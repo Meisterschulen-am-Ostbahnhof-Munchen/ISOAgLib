@@ -89,8 +89,8 @@
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h>
 
 #ifdef DEBUG
   #include <supplementary_driver/driver/rs232/irs232io_c.h>
@@ -165,7 +165,7 @@ void Process_c::init()
   }
 
   //  start with 200 msec timer period
-  ElementBase_c::setTimePeriod(200);
+  Scheduler_Task_c::setTimePeriod(200);
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -246,7 +246,7 @@ CanPkgExt_c& Process_c::dataBase()
 */
 bool Process_c::timeEvent( void ){
   bool b_result = true;
-  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
+  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   if ( ml_filtersToDeleteISO.size() > 0)
   {
@@ -321,7 +321,7 @@ bool Process_c::timeEvent( void ){
     { // skip small values
       ui16_nextTimePeriod = 20;
     }
-    ElementBase_c::setTimePeriod(ui16_nextTimePeriod); // + ElementBase_c::getEarlierInterval());
+    Scheduler_Task_c::setTimePeriod(ui16_nextTimePeriod); // + Scheduler_Task_c::getEarlierInterval());
   }
   // call the time event for all remote data
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();

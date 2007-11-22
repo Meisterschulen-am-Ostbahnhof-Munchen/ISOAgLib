@@ -89,7 +89,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
 
 #ifdef DEBUG
   #ifdef SYSTEM_PC
@@ -700,7 +700,7 @@ MultiSend_c::timeEvent()
             ==> Best would be to know when the next comes.
             clip that value as we may expect incoming can-pkgs, too - so be a little polite!
   */
-  const int32_t ci32_time = ElementBase_c::getLastRetriggerTime();
+  const int32_t ci32_time = Scheduler_Task_c::getLastRetriggerTime();
   // store time of last call, to get time interval between execution
   static int32_t si32_lastCall = 0;
   // only send max 1 package for first call, when execution period can't be derived

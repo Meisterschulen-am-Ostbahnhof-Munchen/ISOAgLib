@@ -1,6 +1,6 @@
 /*! \page PageLicenseConditions License Conditions
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section LicenseConditions License Conditions
 

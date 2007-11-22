@@ -10,7 +10,7 @@
 /* *************************************************************************
  * This example main application is published NOT as GPL`ed Open Source,   *
  * so that you can include this source file in propietary closed projects. *
- * Everybody is encouraged to use the examples in the IsoAgLib_Examples    *
+ * Everybody is encouraged to use the examples in the examples    *
  * directory for a quick and easy start of development for IsoAgLib        *
  * applications.                                                           *
  *                                                                         *
@@ -179,13 +179,13 @@
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
- * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
+ * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_1_0_ReadIso ( see also at \ref PrjConfig1_0_ReadIso ).
  *                                                                         */
 /* *************************************************************************/
 
-/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
+/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/IsoAgLib/isoaglib_config.h
     to include project specific configuration settings.
     Set this define in the project file or Makefile of the whole
     project, so that each source file is compiled with this setting
@@ -237,7 +237,7 @@
 
 /* include some needed util headers */
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -248,39 +248,39 @@
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
 
 #ifdef TEST_TIME
-  #include <IsoAgLib/comm/Base/itimeposgps_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h>
 #endif
 #ifdef TEST_TRACTOR_GENERAL
-  #include <IsoAgLib/comm/Base/itracgeneral_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h>
 #endif
 #ifdef TEST_TRACTOR_MOVING
-  #include <IsoAgLib/comm/Base/itracmove_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #endif
 #ifdef TEST_TRACTOR_LIGHTING
-  #include <IsoAgLib/comm/Base/ext/itraclight_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itraclight_c.h>
 #endif
 #ifdef TEST_TRACPTOSETPOINT
-  #include <IsoAgLib/comm/Base/ext/itracptosetpoint_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h>
 #endif
 #ifdef TEST_TRACMOVESETPOINT
-  #include <IsoAgLib/comm/Base/ext/itracmovesetpoint_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracmovesetpoint_c.h>
 #endif
 #ifdef TEST_TRACPTO
-  #include <IsoAgLib/comm/Base/itracpto_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
 #endif
 #ifdef TEST_TRACAUX
-  #include <IsoAgLib/comm/Base/ext/itracaux_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracaux_c.h>
 #endif
 #ifdef TEST_TRACCERT
-  #include <IsoAgLib/comm/Base/ext/itraccert_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itraccert_c.h>
 #endif
 #ifdef TEST_TRACGUIDANCE
-  #include <IsoAgLib/comm/Base/ext/itracguidance_c.h>
-  #include <IsoAgLib/comm/Base/ext/itracguidancecommand_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracguidance_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracguidancecommand_c.h>
 #endif
 
 
@@ -577,7 +577,7 @@ int main()
       #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
       or
       #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-      in the header xgpl_src/Application_Config/isoaglib_config.h
+      in the header xgpl_src/IsoAgLib/isoaglib_config.h
     - This can be also controlled during runtime with the function call:
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
       or

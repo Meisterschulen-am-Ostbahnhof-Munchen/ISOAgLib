@@ -87,7 +87,7 @@
 #include <algorithm>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/util/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/hal/system.h>
 #ifdef USE_CAN_EEPROM_EDITOR
   #include <IsoAgLib/hal/eeprom.h>

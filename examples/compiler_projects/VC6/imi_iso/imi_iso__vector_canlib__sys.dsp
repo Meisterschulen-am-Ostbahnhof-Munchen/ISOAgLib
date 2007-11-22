@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="imi_iso" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="Imi" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** NICHT BEARBEITEN **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
-CFG=imi_iso - Win32 Debug
+CFG=Imi - Win32 Debug
 !MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
 !MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
 !MESSAGE
-!MESSAGE NMAKE /f "imi_iso.mak".
+!MESSAGE NMAKE /f "Imi.mak".
 !MESSAGE
 !MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
 !MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
 !MESSAGE
-!MESSAGE NMAKE /f "imi_iso.mak" CFG="imi_iso - Win32 Debug"
+!MESSAGE NMAKE /f "Imi.mak" CFG="Imi - Win32 Debug"
 !MESSAGE
 !MESSAGE Für die Konfiguration stehen zur Auswahl:
 !MESSAGE
-!MESSAGE "imi_iso - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "imi_iso - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "Imi - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "Imi - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
 !MESSAGE
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=imi_iso - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "imi_iso - Win32 Release"
+!IF  "$(CFG)" == "Imi - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -41,9 +41,9 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\CANLIB\dll" /I "..\..\..\IsoAgLib_Examples" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_imi_iso.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /c
-# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_imi_iso.h" /d "HWTYPE_VIRTUAL"
-# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_imi_iso.h" /d "HWTYPE_VIRTUAL"
+# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\CANLIB\dll" /I "..\..\..\examples" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_Imi.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /c
+# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Imi.h" /d "HWTYPE_VIRTUAL"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Imi.h" /d "HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -51,7 +51,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /machine:I386 C:\Development\CANLIB\dll /libpath:"C:\STLport\lib"
 
-!ELSEIF  "$(CFG)" == "imi_iso - Win32 Debug"
+!ELSEIF  "$(CFG)" == "Imi - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -65,9 +65,9 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\CANLIB\dll" /I "..\..\..\IsoAgLib_Examples" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_imi_iso.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
-# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_imi_iso.h" /d "HWTYPE_VIRTUAL"
-# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_imi_iso.h" /d "HWTYPE_VIRTUAL"
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\CANLIB\dll" /I "..\..\..\examples" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_Imi.h" /D "HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
+# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Imi.h" /d "HWTYPE_VIRTUAL"
+# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_Imi.h" /d "HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -79,8 +79,8 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "imi_iso - Win32 Release"
-# Name "imi_iso - Win32 Debug"
+# Name "Imi - Win32 Release"
+# Name "Imi - Win32 Debug"
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -313,7 +313,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\eeprom\eeprom_target_extensions.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\imi.cpp
+SOURCE=..\..\..\examples\Imi.cpp
 # End Source File
 
 # Begin Source File

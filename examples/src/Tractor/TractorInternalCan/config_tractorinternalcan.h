@@ -1,10 +1,10 @@
-// File: config_tractorinternalcan.h
+// File: config_TractorInternalCan.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_tractorinternalcan" 
-//            Perform changes direct in the feature and project setup file conf_tractorinternalcan
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_TractorInternalCan" 
+//            Perform changes direct in the feature and project setup file conf_TractorInternalCan
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_tractorinternalcan" call,
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_TractorInternalCan" call,
 //                      if the corresponding value in isoaglib_config.h changed
 
 

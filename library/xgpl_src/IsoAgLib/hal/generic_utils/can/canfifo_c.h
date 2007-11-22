@@ -82,13 +82,13 @@
 
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/hal/can.h>
 
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
-#include <IsoAgLib/hal/generic_utils/can/writeCentralFifo.h>
+#include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
 namespace HAL{
 

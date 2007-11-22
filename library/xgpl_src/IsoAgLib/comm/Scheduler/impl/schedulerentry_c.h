@@ -3,7 +3,7 @@
 
 /***************************************************************************
                           schedulerentry_c  -  header for Wrapper Class for
-                      elementbase_c objects that are managed in Scheduler_c
+                      schedulertask_c objects that are managed in Scheduler_c
                              -------------------
     begin                : Thu Jul 29 1999
     copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
@@ -89,14 +89,14 @@
 #define SYSTEMMANAGEMENT_SCHEDULERENTRY_C_H
 
 
-#include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
 
 
 /// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 //  +X2C Class 2690 : SchedulerEntry_c
-//!  Wrapper class for poitners to already existing singleton-ElementBase_c objects.
+//!  Wrapper class for poitners to already existing singleton-Scheduler_Task_c objects.
 //!  This class provides the needed comparison operators for management of scheduler lists.
 class SchedulerEntry_c
 {
@@ -104,10 +104,10 @@ class SchedulerEntry_c
 public:
 
   //  Operation: SchedulerEntry_c
-  //!  Constructor which takes a pointer to the managed from ElementBase_c derived class.
+  //!  Constructor which takes a pointer to the managed from Scheduler_Task_c derived class.
   //! Parameter:
-  //! @param apc_entry: Pointer to the instance of the represented ElementBase_c derived instance.
-  inline SchedulerEntry_c(ElementBase_c* apc_entry= NULL);
+  //! @param apc_entry: Pointer to the instance of the represented Scheduler_Task_c derived instance.
+  inline SchedulerEntry_c(Scheduler_Task_c* apc_entry= NULL);
 
   //  Operation: operator<=
   //!  Compare retriger time of this item by operator<= with parameter
@@ -127,7 +127,7 @@ public:
   //!  (e.g. erase item with pointer to specific Task)
   //! Parameter:
   //! @param apc_cmpTask: pointer to task object, which should be compared
-  inline bool isTask(const ElementBase_c* apc_cmpTask) const;
+  inline bool isTask(const Scheduler_Task_c* apc_cmpTask) const;
 
   //  Operation: getTimeToNextTrigger
   //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time
@@ -144,7 +144,7 @@ public:
   //  Operation: timeEventExec
   //!  This function is called by the central scheduler to stimulate periodic activities for each task.
   //!  The parameter tells the task the available time for execution.
-  //! @param ai32_demandedExecEnd: available execution time. functon timeEvent() of ElementBase_c Childs
+  //! @param ai32_demandedExecEnd: available execution time. functon timeEvent() of Scheduler_Task_c Childs
   //!                              MUST be finished before the time, to avoid scheduling problems.
   //!                              default value -1 == unrestricted time for execution.
   //! @return true if client could finish his job else false
@@ -226,17 +226,17 @@ protected:
 private:
 
   //  Attribute: mpc_taskInstance
-  ElementBase_c* mpc_taskInstance;
+  Scheduler_Task_c* mpc_taskInstance;
 
 };
 
 // //////////////////////////////// +X2C Operation 2692 : SchedulerEntry_c
-//!  Constructor which takes a pointer to the managed from ElementBase_c derived class.
+//!  Constructor which takes a pointer to the managed from Scheduler_Task_c derived class.
 //! Parameter:
-//! @param apc_entry: Pointer to the instance of the represented ElementBase_c derived instance.
+//! @param apc_entry: Pointer to the instance of the represented Scheduler_Task_c derived instance.
 inline
 
-SchedulerEntry_c::SchedulerEntry_c(ElementBase_c* apc_entry)
+SchedulerEntry_c::SchedulerEntry_c(Scheduler_Task_c* apc_entry)
 : mpc_taskInstance( apc_entry )
 {
 }
@@ -269,7 +269,7 @@ SchedulerEntry_c::operator==(const SchedulerEntry_c& arc_rightSide) const
 //! @param apc_cmpTask: pointer to task object, which should be compared
 inline
 bool
-SchedulerEntry_c::isTask(const ElementBase_c* apc_cmpTask) const
+SchedulerEntry_c::isTask(const Scheduler_Task_c* apc_cmpTask) const
 {
   return ( mpc_taskInstance == apc_cmpTask )?true:false;
 }

@@ -86,10 +86,10 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "processpkg_c.h"
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 
 #include <map>
 #include <list>

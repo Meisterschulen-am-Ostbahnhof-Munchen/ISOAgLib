@@ -1,6 +1,6 @@
 /*! \page outlook Further Development and Applications of IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 
 \section FurtherDevelopment Further Development

@@ -1,6 +1,6 @@
 /***************************************************************************
                           config.h - include dependent on used target (defined
-													           in Application_Config/isoaglib_config.h)
+													           in IsoAgLib/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 central configuration settings
                              -------------------
@@ -56,7 +56,7 @@
 /* ************************************************************ */
 /** \file IsoAgLib/hal/config.h
   * include dependent on used target (defined in
-	  Application_Config/isoaglib_config.h) the suitable HAL
+	  IsoAgLib/isoaglib_config.h) the suitable HAL
 		specific header for central configuration settings.
 */
 /* ************************************************************ */
@@ -64,7 +64,7 @@
 #define _HAL_INDEPENDEND_CONFIG_H_
 
 // include interface aplication relevant configuration settings
-#include <Application_Config/isoaglib_config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/compiler_adaptation.h>
 
 #define HAL_CAN_BITRATE_LIST {10, 20, 40, 50, 100, 125, 250, 500, 1000}

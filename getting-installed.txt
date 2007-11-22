@@ -1,6 +1,6 @@
 /*! \page GettingInstalled Getting Started with IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section HowtoLearnIsoAgLib HOWTO Learn Usage of IsoAgLib
 
@@ -229,7 +229,7 @@ An example mask pool is defined for the example 3_0_VirtualTerminalIso.cpp . Som
 The automatic generation itself is triggered by a call like described in the script build_utils/vt2iso-3-0_VirtualTerminalIso.sh ( LINUX )
 or build_utils/vt2iso-3-0_VirtualTerminalIso.bat ( Win32 ).
 This script/BAT results in suitable files with constant variable array definition for include into the main souce
-file of a project ( in this example in IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/ ).
+file of a project ( in this example in examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/ ).
 
 
 
@@ -334,7 +334,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
 It collects then the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the directory xgpl_src/Application_Config with the
 name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
-the central configuration header xgpl_src/Application_Config/isoaglib_config.h will include this header.
+the central configuration header xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
 Please set additionally the SYSTEM_FOO for the wanted platform - ./compiler_projects/projectGeneration/update_makefile.sh will output the correct define at the end of the
 run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
@@ -347,7 +347,7 @@ The script parses the given project feature set selection and configuring file a
 <li>selects all needed project file ( thus you don't have do manually select the neded files,
 	a big part of the files can be excluded for simple projects )
 <li>generate a project specific configuration header, which is placed in the directory
-	"xgpl_src/Application_Config/" ( you can trigger the compiler to include it by simply
+	"xgpl_src/IsoAgLib/" ( you can trigger the compiler to include it by simply
 	setting the compile time DEFINE PRJ_USE_AUTOGEN_CONFIG to ".config_<project_name>.h"
 <li>create suitable project files for the following build systems:<ul>
 	<li>LINUX: make in the directory "compiler_projects/kdevelop_qmake/"
@@ -583,7 +583,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso"
+REL_APP_PATH="examples/tutorial/0_Part5_NetworkManagement/0_0_AddressClaimIso"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )

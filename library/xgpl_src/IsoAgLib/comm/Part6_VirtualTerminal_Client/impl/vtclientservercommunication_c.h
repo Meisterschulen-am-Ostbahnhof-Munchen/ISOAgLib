@@ -94,13 +94,13 @@
 #define DEF_Retries_TPCommands 2
 #define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 
-#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminalpkg_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/ivtobject_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminalpkg_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
 #define USE_LIST_FOR_FIFO
 

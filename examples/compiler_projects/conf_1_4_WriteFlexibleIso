@@ -1,6 +1,6 @@
 # Filename: conf_1_4_WriteFlexibleIso
 # Configuration setting for tutorial example 1_4_WriteFlexibleIso
-# in the tutorial group 1_BaseData
+# in the tutorial group 1_ApplicationLayer
 
 # ###############################################################
 # Project Identification
@@ -22,7 +22,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/1_BaseData/1_4_WriteFlexibleIso"
+REL_APP_PATH="examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )

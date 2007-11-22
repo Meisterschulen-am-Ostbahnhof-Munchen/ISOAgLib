@@ -1,6 +1,6 @@
 /***************************************************************************
                           can.h - include dependent on used target (defined
-													           in Application_Config/isoaglib_config.h)
+													           in IsoAgLib/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 CAN communication
                              -------------------
@@ -56,7 +56,7 @@
 /* ************************************************************ */
 /** \file IsoAgLib/hal/can.h
   * include dependent on used target (defined in
-	  Application_Config/isoaglib_config.h) the suitable HAL
+	  IsoAgLib/isoaglib_config.h) the suitable HAL
 		specific header for CAN communication.
 */
 /* ************************************************************ */
@@ -64,7 +64,7 @@
 #define _HAL_INDEPENDEND_CAN_H_
 
 // include interface aplication relevant configuration settings
-// #include <Application_Config/isoaglib_config.h>
+// #include <IsoAgLib/isoaglib_config.h>
 #include "config.h"
 
 /** CAN state labels for C167

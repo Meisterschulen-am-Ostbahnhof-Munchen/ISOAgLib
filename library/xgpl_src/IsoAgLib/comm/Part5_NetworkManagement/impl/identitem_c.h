@@ -90,8 +90,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "baseitem_c.h"
-#include "../ISO11783/impl/isoname_c.h"
-#include "../ISO11783/impl/isoitem_c.h"
+#include "..//impl/isoname_c.h"
+#include "..//impl/isoitem_c.h"
 
 
 // Begin Namespace __IsoAgLib

@@ -76,7 +76,7 @@
 	y.spath + ..\..\xgpl_src\IsoAgLib\driver\system\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\driver\eeprom\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\util\impl
-	y.spath + ..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_0_VirtualTerminalIso
+	y.spath + ..\..\examples\tutorial\3_VirtualTerminal_Client\3_0_VirtualTerminalIso
     y.spath + ..\..\commercial_BIOS
 	y.spath + ..\..\commercial_BIOS\bios_esxu
 	y.spath + ..\..\commercial_DIOS

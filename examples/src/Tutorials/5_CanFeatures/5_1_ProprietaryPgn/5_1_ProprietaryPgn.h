@@ -87,10 +87,10 @@
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
-#include <IsoAgLib/comm/Multipacket/imultisend_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/ivtclientservercommunication_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/imultisend_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <cstdlib>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>

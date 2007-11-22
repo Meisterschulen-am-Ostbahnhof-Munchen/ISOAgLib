@@ -37,7 +37,7 @@
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_0_ReadIso\1_0_ReadIso.cpp
+..\..\..\examples\tutorial\1_ApplicationLayer\1_0_ReadIso\1_0_ReadIso.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h

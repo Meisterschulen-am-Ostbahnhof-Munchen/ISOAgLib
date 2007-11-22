@@ -570,8 +570,8 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
   @return true -> all planned activities performed in allowed time
 */
 bool SetpointLocal_c::timeEvent( void ){
-  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
+  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
+  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   // delete all NOT-master entries handled >3sec ago, or
   // delete master entries where isoName of caller is inactive >3sec

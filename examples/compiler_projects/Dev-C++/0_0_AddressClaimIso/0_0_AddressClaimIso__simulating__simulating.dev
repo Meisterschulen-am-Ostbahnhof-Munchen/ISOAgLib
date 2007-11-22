@@ -5,7 +5,7 @@ UnitCount=97
 Type=1
 Ver=1
 ObjFiles=
-Includes=../../..;../../../xgpl_src;../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso
+Includes=../../..;../../../xgpl_src;../../../examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso
 Libs=
 Linker=
 PrivateResource=
@@ -118,7 +118,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -128,7 +128,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -138,7 +138,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -148,7 +148,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -158,7 +158,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -168,7 +168,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -178,7 +178,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -188,7 +188,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit15]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -198,7 +198,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -208,7 +208,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -328,7 +328,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit29]
-FileName=../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/0_0_AddressClaimIso.cpp
+FileName=../../../examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso/0_0_AddressClaimIso.cpp
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -498,7 +498,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit46]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -508,7 +508,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit47]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -518,7 +518,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit48]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -528,7 +528,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit49]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -538,7 +538,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit50]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -548,7 +548,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit51]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -558,7 +558,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit52]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -568,7 +568,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit53]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -578,7 +578,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit54]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -588,7 +588,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit55]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -598,7 +598,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit56]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -608,7 +608,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit57]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -618,7 +618,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit58]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -628,7 +628,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit59]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -638,7 +638,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit60]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -648,7 +648,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit61]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -658,7 +658,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit62]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -668,7 +668,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit63]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -678,7 +678,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit64]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -688,7 +688,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit65]
-FileName=../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1
@@ -718,7 +718,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit68]
-FileName=../../../xgpl_src/Application_Config/isoaglib_config.h
+FileName=../../../xgpl_src/IsoAgLib/isoaglib_config.h
 CompileCpp=1
 Folder=0_0_AddressClaimIso
 Compile=1

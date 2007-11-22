@@ -1,5 +1,5 @@
 #!/bin/sh
-DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples/tutorial"
+DOXYGEN_EXPORT_DIR="../../../../examples/src/Tutorials"
 
 #EXAMPLE_LIST="conf_imi_iso"
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
@@ -13,14 +13,14 @@ RS232_LIST="simulating:sys:rte"
 for conf_example in $EXAMPLE_LIST ; do
   EXAMPLE_DIR=""
   case "$conf_example" in
-    conf_0*) EXAMPLE_DIR="0_SystemMgmt" ;;
-    conf_1*) EXAMPLE_DIR="1_BaseData" ;;
+    conf_0*) EXAMPLE_DIR="0_NetworkManagement" ;;
+    conf_1*) EXAMPLE_DIR="1_ApplicationLayer" ;;
     conf_2*) EXAMPLE_DIR="2_ProcessData" ;;
-    conf_3*) EXAMPLE_DIR="3_Terminal" ;;
+    conf_3*) EXAMPLE_DIR="3_VirtualTerminal_Client" ;;
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
-		conf_tractor*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="tractor" ;;
-		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../IsoAgLib_Examples";EXAMPLE_DIR="CanServerMessenger" ;;
+		conf_tractor*) DOXYGEN_EXPORT_DIR="../../../../examples/src";EXAMPLE_DIR="Tractor" ;;
+		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../../../examples/src";EXAMPLE_DIR="CanServerMessenger" ;;
 		*) EXAMPLE_DIR=".." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`

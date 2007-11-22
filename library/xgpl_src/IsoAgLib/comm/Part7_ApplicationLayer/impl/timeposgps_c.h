@@ -89,12 +89,12 @@
 #define TIMEPOSGPS_C_H
 
 #include <ctime>
-#include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
 
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
-#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #endif
 
 // Begin Namespace __IsoAgLib
@@ -152,7 +152,7 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
-  Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
+  Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
   Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
   Derive from SINGLETON to create a Singleton which manages one global accessible singleton
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).

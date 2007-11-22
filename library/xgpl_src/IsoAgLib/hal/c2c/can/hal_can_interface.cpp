@@ -71,9 +71,9 @@
 #include "hal_can_interface.h"
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
-#include <IsoAgLib/hal/generic_utils/can/writeCentralFifo.h>
+#include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
 #include <list>
 

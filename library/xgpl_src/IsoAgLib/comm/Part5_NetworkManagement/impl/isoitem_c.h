@@ -89,8 +89,8 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

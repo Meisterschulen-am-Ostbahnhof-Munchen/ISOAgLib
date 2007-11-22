@@ -166,7 +166,7 @@ public:
     @param ai32_time optional time to store as last update time (default retreive actual time from central SystemMgmt_c instance)
   */
   void updateTime( int32_t ai32_time = -1 )
-    {if ( ai32_time < 0 ) mi32_lastTime = ElementBase_c::getLastRetriggerTime();
+    {if ( ai32_time < 0 ) mi32_lastTime = Scheduler_Task_c::getLastRetriggerTime();
      else mi32_lastTime = ai32_time;
     }
 

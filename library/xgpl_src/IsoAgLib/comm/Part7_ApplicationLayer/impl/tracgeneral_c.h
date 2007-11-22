@@ -87,8 +87,8 @@
 #ifndef TRACGENERAL_C_H
 #define TRACGENERAL_C_H
 
-#include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
 
 #include <ctime>
 
@@ -116,7 +116,7 @@ class TracGeneral_c;
 typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
 /** stores, updates  and delivers all base data informations;
     Derive from BaseCommon_c some fundamental funktionality for all base data
-    Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
+    Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
     Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
     Derive from SINGLETON to create a Singleton which manages one global accessible singleton
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).

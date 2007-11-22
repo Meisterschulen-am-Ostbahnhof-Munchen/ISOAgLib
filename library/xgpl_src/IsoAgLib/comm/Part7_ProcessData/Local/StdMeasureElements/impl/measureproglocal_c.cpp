@@ -88,8 +88,8 @@
 #include "measureproglocal_c.h"
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
-#include <IsoAgLib/comm/Base/impl/tracmove_c.h>
-//#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
+//#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 namespace __IsoAgLib {
 
@@ -1022,8 +1022,8 @@ bool MeasureProgLocal_c::resetMax(){
   */
 bool MeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod )
 {
-  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
-  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
+  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
+  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   bool b_singleTest;
   int32_t i32_nextTimePeriod;

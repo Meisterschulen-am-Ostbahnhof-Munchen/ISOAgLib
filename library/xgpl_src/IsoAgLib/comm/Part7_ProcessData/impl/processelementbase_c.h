@@ -99,7 +99,7 @@ class ProcDataBase_c;
 
 /**
   base class for elements of ProcessData which has pointer to
-  the containing ProcessData item, inherit pointer to Scheduler_c from ElementBase_c
+  the containing ProcessData item, inherit pointer to Scheduler_c from Scheduler_Task_c
   @author Dipl.-Inform. Achim Spangler
 */
 class ProcessElementBase_c : public ClientBase  {

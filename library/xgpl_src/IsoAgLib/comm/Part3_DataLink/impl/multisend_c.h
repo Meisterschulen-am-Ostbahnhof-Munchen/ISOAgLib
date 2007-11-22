@@ -92,11 +92,11 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 
 #include "multisendpkg_c.h"
 #include "../imultisendstreamer_c.h"
@@ -165,7 +165,7 @@ public:
   @author Dipl.-Inf. Martin Wodok
 */
 class MultiSend_c;
-typedef SINGLETON_DERIVED(MultiSend_c, ElementBase_c) SingletonMultiSend_c;
+typedef SINGLETON_DERIVED(MultiSend_c, Scheduler_Task_c) SingletonMultiSend_c;
 class MultiSend_c : public SingletonMultiSend_c
 {
 public:
@@ -440,7 +440,7 @@ protected: // methods
 
 
 private: // Private methods
-  friend class SINGLETON_DERIVED(MultiSend_c, ElementBase_c);
+  friend class SINGLETON_DERIVED(MultiSend_c, Scheduler_Task_c);
   friend class iMultiSend_c;
   friend class SendStream_c;
 

@@ -16,7 +16,7 @@ CXXFLAGS = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -Wshadow -Wcast-qual -
 
 LEXFLAGS =
 YACCFLAGS= -d
-INCPATH  = -I. -I$(ISOAGLIB_PATH)/xgpl_src $(APP_INC) $(BIOS_INC)
+INCPATH  = -I. -I$(ISOAGLIB_PATH)/library/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
 LFLAGS   =
 LIBS     = $(BIOS_LIB) $(SUBLIBS)
@@ -190,7 +190,7 @@ FORCE:
 install_library: $(INSTALL_FILES_LIBRARY)
 	mkdir -p /$(INSTALL_PATH)/lib;
 	@for INSTITEM in $(INSTALL_FILES_LIBRARY); do \
-		SEARCH=$(ISOAGLIB_PATH)/xgpl_src; \
+		SEARCH=$(ISOAGLIB_PATH)/library/xgpl_src; \
 		REPLACE=$(INSTALL_PATH)/include; \
 		#echo "Search $$SEARCH -> replace $$REPLACE"; \
 		VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \

@@ -10,7 +10,7 @@
 /* *************************************************************************
  * This example main application is published NOT as GPL'ed Open Source,   *
  * so that you can include this source file in propietary closed projects. *
- * Everybody is encouraged to use the examples in the IsoAgLib_Examples    *
+ * Everybody is encouraged to use the examples in the examples    *
  * directory for a quick and easy start of development for IsoAgLib applications*
  *                                                                         *
  * So nobody is bound to publish changes of the example source files.      *
@@ -95,12 +95,16 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <supplementary_driver/driver/sensor/ianalogi_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/iprocess_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/iprocdataremote_c.h>
+
 
 #ifdef USE_EEPROM_IO
   #include <IsoAgLib/driver/eeprom/ieepromio_c.h>
   // include the configuration header with addresses of some EEPROM informations
-  #include <Application_Config/eeprom_adr.h>
+  #include "eeprom_adr.h"
   /// specify if ident information should be read from EEPROM
   #define READ_EEPROM_IDENT_YN  YES
 #endif
@@ -109,19 +113,16 @@
 // of the "IsoAgLib"
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/Base/itracgeneral_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
-#include <IsoAgLib/comm/Base/itracpto_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-
-#ifdef USE_DIN_9684
-  #include <IsoAgLib/comm/SystemMgmt/DIN9684/idinmonitor_c.h>
-#endif
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/ISO11783/iisomonitor_c.h>
 
 // all used local process data doesn't need sophisticated setpoint management
-#include <IsoAgLib/comm/Process/proc_c.h>
-#include <IsoAgLib/comm/Process/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h>
-#include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/iprocdataremote_c.h>
 
 #include <IsoAgLib/driver/can/icanio_c.h>
 
@@ -266,20 +267,9 @@ int main()
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can change the myISOName val through the pointer to myISOName
-#if !defined(USE_ISO_11783)
-  iIdentItem_c c_myIdent( &myISOName, myName );
-//#elif defined(USE_ISO_11783) && defined(USE_DIN_9684)
-#elif 0
-  // claim address for local member as DIN and ISO (ISO only is also possible)
-  iIdentItem_c c_myIdent( &myISOName, myName,
-    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-    ui32_serNo, b_wantedSa, ADR_ISO_SA, b_funcInst, b_ecuInst);
-#else
-  /* for only ISO 11783 */
-  iIdentItem_c c_myIdent( &myISOName,
-      b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-      ui32_serNo, b_wantedSa, ADR_ISO_SA, b_funcInst, b_ecuInst);
-#endif
+  iIdentItem_c c_myIdent( ui8_indGroup, myISOName.devClass(), myISOName.devClassInst(),
+                          b_func, ui16_manufCode, ui32_serNo, b_wantedSa, 0xffff,
+                          b_funcInst, b_ecuInst, b_selfConf);
   // Information for calculating informations from remote Scheduler_c base data
   int32_t i32_workDist = 0, // complete working distance
        i32_lastDist = 0, // base data dist from last check
@@ -297,17 +287,29 @@ int main()
   // local process data for "on/off mechanical" [0/0x64] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, ISOName of local data (can vary from previously given device class & instance),
   // the pointer to myISOName helps automatic update of ISOName, mark this value as NOT cumulated (default)
-  iProcDataLocalSimpleSetpoint_c c_myOnoff(0, myISOName, 0x1, 0x0, 0xFF, 2, myISOName, &myISOName, false);
+//   iProcDataLocalSimpleSetpoint_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
+//                                  const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+//                                      const iIsoName_c& ac_ownerISOName = iIsoName_c::iIsoNameUnspecified(),
+//                                          const iIsoName_c *apc_isoName = NULL,
+//                                          bool ab_cumulativeValue = false,
+
+
+//  iProcDataLocalSimpleSetpoint_c c_myOnoff(0, myISOName, 0x1, 0x0, 0xFF, 2, myISOName, &myISOName, false);
+  iProcDataLocalSimpleSetpoint_c c_myOnoff(NULL, 0, myISOName, myISOName, &myISOName, false);
 
   // local process data for "whole distance" [m] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=1)
-  iProcDataLocalSimpleSetpoint_c c_myWholeDist(0, myISOName, 0x8, 0x1, 0xFF, 2, myISOName, &myISOName, true, ADR_TRIP_DIST);
+//  iProcDataLocalSimpleSetpoint_c c_myWholeDist(0, myISOName, 0x8, 0x1, 0xFF, 2, myISOName, &myISOName, true, ADR_TRIP_DIST);
+  iProcDataLocalSimpleSetpoint_c c_myWholeDist(NULL, 0, myISOName, myISOName, &myISOName, true, ADR_TRIP_DIST);
   // local process data for "working distance" [m] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=4)
-  iProcDataLocalSimpleSetpoint_c c_myWorkDist(0, myISOName, 0x8, 0x4, 0xFF, 2, myISOName, &myISOName, true, ADR_WHOLE_DIST);
+//  iProcDataLocalSimpleSetpoint_c c_myWorkDist(0, myISOName, 0x8, 0x4, 0xFF, 2, myISOName, &myISOName, true, ADR_WHOLE_DIST);
+  iProcDataLocalSimpleSetpoint_c c_myWorkDist(NULL, 0, myISOName, myISOName, &myISOName, true, ADR_WHOLE_DIST);
 
   // local process data for "whole time" [sec] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=0xA, INST=0)
-  iProcDataLocalSimpleSetpoint_c c_myWholeTime(0, myISOName, 0xA, 0x0, 0xFF, 2, myISOName, &myISOName, true, ADR_TRIP_TIME);
+//   iProcDataLocalSimpleSetpoint_c c_myWholeTime(0, myISOName, 0xA, 0x0, 0xFF, 2, myISOName, &myISOName, true, ADR_TRIP_TIME);
+  iProcDataLocalSimpleSetpoint_c c_myWholeTime(NULL, 0, myISOName, myISOName, &myISOName, true, ADR_TRIP_TIME);
   // local process data for "work time" [sec] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=0xA, INST=7)
-  iProcDataLocalSimpleSetpoint_c c_myWorkTime(0, myISOName, 0xA, 0x7, 0xFF, 2, myISOName, &myISOName, true, ADR_WHOLE_TIME);
+//   iProcDataLocalSimpleSetpoint_c c_myWorkTime(0, myISOName, 0xA, 0x7, 0xFF, 2, myISOName, &myISOName, true, ADR_WHOLE_TIME);
+  iProcDataLocalSimpleSetpoint_c c_myWorkTime(NULL, 0, myISOName, myISOName, &myISOName, true, ADR_WHOLE_TIME);
 
   // create pure NULL pointer for working width and working area
   // and init them only, if working width and area are ddefined
@@ -316,20 +318,29 @@ int main()
   if (myWidth > 0)
   { // only create and handle working width and working area if working width is defined == transport has no working width
     // local process data for "working width" [mm] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=3, INST=1)
-    pMyWidth = new iProcDataLocalSimpleSetpoint_c( 0, myISOName, 0x3, 0x1, 0xFF, 2, myISOName, &myISOName, false);
+//     pMyWidth = new iProcDataLocalSimpleSetpoint_c( 0, myISOName, 0x3, 0x1, 0xFF, 2, myISOName, &myISOName, false);
+    pMyWidth = new iProcDataLocalSimpleSetpoint_c( NULL, 0, myISOName, myISOName, &myISOName, false);
     // set the constant width
     pMyWidth->setMasterMeasurementVal(myWidth);
     // local process data for "working area" [m2] of primaer Bodenbearbeitung (LIS=0, DEVCLASS=2, WERT=8, INST=0)
     // with full working width (ZAEHLNUM 0xFF), POS, ISOName of local data (can vary from previously given device class & instance),
     // the pointer to myISOName helps automatic update of ISOName, mark this value as CUMULATED (area grows -> update by de/increment)
-    pMyWorkArea = new iProcDataLocalSimpleSetpoint_c( 0, myISOName, 0x8, 0x0, 0xFF, 2, myISOName, &myISOName, true);
+//     pMyWorkArea = new iProcDataLocalSimpleSetpoint_c( 0, myISOName, 0x8, 0x0, 0xFF, 2, myISOName, &myISOName, true);
+    pMyWorkArea = new iProcDataLocalSimpleSetpoint_c( NULL, 0, myISOName, myISOName, &myISOName, true);
   }
 
    // self defined remote process data for "EHR position" [%] of tracctor (LIS=0, DEVCLASS=1, WERT=0x4, INST=0)
   // with full working width (ZAEHLNUM 0xFF), POS, ISOName of remote data (can vary from previously given device class & instance),
   // ui8_remoteISOName tells the remote owner of the Process Data (where it is located as local),
   // the pointer to myISOName tells the local commanding member, used for target messages as SEND
-  iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorISOName, 0x4, 0x0, 0xFF, 2, c_autodatacollectorISOName, &myISOName);
+//   iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorISOName, 0x4, 0x0, 0xFF, 2, c_autodatacollectorISOName, &myISOName);
+  const ElementDdi_s s_WorkStateElementDDI[2] =
+  {
+    {141, true, GeneralCommand_c::exactValue},
+    {0xffff, false, GeneralCommand_c::exactValue}
+  };
+
+  IsoAgLib::iProcDataRemote_c c_remoteEhr(s_WorkStateElementDDI, 0, c_autodatacollectorISOName, c_autodatacollectorISOName, &myISOName);
   int8_t c_ehrStartProgCnt = 10;
 
 
@@ -355,15 +366,12 @@ int main()
       // all time controlled actions of IsoAgLib
       getISchedulerInstance().timeEvent();
 
-      if (getISystemMgmtInstance().existMemberISOName(myISOName, true))
+      if (getIisoMonitorInstance().existIsoMemberISOName(myISOName, true))
       { // local IMI member has claimed address (as DIN or ISO)
         if (!myClaimedAddress)
         { // first time with claimed address -> do some initial actions
           // send request for member names of other systems
           // (and send own name as demanded by standard)
-          #ifdef USE_DIN_9684
-          getIdinMonitorInstance().requestDinMemberNames();
-          #endif
           // get the i32_distanceOffset to calculate distance from address claim on
           i32_distanceOffset = getITracMoveInstance().distTheor();
           // set the i32_lastDist for getting the working dist to the actual base dist
@@ -374,17 +382,14 @@ int main()
         }
 
         // test if name should be sent (send name after 5, 7 and 9 sec
-        if ( (getISystemMgmtInstance().existMemberISOName(myISOName, true))
+        if ( (getIisoMonitorInstance().existIsoMemberISOName(myISOName, true))
           && ((i32_loopTime / 1000) == b_sendNameTime) )
         { // inkrement b_sendNameTime to send every 2 sec
           if (b_sendNameTime < 9) b_sendNameTime += 2;
           else b_sendNameTime = 0;
-          #ifdef USE_DIN_9684
-          getIdinMonitorInstance().dinMemberISOName(myISOName, true).sendName();
-          #endif
         }
 
-        if (getISystemMgmtInstance().existMemberISOName(c_autodatacollectorISOName, true))
+        if (getIisoMonitorInstance().existIsoMemberISOName(c_autodatacollectorISOName, true))
         { // check for all progs, if they should be started or stopped
           switch (c_ehrStartProgCnt)
           {
@@ -395,7 +400,7 @@ int main()
               c_remoteEhr.prog().addSubprog(Proc_c::TimeProp, 1000);
               // start program with target message time proportional and tell remote
               // system to send actual measured value
-              c_remoteEhr.prog().start(Proc_c::Target, Proc_c::TimeProp, Proc_c::DoVal);
+              c_remoteEhr.prog().start(/*Proc_c::Target, */Proc_c::TimeProp, Proc_c::DoVal);
               // now set the counter to -1 to avoid further starts
               c_ehrStartProgCnt = -1;
               break;

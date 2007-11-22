@@ -90,7 +90,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 #ifdef USE_PROCESS
-  #include <IsoAgLib/comm/Process/impl/process_c.h>
+  #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #endif
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)

@@ -56,7 +56,7 @@
 #define ISO_REQUEST_PGN_HANDLER_C_H
 
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */

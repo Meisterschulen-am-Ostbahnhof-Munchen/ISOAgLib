@@ -61,8 +61,8 @@
 
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
-//#include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+//#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
 
 /* *************************************** */
 /* ********** command defines ************ */

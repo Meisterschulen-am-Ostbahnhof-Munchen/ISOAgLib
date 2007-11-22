@@ -100,9 +100,9 @@ namespace IsoAgLib {
 // IsoAgLib
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 
 // stl
 #include <list>
@@ -160,7 +160,7 @@ class MultiReceiveClientWrapper_s : public ClientBase {
 
 
 class MultiReceive_c;
-typedef SINGLETON_DERIVED(MultiReceive_c,ElementBase_c) SingletonMultiReceive_c;
+typedef SINGLETON_DERIVED(MultiReceive_c,Scheduler_Task_c) SingletonMultiReceive_c;
 
 //  +X2C Class 192 : MultiReceive_c
 //!  Stereotype: 76
@@ -261,7 +261,7 @@ public:
 protected:
 
 private:
-  friend class SINGLETON_DERIVED(MultiReceive_c,ElementBase_c);
+  friend class SINGLETON_DERIVED(MultiReceive_c,Scheduler_Task_c);
 
   /**
     initialize directly after the singleton instance is created.

@@ -1,6 +1,6 @@
 /*! \page PageMaintainers Some information on the maintainers
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section Maintainers Some information on the maintainers
 The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now

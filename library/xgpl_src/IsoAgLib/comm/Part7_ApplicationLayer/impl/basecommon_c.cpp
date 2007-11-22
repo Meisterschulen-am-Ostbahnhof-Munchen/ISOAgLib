@@ -83,9 +83,9 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 #include "basecommon_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 

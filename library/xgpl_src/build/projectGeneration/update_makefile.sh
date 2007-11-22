@@ -141,18 +141,28 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 
 check_set_correct_variables()
 {
-	if [ "A$ISO_AG_LIB_PATH" = "A" ] ; then
-		echo "ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src and IsoAgLibExamples are located"
-		exit 2
-	fi
-	if [ "A$PRJ_SEND_DEBUG" = "A" ] ; then
+  if [ "A$ISO_AG_LIB_PATH" = "A" ] ; then
+  	echo "ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src and IsoAgLibExamples are located"
+  	exit 2
+  else
+    ISO_AG_LIB_INSIDE="../../$ISO_AG_LIB_PATH"
+  fi
+  # check if ISO_AG_LIB_PATH valid
+  if test ! -d $ISO_AG_LIB_PATH ; then
+    echo "ERROR! ISO_AG_LIB_PATH is not a directory"
+  else
+    if test ! -d "$ISO_AG_LIB_PATH/library" ; then
+        echo "ERROR! No library found within ISO_AG_LIB ($ISO_AG_LIB_PATH) - maybe your directory is not updated?"
+    fi
+  fi
+	
+  if [ "A$PRJ_SEND_DEBUG" = "A" ] ; then
   	PRJ_SEND_DEBUG=0
   fi
-	if [ "A$USE_FLOAT_DATA_TYPE" = "A" ] ; then
+  if [ "A$USE_FLOAT_DATA_TYPE" = "A" ] ; then
   	USE_FLOAT_DATA_TYPE=0
   fi
-
-	if [ "A$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" = "A" ] ; then
+  if [ "A$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" = "A" ] ; then
   	OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
   fi
 
@@ -312,12 +322,12 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   fi
 
 	# and also deactivate the features that are only available with the extension directories
-	EXT_BASE_SRC="$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/comm/Base/ext"
+	EXT_BASE_SRC="$ISO_AG_LIB_PATH/library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext"
 
-	if test $PRJ_ISO11783 -lt 1  -o ! -d $EXT_BASE_SRC  ; then
+	if test ! -d $EXT_BASE_SRC  ; then
 		# ISO is not active -> deactivate all ISO only features
 		echo "Deactivate all ISO specific features, that are only available for registered users."
-		echo "Either ISO11783 was not activated, OR the directory $EXT_BASE_SRC with the extensional modules does not exist."
+		echo "The directory $EXT_BASE_SRC with the extensional modules does not exist."
 		echo "Please contact a.spangler@osb-ag.de when you want to register as user so that you can access the extensions area."
 		PRJ_TRACTOR_LIGHT=0
 		PRJ_TRACTOR_AUX=0
@@ -417,67 +427,67 @@ create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Process/impl/proc*' -o -path '*/Process*/igeneralcommand*' -o -path '*/Process*/impl/generalcommand*' -o -path '*/Process/*procdata*base_c.h'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/igeneralcommand*' -o -path '*/Part7_ProcessData/impl/generalcommand*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'"
 
 		if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
 			# allow DevPropertyHandler
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/i*devproperty*'"
+			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/i*devproperty*'"
 		else
-			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Process/i*devproperty*' -a -not -name 'devproperty*' \)"
+			COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o \( -path '*/Part7_ProcessData/i*devproperty*' -a -not -name 'devproperty*' \)"
 		fi
 
     if [ $PROC_LOCAL -gt 0 ] ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/impl/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/impl/*'"
 
       if [ $PROC_LOCAL_STD -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/Std/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/Std/*'"
         INC_LOC_STD_MEASURE_ELEMENTS=1
         INC_LOC_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_LOCAL_SIMPLE_MEASURE -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleMeasure/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/SimpleMeasure/*'"
         INC_LOC_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_LOCAL_SIMPLE_SETPOINT -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/SimpleSetpoint/*'"
         INC_LOC_STD_MEASURE_ELEMENTS=1
         INC_LOC_SIMPLE_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_LOCAL_SIMPLE_MEASURE_SETPOINT -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleMeasureSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/SimpleMeasureSetpoint/*'"
         INC_LOC_SIMPLE_SETPOINT_ELEMENTS=1
       fi
 
       if [ $INC_LOC_STD_MEASURE_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/StdMeasureElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/StdMeasureElements/*'"
       fi
       if [ $INC_LOC_STD_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/StdSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/StdSetpointElements/*'"
       fi
       if [ $INC_LOC_SIMPLE_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Local/SimpleSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Local/SimpleSetpointElements/*'"
       fi
     fi
     if [ $PROC_REMOTE -gt 0 ] ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/impl/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/impl/*'"
 
       if [ $PROC_REMOTE_STD -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/Std/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/Std/*'"
         INC_REM_STD_MEASURE_ELEMENTS=1
         INC_REM_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_REMOTE_SIMPLE_MEASURE -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleMeasure/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/SimpleMeasure/*'"
         INC_REM_SIMPLE_MEASURE_ELEMENTS=1
         INC_REM_STD_SETPOINT_ELEMENTS=1
       fi
       if [ $PROC_REMOTE_SIMPLE_SETPOINT -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/SimpleSetpoint/*'"
         INC_REM_STD_MEASURE_ELEMENTS=1
         INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
       fi
       if test $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT -gt 0 -a $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED -gt 0   ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleMeasureSetpoint/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/SimpleMeasureSetpoint/*'"
         INC_REM_SIMPLE_MEASURE_ELEMENTS=1
         INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
       elif [ $PROC_REMOTE_SIMPLE_MEASURE_SETPOINT -gt 0 ] ; then
@@ -488,24 +498,24 @@ create_filelist( )
         COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -name '*procdataremotesimplesetpointsimplemeasurecombined_c.*'"
 			fi
       if [ $INC_REM_STD_MEASURE_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/StdMeasureElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/StdMeasureElements/*'"
       fi
       if [ $INC_REM_SIMPLE_MEASURE_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleMeasureElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/SimpleMeasureElements/*'"
       fi
       if [ $INC_REM_STD_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/StdSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/StdSetpointElements/*'"
       fi
       if [ $INC_REM_SIMPLE_SETPOINT_ELEMENTS -gt 0 ] ; then
-        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/Remote/SimpleSetpointElements/*'"
+        COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/Remote/SimpleSetpointElements/*'"
       fi
     fi
 
     if test $INC_LOC_STD_MEASURE_ELEMENTS -gt 0 -o $INC_REM_STD_MEASURE_ELEMENTS -gt 0 ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/StdMeasureElements/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/StdMeasureElements/*'"
     fi
     if test $INC_LOC_STD_SETPOINT_ELEMENTS -gt 0 -o $INC_REM_STD_SETPOINT_ELEMENTS -gt 0 ; then
-      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Process/StdSetpointElements/*'"
+      COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o -path '*/Part7_ProcessData/StdSetpointElements/*'"
     fi
 
   fi
@@ -524,54 +534,54 @@ create_filelist( )
   if [ $PRJ_BASE -gt 0 ] ; then
     if [ $PRJ_ISO11783 -lt 1 ] ; then
       # no trac light
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' -a -not -name '*tracguidance*' -a -not -name '*traccert*' \)"
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' -a -not -name '*tracguidance*' -a -not -name '*traccert*' \)"
     else
 # until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
-      COMM_FEATURES="$COMM_FEATURES -o -path '*/Base/*'"
-#      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -not -name '*trac*setpoint*' \) "
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part7_ApplicationLayer/*'"
+#      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -not -name '*trac*setpoint*' \) "
     fi
   fi
   if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 -o $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_TRACTOR_CERTIFICATION -gt 0; then
 	  COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
 	fi
   if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracgeneral_c*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)"
   fi
   if test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -gt 0 ; then
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove*' \)"
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)"
   elif test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -lt 1 ; then
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracmove_c.*' \)"
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)"
   fi
   if test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -gt 0 ; then
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto*' \)"
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)"
   elif test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -lt 1 ; then
-	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracpto_c.*' \)"
+	    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)"
   fi
   if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traclight*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)"
   else
 	PRJ_TRACTOR_LIGHT=0
   fi
   if test $PRJ_TRACTOR_AUX -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
 		# tracaux is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracaux*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)"
 	else
 	PRJ_TRACTOR_AUX=0
 	fi
 	if test $PRJ_TRACTOR_GUIDANCE -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
 		# tracguidance is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*tracguidance*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)"
 	else
 	PRJ_TRACTOR_GUIDANCE=0
   fi
 	if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
 		# tracguidance is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*traccert*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)"
 	else
 	PRJ_TRACTOR_CERTIFICATION=0
   fi
   if [ $PRJ_TIME_GPS -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Base/*' -a -name '*timeposgps*' \)"
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)"
   fi
 
 	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
@@ -583,9 +593,9 @@ create_filelist( )
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
 		if [ $PRJ_ISO_TERMINAL_LAYOUT_MANAGER -gt 0 ] ; then
-	    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/*'"
+	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/*'"
 		else
-	    COMM_FEATURES="$COMM_FEATURES -o -path '*/ISO_Terminal/i*'"
+	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/i*'"
 		fi
     PRJ_MULTIPACKET=1
   fi
@@ -600,11 +610,11 @@ create_filelist( )
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
   	if [ $PRJ_ISO11783 -gt 0 ] ; then
-			COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/i*multi*' -o -path '*/Multipacket/impl/stream_c.*' -o -path '*/Multipacket/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'"
+			COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'"
 			if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
-				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamchunk_c.*' -o -path '*/Multipacket/impl/chunk_c.*'"
+				COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'"
 			else
-				COMM_FEATURES="$COMM_FEATURES -o -path '*/Multipacket/impl/streamlinear_c.*'"
+				COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamlinear_c.*'"
 			fi
 		fi
   fi
@@ -712,7 +722,7 @@ create_filelist( )
 	fi
 
 
-  LIB_ROOT="../$ISO_AG_LIB_PATH/xgpl_src"
+  LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
   SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
   HDR_UTEST_EXT="\( -name '*-test.h' \)"
   HDR_UTEST_MOCK_EXT="\( -name '*-mock.h' \)"
@@ -749,31 +759,29 @@ create_filelist( )
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
   # find central elements
   if [ $PRJ_ISO11783 -lt 1 ] ; then
-		EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/ISO11783/*'"
-	else
-		EXCLUDE_FROM_SYSTEM_MGMT=""
-	fi
-	rm -f .exec.tmp
-	echo "find $LIB_ROOT -follow $SRC_EXT -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -follow -name '*.h' -a \( -path '*/Scheduler/*' -o -path '*/SystemMgmt/*' -o -path '*/util/*' \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+	EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/ISO11783/*'" # OBSOLETE? Folder has been deleted.
+  else
+	EXCLUDE_FROM_SYSTEM_MGMT=""
+  fi
+  rm -f .exec.tmp
 
+  FIND_TEMP_PATH="-path '*/Scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/impl/can*' -o -path '*/Part10_TaskController_Client/*'"
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
-		echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-    echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_PROC_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+    FIND_TEMP_PATH="$FIND_TEMP_PATH -o $COMM_PROC_FEATURES"
   fi
-
   # find wanted other communication features
   if [ "$COMM_FEATURES" != "" ] ; then
-		echo "find $LIB_ROOT -follow $SRC_EXT -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-    echo "find $LIB_ROOT -follow -name '*.h' -a \( $COMM_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+    FIND_TEMP_PATH="$FIND_TEMP_PATH -o $COMM_FEATURES"
   fi
-
-
   #find optional HW features
-	echo "find $LIB_ROOT -follow $SRC_EXT -a \( $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -follow -name '*.h' -a \(  $DRIVER_FEATURES \) -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
-
+  if [ "$DRIVER_FEATURES" != "" ] ; then
+    FIND_TEMP_PATH="$FIND_TEMP_PATH -o $DRIVER_FEATURES"
+  fi
+    
+  echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+  
   # find application files
 	FIRST_LOOP="YES"
 	APP_SRC_PART=""
@@ -851,10 +859,9 @@ create_filelist( )
 	APP_SEARCH_HDR_TYPE_PART="$APP_SEARCH_HDR_TYPE_PART \)"
 
 	for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE" >> .exec.tmp
-		echo "find ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR" >> .exec.tmp
+		echo "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE" >> .exec.tmp
+		echo "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR" >> .exec.tmp
 	done
-
 
   sh .exec.tmp
 
@@ -961,9 +968,9 @@ create_autogen_project_config()
 	fi
 
     for FIRST_REL_APP_PATH in $REL_APP_PATH ; do
-	# CONFIG_NAME=../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/.config_$PROJECT.h
-	CONFIG_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/config_$PROJECT.h
-			VERSION_FILE_NAME=../$ISO_AG_LIB_PATH/$FIRST_REL_APP_PATH/version.h
+	# CONFIG_NAME=$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/.config_$PROJECT.h
+	CONFIG_NAME=$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h
+			VERSION_FILE_NAME=$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/version.h
 			if [ ! -f $VERSION_FILE_NAME ] ; then
 				echo    "#ifndef POOL_VERSION"            > $VERSION_FILE_NAME
 				echo -e "\t#define POOL_VERSION 1.0"     >> $VERSION_FILE_NAME
@@ -1191,12 +1198,11 @@ create_autogen_project_config()
 	echo "// These settings are initially defined in isoaglib_config.h ." >> $CONFIG_NAME
 	echo "// These settings are in commented-out, so that you can activate and adapt them by" >> $CONFIG_NAME
 	echo -e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >> $CONFIG_NAME
-
-	for conf_line in `grep "#define CONFIG_" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'` ; do
+	for conf_line in `grep "#define CONFIG_" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'` ; do
 		conf_name=`echo $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g'`
 		INDIV_CNT=`grep -c $conf_name $CONFIG_NAME.bak`
 		if [ $INDIV_CNT -lt 1 ] ; then
-			grep -B1 "#define $conf_line" ../$ISO_AG_LIB_PATH/xgpl_src/Application_Config/isoaglib_config.h >> $CONFIG_NAME
+			grep -B1 "#define $conf_line" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h >> $CONFIG_NAME
 			sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $CONFIG_NAME.1
 #			CMDLINE=`echo "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $CONFIG_NAME.1"`
 #			echo $CMDLINE | sh
@@ -1217,10 +1223,9 @@ create_autogen_project_config()
 	rm -f $CONFIG_NAME.1
 
 
-
 	echo -e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT List of configuration settings for $PROJECT" > $CONFIG_HEADER_DOXYGEN_READY
 	echo " This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >> $CONFIG_HEADER_DOXYGEN_READY
-	echo " This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the" >> $CONFIG_HEADER_DOXYGEN_READY
+	echo " This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the" >> $CONFIG_HEADER_DOXYGEN_READY
 	echo " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h ( Important: place the directory of the application source files in the include search path )" >> $CONFIG_HEADER_DOXYGEN_READY
 	echo "" >> $CONFIG_HEADER_DOXYGEN_READY
 	echo " Use the file $CONF_FILE in the directory $1 as input file for $0 to create the project generation files." >> $CONFIG_HEADER_DOXYGEN_READY
@@ -1253,7 +1258,7 @@ create_makefile()
 	MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
 	if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
-  	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileSkeleton.txt"
+  	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileSkeleton.txt"
   fi
 
 	# create Makefile Header
@@ -1264,17 +1269,17 @@ create_makefile()
 	echo ""  >> $MakefileNameLong
 	echo "####### Project specific variables" >> $MakefileNameLong
 	echo "TARGET = $PROJECT" >> $MakefileNameLong
-	echo "ISOAGLIB_PATH = ../$ISO_AG_LIB_PATH" >> $MakefileNameLong
+	echo "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >> $MakefileNameLong
 	echo "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
 	echo -n "APP_INC = " >> $MakefileNameLong
-	KDEVELOP_INCLUDE_PATH="../$ISO_AG_LIB_PATH/xgpl_src;"
+	KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library/xgpl_src;"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileNameLong
-		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;"
+		echo -n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
   done
 	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-		echo -n " -I../$ISO_AG_LIB_PATH/$SingleInclPath" >> $MakefileNameLong
-		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$SingleInclPath;"
+		echo -n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$SingleInclPath;"
 	done
 	echo "" >> $MakefileNameLong
 
@@ -1405,7 +1410,6 @@ create_makefile()
 		echo -e -n "$CcFile  " >> $MakefileNameLong
 	done
 	echo -e "\n" >> $MakefileNameLong
-
 rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
 
 cat "$MakefileFilelistLibraryHdr" | grep    "/impl/" > FileListInternal.txt
@@ -1451,7 +1455,6 @@ while [ $DoRepeat = "TRUE" ] ; do
 		rm -f FileListInterface4EvalPre.txt
 	fi
 done
-
 	echo -n "INSTALL_FILES_LIBRARY = " >> $MakefileNameLong
 	FIRST_LOOP="YES"
 	for InterfaceFile in `cat FileListInterface.txt` ; do
@@ -1472,32 +1475,31 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 	if [ $USE_CAN_DRIVER = "msq_server" ] ; then
 		mkdir -p objects_server
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
-		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \\" >> $MakefileNameLong
+		echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \\" >> $MakefileNameLong
 
 		# now derive the source name of the specific CAN HAL module
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
+		echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
 
-    echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
+    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
-		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
+		cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
 		if [ $USE_PCAN_LIB -gt 0 ] ; then
 			echo -e "LIBS_CAN_SERVER	= -lpcan" >> $MakefileNameLong;
 		fi
 
 	fi
-
 	# build special target for CAN server
 	if [ $USE_CAN_DRIVER = "socket_server" ] ; then
 		mkdir -p objects_server
 		echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
-		echo "SOURCES_SERVER = ../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \\" >> $MakefileNameLong
+		echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \\" >> $MakefileNameLong
 
 		# now derive the source name of the specific CAN HAL module
-		echo -e "\t\t../$ISO_AG_LIB_PATH/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
+		echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
 		echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
-		cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
+		cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
 	fi
 
 	cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
@@ -1509,7 +1511,6 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 	fi
 
 	rm -f $MakefileNameLong.1
-
 	# replace the install rules for version.h and the app config file
 	sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $MakefileNameLong.1
 	sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $MakefileNameLong.1 > $MakefileNameLong
@@ -1524,7 +1525,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 	MakefileNameLong="MakefileApp"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
 	if [ "A$MAKEFILE_APP_SKELETON_FILE" = "A" ] ; then
-  	MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/MakefileAppSkeleton.txt"
+  	MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileAppSkeleton.txt"
   fi
 
 
@@ -1538,14 +1539,14 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 	echo "TARGET = $PROJECT" >> $MakefileNameLong
 	echo "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
 	echo -n "APP_INC = " >> $MakefileNameLong
-	KDEVELOP_INCLUDE_PATH="../$ISO_AG_LIB_PATH/xgpl_src;"
+	KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library/xgpl_src;"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		echo -n "-I../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH " >> $MakefileNameLong
-		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;"
+		echo -n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
   done
 	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-		echo -n " -I../$ISO_AG_LIB_PATH/$SingleInclPath" >> $MakefileNameLong
-		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH ../$ISO_AG_LIB_PATH/$SingleInclPath;"
+		echo -n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >> $MakefileNameLong
+		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$SingleInclPath;"
 	done
 	echo "" >> $MakefileNameLong
 
@@ -1610,7 +1611,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 
 	# now create a Kdevelop3 project file
-	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
+	cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
 
 	CMDLINE=`echo "sed -e 's/REPLACE_AUTHOR/$PROJECT_AUTHOR/g' $PROJECT.kdevelop > $PROJECT.kdevelop.1"`
 	echo $CMDLINE | sh
@@ -1669,9 +1670,9 @@ create_DevCCPrj() {
 	ENDOFHEADERA
 
 	DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
-	INCLUDE_DIR_LINE="../$ISO_AG_LIB_PATH;../$ISO_AG_LIB_PATH/xgpl_src"
+	INCLUDE_DIR_LINE="../$ISO_AG_LIB_INSIDE;$ISO_AG_LIB_INSIDE/library/xgpl_src"
     for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-	INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH"
+	INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH"
     done
 
 	LIB_DIR_LINE=""
@@ -1816,20 +1817,20 @@ create_EdePrj()
 ### @todo
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 	  if [ "M$USE_APP_PATH" = "M" ] ; then
-			USE_APP_PATH=`echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+			USE_APP_PATH=`echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 		else
-			USE_APP_PATH="$USE_APP_PATH"`echo ";../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+			USE_APP_PATH="$USE_APP_PATH"`echo ";$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 		fi
 	done
 	echo "USE_APP_PATH: $USE_APP_PATH"
 
-	INCLUDE_APP_PATH_TASKING="../$ISO_AG_LIB_PATH/$USE_EMBED_HEADER_DIRECTORY"
+	INCLUDE_APP_PATH_TASKING="$ISO_AG_LIB_INSIDE/$USE_EMBED_HEADER_DIRECTORY"
 	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
 		INCLUDE_APP_PATH_TASKING="$INCLUDE_APP_PATH_TASKING;$SingleInclPath"
 	done
 
-  USE_EMBED_HEADER_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_HEADER_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
-  USE_EMBED_LIB_DIRECTORY=`echo "../$ISO_AG_LIB_PATH/$USE_EMBED_LIB_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+  USE_EMBED_HEADER_DIRECTORY=`echo "$ISO_AG_LIB_INSIDE/$USE_EMBED_HEADER_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+  USE_EMBED_LIB_DIRECTORY=`echo "$ISO_AG_LIB_INSIDE/$USE_EMBED_LIB_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 
 
   USE_EMBED_ILO=`echo "$USE_EMBED_LIB_DIRECTORY/$USE_EMBED_ILO" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
@@ -1849,7 +1850,7 @@ create_EdePrj()
   USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 
 	# avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
-	ISO_AG_LIB_PATH_WIN=`echo "../$ISO_AG_LIB_PATH" | sed -e 's#/#=_=_#g'`
+	ISO_AG_LIB_PATH_WIN=`echo "../$ISO_AG_LIB_INSIDE" | sed -e 's#/#=_=_#g'`
 	USE_EMBED_LIB_DIRECTORY=`echo "$USE_EMBED_LIB_DIRECTORY" | sed -e 's#/#=_=_#g'`
 	USE_EMBED_HEADER_DIRECTORY=`echo "$USE_EMBED_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
 	USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's#/#=_=_#g'`
@@ -1864,7 +1865,7 @@ create_EdePrj()
 
 
 	# Build Tasking Project File by: a) first stub part; b) file list c) second stub part
-	cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+	cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	CMDLINE=`echo "sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' $EdePrjFilelist > $EdePrjFilelist.1"`
 	echo $CMDLINE | sh
@@ -1883,7 +1884,7 @@ create_EdePrj()
 	done
 
 
-  cat $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/EDE.part2.pjt >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/EDE.part2.pjt >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   cd $DEV_PRJ_DIR
   sed -e "s#INSERT_PROJECT#$PROJECT#g" -e "s#INSERT_TARGET_LIB_DIRECTORY#$USE_EMBED_LIB_DIRECTORY#g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
   sed -e "s#INSERT_ISO_AG_LIB_PATH#$ISO_AG_LIB_PATH_WIN#g" -e "s#INSERT_TARGET_HEADER_DIRECTORY#$USE_EMBED_HEADER_DIRECTORY#g" $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
@@ -1945,7 +1946,7 @@ create_VCPrj()
 	LIB_DIR_LINE=""
 	LIB_FILE_LINE=""
 
-	ISO_AG_LIB_PATH_WIN=`echo "../$ISO_AG_LIB_PATH" | sed -e 's#/#=_=_#g'`
+	ISO_AG_LIB_PATH_WIN=`echo "../$ISO_AG_LIB_INSIDE" | sed -e 's#/#=_=_#g'`
 	USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#\\\#_=_=#g'`
 	USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
 
@@ -2001,13 +2002,13 @@ create_VCPrj()
 	done
 
 	for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-		EACH_REL_APP_PATH_KURZ=`echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+		EACH_REL_APP_PATH_KURZ=`echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 		EACH_REL_APP_PATH_WIN=`echo "$EACH_REL_APP_PATH_KURZ" | sed -e 's#/#=_=_#g'`
 		USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$EACH_REL_APP_PATH_WIN"'"'
 	done
 
 
-  cp -a $DEV_PRJ_DIR/../$ISO_AG_LIB_PATH/compiler_projects/projectGeneration/vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	CMDLINE=`echo "sed -e 's#INSERT_PROJECT#$PROJECT#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"`
 	echo $CMDLINE | sh
@@ -2116,7 +2117,7 @@ perform_everything()
   	GENERATE_FILES_ROOT_DIR="$1/../Dev-C++/"
   elif [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_PC"
-  	GENERATE_FILES_ROOT_DIR="$1/../kdevelop_qmake/"
+  	GENERATE_FILES_ROOT_DIR="$1/kdevelop_make/"
   elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_ESX"
   	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
@@ -2142,7 +2143,6 @@ perform_everything()
   # now call the function create_filelist() which build
   # the file list based on the varibles defined above
   create_filelist $GENERATE_FILES_ROOT_DIR $2
-
   # call function which build the file list for the unit
   # tests
   create_utest_filelist
@@ -2153,7 +2153,6 @@ perform_everything()
   if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
     # call function to create the Makefile in the project dir
     create_makefile $GENERATE_FILES_ROOT_DIR $2
-
 	  # check if a win32 project file whould be created
   elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
   	create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
@@ -2197,7 +2196,7 @@ $0 parses the selected project configuration file and overwrites the default val
 It collects then the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the directory xgpl_src/Application_Config with the
 name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
-the central configuration header xgpl_src/Application_Config/isoaglib_config.h will include this header.
+the central configuration header xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
 Please set additionally the SYSTEM_FOO for the wanted platform - $0 will output the correct define at the end of the
 run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
@@ -2226,8 +2225,8 @@ for option in "$@"; do
 			cd $CALL_DIR ;;
 		--IsoAgLib-root=*)
 			ISOAGLIB_ROOT=`echo "$option" | sed 's/--IsoAgLib-root=//'`
-			if [ ! -f "$ISOAGLIB_ROOT/xgpl_src/Application_Config/isoaglib_config.h" ] ; then
-				echo "Directory $ISOAGLIB_ROOT doesn't contain valid IsoAgLib directory root. The file xgpl_src/Application_Config/isoaglib_config.h can't be found." 1>&2
+			if [ ! -f "$ISOAGLIB_ROOT/library/xgpl_src/IsoAgLib/isoaglib_config.h" ] ; then
+				echo "Directory $ISOAGLIB_ROOT doesn't contain valid IsoAgLib directory root. The file xgpl_src/IsoAgLib/isoaglib_config.h can't be found." 1>&2
 				usage
 				exit 1
 			else
@@ -2584,7 +2583,7 @@ echo "Please set the following DEFINES for your compiler in the project settings
 echo "$USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
 echo "Please add also the main application path ";
     for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-echo "../$ISO_AG_LIB_PATH/$EACH_REL_APP_PATH;";
+echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;";
     done
 echo " to the INCLUDE search path of the compiler"
 echo "( Note: All this is already set for Win32 Dev-C++ and Visual C++ version 6.0 and above DSP project file, LINUX make, Kdevelop3 and Tasking EDE )"
@@ -2595,7 +2594,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 	CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
 	#echo "/**" > $CONFIG_SPEC_DOXYGEN_READY
 	#echo "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_SPEC_DOXYGEN_READY
-	#echo "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
+	#echo "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "*/" >> $CONFIG_SPEC_DOXYGEN_READY
 	#echo "/*@{*/" >> $CONFIG_SPEC_DOXYGEN_READY
@@ -2606,7 +2605,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
 	#echo "/*@}*/" >> $CONFIG_SPEC_DOXYGEN_READY
 
 	echo -e "$ENDLINE$ENDLINE \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
-	echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ " >> $CONFIG_SPEC_DOXYGEN_READY
+	echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >> $CONFIG_SPEC_DOXYGEN_READY
 	echo " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
 	echo "\code" >> $CONFIG_SPEC_DOXYGEN_READY
 	sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $SCRIPT_DIR/$CONF_FILE > /tmp/$CONF_BASE

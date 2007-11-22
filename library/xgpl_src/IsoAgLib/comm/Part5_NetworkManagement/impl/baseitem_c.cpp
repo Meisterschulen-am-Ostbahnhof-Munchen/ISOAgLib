@@ -150,7 +150,7 @@ BaseItem_c& BaseItem_c::operator=(const BaseItem_c& src){
   @return lasted time between last update and the compare time [msec.]
 */
 int32_t BaseItem_c::lastedTime( void ) const {
-  return ( ElementBase_c::getLastRetriggerTime() - mi32_lastTime );
+  return ( Scheduler_Task_c::getLastRetriggerTime() - mi32_lastTime );
 }
 
 /**
@@ -180,7 +180,7 @@ bool BaseItem_c::checkUpdateTime(uint16_t aui16_timeInterval) {
 	// -> simply add aui16_timeIntervall, if current time
 	//    has max 10% deviation from correct timing
 	const uint16_t cui16_maxDeviation = aui16_timeInterval / 10;
-	if ( ElementBase_c::getLastRetriggerTime() <= ( mi32_lastTime + aui16_timeInterval + cui16_maxDeviation ) ) {
+	if ( Scheduler_Task_c::getLastRetriggerTime() <= ( mi32_lastTime + aui16_timeInterval + cui16_maxDeviation ) ) {
 	  // time correctness is close enough to increment last timestamp by exact
 	  // aui16_timeIntervall -> avoid growing time drift if %e.g. each alive msg
 	  // is triggered 5 msec too late
@@ -188,7 +188,7 @@ bool BaseItem_c::checkUpdateTime(uint16_t aui16_timeInterval) {
 	}
 	else {
 	  // time difference is too big -> allow reset of timestamp
-      mi32_lastTime = ElementBase_c::getLastRetriggerTime();
+      mi32_lastTime = Scheduler_Task_c::getLastRetriggerTime();
 	}
 	return true;
 

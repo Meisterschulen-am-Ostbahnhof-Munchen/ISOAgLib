@@ -65,7 +65,7 @@
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
-#include <IsoAgLib/hal/generic_utils/can/writeCentralFifo.h>
+#include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
 namespace __HAL {
 

@@ -71,7 +71,7 @@
 
 
 //#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
-#include <IsoAgLib/hal/generic_utils/can/writeCentralFifo.h>
+#include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
 namespace __HAL {
 /////////////////////////////////////////////////////////////////////////

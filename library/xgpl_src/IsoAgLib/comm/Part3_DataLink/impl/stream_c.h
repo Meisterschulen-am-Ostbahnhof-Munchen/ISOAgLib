@@ -89,7 +89,7 @@
 #define STREAM_C_H
 
 #include "../istream_c.h"
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
 
 

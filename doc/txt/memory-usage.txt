@@ -1,6 +1,6 @@
 /*! \page PageMemoryUsage Information on Memory Resource Requirements
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section MemoryUsage Information on Memory Resource Requirements
 The ISO<i><sub>AgLib</sub></i> was optimized in relation to the old LBS<i><sub>Lib</sub></i> to use as less HEAP

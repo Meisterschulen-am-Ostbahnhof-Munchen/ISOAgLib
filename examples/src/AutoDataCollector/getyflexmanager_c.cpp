@@ -37,7 +37,7 @@
  ***************************************************************************/
 
 //#include "devClassflexmanager_c.h"
-#include <Application_Config/eeprom_adr.h>
+#include <IsoAgLib/eeprom_adr.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 #include <IsoAgLib/driver/eeprom/ieepromio_c.h>
 #include "getyflexmanager_c.h"

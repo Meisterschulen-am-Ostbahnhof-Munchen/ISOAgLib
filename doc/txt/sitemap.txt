@@ -1,7 +1,7 @@
 /*! \page PageSitemap Sitemap of IsoAgLib
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section Sitemap Sitemap
 <div id="sitemap">
-INCLUDE_menu-list.txt_INCLUDE
+INCLUDE_doc/txt/menu-list.txt_INCLUDE
 </div>
 */

@@ -1,6 +1,6 @@
 /*! \page PageSupport Support Possibilities
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section Support Support Possibilities
 Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with

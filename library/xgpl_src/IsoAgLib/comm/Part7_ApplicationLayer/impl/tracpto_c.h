@@ -3,7 +3,7 @@
                                 stores, updates  and delivers all base data
                                 informations from CanCustomer_c derived for
                                 CAN sending and receiving interaction;
-                                from ElementBase_c derived for
+                                from Scheduler_Task_c derived for
                                 interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000
@@ -87,8 +87,8 @@
 #ifndef TRACPTO_C_H
 #define TRACPTO_C_H
 
-#include <IsoAgLib/comm/Base/impl/basecommon_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
@@ -128,7 +128,7 @@ typedef struct
   typedef SINGLETON_DERIVED(TracPTO_c,BaseCommon_c) SingletonTracPto_c;
   /** working on Base Data Msg;
       stores, updates and delivers all base data informations;
-      Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
+      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).

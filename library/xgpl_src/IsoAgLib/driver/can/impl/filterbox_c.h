@@ -92,8 +92,8 @@
 #include <IsoAgLib/hal/can.h>
 
 #include "ident_c.h"
-#include <IsoAgLib/util/impl/canpkgext_c.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

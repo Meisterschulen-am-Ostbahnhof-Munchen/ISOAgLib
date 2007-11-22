@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2  /I "..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_5_ReadGps" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h" /YX /FD /TP /c
+# ADD CPP /nologo /W3 /GX /O2  /I "..\..\..\examples\tutorial\1_ApplicationLayer\1_5_ReadGps" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h" /YX /FD /TP /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h"
 # ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h"
 BSC32=bscmake.exe
@@ -65,7 +65,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od  /I "..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_5_ReadGps" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h" /YX /FD /TP /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od  /I "..\..\..\examples\tutorial\1_ApplicationLayer\1_5_ReadGps" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h" /YX /FD /TP /GZ /c
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h"
 # ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_1_5_ReadGps.h"
 BSC32=bscmake.exe
@@ -225,7 +225,7 @@ SOURCE=..\..\..\xgpl_src\IsoAgLib\hal\pc\system\system_target_extensions.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_5_ReadGps\1_5_ReadGps.cpp
+SOURCE=..\..\..\examples\tutorial\1_ApplicationLayer\1_5_ReadGps\1_5_ReadGps.cpp
 # End Source File
 
 # End Group

@@ -91,9 +91,9 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 
-#include <IsoAgLib/comm/Process/impl/generalcommand_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

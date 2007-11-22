@@ -89,8 +89,8 @@
 #ifndef STREAMINPUT_C_H
 #define STREAMINPUT_C_H
 
-#include <IsoAgLib/comm/ISO_Terminal/ivttypes.h>
-#include <IsoAgLib/convert.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivttypes.h>
+#include <IsoAgLib/util/convert.h>
 
 /** Abstract base class for a streaming input source.
   * Realized by FileStreamInput_c for file readout,

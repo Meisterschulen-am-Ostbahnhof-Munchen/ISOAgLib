@@ -34,7 +34,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -533,7 +533,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -1032,7 +1032,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -1531,7 +1531,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -2030,7 +2030,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -2529,7 +2529,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -3028,7 +3028,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -3527,7 +3527,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -4026,7 +4026,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -4525,7 +4525,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -5024,7 +5024,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -5523,7 +5523,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -6022,7 +6022,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -6521,7 +6521,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -7020,7 +7020,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -7519,7 +7519,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -8018,7 +8018,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -8517,7 +8517,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -9016,7 +9016,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -9515,7 +9515,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -10014,7 +10014,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -10513,7 +10513,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -11012,7 +11012,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -11511,7 +11511,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor"
+REL_APP_PATH="examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -11986,8 +11986,8 @@ PRJ_SENSOR_COUNTER=1
 
 
  \section PrjConfig4_1_Sensor List of configuration settings for 4_1_Sensor
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/config_4_1_Sensor.h 
- This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
+ This is only a copy with doxygen ready comment blocks from the original file ../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/config_4_1_Sensor.h 
+ This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_4_1_Sensor.h ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_4_1_Sensor in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
@@ -12210,16 +12210,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -12237,7 +12237,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/counteri_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/c2c/sensor/sensor_target_extensions.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -12260,29 +12260,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/c2c/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -12337,16 +12337,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -12364,7 +12364,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/counteri_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/esx/sensor/sensor_target_extensions.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -12387,29 +12387,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/esx/typedef.h
@@ -12464,16 +12464,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -12491,7 +12491,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/counteri_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/imi/sensor/sensor_target_extensions.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -12514,29 +12514,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/imi/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
@@ -12591,16 +12591,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -12620,7 +12620,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -12643,29 +12643,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -12724,16 +12724,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -12753,7 +12753,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -12776,29 +12776,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -12857,16 +12857,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -12886,7 +12886,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -12909,29 +12909,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -12990,16 +12990,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -13019,7 +13019,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13042,29 +13042,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13123,16 +13123,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -13152,7 +13152,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13175,29 +13175,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13256,16 +13256,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -13285,7 +13285,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13308,29 +13308,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13389,16 +13389,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -13417,7 +13417,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13440,29 +13440,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13521,16 +13521,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -13549,7 +13549,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13572,29 +13572,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13653,16 +13653,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
@@ -13681,7 +13681,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13704,29 +13704,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13785,16 +13785,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -13814,7 +13814,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13837,29 +13837,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -13919,16 +13919,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -13948,7 +13948,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -13971,29 +13971,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14053,16 +14053,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14082,7 +14082,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14105,29 +14105,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14187,16 +14187,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14216,7 +14216,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14239,29 +14239,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14321,16 +14321,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14350,7 +14350,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14373,29 +14373,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14455,16 +14455,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14484,7 +14484,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14507,29 +14507,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14589,16 +14589,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14618,7 +14618,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14641,29 +14641,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14723,16 +14723,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14752,7 +14752,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14775,29 +14775,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14857,16 +14857,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -14886,7 +14886,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -14909,29 +14909,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -14991,16 +14991,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -15020,7 +15020,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -15043,29 +15043,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -15125,16 +15125,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -15154,7 +15154,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -15177,29 +15177,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
@@ -15259,16 +15259,16 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
@@ -15285,7 +15285,7 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/analogi_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/sensor/impl/counteri_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../IsoAgLib_Examples/tutorial/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
+../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/4_1_Sensor.cpp
 \endcode
 
 
@@ -15308,29 +15308,29 @@ PRJ_SENSOR_COUNTER=1
 ../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../xgpl_src/IsoAgLib/util/iliberr_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofilter_s.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofilterbox_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c_interface.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
 ../../../xgpl_src/IsoAgLib/hal/pm167/typedef.h

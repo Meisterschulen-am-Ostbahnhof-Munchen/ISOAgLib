@@ -30,13 +30,13 @@
   * As some parts in the IsoAgLib are dependent on the supported protocols, it is <b>very</b>
   * important to define the individual protocols to implement by some #define's. This can
   * be achieved by the default settings in the central project configuration file
-  * <i>\<xgpl_src/Application_Config/isoaglib_config.h\></i> and by the compiler-defines in the Makefile.
+  * <i>\<xgpl_src/IsoAgLib/isoaglib_config.h\></i> and by the compiler-defines in the Makefile.
   * The decision on the protocols is based on the availability of the following #define clauses:
   * - #define USE_ISO_11783
   * These define settings can be derived from the #define values of:
   * - USE_ISO_11783_YN YES|NO
   * In case neither USE_xy nor USE_xy_YN is defined, the config files
-  * <i>\<xgpl_src/Application_Config/isoaglib_config.h\></i> defines a default setting.
+  * <i>\<xgpl_src/IsoAgLib/isoaglib_config.h\></i> defines a default setting.
   * Thus you can change the default rules for your individual needs in this file.
   *
   * @section SystemMgmtAddressClaim Address Claim of Local Device
@@ -44,12 +44,12 @@
   *
   * @subsection SystemMgmtAnnIso Start ISO 11783 AddressClaim
   * You can claim an address for a member with the following code lines.
-  * The necessary header is automatically included by xgpl_src/Application_Config/isoaglib_config.h 
+  * The necessary header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h 
   * if the define PRJ_USE_AUTOGEN_CONFIG is set to config_0_0_AddressClaimIso 
   * ( see also at List of configuration settings for 0_0_AddressClaimIso ).
   * \code 
-  * #include \<xgpl/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h\>
-  * #include \<xgpl/IsoAgLib/comm/SystemMgmt/iidentitem_c.h\>
+  * #include \<xgpl/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h\>
+  * #include \<xgpl/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h\>
   * 
   * using namespace IsoAgLib;
   * 
@@ -115,7 +115,7 @@
   * The global accessible instance of IsoAgLib::iIsoMonitor_c is best suited,
   * if exclusive ISO 11783 devices shall be reported on a request.
   * \code
-  * #include \<xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h\>
+  * #include \<xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h\>
   * // retrieve amount of ISO members with claimed address of specific device type
   * const uint8_t cui8_searchDeviceType = 2;
   * const uint8_t cui8_isoActiveMemberCnt = IsoAgLib::getIisoMonitorInstance().isoMemberDevClassCnt( cui8_searchDeviceType, true );

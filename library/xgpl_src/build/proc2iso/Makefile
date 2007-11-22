@@ -70,13 +70,13 @@
 
 XERCESCROOT=/usr/include/xercesc
 LD_LIBRARY_PATH=/usr/lib/xercesc/
-
+ISOAGLIBRARY=../../..
 PLATFORM = LINUX
 COMPILER = g++
 GCC = yes
 GXX = yes
-CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I../../xgpl_src
-CFLAGS =    -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I../../xgpl_src
+CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I${ISOAGLIBRARY}/xgpl_src
+CFLAGS =    -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I${ISOAGLIBRARY}/xgpl_src
 LDFLAGS =
 THREADS = none
 EXTRA_LIBS =
@@ -88,7 +88,7 @@ include Makefile.incl
 APP_NAME=proc2iso
 
 OUTDIR= bin/obj
-EXEC=	bin
+EXEC=	../../../../bin
 OBJS=	${OUTDIR}/proc2iso.o ${OUTDIR}/isoname_c.o ${OUTDIR}/util_funcs.o ${OUTDIR}/iliberr_c.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} -lpthread
 
@@ -111,14 +111,14 @@ ${BATCH_TARGET}:: ${OBJS}
 $(OUTDIR)/proc2iso.o:: src/proc2iso.cpp
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/proc2iso.o src/proc2iso.cpp
 
-$(OUTDIR)/isoname_c.o:: ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/isoname_c.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+$(OUTDIR)/isoname_c.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/ISO11783/impl/isoname_c.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/isoname_c.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/ISO11783/impl/isoname_c.cpp
 
-${OUTDIR}/util_funcs.o:: ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/util_funcs.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+${OUTDIR}/util_funcs.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/util_funcs.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 
-${OUTDIR}/iliberr_c.o:: ../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/iliberr_c.o ../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
+${OUTDIR}/iliberr_c.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/iliberr_c.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/iliberr_c.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/iliberr_c.cpp
 
 clean::
 	rm -f ${OBJS} ${EXEC}/${APP_NAME}

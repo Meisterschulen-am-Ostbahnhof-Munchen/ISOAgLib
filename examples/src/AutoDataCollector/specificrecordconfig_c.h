@@ -40,7 +40,7 @@
 #define SPECIFIC_RECORD_CONFIG_H
 
 #include <IsoAgLib/driver/system/isystem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
 #include "defaultrecordconfig_c.h"
 
 #define TAG_NAME_LEN 8

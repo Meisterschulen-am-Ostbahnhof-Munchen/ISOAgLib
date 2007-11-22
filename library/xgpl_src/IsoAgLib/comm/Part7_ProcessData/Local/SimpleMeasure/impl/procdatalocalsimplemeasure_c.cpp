@@ -242,7 +242,7 @@ ProcDataLocalSimpleMeasure_c::~ProcDataLocalSimpleMeasure_c(){
   @return true -> all planned executions performed
 */
 bool ProcDataLocalSimpleMeasure_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ ){
-  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
+  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   // perform time event activities for base class
   if ( ! ProcDataLocalBase_c::timeEvent() ) return false;
   if ( ! mc_setpoint.timeEvent() ) return false;

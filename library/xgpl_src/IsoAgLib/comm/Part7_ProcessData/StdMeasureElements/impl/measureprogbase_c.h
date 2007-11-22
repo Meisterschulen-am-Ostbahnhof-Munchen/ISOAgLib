@@ -91,7 +91,7 @@
 /* *************************************** */
 #include "measuresubprog_c.h"
 // #include "../../impl/processelementbase_c.h"
-#include <IsoAgLib/comm/Process/impl/processelementbase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h>
 #include "../../impl/proc_c.h"
 
 #ifdef DO_USE_SLIST

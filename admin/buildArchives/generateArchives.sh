@@ -32,11 +32,11 @@ SUPPL_ACTOR_PART="-path '*/supplementary_driver/*/actor/*'"
 SUPPL_RS232_PART="-path '*/supplementary_driver/*/rs232/*'"
 SUPPL_SENSOR_PART="-path '*/supplementary_driver/*/sensor/*'"
 
-PROC_PART="-path '*/comm/Process/*'"
-BASE_PART="-path '*/comm/Base/*'"
-TERMINAL_ISO_PART="-path '*/comm/ISO_Terminal/*'"
+PROC_PART="-path '*/comm/Part7_ProcessData/*'"
+BASE_PART="-path '*/comm/Part7_ApplicationLayer/*'"
+TERMINAL_ISO_PART="-path '*/comm/Part6_VirtualTerminal_Client/*'"
 TERMINAL_DIN_PART="-path '*/comm/DIN_Terminal/*'"
-MULTIPACKET_PART="-path '*/comm/Multipacket/*'"
+MULTIPACKET_PART="-path '*/comm/Part3_DataLink/*'"
 
 #CMDLINE=`echo "find . -type f -and -not \( $SVN_PART -o $DIN_PART -o $ISO_PART -o $DOC_PART -o $SUPPL_ALL_PART \)"`
 #echo $CMDLINE | sh

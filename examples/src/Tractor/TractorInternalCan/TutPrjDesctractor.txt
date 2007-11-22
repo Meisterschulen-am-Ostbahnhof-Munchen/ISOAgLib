@@ -34,7 +34,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -493,7 +493,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -952,7 +952,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -1411,7 +1411,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -1870,7 +1870,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -2329,7 +2329,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -2788,7 +2788,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -3247,7 +3247,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -3706,7 +3706,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -4165,7 +4165,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -4624,7 +4624,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -5083,7 +5083,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -5542,7 +5542,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -6001,7 +6001,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -6460,7 +6460,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -6919,7 +6919,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -7378,7 +7378,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -7837,7 +7837,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -8296,7 +8296,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -8755,7 +8755,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -9214,7 +9214,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -9649,8 +9649,8 @@ PRJ_RS232=1
 
 
  \section PrjConfigtractor List of configuration settings for tractor
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/config_tractor.h 
- This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
+ This is only a copy with doxygen ready comment blocks from the original file ../../../examples/config_tractor.h 
+ This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_tractor.h ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_tractor in the directory /home/wuensch/Projekte/TaskController/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
@@ -9870,14 +9870,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__c2c__sys__sys List of Sourcefiles for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -9887,12 +9887,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/c2c/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/c2c/system/system_target_extensions.cpp
@@ -9901,27 +9901,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__c2c__sys__sys List of Headers for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -9940,21 +9940,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/c2c/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
@@ -9983,14 +9983,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__esx__sys__sys List of Sourcefiles for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10000,12 +10000,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/esx/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/esx/system/system_target_extensions.cpp
@@ -10014,27 +10014,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__esx__sys__sys List of Headers for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10053,21 +10053,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/esx/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
@@ -10096,14 +10096,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__imi__sys__sys List of Sourcefiles for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10113,12 +10113,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/imi/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/imi/system/system_target_extensions.cpp
@@ -10127,27 +10127,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__imi__sys__sys List of Headers for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10166,21 +10166,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/imi/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
@@ -10209,14 +10209,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__linux_server_client__rte List of Sourcefiles for tractor with CAN Driver linux_server_client and RS232 Driver rte
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10226,12 +10226,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
@@ -10243,27 +10243,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__linux_server_client__rte List of Headers for tractor with CAN Driver linux_server_client and RS232 Driver rte
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10282,21 +10282,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -10330,14 +10330,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__linux_server_client__simulating List of Sourcefiles for tractor with CAN Driver linux_server_client and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10347,12 +10347,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
@@ -10364,27 +10364,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__linux_server_client__simulating List of Headers for tractor with CAN Driver linux_server_client and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10403,21 +10403,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -10451,14 +10451,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__linux_server_client__sys List of Sourcefiles for tractor with CAN Driver linux_server_client and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10468,12 +10468,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
@@ -10485,27 +10485,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__linux_server_client__sys List of Headers for tractor with CAN Driver linux_server_client and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10524,21 +10524,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -10572,14 +10572,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__rte__rte List of Sourcefiles for tractor with CAN Driver rte and RS232 Driver rte
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10589,12 +10589,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -10605,27 +10605,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__rte__rte List of Headers for tractor with CAN Driver rte and RS232 Driver rte
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10644,21 +10644,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -10692,14 +10692,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__rte__simulating List of Sourcefiles for tractor with CAN Driver rte and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10709,12 +10709,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -10725,27 +10725,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__rte__simulating List of Headers for tractor with CAN Driver rte and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10764,21 +10764,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -10812,14 +10812,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__rte__sys List of Sourcefiles for tractor with CAN Driver rte and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10829,12 +10829,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -10845,27 +10845,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__rte__sys List of Headers for tractor with CAN Driver rte and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -10884,21 +10884,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -10932,14 +10932,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__simulating__rte List of Sourcefiles for tractor with CAN Driver simulating and RS232 Driver rte
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -10949,12 +10949,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -10965,27 +10965,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__simulating__rte List of Headers for tractor with CAN Driver simulating and RS232 Driver rte
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11004,21 +11004,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11052,14 +11052,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__simulating__simulating List of Sourcefiles for tractor with CAN Driver simulating and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11069,12 +11069,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -11085,27 +11085,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__simulating__simulating List of Headers for tractor with CAN Driver simulating and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11124,21 +11124,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11172,14 +11172,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_linux__simulating__sys List of Sourcefiles for tractor with CAN Driver simulating and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11189,12 +11189,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -11205,27 +11205,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_linux__simulating__sys List of Headers for tractor with CAN Driver simulating and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11244,21 +11244,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11292,14 +11292,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__simulating__simulating List of Sourcefiles for tractor with CAN Driver simulating and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11309,12 +11309,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -11325,27 +11325,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__simulating__simulating List of Headers for tractor with CAN Driver simulating and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11364,21 +11364,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11412,14 +11412,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__simulating__sys List of Sourcefiles for tractor with CAN Driver simulating and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11429,12 +11429,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
@@ -11445,27 +11445,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__simulating__sys List of Headers for tractor with CAN Driver simulating and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11484,21 +11484,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11532,14 +11532,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__sontheim__simulating List of Sourcefiles for tractor with CAN Driver sontheim and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11549,12 +11549,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -11565,27 +11565,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__sontheim__simulating List of Headers for tractor with CAN Driver sontheim and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11604,21 +11604,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11652,14 +11652,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__sontheim__sys List of Sourcefiles for tractor with CAN Driver sontheim and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11669,12 +11669,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -11685,27 +11685,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__sontheim__sys List of Headers for tractor with CAN Driver sontheim and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11724,21 +11724,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11772,14 +11772,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__vector_canlib__simulating List of Sourcefiles for tractor with CAN Driver vector_canlib and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11789,12 +11789,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -11805,27 +11805,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__vector_canlib__simulating List of Headers for tractor with CAN Driver vector_canlib and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11844,21 +11844,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -11892,14 +11892,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__vector_canlib__sys List of Sourcefiles for tractor with CAN Driver vector_canlib and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -11909,12 +11909,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -11925,27 +11925,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__vector_canlib__sys List of Headers for tractor with CAN Driver vector_canlib and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -11964,21 +11964,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -12012,14 +12012,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__vector_xl_drv_lib__simulating List of Sourcefiles for tractor with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -12029,12 +12029,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -12045,27 +12045,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__vector_xl_drv_lib__simulating List of Headers for tractor with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -12084,21 +12084,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -12132,14 +12132,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pc_win32__vector_xl_drv_lib__sys List of Sourcefiles for tractor with CAN Driver vector_xl_drv_lib and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -12149,12 +12149,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -12165,27 +12165,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pc_win32__vector_xl_drv_lib__sys List of Headers for tractor with CAN Driver vector_xl_drv_lib and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -12204,21 +12204,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
@@ -12252,14 +12252,14 @@ PRJ_RS232=1
 
  \section SrcListtractor__pm167__sys__sys List of Sourcefiles for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
 ../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
@@ -12269,12 +12269,12 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
 ../../../xgpl_src/IsoAgLib/util/liberr_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.cpp
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.cpp
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../xgpl_src/IsoAgLib/hal/pm167/can/hal_can_interface.cpp
 ../../../xgpl_src/IsoAgLib/hal/pm167/system/system_target_extensions.cpp
@@ -12283,27 +12283,27 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
-../../../IsoAgLib_Examples/tractor.cpp
+../../../examples/src/Tractor.cpp
 \endcode
 
 
 
  \section HdrListtractor__pm167__sys__sys List of Headers for tractor with CAN Driver sys and RS232 Driver sys
 \code
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/baseitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/istate_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/impl/identitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isosystempkg_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/iidentitem_c.h
-../../../xgpl_src/IsoAgLib/comm/SystemMgmt/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 ../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 ../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
@@ -12322,21 +12322,21 @@ PRJ_RS232=1
 ../../../xgpl_src/IsoAgLib/util/liberr_c.h
 ../../../xgpl_src/IsoAgLib/util/config.h
 ../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
-../../../xgpl_src/Application_Config/isoaglib_config.h
+../../../xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../xgpl_src/IsoAgLib/hal/pm167/typedef.h
 ../../../xgpl_src/IsoAgLib/hal/config.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/timeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/tracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/impl/basecommon_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/impl/tracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ext/itracptosetpoint_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracmove_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracgeneral_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itimeposgps_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/itracpto_c.h
-../../../xgpl_src/IsoAgLib/comm/Base/ibasetypes.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h
+../../../xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h
 ../../../xgpl_src/IsoAgLib/typedef.h
 ../../../xgpl_src/supplementary_driver/hal/rs232.h
 ../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h

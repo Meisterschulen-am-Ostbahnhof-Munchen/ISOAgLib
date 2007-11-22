@@ -85,7 +85,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "../ivttypes.h"
 
 /** struct that stores the Language and Units information

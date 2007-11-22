@@ -59,8 +59,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/identitem_c.h"
-#include "ISO11783/iisoitem_c.h"
-#include "ISO11783/iisoname_c.h"
+#include "iisoitem_c.h"
+#include "iisoname_c.h"
 
 namespace __IsoAgLib {
   class IsoTerminal_c;

@@ -84,7 +84,7 @@
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 // #include "vttypes.h"
 
 namespace __IsoAgLib {

@@ -1,6 +1,6 @@
 /*! \page PageMainFeatures Main Features
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section MainFeatures Main Features
 The ISO<i><sub>AgLib</sub></i> is designed to provide the following main features

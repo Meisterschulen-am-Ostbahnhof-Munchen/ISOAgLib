@@ -85,7 +85,7 @@
 #define CAN_CUSTOMER_H
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include "canpkgext_c.h"
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
 
 namespace IsoAgLib

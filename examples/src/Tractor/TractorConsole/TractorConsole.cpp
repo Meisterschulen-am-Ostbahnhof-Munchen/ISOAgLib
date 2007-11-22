@@ -1,5 +1,5 @@
 /* *************************************************************************
-        tractorconsole.cpp - example for tractor ECU (work-in-progress)
+        TractorConsole.cpp - example for tractor ECU (work-in-progress)
                              -------------------
     begin                : Sun Dec 19 20:00:00 CEST 2004
 
@@ -10,7 +10,7 @@
 /* *************************************************************************
  * This example main application is published NOT as GPL`ed Open Source,   *
  * so that you can include this source file in propietary closed projects. *
- * Everybody is encouraged to use the examples in the IsoAgLib_Examples    *
+ * Everybody is encouraged to use the examples in the examples    *
  * directory for a quick and easy start of development for IsoAgLib        *
  * applications.                                                           *
  *                                                                         *
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example tractorconsole.cpp
+/** \example TractorConsole.cpp
  * This example application of ISO<i><sub>AgLib</sub></i>is a work-in-progress
  * of a tractor ECU. It receives the tractor data from internal CAN, and
  * provides them as ISO 11783 tractor data on external BUS.
@@ -81,17 +81,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_tractorconsole from the directory where the spec file
+ *     conf_TractorConsole from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_tractorconsole</i>
+ *     <i>#> update_makefile.sh conf_TractorConsole</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd tractorconsole</i> to go to the subdirectory tractor
+ *     <li><i>#>cd TractorConsole</i> to go to the subdirectory tractor
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable tractorconsole in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable TractorConsole in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-tractorconsole.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractorconsole</i> as global project parameter
+ *     <li>import the file list in filelist-TractorConsole.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_TractorConsole</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -100,84 +100,84 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpectractorconsole__pc_linux__simulating__simulating .
+ * \ref PrjSpecTractorConsole__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpectractorconsole__pc_linux__rte__rte
- *    <li> \ref PrjSpectractorconsole__pc_linux__rte__simulating
- *    <li> \ref PrjSpectractorconsole__pc_linux__rte__sys
- *    <li> \ref PrjSpectractorconsole__pc_linux__simulating__rte
- *    <li> \ref PrjSpectractorconsole__pc_linux__simulating__simulating
- *    <li> \ref PrjSpectractorconsole__pc_linux__simulating__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__rte__rte
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__rte__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__rte__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__simulating__rte
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpectractorconsole__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpectractorconsole__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpectractorconsole__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpectractorconsole__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref PrjSpectractorconsole__pc_win32__simulating__simulating
- *    <li> \ref PrjSpectractorconsole__pc_win32__simulating__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpectractorconsole__esx__sys__sys
- *    <li> \ref PrjSpectractorconsole__imi__sys__sys
- *    <li> \ref PrjSpectractorconsole__pm167__sys__sys
+ *    <li> \ref PrjSpecTractorConsole__esx__sys__sys
+ *    <li> \ref PrjSpecTractorConsole__imi__sys__sys
+ *    <li> \ref PrjSpecTractorConsole__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileListstractorconsole__pc_linux__simulating__simulating for needed files
- * ( filelist-tractorconsole-doxygen_import.txt ),
- *  with \ref SrcListtractorconsole__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrListtractorconsole__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileListsTractorConsole__pc_linux__simulating__simulating for needed files
+ * ( filelist-TractorConsole-doxygen_import.txt ),
+ *  with \ref SrcListTractorConsole__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListTractorConsole__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileListstractorconsole__pc_linux__rte__rte
- *    <li> \ref FileListstractorconsole__pc_linux__rte__simulating
- *    <li> \ref FileListstractorconsole__pc_linux__rte__sys
- *    <li> \ref FileListstractorconsole__pc_linux__simulating__rte
- *    <li> \ref FileListstractorconsole__pc_linux__simulating__simulating
- *    <li> \ref FileListstractorconsole__pc_linux__simulating__sys
+ *    <li> \ref FileListsTractorConsole__pc_linux__rte__rte
+ *    <li> \ref FileListsTractorConsole__pc_linux__rte__simulating
+ *    <li> \ref FileListsTractorConsole__pc_linux__rte__sys
+ *    <li> \ref FileListsTractorConsole__pc_linux__simulating__rte
+ *    <li> \ref FileListsTractorConsole__pc_linux__simulating__simulating
+ *    <li> \ref FileListsTractorConsole__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileListstractorconsole__pc_win32__vector_canlib__simulating
- *    <li> \ref FileListstractorconsole__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileListstractorconsole__pc_win32__vector_canlib__sys
- *    <li> \ref FileListstractorconsole__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref FileListstractorconsole__pc_win32__simulating__simulating
- *    <li> \ref FileListstractorconsole__pc_win32__simulating__sys
+ *    <li> \ref FileListsTractorConsole__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileListsTractorConsole__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileListsTractorConsole__pc_win32__vector_canlib__sys
+ *    <li> \ref FileListsTractorConsole__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListsTractorConsole__pc_win32__simulating__simulating
+ *    <li> \ref FileListsTractorConsole__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileListstractorconsole__esx__sys__sys
- *    <li> \ref FileListstractorconsole__imi__sys__sys
- *    <li> \ref FileListstractorconsole__pm167__sys__sys
+ *    <li> \ref FileListsTractorConsole__esx__sys__sys
+ *    <li> \ref FileListsTractorConsole__imi__sys__sys
+ *    <li> \ref FileListsTractorConsole__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
- * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
+ * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_tractorconsole ( see also at \ref PrjConfigtractorconsole ).
+ * config_TractorConsole ( see also at \ref PrjConfigTractorConsole ).
  *                                                                         */
 /* *************************************************************************/
 
-/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
+/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/IsoAgLib/isoaglib_config.h
     to include project specific configuration settings.
     Set this define in the project file or Makefile of the whole
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_tractorconsole_can_server.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_TractorConsole_can_server.h
 #endif
 
 // include the central interface header for the hardware adaption layer part
@@ -196,15 +196,15 @@
 #include <IsoAgLib/driver/can/iident_c.h>
 #include <IsoAgLib/util/icanpkgext_c.h>
 #include <IsoAgLib/util/icancustomer_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
-#include <IsoAgLib/comm/Base/itracpto_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 
 /** the following #define should be activated when a ECU based tractor shall take sensor signals as

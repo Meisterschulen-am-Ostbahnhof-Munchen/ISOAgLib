@@ -478,29 +478,31 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = IsoAgLib_Examples \
-                         xgpl_src \
-                         readme.txt \
-                         build_utils \
-                         changelog.txt \
-                         where-to-start.txt \
-                         main-features.txt \
-                         structural-overview.txt \
-                         license-conditions.txt \
-                         memory-usage.txt \
-                         todo.txt \
-                         using-projects.txt \
-                         support.txt \
-                         maintainers.txt \
-                         howto-download.txt \
-                         getting-installed.txt \
-                         information.txt \
-                         outlook.txt \
-                         gpl-with-exception.txt \
-                         disc-further.txt \
-                         sitemap.txt \
-                         oldNews.txt \
-                         README_LICENSED_PARTS.txt
+INPUT                  = .
+
+#examples \
+#                         xgpl_src \
+#                         readme.txt \
+#                         build_utils \
+#                         changelog.txt \
+#                         where-to-start.txt \
+#                         main-features.txt \
+#                         structural-overview.txt \
+#                         license-conditions.txt \
+#                         memory-usage.txt \
+#                         todo.txt \
+#                         using-projects.txt \
+#                         support.txt \
+#                         maintainers.txt \
+#                         howto-download.txt \
+#                         getting-installed.txt \
+#                         information.txt \
+#                         outlook.txt \
+#                         gpl-with-exception.txt \
+#                         disc-further.txt \
+#                         sitemap.txt \
+#                         oldNews.txt \
+#                         README_LICENSED_PARTS.txt
 
 # This tag can be used to specify the character encoding of the source files that 
 # doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 
@@ -581,7 +583,7 @@ EXCLUDE_SYMBOLS        =
 # directories that contain example code fragments that are included (see 
 # the \include command).
 
-EXAMPLE_PATH           = IsoAgLib_Examples
+EXAMPLE_PATH           = examples
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the 
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 
@@ -627,7 +629,7 @@ INPUT_FILTER           =
 # info on how filters are used. If FILTER_PATTERNS is empty, INPUT_FILTER 
 # is applied to all files.
 
-FILTER_PATTERNS        = *.txt=./PlaceMainHeaderWithNavbar.sh
+FILTER_PATTERNS        = *.txt=./admin/PlaceMainHeaderWithNavbar.sh
 
 # If the FILTER_SOURCE_FILES tag is set to YES, the input filter (if set using 
 # INPUT_FILTER) will be used to filter the input files when producing source 

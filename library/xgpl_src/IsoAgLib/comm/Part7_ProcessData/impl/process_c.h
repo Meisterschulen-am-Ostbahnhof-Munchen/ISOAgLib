@@ -94,14 +94,14 @@
 
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
 #include "../Local/impl/procdatalocalbase_c.h"
 #include "../Remote/impl/procdataremotebase_c.h"
 #include "processpkg_c.h"
 #include "../processdatachangehandler_c.h"
-#include "devpropertyhandler_c.h"
-#include <IsoAgLib/comm/Process/impl/processwsmtaskmsghandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h>
 
 #ifdef DO_USE_SLIST
   #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
@@ -120,7 +120,7 @@ namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 class Process_c;
-typedef SINGLETON_DERIVED_CLIENT2(Process_c, ElementBase_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
+typedef SINGLETON_DERIVED_CLIENT2(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
 
 /**
   Central managing instance for all process data
@@ -450,7 +450,7 @@ private: // Private attributes
   */
   void singletonInit() { init(); };
 
-  friend class SINGLETON_DERIVED(Process_c,ElementBase_c);
+  friend class SINGLETON_DERIVED(Process_c,Scheduler_Task_c);
   friend class IsoAgLib::iProcess_c;
   friend class IsoAgLib::iDevPropertyHandler_c;
   /**

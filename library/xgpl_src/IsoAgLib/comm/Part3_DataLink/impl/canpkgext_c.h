@@ -88,7 +88,7 @@
 #ifndef CAN_PKG_EXT_H
 #define CAN_PKG_EXT_H
 
-#include "canpkg_c.h"
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 // Begin Namespace __IsoAgLib

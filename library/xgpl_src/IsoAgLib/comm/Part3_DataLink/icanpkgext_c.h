@@ -60,8 +60,8 @@
 #include "impl/canpkgext_c.h"
 
 // for forward declarations
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 #include <IsoAgLib/driver/can/iident_c.h>
 
 

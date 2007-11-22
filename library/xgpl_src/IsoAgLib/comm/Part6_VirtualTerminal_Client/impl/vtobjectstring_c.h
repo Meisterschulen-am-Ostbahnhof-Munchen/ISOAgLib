@@ -82,7 +82,7 @@
 #ifndef VTOBJECTSTRING_C_H
 #define VTOBJECTSTRING_C_H
 
-#include <IsoAgLib/comm/Multipacket/imultisendstreamer_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include "vtobject_c.h"
 
 namespace __IsoAgLib {

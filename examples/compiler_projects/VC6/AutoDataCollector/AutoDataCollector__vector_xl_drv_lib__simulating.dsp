@@ -41,7 +41,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\XL Driver Library\bin" /I "..\..\..\IsoAgLib_Examples" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /D "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /YX /FD /TP /c
+# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\XL Driver Library\bin" /I "..\..\..\examples" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /D "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /YX /FD /TP /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
 # ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
 BSC32=bscmake.exe
@@ -65,7 +65,7 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\XL Driver Library\bin" /I "..\..\..\IsoAgLib_Examples" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /D "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /YX /FD /TP /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\XL Driver Library\bin" /I "..\..\..\examples" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /D "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR /YX /FD /TP /GZ /c
 # ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
 # ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector.h" /d "XL_HWTYPE_VIRTUAL" /D USE_CAN_EEPROM_EDITOR
 BSC32=bscmake.exe
@@ -273,39 +273,39 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\target_extension_rs23
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\autodatacollector.cpp
+SOURCE=..\..\..\examples\autodatacollector.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\getyflexmanager_c.cpp
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\getyflexmanager_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig_c.cpp
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\specificrecordconfig_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\defaultrecordconfig_c.cpp
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\defaultrecordconfig_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\procdatamanager_c.cpp
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\procdatamanager_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.cpp
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\gpsmanager_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\tractorinternalcan.cpp
+SOURCE=..\..\..\examples\tractor\TractorInternalCan\TractorInternalCan.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\tractorconsole.cpp
+SOURCE=..\..\..\examples\tractor\TractorConsole\TractorConsole.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\CanServerMessenger\CanServerMessenger.cpp
+SOURCE=..\..\..\examples\CanServerMessenger\CanServerMessenger.cpp
 # End Source File
 
 # Begin Source File
@@ -734,63 +734,63 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\rs232_target_extensio
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_AutoDataCollector.h
+SOURCE=..\..\..\examples\config_AutoDataCollector.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\getyflexmanager_c.h
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\getyflexmanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\procdatamanager_c.h
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\procdatamanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\defaultrecordconfig_c.h
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\defaultrecordconfig_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\gpsmanager_c.h
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\gpsmanager_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\AutoDataCollector_Classes\specificrecordconfig_c.h
+SOURCE=..\..\..\examples\AutoDataCollector_Classes\specificrecordconfig_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_tractor.h
+SOURCE=..\..\..\examples\config_tractor.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\config_imi_iso.h
+SOURCE=..\..\..\examples\config_Imi.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\version.h
+SOURCE=..\..\..\examples\version.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\config_tractorinternalcan.h
+SOURCE=..\..\..\examples\tractor\TractorInternalCan\config_TractorInternalCan.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\version.h
+SOURCE=..\..\..\examples\tractor\TractorInternalCan\version.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\config_tractorconsole.h
+SOURCE=..\..\..\examples\tractor\TractorConsole\config_TractorConsole.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorconsole\version.h
+SOURCE=..\..\..\examples\tractor\TractorConsole\version.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\CanServerMessenger\config_CanServerMessenger.h
+SOURCE=..\..\..\examples\CanServerMessenger\config_CanServerMessenger.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\CanServerMessenger\version.h
+SOURCE=..\..\..\examples\CanServerMessenger\version.h
 # End Source File
 
 # Begin Source File

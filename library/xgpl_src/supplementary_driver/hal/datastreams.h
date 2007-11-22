@@ -1,6 +1,6 @@
 /***************************************************************************
                           datastreams.h - include dependent on used target (defined
-													           in Application_Config/isoaglib_config.h)
+													           in IsoAgLib/isoaglib_config.h)
 																		 the suitable HAL specific header for
 																		 datastreams input and output
                              -------------------
@@ -56,7 +56,7 @@
 /* ************************************************************ */
 /** \file supplementary_driver/hal/datastreams.h
   * include dependent on used target (defined in
-	  Application_Config/isoaglib_config.h) the suitable HAL
+	  IsoAgLib/isoaglib_config.h) the suitable HAL
 		specific header for datastreams output control.
 */
 /* ************************************************************ */
@@ -64,7 +64,7 @@
 #define _HAL_INDEPENDEND_DATASTREAMS_H_
 
 // include interface aplication relevant configuration settings
-// #include <Application_Config/isoaglib_config.h>
+// #include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
 
 typedef enum

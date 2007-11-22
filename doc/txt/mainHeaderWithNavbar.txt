@@ -4,5 +4,5 @@ Licensed with Exceptions under the General Public License (GPL) of the Free Soft
 </center>
 <hr>
 <div id="menu">
-INCLUDE_menu-list.txt_INCLUDE
+INCLUDE_doc/txt/menu-list.txt_INCLUDE
 </div>

@@ -85,7 +85,7 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_ProprietaryCan.h
 #endif
 #include "5_1_ProprietaryPgn.h"
-#include "IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h"
+#include "IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h"
 
 
 #ifdef SYSTEM_PC

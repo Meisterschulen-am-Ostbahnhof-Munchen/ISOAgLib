@@ -1,6 +1,6 @@
 /*! \page information Development Targets and Usage Preconditions of IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group

@@ -39,8 +39,8 @@
 #ifndef PROCDATAMANAGER_H
 #define PROCDATAMANAGER_H
 
-#include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/iprocdataremote_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 // using namespace IsoAgLib;
 

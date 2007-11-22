@@ -1,7 +1,7 @@
 /*! \page PageChanges Changelog of IsoAgLib
 
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section Changes Changes
 
@@ -63,10 +63,10 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
   - removed DIN-related code, adapted proc2iso and rebuild all tutorials and their device descriptions
   - removed following folders and classes:
           IsoAgLib/comm/DIN_Terminal
-          IsoAgLib/comm/Process/igps_c.h
-          IsoAgLib/comm/Process/impl/gps_c.cpp
-          IsoAgLib/comm/Process/impl/gps_c.h
-          IsoAgLib/comm/SystemMgmt/DIN9684
+          IsoAgLib/comm/Part7_ProcessData/igps_c.h
+          IsoAgLib/comm/Part7_ProcessData/impl/gps_c.cpp
+          IsoAgLib/comm/Part7_ProcessData/impl/gps_c.h
+          IsoAgLib/comm/Part5_NetworkManagement/DIN9684
   - removed DIN-related tutorials:
           0_1_AddressClaimDin
           0_2_AddressClaimFlexible
@@ -76,12 +76,12 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
           1_5_WriteFlexibleDin
           3_1_LBSTerminalDin
   - removed the no more needed conf-files in projectGeneration/
-  - removed IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.cpp
-            IsoAgLib/comm/SystemMgmt/impl/monitoritem_c.h
+  - removed IsoAgLib/comm/Part5_NetworkManagement/impl/monitoritem_c.cpp
+            IsoAgLib/comm/Part5_NetworkManagement/impl/monitoritem_c.h
     and adapted all affected classes
-  - removed IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.cpp
-            IsoAgLib/comm/SystemMgmt/impl/systemmgmt_c.h
-            IsoAgLib/comm/SystemMgmt/isystemmgmt_c.h
+  - removed IsoAgLib/comm/Part5_NetworkManagement/impl/systemmgmt_c.cpp
+            IsoAgLib/comm/Part5_NetworkManagement/impl/systemmgmt_c.h
+            IsoAgLib/comm/Part5_NetworkManagement/isystemmgmt_c.h
     and replaced all missing function calls with appropriate function calls from the IsoMonitor_c
   - partly renaming of IsoMonitor_c functions
   - removed var2empfSend() and replaced with sendValDevKey() in ProcDataLocalBase_c and ProcDataRemoteBase_c

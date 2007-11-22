@@ -28,7 +28,7 @@
 ..\..\..\xgpl_src\supplementary_driver\driver\actor\impl\actorbase_c.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\actor\impl\digitalo_c.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-..\..\..\IsoAgLib_Examples\tutorial\4_SupplementaryDriver\\4_2_Pwm\4_2_Pwm.cpp
+..\..\..\examples\tutorial\4_SupplementaryDriver\\4_2_Pwm\4_2_Pwm.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h

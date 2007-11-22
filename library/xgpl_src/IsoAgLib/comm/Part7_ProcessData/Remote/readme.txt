@@ -1,5 +1,5 @@
 /** @page ProcDataRemotePage Description of subdirectory Remote of the Process Data part of IsoAgLib
-  * ( <i>\<xgpl_src/IsoAgLib/comm/Process/Remote\></i> )
+  * ( <i>\<xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote\></i> )
   * All interface classes and helper elements which are dedicated to remote process data
   * ( %i.e. for process data where measurement values are updated by remote ECU, this ECU can request
   * values and can command setpoints )

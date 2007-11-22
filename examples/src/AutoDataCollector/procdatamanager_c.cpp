@@ -38,9 +38,9 @@
 
 #include "procdatamanager_c.h"
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/Process/proc_c.h>
-#include <IsoAgLib/comm/Process/Remote/Std/iprocdataremote_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/iprocdataremote_c.h>
 
 ProcDataManager_c::ProcDataManager_c( uint8_t aui8_cnt)
 {

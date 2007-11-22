@@ -86,7 +86,7 @@
 
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include "util_funcs.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

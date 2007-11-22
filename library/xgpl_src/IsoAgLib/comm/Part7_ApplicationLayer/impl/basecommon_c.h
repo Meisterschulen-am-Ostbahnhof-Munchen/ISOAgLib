@@ -86,18 +86,18 @@
 #ifndef BASE_COMMON_H
 #define BASE_COMMON_H
 
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/comm/Base/ibasetypes.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib
 {
 
-  class BaseCommon_c : public ElementBase_c
+  class BaseCommon_c : public Scheduler_Task_c
   {
   public:
 

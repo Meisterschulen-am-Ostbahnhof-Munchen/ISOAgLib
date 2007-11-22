@@ -56,7 +56,7 @@
 #define IEEPROM_IO_H
 
 #include "impl/eepromio_c.h"
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 #include <string>
 
 //using STL_NAMESPACE::string;

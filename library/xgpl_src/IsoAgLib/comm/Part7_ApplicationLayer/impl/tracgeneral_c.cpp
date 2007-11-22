@@ -3,7 +3,7 @@
                                   data informations from CanCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
-                                  from ElementBase_c derived for
+                                  from Scheduler_Task_c derived for
                                   interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000
@@ -86,10 +86,10 @@
 
  ***************************************************************************/
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h>
 
 using namespace std;
 

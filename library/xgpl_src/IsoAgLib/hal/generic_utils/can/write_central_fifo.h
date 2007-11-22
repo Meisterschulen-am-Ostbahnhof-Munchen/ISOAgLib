@@ -1,5 +1,5 @@
 /***************************************************************************
-                          writeCentralFifo.h - definition of Hardware Abstraction
+                          write_central_fifo.h - definition of Hardware Abstraction
                                      Layer for central system functions.
 
                              -------------------

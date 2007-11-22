@@ -85,14 +85,14 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-  #include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif
 #include "tracmove_c.h"
 
 #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-  #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
 
 using namespace std;

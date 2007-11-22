@@ -159,7 +159,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\hal\esx\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_0_ReadIso\1_0_ReadIso.cpp
+..\..\..\examples\tutorial\1_ApplicationLayer\1_0_ReadIso\1_0_ReadIso.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
@@ -255,7 +255,7 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_0_ReadIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tutorial\1_ApplicationLayer\1_0_ReadIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_esx
 
 [Ede]

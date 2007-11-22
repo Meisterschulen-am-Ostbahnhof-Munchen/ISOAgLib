@@ -68,7 +68,7 @@
 #include "../system/system_target_extensions.h"
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/hal/mitron167/system/system.h>
 
 #include <supplementary_driver/hal/rs232.h>

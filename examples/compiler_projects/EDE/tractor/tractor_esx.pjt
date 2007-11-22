@@ -152,7 +152,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\driver\can\impl\canio_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
-..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan\tractor.cpp
+..\..\..\examples\tractor\SourceInternalCan\tractor.cpp
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\istate_c.h
 ..\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\identitem_c.h
@@ -233,7 +233,7 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tractor\SourceInternalCan;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tractor\SourceInternalCan;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_esx
 
 [Ede]

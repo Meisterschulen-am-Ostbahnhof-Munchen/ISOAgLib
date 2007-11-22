@@ -1,3 +1,6 @@
+\ingroup License
+\defgroup build Build
+@{
 Welcome to the IsoAgLib program library hwich is published as Open Source under the
 license conditions of the General Public License ( with exception ) of the Free Software Foundation!
 
@@ -8,3 +11,4 @@ any exception, as no application shall link against parts of this directory.
 
 The shell scripts and BAT files within this directory can be freely used and adapted for
 other projects.
+@}

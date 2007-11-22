@@ -92,7 +92,7 @@ public:
     } TimeEventRetValue_t;
 
   /**
-    call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
+    call the timeEvent for CanIo_c and all communication classes (derived from Scheduler_Task_c) which
     registered within iScheduler_c for periodic timeEvent.
     Define common trigger timestamp, so that distributed activities can be performed with
     common time base.

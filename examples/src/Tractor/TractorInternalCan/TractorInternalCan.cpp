@@ -1,5 +1,5 @@
 /* *************************************************************************
-    tractorinternalcan.cpp - example for tractor ECU (work-in-progress)
+    TractorInternalCan.cpp - example for tractor ECU (work-in-progress)
                              -------------------
     begin                : Sun Dec 19 20:00:00 CEST 2004
 
@@ -10,7 +10,7 @@
 /* *************************************************************************
  * This example main application is published NOT as GPL`ed Open Source,   *
  * so that you can include this source file in propietary closed projects. *
- * Everybody is encouraged to use the examples in the IsoAgLib_Examples    *
+ * Everybody is encouraged to use the examples in the examples    *
  * directory for a quick and easy start of development for IsoAgLib        *
  * applications.                                                           *
  *                                                                         *
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example tractorinternalcan.cpp
+/** \example TractorInternalCan.cpp
  * This example application of ISO<i><sub>AgLib</sub></i>is a work-in-progress
  * of a tractor ECU. It receives the tractor data from internal CAN, and
  * provides them as ISO 11783 tractor data on external BUS.
@@ -81,17 +81,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_tractorinternalcan from the directory where the spec file
+ *     conf_TractorInternalCan from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_tractorinternalcan</i>
+ *     <i>#> update_makefile.sh conf_TractorInternalCan</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd tractorinternalcan</i> to go to the subdirectory tractorinternalcan
+ *     <li><i>#>cd TractorInternalCan</i> to go to the subdirectory TractorInternalCan
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable tractorinternalcan in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable TractorInternalCan in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-tractorinternalcan.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan</i> as global project parameter
+ *     <li>import the file list in filelist-TractorInternalCan.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -100,84 +100,84 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpectractorinternalcan__pc_linux__simulating__simulating .
+ * \ref PrjSpecTractorInternalCan__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpectractorinternalcan__pc_linux__rte__rte
- *    <li> \ref PrjSpectractorinternalcan__pc_linux__rte__simulating
- *    <li> \ref PrjSpectractorinternalcan__pc_linux__rte__sys
- *    <li> \ref PrjSpectractorinternalcan__pc_linux__simulating__rte
- *    <li> \ref PrjSpectractorinternalcan__pc_linux__simulating__simulating
- *    <li> \ref PrjSpectractorinternalcan__pc_linux__simulating__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pc_linux__rte__rte
+ *    <li> \ref PrjSpecTractorInternalCan__pc_linux__rte__simulating
+ *    <li> \ref PrjSpecTractorInternalCan__pc_linux__rte__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pc_linux__simulating__rte
+ *    <li> \ref PrjSpecTractorInternalCan__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpecTractorInternalCan__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpectractorinternalcan__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref PrjSpectractorinternalcan__pc_win32__simulating__simulating
- *    <li> \ref PrjSpectractorinternalcan__pc_win32__simulating__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpectractorinternalcan__esx__sys__sys
- *    <li> \ref PrjSpectractorinternalcan__imi__sys__sys
- *    <li> \ref PrjSpectractorinternalcan__pm167__sys__sys
+ *    <li> \ref PrjSpecTractorInternalCan__esx__sys__sys
+ *    <li> \ref PrjSpecTractorInternalCan__imi__sys__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileListstractorinternalcan__pc_linux__simulating__simulating for needed files
- * ( filelist-tractorinternalcan-doxygen_import.txt ),
- *  with \ref SrcListtractorinternalcan__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrListtractorinternalcan__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileListsTractorInternalCan__pc_linux__simulating__simulating for needed files
+ * ( filelist-TractorInternalCan-doxygen_import.txt ),
+ *  with \ref SrcListTractorInternalCan__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListTractorInternalCan__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileListstractorinternalcan__pc_linux__rte__rte
- *    <li> \ref FileListstractorinternalcan__pc_linux__rte__simulating
- *    <li> \ref FileListstractorinternalcan__pc_linux__rte__sys
- *    <li> \ref FileListstractorinternalcan__pc_linux__simulating__rte
- *    <li> \ref FileListstractorinternalcan__pc_linux__simulating__simulating
- *    <li> \ref FileListstractorinternalcan__pc_linux__simulating__sys
+ *    <li> \ref FileListsTractorInternalCan__pc_linux__rte__rte
+ *    <li> \ref FileListsTractorInternalCan__pc_linux__rte__simulating
+ *    <li> \ref FileListsTractorInternalCan__pc_linux__rte__sys
+ *    <li> \ref FileListsTractorInternalCan__pc_linux__simulating__rte
+ *    <li> \ref FileListsTractorInternalCan__pc_linux__simulating__simulating
+ *    <li> \ref FileListsTractorInternalCan__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileListstractorinternalcan__pc_win32__vector_canlib__simulating
- *    <li> \ref FileListstractorinternalcan__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileListstractorinternalcan__pc_win32__vector_canlib__sys
- *    <li> \ref FileListstractorinternalcan__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref FileListstractorinternalcan__pc_win32__simulating__simulating
- *    <li> \ref FileListstractorinternalcan__pc_win32__simulating__sys
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__vector_canlib__sys
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__simulating__simulating
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileListstractorinternalcan__esx__sys__sys
- *    <li> \ref FileListstractorinternalcan__imi__sys__sys
- *    <li> \ref FileListstractorinternalcan__pm167__sys__sys
+ *    <li> \ref FileListsTractorInternalCan__esx__sys__sys
+ *    <li> \ref FileListsTractorInternalCan__imi__sys__sys
+ *    <li> \ref FileListsTractorInternalCan__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
- * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
+ * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_tractor ( see also at \ref PrjConfigtractorinternalcan ).
+ * config_tractor ( see also at \ref PrjConfigTractorInternalCan ).
  *                                                                         */
 /* *************************************************************************/
 
-/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
+/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/IsoAgLib/isoaglib_config.h
     to include project specific configuration settings.
     Set this define in the project file or Makefile of the whole
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_tractorinternalcan.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_TractorInternalCan.h
 #endif
 
 // include the central interface header for the hardware adaptation layer part
@@ -185,7 +185,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -201,12 +201,12 @@
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
-#include <IsoAgLib/comm/Base/itimeposgps_c.h>
-#include <IsoAgLib/comm/Base/itracgeneral_c.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
-#include <IsoAgLib/comm/Base/itracpto_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
 
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLibAll namespace
@@ -472,7 +472,7 @@ int main()
       #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
       or
       #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-      in the header xgpl_src/Application_Config/isoaglib_config.h
+      in the header xgpl_src/IsoAgLib/isoaglib_config.h
     - This can be also controlled during runtime with the function call:
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
       or

@@ -1,3 +1,6 @@
+\ingroup License
+\defgroup commercial_BIOS Commercial_BIOS
+@{
 Welcome to the IsoAgLib program library hwich is published as Open Source under the
 license conditions of the General Public License ( with exception ) of the Free Software Foundation!
 
@@ -9,3 +12,4 @@ in the appropriate subdirectory, the include pathes and project definitions
 ( esp. linking ) of common HAL target adaptations can be shared among all
 users.
 But you aren't forced to do this!
+@}

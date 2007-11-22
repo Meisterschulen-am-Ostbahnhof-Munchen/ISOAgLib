@@ -13,7 +13,7 @@ CURDIR=`pwd`
 DIR=`dirname $0`
 
 ### 2. Change to where to XML definitions are...
-# cd $CURDIR/$DIR/../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition
+# cd $CURDIR/$DIR/../examples/tutorial/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition
 
 ### 3. If vt2iso won't find your xerces-c lib, you can pass the path in the LD_LIBRARY_PATH environment variable:
 # export LD_LIBRARY_PATH=/usr/local/lib
@@ -21,6 +21,6 @@ DIR=`dirname $0`
 ### 4. Now call vt2iso
 # PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso simpleVTIsoPool.xml"
 
-PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso $CURDIR/$DIR/../IsoAgLib_Examples/tutorial/3_Terminal/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool"
+PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso $CURDIR/$DIR/../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool"
 
 exec $PAR

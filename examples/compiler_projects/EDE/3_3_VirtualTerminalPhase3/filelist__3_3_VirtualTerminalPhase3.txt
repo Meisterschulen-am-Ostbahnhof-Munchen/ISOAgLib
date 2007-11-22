@@ -71,7 +71,7 @@
 ..\..\..\xgpl_src\IsoAgLib\driver\eeprom\impl\eepromio_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.cpp
-..\..\..\IsoAgLib_Examples\tutorial\3_Terminal\3_3_VirtualTerminalPhase3\3_3_VirtualTerminalPhase3.cpp
+..\..\..\examples\tutorial\3_VirtualTerminal_Client\3_3_VirtualTerminalPhase3\3_3_VirtualTerminalPhase3.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h

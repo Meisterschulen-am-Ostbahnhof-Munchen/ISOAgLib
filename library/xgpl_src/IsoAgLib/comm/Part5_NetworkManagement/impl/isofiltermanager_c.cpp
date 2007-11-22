@@ -115,20 +115,20 @@ IsoFilterManager_c::singletonInit ()
 }
 
 
-/** just a dummy implementation of virtual abstract functions in ElementBase_c */
+/** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
 bool IsoFilterManager_c::timeEvent( void )
 {
   return true;
 }
 
 
-/** just a dummy implementation of virtual abstract functions in ElementBase_c */
+/** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
 void IsoFilterManager_c::close( void )
 {
 }
 
 
-/** just a dummy implementation of virtual abstract functions in ElementBase_c */
+/** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
 const char* IsoFilterManager_c::getTaskName() const
 {
   return "IsoFilterManager_c";

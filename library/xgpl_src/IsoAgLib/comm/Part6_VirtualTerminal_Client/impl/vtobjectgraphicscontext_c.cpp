@@ -87,7 +87,7 @@
 #include "../ivtobjectbutton_c.h"
 #include "vtobjectgraphicscontext_c.h"
 #include "isoterminal_c.h"
-#include <IsoAgLib/convert.h>
+#include <IsoAgLib/util/convert.h>
 
 // Make shure not such macro is used.
 #undef MACRO_vtObjectTypeA

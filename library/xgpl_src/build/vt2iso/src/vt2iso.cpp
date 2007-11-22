@@ -668,7 +668,7 @@ vt2iso_c::clean_exit (char* error_message)
   strcat (partFileName, "_direct.h");
   partFile_direct = fopen (partFileName,"wt");
 
-  fprintf (partFile_direct, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+  fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
   fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath, extension);
   fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", xmlFileWithoutPath, extension);
@@ -712,7 +712,7 @@ vt2iso_c::clean_exit (char* error_message)
   strcat (partFileName, "_derived-h.h");
   partFile_direct = fopen (partFileName,"wt");
 
-  fprintf (partFile_direct, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+  fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
   fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath);
 
   /// if USE_SPECIAL_PARSING is defined additional output is done
@@ -940,7 +940,7 @@ vt2iso_c::splitFunction (bool ab_onlyClose=false)
   {
     sprintf (partFileName, "%s-function%d.cpp", xmlFileGlobal, splitFunctionPart);
     partFile_split_function = fopen (partFileName, "wt");
-    fprintf (partFile_split_function, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", xmlFileGlobal);
     fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", xmlFileGlobal);
     fprintf (partFile_split_function, "void initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_DEF)\n", splitFunctionPart);
@@ -1076,14 +1076,14 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
     strncpy (partFileName, xmlFile, 1024);
     strcat (partFileName, "-variables.cpp");
     partFileTmp = fopen (partFileName, "wt");
-    fprintf (partFileTmp, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", xmlFile);
     fclose (partFileTmp);
 
     strncpy (partFileName, xmlFile, 1024);
     strcat (partFileName, "-attributes.cpp");
     partFileTmp = fopen (partFileName, "wt");
-    fprintf (partFileTmp, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", xmlFile);
     fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", xmlFile);
     fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", xmlFile);
@@ -1092,7 +1092,7 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
     strncpy (partFileName, xmlFile, 1024);
     strcat (partFileName, "-list.cpp");
     partFileTmp = fopen (partFileName, "wt");
-    fprintf (partFileTmp, "#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-list.inc\"\n", xmlFile);
     fclose (partFileTmp);
   }

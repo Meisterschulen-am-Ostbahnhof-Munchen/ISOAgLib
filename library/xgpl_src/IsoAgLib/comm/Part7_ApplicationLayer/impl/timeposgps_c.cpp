@@ -88,15 +88,15 @@
 #include "timeposgps_c.h"
 
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 // IsoAgLib_Extension
-#include <IsoAgLib/comm/Multipacket/imultireceive_c.h>
-#include <IsoAgLib/comm/Multipacket/istream_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/imultireceive_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/istream_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/comm/Base/itracmove_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isorequestpgn_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h>
 
 #ifdef DEBUG
   #ifdef SYSTEM_PC

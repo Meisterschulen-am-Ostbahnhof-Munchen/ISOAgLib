@@ -87,12 +87,12 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/canpkgext_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/ISO_Terminal/iisoterminalobjectpool_c.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/identitem_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include "vtserverinstance_c.h"
 #include "vtclientservercommunication_c.h"
 
@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 class VtClientServerCommunication_c;
 class iIdentItem_c;
 class IsoTerminal_c;
-typedef SINGLETON_DERIVED(IsoTerminal_c,ElementBase_c) SingletonIsoTerminal_c;
+typedef SINGLETON_DERIVED(IsoTerminal_c,Scheduler_Task_c) SingletonIsoTerminal_c;
 
 /** central IsoAgLib terminal management object */
 class IsoTerminal_c : public SingletonIsoTerminal_c {
@@ -166,7 +166,7 @@ public:
  virtual const char* getTaskName() const;
 
 private:
-  friend class SINGLETON_DERIVED(IsoTerminal_c, ElementBase_c);
+  friend class SINGLETON_DERIVED(IsoTerminal_c, Scheduler_Task_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of IsoTerminal_c within application
     */

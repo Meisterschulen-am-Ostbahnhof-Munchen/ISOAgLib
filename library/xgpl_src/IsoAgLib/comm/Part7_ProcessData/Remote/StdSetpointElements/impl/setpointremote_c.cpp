@@ -550,7 +550,7 @@ void SetpointRemote_c::releaseMasterIntern(){
 */
 bool SetpointRemote_c::timeEvent( void )
 {
-  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
+  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   const IsoName_c& c_isoName = processData().isoName();
   if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName( c_isoName, true) )
   { // remote owner of this process data isn't active any more

@@ -83,10 +83,10 @@
  ***************************************************************************/
 #include <IsoAgLib/typedef.h>
 #include "identitem_c.h"
-#include "../ISO11783/impl/isomonitor_c.h"
-#include "../ISO11783/impl/isorequestpgn_c.h"
+#include "..//impl/isomonitor_c.h"
+#include "..//impl/isorequestpgn_c.h"
 #if !defined(IGNORE_VTSERVER_NACK) && defined(USE_ISO_TERMINAL)
-  #include "../../ISO_Terminal/impl/isoterminal_c.h"
+  #include "../../Part6_VirtualTerminal_Client/impl/isoterminal_c.h"
 #endif
 
 #ifdef USE_EEPROM_IO

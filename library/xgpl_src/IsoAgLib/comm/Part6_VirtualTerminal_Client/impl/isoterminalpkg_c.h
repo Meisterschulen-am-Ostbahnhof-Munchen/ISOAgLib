@@ -88,8 +88,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/util/impl/canpkgext_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

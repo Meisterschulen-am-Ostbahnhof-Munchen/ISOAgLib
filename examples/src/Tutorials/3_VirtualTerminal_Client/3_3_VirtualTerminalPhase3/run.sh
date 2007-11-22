@@ -16,12 +16,12 @@ VT_KDEV_DIR=${VT_BASE_DIR}/compiler_projects/kdevelop_qmake
 ISO_BASE_DIR=${VT_BASE_DIR}/IsoAgLib
 ISO_UPDATE_DIR=${ISO_BASE_DIR}/compiler_projects/projectGeneration
 ISO_KDEV_DIR=${ISO_BASE_DIR}/compiler_projects/kdevelop_qmake
-ISO_TUT_SRC_DIR=${ISO_BASE_DIR}/IsoAgLib_Examples/tutorial
+ISO_TUT_SRC_DIR=${ISO_BASE_DIR}/examples/src/Tutorials
 
 VT_SRV_DIR=${VT_KDEV_DIR}/vtserver_can_server_file
 VT_CLI_DIR=${VT_KDEV_DIR}/test_client_stdin_can_server
 ISO_33TUT_DIR=${ISO_KDEV_DIR}/3_3_VirtualTerminalPhase3
-ISO_33TUT_SRC_DIR=${ISO_TUT_SRC_DIR}/3_Terminal/3_3_VirtualTerminalPhase3
+ISO_33TUT_SRC_DIR=${ISO_TUT_SRC_DIR}/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3
 ISO_33TUT_XML_DIR=${ISO_33TUT_SRC_DIR}/MaskDefinition
 VT2ISO_DIR=${ISO_BASE_DIR}/build_utils/vt2iso
 VT2ISO=${VT2ISO_DIR}/bin/vt2iso

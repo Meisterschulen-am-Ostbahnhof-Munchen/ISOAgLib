@@ -3,7 +3,7 @@
                                   data information from CanCustomer_c
                                   derived for CAN sending and receiving
                                   interaction;
-                                  from ElementBase_c derived for
+                                  from Scheduler_Task_c derived for
                                   interaction with other IsoAgLib objects
                              -------------------
     begin                 Fri Apr 07 2000
@@ -59,7 +59,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 #include "ibasetypes.h"
 #include "impl/tracmove_c.h"
 
@@ -68,7 +68,7 @@ namespace IsoAgLib {
 
   /** stores, updates  and delivers all moving data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
-      Derive from ElementBase_c to register in Scheduler_c for timeEvent trigger
+      Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
       Derive from CANCustomer to register FilterBox'es in CanIo_c to receive CAN messages
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).

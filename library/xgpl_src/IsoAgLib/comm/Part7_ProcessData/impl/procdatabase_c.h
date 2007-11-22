@@ -92,7 +92,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/SystemMgmt/impl/istate_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h>
 #include "procident_c.h"
 #include "processpkg_c.h"
 #include "generalcommand_c.h"

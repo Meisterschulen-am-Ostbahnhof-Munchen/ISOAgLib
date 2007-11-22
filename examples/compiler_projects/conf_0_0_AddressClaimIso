@@ -1,6 +1,6 @@
 # Filename: conf_0_0_AddressClaimIso
 # Configuration setting for tutorial example 0_0_AddressClaimIso
-# in the tutorial group 0_SystemMgmt
+# in the tutorial group 0_NetworkManagement
 
 # ###############################################################
 # Project Identification
@@ -22,7 +22,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso"
+REL_APP_PATH="examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )

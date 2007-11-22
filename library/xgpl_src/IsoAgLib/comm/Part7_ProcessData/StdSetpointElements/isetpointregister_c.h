@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/setpointregister_c.h"
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 #include "../igeneralcommand_c.h"
 

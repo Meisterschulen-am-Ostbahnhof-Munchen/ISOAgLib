@@ -92,11 +92,11 @@
 #include "../ivtclientservercommunication_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 // #include <IsoAgLib/hal/system.h>
-#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-// #include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+// #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
-// #include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
+// #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 // #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectgraphicscontext_c.h"
@@ -726,7 +726,7 @@ VtClientServerCommunication_c::timeEvent(void)
   // which include sending or starting of TP sessions and the like
   // - and the most time critical ALIVE has already been sent
   // ---> stop continuation, if execution time end is reached
-  if ( ElementBase_c::getAvailableExecTime() == 0 ) return false;
+  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
 
 
 

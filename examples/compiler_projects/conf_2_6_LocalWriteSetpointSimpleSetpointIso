@@ -22,7 +22,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso"
+REL_APP_PATH="examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )

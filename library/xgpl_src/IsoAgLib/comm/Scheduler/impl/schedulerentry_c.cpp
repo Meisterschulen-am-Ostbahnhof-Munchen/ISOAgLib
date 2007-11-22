@@ -91,7 +91,7 @@
 #endif
 
 
-#include <IsoAgLib/util/impl/schedulerentry_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h>
 /// Begin Namespace __IsoAgLib
 
 namespace __IsoAgLib {

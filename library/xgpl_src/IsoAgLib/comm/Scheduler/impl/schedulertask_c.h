@@ -1,5 +1,5 @@
 /***************************************************************************
-                          elementbase_c.h - header for base class for all
+                          schedulertask_c.h - header for base class for all
                                                IsoAgLib member objects which
                                                stores the pointer to the IsoAgLib
                                                instance, and delivers some
@@ -94,11 +94,11 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-//#include <Application_Config/isoaglib_config.h>
+//#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/config.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/saclaimhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -109,22 +109,22 @@ namespace __IsoAgLib {
   *@author Dipl.-Inform. Achim Spangler
   */
 
-  ///retriggerType_t for scheduling ElementBase_c Objects in Scheduler_c
+  ///retriggerType_t for scheduling Scheduler_Task_c Objects in Scheduler_c
   typedef enum retriggerType_en { StandardRetrigger = 1, EarliestRetrigger = 2, LatestRetrigger = 4 } retriggerType_t;
 
 
-class ElementBase_c : public SaClaimHandler_c {
+class Scheduler_Task_c : public SaClaimHandler_c {
  public:
 
   //Constructor
-  ElementBase_c();
+  Scheduler_Task_c();
 
   /** this function is used by IsoAgLib components
     * to perform periodic timed tasks.
     * The central function Scheduler_c::timeEvent()
     * calls the timeEvent() function of all
     * IsoAgLib subsystem classes which are derived
-    * from ElementBase_c and which registered
+    * from Scheduler_Task_c and which registered
     * in the list of Scheduler_c during init
     * Call is wrapped by SchedulerEntry_c for Update of timestamps
     * @return true -> all planned activities performed in available time
@@ -264,7 +264,7 @@ class ElementBase_c : public SaClaimHandler_c {
 
 
   //!  Virtual Destructor - just to avoid compiler warnings
-  virtual ~ElementBase_c();
+  virtual ~Scheduler_Task_c();
 
 
 
@@ -275,7 +275,7 @@ protected:
 
   //  Operation: setTimePeriod
   //!  Set client specific time period between calls of timeEvent.
-  //!  Each from ElementBase_c derived class must set at its INIT
+  //!  Each from Scheduler_Task_c derived class must set at its INIT
   //!  or can use it to set other Time Period in timeEvent()
   //!  Do NOT call from outside (e.g. processMsg)
   //! Parameter:
@@ -392,7 +392,7 @@ protected:
 //!  @return average execution time in [msec] (off complete performed runs)
 inline
 uint16_t
-ElementBase_c::getExecTime() const
+Scheduler_Task_c::getExecTime() const
 {
   return mui16_approxExecTime;
 }
@@ -401,7 +401,7 @@ ElementBase_c::getExecTime() const
 
 inline
 uint16_t
-ElementBase_c::getTimePeriod() const
+Scheduler_Task_c::getTimePeriod() const
 {
   return mui16_timePeriod;
 }
@@ -411,7 +411,7 @@ ElementBase_c::getTimePeriod() const
 //!  @return AVG of exec time
 inline
 uint16_t
-ElementBase_c::getAvgExecTime() const
+Scheduler_Task_c::getAvgExecTime() const
 {
   return ( mui32_callCnt != 0 )?( mui32_sumTime / mui32_callCnt ):0;
 }
@@ -419,7 +419,7 @@ ElementBase_c::getAvgExecTime() const
 //!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
 inline
 uint16_t
-ElementBase_c::getMaxExecTime() const
+Scheduler_Task_c::getMaxExecTime() const
 {
   return mui16_maxTime;
 }
@@ -427,13 +427,13 @@ ElementBase_c::getMaxExecTime() const
 //!  deliver the min exec time of this task (used only for debug based on mui16_minTime)
 inline
 uint16_t
-ElementBase_c::getMinExecTime() const
+Scheduler_Task_c::getMinExecTime() const
 {
   return mui16_minTime;
 }
 inline
 int16_t
-ElementBase_c::getAvgTimingAccuracy() const
+Scheduler_Task_c::getAvgTimingAccuracy() const
 {
   return ( mui32_callCnt != 0 )?( mi32_sumTimingAccuracy / mui32_callCnt ):0;
 }
@@ -443,7 +443,7 @@ ElementBase_c::getAvgTimingAccuracy() const
 //!  (only needed for debug tests)
 inline
 int16_t
-ElementBase_c::getMinTimingAccuracy() const
+Scheduler_Task_c::getMinTimingAccuracy() const
 {
   return mi16_minTimingAccuracy;
 }
@@ -453,7 +453,7 @@ ElementBase_c::getMinTimingAccuracy() const
 //!  (only needed for debug tests)
 inline
 int16_t
-ElementBase_c::getMaxTimingAccuracy() const
+Scheduler_Task_c::getMaxTimingAccuracy() const
 {
   return mi16_maxTimingAccuracy;
 }
@@ -467,7 +467,7 @@ ElementBase_c::getMaxTimingAccuracy() const
 //!  static timestamps.
 inline
 void
-ElementBase_c::forceExecStop()
+Scheduler_Task_c::forceExecStop()
 {
   // the value 0 is telling timeEvent() and all called functions that an immediated stop is needed
   msi32_demandedExecEnd = 0;
@@ -475,7 +475,7 @@ ElementBase_c::forceExecStop()
 
 inline
 int32_t
-ElementBase_c::getLastRetriggerTime()
+Scheduler_Task_c::getLastRetriggerTime()
 {
   return msi32_retriggerTime;
 }
@@ -483,7 +483,7 @@ ElementBase_c::getLastRetriggerTime()
 //!  Deliver the registered exec end timestamp.
 inline
 int32_t
-ElementBase_c::getDemandedExecEnd()
+Scheduler_Task_c::getDemandedExecEnd()
 {
   return msi32_demandedExecEnd;
 }
@@ -492,7 +492,7 @@ ElementBase_c::getDemandedExecEnd()
 //! Scheduler for earlier oder later call of a task
 inline
 uint16_t
-ElementBase_c::getMaxRetriggerJitter() const
+Scheduler_Task_c::getMaxRetriggerJitter() const
 {
   return (mui16_earlierInterval + mui16_latestInterval) ;
 }
@@ -502,7 +502,7 @@ ElementBase_c::getMaxRetriggerJitter() const
 //!  deliver timestamp of next planned retrigger (timeEvent() call)
 inline
 int32_t
-ElementBase_c::getNextTriggerTime() const
+Scheduler_Task_c::getNextTriggerTime() const
 {
   return mi32_nextRetriggerTime;
 }
@@ -510,7 +510,7 @@ ElementBase_c::getNextTriggerTime() const
 //! get Interval for earliest call of Task
 inline
 uint16_t
-ElementBase_c::getEarlierInterval() const
+Scheduler_Task_c::getEarlierInterval() const
 {
  return mui16_earlierInterval;
 }
@@ -518,7 +518,7 @@ ElementBase_c::getEarlierInterval() const
 //! get Interval for latest call of Task
 inline
 uint16_t
-ElementBase_c::getLatestInterval() const
+Scheduler_Task_c::getLatestInterval() const
 {
  return mui16_latestInterval;
 }
@@ -528,7 +528,7 @@ ElementBase_c::getLatestInterval() const
 //!  @param ai32_nextRetriggerTime new timeStamp for retrigger
 inline
 void
-ElementBase_c::changeNextTriggerTime(int32_t ai32_nextRetriggerTime){
+Scheduler_Task_c::changeNextTriggerTime(int32_t ai32_nextRetriggerTime){
   mi32_nextRetriggerTime = ai32_nextRetriggerTime;
 }
 

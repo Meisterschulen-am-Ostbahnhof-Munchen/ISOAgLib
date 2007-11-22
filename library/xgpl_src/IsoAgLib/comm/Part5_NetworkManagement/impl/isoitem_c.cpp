@@ -280,7 +280,7 @@ bool IsoItem_c::timeEvent( void )
 {
   CanIo_c& c_can = getCanInstance4Comm();
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  int32_t i32_time = ElementBase_c::getLastRetriggerTime();
+  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
   IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
   if (itemState(IState_c::PreAddressClaim))
@@ -439,7 +439,7 @@ bool IsoItem_c::processMsg()
   bool b_result = false;
   IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
-      i32_now = ElementBase_c::getLastRetriggerTime();
+      i32_now = Scheduler_Task_c::getLastRetriggerTime();
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
   else updateTime(i32_pkgTime);
 

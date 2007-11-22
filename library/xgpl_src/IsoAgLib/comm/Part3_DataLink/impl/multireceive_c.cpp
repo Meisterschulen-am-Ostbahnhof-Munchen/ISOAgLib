@@ -90,10 +90,10 @@
 #include "multireceive_c.h"
 
 // IsoAgLib
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
 
 
 #ifdef DEBUG

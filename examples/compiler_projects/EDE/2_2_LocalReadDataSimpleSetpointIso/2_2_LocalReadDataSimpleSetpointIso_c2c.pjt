@@ -166,7 +166,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\c2c\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\c2c\system\system_target_extensions.cpp
-..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_2_LocalReadDataSimpleSetpointIso\2_2_LocalReadDataSimpleSetpointIso.cpp
+..\..\..\examples\tutorial\2_ProcessData\2_2_LocalReadDataSimpleSetpointIso\2_2_LocalReadDataSimpleSetpointIso.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
@@ -272,7 +272,7 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\2_ProcessData\2_2_LocalReadDataSimpleSetpointIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_c2c
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tutorial\2_ProcessData\2_2_LocalReadDataSimpleSetpointIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_c2c
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_c2c
 
 [Ede]

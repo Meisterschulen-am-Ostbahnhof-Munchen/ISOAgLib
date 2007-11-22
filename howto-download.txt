@@ -1,6 +1,6 @@
 /*! \page HowtoDownloadPage Documentation and Download of IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <table class="infobox" border="0">
 <tr><th>Overview</th></tr>

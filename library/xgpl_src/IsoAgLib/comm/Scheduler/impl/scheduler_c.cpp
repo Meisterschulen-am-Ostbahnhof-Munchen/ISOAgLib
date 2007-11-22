@@ -85,35 +85,35 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
 #ifdef USE_PROCESS
-  #include <IsoAgLib/comm/Process/impl/process_c.h>
+  #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #endif
 #ifdef USE_TRACTOR_GENERAL
-  #include <IsoAgLib/comm/Base/impl/tracgeneral_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif
 #ifdef USE_TRACTOR_MOVE
-  #include <IsoAgLib/comm/Base/impl/tracmove_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
 #endif
 #ifdef USE_TRACTOR_PTO
-  #include <IsoAgLib/comm/Base/impl/tracpto_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h>
 #endif
 #ifdef USE_TRACTOR_LIGHT
-  #include <IsoAgLib/comm/Base/ext/impl/traclight_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/traclight_c.h>
 #endif
 #ifdef USE_TRACTOR_AUX
-  #include <IsoAgLib/comm/Base/ext/impl/tracaux_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracaux_c.h>
 #endif
 #ifdef USE_TIME_GPS
-  #include <IsoAgLib/comm/Base/impl/timeposgps_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
 #ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
 #endif
 #ifdef DEF_Stream_IMPL
-  #include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-  #include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
+  #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+  #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #endif
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
@@ -296,7 +296,7 @@ void Scheduler_c::registerAccessFlt( void )
 /** register pointer to a new client
   * this function is called within construction of new client instance
   */
-bool Scheduler_c::registerClient( ElementBase_c* pc_client)
+bool Scheduler_c::registerClient( Scheduler_Task_c* pc_client)
 {
   // first check whether this client is already registered
   for ( STL_NAMESPACE::list<SchedulerEntry_c>::const_iterator iter = mc_taskQueue.begin(); iter != mc_taskQueue.end(); iter++ )
@@ -339,7 +339,7 @@ bool Scheduler_c::registerClient( ElementBase_c* pc_client)
 /** unregister pointer to a already registered client
   * this function is called within destruction of new client instance
   */
-void Scheduler_c::unregisterClient( ElementBase_c* pc_client)
+void Scheduler_c::unregisterClient( Scheduler_Task_c* pc_client)
 {
   // delete from Queue if not empty
   if(!mc_taskQueue.empty()){
@@ -410,7 +410,7 @@ Scheduler_c::getCentralSchedulerAvailableExecTime()
 
 
 /**
-  call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
+  call the timeEvent for CanIo_c and all communication classes (derived from Scheduler_Task_c) which
   registered within Scheduler_c for periodic timeEvent.
   Define common trigger timestamp, so that distributed activities can be performed with
   common time base.
@@ -597,7 +597,7 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
   #endif
 }
 
-//!  This function  selects the next task(ElementBase_c Client), executes it and updates the task-list.
+//!  This function  selects the next task(Scheduler_Task_c Client), executes it and updates the task-list.
 //!  If no task can be immediately started with EarliestRetrigger-option,
 //!  the time to earliest triggerable task
 //!  is given to setDebugIdleInformation.
@@ -847,7 +847,7 @@ void Scheduler_c::printTaskList()
 //!  and sort Task to the right Position in the TaskQueue
 //! @param p_client -> Client in Scheduler_c TaskQueue
 //! @param ai16_newTimePeriod -> New Period will set for the Client by Scheduler_c
-bool Scheduler_c::changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t aui16_newTimePeriod ){
+bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , uint16_t aui16_newTimePeriod ){
 
   //Now calculate Delta and nextTriggerTime for Client
   int16_t i_deltaTime = aui16_newTimePeriod - pc_client->getTimePeriod()  ;
@@ -895,7 +895,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , in
 //! @param p_client -> Client in Scheduler_c TaskQueue
 //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
 //! @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
+bool  Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
   if ( mc_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;

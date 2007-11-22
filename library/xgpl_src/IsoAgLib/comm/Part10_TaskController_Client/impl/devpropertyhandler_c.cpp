@@ -80,22 +80,22 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "devpropertyhandler_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisend_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multireceive_c.h>
-#include <IsoAgLib/comm/Multipacket/istream_c.h>
-#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/istream_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 
 #ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/ISO_Terminal/impl/isoterminal_c.h>
-  #include <IsoAgLib/comm/ISO_Terminal/impl/vtclientservercommunication_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 #endif
 
 //define length of every attribute in deviceObject

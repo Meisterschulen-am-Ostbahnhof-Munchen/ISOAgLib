@@ -84,7 +84,7 @@
  ***************************************************************************/
 #include "filterbox_c.h"
 #include "canio_c.h"
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE) || defined(DEBUG_CAN_BUFFER_FILLING)
   #ifdef SYSTEM_PC

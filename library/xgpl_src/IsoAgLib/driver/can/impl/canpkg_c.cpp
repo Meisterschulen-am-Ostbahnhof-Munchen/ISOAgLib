@@ -80,7 +80,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "canpkg_c.h"
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

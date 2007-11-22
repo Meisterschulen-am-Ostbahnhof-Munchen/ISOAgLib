@@ -89,9 +89,9 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
 
-#include <IsoAgLib/util/impl/schedulerentry_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h>
 
 #include <list>
 
@@ -134,7 +134,7 @@ public:
   void startSystem();
 
   /**
-    call the timeEvent for CanIo_c and all communication classes (derived from ElementBase_c) which
+    call the timeEvent for CanIo_c and all communication classes (derived from Scheduler_Task_c) which
     registered within Scheduler_c for periodic timeEvent.
     Define common trigger timestamp, so that distributed activities can be performed with
     common time base.
@@ -213,19 +213,19 @@ public:
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
-  bool registerClient( ElementBase_c* pc_client);
+  bool registerClient( Scheduler_Task_c* pc_client);
   size_t cntClient() const { return mt_clientCnt;}
   /** unregister pointer to a already registered client
     * this function is called within destruction of new client instance
     */
-  void unregisterClient( ElementBase_c* pc_client);
+  void unregisterClient( Scheduler_Task_c* pc_client);
 
   //!  Calculate Delta from TimePeriod of a Client
   //!  Scheduler_c set (NOW + TimePeriod) as New Retrigger for Client
   //!  and sort Task to the right Position in the TaskQueue
   //! @param p_client -> Client in Scheduler_c TaskQueue
   //! @param ai16_newTimePeriod -> New Period will set for the Client by Scheduler_c
-  bool changeTimePeriodAndResortTask(ElementBase_c * pc_client  , uint16_t aui16_newTimePeriod );
+  bool changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , uint16_t aui16_newTimePeriod );
 
 
   //!  Uses Delta from TimePeriod of a Client
@@ -235,7 +235,7 @@ public:
   //! @param p_client -> Client in Scheduler_c TaskQueue
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
   //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(ElementBase_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
+  bool  changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
   //!  Uses Delta from TimePeriod of a Client
   //!  to put a Task to the right Position in the TaskQueue

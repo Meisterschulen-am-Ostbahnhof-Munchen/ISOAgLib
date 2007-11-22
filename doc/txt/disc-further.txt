@@ -1,6 +1,6 @@
 /*! \page disc_further Contact and Background Information on IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section QuestionsAnswers Questions, Answers and Discussion
 An Open Source project needs active users, who post their questions, hints and <b>answers to other questions</b>

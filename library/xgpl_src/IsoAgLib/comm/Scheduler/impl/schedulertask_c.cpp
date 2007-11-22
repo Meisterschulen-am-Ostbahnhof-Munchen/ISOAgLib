@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------
-// File    : SystemManagement/elementbase_c.cc
-// Class   : SystemManagement::ElementBase_c
+// File    : SystemManagement/schedulertask_c.cc
+// Class   : SystemManagement::Scheduler_Task_c
 // Project : xmi2code
 // Author  : Achim Spangler (a.spangler@osb-ag.de)
 // Created : Thu Apr 3 14:28:42 2003
@@ -10,7 +10,7 @@
 //   the Free Software Foundation; either version 2 of the License, or
 //   (at your option) any later version.
 //
-// $Id: elementbase_c.cpp 838 2004-11-05 21:30:12Z spangler $
+// $Id: schedulertask_c.cpp 838 2004-11-05 21:30:12Z spangler $
 //
 // $Log$
 //
@@ -27,15 +27,15 @@
 #endif
 
 
-#include "elementbase_c.h"
+#include "schedulertask_c.h"
 
 #define DEF_CONSOLIDATION_LIMIT_FOR_DELAY_1MSEC 3
 
 namespace __IsoAgLib {
 
-// ////////////////////////////// Operation 1398 : ElementBase_c
+// ////////////////////////////// Operation 1398 : Scheduler_Task_c
 
-ElementBase_c::ElementBase_c()
+Scheduler_Task_c::Scheduler_Task_c()
 : mui16_earlierInterval(75) //default 3/4 of timeperiod
 , mui16_latestInterval(50)   //default 1/2 of timeperiod
 , mi_executionTimeHealth( 0 )
@@ -64,7 +64,7 @@ ElementBase_c::ElementBase_c()
 //! Parameter:
 //! @param t_retriggerType: Bit-OR combination of [earliest|standard|latest]
 int32_t
-ElementBase_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
+Scheduler_Task_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
 {
 
   int32_t i32_now = System_c::getTime();
@@ -113,7 +113,7 @@ ElementBase_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
 //! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
 //!                              default value -1 == unrestricted time for execution.
 void
-ElementBase_c::timeEventPre(int32_t ai32_demandedExecEnd)
+Scheduler_Task_c::timeEventPre(int32_t ai32_demandedExecEnd)
 {
   /// store the demanded exec end
 
@@ -130,7 +130,7 @@ ElementBase_c::timeEventPre(int32_t ai32_demandedExecEnd)
 ///! (-> DO NOT call  if earlier return was forced).
 //!  Update the average execution time mui16_approxExecTime
 void
-ElementBase_c::timeEventPostUpdateStatistics()
+Scheduler_Task_c::timeEventPostUpdateStatistics()
 {
 
   const int32_t ci32_now = System_c::getTime();
@@ -189,7 +189,7 @@ ElementBase_c::timeEventPostUpdateStatistics()
 //!  on available time.
 //!  @return 0 == immediate return is forced, <0 == unrestricted time, else available time in [msec]
 int16_t
-ElementBase_c::getAvailableExecTime()
+Scheduler_Task_c::getAvailableExecTime()
 {
   if ( msi32_demandedExecEnd == 0 ) return 0;
   if ( msi32_demandedExecEnd == -1 ) return -1;
@@ -201,8 +201,8 @@ ElementBase_c::getAvailableExecTime()
 }
 
  /// static_attributes
-int32_t ElementBase_c::msi32_demandedExecEnd= -1;
-int32_t ElementBase_c::msi32_retriggerTime= 0;
+int32_t Scheduler_Task_c::msi32_demandedExecEnd= -1;
+int32_t Scheduler_Task_c::msi32_retriggerTime= 0;
 
 //!  this function is called at the end of system init, to set the trigger times to a suitable and realizable
 //!  start state, so that the scheduler can find
@@ -212,17 +212,17 @@ int32_t ElementBase_c::msi32_retriggerTime= 0;
 //!  devices with 1 second per device)
 //! Parameter:
 //! @param int32_StartTaskTime: individual time offset, to avoid concurring tasks (if starting at same time with same period, the scheduler has every round a time problem)
-void ElementBase_c::startTaskTiming(int32_t rint32_StartTaskTime)
+void Scheduler_Task_c::startTaskTiming(int32_t rint32_StartTaskTime)
 {
   mi32_nextRetriggerTime = rint32_StartTaskTime;
 }
 
-//!  Each from ElementBase_c derived class must set at its init
+//!  Each from Scheduler_Task_c derived class must set at its init
 //!  the needed time period between calls of timeEvent.
 //! Parameter:
 //! @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
 void
-ElementBase_c::setTimePeriod
+Scheduler_Task_c::setTimePeriod
 (uint16_t aui16_timePeriod)
 {
   mui16_timePeriod = aui16_timePeriod;
@@ -230,14 +230,14 @@ ElementBase_c::setTimePeriod
   updateEarlierAndLatestInterval();
   #ifdef DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE
-      << "ElementBase_c::setTimePeriod( " << aui16_timePeriod << ") zu Task "
+      << "Scheduler_Task_c::setTimePeriod( " << aui16_timePeriod << ") zu Task "
       << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
 
 //!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)
 int32_t
-ElementBase_c::getStdTimeToNextTrigger() const
+Scheduler_Task_c::getStdTimeToNextTrigger() const
 {
   int32_t i32_temp = ( mi32_nextRetriggerTime - System_c::getTime() );
   if ( i32_temp < -32767 ) return -32767;
@@ -251,13 +251,13 @@ ElementBase_c::getStdTimeToNextTrigger() const
 //! getTimeToNextTrigger(retriggerType_t)
 //! can be overloaded by Childclass for special condition
 void
-ElementBase_c::updateEarlierAndLatestInterval(){
+Scheduler_Task_c::updateEarlierAndLatestInterval(){
   mui16_earlierInterval = ( ( getTimePeriod() * 3) / 4);
   mui16_latestInterval   =  ( getTimePeriod() / 2) ;
 }
 
 //!  Virtual Destructor - just to avoid compiler warnings
-ElementBase_c::~ElementBase_c()
+Scheduler_Task_c::~Scheduler_Task_c()
 {
 	///b_isInitialized = false;
 }
@@ -268,7 +268,7 @@ ElementBase_c::~ElementBase_c()
 //! a minimum execution time, that should be saved after this item in the
 //! scheduler loop - some tasks might not be able to finish any sensible
 //! work in the default min exec time of 5msec
-uint16_t ElementBase_c::getForcedMinExecTime() const
+uint16_t Scheduler_Task_c::getForcedMinExecTime() const
 {
   return 5;
 }

@@ -87,11 +87,11 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "measuresubprog_c.h"
-#include <IsoAgLib/util/impl/elementbase_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
 #include <cstdlib>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-  #include <IsoAgLib/comm/Base/impl/tracmove_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
 #endif
 
 namespace __IsoAgLib {

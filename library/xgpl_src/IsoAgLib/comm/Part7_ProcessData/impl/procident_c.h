@@ -90,7 +90,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
 #include "generalcommand_c.h"

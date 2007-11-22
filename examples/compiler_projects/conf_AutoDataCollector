@@ -21,7 +21,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="IsoAgLib_Examples"
+REL_APP_PATH="examples"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )
@@ -41,7 +41,7 @@ REL_APP_PATH="IsoAgLib_Examples"
 APP_PATH_EXLCUDE="*/tutorial/*"
 # define filenames which shall be excluded in all directories
 # ( jokers like "*" are allowed - example "test*.cpp" )
-APP_SRC_EXCLUDE="imi.cpp test_hal.cpp tractor.cpp"
+APP_SRC_EXCLUDE="Imi.cpp test_hal.cpp tractor.cpp"
 
 # ###############################################################
 # Selection of Basic Project Settings

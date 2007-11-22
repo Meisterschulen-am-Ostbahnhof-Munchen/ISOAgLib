@@ -39,8 +39,8 @@ ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
 
 [Compiler]
 TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
-BrowseSetFile='tractorconsole.ptg'
-TagSetFile='tractorconsole.tag'
+BrowseSetFile='TractorConsole.ptg'
+TagSetFile='TractorConsole.tag'
 CompilerAddCmdEx='TASKING src','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING src',
 CompilerAddCmdEx='TASKING fle','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
@@ -53,7 +53,7 @@ CompilerAddCmdEx='TASKING asm','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%
 CompilerAddResponse='TASKING asm',
 CompilerAddCmdEx='TASKING cmp','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cmp',
-CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\c166\bin\xfw166.exe tractorconsole.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='$_cw_proj_hash_$','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"c:\programme\tasking\c166\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'c:\programme\tasking\c166\bin\xfw166.exe TractorConsole.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='$_cw_proj_hash_$',
 CompilerAddCmdEx='TASKING ic','"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"c:\programme\tasking\c166\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING ic',
@@ -116,7 +116,7 @@ VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
 [Project]
 ConfigSetLinkDBFilename='c:\programme\tasking\c166\bin\cwright.ldb'
 ConfigSetMarkDBFilename='c:\programme\tasking\c166\bin\cwright.mrk'
-ConfigSetSymbolDBFilename='tractorconsole.sbl'
+ConfigSetSymbolDBFilename='TractorConsole.sbl'
 EditSetPath=''
 
 [Files]
@@ -152,7 +152,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-..\..\..\IsoAgLib_Examples\tractor\tractorconsole\tractorconsole.cpp
+..\..\..\examples\tractor\TractorConsole\TractorConsole.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
@@ -234,13 +234,13 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tractor\tractorconsole;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_pm167
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tractor\TractorConsole;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_pm167
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_pm167
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\spangler\Projekte\IsoAgLib\compiler_projects\EDE\\tractorconsole
+ProjectDir=\home\spangler\Projekte\IsoAgLib\compiler_projects\EDE\\TractorConsole
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
@@ -273,7 +273,7 @@ CCompGlobal=0
 CpuType=CpuC167CS
 CompAlternativeTokens=1
 CompRtti=0
-CppDefine=__TSW_CPP_756__,SYSTEM_PM167,PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h
+CppDefine=__TSW_CPP_756__,SYSTEM_PM167,PRJ_USE_AUTOGEN_CONFIG=config_TractorConsole.h
 CMemModel=CModelLarge
 CEstimateUsk=0
 COutKeepSrc=0
@@ -281,7 +281,7 @@ CFragment=1
 CDispAllWarn=0
 CSupprSomeWarn=1
 CSupprWarn=91,68,135,144
-CDefine=__TSW_CPP_756__,SYSTEM_PM167,PRJ_USE_AUTOGEN_CONFIG=config_tractorconsole.h
+CDefine=__TSW_CPP_756__,SYSTEM_PM167,PRJ_USE_AUTOGEN_CONFIG=config_TractorConsole.h
 COptim=CAdvOptim
 COptimAliasTypeChk=0
 AsmGenDebug=1

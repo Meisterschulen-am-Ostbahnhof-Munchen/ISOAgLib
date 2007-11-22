@@ -82,7 +82,7 @@
 #include "vtobjectstring_c.h"
 #include "../ivtobjectstring_c.h"
 
-#include <IsoAgLib/comm/Multipacket/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 
 namespace IsoAgLib {
   // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple

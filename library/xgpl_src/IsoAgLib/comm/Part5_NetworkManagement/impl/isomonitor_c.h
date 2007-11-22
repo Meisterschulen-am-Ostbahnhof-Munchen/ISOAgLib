@@ -93,14 +93,14 @@
 #include <IsoAgLib/util/config.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/util/impl/elementbase_c.h>
-#include <IsoAgLib/util/impl/cancustomer_c.h>
+#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include "isosystempkg_c.h"
 #include "isoitem_c.h"
 #include "saclaimhandler_c.h"
 #include "isorequestpgnhandler_c.h"
-#include "../../impl/identitem_c.h"
+#include "identitem_c.h"
 
 #include <map>
 
@@ -125,9 +125,9 @@ typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorI
 typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
 
 class IsoMonitor_c;
-typedef SINGLETON_DERIVED_CLIENT1(IsoMonitor_c, ElementBase_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
+typedef SINGLETON_DERIVED_CLIENT1(IsoMonitor_c, Scheduler_Task_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
 // NEU SINGLETON TYPEDEF, wenn ISOMonitor auch IdentItem_c liste verwalten soll
-// typedef SINGLETON_DERIVED1(IsoMonitor_c, ElementBase_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
+// typedef SINGLETON_DERIVED1(IsoMonitor_c, Scheduler_Task_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
   @short Manager for members of Scheduler_c (IsoItem_c)
@@ -519,7 +519,7 @@ private:
      */
   void registerAccessFlt( void ) {getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );}
 
-  friend class SINGLETON_DERIVED(IsoMonitor_c,ElementBase_c);
+  friend class SINGLETON_DERIVED(IsoMonitor_c,Scheduler_Task_c);
 
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
   IsoMonitor_c( void );

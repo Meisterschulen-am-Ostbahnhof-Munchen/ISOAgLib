@@ -84,7 +84,7 @@ void close_rs232()
 /**
   init the RS232 interface
   @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
-        as configured in <Application_Config/isoaglib_config.h>
+        as configured in <IsoAgLib/isoaglib_config.h>
   @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
   DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
   @param bStoppbits amount of stop bits (1,2)

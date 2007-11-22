@@ -1,24 +1,24 @@
-# Microsoft Developer Studio Project File - Name="tractorinternalcan" - Package Owner=<4>
+# Microsoft Developer Studio Project File - Name="TractorInternalCan" - Package Owner=<4>
 # Microsoft Developer Studio Generated Build File, Format Version 6.00
 # ** NICHT BEARBEITEN **
 
 # TARGTYPE "Win32 (x86) Console Application" 0x0103
 
-CFG=tractorinternalcan - Win32 Debug
+CFG=TractorInternalCan - Win32 Debug
 !MESSAGE Dies ist kein gültiges Makefile. Zum Erstellen dieses Projekts mit NMAKE
 !MESSAGE verwenden Sie den Befehl "Makefile exportieren" und führen Sie den Befehl
 !MESSAGE
-!MESSAGE NMAKE /f "tractorinternalcan.mak".
+!MESSAGE NMAKE /f "TractorInternalCan.mak".
 !MESSAGE
 !MESSAGE Sie können beim Ausführen von NMAKE eine Konfiguration angeben
 !MESSAGE durch Definieren des Makros CFG in der Befehlszeile. Zum Beispiel:
 !MESSAGE
-!MESSAGE NMAKE /f "tractorinternalcan.mak" CFG="tractorinternalcan - Win32 Debug"
+!MESSAGE NMAKE /f "TractorInternalCan.mak" CFG="TractorInternalCan - Win32 Debug"
 !MESSAGE
 !MESSAGE Für die Konfiguration stehen zur Auswahl:
 !MESSAGE
-!MESSAGE "tractorinternalcan - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "tractorinternalcan - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "TractorInternalCan - Win32 Release" (basierend auf  "Win32 (x86) Console Application")
+!MESSAGE "TractorInternalCan - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
 !MESSAGE
 
 # Begin Project
@@ -28,7 +28,7 @@ CFG=tractorinternalcan - Win32 Debug
 CPP=cl.exe
 RSC=rc.exe
 
-!IF  "$(CFG)" == "tractorinternalcan - Win32 Release"
+!IF  "$(CFG)" == "TractorInternalCan - Win32 Release"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 0
@@ -41,9 +41,9 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /c
-# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan.h" /d "XL_HWTYPE_VIRTUAL"
-# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD CPP /nologo /W3 /GX /O2 /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\examples\tractor\TractorInternalCan" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /c
+# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan.h" /d "XL_HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -51,7 +51,7 @@ LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib /nologo /subsystem:console /machine:I386  /libpath:"C:\Development\Sontheim" /libpath:"C:\Development\Sontheim\Capitest" /libpath:"C:\STLport\lib"
 
-!ELSEIF  "$(CFG)" == "tractorinternalcan - Win32 Debug"
+!ELSEIF  "$(CFG)" == "TractorInternalCan - Win32 Debug"
 
 # PROP BASE Use_MFC 0
 # PROP BASE Use_Debug_Libraries 1
@@ -65,9 +65,9 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
-# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan.h" /d "XL_HWTYPE_VIRTUAL"
-# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_tractorinternalcan.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "C:\STLport\stlport" /I "..\..\.." /I "..\..\..\xgpl_src" /I "C:\Development\Sontheim" /I "C:\Development\Sontheim\Capitest" /I "..\..\..\examples\tractor\TractorInternalCan" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan.h" /D "XL_HWTYPE_VIRTUAL" /YX /FD /TP /GZ /c
+# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan.h" /d "XL_HWTYPE_VIRTUAL"
+# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan.h" /d "XL_HWTYPE_VIRTUAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -79,8 +79,8 @@ LINK32=link.exe
 
 # Begin Target
 
-# Name "tractorinternalcan - Win32 Release"
-# Name "tractorinternalcan - Win32 Debug"
+# Name "TractorInternalCan - Win32 Release"
+# Name "TractorInternalCan - Win32 Debug"
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -221,7 +221,7 @@ SOURCE=..\..\..\xgpl_src\supplementary_driver\hal\pc\rs232\target_extension_rs23
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\IsoAgLib_Examples\tractor\tractorinternalcan\tractorinternalcan.cpp
+SOURCE=..\..\..\examples\tractor\TractorInternalCan\TractorInternalCan.cpp
 # End Source File
 
 # End Group

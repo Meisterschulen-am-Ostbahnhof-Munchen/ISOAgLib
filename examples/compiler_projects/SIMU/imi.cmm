@@ -81,8 +81,8 @@
 	y.spath + ..\..\commercial_DIOS
 	
 	; Load Appplication and select path for the EXEC
-	y.spath + ..\EDE\imi_iso
-	d.load.Ieee ..\EDE\imi_iso\imi_iso.abs /Include /cfront /int16 /puzzled
+	y.spath + ..\EDE\Imi
+	d.load.Ieee ..\EDE\Imi\Imi.abs /Include /cfront /int16 /puzzled
 	
 	y.dem on on
 	sYmbol.DEMangle on on

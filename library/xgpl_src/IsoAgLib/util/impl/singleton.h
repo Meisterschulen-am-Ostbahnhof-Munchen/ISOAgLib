@@ -1,7 +1,7 @@
 #ifndef SINGLETON_H_
 #define SINGLETON_H_
 
-#include <Application_Config/isoaglib_config.h>
+#include <IsoAgLib/isoaglib_config.h>
 
 #include "../compiler_adaptation.h"
 

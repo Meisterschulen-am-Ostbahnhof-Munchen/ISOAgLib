@@ -54,7 +54,7 @@
 #define ICAN_CUSTOMER_H
 
 #include "impl/cancustomer_c.h"
-#include <IsoAgLib/util/icanpkgext_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
 
 namespace __IsoAgLib
 { // forward declarations

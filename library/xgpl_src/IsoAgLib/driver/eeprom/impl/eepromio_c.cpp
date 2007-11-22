@@ -84,7 +84,7 @@
 #include "eepromio_c.h"
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

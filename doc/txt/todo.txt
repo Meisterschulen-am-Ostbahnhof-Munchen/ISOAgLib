@@ -1,6 +1,6 @@
 /*! \page PageTodo Main TODO items
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section Todo Main TODO items
 The following items are at the TODO list. You are encouraged to

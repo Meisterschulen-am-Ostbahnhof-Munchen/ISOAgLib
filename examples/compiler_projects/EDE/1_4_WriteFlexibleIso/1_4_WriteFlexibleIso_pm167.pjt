@@ -148,7 +148,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\pm167\system\system_target_extensions.cpp
-..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_4_WriteFlexibleIso\1_4_WriteFlexibleIso.cpp
+..\..\..\examples\tutorial\1_ApplicationLayer\1_4_WriteFlexibleIso\1_4_WriteFlexibleIso.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
@@ -220,7 +220,7 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\1_BaseData\1_4_WriteFlexibleIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_pm167
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tutorial\1_ApplicationLayer\1_4_WriteFlexibleIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_pm167
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_pm167
 
 [Ede]

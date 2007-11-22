@@ -1,6 +1,6 @@
 /*! \page PageUsingProjects Known Projects that use IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section UsingProjects Known Projects that use IsoAgLib
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program

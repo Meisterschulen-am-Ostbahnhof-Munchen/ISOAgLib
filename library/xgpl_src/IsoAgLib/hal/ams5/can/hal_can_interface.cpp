@@ -12,7 +12,7 @@
 #include "hal_can_interface.h"
 #include "../commercial_BIOS/bios_ams5/ams_bios.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/hal/ams5/system/system.h>
 
 #include <list>

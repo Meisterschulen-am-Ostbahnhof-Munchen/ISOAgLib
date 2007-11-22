@@ -1,4 +1,4 @@
-#include <IsoAgLib/comm/ISO_Terminal/ivtincludes.h>
+#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>
 #include "simpleVTIsoPool2-handler-direct.inc"
 #include "simpleVTIsoPool2-variables.inc"
 #include "simpleVTIsoPool2-attributes.inc"

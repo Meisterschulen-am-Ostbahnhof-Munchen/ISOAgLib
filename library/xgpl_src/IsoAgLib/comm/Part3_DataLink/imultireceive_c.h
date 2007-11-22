@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/multireceive_c.h"
-#include <IsoAgLib/util/icancustomer_c.h>
+#include <IsoAgLib/driver/can/icancustomer_c.h>
 
 
 // Begin Namespace IsoAgLib

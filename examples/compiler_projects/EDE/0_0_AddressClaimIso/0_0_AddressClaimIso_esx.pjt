@@ -147,7 +147,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
 ..\..\..\xgpl_src\supplementary_driver\hal\virtualDrivers\rs232\rs232_over_can.cpp
-..\..\..\IsoAgLib_Examples\tutorial\0_SystemMgmt\0_0_AddressClaimIso\0_0_AddressClaimIso.cpp
+..\..\..\examples\tutorial\0_NetworkManagement\0_0_AddressClaimIso\0_0_AddressClaimIso.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
@@ -220,7 +220,7 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\0_SystemMgmt\0_0_AddressClaimIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tutorial\0_NetworkManagement\0_0_AddressClaimIso;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_esx
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_esx
 
 [Ede]

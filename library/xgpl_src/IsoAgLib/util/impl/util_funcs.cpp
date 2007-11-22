@@ -88,7 +88,7 @@
 #include "../iliberr_c.h"
 
 #ifdef USE_DATASTREAMS_IO
-#include <IsoAgLib/comm/Multipacket/impl/stream_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #endif
 
 

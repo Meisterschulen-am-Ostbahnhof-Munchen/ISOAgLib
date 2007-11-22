@@ -92,7 +92,7 @@
 #include <IsoAgLib/util/config.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 
 #include "isofilterbox_c.h"
 
@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 // forward declaration
 
 class IsoFilterManager_c;
-typedef SINGLETON_DERIVED(IsoFilterManager_c, ElementBase_c) SingletonIsoFilterManager_c;
+typedef SINGLETON_DERIVED(IsoFilterManager_c, Scheduler_Task_c) SingletonIsoFilterManager_c;
 /** this object manages ISO-Filters - those may contain references
     to ISOName's and are initelligent self-adapting can-filters
     @short Manager for handling of inserting/adapting FilterBox_c-instances
@@ -161,7 +161,7 @@ private: // Private attributes
 
   IsoFilterBox_vec mvec_isoFilterBox;
 
-  friend class SINGLETON_DERIVED (IsoFilterManager_c,ElementBase_c);
+  friend class SINGLETON_DERIVED (IsoFilterManager_c,Scheduler_Task_c);
 
   bool mb_alreadyInitialized;
 };

@@ -10,7 +10,7 @@
 /* *************************************************************************
  * This example main application is published NOT as GPL`ed Open Source,   *
  * so that you can include this source file in propietary closed projects. *
- * Everybody is encouraged to use the examples in the IsoAgLib_Examples    *
+ * Everybody is encouraged to use the examples in the examples    *
  * directory for a quick and easy start of development for IsoAgLib        *
  * applications.                                                           *
  *                                                                         *
@@ -195,13 +195,13 @@
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
- * This header is automatically included by xgpl_src/Application_Config/isoaglib_config.h
+ * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_2_2_LocalReadDataSimpleSetpointIso ( see also at \ref PrjConfig2_2_LocalReadDataSimpleSetpointIso ).
  *                                                                         */
 /* *************************************************************************/
 
-/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h
+/** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/IsoAgLib/isoaglib_config.h
     to include project specific configuration settings.
 		Set this define in the project file or Makefile of the whole
 		project, so that each source file is compiled with this setting
@@ -215,7 +215,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -224,11 +224,11 @@
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
-#include <IsoAgLib/comm/SystemMgmt/iidentitem_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisomonitor_c.h>
-#include <IsoAgLib/comm/Process/proc_c.h>
-#include <IsoAgLib/comm/Process/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h>
-#include <IsoAgLib/comm/Process/iprocess_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/iprocess_c.h>
 
 #include "devicedescription/DeviceDescription.xml-func.h"
 
@@ -291,7 +291,7 @@ int main()
 			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 			or
 			#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
-			in the header xgpl_src/Application_Config/isoaglib_config.h
+			in the header xgpl_src/IsoAgLib/isoaglib_config.h
 		- This can be also controlled during runtime with the function call:
 			getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
 			or

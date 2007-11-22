@@ -52,7 +52,7 @@
 #define _HAL_A2_CONFIG_H_
 
 // include target independent configs
-#include <Application_Config/isoaglib_config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/compiler_adaptation.h>
 
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0

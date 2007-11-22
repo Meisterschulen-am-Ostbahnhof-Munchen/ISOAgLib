@@ -147,7 +147,7 @@ EditSetPath=''
 ..\..\..\xgpl_src\IsoAgLib\hal\imi\can\hal_can_interface.cpp
 ..\..\..\xgpl_src\IsoAgLib\hal\imi\system\system_target_extensions.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-..\..\..\IsoAgLib_Examples\tutorial\4_SupplementaryDriver\\4_0_Eeprom\4_0_Eeprom.cpp
+..\..\..\examples\tutorial\4_SupplementaryDriver\\4_0_Eeprom\4_0_Eeprom.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h
@@ -224,7 +224,7 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\IsoAgLib_Examples\tutorial\4_SupplementaryDriver\\4_0_Eeprom;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_imi
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\examples\tutorial\4_SupplementaryDriver\\4_0_Eeprom;..\..\..;..\..\../xgpl_src;..\..\..\commercial_BIOS\bios_imi
 Libraries=c:\programme\tasking\c166\lib;..\..\..\commercial_BIOS\bios_imi
 
 [Ede]

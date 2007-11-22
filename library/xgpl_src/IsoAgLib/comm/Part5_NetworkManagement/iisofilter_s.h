@@ -55,9 +55,9 @@
 #ifndef IISO_FILTER_H
 #define IISO_FILTER_H
 
-#include <IsoAgLib/util/icancustomer_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isofiltermanager_c.h>
-#include <IsoAgLib/comm/SystemMgmt/ISO11783/iisoname_c.h>
+#include <IsoAgLib/driver/can/icancustomer_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
 namespace __IsoAgLib
 { // forward declarations

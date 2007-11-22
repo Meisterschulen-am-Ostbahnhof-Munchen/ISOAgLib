@@ -1,6 +1,6 @@
 # Filename: conf_3_3_VirtualTerminalPhase3
 # Configuration setting for tutorial example 3_3_VirtualTerminalPhase3
-# in the tutorial group 3_Terminal
+# in the tutorial group 3_VirtualTerminal_Client
 
 # ###############################################################
 # Project Identification
@@ -22,7 +22,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate directories by whitespace
-REL_APP_PATH="IsoAgLib_Examples/tutorial/3_Terminal/3_3_VirtualTerminalPhase3"
+REL_APP_PATH="examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )

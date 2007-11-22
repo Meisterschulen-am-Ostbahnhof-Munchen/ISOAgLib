@@ -67,7 +67,7 @@
 #include "hal_can_interface.h"
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include <IsoAgLib/util/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
 
 namespace __HAL 

@@ -85,7 +85,7 @@
 // +X2C includes
 #include "../ivtobject_c.h"
 #include "vttypes.h"
-#include  <IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.h>
+#include  <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 // ~X2C
 
 #ifdef DEBUG

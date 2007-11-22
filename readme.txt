@@ -1,6 +1,6 @@
 /*! \mainpage Overview on Documentation of IsoAgLib
 
-INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <table class="infoboxLinks" border="0">
 <tr><th>Quick-Links</th></tr>
 <tr><td>

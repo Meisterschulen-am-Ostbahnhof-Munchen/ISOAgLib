@@ -1,8 +1,8 @@
 
 
  \section PrjConfig0_0_AddressClaimIso List of configuration settings for 0_0_AddressClaimIso
- This is only a copy with doxygen ready comment blocks from the original file ../../../IsoAgLib_Examples/tutorial/0_SystemMgmt/0_0_AddressClaimIso/config_0_0_AddressClaimIso.h 
- This header is included by <IsoAgLib/xgpl_src/Application_Config/isoaglib_config.h> based on the
+ This is only a copy with doxygen ready comment blocks from the original file ../../../examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso/config_0_0_AddressClaimIso.h 
+ This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_0_0_AddressClaimIso.h ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_0_0_AddressClaimIso in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.

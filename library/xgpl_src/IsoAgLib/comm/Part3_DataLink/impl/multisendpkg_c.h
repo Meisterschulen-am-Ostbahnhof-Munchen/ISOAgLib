@@ -91,7 +91,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/util/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
 #ifdef USE_ISO_11783
   #include <IsoAgLib/driver/can/impl/ident_c.h>

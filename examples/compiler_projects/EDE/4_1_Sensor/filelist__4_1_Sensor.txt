@@ -31,7 +31,7 @@
 ..\..\..\xgpl_src\supplementary_driver\driver\sensor\impl\analogi_c.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\sensor\impl\counteri_c.cpp
 ..\..\..\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.cpp
-..\..\..\IsoAgLib_Examples\tutorial\4_SupplementaryDriver\\4_1_Sensor\4_1_Sensor.cpp
+..\..\..\examples\tutorial\4_SupplementaryDriver\\4_1_Sensor\4_1_Sensor.cpp
 ..\..\..\xgpl_src\IsoAgLib\util\icanpkg_c.h
 ..\..\..\xgpl_src\IsoAgLib\util\config.h
 ..\..\..\xgpl_src\IsoAgLib\util\iutil_funcs.h

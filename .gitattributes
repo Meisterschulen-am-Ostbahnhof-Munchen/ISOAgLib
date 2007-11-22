@@ -986,6 +986,8 @@ examples/compiler_projects/conf_6_0_VtThreadsEsxu -text
 examples/compiler_projects/conf_AutoDataCollector -text
 examples/compiler_projects/conf_CanServerMessenger -text
 examples/compiler_projects/conf_Imi -text
+examples/compiler_projects/conf_PcCompilation -text
+examples/compiler_projects/conf_PcCompilationSysNotEnHal -text
 examples/compiler_projects/conf_TractorConsole -text
 examples/compiler_projects/conf_TractorInternalCan -text
 examples/compiler_projects/iar_renesas/isoaglib.dep -text
@@ -1002,6 +1004,10 @@ examples/src/CanServerMessenger/CanServerMessenger.cpp -text
 examples/src/CanServerMessenger/TutPrjDescCanServerMessenger.txt -text
 examples/src/CanServerMessenger/config_CanServerMessenger.h -text
 examples/src/CanServerMessenger/version.h -text
+examples/src/GeneralTest/PcCompilation/PcCompilation.cpp -text
+examples/src/GeneralTest/PcCompilation/config_PcCompilation.h -text
+examples/src/GeneralTest/PcCompilation/config_PcCompilationSysNotEnHal.h -text
+examples/src/GeneralTest/PcCompilation/version.h -text
 examples/src/Imi/TutPrjDescimi_iso.txt -text
 examples/src/Imi/config_imi_iso.h -text
 examples/src/Imi/version.h -text

@@ -38,8 +38,8 @@
 
 #include "gpsmanager_c.h"
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
-#include <IsoAgLib/comm/Process/igps_c.h>
-#include <IsoAgLib/comm/Base/itimeposgps_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/igps_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h>
 
 GpsManager_c::GpsManager_c()
 {
