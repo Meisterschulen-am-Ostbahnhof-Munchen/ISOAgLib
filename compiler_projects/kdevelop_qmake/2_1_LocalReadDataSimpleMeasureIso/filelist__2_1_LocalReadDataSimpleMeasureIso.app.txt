@@ -1,1 +1,0 @@
-../../../IsoAgLib_Examples/tutorial/2_ProcessData/2_1_LocalReadDataSimpleMeasureIso/2_1_LocalReadDataSimpleMeasureIso.cpp
