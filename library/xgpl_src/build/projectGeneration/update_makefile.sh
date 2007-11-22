@@ -934,6 +934,7 @@ create_utest_filelist()
 
 	# find unit test files (*-test.h)
 	rm -f .exec.tmp
+
 	echo "find ../../../ $HDR_UTEST_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_PURE" > .exec.tmp
 	sh .exec.tmp
 
@@ -1637,8 +1638,11 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 # which is OpenSource and is based on MinGW - i.e. gcc for Win32
 # URL http://www.bloodshed.net/dev/devcpp.html
 create_DevCCPrj() {
-  DEV_PRJ_DIR="$1/../Dev-C++/$PROJECT"
+  DEV_PRJ_DIR="$1$PROJECT"
+
   # echo "Create Projekt file for Dev-C++ in $DEV_PRJ_DIR"
+
+
   mkdir -p $DEV_PRJ_DIR/objects
   cd $DEV_PRJ_DIR
 	# remove some file lists, which are not used for Dev-C++
@@ -1669,7 +1673,7 @@ create_DevCCPrj() {
 	ObjFiles=
 	ENDOFHEADERA
 
-	DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
+	DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_-DCAN_DRIVER_SOCKET_@@_'
 	INCLUDE_DIR_LINE="../$ISO_AG_LIB_INSIDE;$ISO_AG_LIB_INSIDE/library/xgpl_src"
     for EACH_REL_APP_PATH in $REL_APP_PATH ; do
 	INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH"
@@ -1697,6 +1701,12 @@ create_DevCCPrj() {
 		DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
 		DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
 	fi
+
+   if [ -n "$USE_WIN32_ADDITIONAL_LIBS" ] ; then
+      for ADDITIONAL_LIB in $USE_WIN32_ADDITIONAL_LIBS ; do 
+          LIB_FILE_LINE=$LIB_FILE_LINE$ADDITIONAL_LIB"_@@_"
+      done
+   fi
 
 	echo -n "Includes=$INCLUDE_DIR_LINE" >> $PROJECT_FILE_NAME
 	for SingleInclPath in $PRJ_INCLUDE_PATH ; do
@@ -2114,28 +2124,28 @@ perform_everything()
 
   if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_PC"
-  	GENERATE_FILES_ROOT_DIR="$1/../Dev-C++/"
+  	GENERATE_FILES_ROOT_DIR="$1/Dev-C++/"
   elif [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_PC"
   	GENERATE_FILES_ROOT_DIR="$1/kdevelop_make/"
   elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_ESX"
-  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  	GENERATE_FILES_ROOT_DIR="$1/EDE/"
   elif [ $USE_TARGET_SYSTEM = "esxu" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_ESXu"
-  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  	GENERATE_FILES_ROOT_DIR="$1/EDE/"
   elif [ $USE_TARGET_SYSTEM = "c2c" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_C2C"
-  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  	GENERATE_FILES_ROOT_DIR="$1/EDE/"
   elif [ $USE_TARGET_SYSTEM = "imi" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_IMI"
-  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  	GENERATE_FILES_ROOT_DIR="$1/EDE/"
   elif [ $USE_TARGET_SYSTEM = "pm167" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_PM167"
-  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  	GENERATE_FILES_ROOT_DIR="$1/EDE/"
   elif [ $USE_TARGET_SYSTEM = "Dj1" ] ; then
 		USE_SYSTEM_DEFINE="SYSTEM_DJ1"
-  	GENERATE_FILES_ROOT_DIR="$1/../EDE/"
+  	GENERATE_FILES_ROOT_DIR="$1/EDE/"
   fi
   GENERATE_FILES_ROOT_DIR=`echo "$GENERATE_FILES_ROOT_DIR" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]*\\\.\.//g'`
   # echo "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
