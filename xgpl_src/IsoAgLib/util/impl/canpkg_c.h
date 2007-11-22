@@ -169,7 +169,7 @@ public:
       default defined in isoaglib_config.h
   */
   static void setIdentWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
-    {c_ident.setWord(aui16_val, aui8_pos, at_type);}
+    {msc_ident.setWord(aui16_val, aui8_pos, at_type);}
 
   /**
     set type of ident
