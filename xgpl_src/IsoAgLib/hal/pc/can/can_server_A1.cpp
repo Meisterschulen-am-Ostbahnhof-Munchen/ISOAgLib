@@ -58,6 +58,7 @@
 #include <sys/ioctl.h>
 #include <linux/version.h>
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
 struct canMsgA1_s {

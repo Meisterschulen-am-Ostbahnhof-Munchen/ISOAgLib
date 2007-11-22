@@ -86,6 +86,7 @@
 #include <time.h>
 #include <errno.h>
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
 using namespace __HAL;

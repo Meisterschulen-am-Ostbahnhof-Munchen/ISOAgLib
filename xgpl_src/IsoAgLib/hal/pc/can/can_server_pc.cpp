@@ -56,6 +56,7 @@
   #include <windows.h>
 #endif
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
 static bool  canBusIsOpen[cui32_maxCanBusCnt];

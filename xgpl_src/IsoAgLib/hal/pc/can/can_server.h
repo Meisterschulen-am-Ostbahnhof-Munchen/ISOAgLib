@@ -64,7 +64,11 @@
 #include <list>
 #include <string>
 #include <time.h>
-#include <pthread.h>
+
+#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
+  #include <pthread.h>
+#endif
+
 #include <sys/types.h>
 #ifndef WIN32
  #include <sys/time.h>
@@ -271,6 +275,8 @@ public:
 
 
 
+#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
+
 // server specific data
 class server_c {
 public:
@@ -313,6 +319,7 @@ public:
 extern std::list<int32_t> list_sendTimeStamps;
 void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
 int32_t getTime();
+#endif
 
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
@@ -335,6 +342,8 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
 } // end namespace
 
 
+#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
+
 /////////////////////////////////////////////////////////////////////////
 // Driver Function Declarations
 
@@ -350,5 +359,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
 bool     isBusOpen(uint8_t ui8_bus);
 
 void addSendTimeStampToList(client_c *ps_client, int32_t i32_sendTimeStamp);
+#endif
+
 
 #endif

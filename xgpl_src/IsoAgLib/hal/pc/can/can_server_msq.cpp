@@ -82,6 +82,7 @@
 #include <pthread.h>
 #include <linux/version.h>
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
 #ifdef DEBUG

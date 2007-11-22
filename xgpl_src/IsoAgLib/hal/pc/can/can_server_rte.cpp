@@ -55,6 +55,7 @@
 
 #include "rte_global.h"
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
 // RTE Includes

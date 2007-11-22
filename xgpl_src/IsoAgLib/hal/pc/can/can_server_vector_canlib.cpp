@@ -66,6 +66,7 @@ extern "C" {
 
 #endif
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
 #define HWTYPE_AUTO 1000
