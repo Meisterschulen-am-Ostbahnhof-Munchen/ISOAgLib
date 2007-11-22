@@ -3,7 +3,7 @@
 /ChangeLog -text
 /Doxyfile -text
 IsoAgLib_Examples/CanServerMessenger/CanServerMessenger.cpp -text
-IsoAgLib_Examples/CanServerMessenger/CanServerMessenger/TutPrjDescCanServerMessenger.txt -text
+IsoAgLib_Examples/CanServerMessenger/TutPrjDescCanServerMessenger.txt -text
 IsoAgLib_Examples/CanServerMessenger/config_CanServerMessenger.h -text
 IsoAgLib_Examples/CanServerMessenger/version.h -text
 IsoAgLib_Examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.dev -text
