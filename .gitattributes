@@ -2196,10 +2196,6 @@ compiler_projects/kdevelop_qmake/CanServerMessenger/filelist__CanServerMessenger
 compiler_projects/kdevelop_qmake/CanServerMessenger/filelist__CanServerMessenger.utest.runner.txt -text
 compiler_projects/kdevelop_qmake/CanServerMessenger/filelist__CanServerMessenger.utest.txt -text
 compiler_projects/kdevelop_qmake/CanServerMessenger/filelist__CanServerMessenger__pc_linux__linux_server_client_A1__simulating-doc.txt -text
-compiler_projects/kdevelop_qmake/IsoAgLib/ImiIsoRte.kdevelop -text
-compiler_projects/kdevelop_qmake/IsoAgLib/ImiIsoRte.kdevelop.filelist -text
-compiler_projects/kdevelop_qmake/IsoAgLib/IsoAgLib/templates/cpp_template -text
-compiler_projects/kdevelop_qmake/IsoAgLib/IsoAgLib/templates/header_template -text
 compiler_projects/kdevelop_qmake/imi_iso/Makefile -text
 compiler_projects/kdevelop_qmake/imi_iso/MakefileApp -text
 compiler_projects/kdevelop_qmake/imi_iso/MakefileApp__linux_server_client_A1__rte -text
