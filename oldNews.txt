@@ -1,6 +1,5 @@
 /*! \page PageOldNews Changelog of IsoAgLib
 
-
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section OldNews Archive of old news

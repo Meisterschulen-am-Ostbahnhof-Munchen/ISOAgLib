@@ -1020,6 +1020,7 @@ body ul>li {
 /*
   DOWNLOAD TABLE
 */
+table.download { border:1px dotted gray; }
 table.download th {
   font-size:90%;
   border-bottom: 1px solid gray;
@@ -1029,6 +1030,8 @@ table.download td {
 /*  border-bottom: 1px solid gray;*/
   padding-top:5px;
 }
+
+table.infoboxLinks, table.infobox a { font-weight:normal; }
 
 table.infoboxLinks {
   border:1px dashed #66CC66; 
@@ -1043,7 +1046,20 @@ table.infobox {
   padding:5px;
 }
 
+
+
 #sitemap ul #menu ul { 
   background:#fff; 
 }
 div#sitemap { float:left; margin-bottom:1.5em;}
+
+div#sitemap ul li {
+  margin-top:1em;
+}
+div#sitemap ul ul li {
+  margin-top:0;
+}
+
+div#sitemap ul ul a {
+  font-weight:normal;
+}

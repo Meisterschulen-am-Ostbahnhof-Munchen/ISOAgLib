@@ -8,7 +8,7 @@ This Open Source project is published under License Conditions which are taken f
 This license is defined by the FSF as GPL-compatible according to <a href="http://www.fsf.org/licenses/license-list.html">a list of Open Source licenses</a> .
 Red Hat, the original creator of the eCos, and the current maintainers of this project aimed at the following targets, as cited from their
 <a href="http://ecos.sourceware.org/license-overview.html">license overview page</a>:
-<table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
+<table style="background:#6dd; border: dotted 1px gray; margin-top:1em;" border=0 cellspacing=2 cellpadding=0>
 <tr><td>
 The goal of the license is to serve the eCos user community as a whole. It allows all eCos users to develop products without paying anybody anything, no matter how many developers are working on the product or how many units will be shipped. The license also guarantees that the eCos source code will always be freely available. This applies not only to the core eCos code itself but also to any changes that anybody makes to the core. In particular, it should prevent any company or individual contributing code to the system and then later claiming that all eCos users are now guilty of copyright or patent infringements and have to pay royalties. It should also prevent any company from making some small improvements, calling the result a completely new system, and releasing this under a new and less generous license.
 

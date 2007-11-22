@@ -74,7 +74,7 @@ Installation Steps:
 		- you are finshed! ( no compile or install of sources needed )
 	- with IOSTREAMS version of STLport:<br>
 		use installation overview from http://doc.ece.uci.edu/~mlai/notes/stlport_in_vc.html
-		( the BAT vcvars32.bat is not located at C:\\Program Files\Microsoft Visual Studio\VC98 but in C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin )
+		( the BAT vcvars32.bat is not located at C:\\Program Files\\Microsoft Visual Studio\\VC98 but in C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin )
 -# look at STLport own documentation from local installation file://C:/STLport/doc/install.html and file://C:/STLport/doc/select_io.html for further information
 -# make shure that you adapt the feature setup files to reflect a differing path to your STLport installation ( C:\\STLport is default setting )
 

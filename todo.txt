@@ -17,7 +17,7 @@ help contributing for their implementation with source code.
 
 
 <b>Important</b>
-<table width="100%" border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
+<table border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
 <tr><td>
 Each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
 "fix" the email adress - this "manupulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a

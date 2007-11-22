@@ -27,7 +27,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 More information on commercial backing of ISO<i><sub>AgLib</sub></i> can be obtained <a href="http://www.isoaglib.com/">here</a>.
 
 
-\subsection MaintainersExtensions New customer and researcher only feature area
+\subsection MaintainersExtensions Exclusive feature area for new customers and researchers
 Even if ISO<i><sub>AgLib</sub></i> provides already most of the features, a agricultural device
 may need, there are still some functions, that are missing or that could ease application
 development. But their implementation can only be done, when people of the user community

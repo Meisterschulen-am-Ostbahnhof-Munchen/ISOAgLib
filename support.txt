@@ -4,7 +4,7 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
 \section Support Support Possibilities
 Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with
-important starting information, the learning afford to get a running tutorial example is not completly neglectible ( reading the documentation
+important starting information, the learning effort to get a running tutorial example is not completly neglectible ( reading the documentation
 requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
 
 \subsection Workshop Tutorial Workshops for Development with IsoAgLib

@@ -2,7 +2,7 @@
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 <table class="infoboxLinks" border="0">
-<tr><th>Most often needed lookup-links</th></tr>
+<tr><th>Quick-Links</th></tr>
 <tr><td>
 \ref XMLspec
 </td></tr>
@@ -14,13 +14,25 @@ INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 <table class="infobox" border="0">
 <tr><th>Overview</th></tr>
 <tr><td>The following parts are described in this section:
-<ul><li>\ref Home
-</li><li>\ref LatestNews
-</li><li>\ref Acknowledgements
-</li><li>\ref Authors
-</li></ul>
+    <ul><li> \ref Home
+    </li><li>\ref LatestNews
+    </li><li>\ref Acknowledgements
+    </li><li>\ref Authors
+    </li></ul>
 </td></tr>
 </table>
+<br/>
+<table class="infobox" border="0">
+<tr><th>See also</th></tr>
+<tr><td>
+    <ul><li> \ref Home
+    </li><li>\ref LatestNews
+    </li><li>\ref Acknowledgements
+    </li><li>\ref Authors
+    </li></ul>
+</td></tr>
+</table>
+
 
 \section Home Welcome to IsoAgLib.org!
 
@@ -88,7 +100,7 @@ to develop applications using IsoAglib.
 </b>
 
 \section Acknowledgements Acknowledgements
-\subsection InitialFundingDfg Thanks to DFG funded research group IKB Düuernast
+\subsection InitialFundingDfg Thanks to DFG funded research group IKB Duernast
 The initial creation of the ISO<i><sub>AgLib</sub></i> was enabled by the research project
 <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
 			- Crop Production Engineering</a> .

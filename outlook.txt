@@ -14,7 +14,7 @@ ISO 11783 for its machines. The author <a href="mailto:Achim.Spangler@gmx:de">Ac
 
 \section FurtherExamples Examples
 \image html Diagramme/IsoAgLib-imi.gif
-The ISO<i><sub>AgLib</sub></i> is used at the experimental station Dürnast to document the work of all tractor dependent work
+The ISO<i><sub>AgLib</sub></i> is used at the experimental station D&uuml;rnast to document the work of all tractor dependent work
 including simple soil cultivation implements. Small computing devices, which are called "Implement Indicator" (IMI) were
 developed for this purpose based on the ISO<i><sub>AgLib</sub></i>. A ISO<i><sub>AgLib</sub></i>
  based Task-Controller records all available process data information from

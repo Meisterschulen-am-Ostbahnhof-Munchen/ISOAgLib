@@ -1,8 +1,8 @@
-/*! \page PageUsingProjects List of Known Projects which use IsoAgLib
+/*! \page PageUsingProjects Known Projects that use IsoAgLib
 
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
-\section UsingProjects List of Known Projects which use IsoAgLib
+\section UsingProjects Known Projects that use IsoAgLib
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
 ( or a work based on it - see GPL &sect;3 ) with some information on the used library, it would be quite kind to
 inform additionally the authors of your project, so that each using project can be listed here.

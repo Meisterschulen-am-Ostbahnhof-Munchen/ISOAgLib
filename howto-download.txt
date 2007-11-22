@@ -1,51 +1,64 @@
 /*! \page HowtoDownloadPage Documentation and Download of IsoAgLib
 
-
 INCLUDE_mainHeaderWithNavbar.txt_INCLUDE
 
+<table class="infobox" border="0">
+<tr><th>Overview</th></tr>
+<tr><td>The following parts are described in this section:
+<ul><li>\ref HowtoDownload
+</li><li>\ref HowtoAccessRepository
+</li><li>\ref HowtoContribute
+</li><li>\ref HowtoGetHelp
+</li></ul>
+</td></tr>
+</table>
 
-\section HowtoDownload HOWTO Identify and download needed archives
+
+
+
+\section HowtoDownload Downloading the Needed Archives
 
 As the ISO<i><sub>AgLib</sub></i> provides several functions which are supplementary
 or only relevant for specific conditions, the download is seperated in several
 parts.
 
-<table width="100%" border="0" cellspacing="0" cellpadding="2">
-<tr><td valign="Top" nowrap="true" >Content Description</td>
-	<td valign="Top" nowrap="true" >Archive</td>
-	<td valign="Top" nowrap="true" >Size [KByte]</td>
+<table class="download" border="0" cellspacing="0" cellpadding="2">
+<tr>
+	<th nowrap="true">Archive</th>
+    <th nowrap="true">Content Description</th>   
+	<th nowrap="true">Size (kByte)</th>
 </tr>
-<tr><td>Core components which are needed for almost all use cases</td>
-	<td>http://www.isoaglib.org/Download/coreArchiv-1.2.0.zip</td>
-	<td>4152</td>
+<tr><td><a href="http://www.isoaglib.org/Download/coreArchiv-1.2.0.zip">coreArchiv-1.2.0.zip</a></td>
+    <td>Core components which are needed for almost all use cases</td>
+	<td align="center"> 4152 </td>
 </tr>
-<tr><td>Documentation ( Can also be recreated with Doxygen )</td>
-	<td>http://www.isoaglib.org/Download/generatedHtmlDocuList-1.2.0.zip</td>
-	<td>13125</td>
+<tr><td><a href="http://www.isoaglib.org/Download/generatedHtmlDocuList-1.2.0.zip">generatedHtmlDocuList-1.2.0.zip</a></td>
+    <td>Documentation (Can also be recreated with Doxygen like described below)</td>
+	<td align="center"> 13125 </td>
 </tr>
-<tr><td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
-	<td>http://www.isoaglib.org/Download/isoArchiv-1.2.0.zip</td>
-	<td>408</td>
+<tr><td><a href="http://www.isoaglib.org/Download/isoArchiv-1.2.0.zip">isoArchiv-1.2.0.zip</a></td>
+    <td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
+	<td align="center"> 408 </td>
 </tr>
-<tr><td>Data repository class with cached tractor information ( Base Data like tractor speed )</td>
-	<td>http://www.isoaglib.org/Download/baseArchiv-1.2.0.zip</td>
-	<td>28</td>
+<tr><td><a href="http://www.isoaglib.org/Download/baseArchiv-1.2.0.zip">baseArchiv-1.2.0.zip</a></td>
+    <td>Data repository class with cached tractor information (Base Data like tractor speed)</td>
+	<td align="center"> 28 </td>
 </tr>
-<tr><td>Process Data support ( local and remote process data with several variants for different feature sets / resource requirements</td>
-	<td>http://www.isoaglib.org/Download/procArchiv-1.2.0.zip</td>
-	<td>276</td>
+<tr><td><a href="http://www.isoaglib.org/Download/procArchiv-1.2.0.zip">procArchiv-1.2.0.zip</a></td>
+    <td>Process Data support (local and remote process data with several variants for different feature sets / resource requirements)</td>
+	<td align="center"> 276 </td>
 </tr>
-<tr><td>Supplementary driver with object oriented modelling of RS232 ( access functions like C++ iostreams )</td>
-	<td>http://www.isoaglib.org/Download/supplRs232Archiv-1.2.0.zip</td>
-	<td>44</td>
+<tr><td><a href="http://www.isoaglib.org/Download/supplRs232Archiv-1.2.0.zip">supplRs232Archiv-1.2.0.zip</a></td>
+    <td>Supplementary driver with object oriented modelling of RS232 (access functions like C++ iostreams)</td>
+	<td align="center"> 44</td>
 </tr>
-<tr><td>Supplementary driver with object oriented modelling of Actors ( effective diagnose based on properties for allowed current range )</td>
-	<td>http://www.isoaglib.org/Download/supplActorArchiv-1.2.0.zip</td>
-	<td>36</td>
+<tr><td><a href="http://www.isoaglib.org/Download/supplActorArchiv-1.2.0.zip">supplActorArchiv-1.2.0.zip</a></td>
+    <td>Supplementary driver with object oriented modelling of Actors (effective diagnose based on properties for allowed current range)</td>
+	<td align="center"> 36 </td>
 </tr>
-<tr><td>Supplementary driver with object oriented modelling of Sensors ( Digital and Analog Input )</td>
-	<td>http://www.isoaglib.org/Download/supplSensorArchiv-1.2.0.zip</td>
-	<td>80</td>
+<tr><td><a href="http://www.isoaglib.org/Download/supplSensorArchiv-1.2.0.zip">supplSensorArchiv-1.2.0.zip</a></td>
+    <td>Supplementary driver with object oriented modelling of Sensors (Digital and Analog Input)</td>
+	<td align="center"> 80 </td>
 </tr>
 </table>
 
@@ -55,7 +68,19 @@ of IO channels with One-Channel-One-Instance relation. These driver extensions a
 
 All archives should be extracted from the same directory.
 
-\section HowtoAccessRepository HOWTO Access the Version Management Repository
+\subsection HowtoCreateDoc Rebuilding the Documentation with Doxygen
+
+If you don't want to download the big archive with the generated documentation
+( <b>13 MByte</b> ), you can simply recreate the documentation based on the downloaded
+source and the contained informative text files.
+<b>Steps:</b><ol>
+<li>Download and install Doxygen from http://www.stack.nl/~dimitri/doxygen/ for your specific plattform
+<li>Download and install graphviz with the tool "dot" from http://www.graphviz.org/Download.php
+<li>Let Doxygen create the documentation with the config file "Doxyfile" which is located in the project root directory
+</ol>
+
+
+\section HowtoAccessRepository Accessing the Version Management Repository
 The sources of the ISO<i><sub>AgLib</sub></i> managed by the version management system
 <a href="http://subversion.tigris.org">Subversion</a> which is developed as a replacement for CVS.
 The ISO<i><sub>AgLib</sub></i> repository can be accessed in read-only mode with anonymous access, so that no
@@ -89,7 +114,8 @@ If your company proxy blocks the needed WebDAV commands by default, and you can'
 <a href="http://subversion.tigris.org/project_faq.html%23proxy#proxy">there</a> for a description of the needed WebDAV commands. Maybe
 you can ask your proxy administrator to allow these commands to pass thru.
 
-\section HowtoContribute HOWTO contribute to the project
+
+\section HowtoContribute Contributing to the Project
 Each Open Source project needs the input of an active user community to get optimal results.
 Herby not only source code contributions are needed. For example tutorial examples and documentation text
 could be enhanced, corrected and extended by users who don't feell familiar engough to contribute code.
@@ -125,7 +151,7 @@ process of an update is logged. It indicates also files where it was able to per
 have a look in these files to, to make shure, the merge was really clean ( the maintainers of ISO<i><sub>AgLib</sub></i> didn't have
 such problems so far  ).
 
-\section HowtoGetHelp HOWTO get help
+\section HowtoGetHelp Getting Help
 As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
 So either you sign a support contract to get personal support.<br>
 Or you direct your help requests to the community of ISO<i><sub>AgLib</sub></i> users and developers, who can be reached by the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list</a>
@@ -135,18 +161,7 @@ and send mail <a href="mailto:isoaglib@linux90:idvnet:de">there</a> ). This way 
 without the dependency on the maintainers. New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
 Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
 Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
-This works really fine in several other Open Source projects.
+This works really fine in several other Open  Source projects.
 
-
-\section HowtoCreateDoc HOWTO Recreate Documentation with Doxygen
-
-If you don't want to download the big archive with the generated documentation
-( <b>13 MByte</b> ), you can simply recreate the documentation based on the downloaded
-source and the contained informative text files.
-<b>Steps:</b><ol>
-<li>Download and install Doxygen from http://www.stack.nl/~dimitri/doxygen/ for your specific plattform
-<li>Download and install graphviz with the tool "dot" from http://www.graphviz.org/Download.php
-<li>Let Doxygen create the documentation with the config file "Doxyfile" which is located in the project root directory
-</ol>
 
 */
