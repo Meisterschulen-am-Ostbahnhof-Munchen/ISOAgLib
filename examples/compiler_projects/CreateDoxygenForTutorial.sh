@@ -6,7 +6,7 @@ DOXYGEN_EXPORT_DIR="../../../../examples/src/Tutorials"
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 #TARGET_LIST="pc_linux"
-CAN_LIST="simulating:sys:vector_canlib:vector_xl_drv_lib:sontheim:rte:linux_server_client_A1:linux_server_client_pcan"
+CAN_LIST="simulating:sys:socket_server:msq_server"
 RS232_LIST="simulating:sys:rte"
 #CAN_LIST="sontheim"
 #RS232_LIST="simulating"
@@ -31,41 +31,22 @@ for conf_example in $EXAMPLE_LIST ; do
   	  for rs232_drv in $RS232_LIST ; do
         if [ $can_drv = "sys" ] ; then
 	        if    [ $target = "pc_linux" ] ; then
-      		  can_drv="linux_server_client"
+      		  can_drv="msq_server"
           elif [ $target = "pc_win32" ] ; then
       		  continue
           fi
         fi
-        if [ $can_drv = "vector_canlib" ] ; then
-	        if    [ $target != "pc_win32" ] ; then
-      		  continue
-          fi
-        fi
-        if [ $can_drv = "vector_xl_drv_lib" ] ; then
-	        if    [ $target != "pc_win32" ] ; then
-      		  continue
-          fi
-        fi
-        if [ $can_drv = "sontheim" ] ; then
-	        if    [ $target != "pc_win32" ] ; then
-      		  continue
-          fi
-        fi
-        if [ $can_drv = "rte" ] ; then
-	        if    [ $target != "pc_linux" ] ; then
-      		  continue
-          fi
-        fi
-        if test $can_drv = "linux_server_client_A1" -o  $can_drv = "linux_server_client_pcan" ; then
-	        if    [ $target != "pc_linux" ] ; then
-      		  continue
-          fi
-        fi
 
+        if [ $can_drv = "msq_server" ] ; then
+	        if    [ $target != "pc_linux" ] ; then
+      		  continue
+          fi
+        fi
 
         if test $rs232_drv = "rte" -a $target != "pc_linux" ; then
       	  continue
         fi
+
         case "$target" in
       	  pc*)
           ;;
