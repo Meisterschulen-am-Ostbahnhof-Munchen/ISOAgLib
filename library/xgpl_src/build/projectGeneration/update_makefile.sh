@@ -1646,7 +1646,7 @@ create_DevCCPrj() {
   mkdir -p $DEV_PRJ_DIR/objects
   cd $DEV_PRJ_DIR
 	# remove some file lists, which are not used for Dev-C++
-	rm $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
+	rm $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE &>/dev/null
 
   # org test
 	PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dev"
@@ -1945,9 +1945,7 @@ create_VCPrj()
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
 	# remove some file lists, which are not used for Dev-C++
-	rm "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
-
-
+  rm "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE" &>/dev/null
 
   USE_DEFINES=`echo " /D "'"'"$USE_SYSTEM_DEFINE"'"' " /D "'"'"PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"'"' | sed -e 's/SYSTEM_PC/SYSTEM_PC_VC/g'`
 	USE_d_DEFINES=`echo $USE_DEFINES | sed -e 's#/D#/d#g'`
