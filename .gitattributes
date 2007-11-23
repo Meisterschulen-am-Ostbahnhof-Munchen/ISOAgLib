@@ -990,6 +990,7 @@ examples/compiler_projects/conf_Imi -text
 examples/compiler_projects/conf_PcCompilation -text
 examples/compiler_projects/conf_PcCompilationMultipleInst -text
 examples/compiler_projects/conf_PcCompilationSysNotEnHal -text
+examples/compiler_projects/conf_PcCompilationSysNotEnHalMultipleInst -text
 examples/compiler_projects/conf_TractorConsole -text
 examples/compiler_projects/conf_TractorInternalCan -text
 examples/compiler_projects/iar_renesas/isoaglib.dep -text
