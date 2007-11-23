@@ -811,7 +811,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
   }
   if ( openBus >= 0 )
   { // an open CAN BUS found
-    /** @todo how to handle TWO open BUSSes -> how can wait be called then */
+    /** ??? how to handle TWO open BUSSes -> how can wait be called then */
     int maxfd = can_device+1;
     fd_set rfds;
     struct timeval tv;
