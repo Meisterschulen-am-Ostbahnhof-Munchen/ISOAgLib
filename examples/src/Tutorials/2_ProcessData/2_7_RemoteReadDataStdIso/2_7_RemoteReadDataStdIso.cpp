@@ -51,24 +51,24 @@
 
 /* *********************************************************************** */
 /** \example 2_7_RemoteReadDataStdIso.cpp
- * In section 2 tutorial examples the provision and distribution of process 
- * values is demonstrated. This communication is done over CAN-BUS. An 
- * example consists of a pair of two applications. One 
- * application is ment as local process (*_Local*), another is ment as remote 
- * process (*_Remote*). If an example provides sole measurment values it is 
+ * In section 2 tutorial examples the provision and distribution of process
+ * values is demonstrated. This communication is done over CAN-BUS. An
+ * example consists of a pair of two applications. One
+ * application is ment as local process (*_Local*), another is ment as remote
+ * process (*_Remote*). If an example provides sole measurment values it is
  * grouped in a read example (*Read*). If the remote application sets values
  * in a local application, it is gouped in a write example (*Write*).
  *
- * 
+ *
  *
  * <H1>What is demonstrated</H1>
  * <ol>
  * <li> This example ("2_7_RemoteReadDataStdIso") shows how to request and react on
  * data from a distant process over CAN-BUS communication. A remote connection is used
  * for this data request. Several measurement programs are started in this process.
- * The periodic value update is done automatically. This example also includes 
+ * The periodic value update is done automatically. This example also includes
  * the demonstration of an optional handler class with a method that
- * is automatically called for each measurement value that is received. An example 
+ * is automatically called for each measurement value that is received. An example
  * for data provisioning can be fount in 2_0_LocalReadDataStdIso. Important used concepts are:
  * <ul>
  *  <li>Standard remote process data class IsoAgLib::iProcDataRemote_c
@@ -295,6 +295,18 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
       */
     virtual bool processMeasurementUpdate( EventSource_c ac_src, int32_t ai32_val, const iIsoName_c& ac_callerISOName, bool ab_change );
 
+    /** IMPORTANT: Overload BOTH variants of processMeasurementUpdate() as otherwise the compiler will regard this as hiding of the
+      * not overloaded function variant. Simply calling the int32_t variant with a cast is enough.
+      * react on new received measurement update for remote process data
+      * (remote system which manages the process data sent new value on request or
+      *  during active measurement programm)
+      * @param ac_src general event source class, which provides conversion functions to get needed event source class
+      * @param af_val new value, which caused the event (for immediate access)
+      * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
+      * @return true -> handler class reacted on change event
+      */
+    virtual bool processMeasurementUpdate( EventSource_c ac_src, float af_val, const iIsoName_c& ac_callerISOName, bool ab_change );
+
     /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
       * (remote system which manages the process data, local or other system sent previously a
       *  new setpoint; commanded manager of process data sent the response with ACK/NACK)
@@ -328,6 +340,14 @@ bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c ac_src, int32_
   }
   // answer to IsoAgLib that this new setpoint is handled
   return true;
+}
+
+/** IMPORTANT: Overload BOTH variants of processMeasurementUpdate() as otherwise the compiler will regard this as hiding of the
+  * not overloaded function variant. Simply calling the int32_t variant with a cast is enough.
+  */
+bool MyProcDataHandler_c::processMeasurementUpdate( EventSource_c ac_src, float af_val, const iIsoName_c& ac_callerISOName, bool ab_change )
+{
+  return processMeasurementUpdate( ac_src, int32_t(af_val), ac_callerISOName, ab_change );
 }
 
 bool MyProcDataHandler_c::processSetpointResponse( EventSource_c /* ac_src */, int32_t ai32_val, const iIsoName_c& /* ac_callerISOName */)
