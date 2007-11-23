@@ -159,7 +159,7 @@ class ProcessDataChangeHandler_c {
    * @param ac_callerISOName ISOName of calling device - i.e. which sent new setpoint
    * @return true -> handler class reacted on change event
    */
- virtual bool processMeasurementUpdate( EventSource_c ac_src, float af_val, const iIsoName_c& ac_callerISOName, bool ab_change );
+ virtual bool processMeasurementUpdate( IsoAgLib::EventSource_c ac_src, float af_val, const iIsoName_c& ac_callerISOName, bool ab_change );
 #endif
 
  /** react on received setpoint ACK or NACK upon previous setpoint set for remote process data
