@@ -93,6 +93,16 @@
 
 namespace __IsoAgLib {
 /**
+  default constructor which can set needed pointers to containing objects
+  @param apc_processData pointer to containing ProcessData instance
+*/
+SetpointRemote_c::SetpointRemote_c( ProcDataBase_c *const apc_processData )
+: SetpointBase_c(apc_processData)
+{
+  init(apc_processData);
+}
+
+/**
   initialise this SetpointRemote_c to a well defined starting condition
   @param apc_processData pointer to containing ProcessData instance
 */
