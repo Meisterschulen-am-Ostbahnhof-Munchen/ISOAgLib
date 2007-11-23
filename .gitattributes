@@ -5,10 +5,6 @@
 /LICENSE -text
 admin/testscripts/compileTutorials.sh -text
 bin/update_makefile.sh -text
-commercial_BIOS/bios_pc.testserver/include -text
-commercial_BIOS/bios_pc.testserver/lib -text
-commercial_BIOS/bios_pc.testserver/rte_client_lib -text
-commercial_BIOS/bios_pc.testserver/sw -text
 doc/footer.html -text
 doc/header.html -text
 doc/html/Diagramme/IsoAgLib-further_develop.gif -text
