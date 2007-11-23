@@ -1,0 +1,407 @@
+#############################################################################
+# Makefile for building: 2_6_LocalWriteSetpointSimpleSetpointIso
+# Project:               2_6_LocalWriteSetpointSimpleSetpointIso
+#############################################################################
+
+####### Project specific variables
+TARGET = 2_6_LocalWriteSetpointSimpleSetpointIso
+ISOAGLIB_PATH = ../../../..
+INSTALL_PATH = /usr/local
+APP_INC = -I../../../../examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso 
+
+####### Include a version definition file into the Makefile context - when this file exists
+-include versions.mk
+
+
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_6_LocalWriteSetpointSimpleSetpointIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_SOCKET
+
+####### Definition of compiler binary prefix corresponding to selected target
+COMPILER_BINARY_PRE = 
+
+
+first: all
+
+####### Files
+SOURCES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/impl/procdatalocalsimplesetpoint_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/measureproglocal_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/managemeasureproglocal_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measureprogbase_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measuresubprog_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp  
+
+SOURCES_APP = ../../../../examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/2_6_LocalWriteSetpointSimpleSetpointIso.cpp  
+
+HEADERS_UTEST = 
+
+HEADERS_UTEST_MOCKS = 
+
+HEADERS_UTEST_MOD_SUT = 
+
+TESTRUNNER_SOURCES = 
+
+INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/icanio_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/icancustomer_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/system/isystem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
+		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h \
+		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
+		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisend_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/proc_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/iprocess_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/elementddi_s.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpointElements/isimplemanagesetpointlocal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/imeasureproglocal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/igeneralcommand_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/idevpropertyhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h \
+		../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/impl/procdatalocalsimplesetpoint_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/measureproglocal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/system.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/managemeasureproglocal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measureprogbase_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measuresubprog_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.h
+
+
+#Special Sources for CAN Server
+SOURCES_SERVER = ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_pc.cpp \
+
+#Special Rules for CAN Server
+OBJ_DIR_SERVER  = objects_server
+OBJECTS_SERVER = $(patsubst %.cpp,$(OBJ_DIR_SERVER)/%.o,$(notdir $(SOURCES_SERVER)))
+DEPS_SERVER := $(patsubst %.o,%.d,$(OBJECTS_SERVER))
+
+$(OBJ_DIR_SERVER)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_SERVER)/$$1!' > $@
+
+$(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) $(OBJ_DIR_SERVER)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.o,%,$@).cpp,$(SOURCES_SERVER))
+
+include $(DEPS_SERVER)
+
+can_server: $(OBJECTS_SERVER)
+	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS) $(LIBS_CAN_SERVER)
+####### Some Standard Rules
+SUBLIBS  = -lrt
+CC       = $(COMPILER_BINARY_PRE)gcc
+CXX      = $(COMPILER_BINARY_PRE)g++
+STRIP	 = $(COMPILER_BINARY_PRE)strip
+LEX      = flex
+YACC     = yacc
+
+GCC_MAJOR    := $(shell $(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
+ifneq ($(GCC_MAJOR),2)
+	EXTRA_CFLAGS =  -Wextra -Winit-self -Wmissing-include-dirs
+else
+endif
+CFLAGS   = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
+
+LEXFLAGS =
+YACCFLAGS= -d
+INCPATH  = -I. -I$(ISOAGLIB_PATH)/library/xgpl_src $(APP_INC) $(BIOS_INC)
+LINK     = $(COMPILER_BINARY_PRE)g++
+LFLAGS   = -pthread
+LIBS     = $(BIOS_LIB) $(SUBLIBS)
+AR       = ar cqs
+RANLIB   =
+TAR      = tar -cf
+GZIP     = gzip -9f
+COPY     = cp -f
+COPY_FILE= $(COPY)
+COPY_DIR = $(COPY) -r
+INSTALL_FILE= $(COPY_FILE)
+INSTALL_DIR = $(COPY_DIR)
+DEL_FILE = rm -f
+SYMLINK  = ln -sf
+DEL_DIR  = rmdir
+MOVE     = mv -f
+CHK_DIR_EXISTS= test -d
+MKDIR    = mkdir -p
+UTESTFLAGS= -DUNITTEST
+
+####### Output directory
+
+OBJ_DIR_LIBRARY  = objects_library
+OBJ_DIR_APP  = objects_app
+
+####### Build Rules for Library Part
+
+OBJECTS_LIBRARY = $(patsubst %.cpp,$(OBJ_DIR_LIBRARY)/%.o,$(notdir $(SOURCES_LIBRARY)))
+DEPS_LIBRARY := $(patsubst %.o,%.d,$(OBJECTS_LIBRARY))
+
+# $(OBJ_DIR_LIBRARY)/%.d :
+# 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM -MT $(patsubst %.d,%.o,$@)  $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) > $@
+
+$(OBJ_DIR_LIBRARY)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_LIBRARY)/%.d,%,$@).cpp,$(SOURCES_LIBRARY)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_LIBRARY)/$$1!' > $@
+
+include $(DEPS_LIBRARY)
+
+####### Build Rules for Application Part
+
+OBJECTS_APP = $(patsubst %.cpp,$(OBJ_DIR_APP)/%.o,$(notdir $(SOURCES_APP)))
+DEPS_APP := $(patsubst %.o,%.d,$(OBJECTS_APP))
+
+# $(OBJ_DIR_APP)/%.d :
+# 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM -MT $(patsubst %.d,%.o,$@)  $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) > $@
+
+$(OBJ_DIR_APP)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCES_APP)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_APP)/$$1!' > $@
+
+include $(DEPS_APP)
+
+####### Test-Files
+
+SOURCES_UTEST = $(patsubst %.h,%.cpp,$(HEADERS_UTEST))
+SOURCES_UTEST_MOCKS = $(patsubst %.h,%.cpp,$(HEADERS_UTEST_MOCKS))
+SOURCES_UTEST_MOD_SUT = $(patsubst %.h,%.cpp,$(HEADERS_UTEST_MOD_SUT))
+
+# Special Rules for Unit-Tests
+OBJ_DIR_UTEST  = objects_utest
+OBJECTS_UTEST = $(patsubst %.cpp,$(OBJ_DIR_UTEST)/%.o,$(notdir $(SOURCES_UTEST))) $(patsubst %.cpp,$(OBJ_DIR_UTEST)/%.o,$(notdir $(SOURCES_UTEST_MOCKS))) $(patsubst %.cpp,$(OBJ_DIR_UTEST)/%-modsut.o,$(notdir $(SOURCES_UTEST_MOD_SUT)))
+DEPS_UTEST := $(patsubst %.o,%.d,$(OBJECTS_UTEST))
+
+# Set additional searchpath for dependencies
+VPATH = $(dir $(SOURCES_UTEST)) $(dir $(SOURCES_UTEST_MOCKS)) $(dir $(SOURCES_UTEST_MOD_SUT))
+
+$(OBJ_DIR_UTEST)/%-test.cpp : %-test.h
+	cxxtestgen.pl --part -o $@ $<
+
+$(OBJ_DIR_UTEST)/%-modsut.d :
+	$(CXX) -c $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH) -MM $(filter %/$(notdir $(patsubst %-modsut.d,%.cpp,$@)),$(SOURCES_UTEST_MOD_SUT)) 2>/dev/null | \
+	perl -p -e 's!(.*)\.o:!$(OBJ_DIR_UTEST)/$$1-modsut.o:!' > $@
+
+$(OBJ_DIR_UTEST)/%-test.d :
+	cxxtestgen.pl --part -o $(patsubst %.d,%.cpp,$@) $(filter %/$(notdir $(patsubst %.d,%.h,$@)),$(HEADERS_UTEST))
+	$(CXX) -c $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH) -MM $(patsubst %.d,%.cpp,$@) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_UTEST)/$$1!' > $@
+
+$(OBJ_DIR_UTEST)/%-mock.d :
+	$(CXX) -c $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH) -MM $(filter %/$(notdir $(patsubst %.d,%.cpp,$@)),$(SOURCES_UTEST_MOCKS)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_UTEST)/$$1!' > $@
+
+$(OBJ_DIR_UTEST)/%-modsut.o : $(OBJ_DIR_UTEST)/%-modsut.d
+	$(CXX) $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(notdir $(patsubst %-modsut.o,%.cpp,$@)),$(SOURCES_UTEST_MOD_SUT))
+
+$(OBJ_DIR_UTEST)/%-test.o : $(filter %/$(patsubst $(OBJ_DIR_UTEST)/%.o,%,$@).cpp,$(SOURCES_UTEST)) $(OBJ_DIR_UTEST)/%-test.d
+	$(CXX) $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH)  -o $@ -c $(OBJ_DIR_UTEST)/$(notdir $(filter %/$(patsubst $(OBJ_DIR_UTEST)/%.o,%,$@).cpp,$(SOURCES_UTEST)))
+
+$(OBJ_DIR_UTEST)/%-mock.o : $(filter %/$(notdir $(patsubst %.o,%.cpp,$@)),$(SOURCES_UTEST_MOCKS)) $(OBJ_DIR_UTEST)/%-mock.d
+	$(CXX) $(CXXFLAGS) $(UTESTFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(notdir $(patsubst %.o,%.cpp,$@)),$(SOURCES_UTEST_MOCKS))
+
+include $(DEPS_UTEST)
+
+####### TestRunner-Files
+
+# Special Rules for Unit-Tests (test runner)
+OBJ_DIR_TESTRUNNER = objects_testrunner
+OBJECTS_TESTRUNNER = $(patsubst %.cpp,$(OBJ_DIR_TESTRUNNER)/%.o,$(notdir $(TESTRUNNER_SOURCES)))
+DEPS_TESTRUNNER := $(patsubst %.o,%.d,$(OBJECTS_TESTRUNNER))
+
+$(OBJ_DIR_TESTRUNNER)/%.d :
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_TESTRUNNER)/%.d,%,$@).cpp,$(TESTRUNNER_SOURCES)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_TESTRUNNER)/$$1!' > $@
+
+$(OBJ_DIR_TESTRUNNER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_TESTRUNNER)/%.d,%,$@).cpp,$(TESTRUNNER_SOURCES)) $(OBJ_DIR_TESTRUNNER)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_TESTRUNNER)/%.o,%,$@).cpp,$(TESTRUNNER_SOURCES))
+
+include $(DEPS_TESTRUNNER)
+
+testrunner: $(OBJECTS_TESTRUNNER) $(OBJECTS_UTEST)
+ifeq ($(TESTRUNNER_SOURCES),)
+	@echo "No testrunner build because of no testrunner.cpp is set!"
+else
+	$(LINK) $(LFLAGS) -o testrunner $(OBJECTS_TESTRUNNER) $(OBJECTS_UTEST) $(LIBS) $(WX_LIBS)
+endif
+
+####### Implicit rules
+
+.SUFFIXES: .c .o .cpp .cc .cxx .C
+
+$(OBJ_DIR_LIBRARY)/%.o : $(filter %/$(patsubst $(OBJ_DIR_LIBRARY)/%.d,%,$@).cpp,$(SOURCES_LIBRARY)) $(OBJ_DIR_LIBRARY)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_LIBRARY)/%.o,%,$@).cpp,$(SOURCES_LIBRARY))
+
+$(OBJ_DIR_APP)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCES_APP)) $(OBJ_DIR_APP)/%.d
+	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_APP)/%.o,%,$@).cpp,$(SOURCES_APP))
+
+####### Build rules
+deps : $(DEPS_LIBRARY) $(DEPS_APP) $(DEPS_UTEST) $(DEPS_TESTRUNNER)
+
+static_library:  $(OBJECTS_LIBRARY)
+	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.a
+	ar rcs $(OBJ_DIR_LIBRARY)/libisoaglib.a $^
+
+dynamic_library:  $(OBJECTS_LIBRARY)
+	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.so
+	$(CXX) -shared -o $(OBJ_DIR_LIBRARY)/libisoaglib.so $^
+
+
+all: can_server Makefile static_library dynamic_library  $(TARGET) testrunner
+$(TARGET):  $(OBJECTS_APP) static_library dynamic_library
+	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(LIBS)
+	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.so $(LIBS)
+	-$(DEL_FILE) $(TARGET)
+	ln -s $(TARGET)_static $(TARGET)
+
+dist:
+	@mkdir -p objects/$(TARGET) && $(COPY_FILE) --parents $(SOURCES) $(HEADERS) $(FORMS) $(DIST) objects/$(TARGET)/ && ( cd `dirname objects/$(TARGET)` && $(TAR) vtserver_rte.tar vtserver_rte && $(GZIP) vtserver_rte.tar ) && $(MOVE) `dirname objects/vtserver_rte`/vtserver_rte.tar.gz . && $(DEL_FILE) -r objects/vtserver_rte
+
+yaccclean:
+lexclean:
+clean:
+	-$(DEL_FILE) $(OBJECTS_LIBRARY) $(DEPS_LIBRARY) $(OBJECTS_APP) $(DEPS_APP) $(OBJECTS_UTEST) $(OBJECTS_TESTRUNNER)
+	-$(DEL_FILE) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(OBJ_DIR_LIBRARY)/libisoaglib.so
+	-$(DEL_FILE) *~ core *.core
+
+
+####### Sub-libraries
+
+distclean: clean
+	-$(DEL_FILE) $(TARGET)_static $(TARGET)_dynamic $(TARGET) testrunner
+	-$(DEL_FILE) $(OBJ_DIR_UTEST)/* $(OBJ_DIR_TESTRUNNER)/*
+
+
+FORCE:
+
+####### Compile
+
+
+####### Install
+install_library: $(INSTALL_FILES_LIBRARY)
+	mkdir -p /$(INSTALL_PATH)/lib;
+	@for INSTITEM in $(INSTALL_FILES_LIBRARY); do \
+		SEARCH=$(ISOAGLIB_PATH)/library/xgpl_src; \
+		REPLACE=$(INSTALL_PATH)/include; \
+		#echo "Search $$SEARCH -> replace $$REPLACE"; \
+		VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \
+		#echo "INSTITEM $$INSTITEM , ISOAGLIB_PATH $(ISOAGLIB_PATH) , INSTALL_PATH $(INSTALL_PATH) -> VAR_TEST $$VAR_TEST"; \
+		DEST_PATH=`dirname $$VAR_TEST`; \
+		#echo "DestPath $$DEST_PATH" ; \
+		mkdir -p $$DEST_PATH; \
+		install  -m 0755 $$INSTITEM $$DEST_PATH; \
+		done && \
+		install  -m 0755 ../../../../examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/config_2_6_LocalWriteSetpointSimpleSetpointIso.h $(INSTALL_PATH)/include; \
+		install  -m 0755 ../../../../examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/version.h $(INSTALL_PATH)/include; \
+		install  -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.a $(INSTALL_PATH)/lib/; \
+		install  -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.so "$(INSTALL_PATH)/lib/" ; \
+		echo Finished installing binaries to directory \"$(INSTALL_PATH)\"
+
+uninstall: can_server
+
