@@ -102,8 +102,7 @@ class IsoItem_c;
 class AddressResolveResults_c
 {
   public:
-    AddressResolveResults_c();
-    void init( uint8_t* aui8_address );
+    AddressResolveResults_c(uint8_t* aui8_address);
     ~AddressResolveResults_c();
 
     // IMPORTANT:
@@ -449,19 +448,19 @@ class CanPkgExt_c : public CanPkg_c
 
   /** get the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForSA() { return mc_addrResolveResSA.mpc_monitorItem; }
+  IsoItem_c* getMonitorItemForSA() { return mpc_addrResolveResSA->mpc_monitorItem; }
 
   /** get the isoName for resolved SA
     */
-  const IsoName_c& getISONameForSA() { return *mc_addrResolveResSA.mpc_isoName; }
+  const IsoName_c& getISONameForSA() { return *mpc_addrResolveResSA->mpc_isoName; }
 
   /** set the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForDA() { return mc_addrResolveResDA.mpc_monitorItem; }
+  IsoItem_c* getMonitorItemForDA() { return mpc_addrResolveResDA->mpc_monitorItem; }
 
   /** set the isoName for resolved DA
     */
-  const IsoName_c& getISONameForDA() { return *mc_addrResolveResDA.mpc_isoName; }
+  const IsoName_c& getISONameForDA() { return *mpc_addrResolveResDA->mpc_isoName; }
 
 
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
@@ -526,10 +525,10 @@ private:
   static bool msb_runFlag2String;
 
   /** variable which holds the results for a resolved source address */
-  static AddressResolveResults_c mc_addrResolveResSA;
+  static AddressResolveResults_c* mpc_addrResolveResSA;
 
   /** variable which holds the results for a resolved destination address */
-  static AddressResolveResults_c mc_addrResolveResDA;
+  static AddressResolveResults_c* mpc_addrResolveResDA;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

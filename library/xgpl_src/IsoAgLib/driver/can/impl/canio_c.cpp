@@ -1651,10 +1651,9 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
     // min+1 and max is smaller than size -> shrink array
     if (cntMsgObj() <= ui8_allowedSize) b_continueMerging = false;
 
-    #ifdef HIGH_LOAD_FIFO_CAN
 		//process the message arrived during the reconfiguration
+    if(HAL::isFifoCriticalFilled(mui8_busNumber))
   	processMsg();
-    #endif
 
     // start a comparison(left_ind, right_ind) loop for all elements
     for (ArrMsgObj::iterator pc_leftInd = marr_msgObj.begin(); pc_leftInd != marr_msgObj.end(); pc_leftInd++)
@@ -1873,10 +1872,9 @@ bool CanIo_c::reconfigureMsgObj()
   #endif
   #endif
 
-  #ifdef HIGH_LOAD_FIFO_CAN
   //process the message arrived during the reconfiguration
-	processMsg();
-  #endif
+  if(HAL::isFifoCriticalFilled(mui8_busNumber))
+    processMsg();
 
   bool b_result = true;
   // store old mask to check if global CAN BIOS mask must be changed
@@ -1911,10 +1909,9 @@ bool CanIo_c::reconfigureMsgObj()
 
     CheckSetCntMsgObj();
 
-    #ifdef HIGH_LOAD_FIFO_CAN
     //process the message arrived during the reconfiguration
-    processMsg();
-    #endif
+    if(HAL::isFifoCriticalFilled(mui8_busNumber))
+      processMsg();
 
   // check and correct global masks after merge in CheckSetCntMsgObj()
   getCommonFilterMaskAfterMerge();

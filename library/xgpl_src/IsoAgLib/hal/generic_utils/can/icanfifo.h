@@ -111,6 +111,9 @@ void printIrqTable(uint8_t aui8_busNumber);
 }
 
 
+bool isFifoCriticalFilled(uint8_t aui8_busNum);
+
+
 int32_t iFifoReadFbIdx(uint8_t aui8_busNumber,int32_t& ri32_fbIdx,int32_t& ri32_rcvTime,uint32_t& ri32_ident,__IsoAgLib::Ident_c::identType_t& r_msgtype);
 }
 

@@ -102,6 +102,13 @@ extern "C" {
 const uint32_t cui32_maxNbrCan = (HAL_CAN_MAX_BUS_NR + 1  );
 const unsigned int uic_expBufferSize = 4;
 
+/** When during the reconfiguration only a number of place less than cui_toleranceLevel
+* are free in the CAN FIFO , then the FIFO is considered in critical Filled level and the
+* Canio_c::processMsg is called to free the CAN FIFO buffer */
+
+const unsigned int cui_toleranceLevel = 9;
+
+
 /**
 * Number of buffer elements.
 * The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,

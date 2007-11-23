@@ -210,6 +210,28 @@ bool iFifoIsMsgAvailable(uint8_t aui8_busNum)
 
 }
 
+
+
+/** Check whether the CAN fifo is critical filled
+*   @return true if the CAN FIFO is in a critical filled status **/
+
+bool isFifoCriticalFilled(uint8_t aui8_busNum)
+{
+  const unsigned int ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
+  const unsigned int ui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
+
+/**buffer is critically filled */
+  if(ui_tmpUc > ui_tmpAc +(getBufferSize() * 2) - cui_toleranceLevel )
+  {
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << " Can Fifo is critical filled" << INTERNAL_DEBUG_DEVICE_ENDL;
+    #endif
+    return true;
+  }
+  return false;
+}
+
+
 /** read the FbIndex, rcvTime,refui32_msgId */
 
 int32_t iFifoReadFbIdx(uint8_t aui8_busNum,int32_t& ri32_fbIdx, int32_t& rui32_rcvTime,uint32_t& rui32_msgId,__IsoAgLib::Ident_c::identType_t& r_msgtype)
