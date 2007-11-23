@@ -373,7 +373,7 @@ int8_t *KeyGetString(char *buffer, int16_t len)
 int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  /** @todo decide if RS232 TX buffer from OS should be asked */
+  /** @todo ON REQUEST: decide if RS232 TX buffer from OS should be asked */
   return 0;
 }
 /**
@@ -384,7 +384,7 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
 int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  /** @todo should this be implemented? */
+  /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
 /**
@@ -397,7 +397,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
                          void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  /** @todo should this be implemented? */
+  /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
 /**
@@ -407,7 +407,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
 int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  /** @todo should this be implemented? */
+  /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
 
@@ -419,7 +419,7 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 void clearRs232RxBuffer(uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
-  /** @todo should this be implemented? */
+  /** @todo ON REQUEST: should this be implemented? */
 };
 
 /**
@@ -428,7 +428,7 @@ void clearRs232RxBuffer(uint8_t aui8_channel)
 void clearRs232TxBuffer(uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
-  /** @todo should this be implemented? */
+  /** @todo ON REQUEST: should this be implemented? */
 }
 
 } // end of namespace __HAL

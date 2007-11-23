@@ -591,8 +591,9 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   return HAL_UNKNOWN_ERR;
 };
 
-/** @todo maybe make return code the error code and pass the ref to the value as parameter?
- * for now, simply no error code is generated! */
+/** @todo SOON: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
+ *        this as error code. THEN change this function to use negative values as error codes
+ */
 int32_t getMaxSendDelay(uint8_t aui8_busNr)
 {
   transferBuf_s s_transferBuf;

@@ -137,8 +137,7 @@ static canBuffer_t arr_canBuffer[2][15] =
  { (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL,
    (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL, (canBuffer_t)NULL } };
 
-/** lock state
-  @todo directly use CAN controller register to lock a MsgObj */
+/** lock state */
 static bool b_canBufferLock[2][15] =
 { { false, false, false, false, false, false, false,
    false, false, false, false, false, false, false, false },

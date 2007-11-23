@@ -109,11 +109,11 @@ int32_t getPipeHandleForCanRcvEvent()
 }
 
 
-SOCKET_TYPE call_socket(char *hostname, unsigned short portnum) 
+SOCKET_TYPE call_socket(char *hostname, unsigned short portnum)
 {
   SOCKET_TYPE connectSocket = 0;
 #ifdef WIN32
-  // Create a SOCKET for listening for 
+  // Create a SOCKET for listening for
   // incoming connection requests
   connectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (connectSocket == INVALID_SOCKET) {
@@ -192,7 +192,7 @@ int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
 {
   int16_t i16_rc;
 
-  if ((i16_rc = send(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s), 
+  if ((i16_rc = send(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s),
 #ifdef WIN32
                      0
 #else
@@ -257,9 +257,9 @@ int16_t can_startDriver()
 
 #ifdef WIN32
   // Set the socket I/O mode: In this case FIONBIO
-  // enables or disables the blocking mode for the 
+  // enables or disables the blocking mode for the
   // socket based on the numerical value of iMode.
-  // If iMode = 0, blocking is enabled; 
+  // If iMode = 0, blocking is enabled;
   // If iMode != 0, non-blocking mode is enabled.
   int iMode = 1;
 
@@ -532,7 +532,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   transferBuf_s s_transferBuf;
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
+  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
                      0
 #else
@@ -588,7 +588,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   const uint8_t cui8_useMsgObj = bMsgObj;
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
+  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
                      0
 #else
@@ -662,7 +662,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   s_transferBuf.s_data.i32_sendTimeStamp = getTime();
   memcpy(s_transferBuf.s_data.s_canMsg.ui8_data, ptSend->abData, 8);
 
-  if ((i32_rc = send(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), 
+  if ((i32_rc = send(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
         0
 #else
@@ -692,8 +692,9 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
 };
 
-/** @todo maybe make return code the error code and pass the ref to the value as parameter?
- * for now, simply no error code is generated! */
+/** @todo SOON: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
+ *        this as error code. THEN change this function to use negative values as error codes
+ */
 int32_t getMaxSendDelay(uint8_t rui8_busNr)
 {
 #if 0

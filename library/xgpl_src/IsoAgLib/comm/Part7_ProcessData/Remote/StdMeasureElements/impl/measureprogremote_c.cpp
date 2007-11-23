@@ -667,7 +667,7 @@ void MeasureProgRemote_c::initVal(float af_val){
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetMed(){
-/**TODO2 still relevant*/
+/** @TODO NOW: check whether still relevant - and then delete this TODO */
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
@@ -687,7 +687,7 @@ bool MeasureProgRemote_c::resetMed(){
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetInteg(){
-/**TODO2 still relevant*/
+/** @TODO NOW: check whether still relevant - and then delete this TODO */
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
@@ -729,7 +729,7 @@ bool MeasureProgRemote_c::resetMin(){
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetMax(){
-/**TODO2 still relevant*/
+/** @TODO NOW: check whether still relevant - and then delete this TODO */
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;

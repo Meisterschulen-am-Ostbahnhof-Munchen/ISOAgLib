@@ -84,7 +84,7 @@ void Vt2IsoImagePaintlib_c::close( void )
 
 int Vt2IsoImagePaintlib_c::getPaletteIndex (unsigned int aui_x, unsigned int aui_y)
 {
-  /** @todo See if we can retrieve the palette index via paintlib, too.. */
+  /** @todo ON REQUEST: See if we can retrieve the palette index via paintlib, too.. */
   return -1;
 }
 

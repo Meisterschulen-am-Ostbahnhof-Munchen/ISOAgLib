@@ -344,7 +344,7 @@ void init (const char* xmlFile)
   objNextAutoID = 65534;
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
-  
+
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-bytestream.inc");
   char FileName[200];
@@ -473,7 +473,8 @@ unsigned int objectIsType (char* lookup_name)
 unsigned int idOrName_toi(const char* apc_string, unsigned int parentObjType, bool b_skipParentCheck = FALSE)
 {
   if (apc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
-  /** @todo check if all chars in the string are numbers, not only the first! */
+  /** @todo SOON: add search loop for any non-digit in the "name" and make conversion with atoi() if complete name
+      consists of digits */
   if ((apc_string [0] >= '0') && (apc_string [0] <= '9')) return atoi (apc_string);
   // Starting with a letter, so look up id!
   return getID (apc_string, false, 0, parentObjType, b_skipParentCheck);
@@ -727,7 +728,7 @@ void getAttributesFromNode(DOMNode *node, unsigned int objType)
 uint8_t cntNodeChild(DOMNode *node, unsigned int objType)
 {
   uint8_t ui8_cnt = 0;
-  DOMNode *child; 
+  DOMNode *child;
 
   for (child = node->getFirstChild(); child != 0; child=child->getNextSibling())
   {
@@ -1758,7 +1759,7 @@ int main(int argC, char* argV[])
     // enable datatype normalization - default is off
     parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
-    /** @todo Get path of proc2iso and add it to "proc2iso.xsd" */
+    /** @todo SOON: Get path of proc2iso and add it to "proc2iso.xsd" */
     char xsdLocation[1024+1];
     if (schemaPath == NULL)
     {

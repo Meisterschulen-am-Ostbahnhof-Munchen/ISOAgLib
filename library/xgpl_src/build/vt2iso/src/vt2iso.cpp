@@ -901,7 +901,8 @@ vt2iso_c::idOrName_toi(char* apc_string, bool ab_isMacro)
     std::cout << "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n";
     return -1;
   }
-  /** @todo check if all chars in the string are numbers, not only the first! */
+  /** @todo SOON: add search loop for any non-digit in the "name" and make conversion with atoi() if complete name
+      consists of digits */
   if ((apc_string [0] >= '0') && (apc_string [0] <= '9')) return atoi (apc_string);
 
   if (strstr (apc_string, pcch_poolIdent) != apc_string)
@@ -1664,8 +1665,8 @@ vt2iso_c::autoDetectLanguage (DOMNode *n)
 // we're in an element here, not text or something else...
 //
 // ---------------------------------------------------------------------------
-/// @todo const char* rpcc_inKey, const char* rpcc_inButton
-///       NOT USED atm for recursive uses, as the recursion is done in the setOrigin code!!!!
+/// const char* rpcc_inKey, const char* rpcc_inButton
+/// NOT USED atm for recursive uses, as the recursion is done in the setOrigin code!!!!
 bool
 vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKey, const char* rpcc_inButton*/)
 {
@@ -3685,7 +3686,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT '" << objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye.\n\n";
               return false;
             }
-          /// @todo MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
+          /// @todo SOON: MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
           /*
             if (arrs_language[i].valueBuffer == NULL)
             { // open failed.
@@ -4364,9 +4365,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
 
       if (objHasArrayMacroCommand)
-      { /** @todo I think the "else" is not correct, the length has to be put out also!? -mjw */
+      {
         if (objChildCommands == 0)
-          fprintf (partFile_attributes, ", 0,NULL");
+          fprintf (partFile_attributes, ",NULL");
         else
           fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName);
       }
@@ -4884,7 +4885,7 @@ int main(int argC, char* argV[])
     // enable datatype normalization - default is off
     parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
-    /** @todo Get path of vt2iso and add it to "vt2iso.xsd" */
+    /** @todo SOON: Get path of vt2iso and add it to "vt2iso.xsd" */
     char xsdLocation[1024+1];
     strcpy (xsdLocation, argV[0]);
     // now trim exe filename

@@ -434,7 +434,7 @@ public:
   bool isCalendarDateValid() const;
 
   /** check if a calendar's TIME information was received with valid value since init */
-  /// @todo ... bool isCalendarTimeValid() const;
+  /// @todo SOON: ... bool isCalendarTimeValid() const;
 
   /** get the calendar year value
       @return actual calendar year value
@@ -547,7 +547,7 @@ public:
 
   /** check if we have valid Direction data, so the information should be sent out in timeEventTracMode */
   bool isDirectionToSend() const
-    { return ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+    { return ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo SOON: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
             && (mui16_speedOverGroundCmSec <= 65532)); }
 
   /** deliver GPS receive qualitiy - also needed to see if we have valid GPS-positioning!!! */

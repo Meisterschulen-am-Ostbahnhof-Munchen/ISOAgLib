@@ -684,7 +684,7 @@ void SetpointLocal_c::processSet(){
     // ignore item of actual acepted master, as this should be handled as new
     // item
     if (pc_callerIter->isoName() == c_callerISOName)
-       // @todo: disable check?
+       /** @todo NOW: disable check? */
        if (!pc_callerIter->master())
          break;
   }

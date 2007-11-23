@@ -558,7 +558,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName){
   // set type and isoName for item
   mpc_progCache->setISOName(ac_isoName);
 
-  /**TODO2 remove progType */
+  /** @TODO NOW: remove progType! */
  mpc_progCache->setProgType(2);
 }
 

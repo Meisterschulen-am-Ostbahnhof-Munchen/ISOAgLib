@@ -291,7 +291,7 @@ bool IsoMonitor_c::timeEvent( void )
     case IState_c::Off:
     case IState_c::Standby:
     default:
-      // nothing to todo stay on 3000 ms timePeriod
+      // nothing to to do stay on 3000 ms timePeriod
       break;
     }
 
@@ -305,18 +305,13 @@ bool IsoMonitor_c::timeEvent( void )
   /// - ClaimedAddress, WS claiming: 100ms HT
   /// - ClaimedAddress, ws claimed: 1000ms ST
   /// otherwise idling around with: 3000ms ST
-  /// @todo improve later to have the IdentItems give back fix timestamps. If you, use Hard-Timing and wait for exactly this timestamp
+  /// @todo ON REQUEST: improve later to have the IdentItems give back fix timestamps. If you, use Hard-Timing and wait for exactly this timestamp
   ///       if not so, use soft-timing and idle around...
 
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
   // the following activities are optional for cleanup
   // --> do NOT execute them, if execution time is limited
   if ( getAvailableExecTime() == 0 ) return false;
-
-  if ( existActiveLocalIsoMember() )
-  { // use the SA of the already active node
-    data().setIsoSa(getActiveLocalIsoMember().nr());
-  } /** @todo check if we really want to have the SA set in ANY case, even if we're not sending afterwards.. */
 
   if ( lastIsoSaRequest() == -1) return true;
   else if ( existActiveLocalIsoMember() )
@@ -1232,7 +1227,7 @@ bool IsoMonitor_c::processMsg()
         pc_itemSameSa = NULL;
       }
 
-      /** @todo Change handling of case where SAME ISONAME occurs. We shall not change our ISONAME while running in ISO! */
+      /** @todo SOON AFTER CLARIFICATION OF STANDARD: Change handling of case where SAME ISONAME occurs. We shall not change our ISONAME while running in ISO! */
       // SECOND: trigger total restart of ADR claim for any local IsoItem_c with
       //         SAME IsoName_c
       if ( ( NULL != pc_itemSameISOName ) && ( pc_itemSameISOName->itemState(IState_c::Local)) )
@@ -1328,7 +1323,7 @@ bool IsoMonitor_c::processMsg()
       { // IsoItem_c with same SA has to exist!
         IsoItem_c *pc_itemMaster = &(isoMemberNr(data().isoSa()));
         pc_itemMaster->setMaster (pc_itemMaster); // set item as master
-        /** @todo IGNORE THAT WE GOT x MEMBERS FOR NOW
+        /** @todo SOON: IGNORE THAT WE GOT x MEMBERS FOR NOW
             LATER WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
             for timings see Iso11783-Part1
           */

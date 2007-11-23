@@ -141,8 +141,8 @@ IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
 
   #ifdef USE_WORKING_SET
   // no need of setting "mi8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
-  /// @todo Check if this constructor is really needed and what it should do!
-  /// @todo Check if we need to copy the new 3 member variables, too. Also for the below constructors!!!
+  /// @todo NOW: Check if this constructor is really needed and what it should do!
+  /// @todo NOW: Check if we need to copy the new 3 member variables, too. Also for the below constructors!!!
   // check if the master item pointer of the source item
   // is pointing to itself, as then this new created instance shall
   // not copy the pointer, but set the pointer to itself, as this
@@ -178,7 +178,7 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arc_src)
   setItemState (IState_c::Member);
   #ifdef USE_WORKING_SET
   // no need of setting "mi8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
-  /** @todo What to do with the mpc_masterItem? */
+  /** @todo NOW: What to do with the mpc_masterItem? */
   mi8_slavesToClaimAddress = arc_src.mi8_slavesToClaimAddress;
   mi32_timeLastCompletedAnnounceStarted = arc_src.mi32_timeLastCompletedAnnounceStarted;
   mi32_timeCurrentAnnounceStarted = arc_src.mi32_timeCurrentAnnounceStarted;

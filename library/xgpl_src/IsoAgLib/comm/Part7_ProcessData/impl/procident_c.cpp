@@ -500,40 +500,6 @@ void ProcIdent_c::setElementDDI(const STL_NAMESPACE::list<IsoAgLib::ElementDdi_s
   }
 }
 
-#if 0
-/**
-  claculates ident value for quick comparison
-  @return single comparison value
-*/
-int32_t ProcIdent_c::calcIdentVal() const {
-  int32_t i32_result = (static_cast<int32_t>(isoName().devClass()) & 0x7F   );
-
-    #ifdef USE_ISO_11783
-    #ifdef USE_DIN_9684
-    if ( element() != 0xFFFF )
-    #endif
-    { // take ISO ident settings for compare
-      i32_result |=
-      (
-        // @todo: find algorithm for handling element/DDI list
-        (static_cast<int32_t>(element() & 0x1FF) << 7   ) // len 12 bit -> reduce to 9 Bit
-      | (static_cast<int32_t>(DDI())             << 16  )
-      );
-    }
-    #else
-      i32_result |=
-      (
-        (static_cast<int32_t>(isoName().devClassInst())    << 8   )
-      | (static_cast<int32_t>(lis())             << 12  )
-      | (static_cast<int32_t>(inst())            << 16  )
-      | (static_cast<int32_t>(wert())            << 20  )
-      | (static_cast<int32_t>(zaehlnum())        << 24  )
-      );
-    #endif
-  return i32_result;
-};
-#endif
-
 
 } // end of namespace __IsoAgLib
 

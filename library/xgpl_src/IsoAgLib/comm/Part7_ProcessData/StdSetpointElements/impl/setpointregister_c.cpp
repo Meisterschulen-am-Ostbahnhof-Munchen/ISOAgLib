@@ -203,7 +203,7 @@ float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGro
   @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
   @return true -> a MOD type setpoint exist
 */
-// @todo: rename
+/** @todo NOW: rename */
 bool SetpointRegister_c::existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
   switch (en_valueGroup)
   {

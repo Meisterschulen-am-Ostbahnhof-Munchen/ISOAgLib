@@ -311,7 +311,7 @@ IsoTerminal_c::timeEvent(void)
     if (mvec_vtClientServerComm[ui8_index])
       b_allActivitiesPerformed &= mvec_vtClientServerComm[ui8_index]->timeEvent();
   }
-  /** @todo maybe store the one that was out of time if not all could perform their actions? */
+  /** @todo SOON: maybe store the one that was out of time if not all could perform their actions? - by member variable of IsoTerminal_c */
 
   // set back the scheduler period to 100msec, as any waiting command has been set
   if (getTimePeriod() != 100) setTimePeriod( 100 );
@@ -386,9 +386,13 @@ IsoTerminal_c::processMsg()
       if (mvec_vtClientServerComm[ui8_index])
         mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
     }
-    /** @todo return FALSE so others can react on it? -> Base_c ?? */
-    /** @todo Use Base_c for getting the VT's language????? */
-    /** @todo SOON Multiple VT support! (later on only distribute LANGUAGE to those clients that listen to this VT???!?!?!??) */
+    /** @todo SOON: Change language management, so that the main language code is maintained per VtInstance_c, as the VT
+              - or each single VT - is authoritative for language definition. The TECU is only the fallback in case of a
+                factory default VT. But even in this case, the VT takes the language from TECU, and publishes the language
+                on its own.
+             -> extend VtInstance_c
+             -> avoid double handling of Language PGN in other classes (TracGeneral_c should only handle language PGN, if
+                no VT-Client ist used */
     return false;
   }
 

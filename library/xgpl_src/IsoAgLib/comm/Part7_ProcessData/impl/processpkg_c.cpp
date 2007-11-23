@@ -141,7 +141,7 @@ ProcessPkg_c::~ProcessPkg_c(){
 */
 bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 {
-/**TODO2 still relevant*/
+/** @TODO NOW: check whether still relevant - and then delete this TODO */
   bool b_result = false;
 
 

@@ -464,7 +464,9 @@ bool IdentItem_c::timeEventActive( void )
   #ifdef CHANGE_DEV_CLASS_INST_ON_CONFLICT
   // only change dev class inst and repeated address claim on adress conflicts, if following define
   // is set in masterHeader
-  /** @todo To be adapted for ISO to count conflicts, too. To do later... */
+  /** @todo USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
+           --> we should change SA in such a case AND maybe send some sort of DAIGNOSE MESSAGE
+    */
   // because of errors caused by terminals, which doesn't claim correctly an address
   // don't do conflict changing of POS
   if ((pc_memberItem->affectedConflictCnt() > 3) && (itemState(IState_c::Din)))
@@ -493,7 +495,7 @@ bool IdentItem_c::timeEventActive( void )
     // ( some conflicts with other remote BUS nodes could cause an overwrite
     //    of the master node or of one of the slave node -> this function
     //     resets everything to a well defined master->slave state )
-    /** @todo revise that (maybe) */
+    /** @todo NOW: revise that (maybe) */
     if ( mi8_slaveCount >= 0 ) setToMaster();
     #endif
     mpc_isoItem->timeEvent();
@@ -612,7 +614,7 @@ void IdentItem_c::setToMaster (int8_t ai8_slaveCount, const IsoName_c* apc_slave
     return;
   }
 
-  /// @todo What if the IsoItem is currently set to NULL?
+  /// @todo NOW: What if the IsoItem is currently set to NULL?
   // set our own ISOItem
   mpc_isoItem->setMaster (mpc_isoItem);
 

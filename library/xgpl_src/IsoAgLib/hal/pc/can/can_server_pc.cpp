@@ -100,7 +100,7 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /* pc_serverData */)
 
 void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */)
 {
-/// @todo not implemented for right now on A1!
+/// @todo ON REQUEST: not implemented for right now PC
 }
 
 // PURPOSE: To send a msg on the specified CAN BUS

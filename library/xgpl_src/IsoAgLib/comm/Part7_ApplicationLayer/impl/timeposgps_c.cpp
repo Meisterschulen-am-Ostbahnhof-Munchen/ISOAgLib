@@ -260,7 +260,7 @@ namespace __IsoAgLib {
       bit_calendar.hour = 0;
       bit_calendar.minute = 0;
       bit_calendar.second = 0;
-      // @todo maybe later also reset those values here, too...
+      /** @todo SOON maybe later also reset those values here, too... */
       //bit_calendar.msec = 0;
       //bit_calendar.timezoneMinuteOffset = 0;
       //bit_calendar.timezoneHourOffsetMinus24 = 24;
@@ -296,7 +296,7 @@ namespace __IsoAgLib {
         { // neither Pos nor Dir are specified, so kick the sender!
           mc_sendGpsISOName.setUnspecified();
         }
-        /** @todo Maybe make it 2 GpsIsoNames: One for Position and one for Direction!
+        /** @todo ON REQUEST: Maybe make it 2 GpsIsoNames: One for Position and one for Direction!
         * Then we don't have to wait for both to be silent in order to kick the mc_sendGpsISOName.
         * Naming:       Gps for Position
         *         Direction for Direction */
@@ -625,7 +625,7 @@ namespace __IsoAgLib {
         else
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
-          return false; /** @todo why not return true here?! */
+          return true;
         }
         break;
 
@@ -637,7 +637,7 @@ namespace __IsoAgLib {
           mi32_lastIsoPositionSimple = ci32_now;
           mc_sendGpsISOName = rcc_tempISOName;
           if (getGnssMode() == IsoAgLib::IsoNoGps)
-          { /// @todo Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
+          { /// @todo ON REQUEST: Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
               /// for now, allow it as standalone and set GpsMethod simply to IsoGnssNull as we don't have reception info...
             mt_gnssMethod = IsoAgLib::IsoGnssNull; // was IsoGnssFix before. Actually, noone knows what to set here ;-)
             #ifdef ENABLE_NMEA_2000_MULTI_PACKET
@@ -660,7 +660,7 @@ namespace __IsoAgLib {
           mi32_lastIsoDirection = ci32_now;
           mc_sendGpsISOName = rcc_tempISOName;
 
-          if ( (mui16_courseOverGroundRad10Minus4 <= (62855)) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+          if ( (mui16_courseOverGroundRad10Minus4 <= (62855)) /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
             && (mui16_speedOverGroundCmSec        <= (65532))
              )
           {
@@ -690,12 +690,12 @@ namespace __IsoAgLib {
   };
 
   /** check if an NMEA2000 position signal was received - it does NOT indicate that this is an up2date signal */
-  /** @todo improve with isPositionStreamReceived(), so we know that e.g. Altitude is there, too... */
+  /** @todo ON REQUEST: improve with isPositionStreamReceived(), so we know that e.g. Altitude is there, too... */
   bool TimePosGPS_c::isPositionReceived() const
   {
     if ( (mi32_latitudeDegree10Minus7  >= ( -90*10000000)) && (mi32_latitudeDegree10Minus7  <= ( 90*10000000))
       && (mi32_longitudeDegree10Minus7 >= (-180*10000000)) && (mi32_longitudeDegree10Minus7 <= (180*10000000))
-      && (mt_gnssMethod != IsoAgLib::IsoNoGps) /// @todo improve the checking on what's valid!
+      && (mt_gnssMethod != IsoAgLib::IsoNoGps) /// @todo ON REQUEST: improve the checking on what's valid!
       )
     { // yep, valid GPS information
       return true;
@@ -709,7 +709,7 @@ namespace __IsoAgLib {
   /** check if an NMEA2000 direction signal was received - it does NOT indicate that this is an up2date signal */
   bool TimePosGPS_c::isDirectionReceived() const
   {
-    if ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+    if ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
       && (mui16_speedOverGroundCmSec        <= 65532)
        )
     { // yep, valid GPS-direction information
@@ -854,7 +854,7 @@ namespace __IsoAgLib {
     }
     else
     { // this is not of interest for us
-      return false; /** @todo check if we're NACKing it and if that's correct?? maybe we should just ignore it??? */
+      return false;
     }
   }
 
@@ -993,9 +993,9 @@ namespace __IsoAgLib {
       //IsoAgLib::convertIstream( rc_stream, ui16_dummy ); //ui16_speedCmSec );
       //IsoAgLib::convertIstream( rc_stream, ui16_dummy ); //ui16_flowDirectionRad10Minus4 );
       //IsoAgLib::convertIstream( rc_stream, ui16_dummy ); //ui16_driftSpeedCmSec );
-        /** @todo Do we need those valus above?? */
+        /** @todo ON REQUEST: Do we need those valus above?? */
 
-        if ( (ui16_newCOG <= (62855)) /// @todo check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+        if ( (ui16_newCOG <= (62855)) /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
           && (ui16_newSOG <= (65532))
            )
         {
@@ -1322,7 +1322,7 @@ void TimePosGPS_c::isoSendDirection( void )
   }
 
   /** check if a calendar's TIME information that was received is VALID
-   * @todo Add this check if it's ensured everywhere that NO_VAL times
+   * @todo ON REQUEST: Add this check if it's ensured everywhere that NO_VAL times
    *       don't screw around (with some mktime() or whatever functions...)
   bool TimePosGPS_c::isCalendarTimeValid() const
    */
@@ -1389,7 +1389,7 @@ void TimePosGPS_c::isoSendDirection( void )
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
 
-    // @todo: calender time consists of UTC time and local date?
+    /** @todo ON REQUEST: calender time consists of UTC time and local date? */
     struct ::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
                             ab_day,(ab_month-1),(ai16_year-1900),0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)

@@ -60,7 +60,7 @@
 #include <ctype.h>
 #include <IsoAgLib/hal/system.h>
 
-/** @todo Thanks for any user who has this card type, and can try to compile
+/** @todo ON REQUEST: Thanks for any user who has this card type, and can try to compile
     and run with USE_THREAD defined, so that USE_THREAD can be changed to default
   */
 // #define USE_THREAD

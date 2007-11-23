@@ -312,7 +312,7 @@ bool Process_c::timeEvent( void ){
         ( pc_iter != c_arrClientC1.end() );
         pc_iter++ )
   { // delete item at pc_timeIter, if pc_searchCacheC1 points to pc_client
-    if ( !(*pc_iter)->timeEvent( &ui16_nextTimePeriod ) ) b_result = false; /** @todo seemded to segfault here, although this is REALLY STRANGE! */
+    if ( !(*pc_iter)->timeEvent( &ui16_nextTimePeriod ) ) b_result = false;
   }
 
   if (ui16_nextTimePeriod)
@@ -823,7 +823,10 @@ void Process_c::reactOnMonitorListRemove( const IsoName_c& arcc_isoName, uint8_t
   }
   else
   { // remote IsoItem_c
-    /** @todo remove filter? this may by called on change of SA, so we wouldn't need to remove the filter here! */
+    /** @todo SOON: change handling so that DataLinkLayer issues error, when the target ISONAME is not available, so that the furhter sending of messages to this ISONAME
+              can be explicitly stopped, to avoid ongoing send tries to undefined destination.
+              As soon as this is done, the removal of receive filters should be de-activated.
+      */
     deleteRemoteFilter(arcc_isoName);
   }
 }

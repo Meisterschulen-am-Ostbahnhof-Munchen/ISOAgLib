@@ -900,7 +900,9 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
 
   if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
-    // @todo: was DistProp ?
+    /** @todo NOW: DistProp - Distance-Proportional -> sending of values every fixed dinstance interval
+                  --> check for any impact of answering this question
+      */
     addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
 
   if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)

@@ -121,7 +121,7 @@ namespace __HAL
 //
 
 
-	  
+
 //  #include "../djbiosdrawinterface.h"
 //#include <IsoAgLib/typedef.h>
 
@@ -151,14 +151,14 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t at_mode )
 
   #if DEBUG_FILESTREAMINPUT
 	INTERNAL_DEBUG_DEVICE
-	<< "Filestreaminput: trying to open the file " <<  filename  
-	<< " in mode 0x" 
-	//<< CNAMESPACE::hex 
-	<< at_mode 
-	//<< CNAMESPACE::dec 
+	<< "Filestreaminput: trying to open the file " <<  filename
+	<< " in mode 0x"
+	//<< CNAMESPACE::hex
+	<< at_mode
+	//<< CNAMESPACE::dec
 	<< INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-		
+
   if (NULL != file_handle_) {
 	#if DEBUG_FILESTREAMINPUT
 		INTERNAL_DEBUG_DEVICE
@@ -172,7 +172,7 @@ bool TargetFileStreamInput_c::open( const char* filename, FileMode_t at_mode )
   if (StreamIn & at_mode) {
     mode_string.push_back('r');
   }
-  
+
   if (mode_string.empty()) {
     return false;
   }
@@ -201,8 +201,8 @@ bool TargetFileStreamInput_c::eof() const
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-  // TODO: check if call to eof() can be omitted. (If DjBios_IOP_Read
-  // behaves like standard fread, then this should be the case.)
+  /** @TODO SOON: check if call to eof() can be omitted. (If DjBios_IOP_Read
+      behaves like standard fread, then this should be the case.) */
   if (eof()) {
     is_failed_ = true;
 	#if DEBUG_FILESTREAMINPUT
@@ -221,7 +221,7 @@ TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
   }
 
 	#if DEBUG_FILESTREAMINPUT
-//		INTERNAL_DEBUG_DEVICE << " >> 0x" << getHex(ui8_data); 
+//		INTERNAL_DEBUG_DEVICE << " >> 0x" << getHex(ui8_data);
 //		debugData[mui32_byteCount % DEBUG_ARRAY_SIZE] = ui8_data;
 		mui32_byteCount++;
 		if (mui32_byteCount % DEBUG_ARRAY_SIZE == 0)

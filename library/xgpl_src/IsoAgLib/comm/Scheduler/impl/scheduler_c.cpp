@@ -737,7 +737,7 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& rc_selectedTask)
     sui32_lastDebugOutput = i32_now;
     INTERNAL_DEBUG_DEVICE << "setDebugTimeAccuracy()\n"
       << "Actual time: " << i32_now
-      << " for Task: " << rc_selectedTask.getTaskName() /// todo implente  Taskschilds
+      << " for Task: " << rc_selectedTask.getTaskName()
       << ",\tMax earlier execution: " << si16_maxDeviation
       << ",\tMin earlier execution: " << si16_minDeviation << ",\tCorrect Time Management: "
     << "idle time of FRONT: " << mc_taskQueue.front().getNextTriggerTime()
