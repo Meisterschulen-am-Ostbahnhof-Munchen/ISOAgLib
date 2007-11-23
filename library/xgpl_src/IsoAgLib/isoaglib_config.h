@@ -241,6 +241,47 @@
 
 /* ******************************************************** */
 /**
+ * \name Set configuration parameter for CAN FIFO handling. Valid only in case that not defined SYSTEM_WITH_ENHANCED_CAN_HAL
+ */
+/** Exponent of the 2^N operation,used  to determine the BufferSize of s_canFifoInstance
+* NOTE : The CAN_FIFO_EXPONENT_BUFFER_SIZE must be less than  TARGET_WORDSIZE -1,
+* otherwise the overflow of the UC and AC counter can lead to loss of CAN message. */
+
+#ifndef CAN_FIFO_EXPONENT_BUFFER_SIZE
+  #define  CAN_FIFO_EXPONENT_BUFFER_SIZE 4
+#endif
+
+/** When during the reconfiguration only a number of place less than CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL
+* are free in the CAN FIFO BUFFER, we are in  critical Filled level and also during the reconfiguration
+* the Canio_c::processMsg it is called
+*/
+
+#ifndef CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL
+  #define  CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL 9
+#endif
+
+/** The Variable is the extimated time occurring to the productor for writing one buffer element.
+* NOTE: the measuring unit of this element is microsecond for the target ESX and millisend for the PC
+* Please refers to the measurement unit returned by the function getCurrentTime()
+*/
+
+#ifndef CAN_FIFO_WRITING_TIME
+  #define  CAN_FIFO_WRITING_TIME 100
+#endif
+
+
+/** In the CAN FIFO reading, if we detect that the buffer element,  where we want to read, has been writing
+* right now, if the CAN_FIFO_READ_WAITING is set to YES, we wait a time= CAN_FIFO_WRITING_TIME and then read again.
+*/
+
+#ifdef CONFIG_CAN_FIFO_READ_WAITING
+   #define  CAN_FIFO_READ_WAITING
+#endif
+
+
+/* ******************************************************** */
+
+/**
  * \name Config access to RS232
  * Set the baudrate, buffer sizes and value coding.
  * These settings are used for initialisation on first access to RS232 ( pattern of singletons ).

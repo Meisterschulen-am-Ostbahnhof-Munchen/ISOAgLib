@@ -57,13 +57,8 @@
  */
 
 /**
-* List of all the compilation define:
-* - READ_WAITING : when the consumer in the read operation waits the time necessary to the producer for writing.
-* - CANFIFO_TARGET : for the target environment
-* - DYN_SIZE : if you want that the dimension of the buffer is passed as argument to the constructor of the class canFifo
-* - PC_CANFIFO_DEBUG : to activate debug information on PC
-* - CANFIFO_TARGET_DEBUG
-*.
+* compilation define:
+* - CAN_FIFO_READ_WAITING : when the consumer in the read operation waits the time necessary to the producer for writing.*.
 */
 #ifndef _CANFIFO_H
 
@@ -90,6 +85,7 @@
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
+
 namespace HAL{
 
 #define TARGET_WORDSIZE (SIZEOF_INT * 8)
@@ -100,20 +96,19 @@ extern "C" {
 * Exponent of the 2^N operation,used  to determine the BufferSize
 */
 const uint32_t cui32_maxNbrCan = (HAL_CAN_MAX_BUS_NR + 1  );
-const unsigned int uic_expBufferSize = 4;
+const unsigned int uic_expBufferSize = CAN_FIFO_EXPONENT_BUFFER_SIZE;
 
 /** When during the reconfiguration only a number of place less than cui_toleranceLevel
 * are free in the CAN FIFO , then the FIFO is considered in critical Filled level and the
 * Canio_c::processMsg is called to free the CAN FIFO buffer */
 
-const unsigned int cui_toleranceLevel = 9;
+const unsigned int cui_toleranceLevel = CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL;
 
 
 /**
 * Number of buffer elements.
 * The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,
 * otherwise the overflow of the UC and AC counter can lead to loss of data between producer and consumer.
-* For PC environment define the PC_CANFIFO_DEBUG for activating the check.
 */
 /*
 #if (uic_expBufferSize > (TARGET_WORDSIZE -1))
@@ -140,10 +135,6 @@ volatile unsigned int ui_AckCount;   /*!< \brief Last buffer element read by the
 volatile unsigned int ui_UpdCount;   /*!< \brief Last buffer element written by the productor (UC)*/
 
 fifoData_s p_fifoBuffer[uic_bufferSize];  /*!< \brief Buffer shared between productor and consumer */
-
-#ifdef READ_WAITING
-long i_wt;     /*!< \brief Time occurring to the productor for writing one buffer element */
-#endif
 
 bool b_Reading; /*!< \brief the consumer is reading */
 

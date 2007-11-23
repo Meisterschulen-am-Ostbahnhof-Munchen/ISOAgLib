@@ -73,7 +73,7 @@ NEAR static iFifo_s s_canFifoInstance[cui32_maxNbrCan];
 inline void getFifoCanIdenType(bool b_isExt, __IsoAgLib::Ident_c::identType_t& r_ident);
 
 
-#ifdef READ_WAITING
+#ifdef CAN_FIFO_READ_WAITING
 
 /**
 * Method for retrieving the current Time.
@@ -82,19 +82,19 @@ inline void getFifoCanIdenType(bool b_isExt, __IsoAgLib::Ident_c::identType_t& r
 static inline long getCurrentTime()
 {
 
-#ifdef SYSTEM_PC
-long l_currentTime;
-
-  time(&l_currentTime);
-    return l_currentTime;
-
-#else
-  __HAL::tTime l_retTime;
+#if defined (SYSTEM_ESX) || defined(SYSTEM_ESXu) || defined(SYSTEM_C2C) || defined(SYSTEM_IMI) || defined(SYSTEM_PM167)
+ __HAL::tTime l_retTime;
 
   __HAL::get_time_ext(&l_retTime);
   long l_timeMicroSec = 1000 * l_retTime.l1ms + l_retTime.w1us;
 
   return l_timeMicroSec;
+#else
+long l_currentTime;
+
+
+time(&l_currentTime);
+    return l_currentTime;
 
 #endif
 
@@ -108,7 +108,8 @@ static inline bool isWtElapsed(uint8_t aui8_busNum,long ai_oldTime)
 {
   long l_currentTime = getCurrentTime();
 
-  if(l_currentTime - ai_oldTime > s_canFifoInstance[aui8_busNum].i_wt)
+ // if(l_currentTime - ai_oldTime > s_canFifoInstance[aui8_busNum].i_wt)
+  if(l_currentTime - ai_oldTime > CAN_FIFO_WRITING_TIME)
     return true;
   else
     return false;
@@ -144,7 +145,7 @@ static inline bool isAnythingToRead(unsigned int aui_tmpUc,unsigned int aui_tmpA
   return true;
 }
 
-#ifdef READ_WAITING
+#ifdef CAN_FIFO_READ_WAITING
 /**
 * Check whether there is something to read.
 * If nothing to read because the productor is writing, wait until it ends
@@ -185,7 +186,7 @@ static bool isAnythingToReadWaiting(uint8_t aui8_busNum,unsigned int aui_tmpUc, 
 
 }
 
-#endif // READ_WAITING
+#endif // CAN_FIFO_READ_WAITING
 
 /** Check whether there is a message available : return value = true if a message is available**/
 
@@ -202,7 +203,7 @@ bool iFifoIsMsgAvailable(uint8_t aui8_busNum)
 
   const unsigned int ui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
 
-  #ifdef READ_WAITING
+  #ifdef CAN_FIFO_READ_WAITING
   return isAnythingToReadWaiting(aui8_busNum, ui_tmpUc,s_canFifoInstance[aui8_busNum].ui_AckCount);
   #else
   return isAnythingToRead(ui_tmpUc,s_canFifoInstance[aui8_busNum].ui_AckCount);
@@ -247,7 +248,7 @@ int32_t iFifoReadFbIdx(uint8_t aui8_busNum,int32_t& ri32_fbIdx, int32_t& rui32_r
 
   const unsigned int ui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
 
-#ifdef READ_WAITING
+#ifdef CAN_FIFO_READ_WAITING
   if(false == isAnythingToReadWaiting(aui8_busNum, ui_tmpUc,s_canFifoInstance[aui8_busNum].ui_AckCount))
   {
     i32_retValue = HAL_UNKNOWN_ERR;
@@ -305,7 +306,7 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData)
   const unsigned int ui_tmpUc = s_canFifoInstance[aui8_busNum].ui_UpdCount;
 
 
-#ifdef READ_WAITING
+#ifdef CAN_FIFO_READ_WAITING
   if(false == isAnythingToReadWaiting(aui8_busNum,ui_tmpUc,s_canFifoInstance[aui8_busNum].ui_AckCount))
   {
     i32_retValue = HAL_UNKNOWN_ERR;
@@ -346,12 +347,6 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData)
   std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
 #endif
   INTERNAL_DEBUG_DEVICE << "READER msgId = " << ar_readData.dwId<< INTERNAL_DEBUG_DEVICE_ENDL;
-
-#elif CANFIFO_TARGET_DEBUG
-
-  std::sprintf( outTmp, "READER in the buffer index =  %d\n", ((s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()));
-  put_rs232_string( (uint8_t*)outTmp );
-
 #endif
 
 // operation must be atomic
