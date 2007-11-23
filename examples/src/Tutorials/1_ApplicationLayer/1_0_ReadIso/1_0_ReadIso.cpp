@@ -243,7 +243,7 @@
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
 
-#include <IsoAgLib/util/impl/canpkgext_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
