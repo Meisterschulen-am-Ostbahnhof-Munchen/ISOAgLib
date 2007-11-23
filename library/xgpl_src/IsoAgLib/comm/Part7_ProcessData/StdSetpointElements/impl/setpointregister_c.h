@@ -271,11 +271,11 @@ public:
   */
   bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0)?true:false;}
   /**
-    checks if setpoint with type ab_mod exists
+    checks if setpoint with value group en_valueGroup exists
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
-    @return true -> a MOD type setpoint exist
+    @return true -> a setpoint for this valueGroup exists
   */
-  bool existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  bool modExists(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 
 
   /* ************************************ */

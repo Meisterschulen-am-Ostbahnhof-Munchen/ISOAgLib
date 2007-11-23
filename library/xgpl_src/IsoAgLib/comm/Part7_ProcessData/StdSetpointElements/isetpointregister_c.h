@@ -149,12 +149,12 @@ public:
   */
   bool existDefault()const {return SetpointRegister_c::existDefault();};
   /**
-    checks if setpoint with type ab_mod exists
-    @param ab_mod MOD code of tested setpoint type (exact 0, min 2, max 3, default)
-    @return true -> a MOD type setpoint exist
+    checks if setpoint with value group en_valueGroup exists
+    @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
+    @return true -> a setpoint for this valueGroup exists
   */
-  bool existValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
-    return SetpointRegister_c::existValMod(en_valueGroup);
+  bool modExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+    return SetpointRegister_c::modExists(en_valueGroup);
   };
 
 
