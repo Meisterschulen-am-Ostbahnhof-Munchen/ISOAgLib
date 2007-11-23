@@ -192,15 +192,15 @@
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 
 #include <IsoAgLib/driver/can/iident_c.h>
-#include <IsoAgLib/util/icanpkgext_c.h>
-#include <IsoAgLib/util/icancustomer_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
+#include <IsoAgLib/driver/can/icancustomer_c.h>
 
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
 
 #ifdef SYSTEM_PC
   #ifdef WIN32
