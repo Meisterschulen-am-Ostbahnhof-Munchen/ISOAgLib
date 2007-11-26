@@ -1,4 +1,4 @@
-/*! \page information Development Targets and Usage Preconditions of IsoAgLib
+/*! \page PageTechInfo Technical Information
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
@@ -33,7 +33,7 @@ The main basic design principles of the ISO<i><sub>AgLib</sub></i> are:
 	- use Hardware-Adaptation-Layer to restrict hardware dependent parts, to
     ease adaptation to different ECU types
 	- use hardware independent Communication-Layer, which implements all interaction via ISO11783
-	- very capable and flexible design -&gt; e.g. it can handle received setpoints from a group of
+	- very capable and flexible "Licensing"design -&gt; e.g. it can handle received setpoints from a group of
     different senders, so that the main application can decide, which sender to accept
 	- modularized structure to ease source code administration and to enable de/activation of
     specific function groups (e.g. RS232, sensor, actor)
