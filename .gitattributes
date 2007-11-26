@@ -2761,6 +2761,7 @@ library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h -text
 /license-conditions.txt -text
+/licensing.txt -text
 /main-features.txt -text
 /maintainers.txt -text
 /support.txt -text
