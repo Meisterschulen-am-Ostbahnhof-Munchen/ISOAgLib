@@ -111,8 +111,8 @@ ${BATCH_TARGET}:: ${OBJS}
 $(OUTDIR)/proc2iso.o:: src/proc2iso.cpp
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/proc2iso.o src/proc2iso.cpp
 
-$(OUTDIR)/isoname_c.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/ISO11783/impl/isoname_c.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/isoname_c.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/ISO11783/impl/isoname_c.cpp
+$(OUTDIR)/isoname_c.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/isoname_c.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
 
 ${OUTDIR}/util_funcs.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/util_funcs.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
