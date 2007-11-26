@@ -319,6 +319,7 @@ private:
   unsigned int objType;
 
   bool b_hasUnknownAttributes;
+  bool b_hasMoreThan6SoftKeys;
 
 #ifdef USE_SPECIAL_PARSING_PROP
   SpecialParsingUsePropTag_c* pc_specialParsingPropTag;

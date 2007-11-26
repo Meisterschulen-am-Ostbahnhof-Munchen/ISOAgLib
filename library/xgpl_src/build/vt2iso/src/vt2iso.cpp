@@ -731,6 +731,12 @@ vt2iso_c::clean_exit (char* error_message)
 
   if (error_message != NULL)
     std::cout << error_message;
+
+  if (b_hasMoreThan6SoftKeys)
+    std::cout
+        << "*** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING" << std::endl << std::endl
+        << "Your objectpool uses softkeymasks with MORE THAN 6 softkeys. Be ware that this pool may fail to upload on some VTs!!" << std::endl << std::endl
+        << "*** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING" << std::endl << std::endl;
 }
 
 signed int
@@ -3638,6 +3644,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         case otSoftkeymask:
           fprintf (partFile_attributes, ", %d", colortoi (attrString [attrBackground_colour]));
+          if (objChildObjects > 6)
+          {
+            std::cout << "THE <softkeymask> OBJECT '" << objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!\n\n";
+            b_hasMoreThan6SoftKeys = true;
+          }
           break;
 
         case otKey:
@@ -4484,6 +4495,7 @@ vt2iso_c::vt2iso_c(char* pch_poolIdent)
   , amountXmlFiles(0)
   , pcch_poolIdent (pch_poolIdent)
   , b_hasUnknownAttributes (false)
+  , b_hasMoreThan6SoftKeys (false)
 {}
 
 vt2iso_c::~vt2iso_c()
