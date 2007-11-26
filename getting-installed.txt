@@ -2,9 +2,9 @@
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
-\section HowtoLearnIsoAgLib HOWTO Learn Usage of IsoAgLib
+\section HowtoLearnIsoAgLib Learning IsoAgLib
 
-\subsection InformationInTutorials Information in Tutorial Examples
+\subsection InformationInTutorials Reference Tutorial Examples
 
 Please start your learning phase with the tutorial examples to get a guided tour through the
 various options and features of the library.
@@ -26,14 +26,13 @@ Look at the <a href="examples.html">Example Page</a> for the available tutorial 
 	- \link SuppHalPage Hardware Abstraction Layer (HAL) for supplementary parts of IsoAgLib \endlink
 
 
-\section HowtoSetupCompilerTools HOWTO Prepare Suitable Compiler and IDE
+\section HowtoSetupCompilerTools Preparing Compiler and IDE
 
 The ISO<i><sub>AgLib</sub></i> requires standard conformant C++ compilers with a
 conformant implementation of the <b>S</b>tandard <b>T</b>emplate <b>L</b>ibrary ( STL ).
 As at least the Microsoft Visual Studion of version 6 doesn't provide either, you have at least to
 download the conformant STL version from http://www.stlport.org ( Important: Don't use the iostream version
 of STLport with Visual Studio, as there are some problems ).<br>
-
 
 
 \subsection CompKdevelop3 KDevelop3 for LINUX
@@ -77,7 +76,6 @@ Installation Steps:
 		( the BAT vcvars32.bat is not located at C:\\Program Files\\Microsoft Visual Studio\\VC98 but in C:\\Program Files\\Microsoft Visual Studio\\VC98\\Bin )
 -# look at STLport own documentation from local installation file://C:/STLport/doc/install.html and file://C:/STLport/doc/select_io.html for further information
 -# make shure that you adapt the feature setup files to reflect a differing path to your STLport installation ( C:\\STLport is default setting )
-
 
 
 \subsection CompDevCpp Dev-C++ for Win32
@@ -151,7 +149,7 @@ configuration call with iRS232IO_c::setSndPufferSize and iRS232IO_c::setRecPuffe
 - Calculate the needed memory for RS232 ( corresponds to CONFIG_RS232_DEFAULT_SND_PUF_SIZE or the overridden value ) and CAN ( corresponds to the MAX output from step above )
 - Adapt the buffer size value ( leave some additional space )
 
-\section InstallIsoToolVt2Iso HOWTO Install vt2iso - Tool for Creation of ISO 11783 Virtual Terminal Masks
+\section InstallIsoToolVt2Iso Installing vt2iso - Tool for Creation of ISO 11783 Virtual Terminal Masks
 
 The ISO<i><sub>AgLib</sub></i> provides a complete Open Source Tool Chain for ISO 11783 virtual terminals.
 <b>First of all, you don't have to build vt2iso, as an EXE file is also part of the downloaded archive.</b><br>
@@ -202,16 +200,16 @@ the corresponding headers in /usr/include/xercesc/ ( or /usr/local/include/xerce
 	the downloaded archive xerces-c_2_5_0-mingw.DevPak for install
 </ol>
 
-\subsection CompileVt2Iso Compile vt2iso
+\section CompileVt2Iso Compiling vt2iso
 
-\subsubsection CompileVt2IsoLinux Compile VT2Iso on LINUX
+\subsubsection CompileVt2IsoLinux Compiling vt2iso on LINUX
 <ol>
 <li>cd build_utils/vt2iso
 <li>call make
 </ol>
 
 
-\subsubsection CompileVt2IsoWin32 Compile VT2Iso on Win32 with Dev-C++
+\subsubsection CompileVt2IsoWin32 Compiling VT2Iso on Win32 with Dev-C++
 <ol>
 <li>Install first Dev-C++ with the library packages FreeImage and ImageLib
 <li>Install Xerces-C ( see above )
@@ -223,7 +221,7 @@ the corresponding headers in /usr/include/xercesc/ ( or /usr/local/include/xerce
 	I ask you to check other resources on how to manage dll placement.
 </ol>
 
-\subsection UseVt2Iso Use Vt2Iso to create mask definition
+\subsection UseVt2Iso Creating mask definitions with vt2iso
 You can find the description of the XML syntax which is used by vt2iso at \ref XMLspec .<br>
 An example mask pool is defined for the example 3_0_VirtualTerminalIso.cpp . Some handler functions are also demonstrated there.<br>
 The automatic generation itself is triggered by a call like described in the script build_utils/vt2iso-3-0_VirtualTerminalIso.sh ( LINUX )
@@ -233,7 +231,7 @@ file of a project ( in this example in examples/tutorial/3_Terminal/3_0_VirtualT
 
 
 
-\section HowtoCreateProjectFiles HOWTO Create Project Files with Script update_makefile.sh
+\section HowtoCreateProjectFiles Creating Project Files with update_makefile.sh
 
 Caused by the huge amount of optional features in the ISO<i><sub>AgLib</sub></i> , the manual
 selection of needed project files can get quite complicated.
@@ -247,14 +245,14 @@ Call the script like this:<ul>
 </ul>
 
 
-\subsection UseMSYS Use MSYS to run script on Win32
+\subsection UseMSYS Running script on Win32 using MSYS
 As scripts can only be natively executed in UNIX or LINUX, the tool MSYS ( http://www.mingw.org )
 is needed as a minimal POSIX layer to call bash scripts within Win32.
 This project is simply to install. You don't need the other tools from this website, as the
 MinGW compiler is also integrated into the Dev-C++ tool.
 
 
-\subsection ScriptIntegrateWin32Can Integrate Win32 CAN card drivers
+\subsection ScriptIntegrateWin32Can Integration of Win32 CAN card drivers
 The IsoAgLib provides at the moment an integration with the CAN drivers from Vector Informatik and Sontheim.
 Both Vector Informatik driver types <b>CANLIB</b> and <b>XL Driver Library</b> are supported by the source modules
 <b>target_extension_can_w32_vector_canlib.cpp</b> and <b>target_extension_can_w32_vector_xl_drv_lib.cpp</b> .
@@ -305,7 +303,7 @@ This strategy can be mapped to other Win32 or LINUX CAN cards as well. Please co
 send a running adaptation back to the project.
 
 
-\subsection ScriptOptions Available Command Line Options for update_makefile.sh
+\subsection ScriptOptions Command Line Options for update_makefile.sh
 The script update_makefile.sh provides several command line options which enables the
 individual overwrite of target specific project settings. Thus you can use a project config
 file, which reflects for example a pc_linux platform, to get a project file for pc_win32
@@ -332,7 +330,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
 
 ./compiler_projects/projectGeneration/update_makefile.sh parses the selected project configuration file and overwrites the default values for all contained settings.
 It collects then the corresponding files which can then be imported to an individual IDE.
-Additionally a project specific configuration header is created in the directory xgpl_src/Application_Config with the
+Additionally a project specific configuration header is created in the directory xgpl_src/IsoAgLib with the
 name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
 the central configuration header xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
 Please set additionally the SYSTEM_FOO for the wanted platform - ./compiler_projects/projectGeneration/update_makefile.sh will output the correct define at the end of the
