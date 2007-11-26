@@ -779,9 +779,10 @@ create_filelist( )
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $DRIVER_FEATURES"
   fi
     
+  echo "FP=$FIND_TEMP_PATH"
+
   echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
   echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
-  
   # find application files
 	FIRST_LOOP="YES"
 	APP_SRC_PART=""
@@ -1261,7 +1262,6 @@ create_makefile()
 	if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
   	MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileSkeleton.txt"
   fi
-
 	# create Makefile Header
 	echo "#############################################################################" > $MakefileNameLong
 	echo "# Makefile for building: $PROJECT" >> $MakefileNameLong
@@ -1283,18 +1283,15 @@ create_makefile()
 		KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$SingleInclPath;"
 	done
 	echo "" >> $MakefileNameLong
-
 	echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
 	echo    "-include versions.mk" >> $MakefileNameLong
 
-
 	echo "" >> $MakefileNameLong
-	if [ $USE_CAN_DRIVER = "rte" -o $USE_RS232_DRIVER = "rte" -o $PRJ_CAN_DEVICE_FOR_SERVER = "rte" ] ; then
+	if [ "$USE_CAN_DRIVER" = "rte" -o "$USE_RS232_DRIVER" = "rte" -o "$PRJ_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
 		echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileNameLong
 		# the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
 		echo -n "BIOS_INC =" >> $MakefileNameLong
 	fi
-
 	echo -n -e "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileNameLong
 	for SinglePrjDefine in $PRJ_DEFINES ; do
 		echo -n " -D$SinglePrjDefine" >> $MakefileNameLong
@@ -1329,7 +1326,6 @@ create_makefile()
 				;;
 		esac
 	fi
-
 
 
 	echo -e "\n\nfirst: all\n" >> $MakefileNameLong
