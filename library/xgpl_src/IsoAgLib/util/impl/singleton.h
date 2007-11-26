@@ -135,9 +135,7 @@
   #define getIsoTerminalInstance4Comm()     getIsoTerminalInstance( getSingletonVecKey() )
   #define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getSingletonVecKey() )
   #define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance(getSingletonVecKey())
-  #define getMaskHandlerInstance4Comm()     getMaskHandlerInstance(getSingletonVecKey())
   #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance(getSingletonVecKey())
-  #define getMasterGuiInstance4Comm()       getMasterGuiInstance(getSingletonVecKey())
   #define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance(getSingletonVecKey())
 
 /** the class ClientBase delivers the base information, to concat client class instances
@@ -275,9 +273,7 @@
   #define getIsoTerminalInstance4Comm()   getIsoTerminalInstance()
   #define getMultiReceiveInstance4Comm()  getMultiReceiveInstance()
   #define getIsoRequestPgnInstance4Comm() getIsoRequestPgnInstance()
-  #define getMaskHandlerInstance4Comm()   getMaskHandlerInstance()
   #define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance()
-  #define getMasterGuiInstance4Comm()     getMasterGuiInstance()
   #define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance()
 
   /** the class ClientBase delivers the base information, to concat client class instances
