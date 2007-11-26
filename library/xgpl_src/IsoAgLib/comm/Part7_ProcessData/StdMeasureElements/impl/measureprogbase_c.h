@@ -133,41 +133,35 @@ public:
   /**
     constructor which can optional set most element vars
     @param apc_processData optional pointer to containing ProcDataBase_c instance (default NULL)
-    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
     ProcDataBase_c *const apc_processData = NULL,
-    Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_val = 0,
     const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(apc_processData),
-      mvec_measureSubprog() {init(apc_processData, ren_progType, ai32_val, ac_isoName);}
+      mvec_measureSubprog() {init(apc_processData, ai32_val, ac_isoName);}
 
   /**
     constructor which can optional set most element vars
     @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
     ProcDataBase_c &arc_processData,
-    Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_val = 0,
     const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(arc_processData),
-      mvec_measureSubprog() {init(&arc_processData, ren_progType, ai32_val, ac_isoName);}
+      mvec_measureSubprog() {init(&arc_processData, ai32_val, ac_isoName);}
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
     @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
   void init(
     ProcDataBase_c *const apc_processData,
-    Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_val = 0,
     const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified());
 
@@ -200,11 +194,10 @@ public:
   bool addSubprog(Proc_c::type_t ren_type, int32_t ai32_increment, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
   /**
-    LBS+ uses positive values even for time proportional measure prog
-    -> only the start cmd choose increment type
-    -> search for forced increment type and set first to according type if needed
+    set active flag
+    @param ab_active
   */
-  void forceSubprogType(Proc_c::type_t ren_type);
+  void setActive(bool ab_active) { mb_active = ab_active; }
 
   /**
     start a measuring programm
@@ -286,13 +279,11 @@ public:
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
     @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param af_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
   void init(
     ProcDataBase_c *const apc_processData,
-    Proc_c::progType_t ren_progType,
     float af_val,
     const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified());
 
@@ -369,18 +360,10 @@ public:
     {return ((men_type & ren_type) > 0)?true:false;}
 
   /**
-    return the program type of the item
-    @return ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
+    return the program active flag
+    @return true -> is active
   */
-  uint8_t progType() const{return static_cast<uint8_t>(men_progType);};
-
-  /**
-    check if given progType (base, target) is active
-    @param ren_progType tested Prog-Type
-    @return true -> given Prog-Type is set
-  */
-  bool checkProgType(Proc_c::progType_t ren_progType) const
-    {return ((men_progType & ren_progType) > 0)?true:false;}
+  bool getActive() const { return mb_active; };
 
   /**
     check if given send type is activated
@@ -445,13 +428,6 @@ public:
 #endif
 
   /**
-    set the programm type of the item
-    @param ab_type wanted ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
-  */
-  void setProgType(uint8_t ab_type)
-    {men_progType = Proc_c::progType_t(ab_type);}
-
-  /**
     set the type of the active increment types
     @param ren_type Bit-OR combined increment type(s)
   */
@@ -482,7 +458,7 @@ public:
   /**
     compare two items for PRI and ISOName
     @param arc_right compared object
-    @return true -> both instances are equal (ISOName and ProgType)
+    @return true -> both instances are equal (ISOName and active flag)
   */
   bool operator==(const MeasureProgBase_c& right) const
     {return (calcCompVal() == right.calcCompVal());}
@@ -490,7 +466,7 @@ public:
   /**
     compare two MeasureProg with <
     @param arc_right compared object
-    @return true -> this instance is < than the other (ISOName and ProgType)
+    @return true -> this instance is < than the other (ISOName and active flag)
   */
   bool operator<(const MeasureProgBase_c& right) const
     {return (calcCompVal() < right.calcCompVal());}
@@ -498,7 +474,7 @@ public:
   /**
     compare two MeasureProg with <=
     @param arc_right compared object
-    @return true -> this instance is <= than the other (ISOName and ProgType)
+    @return true -> this instance is <= than the other (ISOName and active flag)
   */
   bool operator<=(const MeasureProgBase_c& right) const
     {return (calcCompVal() <= right.calcCompVal());}
@@ -506,7 +482,7 @@ public:
   /**
     compare two MeasureProg with >
     @param arc_right compared object
-    @return true -> this instance is > than the other (ISOName and ProgType)
+    @return true -> this instance is > than the other (ISOName and active flag)
   */
   bool operator>(const MeasureProgBase_c& right) const
     {return (calcCompVal() > right.calcCompVal());}
@@ -514,7 +490,7 @@ public:
   /**
     compare two MeasureProg with >=
     @param arc_right compared object
-    @return true -> this instance is >= than the other (ISOName and ProgType)
+    @return true -> this instance is >= than the other (ISOName and active flag)
   */
   bool operator>=(const MeasureProgBase_c& right) const
     {return (calcCompVal() >= right.calcCompVal());}
@@ -650,9 +626,9 @@ private: // Private methods
   /**
     calculates a single value from identifying values
     (for easy <,>,...)
-    @return single comparison value (depends on ISOName and Prog-Type)
+    @return single comparison value (depends on ISOName and active flag)
   */
-  int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * men_progType);}
+  int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * (mb_active + 1));}
 
   /**
     deliver to ab_mod according measure val type
@@ -750,10 +726,9 @@ private: // Private attributes
   Proc_c::doSend_t men_doSend;
 
   /**
-    stores if programm is started with baseProcess msg
-    or with targetProcess msg -> this type is used for sending of values
+    stores if programm is active
   */
-  Proc_c::progType_t men_progType;
+  bool mb_active;
 
   /**
     active increment types: some of {TimeProp, DistProp, ValIncr, DeltaIncr,

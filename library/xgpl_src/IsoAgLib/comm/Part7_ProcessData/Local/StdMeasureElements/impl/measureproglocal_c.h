@@ -127,28 +127,24 @@ public:
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataBase_c *const apc_processData = NULL,
-    Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataBase_c *const apc_processData,
-    Proc_c::progType_t ren_progType = Proc_c::UndefinedProg,
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
@@ -156,30 +152,26 @@ public:
   /**
     constructor which can optionally set most element vars of MeasureProgLocal
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param af_masterVal actual central local measured value used as float masterVal
     @param af_eepromVal optional value stored in EEPROM (default 0.0)
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   MeasureProgLocal_c(
     ProcDataBase_c *const apc_processData,
-    Proc_c::progType_t ren_progType,
     float af_masterVal,
     float af_eepromVal = 0.0F,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() )
-    : MeasureProgBase_c(apc_processData, ren_progType, 0, ac_callerISOName )
-    {init(apc_processData, ren_progType, af_masterVal, af_eepromVal, ac_callerISOName  );};
+    : MeasureProgBase_c(apc_processData, 0, ac_callerISOName )
+    {init(apc_processData, af_masterVal, af_eepromVal, ac_callerISOName  );};
   /**
     initialise this MeasureProgLocal_c instance to a well defined initial state
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param ren_progType optional program msg type (Proc_c::Base, Proc_c::Target; default Proc_c::UndefinedProg)
     @param af_masterVal actual central local measured value used as float masterVal
     @param af_eepromVal optional value stored in EEPROM (default 0.0)
     @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
   void init(
     ProcDataBase_c *const apc_processData,
-    Proc_c::progType_t ren_progType,
     float af_masterVal,
     float af_eepromVal = 0.0F,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );

@@ -98,7 +98,7 @@ namespace __IsoAgLib {
    */
   MeasureProgRemote_c::MeasureProgRemote_c(
       ProcDataBase_c *const apc_processData )
-  : MeasureProgBase_c(apc_processData, Proc_c::UndefinedProg, 0, IsoName_c::IsoNameUnspecified() )
+  : MeasureProgBase_c(apc_processData, 0, IsoName_c::IsoNameUnspecified() )
   {
     init( apc_processData );
   }
@@ -110,7 +110,7 @@ namespace __IsoAgLib {
 */
 void MeasureProgRemote_c::init( ProcDataBase_c *const apc_processData )
 {
-  MeasureProgBase_c::init( apc_processData, Proc_c::UndefinedProg, int32_t(0), IsoName_c::IsoNameUnspecified() );
+  MeasureProgBase_c::init( apc_processData, int32_t(0), IsoName_c::IsoNameUnspecified() );
   mb_receiveForeignMeasurement = false;
 }
 
@@ -152,7 +152,6 @@ MeasureProgRemote_c::~MeasureProgRemote_c(){
 
   possible errors:
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-      * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
 
   @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
@@ -179,7 +178,6 @@ bool MeasureProgRemote_c::start(Proc_c::doSend_t ren_doSend){
 
   possible errors:
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-      * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
       * dependant error in CAN_IO
 
   @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)

@@ -106,12 +106,11 @@ namespace __IsoAgLib {
 
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
     @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
 void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
-  Proc_c::progType_t ren_progType, int32_t ai32_val,
+  int32_t ai32_val,
   const IsoName_c& ac_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
@@ -135,7 +134,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   // store the parameter init vals
   mc_isoName = ac_isoName;
   mi32_val = ai32_val;
-  men_progType = ren_progType;
+  mb_active = false;
 
   // set the rest of element vals to defined init
   men_accumProp = Proc_c::AccumNone;
@@ -176,7 +175,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arc_src )
   mc_isoName = arc_src.mc_isoName;
   men_accumProp =  arc_src.men_accumProp;
   men_doSend = arc_src.men_doSend;
-  men_progType = arc_src.men_progType;
+  mb_active = arc_src.mb_active;
   mi32_accel = arc_src.mi32_accel;
   mi32_delta = arc_src.mi32_delta;
   mi32_integ = arc_src.mi32_integ;
@@ -274,27 +273,10 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   // if start follows immedeately addSubprog timeEvent is not called yet => do it here
   // remote: virtual ProcDataRemote::commanderISOName() can give a value different to IsoName_c::IsoNameUnspecified
   // local: virtual ProcDataLocal::commanderISOName() gives IsoName_c::IsoNameUnspecified
-  if (pprocessDataConst()->commanderISOName().isSpecified())
+  if (pprocessDataConst() && pprocessDataConst()->commanderISOName().isSpecified())
     setISOName(pprocessDataConst()->commanderISOName());
 
   return true;
-}
-
-/** ISO uses positive values even for time proportional measure prog
-    -> only the start cmd choose increment type
-    -> search for forced increment type and set first to according type if needed
-  */
-void MeasureProgBase_c::forceSubprogType(Proc_c::type_t ren_type)
-{
-  Vec_MeasureSubprog::iterator pc_subprog;
-  for (pc_subprog = mvec_measureSubprog.begin(); pc_subprog != mvec_measureSubprog.end(); pc_subprog++)
-  {
-    if (pc_subprog->type() == ren_type) break;
-  }
-  if ((pc_subprog == mvec_measureSubprog.end()) && (!mvec_measureSubprog.empty()))
-  { // set increment type of first item
-    mvec_measureSubprog.begin()->setType(ren_type);
-  }
 }
 
 
@@ -307,7 +289,6 @@ bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSe
   // register values
   men_doSend = (ren_doSend != Proc_c::DoNone)?ren_doSend : men_doSend;
   if (men_doSend == Proc_c::DoNone) men_doSend = Proc_c::DoVal;
-  forceSubprogType(ren_type);
   men_type = ren_type;
   return true;
 }
@@ -441,13 +422,11 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
 #ifdef USE_FLOAT_DATA_TYPE
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
     @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param ren_progType optional program type: Proc_c::Base, Proc_c::Target (default Proc_c::UndefinedProg)
     @param af_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
 void MeasureProgBase_c::init(
   ProcDataBase_c *const apc_processData,
-  Proc_c::progType_t ren_progType,
   float af_val,
   const IsoName_c& ac_isoName)
 { // set the dynamic list to a well defined cleared starting condition
@@ -470,7 +449,7 @@ void MeasureProgBase_c::init(
   // store the parameter init vals
   mc_isoName = ac_isoName;
   f_val = af_val;
-  men_progType = ren_progType;
+  mb_active = false;
 
   // set the rest of element vals to defined init
   men_accumProp = Proc_c::AccumNone;
@@ -715,41 +694,6 @@ bool MeasureProgBase_c::processMsg(){
     }
   }
 
-#if 0
-     // old code:
-     // program controlling with start, stop or reset
-      uint8_t b_cmd = c_pkg.data(0);
-      #ifdef LAV_COMMENT_MEASUREPROG_CMD
-      if ((b_cmd & 0x80) > 0)
-      #else
-      if ( ((b_cmd & 0xF) > 0) && ((b_cmd & 0xF) < 7))
-      #endif
-      { // start command
-        start(static_cast<Proc_c::progType_t>(c_pkg.pri()),
-             static_cast<Proc_c::type_t>(b_cmd & 0x7),
-             static_cast<Proc_c::doSend_t>((b_cmd >> 4) & 0x7));
-      }
-      else
-      {
-        #ifdef LAV_COMMENT_MEASUREPROG_CMD
-        if ((b_cmd & 0x8) > 0)
-        #else
-        if ((b_cmd & 0xF) == 0x8)
-        #endif
-        { // reset command
-          reset(b_cmd);
-          // call handler function if handler class is registered
-          if ( processData().getProcessDataChangeHandler() != NULL )
-            processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().isoName().toConstIisoName_c() );
-        }
-        else
-        { // stop command
-          stop();
-        }
-      }
-    }
-#endif
-//#endif
   return b_edited;
 }
 
@@ -900,9 +844,6 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
 
   if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
     // change threshold proportional
-    /** @todo NOW: DistProp - Distance-Proportional -> sending of values every fixed dinstance interval
-                  --> check for any impact of answering this question
-      */
     addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
 
   if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)

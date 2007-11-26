@@ -153,7 +153,6 @@ public:
 
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
 
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
@@ -166,7 +165,6 @@ public:
 
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * Err_c::precondition if ren_progType is not one of the allowed Proc_c::Base, Proc_c::Target
         * dependant error in CAN_IO
 
     @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)

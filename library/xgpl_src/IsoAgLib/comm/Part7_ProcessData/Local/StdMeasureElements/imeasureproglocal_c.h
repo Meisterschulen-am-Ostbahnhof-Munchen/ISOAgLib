@@ -172,18 +172,6 @@ public:
   bool checkType(Proc_c::type_t ren_type)
     {return MeasureProgLocal_c::checkType(ren_type);};
   /**
-    return the program type of the item
-    @return ProgType: Proc_c::UndefinedProg, Proc_c::Base, Proc_c::Target
-  */
-  uint8_t progType(){return MeasureProgLocal_c::progType();};
-  /**
-    check if given progType (base, target) is active
-    @param ren_progType tested Prog-Type
-    @return true -> given Prog-Type is set
-  */
-  bool checkProgType(Proc_c::progType_t ren_progType)
-    {return MeasureProgLocal_c::checkProgType(ren_progType);};
-  /**
     check if given send type is activated
     @param ren_doSend tested sended value
     @return true -> given value is sent on trigger

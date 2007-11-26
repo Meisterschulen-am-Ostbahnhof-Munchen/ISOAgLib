@@ -138,9 +138,6 @@ public:
   /** enum type for setting test conditions for setpoint validity */
   enum testSetpoint_t{TestAllowed = 1, TestMaster = 2};
 
-  /** enum type for possible programm types */
-  enum progType_t {UndefinedProg = 0xFF, Base = 1, Target = 2, Partner = 5 };
-
   /** enum type for to sending values */
   enum doSend_t {DoNone = 0, DoVal = 1, DoMed = 2, DoInteg = 4, DoDelta = 8, DoAccel = 16, DoMin = 32, DoMax = 64,
                  // ISO specific

@@ -313,7 +313,6 @@ void ProcDataBase_c::setBasicSendFlags() const
   const GeneralCommand_c::ValueGroup_t men_valueGroup = getProcessInstance4Comm().data().mc_generalCommand.getValueGroup();
   const bool mb_isSetpoint = getProcessInstance4Comm().data().mc_generalCommand.checkIsSetpoint();
 
-  /** @todo NOW: in case no element/DDI fits send default values */
   mc_data.set_Element(0xFFFF);
   mc_data.set_DDI(0);
 
