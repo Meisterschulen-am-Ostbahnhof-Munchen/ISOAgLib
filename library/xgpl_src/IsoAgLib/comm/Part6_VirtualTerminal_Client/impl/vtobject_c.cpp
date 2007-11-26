@@ -368,8 +368,10 @@ vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iV
 bool
 vtObject_c::genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_enableReplaceOfCmd)
 {
-  if (dx > 128) dx = 128;  /** @todo SOON throw a warning here?! return false? log to Err_c ?! */
-  if (dy < -127)dy = -127; /** @todo SOON throw a warning here?! return false? log to Err_c ?! */
+  /** @todo SOON throw a warning here?! return false? log to Err_c ?! */
+  if (dx > 128) dx = 128;
+  /** @todo SOON throw a warning here?! return false? log to Err_c ?! */
+  if (dy < -127)dy = -127;
 
   bool b_result = genericChangeChildLocationPosition (true, childObject, dx, dy, b_updateObject, numObjectsToFollow, objectsToFollow, ui16_structOffset, ui16_structLen);
   if (b_result) __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeChildLocation (this, childObject, dx, dy, b_enableReplaceOfCmd);

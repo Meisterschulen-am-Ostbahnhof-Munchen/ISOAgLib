@@ -464,8 +464,8 @@ bool IdentItem_c::timeEventActive( void )
   #ifdef CHANGE_DEV_CLASS_INST_ON_CONFLICT
   // only change dev class inst and repeated address claim on adress conflicts, if following define
   // is set in masterHeader
-  /** @todo USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
-           --> we should change SA in such a case AND maybe send some sort of DAIGNOSE MESSAGE
+  /** @todo SOON USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
+           --> we should change SA in such a case AND maybe send some sort of DIAGNOSE MESSAGE
     */
   // because of errors caused by terminals, which doesn't claim correctly an address
   // don't do conflict changing of POS
@@ -556,7 +556,8 @@ bool IdentItem_c::timeEventActive( void )
     }
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
-      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System ); /** @todo SOON insert new error-location/type for those cases! */
+      /** @todo SOON insert new error-location/type for those cases! */
+      getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
       IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (mc_isoName);
       if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS

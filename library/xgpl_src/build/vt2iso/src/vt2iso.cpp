@@ -3565,7 +3565,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         sprintf (attrString [attrTarget_value_variable_reference], "%s", tempString);
       }
 
-      //! @todo To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the
+      //! @todo SOON To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the
       //! following "convertIdReferencesToNameReferences();" call wouldn't be commented out!
       //convertIdReferencesToNameReferences();
       // ###########################################

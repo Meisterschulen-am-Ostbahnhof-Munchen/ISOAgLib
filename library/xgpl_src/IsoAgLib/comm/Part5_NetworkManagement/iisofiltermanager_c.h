@@ -73,7 +73,8 @@ class iIsoFilterManager_c : private __IsoAgLib::IsoFilterManager_c
 {
 public:
 
-  /** @return true on success @todo SOON make the intern function return a bool, too. */
+  /** @return true on success
+      @todo SOON make the intern function return a bool, too. */
   bool insertIsoFilter (iIsoFilter_s const& arcs_isoFilter, bool ab_immReconfigure=true)
   { IsoFilterManager_c::insertIsoFilter (arcs_isoFilter, ab_immReconfigure); return true; }
 

@@ -547,7 +547,8 @@ public:
 
   /** check if we have valid Direction data, so the information should be sent out in timeEventTracMode */
   bool isDirectionToSend() const
-    { return ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo SOON: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+    /// @todo SOON: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+    { return ( (mui16_courseOverGroundRad10Minus4 <= 62855)
             && (mui16_speedOverGroundCmSec <= 65532)); }
 
   /** deliver GPS receive qualitiy - also needed to see if we have valid GPS-positioning!!! */

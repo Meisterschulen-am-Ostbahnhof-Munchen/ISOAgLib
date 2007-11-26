@@ -113,7 +113,8 @@ static const uint8_t scui8_eCM_DPO = 22;
 static const uint8_t scui8_eCM_EndofMsgACK = 23;
 static const uint8_t scui8_CM_ConnAbort = 255;
 
-static const uint8_t scui8_isoCanPkgDelay = 4; /** @todo SOON figure that one out... new ISO says we can put out head2head messages! */
+/** @todo SOON figure that one out... new ISO says we can put out head2head messages! */
+static const uint8_t scui8_isoCanPkgDelay = 4;
 
 
 
@@ -465,7 +466,8 @@ MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
 
   if (mlist_sendStream.empty()) {
     mlist_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_WITH_COMMA ));
-    getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1); /** @todo SOON remove if there's no minimum between data-packets! */
+    /** @todo SOON remove if there's no minimum between data-packets! */
+    getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1);
   } else {
     mlist_sendStream.insert (mlist_sendStream.end(), mlist_sendStream.back()); // insert a copy of the first element (for performance reasons)
   }
@@ -737,7 +739,8 @@ MultiSend_c::timeEvent()
 
   if (mlist_sendStream.empty())
   { // (re-)set the CAN send pause to 0, because not a single SendStream is active anymore.
-    getCanInstance4Comm().setSendpause (0); /** @todo SOON remove if there's no minimum between data-packets! */
+    /** @todo SOON remove if there's no minimum between data-packets! */
+    getCanInstance4Comm().setSendpause (0);
   }
 
   // ALWAYS calculate when we want to be triggered again!

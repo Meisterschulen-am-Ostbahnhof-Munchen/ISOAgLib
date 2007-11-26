@@ -160,7 +160,8 @@ public:
   //! @param arc_stream: stream that is to be processed
   //! @param ab_isFirstChunk: is it the first chunk? do we have to perform some decision action?
   //! @param ab_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!
-  //! @return .... keep stuff @todo COMMENT describe here
+  //! @return .... keep stuff
+  //! @todo COMMENT describe return value here
   virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& /*apc_stream*/, bool /*ab_isFirstChunk*/, bool /*ab_isLastChunk*/) { return false; }
 
   virtual void notificationOnMultiReceiveError (const IsoAgLib::ReceiveStreamIdentifier_c& /*ac_streamIdent*/, uint8_t /*aui8_multiReceiveError*/, bool /*ab_isGlobal*/) {} // needs not to be overwritten

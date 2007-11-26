@@ -161,7 +161,7 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xAA */ (1<<1) | (1<<2) ,
 /* 0xAB */ (1<<1) | (1<<2) ,
 /* 0xAC */ (1<<1) | (1<<2) ,
-/* 0xAD */ (1<<1) | (1<<2) , /** @todo NOW Think about what happens now if you enqueue: MaskA, MaskB, MaskA!!! (Maybe change to delete in between and push_back new?!) */ // (Change Active Mask)
+/* 0xAD */ (1<<0) , // changed. was "(1<<1) | (1<<2) ," before, but we shouldn't change earlier to a datamask as it's probably not setup correctly at this time.  // (Change Active Mask)
 /* 0xAE */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xAF */ (1<<1) | (1<<2) | (1<<3) ,
 /* 0xB0 */ (1<<1) | (1<<2) ,
@@ -173,7 +173,7 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 /* 0xB6 */ 0 , //invalid command
 /* 0xB7 */ 0 , //invalid command
 /* 0xB8 */ (1<<0) ,  //NEVER OVERRIDE THIS COMMAND (Graphics Context)
-/* 0xB9 */ (1<<1) | (1<<2) | (1<<3) | (1<<4), // (Get Attribute Value)
+/* 0xB9 */ (1<<0) , // changed. was "(1<<1) | (1<<2) | (1<<3) | (1<<4)," before, but I guess no overriding should take place in request commands // (Get Attribute Value)
 /* 0xBA */ 0, //invalid command
 /* 0xBB */ 0, //invalid command
 /* 0xBC */ 0, //invalid command
@@ -348,7 +348,8 @@ VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStream
   if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
   if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
-    return false; /** @todo SOON Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
+    /** @todo SOON Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
+    return false;
   return true;
 }
 
@@ -720,7 +721,8 @@ VtClientServerCommunication_c::timeEvent(void)
     return true; // do not proceed if LANGUAGE not yet received!
 
   if (men_objectPoolState == OPCannotBeUploaded)
-    return true; /** @todo SOON is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
+    /** @todo SOON is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
+    return true;
 
   // from HERE ON potential longer command sequences might be started
   // which include sending or starting of TP sessions and the like

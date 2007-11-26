@@ -660,7 +660,8 @@ namespace __IsoAgLib {
           mi32_lastIsoDirection = ci32_now;
           mc_sendGpsISOName = rcc_tempISOName;
 
-          if ( (mui16_courseOverGroundRad10Minus4 <= (62855)) /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+          /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+          if ( (mui16_courseOverGroundRad10Minus4 <= (62855))
             && (mui16_speedOverGroundCmSec        <= (65532))
              )
           {
@@ -695,8 +696,8 @@ namespace __IsoAgLib {
   {
     if ( (mi32_latitudeDegree10Minus7  >= ( -90*10000000)) && (mi32_latitudeDegree10Minus7  <= ( 90*10000000))
       && (mi32_longitudeDegree10Minus7 >= (-180*10000000)) && (mi32_longitudeDegree10Minus7 <= (180*10000000))
-      && (mt_gnssMethod != IsoAgLib::IsoNoGps) /// @todo ON REQUEST: improve the checking on what's valid!
-      )
+      && (mt_gnssMethod != IsoAgLib::IsoNoGps)
+      ) /// @todo ON REQUEST: improve the checking on what's valid!
     { // yep, valid GPS information
       return true;
     }
@@ -709,7 +710,8 @@ namespace __IsoAgLib {
   /** check if an NMEA2000 direction signal was received - it does NOT indicate that this is an up2date signal */
   bool TimePosGPS_c::isDirectionReceived() const
   {
-    if ( (mui16_courseOverGroundRad10Minus4 <= 62855) /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+    /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+    if ( (mui16_courseOverGroundRad10Minus4 <= 62855)
       && (mui16_speedOverGroundCmSec        <= 65532)
        )
     { // yep, valid GPS-direction information
@@ -995,7 +997,8 @@ namespace __IsoAgLib {
       //IsoAgLib::convertIstream( rc_stream, ui16_dummy ); //ui16_driftSpeedCmSec );
         /** @todo ON REQUEST: Do we need those valus above?? */
 
-        if ( (ui16_newCOG <= (62855)) /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+        /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+        if ( (ui16_newCOG <= (62855))
           && (ui16_newSOG <= (65532))
            )
         {
