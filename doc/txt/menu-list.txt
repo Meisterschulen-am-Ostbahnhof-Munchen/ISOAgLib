@@ -9,6 +9,7 @@
         <li> \ref Acknowledgements </li>
         </ul>
     </li>
+    <li> \ref outlook "Further Development" </li>    
     <li class="folder"> \ref HowtoDownloadPage "Download & Installation"
         <ul>
         <li> \ref HowtoDownload "Choosing Archives" </li>
@@ -35,7 +36,6 @@
         <li> \ref InfRequirements </li>
         </ul>
     </li>
-    <li> \ref outlook "Further Development" </li>
     <li class="folder"> Further Information
         <ul>
         <li> \ref FurtherReading </li>
