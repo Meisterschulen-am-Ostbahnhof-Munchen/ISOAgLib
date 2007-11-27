@@ -5,7 +5,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described in this section:
-<ol>
+<ol type="I">
 <li> Download
     <ul><li>\ref HowtoDownload
     </li><li>\ref HowtoAccessRepository
@@ -13,8 +13,8 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </li>
 <li> \ref PageInstallation "Installation"
     <ul><li>\ref HowtoSetupCompilerTools
-    </li><li>\ref InstallIsoToolVt2Iso
     </li><li>\ref HowtoCreateProjectFiles
+    </li><li>\ref InstallIsoToolVt2Iso
     </li></ul>
 </li>
 </ol>
@@ -127,7 +127,7 @@ As this is an Open Source project, not only the maintainers of the project can p
 So either you sign a support contract to get personal support.<br>
 You can also post your requests in the \ref Mailing-List.
 
-See \ref Contributing if you want to help developing IsoAgLib further and share some ideas and work.
+See \ref Contributing if you want to help developing IsoAgLib further and share some ideas or work.
 
 
 */

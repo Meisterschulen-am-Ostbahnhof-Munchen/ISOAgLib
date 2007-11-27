@@ -1,10 +1,8 @@
-/*! \page IsoAgLib Maindirectory
-
-INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
-
+/*!
 \defgroup License LICENSE
+@{
+\defgroup Root Root
 \ingroup License
-\defgroup Root 
 @{
 
 Welcome to the IsoAgLib program library which is published as Open Source under the
@@ -18,8 +16,9 @@ The following directories contain license protected files:
 + doc with source code in documented format ( created by Doxygen from source files )
 
 The following directory contains files which are created to be integrated in closed projects
-( i.e. has no license restrictions ):
+( i.e. have no license restrictions ):
 + examples
+@}
 @}
 
 */

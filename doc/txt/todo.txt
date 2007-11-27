@@ -1,8 +1,25 @@
-/*! \page PageTodo Main TODO items
+/*! \page PageTodo Main TODO Items
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
-\section Todo Main TODO items
+<table class="infobox" border="0">
+<tr><th>Section Overview</th></tr>
+<tr><td>The following parts are described in this section:
+<ol type="I"> 
+    <li>\ref PageDeveloperInfo "Developer Information Page"
+        <ul>
+        <li> \ref WhereToStart </li>
+        <li> \ref HowtoLearnIsoAgLib </li>
+        <li> \ref MemoryUsage </li>
+        </ul>
+    </li>
+    <li> \ref PageChanges "Changelog Page" </li>
+    <li> Main TODO Items Page</li>
+</ol>
+</td></tr>
+</table>
+
+\section Todo Main TODO Items
 The following items are at the TODO list. You are encouraged to
 help contributing for their implementation with source code.
 
@@ -20,7 +37,7 @@ help contributing for their implementation with source code.
 <table border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
 <tr><td>
 Each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
-"fix" the email adress - this "manupulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a
+"fix" the email address - this "manupulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a
 working domain.
 </td></tr></table>
 

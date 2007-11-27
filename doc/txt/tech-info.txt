@@ -2,6 +2,19 @@
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
+<table class="infobox" border="0">
+<tr><th>Section Overview</th></tr>
+<tr><td>The following parts are described in this section:
+    <ul>
+    <li> \ref InfGeneralInformation </li>
+    <li> \ref InfAgentNetwork </li>
+    <li> \ref InfServiceNetwork </li>
+    <li> \ref InfRequirements </li>
+    </ul>
+</td></tr>
+</table>
+
+
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group
 <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-D&uuml;rnast</a>

@@ -5,19 +5,16 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described in this section:
-    <ul><li> \ref WhereToStart
-    <ul><li> \ref HowtoLearnIsoAgLib
-    <ul><li> \ref MemoryUsage
-    </li></ul>
-</td></tr>
-</table>
-<br/>
-<table class="infobox" border="0">
-<tr><th>See also</th></tr>
-<tr><td>
-    <ul><li> \ref Changes
-    </li><li> \ref ToDo
-    </li></ul>
+<ol type="I">
+    <li> Developer Information Page
+        <ul><li> \ref WhereToStart </li>
+        <li> \ref HowtoLearnIsoAgLib </li>
+        <li> \ref MemoryUsage </li>
+        </ul>
+    </li>
+    <li> \ref PageChanges "Changelog" </li>
+    <li> \ref PageTodo </li>
+</ol>
 </td></tr>
 </table>
 

@@ -28,9 +28,9 @@ You can see the complete LICENSE terms at \ref GPL_with_exception where both the
 the GPL license text is presented.
 
 You can identify the license protected parts by:<ul>
-<li>Header at the top of each file
-<li>Files which are placed within directories xgpl_src, build_utils and compiler_projects/projectGeneration ( all relative to root directory )
-<li>README_LICENSED_PARTS.txt in each of the root directories where the license conditions of their contents is described
+<li>header at the top of each file
+<li>files which are placed within directories xgpl_src, build_utils and compiler_projects/projectGeneration ( all relative to root directory )
+<li>the <tt>README<b></b>_LICENSED_PARTS.txt</tt> in each of the root directories where the license conditions of the individual contents is described
 </ul>
 
 <b>Important note on distinction between extensions of ISO<i><sub>AgLib</sub></i> ( which are covered by the license ) and independent

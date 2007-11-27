@@ -1,6 +1,7 @@
 /*! \mainpage Welcome to IsoAgLib.org!
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
+
 <table class="infoboxLinks" border="0">
 <tr><th>Quick-Links</th></tr>
 <tr><td>
@@ -26,7 +27,6 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </table>
 
 \section Home Welcome to IsoAgLib.org!
-
 IsoAglib provides a free portable C++ source library for development
 of <a href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
 applications.
@@ -67,7 +67,9 @@ to develop applications using IsoAglib.
   - <b>February 2006:</b> Enhance modularization of base information (Not-ProcessData parts from 11783-7) - this will be finished for release 1.2.2
   - <b>January 2006:</b> Periodic Source Adress (SA) request sending to get early cleanup of stale nodes in monitor list
   - <b>18.1.2006:</b> Virtual Terminal Client<br>
-    - Now supporting correct scaling of the button-contents! (Each button has its own scaling-factor/centering-offset as the border is always 4 absolute 4 pixel, independent of how the object-pool will be scaled!)
+    - Now supporting correct scaling of the button-contents! (Each bThe layered structure is described by the following diagram:
+inline_dotgraph_1
+Information on Obligatory Elemutton has its own scaling-factor/centering-offset as the border is always 4 absolute 4 pixel, independent of how the object-pool will be scaled!)
       <b>ATTENTION: Please REBUILD vt2iso and RERUN it on your project's XML-definition, the initAllObjects function in the generated -functions.inc has changed!!<br>
     - Also new due to this slightly different scaling in the buttons: Don't use the same fontattributes-object in the datamask AND a button. Also (from a strict point of view) don't use the same fontattributes-object in different-sized buttons (as they all got a slightly different scaling-factor)!!!</b><br>
     - Please recheck all your fixed-bitmaps in your projects (if using any), because the scaling-routine has slightly changed, which may result in size-differences by 1 pixel - this may lead to NOT finding a matching fixed-bitmap anymore!
@@ -141,7 +143,7 @@ The layered structure is described by the following diagram:
   \dot
   digraph LayeredStructure {
     fontname=ARIALN;
-    /*ranksep=1.0;*/
+    ranksep=1.0;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
     node [shape=record, fontname=ARIALN, fontsize=9, style=filled, fontcolor=black];
     edge [fontname=ARIALN, fontsize=9, dir="back"];

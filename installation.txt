@@ -5,16 +5,16 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described in this section:
-<ol>
+<ol type="I">
 <li> \ref PageDownloadAndInstall "Download"
     <ul><li>\ref HowtoDownload
     </li><li>\ref HowtoAccessRepository
     </li></ul>
 </li>
-<li> \ref Installation
+<li> Installation
     <ul><li>\ref HowtoSetupCompilerTools
-    </li><li>\ref InstallIsoToolVt2Iso
     </li><li>\ref HowtoCreateProjectFiles
+    </li><li>\ref InstallIsoToolVt2Iso
     </li></ul>
 </li>
 </ol>
