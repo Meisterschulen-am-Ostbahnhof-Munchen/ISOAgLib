@@ -1,0 +1,171 @@
+/*! \page PageContactAndSupport Contact & Support
+
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
+
+<table class="infobox" border="0">
+<tr><th>Section Overview</th></tr>
+<tr><td>The following parts are described in this section:
+    <ul><li> \ref GeneralSupportInformation
+    </li></ul>
+</td></tr>
+</table>
+<br/>
+<table class="infobox" border="0">
+<tr><th>See also</th></tr>
+<tr><td>
+    <ul><li> \ref Authors
+    </li></ul>
+</td></tr>
+</table>
+
+
+
+\section GeneralSupportInformation General Support Information
+Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with
+important starting information, the learning effort to get a running tutorial example is not completly neglectible ( reading the documentation
+requires at least some time ). Additionally the <b>object oriented</b> development style might be new to most of the potential users.<br>
+
+\subsection Workshop Tutorial Workshops for Development with IsoAgLib
+Please visit our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a> to
+request and plan workshops where all members can learn:
+    - <b>XML</b> design and definition of <b>ISO 11783 Virtual Terminal</b> mask pools
+    - possibilities to create flexible mask definitions which can be automatically adapted by the ISO<i><sub>AgLib</sub></i> to the properties of the connected terminal:
+        - multi-language string handling
+        - scaling to screen size
+        - selection of available font size that is corresponding to the scaling factor of the complete layout
+        - colour depth selection during runtime, so that a unique global mask pool can be defined.
+    - integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
+    - integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
+    - integration of process data management to allow terminal independent control and monitoring access to an implement
+    - adaptation to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
+    - test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment ( RTE ), which is another also Open Source
+        project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
+    - ...
+
+The exact topics of a tutorial workshop can be defined corresponding to the request of
+interested developers.
+
+\subsection HalAdaptation Support for Adaptation to Individual Target Platform
+Even if the adaptation of the ISO<i><sub>AgLib</sub></i> to an individual target platform ( OS or BIOS ) is eased
+by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adaptation or can perform the
+complete adaptation. Please use our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a> for more details.
+
+\subsection SupportContract Support Contract
+Like other Open Source projects, the maintainers can provide some free support, which is restricted by
+the spare free time of the developers and other experts in the user community. For commercial users, who need a predefined
+reaction time for each issue ( question or bug report ), should check our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a>.
+
+\subsection CommercialEdition Commercial Editions
+The business model of ISO<i><sub>AgLib</sub></i> is comparable to <b>Red Hat</b> with their <i>free</i>
+<b><a href="http://www.fedora-linux.org/">Fedora Linux</a></b> and their commercial grade
+<b><a href="http://www.redhat.com/">Red Hat Enterprise</a></b> edition.
+While the versions of the free ISO<i><sub>AgLib</sub></i> edition are good working snapshots of the ongoing development,
+the commercial edition provides thoroughly tested and maintained (including bug fixes for older revisions) versions.
+Please check our <a href="http://www.isoaglib.com/contact.html">commercial project contact page</a> to retrieve more information.
+
+\subsection FeaturesOnRequest Integration of Requested Features
+As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the ISO<i><sub>AgLib</sub></i>, all received
+patches will be reviewed and merged into the reference version of the software. Additionally all feature
+extensions, which are needed for projects of <a href="http://www.osb-ag.de">OSB AG</a> will also be merged.<br>
+
+But as the ISO 11783 standard definition contains a lot of functions, which are not needed for the own
+projects of the ISO<i><sub>AgLib</sub></i> maintainers, they will be only integrated if other users contribute them, or if
+<a href="http://www.osb-ag.de">OSB AG</a> is asked to develop them. This is also true for several enhancements of ISO Virtual Terminal mask definitions, which
+would enable a more capable and more flexible adaptation to the features of the connected terminal. <br>
+Some examples:
+    - GUI tool to define the XML mask definition ( easier than edit of pure ASCII )
+    - individual rules for selection of bitmap version in relation to size and color depth of connected
+        terminal
+    - extension of the font size relative positioning to map different font sizes for different
+        language versions ( languages where all labels a longer than the corresponding strings in other
+        languages might need a smaller font size to allow placement on the common layout;
+        therefore font size dependent position alignment should be enhanced )
+    - language specific bitmaps ( especially if some text is displayed in the bitmap )
+
+
+\section Mailing-Lists
+As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
+So either you sign a support contract to get personal support.<br>
+Or you direct your help requests to the community of ISO<i><sub>AgLib</sub></i> users and developers, who can be reached by the <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list</a>
+or <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a>
+( subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> or <a href="https://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">there (HTTPS)</a>
+and send mail <a href="mailto:isoaglib@linux90:idvnet:de">there</a> ). This way all users can help each other
+without the dependency on the maintainers. New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
+Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
+Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
+This works really fine in several other Open  Source projects.
+
+
+
+\section QuestionsAnswers Questions, Answers and Discussion
+An Open Source project needs active users, who post their questions, hints and <b>answers to other questions</b>
+to a central open communication platform. All users are strongly encouraged to help answering questions and to
+search for reasons of posted ISO<i><sub>AgLib</sub></i> bugs.
+Therefore a <a href="http://linux90.idvnet.de/pipermail/isoaglib/">mailing-list</a> has been established. 
+It can also be accessed with a <a href="https://linux90.idvnet.de/pipermail/isoaglib/">secure</a> connection.</br>
+You can subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> or <a href="https://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">there (HTTPS)</a> or just
+<a href="mailto:isoaglib@linux90:idvnet:de">send mail</a>. This way all users can help each other without 
+the dependency on the maintainers. 
+New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
+Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
+Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
+This works really fine in several other Open Source projects.
+
+
+The ISO<i><sub>AgLib</sub></i> was developed with the help of the following Open Source projects:
+- <a href="http://www.kdevelop.org">KDevelop</a> an IDE for object oriented program development running on Linux
+- <a href="http://www.umbrello.org">Umbrello</a> for modelling of the project with the Unified Modelling Language (UML)
+- KDoc , a source code parser to generate API documentation from the sources
+- <a href="http://www.doxygen.org">doxygen</a> , a comprehensive source code parser, which can be highly configured, and which is used
+    to generate the published API documentation
+- sgmltools, <a href="http://www.lyx.org">lyx</a>, for editing of the handbook
+- Source Navigator, a comprehensive source editor with a capable source parser (e.g. object dependencies,
+    function calls)
+- LINUX and all its standard development tools
+- ...
+
+Thanks to the DFG, which finances the partial project 2 of the research group &quot;IKB-D&uuml;rnast&quot;.
+Thanks to the research group of Prof. H. Auernhammer and to Martin Wodok (m.wodok\@osb-ag:de), who
+developed LBS_Terminal.
+
+
+\section Contributing Contributing to the Project
+Each Open Source project needs the input of an active user community to get optimal results.
+Herby not only source code contributions are needed. For example tutorial examples and documentation text
+could be enhanced, corrected and extended by users who don't feell familiar engough to contribute code.
+
+All authors will be listed in the file(s) where they contributed ( please prepare this in your patches ), and at the main page ( this page )
+of ISO<i><sub>AgLib</sub></i> <a href="index.html#Authors">HERE</a>.
+Each fundamental change like a licensing change will be only performed, if none of the source code authors and contributors
+raise their veto. Licensing changes might be needed, if some projects or users would be prevented from the us of ISO<i><sub>AgLib</sub></i>.
+But also fundamental changes in the design and structure of ISO<i><sub>AgLib</sub></i> will be discussed with the authors (as far as they are still active and
+reachable).
+
+Your contributions can be integrated into the repository if you work as described:
+- Use Subversion or one of its GUI Tools (e.g. TortoiseSVN) to create a local working copy
+- Update your repository ( especially important for creation of diffs ) with
+    the command "svn update" ( or one of the corresponding commands in GUI tools )
+- Collect all changes with the command "svn diff" ( or one of its corresponding commands in GUI tools; e.g. TortoiseSVN provides a command "Create Patch..." )
+    into one patch
+- Send the patch to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+    for inclusion ( evaluation of the change is then a lot easier )<br>
+
+If you perform local changes at your local "Working Copy" ( that's the result of a checkout ), subversion might
+detect <b>conflicts</b> during one of the next updates, if your local changes intersect with some changes in the
+repository. Subversion ( like CVS ) will preserve both versions of the affected <b>lines</b>, so that you can manually
+decide on the "right" merge. If you don't detect such a conflict, you might be irritated by some syntax error messages from your compiler
+or you might get some execution errors on shell scripts like update_makefile.sh . This is caused by the way Subversion presents the both
+versions within the affected file. You might look <a href="http://tortoisesvn.sourceforge.net/docs/release/TortoiseSVN_en/ch05s06.html">here</a> for more
+information on the markers which are used to show conflicts ( comparable to CVS ).<br>
+Subversion will create unchanged copies of your last base version, the current version from repository and your personal changed file,
+so that you can also simply continue to use yours ( foo.mine ) or the newest ( foo.rNN - NN the number of the current version ) version.
+Please remove the files like foo.mine and foo.rNN to indicate to subversion that you resolved the conflict.<br>
+<b>TortoiseSVN</b> helps you to detect conflicts, as it highlights the corresponding filename in its work state dialog window, where the
+process of an update is logged. It indicates also files where it was able to perform a clean merge of local and repository changes. But you might also
+have a look in these files to, to make shure, the merge was really clean ( the maintainers of ISO<i><sub>AgLib</sub></i> didn't have
+such problems so far  ).
+
+*/
+
+
+*/

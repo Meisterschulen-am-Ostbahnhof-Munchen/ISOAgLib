@@ -7,6 +7,7 @@ admin/testscripts/compileTutorials.sh -text
 bin/proc2iso -text
 bin/update_makefile.sh -text
 bin/vt2iso -text
+/contact_and_support.txt -text
 doc/footer.html -text
 doc/header.html -text
 doc/html/Diagramme/IsoAgLib-further_develop.gif -text
@@ -40,6 +41,7 @@ doc/txt/tech-info.txt -text
 doc/txt/todo.txt -text
 doc/txt/topic-template.txt -text
 doc/txt/using-projects.txt -text
+/download.txt -text
 examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__simulating.dev -text
 examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__simulating__sys.dev -text
 examples/compiler_projects/Dev-C++/0_0_AddressClaimIso/0_0_AddressClaimIso__sontheim__simulating.dev -text
@@ -2363,6 +2365,7 @@ examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/version.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/6_0_VtThreads.cpp -text
 /getting-installed.txt -text
 /howto-download.txt -text
+/installation.txt -text
 library/LICENSE -text
 library/commercial_BIOS/bios_pc.testserver/include -text
 library/commercial_BIOS/bios_pc.testserver/lib -text

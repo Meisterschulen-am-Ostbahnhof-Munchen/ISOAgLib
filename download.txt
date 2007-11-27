@@ -1,0 +1,133 @@
+/*! \page PageDownloadAndInstall Download & Installation of IsoAgLib
+
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
+
+<table class="infobox" border="0">
+<tr><th>Section Overview</th></tr>
+<tr><td>The following parts are described in this section:
+<ol>
+<li> Download
+    <ul><li>\ref HowtoDownload
+    </li><li>\ref HowtoAccessRepository
+    </li></ul>
+</li>
+<li> \ref PageInstallation "Installation"
+    <ul><li>\ref HowtoSetupCompilerTools
+    </li><li>\ref InstallIsoToolVt2Iso
+    </li><li>\ref HowtoCreateProjectFiles
+    </li></ul>
+</li>
+</ol>
+</td></tr>
+</table>
+
+\section HowtoDownload Downloading the Needed Archives
+
+As the ISO<i><sub>AgLib</sub></i> provides several functions which are supplementary
+or only relevant for specific conditions, the download is seperated in several
+parts.
+
+<table class="download" border="0" cellspacing="0" cellpadding="2">
+<tr>
+	<th nowrap="true">Archive</th>
+    <th nowrap="true">Content Description</th>   
+	<th nowrap="true">Size (kByte)</th>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/coreArchiv-1.2.0.zip">coreArchiv-1.2.0.zip</a></td>
+    <td>Core components which are needed for almost all use cases</td>
+	<td align="center"> 4152 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/generatedHtmlDocuList-1.2.0.zip">generatedHtmlDocuList-1.2.0.zip</a></td>
+    <td>Documentation (Can also be recreated with Doxygen like described below)</td>
+	<td align="center"> 13125 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/isoArchiv-1.2.0.zip">isoArchiv-1.2.0.zip</a></td>
+    <td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
+	<td align="center"> 408 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/baseArchiv-1.2.0.zip">baseArchiv-1.2.0.zip</a></td>
+    <td>Data repository class with cached tractor information (Base Data like tractor speed)</td>
+	<td align="center"> 28 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/procArchiv-1.2.0.zip">procArchiv-1.2.0.zip</a></td>
+    <td>Process Data support (local and remote process data with several variants for different feature sets / resource requirements)</td>
+	<td align="center"> 276 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/supplRs232Archiv-1.2.0.zip">supplRs232Archiv-1.2.0.zip</a></td>
+    <td>Supplementary driver with object oriented modelling of RS232 (access functions like C++ iostreams)</td>
+	<td align="center"> 44</td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/DoDocumentation and Download of IsoAgLibwnload/supplActorArchiv-1.2.0.zip">supplActorArchiv-1.2.0.zip</a></td>
+    <td>Supplementary driver with object oriented modelling of Actors (effective diagnose based on properties for allowed current range)</td>
+	<td align="center"> 36 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/supplSensorArchiv-1.2.0.zip">supplSensorArchiv-1.2.0.zip</a></td>
+    <td>Supplementary driver with object oriented modelling of Sensors (Digital and Analog Input)</td>
+	<td align="center"> 80 </td>
+</tr>
+</table>
+
+The supplementary drivers were developed to control complete ECU IO in object oriented style
+with ISO<i><sub>AgLib</sub></i> . This development patterns allows the combined control and diagnose
+of IO channels with One-Channel-One-Instance relation. These driver extensions are complete optional.
+
+All archives should be extracted from the same directory.
+
+\subsection HowtoCreateDoc Rebuilding the Documentation with Doxygen
+
+If you don't want to download the big archive with the generated documentation
+( <b>13 MByte</b> ), you can simply recreate the documentation based on the downloaded
+source and the contained informative text files.
+<b>Steps:</b>
+<ol>
+<li>Download and install Doxygen from http://www.stack.nl/~dimitri/doxygen/ for your specific plattform
+<li>Download and install graphviz with the tool "dot" from http://www.graphviz.org/Download.php
+<li>Let Doxygen create the documentation with the config file "Doxyfile" which is located in the project root directory
+</ol>
+
+
+\section HowtoAccessRepository Accessing the Version Management Repository
+The sources of the ISO<i><sub>AgLib</sub></i> managed by the version management system
+<a href="http://subversion.tigris.org">Subversion</a> which is developed as a replacement for CVS.
+The ISO<i><sub>AgLib</sub></i> repository can be accessed in read-only mode with anonymous access, so that no
+registration is needed.
+
+	- HTTP:
+		- HEAD: <a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/releases">http://www.isoaglib.org/svn/OSB/IsoAgLib/releases</a>
+	- HTTPS:
+		- HEAD: <a href="https://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">https://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib</a>
+		- Releases: <a href="https://www.isoaglib.org/svn/OSB/IsoAgLib/releases">https://www.isoaglib.org/svn/OSB/IsoAgLib/releases</a>
+
+You can access the repository by:
+	- normal Browser (<a href="http://www.isoaglib.org/svn/OSB/IsoAgLib/IsoAgLib">directly use the links above</a>)
+	- with command line tools of Subversion
+	- with GUI tools like rapidsvn and TortoiseSVN ( integration in Windows File Manager for very easy
+		version management access )
+		which can be downloaded from <a href="http://subversion.tigris.org">Subversion Webiste</a> .<br>
+		<b>Important:</b><br>
+		Please make sure that you select the option to enable usage by all users on computer during install, as this seems to be
+		no default option. Otherwise you can't use it as ordinary user on WinXP, WinNT or Win2000.<br>
+
+
+<b>What to do on access problems:</b><br>
+Please look at the <a href="https://linux90.idvnet.de/pipermail/isoaglib/">email list (HTTPS)</a> to see, if your problem is known.
+In case your problem differs from already known cases, you should subscribe to the email list and post there your problem report.<br>
+If you can only access Internet through a proxy, you have to configure subversion ( or your GUI frontend like TortoiseSVN ) to use your
+proxy. See the <a href="http://svnbook.red-bean.com/en/1.0/svn-book.html">manual</a> for more information on
+the use of subversion.<br>
+If your company proxy blocks the needed WebDAV commands by default, and you can't use HTTPS for some reasons, you might look at
+<a href="http://subversion.tigris.org/project_faq.html%23proxy#proxy">there</a> for a description of the needed WebDAV commands. Maybe
+you can ask your proxy administrator to allow these commands to pass thru.
+
+
+
+\section HowtoGetHelp Getting Help
+As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
+So either you sign a support contract to get personal support.<br>
+You can also post your requests in the \ref Mailing-List.
+
+See \ref Contributing if you want to help developing IsoAgLib further and share some ideas and work.
+
+
+*/
