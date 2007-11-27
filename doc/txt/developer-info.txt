@@ -18,6 +18,8 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
+
 \section WhereToStart  Where to Start Learning IsoAgLib
 \subsection GettingOverview Where to Get an Overview
 The links in the navigation column present you the following information:

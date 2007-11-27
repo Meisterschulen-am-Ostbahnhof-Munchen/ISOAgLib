@@ -12,11 +12,13 @@ BODY,TD {
 }
 H1 {
     text-align: center;
+    padding-top:1.5em;
     font-size: 160%;
 }
 H2 {
     font-size: 130%;
     padding-top:1em;
+    border-bottom:1px dotted gray;
 }
 H3 {
     font-size: 100%;
@@ -315,9 +317,11 @@ TD.tiny      { font-size: 75%;
 TH.dirtab { background: #e8eef2;
             font-weight: bold;
 }
-HR { height: 1px;
-     border: none;
-     border-top: 1px solid black;
+HR { 
+  height: 1px;
+  border: none;
+  border-top: 1px solid black;
+  margin-left:0;
 }
 
 /* Style for detailed member documentation */
@@ -520,7 +524,6 @@ TABLE.infobox {
   border:1px dashed #66CC66; 
   padding:5px;
 }
-
 
 
 #sitemap UL #menu UL { 

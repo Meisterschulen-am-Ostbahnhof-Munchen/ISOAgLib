@@ -2,6 +2,16 @@
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
+<table class="infobox" border="0">
+<tr><th>Section Overview</th></tr>
+<tr><td>The following parts are described in this section:
+    <ul><li> \ref FurtherDevelopment </li>
+        <li> \ref FurtherExamples </li>
+    </ul>
+</td></tr>
+</table>
+
+<div style="clear:left"></div>
 
 \section FurtherDevelopment Further Development
 The ISO<i><sub>AgLib</sub></i> is published as Open Source according to the GPL license ( with exceptions ). Therefore everybody has the right

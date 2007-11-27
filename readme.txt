@@ -1,4 +1,4 @@
-/*! \mainpage Welcome to IsoAgLib.org!
+/*! \mainpage 
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
@@ -25,6 +25,8 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
     </ul>
 </td></tr>
 </table>
+
+<div style="clear:left"></div>
 
 \section Home Welcome to IsoAgLib.org!
 IsoAglib provides a free portable C++ source library for development

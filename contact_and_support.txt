@@ -22,6 +22,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
 
 \section GeneralSupportInformation General Support Information
 Even if the ISO<i><sub>AgLib</sub></i> provides very detailed documentation including several <b>HOWTO</b> chapters with

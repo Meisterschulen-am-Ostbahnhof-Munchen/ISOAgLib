@@ -14,6 +14,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
 
 \section InfGeneralInformation General Information
 The ISO<i><sub>AgLib</sub></i> was primarily developed for massive automatic process data recording within the research group

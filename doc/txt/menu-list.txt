@@ -1,5 +1,5 @@
 <ul>
-    <li class="folder"> \ref index "About"
+    <li class="folder"> \ref index "IsoAgLib"
         <ul>
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
@@ -25,8 +25,8 @@
         <li> \ref WhereToStart "Where to Start" </li>
         <li> \ref HowtoLearnIsoAgLib "Learning IsoAgLib" </li>
         <li> \ref MemoryUsage "Memory Resource Requirements" </li>
-        <li> \ref Todo </li>
-        <li> \ref Changes "Changelog"</li>
+        <li> \ref PageTodo </li>
+        <li> \ref PageChanges "Changelog"</li>
         </ul>
     </li>
     <li class="folder"> \ref PageTechInfo
@@ -51,7 +51,7 @@
         <li> \ref Contributing "Contributing to IsoAgLib" </li>
         </ul>
     </li>
-    <li> \ref Sitemap </li>
+    <li> \ref PageSitemap "Sitemap" </li>
 </ul>
 
 

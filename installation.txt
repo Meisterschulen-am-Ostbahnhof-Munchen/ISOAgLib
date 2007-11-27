@@ -21,6 +21,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
 
 \section HowtoSetupCompilerTools Preparing Compiler and IDE
 

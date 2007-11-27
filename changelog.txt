@@ -19,6 +19,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
 
 \section Changes Changes
 

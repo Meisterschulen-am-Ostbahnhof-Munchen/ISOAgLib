@@ -21,13 +21,15 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
+
 \section HowtoDownload Downloading the Needed Archives
 
 As the ISO<i><sub>AgLib</sub></i> provides several functions which are supplementary
 or only relevant for specific conditions, the download is seperated in several
 parts.
 
-<table class="download" border="0" cellspacing="0" cellpadding="2">
+<table class="download" border="0" cellspacing="0" cellpadding="2" align="center">
 <tr>
 	<th nowrap="true">Archive</th>
     <th nowrap="true">Content Description</th>   

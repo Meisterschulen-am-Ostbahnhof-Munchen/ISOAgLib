@@ -15,7 +15,7 @@ delivered by the manufacturer. If you place the files of your BIOS/OS
 in the appropriate subdirectory, the include pathes and project definitions
 ( esp. linking ) of common HAL target adaptations can be shared among all
 users.
-But you aren't forced to do this!</tt></big>
+But you aren't forced to do this!
 
 @}
 

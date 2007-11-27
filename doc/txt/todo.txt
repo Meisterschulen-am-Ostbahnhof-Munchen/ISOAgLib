@@ -19,6 +19,8 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </td></tr>
 </table>
 
+<div style="clear:left"></div>
+
 \section Todo Main TODO Items
 The following items are at the TODO list. You are encouraged to
 help contributing for their implementation with source code.
