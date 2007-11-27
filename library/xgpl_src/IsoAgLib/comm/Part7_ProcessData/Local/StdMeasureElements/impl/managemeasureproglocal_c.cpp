@@ -312,20 +312,24 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
       for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
           pc_iter != vec_prog().end(); pc_iter++)
       { // check if this item has inactive isoName
-  
+
         if ( !c_isoMonitor.existIsoMemberISOName(pc_iter->isoName(), true) )
         { // item isn't active any more -> stop entries and erase it
           pc_iter->stop();
           pc_iter->setActive(false);
-  
+
           // erase only if array size > 1
           if (vec_prog().size() > 1)
           {
             vec_prog().erase(pc_iter);
+
+            // reset mpc_progCache
+            mpc_progCache = vec_prog().begin();
+
             #ifdef DEBUG_HEAP_USEAGE
             sui16_MeasureProgLocalTotal--;
             sui16_deconstructMeasureProgLocalTotal++;
-  
+
             if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
               || ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  ) )
             {
@@ -482,9 +486,10 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName)
       break;
   }
 
-  if (pc_iter != vec_prog().end())
+  if (pc_iter != vec_prog().end()) {
     // set cache to new item which is inserted / reused
     mpc_progCache = pc_iter;
+  }
   else
   {
     vec_prog().push_front( MeasureProgLocal_c(pprocessData() ) );
