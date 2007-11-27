@@ -1,34 +1,35 @@
 <ul>
-    <li class="folder"> \ref Home "About"
+    <li class="folder"> \ref index "About"
         <ul>
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
         <li> \ref StructuralOverview </li>
+        <li> \ref UsingProjects "Known Applications" </li>
         <li> \ref Maintainers "Maintainers" </li>
-        <li> \ref UsingProjects "Industry Solutions" </li>
         <li> \ref Acknowledgements </li>
+	    <li> \ref Authors</li>
         </ul>
     </li>
-    <li> \ref outlook "Further Development" </li>    
-    <li class="folder"> \ref HowtoDownloadPage "Download & Installation"
+    <li> \ref outlook "Further Development" </li>
+    <li class="folder"> \ref PageDownloadAndInstall "Download \& Installation"
         <ul>
-        <li> \ref HowtoDownload "Choosing Archives" </li>
+        <li> \ref HowtoDownload "Downloading Archives" </li>
         <li> \ref HowtoAccessRepository "Accessing the Repository" </li>
         <li> \ref HowtoSetupCompilerTools "Preparing Compiler and IDE" </li>
         <li> \ref HowtoCreateProjectFiles "Project File Creation" </li>
         <li> \ref InstallIsoToolVt2Iso "Installing vt2iso" </li>
         </ul>
     </li>
-    <li class="folder"> Developer Information
+    <li class="folder"> \ref PageDeveloperInfo
         <ul>
         <li> \ref WhereToStart "Where to Start" </li>
         <li> \ref HowtoLearnIsoAgLib "Learning IsoAgLib" </li>
-        <li> \ref Changes </li>
-        <li> \ref Todo "ToDo" </li>
         <li> \ref MemoryUsage "Memory Resource Requirements" </li>
+        <li> \ref Todo </li>
+        <li> \ref Changes "Changelog"</li>
         </ul>
     </li>
-    <li class="folder"> \ref information "Technical Information"
+    <li class="folder"> \ref PageTechInfo
         <ul>
         <li> \ref InfGeneralInformation </li>
         <li> \ref InfAgentNetwork </li>
@@ -36,18 +37,18 @@
         <li> \ref InfRequirements </li>
         </ul>
     </li>
-    <li class="folder"> Further Information
+    <li class="folder"> \ref PageFurtherInformation
         <ul>
         <li> \ref FurtherReading </li>
         </ul>
     </li>
-    <li> \ref LicenseConditions "Licensing" </li>
-    <li class="folder"> Contact & Support 
+    <li> \ref PageLicensing </li>
+    <li class="folder"> \ref PageContactAndSupport
         <ul>
-        <li> \ref Support "Support Information" </li>
-        <li> \ref HowtoGetHelp "Getting Help" </li>
+        <li> \ref GeneralSupportInformation </li>
+        <li> \ref Mailing-Lists </li>
         <li> \ref QuestionsAnswers </li>
-        <li> \ref HowtoContribute "Contributing to IsoAgLib" </li>
+        <li> \ref Contributing "Contributing to IsoAgLib" </li>
         </ul>
     </li>
     <li> \ref Sitemap </li>

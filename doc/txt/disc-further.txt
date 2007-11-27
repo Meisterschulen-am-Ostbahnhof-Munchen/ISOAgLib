@@ -1,37 +1,6 @@
-/*! \page disc_further Contact and Background Information on IsoAgLib
+/*! \page PageFurtherInformation Further Information
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
-
-\section QuestionsAnswers Questions, Answers and Discussion
-An Open Source project needs active users, who post their questions, hints and <b>answers to other questions</b>
-to a central open communication platform. All users are strongly encouraged to help answering questions and to
-search for reasons of posted ISO<i><sub>AgLib</sub></i> bugs.
-Therefore a <a href="http://linux90.idvnet.de/pipermail/isoaglib/">mailing-list</a> has been established. 
-It can also be accessed with a <a href="https://linux90.idvnet.de/pipermail/isoaglib/">secure</a> connection.</br>
-You can subscribe <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">here</a> or <a href="https://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">there (HTTPS)</a> or just
-<a href="mailto:isoaglib@linux90:idvnet:de">send mail</a>. This way all users can help each other without 
-the dependency on the maintainers. 
-New feature wishes, bug reports and other change suggestions can be discussed there, too.<br>
-Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
-Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.<br>
-This works really fine in several other Open Source projects.
-
-
-The ISO<i><sub>AgLib</sub></i> was developed with the help of the following Open Source projects:
-- <a href="http://www.kdevelop.org">KDevelop</a> an IDE for object oriented program development running on Linux
-- <a href="http://www.umbrello.org">Umbrello</a> for modelling of the project with the Unified Modelling Language (UML)
-- KDoc , a source code parser to generate API documentation from the sources
-- <a href="http://www.doxygen.org">doxygen</a> , a comprehensive source code parser, which can be highly configured, and which is used
-    to generate the published API documentation
-- sgmltools, <a href="http://www.lyx.org">lyx</a>, for editing of the handbook
-- Source Navigator, a comprehensive source editor with a capable source parser (e.g. object dependencies,
-    function calls)
-- LINUX and all its standard development tools
-- ...
-
-Thanks to the DFG, which finances the partial project 2 of the research group &quot;IKB-D&uuml;rnast&quot;.
-Thanks to the research group of Prof. H. Auernhammer and to Martin Wodok (m.wodok\@osb-ag:de), who
-developed LBS_Terminal.
 
 \section FurtherReading Further Reading on Open Source
 
