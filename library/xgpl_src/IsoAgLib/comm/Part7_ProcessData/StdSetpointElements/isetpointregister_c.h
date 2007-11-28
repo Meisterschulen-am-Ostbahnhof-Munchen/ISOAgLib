@@ -104,13 +104,13 @@ public:
   */
   int32_t getDefault()const{return SetpointRegister_c::getDefault();};
   /**
-    deliver the setpoint according to the mod type
-    @param ab_mod MOD code of wanted setpoint (exact 0, min 2, max 3, default)
-    @return setpoint selected by MOD
+    deliver the setpoint according to the value group
+    @param en_valueGroup of wanted setpoint (exact 0, min 2, max 3, default)
+    @return setpoint selected by value group
   */
-  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const
+  int32_t valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup)const
   {
-    return SetpointRegister_c::valMod(en_valueGroup);
+    return SetpointRegister_c::valForGroup(en_valueGroup);
   };
 
   /**
@@ -153,8 +153,8 @@ public:
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a setpoint for this valueGroup exists
   */
-  bool modExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
-    return SetpointRegister_c::modExists(en_valueGroup);
+  bool valueGroupExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+    return SetpointRegister_c::valueGroupExists(en_valueGroup);
   };
 
 
@@ -207,13 +207,13 @@ public:
   */
   bool setValid(bool ab_state = true){return SetpointRegister_c::setValid(ab_state);};
   /**
-    set a limit val for type given by ab_mod
+    set a limit val for type given by value group
     @param ai32_val new setpoint value
-    @param ab_mod MOD code of setpoint type to set (exact 0, min 2, max 3, default)
+    @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup)
+  void setValForGroup(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup)
   {
-    SetpointRegister_c::setValMod(ai32_val, en_valueGroup);
+    SetpointRegister_c::setValForGroup(ai32_val, en_valueGroup);
   };
 };
 

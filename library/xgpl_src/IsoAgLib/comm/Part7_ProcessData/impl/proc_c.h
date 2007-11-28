@@ -129,8 +129,7 @@ public:
 
 /** enum type definition as part of class */
   enum type_t {NullType = 0, DistProp = 1, TimeProp = 4, ValIncr = 8, 
-               MaximumThreshold = 0x10, MinimumThreshold = 0x20, OnChange = 0x40, Counter,
-               DeltaIncr, AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr};
+               MaximumThreshold = 0x10, MinimumThreshold = 0x20, OnChange = 0x40, Counter };
 
   /** enum type for distinguish between Local or Remote data */
   enum homeEcu_t {Local = 1, Remote = 2};

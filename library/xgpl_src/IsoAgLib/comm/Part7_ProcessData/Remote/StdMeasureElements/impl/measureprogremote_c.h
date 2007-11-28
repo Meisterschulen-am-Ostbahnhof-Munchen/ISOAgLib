@@ -167,7 +167,7 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
 
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
@@ -179,7 +179,7 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param b_deleteSubProgs is only used for ISO
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
@@ -264,42 +264,6 @@ public:
   */
   virtual void initVal(float af_val);
 #endif
-  /**
-    send reset command for medium value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  virtual bool resetMed();
-  /**
-    send reset command for integral value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  virtual bool resetInteg();
-  /**
-    send reset command for minimum value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  virtual bool resetMin();
-  /**
-    send reset command for maximum value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  virtual bool resetMax();
 
   /**
     perform periodic actions --> stop measuring prog if isoName isn't active any more
@@ -320,18 +284,6 @@ private: // Private methods
   bool verifySetRemoteISOName();
 
   /**
-    set medium val
-    @param ai32_val new medium value
-  */
-  void setMed(int32_t ai32_val){mi32_med = ai32_val;};
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set medium val
-    @param af_val new medium value
-  */
-  void setMed(float af_val){f_med = af_val;};
-#endif
-  /**
     deliver a reference to ProcDataRemote_c
     (the base function only delivers ProcDataBase_c)
     @return reference of containing ProcDataRemote_c
@@ -350,18 +302,19 @@ private: // Private methods
     return ((ProcDataRemoteBase_c*)((void*)ProcessElementBase_c::pprocessData()));
   };
 
+  /**
+    send reset command for minimum value (only for local instances)
+    @return true
+  */
+  virtual bool resetMin() { return true; }
+
+  /**
+    send reset command for maximum value (only for local instances)
+    @return true
+  */
+  virtual bool resetMax() { return true; }
+
 private: // Private attributes
-#ifdef USE_FLOAT_DATA_TYPE
-  union {
-    /** medium value of the remote process data */
-    int32_t mi32_med;
-    /** medium value of the remote process data */
-    float f_med;
-  };
-#else
-  /** medium value of the remote process data */
-  int32_t mi32_med;
-#endif
   /** time of last receive of measurement value update */
   int32_t mi32_lastMeasureReceive;
   /**

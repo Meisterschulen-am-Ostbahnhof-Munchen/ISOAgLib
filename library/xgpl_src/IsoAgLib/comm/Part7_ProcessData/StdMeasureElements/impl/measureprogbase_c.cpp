@@ -141,7 +141,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   men_doSend = Proc_c::DoNone;
   men_type = Proc_c::DistProp;
 
-  mi32_accel = mi32_delta = mi32_integ = mi32_lastTime = mi32_max = mi32_min = 0;
+  mi32_accel = mi32_delta = mi32_lastTime = mi32_max = mi32_min = 0;
 }
 
 
@@ -178,7 +178,6 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arc_src )
   mb_active = arc_src.mb_active;
   mi32_accel = arc_src.mi32_accel;
   mi32_delta = arc_src.mi32_delta;
-  mi32_integ = arc_src.mi32_integ;
   mi32_lastTime = arc_src.mi32_lastTime;
   mi32_max = arc_src.mi32_max;
   mi32_min = arc_src.mi32_min;
@@ -223,7 +222,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
 
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
-    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> subprog was created successfully; fals -> out-of-memory error
@@ -281,7 +280,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
 
 
 /** start a measuring programm
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overloaded methods in derived classes
   */
@@ -295,7 +294,7 @@ bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSe
 
 /** stop all running subprog
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overloaded methods in derived classes
   */
@@ -340,24 +339,6 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
   }
 
   return mi32_val;
-}
-
-/** deliver integ val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return integral val for this measure prog
-  */
-int32_t MeasureProgBase_c::integ(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::integValue,
-                                                                GeneralCommand_c::requestValue);
-
-    processData().sendValISOName(isoName(), int32_t(0));
-  }
-  return mi32_integ;
 }
 
 /** deliver min val
@@ -416,7 +397,7 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
-  mi32_val = mi32_min = mi32_max = mi32_integ = ai32_val;
+  mi32_val = mi32_min = mi32_max = ai32_val;
 }
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -456,7 +437,7 @@ void MeasureProgBase_c::init(
   men_doSend = Proc_c::DoNone;
   men_type = Proc_c::DistProp;
 
-  mi32_accel = mi32_delta = mi32_integ = mi32_lastTime = mi32_max = mi32_min = 0;
+  mi32_accel = mi32_delta = mi32_lastTime = mi32_max = mi32_min = 0;
 }
 
 /** deliver actual last received value
@@ -476,25 +457,6 @@ float MeasureProgBase_c::valFloat(bool ab_sendRequest) const
   }
   return f_val;
 }
-
-/** deliver integ val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return integral val for this measure prog
-  */
-float MeasureProgBase_c::integFloat(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::integValue,
-                                                                GeneralCommand_c::requestValue);
-
-    processData().sendValISOName(isoName(), int32_t(0));
-  }
-  return f_integ;
-}
-
 
 /** deliver min val
     @param ab_sendRequest choose wether a request for value update should be
@@ -553,7 +515,7 @@ void MeasureProgBase_c::initVal(float af_val){
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
   }
   #endif
-  f_val = f_min = f_max = f_integ = af_val;
+  f_val = f_min = f_max = af_val;
 }
 #endif
 
@@ -633,17 +595,6 @@ bool MeasureProgBase_c::processMsg(){
       // increment
       processIncrementMsg(en_doSendPkg);
 
-
-    uint8_t b_cmd = c_pkg.data(0);
-
-    if (en_command == GeneralCommand_c::measurementReset)
-    { // reset command (ISO reset: setValue command)
-       reset(b_cmd);
-       // call handler function if handler class is registered
-       if ( processData().getProcessDataChangeHandler() != NULL )
-         processData().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), 0, c_pkg.memberSend().isoName().toConstIisoName_c() );
-    }
-
     if (en_command == GeneralCommand_c::measurementStop)
        stop();
 
@@ -707,13 +658,10 @@ bool MeasureProgBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
 
 
 /** deliver to en_valueGroup according measure val type
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..6]
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+int32_t MeasureProgBase_c::valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = val();
   switch (en_valueGroup)
   {
@@ -727,12 +675,6 @@ int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) 
     case GeneralCommand_c::maxValue:
       i32_value = max();
       break;
-    case GeneralCommand_c::integValue:
-      i32_value = integ();
-      break;
-    case GeneralCommand_c::medValue:
-      i32_value = med();
-      break;
     default:
       // wrong range
       getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
@@ -745,13 +687,10 @@ int32_t MeasureProgBase_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) 
 #ifdef USE_FLOAT_DATA_TYPE
 /** deliver to en_valueGroup according measure val type
     as float value
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..6]
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const
+float MeasureProgBase_c::valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const
 {
   float f_value = valFloat();
     switch (en_valueGroup)
@@ -766,57 +705,12 @@ float MeasureProgBase_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGrou
       case GeneralCommand_c::maxValue:
         f_value = maxFloat();
         break;
-      case GeneralCommand_c::integValue:
-        f_value = integFloat();
-        break;
-      case GeneralCommand_c::medValue:
-        f_value = medFloat();
-        break;
       default:
         getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
     }
   return f_value;
 }
 #endif
-
-
-/** reset according to the process msg command the appropriate value type
-    @param ab_comm command from Scheduler_c reset message
-  */
-void MeasureProgBase_c::reset(uint8_t ab_comm){
-  if ((ab_comm & 0x8) > 0)
-  {
-    if ((ab_comm & 0xF0) > 0)
-    {
-      for (uint8_t b_mask = 1; b_mask <= 4; b_mask *= 2)
-      {
-        if (( (ab_comm & 0xF0) & (b_mask << 4) ) > 0)
-        { // bit of test b_mask set in reset cmd
-          switch (b_mask)
-          {
-            case 1: // value reset
-              resetVal();
-              break;
-            case 2: // medium reset
-              resetMed();
-              break;
-            case 4: // integer reset
-              resetInteg();
-              break;
-          } // switch
-        } // if
-      } // for
-    } // if > 0
-    else
-    { // all values reset
-      resetMin();
-      resetMax();
-      resetMed();
-      resetVal();
-      resetInteg();
-    }
-  }
-}
 
 
 /** process a message with an increment for a measuring program
@@ -856,14 +750,11 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
 }
 
 
-/** reset according to the MOD the appropriate value type
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..4]
-    @param ab_mod MOD of wanted subtype
+/** reset according to the value group the appropriate value type
+    @param en_valueGroup of wanted subtype
     @param ai32_val reset measure value to this value (ISO remote only)
   */
-void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
+void MeasureProgBase_c::resetValForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
     switch (en_valueGroup)
     {
       case GeneralCommand_c::exactValue:
@@ -875,12 +766,6 @@ void MeasureProgBase_c::resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup
         break;
       case GeneralCommand_c::maxValue:
         resetMax();
-        break;
-      case GeneralCommand_c::integValue:
-        resetInteg();
-        break;
-      case GeneralCommand_c::medValue:
-        resetMed();
         break;
       default:
         getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );

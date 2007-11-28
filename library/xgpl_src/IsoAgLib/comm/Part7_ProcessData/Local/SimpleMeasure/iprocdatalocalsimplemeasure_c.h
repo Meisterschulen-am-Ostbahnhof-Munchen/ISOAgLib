@@ -293,14 +293,14 @@ public:
    { return setpointConst().sendMasterSetpointVal( ac_targetISOName );}
 
   /**
-    send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-    @param aui8_mod select sub-type of setpoint
+    send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
+    @param en_valueGroup select sub-type of setpoint
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
+  bool sendSetpointForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
   {
-   return setpointConst().sendSetpointMod( ac_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+   return setpointConst().sendSetpointForGroup( ac_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
   }
 
   #ifdef USE_EEPROM_IO

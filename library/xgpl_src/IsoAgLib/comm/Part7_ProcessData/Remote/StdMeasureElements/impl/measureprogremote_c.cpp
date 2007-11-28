@@ -123,8 +123,6 @@ const MeasureProgRemote_c& MeasureProgRemote_c::operator=(const MeasureProgRemot
   // call base class operator
   MeasureProgBase_c::operator=(arc_src);
 
-  // copy element vars
-  mi32_med = arc_src.mi32_med;
   mb_receiveForeignMeasurement = arc_src.mb_receiveForeignMeasurement;
 
   // return reference to source
@@ -139,7 +137,6 @@ MeasureProgRemote_c::MeasureProgRemote_c(const MeasureProgRemote_c& arc_src)
   : MeasureProgBase_c(arc_src){
 
   // copy element vars
-  mi32_med = arc_src.mi32_med;
   mb_receiveForeignMeasurement = arc_src.mb_receiveForeignMeasurement;
 }
 
@@ -180,7 +177,7 @@ bool MeasureProgRemote_c::start(Proc_c::doSend_t ren_doSend){
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
 
-  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
   @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
@@ -289,7 +286,7 @@ bool MeasureProgRemote_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_do
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
   @param b_deleteSubProgs is only used for ISO
-  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+  @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
   @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   @return true -> command successful sent
 */
@@ -395,46 +392,6 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
   return b_result;
 }
 
-
-
-/**
-  deliver med val
-  @param ab_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return actual medium value
-*/
-
-int32_t MeasureProgRemote_c::med(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::medValue,
-                                                                GeneralCommand_c::requestValue);
-    processDataConst().sendValISOName(isoName(), int32_t(0));
-  }
-  return mi32_med;
-}
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver med val as float
-  @param ab_sendRequest choose wether a request for value update should be
-      sent (default false == send no request)
-  @return actual medium value
-*/
-float MeasureProgRemote_c::medFloat(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::medValue,
-                                                                GeneralCommand_c::requestValue);
-    processDataConst().sendValISOName(isoName(), int32_t(0));
-  }
-  return f_med;
-}
-#endif
-
 /**
   process msg;
   @return true -> msg is already complete edited
@@ -472,7 +429,7 @@ void MeasureProgRemote_c::setValFromPkg(){
   // set timestamp of last measurement receive
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   mi32_lastMeasureReceive = c_pkg.time();
-  // get MOD code of msg
+
   bool b_change = false;
 
 #ifdef USE_FLOAT_DATA_TYPE
@@ -497,14 +454,6 @@ void MeasureProgRemote_c::setValFromPkg(){
       case GeneralCommand_c::maxValue: // msg contains MAX val
         if ( max() != i32_new_val ) b_change = true;
         setMax(i32_new_val);
-        break;
-      case GeneralCommand_c::integValue: // msg contains integral val
-        if ( integ() != i32_new_val ) b_change = true;
-        setInteg(i32_new_val);
-        break;
-      case GeneralCommand_c::medValue: // msg contains medium val
-        if ( med() != i32_new_val ) b_change = true;
-        setMed(i32_new_val);
         break;
       default: ;
     }
@@ -533,14 +482,6 @@ void MeasureProgRemote_c::setValFromPkg(){
       case GeneralCommand_c::maxValue: // msg contains MAX val
         if ( maxFloat() != f_new_val ) b_change = true;
         setMax(f_new_val);
-        break;
-      case GeneralCommand_c::integValue: // msg contains integral val
-        if ( integFloat() != f_new_val ) b_change = true;
-        setInteg(f_new_val);
-        break;
-      case GeneralCommand_c::medValue: // msg contains medium val
-        if ( medFloat() != f_new_val ) b_change = true;
-        setMed(f_new_val);
         break;
       default: ;
     }
@@ -590,9 +531,6 @@ void MeasureProgRemote_c::setVal(int32_t ai32_val){
 void MeasureProgRemote_c::initVal(int32_t ai32_val){
   //first call base function
   MeasureProgBase_c::initVal(ai32_val);
-
-  // set medium initially to first given val
-  mi32_med = ai32_val;
 }
 
 /**
@@ -601,7 +539,7 @@ void MeasureProgRemote_c::initVal(int32_t ai32_val){
   possible errors:
       * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
       * dependant error in CAN_IO
-  @param ai32_val reset measure value to this value (ISO only)
+  @param ai32_val reset measure value to this value
   @return true -> command successful sent
 */
 bool MeasureProgRemote_c::resetVal(int32_t ai32_val){
@@ -649,102 +587,15 @@ void MeasureProgRemote_c::initVal(float af_val){
   //first call base function
   MeasureProgBase_c::initVal(af_val);
 
-  // set medium initially to first given val
-  f_med = af_val;
 }
 #endif
-
-
-
-/**
-  send reset command for medium value
-
-  possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-      * dependant error in CAN_IO
-  @return true -> command successful sent
-*/
-bool MeasureProgRemote_c::resetMed(){
-/** @TODO NOW: check whether still relevant - and then delete this TODO */
-  // if stored remote isoName isn't valid exit this function
-  // error state are set by the function
-  if (!verifySetRemoteISOName())return false;
-
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::medValue,
-                                                              GeneralCommand_c::measurementReset);
-  return processData().sendValISOName(isoName(), int32_t(0x28));
-}
-
-/**
-  send reset command for integral value
-
-  possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-      * dependant error in CAN_IO
-  @return true -> command successful sent
-*/
-bool MeasureProgRemote_c::resetInteg(){
-/** @TODO NOW: check whether still relevant - and then delete this TODO */
-  // if stored remote isoName isn't valid exit this function
-  // error state are set by the function
-  if (!verifySetRemoteISOName())return false;
-
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::integValue,
-                                                              GeneralCommand_c::measurementReset);
-
-  return processData().sendValISOName(isoName(), int32_t(0x48));
-}
-
-/**
-  send reset command for minimum value
-
-  possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-      * dependant error in CAN_IO
-  @return true -> command successful sent
-*/
-bool MeasureProgRemote_c::resetMin(){
-/**TODO2 still relevant*/
-  // if stored remote isoName isn't valid exit this function
-  // error state are set by the function
-  if (!verifySetRemoteISOName())return false;
-
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::minValue,
-                                                              GeneralCommand_c::measurementReset);
-
-  return processData().sendValISOName(isoName(), int32_t(0x8));
-}
-
-/**
-  send reset command for maximum value
-
-  possible errors:
-      * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-      * dependant error in CAN_IO
-  @return true -> command successful sent
-*/
-bool MeasureProgRemote_c::resetMax(){
-/** @TODO NOW: check whether still relevant - and then delete this TODO */
-  // if stored remote isoName isn't valid exit this function
-  // error state are set by the function
-  if (!verifySetRemoteISOName())return false;
-
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::maxValue,
-                                                              GeneralCommand_c::measurementReset);
-
-  return processData().sendValISOName(isoName(), int32_t(0x8));
-}
 
 /**
   perform periodic actions --> stop measuring prog if isoName isn't active any more
   @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned activities performed in available time
 */
-bool MeasureProgRemote_c::timeEvent( uint16_t *pui16_nextTimePeriod )
+bool MeasureProgRemote_c::timeEvent( uint16_t* /* pui16_nextTimePeriod  */)
 {
   if ( (!getIsoMonitorInstance4Comm().existIsoMemberISOName(isoName(), true)) && started() )
   { // remote owner of this process data isn't active any more

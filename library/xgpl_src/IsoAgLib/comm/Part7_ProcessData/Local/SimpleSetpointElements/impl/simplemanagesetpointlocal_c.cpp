@@ -193,29 +193,27 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   }
   #ifndef SIMPLE_RESPOND_ON_SET
   // if no auto-response on setpoint set is want
-  // send MOD dependent value on request
+  // send value group dependent value on request
   // if SIMPLE_RESPOND_ON_SET is defined, the actual setpoint shall be resend
   // on receive of a new setpoint --> "else" is NOT used in this case
   else
   #endif
   {
-    sendSetpointMod(cc_senderISOName, c_pkg.mc_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointForGroup(cc_senderISOName, c_pkg.mc_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
   }
 
 }
 
 /**
-  send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-  @param aui8_mod select sub-type of setpoint
+  send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
   @param ac_targetISOName ISOName of target
-  @param ren_type optional PRI specifier of the message (default Proc_c::Target )
   @param en_valueGroup: min/max/exact/default
   @param en_command
   @return true -> successful sent
 */
-bool SimpleManageSetpointLocal_c::sendSetpointMod(const IsoName_c& ac_targetISOName,
-                                                  GeneralCommand_c::ValueGroup_t en_valueGroup,
-                                                  GeneralCommand_c::CommandType_t en_command ) const {
+bool SimpleManageSetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
+                                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
+                                                       GeneralCommand_c::CommandType_t en_command ) const {
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, en_command);

@@ -251,7 +251,7 @@ void SetpointRemote_c::setMax( int32_t ai32_val){
   getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               GeneralCommand_c::maxValue,
                                                               GeneralCommand_c::setValue);
-  // send command to owner: PD=0, MOD=3
+  // send command to owner
   processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
 
@@ -459,7 +459,7 @@ void SetpointRemote_c::processSet(){
   { // the owner sent the value
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // was a normal value
-      if  ( ( mc_answeredMaster.valMod( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val )
+      if  ( ( mc_answeredMaster.valForGroup( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val )
          || ( ! mc_answeredMaster.valid() )
          || ( mc_answeredMaster.isoName() != c_empfISOName )
          || ( ! mc_answeredMaster.master() )
@@ -478,7 +478,7 @@ void SetpointRemote_c::processSet(){
       if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
         processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().isoName().toConstIisoName_c(), b_changeMeasurement);
 
-      mc_answeredMaster.setValMod( i32_val, c_pkg.mc_generalCommand.getValueGroup());
+      mc_answeredMaster.setValForGroup( i32_val, c_pkg.mc_generalCommand.getValueGroup());
       // set the isoName of the actual master
       mc_answeredMaster.setISOName( c_empfISOName);
       // set the valid flag to true
@@ -510,12 +510,12 @@ void SetpointRemote_c::processSet(){
   { // the owner of the process data sent me an answer
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // normal value
-      if  ( ( mc_answeredMe.valMod( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val )
+      if  ( ( mc_answeredMe.valForGroup( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val )
          || ( ! mc_answeredMe.valid() )
          || ( ! mc_answeredMe.master() )
           ) b_change = true;
       // set the given value
-      mc_answeredMe.setValMod( i32_val, c_pkg.mc_generalCommand.getValueGroup());
+      mc_answeredMe.setValForGroup( i32_val, c_pkg.mc_generalCommand.getValueGroup());
       // set the valid flag to true
       mc_answeredMe.setValid( true);
       // i am the master if i get a normal value answered

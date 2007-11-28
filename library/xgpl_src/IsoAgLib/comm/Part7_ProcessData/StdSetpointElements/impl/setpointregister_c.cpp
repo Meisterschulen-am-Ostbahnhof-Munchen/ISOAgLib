@@ -168,11 +168,11 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& arc_src)const{
 /* ************************************ */
 
 /**
-  deliver the setpoint according to the mod type
+  deliver the setpoint according to the value group
   @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-  @return setpoint selected by MOD
+  @return setpoint selected by value group
 */
-int32_t SetpointRegister_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
+int32_t SetpointRegister_c::valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
   switch (en_valueGroup)
   {
     case GeneralCommand_c::exactValue:
@@ -189,12 +189,12 @@ int32_t SetpointRegister_c::valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)
 
 #ifdef USE_FLOAT_DATA_TYPE
 /**
-  deliver the setpoint according to the mod type
+  deliver the setpoint according to the value group
   @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-  @return setpoint selected by MOD
+  @return setpoint selected by value group
 */
-float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const{
-  int32_t i32_temp = valMod(en_valueGroup);
+float SetpointRegister_c::valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const{
+  int32_t i32_temp = valForGroup(en_valueGroup);
   return *((float*)(&i32_temp));;
 }
 #endif
@@ -203,7 +203,7 @@ float SetpointRegister_c::valModFloat(GeneralCommand_c::ValueGroup_t en_valueGro
   @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
   @return true -> a setpoint for this valueGroup exists
 */
-bool SetpointRegister_c::modExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
+bool SetpointRegister_c::valueGroupExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
   switch (en_valueGroup)
   {
     case GeneralCommand_c::exactValue:
@@ -320,11 +320,11 @@ void SetpointRegister_c::setDefault(int32_t ai32_val)
 };
 
 /**
-  set a limit val for type given by ab_mod
+  set a limit val for type given by value group
   @param ai32_val new setpoint value
   @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
 */
-void SetpointRegister_c::setValMod(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+void SetpointRegister_c::setValForGroup(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
   {
     case GeneralCommand_c::exactValue:
@@ -383,12 +383,12 @@ void SetpointRegister_c::setDefault(float af_val)
 }
 
 /**
-  set a limit val for type given by ab_mod
+  set a limit val for type given by value group
   @param af_val new setpoint value
-  @param en_valueGroup MOD code of setpoint type to set (exact 0, min 2, max 3)
+  @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3)
 */
 
-void SetpointRegister_c::setValMod(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+void SetpointRegister_c::setValForGroup(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
   {
     case GeneralCommand_c::exactValue:

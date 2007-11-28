@@ -275,8 +275,6 @@ protected: // Protected methods
 
     @param ac_varISOName variable ISOName
     @param ai32_val int32_t value to send
-    @param men_valueGroup: min/max/exact/default
-    @param men_command
     @return true -> sendIntern set successful EMPF and SEND
   */
   virtual bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
@@ -293,8 +291,6 @@ protected: // Protected methods
         * dependant error in CanIo_c on CAN send problems
 
     @param ac_varISOName variable ISOName
-    @param ab_pd PD code for the msg
-    @param ab_mod MOD code for the msg
     @param ai32_val float value to send
     @return true -> sendIntern set successful EMPF and SEND
   */

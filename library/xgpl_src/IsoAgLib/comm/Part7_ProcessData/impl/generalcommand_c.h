@@ -102,8 +102,7 @@ class GeneralCommand_c {
 public:
 
   /** enum for specification of defined setpoint types */
-  enum ValueGroup_t { noValue = 0, exactValue = 1, minValue = 2, maxValue = 4, defaultValue = 8,
-                      integValue = 0x10, medValue = 0x20};
+  enum ValueGroup_t { noValue = 0, exactValue = 1, minValue = 2, maxValue = 4, defaultValue = 8 };
 
   /** enum for general commands */
   enum CommandType_t {

@@ -79,9 +79,8 @@ private:
 public:
   /**
     deliver med val
-    @return actual medium value
   */
-  virtual int32_t med(bool ab_sendRequest = false) const {return MeasureProgLocal_c::med(ab_sendRequest);};
+  virtual int32_t med() const {return MeasureProgLocal_c::med();};
 
 
   /**
@@ -117,10 +116,9 @@ public:
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver med val
-    @return actual medium value
   */
-  virtual float medFloat(bool ab_sendRequest = false) const
-    {return MeasureProgLocal_c::medFloat(ab_sendRequest);};
+  virtual float medFloat() const
+    {return MeasureProgLocal_c::medFloat();};
 
 
   /**

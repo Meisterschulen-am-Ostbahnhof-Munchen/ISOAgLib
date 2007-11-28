@@ -365,7 +365,7 @@ bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
 }
 
 /**
-  send a main-information (selected by MOD) to a specified target (selected by ISOName)
+  send a main-information (selected by value group) to a specified target (selected by ISOName)
   @param ac_targetISOName ISOName of target
   @return true -> successful sent
 */
@@ -403,22 +403,6 @@ void ProcDataLocalBase_c::processProg(){
       c_pkg.mc_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
   { // request for measurement value
     sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
-  }
-  else
-  {
-    if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementReset)
-    { // measurement reset cmd
-      #ifdef USE_EEPROM_IO
-      resetEeprom();
-      #else
-      setMasterMeasurementVal(int32_t(0));
-      #endif
-      // now send result of reset action
-      sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
-      // call handler function if handler class is registered
-      if ( getProcessDataChangeHandler() != NULL )
-        getProcessDataChangeHandler()->processMeasurementReset( this, 0, c_pkg.memberSend().isoName().toConstIisoName_c() );
-    }
   }
 }
 

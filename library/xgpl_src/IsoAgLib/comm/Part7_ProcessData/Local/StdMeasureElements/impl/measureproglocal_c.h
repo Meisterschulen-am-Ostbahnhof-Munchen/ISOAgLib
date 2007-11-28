@@ -196,7 +196,7 @@ public:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
 
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @param ai32_masterVal actual master value to start with
     @return true -> starting values sent with success
@@ -211,7 +211,7 @@ public:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
 
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @param af_masterVal actual float master value to start with
     @return true -> starting values sent with success
@@ -226,7 +226,7 @@ public:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
 
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> starting values sent with success
   */
@@ -238,7 +238,7 @@ public:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> stop values sent with success
   */
@@ -248,21 +248,36 @@ public:
     deliver med val
     @return actual medium value
   */
-  int32_t med(bool ab_sendRequest = false) const {return ( (mi32_medCnt > 0) && (ab_sendRequest || !ab_sendRequest))?(mi32_medSum/mi32_medCnt):(0);};
+  int32_t med() const {return ( (mi32_medCnt > 0) ? (mi32_medSum/mi32_medCnt) : 0 );};
+
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver med val as float
     @return actual medium value
   */
-  float medFloat(bool ab_sendRequest = false) const {return ((mi32_medCnt > 0) && (ab_sendRequest || !ab_sendRequest))?(f_medSum/(float)mi32_medCnt):(0.0F);};
+  float medFloat() const {return ( (mi32_medCnt > 0) ? (f_medSum/(float)mi32_medCnt) : (0.0F) );};
 #endif
+
+  /**
+    deliver integ val
+    @return integral val for this measure prog
+  */
+  int32_t integ() const { return mi32_integ; };
+
+#ifdef USE_FLOAT_DATA_TYPE
+  /** deliver integ val
+    @return integral val for this measure prog
+  */
+  float integFloat() const { return f_integ; };
+#endif
+
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
     @param en_valueGroup value group to send
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const;
+  bool sendValForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const;
 
   /**
     send a sub-information from the corresponding setpoint master to a specified target (selected by GPT)
@@ -270,13 +285,13 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointValMod( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const;
+  bool sendSetpointValForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const;
   /**
     deliver to en_valueGroup according setpoint from a master setpoint
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-  int32_t setpointValMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
+  int32_t setpointValForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
 
   /**
     process a message: reset command or value requests
@@ -420,6 +435,31 @@ private: // Private methods
   */
   void incrMedSum(float af_val){f_medSum += af_val;};
 #endif
+
+
+  /**
+    set integ val
+    @param ai32_val new integral value
+  */
+  void setInteg(int32_t ai32_val){mi32_integ = ai32_val;}
+  /**
+    increment the integer value
+    @param ai32_val increment for integral
+  */
+  void incrInteg(int32_t ai32_val){mi32_integ += ai32_val;}
+#ifdef USE_FLOAT_DATA_TYPE
+  /**
+    increment the integer value
+    @param af_val increment for integral
+  */
+  void incrInteg(float af_val){f_integ += af_val;}
+  /**
+    set integ val
+    @param af_val new integral value
+  */
+  void setInteg(float af_val){f_integ = af_val;}
+#endif
+
   /**
     deliver a reference to ProcDataLocal_c
     (the base function only delivers ProcDataBase_c)
@@ -465,6 +505,17 @@ private: // Private attributes
     */
     float f_medSum;
   };
+  union {
+    /**
+      integral value (only defined if one proportional prog is active)
+    */
+    int32_t mi32_integ;
+    /**
+      integral value (only defined if one proportional prog is active)
+    */
+    float f_integ;
+  };
+
 #else
   /** last master (eg. main prog or sensor) val  */
   int32_t mi32_lastMasterVal;
@@ -473,9 +524,15 @@ private: // Private attributes
     (only defined if one proportional prog is active)
   */
   int32_t mi32_medSum;
+  /**
+    integral value (only defined if one proportional prog is active)
+  */
+  int32_t mi32_integ;
+
 #endif
   /** count of used songle values to calculate medium val  */
   int32_t mi32_medCnt;
+
 
   /**
     stores if one subprog triggered,

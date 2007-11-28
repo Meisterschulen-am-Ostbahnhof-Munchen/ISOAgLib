@@ -95,7 +95,7 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
 
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
@@ -124,7 +124,7 @@ public:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
     @param b_deleteSubProgs is only used for ISO
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return true -> command successful sent
   */
@@ -149,49 +149,11 @@ public:
   bool resetVal(int32_t ai32_val = 0) {return MeasureProgRemote_c::resetVal(ai32_val);};
 
   /**
-    send reset command for medium value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  bool resetMed() {return MeasureProgRemote_c::resetMed();};
-  /**
-    send reset command for integral value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  bool resetInteg() {return MeasureProgRemote_c::resetInteg();};
-  /**
-    send reset command for minimum value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  bool resetMin() {return MeasureProgRemote_c::resetMin();};
-  /**
-    send reset command for maximum value
-
-    possible errors:
-        * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
-        * dependant error in CAN_IO
-    @return true -> command successful sent
-  */
-  bool resetMax() {return MeasureProgRemote_c::resetMax();};
-
-
-  /**
     add an aditional subprog or update if one with same kind exist already
 
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
-    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
@@ -206,20 +168,6 @@ public:
     @return measure val for this prog (can differ from master measure val)
   */
   int32_t val(bool ab_sendRequest = false){return MeasureProgRemote_c::val(ab_sendRequest);};
-  /**
-    deliver integ val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return integral val for this measure prog
-  */
-  int32_t integ(bool ab_sendRequest = false){return MeasureProgRemote_c::integ(ab_sendRequest);};
-  /**
-    deliver med val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return actual medium value
-  */
-  int32_t med(bool ab_sendRequest = false) const {return MeasureProgRemote_c::med(ab_sendRequest);};
   /**
     deliver min val
     @param ab_sendRequest choose wether a request for value update should be

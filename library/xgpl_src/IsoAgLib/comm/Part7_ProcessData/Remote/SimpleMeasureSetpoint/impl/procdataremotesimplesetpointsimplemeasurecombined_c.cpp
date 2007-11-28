@@ -357,7 +357,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processProg(){
   // for simple measurement the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if ((c_pkg.pd() == 1) && (c_pkg.mod() == 0))
+  if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue )
   {
     bool b_change = false;
   #ifdef USE_FLOAT_DATA_TYPE

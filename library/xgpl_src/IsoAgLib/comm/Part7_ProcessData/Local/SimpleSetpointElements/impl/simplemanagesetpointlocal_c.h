@@ -161,16 +161,15 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @return true -> successful sent
   */
   bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName ) const
-   { return sendSetpointMod( ac_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+   { return sendSetpointForGroup( ac_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
   /**
-    send a sub-setpoint (selected by MOD) to a specified target (selected by GPT)
-    @param aui8_mod select sub-type of setpoint
+    send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
     @param ac_targetISOName ISOName of target
     @param en_valueGroup: min/max/exact/default
     @param en_command
     @return true -> successful sent
   */
-  bool sendSetpointMod(const IsoName_c& ac_targetISOName,
+  bool sendSetpointForGroup(const IsoName_c& ac_targetISOName,
                        GeneralCommand_c::ValueGroup_t en_valueGroup,
                        GeneralCommand_c::CommandType_t en_command ) const;
   /**

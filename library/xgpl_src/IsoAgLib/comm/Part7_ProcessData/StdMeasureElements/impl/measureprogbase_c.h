@@ -186,7 +186,7 @@ public:
 
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
-    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr
+    @param ren_type increment type: Proc_c::TimeProp, Proc_c::DistProp, ...
     @param ai32_increment increment value
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
@@ -201,7 +201,7 @@ public:
 
   /**
     start a measuring programm
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
@@ -210,7 +210,7 @@ public:
   /**
     stop all running subprog
     @param b_deleteSubProgs is only needed for remote ISO case (but is needed due to overloading here also)
-    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, Proc_c::ValIncr)
+    @param ren_type wanted increment type (Proc_c::TimeProp, Proc_c::DistProp, ...)
     @param ren_doSend set process data subtype to stop (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
     @return always true; only relevant for overoaded methods in derived classes
   */
@@ -231,21 +231,6 @@ public:
     @return measure val for this prog (can differ from master measure val)
   */
   int32_t val(bool ab_sendRequest = false) const;
-
-  /**
-    deliver the medium value of a measure program (pure virtual function)
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-  */
-  virtual int32_t med(bool ab_sendRequest = false) const = 0;
-
-  /**
-    deliver integ val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return integral val for this measure prog
-  */
-  int32_t integ(bool ab_sendRequest = false) const;
 
   /**
     deliver min val
@@ -294,13 +279,6 @@ public:
     @return measure val for this prog (can differ from master measure val)
   */
   float valFloat(bool ab_sendRequest = false) const;
-
-  /**
-    deliver the medium value of a measure program (pure virtual function)
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-  */
-  virtual float medFloat(bool ab_sendRequest = false) const = 0;
 
   /**
     deliver integ val
@@ -392,16 +370,6 @@ public:
   */
   virtual void initVal(float af_val);
 #endif
-
-  /**
-    reset the medium (pure virtual function)
-  */
-  virtual bool resetMed() = 0;
-
-  /**
-    reset the integral (pure virtual function)
-  */
-  virtual bool resetInteg() = 0;
 
   /**
     reset MIN (pure virtual function)
@@ -497,26 +465,17 @@ public:
 
 protected: // Protected methods
   /**
-    reset according to the MOD the appropriate value type
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..4]
-    @param en_valueGroup MOD of wanted subtype
+    reset according to the value group the appropriate value
+    @param en_valueGroup of wanted subtype
     @param ai32_val reset measure value to this value (ISO remote only)
   */
-  void resetValMod(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val = 0);
+  void resetValForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val = 0);
 
   /**
     internal increment the value
     @param ai32_val increment for internal measure val
   */
   void incrVal(int32_t ai32_val){mi32_val += ai32_val;}
-
-  /**
-    increment the integer value
-    @param ai32_val increment for integral
-  */
-  void incrInteg(int32_t ai32_val){mi32_integ += ai32_val;}
 
   /**
     set min val
@@ -530,24 +489,12 @@ protected: // Protected methods
   */
   void setMax(int32_t ai32_val){mi32_max = ai32_val;}
 
-  /**
-    set integ val
-    @param ai32_val new integral value
-  */
-  void setInteg(int32_t ai32_val){mi32_integ = ai32_val;}
-
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     internal increment the value
     @param af_val increment for internal measure val
   */
   void incrVal(float af_val){f_val += af_val;}
-
-  /**
-    increment the integer value
-    @param af_val increment for integral
-  */
-  void incrInteg(float af_val){f_integ += af_val;}
 
   /**
     set min val
@@ -561,11 +508,6 @@ protected: // Protected methods
   */
   void setMax(float af_val){f_max = af_val;}
 
-  /**
-    set integ val
-    @param af_val new integral value
-  */
-  void setInteg(float af_val){f_integ = af_val;}
 #endif
 
 protected: // Protected attributes
@@ -631,33 +573,20 @@ private: // Private methods
   int32_t calcCompVal()const {return ( ( (mc_isoName.devClass() << 4) | (mc_isoName.devClassInst()) ) * (mb_active + 1));}
 
   /**
-    deliver to ab_mod according measure val type
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..6]
-    @param en_valueGroup MOD of wanted subtype
-    @return value of specified subtype
-  */
-  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
-
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver to ab_mod according measure val type
-    as float value
-
-    possible errors:
-        * Err_c:range MOD is not in allowed range [0..6]
+    deliver value according measure value group
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-  float valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
-#endif
+  int32_t valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
 
+#ifdef USE_FLOAT_DATA_TYPE
   /**
-    reset according to the process msg command the appropriate value type
-    @param ab_comm command from Scheduler_c reset message
+    deliver value according measure value group
+    @param en_valueGroup of wanted subtype
+    @return value of specified subtype
   */
-  void reset(uint8_t ab_comm);
+  float valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const;
+#endif
 
   /**
     process a message with an increment for a measuring program
@@ -692,16 +621,6 @@ private: // Private attributes
     float f_max;
   };
 
-  union {
-    /**
-      integral value (only defined if one proportional prog is active)
-    */
-    int32_t mi32_integ;
-    /**
-      integral value (only defined if one proportional prog is active)
-    */
-    float f_integ;
-  };
 #else
 
   /**
@@ -714,10 +633,6 @@ private: // Private attributes
   */
   int32_t mi32_max;
 
-  /**
-    integral value (only defined if one proportional prog is active)
-  */
-  int32_t mi32_integ;
 #endif
 
   /** dynamic array for subprogs */
@@ -731,8 +646,7 @@ private: // Private attributes
   bool mb_active;
 
   /**
-    active increment types: some of {TimeProp, DistProp, ValIncr, DeltaIncr,
-                  AccelIncr, MedIncr, MinIncr, MaxIncr, IntegIncr}
+    active increment types: some of {TimeProp, DistProp, ...}
   */
   Proc_c::type_t men_type;
 

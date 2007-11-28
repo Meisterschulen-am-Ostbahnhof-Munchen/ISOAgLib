@@ -106,11 +106,11 @@ namespace __IsoAgLib {
 */
 MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
 : ClientBase( SINGLETON_VEC_KEY_PARAMETER_USE ),
-  men_type( ren_type ),
-  men_doSend( ren_doSend ),
+  mi32_lastVal( 0 ),
   mi32_increment( ai32_increment ),
   mb_started( false ),
-  mi32_lastVal( 0 )
+  men_type( ren_type ),
+  men_doSend( ren_doSend )
 {
 }
 #ifdef USE_FLOAT_DATA_TYPE
@@ -124,11 +124,11 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
 */
 MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
 : ClientBase( SINGLETON_VEC_KEY_PARAMETER_USE ),
-  men_type( ren_type ),
-  men_doSend( ren_doSend ),
+  f_lastVal( 0.0 ),
   f_increment( af_increment ),
   mb_started( false ),
-  f_lastVal( 0.0 )
+  men_type( ren_type ),
+  men_doSend( ren_doSend )
 {
 }
 #endif

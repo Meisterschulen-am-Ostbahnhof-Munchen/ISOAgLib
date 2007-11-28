@@ -161,7 +161,7 @@ void ProcDataRemoteBase_c::setCommanderISOName(const IsoName_c* apc_externalOver
   @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataRemoteBase_c::timeEvent( uint16_t *pui16_nextTimePeriod )
+bool ProcDataRemoteBase_c::timeEvent( uint16_t* /*pui16_nextTimePeriod */)
 {
   return true;
 }

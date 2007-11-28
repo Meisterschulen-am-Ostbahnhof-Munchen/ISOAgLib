@@ -293,7 +293,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
-  /** send a min-information (selected by MOD) to a specified target (selected by ISOName)
+  /** send a min-information (selected by value group) to a specified target (selected by ISOName)
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
@@ -341,8 +341,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
 
       @param ac_varISOName variable ISOName
       @param ai32_val int32_t value to send
-      @param en_valueGroup: min/max/exact/default
-      @param en_command
       @return true -> sendIntern set successful EMPF and SEND
   */
   bool sendValISOName( const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
@@ -357,8 +355,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   * dependant error in CanIo_c on CAN send problems
 
       @param ac_varISOName variable ISOName
-      @param ab_pd PD code for the msg
-      @param ab_mod MOD code for the msg
       @param ai32_val float value to send
       @return true -> sendIntern set successful EMPF and SEND
   */

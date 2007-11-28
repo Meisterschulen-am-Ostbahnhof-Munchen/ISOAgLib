@@ -132,18 +132,6 @@ public:
   uint8_t send()const{return bit_data.b_send;}
 
   /**
-    deliver PD of process msg (PD flag for subtype/action of Process-Data)
-    @return PD value of message
-  */
-  uint8_t pd()const{return bit_data.b_pd;}
-
-  /**
-    deliver MOD of process msg (MOD flag for subtype of Process-Data)
-    @return MOD value of message
-  */
-  uint8_t mod()const{return bit_data.b_mod;}
-
-  /**
     deliver D of process msg (0 -> integer; 1 -> float)
     @return D value of message
   */
@@ -283,18 +271,6 @@ public:
     bit_data.b_send = ab_val;
     setIdentType(Ident_c::StandardIdent);
   }
-
-  /**
-    set value PD of process msg
-    @param ab_val new PD value for message
-  */
-  void setPd(uint8_t ab_val){bit_data.b_pd = ab_val;}
-
-  /**
-    set value MOD of process msg
-    @param ab_val new MOD value for message
-  */
-  void setMod(uint8_t ab_val){bit_data.b_mod = ab_val;}
 
   /**
     set value D of process msg

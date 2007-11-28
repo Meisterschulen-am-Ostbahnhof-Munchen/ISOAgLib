@@ -202,11 +202,11 @@ public:
   */
   int32_t getDefault()const{return (existDefault())?(mi32_default):(mi32_exactOrMin);}
   /**
-    deliver the setpoint according to the mod type
+    deliver the setpoint according to the value group
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-    @return setpoint selected by MOD
+    @return setpoint selected by value group
   */
-  int32_t valMod(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  int32_t valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the minimum limit; if no min is given (~0) return f_exactOrMin
@@ -224,11 +224,11 @@ public:
   */
   float defaultFloat()const{return (existDefault())?(f_default):(f_exactOrMin);}
   /**
-    deliver the setpoint according to the mod type
+    deliver the setpoint according to the value group
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-    @return setpoint selected by MOD
+    @return setpoint selected by value group
   */
-  float valModFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  float valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 #endif
   /**
     check if setpoint value was already handled
@@ -275,7 +275,7 @@ public:
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a setpoint for this valueGroup exists
   */
-  bool modExists(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  bool valueGroupExists(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
 
 
   /* ************************************ */
@@ -334,11 +334,11 @@ public:
   */
   void setDefault(float af_val);
   /**
-    set a limit val for type given by ab_mod
+    set a limit val for type given by value group
     @param af_val new setpoint value
-    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
+    @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
+  void setValForGroup(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 #endif
   /**
     set the handled state; return if state was changed
@@ -360,11 +360,11 @@ public:
   */
   bool setValid(bool ab_state = true);
   /**
-    set a limit val for type given by ab_mod
+    set a limit val for type given by value group
     @param ai32_val new setpoint value
-    @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
+    @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValMod(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
+  void setValForGroup(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
