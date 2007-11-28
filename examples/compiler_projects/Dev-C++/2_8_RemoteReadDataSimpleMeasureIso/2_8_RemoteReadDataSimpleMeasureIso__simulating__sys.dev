@@ -1,18 +1,18 @@
 [Project]
 FileName=2_8_RemoteReadDataSimpleMeasureIso__simulating__sys.dev
 Name=2_8_RemoteReadDataSimpleMeasureIso
-UnitCount=133
+UnitCount=136
 Type=1
 Ver=1
 ObjFiles=
-Includes=../../..;../../../xgpl_src;../../../examples/src/Tutorials/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso
+Includes=../../../../..;../../../../library/xgpl_src;../../../../examples/src/Tutorials/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso
 Libs=
 Linker=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_2_8_RemoteReadDataSimpleMeasureIso.h_@@_
-CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_2_8_RemoteReadDataSimpleMeasureIso.h_@@_
+Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_2_8_RemoteReadDataSimpleMeasureIso.h_@@_-DCAN_DRIVER_SOCKET_@@_
+CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_2_8_RemoteReadDataSimpleMeasureIso.h_@@_-DCAN_DRIVER_SOCKET_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -48,7 +48,7 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit1]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -58,7 +58,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -68,7 +68,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit3]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -78,7 +78,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -88,7 +88,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -98,7 +98,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -108,7 +108,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit7]
-FileName=../../../xgpl_src/IsoAgLib/util/iliberr_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -118,7 +118,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit8]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/canfifo_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -128,7 +128,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit9]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -138,7 +138,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit10]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -148,7 +148,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit11]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -158,7 +158,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit12]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -168,7 +168,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit13]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -178,7 +178,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit14]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -188,7 +188,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit15]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -198,7 +198,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit16]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointbase_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -208,7 +208,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointregister_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -218,7 +218,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -228,7 +228,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointbase_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -238,7 +238,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointregister_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -248,7 +248,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit21]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -258,7 +258,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit22]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -268,7 +268,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit23]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -278,7 +278,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit24]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/impl/setpointremote_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -288,7 +288,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit25]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -298,7 +298,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit26]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasureElements/impl/simplemanagemeasureprogremote_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -308,7 +308,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit27]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/impl/setpointremote_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/impl/procdataremotesimplemeasure_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -318,7 +318,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit28]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -328,7 +328,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit29]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasureElements/impl/simplemanagemeasureprogremote_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -338,7 +338,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit30]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/impl/procdataremotesimplemeasure_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -348,7 +348,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit31]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -358,7 +358,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit32]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -368,7 +368,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit33]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -378,7 +378,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit34]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -388,7 +388,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit35]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -398,7 +398,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit36]
-FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -408,7 +408,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit37]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -418,7 +418,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit38]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -428,7 +428,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit39]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -438,7 +438,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit40]
-FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -448,7 +448,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit41]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -458,7 +458,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit42]
-FileName=../../../examples/src/Tutorials/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/2_8_RemoteReadDataSimpleMeasureIso.cpp
+FileName=../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -468,7 +468,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit43]
-FileName=../../../xgpl_src/IsoAgLib/util/icanpkg_c.h
+FileName=../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_w32_sys.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -478,7 +478,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit44]
-FileName=../../../xgpl_src/IsoAgLib/util/config.h
+FileName=../../../../examples/src/Tutorials/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/2_8_RemoteReadDataSimpleMeasureIso.cpp
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -488,7 +488,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit45]
-FileName=../../../xgpl_src/IsoAgLib/util/iutil_funcs.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -498,7 +498,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit46]
-FileName=../../../xgpl_src/IsoAgLib/util/icanpkgext_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -508,7 +508,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit47]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/schedulerentry_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/icanio_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -518,7 +518,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit48]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -528,7 +528,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit49]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -538,7 +538,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit50]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/cancustomer_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -548,7 +548,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit51]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/singleton_container.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -558,7 +558,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit52]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkgext_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -568,7 +568,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit53]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/util_funcs.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -578,7 +578,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit54]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/canpkg_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/can/icancustomer_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -588,7 +588,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit55]
-FileName=../../../xgpl_src/IsoAgLib/util/impl/elementbase_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/system/isystem_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -598,7 +598,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit56]
-FileName=../../../xgpl_src/IsoAgLib/util/icancustomer_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -608,7 +608,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit57]
-FileName=../../../xgpl_src/IsoAgLib/util/compiler_adaptation.h
+FileName=../../../../library/xgpl_src/IsoAgLib/typedef.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -618,7 +618,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit58]
-FileName=../../../xgpl_src/IsoAgLib/util/iliberr_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -628,7 +628,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit59]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/config.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -638,7 +638,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit60]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -648,7 +648,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit61]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/canfifo_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -658,7 +658,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit62]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/icanfifo.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -668,7 +668,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit63]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -678,7 +678,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit64]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -688,7 +688,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit65]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -698,7 +698,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit66]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofilterbox_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -708,7 +708,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit67]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -718,7 +718,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit68]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -728,7 +728,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit69]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c_interface.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -738,7 +738,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit70]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -748,7 +748,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit71]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isosystempkg_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -758,7 +758,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit72]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -768,7 +768,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit73]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/system.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -778,7 +778,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit74]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/hal/can.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -788,7 +788,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit75]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/config.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -798,7 +798,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit76]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -808,7 +808,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit77]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -818,7 +818,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit78]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//iisofiltermanager_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -828,7 +828,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit79]
-FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -838,7 +838,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit80]
-FileName=../../../xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -848,7 +848,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit81]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/proc_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -858,7 +858,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit82]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/convert.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -868,7 +868,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit83]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/idevpropertyhandler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -878,7 +878,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit84]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/isetpointregister_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -888,7 +888,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit85]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointregister_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/proc_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -898,7 +898,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit86]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointbase_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -908,7 +908,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit87]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/iprocess_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/isetpointregister_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -918,7 +918,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit88]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/elementddi_s.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointregister_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -928,7 +928,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit89]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointbase_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -938,7 +938,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit90]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/iprocess_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -948,7 +948,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit91]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/elementddi_s.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -958,7 +958,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit92]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -968,7 +968,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit93]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -978,7 +978,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit94]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -988,7 +988,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit95]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -998,7 +998,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit96]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1008,7 +1008,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit97]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1018,7 +1018,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit98]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/generalcommand_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1028,7 +1028,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit99]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/impl/setpointremote_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1038,7 +1038,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit100]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/isetpointremote_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1048,7 +1048,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit101]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/igeneralcommand_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1058,7 +1058,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit102]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasureElements/impl/simplemanagemeasureprogremote_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/impl/setpointremote_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1068,7 +1068,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit103]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/impl/procdataremotesimplemeasure_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/isetpointremote_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1078,7 +1078,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit104]
-FileName=../../../xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/iprocdataremotesimplemeasure_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1088,7 +1088,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit105]
-FileName=../../../xgpl_src/IsoAgLib/isoaglib_config.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasureElements/impl/simplemanagemeasureprogremote_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1098,7 +1098,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit106]
-FileName=../../../xgpl_src/IsoAgLib/typedef.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/impl/procdataremotesimplemeasure_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1108,7 +1108,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit107]
-FileName=../../../xgpl_src/IsoAgLib/hal/config.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/iprocdataremotesimplemeasure_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1118,7 +1118,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit108]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/typedef.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1128,7 +1128,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit109]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/iident_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1138,7 +1138,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit110]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/icanio_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1148,7 +1148,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit111]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1158,7 +1158,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit112]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/canio_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/idevpropertyhandler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1168,7 +1168,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit113]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/ident_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1178,7 +1178,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit114]
-FileName=../../../xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1188,7 +1188,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit115]
-FileName=../../../xgpl_src/IsoAgLib/driver/system/isystem_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1198,7 +1198,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit116]
-FileName=../../../xgpl_src/IsoAgLib/driver/system/impl/system_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1208,7 +1208,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit117]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/config.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1218,7 +1218,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit118]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1228,7 +1228,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit119]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_msq.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1238,7 +1238,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit120]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1248,7 +1248,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit121]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1258,7 +1258,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit122]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1268,7 +1268,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit123]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/can/can_server.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1278,7 +1278,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit124]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1288,7 +1288,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit125]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/system/system.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1298,7 +1298,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit126]
-FileName=../../../xgpl_src/IsoAgLib/hal/pc/errcodes.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1308,7 +1308,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit127]
-FileName=../../../xgpl_src/IsoAgLib/hal/system.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1318,7 +1318,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit128]
-FileName=../../../xgpl_src/IsoAgLib/hal/can.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1328,7 +1328,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit129]
-FileName=../../../xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1338,7 +1338,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit130]
-FileName=../../../xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1348,7 +1348,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit131]
-FileName=../../../xgpl_src/supplementary_driver/hal/rs232.h
+FileName=../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1358,7 +1358,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit132]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
+FileName=../../../../library/xgpl_src/supplementary_driver/driver/rs232/irs232io_c.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
@@ -1368,7 +1368,37 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit133]
-FileName=../../../xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
+FileName=../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h
+CompileCpp=1
+Folder=2_8_RemoteReadDataSimpleMeasureIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit134]
+FileName=../../../../library/xgpl_src/supplementary_driver/hal/rs232.h
+CompileCpp=1
+Folder=2_8_RemoteReadDataSimpleMeasureIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit135]
+FileName=../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
+CompileCpp=1
+Folder=2_8_RemoteReadDataSimpleMeasureIso
+Compile=1
+Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit136]
+FileName=../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h
 CompileCpp=1
 Folder=2_8_RemoteReadDataSimpleMeasureIso
 Compile=1
