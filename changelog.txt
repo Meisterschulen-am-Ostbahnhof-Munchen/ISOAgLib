@@ -24,6 +24,15 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section Changes Changes
 
 \subsection Change_M 2.0 to 2.1
+  - the IsoAgLib core files ( "xgpl_src" "commercial_BIOS" and simulated_IO") have been moved together in a new folder "library"
+  - some important folders and files have been renamed so the content should be easier to identify
+    - folders below IsoAgLib/comm are now labeled like the related OSI layer
+    - IsoAgLib_Examples -> examples with a new folder "src" inside containing the source files
+    - Binaries like vt2iso and proc2ito are now being compiled to the new folder "bin".
+    - compiler_projects has been moved into "examples" containing the config files of the examples.
+    - The folder "build_utils" has been renamed to "build" and moved to library/xgpl_src/build
+    - The class "ElementBase_c" has been renamed to "SchedulerTask_c" and moved to folder "Scheduler", like "CanPkExt_c" as well.
+    - The classes "CanCustomer_c" and "CanPkg_C" have been moved to folder "/driver/can"
   - optimized scheduler resorting to avoid several HEAP malloc/free calls
   - added new DEFINEs for MultiReceive: refer to new generated config_xxx.h or isoaglib_config.h
   - vt2iso: special parsing of proprietary elements and attributes possible
