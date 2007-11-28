@@ -80,9 +80,13 @@ using namespace __HAL;
   // device nodes minor base. Must be the same as defined in the driver
   #ifndef PCAN_MSCAN_MINOR_BASE
     // (USB driver)
-    #define PCAN_MSCAN_MINOR_BASE     32
-    // (file pcan_mpc5200.c)
-    //#define PCAN_MSCAN_MINOR_BASE     40
+    #ifdef SYSTEM_A5
+      #define PCAN_MSCAN_MINOR_BASE     0
+    #else
+      #define PCAN_MSCAN_MINOR_BASE     32
+      // (file pcan_mpc5200.c)
+      //#define PCAN_MSCAN_MINOR_BASE     40
+    #endif
   #endif
 #endif
 
