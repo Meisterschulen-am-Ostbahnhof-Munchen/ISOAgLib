@@ -1801,7 +1801,7 @@ create_EdePrj()
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
 
-	if [ $USE_EMBED_LIB_DIRECTORY = "commercial_BIOS/bios_esx" ] ; then
+	if [ $USE_EMBED_LIB_DIRECTORY = "library/commercial_BIOS/bios_esx" ] ; then
 		## adopt the BIOS file, if $USE_EMBED_LIB_DIRECTORY and
 		## and $USE_EMBED_HEADER_DIRECTORY reflect default value which doesn't match to defined target
 		case "$USE_TARGET_SYSTEM" in
@@ -1810,8 +1810,8 @@ create_EdePrj()
 		pc*)
 			;;
 		*)
-			USE_EMBED_LIB_DIRECTORY="commercial_BIOS/bios_$USE_TARGET_SYSTEM"
-			USE_EMBED_HEADER_DIRECTORY="commercial_BIOS/bios_$USE_TARGET_SYSTEM"
+			USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
+			USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
 			;;
 		esac
 	fi
@@ -1853,7 +1853,7 @@ create_EdePrj()
   USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 
 	# avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
-	ISO_AG_LIB_PATH_WIN=`echo "../$ISO_AG_LIB_INSIDE" | sed -e 's#/#=_=_#g'`
+	ISO_AG_LIB_PATH_WIN=`echo "$ISO_AG_LIB_INSIDE" | sed -e 's#/#=_=_#g'`
 	USE_EMBED_LIB_DIRECTORY=`echo "$USE_EMBED_LIB_DIRECTORY" | sed -e 's#/#=_=_#g'`
 	USE_EMBED_HEADER_DIRECTORY=`echo "$USE_EMBED_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
 	USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's#/#=_=_#g'`
