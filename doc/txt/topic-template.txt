@@ -1,6 +1,0 @@
-/*! \page PageTopicTemplate Topic Template regarding IsoAgLib
-
-INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
-
-\section TopicTemplate Topic Template
-*/
