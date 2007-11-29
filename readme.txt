@@ -142,7 +142,60 @@ The ISO<i><sub>AgLib</sub></i> is designed for easy adaptation to new hardware p
 part of the software can be used without any changes for all hardware types. The more this common software
 part is used, the better the quality can get. <br>
 The layered structure is described by the following diagram:
-  \dot
+
+
+\htmlonly
+<img src="Images/structure.png" width="890" height="531" usemap="#structure" alt="Structural Overview" border="0">
+<br/><small>additional information can be accessed by clicking on the respective area in the image</small>
+<map name="structure">
+    <area shape="rect" coords="720, 38,835, 94" href="MultiMsgPage.html" alt="Data Stream (needed for ISO Terminal)" title="Data Stream (needed for ISO Terminal)">
+    <area shape="rect" coords="590, 38,705, 94" href="XMLspec.html" alt="ISO Virtual (complete optional)" title="ISO Virtual (complete optional)">
+    <area shape="rect" coords="347, 38,436, 94" href="ProcDataPage.html" alt="Process Data (optional)" title="Process Data (optional)">
+    <area shape="rect" coords="215, 38,322, 94" href="SystemMgmtPage.html" alt="System Management (partly obligatory)" title="System Management (partly obligatory)">
+    <area shape="rect" coords="460, 38,570, 94" href="BaseDataPage.html" alt="Base Data (complete optional)" title="Base Data (complete optional)">
+    <area shape="rect" coords=" 20, 38,170, 94" href="CommOverPage.html" alt="Communication Services for ISO 11783" title="Communication Services for ISO 11783">
+
+    <area shape="rect" coords="663,154,754,244" href="" alt="Sensor Supplementary Driver with Scaling and Range-Check" title="Sensor Supplementary Driver with Scaling and Range-Check">
+    <area shape="rect" coords="550,152,641,244" href="" alt="RS232 Supplementary Driver with IO STREAMS like read/write access" title="RS232 Supplementary Driver with IO STREAMS like read/write access">
+    <area shape="rect" coords="435,163,529,237" href="" alt="CAN individual mask/filter settings for each filterbox" title="CAN individual mask/filter settings for each filterbox">
+    <area shape="rect" coords="776,153,867,242" href="" alt="Actor Supplementary Driver with State Monitoring Functions" title="Actor Supplementary Driver with State Monitoring Functions">
+    <area shape="rect" coords="323,170,416,227" href="" alt="EEPROM IO-STREAMS Like Read/Write Access" title="EEPROM IO-STREAMS Like Read/Write Access">
+    <area shape="rect" coords="190,170,300,320" href="" alt="Common System Access (Globally Used)" title="Common System Access (Globally Used)">
+    <!--<area shape="rect" coords=" 20,170,170,244" href="" alt="Provide Driver Features\nwhich are not part of\nmost Platforms" title="Provide Driver Features\nwhich are not part of\nmost Platforms">-->
+
+<!--    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">
+    <area shape="rect" coords="  1,  1,249, 49" href="" alt="" title="">-->
+</map>
+<!-- generated dot map...
+<area shape="rect" href="da/d12/classIsoAgLib_1_1iDigitalO__c.html" title="Actor\nSupplementary\nDriver with\nState Monitoring\nFunctions" alt="" coords="962,316,1085,393">
+<area shape="rect" href="d9/dc6/classIsoAgLib_1_1iCanIo__c.html" title="CAN\nIndividual Mask/\nFilter Settings\nfor each Filterbox" alt="" coords="528,322,656,386">
+<area shape="rect" href="d8/d6a/classIsoAgLib_1_1iRS232IO__c.html" title="RS232\n Supplementary\nDriver with\nIOSTREAMS Like\nRead/Write\nAccess" alt="" coords="680,309,800,400">
+<area shape="rect" href="d4/dca/classIsoAgLib_1_1iEepromIo__c.html" title="EEPROM\nIO-STREAMS Like\nRead/Write Access" alt="" coords="370,329,504,380">
+<area shape="rect" href="d3/db4/classIsoAgLib_1_1iSystem__c.html" title="Common System\nAccess\n(Globally Used)" alt="" coords="221,329,346,380">
+<area shape="rect" href="dd/d8b/rs232_8h.html" title="RS232\nSupplementary\nDriver" alt="" coords="649,516,764,566">
+<area shape="rect" href="dd/dc8/classIsoAgLib_1_1iAnalogIRangeCheck__c.html" title="Sensor\nSupplementary\nDriver with\nScaling and\nRange-Check" alt="" coords="824,316,938,393">
+<area shape="rect" href="d5/d2e/sensor_8h.html" title="Sensor\nSupplementary\nDriver" alt="" coords="788,516,902,566">
+<area shape="rect" href="df/d10/actor_8h.html" title="Actor\nSupplementary\nDriver" alt="" coords="926,516,1041,566">
+<area shape="rect" href="d7/da8/can_8h.html" title="CAN" alt="" coords="553,517,625,565">
+<area shape="rect" href="d0/ded/eeprom_8h.html" title="EEPROM\n(Store Process Data,\nSelfConf SA, ...)" alt="" coords="385,516,529,566">
+<area shape="rect" href="dc/db2/system_8h.html" title="Common\nSystem Access\n(Watchdog,Time, ...)" alt="" coords="217,516,361,566">
+<area shape="rect" href="MainHalPage.html" title="Map Platform Specific\nAPI to Unique API\nfor IsoAgLib\n(Mapping during\ncompile-time -\nno runtime-overhead)" alt="" coords="38,496,193,586">
+</map>-->
+</div>
+
+\endhtmlonly
+
+<!--
+\dot
   digraph LayeredStructure {
     fontname=ARIALN;
     ranksep=1.0;
@@ -255,7 +308,7 @@ The layered structure is described by the following diagram:
     sensor_drv  -> sensor_hal [ /*weight=2000*/ ];
     actor_drv   -> actor_hal  [ /*weight=2000*/ ];
 }
-\enddot
+\enddot-->
 
 \subsection StructObligatory Information on Obligatory Elements
 The following elements are needed for all projects:
