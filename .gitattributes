@@ -2358,8 +2358,6 @@ examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/TutPrjDesc5_1_Proprietar
 examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/config_5_1_ProprietaryPgn.h -text
 examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/version.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/6_0_VtThreads.cpp -text
-/getting-installed.txt -text
-/howto-download.txt -text
 /installation.txt -text
 library/LICENSE -text
 library/commercial_BIOS/bios_pc.testserver/include -text
@@ -2712,9 +2710,4 @@ library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.c
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h -text
-/license-conditions.txt -text
 /licensing.txt -text
-/main-features.txt -text
-/maintainers.txt -text
-/support.txt -text
-/where-to-start.txt -text
