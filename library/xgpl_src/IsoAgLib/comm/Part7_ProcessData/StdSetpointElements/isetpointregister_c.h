@@ -61,7 +61,7 @@
 #include "impl/setpointregister_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
 
-#include "../igeneralcommand_c.h"
+#include "../iprocesscmd_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -108,7 +108,7 @@ public:
     @param en_valueGroup of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by value group
   */
-  int32_t valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup)const
+  int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)const
   {
     return SetpointRegister_c::valForGroup(en_valueGroup);
   };
@@ -153,7 +153,7 @@ public:
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a setpoint for this valueGroup exists
   */
-  bool valueGroupExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+  bool valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
     return SetpointRegister_c::valueGroupExists(en_valueGroup);
   };
 
@@ -211,7 +211,7 @@ public:
     @param ai32_val new setpoint value
     @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValForGroup(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup)
+  void setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGroup_t en_valueGroup)
   {
     SetpointRegister_c::setValForGroup(ai32_val, en_valueGroup);
   };

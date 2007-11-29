@@ -60,7 +60,7 @@
 /* *************************************** */
 #include "impl/procdatalocalsimplemeasure_c.h"
 #include "../StdSetpointElements/isetpointlocal_c.h"
-#include "../../igeneralcommand_c.h"
+#include "../../iprocesscmd_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -298,9 +298,9 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
+  bool sendSetpointForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
   {
-   return setpointConst().sendSetpointForGroup( ac_targetISOName, en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+   return setpointConst().sendSetpointForGroup( ac_targetISOName, en_valueGroup, __IsoAgLib::ProcessCmd_c::setValue );
   }
 
   #ifdef USE_EEPROM_IO

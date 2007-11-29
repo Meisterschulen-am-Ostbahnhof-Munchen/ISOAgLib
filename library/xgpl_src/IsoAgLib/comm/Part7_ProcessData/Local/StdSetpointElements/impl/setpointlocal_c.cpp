@@ -633,10 +633,10 @@ bool SetpointLocal_c::timeEvent( void ){
   @return true -> successful sent
 */
 bool SetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
-                                           GeneralCommand_c::ValueGroup_t en_valueGroup,
-                                           GeneralCommand_c::CommandType_t en_command) const {
+                                           ProcessCmd_c::ValueGroup_t en_valueGroup,
+                                           ProcessCmd_c::CommandType_t en_command) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, en_command);
   #ifdef USE_FLOAT_DATA_TYPE
   if (valType() == i32_val) {
@@ -663,7 +663,7 @@ void SetpointLocal_c::processRequest() const {
   if (b_existMaster)
   {
     // use the values in general command which are already set
-    sendSetpointForGroup(c_pkg.memberSend().isoName(), c_pkg.mc_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointForGroup(c_pkg.memberSend().isoName(), c_pkg.mc_processCmd.getValueGroup(), ProcessCmd_c::setValue );
   }
 }
 
@@ -737,9 +737,9 @@ void SetpointLocal_c::processSet(){
     #endif
 
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::setValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::setValue);
     // notify the caller
     processData().sendValISOName( c_pkg.memberSend().isoName(), SETPOINT_RELEASE_COMMAND);
   }
@@ -753,8 +753,8 @@ void SetpointLocal_c::processSet(){
       int32_t i32_val = processData().pkgDataLong();
       // now set according to mod the suitable setpoint type  value
       // simply set the new setpoint vlue
-      if ( pc_callerIter->valForGroup( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val ) b_change = true;
-      pc_callerIter->setValForGroup( i32_val, c_pkg.mc_generalCommand.getValueGroup());
+      if ( pc_callerIter->valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val ) b_change = true;
+      pc_callerIter->setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
     #ifdef USE_FLOAT_DATA_TYPE
     }
     else
@@ -763,8 +763,8 @@ void SetpointLocal_c::processSet(){
       float f_val = processData().pkgDataFloat();
       // now set according to mod the suitable setpoint type  value
       // simply set the new setpoint vlue
-      if ( pc_callerIter->valForGroupFloat( c_pkg.mc_generalCommand.getValueGroup() ) != f_val ) b_change = true;
-      pc_callerIter->setValForGroup( f_val, c_pkg.mc_generalCommand.getValueGroup() );
+      if ( pc_callerIter->valForGroupFloat( c_pkg.mc_processCmd.getValueGroup() ) != f_val ) b_change = true;
+      pc_callerIter->setValForGroup( f_val, c_pkg.mc_processCmd.getValueGroup() );
     }
     #endif
   }

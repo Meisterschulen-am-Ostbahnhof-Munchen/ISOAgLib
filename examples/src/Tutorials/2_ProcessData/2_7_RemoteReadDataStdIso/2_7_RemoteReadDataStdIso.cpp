@@ -382,7 +382,7 @@ int main()
       b_funcInst = 0,
       b_ecuInst = 0;
   uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27+1;
+  uint32_t ui32_serNo = 27;
 
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
@@ -399,22 +399,22 @@ int main()
   const ElementDdi_s s_workStateElementDDI[] =
   {
     // DDI 141,
-    {141, true, GeneralCommand_c::exactValue},
+    {141, true, ProcessCmd_c::exactValue},
     // termination entry
-    {0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, ProcessCmd_c::noValue}
   };
   const ElementDdi_s s_applicationRateElementDDI[] =
   {
     // DDI 1,
-    {1, true, GeneralCommand_c::exactValue},
+    {1, true, ProcessCmd_c::exactValue},
     // DDI 2,
-//     {2, false, GeneralCommand_c::exactValue}, // -> that ElementDdi_s is commented out to demonstrate how to add a DDI dynamically
+//     {2, false, ProcessCmd_c::exactValue}, // -> that ElementDdi_s is commented out to demonstrate how to add a DDI dynamically
     // DDI 3,
-    {3, true, GeneralCommand_c::defaultValue},
+    {3, true, ProcessCmd_c::defaultValue},
     // DDI 4,
-    {4, true, GeneralCommand_c::minValue},
+    {4, true, ProcessCmd_c::minValue},
     // termination entry
-    {0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, ProcessCmd_c::noValue}
   };
 
 #ifdef USE_PROC_HANDLER
@@ -559,6 +559,7 @@ int main()
         arr_procData[cui8_indexApplicationRate].prog().start(Proc_c::TimeProp, Proc_c::DoVal);
         LOG_INFO << "\r\nstart measurement for DDI 2 (normal time increment measurement)" << "\r\n";
       }
+
       if (ui16_cnt == 120)
       {
         arr_procData[cui8_indexApplicationRate].prog().addSubprog(Proc_c::TimeProp, 500, Proc_c::DoValForExactSetpoint);
@@ -628,6 +629,7 @@ int main()
         arr_procData[cui8_indexWorkState].prog().stop();
         LOG_INFO << "\r\nstopping measurement for DDI 141" << "\r\n";
       }
+
 #endif
     }
 

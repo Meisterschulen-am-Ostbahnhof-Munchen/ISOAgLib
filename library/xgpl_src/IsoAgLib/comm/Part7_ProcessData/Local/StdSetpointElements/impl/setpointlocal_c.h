@@ -358,8 +358,8 @@ public:
      @return true -> successful sent
   */
   bool sendSetpointForGroup(const IsoName_c& ac_targetISOName,
-                            GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue,
-                            GeneralCommand_c::CommandType_t en_command = GeneralCommand_c::noCommand) const;
+                            ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue,
+                            ProcessCmd_c::CommandType_t en_command = ProcessCmd_c::noCommand) const;
 
   /**
     send a exact-setpoint to a specified target (selected by GPT)
@@ -367,7 +367,7 @@ public:
     @return true -> successful sent
   */
   bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName) const
-   { return sendSetpointForGroup(ac_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+   { return sendSetpointForGroup(ac_targetISOName, ProcessCmd_c::exactValue, ProcessCmd_c::setValue );};
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */

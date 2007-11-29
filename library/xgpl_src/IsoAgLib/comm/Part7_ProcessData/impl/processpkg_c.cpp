@@ -147,8 +147,8 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 
   const int32_t ci32_test = mc_flex4Data.getInt32Data();
 
-  if (mc_generalCommand.getCommand() == GeneralCommand_c::setValue &&
-      mc_generalCommand.checkIsSetpoint())
+  if (mc_processCmd.getCommand() == ProcessCmd_c::setValue &&
+      mc_processCmd.checkIsSetpoint())
   { // setpoint value -> special commands are possible for exact, min, max, default setpopints
       if ((ren_checkCmd & setpointReleaseCmd != 0)
        &&(ci32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
@@ -162,8 +162,8 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
       }
   }
 
-  if (mc_generalCommand.getCommand() == GeneralCommand_c::setValue &&
-      !mc_generalCommand.checkIsSetpoint())
+  if (mc_processCmd.getCommand() == ProcessCmd_c::setValue &&
+      !mc_processCmd.checkIsSetpoint())
   { // measure value: conversion if: actual, min, max, integ, med
     // check for command values
     if ((ren_checkCmd & noVal_32s != 0)
@@ -496,21 +496,21 @@ void ProcessPkg_c::string2Flags()
 void ProcessPkg_c::flags2String()
 {
   uint8_t ui8_cmd;
-  switch (mc_generalCommand.getCommand()) {
-    case GeneralCommand_c::requestConfiguration:                  ui8_cmd = 0; break;
-    case GeneralCommand_c::configurationResponse:                 ui8_cmd = 1; break;
-    case GeneralCommand_c::requestValue:                          ui8_cmd = 2; break;
-    case GeneralCommand_c::setValue:                              ui8_cmd = 3; break;
-    case GeneralCommand_c::measurementTimeValueStart:             ui8_cmd = 4; break;
-    case GeneralCommand_c::measurementDistanceValueStart:         ui8_cmd = 5; break;
-    case GeneralCommand_c::measurementMinimumThresholdValueStart: ui8_cmd = 6; break;
-    case GeneralCommand_c::measurementMaximumThresholdValueStart: ui8_cmd = 7; break;
-    case GeneralCommand_c::measurementChangeThresholdValueStart:  ui8_cmd = 8; break;
-    case GeneralCommand_c::nack:                                  ui8_cmd = 0xd; break;
-    case GeneralCommand_c::taskControllerStatus:                  ui8_cmd = 0xe; break;
-    case GeneralCommand_c::workingsetMasterMaintenance:           ui8_cmd = 0xf; break;
+  switch (mc_processCmd.getCommand()) {
+    case ProcessCmd_c::requestConfiguration:                  ui8_cmd = 0; break;
+    case ProcessCmd_c::configurationResponse:                 ui8_cmd = 1; break;
+    case ProcessCmd_c::requestValue:                          ui8_cmd = 2; break;
+    case ProcessCmd_c::setValue:                              ui8_cmd = 3; break;
+    case ProcessCmd_c::measurementTimeValueStart:             ui8_cmd = 4; break;
+    case ProcessCmd_c::measurementDistanceValueStart:         ui8_cmd = 5; break;
+    case ProcessCmd_c::measurementMinimumThresholdValueStart: ui8_cmd = 6; break;
+    case ProcessCmd_c::measurementMaximumThresholdValueStart: ui8_cmd = 7; break;
+    case ProcessCmd_c::measurementChangeThresholdValueStart:  ui8_cmd = 8; break;
+    case ProcessCmd_c::nack:                                  ui8_cmd = 0xd; break;
+    case ProcessCmd_c::taskControllerStatus:                  ui8_cmd = 0xe; break;
+    case ProcessCmd_c::workingsetMasterMaintenance:           ui8_cmd = 0xf; break;
     // map reset command to setValue command
-    case GeneralCommand_c::measurementReset:                      ui8_cmd = 3; break;
+    case ProcessCmd_c::measurementReset:                      ui8_cmd = 3; break;
     default: ui8_cmd = 0xFF;
   }
 
@@ -588,48 +588,48 @@ bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_ele
 {
   bool mb_isSetpoint = false;
   bool mb_isRequest = false;
-  GeneralCommand_c::ValueGroup_t men_valueGroup = GeneralCommand_c::noValue;
-  GeneralCommand_c::CommandType_t men_command = GeneralCommand_c::noCommand;
+  ProcessCmd_c::ValueGroup_t men_valueGroup = ProcessCmd_c::noValue;
+  ProcessCmd_c::CommandType_t men_command = ProcessCmd_c::noCommand;
 
   if ( identType() != Ident_c::StandardIdent) {
     // ISO command
     switch (cmd()) {
       case 0x00:
-        men_command = GeneralCommand_c::requestConfiguration;
+        men_command = ProcessCmd_c::requestConfiguration;
         break;
       case 0x01:
-        men_command = GeneralCommand_c::configurationResponse;
+        men_command = ProcessCmd_c::configurationResponse;
         break;
       case 0x02:
-        men_command = GeneralCommand_c::requestValue;
+        men_command = ProcessCmd_c::requestValue;
         mb_isRequest = true;
         break;
       case 0x03:
-        men_command = GeneralCommand_c::setValue;
+        men_command = ProcessCmd_c::setValue;
         break;
       case 0x04:
-        men_command = GeneralCommand_c::measurementTimeValueStart;
+        men_command = ProcessCmd_c::measurementTimeValueStart;
         break;
       case 0x05:
-        men_command = GeneralCommand_c::measurementDistanceValueStart;
+        men_command = ProcessCmd_c::measurementDistanceValueStart;
         break;
       case 0x06:
-        men_command = GeneralCommand_c::measurementMinimumThresholdValueStart;
+        men_command = ProcessCmd_c::measurementMinimumThresholdValueStart;
         break;
       case 0x07:
-        men_command = GeneralCommand_c::measurementMaximumThresholdValueStart;
+        men_command = ProcessCmd_c::measurementMaximumThresholdValueStart;
         break;
       case 0x08:
-        men_command = GeneralCommand_c::measurementChangeThresholdValueStart;
+        men_command = ProcessCmd_c::measurementChangeThresholdValueStart;
         break;
       case 0x0d:
-        men_command = GeneralCommand_c::nack;
+        men_command = ProcessCmd_c::nack;
         break;
       case 0x0e:
-        men_command = GeneralCommand_c::taskControllerStatus;
+        men_command = ProcessCmd_c::taskControllerStatus;
         break;
       case 0x0f:
-        men_command = GeneralCommand_c::workingsetMasterMaintenance;
+        men_command = ProcessCmd_c::workingsetMasterMaintenance;
         break;
     }
   }
@@ -640,9 +640,9 @@ bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_ele
     men_valueGroup = rl_elementDDI.en_valueGroup;
   }
 
-  if (men_command != GeneralCommand_c::noCommand)
+  if (men_command != ProcessCmd_c::noCommand)
   {
-    mc_generalCommand.setValues(mb_isSetpoint, mb_isRequest, men_valueGroup, men_command);
+    mc_processCmd.setValues(mb_isSetpoint, mb_isRequest, men_valueGroup, men_command);
     return true;
   }
   else return false;

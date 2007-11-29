@@ -216,7 +216,7 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
 */
 void ProcDataBase_c::processMsg()
 {
-  if (getProcessInstance4Comm().data().mc_generalCommand.checkIsSetpoint())
+  if (getProcessInstance4Comm().data().mc_processCmd.checkIsSetpoint())
     processSetpoint();
   else
     processProg();
@@ -310,8 +310,8 @@ void ProcDataBase_c::setBasicSendFlags() const
 
   // general command is already set, use these values:
   // set command in ProcessPkg::flags2string
-  const GeneralCommand_c::ValueGroup_t men_valueGroup = getProcessInstance4Comm().data().mc_generalCommand.getValueGroup();
-  const bool mb_isSetpoint = getProcessInstance4Comm().data().mc_generalCommand.checkIsSetpoint();
+  const ProcessCmd_c::ValueGroup_t men_valueGroup = getProcessInstance4Comm().data().mc_processCmd.getValueGroup();
+  const bool mb_isSetpoint = getProcessInstance4Comm().data().mc_processCmd.checkIsSetpoint();
 
   mc_data.set_Element(0xFFFF);
   mc_data.set_DDI(0);

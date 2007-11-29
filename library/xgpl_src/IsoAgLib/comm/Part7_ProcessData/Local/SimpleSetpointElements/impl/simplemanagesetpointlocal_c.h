@@ -161,7 +161,7 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @return true -> successful sent
   */
   bool sendMasterSetpointVal( const IsoName_c& ac_targetISOName ) const
-   { return sendSetpointForGroup( ac_targetISOName, GeneralCommand_c::exactValue, GeneralCommand_c::setValue );};
+   { return sendSetpointForGroup( ac_targetISOName, ProcessCmd_c::exactValue, ProcessCmd_c::setValue );};
   /**
     send a sub-setpoint (selected by value group) to a specified target (selected by GPT)
     @param ac_targetISOName ISOName of target
@@ -170,8 +170,8 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @return true -> successful sent
   */
   bool sendSetpointForGroup(const IsoName_c& ac_targetISOName,
-                       GeneralCommand_c::ValueGroup_t en_valueGroup,
-                       GeneralCommand_c::CommandType_t en_command ) const;
+                            ProcessCmd_c::ValueGroup_t en_valueGroup,
+                            ProcessCmd_c::CommandType_t en_command ) const;
   /**
     retreive simple master setpoint
     @return actual received setpoint value

@@ -269,7 +269,7 @@ bool ProcIdent_c::hasDDI( uint16_t aui16_checkDDI ) const
   else return true;
 }
 
-bool ProcIdent_c::hasType(bool ab_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const
+bool ProcIdent_c::hasType(bool ab_isSetpoint, ProcessCmd_c::ValueGroup_t t_ddiType) const
 {
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
   for (iter = mlist_elementDDI.begin(); iter != mlist_elementDDI.end(); iter++)
@@ -361,10 +361,10 @@ bool ProcIdent_c::add2Group(uint16_t aui16_DDI)
 
     if (b_foundPair)
     {
-      GeneralCommand_c::ValueGroup_t ddiType;
+      ProcessCmd_c::ValueGroup_t ddiType;
       bool mb_isSetpoint;
       getDDIType(aui16_DDI, ddiType, mb_isSetpoint);
-      if (ddiType != GeneralCommand_c::noValue)
+      if (ddiType != ProcessCmd_c::noValue)
       {
         IsoAgLib::ElementDdi_s s_DDIToAdd = {aui16_DDI, mb_isSetpoint, ddiType};
         mlist_elementDDI.push_back(s_DDIToAdd);
@@ -376,7 +376,7 @@ bool ProcIdent_c::add2Group(uint16_t aui16_DDI)
 }
 
 
-bool ProcIdent_c::addProprietary2Group(uint16_t aui16_DDI, bool mb_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType)
+bool ProcIdent_c::addProprietary2Group(uint16_t aui16_DDI, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType)
 {
   IsoAgLib::ElementDdi_s s_DDIToAdd = {aui16_DDI, mb_isSetpoint, ddiType};
   mlist_elementDDI.push_back(s_DDIToAdd);
@@ -384,26 +384,26 @@ bool ProcIdent_c::addProprietary2Group(uint16_t aui16_DDI, bool mb_isSetpoint, G
   return true;
 }
 
-void ProcIdent_c::getDDIType(uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t &r_ddiType, bool &rb_isSetpoint)
+void ProcIdent_c::getDDIType(uint16_t aui16_DDI, ProcessCmd_c::ValueGroup_t &r_ddiType, bool &rb_isSetpoint)
 {
   // check if given DDI is proprietary
   if (aui16_DDI > 0xDFFF)
   { // 0xDFFF is Request Default Process Data
     // proprietary DDIs are exact per default
-    r_ddiType = GeneralCommand_c::exactValue;
+    r_ddiType = ProcessCmd_c::exactValue;
     rb_isSetpoint = true;
     return;
   }
 
   if ((aui16_DDI == 0x8E) || (aui16_DDI == 0x8D))
   {
-    r_ddiType = GeneralCommand_c::exactValue;
+    r_ddiType = ProcessCmd_c::exactValue;
     rb_isSetpoint = true;
     return;
   }
   if (aui16_DDI == 0x8F)
   {
-    r_ddiType = GeneralCommand_c::exactValue;
+    r_ddiType = ProcessCmd_c::exactValue;
     rb_isSetpoint = false;
     return;
   }
@@ -415,23 +415,23 @@ void ProcIdent_c::getDDIType(uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t 
     switch (ui8_groupDDI1)
     {
       case 0:
-        r_ddiType = GeneralCommand_c::maxValue;
+        r_ddiType = ProcessCmd_c::maxValue;
         rb_isSetpoint = false;
         break;
       case 1:
-        r_ddiType = GeneralCommand_c::exactValue;
+        r_ddiType = ProcessCmd_c::exactValue;
         rb_isSetpoint = true;
         break;
       case 2:
-        r_ddiType = GeneralCommand_c::exactValue;
+        r_ddiType = ProcessCmd_c::exactValue;
         rb_isSetpoint = false;
         break;
       case 3:
-        r_ddiType = GeneralCommand_c::defaultValue;
+        r_ddiType = ProcessCmd_c::defaultValue;
         rb_isSetpoint = true;
         break;
       case 4:
-        r_ddiType = GeneralCommand_c::minValue;
+        r_ddiType = ProcessCmd_c::minValue;
         rb_isSetpoint = false;
         break;
     }
@@ -445,15 +445,15 @@ void ProcIdent_c::getDDIType(uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t 
     switch (ui8_groupDDI2)
     {
       case 0:
-        r_ddiType = GeneralCommand_c::exactValue;
+        r_ddiType = ProcessCmd_c::exactValue;
         rb_isSetpoint = true;
         break;
       case 1:
-        r_ddiType = GeneralCommand_c::exactValue;
+        r_ddiType = ProcessCmd_c::exactValue;
         rb_isSetpoint = false;
         break;
       case 2:
-        r_ddiType = GeneralCommand_c::maxValue;
+        r_ddiType = ProcessCmd_c::maxValue;
         rb_isSetpoint = false;
         break;
     }
@@ -461,15 +461,15 @@ void ProcIdent_c::getDDIType(uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t 
   }
 
   // any other DDI
-  r_ddiType = GeneralCommand_c::exactValue;
+  r_ddiType = ProcessCmd_c::exactValue;
   rb_isSetpoint = false;
 }
 
 
-bool ProcIdent_c::hasDDIType (uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType)
+bool ProcIdent_c::hasDDIType (uint16_t aui16_DDI, ProcessCmd_c::ValueGroup_t t_ddiType)
 {
   bool b_isSetPoint;
-  GeneralCommand_c::ValueGroup_t t_retDDIType;
+  ProcessCmd_c::ValueGroup_t t_retDDIType;
 
   getDDIType (aui16_DDI, t_retDDIType, b_isSetPoint);
 

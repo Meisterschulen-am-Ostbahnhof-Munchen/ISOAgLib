@@ -95,7 +95,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h>
 #include "procident_c.h"
 #include "processpkg_c.h"
-#include "generalcommand_c.h"
+#include "processcmd_c.h"
 
 namespace IsoAgLib {
   class  ProcessDataChangeHandler_c;

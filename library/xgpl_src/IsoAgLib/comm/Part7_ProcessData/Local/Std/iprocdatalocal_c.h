@@ -62,7 +62,7 @@
 #include "../StdMeasureElements/imeasureproglocal_c.h"
 #include "../StdSetpointElements/isetpointlocal_c.h"
 #include "../../proc_c.h"
-#include "../../igeneralcommand_c.h"
+#include "../../iprocesscmd_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -207,8 +207,8 @@ public:
     const ElementDdi_s s_tmpElementDDI[2] =
     {
       // if this constructor is used => only exact measurement possible
-      {aui16_DDI, false, GeneralCommand_c::exactValue},
-      {0xFFFF, false, GeneralCommand_c::noValue}
+      {aui16_DDI, false, ProcessCmd_c::exactValue},
+      {0xFFFF, false, ProcessCmd_c::noValue}
     };
 
     ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
@@ -317,8 +317,8 @@ public:
      const ElementDdi_s s_tmpElementDDI[2] =
      {
        // if this init is used => only exact measurement possible
-       {aui16_DDI, false, GeneralCommand_c::exactValue},
-       {0xFFFF, false, GeneralCommand_c::noValue}
+       {aui16_DDI, false, ProcessCmd_c::exactValue},
+       {0xFFFF, false, ProcessCmd_c::noValue}
      };
 
      ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
@@ -405,10 +405,10 @@ public:
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-  bool sendSetpointForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
+  bool sendSetpointForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const iIsoName_c& ac_targetISOName ) const
   {
     return setpointConst().sendSetpointForGroup( ac_targetISOName,
-                                            en_valueGroup, __IsoAgLib::GeneralCommand_c::setValue );
+                                            en_valueGroup, __IsoAgLib::ProcessCmd_c::setValue );
   }
 
   #ifdef USE_EEPROM_IO

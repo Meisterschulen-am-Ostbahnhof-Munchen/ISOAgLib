@@ -88,7 +88,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "igeneralcommand_c.h"
+#include "iprocesscmd_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -100,7 +100,7 @@ namespace IsoAgLib {
 struct ElementDdi_s {
   uint16_t ui16_DDI;
   bool b_isSetpoint;
-  GeneralCommand_c::ValueGroup_t en_valueGroup;
+  ProcessCmd_c::ValueGroup_t en_valueGroup;
 };
 
 

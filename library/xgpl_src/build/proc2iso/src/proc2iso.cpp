@@ -1353,9 +1353,9 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
           uint8_t index=0;
           for (; index<ui8_amount; index++)
           {
-            fprintf(partFileB, "\t{%s, %s, IsoAgLib::GeneralCommand_c::%sValue},\n", vecstr_dataForCombination[2+3*index].c_str(), vecstr_dataForCombination[3+3*index].c_str(), vecstr_dataForCombination[4+3*index].c_str());
+            fprintf(partFileB, "\t{%s, %s, IsoAgLib::ProcessCmd_c::%sValue},\n", vecstr_dataForCombination[2+3*index].c_str(), vecstr_dataForCombination[3+3*index].c_str(), vecstr_dataForCombination[4+3*index].c_str());
           }
-          fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, false, IsoAgLib::GeneralCommand_c::noValue}\n};\n\n");
+          fprintf(partFileB, "\t// termination entry\n\t{0xFFFF, false, IsoAgLib::ProcessCmd_c::noValue}\n};\n\n");
           for (index=0; index<ui8_amount*3; index++)
             vecstr_dataForCombination.pop_back();
         }

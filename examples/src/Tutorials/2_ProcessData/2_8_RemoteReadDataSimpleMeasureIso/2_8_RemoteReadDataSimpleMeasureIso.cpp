@@ -347,18 +347,18 @@ int main()
   const ElementDdi_s s_WorkStateElementDDI[2] =
   {
     // DDI 141
-    {141, true, GeneralCommand_c::exactValue},
+    {141, true, ProcessCmd_c::exactValue},
     // termination entry
-    {0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, ProcessCmd_c::noValue}
   };
   const ElementDdi_s s_ApplicationRateElementDDI[3] =
   {
     // DDI 1
-    {1, true, GeneralCommand_c::exactValue},
+    {1, true, ProcessCmd_c::exactValue},
     // DDI 2
-    {2, false, GeneralCommand_c::exactValue},
+    {2, false, ProcessCmd_c::exactValue},
     // termination entry
-    {0xFFFF, false, GeneralCommand_c::noValue}
+    {0xFFFF, false, ProcessCmd_c::noValue}
   };
 
 #ifdef USE_PROC_HANDLER

@@ -372,9 +372,9 @@ bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
 bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
 
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::setValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::setValue);
 
     #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
     if (valType() == i32_val) return sendValISOName(ac_targetISOName, eepromVal());
@@ -398,9 +398,9 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetIS
 void ProcDataLocalBase_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // handle for simple measurement value
-  if (c_pkg.mc_generalCommand.checkIsRequest() &&
-      // c_pkg.mc_generalCommand.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
-      c_pkg.mc_generalCommand.getValueGroup() == GeneralCommand_c::exactValue)
+  if (c_pkg.mc_processCmd.checkIsRequest() &&
+      // c_pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
+      c_pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
   { // request for measurement value
     sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
   }

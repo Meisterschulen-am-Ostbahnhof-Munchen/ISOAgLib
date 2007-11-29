@@ -172,16 +172,16 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& arc_src)const{
   @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
   @return setpoint selected by value group
 */
-int32_t SetpointRegister_c::valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
+int32_t SetpointRegister_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const{
   switch (en_valueGroup)
   {
-    case GeneralCommand_c::exactValue:
+    case ProcessCmd_c::exactValue:
       return exact();
-    case GeneralCommand_c::minValue:
+    case ProcessCmd_c::minValue:
       return min();
-    case GeneralCommand_c::defaultValue:
+    case ProcessCmd_c::defaultValue:
       return getDefault();
-    case GeneralCommand_c::maxValue:
+    case ProcessCmd_c::maxValue:
     default:
       return max();
   }
@@ -193,7 +193,7 @@ int32_t SetpointRegister_c::valForGroup(GeneralCommand_c::ValueGroup_t en_valueG
   @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
   @return setpoint selected by value group
 */
-float SetpointRegister_c::valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const{
+float SetpointRegister_c::valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup)const{
   int32_t i32_temp = valForGroup(en_valueGroup);
   return *((float*)(&i32_temp));;
 }
@@ -203,16 +203,16 @@ float SetpointRegister_c::valForGroupFloat(GeneralCommand_c::ValueGroup_t en_val
   @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
   @return true -> a setpoint for this valueGroup exists
 */
-bool SetpointRegister_c::valueGroupExists(GeneralCommand_c::ValueGroup_t en_valueGroup) const{
+bool SetpointRegister_c::valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGroup) const{
   switch (en_valueGroup)
   {
-    case GeneralCommand_c::exactValue:
+    case ProcessCmd_c::exactValue:
       return ((data.en_definedSetpoints & exactType) != 0)?true:false;
-    case GeneralCommand_c::minValue:
+    case ProcessCmd_c::minValue:
       return ((data.en_definedSetpoints & minType) != 0)?true:false;
-    case GeneralCommand_c::defaultValue:
+    case ProcessCmd_c::defaultValue:
       return ((data.en_definedSetpoints & defaultType) != 0)?true:false;
-    case GeneralCommand_c::maxValue:
+    case ProcessCmd_c::maxValue:
       return ((data.en_definedSetpoints & maxType) != 0)?true:false;
     default:
       return false;
@@ -324,19 +324,19 @@ void SetpointRegister_c::setDefault(int32_t ai32_val)
   @param ai32_val new setpoint value
   @param en_valueGroup code of setpoint type to set (exact 0, min 2, max 3, default)
 */
-void SetpointRegister_c::setValForGroup(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+void SetpointRegister_c::setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
   {
-    case GeneralCommand_c::exactValue:
+    case ProcessCmd_c::exactValue:
       setExact(ai32_val);
       break;
-    case GeneralCommand_c::minValue:
+    case ProcessCmd_c::minValue:
       setMin(ai32_val);
       break;
-    case GeneralCommand_c::maxValue:
+    case ProcessCmd_c::maxValue:
       setMax(ai32_val);
       break;
-    case GeneralCommand_c::defaultValue:
+    case ProcessCmd_c::defaultValue:
       setDefault(ai32_val);
       break;
     default: ;
@@ -388,19 +388,19 @@ void SetpointRegister_c::setDefault(float af_val)
   @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3)
 */
 
-void SetpointRegister_c::setValForGroup(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup){
+void SetpointRegister_c::setValForGroup(float af_val, ProcessCmd_c::ValueGroup_t en_valueGroup){
   switch (en_valueGroup)
   {
-    case GeneralCommand_c::exactValue:
+    case ProcessCmd_c::exactValue:
       setExact(af_val);
       break;
-    case GeneralCommand_c::minValue:
+    case ProcessCmd_c::minValue:
       setMin(af_val);
       break;
-    case GeneralCommand_c::maxValue:
+    case ProcessCmd_c::maxValue:
       setMax(af_val);
       break;
-    case GeneralCommand_c::defaultValue:
+    case ProcessCmd_c::defaultValue:
       setDefault(af_val);
       break;
     default: ;

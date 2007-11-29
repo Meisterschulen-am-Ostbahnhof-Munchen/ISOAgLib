@@ -88,7 +88,7 @@
 #include "setpointbase_c.h"
 #include "setpointregister_c.h"
 #include "../../impl/process_c.h"
-#include "../../impl/generalcommand_c.h"
+#include "../../impl/processcmd_c.h"
 
 namespace __IsoAgLib {
 
@@ -156,7 +156,7 @@ bool SetpointBase_c::timeEvent( void ){
 /** process a setpoint message */
 void SetpointBase_c::processMsg(){
   // check if its a request for actual setpoint
-  if (getProcessInstance4Comm().data().mc_generalCommand.checkIsRequest())
+  if (getProcessInstance4Comm().data().mc_processCmd.checkIsRequest())
   {
     processRequest();
   }
@@ -182,7 +182,7 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,
 {
   int32_t i32_value;
   bool b_isCmd = false;
-  GeneralCommand_c::ValueGroup_t en_valueGroup = GeneralCommand_c::noValue;
+  ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue;
 
   if ((ai32_overrideVal == SETPOINT_RELEASE_COMMAND)
    || (ai32_overrideVal == SETPOINT_ERROR_COMMAND)
@@ -190,30 +190,30 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,
 
   if (arc_src.existExact())
   { // exact setpoint exist
-    en_valueGroup = GeneralCommand_c::exactValue;
+    en_valueGroup = ProcessCmd_c::exactValue;
     i32_value = (b_override) ? ai32_overrideVal : arc_src.exact();
   }
   else if (arc_src.existMin())
   { // min setpoint exist
-    en_valueGroup = GeneralCommand_c::minValue;
+    en_valueGroup = ProcessCmd_c::minValue;
     i32_value = (b_override) ? ai32_overrideVal : arc_src.min();
   }
   else if (arc_src.existMax())
   { // max setpoint exist
-     en_valueGroup = GeneralCommand_c::maxValue;
+     en_valueGroup = ProcessCmd_c::maxValue;
      i32_value = (b_override) ? ai32_overrideVal : arc_src.max();
   }
   else if (arc_src.existDefault())
   { // default setpoint exist
-     en_valueGroup = GeneralCommand_c::defaultValue;
+     en_valueGroup = ProcessCmd_c::defaultValue;
      i32_value = (b_override) ? ai32_overrideVal : arc_src.getDefault();
   }
 
-  if (en_valueGroup != GeneralCommand_c::noValue)
+  if (en_valueGroup != ProcessCmd_c::noValue)
   {
      // prepare general command in process pkg
-     getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                                 en_valueGroup, GeneralCommand_c::setValue);
+     getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                              en_valueGroup, ProcessCmd_c::setValue);
 
      pprocessData()->sendValISOName( arc_src.isoName(), i32_value);
   }

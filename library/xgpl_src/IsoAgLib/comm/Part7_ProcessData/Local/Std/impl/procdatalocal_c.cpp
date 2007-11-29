@@ -329,10 +329,10 @@ void ProcDataLocal_c::resetEeprom( MeasureProgLocal_c* pc_progItem )
 
 /** process a setpoint message */
 void ProcDataLocal_c::processSetpoint(){
-  switch (getProcessInstance4Comm().data().mc_generalCommand.getCommand())
+  switch (getProcessInstance4Comm().data().mc_processCmd.getCommand())
   {
-    case GeneralCommand_c::setValue:
-    case GeneralCommand_c::requestValue:
+    case ProcessCmd_c::setValue:
+    case ProcessCmd_c::requestValue:
       mc_setpoint.processMsg();
       break;
     default:

@@ -90,7 +90,7 @@
 #include "procdataremotesimplesetpointsimplemeasurecombined_c.h"
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
-#include "../../../impl/generalcommand_c.h"
+#include "../../../impl/processcmd_c.h"
 
 namespace __IsoAgLib {
 
@@ -194,9 +194,9 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterVal(b
   setValType(i32_val);
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::requestValue);
 
     sendValISOName(commanderISOName(), 0);
   }
@@ -212,9 +212,9 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(i
 {
   setValType(i32_val);
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
   sendValISOName(commanderISOName(), ai32_val);
   if (!ab_onlyStoreOnResponse) mi32_masterVal = ai32_val;
 }
@@ -229,9 +229,9 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setpointMasterValFloa
   setValType(float_val);
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::requestValue);
 
     sendValISOName(commanderISOName(), 0);
   }
@@ -246,9 +246,9 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::setSetpointMasterVal(f
 {
   setValType(float_val);
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
 
   sendValISOName(commanderISOName(), af_val);
   if (!ab_onlyStoreOnResponse) f_masterVal = af_val;
@@ -264,9 +264,9 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterMeasurementVa
   setValType(i32_val);
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::requestValue);
 
     sendValISOName(commanderISOName(), 0);
   }
@@ -278,21 +278,21 @@ int32_t ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterMeasurementVa
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::resetMasterVal()
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
   sendValISOName(commanderISOName(), 0);
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::measurementReset);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::measurementReset);
   sendValISOName(commanderISOName(), 0x8);
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
   sendValISOName(commanderISOName(), 0);
   #endif
 }
@@ -307,9 +307,9 @@ float ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::masterValFloat(bool a
   setValType(float_val);
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::requestValue);
     sendValISOName(commanderISOName(), 0);
   }
   return f_masterVal;
@@ -322,12 +322,12 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   // pd = 0
-  if (!c_pkg.mc_generalCommand.checkIsRequest())
+  if (!c_pkg.mc_processCmd.checkIsRequest())
   {
     bool b_change = false;
-    switch (c_pkg.mc_generalCommand.getValueGroup())
+    switch (c_pkg.mc_processCmd.getValueGroup())
     {
-      case GeneralCommand_c::exactValue: // exact setpoint
+      case ProcessCmd_c::exactValue: // exact setpoint
         #ifdef USE_FLOAT_DATA_TYPE
         if (c_pkg.valType() == float_val)
         {
@@ -357,7 +357,7 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processSetpoint(){
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::processProg(){
   // for simple measurement the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue )
+  if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue )
   {
     bool b_change = false;
   #ifdef USE_FLOAT_DATA_TYPE

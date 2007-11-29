@@ -161,15 +161,15 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const IsoName_c& cc_senderISOName = c_pkg.memberSend().isoName();
 
-  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue)
+  if (c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
   { // setpoint set
     bool b_change = false;
-    switch (c_pkg.mc_generalCommand.getValueGroup())
+    switch (c_pkg.mc_processCmd.getValueGroup())
     {
-      case GeneralCommand_c::exactValue: // set actual setpoint
-      case GeneralCommand_c::minValue: // min -> simply set exact
-      case GeneralCommand_c::maxValue: // max -> simply set exact
-      case GeneralCommand_c::defaultValue: // max -> simply set exact
+      case ProcessCmd_c::exactValue: // set actual setpoint
+      case ProcessCmd_c::minValue: // min -> simply set exact
+      case ProcessCmd_c::maxValue: // max -> simply set exact
+      case ProcessCmd_c::defaultValue: // max -> simply set exact
         #ifdef USE_FLOAT_DATA_TYPE
         if ( ( c_pkg.valType() == float_val)
           && ( setpointMasterValFloat() != c_pkg.dataFloat() ) ) {
@@ -199,7 +199,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   else
   #endif
   {
-    sendSetpointForGroup(cc_senderISOName, c_pkg.mc_generalCommand.getValueGroup(), GeneralCommand_c::setValue );
+    sendSetpointForGroup(cc_senderISOName, c_pkg.mc_processCmd.getValueGroup(), ProcessCmd_c::setValue );
   }
 
 }
@@ -212,10 +212,10 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
   @return true -> successful sent
 */
 bool SimpleManageSetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
-                                                       GeneralCommand_c::ValueGroup_t en_valueGroup,
-                                                       GeneralCommand_c::CommandType_t en_command ) const {
+                                                       ProcessCmd_c::ValueGroup_t en_valueGroup,
+                                                       ProcessCmd_c::CommandType_t en_command ) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, en_command);
   //if ( aui8_mod != 1 ) {
     // not percent

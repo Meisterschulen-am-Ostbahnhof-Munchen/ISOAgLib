@@ -91,9 +91,9 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
-#include <IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -206,7 +206,7 @@ public:
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by value group
   */
-  int32_t valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     deliver the minimum limit; if no min is given (~0) return f_exactOrMin
@@ -228,7 +228,7 @@ public:
     @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
     @return setpoint selected by value group
   */
-  float valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  float valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
 #endif
   /**
     check if setpoint value was already handled
@@ -275,7 +275,7 @@ public:
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
     @return true -> a setpoint for this valueGroup exists
   */
-  bool valueGroupExists(GeneralCommand_c::ValueGroup_t en_valueGroup)const;
+  bool valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
 
 
   /* ************************************ */
@@ -338,7 +338,7 @@ public:
     @param af_val new setpoint value
     @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValForGroup(float af_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
+  void setValForGroup(float af_val, ProcessCmd_c::ValueGroup_t en_valueGroup);
 #endif
   /**
     set the handled state; return if state was changed
@@ -364,7 +364,7 @@ public:
     @param ai32_val new setpoint value
     @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
   */
-  void setValForGroup(int32_t ai32_val, GeneralCommand_c::ValueGroup_t en_valueGroup);
+  void setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGroup_t en_valueGroup);
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */

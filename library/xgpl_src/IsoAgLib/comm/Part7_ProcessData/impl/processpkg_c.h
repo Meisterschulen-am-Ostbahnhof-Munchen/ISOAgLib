@@ -94,7 +94,7 @@
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
-#include "generalcommand_c.h"
+#include "processcmd_c.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include "../elementddi_s.h"
 #include <list>
@@ -380,7 +380,7 @@ public:
   void useTermISONameForLocalProc(const IsoName_c& ac_isoName, const IsoName_c& ac_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
-  GeneralCommand_c mc_generalCommand;
+  ProcessCmd_c mc_processCmd;
 
 private: // Private methods
 

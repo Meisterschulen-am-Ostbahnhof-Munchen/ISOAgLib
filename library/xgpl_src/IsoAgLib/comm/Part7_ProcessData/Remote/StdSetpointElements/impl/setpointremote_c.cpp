@@ -87,7 +87,7 @@
 /* *************************************** */
 #include "setpointremote_c.h"
 #include "../../../impl/process_c.h"
-#include "../../../impl/generalcommand_c.h"
+#include "../../../impl/processcmd_c.h"
 #include "../../../processdatachangehandler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
@@ -173,9 +173,9 @@ void SetpointRemote_c::setExact(float af_val)
 
   // prepare general command in process pkg
   // isSetpoint = true, isRequest = false
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
 
   processData().sendValISOName(processData().commanderISOName(), af_val);
 }
@@ -199,9 +199,9 @@ void SetpointRemote_c::setExact( int32_t ai32_val){
   mi32_commandedTime = System_c::getTime();
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::setValue);
 
   processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
@@ -224,9 +224,9 @@ void SetpointRemote_c::setMin( int32_t ai32_val){
   mi32_commandedTime = System_c::getTime();
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::minValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                           ProcessCmd_c::minValue,
+                                                           ProcessCmd_c::setValue);
 
   processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
@@ -248,9 +248,9 @@ void SetpointRemote_c::setMax( int32_t ai32_val){
   mi32_commandedTime = System_c::getTime();
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::maxValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                           ProcessCmd_c::maxValue,
+                                                           ProcessCmd_c::setValue);
   // send command to owner
   processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
@@ -272,9 +272,9 @@ void SetpointRemote_c::setDefault( int32_t ai32_val){
   mi32_commandedTime = System_c::getTime();
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::defaultValue,
-                                                              GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+                                                           ProcessCmd_c::defaultValue,
+                                                           ProcessCmd_c::setValue);
   // send command to owner:
   processData().sendValISOName(processData().commanderISOName(), ai32_val);
 }
@@ -285,9 +285,9 @@ void SetpointRemote_c::setDefault( int32_t ai32_val){
 void SetpointRemote_c::requestExact() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                              GeneralCommand_c::exactValue,
-                                                              GeneralCommand_c::requestValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                           ProcessCmd_c::exactValue,
+                                                           ProcessCmd_c::requestValue);
 
   processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
@@ -297,9 +297,9 @@ void SetpointRemote_c::requestExact() const
 void SetpointRemote_c::requestMin() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                              GeneralCommand_c::minValue,
-                                                              GeneralCommand_c::requestValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                           ProcessCmd_c::minValue,
+                                                           ProcessCmd_c::requestValue);
 
   processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
@@ -309,9 +309,9 @@ void SetpointRemote_c::requestMin() const
 void SetpointRemote_c::requestMax() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                              GeneralCommand_c::maxValue,
-                                                              GeneralCommand_c::requestValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                           ProcessCmd_c::maxValue,
+                                                           ProcessCmd_c::requestValue);
 
   processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
@@ -321,9 +321,9 @@ void SetpointRemote_c::requestMax() const
 void SetpointRemote_c::requestDefault() const
 {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                              GeneralCommand_c::defaultValue,
-                                                              GeneralCommand_c::requestValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+                                                           ProcessCmd_c::defaultValue,
+                                                           ProcessCmd_c::requestValue);
   processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
 }
 
@@ -459,26 +459,26 @@ void SetpointRemote_c::processSet(){
   { // the owner sent the value
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // was a normal value
-      if  ( ( mc_answeredMaster.valForGroup( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val )
+      if  ( ( mc_answeredMaster.valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val )
          || ( ! mc_answeredMaster.valid() )
          || ( mc_answeredMaster.isoName() != c_empfISOName )
          || ( ! mc_answeredMaster.master() )
           ) b_change = true;
 
       bool b_changeMeasurement;
-      switch (c_pkg.mc_generalCommand.getValueGroup())
+      switch (c_pkg.mc_processCmd.getValueGroup())
       { // compare new value with corresponding last value
-        case GeneralCommand_c::exactValue:   b_changeMeasurement = (mc_answeredMaster.exact() != i32_val); break;
-        case GeneralCommand_c::defaultValue: b_changeMeasurement = (mc_answeredMaster.getDefault() != i32_val); break;
-        case GeneralCommand_c::minValue:     b_changeMeasurement = (mc_answeredMaster.min() != i32_val); break;
-        case GeneralCommand_c::maxValue:     b_changeMeasurement = (mc_answeredMaster.max() != i32_val); break;
+        case ProcessCmd_c::exactValue:   b_changeMeasurement = (mc_answeredMaster.exact() != i32_val); break;
+        case ProcessCmd_c::defaultValue: b_changeMeasurement = (mc_answeredMaster.getDefault() != i32_val); break;
+        case ProcessCmd_c::minValue:     b_changeMeasurement = (mc_answeredMaster.min() != i32_val); break;
+        case ProcessCmd_c::maxValue:     b_changeMeasurement = (mc_answeredMaster.max() != i32_val); break;
         default:                             b_changeMeasurement = FALSE;
       }
       // call processMeasurementUpdate handler function in case a measurement prog is running for this setpoint DDI
       if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
         processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().isoName().toConstIisoName_c(), b_changeMeasurement);
 
-      mc_answeredMaster.setValForGroup( i32_val, c_pkg.mc_generalCommand.getValueGroup());
+      mc_answeredMaster.setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
       // set the isoName of the actual master
       mc_answeredMaster.setISOName( c_empfISOName);
       // set the valid flag to true
@@ -510,12 +510,12 @@ void SetpointRemote_c::processSet(){
   { // the owner of the process data sent me an answer
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // normal value
-      if  ( ( mc_answeredMe.valForGroup( c_pkg.mc_generalCommand.getValueGroup() ) != i32_val )
+      if  ( ( mc_answeredMe.valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val )
          || ( ! mc_answeredMe.valid() )
          || ( ! mc_answeredMe.master() )
           ) b_change = true;
       // set the given value
-      mc_answeredMe.setValForGroup( i32_val, c_pkg.mc_generalCommand.getValueGroup());
+      mc_answeredMe.setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
       // set the valid flag to true
       mc_answeredMe.setValid( true);
       // i am the master if i get a normal value answered

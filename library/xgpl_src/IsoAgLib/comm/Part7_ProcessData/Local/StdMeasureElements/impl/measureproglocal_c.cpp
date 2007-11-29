@@ -405,10 +405,10 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendValForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
+bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              en_valueGroup, GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              en_valueGroup, ProcessCmd_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processDataConst().valType() != float_val)
      return processDataConst().sendValISOName(ac_targetISOName, valForGroup(en_valueGroup));
@@ -424,10 +424,10 @@ bool MeasureProgLocal_c::sendValForGroup( GeneralCommand_c::ValueGroup_t en_valu
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendSetpointValForGroup( GeneralCommand_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
+bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(TRUE /* isSetpoint */, false, /* isRequest */
-                                                              en_valueGroup, GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(TRUE /* isSetpoint */, false, /* isRequest */
+                                                              en_valueGroup, ProcessCmd_c::setValue);
   return processDataConst().sendValISOName(ac_targetISOName, setpointValForGroup(en_valueGroup));
 }
 
@@ -435,23 +435,23 @@ bool MeasureProgLocal_c::sendSetpointValForGroup( GeneralCommand_c::ValueGroup_t
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-int32_t MeasureProgLocal_c::setpointValForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = 0;
   ProcDataLocalBase_c* pc_procdata = pprocessData();
   if (pc_procdata->setpointExistMaster())
   {
     switch (en_valueGroup)
     {
-      case GeneralCommand_c::exactValue:
+      case ProcessCmd_c::exactValue:
         i32_value = pc_procdata->setpointExactValue();
         break;
-      case GeneralCommand_c::defaultValue:
+      case ProcessCmd_c::defaultValue:
         i32_value = pc_procdata->setpointDefaultValue();
         break;
-      case GeneralCommand_c::minValue:
+      case ProcessCmd_c::minValue:
         i32_value = pc_procdata->setpointMinValue();
         break;
-      case GeneralCommand_c::maxValue:
+      case ProcessCmd_c::maxValue:
         i32_value = pc_procdata->setpointMaxValue();
         break;
       default:
@@ -479,11 +479,11 @@ bool MeasureProgLocal_c::processMsg(){
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
     // the message was a value message -> evaluate it here
-    if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::setValue)
+    if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
       // ISO: value in message contains reset value
       const int32_t ci32_val = c_pkg.dataRawCmdLong();
-      resetValForGroup(c_pkg.mc_generalCommand.getValueGroup(), ci32_val);
+      resetValForGroup(c_pkg.mc_processCmd.getValueGroup(), ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
@@ -498,7 +498,7 @@ bool MeasureProgLocal_c::processMsg(){
     } // write
     else
     { // read -> answer wanted value
-      sendValForGroup( c_pkg.mc_generalCommand.getValueGroup(), c_pkg.memberSend().isoName() );
+      sendValForGroup( c_pkg.mc_processCmd.getValueGroup(), c_pkg.memberSend().isoName() );
 
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
@@ -704,28 +704,28 @@ void MeasureProgLocal_c::setVal(float af_val){
 bool MeasureProgLocal_c::sendRegisteredVals(Proc_c::doSend_t ren_doSend){
   bool b_success = false;
 
-  GeneralCommand_c::ValueGroup_t en_valueGroup;
+  ProcessCmd_c::ValueGroup_t en_valueGroup;
 
   switch (ren_doSend)
   {
-    case Proc_c::DoValForDefaultSetpoint: en_valueGroup = GeneralCommand_c::defaultValue; break;
+    case Proc_c::DoValForDefaultSetpoint: en_valueGroup = ProcessCmd_c::defaultValue; break;
     case Proc_c::DoValForMinSetpoint:
     case Proc_c::DoValForMinMeasurement:
-      en_valueGroup = GeneralCommand_c::minValue; break;
+      en_valueGroup = ProcessCmd_c::minValue; break;
     case Proc_c::DoValForMaxSetpoint:
     case Proc_c::DoValForMaxMeasurement:
-      en_valueGroup = GeneralCommand_c::maxValue; break;
-    case Proc_c::DoValForExactSetpoint:   en_valueGroup = GeneralCommand_c::exactValue; break;
-    default:                              en_valueGroup = GeneralCommand_c::noValue;
+      en_valueGroup = ProcessCmd_c::maxValue; break;
+    case Proc_c::DoValForExactSetpoint:   en_valueGroup = ProcessCmd_c::exactValue; break;
+    default:                              en_valueGroup = ProcessCmd_c::noValue;
   }
 
-  if (GeneralCommand_c::noValue != en_valueGroup)
+  if (ProcessCmd_c::noValue != en_valueGroup)
     // get value from corresponding setpoint and send it
     b_success = (sendSetpointValForGroup( en_valueGroup, isoName()))?true : b_success;
 
   // normal measurement (no measurement on setpoint DDI)
   if (Proc_c::DoVal == ren_doSend)
-    b_success = (sendValForGroup( GeneralCommand_c::exactValue, isoName()))?true : b_success;
+    b_success = (sendValForGroup( ProcessCmd_c::exactValue, isoName()))?true : b_success;
 
   return b_success;
 }
@@ -770,8 +770,8 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   bool b_sendSuccess;
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::exactValue, GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              ProcessCmd_c::exactValue, ProcessCmd_c::setValue);
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
   {
@@ -863,8 +863,8 @@ bool MeasureProgLocal_c::resetMed(){
 bool MeasureProgLocal_c::resetMin(){
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::minValue, GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              ProcessCmd_c::minValue, ProcessCmd_c::setValue);
 
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)
@@ -893,8 +893,8 @@ bool MeasureProgLocal_c::resetMin(){
 bool MeasureProgLocal_c::resetMax(){
 
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              GeneralCommand_c::maxValue, GeneralCommand_c::setValue);
+  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+                                                              ProcessCmd_c::maxValue, ProcessCmd_c::setValue);
 
 #ifdef USE_FLOAT_DATA_TYPE
   if (processData().valType() != float_val)

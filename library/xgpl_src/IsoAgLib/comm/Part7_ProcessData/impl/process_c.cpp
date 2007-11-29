@@ -623,7 +623,7 @@ bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
 }
 
 
-ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName, GeneralCommand_c::ValueGroup_t& refen_valueGroup, bool& rb_isSetpoint)
+ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName, ProcessCmd_c::ValueGroup_t& refen_valueGroup, bool& rb_isSetpoint)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = NULL;
 
@@ -643,7 +643,7 @@ ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uin
   if (pc_remoteProcessData)
   {
     bool mb_isSetpoint;
-    GeneralCommand_c::ValueGroup_t men_valueGroup;
+    ProcessCmd_c::ValueGroup_t men_valueGroup;
     pc_remoteProcessData->getDDIType(aui16_DDI, men_valueGroup, mb_isSetpoint);
     if (pc_remoteProcessData->add2Group(aui16_DDI))
     {
@@ -665,7 +665,7 @@ bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_de
 }
 
 
-bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName)
+bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName)
 {
   ProcDataRemoteBase_c* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(aui_deviceElement, ac_isoName);
 

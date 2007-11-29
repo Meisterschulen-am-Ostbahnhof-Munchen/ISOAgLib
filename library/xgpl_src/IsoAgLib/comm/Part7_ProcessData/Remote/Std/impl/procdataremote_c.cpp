@@ -212,11 +212,11 @@ void ProcDataRemote_c::processProg(){
 */
 int32_t ProcDataRemote_c::masterMeasurementVal(bool ab_sendRequest)
 {
-  if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::exactValue))
+  if (hasType(FALSE /* b_isSetpoint */, ProcessCmd_c::exactValue))
     return mc_measure.masterMeasurementVal( ab_sendRequest );
-  if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::maxValue))
+  if (hasType(FALSE /* b_isSetpoint */, ProcessCmd_c::maxValue))
     return mc_measure.max( ab_sendRequest );
-  if (hasType(FALSE /* b_isSetpoint */, GeneralCommand_c::minValue))
+  if (hasType(FALSE /* b_isSetpoint */, ProcessCmd_c::minValue))
     return mc_measure.max( ab_sendRequest );
 
   return 0;

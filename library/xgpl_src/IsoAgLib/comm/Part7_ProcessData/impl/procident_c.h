@@ -93,7 +93,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
-#include "generalcommand_c.h"
+#include "processcmd_c.h"
 #include "../elementddi_s.h"
 #include <list>
 
@@ -198,7 +198,7 @@ public:
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI( uint16_t aui16_checkDDI ) const;
-  bool hasType(bool ab_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const;
+  bool hasType(bool ab_isSetpoint, ProcessCmd_c::ValueGroup_t t_ddiType) const;
 
   /**
     deliver value DDI (only possible if only one elementDDI in list)
@@ -313,11 +313,11 @@ public:
 
   bool add2Group(uint16_t aui16_DDI);
 
-  bool addProprietary2Group(uint16_t aui16_DDI, bool mb_isSetpoint, GeneralCommand_c::ValueGroup_t ddiType);
+  bool addProprietary2Group(uint16_t aui16_DDI, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType);
 
-  static void getDDIType(uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t &r_ddiType, bool &rb_isSetpoint);
+  static void getDDIType(uint16_t aui16_DDI, ProcessCmd_c::ValueGroup_t &r_ddiType, bool &rb_isSetpoint);
 
-  static bool hasDDIType (uint16_t aui16_DDI, GeneralCommand_c::ValueGroup_t t_ddiType);
+  static bool hasDDIType (uint16_t aui16_DDI, ProcessCmd_c::ValueGroup_t t_ddiType);
 
 private: // Private attributes
   /** internal base function for copy constructor and assignement */

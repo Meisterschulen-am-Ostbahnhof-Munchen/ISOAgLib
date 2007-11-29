@@ -184,8 +184,8 @@ public:
     const ElementDdi_s s_tmpElementDDI[2] =
     {
       // if this constructor is used => only exact measurement possible
-      {aui16_DDI, false, GeneralCommand_c::exactValue},
-      {0xFFFF, false, GeneralCommand_c::noValue}
+      {aui16_DDI, false, ProcessCmd_c::exactValue},
+      {0xFFFF, false, ProcessCmd_c::noValue}
     };
 
     ProcDataRemote_c::init( s_tmpElementDDI, aui16_element,
@@ -239,8 +239,8 @@ public:
      const ElementDdi_s s_tmpElementDDI[2] =
      {
        // if this init is used => only exact measurement possible
-       {aui16_DDI, false, GeneralCommand_c::exactValue},
-       {0xFFFF, false, GeneralCommand_c::noValue}
+       {aui16_DDI, false, ProcessCmd_c::exactValue},
+       {0xFFFF, false, ProcessCmd_c::noValue}
      };
 
      ProcDataRemote_c::init( s_tmpElementDDI, aui16_element,
@@ -273,7 +273,7 @@ public:
 
   /** check if this ProcIdent_c has the given DDI as element */
   bool hasDDI (uint16_t aui16_checkDDI) const { return ProcIdent_c::hasDDI( aui16_checkDDI );}
-  bool hasType(bool ab_isSetpoint, GeneralCommand_c::ValueGroup_t t_ddiType) const { return ProcIdent_c::hasType(ab_isSetpoint, t_ddiType); }
+  bool hasType(bool ab_isSetpoint, ProcessCmd_c::ValueGroup_t t_ddiType) const { return ProcIdent_c::hasType(ab_isSetpoint, t_ddiType); }
 
   /** deliver elementDDI list
     @return STL_NAMESPACE::list<ElementDdi_s>

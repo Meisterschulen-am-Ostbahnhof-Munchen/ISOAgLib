@@ -331,9 +331,9 @@ int32_t MeasureProgBase_c::val(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
@@ -350,9 +350,9 @@ int32_t MeasureProgBase_c::min(bool ab_sendRequest) const
 {
   if(ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::minValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::minValue,
+                                                             ProcessCmd_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
@@ -368,9 +368,9 @@ int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::maxValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::maxValue,
+                                                             ProcessCmd_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
@@ -449,9 +449,9 @@ float MeasureProgBase_c::valFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::exactValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::exactValue,
+                                                             ProcessCmd_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
@@ -467,9 +467,9 @@ float MeasureProgBase_c::minFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::minValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::minValue,
+                                                             ProcessCmd_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
@@ -486,9 +486,9 @@ float MeasureProgBase_c::maxFloat(bool ab_sendRequest) const
 {
   if (ab_sendRequest) {
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_generalCommand.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                                GeneralCommand_c::maxValue,
-                                                                GeneralCommand_c::requestValue);
+    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
+                                                             ProcessCmd_c::maxValue,
+                                                             ProcessCmd_c::requestValue);
 
     processData().sendValISOName(isoName(), int32_t(0));
   }
@@ -527,7 +527,7 @@ void MeasureProgBase_c::initVal(float af_val){
   */
 bool MeasureProgBase_c::processMsg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  GeneralCommand_c::CommandType_t en_command = c_pkg.mc_generalCommand.getCommand();
+  ProcessCmd_c::CommandType_t en_command = c_pkg.mc_processCmd.getCommand();
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -546,7 +546,7 @@ bool MeasureProgBase_c::processMsg(){
   #endif
   bool b_edited = false;
 
-  if (en_command == GeneralCommand_c::setValue)
+  if (en_command == ProcessCmd_c::setValue)
     // setValue command indicates receiving of a measure value
     // => handle this in measure prog remote => return false
     // or a reset
@@ -555,30 +555,30 @@ bool MeasureProgBase_c::processMsg(){
 
   // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
   // check if PD==0 -> SET increment message
-  if (!c_pkg.mc_generalCommand.checkIsRequest())
+  if (!c_pkg.mc_processCmd.checkIsRequest())
   { // mark that msg already edited
     b_edited = true;
 
     // set en_doSendPkg (for ISO)
-    GeneralCommand_c::ValueGroup_t en_valueGroup = c_pkg.mc_generalCommand.getValueGroup();
+    ProcessCmd_c::ValueGroup_t en_valueGroup = c_pkg.mc_processCmd.getValueGroup();
 
     Proc_c::doSend_t en_doSendPkg = Proc_c::DoVal;  //default send data mode
-    if (c_pkg.mc_generalCommand.checkIsSetpoint())
+    if (c_pkg.mc_processCmd.checkIsSetpoint())
       en_doSendPkg = Proc_c::DoValForExactSetpoint; // measurement for exact value setpoint
 
     switch (en_valueGroup)
     {
-      case GeneralCommand_c::minValue:
+      case ProcessCmd_c::minValue:
         en_doSendPkg = Proc_c::DoValForMinSetpoint; // measurement for min value setpoint
-        if (!c_pkg.mc_generalCommand.checkIsSetpoint())
+        if (!c_pkg.mc_processCmd.checkIsSetpoint())
           en_doSendPkg = Proc_c::DoValForMinMeasurement; // measurement for min value measurement
         break;
-      case GeneralCommand_c::maxValue:
+      case ProcessCmd_c::maxValue:
         en_doSendPkg = Proc_c::DoValForMaxSetpoint; // measurement for max value setpoint
-        if (!c_pkg.mc_generalCommand.checkIsSetpoint())
+        if (!c_pkg.mc_processCmd.checkIsSetpoint())
           en_doSendPkg = Proc_c::DoValForMaxMeasurement; // measurement for max value measurement
         break;
-      case GeneralCommand_c::defaultValue:
+      case ProcessCmd_c::defaultValue:
         en_doSendPkg = Proc_c::DoValForDefaultSetpoint; // measurement for default value setpoint
         break;
       default:
@@ -587,44 +587,44 @@ bool MeasureProgBase_c::processMsg(){
 
     // programm controlling command
     if (// ISO
-        en_command == GeneralCommand_c::measurementDistanceValueStart ||
-        en_command == GeneralCommand_c::measurementTimeValueStart ||
-        en_command == GeneralCommand_c::measurementChangeThresholdValueStart ||
-        en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
-        en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
+        en_command == ProcessCmd_c::measurementDistanceValueStart ||
+        en_command == ProcessCmd_c::measurementTimeValueStart ||
+        en_command == ProcessCmd_c::measurementChangeThresholdValueStart ||
+        en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
+        en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
       // increment
       processIncrementMsg(en_doSendPkg);
 
-    if (en_command == GeneralCommand_c::measurementStop)
+    if (en_command == ProcessCmd_c::measurementStop)
        stop();
 
     // ISO, local
-    if (en_command == GeneralCommand_c::measurementDistanceValueStart ||
-        en_command == GeneralCommand_c::measurementTimeValueStart ||
-        en_command == GeneralCommand_c::measurementChangeThresholdValueStart ||
-        en_command == GeneralCommand_c::measurementMinimumThresholdValueStart ||
-        en_command == GeneralCommand_c::measurementMaximumThresholdValueStart)
+    if (en_command == ProcessCmd_c::measurementDistanceValueStart ||
+        en_command == ProcessCmd_c::measurementTimeValueStart ||
+        en_command == ProcessCmd_c::measurementChangeThresholdValueStart ||
+        en_command == ProcessCmd_c::measurementMinimumThresholdValueStart ||
+        en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
     {
       Proc_c::type_t en_typePkg = Proc_c::NullType;
       int32_t i32_dataLong = c_pkg.dataLong();
       switch (en_command) {
-        case GeneralCommand_c::measurementTimeValueStart:
+        case ProcessCmd_c::measurementTimeValueStart:
           en_typePkg = Proc_c::TimeProp;
           break;
-        case GeneralCommand_c::measurementDistanceValueStart:
+        case ProcessCmd_c::measurementDistanceValueStart:
           en_typePkg = Proc_c::DistProp;
           break;
-        case GeneralCommand_c::measurementChangeThresholdValueStart:
+        case ProcessCmd_c::measurementChangeThresholdValueStart:
           en_typePkg = Proc_c::OnChange;
           if (Proc_c::ThresholdChangeStopVal == i32_dataLong)
             i32_dataLong = 0; // stop command
           break;
-        case GeneralCommand_c::measurementMaximumThresholdValueStart:
+        case ProcessCmd_c::measurementMaximumThresholdValueStart:
           en_typePkg = Proc_c::MaximumThreshold;
           if (Proc_c::ThresholdMaximumStopVal == i32_dataLong)
             i32_dataLong = 0; // stop command
           break;
-        case GeneralCommand_c::measurementMinimumThresholdValueStart:
+        case ProcessCmd_c::measurementMinimumThresholdValueStart:
           en_typePkg = Proc_c::MinimumThreshold;
           if (Proc_c::ThresholdMinimumStopVal == i32_dataLong)
             i32_dataLong = 0; // stop command
@@ -661,18 +661,18 @@ bool MeasureProgBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-int32_t MeasureProgBase_c::valForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup) const {
+int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const {
   int32_t i32_value = val();
   switch (en_valueGroup)
   {
-    case GeneralCommand_c::exactValue:
+    case ProcessCmd_c::exactValue:
       // set val with function, to calc delta and accel
       // i32_value = val();
       break;
-    case GeneralCommand_c::minValue:
+    case ProcessCmd_c::minValue:
       i32_value = min();
       break;
-    case GeneralCommand_c::maxValue:
+    case ProcessCmd_c::maxValue:
       i32_value = max();
       break;
     default:
@@ -690,19 +690,19 @@ int32_t MeasureProgBase_c::valForGroup(GeneralCommand_c::ValueGroup_t en_valueGr
     @param en_valueGroup of wanted subtype
     @return value of specified subtype
   */
-float MeasureProgBase_c::valForGroupFloat(GeneralCommand_c::ValueGroup_t en_valueGroup) const
+float MeasureProgBase_c::valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup) const
 {
   float f_value = valFloat();
     switch (en_valueGroup)
     {
-      case GeneralCommand_c::exactValue:
+      case ProcessCmd_c::exactValue:
         // set val with function, to calc delta and accel
         // i32_value = val();
         break;
-      case GeneralCommand_c::minValue:
+      case ProcessCmd_c::minValue:
         f_value = minFloat();
         break;
-      case GeneralCommand_c::maxValue:
+      case ProcessCmd_c::maxValue:
         f_value = maxFloat();
         break;
       default:
@@ -728,23 +728,23 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
   // get the int32_t data val without conversion
   const int32_t ci32_val = c_pkg.dataRawCmdLong();
 
-  if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementTimeValueStart)
+  if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
     // time proportional
     addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(ci32_val), ren_doSend);
 
-  if ( c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementDistanceValueStart)
+  if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
     // distance proportional
     addSubprog(Proc_c::DistProp, ci32_val, ren_doSend);
 
-  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementChangeThresholdValueStart)
+  if (c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementChangeThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::OnChange, ci32_val, ren_doSend);
 
-  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementMaximumThresholdValueStart)
+  if (c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMaximumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MaximumThreshold, ci32_val, ren_doSend);
 
-  if (c_pkg.mc_generalCommand.getCommand() == GeneralCommand_c::measurementMinimumThresholdValueStart)
+  if (c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementMinimumThresholdValueStart)
     // change threshold proportional
     addSubprog(Proc_c::MinimumThreshold, ci32_val, ren_doSend);
 }
@@ -754,17 +754,17 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
     @param en_valueGroup of wanted subtype
     @param ai32_val reset measure value to this value (ISO remote only)
   */
-void MeasureProgBase_c::resetValForGroup(GeneralCommand_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
+void MeasureProgBase_c::resetValForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup, int32_t ai32_val){
     switch (en_valueGroup)
     {
-      case GeneralCommand_c::exactValue:
+      case ProcessCmd_c::exactValue:
         // set val with function, to calc delta and accel
         resetVal(ai32_val);
         break;
-      case GeneralCommand_c::minValue:
+      case ProcessCmd_c::minValue:
         resetMin();
         break;
-      case GeneralCommand_c::maxValue:
+      case ProcessCmd_c::maxValue:
         resetMax();
         break;
       default:

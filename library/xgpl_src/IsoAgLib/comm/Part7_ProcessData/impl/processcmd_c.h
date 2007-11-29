@@ -1,5 +1,5 @@
 /***************************************************************************
-                          generalcommand_c.h - extracts general data from ISO
+                          processcmd_c.h - extracts general data from ISO
                                                process messages
                              -------------------
     begin                : Fri Apr 07 2000
@@ -83,8 +83,8 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#ifndef GENERAL_COMMAND_H
-#define GENERAL_COMMAND_H
+#ifndef PROCESSCMD_H
+#define PROCESSCMD_H
 
 /* *************************************** */
 /* ********** include headers ************ */
@@ -95,10 +95,9 @@
 namespace __IsoAgLib {
 
 /**
-  extracts general command data from ISO process messages
-  @author Dipl.-Inform. Achim Spangler
+  extracts process command info from ISO process messages
 */
-class GeneralCommand_c {
+class ProcessCmd_c {
 public:
 
   /** enum for specification of defined setpoint types */
@@ -128,7 +127,7 @@ public:
   };
 
   /** constructor */
-  GeneralCommand_c();
+  ProcessCmd_c();
 
   /** read access for isSetpoint */
   bool checkIsSetpoint() const { return mb_isSetpoint; };

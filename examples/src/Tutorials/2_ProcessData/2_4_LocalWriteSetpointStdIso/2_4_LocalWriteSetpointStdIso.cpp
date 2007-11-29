@@ -403,7 +403,6 @@ int main()
   bool b_registerSuccess = IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de, ui32_arrayLength_de, true);
 
 #ifdef USE_PROC_HANDLER
-  // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          scui16_workStateElementNumber,
@@ -413,7 +412,6 @@ int main()
   #endif
                                          &c_mySetpointHandler);
 
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                scui16_applicationRateElementNumber,
@@ -507,6 +505,7 @@ int main()
 
     arr_procData[cui8_indexWorkState].setMasterMeasurementVal( getCurrentWorkState() );
     arr_procData[cui8_indexApplicationRate].setMasterMeasurementVal( getCurrentApplicationRate() );
+
     #else
     c_workState.setMasterMeasurementVal( getCurrentWorkState() );
     c_applicationRate.setMasterMeasurementVal( getCurrentApplicationRate() );

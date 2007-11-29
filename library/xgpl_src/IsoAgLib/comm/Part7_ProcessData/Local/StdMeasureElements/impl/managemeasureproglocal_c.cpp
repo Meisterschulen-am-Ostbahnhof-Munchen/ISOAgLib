@@ -371,18 +371,18 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
 void ManageMeasureProgLocal_c::processProg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   const IsoName_c& c_callerISOName =  c_pkg.memberSend().isoName();
-  GeneralCommand_c::CommandType_t en_command = c_pkg.mc_generalCommand.getCommand();
+  ProcessCmd_c::CommandType_t en_command = c_pkg.mc_processCmd.getCommand();
 
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
   if ( (en_command & 0x10) || /* measurement command indices are >= 0x10 < 0x20! */
-       ( en_command == GeneralCommand_c::setValue)
+       ( en_command == ProcessCmd_c::setValue)
      )
   { // it's a measuring program message -> create new item if none found
     updateProgCache(c_callerISOName, true);
   }
   else
-    if ( !c_pkg.mc_generalCommand.checkIsRequest() ||
-         c_pkg.mc_generalCommand.getValueGroup() != GeneralCommand_c::exactValue )
+    if ( !c_pkg.mc_processCmd.checkIsRequest() ||
+         c_pkg.mc_processCmd.getValueGroup() != ProcessCmd_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
       if (!updateProgCache(c_callerISOName, false))return;
     }
