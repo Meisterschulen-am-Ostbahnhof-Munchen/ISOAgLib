@@ -1499,6 +1499,14 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 	cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
 
+	# remove testrunner for A1
+   case $PRJ_DEFINES in
+       *SYSTEM_A1*)
+       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
+       mv $MakefileNameLong.1 $MakefileNameLong
+       ;;
+   esac
+
 	# add can_server creation to target "all"
 	if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" ] ; then
 		sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
@@ -1506,6 +1514,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 	fi
 
 	rm -f $MakefileNameLong.1
+
 	# replace the install rules for version.h and the app config file
 	sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $MakefileNameLong.1
 	sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $MakefileNameLong.1 > $MakefileNameLong
