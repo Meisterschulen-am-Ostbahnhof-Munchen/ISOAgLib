@@ -1,11 +1,11 @@
 [Project]
 FileName=Proc2Iso.dev
 Name=Proc2Iso
-UnitCount=7
+UnitCount=6
 Type=1
 Ver=1
 ObjFiles=
-Includes=C:\Programme\Dev-Cpp\xerces-c_2_5_0\include;C:\Projekte_Subversion\IsoAgLib\xgpl_src
+Includes=C:\Programme\Dev-Cpp\xerces-c_2_5_0\include;C:\Projekte_Subversion\IsoAgLib\library\xgpl_src
 Libs=C:\Programme\Dev-Cpp\xerces-c_2_5_0\lib
 PrivateResource=
 ResourceIncludes=
@@ -60,7 +60,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit4]
-FileName=..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.h
+FileName=..\..\IsoAgLib\comm\Part5_NetworkManagement\impl\isoname_c.cpp
 CompileCpp=1
 Folder=Proc2Iso
 Compile=1
@@ -70,7 +70,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit5]
-FileName=..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\ISO11783\impl\isoname_c.cpp
+FileName=..\..\IsoAgLib\util\impl\util_funcs.cpp
 CompileCpp=1
 Folder=Proc2Iso
 Compile=1
@@ -80,7 +80,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit6]
-FileName=..\..\xgpl_src\IsoAgLib\util\impl\util_funcs.cpp
+FileName=..\..\IsoAgLib\util\iliberr_c.cpp
 CompileCpp=1
 Folder=Proc2Iso
 Compile=1
