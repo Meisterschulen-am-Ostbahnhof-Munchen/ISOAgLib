@@ -1,7 +1,7 @@
-/** @page MultiMsgPage Send of data streams of more than 8 Data Byte with Multi-Message Protocol
-  * The ISO 11783 protocol uses the a protocol extension to send data streams ( units )
+/** @page DataLinkPage Send of data streams of more than 8 Data Byte with Multi-Message Protocol
+  * The ISO 11783 protocol uses the protocol extension to send data streams ( units )
   * of more than 8 Data Bytes, which don't fit into one CAN packet.
-  * This is especially important for the interaction with graphic user interfaces - terminals.
+  * This is especially important for the interaction with graphical user interfaces - terminals.
   * Here the complete description of all user interface components ( mask pool ) results in
   * data streams of several 100 kByte.
   * The IsoAgLib provides simple but capable API functions to send such data streams for each protocol

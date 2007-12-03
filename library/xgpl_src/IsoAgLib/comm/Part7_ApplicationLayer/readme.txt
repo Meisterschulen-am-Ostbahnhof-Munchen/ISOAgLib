@@ -1,4 +1,4 @@
-/** @page BaseDataPage Management of Periodic PGN Base Information
+/** @page AppLayerPage Management of Periodic PGN Base Information
   * The ISO<i><sub>AgLib</sub></i> stores the information of several base information,
   * so that they can be easily evaluated from the application independent
   * from the time relation between CAN-receive time and access time.

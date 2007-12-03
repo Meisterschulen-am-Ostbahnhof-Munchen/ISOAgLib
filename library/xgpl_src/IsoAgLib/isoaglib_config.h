@@ -728,6 +728,12 @@
 */
 #ifndef RS232_INSTANCE_CNT
   #define RS232_INSTANCE_CNT 1
+#else
+  #if RS232_INSTANCE_CNT < 1
+    #error "RS232_INSTANCE_CNT < 1 is not allowed"
+  #elif RS232_INSTANCE_CNT > 9
+    #error "RS232_INSTANCE_CNT > 9 is not allowed"
+  #endif
 #endif
 
 /** count of CAN ports which are managed with IsoAgLib

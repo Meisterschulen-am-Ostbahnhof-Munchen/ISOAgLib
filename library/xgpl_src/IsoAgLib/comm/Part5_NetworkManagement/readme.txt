@@ -1,4 +1,4 @@
-/** @page SystemMgmtPage Device AddressClaim and Management of Information in Monitor Lists
+/** @page NetworkMgmtPage Device AddressClaim and Management of Information in Monitor Lists
   * The IsoAgLib allows to claim address a local device ( identity ) with a single
   * function call at the BUS. Additionally it provides simple access to individual
   * information of other members, like source adress, name ( 64-bit ISO )

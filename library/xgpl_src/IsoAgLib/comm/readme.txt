@@ -13,32 +13,25 @@
     node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue, color=greenyellow];
     edge     [fontname=ARIALN, fontsize=10, dir="back"];
 
-		can        [ label="CAN Communication" ];
-		eeprom     [ label="EEPROM" ];
-		root       [ label="Communication Services ISO 11783" ];
-		scheduler        [ label="Scheduler\nFunction: Coordination of all services\nLocation-Directory: Scheduler", URL="\ref SchedulerPage" ];
-		system_mgmt [ label="System Management\nFunction: Monitor lists of all nodes on network\nLocation-Directory: SystemMgmt", URL="\ref SystemMgmtPage" ];
-		iso_system [ label="ISO Networkmanagement\nFunction: Monitor lists of ISO 11783 nodes\nLocation-Directory: System/ISO11783", URL="\ref SystemMgmtAnnIso"  ];
-		base   [ label="Base Data\nFunction: Periodically sent base information ( mostly tractor )\nLocation-Directory: Base_c", URL="\ref BaseDataPage" ];
-		iso_base   [ label="ISO 11783 Data\nFunction: Manage periodically sent tractor and calendar PGN information\nLocation-Directory: Base_c", URL="\ref BaseDataIsoType" ];
-		multi_msg  [ label="Data Stream\nFunction: Send stream of more than 8-Byte\nLocation-Directory: Multipacket", URL="\ref MultiMsgPage" ];
-		iso_term   [ label="ISO Virtual Terminal\nFunction: Upload, layout and control of virtual terminal\nLocation-Directory: ISO_Terminal", URL="\ref XMLspec" ];
-		process   [ label="Process Data\nFunction: Process-Data\nLocation-Directory: Process", URL="\ref ProcDataPage" ];
-		iso_proc   [ label="ISO Format\nFunction: Format data for ISO 11783\nLocation-Directory: Process", URL="\ref ProcDataSec" ];
+		can         [ label="CAN Communication" ];
+		eeprom      [ label="EEPROM" ];
+		root        [ label="Communication Services ISO 11783" ];
+		scheduler   [ label="Scheduler\nFunction: Coordination of all services\nLocation-Directory: Scheduler", URL="\ref SchedulerPage" ];
+		network_mgmt [ label="Network Management\nFunction: Monitor lists of all nodes on network\nLocation-Directory: Part5_NetworkManagement", URL="\ref NetworkMgmtPage" ];
+		app_layer   [ label="Application Layer\nFunction: Periodically sent base information ( mostly tractor )\nLocation-Directory: Part7_ApplicationLayer", URL="\ref AppLayerPage" ];
+		data_link   [ label="Data Link\nFunction: Send stream of more than 8-Byte\nLocation-Directory: Part3_DataLink", URL="\ref DataLinkPage" ];
+		vt_client   [ label="ISO Virtual Terminal Client\nFunction: Upload, layout and control of virtual terminal\nLocation-Directory: Part6_VirtualTerminal_Client", URL="\ref VTClient" ];
+		process     [ label="Process Data\nFunction: Process-Data\nLocation-Directory: Part7_ProcessData", URL="\ref ProcDataPage" ];
 
 		can         -> root ;
 		root        -> scheduler ;
-		scheduler   -> system_mgmt ;
-		system_mgmt -> base ;
-		base        -> iso_base ;
-		system_mgmt -> iso_system ;
-		eeprom      -> iso_system [ label="store and reload dynamic SA", style=dotted ];
-		system_mgmt -> multi_msg ;
-		system_mgmt -> process ;
+		scheduler   -> network_mgmt ;
+		network_mgmt -> app_layer ;
+		network_mgmt -> data_link ;
+		network_mgmt -> process ;
 		eeprom      -> process [ label="store and reload accumulated values" ];
-		system_mgmt -> multi_msg ;
-		process     -> iso_proc ;
-		multi_msg   -> iso_term ;
+		network_mgmt -> data_link ;
+		data_link   -> vt_client ;
 
   }
   \enddot
@@ -50,25 +43,21 @@
 	* guarantee to return at the requested time.
 	*
 	* @subsection CommOverIsoSystem Overview on ISO 11783 Monitor List
-	* <b>Detailed Description:</b> \ref SystemMgmtAnnIso
+	* <b>Detailed Description:</b> \ref NetworkMgmt
 	* The class IsoAgLib::iIsoMonitor_c has a monitor list of all ISO 11783 network nodes.
 	* It is mostly used by the application to search for a device by its device type - and to get its SA.
 	* It is also used internally to claim address and manage local ISO 11783 identities ( \ref IsoAgLib::iIsoItem_c ).
 	* If EEPROM store and reload ( \ref USE_EEPROM_IO_YN ) is activated and compiled in the project, a
 	* dynamic aquired SA is automatically stred and reloaded at specified EEPROM address - as suggested by the standard.
 	*
-	* @subsection CommOverIsoBase Overview on ISO 11783 Data
-	* <b>Detailed Description:</b> \ref BaseDataIsoType
-	* ISO 11783 provides more information than DIN 9684
-	*
 	* @subsection CommOverIsoTerminal Overview on ISO 11783 Virtual Terminal
-	* <b>Detailed Description:</b> \ref XMLspec
+	* <b>Detailed Description:</b> \ref VTClient
 	* The IsoAgLib provides a complete toolchain for user interface management based
 	* on ISO 11783 virtual terminal. The layout with including definition of handles
 	* for data exchange and display control is based on XML. This approach is comparable
 	* to user interface resource description of other PC operating systems.
 	* The individual DTD ( data type description ) for ISO 11783 in IsoAgLib is
-	* described in \ref XMLspec . The usage of this mechanism is best demonstrated with an
+	* described in \ref VTClient . The usage of this mechanism is best demonstrated with an
 	* example like imiIsoMaskupload.cpp .
 	* The IsoAgLib contains the build utilities which are needed to generate the constant
 	* variable array definitions which are used as data source to upload the object pool.
@@ -77,7 +66,7 @@
 	*
 	* @subsection CommOverIsoProc Overview on ISO Format
 	* <b>Detailed Description:</b> \ref ProcDataSec
-	* The IsoAgLib can automatically detect based on the active protocol, how the
+	* The IsoAgLib can automatically detect, based on the active protocol, how the
 	* process data messages must be formatted. As ISO 11783 Process Data was at least till
 	* Mid 2003 compatible to DIN 9684, the API is 100% independent from the protocol.<br>
 	* <b>Possible Problems of Current ISO Activities:<br>
