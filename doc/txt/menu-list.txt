@@ -4,13 +4,13 @@
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
         <li> \ref StructuralOverview </li>
-        <li> \ref UsingProjects "Known Applications" </li>
+        <li> \ref UsingProjects "Known Users" </li>
         <li> \ref Maintainers "Maintainers" </li>
         <li> \ref Acknowledgements </li>
 	    <li> \ref Authors</li>
         </ul>
     </li>
-    <li> \ref outlook "Further Development" </li>
+    <li> \ref outlook "Solutions" </li>
     <li class="folder"> \ref PageDownloadAndInstall "Download \& Installation"
         <ul>
         <li> \ref HowtoDownload "Downloading Archives" </li>
