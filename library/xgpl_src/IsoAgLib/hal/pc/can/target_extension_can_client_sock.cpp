@@ -109,7 +109,7 @@ int32_t getPipeHandleForCanRcvEvent()
 }
 
 
-SOCKET_TYPE call_socket(char *hostname, unsigned short portnum)
+SOCKET_TYPE call_socket(unsigned short portnum)
 {
   SOCKET_TYPE connectSocket = 0;
 #ifdef WIN32
@@ -249,11 +249,11 @@ int16_t can_startDriver()
     printf("Error at WSAStartup()\n");
 #endif
 
-  i32_commandSocket = call_socket(CAN_SERVER_HOST, COMMAND_TRANSFER_PORT);
+  i32_commandSocket = call_socket(COMMAND_TRANSFER_PORT);
 
   // client registration
   transferBuf_s s_transferBuf;
-  i32_dataSocket = call_socket(CAN_SERVER_HOST, DATA_TRANSFER_PORT);
+  i32_dataSocket = call_socket(DATA_TRANSFER_PORT);
 
 #ifdef WIN32
   // Set the socket I/O mode: In this case FIONBIO
@@ -505,7 +505,7 @@ bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 }
 
 
-int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t bMsgObj)
+int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t /* bMsgObj */)
 {
 
   DEBUG_PRINT2("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, bMsgObj);
@@ -555,7 +555,6 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   int16_t i16_rc;
   fd_set rfds;
   struct timeval s_timeout;
-  static uint8_t ui8_buf[16];
 
   FD_ZERO(&rfds);
   FD_SET(i32_dataSocket, &rfds);
@@ -584,8 +583,6 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   //DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
-
-  const uint8_t cui8_useMsgObj = bMsgObj;
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
   if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
@@ -695,7 +692,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 /** @todo SOON: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
  *        this as error code. THEN change this function to use negative values as error codes
  */
-int32_t getMaxSendDelay(uint8_t rui8_busNr)
+int32_t getMaxSendDelay(uint8_t /* rui8_busNr */)
 {
 #if 0
   transferBuf_s s_transferBuf;
