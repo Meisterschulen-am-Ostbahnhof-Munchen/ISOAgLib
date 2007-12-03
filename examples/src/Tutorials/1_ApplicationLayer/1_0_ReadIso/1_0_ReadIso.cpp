@@ -881,11 +881,7 @@ int main()
     // The following sleep mechanism uses idle_time of  scheduler reported back
     // no need to sleep on single-task systems
     #ifdef SYSTEM_PC
-      #ifdef WIN32
-        if ( i32_idleTimeSpread > 0 ) Sleep(i32_idleTimeSpread);
-      #else
-        if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-      #endif
+      if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
     #endif
 
 
