@@ -42,6 +42,13 @@ to develop applications using IsoAglib.
 
 \section LatestNews Latest News
 
+\subsection NewsForBigRelease New for 2.1 release
+  - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after addition or deletion of FilterBox_c instances and message processing in order as received
+  - PC can_server port vor Windows available (socket communication which can also be used under Linux)
+  - fixed Working-Set-Master announce (TC client/server communication)
+  - central mutex, so that a separate thread can safely access the IsoAgLib, while no Scheduler_c::timeEvent() triggered internal activities of IsoAgLib are running
+  - reordering of directory structure, so that just a part of IsoAgLib can be checked out, which contains only the library sources and managed BIOS files
+
 \subsection NewsForBigRelease New for the 2.0 release
   - <b>December 2006:</b> Support of PEAK CAN cards for Linux development hosts
   - <b>October 2006:</b> Integrate enhanced scheduler, which plans exact reschedule times for all periodic subtasks of ISO<i><sub>AgLib</sub></i>, so that other program items
