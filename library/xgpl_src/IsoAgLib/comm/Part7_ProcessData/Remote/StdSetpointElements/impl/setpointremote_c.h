@@ -89,8 +89,8 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../../StdSetpointElements/impl/setpointbase_c.h"
-#include "../../../StdSetpointElements/impl/setpointregister_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointbase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointregister_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
