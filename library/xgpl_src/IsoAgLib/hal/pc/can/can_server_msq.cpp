@@ -1337,8 +1337,7 @@ int main(int argc, char *argv[])
 
 
   // do the reset
-  int i = resetCard();
-  if (!i) {
+  if (!resetCard()) {
     DEBUG_PRINT("Reset not ok\n");
     exit(1);
   }
