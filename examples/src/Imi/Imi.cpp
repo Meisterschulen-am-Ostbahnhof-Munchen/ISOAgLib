@@ -336,8 +336,8 @@ int main()
 //   iProcDataRemote_c c_remoteEhr(0, c_autodatacollectorISOName, 0x4, 0x0, 0xFF, 2, c_autodatacollectorISOName, &myISOName);
   const ElementDdi_s s_WorkStateElementDDI[2] =
   {
-    {141, true, GeneralCommand_c::exactValue},
-    {0xffff, false, GeneralCommand_c::exactValue}
+    {141, true, ProcessCmd_c::exactValue},
+    {0xffff, false, ProcessCmd_c::exactValue}
   };
 
   IsoAgLib::iProcDataRemote_c c_remoteEhr(s_WorkStateElementDDI, 0, c_autodatacollectorISOName, c_autodatacollectorISOName, &myISOName);
