@@ -489,9 +489,8 @@ int main()
       c_myDataHandler.doSendTest( (IsoAgLib::iSystem_c::getTime()&0xFFFF), (IsoAgLib::iSystem_c::getTime()>>8),
         (IsoAgLib::iSystem_c::getTime()%100) );
     }
-    #ifdef SYSTEM_PC
-      if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-    #endif
+
+    if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
   }
   return 1;
 }

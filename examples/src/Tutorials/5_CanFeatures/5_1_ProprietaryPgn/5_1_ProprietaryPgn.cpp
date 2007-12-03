@@ -288,10 +288,7 @@ int main()
         We don't get exact timing with mainEvent() but we don't need it for demonstrating the tutorial */
     if (i32_idleTimeSpread > 50) i32_idleTimeSpread = 50;
 
-    // no need to sleep on single-task systems
-    #ifdef SYSTEM_PC
-     if ( i32_idleTimeSpread > 0 ) iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-    #endif
+    if ( i32_idleTimeSpread > 0 ) iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
   }
   return 1;
 };

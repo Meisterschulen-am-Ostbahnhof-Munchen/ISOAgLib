@@ -687,7 +687,6 @@ int main()
 
 
     // The following sleep mechanism will be changed with the new scheduler reporting back the idle-time
-    // no need to sleep on single-task systems
     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
   }
 

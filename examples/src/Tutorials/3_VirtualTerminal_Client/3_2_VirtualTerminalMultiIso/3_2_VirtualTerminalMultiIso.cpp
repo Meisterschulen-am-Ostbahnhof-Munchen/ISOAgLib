@@ -763,9 +763,7 @@ main()
     // IMPORTANT: call main timeEvent function for
     // all time controlled actions of IsoAgLib
     i32_idleTimeSpread = IsoAgLib::getISchedulerInstance().timeEvent();
-    #ifdef SYSTEM_PC
-     if ( i32_idleTimeSpread > 0 )
-       IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-    #endif
+    if ( i32_idleTimeSpread > 0 )
+      IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
   }
 }

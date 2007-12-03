@@ -769,9 +769,9 @@ int main()
         #endif
      }
     #endif
-    #ifdef SYSTEM_PC
-      if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-    #endif
+
+    if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+
   }
   return 1;
 }

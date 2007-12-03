@@ -490,9 +490,7 @@ int main()
     //   MyInternalCanHandler_c::processMsg() into the suitable flags of
     //   IsoAgLib internal part for base data sending ( Base_c )
 
-    #ifdef SYSTEM_PC
-     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-    #endif
+    if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
   }
   return 1;
 }
