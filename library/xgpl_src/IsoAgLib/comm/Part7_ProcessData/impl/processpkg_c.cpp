@@ -136,14 +136,13 @@ ProcessPkg_c::~ProcessPkg_c(){
 /**
   check if the 4byte value of the message has a special command of type
   proc_specCmd_t: setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
+  (extension to ISO specification)
   @param ren_checkCmd special command to check for
   @return true -> the given cmd was received
 */
 bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 {
-/** @TODO NOW: check whether still relevant - and then delete this TODO */
   bool b_result = false;
-
 
   const int32_t ci32_test = mc_flex4Data.getInt32Data();
 
