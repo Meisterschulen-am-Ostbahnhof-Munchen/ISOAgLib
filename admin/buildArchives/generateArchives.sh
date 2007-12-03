@@ -29,15 +29,15 @@ SUPPL_ALL_PART="-path '*/supplementary_driver/*'"
 SUPPL_ACTOR_PART="-path '*/supplementary_driver/*/actor/*'"
 SUPPL_RS232_PART="-path '*/supplementary_driver/*/rs232/*'"
 SUPPL_SENSOR_PART="-path '*/supplementary_driver/*/sensor/*'"
+SUPPL_DATASTREAMS_PART="-path '*/supplementary_driver/*/datastreams/*'"
 
 PROC_PART="-path '*/comm/Part7_ProcessData/*'"
+TC_PART="-path '*/comm/Part10_TaskController_Client/*'"
 BASE_PART="-path '*/comm/Part7_ApplicationLayer/*'"
-TERMINAL_ISO_PART="-path '*/comm/Part6_VirtualTerminal_Client/*'"
-MULTIPACKET_PART="-path '*/comm/Part3_DataLink/*'"
 
 echo "Build File List for main core"
 rm -f $SCRIPT_DIR/coreList.txt
-CMDLINE=`echo "find . -type f -and -not \( $SVN_PART -o $SUPPL_ALL_PART -o $DOC_PART -o $SUPPL_ALL_PART -o $PROC_PART -o $TERMINAL_ISO_PART -o $MULTIPACKET_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/coreList.txt"`
+CMDLINE=`echo "find . -type f -and -not \( $SVN_PART -o $SUPPL_ALL_PART -o $DOC_PART -o $SUPPL_ALL_PART -o $PROC_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/coreList.txt"`
 echo $CMDLINE | sh
 # add core bitmaps for doc
 find ./doc/html/Diagramme/ -type f -not -path "*/.svn/*" >> $SCRIPT_DIR/coreList.txt
@@ -47,7 +47,7 @@ echo "./library/commercial_BIOS/README_LICENSED_PARTS.txt" >> $SCRIPT_DIR/coreLi
 
 echo "Build File List for Proces Module"
 rm -f $SCRIPT_DIR/procList.txt
-CMDLINE=`echo "find . -type f -and $PROC_PART -and -not \( $SVN_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/procList.txt"`
+CMDLINE=`echo "find . -type f -and \( $PROC_PART -o $TC_PART \) -and -not \( $SVN_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/procList.txt"`
 echo $CMDLINE | sh
 
 echo "Build File List for Base Module"
@@ -75,6 +75,14 @@ CMDLINE=`echo "find . -type f -and $SUPPL_SENSOR_PART -and -not \( $SVN_PART \) 
 echo $CMDLINE | sh
 echo "library/xgpl_src/supplementary_driver/hal/sensor.h" >> "$SCRIPT_DIR/supplSensorList.txt"
 echo "library/xgpl_src/supplementary_driver/hal/readme.txt" >> "$SCRIPT_DIR/supplSensorList.txt"
+
+echo "Build File List for Supplementary Datastreams"
+rm -f $SCRIPT_DIR/supplDatastreamsList.txt
+CMDLINE=`echo "find . -type f -and $SUPPL_DATASTREAMS_PART -and -not \( $SVN_PART \) $NEVER_WANTED_PART > $SCRIPT_DIR/supplDatastreamsList.txt"`
+echo $CMDLINE | sh
+echo "library/xgpl_src/supplementary_driver/hal/datastreams.h" >> "$SCRIPT_DIR/supplDatastreamsList.txt"
+echo "library/xgpl_src/supplementary_driver/hal/readme.txt" >> "$SCRIPT_DIR/supplDatastreamsList.txt"
+
 
 echo "Build File List for generated Docu"
 rm -f $SCRIPT_DIR/generatedHtmlDocuList.txt
@@ -106,6 +114,10 @@ cat $SCRIPT_DIR/supplRs232List.txt | zip -9 $SCRIPT_DIR/supplRs232Archiv.zip -@
 echo "Build supplSensorArchiv.zip"
 rm -f $SCRIPT_DIR/supplSensorArchiv.zip
 cat $SCRIPT_DIR/supplSensorList.txt | zip -9 $SCRIPT_DIR/supplSensorArchiv.zip -@
+
+echo "Build supplDatastreamsArchiv.zip"
+rm -f $SCRIPT_DIR/supplDatastreamsArchiv.zip
+cat $SCRIPT_DIR/supplDatastreamsList.txt | zip -9 $SCRIPT_DIR/supplDatastreamsArchiv.zip -@
 
 echo "Build generatedHtmlDocuList.zip"
 rm -f $SCRIPT_DIR/generatedHtmlDocuList.zip
