@@ -365,24 +365,31 @@ can't be affected by the style and quality of future project maintenance.</b>
 \section Maintainers Some information on the maintainers
 The ISO<i><sub>AgLib</sub></i> was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
-already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg and Berlin ( all in Germany; <b>state February 2007</b> ).<br>
+already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin ( all in Germany; <b>state November 2007</b> ).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
 Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
-    - AGCO GmbH / Fendt
-    - Apparatebau Gauting GmbH
-    - Avery Dennison Deutschland GmbH
+    - <a href="http://www.agcocorp.com/">AGCO GmbH/<a href="http://www.fendt.com/">Fendt</a>
+    - AL.systems GmbH
+    - <a href="http://www.aoa-gauting.de/">Apparatebau Gauting GmbH</a>
+    - <a href="http://www.machines.averydennison.com/">Avery Dennison Deutschland GmbH</a>
     - AZH GmbH
-  - BMW
-    - EMAG
-    - FIDUCIA IT
-    - Fritzmeier
-    - Infineon Technologies AG
-    - MTU Aero Engines
-    - Porsche
-    - Robert Bosch GmbH
-    - Siemens AG
-    - ThyssenKrupp AutomotiveMechatronics GmbH
-    - Valeo
+    - <a href="http://www.benqmobile.com">BenQ Mobile GmbH & Co OHG</a>
+    - <a href="http://www.emag.de/">EMAG GmbH</a>
+    - <a href="http://www.fiducia.de/">FIDUCIA IT AG</a>
+    - <a href="http://www.fritzmeier.de/">FRITZMEIER Systems GmbH & Co.</a>
+    - <a href="http://www.infineon.com/">Infineon Technologies AG</a>
+    - <a href="http://www.mtu.de">MTU Aero Engines</a>
+    - <a href="http://www.kvb.de/">Kassenärztliche Vereinigung Bayerns</a>
+    - <a href="http://www.oce.de">Océ Printing Systems GmbH</a>
+    - Panasonic Automotive Systems Europe GmbH
+    - <a href="http://www.porsche.com/usa/">Dr. Ing. h.c.F. Porsche AG</a>
+    - <a href="http://www.siemens.com">Siemens AG</a>
+    - <a href="http://www.thyssenkrupp-technologies.de">ThyssenKrupp AutomotiveMechatronics GmbH</a>
+    - <a href="http://www.valeo.de">Valeo Sicherheitssysteme GmbH</a>
+    - <a href="http://www.valeo.de">Valeo Schalter und Sensoren GmbH</a>
+    - <a href="http://bosch.com">Robert Bosch GmbH</a>
+    - <a href="http://www.imis.com">Joh. Winklhofer & Söhne GmbH & Co. KG</a>
+    - <a href="http://www.ivm-automotive.com/">IVM Automotive München Gmb</a>
 
 More information on commercial backing of ISO<i><sub>AgLib</sub></i> can be obtained <a href="http://www.isoaglib.com/">here</a>.
 

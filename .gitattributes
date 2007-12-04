@@ -3,6 +3,7 @@
 /ChangeLog -text
 /Doxyfile -text
 /LICENSE -text
+admin/includeTaggedFile.pl -text
 admin/testscripts/compileSelectedTutorials.sh -text
 admin/testscripts/compileTutorials.sh -text
 bin/proc2iso -text
