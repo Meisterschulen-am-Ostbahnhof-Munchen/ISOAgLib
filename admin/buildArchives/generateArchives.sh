@@ -3,6 +3,8 @@
 # Collect the main files of IsoAgLib which are
 # relevant for setups
 
+VERSION="2.1"
+
 START=`pwd`
 cd `dirname $0`
 SCRIPT_DIR=`pwd`
@@ -91,33 +93,47 @@ find ./doc/html -type f -not -path "*/.svn/*" -not -path "*/Diagramme/*" > $SCRI
 
 echo "Build Archives"
 
-echo "Build coreArchiv.zip"
+echo "Build coreArchiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/coreArchiv.zip
-cat $SCRIPT_DIR/coreList.txt | zip -9 $SCRIPT_DIR/coreArchiv.zip -@
+cat $SCRIPT_DIR/coreList.txt | zip -9 $SCRIPT_DIR/coreArchiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/coreArchiv-$VERSION.tar -T $SCRIPT_DIR/coreList.txt
+gzip $SCRIPT_DIR/coreArchiv-$VERSION.tar
 
-echo "Build procArchiv.zip"
+echo "Build procArchiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/procArchiv.zip
-cat $SCRIPT_DIR/procList.txt | zip -9 $SCRIPT_DIR/procArchiv.zip -@
+cat $SCRIPT_DIR/procList.txt | zip -9 $SCRIPT_DIR/procArchiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/procArchiv-$VERSION.tar -T $SCRIPT_DIR/procList.txt
+gzip $SCRIPT_DIR/procArchiv-$VERSION.tar
 
-echo "Build baseArchiv.zip"
+echo "Build baseArchiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/baseArchiv.zip
-cat $SCRIPT_DIR/baseList.txt | zip -9 $SCRIPT_DIR/baseArchiv.zip -@
+cat $SCRIPT_DIR/baseList.txt | zip -9 $SCRIPT_DIR/baseArchiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/baseArchiv-$VERSION.tar -T $SCRIPT_DIR/baseList.txt
+gzip $SCRIPT_DIR/baseArchiv-$VERSION.tar
 
-echo "Build supplActorArchiv.zip"
+echo "Build supplActorArchiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/supplActorArchiv.zip
-cat $SCRIPT_DIR/supplActorList.txt | zip -9 $SCRIPT_DIR/supplActorArchiv.zip -@
+cat $SCRIPT_DIR/supplActorList.txt | zip -9 $SCRIPT_DIR/supplActorArchiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/supplActorArchiv-$VERSION.tar -T $SCRIPT_DIR/supplActorList.txt
+gzip $SCRIPT_DIR/supplActorArchiv-$VERSION.tar
 
-echo "Build supplRs232Archiv.zip"
+echo "Build supplRs232Archiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/supplRs232Archiv.zip
-cat $SCRIPT_DIR/supplRs232List.txt | zip -9 $SCRIPT_DIR/supplRs232Archiv.zip -@
+cat $SCRIPT_DIR/supplRs232List.txt | zip -9 $SCRIPT_DIR/supplRs232Archiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/supplRs232Archiv-$VERSION.tar -T $SCRIPT_DIR/supplRs232List.txt
+gzip $SCRIPT_DIR/supplRs232Archiv-$VERSION.tar
 
-echo "Build supplSensorArchiv.zip"
+echo "Build supplSensorArchiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/supplSensorArchiv.zip
-cat $SCRIPT_DIR/supplSensorList.txt | zip -9 $SCRIPT_DIR/supplSensorArchiv.zip -@
+cat $SCRIPT_DIR/supplSensorList.txt | zip -9 $SCRIPT_DIR/supplSensorArchiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/supplSensorArchiv-$VERSION.tar -T $SCRIPT_DIR/supplSensorList.txt
+gzip $SCRIPT_DIR/supplSensorArchiv-$VERSION.tar
 
-echo "Build supplDatastreamsArchiv.zip"
+echo "Build supplDatastreamsArchiv.zip/.tar.gz"
 rm -f $SCRIPT_DIR/supplDatastreamsArchiv.zip
-cat $SCRIPT_DIR/supplDatastreamsList.txt | zip -9 $SCRIPT_DIR/supplDatastreamsArchiv.zip -@
+cat $SCRIPT_DIR/supplDatastreamsList.txt | zip -9 $SCRIPT_DIR/supplDatastreamsArchiv-$VERSION.zip -@
+tar -cf $SCRIPT_DIR/supplDatastreamsArchiv-$VERSION.tar -T $SCRIPT_DIR/supplDatastreamsList.txt
+gzip $SCRIPT_DIR/supplDatastreamsArchiv-$VERSION.tar
 
 echo "Build generatedHtmlDocuList.zip"
 rm -f $SCRIPT_DIR/generatedHtmlDocuList.zip
