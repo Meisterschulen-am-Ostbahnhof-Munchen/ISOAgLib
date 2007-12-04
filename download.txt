@@ -79,11 +79,14 @@ All archives should be extracted from the same directory.
 
 If you don't want to download the big archive with the generated documentation
 ( <b>13 MByte</b> ), you can simply recreate the documentation based on the downloaded
-source and the contained informative text files.
+source and the contained informative text files. 
+At the moment the main entry pages are generated using a perl script because doxygen is not (yet) able to handle some things properly.
+Therefore windows user need to install a perl distribution.
 <b>Steps:</b>
 <ol>
 <li>Download and install Doxygen from http://www.stack.nl/~dimitri/doxygen/ for your specific plattform
 <li>Download and install graphviz with the tool "dot" from http://www.graphviz.org/Download.php
+<li>For Win32 users: download and install <a href="http://www.activestate.com/Products/activeperl/">ActivePerl</a>
 <li>Let Doxygen create the documentation with the config file "Doxyfile" which is located in the project root directory
 </ol>
 
