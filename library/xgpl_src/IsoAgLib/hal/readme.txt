@@ -25,23 +25,23 @@
   digraph MainHalEsxStructure {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue];
-    edge     [fontname=ARIALN, fontsize=10];
+    node     [/*shape=record, */fontname=ARIALN, fontsize=8, style=filled, fontcolor=blue];
+    edge     [fontname=ARIALN, fontsize=8];
 
-		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
+		m_hal       [label="Hardware Abstraction Layer\nfor main library parts\npartly obligatory", color="green4", fontcolor="white"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_config  [label="Central Header for\nPlatform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for\nMain Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for\nPlatform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for\nPlatform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
 		hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="green2"];
 
-		h_esx_system [label="Target Adaptation of Base System Calls\nobligatory for this platform", color="green2", URL="\ref esx/system/system.h"];
-		h_esx_can   [label="Target Adaptation of CAN IO\nobligatory for this platform", color="green2", URL="\ref esx/can/can.h"];
-		h_esx_eeprom [label="Target Adaptation of EEPROM\noptional;needed from other features", color="greenyellow", URL="\ref esx/eeprom/eeprom.h"];
-		h_esx_conf  [label="ESX specific Configuration Settings\nobligatory", color="green2", shape="ellipse", URL="\ref esx/config.h"];
-		h_esx_type  [label="ESX specific Typedefs\nobligatory", color="green2", shape="ellipse", URL="\ref esx/typedef.h"];
-		h_esx_err   [label="ESX specific Errcode Mapping\nobligatory", color="green2", shape="ellipse", URL="\ref esx/errcodes.h"];
+		h_esx_system [label="Target Adaptation\nof Base System Calls\n(obligatory for this platform)", color="green2", URL="\ref esx/system/system.h"];
+		h_esx_can   [label="Target Adaptation\nof CAN IO\n(obligatory for this platform)", color="green2", URL="\ref esx/can/can.h"];
+		h_esx_eeprom [label="Target Adaptation\nof EEPROM\n(optional);needed from other features", color="greenyellow", URL="\ref esx/eeprom/eeprom.h"];
+		h_esx_conf  [label="ESX specific\nConfiguration Settings\n(obligatory)", color="green2", shape="ellipse", URL="\ref esx/config.h"];
+		h_esx_type  [label="ESX specific\nTypedefs\n(obligatory)", color="green2", shape="ellipse", URL="\ref esx/typedef.h"];
+		h_esx_err   [label="ESX specific\nErrcode Mapping\n(obligatory)", color="green2", shape="ellipse", URL="\ref esx/errcodes.h"];
 
 		m_hal    -> hal_config [label="config.h"];
 		m_hal    -> hal_system [label="system.h"];
@@ -66,16 +66,16 @@
   digraph MainHalImiStructure {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue];
-    edge     [fontname=ARIALN, fontsize=10];
+    node     [/*shape=record, */fontname=ARIALN, fontsize=8, style=filled, fontcolor=blue];
+    edge     [fontname=ARIALN, fontsize=8];
 
-		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
+		m_hal       [label="Hardware Abstraction Layer\nfor main library parts\npartly obligatory", color="green4", fontcolor="white"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_imi     [label="HAL for IMI of STW\nobligatory for this platform", color="green2"];
+		hal_config  [label="Central Header for\nPlatform Configuration\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for\nMain Target Functions (e.g. get_time())\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for\nPlatform specific CAN IO\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for\nPlatform specific EEPROM IO\n(optional)", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_imi     [label="HAL for IMI of STW\n(obligatory for this platform)", color="green2"];
 
 		h_imi_system [label="system", color="green2", URL="\ref imi/system/system.h"];
 		h_imi_can   [label="can", color="green2", URL="\ref imi/can/can.h"];
@@ -108,16 +108,16 @@
   digraph MainHalPm167Structure {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue];
-    edge     [fontname=ARIALN, fontsize=10];
+    node     [/*shape=record, */fontname=ARIALN, fontsize=8, style=filled, fontcolor=blue];
+    edge     [fontname=ARIALN, fontsize=8];
 
-		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
+		m_hal       [label="Hardware Abstraction Layer\nfor main library parts\n(partly obligatory)", color="green4", fontcolor="white"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_pm167   [label="HAL for PM167 of STW\nobligatory for this platform", color="green2"];
+		hal_config  [label="Central Header for\nPlatform Configuration\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for\nMain Target Functions (e.g. get_time())\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for\nPlatform specific CAN IO\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for\nPlatform specific EEPROM IO\n(optional)", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_pm167   [label="HAL for PM167 of STW\n(obligatory for this platform)", color="green2"];
 
 		h_pm167_system [label="system", color="green2", URL="\ref pm167/system/system.h"];
 		h_pm167_can   [label="can", color="green2", URL="\ref pm167/can/can.h"];
@@ -150,16 +150,16 @@
   digraph MainHalPcStructure {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue];
-    edge     [fontname=ARIALN, fontsize=10];
+    node     [/*shape=record, */fontname=ARIALN, fontsize=8, style=filled, fontcolor=blue];
+    edge     [fontname=ARIALN, fontsize=8];
 
-		m_hal       [label="Hardware Abstraction Layer for main library parts\npartly obligatory", color="green4"];
+		m_hal       [label="Hardware Abstraction Layer\nfor main library parts\npartly obligatory", color="green4", fontcolor="white"];
 
-		hal_config  [label="Central Header for Platform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
-		hal_system  [label="Central Header for Main Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
-		hal_can     [label="Central Header for Platform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
-		hal_eeprom  [label="Central Header for Platform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
-		hal_pc      [label="Example HAL for PC\nobligatory for this platform", color="green2"];
+		hal_config  [label="Central Header for\nPlatform Configuration\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/config.h"];
+		hal_system  [label="Central Header for\nMain Target Functions (e.g. get_time())\nobligatory)", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+		hal_can     [label="Central Header for\nPlatform specific CAN IO\n(obligatory)", color="green2", shape="ellipse", URL="\ref hal/can.h"];
+		hal_eeprom  [label="Central Header for\nPlatform specific EEPROM IO\n(optional)", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
+		hal_pc      [label="Example HAL for PC\n(obligatory for this platform)", color="green2"];
 
 		h_pc_system [label="system", color="green2", URL="\ref pc/system/system.h"];
 		h_pc_can    [label="can", color="green2", URL="\ref pc/can/can.h"];
