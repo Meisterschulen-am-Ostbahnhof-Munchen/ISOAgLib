@@ -141,7 +141,7 @@ extern uint8_t RS232_over_can_initialized;
     @param wBuffersize wanted puffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
-  inline int16_t configRs232RxObj(uint16_t /*wBuffersize*/, void (*/*pFunction*/)(uint8_t *bByte),
+  inline int16_t configRs232RxObj(uint16_t /*wBuffersize*/, void (* /*pFunction*/)(uint8_t *bByte),
                                   uint8_t /*aui8_channel*/)
     {return RS232_over_can_initialized ? HAL_NO_ERR : HAL_RANGE_ERR;};
   /**
@@ -150,14 +150,14 @@ extern uint8_t RS232_over_can_initialized;
     @param funktionAfterTransmit pointer to irq function or NULL if not wanted
     @param funktionBeforTransmit pointer to irq function or NULL if not wanted
   */
-  inline int16_t configRs232TxObj(uint16_t /*wBuffersize*/,void (*/*funktionAfterTransmit*/)(uint8_t */*bByte*/),
-                                  void (*/*funktionBeforTransmit*/)(uint8_t */*bByte*/), uint8_t /*aui8_channel*/)
+  inline int16_t configRs232TxObj(uint16_t /*wBuffersize*/,void (* /*funktionAfterTransmit*/)(uint8_t * /*bByte*/),
+                                  void (* /*funktionBeforTransmit*/)(uint8_t * /*bByte*/), uint8_t /*aui8_channel*/)
     {return RS232_over_can_initialized ? HAL_NO_ERR : HAL_RANGE_ERR;};
   /**
     get errr code of BIOS
     @return 0=parity, 1=stopbit framing error, 2=overflow
   */
-  inline int16_t getRs232Error(uint8_t */*Errorcode*/, uint8_t /*aui8_channel*/)
+  inline int16_t getRs232Error(uint8_t * /*Errorcode*/, uint8_t /*aui8_channel*/)
     {return RS232_over_can_initialized ? HAL_NO_ERR : HAL_RANGE_ERR;};
 
   /**
@@ -165,7 +165,7 @@ extern uint8_t RS232_over_can_initialized;
     @param pbRead pointer to target data
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232Char(uint8_t */*pbRead*/, uint8_t /*aui8_channel*/)
+  inline int16_t getRs232Char(uint8_t * /*pbRead*/, uint8_t /*aui8_channel*/)
     {return RS232_over_can_initialized ? HAL_NO_ERR : HAL_RANGE_ERR;};
   /**
     read bLastChar terminated string from receive puffer
@@ -173,7 +173,7 @@ extern uint8_t RS232_over_can_initialized;
     @param bLastChar terminating char
     @return HAL_NO_ERR -> o.k. else puffer underflow
   */
-  inline int16_t getRs232String(uint8_t */*pbRead*/,uint8_t /*bLastChar*/, uint8_t /*aui8_channel*/)
+  inline int16_t getRs232String(uint8_t * /*pbRead*/,uint8_t /*bLastChar*/, uint8_t /*aui8_channel*/)
     {return RS232_over_can_initialized ? HAL_NO_ERR : HAL_RANGE_ERR;};
 
   /**
