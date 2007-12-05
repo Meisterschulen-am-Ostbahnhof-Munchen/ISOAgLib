@@ -10,8 +10,8 @@
   digraph ProcessDataHierarchy {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node     [shape=record, fontname=ARIALN, fontsize=10, style=filled, fontcolor=blue];
-    edge     [fontname=ARIALN, fontsize=10];
+    node     [/*shape=record, */fontname=ARIALN, fontsize=8, style=filled, fontcolor=blue];
+    edge     [fontname=ARIALN, fontsize=8];
 
     subgraph center {
       style="invis";
@@ -35,10 +35,10 @@
       style=filled;
       color=cornflowerblue;
       label="Data of this ECU";
-      Local_c [ fontcolor=black, shape=octagon, color="blue1", label="iProcDataLocal_c", URL="\ref IsoAgLib::iProcDataLocal_c" ];
-      LocalSimpleMeasure_c [ fontcolor=black, shape=septagon, color="blue1", label="iLBSProcDataLocal\nSimpleMeasure_c", URL="\ref IsoAgLib::iProcDataLocalSimpleMeasure_c" ];
-      LocalSimpleSetpoint_c [ fontcolor=black, shape=hexagon, color="blue1", label="iLBSProcDataLocal\nSimpleSetpoint_c", URL="\ref IsoAgLib::iProcDataLocalSimpleSetpoint_c" ];
-      LocalSimpleSetpointSimpleMeasure_c [ fontcolor=black, shape=pentagon, color="blue1", label="iLBSProcDataLocal\nSimpleSetpoint\nSimpleMeasure_c",
+      Local_c [ fontcolor=white, shape=octagon, color="blue1", label="iProcDataLocal_c", URL="\ref IsoAgLib::iProcDataLocal_c" ];
+      LocalSimpleMeasure_c [ fontcolor=white, shape=septagon, color="blue1", label="iLBSProcDataLocal\nSimpleMeasure_c", URL="\ref IsoAgLib::iProcDataLocalSimpleMeasure_c" ];
+      LocalSimpleSetpoint_c [ fontcolor=white, shape=hexagon, color="blue1", label="iLBSProcDataLocal\nSimpleSetpoint_c", URL="\ref IsoAgLib::iProcDataLocalSimpleSetpoint_c" ];
+      LocalSimpleSetpointSimpleMeasure_c [ fontcolor=white, shape=pentagon, color="blue1", label="iLBSProcDataLocal\nSimpleSetpoint\nSimpleMeasure_c",
                                           URL="\ref IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c" ];
     };
 
@@ -46,12 +46,12 @@
       style=filled;
       color="chartreuse3";
       label="Data requested from other ECU";
-      Remote_c [ shape=octagon, color="forestgreen", label="iProcDataRemote_c", URL="\ref IsoAgLib::iProcDataRemote_c" ];
-      RemoteSimpleMeasure_c [ shape=septagon, color="forestgreen", label="iProcDataRemote_c\nSimpleMeasure_c", URL="\ref IsoAgLib::iProcDataRemoteSimpleMeasure_c" ];
-      RemoteSimpleSetpoint_c [ shape=hexagon, color="forestgreen", label="iProcDataRemote_c\nSimpleSetpoint_c", URL="\ref IsoAgLib::iProcDataRemoteSimpleSetpoint_c" ];
-      RemoteSimpleSetpointSimpleMeasure_c [ shape=pentagon, color="forestgreen", label="iProcDataRemote_c\nSimpleSetpoint\nSimpleMeasure_c",
+      Remote_c [ shape=octagon, fontcolor=white, color="forestgreen", label="iProcDataRemote_c", URL="\ref IsoAgLib::iProcDataRemote_c" ];
+      RemoteSimpleMeasure_c [ shape=septagon, fontcolor=white, color="forestgreen", label="iProcDataRemote_c\nSimpleMeasure_c", URL="\ref IsoAgLib::iProcDataRemoteSimpleMeasure_c" ];
+      RemoteSimpleSetpoint_c [ shape=hexagon, fontcolor=white, color="forestgreen", label="iProcDataRemote_c\nSimpleSetpoint_c", URL="\ref IsoAgLib::iProcDataRemoteSimpleSetpoint_c" ];
+      RemoteSimpleSetpointSimpleMeasure_c [ shape=pentagon, fontcolor=white, color="forestgreen", label="iProcDataRemote_c\nSimpleSetpoint\nSimpleMeasure_c",
                                           URL="\ref IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c" ];
-      RemoteSimpleSetpointSimpleMeasureCombined_c [ shape=pentagon, color="forestgreen", label="iProcDataRemote_c\nSimpleSetpoint\nSimpleMeasure\nCombined_c",
+      RemoteSimpleSetpointSimpleMeasureCombined_c [ shape=pentagon, fontcolor=white, color="forestgreen", label="iProcDataRemote_c\nSimpleSetpoint\nSimpleMeasure\nCombined_c",
                                           URL="\ref IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c" ];
     };
     root -> subgraph cluster_local [ color="blue" ];
