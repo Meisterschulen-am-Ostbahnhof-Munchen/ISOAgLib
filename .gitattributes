@@ -2402,6 +2402,7 @@ examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoP
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_derived-cpp.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_derived-h.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_direct.h -text
+/index.html -text
 /installation.txt -text
 library/LICENSE -text
 library/commercial_BIOS/bios_pc.testserver/include -text
