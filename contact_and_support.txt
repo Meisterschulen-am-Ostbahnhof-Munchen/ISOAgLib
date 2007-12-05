@@ -161,7 +161,13 @@ process of an update is logged. It indicates also files where it was able to per
 have a look in these files to, to make shure, the merge was really clean ( the maintainers of ISO<i><sub>AgLib</sub></i> didn't have
 such problems so far  ).
 
+
+<b>Important</b>
+<table border="0" cellspacing="0" cellpadding="2" bgcolor="aqua">
+<tr><td>
+Each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
+"fix" the email address - this "manupulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a
+working domain.
+</td></tr></table>
 */
 
-
-*/

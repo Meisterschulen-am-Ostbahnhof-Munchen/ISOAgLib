@@ -21,12 +21,6 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <div style="clear:left"></div>
 
 \section WhereToStart  Where to Start Learning IsoAgLib
-\subsection GettingOverview Where to Get an Overview
-The links in the navigation column present you the following information:
-    - Get short information on ISO<i><sub>AgLib</sub></i> and its structural design at \ref MainFeatures and \ref StructuralOverview
-    - Get some insight on the design goals of the complete system at \ref InfGeneralInformation , \ref InfAgentNetwork and \ref InfServiceNetwork
-    - Check ease of application development in an example for virtual terminal handling at 3_0_VirtualTerminalIso.cpp
-            ( other examples at <a href="examples.html">tutorial examples</a> page )
 
 \subsection StartToLearn Where to Start Learning the IsoAgLib
 Please have a close look at all HOWTO chapters which are presented in the navigation column.

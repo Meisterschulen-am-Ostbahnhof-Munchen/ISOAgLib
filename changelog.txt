@@ -23,7 +23,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section Changes Changes
 
-\subsection Change_M 2.0 to 2.1
+\subsection Change_O 2.0 to 2.1
   - the IsoAgLib core files ( "xgpl_src" "commercial_BIOS" and simulated_IO") have been moved together in a new folder "library"
   - some important folders and files have been renamed so the content should be easier to identify
     - folders below IsoAgLib/comm are now labeled like the related OSI layer
@@ -54,7 +54,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
   - bug fix: use rc_isoTerminal.data().time() instead of HAL::getTime() in VtServerInstance
   - bug fix: VtServerInstance uses getLastProcessedCanPkgTime() now for detecting dropp offs
 
-\subsection Change_M 2.0 (changes on maintained version)
+\subsection Change_N 2.0 (changes on maintained version)
   - rewritten and enhanced TimePosGps_c
   - use isUnspecified() for ISOName instead of 0xff
   - avoid STL container list method call, as at least std::list<T>::size() works very slow

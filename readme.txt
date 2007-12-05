@@ -15,7 +15,8 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described in this section:
-    <ul><li> \ref LatestNews </li>
+    <ul><li> \ref Home "Welcome" </li>
+        <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
         <li> \ref StructuralOverview </li>
         <li> \ref UsingProjects "Known Applications" </li>
@@ -29,16 +30,21 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <div style="clear:left"></div>
 
 \section Home Welcome to IsoAgLib.org!
-IsoAglib provides a free portable C++ source library for development
+@isoaglib provides a free portable C++ source library for development
 of <a href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
 applications.
+The purpose of ISO 11783 is to provide an open interconnected system for on-board electronic systems. It is intended to enable electronic units to communicate with each other providing a standardized system.
+@isoaglib covers parts 1 to 13 of ISO11783 which specify a communications system for agricultural equipment based on the CAN 2.0 B [1] protocol.<br/>
 
-IsoAgLib is mainly developed on LINUX. The actual target device is
-typically an embedded system. Some Win32 specific adaptations do
-exist, too.
+\isoaglib is mainly developed on LINUX. The actual target device is typically an embedded system. There also exist some Win32 specific adaptations, as well.
 
-Follow the <a href="examples.html">tutorial examples</a> to learn how
-to develop applications using IsoAglib.
+\subsection GettingOverview More Information on IsoAgLib
+To learn more about \isoaglib you can check the navigation menu for further topics or use one of the following links:
+    - \ref MainFeatures
+    - \ref StructuralOverview describes the structural design of \isoaglib
+    - \ref InfGeneralInformation, \ref InfAgentNetwork, \ref InfServiceNetwork provide some insight on the design goals of the complete system
+    - \ref 3_0_VirtualTerminalIso.cpp illustrates the ease of application development in an example for virtual terminal handling
+    - the <a href="examples.html">tutorial examples page</a> provides other examples for studying purpose
 
 \section LatestNews Latest News
 
@@ -46,8 +52,8 @@ to develop applications using IsoAglib.
   - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after addition or deletion of FilterBox_c instances and message processing in order as received
   - PC can_server port vor Windows available (socket communication which can also be used under Linux)
   - fixed Working-Set-Master announce (TC client/server communication)
-  - central mutex, so that a separate thread can safely access the IsoAgLib, while no Scheduler_c::timeEvent() triggered internal activities of IsoAgLib are running
-  - reordering of directory structure, so that just a part of IsoAgLib can be checked out, which contains only the library sources and managed BIOS files
+  - central mutex, so that a separate thread can safely access the \isoaglib, while no Scheduler_c::timeEvent() triggered internal activities of \isoaglib are running
+  - reordering of directory structure, so that just a part of \isoaglib can be checked out, which contains only the library sources and managed BIOS files
 
 \subsection NewsForBigRelease New for the 2.0 release
   - <b>December 2006:</b> Support of PEAK CAN cards for Linux development hosts
