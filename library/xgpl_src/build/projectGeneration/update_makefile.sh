@@ -727,6 +727,7 @@ create_filelist( )
   HDR_UTEST_EXT="\( -name '*-test.h' \)"
   HDR_UTEST_MOCK_EXT="\( -name '*-mock.h' \)"
   TESTRUNNER_EXT="\( -name 'testrunner.cpp' \)"
+  UTEST_DIRS_EXT="\( -name 'utest' -type d \)"
 
 
   # go back to directory where config file resides
@@ -924,30 +925,55 @@ create_utest_filelist()
 	FILELIST_UTEST_MODSUT_PURE="filelist"'__'"$PROJECT.utest.modsut.txt"
 	FILELIST_UTEST_RUNNER_PURE="filelist"'__'"$PROJECT.utest.runner.txt"
 
+	DIRECTORYLIST_UTEST_PURE="directories"'__'"$PROJECT.utest.txt"
+
 	# go to project directory
 	cd $PROJECT
 
 	# create new files containing the file lists
-	rm -f "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE"
-	touch "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE"
+	rm -f "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE" "$DIRECTORYLIST_UTEST_PURE"
+	touch "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE" "$DIRECTORYLIST_UTEST_PURE"
 
-	# find unit test files (*-test.h)
+	FIND_ROOT_DIR=""
+
+	# are we at an extern project?
+	if [[ "$ISO_AG_LIB_INSIDE" =~ "IsoAgLib" ]]
+	then
+		# we're at an extern project (like vtserver)
+		FIND_ROOT_DIR=$ISO_AG_LIB_INSIDE/../
+	else
+		# we're inside the isoaglib!
+		FIND_ROOT_DIR=$ISO_AG_LIB_INSIDE
+	fi
+
+	# find unit test directories
 	rm -f .exec.tmp
 
-	echo "find ../../../ $HDR_UTEST_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_PURE" > .exec.tmp
+	echo "find $FIND_ROOT_DIR $UTEST_DIRS_EXT >> $DIRECTORYLIST_UTEST_PURE" > .exec.tmp
 	sh .exec.tmp
 
-	# find mock object files (*-mock.h)
-	rm -f .exec.tmp
-	echo "find ../../../ $HDR_UTEST_MOCK_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_MOCK_PURE" > .exec.tmp
-	sh .exec.tmp
+	exec 0<$DIRECTORYLIST_UTEST_PURE
+
+	while read line
+	do
+		# find unit test files (*-test.h)
+		rm -f .exec.tmp
+		echo "find $line $HDR_UTEST_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_PURE" > .exec.tmp
+		sh .exec.tmp
+
+		# find mock object files (*-mock.h)
+		rm -f .exec.tmp
+		echo "find $line $HDR_UTEST_MOCK_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_MOCK_PURE" > .exec.tmp
+		sh .exec.tmp
+	done
 
 	# determine modified software under test (MOD-SUT) files
-cat $FILELIST_UTEST_PURE | sed -e 's!\(.*\)/utest/\(.*\)-test\.h!\1/\2_c.h!' >> $FILELIST_UTEST_MODSUT_PURE
+	cat $FILELIST_UTEST_PURE | sed -e 's!\(.*\)/utest/\(.*\)-test\.h!\1/\2_c.h!' >> $FILELIST_UTEST_MODSUT_PURE
 
 	# find the testrunner (testrunner.cpp)
 	rm -f .exec.tmp
-	echo "find ../../../ $TESTRUNNER_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_RUNNER_PURE" > .exec.tmp
+
+	echo "find $FIND_ROOT_DIR $TESTRUNNER_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_RUNNER_PURE" > .exec.tmp
 	sh .exec.tmp
 
 	rm -f .exec.tmp
