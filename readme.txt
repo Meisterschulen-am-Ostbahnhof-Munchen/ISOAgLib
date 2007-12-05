@@ -34,7 +34,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 of <a href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
 applications.
 The purpose of ISO 11783 is to provide an open interconnected system for on-board electronic systems. It is intended to enable electronic units to communicate with each other providing a standardized system.
-@isoaglib covers parts 1 to 13 of ISO11783 which specify a communications system for agricultural equipment based on the CAN 2.0 B [1] protocol.<br/>
+ISO 11783 consists of 13 parts which specify a communications system for agricultural equipment based on the CAN 2.0 B [1] protocol.<br/>
 
 \isoaglib is mainly developed on LINUX. The actual target device is typically an embedded system. There also exist some Win32 specific adaptations, as well.
 
