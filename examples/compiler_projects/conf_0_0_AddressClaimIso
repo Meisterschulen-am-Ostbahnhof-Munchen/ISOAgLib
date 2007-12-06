@@ -231,7 +231,7 @@ USE_ISO_TERMINAL_GRAPHICCONTEXT=1
 
 # if Iso_Terminal should offer the attributes via getter functions, this feature can be enabled.
 # thus it is recommended to store attributes at client side (smaller binary + less traffic)
-USE_ISO_TERMINAL_GET_ATTRIBUTES=1
+USE_ISO_TERMINAL_GETATTRIBUTES=1
 
 # ###############################################################
 # Process Data Communication Setup
