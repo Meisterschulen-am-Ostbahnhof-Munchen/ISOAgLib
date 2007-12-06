@@ -1063,6 +1063,7 @@ create_autogen_project_config()
 	echo -e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 	echo -e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
 
+
   echo "// Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory." >> $CONFIG_NAME
   echo "// Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian." >> $CONFIG_NAME
   echo "// Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms," >> $CONFIG_NAME
@@ -1203,19 +1204,22 @@ create_autogen_project_config()
   fi
 
   if [ $PRJ_ISO11783 -gt 0 ] ; then
-		echo -e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >> $CONFIG_NAME
-  	if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
-			echo -e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
+    echo -e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >> $CONFIG_NAME
+    if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
+	echo -e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
+	echo -e "#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE" >> $CONFIG_NAME
+	echo -e "#define USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE" >> $CONFIG_NAME
+	echo "hey man, stuff is being pasted in $CONFIG_NAME"
     fi
 
-	  if [ $PRJ_MULTIPACKET -gt 0 ] ; then
-			if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
-				echo -e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >> $CONFIG_NAME
-				echo -e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >> $CONFIG_NAME
-			else
-				echo -e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >> $CONFIG_NAME
-				echo -e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >> $CONFIG_NAME
-			fi
+    if [ $PRJ_MULTIPACKET -gt 0 ] ; then
+	if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
+	    echo -e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >> $CONFIG_NAME
+	    echo -e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >> $CONFIG_NAME
+	else
+	    echo -e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >> $CONFIG_NAME
+	    echo -e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >> $CONFIG_NAME
+	fi
     fi
   	if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
 			echo -e "#ifndef USE_ISO_TERMINAL_SERVER $ENDLINE\t#define USE_ISO_TERMINAL_SERVER $ENDLINE#endif" >> $CONFIG_NAME
