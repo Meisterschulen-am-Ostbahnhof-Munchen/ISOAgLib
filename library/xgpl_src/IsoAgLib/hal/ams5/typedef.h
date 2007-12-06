@@ -148,24 +148,9 @@
    }
    canMsg_t;
 
+
    /** pointer type to CAN message with timestamp (ringbuffer element) */
    typedef canMsg_t*  canBuffer_pt;
-
-   /** CAN Config-Objekt */
-   typedef struct
-   {
-      uint8_t  objNr;       // number of CAN objekt
-      uint32_t dwId;          // Identifier
-      uint8_t  idType;      // ID-Type: SID (11 Bit) = FALSE
-                            //          EID (29 Bit) = TRUE
-      uint8_t  direction;   // receive (0) or transmit (1)
-      uint16_t bufferSize;  // size of buffer
-      bool     bufferLock;  // state after init.: lock (true) / unlock (false)
-   }
-   canConfigObj_t;
-
-   /** pointer-type to CAN Config-Objekt */
-   typedef canConfigObj_t* canConfigObj_pt;
 
    /**
       CAN message box structure at byte access
@@ -208,8 +193,31 @@
    }
    canSlotMBox_t;
 
+ /** Pointer to the function called at the reception of a CAN msg
+  * uint8_t bBusNumber, uint8_t bMsgObj [0..13],
+  * canSlotMBox_t * ptCanMsgObj = Address of the register */
+//  typedef void *(*tIRQ_FUNCTION)(uint8_t,uint8_t,canSlotMBox_t volatile*,uint8_t);
+  typedef void (*tIRQ_FUNCTION)(uint8_t,uint8_t,canSlotMBox_t volatile*,uint8_t);
+  // typedef tCanMsgReg huge*(*tIRQ_FUNCTION)(byte,byte,tCanMsgReg huge*); 
 
-   /**
+   /** CAN Config-Objekt */
+   typedef struct
+   {
+      uint8_t  objNr;       // number of CAN objekt
+      uint32_t dwId;          // Identifier
+      uint8_t  idType;      // ID-Type: SID (11 Bit) = FALSE
+                            //          EID (29 Bit) = TRUE
+      uint8_t  direction;   // receive (0) or transmit (1)
+      uint16_t bufferSize;  // size of buffer
+      bool     bufferLock;  // state after init.: lock (true) / unlock (false)
+      tIRQ_FUNCTION pfIrqFunction;
+   }
+   canConfigObj_t;
+
+   /** pointer-type to CAN Config-Objekt */
+   typedef canConfigObj_t* canConfigObj_pt;
+
+  /**
       CAN message control register
    */
    typedef union
