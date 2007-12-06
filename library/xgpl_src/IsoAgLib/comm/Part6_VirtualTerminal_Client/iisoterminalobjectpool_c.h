@@ -61,7 +61,7 @@
 
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 //#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
 
 /* *************************************** */
@@ -286,10 +286,9 @@ public:
   virtual void eventDisplayActivation() {}
 
   /**
-     hook function that gets called after recognizing an incoming
-     VT proprietary message.
+     Gets called after recognizing an incoming VT proprietary message.
    */
-  virtual uint8_t eventProprietaryCommand(iIsoName_c /*cc_isoname*/) { return 0; };
+  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname) { return doEventProprietaryCommand(acr_isoname); };
 
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
@@ -337,6 +336,13 @@ public:
     for Get Attribute Value command
   */
   virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {}
+private:
+  /**
+     hook function that gets called after recognizing an incoming
+     VT proprietary message.
+   */
+  virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/) { return 0; }
+
 protected:
   iVtObject_c*HUGE_MEM** iVtObjects;
   uint16_t numObjects;
