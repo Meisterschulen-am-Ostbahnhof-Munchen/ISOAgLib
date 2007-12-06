@@ -169,7 +169,7 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData);
 @param acref_writeData : Data to be written.
 @return false whether the buffer is full and productor should wait.
 */
-bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId, void* irqData);
+bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId, void* irqData,uint8_t aui8_bXtd=1);
 
 
 void iFifoDiscardOldMessage(uint8_t aui8_busNum);

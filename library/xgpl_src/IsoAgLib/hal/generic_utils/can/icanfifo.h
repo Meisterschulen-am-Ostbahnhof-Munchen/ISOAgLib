@@ -61,8 +61,13 @@
 
 #ifdef SYSTEM_PC
 #define NEAR
+#define NEAR_PTR
+#elif SYSTEM_AMS5
+#define NEAR __near
+#define NEAR_PTR
 #else
 #define NEAR _near
+#define NEAR_PTR _near
 #endif
 
 namespace HAL {

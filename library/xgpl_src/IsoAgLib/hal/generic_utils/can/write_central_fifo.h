@@ -122,7 +122,7 @@ __HAL::tCanMsgReg* IRQ_TriggerSend(uint8_t bBus,uint8_t bOjekt,__HAL::tCanMsgReg
 #endif
 
 
-void getIrqData(void* inputData, NEAR HAL::fifoData_s* destination);
+void getIrqData(void* inputData, NEAR HAL::fifoData_s* destination, uint8_t aui8_bXtd=1);
 
 
 

@@ -271,8 +271,8 @@ int32_t iFifoReadFbIdx(uint8_t aui8_busNum,int32_t& ri32_fbIdx, int32_t& rui32_r
   if(!s_canFifoInstance[aui8_busNum].b_Reading )
     s_canFifoInstance[aui8_busNum].b_Reading = true;
 
-NEAR fifoData_s* ps_readData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
 
+NEAR_PTR fifoData_s* ps_readData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
   ri32_fbIdx = ps_readData->i32_fbIndex;
   rui32_rcvTime = ps_readData->i32_time;
   rui32_msgId = ps_readData->dwId;
@@ -331,7 +331,8 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData)
 
 
   uint8_t* pui8_destination = (uint8_t*)&ar_readData;
-  NEAR uint8_t* pui8_source = (uint8_t*)&s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
+
+  NEAR_PTR uint8_t* pui8_source = (uint8_t*)&s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
   for ( unsigned int cnt = sizeof(fifoData_s); cnt > 0; cnt--)
   {
          *pui8_destination= *pui8_source;
@@ -401,7 +402,7 @@ inline  void getFifoCanIdenType(bool b_isExt,__IsoAgLib::Ident_c::identType_t& r
 
 
 /** function used by the productor for writing in the FIFO */
-bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* irqData)
+bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* irqData, uint8_t aui8_bXtd)
 {
 
   unsigned int ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
@@ -463,15 +464,17 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
 //end atomic operation
 
 /** write in the FIFO **/
- NEAR fifoData_s* ps_writeData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()];
 
+  NEAR_PTR fifoData_s* ps_writeData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()];
   ps_writeData->dwId = ai32_msgId;
   ps_writeData->i32_time = HAL::getTime();
   ps_writeData->i32_fbIndex = ai32_fbIdx;
+  
+  
 
   // getIrqData is implemented in the target specific HAL and can directly place the data of the
   // received message into pointed place inside the FIFO
-  __HAL::getIrqData( irqData, ps_writeData );
+  __HAL::getIrqData( irqData, ps_writeData , aui8_bXtd);
 
 /******************************
        WRITE INTO THE BUFFER
