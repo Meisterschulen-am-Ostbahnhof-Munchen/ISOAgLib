@@ -137,7 +137,7 @@ vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableRepla
   setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 void
 vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
 {
@@ -296,7 +296,7 @@ vtObject_c::getValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, 
   return * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset));
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 // //////////////////////////////// get(Signed)Value(8/16/32)GetAttribute
 uint8_t
 vtObject_c::getValue8GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {

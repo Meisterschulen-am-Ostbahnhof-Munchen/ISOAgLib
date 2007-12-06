@@ -132,7 +132,7 @@ public:
 
   bool setAudioVolume (uint8_t aui8_volume);
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 0; }
   uint8_t updateBackgroundColour(bool b_SendRequest=false);

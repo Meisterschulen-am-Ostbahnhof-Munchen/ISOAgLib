@@ -126,7 +126,7 @@ public:
   //! @param newValidationString:
   //! @param b_updateObject:
   void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 26; }
 

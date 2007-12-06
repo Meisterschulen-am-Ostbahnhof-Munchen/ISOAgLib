@@ -242,7 +242,7 @@ vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFo
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getClientByID (s_properties.clientId).getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectFontAttributes_c::updateFontColour(bool b_SendRequest)
 {

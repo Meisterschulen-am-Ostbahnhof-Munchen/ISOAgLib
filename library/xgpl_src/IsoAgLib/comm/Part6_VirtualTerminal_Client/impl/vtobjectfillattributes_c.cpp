@@ -146,7 +146,7 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFill
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectFillAttributes_c::updateFillType(bool b_SendRequest)
 {

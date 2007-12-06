@@ -129,7 +129,7 @@ public:
 
   //  Operation: getString
   const char* getString();
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 22; }
   */

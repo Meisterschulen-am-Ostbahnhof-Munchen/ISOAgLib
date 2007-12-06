@@ -126,7 +126,7 @@ public:
 
   //! @param p_btn:
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 27; }
 

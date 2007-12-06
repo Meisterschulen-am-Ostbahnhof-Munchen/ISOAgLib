@@ -1196,7 +1196,7 @@ VtClientServerCommunication_c::processMsg()
 
     case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value"
       MACRO_setStateDependantOnError (7)
-      #ifdef USE_GETATTRIBUTE
+      #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
       // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
       if ((mc_data.getUint8Data (1) == 0xFF) && (mc_data.getUint8Data (2) == 0xFF)) // object id is set to 0xFFFF to indicate error response
       {
@@ -1977,7 +1977,7 @@ VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
 // ########## END Graphics Context ##########
 #endif
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 bool
 VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
 {

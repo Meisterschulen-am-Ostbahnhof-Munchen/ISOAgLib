@@ -168,7 +168,7 @@ vtObjectAlarmMask_c::setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, in
   return genericChangeChildPosition (apc_childObject, x, y, b_updateObject, vtObjectAlarmMask_a->numberOfObjectsToFollow, const_cast<IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s *> (vtObjectAlarmMask_a->objectsToFollow), MACRO_getStructOffset(get_vtObjectAlarmMask_a(), objectsToFollow), sizeof(iVtObjectAlarmMask_s), b_enableReplaceOfCmd);
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 uint8_t
 vtObjectAlarmMask_c::updateBackgroundColour (bool b_SendRequest)
 {

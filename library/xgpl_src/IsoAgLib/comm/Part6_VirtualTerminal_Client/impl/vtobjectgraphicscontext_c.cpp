@@ -456,7 +456,7 @@ vtObjectGraphicsContext_c::copyViewport2PictureGraphic( const IsoAgLib::iVtObjec
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 uint16_t
 vtObjectGraphicsContext_c::updateViewportWidth(bool b_SendRequest)
 {

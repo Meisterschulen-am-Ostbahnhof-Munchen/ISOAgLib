@@ -209,7 +209,7 @@ vtObjectContainer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   }
 }
 
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 /** these attributes are in parentheses in the spec, so commented out here
 uint16_t
 vtObjectContainer_c::updateWidth(bool b_SendRequest)

@@ -195,7 +195,7 @@ vtObjectInputAttributes_c::getString()
 {
   return get_vtObjectInputAttributes_a()->validationString;
 }
-#ifdef USE_GETATTRIBUTE
+#ifdef USE_ISO_TERMINAL_GETATTRIBUTES
 /** that attribute is in parentheses in the spec, so commented out here
 uint8_t
 vtObjectInputAttributes_c::updateValidationType(bool b_SendRequest)
