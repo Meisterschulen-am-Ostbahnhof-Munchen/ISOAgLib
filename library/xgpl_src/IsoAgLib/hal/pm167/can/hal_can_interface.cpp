@@ -217,7 +217,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
 
 /** user defined function to retrieve the data from tCanMsgReg  */
 
-void getIrqData(void* inputData,_near HAL::fifoData_s* destination)
+void getIrqData(void* inputData,_near HAL::fifoData_s* destination,uint8_t aui8_bXtd)
 {
 
   tCanMsgReg* tCanregister = (tCanMsgReg*)inputData;

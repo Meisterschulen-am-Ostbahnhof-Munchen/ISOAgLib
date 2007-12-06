@@ -839,7 +839,7 @@ __HAL::tCanMsgReg* IwriteCentralCanfifo(uint8_t bBus,uint8_t bOjekt,__HAL::tCanM
   return 0;
 }
 
-void getIrqData(void* inputData,HAL::fifoData_s* destination)
+void getIrqData(void* inputData,HAL::fifoData_s* destination,uint8_t aui8_extended)
 {
 
   tCanMsgReg* tCanregister = (tCanMsgReg*)inputData;
