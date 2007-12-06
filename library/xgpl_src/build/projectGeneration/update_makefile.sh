@@ -937,7 +937,7 @@ create_utest_filelist()
 	FIND_ROOT_DIR=""
 
 	# are we at an extern project?
-	if [[ "$ISO_AG_LIB_INSIDE" =~ "IsoAgLib" ]]
+	if [ "$ISO_AG_LIB_INSIDE" =~ "IsoAgLib" ]
 	then
 		# we're at an extern project (like vtserver)
 		FIND_ROOT_DIR=$ISO_AG_LIB_INSIDE/../
