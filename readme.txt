@@ -19,7 +19,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
         <li> \ref StructuralOverview </li>
-        <li> \ref UsingProjects "Known Applications" </li>
+        <li> \ref UsingProjects "Known Users" </li>
         <li> \ref Maintainers "Maintainers" </li>
         <li> \ref Authors
     </ul>
@@ -39,7 +39,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </script>
 <span style="float:right"><a href="javascript:popUp('Images/isobus.png')"><img src="Images/isobus_thumb.png" alt="isobus.png" border="0"><br><small>ISOBUS overview</a></small></span>
 \endhtmlonly
-@isoaglib provides a free portable C++ source library for development
+\isoaglib provides a free portable C++ source library for development
 of <a href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
 applications.
 The purpose of ISO 11783 is to provide an open interconnected system for on-board electronic systems. It is intended to enable electronic units to communicate with each other providing a standardized system.
@@ -86,15 +86,15 @@ The \isoaglib is designed to provide the following main features
     <b>Core target of \isoaglib Virtual Terminal design:</b><br>
     - Enable creation of one single mask pool, that fits all terminal configurations
     - Provide attributes for project specific control of the runtime adaptation
-    - Allow flexible addition of further attributes, if automatic layout control must be optimized for some terminal properties (e.g. amount of softkeys )
+    - Allow flexible addition of further attributes, if automatic layout control must be optimized for some terminal properties (e.g. amount of softkeys)
 
     All these actions are demonstrated in the tutorial example \ref 3_0_VirtualTerminalIso.cpp .<br>
     &nbsp;<br>
     Brad Cox developed a tool for his company, that is able to convert the project files of the WTK mask generator to the XML definition.
-    Please contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> if you are interested in this tool for your own use, as Brad
+    Please contact <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> if you are interested in this tool for your own use, as Brad
     Cox indicated already, that he might be willing to provide this undest some conditions. <br>
     But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to
-    control the automatic runtime adaptation of the single core mask pool to the different terminal properties (e.g. font size dependent spacing ).
+    control the automatic runtime adaptation of the single core mask pool to the different terminal properties (e.g. font size dependent spacing).
 - provide flexible and capable process data implementation as backbone for all documenting and control interaction
         (e.g. trigger dependent measurement value send, allow setpoint intervals with MIN / MAX,
         enable N --&gt; 1 relation between user and provider of process data)
@@ -283,7 +283,7 @@ The layered structure is described by the following diagram:
 The following elements are needed for all projects:
     - blue nodes in layer "HAL"
     - yellow nodes in layer "Driver Extensions"
-    - cyan nodes in layer "Communication" (the subdirectory ISO11783 is only used for the respective protocol )
+    - cyan nodes in layer "Communication" (the subdirectory ISO11783 is only used for the respective protocol)
 
 Therefore the minimum footprint of the \isoaglib in Flash ROM is quite low.
 
@@ -293,7 +293,7 @@ The supplementary drivers for RS232, Sensor Input and Actuator Control (mainly P
 the research project at TUM.
 
 
-\section UsingProjects Known Applications
+\section UsingProjects Known Users
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
 ( or a work based on it - see GPL &sect;3) with some information on the used library, it would be quite kind to
 inform additionally the authors of your project, so that each using project can be listed here.
@@ -309,7 +309,7 @@ The <a href="http://www.isoaglib.com/">Commercial Overview Page</a> of \isoaglib
 <a href="http://www.isoaglib.com/customer-agco.html">list of commercial products which use \isoaglib</a>.
 
 
-The \isoaglib will be actively maintained by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
+The \isoaglib will be actively maintained by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
 as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
 Even in case the active maintenance by <a href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
 the independent website at the
@@ -332,9 +332,9 @@ can't be affected by the style and quality of future project maintenance.</b>
 
 
 \section Maintainers Some information on the maintainers
-The \isoaglib was initially created by <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> who is now
+The \isoaglib was initially created by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> who is now
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
-already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin (all in Germany; <b>state November 2007</b> ).<br>
+already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin (all in Germany; <b>state November 2007</b>).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
 Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
     - <a href="http://www.agcocorp.com/">AGCO GmbH/<a href="http://www.fendt.com/">Fendt</a>
@@ -373,7 +373,7 @@ at least to avoid that our competitors take the code for free and make their own
 even asking us).
 
 Interested parties don't have to pay much money, as we are mostly interested in information about
-everybody who uses those additional features. So don't hesitate to contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+everybody who uses those additional features. So don't hesitate to contact <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
 for registration to get access to the <b>EXT</b> part of \isoaglib.
 
 The following areas are examples for such extensions:
@@ -381,17 +381,17 @@ The following areas are examples for such extensions:
         - <i>iTracLight_c</i> for lightning information and control
         - <i>iTracMoveSetpoint_c</i> for control of tractor moving parameters by implement
         - <i>iTracPtoSetpoint_c</i> for control of PTO settings by implement
-        - <i>iTracAux_c</i> for management of axiliary valves of tractor (control and information )
+        - <i>iTracAux_c</i> for management of axiliary valves of tractor (control and information)
     - additional features for virtual terminal access like multi language framework (simple definition of variable language depend parts of the mask pool)
 
 
 \section Authors Authors and Contributors
 
-	- Main Author: <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> designed
+	- Main Author: <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> designed
 			the complete framework
-	- Virtual Terminal Expert: <a href="mailto:M.Wodok@osb-ag:de">Martin Wodok</a> implemented
+	- Virtual Terminal Expert: <a href="mailto:M.Wodok_at_osb-ag:de">Martin Wodok</a> implemented
 			the tool <b>vt2iso</b> and the virtual terminal handling
-	- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox@agcocorp:com">Brad Cox</a> who helped to find several optimization needs for documentation,
+	- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox_at_agcocorp:com">Brad Cox</a> who helped to find several optimization needs for documentation,
 			tutorial and project generation support. The resulting documentation helped him finally to implement all missing VT Object types, which
 			weren't needed for the <b>MiniVeg N</b> project. He is already using \isoaglib for some interesting test applications, and
 			contributed all missing VT Objects, so that \isoaglib imeplements also VT Objects like Macro and AuxiliaryInput.
@@ -399,6 +399,10 @@ The following areas are examples for such extensions:
 			Last but not least, he started with us to integrate multi language support.
 
 \subsection Acknowledgements Acknowledgements
+Thanks to the DFG, which finances the partial project 2 of the research group &quot;IKB-D&uuml;rnast&quot;.
+Thanks to the research group of Prof. H. Auernhammer and to <a href="mailto:m.wodok_at_osb-ag:de">Martin Wodok</a>, who
+developed LBS_Terminal.
+
 \anchor InitialFundingDfg <b>Thanks to DFG funded research group IKB Duernast</b><br/>
 The initial creation of the \isoaglib was enabled by the research project
 <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology
@@ -406,7 +410,7 @@ The initial creation of the \isoaglib was enabled by the research project
 
 \anchor InitialSupport <b>Thanks to development by Sensortechnik Wiedemann (STW)</b><br/>
 The development phase with some compiler issues was supported by the experts of the
-<b>ESX</b> engineering team at <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW )</a> .
+<b>ESX</b> engineering team at <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a> .
 Some of the main design goals were derived during a project with <a href="http://www.sensor-technik.de">STW</a>
 and <a href="http://www.fendt.com/">AGCO Fendt</a> .
 
@@ -420,9 +424,8 @@ As the \isoaglib is mainly developed on LINUX, all Win32 specific adaptations
 including driver mappings and project file generation for Win32 IDEs weren't optimal until
 first users like <b>Brad Cox</b> started to try \isoaglib in combination with
 <b>Microsoft Visual Studio C++</b> . As a result, \isoaglib:
--  provides now an automatic project file generation for Microsoft Visual Studio VC++ version 6.0 (DSP file ),
+-  provides now an automatic project file generation for Microsoft Visual Studio VC++ version 6.0 (DSP file),
      with the requirement of installation of STLport, if version 7.0 and above isn't used
 - Open Source Win32 IDE "Dev-C++" is used for Win32 compile of vt2iso, as there the several required utils can be installed a lot easier.
-
 
 */

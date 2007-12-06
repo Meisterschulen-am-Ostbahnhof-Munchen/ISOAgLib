@@ -6,10 +6,10 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described in this section:
     <ul>
-    <li> \ref GeneralSupportInformation </li>
+    <li> \ref ContactInformation </li>
     <li> \ref Mailing-Lists </li>
-    <li> \ref QuestionsAnswers </li>
     <li> \ref Contributing </li>
+    <li> \ref GeneralSupportInformation </li>
     </ul>
 </td></tr>
 </table>
@@ -27,9 +27,8 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <table class="infobox" border="0">
 <tr><td><i>
 <b>Please note...</b><br/>
-that each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
-"fix" the email address - this "manipulation" might change, if the maintainers detect that SPAM tools are able to derive automatically a
-working domain.</i>
+...that each email adress in this project has been intentionally corrupted to avoid spamming. A human reader will easily detect how to
+fix the email address.</i>
 </td></tr></table>
 
 \section ContactInformation Contact Information
@@ -49,71 +48,45 @@ New feature wishes, bug reports and other change suggestions can be discussed th
 Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
 Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.
 
-
-\section QuestionsAnswers Questions, Answers and Discussion
-An Open Source project needs active users, who post their questions, hints and <i>answers to other questions</i>
-to a central open communication platform. Therefore all users are strongly encouraged to help answering questions and to
-search for reasons of posted \isoaglib bugs in the \ref Mailing-Lists described above. 
-
-This works really fine in several other Open Source projects.
-
-The \isoaglib was developed with the help of the following Open Source projects:
-- <a href="http://www.kdevelop.org">KDevelop</a> an IDE for object oriented program development running on Linux
-- <a href="http://www.umbrello.org">Umbrello</a> for modelling of the project with the Unified Modelling Language (UML)
-- KDoc , a source code parser to generate API documentation from the sources
-- <a href="http://www.doxygen.org">doxygen</a> , a comprehensive source code parser, which can be highly configured, and which is used
-    to generate the published API documentation
-- sgmltools, <a href="http://www.lyx.org">lyx</a>, for editing of the handbook
-- Source Navigator, a comprehensive source editor with a capable source parser (e.g. object dependencies,
-    function calls)
-- LINUX and all its standard development tools
-- ...
-
-Thanks to the DFG, which finances the partial project 2 of the research group &quot;IKB-D&uuml;rnast&quot;.
-Thanks to the research group of Prof. H. Auernhammer and to <a href="mailto:m.wodok_at_osb-ag:de">Martin Wodok</a>, who
-developed LBS_Terminal.
-
-
 \section Contributing Contributing to the IsoAgLib Project
 Each Open Source project needs the input of an active user community to get optimal results.
 Herby not only source code contributions are needed. For example tutorial examples and documentation text
-could be enhanced, corrected and extended by users who don't feell familiar engough to contribute code.
+could be enhanced, corrected and extended by users who don't feel familiar enough to contribute code.
 
-All authors will be listed in the file(s) where they contributed ( please prepare this in your patches ), and at the main page ( this page )
-of \isoaglib <a href="index.html#Authors">HERE</a>.
+All authors will be listed in the file(s) where they contributed (please prepare this in your patches), and at the \ref Authors "Authors' and Contributors' section" on the main entry page</a> of \isoaglib.
 Each fundamental change like a licensing change will be only performed, if none of the source code authors and contributors
-raise their veto. Licensing changes might be needed, if some projects or users would be prevented from the us of \isoaglib.
+raise their veto. Licensing changes might be needed, if some projects or users would be prevented from the use of \isoaglib.
 But also fundamental changes in the design and structure of \isoaglib will be discussed with the authors (as far as they are still active and
 reachable).
 
 Your contributions can be integrated into the repository if you work as described:
 - Use Subversion or one of its GUI Tools (e.g. TortoiseSVN) to create a local working copy
-- Update your repository ( especially important for creation of diffs ) with
-    the command "svn update" ( or one of the corresponding commands in GUI tools )
-- Collect all changes with the command "svn diff" ( or one of its corresponding commands in GUI tools; e.g. TortoiseSVN provides a command "Create Patch..." )
+- Update your repository (especially important for creation of diffs) with
+    the command "svn update" (or one of the corresponding commands in GUI tools)
+- Collect all changes with the command "svn diff" (or one of its corresponding commands in GUI tools; e.g. TortoiseSVN provides a command "Create Patch...")
     into one patch
 - Send the patch to <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
-    for inclusion ( evaluation of the change is then a lot easier )<br>
+    for inclusion (evaluation of the change is then a lot easier)<br>
 
-If you perform local changes at your local "Working Copy" ( that's the result of a checkout ), subversion might
+If you perform local changes at your local "Working Copy" (that's the result of a checkout), subversion might
 detect <b>conflicts</b> during one of the next updates, if your local changes intersect with some changes in the
-repository. Subversion ( like CVS ) will preserve both versions of the affected <b>lines</b>, so that you can manually
+repository. Subversion (like CVS) will preserve both versions of the affected <b>lines</b>, so that you can manually
 decide on the "right" merge. If you don't detect such a conflict, you might be irritated by some syntax error messages from your compiler
-or you might get some execution errors on shell scripts like update_makefile.sh . This is caused by the way Subversion presents the both
-versions within the affected file. You might look <a href="http://tortoisesvn.sourceforge.net/docs/release/TortoiseSVN_en/ch05s06.html">here</a> for more
-information on the markers which are used to show conflicts ( comparable to CVS ).<br>
+or you might get some execution errors on shell scripts like <tt>update_makefile.sh</tt>. This is caused by the way subversion presents both
+versions within the affected file. 
+You might look <a href="http://tortoisesvn.sourceforge.net/docs/release/TortoiseSVN_en/ch05s06.html">here</a> for more
+information on the markers which are used to show conflicts (comparable to CVS).<br>
 Subversion will create unchanged copies of your last base version, the current version from repository and your personal changed file,
-so that you can also simply continue to use yours ( foo.mine ) or the newest ( foo.rNN - NN the number of the current version ) version.
-Please remove the files like foo.mine and foo.rNN to indicate to subversion that you resolved the conflict.<br>
+so that you can also simply continue to use yours (<tt>foo.mine</tt>) or the newest (<tt>foo.rNN</tt> - <tt>NN</tt> the number of the current version) version.
+Please remove the files like <tt>foo.mine</tt> and <tt>foo.rNN</tt> to indicate to subversion that you resolved the conflict.<br>
 <b>TortoiseSVN</b> helps you to detect conflicts, as it highlights the corresponding filename in its work state dialog window, where the
-process of an update is logged. It indicates also files where it was able to perform a clean merge of local and repository changes. But you might also
-have a look in these files to, to make shure, the merge was really clean ( the maintainers of \isoaglib didn't have
-such problems so far  ).
+process of an update is logged. It indicates also files where it was able to perform a clean merge of local and repository changes. 
+But you might also have a look in these files to make verify that the merge was really clean (the maintainers of \isoaglib didn't have
+such problems so far).
 
 \section GeneralSupportInformation General Support Information
-Even if the \isoaglib provides very detailed documentation including several <b>HOWTO</b> chapters with
-important starting information, the learning effort to get a tutorial example running is not completly neglectible ( reading the documentation
-requires at least some time ). Additionally the <i>object oriented</i> development style might be new to most of the potential users.
+Even if \isoaglib provides very detailed documentation including several <b>HOWTO</b> chapters, the learning effort to get a tutorial example running is not completly neglectible (reading the documentation requires at least some time).
+Additionally the <i>object oriented</i> development style might be new to most of the potential users.
 
 \subsection Workshop Tutorial Workshops for Development with IsoAgLib
 Please contact <a href="mailto:a.spangler_at_osb-ag:de">Achim Spangler</a> to
@@ -124,34 +97,34 @@ request and plan workshops where all members can learn:
         - scaling to screen size
         - selection of available font size that is corresponding to the scaling factor of the complete layout
         - colour depth selection during runtime, so that a unique global mask pool can be defined.
-    - integration of <b>IDE</b> of choice ( some project file format types are automatically supported )
-    - integration of <b>ISO 11783</b> communication with existing application code ( ways to define interface modules )
+    - integration of <b>IDE</b> of choice (some project file format types are automatically supported)
+    - integration of <b>ISO 11783</b> communication with existing application code (ways to define interface modules)
     - integration of process data management to allow terminal independent control and monitoring access to an implement
-    - adaptation to individual target platform ( creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL )
-    - test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment ( RTE ), which is another also Open Source
-        project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications ( not only useable for ISO 11783 networks )
+    - adaptation to individual target platform (creation of corresponding <b>H</b>ardware <b>A</b>bstraction <b>L</b>ayer - HAL)
+    - test of application with the <b>R</b>ealtime <b>T</b>est <b>E</b>nvironment (RTE), which is another also Open Source
+        project of <a href="http://www.osb-ag.de">OSB AG</a> for test of embedded applications (not only useable for ISO 11783 networks)
     - ...
 
 The exact topics of a tutorial workshop can be defined corresponding to the request of
 interested developers.
 
-\subsection HalAdaptation Support for Adaptation to Individual Target Platform
-Even if the adaptation of the \isoaglib to an individual target platform ( OS or BIOS ) is eased
+\subsection HalAdaptation Support for Adaptation to an Individual Target Platform
+Even if the adaptation of \isoaglib to an individual target platform (OS or BIOS) is eased
 by the compact HAL definition, <a href="http://www.osb-ag.de">OSB AG</a> can offer support for this adaptation or can perform the
 complete adaptation. Please contact <a href="mailto:a.spangler_at_osb-ag:de">Achim Spangler</a> for more details.
 
 \subsection SupportContract Support Contract
 Like other Open Source projects, the maintainers can provide some free support, which is restricted by
 the spare free time of the developers and other experts in the user community. For commercial users, who need a predefined
-reaction time for each issue ( question or bug report ), should contact <a href="mailto:a.spangler_at_osb-ag:de">Achim Spangler</a> to arrange a commercial project contact.
+reaction time for each issue (question or bug report), should contact <a href="mailto:a.spangler_at_osb-ag:de">Achim Spangler</a> to arrange a commercial project contact.
 
 \subsection CommercialEdition Commercial Editions
-The business model of \isoaglib is comparable to <b>Red Hat</b> with their <i>free</i>
+The business model of \isoaglib is comparable to <b>Red Hat</b> with their free
 <b><a href="http://www.fedora-linux.org/">Fedora Linux</a></b> and their commercial grade
 <b><a href="http://www.redhat.com/">Red Hat Enterprise</a></b> edition.
 While the versions of the free \isoaglib edition are good working snapshots of the ongoing development,
-the commercial edition provides thoroughly tested and maintained (including bug fixes for older revisions) versions.
-Please get in toch with check our <a href="http://www.isoaglib.com/contact.html"> to retrieve more information.
+the commercial edition provides thoroughly tested and maintained versions (including bug fixes for older revisions).
+Please get in toch with <a href="mailto:a.spangler_at_osb-ag:de">Achim Spangler</a> to retrieve more information.
 
 \subsection FeaturesOnRequest Integration of Requested Features
 As long as <a href="http://www.osb-ag.de">OSB AG</a> maintains the \isoaglib, all received
@@ -163,14 +136,14 @@ projects of the \isoaglib maintainers, they will be only integrated if other use
 <a href="http://www.osb-ag.de">OSB AG</a> is asked to develop them. This is also true for several enhancements of ISO Virtual Terminal mask definitions, which
 would enable a more capable and more flexible adaptation to the features of the connected terminal. <br>
 Some examples:
-    - GUI tool to define the XML mask definition ( easier than edit of pure ASCII )
+    - GUI tool to define the XML mask definition (easier than edit of pure ASCII)
     - individual rules for selection of bitmap version in relation to size and color depth of connected
         terminal
     - extension of the font size relative positioning to map different font sizes for different
-        language versions ( languages where all labels a longer than the corresponding strings in other
+        language versions (languages where all labels a longer than the corresponding strings in other
         languages might need a smaller font size to allow placement on the common layout;
-        therefore font size dependent position alignment should be enhanced )
-    - language specific bitmaps ( especially if some text is displayed in the bitmap )
+        therefore font size dependent position alignment should be enhanced)
+    - language specific bitmaps (especially if some text is displayed in the bitmap)
 
 */
 

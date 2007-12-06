@@ -2,6 +2,17 @@
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
+<table class="infobox" border="0">
+<tr><th>See also</th></tr>
+<tr><td>
+    <ul>
+    <li> \ref GPL_with_exception </li>
+    </ul>
+</td></tr>
+</table>
+
+<div style="clear:left"></div>
+
 \section LicenseConditions License Conditions
 
 This Open Source project is published under License Conditions which are taken from the <a href="http://ecos.sourceware.org/">eCos</a> project.
@@ -33,16 +44,16 @@ You can identify the license protected parts by:<ul>
 <li>the <tt>README<b></b>_LICENSED_PARTS.txt</tt> in each of the root directories where the license conditions of the individual contents is described
 </ul>
 
-<b>Important note on distinction between extensions of ISO<i><sub>AgLib</sub></i> ( which are covered by the license ) and independent
+<b>Important note on distinction between extensions of \isoaglib ( which are covered by the license ) and independent
 Application development:</b>
-The ISO<i><sub>AgLib</sub></i> uses <b>C++</b> namespaces to group internal classes, functions, types, ... in units  <i>__IsoAgLib</i> and <i>__HAL</i>,
+The \isoaglib uses <b>C++</b> namespaces to group internal classes, functions, types, ... in units  <i>__IsoAgLib</i> and <i>__HAL</i>,
 which can be clearly seperated from their interface counterparts <i>IsoAgLib</i> and <i>HAL</i>.
 Each module which uses or calls <b>directly</b> elements of the internal namespaces <i>__IsoAgLib</i> and <i>__HAL</i> is regarded as extension
-of the ISO<i><sub>AgLib</sub></i>.
-So you must restrict your direct usage of ISO<i><sub>AgLib</sub></i> parts to the interface namespaces <i>IsoAgLib</i> and <i>HAL</i>.
+of the \isoaglib.
+So you must restrict your direct usage of \isoaglib parts to the interface namespaces <i>IsoAgLib</i> and <i>HAL</i>.
 This causes no runtime and firmware size overhead, as the mapping between the interface elements and their corresponding internal elements
 is realized by inlining, which is replaced by the compiler with direct usage of internal parts.
 Please contact the maintainer <a href="mailto:a.spangler@osb-ag:de">Achim Spangler</a>, in case you need for some reasons direct access to internal
-parts. In case your planned function is really no extension to the ISO<i><sub>AgLib</sub></i>, the interface might be extended to provide the
+parts. In case your planned function is really no extension to the \isoaglib, the interface might be extended to provide the
 needed access.
 */
