@@ -606,11 +606,13 @@ create_filelist( )
         COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/i*'"
       fi
       USE_ISO_TERMINAL_GRAPHICCONTEXT=1
+      echo "CHECK 1"
     fi
     PRJ_MULTIPACKET=1
   fi
-  if [ "$USE_ISO_TERMINAL_ATTRIBUTES" != "" ] ; then
-    USE_ISO_TERMINAL_ATTRIBUTES=1
+  if [ "$USE_ISO_TERMINAL_GETATTRIBUTES" != "" ] ; then
+    USE_ISO_TERMINAL_GETATTRIBUTES=1
+    echo "check 2"
   fi
   if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
     PRJ_MULTIPACKET=1
