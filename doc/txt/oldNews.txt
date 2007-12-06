@@ -1,8 +1,69 @@
-/*! \page PageOldNews Changelog of IsoAgLib
+/*! \page PageOldNews IsoAgLib news archive 
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
+<table class="infobox" border="0">
+<tr><th>See also</th></tr>
+<tr><td>The following parts are described in this section:
+    <ul><li> \ref LatestNews </li>
+        <li> \ref PageChanges </li>
+        <li> \ref PageTodo </li>
+    </ul>
+</td></tr>
+</table>
+
+<div style="clear:left"></div>
+
 \section OldNews Archive of old news
+
+\subsection News_E New for the 2.0 release
+  - <b>December 2006:</b> Support of PEAK CAN cards for Linux development hosts
+  - <b>October 2006:</b> Integrate enhanced scheduler, which plans exact reschedule times for all periodic subtasks of ISO<i><sub>AgLib</sub></i>, so that other program items
+     exactly know when the timeEvent() function of ISO<i><sub>AgLib</sub></i> has to be called again.
+  - <b>September 2006:</b> <b>ISO<i><sub>AgLib</sub></i></b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
+    The following steps had to be done:
+    + remove all unneeded DIN9684 and all its #ifdefs
+    + merge ISONAME_c and DevKey_c to the new ISONAME_c as the only
+      class to represent the device key
+    + merge SystemMgmt_c and IsoMonitor_c to the new IsoMonitor_c class
+      so that it hosts both all IdentItem_c (as list of pointers)
+      and does also maintain list of all ECUs on the BUS
+      --> all Network Management is done by this IsoMonitor_c class right
+      now
+    + optimize adress resolving for process data send, as some helper functions
+      were only needed for the DIN way of life
+    + optimize the TP send and receive classes, as several action flows were
+      only needed for the parallel support of DIN, ISO and Fieldstar/LBS+ TP
+
+\subsection News_D Planned changes for 2.0.1 release
+  - there are currently no planned changes on interface side for 2.0.1 release
+  - CAN HAL will get its own central message FIFO implementation, to get better load balancing and message processing in order as received
+
+\subsection News_C News for the 1.2.1 release
+  - <b>February 2006:</b> Enhance modularization of base information (Not-ProcessData parts from 11783-7) - this will be finished for release 1.2.2
+  - <b>January 2006:</b> Periodic Source Adress (SA) request sending to get early cleanup of stale nodes in monitor list
+  - <b>18.1.2006:</b> Virtual Terminal Client<br>
+    - Now supporting correct scaling of the button-contents! (Each bThe layered structure is described by the following diagram:
+inline_dotgraph_1
+Information on Obligatory Elemutton has its own scaling-factor/centering-offset as the border is always 4 absolute 4 pixel, independent of how the object-pool will be scaled!)
+      <b>ATTENTION: Please REBUILD vt2iso and RERUN it on your project's XML-definition, the initAllObjects function in the generated -functions.inc has changed!!<br>
+    - Also new due to this slightly different scaling in the buttons: Don't use the same fontattributes-object in the datamask AND a button. Also (from a strict point of view) don't use the same fontattributes-object in different-sized buttons (as they all got a slightly different scaling-factor)!!!</b><br>
+    - Please recheck all your fixed-bitmaps in your projects (if using any), because the scaling-routine has slightly changed, which may result in size-differences by 1 pixel - this may lead to NOT finding a matching fixed-bitmap anymore!
+
+\subsection News_B News for the 1.2.0 release
+    - <b>during 2005:</b> Virtual Terminal Client<br>
+        - <b>ISO<i><sub>AgLib</sub></i></b> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com
+        - Added support for IsoLatin-9 fonts: Now for every font-attribute the "font_type" attribute has to be specified. (Please adapt your existing XML files.)<br>
+        - Support for font-downscaling (in case a pool is designed for >200x200 pixel VTs)<br>
+        - Cleanup on Tutorial3_0 example objectpool
+        - Several more handler functions, for more information see "Changes" section below<br>
+        - Vector-Informatik supports now the Open Sourve IDE <b>Dev-C++</b>, so that you don't need Microsoft compilers to get the tutorials to run with real CAN hardware on Win32.
+        - New area of customer only extension modules. Specific extansions like complete level 2 and 3 Tractor ECU Client and Server support need several additional functions, that
+            are at the moment only implemented by <a href="http://www.osb-ag.de/">OSB</a> and nobody else from the user community. Thus we don't want to give it for free to anonymous
+            parties (including our competitors). Researchers and potential customer may ask <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for granting personal access
+            to the repository.
+    - <b>2005-March:</b> MultiReceive classes implemented.
+
 \subsection News_A News before the 1.1.0 release
 	- <b>2004-11-15:</b> Create new email list for email exchange within user community so that users can help each other, and
 		can discuss changes there, before somebody starts implementing the change<br>
@@ -31,7 +92,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 			- rename example program Taskcontroller to AutoDataCollector, to avoid misleading interpretation as ISO 11783 conformant Task-Controller which it is <b>clearly NOT</b>
 
 
-\subsection OldNews News before 1.0.0 release
+\subsection News_a News before 1.0.0 release
 	- Complete Toolchain for ISO 11783 Virtual Terminal is integrated.
 	- <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a> -
 	    the first commercial application of <a href="www.fritzmeier.de">Fritzmeier</a>
