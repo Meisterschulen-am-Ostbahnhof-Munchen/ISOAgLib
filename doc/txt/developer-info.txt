@@ -14,7 +14,18 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
     </li>
     <li> \ref PageChanges "Changelog" </li>
     <li> \ref PageTodo </li>
+    <li> \ref ToolsUsed </li>
 </ol>
+</td></tr>
+</table>
+<br>
+<table class="infobox" border="0">
+<tr><th>See also</th></tr>
+<tr><td>
+    <ul>
+    <li> \ref Contributing </li>
+    <li> \ref ToolsUsed </li>
+    </ul>
 </td></tr>
 </table>
 

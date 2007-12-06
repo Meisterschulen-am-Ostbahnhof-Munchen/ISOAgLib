@@ -39,16 +39,17 @@
     </li>
     <li class="folder"> \ref PageFurtherInformation
         <ul>
+        <li> \ref ToolsUsed </li>
         <li> \ref FurtherReading </li>
         </ul>
     </li>
     <li> \ref PageLicensing </li>
     <li class="folder"> \ref PageContactAndSupport
         <ul>
-        <li> \ref GeneralSupportInformation </li>
+        <li> \ref ContactInformation </li>
         <li> \ref Mailing-Lists </li>
-        <li> \ref QuestionsAnswers </li>
         <li> \ref Contributing "Contributing to IsoAgLib" </li>
+        <li> \ref GeneralSupportInformation </li>
         </ul>
     </li>
     <li> \ref PageSitemap "Sitemap" </li>
