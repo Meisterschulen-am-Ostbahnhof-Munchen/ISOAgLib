@@ -182,6 +182,7 @@ vtObjectButton_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/)
   }
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectButton_c::updateWidth(bool b_SendRequest)
 {
@@ -250,5 +251,5 @@ vtObjectButton_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeV
     default: break;
   }
 }
-
+#endif
 } // end of namespace __IsoAgLib

@@ -126,7 +126,7 @@ public:
   void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false){
     vtObjectFontAttributes_c::setFontAttributes(newFontColour, newFontSize, newFontType, newFontStyle, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectFontAttributes_c::updateObjectType(); }
   */
@@ -146,6 +146,7 @@ public:
   uint8_t updateFontStyle(bool b_SendRequest=false) {
     return vtObjectFontAttributes_c::updateFontStyle(b_SendRequest);
   }
+#endif
 };
 
 } // end of namespace IsoAgLib

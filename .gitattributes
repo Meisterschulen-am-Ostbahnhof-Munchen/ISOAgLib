@@ -2157,7 +2157,6 @@ examples/compiler_projects/kdevelop_make/TractorInternalCan/filelist__TractorInt
 examples/compiler_projects/kdevelop_make/TractorInternalCan/filelist__TractorInternalCan.utest.modsut.txt -text
 examples/compiler_projects/kdevelop_make/TractorInternalCan/filelist__TractorInternalCan.utest.runner.txt -text
 examples/compiler_projects/kdevelop_make/TractorInternalCan/filelist__TractorInternalCan.utest.txt -text
-examples/compiler_projects/kdevelop_make/bla -text
 examples/compiler_projects/update_makefile.sh -text
 examples/src/AutoDataCollector/TutPrjDescAutoDataCollector.txt -text
 examples/src/AutoDataCollector/config_AutoDataCollector.h -text

@@ -137,11 +137,13 @@ vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableRepla
   setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 void
 vtObject_c::getAttribute(uint8_t attrID, bool b_enableReplaceOfCmd)
 {
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandGetAttributeValue (this, attrID, b_enableReplaceOfCmd);
 }
+#endif
 
 void
 vtObject_c::createRamStructIfNotYet (uint16_t ui16_structLen)
@@ -294,6 +296,7 @@ vtObject_c::getValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, 
   return * ((float*) (((uint8_t *)vtObject_a)+ui16_structOffset));
 }
 
+#ifdef USE_GETATTRIBUTE
 // //////////////////////////////// get(Signed)Value(8/16/32)GetAttribute
 uint8_t
 vtObject_c::getValue8GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd) {
@@ -330,7 +333,7 @@ vtObject_c::getValueFloatGetAttribute (uint16_t ui16_structOffset, uint16_t ui16
   getAttribute (ui8_ind, b_enableReplaceOfCmd);
   return getValueFloat (ui16_structOffset, ui16_structLen);
 }
-
+#endif
 
 bool
 vtObject_c::genericChangeChildLocationPosition (bool ab_isLocation, IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen)

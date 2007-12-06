@@ -151,6 +151,7 @@ vtObjectLineAttributes_c::setLineAttributes(uint8_t newLineColour, uint8_t newLi
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeLineAttributes (this, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newLineColour, this, IsoAgLib::LineColour), newLineWidth, newLineArt, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint8_t
 vtObjectLineAttributes_c::updateLineColour(bool b_SendRequest)
 {
@@ -189,5 +190,5 @@ vtObjectLineAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
-
+#endif
 } // end of namespace __IsoAgLib

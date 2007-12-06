@@ -176,6 +176,7 @@ vtObjectPolygon_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateO
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectPolygon_c::updateWidth(bool b_SendRequest)
 {
@@ -234,5 +235,6 @@ vtObjectPolygon_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribute
     default: break;
   }
 }
+#endif
 
 } // end namespace __IsoAgLib

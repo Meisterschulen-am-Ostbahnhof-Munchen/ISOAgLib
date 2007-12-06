@@ -116,7 +116,7 @@ public:
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectContainer_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const {
@@ -136,6 +136,7 @@ public:
     return vtObjectContainer_c::updateHidden(b_SendRequest);
   }
   */
+#endif
 };
 
 } // end of namespace IsoAgLib

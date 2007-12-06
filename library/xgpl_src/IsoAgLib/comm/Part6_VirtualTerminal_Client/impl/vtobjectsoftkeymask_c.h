@@ -126,7 +126,7 @@ public:
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour) : 0, sizeof(iVtObjectSoftKeyMask_s), 1, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::BackgroundColour), b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 4; }
@@ -135,6 +135,7 @@ public:
   uint8_t updateBackgroundColour(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end of namespace __IsoAgLib

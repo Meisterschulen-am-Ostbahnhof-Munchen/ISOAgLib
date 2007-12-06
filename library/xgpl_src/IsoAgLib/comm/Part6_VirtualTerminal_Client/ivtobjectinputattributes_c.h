@@ -102,7 +102,7 @@ public:
   void setValidationStringRef(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectInputAttributes_c::setValidationStringRef (newValidationString, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectInputAttributes_c::updateObjectType(); }
   
@@ -110,7 +110,7 @@ public:
     return vtObjectInputAttributes_c::updateValidationType(b_SendRequest);
   }
   */
-
+#endif
 };
 
 } // end namespace IsoAgLib

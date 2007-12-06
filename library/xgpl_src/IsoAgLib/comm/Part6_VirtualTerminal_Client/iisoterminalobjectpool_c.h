@@ -332,13 +332,11 @@ public:
     else
       return 0; /* black - std. drawing colour */
   };
-
   /**
     hook function that gets called immediately after recognizing the success of a command-response message
     for Get Attribute Value command
   */
   virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {}
-
 protected:
   iVtObject_c*HUGE_MEM** iVtObjects;
   uint16_t numObjects;

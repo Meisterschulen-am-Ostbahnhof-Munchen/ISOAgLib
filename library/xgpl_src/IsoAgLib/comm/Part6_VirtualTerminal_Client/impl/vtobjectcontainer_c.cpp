@@ -209,6 +209,7 @@ vtObjectContainer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   }
 }
 
+#ifdef USE_GETATTRIBUTE
 /** these attributes are in parentheses in the spec, so commented out here
 uint16_t
 vtObjectContainer_c::updateWidth(bool b_SendRequest)
@@ -251,4 +252,5 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
     default: break;
   }
 }
+#endif
 } // end of namespace __IsoAgLib

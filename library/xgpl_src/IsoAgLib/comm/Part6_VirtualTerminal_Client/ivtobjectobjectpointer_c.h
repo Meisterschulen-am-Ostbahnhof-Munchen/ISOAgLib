@@ -86,7 +86,7 @@ public:
   void setValue(iVtObject_c* apc_newObject, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectObjectPointer_c::setValue (apc_newObject, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectInputAttributes_c::updateObjectType(); }
   
@@ -94,7 +94,7 @@ public:
     return vtObjectInputAttributes_c::getValue(b_SendRequest);
   }
   */
-
+#endif
 };
 
 } // end of namespace IsoAgLib

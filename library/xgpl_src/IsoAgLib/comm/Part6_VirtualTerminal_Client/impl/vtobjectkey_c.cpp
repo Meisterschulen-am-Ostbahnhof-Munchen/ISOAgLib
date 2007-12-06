@@ -155,6 +155,7 @@ vtObjectKey_c::setOriginSKM(bool /*b_SKM*/)
   }
 }
 
+#ifdef USE_GETATTRIBUTE
 uint8_t
 vtObjectKey_c::updateBackgroundColour(bool b_SendRequest)
 {
@@ -183,5 +184,5 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
     default: break;
   }
 }
-
+#endif
 } // end of namespace __IsoAgLib

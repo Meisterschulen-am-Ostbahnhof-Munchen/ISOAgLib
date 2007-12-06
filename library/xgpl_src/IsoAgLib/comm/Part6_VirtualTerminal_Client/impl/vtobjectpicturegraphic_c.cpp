@@ -287,6 +287,7 @@ vtObjectPictureGraphic_c::fitTerminal() const
   return 17+numberOfBytesInRawData+vtObjectPictureGraphic_a->numberOfMacrosToFollow*2;
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectPictureGraphic_c::updateWidth(bool b_SendRequest)
 {
@@ -359,4 +360,5 @@ vtObjectPictureGraphic_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
+#endif
 } // end of namespace __IsoAgLib

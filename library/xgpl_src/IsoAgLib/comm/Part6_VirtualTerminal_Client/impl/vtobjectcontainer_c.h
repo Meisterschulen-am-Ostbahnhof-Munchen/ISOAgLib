@@ -126,6 +126,7 @@ public:
 
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 3; }
@@ -138,7 +139,7 @@ public:
   */
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
-
+#endif
 protected:
   //  Operation: hideShow
   //! @param b_hideOrShow:

@@ -213,6 +213,7 @@ vtObjectInputList_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_updat
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectInputList_c::updateWidth(bool b_SendRequest)
 {
@@ -275,4 +276,5 @@ vtObjectInputList_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
     default: break;
   }
 }
+#endif
 } // end of namespace __IsoAgLib

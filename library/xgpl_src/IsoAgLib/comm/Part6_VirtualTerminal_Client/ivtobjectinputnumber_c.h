@@ -212,7 +212,7 @@ public:
 
   //  Operation: select
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
-
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectInputNumber_c::updateObjectType(); }
@@ -279,7 +279,7 @@ public:
     return vtObjectInputNumber_c::update2ndOptionsByte(b_SendRequest);
   }
   */
-
+#endif
 }; // ~X2C
 
 } // end of namespace IsoAgLib

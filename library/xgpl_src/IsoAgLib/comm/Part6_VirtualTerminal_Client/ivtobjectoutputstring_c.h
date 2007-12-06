@@ -179,7 +179,7 @@ public:
     vtObjectOutputString_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectOutputString_c::updateObjectType(); }
@@ -212,7 +212,7 @@ public:
   uint8_t updateJustification(bool b_SendRequest=false) {
     return vtObjectOutputString_c::updateJustification(b_SendRequest);
   }
-
+#endif
 };
 
 } // end of namespace IsoAgLib

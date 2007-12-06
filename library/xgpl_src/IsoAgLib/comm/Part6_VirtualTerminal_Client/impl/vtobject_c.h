@@ -119,8 +119,9 @@ public:
   virtual uint8_t updateObjectType() const = 0;
   */
 
+#ifdef USE_GETATTRIBUTE
   virtual void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue) = 0;
-
+#endif
 
 protected:
   /** @todo ON REQUEST: check for double initialization via flags & STRUCT_IN_RAM etc.
@@ -150,7 +151,9 @@ protected:
   void setAttribute      (uint8_t attrID, uint32_t newValue, bool b_enableReplaceOfCmd=true);
   void setAttributeFloat (uint8_t attrID, float newValue, bool b_enableReplaceOfCmd=true);
 
+  #ifdef USE_GETATTRIBUTE
   void getAttribute      (uint8_t attrID, bool b_enableReplaceOfCmd=true);
+  #endif
 
 
   void createRamStructIfNotYet (uint16_t ui16_structLen);
@@ -179,6 +182,7 @@ protected:
   int16_t getSignedValue16 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
   int32_t getSignedValue32 (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
   float getValueFloat (uint16_t ui16_structOffset, uint16_t ui16_structLen, bool b_createRamStructIfNeeded=false);
+  #ifdef USE_GETATTRIBUTE
   uint8_t getValue8GetAttribute  (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
   uint16_t getValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
   uint32_t getValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
@@ -186,6 +190,7 @@ protected:
   int16_t getSignedValue16GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
   int32_t getSignedValue32GetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_createRamStructIfNeeded=false);
   float getValueFloatGetAttribute (uint16_t ui16_structOffset, uint16_t ui16_structLen, uint8_t ui8_ind, bool b_enableReplaceOfCmd=false);
+  #endif
 
 
   bool genericChangeChildLocation (IsoAgLib::iVtObject_c* childObject, int16_t dx, int16_t dy, bool b_updateObject, uint8_t numObjectsToFollow, IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s* objectsToFollow, uint16_t ui16_structOffset, uint16_t ui16_structLen,bool b_enableReplaceOfCmd);

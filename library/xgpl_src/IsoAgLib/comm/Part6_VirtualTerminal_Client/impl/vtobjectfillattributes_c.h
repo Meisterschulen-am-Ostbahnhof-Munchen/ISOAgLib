@@ -142,6 +142,7 @@ public:
   //! @param b_updateObject:
   void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+#ifdef USE_GETATTRIBUTE
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 25; }
   */
@@ -153,6 +154,7 @@ public:
   uint16_t updateFillPattern(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end namespace

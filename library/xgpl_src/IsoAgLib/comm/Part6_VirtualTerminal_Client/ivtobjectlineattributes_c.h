@@ -110,7 +110,7 @@ public:
     vtObjectLineAttributes_c::setLineAttributes (newLineColour, newLineWidth, newLineArt, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  
+#ifdef USE_GETATTRIBUTE  
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectLineAttributes_c::updateObjectType(); }
   */
@@ -126,7 +126,7 @@ public:
   uint16_t updateLineArt(bool b_SendRequest=false) {
     return vtObjectLineAttributes_c::updateLineArt(b_SendRequest);
   }
-
+#endif
 }; // ~X2C
 
 } // end of namespace IsoAgLib

@@ -584,28 +584,37 @@ create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)"
   fi
 
-	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
-		COMM_FEATURES="$COMM_FEATURES -o -path '*/ProprietaryCan/*'"
-	fi
+  if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/ProprietaryCan/*'"
+  fi
 
   if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
     PRJ_MULTIPACKET=1
   fi
   if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
-		if [ $PRJ_ISO_TERMINAL_LAYOUT_MANAGER -gt 0 ] ; then
-	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/*'"
-		else
-	    COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/i*'"
-		fi
+    if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" = "" ] ; then
+      # exclude graphicscontext_c
+      if [ $PRJ_ISO_TERMINAL_LAYOUT_MANAGER -gt 0 ] ; then
+        COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part6_VirtualTerminal_Client/*' -a -not -name '*graphicscontext_c*' \)"
+      else
+        COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)"
+      fi
+    else
+      if [ $PRJ_ISO_TERMINAL_LAYOUT_MANAGER -gt 0 ] ; then
+        COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/*'"
+      else
+        COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/i*'"
+      fi
+    fi
     PRJ_MULTIPACKET=1
   fi
-	if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
+  if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
     PRJ_MULTIPACKET=1
-	fi
+  fi
   if [ $PRJ_DATASTREAMS -lt 1 ] ; then
-		if test $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
-	    COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
-		fi
+    if test $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
+        COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
+    fi
   fi
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
   	PRJ_MULTIPACKET=1
@@ -2182,7 +2191,6 @@ perform_everything()
   # call function which build the file list for the unit
   # tests
   create_utest_filelist
-
 	# call function to create project specific config file
 	create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
 

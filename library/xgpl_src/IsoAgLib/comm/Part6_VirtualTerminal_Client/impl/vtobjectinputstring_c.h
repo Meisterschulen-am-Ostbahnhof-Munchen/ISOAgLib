@@ -198,6 +198,7 @@ public:
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputString_a(), horizontalJustification) : 0, sizeof(iVtObjectInputString_s), 8 /* "Horizontal justification" */, newHorizontalJustification, newHorizontalJustification, b_enableReplaceOfCmd);
   }
 
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 8; }
@@ -224,7 +225,7 @@ public:
   */
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
-
+#endif
 private:
   //  Operation: updateEnable
   //! @param b_enableOrDisable:

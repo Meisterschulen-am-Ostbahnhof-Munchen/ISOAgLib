@@ -137,6 +137,7 @@ public:
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectInputBoolean_a(), variableReference) : 0, sizeof(iVtObjectInputBoolean_s), 4, newValue, b_enableReplaceOfCmd);
   }
 
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 7; }
@@ -157,7 +158,7 @@ public:
   */
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
-
+#endif
 private:
   //  Operation: updateEnable
   //! @param b_enableOrDisable:

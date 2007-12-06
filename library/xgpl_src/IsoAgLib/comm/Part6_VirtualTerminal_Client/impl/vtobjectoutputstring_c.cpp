@@ -317,6 +317,7 @@ vtObjectOutputString_c::getString()
   return get_vtObjectOutputString_a()->value;
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectOutputString_c::updateWidth(bool b_SendRequest)
 {
@@ -395,5 +396,5 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
     default: break;
   }
 }
-
+#endif
 } // end of namespace __IsoAgLib

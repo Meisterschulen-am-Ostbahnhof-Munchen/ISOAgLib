@@ -175,6 +175,7 @@ vtObjectLine_c::setEndPoint (uint16_t newWidth, uint16_t newHeight, uint8_t newL
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeEndPoint (this, newWidth, newHeight, newLineDirection, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectLine_c::updateLineAttributes(bool b_SendRequest)
 {
@@ -223,5 +224,5 @@ vtObjectLine_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVal
     default: break;
   }
 }
-
+#endif
 } // end of namespace __IsoAgLib

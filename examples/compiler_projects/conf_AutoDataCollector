@@ -200,6 +200,13 @@ PRJ_DIN9684=1
 # this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_CERTIFICATION=0
 
+# decide if the functionality of the graphical context is necessary for the client
+# USE_ISO_TERMINAL_GRAPHICCONTEXT 1
+
+# if Iso_Terminal should offer the attributes via getter functions, this feature can be enabled.
+# thus it is recommended to store attributes at client side (smaller binary + less traffic)
+# USE_ISO_TERMINAL_ATTRIBUTES 1
+
 # ###############################################################
 # Process Data Communication Setup
 # ###############################################################

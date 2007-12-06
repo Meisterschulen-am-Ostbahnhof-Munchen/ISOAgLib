@@ -95,10 +95,11 @@ public:
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectAuxiliaryFunction_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectAuxiliaryFunction_c::updateObjectType(); }
   */
+#endif
 };
 
 } // end of namespace IsoAgLib

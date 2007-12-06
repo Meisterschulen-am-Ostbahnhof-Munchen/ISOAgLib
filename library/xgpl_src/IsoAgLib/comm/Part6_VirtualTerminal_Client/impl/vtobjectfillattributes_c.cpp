@@ -146,6 +146,7 @@ vtObjectFillAttributes_c::setFillAttributes(uint8_t newFillType, uint8_t newFill
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFillAttributes (this, newFillType, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newFillColour, this, IsoAgLib::FillColour), newFillPattern, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint8_t
 vtObjectFillAttributes_c::updateFillType(bool b_SendRequest)
 {
@@ -184,5 +185,5 @@ vtObjectFillAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
-
+#endif
 } // end namespace __IsoAgLib

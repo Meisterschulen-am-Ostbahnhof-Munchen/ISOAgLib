@@ -456,6 +456,7 @@ vtObjectGraphicsContext_c::copyViewport2PictureGraphic( const IsoAgLib::iVtObjec
               this, pc_iVtObjectPictureGraphic, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectGraphicsContext_c::updateViewportWidth(bool b_SendRequest)
 {
@@ -613,5 +614,5 @@ vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_a
     default: break;
   }
 }
-
+#endif
 } // namespace __IsoAgLib

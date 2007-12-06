@@ -195,7 +195,7 @@ vtObjectInputAttributes_c::getString()
 {
   return get_vtObjectInputAttributes_a()->validationString;
 }
-
+#ifdef USE_GETATTRIBUTE
 /** that attribute is in parentheses in the spec, so commented out here
 uint8_t
 vtObjectInputAttributes_c::updateValidationType(bool b_SendRequest)
@@ -215,4 +215,5 @@ vtObjectInputAttributes_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*
     saveValue8(MACRO_getStructOffset(get_vtObjectInputAttributes_a(), validationType), sizeof(iVtObjectInputAttributes_s), convertLittleEndianStringUi8(pui8_attributeValue));
   */
 }
+#endif
 } // end namespace __IsoAgLib

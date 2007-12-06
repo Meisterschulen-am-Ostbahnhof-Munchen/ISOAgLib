@@ -139,7 +139,7 @@ vtObjectSoftKeyMask_c::setOriginSKM(bool /*b_SKM*/)
     vtObjectSoftKeyMask_a->objectsToFollow[i].vtObject->setOriginSKM (true);
   }
 }
-
+#ifdef USE_GETATTRIBUTE
 uint8_t
 vtObjectSoftKeyMask_c::updateBackgroundColour(bool b_SendRequest)
 {
@@ -155,5 +155,5 @@ vtObjectSoftKeyMask_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
   if (attrID == 1)
     saveValue8(MACRO_getStructOffset(get_vtObjectSoftKeyMask_a(), backgroundColour), sizeof(iVtObjectSoftKeyMask_s), convertLittleEndianStringUi8(pui8_attributeValue));
 }
-
+#endif
 } // end of namespace __IsoAgLib

@@ -81,11 +81,11 @@ public:
   //  Operation: get_vtObjectMacro_a
   const iVtObjectMacro_s& get_vtObjectMacro_a() { return *vtObjectMacro_c::get_vtObjectMacro_a(); }
 
-  
+#ifdef USE_GETATTRIBUTE  
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectMacro_c::updateObjectType(); }
   */
-
+#endif
 }; // ~X2C
 
 } // end namespace IsoAgLib

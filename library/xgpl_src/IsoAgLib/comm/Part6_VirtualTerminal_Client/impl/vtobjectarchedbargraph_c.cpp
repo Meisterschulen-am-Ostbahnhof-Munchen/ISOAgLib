@@ -204,6 +204,7 @@ vtObjectArchedBarGraph_c::setSize(uint16_t newWidth, uint16_t newHeight, bool b_
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSize (this, newWidth, newHeight, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectArchedBarGraph_c::updateWidth(bool b_SendRequest)
 {
@@ -356,5 +357,5 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
-
+#endif
 } // end namespace __IsoAgLib

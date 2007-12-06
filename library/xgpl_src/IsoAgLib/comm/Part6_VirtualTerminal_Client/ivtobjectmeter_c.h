@@ -176,6 +176,7 @@ public:
     vtObjectMeter_c::setVariableReference (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
   
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectMeter_c::updateObjectType(); }
@@ -230,7 +231,7 @@ public:
     return vtObjectMeter_c::getValue(b_SendRequest);
   }
   */
-
+#endif
 }; // ~X2C
 
 } // end namespace IsoAgLib

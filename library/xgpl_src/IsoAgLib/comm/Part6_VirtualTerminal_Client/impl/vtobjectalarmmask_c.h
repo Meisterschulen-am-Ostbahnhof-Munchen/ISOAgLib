@@ -132,6 +132,7 @@ public:
 
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
+#ifdef USE_GETATTRIBUTE
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 2; }
   */
@@ -142,6 +143,7 @@ public:
   uint8_t updateAcousticSignal(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end of namespace __IsoAgLib

@@ -161,7 +161,7 @@ public:
     if (aui16_actHeight!= 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), actualHeight), sizeof(iVtObjectPictureGraphic_s), aui16_actHeight);
     if (aui16_width    != 0xFFFF) saveValue16(MACRO_getStructOffset(get_vtObjectPictureGraphic_a(), width),        sizeof(iVtObjectPictureGraphic_s), aui16_width);
   }
-
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 20; }
@@ -182,6 +182,7 @@ public:
   */
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end of namespace __IsoAgLib

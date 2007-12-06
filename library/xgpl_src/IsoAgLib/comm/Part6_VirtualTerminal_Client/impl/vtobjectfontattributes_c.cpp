@@ -242,6 +242,7 @@ vtObjectFontAttributes_c::setFontAttributes(uint8_t newFontColour, uint8_t newFo
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeFontAttributes (this, __IsoAgLib::getIsoTerminalInstance().getClientByID (s_properties.clientId).getUserClippedColor (newFontColour, this, IsoAgLib::FontColour), newFontSize, newFontType, newFontStyle, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 uint8_t
 vtObjectFontAttributes_c::updateFontColour(bool b_SendRequest)
 {
@@ -290,5 +291,5 @@ vtObjectFontAttributes_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
     default: break;
   }
 }
-
+#endif
 } // end of namespace __IsoAgLib

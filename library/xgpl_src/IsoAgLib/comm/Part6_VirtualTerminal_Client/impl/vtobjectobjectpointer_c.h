@@ -126,7 +126,7 @@ public:
 
   //! @param p_btn:
   void setOriginBTN(IsoAgLib::iVtObjectButton_c* /*p_btn*/);
-
+#ifdef USE_GETATTRIBUTE
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 27; }
 
@@ -134,6 +134,7 @@ public:
   */
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end of namespace __IsoAgLib

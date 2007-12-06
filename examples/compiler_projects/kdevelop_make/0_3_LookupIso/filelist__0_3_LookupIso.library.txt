@@ -25,4 +25,4 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
+../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp

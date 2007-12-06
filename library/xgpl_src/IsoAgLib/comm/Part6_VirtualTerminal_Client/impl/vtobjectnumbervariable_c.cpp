@@ -135,6 +135,7 @@ vtObjectNumberVariable_c::setValue(uint32_t newValue,
   __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeNumericValue (this, newValue & 0xFF, (newValue >> 8) & 0xFF, (newValue >> 16) & 0xFF, newValue >> 24, b_enableReplaceOfCmd);
 }
 
+#ifdef USE_GETATTRIBUTE
 /** that attribute is in parentheses in the spec, so commented out here
 uint32_t
 vtObjectNumberVariable_c::updateValue(bool b_SendRequest)
@@ -154,4 +155,5 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
     saveValue32(MACRO_getStructOffset(get_vtObjectNumberVariable_a(), value), sizeof(iVtObjectNumberVariable_s), convertLittleEndianStringUi32(pui8_attributeValue));
   */
 }
+#endif
 } // end of namespace __IsoAgLib

@@ -170,6 +170,7 @@ public:
   //! @param b_SKM:
   void setOriginSKM(bool b_SKM);
 
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 15; }
@@ -190,6 +191,7 @@ public:
   uint16_t updateFillAttributes(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end namespace __IsoAgLib

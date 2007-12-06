@@ -86,7 +86,8 @@ public:
   void setValue(uint32_t newValue, bool b_updateObject= false, bool b_enableReplaceOfCmd=true) {
     vtObjectNumberVariable_c::setValue (newValue, b_updateObject, b_enableReplaceOfCmd); }
 
-  
+
+#ifdef USE_GETATTRIBUTE  
   // ///////////////////////// getter for attributes
   /** these attributes are in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectNumberVariable_c::updateObjectType(); }
@@ -95,7 +96,7 @@ public:
     return vtObjectNumberVariable_c::getValue(b_SendRequest);
   }
   */
-
+#endif
 }; // ~X2C
 
 } // end of namespace IsoAgLib

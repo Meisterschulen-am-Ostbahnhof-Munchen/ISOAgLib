@@ -129,12 +129,13 @@ public:
 
   //  Operation: getString
   const char* getString();
-
+#ifdef USE_GETATTRIBUTE
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 22; }
   */
 
   void saveReceivedAttribute (uint8_t /*attrID*/, uint8_t* /*pui8_attributeValue*/) {};
+#endif
 };
 
 } // end of namespace __IsoAgLib

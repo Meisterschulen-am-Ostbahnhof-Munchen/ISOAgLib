@@ -112,7 +112,7 @@ public:
   bool setChildPosition(IsoAgLib::iVtObject_c* apc_childObject, int16_t dx, int16_t dy, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     return vtObjectDataMask_c::setChildPosition(apc_childObject, dx, dy, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const {
@@ -127,6 +127,7 @@ public:
   uint16_t updateSoftKeyMask(bool b_SendRequest=false) {
     return vtObjectDataMask_c::updateSoftKeyMask(b_SendRequest);
   }
+#endif
 };
 
 } // end of namespace IsoAgLib

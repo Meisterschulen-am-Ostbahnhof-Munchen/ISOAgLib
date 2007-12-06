@@ -202,7 +202,7 @@ public:
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectArchedBarGraph_c::setSize(newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
-
+#ifdef USE_GETATTRIBUTE
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectArchedBarGraph_c::updateObjectType(); }
@@ -265,7 +265,7 @@ public:
     return vtObjectArchedBarGraph_c::getValue(b_SendRequest);
   }
   */
-
+#endif
 };
 
 } // end namespace __IsoAgLib

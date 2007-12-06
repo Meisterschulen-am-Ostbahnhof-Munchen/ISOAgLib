@@ -166,6 +166,7 @@ vtObjectMeter_c::setValue(uint16_t newValue, bool b_updateObject, bool b_enableR
   }
 }
 
+#ifdef USE_GETATTRIBUTE
 uint16_t
 vtObjectMeter_c::updateWidth(bool b_SendRequest)
 {
@@ -298,4 +299,5 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
     default: break;
   }
 }
+#endif
 } // end namespace __IsoAgLib

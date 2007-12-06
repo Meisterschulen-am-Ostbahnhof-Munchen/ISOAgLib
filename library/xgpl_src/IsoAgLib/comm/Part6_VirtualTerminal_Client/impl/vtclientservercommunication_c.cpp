@@ -1196,6 +1196,7 @@ VtClientServerCommunication_c::processMsg()
 
     case 0xB9: // Command: "Get Technical Data", parameter "Get Attribute Value"
       MACRO_setStateDependantOnError (7)
+      #ifdef USE_GETATTRIBUTE
       // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
       if ((mc_data.getUint8Data (1) == 0xFF) && (mc_data.getUint8Data (2) == 0xFF)) // object id is set to 0xFFFF to indicate error response
       {
@@ -1267,6 +1268,7 @@ VtClientServerCommunication_c::processMsg()
           }
         }
       }
+      #endif
       break;
     case 0xBD: // Command: "Command", parameter "Lock/Unlock Mask Response"
       MACRO_setStateDependantOnError (3)
@@ -1665,8 +1667,8 @@ VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t aui16_o
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 /////////////
-
-// ########## Gaphics Context ##########
+#ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
+// ########## Graphics Context ##########
 //! @return Flag if successful
 bool
 VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
@@ -1973,7 +1975,9 @@ VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 // ########## END Graphics Context ##########
+#endif
 
+#ifdef USE_GETATTRIBUTE
 bool
 VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject_c* apc_object, const uint8_t cui8_attrID, bool b_enableReplaceOfCmd)
 {
@@ -1983,6 +1987,7 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
                       0xFF, 0xFF, 0xFF, 0xFF,
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
+#endif
 
 bool
 VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)

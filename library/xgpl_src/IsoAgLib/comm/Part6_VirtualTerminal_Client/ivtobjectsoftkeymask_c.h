@@ -87,7 +87,7 @@ public:
     vtObjectSoftKeyMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  
+#ifdef USE_GETATTRIBUTE  
   // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const {
@@ -98,7 +98,7 @@ public:
   uint8_t updateBackgroundColour(bool b_SendRequest=false) {
     return vtObjectSoftKeyMask_c::updateBackgroundColour(b_SendRequest);
   }
-
+#endif
 }; // ~X2C
 
 } // end of namespace IsoAgLib

@@ -151,6 +151,7 @@ public:
   }
 #endif
 
+#ifdef USE_GETATTRIBUTE
     // ///////////////////////// getter for attributes
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return 6; }
@@ -169,6 +170,7 @@ public:
   uint8_t updateOptions(bool b_SendRequest=false);
 
   void saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attributeValue);
+#endif
 };
 
 } // end of namespace __IsoAgLib

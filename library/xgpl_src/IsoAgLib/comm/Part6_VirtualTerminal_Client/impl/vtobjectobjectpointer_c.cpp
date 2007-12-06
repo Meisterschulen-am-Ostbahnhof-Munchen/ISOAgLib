@@ -157,6 +157,7 @@ vtObjectObjectPointer_c::setOriginBTN(IsoAgLib::iVtObjectButton_c* p_btn)
   }
 }
 
+#ifdef USE_GETATTRIBUTE
 /** that attribute is in parentheses in the spec, so commented out here
 uint16_t
 vtObjectObjectPointer_c::updateValue(bool b_SendRequest)
@@ -176,5 +177,5 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
   default: break;
   */
 }
-
+#endif
 } // end of namespace __IsoAgLib
