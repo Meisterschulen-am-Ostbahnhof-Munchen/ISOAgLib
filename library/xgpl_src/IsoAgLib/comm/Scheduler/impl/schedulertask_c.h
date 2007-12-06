@@ -252,6 +252,10 @@ class Scheduler_Task_c : public SaClaimHandler_c {
   //  Operation: getDemandedExecEnd
   //!  Deliver the registered exec end timestamp.
   static inline int32_t getDemandedExecEnd();
+  
+   //  Operation: setDemandedExecEnd
+  //!  Sets the registered exec end timestamp.
+  static inline void setDemandedExecEnd(int32_t ai32_demandenExecTime) {  msi32_demandedExecEnd = ai32_demandenExecTime;};
 
   //  Operation: getLastRetriggerTime
   static inline int32_t getLastRetriggerTime();

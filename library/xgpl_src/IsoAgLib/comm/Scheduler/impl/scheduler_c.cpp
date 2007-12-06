@@ -120,7 +120,11 @@
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
-#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING)
+#ifdef SYSTEM_DJ1
+#include <compilerswitches.h>
+#endif
+
+#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -347,7 +351,7 @@ void Scheduler_c::unregisterClient( Scheduler_Task_c* pc_client)
     for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end();){
 
       if(itc_task->isTask(pc_client)){
-        #ifdef DEBUG_SCHEDULER
+        #if defined(DEBUG_SCHEDULER) || DEBUG_TASKS_QUEUE
         INTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
         << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -444,14 +448,15 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   // trigger the watchdog
   System_c::triggerWd();
 
+  int32_t i32_endCanProcessing = HAL::getTime() +  mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
+  Scheduler_Task_c::setDemandedExecEnd( (i32_endCanProcessing <ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   ); 
+
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
   { // all CAN_IO activities ready -> update statistic for CAN_IO
     mi16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }
   System_c::triggerWd();
-
-
   /* call EEEditor Process */
   #if defined(USE_CAN_EEPROM_EDITOR)
     // check if immediate return is needed
@@ -460,14 +465,17 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
     // check if immediate return is needed
     HAL::ProcessRS232EEEditorMsg();
   #endif
-
+  
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
   { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
     getCanInstance( ind ).timeEvent();
+    System_c::triggerWd();
   }
   #endif
   System_c::triggerWd();
+
+  
   /// Call timeEvent for next Client in TaskQueue as long as
   /// one Client returns idleTime=0 and Scheduler_c has still time;
   /// (i32_idleTime > 0)-> ends loop -> triggers still proccessmsg()
@@ -478,6 +486,9 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   {
             System_c::triggerWd();
   }
+
+  i32_endCanProcessing = HAL::getTime() + mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
+  Scheduler_Task_c::setDemandedExecEnd( ( i32_endCanProcessing < ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   ); 
 
   // check if all tasks are called
   if ( i32_idleTime > 0 )
@@ -547,6 +558,7 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
   if(cntClient() <= 1) return ; //nothing to sort
 
   STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterExecuted = mc_taskQueue.begin();
+  
   for ( ; iterExecuted != mc_taskQueue.end(); iterExecuted++ )
   {
     if (apc_sort == &(*iterExecuted) ) break;
@@ -557,6 +569,10 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
 
   // compare with the next item in list
   ++iterCompare;
+
+  // Safety test  
+  if (iterCompare == mc_taskQueue.end()) return;
+
   if ( *iterExecuted <= *iterCompare )
   { // the current item is still having lower retrigger time -> no resort needed
     return;
