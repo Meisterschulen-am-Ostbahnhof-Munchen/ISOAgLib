@@ -605,8 +605,12 @@ create_filelist( )
       else
         COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/i*'"
       fi
+      USE_ISO_TERMINAL_GRAPHICCONTEXT=1
     fi
     PRJ_MULTIPACKET=1
+  fi
+  if [ "$USE_ISO_TERMINAL_ATTRIBUTES" != "" ] ; then
+    USE_ISO_TERMINAL_ATTRIBUTES=1
   fi
   if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
     PRJ_MULTIPACKET=1
@@ -729,7 +733,6 @@ create_filelist( )
 	else
 		DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/can/*'"
 	fi
-
 
   LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
   SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
@@ -873,7 +876,6 @@ create_filelist( )
 	done
 
   sh .exec.tmp
-
 	cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
 	cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
   rm -f .exec.tmp
@@ -916,7 +918,6 @@ create_filelist( )
 	cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
 	rm -f $FILELIST_COMBINED_HDR
 
-
   # go back to directory where config file resides
 	cd $1
 
@@ -938,7 +939,6 @@ create_utest_filelist()
 
 	# go to project directory
 	cd $PROJECT
-
 	# create new files containing the file lists
 	rm -f "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE" "$DIRECTORYLIST_UTEST_PURE"
 	touch "$FILELIST_UTEST_PURE" "$FILELIST_UTEST_MOCK_PURE" "$FILELIST_UTEST_MODSUT_PURE" "$FILELIST_UTEST_RUNNER_PURE" "$DIRECTORYLIST_UTEST_PURE"
@@ -957,7 +957,6 @@ create_utest_filelist()
 
 	# find unit test directories
 	rm -f .exec.tmp
-
 	echo "find $FIND_ROOT_DIR $UTEST_DIRS_EXT >> $DIRECTORYLIST_UTEST_PURE" > .exec.tmp
 	sh .exec.tmp
 
@@ -975,7 +974,6 @@ create_utest_filelist()
 		echo "find $line $HDR_UTEST_MOCK_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_MOCK_PURE" > .exec.tmp
 		sh .exec.tmp
 	done
-
 	# determine modified software under test (MOD-SUT) files
 	cat $FILELIST_UTEST_PURE | sed -e 's!\(.*\)/utest/\(.*\)-test\.h!\1/\2_c.h!' >> $FILELIST_UTEST_MODSUT_PURE
 
@@ -984,7 +982,6 @@ create_utest_filelist()
 
 	echo "find $FIND_ROOT_DIR $TESTRUNNER_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_RUNNER_PURE" > .exec.tmp
 	sh .exec.tmp
-
 	rm -f .exec.tmp
 }
 
@@ -2193,7 +2190,6 @@ perform_everything()
   create_utest_filelist
 	# call function to create project specific config file
 	create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
-
   if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
     # call function to create the Makefile in the project dir
     create_makefile $GENERATE_FILES_ROOT_DIR $2
