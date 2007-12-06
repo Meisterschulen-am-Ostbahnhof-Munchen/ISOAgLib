@@ -545,8 +545,9 @@ vt2iso_c::clean_exit (char* error_message)
         mit_obj = mit_lang->second.find (ui16_WSObjID);
         *pb_firstLine = false;
 
-        // first, print out the workingset object
-        fprintf (fileList, "\n %s", mit_obj->second.c_str());
+        if (fileList) // first, print out the workingset object
+          fprintf (fileList, "\n %s", mit_obj->second.c_str());
+
         // delete from the map
         mit_lang->second.erase (mit_obj);
       }
