@@ -606,13 +606,11 @@ create_filelist( )
         COMM_FEATURES="$COMM_FEATURES -o -path '*/Part6_VirtualTerminal_Client/i*'"
       fi
       USE_ISO_TERMINAL_GRAPHICCONTEXT=1
-      echo "CHECK 1"
     fi
     PRJ_MULTIPACKET=1
   fi
   if [ "$USE_ISO_TERMINAL_GETATTRIBUTES" != "" ] ; then
     USE_ISO_TERMINAL_GETATTRIBUTES=1
-    echo "check 2"
   fi
   if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
     PRJ_MULTIPACKET=1
@@ -1207,9 +1205,12 @@ create_autogen_project_config()
     echo -e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >> $CONFIG_NAME
     if [ $PRJ_ISO_TERMINAL -gt 0 ] ; then
 	echo -e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
-	echo -e "#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE" >> $CONFIG_NAME
-	echo -e "#define USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE" >> $CONFIG_NAME
-	echo "hey man, stuff is being pasted in $CONFIG_NAME"
+	if [ $USE_ISO_TERMINAL_ATTRIBUTES -gt 0 ] ; then
+	  echo -e "#ifndef USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE\t#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE#endif" >> $CONFIG_NAME
+	fi
+	if [ $USE_ISO_TERMINAL_GRAPHICCONTEXT -gt 0 ] ; then
+	  echo -e "#ifndef USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE\t #define USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE#endif" >> $CONFIG_NAME
+	fi
     fi
 
     if [ $PRJ_MULTIPACKET -gt 0 ] ; then
