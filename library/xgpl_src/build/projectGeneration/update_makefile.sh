@@ -1714,7 +1714,7 @@ create_DevCCPrj() {
   Type=1
   Ver=1
   ObjFiles=
-  ENDOFHEADERA
+ENDOFHEADERA
 
   DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_-DCAN_DRIVER_SOCKET_@@_'
   INCLUDE_DIR_LINE="../$ISO_AG_LIB_INSIDE;$ISO_AG_LIB_INSIDE/library/xgpl_src"
@@ -1764,7 +1764,7 @@ create_DevCCPrj() {
   PrivateResource=
   ResourceIncludes=
   MakeIncludes=
-  ENDOFHEADERA
+ENDOFHEADERA
 
 
 
@@ -1781,7 +1781,7 @@ create_DevCCPrj() {
   ExeOutput=
   ObjectOutput=objects
   OverrideOutput=0
-  ENDOFHEADERB
+ENDOFHEADERB
 
   echo "OverrideOutputName=$PROJECT_EXE_NAME" >> $PROJECT_FILE_NAME
 
@@ -1815,7 +1815,7 @@ create_DevCCPrj() {
   ProductVersion=
   AutoIncBuildNr=0
 
-  ENDOFHEADERC
+ENDOFHEADERC
 
   SOURCES=`cat $DevCcPrjFilelist`
   unit_ind=0
@@ -2093,7 +2093,7 @@ create_VCPrj()
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-  ENDOFHEADERB
+ENDOFHEADERB
 
   for i in $SOURCES
   do
@@ -2113,7 +2113,7 @@ create_VCPrj()
 # Begin Group "Header-Dateien"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
-  ENDOFHEADERB
+ENDOFHEADERB
 
   for i in $HEADERS
   do
