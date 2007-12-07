@@ -1198,6 +1198,10 @@ SOURCE=..\..\..\..\examples\src\GeneralTest\PcCompilation\config_PcCompilationSy
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\..\examples\src\GeneralTest\PcCompilation\config_PcCompilationMultipleInst.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\..\examples\src\Imi\eeprom_adr.h
 # End Source File
 
@@ -1215,6 +1219,10 @@ SOURCE=..\..\..\..\examples\src\Tractor\TractorConsole\config_tractorconsole.h
 
 # Begin Source File
 SOURCE=..\..\..\..\examples\src\Tractor\TractorConsole\version.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\..\examples\src\Tractor\TractorConsole\config_TractorConsole.h
 # End Source File
 
 # Begin Source File
@@ -1239,6 +1247,10 @@ SOURCE=..\..\..\..\examples\src\Tractor\version.h
 
 # Begin Source File
 SOURCE=..\..\..\..\examples\version.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\..\examples\config_Imi.h
 # End Source File
 
 # Begin Source File
