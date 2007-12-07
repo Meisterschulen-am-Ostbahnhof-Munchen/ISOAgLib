@@ -5,7 +5,7 @@ cd ../../examples/compiler_projects
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32"
 CAN_LIST="socket_server"
-DEVICE_LIST="pc pcan sontheim vector_canlib vector_xl"
+DEVICE_LIST="pc"
 RS232_LIST="simulating"
 
 for conf_example in $EXAMPLE_LIST ; do
