@@ -398,11 +398,11 @@ void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
 {
 #if WIN32
   clock_t t_sendTimestamp = timeGetTime();
+  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp;
 #else
   clock_t t_sendTimestamp = times(NULL);
-#endif
-
   uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
+#endif
 
   if (f_handle) {
     /* split of fprintf 64bit-value is needed for windows! */
