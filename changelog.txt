@@ -24,6 +24,12 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section Changes Changes
 
 \subsection Change_O 2.0 to 2.1
+  - Process data: GeneralCommand_c renamed to ProcessCmd_c
+  - new naming scheme (m-prefix for member-variables, ...)
+  - ProcIdent_c and all derived classes (local and remote): parameter c_ownerISOName removed from init() and constructor
+  - changed handling of received process data messages (first local then remote check)
+  - usage of fast datatypes in cases where an integer variable only needs a specific minimum size (HANDLE_FAST_DATATYPE_AS_STRICT)
+  - optional global mutex in Scheduler_c so that an application can have several parallel threads with access to the IsoAgLib data structures
   - the IsoAgLib core files ( "xgpl_src" "commercial_BIOS" and simulated_IO") have been moved together in a new folder "library"
   - some important folders and files have been renamed so the content should be easier to identify
     - folders below IsoAgLib/comm are now labeled like the related OSI layer
@@ -48,7 +54,6 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
   - bug fix: replacement of the first item in VT-Client CommandQueue for replacement corrected
   - bug fix: devpropertyhandler corrected (incoming command-responses on ChangeDesignator)
   - new WorkingSet announce strategy: no more automatic announce on Address-Claim
-  - rename member variables, so that they start with m_ in comm/base and comm/base/ext
   - can_server now with socket interface (Windows and Linux) and message queues (Linux only) with common CAN device extensions (PEAK can card, A1, Sontheim, ...)
   - Central CAN FIFO, so that the BIOS/OS doesn't need to provide individual FIFOs for each receive MsgObj
   - bug fix: use rc_isoTerminal.data().time() instead of HAL::getTime() in VtServerInstance
