@@ -3,6 +3,7 @@
 /ChangeLog -text
 /Doxyfile -text
 /LICENSE -text
+admin/buildArchives/create_win32_projects.sh -text
 admin/includeTaggedFile.pl -text
 admin/testscripts/compileSelectedTutorials.sh -text
 admin/testscripts/compileTutorials.sh -text
