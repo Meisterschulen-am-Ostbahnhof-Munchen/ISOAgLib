@@ -91,7 +91,7 @@ OUTDIR= bin/obj
 EXEC=	../../../../bin
 OBJS=	${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagefreeimage_c.o \
 			${OUTDIR}/vt2iso-defines.o ${OUTDIR}/vt2iso-globals.o
-myLIBRARY_NAMES = ${LIBRARY_NAMES} -lfreeimage -lpng -ljpeg -ltiff -lpthread
+myLIBRARY_NAMES = ${LIBRARY_NAMES} -lfreeimage -lpthread
 SRC=	src
 
 ## OS390BATCH

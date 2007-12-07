@@ -1000,6 +1000,9 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   kcNextAutoID = 254; // for safety, 255 should also be okay though...
   objNextUnnamedName = 1;
 
+   for (int i=0; i<=DEF_iso639entries; i++)
+      arrb_objTypes[i] = false;
+
 // partFile_variables = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
 // fclose (partFile_variables);
@@ -1888,6 +1891,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         return false;
     }
 
+    arrb_objTypes[ objType ] = true; /// Remember which tag has been used - this will later be used to save some overhead in ivtincludes.
+
     /** if USE_SPECIAL_PARSING is defined then a special parsing follows here
       * either to parse the additional attributes in the known tags
       * or to fully parse an unknown tag
@@ -2014,7 +2019,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         break;
     }
 
-    static char duplicateForLanguages[(136*2)+1]; // max for all languages
+    static char duplicateForLanguages[(DEF_iso639entries*2)+1]; // max for all languages
 
     /// Backup as those values are overriden by the multilanguage processing when getting values from the .xx.txt
     char backupAttrStringValue [stringLength+1];
@@ -3619,6 +3624,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cout << "Error in acousticsignaltoi()  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
+
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
             fprintf (partFile_attributes, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
           else
@@ -4519,6 +4525,18 @@ vt2iso_c::skRelatedFileOutput()
   fprintf (partFile_defines, "#define vtObjectPoolSoftKeyHeight %d\n", getSKHeight());
 }
 
+void
+vt2iso_c::generateIncludeDefines()
+{
+  for (int i=0; i<=DEF_iso639entries; i++)
+  {
+    if (arrb_objTypes[i])
+    {
+      fprintf (partFile_defines, "#define USE_VTOBJECT_%s\n", otCompTable[i]);
+    }
+  }
+}
+
 const char*
 vt2iso_c::getAttributeValue (DOMNode* pc_node, const char* attributeName)
 {
@@ -4996,6 +5014,8 @@ int main(int argC, char* argV[])
   } // loop all files
 
   pc_vt2iso->skRelatedFileOutput();
+
+  pc_vt2iso->generateIncludeDefines();
 
   if (errorOccurred)
     pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n\n");

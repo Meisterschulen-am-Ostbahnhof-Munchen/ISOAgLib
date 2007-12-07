@@ -195,6 +195,8 @@ public:
 
   void skRelatedFileOutput();
 
+  void generateIncludeDefines();
+
   int getAmountXmlFiles() const {return amountXmlFiles;}
 
   const char* getXmlFile (int index) { return xmlFiles[index]; }
@@ -318,8 +320,11 @@ private:
   bool is_objID;
   unsigned int objType;
 
+  bool arrb_objTypes [ DEF_iso639entries ];
+
   bool b_hasUnknownAttributes;
   bool b_hasMoreThan6SoftKeys;
+
 
 #ifdef USE_SPECIAL_PARSING_PROP
   SpecialParsingUsePropTag_c* pc_specialParsingPropTag;

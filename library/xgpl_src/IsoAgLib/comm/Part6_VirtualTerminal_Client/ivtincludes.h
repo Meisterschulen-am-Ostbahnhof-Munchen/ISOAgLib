@@ -51,39 +51,102 @@
 
 #include "ivttypes.h"
 
-#include "ivtobjectalarmmask_c.h"
-#include "ivtobjectarchedbargraph_c.h"
-#include "ivtobjectauxiliaryfunction_c.h"
-#include "ivtobjectauxiliaryinput_c.h"
-#include "ivtobjectbutton_c.h"
-#include "ivtobjectcontainer_c.h"
 #include "ivtobjectdatamask_c.h"
-#include "ivtobjectellipse_c.h"
-#include "ivtobjectfillattributes_c.h"
-#include "ivtobjectfontattributes_c.h"
-#include "ivtobjectinputattributes_c.h"
-#include "ivtobjectinputboolean_c.h"
-#include "ivtobjectinputlist_c.h"
-#include "ivtobjectinputnumber_c.h"
-#include "ivtobjectinputstring_c.h"
-#include "ivtobjectgraphicscontext_c.h"
-#include "ivtobjectkey_c.h"
-#include "ivtobjectline_c.h"
-#include "ivtobjectlinearbargraph_c.h"
-#include "ivtobjectlineattributes_c.h"
-#include "ivtobjectmacro_c.h"
-#include "ivtobjectmeter_c.h"
-#include "ivtobjectnumbervariable_c.h"
-#include "ivtobjectobjectpointer_c.h"
-#include "ivtobjectoutputnumber_c.h"
-#include "ivtobjectoutputstring_c.h"
-#include "ivtobjectoutputlist_c.h"
-#include "ivtobjectpicturegraphic_c.h"
-#include "ivtobjectpolygon_c.h"
-#include "ivtobjectrectangle_c.h"
-#include "ivtobjectsoftkeymask_c.h"
-#include "ivtobjectstringvariable_c.h"
 #include "ivtobjectworkingset_c.h"
+
+#ifdef USE_VTOBJECT_alarmmask
+  #include "ivtobjectalarmmask_c.h"
+#endif
+#ifdef USE_VTOBJECT_
+  #include "ivtobjectarchedbargraph_c.h"
+#endif
+#ifdef USE_VTOBJECT_auxiliaryfunction
+  #include "ivtobjectauxiliaryfunction_c.h"
+#endif
+#ifdef USE_VTOBJECT_auxiliaryinput
+  #include "ivtobjectauxiliaryinput_c.h"
+#endif
+#ifdef USE_VTOBJECT_button
+  #include "ivtobjectbutton_c.h"
+#endif
+#ifdef USE_VTOBJECT_container
+  #include "ivtobjectcontainer_c.h"
+#endif
+#ifdef USE_VTOBJECT_ellipse
+  #include "ivtobjectellipse_c.h"
+#endif
+#ifdef USE_VTOBJECT_fillattributes
+  #include "ivtobjectfillattributes_c.h"
+#endif
+#ifdef USE_VTOBJECT_fontattributes
+  #include "ivtobjectfontattributes_c.h"
+#endif
+#ifdef USE_VTOBJECT_inputattributes
+  #include "ivtobjectinputattributes_c.h"
+#endif
+#ifdef USE_VTOBJECT_inputboolean
+  #include "ivtobjectinputboolean_c.h"
+#endif
+#ifdef USE_VTOBJECT_inputlist
+  #include "ivtobjectinputlist_c.h"
+#endif
+#ifdef USE_VTOBJECT_inputnumber
+  #include "ivtobjectinputnumber_c.h"
+#endif
+#ifdef USE_VTOBJECT_inputstring
+  #include "ivtobjectinputstring_c.h"
+#endif
+#ifdef USE_VTOBJECT_graphicscontext
+  #include "ivtobjectgraphicscontext_c.h"
+#endif
+#ifdef USE_VTOBJECT_key
+  #include "ivtobjectkey_c.h"
+#endif
+#ifdef USE_VTOBJECT_line
+  #include "ivtobjectline_c.h"
+#endif
+#ifdef USE_VTOBJECT_linearbargraph
+  #include "ivtobjectlinearbargraph_c.h"
+#endif
+#ifdef USE_VTOBJECT_lineattributes
+  #include "ivtobjectlineattributes_c.h"
+#endif
+#ifdef USE_VTOBJECT_macro
+  #include "ivtobjectmacro_c.h"
+#endif
+#ifdef USE_VTOBJECT_meter
+  #include "ivtobjectmeter_c.h"
+#endif
+#ifdef USE_VTOBJECT_numbervariable
+  #include "ivtobjectnumbervariable_c.h"
+#endif
+#ifdef USE_VTOBJECT_objectpointer
+  #include "ivtobjectobjectpointer_c.h"
+#endif
+#ifdef USE_VTOBJECT_outputnumber
+  #include "ivtobjectoutputnumber_c.h"
+#endif
+#ifdef USE_VTOBJECT_outputstring
+  #include "ivtobjectoutputstring_c.h"
+#endif
+#ifdef USE_VTOBJECT_outputlist
+  #include "ivtobjectoutputlist_c.h"
+#endif
+#ifdef USE_VTOBJECT_picturegraphic
+  #include "ivtobjectpicturegraphic_c.h"
+#endif
+#ifdef USE_VTOBJECT_polygon
+  #include "ivtobjectpolygon_c.h"
+#endif
+#ifdef USE_VTOBJECT_rectangle
+  #include "ivtobjectrectangle_c.h"
+#endif
+#ifdef USE_VTOBJECT_softkeymask
+  #include "ivtobjectsoftkeymask_c.h"
+#endif
+#ifdef USE_VTOBJECT_stringvariable
+  #include "ivtobjectstringvariable_c.h"
+#endif
 
 #include "iisoterminalobjectpool_c.h"
 #include "iisoterminal_c.h"
