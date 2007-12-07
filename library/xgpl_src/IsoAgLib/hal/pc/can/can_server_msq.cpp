@@ -301,10 +301,11 @@ void usage() {
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE* f_handle)
 {
   clock_t t_sendTimestamp = times(NULL);
+  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
 
   if (f_handle) {
-    fprintf(f_handle, "%05d %d %d %d %d %d %-8x  ",
-            t_sendTimestamp*10, bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
+    fprintf(f_handle, "%Ld %d %d %d %d %d %-8x  ",
+            ui64_timeStamp10, bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
             (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);
     for (uint8_t ui8_i = 0; (ui8_i < ps_canMsg->i32_len) && (ui8_i < 8); ui8_i++)
       fprintf(f_handle, " %-3hx", ps_canMsg->ui8_data[ui8_i]);

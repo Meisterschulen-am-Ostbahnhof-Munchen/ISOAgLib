@@ -402,11 +402,15 @@ void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
   clock_t t_sendTimestamp = times(NULL);
 #endif
 
+  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
+
   if (f_handle) {
-    fprintf(f_handle, "%05d %d %d %d %d %d %-8x  ",
-            t_sendTimestamp*10, ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
-            (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
-    for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
+    /* split of fprintf 64bit-value is needed for windows! */
+    fprintf(f_handle, "%Ld ", ui64_timeStamp10);
+    fprintf(f_handle, "%d %d %d %d %d %-8x  ",
+        ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
+        (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
+	for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
       fprintf(f_handle, " %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
     fprintf(f_handle, "\n");
     fflush(f_handle);
