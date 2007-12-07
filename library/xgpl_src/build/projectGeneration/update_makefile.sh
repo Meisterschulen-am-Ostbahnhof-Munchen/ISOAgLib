@@ -62,6 +62,7 @@
 alias echo=$(which echo)
 PARAMETER_TARGET_SYSTEM="UseConfigFile"
 PARAMETER_CAN_DRIVER="UseConfigFile"
+PARAMETER_CAN_DEVICE_FOR_SERVER="UseConfigFile"
 PARAMETER_RS232_DRIVER="UseConfigFile"
 
 
@@ -2156,6 +2157,9 @@ perform_everything()
     USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
     #echo "Use Parameter value for can driver: $PARAMETER_CAN_DRIVER"
   fi
+  if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
+    PRJ_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
+  fi
   if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
     USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
     #echo "Use Parameter value for rs232 driver: $PARAMETER_RS232_DRIVER"
@@ -2232,6 +2236,9 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     ( "pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167" ).
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"msq_server"|"socket_server", deprecated: "rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
+  --pc-can-device-for-server=CAN_DEVICE_FOR_SERVER
+                                    use this device for building the can_server
+                                    ( "pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
   --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
@@ -2287,6 +2294,9 @@ for option in "$@"; do
       ;;
     --pc-can-driver=*)
       PARAMETER_CAN_DRIVER=`echo "$option" | sed 's/--pc-can-driver=//'`
+      ;;
+    --pc-can-device-for-server=*)
+      PARAMETER_CAN_DEVICE_FOR_SERVER=`echo "$option" | sed 's/--pc-can-device-for-server=//'`
       ;;
     --pc-rs232-driver=*)
       PARAMETER_RS232_DRIVER=`echo "$option" | sed 's/--pc-rs232-driver=//'`
@@ -2367,6 +2377,12 @@ if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
     PARAMETER_CAN_DRIVER="msq_server"
   fi
 fi
+
+if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
+	PRJ_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
+fi
+
+
 #default for not-can_server
 CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
 case "$USE_CAN_DRIVER" in
