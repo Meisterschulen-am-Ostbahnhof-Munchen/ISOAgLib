@@ -376,6 +376,7 @@ examples/compiler_projects/Dev-C++/canserver/can_server.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_pcan.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_sontheim.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.dev -text
 examples/compiler_projects/Dev-C++/imi_iso/filelist__imi_iso.utest.mock.txt -text
 examples/compiler_projects/Dev-C++/imi_iso/filelist__imi_iso.utest.modsut.txt -text
 examples/compiler_projects/Dev-C++/imi_iso/filelist__imi_iso.utest.runner.txt -text

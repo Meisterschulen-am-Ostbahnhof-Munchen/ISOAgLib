@@ -1,18 +1,18 @@
 [Project]
-FileName=can_server_vector.dev
+FileName=can_server_vector_xl.dev
 Name=Project1
 UnitCount=2
 Type=1
 Ver=1
 ObjFiles=
-Includes=C:\Development\pthread;../../../../library/xgpl_src;C:\Development\CANLIB\dll
+Includes=C:\Development\pthread;../../../../library/xgpl_src;C:\Development\xl_driver_library\bin
 Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
 Compiler=-DCAN_DRIVER_SOCKET_@@_
 CppCompiler=-DCAN_DRIVER_SOCKET_@@_
-Linker=c:/Development/pthread/pthreadVC2.lib_@@_c:/Development/Dev-Cpp/lib/libwinmm.a_@@_c:/Development/Dev-Cpp/lib/libws2_32.a_@@_c:/Development/CANLIB/exec/vcand32.lib_@@_
+Linker=c:/Development/pthread/pthreadVC2.lib_@@_c:/Development/Dev-Cpp/lib/libwinmm.a_@@_c:/Development/Dev-Cpp/lib/libws2_32.a_@@_c:/Development/xl_driver_library/bin/vxlapib.lib_@@_
 IsCpp=1
 Icon=
 ExeOutput=
@@ -58,7 +58,7 @@ ProductVersion=
 AutoIncBuildNr=0
 
 [Unit2]
-FileName=..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_vector_canlib.cpp
+FileName=..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_vector_xl.cpp
 CompileCpp=1
 Folder=Project1
 Compile=1
