@@ -1,16 +1,14 @@
 #!/bin/sh
-DOXYGEN_EXPORT_DIR="../../../../examples/src/Tutorials"
+DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 
-#EXAMPLE_LIST="conf_imi_iso"
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
-#TARGET_LIST="pc_linux"
 CAN_LIST="simulating:sys:socket_server:msq_server"
 RS232_LIST="simulating:sys:rte"
-#CAN_LIST="sontheim"
-#RS232_LIST="simulating"
+DEVICE_LIST="pc:pcan:A1:rte:sontheim:vector_canlib:vector_xl"
 for conf_example in $EXAMPLE_LIST ; do
+  echo "Processing... ". $conf_example
   EXAMPLE_DIR=""
   case "$conf_example" in
     conf_0*) EXAMPLE_DIR="0_NetworkManagement" ;;
@@ -19,46 +17,77 @@ for conf_example in $EXAMPLE_LIST ; do
     conf_3*) EXAMPLE_DIR="3_VirtualTerminal_Client" ;;
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
-		conf_tractor*) DOXYGEN_EXPORT_DIR="../../../../examples/src";EXAMPLE_DIR="Tractor" ;;
-		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../../../examples/src";EXAMPLE_DIR="CanServerMessenger" ;;
+		conf_6*) EXAMPLE_DIR="6_ParallelMutex" ;;
+		conf_Tractor*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="Tractor" ;;
+		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="CanServerMessenger" ;;
 		*) EXAMPLE_DIR=".." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`
   EXAMPLE_DOXY=`echo $EXAMPLE | sed -e 's/-/__/g'`
 	IFS=:
   for target in $TARGET_LIST ; do
-	  for can_drv in $CAN_LIST ; do
-  	  for rs232_drv in $RS232_LIST ; do
-        if [ $can_drv = "sys" ] ; then
-	        if    [ $target = "pc_linux" ] ; then
-      		  can_drv="msq_server"
-          elif [ $target = "pc_win32" ] ; then
-      		  continue
+    for can_drv in $CAN_LIST ; do
+      for can_device in $DEVICE_LIST ; do
+        for rs232_drv in $RS232_LIST ; do
+          if test $target = "pc_win32" ; then
+            if test $can_drv != "socket_server" -a $can_drv != "simulating" ; then
+              continue
+            fi
+            if test $can_device != "pc" ; then
+              continue
+            fi
+          elif test $target = "pc_linux" ; then
+            if test $can_drv != "msq_server" -a $can_drv != "simulating" ; then
+              continue;
+            fi
+            if test $can_device = "sontheim" -o $can_device = 'vector_canlib' -o $can_device = 'vector_xl' ; then
+              continue
+            fi
+            if test $can_drv = "simulating" -a $can_device != "pc" ; then
+              continue
+            fi
+          else
+            if test $can_device != "pc" ; then
+              continue;
+            fi
           fi
-        fi
 
-        if [ $can_drv = "msq_server" ] ; then
-	        if    [ $target != "pc_linux" ] ; then
-      		  continue
+          if [ $can_drv = "sys" ] ; then
+            if    [ $target = "pc_linux" ] ; then
+              can_drv="msq_server"
+            elif [ $target = "pc_win32" ] ; then
+              continue
+            fi
           fi
-        fi
-
-        if test $rs232_drv = "rte" -a $target != "pc_linux" ; then
-      	  continue
-        fi
-
-        case "$target" in
-      	  pc*)
-          ;;
-          *)
-          if test $rs232_drv != "sys" -o $can_drv != "sys" ; then
-        	  continue
+  
+          if [ $can_drv = "msq_server" ] ; then
+            if    [ $target != "pc_linux" ] ; then
+              continue
+            fi
           fi
-          ;;
-        esac
-   		  # echo "Target: $target, CAN: $can_drv, RS232: $rs232_drv"
-        echo "$EXAMPLE_DIR $EXAMPLE $conf_example $target __ $can_drv __ $rs232_drv"
-				echo "./update_makefile.sh --target-system=$target --pc-can-driver=$can_drv --pc-rs232-driver=$rs232_drv --doxygen-export-directory=$DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE $conf_example" | sh
+          if [ $can_drv = "socket_server" ] ; then
+            if    test $target != "pc_linux" -a $target != "pc_win32" ; then
+              continue
+            fi
+          fi
+  
+          if test $rs232_drv = "rte" -a $target != "pc_linux" ; then
+            continue
+          fi
+  
+          case "$target" in
+            pc*)
+            ;;
+            *)
+            if test $rs232_drv != "sys" -o $can_drv != "sys" ; then
+              continue
+            fi
+            ;;
+          esac
+           echo "target= $target candriver= $can_drv can_device= $can_device rs232= $rs232_drv $conf_example"
+#            echo "./update_makefile.sh --target-system=$target --pc-can-driver=$can_drv --pc-can-device-for-server=$can_device --pc-rs232-driver=$rs232_drv --doxygen-export-directory=$DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE $conf_example"
+             echo "./update_makefile.sh --target-system=$target --pc-can-driver=$can_drv --pc-can-device-for-server=$can_device --pc-rs232-driver=$rs232_drv --doxygen-export-directory=$DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE $conf_example" | sh
+        done
       done
     done
   done
@@ -79,4 +108,5 @@ for conf_example in $EXAMPLE_LIST ; do
   echo " */" >> $COLLECT_NAME
   rm -f $COLLECT_DIR/spec_*.txt $COLLECT_DIR/config_*.txt $COLLECT_DIR/file*.txt
   #exit 0
+exit
 done
