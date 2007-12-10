@@ -373,6 +373,9 @@ examples/compiler_projects/Dev-C++/CanServerMessenger/filelist__CanServerMesseng
 examples/compiler_projects/Dev-C++/CanServerMessenger/filelist__CanServerMessenger.utest.txt -text
 examples/compiler_projects/Dev-C++/CanServerMessenger/filelist__CanServerMessenger__pc_win32__can_server_sock_pc__simulating-doc.txt -text
 examples/compiler_projects/Dev-C++/canserver/can_server.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_pcan.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_sontheim.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_vector.dev -text
 examples/compiler_projects/Dev-C++/imi_iso/filelist__imi_iso.utest.mock.txt -text
 examples/compiler_projects/Dev-C++/imi_iso/filelist__imi_iso.utest.modsut.txt -text
 examples/compiler_projects/Dev-C++/imi_iso/filelist__imi_iso.utest.runner.txt -text
