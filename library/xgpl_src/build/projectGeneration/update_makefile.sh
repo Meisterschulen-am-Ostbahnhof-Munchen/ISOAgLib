@@ -100,7 +100,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # the corresponding default values are used
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
 # + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server" -> select wanted driver connection for CAN (deprecated: "rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim")
-# + CAN_DEVICE_FOR_SERVER="pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" -> use this device for building the can_server
+# + USE_CAN_DEVICE_FOR_SERVER="pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" -> use this device for building the can_server
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -1326,7 +1326,7 @@ create_makefile()
   echo    "-include versions.mk" >> $MakefileNameLong
 
   echo "" >> $MakefileNameLong
-  if [ "$USE_CAN_DRIVER" = "rte" -o "$USE_RS232_DRIVER" = "rte" -o "$PRJ_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
+  if [ "$USE_CAN_DRIVER" = "rte" -o "$USE_RS232_DRIVER" = "rte" -o "$USE_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
     echo "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileNameLong
     # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
     echo -n "BIOS_INC =" >> $MakefileNameLong
@@ -1514,7 +1514,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
     echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \\" >> $MakefileNameLong
 
     # now derive the source name of the specific CAN HAL module
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
+    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$USE_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
 
     echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
     echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
@@ -1532,7 +1532,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
     echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \\" >> $MakefileNameLong
 
     # now derive the source name of the specific CAN HAL module
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$PRJ_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
+    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$USE_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
     echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
     cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
@@ -1726,19 +1726,19 @@ ENDOFHEADERA
   LIB_DIR_LINE=""
   LIB_FILE_LINE=""
 
-  if  [ $USE_CAN_DRIVER = "vector_canlib" -o $PRJ_CAN_DEVICE_FOR_SERVER = "vector_canlib" ] ; then
+  if  [ $USE_CAN_DRIVER = "vector_canlib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_canlib" ] ; then
     INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$USE_WIN32_HEADER_DIRECTORY/CANLIB/dll"
     LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/CANLIB/dll"
     LIB_FILE_LINE="-lvcand32_@@_"
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
     DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
-  elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" -o $PRJ_CAN_DEVICE_FOR_SERVER = "vector_xl" ] ; then
+  elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_xl" ] ; then
     INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/XL Driver Library/bin\""
     LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/XL Driver Library/bin"
     LIB_FILE_LINE="-lvxlapi_@@_"
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
     DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE=XL_'"$USE_WIN32_CAN_HW_TYPE"'_@@_'
-  elif  [ $USE_CAN_DRIVER = "sontheim" -o $PRJ_CAN_DEVICE_FOR_SERVER = "sontheim" ] ; then
+  elif  [ $USE_CAN_DRIVER = "sontheim" -o $USE_CAN_DEVICE_FOR_SERVER = "sontheim" ] ; then
     INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/Sontheim\";\"$USE_WIN32_HEADER_DIRECTORY/Sontheim/Capitest\""
     LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/Sontheim;$USE_WIN32_LIB_DIRECTORY/Sontheim/Capitest"
     LIB_FILE_LINE="-lvcanapi_@@_"
@@ -2009,21 +2009,21 @@ create_VCPrj()
 
   PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#/#=_=_#g'`
 
-  if  [ $USE_CAN_DRIVER = "vector_canlib" -o $PRJ_CAN_DEVICE_FOR_SERVER = "vector_canlib" ] ; then
+  if  [ $USE_CAN_DRIVER = "vector_canlib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_canlib" ] ; then
           USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
           USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
           USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
           LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
-  elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" -o $PRJ_CAN_DEVICE_FOR_SERVER = "vector_xl" ] ; then
+  elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_xl" ] ; then
           USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
           USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
           USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
           LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
-  elif  [ $USE_CAN_DRIVER = "sontheim" -o $PRJ_CAN_DEVICE_FOR_SERVER = "sontheim" ] ; then
+  elif  [ $USE_CAN_DRIVER = "sontheim" -o $USE_CAN_DEVICE_FOR_SERVER = "sontheim" ] ; then
           USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
           USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
           USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
@@ -2159,7 +2159,7 @@ perform_everything()
     #echo "Use Parameter value for can driver: $PARAMETER_CAN_DRIVER"
   fi
   if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
-    PRJ_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
+    USE_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
   fi
   if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
     USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
@@ -2373,14 +2373,14 @@ if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
   USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
   IS_CAN_SERVER=$(echo $PARAMETER_CAN_DRIVER | grep -c "msq_server")
   if [ $IS_CAN_SERVER -gt 0 ] ; then
-    PRJ_CAN_DEVICE_FOR_SERVER=$(echo $PARAMETER_CAN_DRIVER | sed 's/msq_server_//g')
+    USE_CAN_DEVICE_FOR_SERVER=$(echo $PARAMETER_CAN_DRIVER | sed 's/msq_server_//g')
     USE_CAN_DRIVER="msq_server"
     PARAMETER_CAN_DRIVER="msq_server"
   fi
 fi
 
 if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
-	PRJ_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
+	USE_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
 fi
 
 
@@ -2442,31 +2442,31 @@ case "$USE_CAN_DRIVER" in
         PARAMETER_CAN_DRIVER="sys"
       ;;
     esac
-    # make sure, that PRJ_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
-    if [ "A$PRJ_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
+    # make sure, that USE_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
+    if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
       case $PRJ_DEFINES in
         *SYSTEM_A1*)
-          PRJ_CAN_DEVICE_FOR_SERVER="A1"
+          USE_CAN_DEVICE_FOR_SERVER="A1"
           ;;
         *)
-          PRJ_CAN_DEVICE_FOR_SERVER="pc"
+          USE_CAN_DEVICE_FOR_SERVER="pc"
           ;;
       esac
     fi
-    CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${PRJ_CAN_DEVICE_FOR_SERVER}
+    CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
   ;;
   socket_server)
-    if [ "A$PRJ_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
+    if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
       case $PRJ_DEFINES in
         *SYSTEM_A1*)
-          PRJ_CAN_DEVICE_FOR_SERVER="A1"
+          USE_CAN_DEVICE_FOR_SERVER="A1"
           ;;
         *)
-          PRJ_CAN_DEVICE_FOR_SERVER="pc"
+          USE_CAN_DEVICE_FOR_SERVER="pc"
           ;;
       esac
     fi
-    CAN_SERVER_FILENAME=can_server_sock_${PRJ_CAN_DEVICE_FOR_SERVER}
+    CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
   ;;
   vector_canlib)
     case "$USE_TARGET_SYSTEM" in
@@ -2530,7 +2530,7 @@ case "$USE_CAN_DRIVER" in
     ;;
 esac
 
-case "$PRJ_CAN_DEVICE_FOR_SERVER" in
+case "$USE_CAN_DEVICE_FOR_SERVER" in
   rte)
     case "$USE_TARGET_SYSTEM" in
       pc_linux)
