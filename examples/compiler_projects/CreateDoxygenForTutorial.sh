@@ -20,7 +20,7 @@ for conf_example in $EXAMPLE_LIST ; do
 		conf_6*) EXAMPLE_DIR="6_ParallelMutex" ;;
 		conf_Tractor*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="Tractor" ;;
 		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="CanServerMessenger" ;;
-		*) EXAMPLE_DIR=".." ;;
+		*) EXAMPLE_DIR="." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`
   EXAMPLE_DOXY=`echo $EXAMPLE | sed -e 's/-/__/g'`
@@ -108,5 +108,4 @@ for conf_example in $EXAMPLE_LIST ; do
   echo " */" >> $COLLECT_NAME
   rm -f $COLLECT_DIR/spec_*.txt $COLLECT_DIR/config_*.txt $COLLECT_DIR/file*.txt
   #exit 0
-exit
 done
