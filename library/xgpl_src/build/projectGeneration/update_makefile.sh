@@ -100,6 +100,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # the corresponding default values are used
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
 # + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server" -> select wanted driver connection for CAN (deprecated: "rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim")
+# + CAN_DEVICE_FOR_SERVER="pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" -> use this device for building the can_server
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
