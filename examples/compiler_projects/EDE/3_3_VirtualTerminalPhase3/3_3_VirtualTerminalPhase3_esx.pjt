@@ -1,6 +1,6 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='..\..\..\..\..'
+SysSetCwd='..\..\..\..'
 SrchSetFlags=0x0418680a
 SrchSetAgainFlags=0x00006002,0
 SrchSetAgainFlags=0x0200600a,1
@@ -169,7 +169,6 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectmeter_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectinputlist_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectoutputlist_c.cpp
-..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectgraphicscontext_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectfontattributes_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectpolygon_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectauxiliaryinput_c.cpp
@@ -255,7 +254,6 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobject_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectcontainer_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\isoterminal_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectgraphicscontext_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectpicturegraphic_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectauxiliaryinput_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectalarmmask_c.h
@@ -302,7 +300,6 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectkey_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectline_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\iisoterminal_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectgraphicscontext_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtclientservercommunication_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectlineattributes_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectinputnumber_c.h
@@ -361,13 +358,13 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\3_VirtualTerminal_Client\3_3_VirtualTerminalPhase3;..\..\..\..\..;..\..\..\..\../library/xgpl_src;..\..\..\..\commercial_BIOS\bios_esx
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\3_VirtualTerminal_Client\3_3_VirtualTerminalPhase3;..\..\..\..;..\..\..\../library/xgpl_src;..\..\..\..\commercial_BIOS\bios_esx
 Libraries=c:\programme\tasking\c166\lib;..\..\..\..\commercial_BIOS\bios_esx
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\drosdowski\Projects\IsoAgLib\examples\compiler_projects\EDE\\3_3_VirtualTerminalPhase3
+ProjectDir=\home\drosdowski\Projects\VtServer_StandardRevision3_ActiveWork\IsoAgLib\examples\compiler_projects\EDE\\3_3_VirtualTerminalPhase3
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b

@@ -31,8 +31,8 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.cpp
-../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.cpp
+../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/impl/procdatalocalsimplesetpoint_c.cpp
@@ -132,10 +132,10 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.h
-../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpoint/impl/procdatalocalsimplesetpoint_c.h
@@ -145,7 +145,6 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/imeasureproglocal_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/measureproglocal_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/managemeasureproglocal_c.h
-../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/igeneralcommand_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/impl/setpointremote_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/isetpointremote_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h

@@ -167,8 +167,8 @@ ifneq ($(GCC_MAJOR),2)
 	EXTRA_CFLAGS =  -Wextra -Winit-self -Wmissing-include-dirs
 else
 endif
-CFLAGS   = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
+CFLAGS   = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
 
 LEXFLAGS =
 YACCFLAGS= -d

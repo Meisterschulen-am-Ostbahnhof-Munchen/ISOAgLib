@@ -27,6 +27,9 @@
 ../../../../examples/src/Tutorials/1_ApplicationLayer/1_0_ReadIso/version.h
 ../../../../examples/src/Tutorials/1_ApplicationLayer/1_2_WriteIso/config_1_2_WriteIso.h
 ../../../../examples/src/Tutorials/1_ApplicationLayer/1_2_WriteIso/version.h
+../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_derived-cpp.h
+../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_derived-h.h
+../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_direct.h
 ../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/config_6_0_VtThreads.h
 ../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/version.h
 ../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/config_6_0_VtThreadsEsxu.h
@@ -35,6 +38,9 @@
 ../../../../examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/config_5_1_ProprietaryPgn.h
 ../../../../examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/version.h
 ../../../../examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/5_1_ProprietaryPgn.h
+../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool_derived-cpp.h
+../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool_derived-h.h
+../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool_direct.h
 ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/config_3_3_VirtualTerminalPhase3.h
 ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/version.h
 ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition2/simpleVTIsoPool2_derived-cpp.h

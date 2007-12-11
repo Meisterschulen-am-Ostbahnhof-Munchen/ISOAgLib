@@ -25,7 +25,7 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../../examples/src/Tutorials/0_NetworkManagement/0_3_LookupIso/0_3_LookupIso.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h
 ../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h

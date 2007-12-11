@@ -14,8 +14,8 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procident_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.cpp
-../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/generalcommand_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/process_c.cpp
+../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/procdatabase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleSetpoint/impl/procdataremotesimplesetpoint_c.cpp

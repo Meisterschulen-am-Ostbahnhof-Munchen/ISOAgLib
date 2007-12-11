@@ -1,6 +1,6 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='..\..\..\..\..'
+SysSetCwd='..\..\..\..'
 SrchSetFlags=0x0418680a
 SrchSetAgainFlags=0x00006002,0
 SrchSetAgainFlags=0x0200600a,1
@@ -222,13 +222,13 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\5_CanFeatures\5_0_InternalCan;..\..\..\..\..;..\..\..\..\../library/xgpl_src;..\..\..\..\commercial_BIOS\bios_esx
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\5_CanFeatures\5_0_InternalCan;..\..\..\..;..\..\..\../library/xgpl_src;..\..\..\..\commercial_BIOS\bios_esx
 Libraries=c:\programme\tasking\c166\lib;..\..\..\..\commercial_BIOS\bios_esx
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\drosdowski\Projects\IsoAgLib\examples\compiler_projects\EDE\\5_0_InternalCan
+ProjectDir=\home\drosdowski\Projects\VtServer_StandardRevision3_ActiveWork\IsoAgLib\examples\compiler_projects\EDE\\5_0_InternalCan
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b

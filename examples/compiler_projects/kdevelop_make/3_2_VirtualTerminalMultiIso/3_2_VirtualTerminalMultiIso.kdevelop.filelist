@@ -46,7 +46,6 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectmeter_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputlist_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputlist_c.cpp
-../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectfontattributes_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpolygon_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryinput_c.cpp
@@ -130,7 +129,6 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobject_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectcontainer_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h
-../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpicturegraphic_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryinput_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectalarmmask_c.h
@@ -177,7 +175,6 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectkey_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectline_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminal_c.h
-../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectgraphicscontext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectlineattributes_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectinputnumber_c.h
