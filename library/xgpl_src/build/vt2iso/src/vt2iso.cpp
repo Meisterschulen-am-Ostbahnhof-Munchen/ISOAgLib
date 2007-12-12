@@ -525,6 +525,9 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_defines, "\n#define vtKeyCodeACK 0\n");
     // OLD:  fprintf (partFile_defines, "\n#define vtObjectCount %d\n", objCount);
   }
+  if (partFile_obj_selection) {
+    fprintf (partFile_obj_selection, "\n#endif\n");
+  }
 
   std::map<int32_t, ObjListEntry>::iterator mit_lang;
   std::map<uint16_t, std::string>::iterator mit_obj;
@@ -669,6 +672,7 @@ vt2iso_c::clean_exit (char* error_message)
   strcat (partFileName, "_direct.h");
   partFile_direct = fopen (partFileName,"wt");
 
+  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
   fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath, extension);
@@ -678,7 +682,6 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
   }
   fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath);
 
   if (pc_specialParsing)
@@ -691,6 +694,7 @@ vt2iso_c::clean_exit (char* error_message)
   strcat (partFileName, "_derived-cpp.h");
   partFile_direct = fopen (partFileName,"wt");
 
+  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath, extension);
   fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", xmlFileWithoutPath, extension);
   for (unsigned int i=0; i<ui_languages; i++)
@@ -698,7 +702,6 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath, i);
   }
   fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath);
-  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath);
   fprintf (partFile_direct, "#include \"%s-functions%s.inc\"\n", xmlFileWithoutPath, extension);
 
   if (pc_specialParsing)
@@ -725,6 +728,7 @@ vt2iso_c::clean_exit (char* error_message)
   if (partFile_attributes)       fclose (partFile_attributes);
   if (partFile_attributes_extern) fclose (partFile_attributes_extern);
   if (partFile_defines)          fclose (partFile_defines);
+  if (partFile_obj_selection)     fclose (partFile_obj_selection);
   if (partFile_functions)        fclose (partFile_functions);
   if (partFile_functions_origin) fclose (partFile_functions_origin);
 
@@ -948,6 +952,7 @@ vt2iso_c::splitFunction (bool ab_onlyClose=false)
   {
     sprintf (partFileName, "%s-function%d.cpp", xmlFileGlobal, splitFunctionPart);
     partFile_split_function = fopen (partFileName, "wt");
+    
     fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", xmlFileGlobal);
     fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", xmlFileGlobal);
@@ -976,6 +981,7 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   partFile_functions = NULL;
   partFile_functions_origin = NULL;
   partFile_defines = NULL;
+  partFile_obj_selection = NULL;
   partFile_list = NULL;
   partFile_handler_direct = NULL;
   partFile_handler_derived = NULL;
@@ -1051,7 +1057,13 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   strcat (partFileName, "-defines.inc");
   partFile_defines = fopen (partFileName,"wt");
   if (partFile_defines == NULL) clean_exit ("Couldn't create -defines.inc.");
+  
+  partFile_obj_selection = fopen ("IsoTerminalObjectSelection.inc","wt");
+  if (partFile_obj_selection == NULL) clean_exit ("Couldn't create IsoTerminalObjectSelection.inc.");
 
+  fprintf( partFile_obj_selection, "#ifndef DECL_obj_selection_%s_c\n", proName.c_str());
+  fprintf( partFile_obj_selection, "#define DECL_obj_selection_%s_c\n\n", proName.c_str());
+  
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-list.inc");
   partFile_list = fopen (partFileName,"wt");
@@ -4530,9 +4542,9 @@ vt2iso_c::generateIncludeDefines()
 {
   for (int i=0; i<=DEF_iso639entries; i++)
   {
-    if (arrb_objTypes[i])
+    if ((i < 39) && (!arrb_objTypes[i])) // parse only standard vt objects
     {
-      fprintf (partFile_defines, "#define USE_VTOBJECT_%s\n", otCompTable[i]);
+      fprintf (partFile_obj_selection, "#define USE_NO_VTOBJECT_%s\n", otCompTable[i]);
     }
   }
 }
@@ -5014,8 +5026,8 @@ int main(int argC, char* argV[])
   } // loop all files
 
   pc_vt2iso->skRelatedFileOutput();
-
-  pc_vt2iso->generateIncludeDefines();
+  
+  pc_vt2iso->generateIncludeDefines();  
 
   if (errorOccurred)
     pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n\n");

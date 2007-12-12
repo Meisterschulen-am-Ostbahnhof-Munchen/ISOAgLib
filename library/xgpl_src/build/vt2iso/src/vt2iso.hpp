@@ -262,6 +262,7 @@ private:
   FILE *partFile_handler_direct;
   FILE *partFile_handler_derived;
   FILE *partFile_split_function;
+  FILE *partFile_obj_selection;
 
   unsigned int ui_languages;
 
