@@ -225,11 +225,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // call TracPto_c function to send pto informtation
     // isoSendMessage checks if this item (identified by ISOName)
     // is configured to send pto information
-    if ( aui32_pgn == FRONT_PTO_STATE_PGN  && mt_ptoFront.t_ptoEngaged != IsoAgLib::IsoActive)
+    if ( aui32_pgn == FRONT_PTO_STATE_PGN  && (IsoAgLib::IsoActiveFlag_t)(mt_ptoFront.t_ptoEngaged) != IsoAgLib::IsoActive)
     {
       sendMessage(sendFrontPto);
     }
-    if ( aui32_pgn == REAR_PTO_STATE_PGN && mt_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
+    if ( aui32_pgn == REAR_PTO_STATE_PGN && (IsoAgLib::IsoActiveFlag_t)mt_ptoRear.t_ptoEngaged != IsoAgLib::IsoActive)
     {
       sendMessage(sendRearPto);
     }
@@ -327,7 +327,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( (ci32_now - mt_ptoFront.i32_lastPto)  >= TIMEOUT_TRACTOR_DATA
            || getSelectedDataSourceISOName().isUnspecified()
          )
-         && ( mt_ptoFront.ui16_pto8DigitPerRpm != 0 && mt_ptoFront.t_ptoEngaged != IsoAgLib::IsoInactive)
+         && ( (IsoAgLib::IsoActiveFlag_t)(mt_ptoFront.ui16_pto8DigitPerRpm) != 0 && (IsoAgLib::IsoActiveFlag_t)(mt_ptoFront.t_ptoEngaged) != IsoAgLib::IsoInactive)
        )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
@@ -337,7 +337,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( ( ci32_now - mt_ptoRear.i32_lastPto ) >= TIMEOUT_TRACTOR_DATA
            || (getSelectedDataSourceISOName().isUnspecified() )
          )
-         && ( mt_ptoRear.ui16_pto8DigitPerRpm != 0 && mt_ptoRear.t_ptoEngaged != IsoAgLib::IsoInactive )
+         && ((IsoAgLib::IsoActiveFlag_t)(mt_ptoRear.ui16_pto8DigitPerRpm) != 0 && (IsoAgLib::IsoActiveFlag_t)(mt_ptoRear.t_ptoEngaged) != IsoAgLib::IsoInactive )
        )
     { // TECU stoppped its PTO and doesn'T send PTO updates - as defined by ISO 11783
       // --> switch values to ZERO
