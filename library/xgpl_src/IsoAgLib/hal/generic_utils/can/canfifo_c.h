@@ -88,7 +88,16 @@
 
 namespace HAL{
 
+/**
+* Number of canfifo buffer elements.
+* The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,
+* otherwise the overflow of the UC and AC counter can lead to loss of data between producer and consumer.
+*/
 #define TARGET_WORDSIZE (SIZEOF_INT * 8)
+
+#if CAN_FIFO_EXPONENT_BUFFER_SIZE >= (TARGET_WORDSIZE - 1)
+#error CAN_FIFO_EXPONENT_BUFFER_SIZE must be less than  TARGET_WORDSIZE -1
+#endif
 
 extern "C" {
 
@@ -103,19 +112,6 @@ const unsigned int uic_expBufferSize = CAN_FIFO_EXPONENT_BUFFER_SIZE;
 * Canio_c::processMsg is called to free the CAN FIFO buffer */
 
 const unsigned int cui_toleranceLevel = CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL;
-
-
-/**
-* Number of buffer elements.
-* The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,
-* otherwise the overflow of the UC and AC counter can lead to loss of data between producer and consumer.
-*/
-/*
-#if (uic_expBufferSize > (TARGET_WORDSIZE -1))
-Error on Buffer size, the variable uic_expBufferSize is too big.
-Please mofify
-#endif
-*/
 
 
 const unsigned int uic_bufferSize = 1 << uic_expBufferSize;

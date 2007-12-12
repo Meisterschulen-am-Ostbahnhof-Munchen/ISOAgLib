@@ -66,7 +66,7 @@ namespace HAL {
 
 extern "C" {
 
-NEAR static iFifo_s s_canFifoInstance[cui32_maxNbrCan];
+NEAR_MEM static iFifo_s s_canFifoInstance[cui32_maxNbrCan];
 
 }
 
@@ -272,7 +272,7 @@ int32_t iFifoReadFbIdx(uint8_t aui8_busNum,int32_t& ri32_fbIdx, int32_t& rui32_r
     s_canFifoInstance[aui8_busNum].b_Reading = true;
 
 
-NEAR_PTR fifoData_s* ps_readData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
+USE_NEAR_MEM fifoData_s* ps_readData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
   ri32_fbIdx = ps_readData->i32_fbIndex;
   rui32_rcvTime = ps_readData->i32_time;
   rui32_msgId = ps_readData->dwId;
@@ -332,7 +332,7 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData)
 
   uint8_t* pui8_destination = (uint8_t*)&ar_readData;
 
-  NEAR_PTR uint8_t* pui8_source = (uint8_t*)&s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
+  USE_NEAR_MEM uint8_t* pui8_source = (uint8_t*)&s_canFifoInstance[aui8_busNum].p_fifoBuffer[(s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()];
   for ( unsigned int cnt = sizeof(fifoData_s); cnt > 0; cnt--)
   {
          *pui8_destination= *pui8_source;
@@ -465,12 +465,12 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
 
 /** write in the FIFO **/
 
-  NEAR_PTR fifoData_s* ps_writeData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()];
+  USE_NEAR_MEM fifoData_s* ps_writeData = &s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()];
   ps_writeData->dwId = ai32_msgId;
   ps_writeData->i32_time = HAL::getTime();
   ps_writeData->i32_fbIndex = ai32_fbIdx;
-  
-  
+
+
 
   // getIrqData is implemented in the target specific HAL and can directly place the data of the
   // received message into pointed place inside the FIFO

@@ -77,8 +77,8 @@ extern "C" {
 
 /**Support table for quick search of the FilterBox interested to the message.
 */
-NEAR static mo_compare_s  moIdentArr[cui32_maxNbrCan][cui8_numMsbObj]; /** the index is the MsbObjNum of the ArrMsgObj */
-NEAR static bool sb_initialized[cui32_maxNbrCan];
+NEAR_MEM static mo_compare_s  moIdentArr[cui32_maxNbrCan][cui8_numMsbObj]; /** the index is the MsbObjNum of the ArrMsgObj */
+NEAR_MEM static bool sb_initialized[cui32_maxNbrCan];
 static uint8_t minReceiveObjNr[cui32_maxNbrCan];
 
 

@@ -93,6 +93,11 @@
   */
 // #define USE_HUGE_MEM
 
+/** define suitable  keyword for near memory type */
+#define NEAR_MEM
+#define USE_NEAR_MEM
+
+
 #define MAX_EEPROM_SEGMENT_SIZE 40
 
 /** define max number of write try-cycle to EEPROM
