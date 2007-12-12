@@ -190,6 +190,7 @@ void Scheduler_c::singletonInit()
   mi32_demandedExecEndScheduler = 0;
   mb_execStopForced = false;
 
+
   init();
 };
 
@@ -206,6 +207,8 @@ void Scheduler_c::init( void )
   // clear the scheduler queues
   while ( !mc_taskQueue.empty() ) mc_taskQueue.pop_front();
   setCntClient( 0 );
+
+  pc_currentlyExecutedTask = NULL;
 }
 
 /** simply close communicating clients */
@@ -449,7 +452,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   System_c::triggerWd();
 
   int32_t i32_endCanProcessing = HAL::getTime() +  mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
-  Scheduler_Task_c::setDemandedExecEnd( (i32_endCanProcessing <ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   ); 
+  Scheduler_Task_c::setDemandedExecEnd( (i32_endCanProcessing <ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
   // process CAN messages
   if ( getCanInstance4Comm().timeEvent() )
@@ -465,7 +468,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
     // check if immediate return is needed
     HAL::ProcessRS232EEEditorMsg();
   #endif
-  
+
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
   { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
@@ -475,7 +478,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   #endif
   System_c::triggerWd();
 
-  
+
   /// Call timeEvent for next Client in TaskQueue as long as
   /// one Client returns idleTime=0 and Scheduler_c has still time;
   /// (i32_idleTime > 0)-> ends loop -> triggers still proccessmsg()
@@ -488,7 +491,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   }
 
   i32_endCanProcessing = HAL::getTime() + mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
-  Scheduler_Task_c::setDemandedExecEnd( ( i32_endCanProcessing < ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   ); 
+  Scheduler_Task_c::setDemandedExecEnd( ( i32_endCanProcessing < ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
   // check if all tasks are called
   if ( i32_idleTime > 0 )
@@ -558,7 +561,7 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
   if(cntClient() <= 1) return ; //nothing to sort
 
   STL_NAMESPACE::list<SchedulerEntry_c>::iterator iterExecuted = mc_taskQueue.begin();
-  
+
   for ( ; iterExecuted != mc_taskQueue.end(); iterExecuted++ )
   {
     if (apc_sort == &(*iterExecuted) ) break;
@@ -570,7 +573,7 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
   // compare with the next item in list
   ++iterCompare;
 
-  // Safety test  
+  // Safety test
   if (iterCompare == mc_taskQueue.end()) return;
 
   if ( *iterExecuted <= *iterCompare )
@@ -683,7 +686,15 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     /// IF Client returns with false -> return i32_idleTime = -1
     /// because last Client could not finish in available TimeSpan
     SchedulerEntry_c* pc_execute = &(*pc_execIter);
+
+    /// set the current Task as currently executed task
+    pc_currentlyExecutedTask = pc_execute;
+
     const bool b_result = pc_execIter->timeEventExec( i32_endTime );
+
+    ///reset the currently executed task.
+    pc_currentlyExecutedTask = NULL;
+
     if ( !b_result && (pc_nextCallIter != mc_taskQueue.end() ) )
     { // time was not enough and more than one client is managed - check whether the next item
       // needs also to be executed
@@ -865,6 +876,18 @@ void Scheduler_c::printTaskList()
 //! @param ai16_newTimePeriod -> New Period will set for the Client by Scheduler_c
 bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , uint16_t aui16_newTimePeriod ){
 
+/** the task involved in the operation is being executing now , the operation cannot be performed */
+  if(isTaskExecuted(pc_client))
+  {
+   #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeTimePeriodAndResortTask" << INTERNAL_DEBUG_DEVICE_ENDL;
+
+    TraceAndAbort();
+   #endif
+    return false;
+  }
+
+
   //Now calculate Delta and nextTriggerTime for Client
   int16_t i_deltaTime = aui16_newTimePeriod - pc_client->getTimePeriod()  ;
   int32_t i32_newTriggerTime = pc_client->getNextTriggerTime() + i_deltaTime;
@@ -889,6 +912,18 @@ bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , 
 //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
 bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
+
+  /** the task involved in the operation is being executing now , the operation cannot be performed */
+  if(pc_currentlyExecutedTask == &ac_client)
+  {
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeRetriggerTimeAndResort" << INTERNAL_DEBUG_DEVICE_ENDL;
+
+    TraceAndAbort();
+    #endif
+    return false;
+  }
+
   if ( mc_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;
   else
@@ -913,6 +948,18 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , in
 //! @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
 bool  Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
+
+  /** the task involved in the operation is being executing now , the operation cannot be performed */
+  if(isTaskExecuted(pc_client))
+  {
+    #ifdef DEBUG
+    INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeRetriggerTimeAndResort" << INTERNAL_DEBUG_DEVICE_ENDL;
+
+    TraceAndAbort();
+    #endif
+    return false;
+  }
+
   if ( mc_taskQueue.empty() ) return false;
   else if (cntClient() == 1) return true;
   else
@@ -937,6 +984,8 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client  , 
 //! @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
 bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
+
+
   #ifdef DEBUG_SCHEDULER
   printTaskList();
   #endif
@@ -1075,5 +1124,39 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
   #endif
   return  true ;
 }
+
+ /** The function checks whether the input Scheduler_task_c is in the timeEvent,
+     in this case return true */
+bool Scheduler_c::isTaskExecuted(const Scheduler_Task_c* apc_client)
+  {
+      if(pc_currentlyExecutedTask == NULL)
+      {
+        return false;
+      }
+
+      if(pc_currentlyExecutedTask->isTask( apc_client))
+      {
+        return true;
+      }
+
+      return false;
+   };
+
+#ifdef DEBUG
+
+/** Tracing function for debugging aim, the function performs an abort in case of SYSTEM_PC target */
+
+void Scheduler_c::TraceAndAbort(){
+
+        INTERNAL_DEBUG_DEVICE << " The Task is currently on the timeEvent."
+        << "It is not allowed to call the methods changeTimePeriodAndResortTask,changeRetriggerTimeAndResort, changeRetriggerTimeAndResort "
+        << "Please call the method setTimePeriod instead " << INTERNAL_DEBUG_DEVICE_ENDL;
+
+        #ifdef SYSTEM_PC
+        abort();
+        #endif
+
+   }
+#endif
 
 } // end of namespace __IsoAgLib

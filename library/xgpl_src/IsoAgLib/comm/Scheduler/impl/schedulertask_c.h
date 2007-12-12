@@ -98,7 +98,7 @@
 #include <IsoAgLib/hal/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/saclaimhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -252,7 +252,7 @@ class Scheduler_Task_c : public SaClaimHandler_c {
   //  Operation: getDemandedExecEnd
   //!  Deliver the registered exec end timestamp.
   static inline int32_t getDemandedExecEnd();
-  
+
    //  Operation: setDemandedExecEnd
   //!  Sets the registered exec end timestamp.
   static inline void setDemandedExecEnd(int32_t ai32_demandenExecTime) {  msi32_demandedExecEnd = ai32_demandenExecTime;};

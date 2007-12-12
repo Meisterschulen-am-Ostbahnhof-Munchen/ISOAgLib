@@ -60,6 +60,7 @@
 /* *************************************** */
 #include "impl/multireceive_c.h"
 #include <IsoAgLib/driver/can/icancustomer_c.h>
+#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
 
 
 // Begin Namespace IsoAgLib
@@ -96,7 +97,24 @@ public:
                          #endif
                          ); }
 
+ void registerClient   (IsoAgLib::iSchedulerTask_c& arc_client, const iIsoName_c& arc_isoName,
+                         uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                         bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
+                         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+                         , bool ab_isFastPacket=false
+                         #endif
+                         )
+    { MultiReceive_c::registerClient (arc_client, arc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
+                         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+                         , ab_isFastPacket
+                         #endif
+                         ); }
+
   void deregisterClient (IsoAgLib::iCanCustomer_c* apc_client)
+    { MultiReceive_c::deregisterClient (*static_cast<__IsoAgLib::CanCustomer_c*>(apc_client)); }
+
+
+  void deregisterClient (IsoAgLib::iSchedulerTask_c* apc_client)
     { MultiReceive_c::deregisterClient (*static_cast<__IsoAgLib::CanCustomer_c*>(apc_client)); }
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.

@@ -1,13 +1,11 @@
 /***************************************************************************
-                          iiso_item.h - object which represents an item
-                                           in a iso monitor list
+                          ischedulertask_c.cpp  -  header for central hardware independent
+                                    object which manages all functional
+                                    IsoAgLib member objects
                              -------------------
-    begin                : Tue Jan 02 2001
-    copyright            : (C) 2001 - 2004 by Dipl.-Inform. Achim Spangler
+    begin                : Thu Jul 29 1999
+    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
-    type                 : Header
-    $LastChangedDate: 2006-10-05 08:36:45 +0200 (Do, 05 Okt 2006) $
-    $LastChangedRevision: 2046 $
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +20,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -52,53 +50,40 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-#ifndef IISO_FILTER_H
-#define IISO_FILTER_H
 
-#include <IsoAgLib/driver/can/icancustomer_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
-#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
-
-namespace __IsoAgLib
-{ // forward declarations
-  class ProprietaryMessageHandler_c;
-}
+/* *************************************** */
+/* ********** include headers ************ */
+/* *************************************** */
+#include "ischedulertask_c.h"
 
 
-namespace IsoAgLib
-{ // forward declarations
-  class iIdent_c;
+/// Begin Namespace IsoAgLib
+namespace IsoAgLib {
 
+/** Costructor for iSchedulerTask_c */
 
-struct iIsoFilter_s : private __IsoAgLib::IsoFilter_s
+iSchedulerTask_c::iSchedulerTask_c(int ai_key):mi_key(ai_key)
 {
-  iIsoFilter_s (iCanCustomer_c& arc_canCustomer, uint32_t aui32_mask, uint32_t aui32_filter, const iIsoName_c* apc_isoNameDa = NULL, const iIsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, iIdent_c::identType_t at_identType=iIdent_c::ExtendedIdent)
-    : IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(arc_canCustomer),
-      aui32_mask, aui32_filter,
-      apc_isoNameDa, apc_isoNameSa,
-      ai8_dlcForce, at_identType) {}
+  if (Scheduler_Task_c::checkAlreadyClosed())
+  { // avoid another call
+    Scheduler_Task_c::clearAlreadyClosed();
 
-
-  iIsoFilter_s (iSchedulerTask_c& arc_schedulerTask, uint32_t aui32_mask, uint32_t aui32_filter, const iIsoName_c* apc_isoNameDa = NULL, const iIsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, iIdent_c::identType_t at_identType=iIdent_c::ExtendedIdent)
-    : IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(arc_schedulerTask),
-      aui32_mask, aui32_filter,
-      apc_isoNameDa, apc_isoNameSa,
-      ai8_dlcForce, at_identType) {}
-
-
-  uint32_t          getMask()      const { return IsoFilter_s::getMask(); }
-  uint32_t          getFilter()    const { return IsoFilter_s::getFilter(); }
-  const iIsoName_c& getIsoNameDa() const { return static_cast<const iIsoName_c&>(IsoFilter_s::getIsoNameDa()); }
-  const iIsoName_c& getIsoNameSa() const { return static_cast<const iIsoName_c&>(IsoFilter_s::getIsoNameSa()); }
-
-  bool operator == (const iIsoFilter_s rrefcs_isoFilter) const { return __IsoAgLib::IsoFilter_s::operator == (rrefcs_isoFilter); }
-  bool operator != (const iIsoFilter_s rrefcs_isoFilter) const { return __IsoAgLib::IsoFilter_s::operator != (rrefcs_isoFilter); }
-
-private:
-  friend class iIsoFilterManager_c;
-  friend class __IsoAgLib::ProprietaryMessageHandler_c;
+    // register in Scheduler_c to get time-events
+    __IsoAgLib::getSchedulerInstance4Comm().registerClient(this);
+  }
 };
 
-} // End Namespace IsoAgLib
-#endif
+/** Destructor for iSchedulerTask_c */
+iSchedulerTask_c:: ~iSchedulerTask_c()
+{
+
+  if (!Scheduler_Task_c::checkAlreadyClosed())
+  { // avoid another call
+    Scheduler_Task_c::setAlreadyClosed();
+
+    // deregister in Scheduler_c
+    __IsoAgLib::getSchedulerInstance4Comm().unregisterClient(this);
+  }
+};
+
+}

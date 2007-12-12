@@ -71,6 +71,7 @@ Scheduler_Task_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
   int32_t i32_earlierTime = 0,
           i32_resultTime = 0;
 
+
   // first check for earliest setting
   if ( ( t_retriggerType & EarliestRetrigger ) != 0 )
   { // allow  shorter time between two retriggers (default 75 %)
@@ -270,6 +271,7 @@ Scheduler_Task_c::~Scheduler_Task_c()
 //! work in the default min exec time of 5msec
 uint16_t Scheduler_Task_c::getForcedMinExecTime() const
 {
+
   return 5;
 }
 

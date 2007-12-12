@@ -253,6 +253,15 @@ private: //Private methods
   Scheduler_c() : mb_systemStarted (false) {};
 
 
+  /** The function checks whether the input Scheduler_task_c is in the timeEvent,
+     in this case return true */
+
+  bool isTaskExecuted(const Scheduler_Task_c* apc_client);
+
+#ifdef DEBUG
+  void TraceAndAbort();
+#endif
+
   /**
     initialize directly after the singleton instance is created.
     this is called from singleton.h and should NOT be called from the user again.
@@ -328,6 +337,8 @@ private: // Private attributes
   HAL::ExclusiveAccess_c mc_protectAccess;
 #endif
 
+ /** pointer to the currently executed task */
+  SchedulerEntry_c * pc_currentlyExecutedTask;
 
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
   static int32_t mi32_lastTimeEventTime;
