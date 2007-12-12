@@ -1469,8 +1469,12 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
   }
   else //if the full reconfiguration is not necessary, the pc_iterFilterBox start from the last FilterBox added
   {
-
+#ifndef WIN32
    pc_iterFilterBox = static_cast <ArrFilterBox::iterator> (&m_arrFilterBox[getMinChangedFilterBox()]);
+#else
+	  pc_iterFilterBox = m_arrFilterBox.begin();
+	  for (uint32_t ui32_loopFilerBox = 0; ui32_loopFilerBox < getMinChangedFilterBox(); ui32_loopFilerBox++) pc_iterFilterBox++;
+#endif
    pc_search4MsgObjReuse = marr_msgObj.end(); // indicate that NO existing MsgObj_c is available for reuse
 
   }
