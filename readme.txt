@@ -360,7 +360,7 @@ Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
     - <a href="http://www.imis.com">Joh. Winklhofer & Söhne GmbH & Co. KG</a>
     - <a href="http://www.ivm-automotive.com/">IVM Automotive München Gmb</a>
 
-More information on commercial backing of \isoaglib can be obtained <a href="http://www.isoaglib.com/">here</a>.
+More information on commercial backing of \isoaglib can be obtained in the \ref GeneralSupportInformation section.
 
 
 \subsection MaintainersExtensions Exclusive feature area for new customers and researchers
