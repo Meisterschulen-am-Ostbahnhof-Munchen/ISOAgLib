@@ -2779,6 +2779,9 @@ examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoP
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_derived-cpp.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_derived-h.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/MaskDefinition/simpleVTIsoPool_direct.h -text
+examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTask/7_0_SchedulerTask.cpp -text
+examples/src/Tutorials/7_SchedulerTask/7_1_SchedulerTask/7_1_SchedulerTask.cpp -text
+examples/src/Tutorials/7_SchedulerTask/7_2_SchedulerTask/7_2_SchedulerTask.cpp -text
 /index.html -text
 /installation.txt -text
 library/LICENSE -text
