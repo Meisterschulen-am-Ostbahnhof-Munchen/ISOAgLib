@@ -53,7 +53,7 @@
 
 #include "impl/vtobjectstringvariable_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_stringvariable || defined USE_VTOBJECT_outputstring
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_stringvariable || defined USE_VTOBJECT_outputstring || defined USE_VTOBJECT_inputstring
 #include "ivtobjectoutputstring_c.h"
 
 #ifdef USE_VT_UNICODE_SUPPORT

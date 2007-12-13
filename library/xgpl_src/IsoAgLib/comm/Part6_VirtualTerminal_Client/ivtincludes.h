@@ -80,9 +80,9 @@
 #if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_ellipse
   #include "ivtobjectellipse_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
+//#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
   #include "ivtobjectgraphicscontext_c.h"
-#endif
+//#endif
 #if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputboolean
   #include "ivtobjectinputboolean_c.h"
 #endif

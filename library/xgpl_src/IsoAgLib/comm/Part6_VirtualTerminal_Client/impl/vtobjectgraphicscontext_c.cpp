@@ -81,7 +81,6 @@
  ***************************************************************************/
 #include "vtobjectgraphicscontext_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
 #include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectlineattributes_c.h"
@@ -617,4 +616,3 @@ vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_a
 }
 #endif
 } // namespace __IsoAgLib
-#endif
