@@ -91,7 +91,7 @@ public:
   //!  @return <0 -> too late, =0 -> trigger now, >0 -> wait
   //! Parameter:
   //! @param t_retriggerType: Bit-OR combination of [earliest|standard|latest]
-  virtual int32_t getTimeToNextTrigger(__IsoAgLib::retriggerType_t t_retriggerType= __IsoAgLib::StandardRetrigger) const {return Scheduler_Task_c::getTimeToNextTrigger(t_retriggerType);}
+  virtual int32_t getTimeToNextTrigger(__IsoAgLib::retriggerType_t t_retriggerType= __IsoAgLib::StandardRetrigger) const;
 
 
 
@@ -140,11 +140,11 @@ public:
  virtual const char* getTaskName() const = 0;
 
 
- //! virtual function which allows a scheduler client to define
+  //! virtual function which allows a scheduler client to define
   //! a minimum execution time, that should be saved after this item in the
   //! scheduler loop - some tasks might not be able to finish any sensible
   //! work in the default min exec time of 5msec
- virtual uint16_t getForcedMinExecTime() const {return Scheduler_Task_c::getForcedMinExecTime();}
+ virtual uint16_t getForcedMinExecTime() const;
 
 
   //  Operation: getAvailableExecTime
@@ -173,17 +173,21 @@ public:
   //! delay the next retrigger time to the given timestamp
   void delayNextTriggerTimeToTime( int32_t ai32_newNextRetrigger ) { return Scheduler_Task_c::delayNextTriggerTimeToTime(ai32_newNextRetrigger);}
 
- //! Function set mui16_earlierInterval and
+  //! Function set mui16_earlierInterval and
   //! ui16_laterInterval that will be used by
   //! getTimeToNextTrigger(retriggerType_t)
   //! can be overloaded by Childclass for special condition
-  virtual void updateEarlierAndLatestInterval(){return Scheduler_Task_c::updateEarlierAndLatestInterval();}
+  virtual void updateEarlierAndLatestInterval();
 
  /**
     virtual function which delivers a pointer to the iCANCustomer
-    specific iCanPkgExt_c instance
+    specific iCanPkgExt_c instance.
+    Default implementation of this function "borrows" the CanPkgExt_c instance of the corresponding
+    IsoMonitor_c singleton class.
+    This function has only to be overloaded by a derived class, if the application wants to use a special
+    derived version from iCanPkgExt_c for special sting2flags() and flags2string() functionality.
   */
-  virtual iCanPkgExt_c& iDataBase()=0;
+  virtual iCanPkgExt_c& iDataBase();
 
   /**
     process a message -> the specialized/derived version of this virtual
@@ -191,7 +195,7 @@ public:
     @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool processMsg() { return CanCustomer_c::processMsg();}
+  virtual bool processMsg();
 
  /**
     process a message -> the specialized/derived version of this virtual
@@ -199,9 +203,9 @@ public:
     @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool processInvalidMsg() { return CanCustomer_c::processInvalidMsg(); }
+  virtual bool processInvalidMsg();
 
-  virtual bool isNetworkMgmt() const { return CanCustomer_c::isNetworkMgmt(); }
+  virtual bool isNetworkMgmt() const;
 
 
   /** return the protocol instance */
