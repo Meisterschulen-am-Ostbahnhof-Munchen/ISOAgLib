@@ -4,11 +4,15 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
-<tr><td>The following parts are described in the different parts/pages:
+<tr><td>The following parts are described on the respective pages:
 <ol type="I">
     <li> Developer Information Page
-        <ul><li> \ref WhereToStart </li>
-        <li> \ref HowtoLearnIsoAgLib </li>
+        <ul><li> \ref WhereToStart 
+	<ul><li> \ref StartToLearn
+	    <li> \ref Documentation </li>
+	    <li> \ref GettingHelp </li>
+	</ul>
+	</li>
         <li> \ref MemoryUsage </li>
         </ul>
     </li>
@@ -78,7 +82,7 @@ Please contact the maintainers
 understand some parts after having read the provided documentation.
 
 
-\subsection DDDocumentation Documentation Overview Pages
+\subsection Documentation Documentation Overview Pages
 
 - \link LgplSrcOverview Overview on GPL Licensed Parts of IsoAgLib \endlink
     - \link CommOverPage Documentation on Communication Services of IsoAgLib \endlink

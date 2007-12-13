@@ -4,21 +4,23 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
-<tr><td>The following parts are described in this section:
-<ol type="I"> 
+<tr><td>The following parts are described on the respective pages:
+<ol type="I">
     <li>\ref PageDeveloperInfo "Developer Information Page"
-        <ul>
-        <li> \ref WhereToStart </li>
-        <li> \ref HowtoLearnIsoAgLib </li>
+        <ul><li> \ref WhereToStart 
+    <ul><li> \ref StartToLearn
+        <li> \ref Documentation </li>
+        <li> \ref GettingHelp </li>
+    </ul>
+    </li>
         <li> \ref MemoryUsage </li>
         </ul>
     </li>
-    <li> \ref PageChanges "Changelog Page" </li>
-    <li> Main TODO Items Page</li>
+    <li> \ref PageChanges "Changelog" </li>
+    <li> Main TODO Items Page </li>
 </ol>
 </td></tr>
 </table>
-
 <div style="clear:left"></div>
 
 \section Todo Main TODO Items

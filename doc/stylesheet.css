@@ -534,6 +534,7 @@ TABLE.infobox {
   padding:5px;
 }
 
+TABLE.infobox ol>li {padding-top:4px;}
 
 #sitemap UL #menu UL { 
   background:#fff; 
