@@ -1,5 +1,5 @@
 /** @page MainHalPage Structure of HAL for Main Parts of IsoAgLib
-	The directory structure of the ISO<i><sub>AgLib</sub></i> HAL
+	The directory structure of the \isoaglib HAL
 	is designed to ease quick adaptation to new platform types.
 
 	\section MainHalAdaptationNew Adaptation to New Platform
@@ -7,7 +7,7 @@
 	-# create a new SYSTEM_XY define in the header isoaglib_config.h for your platform ( compare to SYSTEM_ESX )
 	-# create a new #elif setting in isoaglib_config.h where the directory name for the HAL of the new platform is defined ( compare to SYSTEM_ESX )
 	-# create a copy of the directory <i>\<xgpl_src/IsoAgLib/hal/esx\></i> with the directory name as specified in isoaglib_config.h
-	-# do this also for <i>\<xgpl_src/supplementary_driver/hal/esx\></i> if you intend to use ISO<i><sub>AgLib</sub></i> for actor, rs232 or sensor
+	-# do this also for <i>\<xgpl_src/supplementary_driver/hal/esx\></i> if you intend to use \isoaglib for actor, rs232 or sensor
 	-# adapt the files in the new directories to your specific needs
 		- adapt #include statements for platform specific library / BIOS / RTOS
 		- adapt config settings in config.h ( compare to esx/config.h )
