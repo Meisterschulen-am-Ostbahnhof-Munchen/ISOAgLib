@@ -73,6 +73,7 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbo
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectmeter_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputlist_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputlist_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectfontattributes_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpolygon_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectauxiliaryinput_c.cpp  \
@@ -148,6 +149,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectkey_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectline_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectgraphicscontext_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectlineattributes_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectinputnumber_c.h \
@@ -211,6 +213,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpolygon_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectkey_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectline_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectlineattributes_c.h \

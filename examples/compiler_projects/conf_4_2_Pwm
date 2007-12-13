@@ -91,6 +91,14 @@ ISO_AG_LIB_PATH="../.."
 #            but avoids slow memory allocation in too small units )
 # OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
 
+# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
+# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
+# the object pool and thus need not to be included in the client application.
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION3="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION4="MaskDefinition"
+
 # ###############################################################
 # Basic Hardware Setup
 # ###############################################################

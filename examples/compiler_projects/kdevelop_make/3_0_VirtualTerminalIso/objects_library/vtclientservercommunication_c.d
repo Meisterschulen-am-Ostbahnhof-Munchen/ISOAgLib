@@ -103,8 +103,6 @@ objects_library/vtclientservercommunication_c.o:  \
   ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../ivtobject_c.h \
   ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/vttypes.h \
   ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/isoterminal_c.h \
-  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../ivtobjectgraphicscontext_c.h \
-  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/vtobjectgraphicscontext_c.h \
   ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../ivtobjectlineattributes_c.h \
   ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/vtobjectlineattributes_c.h \
   ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../ivtobjectfillattributes_c.h \

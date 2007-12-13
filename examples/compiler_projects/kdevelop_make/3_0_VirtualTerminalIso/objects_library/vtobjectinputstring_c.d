@@ -1,2 +1,40 @@
 objects_library/vtobjectinputstring_c.o:  \
- ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputstring_c.cpp
+ ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputstring_c.cpp \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../ivtobjectinputstring_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/vtobjectinputstring_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../ivtobjectstring_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../impl/vtobjectstring_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/typedef.h \
+  ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
+  ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIso.h \
+  ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/version.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/config.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/impl/../compiler_adaptation.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../impl/vtobject_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../impl/../ivtobject_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../impl/../ivttypes.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/../impl/../impl/vttypes.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/config.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/../typedef.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/can.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/config.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/../typedef.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/../errcodes.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/../typedef.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/../config.h \
+  ../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
+  ../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputstring_c.h
