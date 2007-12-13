@@ -60,9 +60,10 @@
 #include "impl/canpkgext_c.h"
 
 // for forward declarations
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/driver/can/iident_c.h>
+
 
 
 
@@ -316,6 +317,7 @@ public:
 private:
   friend class iCanIo_c;
   friend class iCanCustomer_c;
+  friend class iSchedulerTask_c;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */
