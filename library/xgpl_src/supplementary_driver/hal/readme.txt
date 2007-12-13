@@ -1,5 +1,5 @@
 /** @page SuppHalPage Structure of HAL for Supplementary Parts of IsoAgLib
-	The directory structure of the ISO<i><sub>AgLib</sub></i> HAL
+	The directory structure of the \isoaglib HAL
 	is designed to ease quick adaptation to new platform types.
 	Please see \ref MainHalAdaptationNew for details.
 
