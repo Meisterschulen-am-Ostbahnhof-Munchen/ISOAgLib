@@ -6,7 +6,20 @@
   *
   *
   * @section ProcDataOverviewGrp Overview on type of Process Data
-  \dot
+  <img src="Images/processData.png" alt="Process Data Hierarchy" title="Process Data Hierarchy">
+  For details see the individual class descriptions:
+  <ul>
+  <li>\ref IsoAgLib::iProcDataLocal_c</li>
+  <li>\ref IsoAgLib::iProcDataLocalSimpleMeasure_c</li>
+  <li>\ref IsoAgLib::iProcDataLocalSimpleSetpoint_c</li>
+  <li>\ref IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c</li>
+  <li>\ref IsoAgLib::iProcDataRemote_c</li>
+  <li>\ref IsoAgLib::iProcDataRemoteSimpleMeasure_c</li>
+  <li>\ref IsoAgLib::iProcDataRemoteSimpleSetpoint_c</li>
+  <li>\ref IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c</li>
+  <li>\ref IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c</li>
+  </ul>
+  <!--\dot
   digraph ProcessDataHierarchy {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
@@ -83,7 +96,7 @@
     LocalSimpleMeasure_c -> FeatureLevelRoot [ style=invis ];
     LocalSimpleSetpoint_c -> FeatureLevelRoot [ style=invis ];
   }
-  \enddot
+  \enddot-->
   * @subsection LocalProcDataOverview Local Process Data
   * Therefore the following variants are provided for local Process Data \n ( <b>local means:</b> the ECU which
   * performs this SW is responsible for measurement and update of the value; additionally
@@ -278,18 +291,18 @@
   * // declare extern example function ( dummy )
   * extern void doSomething( IsoAgLib::iProcDataLocal_c *pc_localProc );
   * // set device type of local ECU: fertilizer
-  * IsoAgLib::iIsoNname c_myIsoName( 5, 0 );
+  * IsoAgLib::iIsoName_c c_myIsoName( 5, 0 );
   * // initialise variable upon construction/definition
   * // local process data for "on/off mechanical" [0/0x64] of fertilizer spreader
   * // creation of process data instance
-  * IsoAgLib::iProcDataLocal_c c_myWorkState ( 0, 0, c_myIsoName, c_myIsoName, &c_myIsoName, false, 0x1234 );
+  * IsoAgLib::iProcDataLocal_c c_myWorkState ( 0, 0, c_myIsoName, &c_myIsoName, false, 0x1234 );
   * // set measurement data to working == 0x64
   * c_myWorkState.setMasterMeasurementVal( 0x64 );
   *
   * // alternate: initialise process data variable after definition
   * // "working width" [mm] of fertilizer spreader, store/load data at EEPROM adress 0x1238
   * IsoAgLib::iProcDataLocal_c c_myWorkWidth;
-  * c_myWorkWidth.init( 0, 0, c_myIsoName, c_myIsoName, &c_myIsoName, false, 0x1238 ); 
+  * c_myWorkWidth.init( 0, 0, c_myIsoName, &c_myIsoName, false, 0x1238 ); 
   *
   * // call function doSomething -> give pointer to variable c_myWorkState -> transfer simple adress via stack
   * doSomething( &c_myWorkState );
@@ -309,10 +322,10 @@
   * // define device type of remote ECU ( from which we want measurement data )
   * IsoAgLib::IsoName_c remoteIsoName( 1, 0 );
   * // define remote process data to gather information of remote work state
-   * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, 0, myIsoName, myIsoName, &myIsoName, remoteGtp, 0);
+   * IsoAgLib::iProcDataRemote_c c_remoteWorkState( 0, 0, myIsoName, &myIsoName, remoteGtp, 0);
   * // trigger value update every 1000 msec.
   * c_remoteWorkState.prog().addSubprog(Proc_c::TimeProp, 1000);
-  * // start measure program: trigger send of current measure value ( and not MIN/MAX/AVG/ etc. )
+  * // start measure program: trigger send of current measure value (and not MIN/MAX/AVG/ etc.)
   * c_remoteWorkState.prog().start(Proc_c::TimeProp, Proc_c::DoVal);
   * while( true ) {
   *   // use last received measurement value
@@ -358,6 +371,6 @@
   * // define local process data, which uses the handler
   * IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myFertilizerAmount;
   * // init process data with pointer to handler, which shall be called upon setpoint receive
-  * c_myFertilizerAmount.init( 0, 0, myIsoName, myIsoName, &myIsoName, false, 0x123A, &c_setpointHandler );
+  * c_myFertilizerAmount.init( 0, 0, myIsoName, &myIsoName, false, 0x123A, &c_setpointHandler );
   * \endcode
   */

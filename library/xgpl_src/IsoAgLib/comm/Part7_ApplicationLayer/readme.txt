@@ -1,16 +1,16 @@
 /** @page AppLayerPage Management of Periodic PGN Base Information
-  * The ISO<i><sub>AgLib</sub></i> stores the information of several base information,
+  * The \isoaglib stores the information of several base information,
   * so that they can be easily evaluated from the application independent
   * from the time relation between CAN-receive time and access time.
   * Additionally the Base_c class can be configured to send
   * these data types. In this case the application can update the
   * data for send independent from the individual send time on BUS.
   * Thus the afford for implementation of the correct send intervals
-  * is completely taken away from application to the ISO<i><sub>AgLib</sub></i>.
+  * is completely taken away from application to the \isoaglib.
   *
   * @section BaseDataTypeList Overview on the handled PGN data for ISO 11783
   * As the ISO 11783 specifies a lot of information types
-  * which can be periodically sent, the ISO<i><sub>AgLib</sub></i> has the following
+  * which can be periodically sent, the \isoaglib has the following
   * classes:
   * - TimePosGps_c:
   *   - year/month/day hour/minute/second from calendar setting
@@ -67,7 +67,7 @@
   * \endcode
   *
   * @section BaseDataPowerMaintenance Request of Power Maintenance
-  * The ISO<i><sub>AgLib</sub></i> provides the possibility to requst the maintenance of tractor
+  * The \isoaglib provides the possibility to requst the maintenance of tractor
   * power with a single function call.
   *
   * \code
@@ -87,7 +87,7 @@
   * The application can configure the send mode in the following groups:
   * - base information type 1: real and gear based speed and distance ( TracMove_c )
   * - base information type 2: front and rear PTO, engine RPM, front and rear hitch state ( TracPto_c, TracGeneral_c )
-  * - calendar data ( ISO<i><sub>AgLib</sub></i> increments the time after first time setting independent from further data update of application; TimePosGps_c )
+  * - calendar data ( \isoaglib increments the time after first time setting independent from further data update of application; TimePosGps_c )
   *
   * The base information group 2 includes in case of an ISO 11783 system all additional information like draft force.
   * The default state for all groups is read only, so that a system that likes to send some base data types,
