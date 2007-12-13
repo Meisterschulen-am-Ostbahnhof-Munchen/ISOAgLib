@@ -52,10 +52,10 @@
 #ifndef IVTOBJECTLINE_C_H
 #define IVTOBJECTLINE_C_H
 
-
 // +X2C includes
 #include "impl/vtobjectline_c.h"
 // ~X2C
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_line
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -151,4 +151,5 @@ public:
 
 } // end of namespace IsoAgLib
 
+#endif
 #endif

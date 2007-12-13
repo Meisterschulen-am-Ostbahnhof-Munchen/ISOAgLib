@@ -81,6 +81,7 @@
  ***************************************************************************/
 #include "vtobjectnumbervariable_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_numbervariable || defined USE_VTOBJECT_inputnumber
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -157,3 +158,4 @@ vtObjectNumberVariable_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*p
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

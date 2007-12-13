@@ -53,6 +53,8 @@
 
 #include "impl/vtobjectgraphicscontext_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
+
 namespace IsoAgLib {
 
 class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
@@ -408,3 +410,4 @@ public:
 } // namespace IsoAgLib
 
 #endif // IVTOBJECTGRAPHICSCONTEXT_C_H
+#endif

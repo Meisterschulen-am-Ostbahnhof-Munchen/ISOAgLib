@@ -48,15 +48,13 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
-
 #ifndef IVTOBJECTALARMMASK_C_H
 #define IVTOBJECTALARMMASK_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectalarmmask_c.h"
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_alarmmask
 #include "ivtobjectsoftkeymask_c.h"
-// ~X2C
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -160,4 +158,5 @@ public:
 
 } // end of namespace IsoAgLib
 
+#endif
 #endif

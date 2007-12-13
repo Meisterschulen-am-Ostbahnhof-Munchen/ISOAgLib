@@ -81,8 +81,9 @@
  ***************************************************************************/
 #include "vtobjectarchedbargraph_c.h"
 
-#include "isoterminal_c.h"
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_archedbargraph
 #include "../ivtobjectbutton_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -359,3 +360,4 @@ vtObjectArchedBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 }
 #endif
 } // end namespace __IsoAgLib
+#endif

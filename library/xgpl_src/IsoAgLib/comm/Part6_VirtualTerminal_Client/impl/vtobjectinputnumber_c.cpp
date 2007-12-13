@@ -81,6 +81,7 @@
  ***************************************************************************/
 #include "vtobjectinputnumber_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "isoterminal_c.h"
 
@@ -364,3 +365,4 @@ vtObjectInputNumber_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

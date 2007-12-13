@@ -82,6 +82,9 @@
 #ifndef VTOBJECTRECTANGLE_C_H
 #define VTOBJECTRECTANGLE_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_rectangle
 #include "vtobject_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -104,7 +107,7 @@ public:
   void init(const iVtObjectRectangle_s* vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectRectangleSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
-  //  Operation: get_vtObjectmeter_a
+  //  Operation: get_vtObjectRectangle_a
   iVtObjectRectangle_s* get_vtObjectRectangle_a() { return (iVtObjectRectangle_s *)&(get_vtObject_a()); }
 
   //  Operation: vtObjectRectangle_c
@@ -175,4 +178,5 @@ public:
 
 } // end namespace __IsoAgLib
 
+#endif
 #endif

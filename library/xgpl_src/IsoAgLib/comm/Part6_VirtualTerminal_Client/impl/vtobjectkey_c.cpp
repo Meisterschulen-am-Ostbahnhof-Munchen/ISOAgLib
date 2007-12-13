@@ -81,9 +81,10 @@
  ***************************************************************************/
 #include "vtobjectkey_c.h"
 
-#include "isoterminal_c.h"
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_key
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -186,3 +187,4 @@ vtObjectKey_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeValu
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

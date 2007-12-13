@@ -82,6 +82,7 @@
 #include "vtobjectcontainer_c.h"
 #include "../ivtobjectcontainer_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_container
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
@@ -254,3 +255,4 @@ vtObjectContainer_c::saveReceivedAttribute(uint8_t attrID, uint8_t* /*pui8_attri
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

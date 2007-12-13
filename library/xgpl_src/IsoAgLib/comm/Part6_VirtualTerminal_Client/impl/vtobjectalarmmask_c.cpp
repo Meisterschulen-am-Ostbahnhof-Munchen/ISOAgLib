@@ -81,8 +81,9 @@
  ***************************************************************************/
 #include "vtobjectalarmmask_c.h"
 
-#include "../ivtobjectfontattributes_c.h"
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_alarmmask
 #include "isoterminal_c.h"
+#include "../ivtobjectfontattributes_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -219,3 +220,4 @@ vtObjectAlarmMask_c::saveReceivedAttribute (uint8_t attrID, uint8_t* pui8_attrib
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

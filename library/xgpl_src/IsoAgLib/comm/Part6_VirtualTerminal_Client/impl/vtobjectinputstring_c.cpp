@@ -79,15 +79,16 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+#include "../ivtobjectinputstring_c.h"
 #include "vtobjectinputstring_c.h"
 
-#include <IsoAgLib/util/impl/util_funcs.h>
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputstring
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
-#include "../ivtobjectinputstring_c.h"
 #include "../ivtobjectstringvariable_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -394,3 +395,4 @@ vtObjectInputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attri
 }
 #endif
 } // end namespace __IsoAgLib
+#endif

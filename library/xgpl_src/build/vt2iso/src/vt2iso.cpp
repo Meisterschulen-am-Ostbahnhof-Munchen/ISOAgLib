@@ -525,9 +525,6 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_defines, "\n#define vtKeyCodeACK 0\n");
     // OLD:  fprintf (partFile_defines, "\n#define vtObjectCount %d\n", objCount);
   }
-  if (partFile_obj_selection) {
-    fprintf (partFile_obj_selection, "\n#endif\n");
-  }
 
   std::map<int32_t, ObjListEntry>::iterator mit_lang;
   std::map<uint16_t, std::string>::iterator mit_obj;
@@ -1061,9 +1058,6 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   partFile_obj_selection = fopen ("IsoTerminalObjectSelection.inc","wt");
   if (partFile_obj_selection == NULL) clean_exit ("Couldn't create IsoTerminalObjectSelection.inc.");
 
-  fprintf( partFile_obj_selection, "#ifndef DECL_obj_selection_%s_c\n", proName.c_str());
-  fprintf( partFile_obj_selection, "#define DECL_obj_selection_%s_c\n\n", proName.c_str());
-  
   strncpy (partFileName, xmlFile, 1024);
   strcat (partFileName, "-list.inc");
   partFile_list = fopen (partFileName,"wt");
@@ -4542,9 +4536,11 @@ vt2iso_c::generateIncludeDefines()
 {
   for (int i=0; i<=DEF_iso639entries; i++)
   {
-    if ((i < 39) && (!arrb_objTypes[i])) // parse only standard vt objects
+    if ((i < 39) && (arrb_objTypes[i])) // parse only standard vt objects
     {
-      fprintf (partFile_obj_selection, "#define USE_NO_VTOBJECT_%s\n", otCompTable[i]);
+      fprintf (partFile_obj_selection, "#ifndef USE_VTOBJECT_%s\n", otCompTable[i]);
+      fprintf (partFile_obj_selection, "\t#define USE_VTOBJECT_%s\n", otCompTable[i]);
+      fprintf (partFile_obj_selection, "#endif\n");
     }
   }
 }

@@ -49,18 +49,15 @@
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
 
-
 #ifndef IVTOBJECTARCHEDBARGRAPH_C_H
 #define IVTOBJECTARCHEDBARGRAPH_C_H
 
-
-// +X2C includes
 #include "impl/vtobjectarchedbargraph_c.h"
-// ~X2C
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_archedbargraph
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
-
 
 
 //  +X2C Class 119 : vtObjectArchedBarGraph_c
@@ -270,4 +267,5 @@ public:
 
 } // end namespace __IsoAgLib
 
+#endif
 #endif

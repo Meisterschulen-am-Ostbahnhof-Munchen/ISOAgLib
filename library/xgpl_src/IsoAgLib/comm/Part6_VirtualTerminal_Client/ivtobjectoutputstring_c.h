@@ -52,12 +52,12 @@
 #ifndef IVTOBJECTOUTPUTSTRING_C_H
 #define IVTOBJECTOUTPUTSTRING_C_H
 
-
 // +X2C includes
 #include "impl/vtobjectoutputstring_c.h"
 //#include "ivtobjectstringvariable_c.h"
 // ~X2C
-
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputstring
+#include "iisoterminal_c.h"
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
@@ -184,7 +184,7 @@ public:
   /** that attribute is in parentheses in the spec, so commented out here
   uint8_t updateObjectType() const { return vtObjectOutputString_c::updateObjectType(); }
    */
-  
+
   uint16_t updateWidth(bool b_SendRequest=false) {
     return vtObjectOutputString_c::updateWidth(b_SendRequest);
   }
@@ -218,3 +218,4 @@ public:
 } // end of namespace IsoAgLib
 
 #endif // -X2C
+#endif

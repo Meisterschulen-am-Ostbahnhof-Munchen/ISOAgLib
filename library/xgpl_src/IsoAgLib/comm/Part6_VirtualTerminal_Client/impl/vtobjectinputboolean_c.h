@@ -82,6 +82,9 @@
 #ifndef VTOBJECTINPUTBOOLEAN_C_H
 #define VTOBJECTINPUTBOOLEAN_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputboolean
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 
@@ -167,4 +170,5 @@ private:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

@@ -49,14 +49,13 @@
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
 
-
 #ifndef IVTOBJECTMETER_C_H
 #define IVTOBJECTMETER_C_H
-
 
 // +X2C includes
 #include "impl/vtobjectmeter_c.h"
 // ~X2C
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_meter
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -237,3 +236,4 @@ public:
 } // end namespace IsoAgLib
 
 #endif // -X2C
+#endif

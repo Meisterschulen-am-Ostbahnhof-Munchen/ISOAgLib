@@ -81,7 +81,9 @@
  ***************************************************************************/
 #ifndef VTOBJECTAUXILIARYFUNCTION_C_H
 #define VTOBJECTAUXILIARYFUNCTION_C_H
+#include <IsoAgLib/typedef.h>
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryfunction
 // includes
 #include "vtobject_c.h"
 #include "vttypes.h"
@@ -136,4 +138,5 @@ public:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

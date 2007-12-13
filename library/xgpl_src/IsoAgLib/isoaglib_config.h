@@ -789,9 +789,29 @@
 
 #ifndef USE_WORKING_SET
   /// auto-define USE_WORKING_SET dependend on the parts that need it!
-  #if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER) || defined (USE_PROC_DATA_DESCRIPTION_POOL)
+  #if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER) || defined (USE_PROC_DATA_DESCRIPTION_POOL)  
     #define USE_WORKING_SET
   #endif
+#endif
+#if defined USE_ISO_TERMINAL 
+  #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1
+    #define _autogen_config_header1_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION1/IsoTerminalObjectSelection.inc>
+    #include _autogen_config_header1_
+  #endif
+  #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION2
+    #define _autogen_config_header2_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION2/IsoTerminalObjectSelection.inc>
+    #include _autogen_config_header2_
+  #endif
+  #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION3
+    #define _autogen_config_header3_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION3/IsoTerminalObjectSelection.inc>
+    #include _autogen_config_header3_
+  #endif
+  #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION4
+    #define _autogen_config_header4_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION4/IsoTerminalObjectSelection.inc>
+    #include _autogen_config_header4_
+  #endif
+  
+// e.g. #include <MaskDefinition/IsoTerminalObjectSelection.inc>
 #endif
 
 /** default values for global masks

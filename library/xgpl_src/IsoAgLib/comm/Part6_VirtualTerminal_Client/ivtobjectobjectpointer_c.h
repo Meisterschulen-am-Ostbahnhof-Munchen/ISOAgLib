@@ -52,10 +52,10 @@
 #ifndef IVTOBJECTOBJECTPOINTER_C_H
 #define IVTOBJECTOBJECTPOINTER_C_H
 
-
 // +X2C includes
 #include "impl/vtobjectobjectpointer_c.h"
 // ~X2C
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_objectpointer
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -100,3 +100,4 @@ public:
 } // end of namespace IsoAgLib
 
 #endif // -X2C
+#endif

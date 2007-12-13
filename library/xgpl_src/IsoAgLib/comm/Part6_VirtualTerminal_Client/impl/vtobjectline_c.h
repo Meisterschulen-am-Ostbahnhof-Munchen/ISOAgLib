@@ -82,6 +82,9 @@
 #ifndef VTOBJECTLINE_C_H
 #define VTOBJECTLINE_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_line
 #include "vtobject_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -159,4 +162,5 @@ public:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

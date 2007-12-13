@@ -82,6 +82,9 @@
 #ifndef VTOBJECTPOLYGON_C_H
 #define VTOBJECTPOLYGON_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_polygon
 #include "vtobject_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -175,4 +178,5 @@ public:
 
 } // end namepsace __IsoAgLibb
 
+#endif
 #endif

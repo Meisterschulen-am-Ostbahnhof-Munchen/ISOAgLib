@@ -81,6 +81,7 @@
  ***************************************************************************/
 #include "vtobjectmeter_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_meter
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
 
@@ -301,3 +302,4 @@ vtObjectMeter_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attributeVa
 }
 #endif
 } // end namespace __IsoAgLib
+#endif

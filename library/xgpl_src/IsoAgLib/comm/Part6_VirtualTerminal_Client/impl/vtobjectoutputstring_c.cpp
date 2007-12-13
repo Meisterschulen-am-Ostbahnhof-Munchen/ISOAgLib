@@ -79,14 +79,17 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "vtobjectoutputstring_c.h"
-#include "../ivtobjectoutputstring_c.h"
 
+#include "../ivtobjectoutputstring_c.h"
+#include "vtobjectoutputstring_c.h"
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputstring
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectstringvariable_c.h"
-#include "isoterminal_c.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "isoterminal_c.h"
+
 
 namespace IsoAgLib {
   // implement here a normal constructor/destructor, as the compiler dislikes inlining of that simple
@@ -398,3 +401,4 @@ vtObjectOutputString_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attr
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

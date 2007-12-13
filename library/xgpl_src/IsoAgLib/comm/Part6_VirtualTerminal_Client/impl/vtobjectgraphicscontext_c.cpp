@@ -79,17 +79,18 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include "../ivtobjectpicturegraphic_c.h"
+#include "vtobjectgraphicscontext_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
+#include "../ivtobjectpicturegraphic_c.h"
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
-#include "vtobjectgraphicscontext_c.h"
 #include "isoterminal_c.h"
 #include <IsoAgLib/util/convert.h>
 
-// Make shure not such macro is used.
+// Make sure not such macro is used.
 #undef MACRO_vtObjectTypeA
 #undef MACRO_vtObjectTypeS
 
@@ -616,3 +617,4 @@ vtObjectGraphicsContext_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_a
 }
 #endif
 } // namespace __IsoAgLib
+#endif

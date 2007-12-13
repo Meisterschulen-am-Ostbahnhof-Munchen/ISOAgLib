@@ -99,7 +99,9 @@
 // #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
 // #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
-#include "../ivtobjectgraphicscontext_c.h"
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
+  #include "../ivtobjectgraphicscontext_c.h"
+#endif
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectfontattributes_c.h"

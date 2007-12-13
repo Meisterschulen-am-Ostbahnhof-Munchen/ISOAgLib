@@ -52,10 +52,11 @@
 #ifndef IVTOBJECTCONTAINER_C_H
 #define IVTOBJECTCONTAINER_C_H
 
-
 // +X2C includes
 #include "impl/vtobjectcontainer_c.h"
 // ~X2C
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_container
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -141,4 +142,5 @@ public:
 
 } // end of namespace IsoAgLib
 
+#endif
 #endif

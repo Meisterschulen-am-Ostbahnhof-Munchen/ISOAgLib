@@ -82,9 +82,11 @@
 #ifndef VTOBJECTOUTPUTSTRING_C_H
 #define VTOBJECTOUTPUTSTRING_C_H
 
+#include <IsoAgLib/typedef.h>
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputstring
 #include "../ivtobjectstring_c.h"
-#include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -191,4 +193,5 @@ public:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

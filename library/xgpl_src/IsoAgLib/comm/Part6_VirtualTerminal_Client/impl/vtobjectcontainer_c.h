@@ -82,6 +82,9 @@
 #ifndef VTOBJECTCONTAINER_C_H
 #define VTOBJECTCONTAINER_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_container
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 
@@ -149,4 +152,5 @@ protected:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

@@ -81,8 +81,9 @@
  ***************************************************************************/
 #include "vtobjectlinearbargraph_c.h"
 
-#include "isoterminal_c.h"
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_linearbargraph
 #include "../ivtobjectbutton_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -322,3 +323,4 @@ vtObjectLinearBarGraph_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_at
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

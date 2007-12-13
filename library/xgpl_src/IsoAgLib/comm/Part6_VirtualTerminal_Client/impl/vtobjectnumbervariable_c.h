@@ -82,6 +82,9 @@
 #ifndef VTOBJECTNUMBERVARIABLE_C_H
 #define VTOBJECTNUMBERVARIABLE_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_numbervariable || defined USE_VTOBJECT_inputnumber
 #include "vtobject_c.h"
 #include "vtclientservercommunication_c.h"
 
@@ -133,4 +136,5 @@ public:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

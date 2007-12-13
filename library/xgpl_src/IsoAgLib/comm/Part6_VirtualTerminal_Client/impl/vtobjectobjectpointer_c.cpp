@@ -81,6 +81,7 @@
  ***************************************************************************/
 #include "vtobjectobjectpointer_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_objectpointer
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -179,3 +180,4 @@ vtObjectObjectPointer_c::saveReceivedAttribute(uint8_t /*attrID*/, uint8_t* /*pu
 }
 #endif
 } // end of namespace __IsoAgLib
+#endif

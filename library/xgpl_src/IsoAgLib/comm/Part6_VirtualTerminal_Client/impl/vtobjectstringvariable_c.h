@@ -81,8 +81,11 @@
  ***************************************************************************/
 #ifndef VTOBJECTSTRINGVARIABLE_C_H
 #define VTOBJECTSTRINGVARIABLE_C_H
-
 #include "../ivtobjectstring_c.h"
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputstring || defined USE_VTOBJECT_stringvariable
+
 #include "vtclientservercommunication_c.h"
 
 // Begin Namespace __IsoAgLib
@@ -140,4 +143,5 @@ public:
 
 } // end of namespace __IsoAgLib
 
+#endif
 #endif

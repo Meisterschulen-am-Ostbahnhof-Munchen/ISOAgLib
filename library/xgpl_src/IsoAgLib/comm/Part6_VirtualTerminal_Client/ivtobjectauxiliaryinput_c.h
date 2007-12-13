@@ -56,6 +56,7 @@
 // +X2C includes
 #include "impl/vtobjectauxiliaryinput_c.h"
 // ~X2C
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryinput
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -104,4 +105,5 @@ public:
 
 } // end of namespace IsoAgLib
 
+#endif
 #endif

@@ -82,6 +82,8 @@
 #include "../ivtobjectstringvariable_c.h"
 #include "vtobjectstringvariable_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputstring || defined USE_VTOBJECT_stringvariable
+
 #include "isoterminal_c.h"
 
 namespace IsoAgLib {
@@ -210,3 +212,4 @@ vtObjectStringVariable_c::getString()
 }
 
 } // end of namespace __IsoAgLib
+#endif

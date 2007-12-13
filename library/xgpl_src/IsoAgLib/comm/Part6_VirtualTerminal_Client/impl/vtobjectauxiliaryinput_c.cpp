@@ -81,9 +81,10 @@
  ***************************************************************************/
 #include "vtobjectauxiliaryinput_c.h"
 
-#include "isoterminal_c.h"
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryinput
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -154,3 +155,4 @@ vtObjectAuxiliaryInput_c::setOriginSKM(bool /* b_SKM */)
 }
 
 } // end of namespace __IsoAgLib
+#endif

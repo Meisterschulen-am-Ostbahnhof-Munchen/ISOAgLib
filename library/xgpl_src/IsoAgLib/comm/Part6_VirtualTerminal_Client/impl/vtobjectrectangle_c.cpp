@@ -81,6 +81,7 @@
  ***************************************************************************/
 #include "vtobjectrectangle_c.h"
 
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_rectangle
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
@@ -236,3 +237,4 @@ vtObjectRectangle_c::saveReceivedAttribute(uint8_t attrID, uint8_t* pui8_attribu
 #endif
 
 } // end namespace __IsoAgLib
+#endif

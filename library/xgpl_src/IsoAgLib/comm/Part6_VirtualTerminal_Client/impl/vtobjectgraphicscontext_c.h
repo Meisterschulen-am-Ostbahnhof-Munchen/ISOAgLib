@@ -82,6 +82,10 @@
 #ifndef VTOBJECTGRAPHICSCONTEXT_C_H
 #define VTOBJECTGRAPHICSCONTEXT_C_H
 
+#include <IsoAgLib/typedef.h>
+
+#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
+
 #include "vtobject_c.h"
 #include "isoterminal_c.h"
 
@@ -268,3 +272,4 @@ private:
 } // namespace __IsoAgLib
 
 #endif // VTOBJECTGRAPHICSCONTEXT_C_H
+#endif
