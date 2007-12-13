@@ -4,7 +4,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
-<tr><td>The following parts are described in this section (divided in two pages):
+<tr><td>The following parts are described on the respective pages:
 <ol type="I">
 <li> Download
     <ul><li>\ref HowtoDownload

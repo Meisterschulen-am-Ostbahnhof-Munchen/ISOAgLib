@@ -310,22 +310,22 @@ The following table contains a few commercial products which use \isoaglib:
 <tr><th>Company</th>
     <th>Used parts</th>
     <th>Description</th></tr>
-<tr><td valign="top" align="center" width="80"><a href="http://www.agocorp.com">Agco Corp.</a></td>
-    <td valign="top"><ul><li>Virtual Terminal (11783-6)</li>
+<tr><td valign="top" align="center" width="80"><a href="http://www.agocorp.com"><i>Agco Corp.</i></a></td>
+    <td valign="top"><i><ul><li>Virtual Terminal (11783-6)</li>
             <li>TC (11783-10)</li>
-            <li>GPS converter</li></ul></td>
-    <td>Based on \isoaglib the development team of <a href="http://www.osb-ag.de">OSB AG</a> implemented the ISO VT Server (11783-6) on the Terminal Opus A1 from Wachendorff.
+            <li>GPS converter</li></ul></i></td>
+    <td><i>Based on \isoaglib the development team of <a href="http://www.osb-ag.de">OSB AG</a> implemented the ISO VT Server (11783-6) on the Terminal Opus A1 from Wachendorff.
         The operating system is a Linux platform and the OSB AG team managed to develop a running prototype within three months.
         At the Agritechnica 2005 a running ISO Terminal was presented.<br>
         After the Agritechnica 2005, the Task Controller Server (11783-10) and GPS Cinverter were integrated into the system. Which made operating data logging and transferring GPS information from RS232 to the ISOBUS in NMEA 2000 format possible.
-        This is the next step of operating data logging; now the farmer has the possibility to synchronize his field recorder with relevant GPS data.</td></tr>
-<tr><td valign="top" align="center"><a href="http://www.fritzmeier.de">Fritzmeier Umwelttechnik GmbH</a></td>
-    <td valign="top"><ul><li>Control system of the MiniVegN</li></ul></td>
-    <td>Within this project the \isoaglib was the base for the development of a control system between MiniVegN, tractor and fertilize spreader. 
+        This is the next step of operating data logging; now the farmer has the possibility to synchronize his field recorder with relevant GPS data.</i></td></tr>
+<tr><td valign="top" align="center"><a href="http://www.fritzmeier.de"><i>Fritzmeier Umwelttechnik GmbH</i></a></td>
+    <td valign="top"><i><ul><li>Control system of the MiniVegN</li></ul></i></td>
+    <td><i>Within this project the \isoaglib was the base for the development of a control system between MiniVegN, tractor and fertilize spreader. 
         The laser of the MiniVegN tests the nitrogen content of the plant and sends the information to the spreader. The spreader has to spread out the right amount of fertilizer. 
-        With the \isoaglib the MiniVegN is compatible to the standard ISO 11783.</td></tr>
-<tr><td valign="top" align="center"><a href="http://www.zunhammer.de">Zunhammer GmbH</a></td>
-    <td valign="top"><ul><li>User Interface</li><li>ISO control system</li></ul></td>
+        With the \isoaglib the MiniVegN is compatible to the standard ISO 11783.</i></td></tr>
+<tr><td valign="top" align="center"><a href="http://www.zunhammer.de"><i>Zunhammer GmbH</i></a></td>
+    <td valign="top"><i><ul><li>User Interface</li><li>ISO control system</li></ul></i></td>
     <td><i>"The challenge was to bring Zunhammer liquid manure spreader to ISO compatibility within four weeks.
         The control of the spreader had to be done by ISO terminal.
         The open source library \isoaglib was the right instrument and together with the Zunhammer development team the we managed to build a running prototype punctual to the Agritechnica 2005.
