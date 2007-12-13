@@ -1127,7 +1127,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEnt
 
  /** The function checks whether the input Scheduler_task_c is in the timeEvent,
      in this case return true */
-bool Scheduler_c::isTaskExecuted(const Scheduler_Task_c* apc_client)
+bool Scheduler_c::isTaskExecuted(const Scheduler_Task_c* apc_client) const
   {
       if(pc_currentlyExecutedTask == NULL)
       {

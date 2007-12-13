@@ -247,16 +247,14 @@ public:
   bool  changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
 
+  /** The function checks whether the input Scheduler_task_c is in the timeEvent,
+     in this case return true */
+  bool isTaskExecuted(const Scheduler_Task_c* apc_client) const;
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
   Scheduler_c() : mb_systemStarted (false) {};
 
-
-  /** The function checks whether the input Scheduler_task_c is in the timeEvent,
-     in this case return true */
-
-  bool isTaskExecuted(const Scheduler_Task_c* apc_client);
 
 #ifdef DEBUG
   void TraceAndAbort();
