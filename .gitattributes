@@ -982,6 +982,9 @@ examples/compiler_projects/conf_5_0_InternalCan -text
 examples/compiler_projects/conf_5_1_ProprietaryPgn -text
 examples/compiler_projects/conf_6_0_VtThreads -text
 examples/compiler_projects/conf_6_0_VtThreadsEsxu -text
+examples/compiler_projects/conf_7_0_SchedulerTask -text
+examples/compiler_projects/conf_7_1_SchedulerTask -text
+examples/compiler_projects/conf_7_2_SchedulerTask -text
 examples/compiler_projects/conf_AutoDataCollector -text
 examples/compiler_projects/conf_CanServerMessenger -text
 examples/compiler_projects/conf_Imi -text
