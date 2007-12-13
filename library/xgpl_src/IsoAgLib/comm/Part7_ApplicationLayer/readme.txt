@@ -53,7 +53,7 @@
   * int16_t i16_frontPto = IsoAgLib::getITracPtoInstance().ptoFront();
   * /// read the state of the rear hitch
   * uint8_t ui8_rearHitch = IsoAgLib::getITracGeneralInstance().hitchRear();
-  * // check if since system start at least one calendat msg was received
+  * // check if since system start at least one calendar msg was received
   * if ( IsoAgLib::getITimePosGpsInstance().isCalendarReceived() ) {
   *   /// read hour
   *   uint8_t ui8_hour = IsoAgLib::getITimePosGpsInstance().hourLocal();
