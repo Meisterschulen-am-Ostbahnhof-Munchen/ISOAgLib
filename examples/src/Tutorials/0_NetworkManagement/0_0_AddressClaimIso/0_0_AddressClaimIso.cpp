@@ -50,7 +50,8 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 0_0_AddressClaimIso.cpp
+/**
+ * \example 0_0_AddressClaimIso.cpp 
  * This tutorial shall provide a simple base program, which claims address
  * only an ISO11783 member with fixed identity.
  *
@@ -184,7 +185,7 @@
 
 /* include some needed util headers */
 //#include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>

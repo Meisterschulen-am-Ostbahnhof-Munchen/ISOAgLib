@@ -66,8 +66,8 @@
  * <li>This example ("2_4_LocalWriteSetpointStdIso") creates some examplary local process data. This 
  * process data is regualarly updated. The values are stored in an IsoAgLib::iProcDataLocal_c
  * object. These values can be requested by remote processes over CAN-BUS communication.
- * Furthermore this application allowes remote processes to define setpoints. 
- * An example for this request can be fount in 2_9_RemoteWriteSetpointStdIso. 
+ * Furthermore this application allows remote processes to define setpoints. 
+ * An example for this request can be found in 2_9_RemoteWriteSetpointStdIso. 
  * The following concepts are used to check for the device type of a setpoint's sender in order to
  * decide whether to accept or deny a setpoint value:
  * <ul>
