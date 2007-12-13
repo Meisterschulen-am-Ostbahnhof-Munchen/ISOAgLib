@@ -16,9 +16,9 @@ H1 {
   font-size: 160%;
 }
 H2 {
-  font-size: 130%;
-  margin: 2em -5px 5px -5px;
-  padding: 0px 5px 0px 5px;
+  font-size: 100%;
+  margin: 1.5em -5px 5px -5px;
+  padding: 2px 5px 1px 5px;
   background-color: #e2f0ff;
   border-bottom:1px solid lightgray;
 }
@@ -550,3 +550,22 @@ DIV#sitemap UL UL LI {
 DIV#sitemap UL UL A {
   font-weight:normal;
 }
+
+/* Tag for hidden dynamic sections */
+#hiddendiv { display: none; }
+a#anchor4hiddendiv { 
+  text-decoration:none;
+  background: #f0f0f0;
+  border-top:1px solid silver; 
+  border-right:1px solid silver; 
+  border-bottom:1px solid silver;
+  border-left:1px solid silver;
+  padding:1px 2px 1px 2px; 
+}
+a#anchor4hiddendiv:hover { 
+  border-top:1px solid gray; 
+  border-right:1px solid gray;
+  border-bottom:1px solid gray;
+  border-left:1px solid gray;
+}
+

@@ -32,11 +32,13 @@ doc/html/Diagramme/service_network_flexibility.gif -text
 doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
 doc/html/Images/background-hill.gif -text
 doc/html/Images/ikb_logo.gif -text
+doc/html/Images/ikb_logo_thumb.gif -text
 doc/html/Images/isoaglib_logo.gif -text
 doc/html/Images/isoaglib_osb.gif -text
 doc/html/Images/isobus.png -text
 doc/html/Images/isobus_thumb.png -text
 doc/html/Images/osb_logo.gif -text
+doc/html/Images/processData.png -text
 doc/html/Images/rightarrow.gif -text
 doc/html/Images/structure.png -text
 doc/html/Images/tum_logo.gif -text

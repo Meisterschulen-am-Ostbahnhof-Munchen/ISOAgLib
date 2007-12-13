@@ -40,11 +40,11 @@ the GPL license text is presented.
 
 You can identify the license protected parts by:<ul>
 <li>header at the top of each file
-<li>files which are placed within directories xgpl_src, build_utils and compiler_projects/projectGeneration ( all relative to root directory )
+<li>files which are placed within directories xgpl_src, build_utils and compiler_projects/projectGeneration (all relative to root directory)
 <li>the <tt>README<b></b>_LICENSED_PARTS.txt</tt> in each of the root directories where the license conditions of the individual contents is described
 </ul>
 
-<b>Important note on distinction between extensions of \isoaglib ( which are covered by the license ) and independent
+<b>Important note on distinction between extensions of \isoaglib (which are covered by the license) and independent
 Application development:</b>
 The \isoaglib uses <b>C++</b> namespaces to group internal classes, functions, types, ... in units  <i>__IsoAgLib</i> and <i>__HAL</i>,
 which can be clearly seperated from their interface counterparts <i>IsoAgLib</i> and <i>HAL</i>.

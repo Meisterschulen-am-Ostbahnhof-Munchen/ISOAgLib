@@ -132,10 +132,10 @@ The layered structure is described by the following diagram:
 <map name="structure">
     <area shape="rect" coords=" 20, 38,131, 94" href="CommOverPage.html" alt="Communication Services for ISO 11783" title="Communication Services for ISO 11783">
     <!--<area shape="rect" coords="183, 21,218,169" href="" alt="Scheduler" title="Scheduler">-->
-    <area shape="rect" coords="228, 38,318, 94" href="MultiMsgPage.html" alt="Part 3: Data Link" title="Part 3: Data Link">
-    <area shape="rect" coords="341, 38,433, 94" href="SystemMgmtPage.html" alt="Part 5: Network Management" title="Part 5: Network Management">    
+    <area shape="rect" coords="228, 38,318, 94" href="DataLinkPage.html" alt="Part 3: Data Link" title="Part 3: Data Link">
+    <area shape="rect" coords="341, 38,433, 94" href="NetworkMgmtPage.html" alt="Part 5: Network Management" title="Part 5: Network Management">    
     <area shape="rect" coords="455, 38,526, 94" href="XMLspec.html" alt="Part 6: ISO Virtual Terminal" title="Part 6: ISO Virtual Terminal">
-    <area shape="rect" coords="548. 63,613, 94" href="BaseDataPage.html" alt="Part 7: Application Layer" title="Part 7: Application Layer">
+    <area shape="rect" coords="548. 63,613, 94" href="AppLayerPage.html" alt="Part 7: Application Layer" title="Part 7: Application Layer">
     <area shape="rect" coords="613, 63,656, 94" href="ProcDataPage.html" alt="Part 7: Process Data" title="Part 7: Process Data">
     <!--<area shape="rect" coords="682, 38,755, 94" href="" alt="Part 10: Task Controller" title="Part 10: Task Controller">
         <area shape="rect" coords="776, 38,847, 94" href="" alt="Part 13: File Server" title="Part 13: File Server">
@@ -186,7 +186,7 @@ The layered structure is described by the following diagram:
         iso_term        [label="ISO Virtual\n(complete optional)", color="white", URL="\ref XMLspec", width=1.5 ];
         process         [label="Process Data\n(optional)", color="white", URL="\ref ProcDataPage", width=1.25 ];
         system_mgmt     [label="System Management\n(partly obligatory)", color="cyan2", URL="\ref SystemMgmtPage", width=1.5 ];
-        base            [label="Base Data\n(complete optional)", color="white", URL="\ref BaseDataPage", width=1.5 ];
+        base            [label="Base Data\n(complete optional)", color="white", URL="\ref AppLayerPage", width=1.5 ];
         comm_doc        [label="Communication Services\nfor ISO 11783", URL="\ref CommOverPage", width=1.5 ];
     }
 
@@ -305,8 +305,33 @@ sensors, task controllers, core control units (expert system) and tractor builds
 interaction networks with all sorts of dependencies. Here \isoaglib can provide common patterns for the
 management of such interactions. This list can then help to identify well supported device combinations.<br>
 
-The <a href="http://www.isoaglib.com/">Commercial Overview Page</a> of \isoaglib has a
-<a href="http://www.isoaglib.com/customer-agco.html">list of commercial products which use \isoaglib</a>.
+The following table contains a few commercial products which use \isoaglib:
+<table class="download" border=0 cellspacing=0>
+<tr><th>Company</th>
+    <th>Used parts</th>
+    <th>Description</th></tr>
+<tr><td valign="top" align="center" width="80"><a href="http://www.agocorp.com">Agco Corp.</a></td>
+    <td valign="top"><ul><li>Virtual Terminal (11783-6)</li>
+            <li>TC (11783-10)</li>
+            <li>GPS converter</li></ul></td>
+    <td>Based on \isoaglib the development team of <a href="http://www.osb-ag.de">OSB AG</a> implemented the ISO VT Server (11783-6) on the Terminal Opus A1 from Wachendorff.
+        The operating system is a Linux platform and the OSB AG team managed to develop a running prototype within three months.
+        At the Agritechnica 2005 a running ISO Terminal was presented.<br>
+        After the Agritechnica 2005, the Task Controller Server (11783-10) and GPS Cinverter were integrated into the system. Which made operating data logging and transferring GPS information from RS232 to the ISOBUS in NMEA 2000 format possible.
+        This is the next step of operating data logging; now the farmer has the possibility to synchronize his field recorder with relevant GPS data.</td></tr>
+<tr><td valign="top" align="center"><a href="http://www.fritzmeier.de">Fritzmeier Umwelttechnik GmbH</a></td>
+    <td valign="top"><ul><li>Control system of the MiniVegN</li></ul></td>
+    <td>Within this project the \isoaglib was the base for the development of a control system between MiniVegN, tractor and fertilize spreader. 
+        The laser of the MiniVegN tests the nitrogen content of the plant and sends the information to the spreader. The spreader has to spread out the right amount of fertilizer. 
+        With the \isoaglib the MiniVegN is compatible to the standard ISO 11783.</td></tr>
+<tr><td valign="top" align="center"><a href="http://www.zunhammer.de">Zunhammer GmbH</a></td>
+    <td valign="top"><ul><li>User Interface</li><li>ISO control system</li></ul></td>
+    <td><i>"The challenge was to bring Zunhammer liquid manure spreader to ISO compatibility within four weeks.
+        The control of the spreader had to be done by ISO terminal.
+        The open source library \isoaglib was the right instrument and together with the Zunhammer development team the we managed to build a running prototype punctual to the Agritechnica 2005.
+        The time frame of four weeks was achived."</i>
+</td></tr>
+</table>
 
 
 The \isoaglib will be actively maintained by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
