@@ -116,7 +116,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
