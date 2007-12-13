@@ -1,4 +1,4 @@
-/*! \page PageSitemap Sitemap of IsoAgLib
+/*! \page PageSitemap Sitemap
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <div style="clear:left"></div>
 \section Sitemap Sitemap

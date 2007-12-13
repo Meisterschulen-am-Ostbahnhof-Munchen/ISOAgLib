@@ -1,4 +1,4 @@
-/* \page GPL_with_exception IsoAgLib Library License - GNU General Public License with exceptions - GNU Project - Free Software Foundation (FSF)
+/*! \page GPL_with_exception IsoAgLib Library License - GNU General Public License with exceptions - GNU Project - Free Software Foundation (FSF)
 \section GplException Definition of GPL Exception according to eCos project
 The following paragraph defines for each source file the allowed
 integration into applications:<br>
@@ -15,7 +15,7 @@ This exception does not invalidate any other reasons why a work based on
 this file might be covered by the GNU General Public License.
 
 Alternative licenses for IsoAgLib may be arranged by contacting
-the main author Achim Spangler by a.spangler@osb-ag:de
+the main author Achim Spangler by a.spangler_at_osb-ag:de
 </b>
 <HR>
 
@@ -414,6 +414,6 @@ POSSIBILITY OF SUCH DAMAGES.
 <P>
 
 
-<H2>END OF TERMS AND CONDITIONS</H2>
+<H3>END OF TERMS AND CONDITIONS</H3>
 
 */

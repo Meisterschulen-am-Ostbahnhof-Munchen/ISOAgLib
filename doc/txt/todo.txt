@@ -25,7 +25,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 The following items are at the TODO list. You are encouraged to
 help contributing for their implementation with source code.
 
-	- Calculate the RAM + ROM resource need of the ISO<i><sub>AgLib</sub></i> tutorial example programs
+	- Calculate the RAM + ROM resource need of the \isoaglib tutorial example programs
 		for some embedded architectures with different feature lists<br>
 		<b>Performed on request or in case somebody is volunteering</b>
 	- Extending documentation on virtual terminal support and driver adaptation architecture<br>

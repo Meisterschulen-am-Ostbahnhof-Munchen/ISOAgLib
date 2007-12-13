@@ -18,9 +18,9 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \subsection News_E New for the 2.0 release
   - <b>December 2006:</b> Support of PEAK CAN cards for Linux development hosts
-  - <b>October 2006:</b> Integrate enhanced scheduler, which plans exact reschedule times for all periodic subtasks of ISO<i><sub>AgLib</sub></i>, so that other program items
-     exactly know when the timeEvent() function of ISO<i><sub>AgLib</sub></i> has to be called again.
-  - <b>September 2006:</b> <b>ISO<i><sub>AgLib</sub></i></b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
+  - <b>October 2006:</b> Integrate enhanced scheduler, which plans exact reschedule times for all periodic subtasks of \isoaglib, so that other program items
+     exactly know when the timeEvent() function of \isoaglib has to be called again.
+  - <b>September 2006:</b> <b>\isoaglib</b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
     The following steps had to be done:
     + remove all unneeded DIN9684 and all its #ifdefs
     + merge ISONAME_c and DevKey_c to the new ISONAME_c as the only
@@ -52,7 +52,7 @@ Information on Obligatory Elemutton has its own scaling-factor/centering-offset 
 
 \subsection News_B News for the 1.2.0 release
     - <b>during 2005:</b> Virtual Terminal Client<br>
-        - <b>ISO<i><sub>AgLib</sub></i></b> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com
+        - <b>\isoaglib</b> has now its own internet domains: http://www.isoaglib.org , http://www.isoaglib.de and http://www.isoaglib.com
         - Added support for IsoLatin-9 fonts: Now for every font-attribute the "font_type" attribute has to be specified. (Please adapt your existing XML files.)<br>
         - Support for font-downscaling (in case a pool is designed for >200x200 pixel VTs)<br>
         - Cleanup on Tutorial3_0 example objectpool
@@ -79,9 +79,9 @@ Information on Obligatory Elemutton has its own scaling-factor/centering-offset 
 	- <b>2004-12-06:</b> Enable and test Win32 multithreading in Sontheim CAN driver ( as no Vector-Informatik CAN cards are accessible for the author, this can't be tested -> so multithreading is only active
 			as default for Sontheim )
 	- <b>2004-12-09:</b> As some so called "Extended EC++" compilers like IAR don't support multiple inheritance and additionally place their individual tailored version of STL
-		<b>not</b> in the ANSI C++ conformant namespace <b>std</b> the ISO<i><sub>AgLib</sub></i> was changed to <b>not use any multiple inheritance</b> and is now
+		<b>not</b> in the ANSI C++ conformant namespace <b>std</b> the \isoaglib was changed to <b>not use any multiple inheritance</b> and is now
 		<b>flexible to retrieve STL elements from the namespace STL_NAMESPACE, which can be defined individual for each compiler in the header <i>compiler_adaptation.h</i></b><br>
-		Therefore the ISO<i><sub>AgLib</sub></i> is now usable for all compilers which use this "Extended EC++" subset of ANSI C++
+		Therefore the \isoaglib is now usable for all compilers which use this "Extended EC++" subset of ANSI C++
 	- <b>2004-12-10:</b> List of used C++ features which aren't mapped by simple <b>EC++</b> compilers which doesn't use the <b>Extended EC++</b> specification
 		is written in \ref InfReqCompiler ( there are also some general notes on compiler use )
 	- <b>2004-12-12:</b> Add tutorial examples for internal CAN, supplementary drivers eeprom, sensor and PWM
@@ -96,25 +96,25 @@ Information on Obligatory Elemutton has its own scaling-factor/centering-offset 
 	- Complete Toolchain for ISO 11783 Virtual Terminal is integrated.
 	- <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a> -
 	    the first commercial application of <a href="www.fritzmeier.de">Fritzmeier</a>
-	    is developed based on ISO<i><sub>AgLib</sub></i>
-	- Company <a href="www.osb-ag.de">OSB AG</a> with the author of ISO<i><sub>AgLib</sub></i> is providing commercial
-	    service for ISO<i><sub>AgLib</sub></i> applications, project development based on ISO<i><sub>AgLib</sub></i> and other
+	    is developed based on \isoaglib
+	- Company <a href="www.osb-ag.de">OSB AG</a> with the author of \isoaglib is providing commercial
+	    service for \isoaglib applications, project development based on \isoaglib and other
 			embedded services
-	- ISO<i><sub>AgLib</sub></i> is still being developed in cooperation with research group of <b>Prof. Auernhammer</b>
+	- \isoaglib is still being developed in cooperation with research group of <b>Prof. Auernhammer</b>
 	    at <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
-	- ISO<i><sub>AgLib</sub></i> is now running also at ECU of <a href="http://www.mitron.fi">Mitron</a>
-	- Directory structure and module structure of ISO<i><sub>AgLib</sub></i> is completly reorganized, so that
+	- \isoaglib is now running also at ECU of <a href="http://www.mitron.fi">Mitron</a>
+	- Directory structure and module structure of \isoaglib is completly reorganized, so that
 	    optional and obligatory parts can be detected better, and the corresponding files for
 			internal implementation and interface are tighter grouped.
 	- Heavy extended documentation with information on every important part of the library
 	    with example code lines and some diagrams.
 	- <b>Changed license to <i>GPL with extension</i> which derived from the <i>eCos</i> license. This license has an explicit definition of
-		allowed usage of ISO<i><sub>AgLib</sub></i> which doesn't cause any license obligations on the using application.
+		allowed usage of \isoaglib which doesn't cause any license obligations on the using application.
 		The original chosen LGPL license would require some inacceptable requirements to commercial applications.</b>
 	- Shell script collects all needed source files based on a feature set definition in one small project spec file. Thus
 		it is easy to avoid the inclusion of unneeded files. This shell script is also useable in Windows, as the
 		Open Source tool <b>MSYS</b> provides a minimum but capable enough <b>POSIX</b> layer for Windows.
-	- At least one very active and already contributing user from a well known manufacturer confirms, that ISO<i><sub>AgLib</sub></i>
+	- At least one very active and already contributing user from a well known manufacturer confirms, that \isoaglib
 		allows even the implementation of missing features after some work with it.
 	- Each email adress in this project is intentionally corrupted, to make SPAMMING a little bit more complicated. Each human reader will easily detect how to
 		"fix" the email adress - this "manipulation" might change if the maintainers detect that SPAM tools are able to derive automatically a
