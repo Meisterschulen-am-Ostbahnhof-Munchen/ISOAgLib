@@ -339,7 +339,7 @@ int main()
   bool b_hdd_warn_led = false;
   IsoAgLib::iDigitalO_c c_alarm_beeper(0);
 
-  // ontrol if data can be logged to HDD
+  // Control if data can be logged to HDD
   bool w_can_log_data = false;
 #endif
 
