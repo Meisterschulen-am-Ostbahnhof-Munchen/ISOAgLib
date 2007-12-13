@@ -12,6 +12,14 @@ bin/update_makefile.sh -text
 bin/vt2iso -text
 /contact_and_support.txt -text
 doc/footer.html -text
+doc/graphics/isobus.odg -text
+doc/graphics/isobus.png -text
+doc/graphics/isobus_thumb.png -text
+doc/graphics/processData.odg -text
+doc/graphics/processData.png -text
+doc/graphics/structure.jpg -text
+doc/graphics/structure.odg -text
+doc/graphics/structure.png -text
 doc/header.html -text
 doc/html/Diagramme/IsoAgLib-further_develop.gif -text
 doc/html/Diagramme/IsoAgLib-imi.gif -text
