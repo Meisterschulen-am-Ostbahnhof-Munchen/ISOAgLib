@@ -1,5 +1,5 @@
 /** @page LgplSrcOverview Overview on Structure of IsoAgLib
-	 The core components of the ISO<i><sub>AgLib</sub></i> which are
+	 The core components of the \isoaglib which are
 	  licensed under the conditions of the LGPL license of the
 	  <a href="http://www.fsf.org">Free Software Foundation</a> are placed in the directory
 	  <i>\<xgpl_src\></i> . Please note that the license requires each user to provide
@@ -15,7 +15,7 @@
 		-# <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a> by support for the research of the main author within his research for IKB-Dürnast
 
 		\section LgplStructure Overview on Directory Structure of LGPL Licensed Parts of IsoAgLib
-		The structure of the source files of the ISO<i><sub>AgLib</sub></i> is described in the following imagemap diagram.
+		The structure of the source files of the \isoaglib is described in the following imagemap diagram.
 		The informaiton "(partly) obligtory, optional" is normally true for all contained directories and files of the listed
 		nodes, as long as no exception is listed in the diagram.
 		\subsection LgplMainStructure Structure of Main Parts
@@ -50,9 +50,9 @@
 		subgraph cluster_level311 {
 			style="invis";
 			rank=same;
-			system_mgmt [label="System Management\n(partly obligatory)", color="green", URL="\ref SystemMgmtPage"/*,width=2*/ ];
-			multi_msg   [label="Data Stream\n(needed for ISO Terminal)", color="greenyellow", URL="\ref MultiMsgPage"/*,width=2*/ ];
-			base        [label="Base Data\n(complete optional)", color="yellow", URL="\ref BaseDataPage"/*,width=2*/ ];
+			system_mgmt [label="System Management\n(partly obligatory)", color="green", URL="\ref NetworkMgmtPage"/*,width=2*/ ];
+			multi_msg   [label="Data Stream\n(needed for ISO Terminal)", color="greenyellow", URL="\ref DataLinkPage"/*,width=2*/ ];
+			base        [label="Base Data\n(complete optional)", color="yellow", URL="\ref AppLayerPage"/*,width=2*/ ];
 			iso_term    [label="ISO Virtual\n(complete optional)", color="yellow", URL="\ref XMLspec"/*,width=2*/ ];
 			process     [label="Process Data\n(optional)", color="yellow", URL="\ref ProcDataPage"/*,width=2*/ ];
 			}
@@ -136,9 +136,9 @@
 		subgraph cluster_level21 {
 			style="invis";
 			rank=same;
-			sup_actor   [label="Extended Digital/PWM Output\n(optional)", color="yellow", URL="\ref iDigitalO_c"];
-			sup_rs232   [label="Extended RS232 IO\n(optional)", color="yellow", URL="\ref iRS232IO_c"];
-			sup_sensor  [label="Extended Sensor Input\n(optional)", color="yellow", URL="\ref iAnalogIRangeCheck_c"];
+			sup_actor   [label="Extended Digital/PWM Output\n(optional)", color="yellow", URL="\ref IsoAgLib::iDigitalO_c"];
+			sup_rs232   [label="Extended RS232 IO\n(optional)", color="yellow", URL="\ref IsoAgLib::iRS232IO_c"];
+			sup_sensor  [label="Extended Sensor Input\n(optional)", color="yellow", URL="\ref IsoAgLib::iAnalogIRangeCheck_c"];
 		}
 		subgraph cluster_level22 {
 			style="invis";
@@ -179,19 +179,19 @@
 
 	 \section StructurePrinciple Principles of Structuring the IsoAgLib
 	 \subsection StructurObligOpt Distribution of Core Components and Supplements
-	 The ISO<i><sub>AgLib</sub></i> was developed for a research project, where an ECU should
+	 The \isoaglib was developed for a research project, where an ECU should
 	 detect automatically connected implementes and should then record the retrieveable information
 	 on a PCMCIA memory card ( connected via RS232 ). Additionally some information were read from
 	 digital and analog input sensors.
 
-	 Thus the ISO<i><sub>AgLib</sub></i> had not only the target to implement the ISO 11783 protocol, but also
+	 Thus the \isoaglib had not only the target to implement the ISO 11783 protocol, but also
 	 to provide a platform hardware independent API for capable hardware access.
-	 A ruling target of ISO<i><sub>AgLib</sub></i> is to server <b>optionally</b> as a complete hardware extension layer, which
+	 A ruling target of \isoaglib is to server <b>optionally</b> as a complete hardware extension layer, which
 	 allows the application developer to use driver services which are not included in the standard platform libraries and which
 	 introduce no platform dependency on the main project. This principle is used for the actively used research systems and for the
 	 commercial development on the implement <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor <b>MiniVeg N</b></a>.
 
-	 But as most projects will start with ISO<i><sub>AgLib</sub></i> as pure ISO 11783 implementation, all
+	 But as most projects will start with \isoaglib as pure ISO 11783 implementation, all
 	 supplementary parts can be simply excluded from project - by just not including in project file list ( and not calling methods
 	 from the excluded files - ;-) ).
 	 This results in the main directories <i>\<xgpl_src/IsoAgLib\></i> and <i>\<xgpl_src/supplementary_driver\></i>.
@@ -204,7 +204,7 @@
 	 more information on optional parts is provided.
 
 	 \subsection StructureInterface Grouping of Interface with corresponding Implementation
-	 The ISO<i><sub>AgLib</sub></i> provides all application relevant classes, functions and other components in the namespace
+	 The \isoaglib provides all application relevant classes, functions and other components in the namespace
 	 <i>IsoAgLib</i>, and hides the implementation of these components in the namespace <i>__IsoAgLib</i>. The name of all interface
 	 classes starts with a lower <b>'i'</b>, whereas the corresponding implementation class has the same name - without the <b>'i'</b> at the beginning.
 	 The implementation classes and source files are also hidden within the subdirectory <b>/impl</b> of the respective directory -
@@ -216,7 +216,7 @@
 	 The platform dependent variants of the HAL are grouped by the name of the respective plateform. This name is defined in the central
 	 configuration file isoaglib_config.h , where either the corresponding #define like SYSTEM_ESX can be constantly defined or can be
 	 provided as runtime defines during the Make-Process ( as compiler option ). The conditional #ifdef rules in isoaglib_config.h
-	 allow the headers of the ISO<i><sub>AgLib</sub></i> to fetch the corresponding headers from the central headers in the
+	 allow the headers of the \isoaglib to fetch the corresponding headers from the central headers in the
 	 directories <i>\<xgpl_src/IsoAgLib/hal\></i> and <i>\<xgpl_src/supplementary_driver/hal\></i>.
 	 Each platform has its own subdirectory in the previous mentioned directories.
 	 Like described in the diagram at the top of this page, each driver extension directory is mapped with a same named
@@ -226,7 +226,7 @@
 	 have a unique name and functions ( described by their parameters ). This can be realized in most cases by simple
 	 inline functions - which are a better C++ variant of the old style function-macros of C. The call of these inline functions is
 	 replaced during compile time by their function body - thus the platform library functions are directly called during runtime.
-	 If the ISO<i><sub>AgLib</sub></i> requires some features which can not be provided by simple inline functions, the needed additional
+	 If the \isoaglib requires some features which can not be provided by simple inline functions, the needed additional
 	 functionality can be implemented in the files named like system_target_extensions.h and system_target_extensions.cpp.
 
 	 The name mapping is provided also with the help of namespaces, which cause no runtime overhead.
