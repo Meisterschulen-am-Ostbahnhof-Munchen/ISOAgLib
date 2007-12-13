@@ -26,6 +26,7 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measureprogbase_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measuresubprog_c.cpp
+../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.cpp

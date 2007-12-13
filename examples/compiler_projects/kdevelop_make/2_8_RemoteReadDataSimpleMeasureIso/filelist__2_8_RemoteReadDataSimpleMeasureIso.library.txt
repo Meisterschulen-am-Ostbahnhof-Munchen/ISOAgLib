@@ -24,6 +24,7 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasureElements/impl/simplemanagemeasureprogremote_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasure/impl/procdataremotesimplemeasure_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.cpp
+../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.cpp
@@ -38,4 +39,4 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
-../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
+../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp

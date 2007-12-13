@@ -35,6 +35,7 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbo
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.cpp  \
@@ -74,6 +75,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
 		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h \
@@ -93,12 +95,13 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
 		../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/can.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/system.h \
@@ -107,11 +110,10 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h \
 		../../../../library/xgpl_src/supplementary_driver/hal/rs232.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \

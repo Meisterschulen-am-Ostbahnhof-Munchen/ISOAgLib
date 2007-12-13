@@ -18,6 +18,7 @@ for conf_example in $EXAMPLE_LIST ; do
 		conf_4*) EXAMPLE_DIR="4_SupplementaryDriver" ;;
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
 		conf_6*) EXAMPLE_DIR="6_ParallelMutex" ;;
+		conf_7*) EXAMPLE_DIR="7_SchedulerTask" ;;
 		conf_Tractor*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="Tractor" ;;
 		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="CanServerMessenger" ;;
 		*) EXAMPLE_DIR="." ;;
