@@ -178,16 +178,20 @@ public:
   void clean_exit(char* error_message = NULL);
 
   bool getIsOPDimension() const { return is_opDimension; }
+  bool getIsOPAdditionallyRequiredObjects() const { return is_opAdditionallyRequiredObjects; }
   bool getIsSKWidth() const { return is_skWidth; }
   bool getIsSKHeight() const { return is_skHeight; }
 
   void setIsOPDimension (bool b_isOPDimension) { is_opDimension = b_isOPDimension; }
+  void setIsOPAdditionallyRequiredObjects (bool b_isOPAdditionallyRequiredObjects) { is_opAdditionallyRequiredObjects = b_isOPAdditionallyRequiredObjects; }
   void setIsSKWidth (bool b_isSKWidth) { is_skWidth = b_isSKWidth; }
   void setIsSKHeight (bool b_isSKHeight) { is_skHeight = b_isSKHeight; }
 
   unsigned int getOPDimension() const { return opDimension; }
   unsigned int getSKWidth() const { return skWidth; }
   unsigned int getSKHeight() const { return skHeight; }
+
+  const char* getOPAdditionallyRequiredObjects() const { return opAdditionallyRequiredObjects; }
 
   void setOPDimension (unsigned int OPDimension) { opDimension = OPDimension; }
   void setSKWidth (unsigned int SKWidth) { skWidth = SKWidth; }
@@ -290,7 +294,9 @@ private:
   unsigned int opDimension;
   unsigned int skWidth;
   unsigned int skHeight;
+  char opAdditionallyRequiredObjects[1024+1];
   bool is_opDimension;
+  bool is_opAdditionallyRequiredObjects;
   bool is_skWidth;
   bool is_skHeight;
 

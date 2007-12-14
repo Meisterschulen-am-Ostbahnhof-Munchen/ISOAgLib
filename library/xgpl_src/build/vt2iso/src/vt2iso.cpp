@@ -968,6 +968,7 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   ui_languages=0;
 
   is_opDimension=false;
+  is_opAdditionallyRequiredObjects=false;
   is_skWidth=false;
   is_skHeight=false;
 
@@ -990,6 +991,7 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   attr_name [1024+1-1] = 0x00;
   attr_value [1024+1-1] = 0x00;
   spc_autoLanguage[0] = 0x00; // default to no autoLanguage
+  opAdditionallyRequiredObjects[0] = 0x00;
 
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
@@ -1793,6 +1795,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             is_opDimension = true;
             continue;
           }
+	  if (strncmp (attr_name, "additionally_required_objects", stringLength) == 0) {
+            if (is_opAdditionallyRequiredObjects) {
+              std::cout << "\n\nYOU MUSTN'T SPECIFY THE additionally_required_objects= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
+              return false;
+            }
+	  std::cout << "\nCheck 1a\n";
+            strcpy (opAdditionallyRequiredObjects, attr_value);
+            is_opAdditionallyRequiredObjects = true;
+            continue;
+          }	  
+	  std::cout << "\nCheck 1b\n";
           if (strncmp (attr_name, "sk_width", stringLength) == 0) {
             if (is_skWidth) {
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
@@ -4534,12 +4547,14 @@ vt2iso_c::skRelatedFileOutput()
 void
 vt2iso_c::generateIncludeDefines()
 {
-  for (int i=0; i<=DEF_iso639entries; i++)
+  const char* additionally_required_objects = getOPAdditionallyRequiredObjects();
+  for (int i=0; i<39; i++) // parse only standard vt objects
   {
-    if ((i < 39) && (arrb_objTypes[i])) // parse only standard vt objects
+    char* objectName=otCompTable[i];
+    if (arrb_objTypes[i] || strstr(additionally_required_objects, objectName) ) 
     {
-      fprintf (partFile_obj_selection, "#ifndef USE_VTOBJECT_%s\n", otCompTable[i]);
-      fprintf (partFile_obj_selection, "\t#define USE_VTOBJECT_%s\n", otCompTable[i]);
+      fprintf (partFile_obj_selection, "#ifndef USE_VTOBJECT_%s\n", objectName);
+      fprintf (partFile_obj_selection, "\t#define USE_VTOBJECT_%s\n", objectName);
       fprintf (partFile_obj_selection, "#endif\n");
     }
   }
