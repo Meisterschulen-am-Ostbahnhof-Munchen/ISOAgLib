@@ -63,7 +63,7 @@
 #include "ivtobjectsoftkeymask_c.h"
 #include "ivtobjectworkingset_c.h"
 
-#ifdef PRJ_ISO_TERMINAL_OBJECT_SELECTION1
+#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1
   #define USE_VTOBJECT_alarmmask
   #define USE_VTOBJECT_archedbargraph
   #define USE_VTOBJECT_auxiliaryfunction
