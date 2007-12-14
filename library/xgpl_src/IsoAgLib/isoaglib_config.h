@@ -829,6 +829,7 @@
     #define USE_VTOBJECT_meter
     #define USE_VTOBJECT_objectpointer
     #define USE_VTOBJECT_outputnumber
+    #define USE_VTOBJECT_stringvariable
     #define USE_VTOBJECT_outputstring
     #define USE_VTOBJECT_outputlist
     #define USE_VTOBJECT_polygon
@@ -838,15 +839,19 @@
   #ifndef USE_VTOBJECT_numbervariable
     #ifdef USE_VTOBJECT_inputnumber
       #define USE_VTOBJECT_numbervariable
-    #elif USE_VTOBJECT_outputnumber
-      #define USE_VTOBJECT_numbervariable
+    #else
+      #if USE_VTOBJECT_outputnumber
+        #define USE_VTOBJECT_numbervariable
+      #endif
     #endif
   #endif
   #ifndef USE_VTOBJECT_stringvariable
     #ifdef USE_VTOBJECT_inputstring
       #define USE_VTOBJECT_stringvariable
-    #elif USE_VTOBJECT_outputstring
-      #define USE_VTOBJECT_stringvariable
+    #else 
+      #if USE_VTOBJECT_outputstring
+        #define USE_VTOBJECT_stringvariable
+      #endif
     #endif
   #endif
   
