@@ -206,6 +206,8 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <cstdlib>
+#include <string>
+
 #ifdef DEBUG
   #ifdef SYSTEM_PC
     #include <iostream>
