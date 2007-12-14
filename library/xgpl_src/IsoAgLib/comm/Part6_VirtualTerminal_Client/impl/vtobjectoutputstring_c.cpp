@@ -83,7 +83,7 @@
 #include "../ivtobjectoutputstring_c.h"
 #include "vtobjectoutputstring_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputstring
+#ifdef USE_VTOBJECT_outputstring
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "../ivtobjectstringvariable_c.h"

@@ -84,7 +84,7 @@
 
 #include <IsoAgLib/typedef.h>
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_alarmmask
+#ifdef USE_VTOBJECT_alarmmask
 #include "../ivtobjectmask_c.h"
 #include "../ivtobjectsoftkeymask_c.h"
 #include "isoterminal_c.h"

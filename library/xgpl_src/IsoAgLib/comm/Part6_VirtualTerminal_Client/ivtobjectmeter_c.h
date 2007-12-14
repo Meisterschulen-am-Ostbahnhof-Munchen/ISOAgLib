@@ -55,7 +55,7 @@
 // +X2C includes
 #include "impl/vtobjectmeter_c.h"
 // ~X2C
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_meter
+#ifdef USE_VTOBJECT_meter
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

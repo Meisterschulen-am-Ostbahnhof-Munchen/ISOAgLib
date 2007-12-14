@@ -82,7 +82,7 @@
 #include "../ivtobjectstringvariable_c.h"
 #include "vtobjectstringvariable_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputstring || defined USE_VTOBJECT_outputstring || defined USE_VTOBJECT_stringvariable
+#ifdef USE_VTOBJECT_stringvariable
 
 #include "isoterminal_c.h"
 

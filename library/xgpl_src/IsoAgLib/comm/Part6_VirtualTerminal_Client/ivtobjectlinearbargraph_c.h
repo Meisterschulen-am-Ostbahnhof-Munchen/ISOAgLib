@@ -55,7 +55,7 @@
 // +X2C includes
 #include "impl/vtobjectlinearbargraph_c.h"
 // ~X2C
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_linearbargraph
+#ifdef USE_VTOBJECT_linearbargraph
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

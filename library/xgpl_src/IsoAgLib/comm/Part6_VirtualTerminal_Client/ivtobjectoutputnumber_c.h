@@ -56,7 +56,7 @@
 // +X2C includes
 #include "impl/vtobjectoutputnumber_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputnumber
+#ifdef USE_VTOBJECT_outputnumber
 #include "ivtobjectfontattributes_c.h"
 // ~X2C
 

@@ -55,7 +55,7 @@
 // +X2C includes
 #include "impl/vtobjectkey_c.h"
 // ~X2C
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_key
+#ifdef defined USE_VTOBJECT_key
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

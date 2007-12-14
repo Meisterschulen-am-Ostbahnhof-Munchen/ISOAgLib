@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectinputnumber_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputnumber
+#ifdef USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "isoterminal_c.h"
 

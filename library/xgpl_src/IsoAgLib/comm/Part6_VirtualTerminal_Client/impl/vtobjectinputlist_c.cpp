@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectinputlist_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputlist
+#ifdef USE_VTOBJECT_inputlist
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

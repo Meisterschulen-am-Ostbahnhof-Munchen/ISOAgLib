@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectinputboolean_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputboolean
+#ifdef USE_VTOBJECT_inputboolean
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

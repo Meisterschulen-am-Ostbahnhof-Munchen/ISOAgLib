@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectarchedbargraph_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_archedbargraph
+#ifdef USE_VTOBJECT_archedbargraph
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"
 

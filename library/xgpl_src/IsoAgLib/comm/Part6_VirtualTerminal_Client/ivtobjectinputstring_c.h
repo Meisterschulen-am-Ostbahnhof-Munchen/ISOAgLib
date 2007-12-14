@@ -56,7 +56,7 @@
 // +X2C includes
 #include "impl/vtobjectinputstring_c.h"
 // ~X2C
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputstring
+#ifdef USE_VTOBJECT_inputstring
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

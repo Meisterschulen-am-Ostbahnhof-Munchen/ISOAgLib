@@ -54,6 +54,7 @@
 #include "ivtobjectbutton_c.h"
 #include "ivtobjectdatamask_c.h"
 #include "ivtobjectfontattributes_c.h"
+#include "ivtobjectgraphicscontext_c.h"
 #include "ivtobjectmacro_c.h"
 #include "ivtobjectfillattributes_c.h"
 #include "ivtobjectinputattributes_c.h"
@@ -62,73 +63,109 @@
 #include "ivtobjectsoftkeymask_c.h"
 #include "ivtobjectworkingset_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_alarmmask
+#ifdef PRJ_ISO_TERMINAL_OBJECT_SELECTION1
+  #define USE_VTOBJECT_alarmmask
+  #define USE_VTOBJECT_archedbargraph
+  #define USE_VTOBJECT_auxiliaryfunction
+  #define USE_VTOBJECT_auxiliaryinput
+  #define USE_VTOBJECT_button
+  #define USE_VTOBJECT_container
+  #define USE_VTOBJECT_ellipse
+  #define USE_VTOBJECT_inputboolean
+  #define USE_VTOBJECT_inputlist
+  #define USE_VTOBJECT_inputnumber
+  #define USE_VTOBJECT_inputstring
+  #define USE_VTOBJECT_key
+  #define USE_VTOBJECT_line
+  #define USE_VTOBJECT_linearbargraph
+  #define USE_VTOBJECT_meter
+  #define USE_VTOBJECT_objectpointer
+  #define USE_VTOBJECT_outputnumber
+  #define USE_VTOBJECT_outputstring
+  #define USE_VTOBJECT_outputlist
+  #define USE_VTOBJECT_polygon
+  #define USE_VTOBJECT_rectangle
+#endif
+
+#ifndef USE_VTOBJECT_numbervariable
+  #ifdef USE_VTOBJECT_inputnumber
+    #define USE_VTOBJECT_numbervariable
+  #elif USE_VTOBJECT_outputnumber
+    #define USE_VTOBJECT_numbervariable
+  #endif
+#endif
+#ifndef USE_VTOBJECT_stringvariable
+  #ifdef USE_VTOBJECT_inputstring
+    #define USE_VTOBJECT_stringvariable
+  #elif USE_VTOBJECT_outputstring
+    #define USE_VTOBJECT_stringvariable
+  #endif
+#endif
+
+#ifdef USE_VTOBJECT_alarmmask
   #include "ivtobjectalarmmask_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_archedbargraph
+#ifdef USE_VTOBJECT_archedbargraph
   #include "ivtobjectarchedbargraph_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryfunction
+#ifdef USE_VTOBJECT_auxiliaryfunction
   #include "ivtobjectauxiliaryfunction_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryinput
+#ifdef USE_VTOBJECT_auxiliaryinput
   #include "ivtobjectauxiliaryinput_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_container
+#ifdef USE_VTOBJECT_container
   #include "ivtobjectcontainer_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_ellipse
+#ifdef USE_VTOBJECT_ellipse
   #include "ivtobjectellipse_c.h"
 #endif
-//#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
-  #include "ivtobjectgraphicscontext_c.h"
-//#endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputboolean
+#ifdef USE_VTOBJECT_inputboolean
   #include "ivtobjectinputboolean_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputlist
+#ifdef USE_VTOBJECT_inputlist
   #include "ivtobjectinputlist_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || (defined USE_VTOBJECT_inputnumber) || (defined USE_VTOBJECT_numbervariable)
+#ifdef USE_VTOBJECT_inputnumber
   #include "ivtobjectinputnumber_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || (defined USE_VTOBJECT_inputstring) || (defined USE_VTOBJECT_stringvariable)
+#ifdef USE_VTOBJECT_inputstring
   #include "ivtobjectinputstring_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_key
+#ifdef USE_VTOBJECT_key
   #include "ivtobjectkey_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_line
+#ifdef USE_VTOBJECT_line
   #include "ivtobjectline_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_linearbargraph
+#ifdef USE_VTOBJECT_linearbargraph
   #include "ivtobjectlinearbargraph_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_meter
+#ifdef USE_VTOBJECT_meter
   #include "ivtobjectmeter_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_numbervariable
+#ifdef USE_VTOBJECT_numbervariable
   #include "ivtobjectnumbervariable_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_objectpointer
+#ifdef USE_VTOBJECT_objectpointer
   #include "ivtobjectobjectpointer_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputnumber
+#ifdef USE_VTOBJECT_outputnumber
   #include "ivtobjectoutputnumber_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputstring
+#ifdef USE_VTOBJECT_outputstring
   #include "ivtobjectoutputstring_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputlist
+#ifdef USE_VTOBJECT_outputlist
   #include "ivtobjectoutputlist_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_polygon
+#ifdef USE_VTOBJECT_polygon
   #include "ivtobjectpolygon_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_rectangle
+#ifdef USE_VTOBJECT_rectangle
   #include "ivtobjectrectangle_c.h"
 #endif
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_stringvariable
+#ifdef USE_VTOBJECT_stringvariable
   #include "ivtobjectstringvariable_c.h"
 #endif
 

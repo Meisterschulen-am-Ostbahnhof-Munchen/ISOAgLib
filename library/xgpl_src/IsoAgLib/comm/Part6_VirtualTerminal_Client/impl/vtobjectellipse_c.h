@@ -84,7 +84,7 @@
 
 #include <IsoAgLib/typedef.h>
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_ellipse
+#ifdef USE_VTOBJECT_ellipse
 #include "vtobject_c.h"
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"

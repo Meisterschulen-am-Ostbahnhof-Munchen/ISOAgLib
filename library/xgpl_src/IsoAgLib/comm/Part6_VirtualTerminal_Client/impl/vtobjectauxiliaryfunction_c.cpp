@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectauxiliaryfunction_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryfunction
+#ifdef USE_VTOBJECT_auxiliaryfunction
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
 #include "isoterminal_c.h"

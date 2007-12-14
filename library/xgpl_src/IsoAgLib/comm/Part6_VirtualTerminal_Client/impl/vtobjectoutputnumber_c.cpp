@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectoutputnumber_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputnumber
+#ifdef USE_VTOBJECT_outputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"

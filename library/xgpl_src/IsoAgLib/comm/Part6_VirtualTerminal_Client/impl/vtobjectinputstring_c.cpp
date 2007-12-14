@@ -82,7 +82,7 @@
 #include "../ivtobjectinputstring_c.h"
 #include "vtobjectinputstring_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_inputstring
+#ifdef USE_VTOBJECT_inputstring
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectinputattributes_c.h"
 #include "../ivtobjectstringvariable_c.h"

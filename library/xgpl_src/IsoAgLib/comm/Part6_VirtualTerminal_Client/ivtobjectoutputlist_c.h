@@ -56,7 +56,7 @@
 // +X2C includes
 #include "impl/vtobjectoutputlist_c.h"
 // ~X2C
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputlist
+#ifdef USE_VTOBJECT_outputlist
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

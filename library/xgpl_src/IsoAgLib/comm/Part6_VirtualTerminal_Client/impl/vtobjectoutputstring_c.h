@@ -83,7 +83,7 @@
 #define VTOBJECTOUTPUTSTRING_C_H
 
 #include <IsoAgLib/typedef.h>
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_outputstring
+#ifdef USE_VTOBJECT_outputstring
 #include "../ivtobjectstring_c.h"
 #include "vtclientservercommunication_c.h"
 #include "isoterminal_c.h"

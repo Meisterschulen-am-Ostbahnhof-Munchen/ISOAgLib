@@ -84,7 +84,7 @@
 
 #include <IsoAgLib/typedef.h>
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_auxiliaryinput
+#ifdef USE_VTOBJECT_auxiliaryinput
 #include "vtobject_c.h"
 #include "vttypes.h"
 

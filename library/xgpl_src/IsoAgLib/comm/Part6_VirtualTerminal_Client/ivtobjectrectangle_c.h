@@ -56,7 +56,7 @@
 // +X2C includes
 #include "impl/vtobjectrectangle_c.h"
 // ~X2C
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_rectangle
+#ifdef USE_VTOBJECT_rectangle
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

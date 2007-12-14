@@ -81,7 +81,7 @@
  ***************************************************************************/
 #include "vtobjectalarmmask_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_alarmmask
+#ifdef USE_VTOBJECT_alarmmask
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
 

@@ -53,7 +53,7 @@
 
 #include "impl/vtobjectalarmmask_c.h"
 
-#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_alarmmask
+#ifdef USE_VTOBJECT_alarmmask
 #include "ivtobjectsoftkeymask_c.h"
 
 // Begin Namespace IsoAgLib
