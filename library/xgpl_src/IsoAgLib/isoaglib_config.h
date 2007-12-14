@@ -810,6 +810,45 @@
     #define _autogen_config_header4_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION4/IsoTerminalObjectSelection.inc>
     #include _autogen_config_header4_
   #endif
+
+  #ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1
+    #define USE_VTOBJECT_alarmmask
+    #define USE_VTOBJECT_archedbargraph
+    #define USE_VTOBJECT_auxiliaryfunction
+    #define USE_VTOBJECT_auxiliaryinput
+    #define USE_VTOBJECT_button
+    #define USE_VTOBJECT_container
+    #define USE_VTOBJECT_ellipse
+    #define USE_VTOBJECT_inputboolean
+    #define USE_VTOBJECT_inputlist
+    #define USE_VTOBJECT_inputnumber
+    #define USE_VTOBJECT_inputstring
+    #define USE_VTOBJECT_key
+    #define USE_VTOBJECT_line
+    #define USE_VTOBJECT_linearbargraph
+    #define USE_VTOBJECT_meter
+    #define USE_VTOBJECT_objectpointer
+    #define USE_VTOBJECT_outputnumber
+    #define USE_VTOBJECT_outputstring
+    #define USE_VTOBJECT_outputlist
+    #define USE_VTOBJECT_polygon
+    #define USE_VTOBJECT_rectangle
+  #endif
+  
+  #ifndef USE_VTOBJECT_numbervariable
+    #ifdef USE_VTOBJECT_inputnumber
+      #define USE_VTOBJECT_numbervariable
+    #elif USE_VTOBJECT_outputnumber
+      #define USE_VTOBJECT_numbervariable
+    #endif
+  #endif
+  #ifndef USE_VTOBJECT_stringvariable
+    #ifdef USE_VTOBJECT_inputstring
+      #define USE_VTOBJECT_stringvariable
+    #elif USE_VTOBJECT_outputstring
+      #define USE_VTOBJECT_stringvariable
+    #endif
+  #endif
   
 // e.g. #include <MaskDefinition/IsoTerminalObjectSelection.inc>
 #endif
