@@ -1800,12 +1800,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE additionally_required_objects= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
               return false;
             }
-	  std::cout << "\nCheck 1a\n";
             strcpy (opAdditionallyRequiredObjects, attr_value);
             is_opAdditionallyRequiredObjects = true;
             continue;
           }	  
-	  std::cout << "\nCheck 1b\n";
           if (strncmp (attr_name, "sk_width", stringLength) == 0) {
             if (is_skWidth) {
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
