@@ -1198,7 +1198,7 @@ uint32_t ui32_msgNbr;
     }
 
 
-    if (( Scheduler_c::getCentralSchedulerAvailableExecTime() == 0 ) && (!b_forceProcessAll))
+    if (( Scheduler_Task_c::getAvailableExecTime() == 0 ) && (!b_forceProcessAll))
     { // switch the flag back, so that further processings are enabled
       mb_runningCanProcess = false;
       return -1;

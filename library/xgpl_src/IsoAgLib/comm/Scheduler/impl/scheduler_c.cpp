@@ -451,7 +451,9 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   // trigger the watchdog
   System_c::triggerWd();
 
-  int32_t i32_endCanProcessing = HAL::getTime() +  mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
+  int32_t i32_endCanProcessing = mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
+  if ( i32_endCanProcessing < ci32_minCanProcessingTime ) i32_endCanProcessing = HAL::getTime() +  ci32_minCanProcessingTime;
+  else i32_endCanProcessing = HAL::getTime() + i32_endCanProcessing;
   Scheduler_Task_c::setDemandedExecEnd( (i32_endCanProcessing <ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
   // process CAN messages
@@ -490,7 +492,9 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
             System_c::triggerWd();
   }
 
-  i32_endCanProcessing = HAL::getTime() + mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
+  i32_endCanProcessing = mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
+  if ( i32_endCanProcessing < ci32_minCanProcessingTime ) i32_endCanProcessing = HAL::getTime() +  ci32_minCanProcessingTime;
+  else i32_endCanProcessing = HAL::getTime() + i32_endCanProcessing;
   Scheduler_Task_c::setDemandedExecEnd( ( i32_endCanProcessing < ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
   // check if all tasks are called

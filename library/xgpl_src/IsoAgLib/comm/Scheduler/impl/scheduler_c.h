@@ -356,6 +356,9 @@ private: // Private attributes
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
   static bool mb_execStopForced;
 
+  /** constant for minimum time for CAN processing */
+  static const int ci32_minCanProcessingTime = 10;
+
   //  Attribute: mc_taskQueue
   //!  central priority queue for all tasks
   STL_NAMESPACE::list<SchedulerEntry_c> mc_taskQueue;
