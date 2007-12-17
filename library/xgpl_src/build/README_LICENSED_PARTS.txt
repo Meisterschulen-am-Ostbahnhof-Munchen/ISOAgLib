@@ -5,7 +5,7 @@
 
 @{
 
-Welcome to the IsoAgLib program library hwich is published as Open Source under the
+Welcome to the IsoAgLib program library which is published as Open Source under the
 license conditions of the General Public License ( with exception ) of the Free Software Foundation!
 
 THIS DIRECTORY:
