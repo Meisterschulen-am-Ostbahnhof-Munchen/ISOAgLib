@@ -1,6 +1,5 @@
 * text=auto !eol
 /AUTHORS -text
-/ChangeLog -text
 /Doxyfile -text
 /LICENSE -text
 admin/buildArchives/create_win32_projects.sh -text
