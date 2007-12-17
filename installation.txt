@@ -6,7 +6,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described on the respective pages:
 <ol type="I">
-<li> \ref PageDownloadAndInstall "Download"
+<li> \ref PageDownload "Download"
     <ul><li>\ref HowtoDownload
     </li><li>\ref HowtoAccessRepository
     </li></ul>

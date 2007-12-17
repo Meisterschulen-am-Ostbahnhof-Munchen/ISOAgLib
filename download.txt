@@ -1,4 +1,4 @@
-/*! \page PageDownloadAndInstall Download
+/*! \page PageDownload Download
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
@@ -35,37 +35,40 @@ parts.
     <th nowrap="true">Content Description</th>   
 	<th nowrap="true">Size (kByte)</th>
 </tr>
-<tr><td><a href="http://www.isoaglib.org/Download/coreArchiv-1.2.0.zip">coreArchiv-1.2.0.zip</a></td>
+<tr><td><a href="http://www.isoaglib.org/Download/coreArchiv-2.1.0.zip">coreArchiv-2.1.0.zip</a></td>
     <td>Core components which are needed for almost all use cases</td>
-	<td align="center"> 4152 </td>
+	<td align="center"> 0 </td>
 </tr>
-<tr><td><a href="http://www.isoaglib.org/Download/generatedHtmlDocuList-2.1.0.zip">generatedHtmlDocuList-1.2.0.zip</a></td>
+<tr><td><a href="http://www.isoaglib.org/Download/generatedHtmlDocuList-2.1.0.zip">generatedHtmlDocuList-2.1.0.zip</a></td>
     <td>Documentation (can also be recreated with Doxygen like described below)</td>
-	<td align="center"> 13125 </td>
-</tr>
-<tr><td><a href="http://www.isoaglib.org/Download/isoArchiv-2.1.0.zip">isoArchiv-1.2.0.zip</a></td>
+	<td align="center"> 0 </td>
+<!--<tr><td><a href="http://www.isoaglib.org/Download/isoArchiv-2.1.0.zip">isoArchiv-1.2.0.zip</a></td>
     <td><b>Essential ISO 11783</b> specific parts including virtual terminal support</td>
-	<td align="center"> 408 </td>
-</tr>
-<tr><td><a href="http://www.isoaglib.org/Download/baseArchiv-2.1.0.zip">baseArchiv-1.2.0.zip</a></td>
+	<td align="center"> 0 </td>
+</tr>-->
+<tr><td><a href="http://www.isoaglib.org/Download/baseArchiv-2.1.0.zip">baseArchiv-2.1.0.zip</a></td>
     <td>Data repository class with cached tractor information (Base Data like tractor speed)</td>
-	<td align="center"> 28 </td>
+	<td align="center"> 0 </td>
 </tr>
-<tr><td><a href="http://www.isoaglib.org/Download/procArchiv-2.1.0.zip">procArchiv-1.2.0.zip</a></td>
+<tr><td><a href="http://www.isoaglib.org/Download/procArchiv-2.1.0.zip">procArchiv-2.1.0.zip</a></td>
     <td>Process Data support (local and remote process data with several variants for different feature sets / resource requirements)</td>
-	<td align="center"> 276 </td>
+	<td align="center"> 0 </td>
 </tr>
-<tr><td><a href="http://www.isoaglib.org/Download/supplRs232Archiv-2.1.0.zip">supplRs232Archiv-1.2.0.zip</a></td>
+<tr><td><a href="http://www.isoaglib.org/Download/supplRs232Archiv-2.1.0.zip">supplRs232Archiv-2.1.0.zip</a></td>
     <td>Supplementary driver with object oriented modelling of RS232 (access functions like C++ iostreams)</td>
-	<td align="center"> 44</td>
+	<td align="center"> 0 </td>
 </tr>
-<tr><td><a href="http://www.isoaglib.org/DoDocumentation and Download of IsoAgLibwnload/supplActorArchiv-2.1.0.zip">supplActorArchiv-1.2.0.zip</a></td>
+<tr><td><a href="http://www.isoaglib.org/DoDocumentation and Download of IsoAgLibwnload/supplActorArchiv-2.1.0.zip">supplActorArchiv-2.1.0.zip</a></td>
     <td>Supplementary driver with object oriented modelling of Actors (effective diagnose based on properties for allowed current range)</td>
-	<td align="center"> 36 </td>
+	<td align="center"> 0 </td>
 </tr>
 <tr><td><a href="http://www.isoaglib.org/Download/supplSensorArchiv-2.1.0.zip">supplSensorArchiv-1.2.0.zip</a></td>
     <td>Supplementary driver with object oriented modelling of Sensors (Digital and Analog Input)</td>
-	<td align="center"> 80 </td>
+	<td align="center"> 0 </td>
+</tr>
+<tr><td><a href="http://www.isoaglib.org/Download/supplDataStreams-2.1.0.zip">supplDataStreams-2.1.0.zip</a></td>
+    <td>Supplementary Data Streams (..)</td>
+    <td align="center"> 0 </td>
 </tr>
 </table>
 

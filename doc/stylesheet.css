@@ -479,6 +479,11 @@ div#menu UL LI UL LI { background:#fff; }
   background:url("Images/rightarrow.gif") right no-repeat #eee;
 }
 
+#menu LI.folder  LI.folder {
+  background:url("Images/rightarrow.gif") right no-repeat #fff;
+}
+
+
 /* regular hovers */
 #menu A:hover {
   background-color:#888;
@@ -570,3 +575,4 @@ a#anchor4hiddendiv:hover {
   border-left:1px solid gray;
 }
 
+/* a#ext { color:#080; } */

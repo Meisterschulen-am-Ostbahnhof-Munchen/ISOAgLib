@@ -4,27 +4,34 @@
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
         <li> \ref StructuralOverview </li>
-        <li> \ref UsingProjects "Known Users" </li>
+        <li> \ref UsingProjects </li>
         <li> \ref Maintainers "Maintainers" </li>
         <li> \ref Acknowledgements </li>
 	    <li> \ref Authors</li>
         </ul>
     </li>
     <li> \ref outlook "Solutions" </li>
-    <li class="folder"> \ref PageDownloadAndInstall "Download \& Installation"
+    <li class="folder"> \ref PageDownload "Download \& Installation"
         <ul>
         <li> \ref HowtoDownload "Downloading Archives" </li>
         <li> \ref HowtoAccessRepository "Accessing the Repository" </li>
-        <li> \ref HowtoSetupCompilerTools "Preparing Compiler and IDE" </li>
-        <li> \ref HowtoCreateProjectFiles "Project File Creation" </li>
-        <li> \ref InstallIsoToolVt2Iso "Installing vt2iso" </li>
+        <li class="folder"> \ref PageInstallation
+            <ul>
+            <li> \ref HowtoSetupCompilerTools "Preparing Compiler and IDE" </li>
+            <li> \ref HowtoCreateProjectFiles "Project File Creation" </li>
+            <li> \ref InstallIsoToolVt2Iso "Installing vt2iso" </li>
+            </ul></li>
         </ul>
     </li>
     <li class="folder"> \ref PageDeveloperInfo
-        <ul>
-        <li> \ref WhereToStart "Where to Start" </li>
-        <li> \ref HowtoLearnIsoAgLib "Learning IsoAgLib" </li>
-        <li> \ref MemoryUsage "Memory Resource Requirements" </li>
+        <ul><li class="folder"> \ref WhereToStart 
+            <ul><li> \ref StartToLearn </li>
+                <li> \ref DocOverview </li>
+                <li> \ref GettingHelp </li>
+            </ul>
+            </li>
+        <li> \ref InfRequirements </li>        
+        <li> \ref MemoryUsage</li>
         <li> \ref PageTodo </li>
         <li> \ref PageChanges "Changelog"</li>
         </ul>
