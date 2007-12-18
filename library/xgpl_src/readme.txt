@@ -1,4 +1,4 @@
-/** @page LgplSrcOverview Overview on Structure of \isoaglib
+/** @page LgplSrcOverview Structural Overview
 	 The core components of the \isoaglib which are
 	  licensed under the conditions of the LGPL license of the
 	  <a href="http://www.fsf.org">Free Software Foundation</a> are placed in the directory

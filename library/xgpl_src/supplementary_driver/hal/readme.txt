@@ -1,11 +1,12 @@
-/** @page SuppHalPage Structure of HAL for Supplementary Parts of IsoAgLib
-	The directory structure of the \isoaglib HAL
-	is designed to ease quick adaptation to new platform types.
-	Please see \ref MainHalAdaptationNew for details.
+/*! @page SuppHalPage Structure of HAL for Supplementary Parts of IsoAgLib
+The directory structure of the \isoaglib HAL
+is designed to ease quick adaptation to new platform types.
+Please see \ref MainHalAdaptationNew for details.
 
-	\section SuppHalStructure Structure of HAL for Main Parts
-	\subsection SupplHalEsx HAL for Supplementary Drivers on ESX of STW
-  \dot
+\section SuppHalStructure Structure of HAL for Main Parts
+\subsection SupplHalEsx HAL for Supplementary Drivers on ESX of STW
+
+\dot
   digraph SupplHalEsx {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
@@ -36,11 +37,11 @@
 		sup_h_rs232 -> h_esx_rs232 [label="implement depend",style="dotted"];
 		sup_h_sens -> h_esx_sensor [label="implement depend",style="dotted"];
 	}
-	\enddot
+\enddot
 
-<br/><br/>
-	\subsection SupplHalImi HAL for Supplementary Drivers on IMI of STW
-  \dot
+
+\subsection SupplHalImi HAL for Supplementary Drivers on IMI of STW
+\dot
   digraph SupplHalImi {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
@@ -66,10 +67,11 @@
 		sup_h_rs232 -> h_imi_rs232 [label="implement depend",style="dotted"];
 		sup_h_sens -> h_imi_sensor [label="implement depend",style="dotted"];
 	}
-	\enddot
-<br/><br/>
-	\subsection SupplHalPm167 HAL for Supplementary Drivers on Pm167 of STW
-  \dot
+\enddot
+
+
+\subsection SupplHalPm167 HAL for Supplementary Drivers on Pm167 of STW
+\dot
   digraph SupplHalPm167 {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
@@ -89,10 +91,11 @@
 
 		sup_h_rs232 -> h_pm167_rs232 [label="implement depend",style="dotted"];
 	}
-	\enddot
-<br/><br/>
-	\subsection SupplHalPc HAL for Supplementary Drivers on PC
-  \dot
+\enddot
+
+
+\subsection SupplHalPc HAL for Supplementary Drivers on PC
+\dot
   digraph SupplHalPc {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
@@ -118,5 +121,5 @@
 		sup_h_rs232 -> h_pc_rs232  [label="implement depend",style="dotted"];
 		sup_h_sens -> h_pc_sensor  [label="implement depend",style="dotted"];
 	}
-	\enddot
-	*/
+\enddot
+*/
