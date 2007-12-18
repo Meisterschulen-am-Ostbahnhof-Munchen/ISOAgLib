@@ -10,7 +10,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
     <li>\ref PageDeveloperInfo "Developer Information Page"
         <ul><li> \ref WhereToStart 
     <ul><li> \ref StartToLearn
-        <li> \ref Documentation </li>
+        <li> \ref DocOverview </li>
         <li> \ref GettingHelp </li>
     </ul>
     </li>

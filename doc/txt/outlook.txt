@@ -1,4 +1,4 @@
-/*! \page outlook Further Development and Applications of IsoAgLib
+/*! \page outlook Further Development and Applications of \isoaglib
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
@@ -20,10 +20,10 @@ to the public with the same license conditions. Thus the ISO<i><sub>AgLib</sub><
 without the fear of monopolistic control. This would allow the compatible use of all sophisticated features of
 ISO 11783 for its machines. The author <a href="mailto:Achim.Spangler@gmx:de">Achim Spangler</a> who is now working for
 <a href="http://www.osb-ag.de/">OSB AG</a> can arrange service contracts to provide extensions and other service for the ISO<i><sub>AgLib</sub></i>.
-\image html Diagramme/IsoAgLib-further_develop.gif
+\image html Diagramme/IsoAgLib-further_develop.png
 
 \section FurtherExamples Examples
-\image html Diagramme/IsoAgLib-imi.gif
+\image html Diagramme/IsoAgLib-imi.png
 The ISO<i><sub>AgLib</sub></i> is used at the experimental station D&uuml;rnast to document the work of all tractor dependent work
 including simple soil cultivation implements. Small computing devices, which are called "Implement Indicator" (IMI) were
 developed for this purpose based on the ISO<i><sub>AgLib</sub></i>. A ISO<i><sub>AgLib</sub></i>
@@ -34,7 +34,7 @@ everything on PCMCIA memory cards. <br clear="All">
 &nbsp;<br>
 &nbsp;<br>
 The work result with applicating implements like seeder can be optimized, if the ECU of the seeder can command the tractor
-\image html Diagramme/IsoAgLib-seed_power_harrow_interaction.gif
+\image html Diagramme/IsoAgLib-seed_power_harrow_interaction.png
  to drive not faster than the machine construction allows dependent on the
 wanted seed density and depth and environment conditions. A front mounted
 power harrow could indirectly control the loosening of soil compaction (work
@@ -53,7 +53,7 @@ ISO<i><sub>AgLib</sub></i>.
 &nbsp;<br>
 A modular extendable network for the fertilizer dosing can be also realized based on the process data features of the
 ISO<i><sub>AgLib</sub></i>. Most of the actual sold systems with LBS (DIN 9684) aware fertilizers consist only of functions
-\image html Diagramme/fertiliser_control_collaboration.gif
+\image html Diagramme/fertiliser_control_collaboration.png
 to control the application rate with a standard terminal or with application maps. But the latter is derived from
 static information like yield maps, so that environmental conditions of the actual year are not integrated.<br>
 Some systems utilize a spectroscopic sensor to detect the amount of chlorophyll in the plants. As long as the shortage

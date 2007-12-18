@@ -168,10 +168,10 @@ MinGW compiler is also integrated into the Dev-C++ tool.
 
 
 \subsection ScriptIntegrateWin32Can Integration of Win32 CAN card drivers
-The IsoAgLib provides now also for Win32 the CAN server application with the following features:
+The \isoaglib provides now also for Win32 the CAN server application with the following features:
 <ol>
-<li>several IsoAgLib applications can run on the same host and communicate which each other through the CAN server (socket communication)
-<li>the connected IsoAgLib appliactions can access a physical CAN bus via the CAN server application. Supported HW types are:
+<li>several \isoaglib applications can run on the same host and communicate which each other through the CAN server (socket communication)
+<li>the connected \isoaglib appliactions can access a physical CAN bus via the CAN server application. Supported HW types are:
     <ul>
     <li>Peak CAN USB driver
     <li>Vector Informatik driver (<b>CANLIB</b> and <b>XL Driver Library</b>)
@@ -181,7 +181,7 @@ The IsoAgLib provides now also for Win32 the CAN server application with the fol
     </ul>
 </ol>
 
-The necessary configuration options for the IsoAgLib applications are (e.g. conf_0_0_AddressClaimIso):
+The necessary configuration options for the \isoaglib applications are (e.g. conf_0_0_AddressClaimIso):
 <ul>
 <li><tt>USE_CAN_DRIVER="socket_server"</tt>
 <li><tt>USE_CAN_DEVICE_FOR_SERVER="pc"</tt>
@@ -329,7 +329,7 @@ The project can be identified by:
 
 The update_makefile.sh script can collect your individual source files into the project file of the wanted IDE.
 This can be achived by the following settings.
-	- <tt>REL_APP_PATH</tt> path in relation to IsoAgLib base directory to base directory of all application sources
+	- <tt>REL_APP_PATH</tt> path in relation to <tt>IsoAgLib</tt> base directory to base directory of all application sources
 			(use "../" to navigate to parent directory; use UNIX style directory separator "/" )
 	- selection of source files in two alternative ways:
 		-# <tt>APP_SRC_FILE</tt> list single files seperated by whitespace
@@ -341,7 +341,7 @@ This can be achived by the following settings.
 
 \subsubsection ConfBaseSetting Basic Project Settings
 The following basic settings can be specified independent from hardware and feature setup:
-	- <tt>ISO_AG_LIB_PATH</tt> relative path from directory where the feature setup file is located to the root directory of IsoAgLib ("../.." for the tutorial examples)
+	- <tt>ISO_AG_LIB_PATH</tt> relative path from directory where the feature setup file is located to the root directory of \isoaglib ("../.." for the tutorial examples)
 	- <tt>PRJ_DEFINES</tt> individual <tt>\#defines</tt> which are integrated into the project file - some examples for special debug purposes:
 		- <tt>DEBUG_CAN_BUFFER_FILLING</tt> for RS232 output of MAX amount of buffered CAN messages
 		                                  (important to decide on amount of items in the BIOS/OS CAN receive buffer)
@@ -350,7 +350,7 @@ The following basic settings can be specified independent from hardware and feat
 		                           IsoAgLib::MeasureSubprog_c , SetpointRegister ;
 		                           additionally print calculated amount of HEAP memory which is used by the several types of
 		                           dynamic lists (output on each list change)
-	- <tt>PRJ_SEND_DEBUG</tt> activate several IsoAgLib internal debugging on RS232
+	- <tt>PRJ_SEND_DEBUG</tt> activate several \isoaglib internal debugging on RS232
 	- <tt>USE_FLOAT_DATA_TYPE</tt> activate useage of float variable type (avoid useage of float in subfunctions process data, RS232 output, GPS decode)
 	- <tt>OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED</tt> reduce HEAP useage size in favour of speed. This can lead to HEAP memory fragmentation in worst-case scenarios. Default is OFF.
 
@@ -366,17 +366,17 @@ The basic hardware setup of your target (including CAN hardware/driver) can be d
         - update_makefile.sh automatically selects the "sys" CAN driver, if no PC target is selected
     - <tt>USE_CAN_DEVICE_FOR_SERVER</tt> CAN device used by CAN server application <tt>{ "pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl }</tt>,
         - for target "pc_win32" only "pc" is allowed, because the CAN server application has it's own, CAN card specific project files (see ScriptIntegrateWin32Can)
-        - for target "pc_linux" the allowed values are <tt>{ "pc"|"pcan"|"A1"|"rte" }</tt>. The resulting Makefile will build the IsoAgLib application and also the CAN card specific CAN server application.
+        - for target "pc_linux" the allowed values are <tt>{ "pc"|"pcan"|"A1"|"rte" }</tt>. The resulting Makefile will build the \isoaglib application and also the CAN card specific CAN server application.
 	- <tt>USE_RS232_DRIVER</tt> RS232 driver to use from list <tt>{ "simulating"|"sys"|"rte" }</tt>
         - where type "simulating" uses file based RS232 simulation on each PC system target,
         - "sys" uses the native RS232 of every target
         - and "rte" uses the RS232 interface of the RTE system
         - <tt>update_makefile.sh</tt> automatically selects the "sys" RS232 driver, if no PC target is selected
 	- <tt>CAN_BUS_CNT</tt> count of available CAN BUSes at target - default 1
-	- <tt>CAN_INSTANCE_CNT</tt> count of CAN channels which shall be supported by IsoAgLib (the application can also use the extended CAN
-	                          features of IsoAgLib so that e.g. channel 0 can be used for protocol and channel 1 for internal CAN communication)<br>
+	- <tt>CAN_INSTANCE_CNT</tt> count of CAN channels which shall be supported by \isoaglib (the application can also use the extended CAN
+	                          features of \isoaglib so that e.g. channel 0 can be used for protocol and channel 1 for internal CAN communication)<br>
 	                          Must be smaller or equal as <tt>CAN_BUS_CNT</tt>.
-	- <tt>PRT_INSTANCE_CNT</tt> count of CAN channels where the communication protocol shall be supported - the IsoAgLib can be used as gateway to
+	- <tt>PRT_INSTANCE_CNT</tt> count of CAN channels where the communication protocol shall be supported - the \isoaglib can be used as gateway to
 	                          route traffic between the connected CAN interfaces
 	- <tt>RS232_INSTANCE_CNT</tt> defines amount of RS232 instances that are supported in parallel. When the ECU shall communicate on more than one channel, this variable has to be adapted to the channel amount.
 
@@ -422,14 +422,14 @@ The \isoaglib needs for basic communication service only access to core system f
 trigger watchdog) and CAN. But as the author used it also for other I/O types during the initiating research project, and as
 some other I/Os can deliver some important additional features to \isoaglib core components, they are also
 provided - and can be selected by the following configuration variables.
-	- <tt>PRJ_EEPROM</tt> select if the EEPROM driver shall be used, to read/write EEPROM data from within the IsoAgLib. This is important for local
-		   process data, as IsoAgLib can store intermediate values in EEPROM so that the value can be re-read on each system startup
+	- <tt>PRJ_EEPROM</tt> select if the EEPROM driver shall be used, to read/write EEPROM data from within the \isoaglib. This is important for local
+		   process data, as \isoaglib can store intermediate values in EEPROM so that the value can be re-read on each system startup
 		   (important for cumulative values like distance, when the application has only to calculate the distance increments of the
-		   current working session, and the IsoAgLib provides the cumulated value on BUS;<br>
+		   current working session, and the \isoaglib provides the cumulated value on BUS;<br>
 		   it's also important to store the current SA on ISO 11783 address claim
 		   --> try to reuse SA os last working session on next system start.<br>
 		   the application has only to specify to EEPROM address to handle the SA;
-		   IsoAgLib takes then care of storing and reloading the SA)
+		   \isoaglib takes then care of storing and reloading the SA)
 	- <tt>PRJ_DATASTREAMS</tt> enables HAL based file I/O, so that applications with file access can be easily ported between targets with different methods for file access.
 	- <tt>PRJ_RS232</tt> select IsoAgLib::iRS232IO_c for RS232 output which can be used like the standard C++ iostreams
 	- <tt>PRJ_RS232_OVER_CAN</tt> provides a special RS232 HAL, that uses CAN messaging for sending and receiving RS232 messages.
@@ -438,9 +438,9 @@ provided - and can be selected by the following configuration variables.
 	     use IsoAgLib::iActorO_c for global access to all active IsoAgLib::iDigitalO_c instances
 	- <tt>PRJ_SENSOR_ANALOG</tt> select IsoAgLib::iAnalogI_c for analog (current or voltage) sensor input or IsoAgLib::iAnalogIRangeCheck_c with enhanced automatic range check
 	- <tt>PRJ_SENSOR_COUNTER</tt> select IsoAgLib::iCounterI_c for counter input. the existing HAL implementations (e.g. for ESX) extend the BIOS/OS
-	     function, as a IsoAgLib specific event counting for very low event repetition rates is provided - the BIOS version is only
+	     function, as a \isoaglib specific event counting for very low event repetition rates is provided - the BIOS version is only
 	     designed for typical RPM values
-	- <tt>PRJ_ACTOR</tt> select if the digital output driver shall be integrated into the project. you can then use the HAL of IsoAgLib to realize a mostly hardware independent
+	- <tt>PRJ_ACTOR</tt> select if the digital output driver shall be integrated into the project. you can then use the HAL of \isoaglib to realize a mostly hardware independent
 	     access on PWM output. This is completely independent from communication tasks, but was created during research and is actively used by OSB AG for its own
 	     projects
 
@@ -454,7 +454,7 @@ The following places are search automatically:
 \subsubsection ConfBuildEde Build System Configuration for Cross Compilers (like Tasking EDE)
 Configuration options typical for embedded project (these are used for target systems like "esx", "imi", "pm167")
 where the system libraries aren't placed in standard directories (UNIX/Linux has standard directories <tt>/usr/include</tt>, <tt>/usr/local/include</tt>, <tt>/usr/lib</tt>
-and <tt>/usr/local/lib</tt> -> IsoAgLib awaits the libraries in this directories for UNIX/Linux).<br>
+and <tt>/usr/local/lib</tt> -> \isoaglib awaits the libraries in this directories for UNIX/Linux).<br>
 These settings are at the moment only used for project generation of
 	- Tasking EDE
 

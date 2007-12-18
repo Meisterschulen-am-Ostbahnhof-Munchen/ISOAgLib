@@ -125,7 +125,7 @@ Therefore the \isoaglib provides the following services:<br>
 The interactions between the devices of a ISO 11783 network can be modelled as
 the providing and using of construction  independent services. This is illustrated
 with the following diagrams.<br>
-\image html Diagramme/service_network_connection.gif
+\image html Diagramme/service_network_connection.png
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>
@@ -134,7 +134,7 @@ The devices of this network are using and providing services as process data. Th
 possible, if no device is dependent on a service of another not existent device.
 <br clear="All">
 <hr>
-\image html Diagramme/service_network_conflict.gif
+\image html Diagramme/service_network_conflict.png
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;<br>Resource conflicts can occur, if several devices want to control the driving speed and RPM of PTO of the tractor.
@@ -142,7 +142,7 @@ Therefore each implement should avoid the sending of exact setpoints in favour o
 
 <br clear="All">
 <hr>
-\image html Diagramme/service_network_flexibility.gif
+\image html Diagramme/service_network_flexibility.png
 &nbsp;<br>
 &nbsp;<br>
 &nbsp;Several implements which want to control the work of the tractor are no problem, if they define intervals instead of

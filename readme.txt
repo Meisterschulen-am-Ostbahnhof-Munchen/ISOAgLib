@@ -40,7 +40,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <span style="float:right"><a href="javascript:popUp('Images/isobus.png')"><img src="Images/isobus_thumb.png" alt="isobus.png" border="0"><br><small>ISOBUS overview</a></small></span>
 \endhtmlonly
 \isoaglib provides a free portable C++ source library for development
-of <a id="ext" href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
+of <a href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
 applications.
 The purpose of ISO 11783 is to provide an open interconnected system for on-board electronic systems. It is intended to enable electronic units to communicate with each other providing a standardized system.
 ISO 11783 consists of 13 parts which specify a communications system for agricultural equipment based on the CAN 2.0 B [1] protocol.<br/>
@@ -53,7 +53,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
     - \ref StructuralOverview describes the structural design of \isoaglib
     - \ref InfGeneralInformation, \ref InfAgentNetwork, \ref InfServiceNetwork provide some insight on the design goals of the complete system
     - \ref 3_0_VirtualTerminalIso.cpp illustrates the ease of application development in an example for virtual terminal handling
-    - the <a href="examples.html">tutorial examples page</a> provides other examples for studying purpose
+    - the <a class="el" href="examples.html"> tutorial examples page</a> provides other examples for studying purpose
 
 \section LatestNews Latest News
 
@@ -82,7 +82,7 @@ The \isoaglib provides the following features to facilitate the development of I
   - Enable creation of one single mask pool, that fits all terminal configurations
   - Provide attributes for project specification of runtime adaptations
   - Allow for flexible addition of further attributes. This is useful where automatic layout control must be optimized for some terminal properties (e.g. the number of softkeys)
-        All these actions are demonstrated in the tutorial example 3_0_VirtualTerminalIso.cpp on the <a href="$relpath$examples.html">tutorial examples page</a>.
+        All these actions are demonstrated in the tutorial example 3_0_VirtualTerminalIso.cpp on the <a  class="el" href="examples.html">tutorial examples page</a>.
 - <strong>XML notation for mask definition</strong>:
   - XML mask files are converted to ROM-enabled variable arrays
     for inclusion in a project object module.
@@ -357,21 +357,21 @@ The following table contains a few commercial products which use \isoaglib:
 <tr><th>Company</th>
     <th>Used parts</th>
     <th>Description</th></tr>
-<tr><td valign="top" align="center" width="80"><a id="ext" href="http://www.agocorp.com"><i>Agco Corp.</i></a></td>
+<tr><td valign="top" align="center" width="80"><a href="http://www.agocorp.com"><i>Agco Corp.</i></a></td>
     <td valign="top"><i><ul><li>Virtual Terminal (11783-6)</li>
             <li>TC (11783-10)</li>
             <li>GPS converter</li></ul></i></td>
-    <td><i>Based on \isoaglib the development team of <a id="ext" href="http://www.osb-ag.de">OSB AG</a> implemented the ISO VT Server (11783-6) on the Terminal Opus A1 from Wachendorff.
+    <td><i>Based on \isoaglib the development team of <a href="http://www.osb-ag.de">OSB AG</a> implemented the ISO VT Server (11783-6) on the Terminal Opus A1 from Wachendorff.
         The operating system is a Linux platform and the OSB AG team managed to develop a running prototype within three months.
         At the Agritechnica 2005 a running ISO Terminal was presented.<br>
         After the Agritechnica 2005, the Task Controller Server (11783-10) and GPS Cinverter were integrated into the system. Which made operating data logging and transferring GPS information from RS232 to the ISOBUS in NMEA 2000 format possible.
         This is the next step of operating data logging; now the farmer has the possibility to synchronize his field recorder with relevant GPS data.</i></td></tr>
-<tr><td valign="top" align="center"><a id="ext" href="http://www.fritzmeier.de"><i>Fritzmeier Umwelttechnik GmbH</i></a></td>
+<tr><td valign="top" align="center"><a href="http://www.fritzmeier.de"><i>Fritzmeier Umwelttechnik GmbH</i></a></td>
     <td valign="top"><i><ul><li>Control system of the MiniVegN</li></ul></i></td>
     <td><i>Within this project the \isoaglib was the base for the development of a control system between MiniVegN, tractor and fertilize spreader. 
         The laser of the MiniVegN tests the nitrogen content of the plant and sends the information to the spreader. The spreader has to spread out the right amount of fertilizer. 
         With the \isoaglib the MiniVegN is compatible to the standard ISO 11783.</i></td></tr>
-<tr><td valign="top" align="center"><a id="ext" href="http://www.zunhammer.de"><i>Zunhammer GmbH</i></a></td>
+<tr><td valign="top" align="center"><a href="http://www.zunhammer.de"><i>Zunhammer GmbH</i></a></td>
     <td valign="top"><i><ul><li>User Interface</li><li>ISO control system</li></ul></i></td>
     <td><i>"The challenge was to bring Zunhammer liquid manure spreader to ISO compatibility within four weeks.
         The control of the spreader had to be done by ISO terminal.
@@ -381,19 +381,19 @@ The following table contains a few commercial products which use \isoaglib:
 </table>
 
 
-The \isoaglib will be actively maintained by <a id="ext" href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> at <a id="ext" href="http://www.osb-ag.de">OSB AG</a>
+The \isoaglib will be actively maintained by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
 as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
-Even in case the active maintenance by <a id="ext" href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
+Even in case the active maintenance by <a href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
 the independent website at the
-<a id="ext" href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
+<a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and Land Use Technology - Crop Production Engineering</a>
 assure that any interested party can step in and continue the maintenance of the project. This guarantees, like in other Open Source projects, the
 open access for every user. <br>
-Also, in case the major part of the user community is unsatisfied with the maintenance by <a id="ext" href="http://www.osb-ag.de">OSB AG</a>, it is
-normal for Open Source projects like \isoaglib to fork the project as a last resort, if <a id="ext" href="http://www.osb-ag.de">OSB AG</a>
-can't or doesn't want to change the style of maintenance as requested. As far as possible, <a id="ext" href="http://www.osb-ag.de">OSB AG</a>
+Also, in case the major part of the user community is unsatisfied with the maintenance by <a href="http://www.osb-ag.de">OSB AG</a>, it is
+normal for Open Source projects like \isoaglib to fork the project as a last resort, if <a href="http://www.osb-ag.de">OSB AG</a>
+can't or doesn't want to change the style of maintenance as requested. As far as possible, <a href="http://www.osb-ag.de">OSB AG</a>
 will do everything to avoid such a fork.<br>
 A comparable fork was performed by users and developers of the X11R6 server project for UNIX style operating systems - <b>XFree86</b>.
-Caused by some licensing issues, a fork of the <a id="ext" href="http://www.xfree86.org/">XFree86</a> was created by the <a id="ext" href="http://X.Org">X.Org Foundation</a>,
+Caused by some licensing issues, a fork of the <a href="http://www.xfree86.org/">XFree86</a> was created by the <a href="http://X.Org">X.Org Foundation</a>,
 which also appreciated by several graphic card manufacturers, as they can integrate their drivers with the new management method in a better way.
 <br>
 &nbsp;<br>
@@ -404,27 +404,27 @@ can't be affected by the style and quality of future project maintenance.</b>
 
 
 \section Maintainers Maintainers
-The \isoaglib was initially created by <a id="ext" href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> who is now
-working for the company <b><a id="ext" href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
+The \isoaglib was initially created by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> who is now
+working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
 already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin (all in Germany; <b>state November 2007</b>).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
-Some of the <b><a id="ext" href="http://www.osb-ag.de">OSB AG</a></b> customers are: 
-<a id="ext" href="http://www.agcocorp.com/">AGCO GmbH/<a id="ext" href="http://www.fendt.com/">Fendt</a>,<!-->AL.systems GmbH,-->
-<a id="ext" href="http://www.aoa-gauting.de/">Apparatebau Gauting GmbH</a>,<!--<a id="ext" href="http://www.machines.averydennison.com/">Avery Dennison Deutschland GmbH</a>,
+Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are: 
+<a href="http://www.agcocorp.com/">AGCO GmbH/<a href="http://www.fendt.com/">Fendt</a>,<!-->AL.systems GmbH,-->
+<a href="http://www.aoa-gauting.de/">Apparatebau Gauting GmbH</a>,<!--<a href="http://www.machines.averydennison.com/">Avery Dennison Deutschland GmbH</a>,
 AZH GmbH,-->
-<a id="ext" href="http://www.benqmobile.com">BenQ Mobile GmbH & Co OHG</a>,
-<a id="ext" href="http://www.emag.de/">EMAG GmbH</a>,
-<a id="ext" href="http://www.fiducia.de/">FIDUCIA IT AG</a>,
-<a id="ext" href="http://www.fritzmeier.de/">FRITZMEIER Systems GmbH & Co.</a>,
-<a id="ext" href="http://www.infineon.com/">Infineon Technologies AG</a>,
-<a id="ext" href="http://www.mtu.de">MTU Aero Engines</a>,
-<a id="ext" href="http://www.kvb.de/">Kassenärztliche Vereinigung Bayerns</a>,<!--<a id="ext" href="http://www.oce.de">Océ Printing Systems GmbH</a>, Panasonic Automotive Systems Europe GmbH,-->
-<a id="ext" href="http://www.porsche.com/usa/">Dr. Ing. h.c.F. Porsche AG</a>,
-<a id="ext" href="http://www.siemens.com">Siemens AG</a>,
-<a id="ext" href="http://www.thyssenkrupp-technologies.de">ThyssenKrupp AutomotiveMechatronics GmbH</a>,
-<a id="ext" href="http://www.valeo.de">Valeo GmbH</a>,
-<a id="ext" href="http://bosch.com">Robert Bosch GmbH</a>,<!--<a id="ext" href="http://www.imis.com">Joh. Winklhofer & Söhne GmbH & Co. KG</a>,-->
-<a id="ext" href="http://www.ivm-automotive.com/">IVM Automotive München Gmb</a>
+<a href="http://www.benqmobile.com">BenQ Mobile GmbH & Co OHG</a>,
+<a href="http://www.emag.de/">EMAG GmbH</a>,
+<a href="http://www.fiducia.de/">FIDUCIA IT AG</a>,
+<a href="http://www.fritzmeier.de/">FRITZMEIER Systems GmbH & Co.</a>,
+<a href="http://www.infineon.com/">Infineon Technologies AG</a>,
+<a href="http://www.mtu.de">MTU Aero Engines</a>,
+<a href="http://www.kvb.de/">Kassenärztliche Vereinigung Bayerns</a>,<!--<a href="http://www.oce.de">Océ Printing Systems GmbH</a>, Panasonic Automotive Systems Europe GmbH,-->
+<a href="http://www.porsche.com/usa/">Dr. Ing. h.c.F. Porsche AG</a>,
+<a href="http://www.siemens.com">Siemens AG</a>,
+<a href="http://www.thyssenkrupp-technologies.de">ThyssenKrupp AutomotiveMechatronics GmbH</a>,
+<a href="http://www.valeo.de">Valeo GmbH</a>,
+<a href="http://bosch.com">Robert Bosch GmbH</a>,<!--<a href="http://www.imis.com">Joh. Winklhofer & Söhne GmbH & Co. KG</a>,-->
+<a href="http://www.ivm-automotive.com/">IVM Automotive München Gmb</a>
 
 More information on commercial backing of \isoaglib can be obtained in the \ref GeneralSupportInformation and the \ref PageContactAndSupport section.
 
@@ -439,7 +439,7 @@ at least to avoid that our competitors take the code for free and make their own
 even asking us).
 
 Interested parties don't have to pay much money, as we are mostly interested in information about
-everybody who uses those additional features. So don't hesitate to contact <a id="ext" href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
+everybody who uses those additional features. So don't hesitate to contact <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
 for registration to get access to the <b>EXT</b> part of \isoaglib.
 
 The following areas are examples for such extensions:
@@ -452,26 +452,26 @@ The following areas are examples for such extensions:
 
 
 \section Authors Authors and Contributors
-- Main Author: <a id="ext" href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> designed the complete framework
-- Virtual Terminal Expert: <a id="ext" href="mailto:M.Wodok_at_osb-ag:de">Martin Wodok</a> implemented the tool <b>vt2iso</b> and the virtual terminal handling
-- Pioneer Win32 User and <b>First External Contributor</b>: <a id="ext" href="mailto:Brad.Cox_at_agcocorp:com">Brad Cox</a> who helped to find several optimization needs for documentation, tutorial and project generation support. The resulting documentation helped him finally to implement all missing VT Object types, which weren't needed for the <b>MiniVeg N</b> project. He is already using \isoaglib for some interesting test applications, and contributed all missing VT Objects, so that \isoaglib imeplements also VT Objects like Macro and AuxiliaryInput.
+- Main Author: <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> designed the complete framework
+- Virtual Terminal Expert: <a href="mailto:M.Wodok_at_osb-ag:de">Martin Wodok</a> implemented the tool <b>vt2iso</b> and the virtual terminal handling
+- Pioneer Win32 User and <b>First External Contributor</b>: <a href="mailto:Brad.Cox_at_agcocorp:com">Brad Cox</a> who helped to find several optimization needs for documentation, tutorial and project generation support. The resulting documentation helped him finally to implement all missing VT Object types, which weren't needed for the <b>MiniVeg N</b> project. He is already using \isoaglib for some interesting test applications, and contributed all missing VT Objects, so that \isoaglib imeplements also VT Objects like Macro and AuxiliaryInput.
   Some other extensions from him are moveChildLocation and setOriginSKM functions for VT Objects, where appropriate.
   Last but not least, he started with us to integrate multi language support.
 
 \subsection Acknowledgements Acknowledgements
 - Thanks to the <strong>DFG</strong>, which finances the partial project 2 of the research group &quot;IKB-D&uuml;rnast&quot;.
-- Thanks to the <strong>research group of Prof. H. Auernhammer</strong> and to <a id="ext" href="mailto:m.wodok_at_osb-ag:de">Martin Wodok</a>, who developed LBS_Terminal.
+- Thanks to the <strong>research group of Prof. H. Auernhammer</strong> and to <a href="mailto:m.wodok_at_osb-ag:de">Martin Wodok</a>, who developed LBS_Terminal.
 - \anchor InitialFundingDfg <strong>Thanks to DFG funded research group IKB Duernast</strong><br/>
   The initial creation of the \isoaglib was enabled by the research project
-  <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a id="ext" href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and 
+  <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and 
   Land Use Technology - Crop Production Engineering</a>.
 - \anchor InitialSupport <strong>Thanks to development by Sensortechnik Wiedemann (STW)</strong><br/>
-  The development phase with some compiler issues was supported by the experts of the <b>ESX</b> engineering team at <a id="ext" href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a>.
-  Some of the main design goals were derived during a project with <a id="ext" href="http://www.sensor-technik.de">STW</a>
-  and <a id="ext" href="http://www.fendt.com/">AGCO Fendt</a> .
+  The development phase with some compiler issues was supported by the experts of the <b>ESX</b> engineering team at <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a>.
+  Some of the main design goals were derived during a project with <a href="http://www.sensor-technik.de">STW</a>
+  and <a href="http://www.fendt.com/">AGCO Fendt</a> .
 - \anchor IsoVtExtension <strong>Thanks to Fritzmeier for contribution of ISO 11783 Virtual Terminal support</strong><br/>
   The development of the central control unit for the chlorophyll sensor
-  <a id="ext" href="http://www.fritzmeier.de/engl/environment/environment_miniveg.htm">MiniVeg N</a> was heavily based on the prior work at \isoaglib,
+  <a href="http://www.fritzmeier.de/engl/environment/environment_miniveg.htm">MiniVeg N</a> was heavily based on the prior work at \isoaglib,
   so that Fritzmeier accepted to fund the development of ISO 11783 virtual terminal support in \isoaglib .
 - \anchor FirstWin32Users <strong>Thanks to eager and patient initial developers with Win32</strong><br/>
   As the \isoaglib is mainly developed on LINUX, all Win32 specific adaptations

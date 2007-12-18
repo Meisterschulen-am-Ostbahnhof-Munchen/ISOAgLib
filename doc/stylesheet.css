@@ -98,17 +98,17 @@ A.qindexHL:hover {
   color: #fff;
 }
 A.qindexHL:visited { text-decoration: none; background-color: #66c; color: #fff; }
-A { color: #1A41A8; }
-A:visited { color: #2A3798; }
-A.el { /*text-decoration: none;*/ font-weight: normal;/}
-A.elRef { font-weight: bold; }
+A { color: #1A41A8; text-decoration:none; }
+/*A:visited { color: #2A3798; }*/
+A.el, A.elRef { text-decoration: underline; }
 A.code:link { text-decoration: none; font-weight: normal; color: #00F; }
 A.code:visited { text-decoration: none; font-weight: normal; color: #00F; }
 A.codeRef:link { font-weight: normal; color: #00f}
 A.codeRef:visited { font-weight: normal; color: #00f}
-A:hover { text-decoration: none; background-color: #e2f2ff }
-H2>a:hover { text-decoration: none; }
-H1>a:hover { text-decoration: none; }
+A:hover { text-decoration: underline;  background-color: #fff }
+A.el:hover, A.elRef:hover { background-color: #e2f2ff; color: #1A41A8; }
+H1 a:hover, H2 a:hover, H3 a:hover { text-decoration: none; color: #1A41A8;}
+
 
 DL.el { margin-left: -1cm }
 

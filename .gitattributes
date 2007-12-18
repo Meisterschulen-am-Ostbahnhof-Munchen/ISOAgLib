@@ -20,14 +20,14 @@ doc/graphics/structure.jpg -text
 doc/graphics/structure.odg -text
 doc/graphics/structure.png -text
 doc/header.html -text
-doc/html/Diagramme/IsoAgLib-further_develop.gif -text
-doc/html/Diagramme/IsoAgLib-imi.gif -text
-doc/html/Diagramme/IsoAgLib-mixed-protocols.gif -text
-doc/html/Diagramme/IsoAgLib-seed_power_harrow_interaction.gif -text
-doc/html/Diagramme/fertiliser_control_collaboration.gif -text
-doc/html/Diagramme/service_network_conflict.gif -text
-doc/html/Diagramme/service_network_connection.gif -text
-doc/html/Diagramme/service_network_flexibility.gif -text
+doc/html/Diagramme/IsoAgLib-further_develop.png -text
+doc/html/Diagramme/IsoAgLib-imi.png -text
+doc/html/Diagramme/IsoAgLib-mixed-protocols.png -text
+doc/html/Diagramme/IsoAgLib-seed_power_harrow_interaction.png -text
+doc/html/Diagramme/fertiliser_control_collaboration.png -text
+doc/html/Diagramme/service_network_conflict.png -text
+doc/html/Diagramme/service_network_connection.png -text
+doc/html/Diagramme/service_network_flexibility.png -text
 doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
 doc/html/Images/background-hill.gif -text
 doc/html/Images/ikb_logo.gif -text

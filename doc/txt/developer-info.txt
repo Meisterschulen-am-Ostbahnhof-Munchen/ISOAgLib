@@ -40,12 +40,12 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \subsection StartToLearn Hands-On Steps
 
 Please start your learning phase with the tutorial examples
-on the <a href="examples.html">Example Page</a> to get a guided tour through the
+on the <a class="el" href="examples.html">example page</a> to get a guided tour through the
 various options and features of the library.
 Each example has several links to informative HTML pages from where you can get more and
 deeper information on the presented topics.
 
-    - read at least some of the <a href="examples.html">tutorial examples</a> which are organized in groups (first number) and read some of the referenced further documentation:
+    - read at least some of the <a class="el" href="examples.html">tutorial examples</a> which are organized in groups (first number) and read some of the referenced further documentation:
         - Nr. 0 for simple applications which demonstrate management of ECU as device node at the network
         - Nr. 1 for simple applications which demonstrate usage of base data like tractor speed and distance
         - Nr. 2 for several levels of applications which demonstrate use of process data value exchange (measurement data for monitoring and setpoint setting for control)
@@ -84,17 +84,21 @@ understand some parts after having read the provided documentation.
 
 
 \subsection DocOverview Documentation Overview Pages
+Information on the communication services or the hardware abstraction layer can be found on the specific detail and overview pages below:
 
-- \link LgplSrcOverview Overview on GPL Licensed Parts of IsoAgLib \endlink
-    - \link CommOverPage Documentation on Communication Services of IsoAgLib \endlink
-        - \link SchedulerPage Overview on Central Scheduler of IsoAgLib \endlink
-        - \link NetworkMgmtPage Overview on System Management of IsoAgLib (%i.%e. monitor lists) \endlink
-        - \link AppLayerPage Overview on Base Data Handling in IsoAgLib \endlink
-        - \link ProcDataPage Overview on Process Data Handling in IsoAgLib \endlink
-        - \link DataLinkPage Overview on Data Stream Messages with multi packets \endlink
-        - \link XMLspec Overveiw on Interaction with ISO 11783 Virtual Terminal \endlink
-    - \link MainHalPage Hardware Abstraction Layer (HAL) for main parts of IsoAgLib \endlink
-    - \link SuppHalPage Hardware Abstraction Layer (HAL) for supplementary parts of IsoAgLib \endlink
+- \ref LgplSrcOverview "GPL Licensed Parts Overview"
+
+- \ref CommOverPage "Communication Services"
+    - \ref SchedulerPage "Central Scheduler"
+    - \ref NetworkMgmtPage "System Management (i.e. monitor lists)"
+    - \ref AppLayerPage "Base Data Handling"
+    - \ref ProcDataPage "Process Data Handling"
+    - \ref DataLinkPage "Data Stream Messages with multi packets"
+    - \ref XMLspec "Interaction with ISO 11783 Virtual Terminal"
+
+- Hardware Abstraction Layer
+    - \ref MainHalPage "HAL for main parts"
+    - \ref SuppHalPage "HAL for supplementary parts"
 
 \subsection GettingHelp Getting Help
 Please send any questions that you can not solve yourself (using the
@@ -123,23 +127,23 @@ Library" (STL) is used as proven and high quality implementation of lists and co
 algorithms, to avoid individual implementation of standard tasks which would be error prone and would
 cause a long work to find an optimal and efficient solution. Each STL element was chosen after a thorough
 analysis on runtime and RAM + ROM size overhead, so that an individual implementation would never be better.
-<br>
-The following parts of the STL are used:
-    - list ( list of nodes with <b>two</b> pointers overhead per stored data item, no reallocation needed,
-        navigation in both direction, direct access to first and last element, needed for FIFO buffer )
-    - slist ( list of nodes with <b>one</b> pointer overhead per stored data item, no reallocation needed,
-        navigation only from first to last element, direct access only to first; used for most cases as typical application is storage of
-        objects which are iterated from first to last element )
-    - vector ( array of items which must be reallocated as soon as the reserved capacity is used,
-        thus only used for storage of pointers where reallocation is relative cheap and one or two pointers per item would cause too much overhead )
-    - queue ( optional FIFO for spooling of items to ISO virtual terminal - could be activated at compile time by config setting )
-    - find ( standardized and optimized algorithm for search in the containers list, slist, vector )
-    - distance and advance ( algorithms for efficient placement of iterators during copy actions )
 
-The \isoaglib <b>doesn't use:</b>
-    - multiple inheritance ( as of 2004-12-09 )
-    - runtime type identification ( RTTI )
-    - exception handling
+The following parts of the STL are used:
+- list ( list of nodes with <b>two</b> pointers overhead per stored data item, no reallocation needed,
+  navigation in both direction, direct access to first and last element, needed for FIFO buffer )
+- slist ( list of nodes with <b>one</b> pointer overhead per stored data item, no reallocation needed,
+  navigation only from first to last element, direct access only to first; used for most cases as typical application is storage of
+  objects which are iterated from first to last element )
+- vector ( array of items which must be reallocated as soon as the reserved capacity is used,
+  thus only used for storage of pointers where reallocation is relative cheap and one or two pointers per item would cause too much overhead )
+- queue ( optional FIFO for spooling of items to ISO virtual terminal - could be activated at compile time by config setting )
+- find ( standardized and optimized algorithm for search in the containers list, slist, vector )
+- distance and advance ( algorithms for efficient placement of iterators during copy actions )
+
+The \isoaglib <b>doesn't use</b>:
+- multiple inheritance ( as of 2004-12-09 )
+- runtime type identification ( RTTI )
+- exception handling
 
 Thus compilers which support the so called <b>Extended EC++</b> specification can be used, as long as they provide an adapted
 version of the STL.
@@ -181,7 +185,7 @@ parts written in C and C++ without any problems.<br>
 \subsection InfReqProgrammingSkills Programming Skills
 As long as the \isoaglib should only be used as it is, without
 analysing or optimizing it, the needed additional C++ skills (in relation
-to C) are small. The <b>28</b> current <a href="examples.html">tutorial examples</a> and the three real
+to C) are small. The <b>28</b> current <a class="el" href="examples.html">tutorial examples</a> and the three real
 research world examples provide a sufficient introduction in the usage of
 C++ and the \isoaglib.<br>
 As soon as the internals of the \isoaglib should be understood, the needed level of C++ skills is increased dependent on the configuration of the \isoaglib. Companies who are interested in a reliable guarantee that needed bugfixes
@@ -189,7 +193,7 @@ or extensions are realized by external developers (if local developers
 are not familiar with C++ and the \isoaglib) should contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
  to establish commercial support contracts including training, project attendance and \isoaglib ISO 900x certification.<br>
 <br><b>
-Everybody who wants to get familiar with the \isoaglib should start with the <a href="examples.html">tutorial examples</a>.</b><br>
+Everybody who wants to get familiar with the \isoaglib should start with the <a class="el" href="examples.html">tutorial examples</a>.</b><br>
 
 \section MemoryUsage Memory Resource Requirements
 The \isoaglib was optimized in relation to the old LBS<i><sub>Lib</sub></i> to use as less HEAP
@@ -330,7 +334,7 @@ Additionally the project contained the source files for all Virtual Terminal obj
 even if only a few types are used and demonstrated. Thus you can reduce the ROM requirements by removing all unneeded graphic objects from your source file
 list (all source files in <tt>xgpl_src/IsoAgLib/comm/ISO_Terminal</tt> are named corresponding to their name in the ISO 11783 standard).<br>
 But please make shure, that you remove only files with the pattern (i)vtobject\<VtObject-Name\>_c.[cpp|h] where VtObject-Name is a VtObject that you don't need.
-Please also have a look at the <a href="inherits.html">graphic inheritance diagram</a> to avoid removal of classes, which are needed by classes which you
+Please also have a look at the <a class="el" href="inherits.html">graphic inheritance diagram</a> to avoid removal of classes, which are needed by classes which you
 use in your project (e.g. don't remove vtobjectstring_c if you use vtobjectinputstring_c as the former is it's base class).
 <br>
 <b>Important:</b><br>
