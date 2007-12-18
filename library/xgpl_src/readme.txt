@@ -1,4 +1,4 @@
-/** @page LgplSrcOverview Overview on Structure of IsoAgLib
+/** @page LgplSrcOverview Overview on Structure of \isoaglib
 	 The core components of the \isoaglib which are
 	  licensed under the conditions of the LGPL license of the
 	  <a href="http://www.fsf.org">Free Software Foundation</a> are placed in the directory
@@ -41,20 +41,22 @@
 			style="invis";
 			rank=same;
 			m_comm      [label="Communication\nProtocol\n(partly obligatory)", color="green", URL="\ref CommOverPage"/*,width=3*/];
-			m_driver    [label="Enhanced\nDrivers\nfor main\nlibrary parts\n(partly obligatory)", color="green"/*,width=3*/];
+			m_driver    [label="Enhanced Drivers\nfor main library parts\n(partly obligatory)", color="green"/*,width=3*/];
 			m_hal       [label="HAL for main\nlibrary parts\n(partly obligatory)", color="green"/*,width=3*/];
-			m_util      [label="Utilities\nfor main\nlibrary(partly obligatory)", color="green2"/*,width=3*/];
+			m_util      [label="Utilities for\nmain library\n(partly obligatory)", color="green2"/*,width=3*/];
 			m_type      [label="Platform\nindependent\ntypedefs\n(obligatory)", color="green2", shape="ellipse", URL="\ref IsoAgLib/typedef.h"/*,width=3*/];
 		}
 
 		subgraph cluster_level311 {
 			style="invis";
 			rank=same;
-			system_mgmt [label="System Management\n(partly obligatory)", color="green", URL="\ref NetworkMgmtPage"/*,width=2*/ ];
-			multi_msg   [label="Data Stream\n(needed for ISO Terminal)", color="greenyellow", URL="\ref DataLinkPage"/*,width=2*/ ];
-			base        [label="Base Data\n(complete optional)", color="yellow", URL="\ref AppLayerPage"/*,width=2*/ ];
-			iso_term    [label="ISO Virtual\n(complete optional)", color="yellow", URL="\ref XMLspec"/*,width=2*/ ];
-			process     [label="Process Data\n(optional)", color="yellow", URL="\ref ProcDataPage"/*,width=2*/ ];
+			network_mgmt [label="P5: Network\nManagement\n(partly obligatory)", color="green", URL="\ref NetworkMgmtPage"/*,width=2*/ ];
+			multi_msg   [label="P3: DataLinkLayer\n(needed for VT)", color="greenyellow", URL="\ref DataLinkPage"/*,width=2*/ ];
+			appLayer    [label="P7: AppLayer\n(complete optional)", color="yellow", URL="\ref AppLayerPage"/*,width=2*/ ];
+			iso_term    [label="P6: Virtual Terminal\n(complete optional)", color="yellow", URL="\ref XMLspec"/*,width=2*/ ];
+			process     [label="P2: Process Data\n(optional)", color="yellow", URL="\ref ProcDataPage"/*,width=2*/ ];
+            taskCtrlr   [label="P10: Task\nController", color="yellow", URL="" ];
+            fileSvr     [label="P13: File\nServer", color="yellow", URL="" ];
 			}
 		subgraph cluster_level312 {
 			style="invis";
@@ -91,11 +93,13 @@
 		main_lib -> m_util [label="util"];
 		main_lib -> m_type [label="typedef.h"];
 
-		m_comm   -> multi_msg [label="Multipacket"];
-		m_comm   -> base [label="Base"];
-		m_comm   -> system_mgmt [label="SystemMgmt"];
-		m_comm   -> process [label="Process"];
-		m_comm   -> iso_term [label="ISO_Terminal"];
+		m_comm   -> multi_msg    [label="Multipacket"];
+		m_comm   -> appLayer     [label="Applcation\nLayer"];
+		m_comm   -> network_mgmt [label="Network\nMgmt"];
+		m_comm   -> process      [label="Process"];
+		m_comm   -> iso_term     [label="Virtual\nTerminal"];
+        m_comm   -> fileSvr      [label="File\nServer"];
+        m_comm   -> taskCtrlr    [label="Task\nController"];
 
 		m_driver -> can [label="can"];
 		m_driver -> eeprom [label="eeprom"];
@@ -113,7 +117,7 @@
 		system     -> hal_system [label="implement depend",style="dotted"];
 		can      -> hal_can [label="implement depend",style="dotted"];
 		process    -> eeprom [label="feature dependency",style="dotted"];
-		system_mgmt -> eeprom [label="feature dependency",style="dotted"];
+		network_mgmt -> eeprom [label="feature dependency",style="dotted"];
 		eeprom     -> hal_eeprom [label="implement depend",style="dotted"];
    }
 	 \enddot
@@ -194,21 +198,21 @@
 	 But as most projects will start with \isoaglib as pure ISO 11783 implementation, all
 	 supplementary parts can be simply excluded from project - by just not including in project file list ( and not calling methods
 	 from the excluded files - ;-) ).
-	 This results in the main directories <i>\<xgpl_src/IsoAgLib\></i> and <i>\<xgpl_src/supplementary_driver\></i>.
+	 This results in the main directories <tt>xgpl_src/IsoAgLib</tt> and <tt>xgpl_src/supplementary_driver</tt>.
 
 	 But not all files are obligatory for each ISO 11783 project - as described in the diagram above.
 	 First of all, you can exclude complete protocol features by exclusion of their corresponding directories.
-	 Secondly some main features like \link SystemMgmtPage System Management \endlink ( claim address for local identities, ISO monitor list of all network nodes ) or
+	 Secondly some main features like \ref NetworkMgmtPage "Network Management ( claim address for local identities, ISO monitor list of all network nodes ) or
 	 \link ProcDataPage process data \endlink contains some options, which are not needed for all projects. This could be ruled by the decision for the
 	 protocol ISO 11783, or by the feature depth of the used process data. Please have a look at the documentation of the communication parts, where
 	 more information on optional parts is provided.
 
 	 \subsection StructureInterface Grouping of Interface with corresponding Implementation
 	 The \isoaglib provides all application relevant classes, functions and other components in the namespace
-	 <i>IsoAgLib</i>, and hides the implementation of these components in the namespace <i>__IsoAgLib</i>. The name of all interface
+	 <tt>IsoAgLib</tt>, and hides the implementation of these components in the namespace <tt>__IsoAgLib</tt>. The name of all interface
 	 classes starts with a lower <b>'i'</b>, whereas the corresponding implementation class has the same name - without the <b>'i'</b> at the beginning.
 	 The implementation classes and source files are also hidden within the subdirectory <b>/impl</b> of the respective directory -
-	 %e.%g. <i>\<xgpl_src/IsoAgLib/util\></i> for interface and <i>\<xgpl_src/IsoAgLib/util/<b>impl</b>\></i> for implementation.
+	 %e.%g. <tt>xgpl_src/IsoAgLib/util</tt> for interface and <tt>xgpl_src/IsoAgLib/util/<b>impl</b>/</tt> for implementation.
 	 So the content for the several "/impl" subdirectories is really only meant for experts who want to know how the different functions
 	 are implemented - %e.%g. for implementation of extensions and bug-fixes.
 
@@ -217,10 +221,10 @@
 	 configuration file isoaglib_config.h , where either the corresponding #define like SYSTEM_ESX can be constantly defined or can be
 	 provided as runtime defines during the Make-Process ( as compiler option ). The conditional #ifdef rules in isoaglib_config.h
 	 allow the headers of the \isoaglib to fetch the corresponding headers from the central headers in the
-	 directories <i>\<xgpl_src/IsoAgLib/hal\></i> and <i>\<xgpl_src/supplementary_driver/hal\></i>.
+	 directories <tt>xgpl_src/IsoAgLib/hal</tt> and <tt>xgpl_src/supplementary_driver/hal</tt>.
 	 Each platform has its own subdirectory in the previous mentioned directories.
 	 Like described in the diagram at the top of this page, each driver extension directory is mapped with a same named
-	 directory within <i>\<xgpl_src/IsoAgLib/hal/PlatformXY\></i> or <i>\<xgpl_src/supplementary_driver/hal/PlatformXY\></i>.
+	 directory within <tt>xgpl_src/IsoAgLib/hal/PlatformXY</tt> or <tt>xgpl_src/supplementary_driver/hal/PlatformXY</tt>.
 
 	 The main idea of the HAL is to provide a unique API for hardware and system access where at least the used functions
 	 have a unique name and functions ( described by their parameters ). This can be realized in most cases by simple
@@ -230,8 +234,8 @@
 	 functionality can be implemented in the files named like system_target_extensions.h and system_target_extensions.cpp.
 
 	 The name mapping is provided also with the help of namespaces, which cause no runtime overhead.
-	 Therefore the needed platform specific headers are included with an <b>extern "C"</b> statement in the namespace
-	 <b>__HAL</b>. The inline functions are defined as part of the namespace <b>HAL</b>, so that the names of the
+	 Therefore the needed platform specific headers are included with an <tt>extern "C"</tt> statement in the namespace
+	 <tt>__HAL</tt>. The inline functions are defined as part of the namespace <tt>HAL</tt>, so that the names of the
 	 platform specific headers and the HAL can be identically. The compiler can distinguish between them with the help of
 	 the namespace.
 

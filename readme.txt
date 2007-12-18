@@ -43,7 +43,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 of <a href="http://www.isobus.com/">ISO 11783 (ISOBUS)</a>
 applications.
 The purpose of ISO 11783 is to provide an open interconnected system for on-board electronic systems. It is intended to enable electronic units to communicate with each other providing a standardized system.
-ISO 11783 consists of 13 parts which specify a communications system for agricultural equipment based on the CAN 2.0 B [1] protocol.<br/>
+ISO 11783 consists of 13 parts which specify a communications system for agricultural equipment based on the CAN 2.0 B [1] protocol.<br>
 
 \isoaglib is mainly developed on LINUX. The actual target device is typically an embedded system. There also exist some Win32 specific adaptations, as well.
 
@@ -173,7 +173,7 @@ The layered structure is described by the following diagram:
 -->
 \htmlonly
 <img src="Images/structure.png" usemap="#structure" alt="Structural Overview" border="0">
-<br/><small>additional information can be accessed by clicking on the respective area in the image</small>
+<br><small>additional information can be accessed by clicking on the respective area in the image</small>
 <map name="structure">
     <area shape="rect" coords=" 20, 38,131, 94" href="CommOverPage.html" alt="Communication Services for ISO 11783" title="Communication Services for ISO 11783">
     <!--<area shape="rect" coords="183, 21,218,169" href="" alt="Scheduler" title="Scheduler">-->
@@ -342,7 +342,7 @@ University of Munich (TUM).
 
 \section UsingProjects Customer Examples
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
-( or a work based on it - see GPL &sect;3) with some information on the used library, it would be quite kind to
+( or a work based on it - see GPL §3) with some information on the used library, it would be quite kind to
 inform additionally the authors of your project, so that each using project can be listed here.
 This list can also serve as a prominent place for showing all contributing (by money and/or code) users.<br>
 
@@ -375,7 +375,7 @@ The following table contains a few commercial products which use \isoaglib:
     <td valign="top"><i><ul><li>User Interface</li><li>ISO control system</li></ul></i></td>
     <td><i>"The challenge was to bring Zunhammer liquid manure spreader to ISO compatibility within four weeks.
         The control of the spreader had to be done by ISO terminal.
-        The open source library \isoaglib was the right instrument and together with the Zunhammer development team the we managed to build a running prototype punctual to the Agritechnica 2005.
+        The open source library \isoaglib was the righ&sect;t instrument and together with the Zunhammer development team the we managed to build a running prototype punctual to the Agritechnica 2005.
         The time frame of four weeks was achived."</i>
 </td></tr>
 </table>
@@ -409,7 +409,7 @@ working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This c
 already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin (all in Germany; <b>state November 2007</b>).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
 Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are: 
-<a href="http://www.agcocorp.com/">AGCO GmbH/<a href="http://www.fendt.com/">Fendt</a>,<!-->AL.systems GmbH,-->
+<a href="http://www.agcocorp.com/">AGCO GmbH</a>/<a href="http://www.fendt.com/">Fendt</a>,<!-->AL.systems GmbH,-->
 <a href="http://www.aoa-gauting.de/">Apparatebau Gauting GmbH</a>,<!--<a href="http://www.machines.averydennison.com/">Avery Dennison Deutschland GmbH</a>,
 AZH GmbH,-->
 <a href="http://www.benqmobile.com">BenQ Mobile GmbH & Co OHG</a>,
@@ -461,19 +461,19 @@ The following areas are examples for such extensions:
 \subsection Acknowledgements Acknowledgements
 - Thanks to the <strong>DFG</strong>, which finances the partial project 2 of the research group &quot;IKB-D&uuml;rnast&quot;.
 - Thanks to the <strong>research group of Prof. H. Auernhammer</strong> and to <a href="mailto:m.wodok_at_osb-ag:de">Martin Wodok</a>, who developed LBS_Terminal.
-- \anchor InitialFundingDfg <strong>Thanks to DFG funded research group IKB Duernast</strong><br/>
+- \anchor InitialFundingDfg <strong>Thanks to DFG funded research group IKB Duernast</strong><br>
   The initial creation of the \isoaglib was enabled by the research project
   <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and 
   Land Use Technology - Crop Production Engineering</a>.
-- \anchor InitialSupport <strong>Thanks to development by Sensortechnik Wiedemann (STW)</strong><br/>
+- \anchor InitialSupport <strong>Thanks to development by Sensortechnik Wiedemann (STW)</strong><br>
   The development phase with some compiler issues was supported by the experts of the <b>ESX</b> engineering team at <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a>.
   Some of the main design goals were derived during a project with <a href="http://www.sensor-technik.de">STW</a>
   and <a href="http://www.fendt.com/">AGCO Fendt</a> .
-- \anchor IsoVtExtension <strong>Thanks to Fritzmeier for contribution of ISO 11783 Virtual Terminal support</strong><br/>
+- \anchor IsoVtExtension <strong>Thanks to Fritzmeier for contribution of ISO 11783 Virtual Terminal support</strong><br>
   The development of the central control unit for the chlorophyll sensor
   <a href="http://www.fritzmeier.de/engl/environment/environment_miniveg.htm">MiniVeg N</a> was heavily based on the prior work at \isoaglib,
   so that Fritzmeier accepted to fund the development of ISO 11783 virtual terminal support in \isoaglib .
-- \anchor FirstWin32Users <strong>Thanks to eager and patient initial developers with Win32</strong><br/>
+- \anchor FirstWin32Users <strong>Thanks to eager and patient initial developers with Win32</strong><br>
   As the \isoaglib is mainly developed on LINUX, all Win32 specific adaptations
   including driver mappings and project file generation for Win32 IDEs weren't optimal until
   first users like <b>Brad Cox</b> started to try \isoaglib in combination with <i>Microsoft Visual Studio C++</i> . 

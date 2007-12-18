@@ -51,7 +51,7 @@ deeper information on the presented topics.
         - Nr. 2 for several levels of applications which demonstrate use of process data value exchange (measurement data for monitoring and setpoint setting for control)
         - Nr. 3 for two examples of terminal handling: <b>ISO 11783 virtual terminal</b>
     - check for modules which you should download to get the features you want at \ref HowtoDownload
-    - check for pointers at documentation overview pages of the core features of \isoaglib at \ref HowtoLearnIsoAgLib
+    - check for pointers at documentation overview pages of the core features of \isoaglib
     - check for installation instructions of vt2iso , a tool to convert XML mask definition to ROM-eable constant variable definition modules at \ref InstallIsoToolVt2Iso
         (<b>you don't have to compile it at Win32, as an EXE is also part of the archive</b>)
     - check for instructions to create IDE project files for applications at \ref HowtoCreateProjectFiles (the presented shell script does the very important and
@@ -86,13 +86,13 @@ understand some parts after having read the provided documentation.
 \subsection DocOverview Documentation Overview Pages
 Information on the communication services or the hardware abstraction layer can be found on the specific detail and overview pages below:
 
-- \ref LgplSrcOverview "GPL Licensed Parts Overview"
+- \ref LgplSrcOverview "GPL licensed parts overview"
 
-- \ref CommOverPage "Communication Services"
+- \ref CommOverPage "Communication Services overview"
     - \ref SchedulerPage "Central Scheduler"
     - \ref NetworkMgmtPage "System Management (i.e. monitor lists)"
-    - \ref AppLayerPage "Base Data Handling"
-    - \ref ProcDataPage "Process Data Handling"
+    - \ref AppLayerPage "Base Data handling"
+    - \ref ProcDataPage "Process Data handling"
     - \ref DataLinkPage "Data Stream Messages with multi packets"
     - \ref XMLspec "Interaction with ISO 11783 Virtual Terminal"
 

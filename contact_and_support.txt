@@ -13,7 +13,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
     </ul>
 </td></tr>
 </table>
-<br/>
+<br>
 <table class="infobox" border="0">
 <tr><th>See also</th></tr>
 <tr><td>
@@ -26,7 +26,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <table class="infobox" border="0">
 <tr><td><i>
-<b>Please note...</b><br/>
+<b>Please note...</b><br>
 ...that each email adress in this project has been intentionally corrupted to avoid spamming. A human reader will easily detect how to
 fix the email address.</i>
 </td></tr></table>
