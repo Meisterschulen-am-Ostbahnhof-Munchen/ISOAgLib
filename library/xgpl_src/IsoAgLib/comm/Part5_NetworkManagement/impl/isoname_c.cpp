@@ -408,7 +408,7 @@ void IsoName_c::setSerNo(uint32_t aui32_serNo)
 */
 int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) const
 {
-#if defined(DEBUG) && !defined(SYSTEM_A1) && defined(SYSTEM_PC)
+#if defined(DEBUG) && !defined(SYSTEM_A1) && !defined(SYSTEM_A5) && defined(SYSTEM_PC)
   if ( apu_compare == NULL )
   { // calling function called this function with wrong parameter
     // - but in production version, we await, that the caller makes sure,

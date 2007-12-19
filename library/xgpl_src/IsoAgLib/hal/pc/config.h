@@ -76,6 +76,9 @@
 #  ifdef SYSTEM_A1
    /* we know that this cpu is little endian */
 #    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#  elif defined(SYSTEM_A5)
+   /* we know that this cpu is little endian */
+#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
 #  endif
 #endif
 
