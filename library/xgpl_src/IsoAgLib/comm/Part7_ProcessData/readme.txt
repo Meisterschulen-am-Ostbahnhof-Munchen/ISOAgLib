@@ -7,7 +7,7 @@ publish some measurement data on the BUS, restricted variants of them are provid
 
 \section ProcDataOverviewGrp Overview on type of Process Data
   <img src="Images/processData.png" alt="Process Data Hierarchy" title="Process Data Hierarchy">
-  For details see the individual class descriptions:
+  More information can be found on the detail pages and class descriptions:
   <ul>
   <li>\ref IsoAgLib::iProcDataLocal_c</li>
   <li>\ref IsoAgLib::iProcDataLocalSimpleMeasure_c</li>
@@ -128,7 +128,8 @@ it is the adressee for setpoint commands ):
      - more than one ECU could try to control the behaviour of this ECU with setpoint commands
 - \a IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c
    - reduce feature set of both measurement and setpoint data
-  *
+<br>Also take a look at the \ref ProcDataLocalPage.
+
 \subsection RemoteProcDataOverview Remote Process Data
 The access to remote Process Data, which corresponds to data aquired by remote ECUs provides
 similar levels of capability:
@@ -155,7 +156,7 @@ similar levels of capability:
    - combine setpoint and measurement value to one variable
      ( IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c handles them as two different values, so that
        a deviation between them can still be detected )
-
+<br>Also take a look at the \ref ProcDataRemotePage.
 
 \section ProcDataDirectoryStructureGrp Distribution of Classes and their corresponding files
 The different variants of local and remote Process Data are based on some helper classes. The helper classes

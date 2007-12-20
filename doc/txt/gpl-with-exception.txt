@@ -1,4 +1,4 @@
-/*! \page GPL_with_exception \isoaglib Library License - GNU General Public License with exceptions - GNU Project - Free Software Foundation (FSF)
+/*! \page GPL_with_exception ISOAgLib Library License - GNU General Public License with exceptions - GNU Project - Free Software Foundation (FSF)
 \section GplException Definition of GPL Exception according to eCos project
 The following paragraph defines for each source file the allowed
 integration into applications:<br>

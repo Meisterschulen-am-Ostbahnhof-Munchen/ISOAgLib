@@ -90,7 +90,7 @@ Information on the communication services or the hardware abstraction layer can 
 
 - \ref CommOverPage "Communication Services overview"
     - \ref SchedulerPage "Central Scheduler"
-    - \ref NetworkMgmtPage "System Management (i.e. monitor lists)"
+    - \ref NetworkMgmtPage "Network Management (i.e. monitor lists)"
     - \ref AppLayerPage "Base Data handling"
     - \ref ProcDataPage "Process Data handling"
     - \ref DataLinkPage "Data Stream Messages with multi packets"
@@ -253,7 +253,7 @@ project specification file conf_foo).
 The following table present some exact numbers for the needed HEAP memory, so that the decision on the HEAP allocation strategy is eased:
 ( all numbers for 16 Bit CPU with large memory modell; unit Byte)
 <table>
-<tr><td>Item</td><td>Size without chunks</td><td>Size with chunks</td><td>Typical unused memory per chunk</td><td>Comment</td></tr>
+<tr><th>Item</th><th>Size without chunks</th><th>Size with chunks</th><th>Typical unused memory per chunk</th><th>Comment</th></tr>
 
 <tr><td>Scheduler Entry</td><td>12 x scheduled items -> 56</td><td>160</td><td>104</td><td>Vector of pointers to 12 scheduled part tasks</td></tr>
 <tr><td>Scheduled Times</td><td>12 x scheduled items -> 32</td><td>80</td><td>48</td><td>Vector of uint16_t execution times of scheduled part tasks</td></tr>
@@ -272,7 +272,7 @@ The following table present some exact numbers for the needed HEAP memory, so th
 <tr><td>ISO Buffer of IsoAgLib::SendCommand_c</td><td> (only chunk allocation) </td><td>1284 (chunk of 80 commands)</td><td>--</td><td>For buffer of IsoAgLib::SendCommand_c the malloc alloc is for most conditions not more efficient in HEAP use.</td></tr>
 <tr><td>ISO Buffer of IsoAgLib::SendUpload_c</td><td>2 x 32 -> 64</td><td>888</td><td>824</td><td>For buffer of IsoAgLib::SendUpload_c the malloc alloc is for most conditions more efficient in HEAP use.</td></tr>
 
-<tr><td><b>SUM ISO 11783</b></td><td><b>3912</b></td><td><b>10996</b></td><td><b>7084</b></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
+<tr><td><i>SUM ISO 11783</i></td><td><i>3912</i></td><td><i>10996</i></td><td><i>7084</i></td><td>real numbers depend heavily on used features and targeted network configuration</td></tr>
 </table>
 
 <b>IMPORTANT:<br>
@@ -319,7 +319,7 @@ The real values might differ to some degree, as only the MAP file of the complet
 for integration.
 
 <table>
-<tr><td><b>Tutorial Example</b></td> <td><b>RAM usage \isoaglib and application (KByte)</b></td> </tr>
+<tr><th>Tutorial Example</th><th>RAM usage \isoaglib and application (KByte)</th> </tr>
 <tr><td>0_0_AddressClaimIso</td> <td>6</td> </tr>
 <tr><td>3_0_VirtualTerminalIso</td> <td>12</td> </tr>
 </table>
@@ -343,7 +343,7 @@ The real values might differ to some degree, as only the MAP file of the complet
 for integration.
 
 <table>
-<tr><td><b>Tutorial Example</b></td> <td><b>ROM usage \isoaglib and application (KByte)</b></td> <td><b>ROM usage Bitmaps (KByte)</b></td> </tr>
+<tr><th>Tutorial Example</th><th>ROM usage \isoaglib and application (KByte)</th><th>ROM usage Bitmaps (KByte)</th></tr>
 <tr><td>0_0_AddressClaimIso</td>     <td>89</td>                                                             <td>--</td></tr>
 <tr><td>3_0_VirtualTerminalIso</td>  <td>180</td>                                                            <td> 3</td></tr>
 </table>

@@ -525,7 +525,7 @@ TABLE.download TD {
 }
 
 TABLE.infoboxLinks, TABLE.infobox A { font-weight:normal; }
-
+TABLE.infobox TH, TABLE.infoboxLinks TH { border:0; }
 TABLE.infoboxLinks {
   border:1px dashed #66CC66; 
   padding:5px;
@@ -576,3 +576,7 @@ a#anchor4hiddendiv:hover {
 }
 
 /* a#ext { color:#080; } */
+
+TABLE { border-collapse:collapse; border: 1px dotted silver; }
+/*TABLE TR { border:0; }*/
+TABLE TH { border-bottom: 1px solid gray; }

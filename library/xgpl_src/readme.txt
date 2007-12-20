@@ -15,10 +15,14 @@ The core components of the \isoaglib which are licensed under the conditions of 
 
 \section LgplStructure Overview on Directory Structure of LGPL Licensed Parts of IsoAgLib
 The structure of the source files of the \isoaglib is described in the following imagemap diagram.
-The informaiton "(partly) obligtory, optional" is normally true for all contained directories and files of the listed
-nodes, as long as no exception is listed in the diagram.
+<!--The informaiton "(partly) obligtory, optional" is normally true for all contained directories and files of the listed
+nodes, as long as no exception is listed in the diagram.-->
+
+
+<img src="Images/directory_structure.png" alt="directory structure" title="directory structure">
+<!--
 \subsection LgplMainStructure Structure of Main Parts
-  \dot
+\dot
   digraph LgplMainStructure {
     fontname=ARIALN;
     fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
@@ -177,7 +181,7 @@ nodes, as long as no exception is listed in the diagram.
  sup_sensor   -> sup_h_sens [label="implement depend",style="dotted"];
  }
 \enddot
-
+-->
 
 
 \section StructurePrinciple Structuring Principles of the IsoAgLib

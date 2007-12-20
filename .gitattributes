@@ -13,6 +13,8 @@ bin/vt2iso -text
 doc/footer.html -text
 doc/graphics/commOverview.odg -text
 doc/graphics/commOverview.png -text
+doc/graphics/directory_structure.odg -text
+doc/graphics/directory_structure.png -text
 doc/graphics/isobus.odg -text
 doc/graphics/isobus.png -text
 doc/graphics/isobus_thumb.png -text
@@ -33,6 +35,7 @@ doc/html/Diagramme/service_network_flexibility.png -text
 doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
 doc/html/Images/background-hill.gif -text
 doc/html/Images/commOverview.png -text
+doc/html/Images/directory_structure.png -text
 doc/html/Images/ikb_logo.gif -text
 doc/html/Images/ikb_logo_thumb.gif -text
 doc/html/Images/isoaglib_logo.gif -text

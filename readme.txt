@@ -18,7 +18,6 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
     <ul><li> \ref Home "Welcome" </li>
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
-        <li> \ref StructuralOverview </li>
         <li> \ref UsingProjects </li>
         <li> \ref Maintainers "Maintainers" </li>
         <li> \ref Authors
@@ -51,6 +50,7 @@ ISO 11783 consists of 13 parts which specify a communications system for agricul
 To learn more about \isoaglib you can check the navigation menu for further topics or use one of the following links:
     - \ref MainFeatures
     - \ref StructuralOverview describes the structural design of \isoaglib
+    - \ref DocOverview provide an overview on pages for information on the structure of the licensed parts, the communication services or the HAL
     - \ref InfGeneralInformation, \ref InfAgentNetwork, \ref InfServiceNetwork provide some insight on the design goals of the complete system
     - \ref 3_0_VirtualTerminalIso.cpp illustrates the ease of application development in an example for virtual terminal handling
     - the <a class="el" href="examples.html"> tutorial examples page</a> provides other examples for studying purpose
@@ -148,197 +148,6 @@ But this tool would only help to start the virtual mask definition with XML, as 
   of multi-language support.
 -->
 
-\section StructuralOverview Structural Overview
-
-\subsection StructureModularity Modular Design
-The \isoaglib is modularized according to the different
-ISO11783 functional components.  Only a small number of modules is
-necessary for all systems, so that an individual project can adapt
-capabilities and Flash ROM size to its specific needs.
-
-\subsection StructureLayers Layered Design
-The \isoaglib is designed to be easily adapted to new
-hardware platforms.  The majority of the software can be used without any
-changes on all platforms.  The more this common software part is used,
-the better its quality will get.
-
-The layered structure is described by the following diagram:
-
-<!-- 
-  THE LINKED PAGES NEED TO BE MODIFIED MANUALLY AS IT IS NOT (YET) POSSIBLE IN DOXYGEN 
-  TO REFERENCE JUST THE LINK ADDRESS TO A PAGE WITHOUT ACTUALLY CREATING THE LINK!
-  So it could be useful to use the dot creation tool first and then copy the proper urls 
-  manually from the generated page.
-  The graphic was exported from the OpenOffice Draw document admin/graphics/structure.odd
--->
-\htmlonly
-<img src="Images/structure.png" usemap="#structure" alt="Structural Overview" border="0">
-<br><small>additional information can be accessed by clicking on the respective area in the image</small>
-<map name="structure">
-    <area shape="rect" coords=" 20, 38,131, 94" href="CommOverPage.html" alt="Communication Services for ISO 11783" title="Communication Services for ISO 11783">
-    <!--<area shape="rect" coords="183, 21,218,169" href="" alt="Scheduler" title="Scheduler">-->
-    <area shape="rect" coords="228, 38,318, 94" href="DataLinkPage.html" alt="Part 3: Data Link" title="Part 3: Data Link">
-    <area shape="rect" coords="341, 38,433, 94" href="NetworkMgmtPage.html" alt="Part 5: Network Management" title="Part 5: Network Management">    
-    <area shape="rect" coords="455, 38,526, 94" href="XMLspec.html" alt="Part 6: ISO Virtual Terminal" title="Part 6: ISO Virtual Terminal">
-    <area shape="rect" coords="548. 63,613, 94" href="AppLayerPage.html" alt="Part 7: Application Layer" title="Part 7: Application Layer">
-    <area shape="rect" coords="613, 63,656, 94" href="ProcDataPage.html" alt="Part 7: Process Data" title="Part 7: Process Data">
-    <!--<area shape="rect" coords="682, 38,755, 94" href="" alt="Part 10: Task Controller" title="Part 10: Task Controller">
-        <area shape="rect" coords="776, 38,847, 94" href="" alt="Part 13: File Server" title="Part 13: File Server">
-    -->
-
-<!--<area shape="rect" coords=" 20,170,150,245" href="" alt="Provide Driver Features which are not part of most Platforms" title="Provide Driver Features which are not part of most Platforms">   -->
-    <area shape="rect" coords="190,170,300,225" href="d3/db4/classIsoAgLib_1_1iSystem__c.html" alt="Common System Access (Globally Used)" title="Common System Access (Globally Used)">
-    <area shape="rect" coords="323,170,416,227" href="d4/dca/classIsoAgLib_1_1iEepromIo__c.html" alt="EEPROM IO-STREAMS Like Read/Write Access" title="EEPROM IO-STREAMS Like Read/Write Access">
-    <area shape="rect" coords="435,163,529,237" href="d9/dc6/classIsoAgLib_1_1iCanIo__c.html" alt="CAN individual mask/filter settings for each filterbox" title="CAN individual mask/filter settings for each filterbox">
-    <area shape="rect" coords="550,152,641,244" href="d8/d6a/classIsoAgLib_1_1iRS232IO__c.html" alt="RS232 Supplementary Driver with IO STREAMS like read/write access" title="RS232 Supplementary Driver with IO STREAMS like read/write access">
-    <area shape="rect" coords="663,154,754,244" href="dd/dc8/classIsoAgLib_1_1iAnalogIRangeCheck__c.html" alt="Sensor Supplementary Driver with Scaling and Range-Check" title="Sensor Supplementary Driver with Scaling and Range-Check">
-    <area shape="rect" coords="776,153,867,242" href="da/d12/classIsoAgLib_1_1iDigitalO__c.html" alt="Actor Supplementary Driver with State Monitoring Functions" title="Actor Supplementary Driver with State Monitoring Functions">
-
-    <area shape="rect" coords=" 19,321,170,397" href="MainHalPage.html" alt="Map Platform Specific API to Unique API for IsoAgLib (Mapping during compile-time -no runtime-overhead)" title="Map Platform Specific API to Unique API for IsoAgLib (Mapping during compile-time -no runtime-overhead)">
-    <area shape="rect" coords="189,330,302,385" href="dc/db2/system_8h.html" alt="Common System Access (Watchdog,Time, ...)" title="Common System Access (Watchdog,Time, ...)">
-    <area shape="rect" coords="323,330,415,385" href="d0/ded/eeprom_8h.html" alt="EEPROM (Store Process Data, SelfConf SA, ...)" title="EEPROM (Store Process Data, SelfConf SA, ...)">
-    <area shape="rect" coords="437,330,532,385" href="d7/da8/can_8h.html" alt="CAN" title="CAN">
-    <area shape="rect" coords="549,330,642,385" href="dd/d8b/rs232_8h.html" alt="RS232 Supplementary Driver" title="RS232 Supplementary Driver">    
-    <area shape="rect" coords="663,330,755,385" href="d5/d2e/sensor_8h.html" alt="Sensor Supplementary Driver" title="Sensor Supplementary Driver">
-    <area shape="rect" coords="776,330,866,385" href="df/d10/actor_8h.html" alt="Actor Supplementary Driver" title="Actor Supplementary Driver">
-
-<!--<area shape="rect" coords="077,472,359,510" href="" alt="BIOS Collection of Low Level  Driver Libraries" title="BIOS Collection of Low Level  Driver Libraries">
-    <area shape="rect" coords="529,473,811,510" href="" alt="RTOS Realtime Operating System" title="RTOS Realtime Operating System"> -->
-</map>
-\endhtmlonly
-<!--
-
-\dot
-  digraph LayeredStructure {
-    fontname=ARIALN;
-    ranksep=1.0;
-    fontpath="/usr/X11R6/lib/X11/fonts/drakfont/ttf:/usr/share/fonts/ttf:/usr/X11R6/lib/X11/fonts/TTF";
-    node [shape=record, fontname=ARIALN, fontsize=9, style=filled, fontcolor=black];
-    edge [fontname=ARIALN, fontsize=9, dir="back"];
-    ordering=out;
-    pack=true;
-
-    upperRuler [ label="<p1>a|<p21>b|<p22>b|<p23>b|<p3>c|<p4>d|<p5>e", style=invis ];
-
-    subgraph cluster_Communication {
-        style="filled";
-        label="Communication";
-        bottomlabel="Communication Services for ISO 11783";
-        bgcolor=grey;
-        color="grey";
-        rank=same;
-        multi_msg       [label="Data Stream\n(needed for\nISO Terminal)", color="cyan4", URL="\ref MultiMsgPage", width=1.25 ];
-        iso_term        [label="ISO Virtual\n(complete optional)", color="white", URL="\ref XMLspec", width=1.5 ];
-        process         [label="Process Data\n(optional)", color="white", URL="\ref ProcDataPage", width=1.25 ];
-        system_mgmt     [label="System Management\n(partly obligatory)", color="cyan2", URL="\ref SystemMgmtPage", width=1.5 ];
-        base            [label="Base Data\n(complete optional)", color="white", URL="\ref AppLayerPage", width=1.5 ];
-        comm_doc        [label="Communication Services\nfor ISO 11783", URL="\ref CommOverPage", width=1.5 ];
-    }
-
-    subgraph cluster_DriverExtensions {
-        style="filled";
-        label="Driver Extensions";
-        bgcolor=grey;
-        color="grey";
-        rank=same;
-        rs232_drv    [label="RS232\n Supplementary\nDriver with\nIOSTREAMS Like\nRead/Write\nAccess", color="white", URL="\ref IsoAgLib::iRS232IO_c"];
-        sensor_drv   [label="Sensor\nSupplementary\nDriver with\nScaling and\nRange-Check", color="white", URL="\ref IsoAgLib::iAnalogIRangeCheck_c"];
-        actor_drv    [label="Actor\nSupplementary\nDriver with\nState Monitoring\nFunctions", color="white", URL="\ref IsoAgLib::iDigitalO_c"];
-        can_drv      [label="CAN\nIndividual Mask/\nFilter Settings\nfor each Filterbox", color="yellow", URL="\ref IsoAgLib::iCanIo_c"];
-        eeprom_drv   [label="EEPROM\nIO-STREAMS Like\nRead/Write Access", color="yellow", URL="\ref IsoAgLib::iEepromIo_c"];
-        common_drv   [label="Common System\nAccess\n(Globally Used)", color="yellow", URL="\ref IsoAgLib::iSystem_c"];
-        drv_doc      [label="Provide Driver Features\nwhich are not part of\nmost Platforms"];
-    }
-
-    subgraph cluster_HAL {
-        style="filled";
-        label="HAL";
-        color="grey";
-        bgcolor=grey;
-        rank=same;
-        rs232_hal    [label="RS232\nSupplementary\nDriver", color="white", URL="\ref hal/rs232.h"];
-        sensor_hal   [label="Sensor\nSupplementary\nDriver", color="white", URL="\ref hal/sensor.h"];
-        actor_hal    [label="Actor\nSupplementary\nDriver", color="white", URL="\ref hal/actor.h"];
-        can_hal      [label="CAN", color="dodgerblue3", URL="\ref hal/can.h"];
-        eeprom_hal   [label="EEPROM\n(Store Process Data,\nSelfConf SA, ...)", color="dodgerblue3", URL="\ref hal/eeprom.h"];
-        common_hal   [label="Common\nSystem Access\n(Watchdog,Time, ...)", color="dodgerblue3", URL="\ref hal/system.h"];
-        hal_doc      [label="Map Platform Specific\nAPI to Unique API\nfor IsoAgLib\n(Mapping during\ncompile-time -\nno runtime-overhead)",URL="\ref MainHalPage"];
-    }
-
-    subgraph cluster_Hardware {
-        style="filled";
-        label="Hardware";
-        color="grey";
-        bgcolor=grey;
-        rank=same;
-        bios      [ label="BIOS\nCollection of Low Level \nDriver Libraries", color="green2" ];
-        place_hw  [ label="<p1>a|<p21>b|<p2>b|<p23>b|<p3>c|<p31>c1|<p32>c2|<p4>d|<p41>d1|<p42>d2|<p5>e|<p51>e1|<p52>e2|<p6>f|<p61>f1", style=invis ];
-        rtos      [ label="RTOS\nRealtime Operating System", color="green2" ];
-    }
-
-    lowerRuler [ label="<p1>a|<p21>b|<p22>b|<p23>b|<p3>c|<p4>d|<p5>e|<p6>f", style=invis];
-
-    upperRuler:p1 -> comm_doc [ style=invis, weight=6000 ];
-
-    comm_doc      -> drv_doc [ style=invis, weight=6000 ];
-    drv_doc       -> hal_doc [ style=invis, weight=6000 ];
-    hal_doc       -> bios    [ style=invis, weight=6000 ];
-
-    common_hal -> place_hw:p1 [ /*weight=4000*/ ];
-    eeprom_hal -> place_hw:p2 [ /*weight=4000*/ ];
-    can_hal    -> place_hw:p3 [ /*weight=1000*/ ];
-    rs232_hal  -> place_hw:p4 [ /*weight=1000*/ ];
-    sensor_hal -> place_hw:p5 [ /*weight=1000*/ ];
-    actor_hal  -> place_hw:p6 [ /*weight=1000*/];
-
-    bios -> lowerRuler:p1      [ style=invis/*, weight=3000*/ ];
-    place_hw -> lowerRuler:p23 [ style=invis/*, weight=3000*/ ];
-    rtos -> lowerRuler:p6      [ style=invis/*, weight=6000*/ ];
-
-    system_mgmt -> common_drv [ style=invis/*, weight=2000 */ ];
-    process     -> eeprom_drv [ style=invis/*, weight=2000 */ ];
-    base        -> can_drv    [ style=invis/*, weight=2000 */ ];
-    iso_term    -> rs232_drv  [ style=invis/*, weight=2000 */ ];
-    multi_msg   -> actor_drv  [ style=invis/*, weight=2000 */];
-
-    upperRuler:p21 -> system_mgmt [ style=invis/*, weight=2000 */ ];
-    upperRuler:p22 -> process     [ style=invis/*, weight=2000 */ ];
-    upperRuler:p23 -> base        [ style=invis/*, weight=2000 */ ];
-    upperRuler:p3  -> iso_term    [ style=invis/*, weight=2000 */ ];
-    upperRuler:p5  -> multi_msg   [ style=invis/*, weight=2000 */ ];
-
-    process     -> eeprom_drv [ style="dotted"];
-    system_mgmt -> can_drv    [ /*weight=1000, headport="nw", tailport="se"*/ ];
-    process     -> can_drv    [ /*weight=1000*/ ];
-    base        -> can_drv    [ /*weight=1000*/ ];
-    iso_term    -> can_drv    [ /*weight=1000*/ ];
-    multi_msg   -> can_drv    [ /*weight=1000*/ ];
-    system_mgmt -> eeprom_drv [ style="dotted" ];
-    common_drv  -> common_hal [ /*weight=3000*/ ];
-    can_drv     -> can_hal    [ /*weight=3000*/];
-    eeprom_drv  -> eeprom_hal [ /*weight=3000*/ ];
-    rs232_drv   -> rs232_hal  [ /*weight=2000*/ ];
-    sensor_drv  -> sensor_hal [ /*weight=2000*/ ];
-    actor_drv   -> actor_hal  [ /*weight=2000*/ ];
-}
-\enddot
--->
-
-\subsection StructObligatory Information on Mandatory Elements
-The following elements are needed for all projects:
- - blue "HAL" layer nodes
- - yellow "Driver Extensions" layer nodes
- - cyan "Communication" layer nodes
-
-The modularized principle ensures that the minimum footprint of the
-\isoaglib in Flash ROM is quite low.
-
-\subsection StructPartlyOptional Other Elements
-
-The supplementary drivers for RS232, Sensor Input and Actuator Control
-(mainly PWM) were developed for a research project at the Technical
-University of Munich (TUM).
-
 
 \section UsingProjects Customer Examples
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
@@ -353,7 +162,7 @@ interaction networks with all sorts of dependencies. Here \isoaglib can provide 
 management of such interactions. This list can then help to identify well supported device combinations.<br>
 
 The following table contains a few commercial products which use \isoaglib:
-<table class="download" border=0 cellspacing=0>
+<table>
 <tr><th>Company</th>
     <th>Used parts</th>
     <th>Description</th></tr>
