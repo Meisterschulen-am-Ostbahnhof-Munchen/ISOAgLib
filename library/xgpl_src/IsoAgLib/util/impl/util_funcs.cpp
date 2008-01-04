@@ -961,6 +961,28 @@ int Flexible8ByteString_c::compare( const Flexible8ByteString_c& arc_cmp ) const
 
 #endif // end !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
 
+/**
+  set a float value at specified position in string.
+  IMPORTANT: position 0 matches to the least significant byte,
+  as the string is ordered in LittleEndian order,
+  identic to the order which is used for CAN messages
+  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
+  @param aui8_pos Byte position [0..4]
+  @param af_val float value to set
+  */
+void Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
+{
+  if ( aui8_pos < 5 ) floatVar2LittleEndianStream( &af_val, (uint8+aui8_pos) );
+  else
+  {
+    getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
+#if defined(SYSTEM_PC) && defined(DEBUG)
+    fprintf( stderr,
+            "ERROR!! Flexible8ByteString_c::setFloatData has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
+    abort();
+#endif
+  }
+}
 #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 /**
   set an uint16_t value at specified position in string.
@@ -1244,28 +1266,6 @@ float Flexible8ByteString_c::getFloatData(uint8_t aui8_pos) const
   return 0;
 }
 
-/**
-  set a float value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-  as the string is ordered in LittleEndian order,
-  identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos Byte position [0..4]
-  @param af_val float value to set
-  */
-void Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
-{
-  if ( aui8_pos < 5 ) floatVar2LittleEndianStream( &af_val, (uint8+aui8_pos) );
-  else
-  {
-    getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-#if defined(SYSTEM_PC) && defined(DEBUG)
-    fprintf( stderr,
-            "ERROR!! Flexible8ByteString_c::setFloatData has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-    abort();
-#endif
-  }
-}
 
 /**
   set an uint32_t value at specified position in string.
