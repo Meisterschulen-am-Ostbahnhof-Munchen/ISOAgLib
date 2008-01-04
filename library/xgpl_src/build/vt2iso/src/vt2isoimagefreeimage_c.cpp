@@ -77,6 +77,12 @@ Vt2IsoImageFreeImage_c::Vt2IsoImageFreeImage_c( const char* filename )
 }
 
 
+void Vt2IsoImageFreeImage_c::printLicenseText()
+{
+  std::cout << "This software uses the FreeImage open source image library. See http://freeimage.sourceforge.net for details." << std::endl
+            << "FreeImage is used under the (GNU GPL or FIPL), version (license version). " << std::endl;
+}
+
 /** open the given bitmap file and guarantee
  that the pixels can be accessed by RGB
  ( i.e. convert if indexed )

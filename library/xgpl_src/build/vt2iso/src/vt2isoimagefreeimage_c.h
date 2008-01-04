@@ -41,7 +41,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "FreeImage.h"
+#include <FreeImage.h>
 
 #include "vt2isoimagebase_c.h"
 
@@ -53,6 +53,9 @@ class Vt2IsoImageFreeImage_c : public Vt2IsoImageBase_c
  public:
  	/** constructor which can directly open the corresponding file */
 	Vt2IsoImageFreeImage_c( const char* filename = NULL );
+	
+	void printLicenseText();
+	
 	virtual void close( void );
  	/** open the given bitmap file and guarantee
 		that the pixels can be accessed by RGB

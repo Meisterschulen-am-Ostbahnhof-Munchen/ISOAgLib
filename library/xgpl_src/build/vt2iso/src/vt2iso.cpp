@@ -4769,6 +4769,8 @@ vt2iso_c::getObjNameWithPoolIdent (char* pcch_objName)
 // ---------------------------------------------------------------------------
 int main(int argC, char* argV[])
 {
+  c_Bitmap.printLicenseText();
+
   // Check command line and extract arguments.
   if (argC < 2) { usage(); return 1; }
 

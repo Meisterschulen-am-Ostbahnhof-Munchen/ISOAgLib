@@ -88,8 +88,9 @@ include Makefile.incl
 APP_NAME=vt2iso
 
 OUTDIR= bin/obj
-EXEC=	bin
-OBJS=	${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagepaintlib_c.o
+EXEC=	../../../../bin
+OBJS=	${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagepaintlib_c.o \
+			${OUTDIR}/vt2iso-defines.o ${OUTDIR}/vt2iso-globals.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} -lpaintlib -lpng -ljpeg -ltiff -lpthread
 SRC=	src
 
@@ -117,6 +118,13 @@ $(OUTDIR)/vt2isoimagebase_c.o:: ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoimagebas
 
 $(OUTDIR)/vt2isoimagepaintlib_c.o:: ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoimagepaintlib_c.cpp ${SRC}/vt2isoimagepaintlib_c.h
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2isoimagepaintlib_c.o ${SRC}/vt2isoimagepaintlib_c.cpp
+
+${OUTDIR}/vt2iso-defines.o:: ${SRC}/vt2iso-defines.hpp ${SRC}/vt2iso-defines.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2iso-defines.o ${SRC}/vt2iso-defines.cpp
+
+${OUTDIR}/vt2iso-globals.o:: ${SRC}/vt2iso-globals.hpp ${SRC}/vt2iso-globals.cpp
+	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2iso-globals.o ${SRC}/vt2iso-globals.cpp
+
 
 clean::
 	rm -f ${OBJS} ${EXEC}/${APP_NAME}

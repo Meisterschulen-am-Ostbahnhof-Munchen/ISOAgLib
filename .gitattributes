@@ -2965,6 +2965,9 @@ library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cp
 library/xgpl_src/IsoAgLib/util/compiler_adaptation.h -text
 library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
+library/xgpl_src/build/libs/freeimage/FreeImage.dll -text
+library/xgpl_src/build/libs/freeimage/LICENSE -text
+library/xgpl_src/build/libs/freeimage/libfreeimage.a -text
 library/xgpl_src/build/proc2iso/AUTHORS -text
 library/xgpl_src/build/proc2iso/COPYING -text
 library/xgpl_src/build/proc2iso/ChangeLog -text
@@ -3003,7 +3006,6 @@ library/xgpl_src/build/projectGeneration/qmake_stub.pro -text
 library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp eol=crlf
 library/xgpl_src/build/vt2iso-3-0_VirtualTerminalIso.bat -text
 library/xgpl_src/build/vt2iso/Doxyfile -text
-library/xgpl_src/build/vt2iso/FreeImage.dll -text
 library/xgpl_src/build/vt2iso/Makefile.incl -text
 library/xgpl_src/build/vt2iso/Makefile.paintlib -text
 library/xgpl_src/build/vt2iso/Release/FreeImage.dll -text

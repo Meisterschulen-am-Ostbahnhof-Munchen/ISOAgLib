@@ -62,7 +62,7 @@
 ifeq (${SYSOVR},OS400)
 PLATFORM = OS400
 endif
-INCLUDES= -I. -I${XERCESCROOT} -I/usr/include -I/usr/local/include -Isrc
+INCLUDES= -I. -I${XERCESCROOT} -I/usr/include -I/usr/local/include -Isrc -I../libs/freeimage
 LIB_DIR=${XERCESCROOT}
 ifneq (${PLATFORM},OS400)
 LIBNAME=xerces-c
