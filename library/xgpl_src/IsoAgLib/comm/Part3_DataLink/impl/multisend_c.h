@@ -95,8 +95,8 @@
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
 #include "multisendpkg_c.h"
 #include "../imultisendstreamer_c.h"

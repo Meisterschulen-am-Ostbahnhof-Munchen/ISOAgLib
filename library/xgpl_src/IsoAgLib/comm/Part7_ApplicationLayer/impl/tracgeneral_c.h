@@ -88,7 +88,7 @@
 #define TRACGENERAL_C_H
 
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 
 #include <ctime>
 

@@ -85,7 +85,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif

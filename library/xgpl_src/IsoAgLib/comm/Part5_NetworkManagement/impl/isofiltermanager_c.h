@@ -92,7 +92,7 @@
 #include <IsoAgLib/util/config.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
 #include "isofilterbox_c.h"
 

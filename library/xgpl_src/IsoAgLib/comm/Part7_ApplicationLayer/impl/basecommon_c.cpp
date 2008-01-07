@@ -85,7 +85,7 @@
 
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "basecommon_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
@@ -199,7 +199,7 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
     mc_selectedDataSourceISOName = *apc_isoName;
   }
   else
-  { //implement mode
+  { /implement mode
     mc_selectedDataSourceISOName.setUnspecified();
   }
   return true;

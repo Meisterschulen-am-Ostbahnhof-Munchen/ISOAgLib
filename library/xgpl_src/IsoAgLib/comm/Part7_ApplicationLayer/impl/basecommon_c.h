@@ -87,8 +87,8 @@
 #define BASE_COMMON_H
 
 #include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h>

@@ -90,7 +90,7 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
 
 // Begin Namespace __IsoAgLib

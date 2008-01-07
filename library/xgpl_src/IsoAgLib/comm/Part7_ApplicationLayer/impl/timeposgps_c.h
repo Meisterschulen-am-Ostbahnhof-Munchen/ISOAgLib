@@ -90,7 +90,7 @@
 
 #include <ctime>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgnhandler_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>

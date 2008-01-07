@@ -90,7 +90,7 @@
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include "vtserverinstance_c.h"

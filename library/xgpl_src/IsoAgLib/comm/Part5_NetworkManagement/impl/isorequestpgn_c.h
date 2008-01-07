@@ -94,7 +94,7 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 //#include "isoitem_c.h"
 
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking

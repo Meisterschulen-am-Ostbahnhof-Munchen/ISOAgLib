@@ -85,11 +85,11 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "tracpto_c.h"
 #include "tracgeneral_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isorequestpgn_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 using namespace std;
 

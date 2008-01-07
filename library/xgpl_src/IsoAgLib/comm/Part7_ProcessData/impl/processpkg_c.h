@@ -90,10 +90,10 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "processcmd_c.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include "../elementddi_s.h"

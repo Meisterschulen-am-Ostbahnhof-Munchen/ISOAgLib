@@ -95,8 +95,8 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 // #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
-// #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+// #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 // #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
 //#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext

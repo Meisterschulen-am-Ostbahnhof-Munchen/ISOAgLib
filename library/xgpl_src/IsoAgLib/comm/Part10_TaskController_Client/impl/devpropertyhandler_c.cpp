@@ -90,8 +90,8 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>

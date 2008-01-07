@@ -84,7 +84,7 @@
  ***************************************************************************/
 
 #include "isofilterbox_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
 namespace __IsoAgLib {

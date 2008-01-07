@@ -89,8 +89,8 @@
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 
 #ifdef DEBUG
   #include <supplementary_driver/driver/rs232/irs232io_c.h>

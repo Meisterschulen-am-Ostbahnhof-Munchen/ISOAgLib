@@ -85,8 +85,8 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #ifdef USE_PROCESS
   #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #endif

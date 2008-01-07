@@ -101,8 +101,8 @@ namespace IsoAgLib {
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
 // stl
 #include <list>
