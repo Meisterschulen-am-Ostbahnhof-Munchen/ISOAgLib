@@ -1,6 +1,8 @@
 /** \page CommOverPage Communication Protocol Services Overview
 The implementation of all standardized protocol services is located in the directory
-<tt>xgpl_src/IsoAgLib/comm/</tt> and its subdirectories.
+<tt>xgpl_src/IsoAgLib/comm/</tt> and its subdirectories. The directories are structured after the different parts of the <a href="http://www.isobus.com">ISOBUS</a> standard.
+Those are at the moment: <tt>Part3_DataLink</tt>, <tt>Part5_NetworkManagement</tt>, <tt>Part6_VirtualTerminal_Client</tt>,
+<tt>Part7_ApplicationLayer</tt>, <tt>Part7_ProcessData</tt>, <tt>Part10_TaskController_Client</tt> as well as <tt>Scheduler</tt> and <tt>ext</tt>.
 
 \section ServiceDependency Dependencies of Protocol Services
 Most of the protocol features can be selected independent from other functions for
@@ -55,15 +57,15 @@ The application has mostly only contact to the main scheduling function IsoAgLib
 which is responsible to dedicate periodically execution time to all components with the
 guarantee to return at the requested time.
 
-\subsection CommOverIsoSystem Overview on ISO 11783 Monitor List
-<b>Detailed Description:</b> \ref NetworkMgmt<br>
+\section CommOverIsoSystem Overview on ISO 11783 Monitor List
+<b>Detailed Description:</b> \ref NetworkMgmtPage<br>
 The class IsoAgLib::iIsoMonitor_c has a monitor list of all ISO 11783 network nodes.
 It is mostly used by the application to search for a device by its device type - and to get its SA.
 It is also used internally to claim address and manage local ISO 11783 identities \ref IsoAgLib::iIsoItem_c.
 If EEPROM store and reload \ref USE_EEPROM_IO_YN is activated and compiled in the project, a
 dynamic aquired SA is automatically stred and reloaded at specified EEPROM address - as suggested by the standard.
 
-\subsection CommOverIsoTerminal Overview on ISO 11783 Virtual Terminal
+\section CommOverIsoTerminal Overview on ISO 11783 Virtual Terminal
 <b>Detailed Description:</b> \ref VTClient<br>
  provides a complete toolchain for user interface management based
 on ISO 11783 virtual terminal. The layout with including definition of handles
@@ -77,16 +79,16 @@ variable array definitions which are used as data source to upload the object po
 These utilities are tested with Linux, but as they use only some pure C libraries without
 any GUI part, they should be easily ported to another development operating system.
 
-\subsection CommOverIsoProc Overview on ISO Format
-<b>Detailed Description:</b> \ref ProcDataSec<br>
+\section CommOverIsoProc Overview on ISO Format
+<b>Detailed Description:</b> \ref ProcDataPage<br>
  can automatically detect, based on the active protocol, how the
 process data messages must be formatted. As ISO 11783 Process Data was at least till
 Mid 2003 compatible to DIN 9684, the API is 100% independent from the protocol.<br>
 
 <b>Possible Problems of Current ISO Activities:</b><br>
 As the process data part of ISO 11783 is under heavy change,  can't guarantee
-the compatibility for the final - whenever it comes - ISO 11783 release.<br>
-<span style="border-bottom: 1px dashed gray">The main problem:</span><br>
+the compatibility for the final - whenever it comes - ISO 11783 release.<br><br>
+<i>The main problem:</i><br>
 The \isoaglib process data handling strategy is based on the object oriented approach, which
 was defined by the creator of the corresponding DIN 9684 part. This is also comparable to
 the ISO 11783 virtual terminal part.

@@ -1044,18 +1044,19 @@ ROMable constant declarations for all used virtual terminal objects, which can b
 
 \subsection InstallFreeImage Install Image Manipulation Library Free Image
 The <tt>vt2iso</tt> can read almost all types of bitmaps to get the compileable variable array representation
-of bitmaps for the ECU. This stuff is greatly supported by the Open Source libraries <tt>FreeImage</tt>
+of bitmaps for the ECU. Those operations are greatly supported by the Open Source libraries <tt>FreeImage</tt>
 and <tt>Paintlib</tt> (http://www.paintlib.de/paintlib/) (alternative - choose the library that is easier to install for you).<br>
 Vt2iso uses these libraries to access the color values of all pixels (and to convert from palettized / indexed formats
 if needed) so that the needed conversion to the chosen color depth can be performed.
 Vt2iso uses an automatic calculation of a threshold to get the highest contrast in the picture (optimum 50:50 relation between
 black and white).<br>
 \subsubsection FreeImageLinux Installation of Free Image Library on Linux
-The FreeImage library can be best compiled from source for Linux (simple to compile with make based on
+For Linux users <tt>libfreeimage.a</tt> is included in the repository so that further compilation is not required anymore.
+<!--The FreeImage library can be best compiled from source for Linux (simple to compile with make based on
 provided Makefile).
 Please make sure that the library and include files are installed to system directories (need root user to install)
 or adapt the Makefiles on your own (no support by author for this config).
-The FreeImage library may also be available as a ready made binary distribution.
+The FreeImage library may also be available as a ready made binary distribution.-->
 
 \subsubsection FreeImageWin32 Installation of Free Image Library on Win32
 On Win32 Platform the Dev-C++ IDE provides a very simple download as extension package from within the program. Thus you have no
