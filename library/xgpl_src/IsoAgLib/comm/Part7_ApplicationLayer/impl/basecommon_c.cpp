@@ -199,7 +199,7 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
     mc_selectedDataSourceISOName = *apc_isoName;
   }
   else
-  { /implement mode
+  { //implement mode
     mc_selectedDataSourceISOName.setUnspecified();
   }
   return true;
