@@ -215,13 +215,13 @@ namespace __IsoAgLib {
   #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 
-  /** HIDDEN constructor for a TimePosGPS_c object instance which can optional
+  /** HIDDEN constructor for a TimePosGps_c object instance which can optional
   set the configuration for send/receive for base msg type NMEA 2000 GPS
   and calendar
-  NEVER instantiate a variable of type TimePosGPS_c within application
-  only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+  NEVER instantiate a variable of type TimePosGps_c within application
+  only access TimePosGps_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
    */
-  TimePosGPS_c::TimePosGPS_c()
+  TimePosGps_c::TimePosGps_c()
   : mc_sendGpsISOName(),
   mpc_isoNameGps(NULL),
   mt_identModeGps( IsoAgLib::IdentModeImplement )
@@ -238,7 +238,7 @@ namespace __IsoAgLib {
       @see CanIo_c::operator<<
       @return true -> all planned activities performed in allowed time
     */
-  bool TimePosGPS_c::timeEvent(  )
+  bool TimePosGps_c::timeEvent(  )
   {
     checkCreateReceiveFilter();
 
@@ -316,7 +316,7 @@ namespace __IsoAgLib {
       on active local idents which has already claimed an address
       --> avoid to much Filter Boxes
     */
-  void TimePosGPS_c::checkCreateReceiveFilter( )
+  void TimePosGps_c::checkCreateReceiveFilter( )
   {
     IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     CanIo_c &c_can = getCanInstance4Comm();
@@ -336,7 +336,7 @@ namespace __IsoAgLib {
     this is called from singleton.h and should NOT be called from the user again.
     users please use init(...) instead.
   */
-  void TimePosGPS_c::singletonInit()
+  void TimePosGps_c::singletonInit()
   { // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
     // singleton vec key - this key value is NOT available at construction time!!!
     BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
@@ -351,7 +351,7 @@ namespace __IsoAgLib {
       @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
     */
-  void TimePosGPS_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
+  void TimePosGps_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
   {
     BaseCommon_c::init_base( apc_isoName, getSingletonVecKey(), at_identMode );
 
@@ -373,13 +373,13 @@ namespace __IsoAgLib {
     }
   }
 
-  /** config the TimePosGPS_c object after init -> set pointer to isoName and
+  /** config the TimePosGps_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
       @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TimePosGps_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
@@ -432,7 +432,7 @@ namespace __IsoAgLib {
   };
 
   /** force a request for pgn for time/date information */
-  bool TimePosGPS_c::sendRequestUpdateTimeDate()
+  bool TimePosGps_c::sendRequestUpdateTimeDate()
   {
     if ( checkMode(IsoAgLib::IdentModeImplement) )
       return BaseCommon_c::sendPgnRequest(TIME_DATE_PGN);
@@ -445,7 +445,7 @@ namespace __IsoAgLib {
       @param ab_implementMode implement mode (true) or tractor mode (false)!!!
       @return true -> configuration was successfull
     */
-  bool TimePosGPS_c::configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t  at_identModeGps)
+  bool TimePosGps_c::configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t  at_identModeGps)
   {
     if (   at_identModeGps == IsoAgLib::IdentModeTractor
         && apc_isoName == NULL
@@ -531,7 +531,7 @@ namespace __IsoAgLib {
 
   /** Retrieve the last update time of the specified information type
     */
-  int32_t TimePosGPS_c::lastedTimeSinceUpdateGps() const
+  int32_t TimePosGps_c::lastedTimeSinceUpdateGps() const
   {
     const int32_t ci32_now = getLastRetriggerTime();
     #ifdef ENABLE_NMEA_2000_MULTI_PACKET
@@ -542,7 +542,7 @@ namespace __IsoAgLib {
     #endif
   }
   /** Retrieve the time of last update */
-  int32_t TimePosGPS_c::lastUpdateTimeGps() const
+  int32_t TimePosGps_c::lastUpdateTimeGps() const
   {
     #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     if ( mi32_lastIsoPositionStream > mi32_lastIsoPositionSimple ) return mi32_lastIsoPositionStream;
@@ -554,13 +554,13 @@ namespace __IsoAgLib {
 
   /** Retrieve the last update time of the specified information type
     */
-  int32_t TimePosGPS_c::lastedTimeSinceUpdateDirection() const
+  int32_t TimePosGps_c::lastedTimeSinceUpdateDirection() const
   {
     const int32_t ci32_now = getLastRetriggerTime();
     return ( ci32_now - mi32_lastIsoDirection);
   }
   /** Retrieve the time of last update */
-  int32_t TimePosGPS_c::lastUpdateTimeDirection() const
+  int32_t TimePosGps_c::lastUpdateTimeDirection() const
   {
     return mi32_lastIsoDirection;
   }
@@ -569,15 +569,15 @@ namespace __IsoAgLib {
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TimePosGPS_c& getTimePosGpsInstance( uint8_t aui8_instance )
+  TimePosGps_c& getTimePosGpsInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return TimePosGPS_c::instance( aui8_instance );
+    return TimePosGps_c::instance( aui8_instance );
   };
   #else
   /** C-style function, to get access to the unique Base_c singleton instance */
-  TimePosGPS_c& getTimePosGpsInstance( void )
+  TimePosGps_c& getTimePosGpsInstance( void )
   {
-    static TimePosGPS_c& c_lbsTimePosGps = TimePosGPS_c::instance();
+    static TimePosGps_c& c_lbsTimePosGps = TimePosGps_c::instance();
     return c_lbsTimePosGps;
   };
   #endif
@@ -587,7 +587,7 @@ namespace __IsoAgLib {
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TimePosGPS_c::processMsg()
+  bool TimePosGps_c::processMsg()
   {
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
@@ -678,12 +678,12 @@ namespace __IsoAgLib {
     return false;
   }
 
-  bool TimePosGPS_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+  bool TimePosGps_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
 
-    // call TimePosGPS_c function to send time/date
+    // call TimePosGps_c function to send time/date
     // isoSendCalendar checks if this item (identified by ISOName)
     // is configured to send time/date
     sendCalendar(*getISOName());
@@ -692,7 +692,7 @@ namespace __IsoAgLib {
 
   /** check if an NMEA2000 position signal was received - it does NOT indicate that this is an up2date signal */
   /** @todo ON REQUEST: improve with isPositionStreamReceived(), so we know that e.g. Altitude is there, too... */
-  bool TimePosGPS_c::isPositionReceived() const
+  bool TimePosGps_c::isPositionReceived() const
   {
     if ( (mi32_latitudeDegree10Minus7  >= ( -90*10000000)) && (mi32_latitudeDegree10Minus7  <= ( 90*10000000))
       && (mi32_longitudeDegree10Minus7 >= (-180*10000000)) && (mi32_longitudeDegree10Minus7 <= (180*10000000))
@@ -708,7 +708,7 @@ namespace __IsoAgLib {
   }
 
   /** check if an NMEA2000 direction signal was received - it does NOT indicate that this is an up2date signal */
-  bool TimePosGPS_c::isDirectionReceived() const
+  bool TimePosGps_c::isDirectionReceived() const
   {
     /// @todo ON REQUEST: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
     if ( (mui16_courseOverGroundRad10Minus4 <= 62855)
@@ -731,7 +731,7 @@ namespace __IsoAgLib {
   *  In case another system is sending TIME_DATE_PGN, this time could be out-of-sync with GPS time.
   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
   */
-  void TimePosGPS_c::setTimeUtcGps(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec )
+  void TimePosGps_c::setTimeUtcGps(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec )
   {
     bit_gpsTime.hour = ab_hour;
     bit_gpsTime.minute = ab_minute;
@@ -749,7 +749,7 @@ namespace __IsoAgLib {
   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
   *  @param ab_hour actual calendar hour value
   */
-  void TimePosGPS_c::setHourUtcGps(uint8_t ab_hour)
+  void TimePosGps_c::setHourUtcGps(uint8_t ab_hour)
   {
     bit_gpsTime.hour = ab_hour;
     if ( getSelectedDataSourceISOName().isUnspecified() )
@@ -764,7 +764,7 @@ namespace __IsoAgLib {
   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
   *  @param ab_minute actual calendar minute value
   */
-  void TimePosGPS_c::setMinuteUtcGps(uint8_t ab_minute)
+  void TimePosGps_c::setMinuteUtcGps(uint8_t ab_minute)
   {
     bit_gpsTime.minute = ab_minute;
     if ( getSelectedDataSourceISOName().isUnspecified() )
@@ -779,7 +779,7 @@ namespace __IsoAgLib {
   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
   *  @param ab_second actual calendar second value
   */
-  void TimePosGPS_c::setSecondUtcGps(uint8_t ab_second)
+  void TimePosGps_c::setSecondUtcGps(uint8_t ab_second)
   {
     bit_gpsTime.second = ab_second;
     if ( getSelectedDataSourceISOName().isUnspecified() )
@@ -794,7 +794,7 @@ namespace __IsoAgLib {
   *  To avoid a jumping back and forth Non-GPS UTC time, those two UTC time sources are then not to be synced.
   *  @param ab_millisecond actual calendar second value
   */
-  void TimePosGPS_c::setMillisecondUtcGps(uint16_t aui16_millisecond)
+  void TimePosGps_c::setMillisecondUtcGps(uint16_t aui16_millisecond)
   {
     bit_gpsTime.msec = aui16_millisecond;
     if ( getSelectedDataSourceISOName().isUnspecified() )
@@ -804,7 +804,7 @@ namespace __IsoAgLib {
   }
 
   /** deliver GPS receive qualitiy */
-  void TimePosGPS_c::setGnssMode( IsoAgLib::IsoGnssMethod_t at_newVal )
+  void TimePosGps_c::setGnssMode( IsoAgLib::IsoGnssMethod_t at_newVal )
   {
     if(at_newVal<=IsoAgLib::IsoGnssMethodMAX) mt_gnssMethod = at_newVal;
 /**
@@ -845,7 +845,7 @@ namespace __IsoAgLib {
   //! Parameter:
   //! @param ac_ident:
   //! @param aui32_totalLen:
-  bool TimePosGPS_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
+  bool TimePosGps_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
                                          uint32_t /*aui32_totalLen */)
   {
     if ( ( ( ac_ident.getPgn() == NMEA_GPS_POSITION_DATA_PGN  )
@@ -864,7 +864,7 @@ namespace __IsoAgLib {
   //! @param ac_ident:
   //! @param ab_isFirstChunk:
   //! @param ab_isLastChunkAndACKd:
-  bool TimePosGPS_c::processPartStreamDataChunk (IsoAgLib::iStream_c& arc_stream,
+  bool TimePosGps_c::processPartStreamDataChunk (IsoAgLib::iStream_c& arc_stream,
                                           bool /*ab_isFirstChunk*/,
                                           bool ab_isLastChunkAndACKd)
   {
@@ -879,14 +879,14 @@ namespace __IsoAgLib {
     return false;
   }
 
-  void TimePosGPS_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
+  void TimePosGps_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
   { // as we don't perform on-the-fly parse, there is nothing special to do
   }
 
   //! Parameter:
   //! @param ac_ident:
   //! @param apc_stream:
-  bool TimePosGPS_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
+  bool TimePosGps_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
                                        IsoAgLib::iStream_c& rc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
     IsoName_c const& rcc_tempISOName = rc_stream.getIdent().getSaIsoName();
@@ -1027,7 +1027,7 @@ namespace __IsoAgLib {
       @pre  function is only called in tractor mode
       @see  BaseCommon_c::timeEvent()
     */
-  bool TimePosGPS_c::timeEventTracMode()
+  bool TimePosGps_c::timeEventTracMode()
   {
     const int32_t ci32_now = getLastRetriggerTime();
 
@@ -1059,7 +1059,7 @@ namespace __IsoAgLib {
   }
 
   /** send position rapid update message */
-  void TimePosGPS_c::sendPositionRapidUpdate( void )
+  void TimePosGps_c::sendPositionRapidUpdate( void )
   {
     // retreive the actual dynamic sender no of the member with the registered isoName
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberISOName(*mpc_isoNameGps, true).nr();
@@ -1084,7 +1084,7 @@ namespace __IsoAgLib {
 /**
 ** not using anymore as we changed from PGN 130577 to 129026
 **
-  void TimePosGPS_c::isoSendDirectionStream( void )
+  void TimePosGps_c::isoSendDirectionStream( void )
   {
     const int32_t ci32_now = getLastRetriggerTime();
     // set data in Nmea2000SendStreamer_c
@@ -1115,7 +1115,7 @@ namespace __IsoAgLib {
   }
 */
 
-void TimePosGPS_c::isoSendDirection( void )
+void TimePosGps_c::isoSendDirection( void )
 {
   // little pre-Setup
   mui8_directionSequenceID = 0xFF; // not using tied-together-packaging right now
@@ -1177,7 +1177,7 @@ void TimePosGPS_c::isoSendDirection( void )
   }
 
   /** send position as detailed stream */
-  void TimePosGPS_c::isoSendPositionStream( void )
+  void TimePosGps_c::isoSendPositionStream( void )
   {
     // little pre-Setup
     mui8_positionSequenceID = 0xFF; // not using tied-together-packaging right now
@@ -1264,7 +1264,7 @@ void TimePosGPS_c::isoSendDirection( void )
       @see CanPkgExt_c::getData
       @see CanIo_c::operator<<
     */
-  void TimePosGPS_c::sendCalendar(const IsoName_c& ac_isoName)
+  void TimePosGps_c::sendCalendar(const IsoName_c& ac_isoName)
   {
     if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_isoName, true)) return;
 
@@ -1312,14 +1312,14 @@ void TimePosGPS_c::isoSendDirection( void )
 
   /** check if a calendar information was received since init
    */
-  bool TimePosGPS_c::isCalendarReceived() const
+  bool TimePosGps_c::isCalendarReceived() const
   {
     return ( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 ) // year 0 (absolute) indicates NO_VAL!
         && ( bit_calendar.second == 0 ) && ( bit_calendar.minute == 0 ) && ( bit_calendar.hour == 0 ) )?false:true;
   }
 
   /** check if a calendar's DATE information that was received is VALID */
-  bool TimePosGPS_c::isCalendarDateValid() const
+  bool TimePosGps_c::isCalendarDateValid() const
   { // check if default data from init is still in vars
     return ( (bit_calendar.day > 0) && (bit_calendar.month > 0) && (bit_calendar.year > 0) );
   }
@@ -1327,7 +1327,7 @@ void TimePosGPS_c::isoSendDirection( void )
   /** check if a calendar's TIME information that was received is VALID
    * @todo ON REQUEST: Add this check if it's ensured everywhere that NO_VAL times
    *       don't screw around (with some mktime() or whatever functions...)
-  bool TimePosGPS_c::isCalendarTimeValid() const
+  bool TimePosGps_c::isCalendarTimeValid() const
    */
 
   /**
@@ -1339,7 +1339,7 @@ void TimePosGPS_c::isoSendDirection( void )
   @param ab_minute value to store as minute
   @param ab_second value to store as second
   */
-  void TimePosGPS_c::setCalendarUtc(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec)
+  void TimePosGps_c::setCalendarUtc(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec)
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1362,7 +1362,7 @@ void TimePosGPS_c::isoSendDirection( void )
   @param ab_minute value to store as minute
   @param ab_second value to store as second
   */
-  void TimePosGPS_c::setCalendarLocal(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec )
+  void TimePosGps_c::setCalendarLocal(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day, uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec )
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1387,7 +1387,7 @@ void TimePosGPS_c::isoSendDirection( void )
   };
 
   /** set the date in local timezone */
-  void TimePosGPS_c::setDateLocal(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day)
+  void TimePosGps_c::setDateLocal(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day)
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1409,7 +1409,7 @@ void TimePosGPS_c::isoSendDirection( void )
   }
 
   /** set the date in UTC timezone */
-  void TimePosGPS_c::setDateUtc(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day)
+  void TimePosGps_c::setDateUtc(int16_t ai16_year, uint8_t ab_month, uint8_t ab_day)
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1419,7 +1419,7 @@ void TimePosGPS_c::isoSendDirection( void )
   }
 
   /** set the time in local timezone */
-  void TimePosGPS_c::setTimeLocal(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec)
+  void TimePosGps_c::setTimeLocal(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec)
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1445,7 +1445,7 @@ void TimePosGPS_c::isoSendDirection( void )
   }
 
   /** set the time in UTC timezone */
-  void TimePosGPS_c::setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec, bool b_updateDate)
+  void TimePosGps_c::setTimeUtc(uint8_t ab_hour, uint8_t ab_minute, uint8_t ab_second, uint16_t aui16_msec, bool b_updateDate)
   {
     if (b_updateDate)
     {
@@ -1463,7 +1463,7 @@ void TimePosGPS_c::isoSendDirection( void )
     bit_calendar.msec   = aui16_msec;
   }
 
-  const struct ::tm* TimePosGPS_c::Utc2LocalTime()
+  const struct ::tm* TimePosGps_c::Utc2LocalTime()
   {
     if (0 == mt_cachedLocalSeconds1970AtLastSet)
     {
@@ -1483,7 +1483,7 @@ void TimePosGPS_c::isoSendDirection( void )
   get the calendar year value
   @return actual calendar year value
   */
-  int16_t TimePosGPS_c::yearLocal()
+  int16_t TimePosGps_c::yearLocal()
   {
     return Utc2LocalTime()->tm_year+1900;
   }
@@ -1492,7 +1492,7 @@ void TimePosGPS_c::isoSendDirection( void )
   get the calendar month value
   @return actual calendar month value
   */
-  uint8_t TimePosGPS_c::monthLocal()
+  uint8_t TimePosGps_c::monthLocal()
   { // month is delivered with range [0..11] -> add 1
     return Utc2LocalTime()->tm_mon+1;
   }
@@ -1501,7 +1501,7 @@ void TimePosGPS_c::isoSendDirection( void )
   get the calendar day value
   @return actual calendar day value
   */
-  uint8_t TimePosGPS_c::dayLocal()
+  uint8_t TimePosGps_c::dayLocal()
   {
     return Utc2LocalTime()->tm_mday;
   }
@@ -1510,7 +1510,7 @@ void TimePosGPS_c::isoSendDirection( void )
   get the calendar hour value
   @return actual calendar hour value
   */
-  uint8_t TimePosGPS_c::hourLocal()
+  uint8_t TimePosGps_c::hourLocal()
   {
     return Utc2LocalTime()->tm_hour;
   }
@@ -1519,43 +1519,43 @@ void TimePosGPS_c::isoSendDirection( void )
   get the calendar minute value
   @return actual calendar minute value
   */
-  uint8_t TimePosGPS_c::minuteLocal()
+  uint8_t TimePosGps_c::minuteLocal()
   {
     return Utc2LocalTime()->tm_min;
   };
 
-  int16_t TimePosGPS_c::yearUtc()
+  int16_t TimePosGps_c::yearUtc()
   {
     const struct CNAMESPACE::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_year + 1900 : 0;
   }
-  uint8_t TimePosGPS_c::monthUtc()
+  uint8_t TimePosGps_c::monthUtc()
   {
     const struct CNAMESPACE::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_mon + 1 : 0;
   }
-  uint8_t TimePosGPS_c::dayUtc()
+  uint8_t TimePosGps_c::dayUtc()
   {
     const struct CNAMESPACE::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_mday : 0;
   }
-  uint8_t TimePosGPS_c::hourUtc()
+  uint8_t TimePosGps_c::hourUtc()
   {
     const struct CNAMESPACE::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_hour : 0;
   }
-  uint8_t TimePosGPS_c::minuteUtc()
+  uint8_t TimePosGps_c::minuteUtc()
   {
     const struct CNAMESPACE::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_min : 0;
   }
-  uint8_t TimePosGPS_c::second()
+  uint8_t TimePosGps_c::second()
   {
     const struct CNAMESPACE::tm* p_tm = currentUtcTm();
     return (NULL != p_tm) ? p_tm->tm_sec : 0;
   }
 
-  struct CNAMESPACE::tm* TimePosGPS_c::currentUtcTm()
+  struct CNAMESPACE::tm* TimePosGps_c::currentUtcTm()
   {
     if ( 0 == mt_cachedLocalSeconds1970AtLastSet)
     { // recalculate seconds from bit_calendar struct
@@ -1580,8 +1580,8 @@ void TimePosGPS_c::isoSendDirection( void )
 
 ///  Used for Debugging Tasks in Scheduler_c
 const char*
-TimePosGPS_c::getTaskName() const
-{   return "TimePosGPS_c"; }
+TimePosGps_c::getTaskName() const
+{   return "TimePosGps_c"; }
 
 } // namespace __IsoAgLib
 

@@ -433,7 +433,7 @@ void TracMove_c::singletonInit()
   void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
   {
     #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-    TimePosGPS_c& c_timeposgps = getTimePosGpsInstance4Comm();
+    TimePosGps_c& c_timeposgps = getTimePosGpsInstance4Comm();
     #endif
     switch(t_speedSrc)
     {

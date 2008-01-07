@@ -147,8 +147,9 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 };
 #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
-class TimePosGPS_c;
-typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
+class TimePosGps_c;
+typedef TimePosGps_c TimePosGPS_c; /// this typedef is only for some time to provide backward compatibility at API level
+typedef SINGLETON_DERIVED(TimePosGpS_c,BaseCommon_c) SingletonTimePosGps_c;
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
@@ -158,12 +159,12 @@ typedef SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c) SingletonTimePosGps_c;
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
 
-class TimePosGPS_c : public SingletonTimePosGps_c
+class TimePosGps_c : public SingletonTimePosGps_c
 {
  public:
   // Public methods
   /* ********************************************* */
-  /** \name Management Functions for class TimePosGPS_c  */
+  /** \name Management Functions for class TimePosGps_c  */
   /*@{*/
 
   /** initialize directly after the singleton instance is created.
@@ -202,7 +203,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
   /** destructor for Base_c which has nothing to do */
-  virtual ~TimePosGPS_c() { BaseCommon_c::close();}
+  virtual ~TimePosGps_c() { BaseCommon_c::close();}
 
   /** process a message request for PGN
       @param  aui32_pgn  PGN
@@ -255,7 +256,7 @@ class TimePosGPS_c : public SingletonTimePosGps_c
   const IsoName_c& getSenderISONameGpsConst() const {return mc_sendGpsISOName;}
 
   /* ********************************************* */
-  /** \name MultiReceive functions for TimePosGPS_c  */
+  /** \name MultiReceive functions for TimePosGps_c  */
   /*@{*/
   #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 public:
@@ -630,15 +631,15 @@ public:
 
 private:
   // Private methods
-  friend class SINGLETON_DERIVED(TimePosGPS_c,BaseCommon_c);
+  friend class SINGLETON_DERIVED(TimePosGps_c,BaseCommon_c);
 
-  /** HIDDEN constructor for a TimePosGPS_c object instance which can optional
+  /** HIDDEN constructor for a TimePosGps_c object instance which can optional
     set the configuration for send/receive for base msg type NMEA 2000 GPS
     and calendar
-    NEVER instantiate a variable of type TimePosGPS_c within application
-    only access TimePosGPS_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
+    NEVER instantiate a variable of type TimePosGps_c within application
+    only access TimePosGps_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
     */
-  TimePosGPS_c();
+  TimePosGps_c();
 
   /** deliver time between now and last calendar set in [msec]
     @return msec since last calendar set
@@ -809,10 +810,10 @@ private:
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TimePosGPS_c& getTimePosGpsInstance( uint8_t aui8_instance = 0 );
+  TimePosGps_c& getTimePosGpsInstance( uint8_t aui8_instance = 0 );
 #else
   /** C-style function, to get access to the unique Base_c singleton instance */
-  TimePosGPS_c& getTimePosGpsInstance( void );
+  TimePosGps_c& getTimePosGpsInstance( void );
 #endif // END of PRT_INSTANCE_CNT
 
 } // END of Namespace __IsoAgLib
