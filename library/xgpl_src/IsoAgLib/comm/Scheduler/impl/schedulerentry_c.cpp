@@ -107,7 +107,7 @@ bool
 SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
 {
   #ifdef DEBUG
-  if  ( mpc_taskInstance == NULL )
+  if ( mpc_taskInstance == NULL )
   {
     #ifdef SYSTEM_PC
     EXTERNAL_DEBUG_DEVICE << "SchedulerEntry_c::timeEvent() had no mpc_taskInstance."
@@ -121,10 +121,10 @@ SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
   /// call only if client returns true caused by  nextRetriggerTime
   /// should NOT be Updated in  timeEventPostUpdateStatistics()
   /// so Client keep old nextRetriggerTime and stay as FIRST in TaskQueue
-  if( cb_result )mpc_taskInstance->timeEventPostUpdateStatistics();
+  if (cb_result) mpc_taskInstance->timeEventPostUpdateStatistics();
 
   #if defined (DEBUG) && defined( DEBUG_SCHEDULER)
-    if(!cb_result)  {
+    if (!cb_result) {
         INTERNAL_DEBUG_DEVICE << mpc_taskInstance->getTaskName() << ".timeEvent() returned false."
         << INTERNAL_DEBUG_DEVICE_ENDL;
     }

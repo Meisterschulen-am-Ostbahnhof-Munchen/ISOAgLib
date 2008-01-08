@@ -477,8 +477,9 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
     getCanInstance( ind ).timeEvent();
     System_c::triggerWd();
   }
-  #endif
+  #else
   System_c::triggerWd();
+  #endif
 
 
   /// Call timeEvent for next Client in TaskQueue as long as
