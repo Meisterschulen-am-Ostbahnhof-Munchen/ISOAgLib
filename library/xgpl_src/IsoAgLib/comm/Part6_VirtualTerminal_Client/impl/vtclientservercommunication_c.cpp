@@ -370,8 +370,11 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
         mui8_inputStringLength = arc_stream.getNextNotParsed();
 
         const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
-        if (ui16_totalstreamsize != (mui8_inputStringLength + 4))
-        {
+        if (ui16_totalstreamsize < (mui8_inputStringLength + 4))
+        { /** @todo SOON "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
+	      This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
+	      It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
+	   */
           arc_stream.setStreamInvalid();
           return false;
         }
