@@ -85,7 +85,7 @@
  *     and the script are located (default: IsoAgLib/compiler_projects/procejtGeneration/)<br>
  *     <tt>#> ./update_makefile.sh conf_0_0_AddressClaimIso</tt>
  * <li><b>Only Linux:</b><ul>
- *     <li>move to the 0_0_AddressClaimIso subdirectory of the kdevelop_qmake directory and run make
+ *     <li>move to the 0_0_AddressClaimIso subdirectory of the kdevelop_make directory and run make
  *     <li><tt>#> make</tt><br>
  *     <li>GNU make will then use the fresh created Makefile to create the executable 0_0_AddressClaimIso in this directory
  *     </ul>

@@ -391,9 +391,9 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   bool b_result = false;
 
   // decide which isoName to use for matching
-  // ISO message: use isoName from corresponding monitor item for checks
+  // use isoName from corresponding monitor item for checks
   const IsoName_c& c_isoNameReceiver = data().memberEmpf().isoName();
-  // ISO only message: check for sender isoName (only in remote)
+  // check for sender isoName (only in remote)
   const IsoName_c& c_isoNameSender = data().memberSend().isoName();
 
   // check first for remote Process Data

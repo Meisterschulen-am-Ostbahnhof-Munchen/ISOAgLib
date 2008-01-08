@@ -182,7 +182,7 @@ public:
 {}
 
   /**
-    constructor whith alternative parameter list (ISO only)
+    constructor whith alternative parameter list
     @param aui16_DDI
     @param aui16_element
     ...
@@ -273,7 +273,7 @@ public:
   }
 
   /**
-    ISO only: initialise this ProcDataLocal_c instance to a well defined initial state
+    <!--ISO only: -->Initialise this ProcDataLocal_c instance to a well defined initial state
               this alternative uses DDI and element number as parameter and not pointer to list of ElementDdi_s
 
     possible errors:

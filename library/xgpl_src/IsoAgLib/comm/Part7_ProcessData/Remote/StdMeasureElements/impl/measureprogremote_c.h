@@ -247,7 +247,7 @@ public:
     possible errors:
         * Err_c::elNonexistent no remote member with claimed address with given DEVCLASS found
         * dependant error in CAN_IO
-    @param ai32_val reset measure value to this value (ISO only)
+    @param ai32_val reset measure value to this value
     @return true -> command successful sent
   */
   virtual bool resetVal(int32_t ai32_val = 0);

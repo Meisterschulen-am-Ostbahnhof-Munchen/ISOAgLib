@@ -1,6 +1,6 @@
 /*! \page ProcDataPage Process Data Management
 The \isoaglib provides a very capable management of Process Data as standard mechanism
-( IsoAgLib::iProcDataLocal_c and IsoAgLib::iProcDataRemote_c ).
+(IsoAgLib::iProcDataLocal_c and IsoAgLib::iProcDataRemote_c).
 But as this might cause a big overhead for some applications, which for example only want to
 publish some measurement data on the BUS, restricted variants of them are provided.
 
@@ -98,9 +98,9 @@ publish some measurement data on the BUS, restricted variants of them are provid
   }
   \enddot-->
 \subsection LocalProcDataOverview Local Process Data
-Therefore the following variants are provided for local Process Data \n ( <b>local means:</b> the ECU which
+Therefore the following variants are provided for local Process Data \n (<b>local means:</b> the ECU which
 performs this SW is responsible for measurement and update of the value; additionally
-it is the adressee for setpoint commands ):
+it is the adressee for setpoint commands):
 - \a IsoAgLib::iProcDataLocal_c
    - full feature set of local managed Process Data
    - allow remote ECU to start measurement program, so that a value update is sent regularly
@@ -112,13 +112,13 @@ it is the adressee for setpoint commands ):
      -> the application has this way the possibility to evaluate all recieved values to find an
      optimal value which satisfies all - or at least most - of the received requests.
 - \a IsoAgLib::iProcDataLocalSimpleMeasure_c
-   - reduce resource ( RAM per instance, ROM if IsoAgLib::iProcDataLocal_c is not used in the project )
+   - reduce resource (RAM per instance, ROM if IsoAgLib::iProcDataLocal_c is not used in the project)
      afford by reduce of measurement data feature set
    - only provide measurement values by single shot requests - NO measurement programs.
      Also no derivation of MIN, MAX, AVG etc. - just provide single measurement value per request.
    - capable setpoint handling of IsoAgLib::iProcDataLocal_c
 - \a IsoAgLib::iProcDataLocalSimpleSetpoint_c
-   - reduce resource ( RAM per instance, ROM if IsoAgLib::iProcDataLocal_c is not used in the project )
+   - reduce resource (RAM per instance, ROM if IsoAgLib::iProcDataLocal_c is not used in the project)
      afford by reduce of setpoint command feature set
    - capable measurement data handling of IsoAgLib::iProcDataLocal_c
    - simply store each received setpoint and automatically send confirmation reply back to commanding
@@ -138,11 +138,11 @@ similar levels of capability:
    - provide methods to configure and use measurement programs and to request single values
    - enable commanding of setpoint values.
      The library provides the following state information for each setpoint:
-     - Setpoint accepted? ( %e.g. other conflicting setpoint or simply the commanded value out of bounds )
-     - Setpoint currently realised? ( %e.g. previously accepted setpoint can <b>not</b> be implemented on
-       current machine and environment state )
+     - Setpoint accepted? (%e.g. other conflicting setpoint or simply the commanded value out of bounds)
+     - Setpoint currently realised? (%e.g. previously accepted setpoint can <b>not</b> be implemented on
+       current machine and environment state)
      - Intersection of conflicting master setpoint and own setpoint is not empty and is implemented by commanded ECU?
-     - Current master setpoint? ( interesting if own setpoint wish was not accepted )
+     - Current master setpoint? (interesting if own setpoint wish was not accepted)
 - \a IsoAgLib::iProcDataRemoteSimpleMeasure_c
    - simply use single value request to gather measurement data of remote ECU
    - capable setpoint handling of IsoAgLib::iProcDataRemote_c
@@ -154,8 +154,8 @@ similar levels of capability:
 - \a IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
    - reduce RAM resource request more than IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c
    - combine setpoint and measurement value to one variable
-     ( IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c handles them as two different values, so that
-       a deviation between them can still be detected )
+     (IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c handles them as two different values, so that
+       a deviation between them can still be detected)
 <br>Also take a look at the \ref ProcDataRemotePage.
 
 \section ProcDataDirectoryStructureGrp Distribution of Classes and their corresponding files
@@ -163,9 +163,9 @@ The different variants of local and remote Process Data are based on some helper
 are structured corresponding to the feature set levels described in the overview on types of Process Data.
 The subdirectories are structured so that the needed main and helper classes for a wanted Process Data variant
 can be easily found.
-\n %E.%g. classes which are responsible for standard ( capable ) measuring programs of
+\n %E.%g. classes which are responsible for standard (capable) measuring programs of
 a Process Data type reside in the directories named <b>StdMeasureElements</b>.
-\n Comparable, the helper classes for a process data type which provides only restricted ( simple )
+\n Comparable, the helper classes for a process data type which provides only restricted (simple)
 setpoint management are placed in directories named <b>SimpleMeasureElements</b>.
 \n This leads to the following subdirectory structure beneath <i>\<xgpl_src/IsoAgLib/comm/Process\></i>
 Like in all directories of IsoAgLib, the internal implementation class Foo_c resides in path/impl/foo_c.h
@@ -175,7 +175,7 @@ any class of path. \n
 <table>
 <tr>
 <td>Local</td><td>&nbsp;</td><td>classes for local process data types <br>
-              -> ECU which runs this SW is responsible to update measurement value and react on setpoint ( if used )</td>
+              -> ECU which runs this SW is responsible to update measurement value and react on setpoint (if used)</td>
 </tr>
 <tr>
 <td>Remote</td><td>&nbsp;</td><td>classes for remote process data types<br>
@@ -183,31 +183,31 @@ any class of path. \n
 </tr>
 <tr>
 <td>StdMeasureElements</td><td>&nbsp;</td><td>helper classes for both remote and local measurement programs<br>
-              ( thereby placed in this central directory )</td>
+              (thereby placed in this central directory)</td>
 </tr>
 <tr>
 <td>StdSetpointElements</td><td>&nbsp;</td><td>helper classes for both remote and local capable setpoint handling<br>
-              ( thereby placed in this central directory )</td>
+              (thereby placed in this central directory)</td>
 </tr>
 <tr>
 <td>impl</td><td>&nbsp;</td><td>implementation files for all central classes which are needed for <b>all</b> Process Data applications<br>
-              ( -> include the elements of this directory always if you use Process Data )</td>
+              (-> include the elements of this directory always if you use Process Data)</td>
 </tr>
 <tr>
 <td>Local</td><td>Std</td><td>files for IsoAgLib::iProcDataLocal_c <br> need files of \e Local/StdMeasureElements, \e Local/StdSetpointElements,
-              \e StdMeasureElements, \e StdSetpointElements and \e impl ( everything related to Process directory )</td>
+              \e StdMeasureElements, \e StdSetpointElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Local</td><td>SimpleMeasure</td><td>files for IsoAgLib::iProcDataLocalSimpleMeasure_c <br> need files of \e Local/StdSetpointElements,
-              \e StdSetpointElements and \e impl ( everything related to Process directory )</td>
+              \e StdSetpointElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Local</td><td>SimpleSetpoint</td><td>files for IsoAgLib::iProcDataLocalSimpleSetpoint_c <br> need files of \e Local/StdMeasureElements,
-              \e Local/SimpleSetpointElements, \e StdMeasureElements and \e impl ( everything related to Process directory )</td>
+              \e Local/SimpleSetpointElements, \e StdMeasureElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Local</td><td>SimpleMeasureSetpoint</td><td>files for IsoAgLib::iProcDataLocalSimpleSetpointSimpleMeasure_c <br> need files of
-              \e Local/SimpleSetpointElements and \e impl ( everything related to Process directory )</td>
+              \e Local/SimpleSetpointElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Local</td><td>StdMeasureElements</td><td>helper classes for IsoAgLib::iProcDataLocal_c and IsoAgLib::iProcDataLocalSimpleSetpoint_c</td>
@@ -224,21 +224,21 @@ any class of path. \n
 </tr>
 <tr>
 <td>Remote</td><td>Std</td><td>files for IsoAgLib::iProcDataRemote_c <br> need files of \e Remote/StdMeasureElements, \e Remote/StdSetpointElements,
-              \e StdMeasureElements, \e StdSetpointElements and \e impl ( everything related to Process directory )</td>
+              \e StdMeasureElements, \e StdSetpointElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Remote</td><td>SimpleMeasure</td><td>files for IsoAgLib::iProcDataRemoteSimpleMeasure_c <br> need files of \e Remote/SimpleMeasureElements,
-              \e Remote/StdSetpointElements, \e StdSetpointElements and \e impl ( everything related to Process directory )</td>
+              \e Remote/StdSetpointElements, \e StdSetpointElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Remote</td><td>SimpleSetpoint</td><td>files for IsoAgLib::iProcDataRemoteSimpleSetpoint_c <br> need files of \e Remote/StdMeasureElements,
-              \e Remote/SimpleSetpointElements, \e StdMeasureElements and \e impl ( everything related to Process directory )</td>
+              \e Remote/SimpleSetpointElements, \e StdMeasureElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Remote</td><td>SimpleMeasureSetpoint</td><td>files for IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c and
               IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c <br> need files of
-              \e Remote/StdMeasureElements ( only for IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c ),
-              \e Remote/SimpleSetpointElements and \e impl ( everything related to Process directory )</td>
+              \e Remote/StdMeasureElements (only for IsoAgLib::iProcDataRemoteSimpleSetpointSimpleMeasure_c),
+              \e Remote/SimpleSetpointElements and \e impl (everything related to Process directory)</td>
 </tr>
 <tr>
 <td>Remote</td><td>StdMeasureElements</td><td>helper classes for IsoAgLib::iProcDataRemote_c and IsoAgLib::iProcDataRemoteSimpleSetpoint_c</td>
@@ -266,15 +266,15 @@ The \isoaglib handles Process Data to the greatest part independent from the und
 This allows to write applications, which concentrate only on the data communication part without
 the overhead of protocol specific details.
 This is achieved by the CAN data formating and low-level processing class __IsoAgLib::ProcessPkg_c, which
-detects dependent on the receiver ( for send of msg ) and/or sender ( for receive of msg )
+detects dependent on the receiver (for send of msg) and/or sender (for receive of msg)
 and its protocol state, which protocol format to use. This is achieved by IsoAgLib::iIsoMonitor_c
 which provides functions to derive the protocol type of a ECU based on it DevKey == device_type/_instance setting.
 
 \subsection ApplicationPrinciple Principles for the use of Process Data
-In spite to the first design of IsoAgLib ( version <= 0.3.0 ), the single variable instances
-of data type "Process Data XY" ( with XY from { IsoAgLib::iProcDataLocal_c, IsoAgLib::iProcDataRemote_c,
-IsoAgLib::iProcDataLocalSimpleMeasure_c, IsoAgLib::iProcDataRemoteSimpleSetpoint_c, ... } )
-can be placed like a "normal" variable ( %e.g. int, char ) in the program in the variable
+In spite to the first design of IsoAgLib (version <= 0.3.0), the single variable instances
+of data type "Process Data XY" (with XY from { IsoAgLib::iProcDataLocal_c, IsoAgLib::iProcDataRemote_c,
+IsoAgLib::iProcDataLocalSimpleMeasure_c, IsoAgLib::iProcDataRemoteSimpleSetpoint_c, ... })
+can be placed like a "normal" variable (%e.g. int, char) in the program in the variable
 scope where the process data information shall be accessed. Like "normal" variables,
 pointers to a process data instance can be distributed round the application.
 \subsubsection ImportantDisallowed Important Note to the use of Process Data Variables
@@ -283,13 +283,13 @@ use a process data type as function parameter.\n
 <b>Instead:</b> Provide access to functions or different sub-programs by <b>POINTER</b> to a Process Data
 instance. \n
 <b>Reason:</b> A Process Data type occupies a lot of RAM for the management of the different sub-data
-and a copy ( this is also done for function call without pointer or references ) of complete
+and a copy (this is also done for function call without pointer or references) of complete
 Process Data instances are <b>very expensive</b> operation regarding to RAM and time.
 Proc2iso should be used for generation of process information needed by the code sample below (see \ref XMLProcSpec).
 However, the file DeviceDescription.xml-func.inc describes how to do this by hand.
 \subsubsection ExampleForCorrectDistribution Example for Creation and Correct Distribution of Process Data Variable
 \code
-// declare extern example function ( dummy )
+// declare extern example function (dummy)
 extern void doSomething( IsoAgLib::iProcDataLocal_c *pc_localProc );
 // set device type of local ECU: fertilizer
 IsoAgLib::iIsoName_c c_myIsoName( 5, 0 );
@@ -311,14 +311,14 @@ doSomething( &c_myWorkState );
 
 \subsubsection StartMeasureProgram Example for Starting a Measure Program
 The \isoaglib provides a capable support for measuring programs, where an ECU can
-request the periodical send of a measurement value ( Process Data ) at a remote ECU.
-This can be performed by creating so-called subprogs ( >= 1 per measurement program ),
+request the periodical send of a measurement value (Process Data) at a remote ECU.
+This can be performed by creating so-called subprogs (>= 1 per measurement program),
 where the conditions to trigger a measurement value send can be defined.
 The final start command for the measurement program can then select the values, which
 should be sent on each trigger event.
 \n The nice on all this features is, that the ECU, which provides the data must only
 update the measurement value, as all the other communication is performed by the \isoaglib
-( %i.e. register measure programs and handle send of data, ... ).
+(%i.e. register measure programs and handle send of data, ...).
 \code
 // define device type of remote ECU ( from which we want measurement data )
 IsoAgLib::IsoName_c remoteIsoName( 1, 0 );
@@ -342,7 +342,7 @@ while( true ) {
 If an application has to immediately react on received setpoint or measurement update, it is needlessly time consuming
 to poll always for the awaited event. The \isoaglib provides a mechanism to define a handler which can then be
 registered on all Process Data variables, which should use the handler. \n
-Example usage: Define function which evaluates new received setpoints for immediate response and realisation ( if accepted )
+Example usage: Define function which evaluates new received setpoints for immediate response and realisation (if accepted)
 in current control loop.
 \code
 // derive handler class frome base class of IsoAgLib

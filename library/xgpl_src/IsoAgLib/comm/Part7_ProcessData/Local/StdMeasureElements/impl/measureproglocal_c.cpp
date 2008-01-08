@@ -762,7 +762,7 @@ void MeasureProgLocal_c::initVal(float af_val){
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
-    @param ai32_val reset measure value to this value (ISO only)
+    @param ai32_val reset measure value to this value
     @return true -> reseted measure val sent with success
   */
 bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
@@ -776,7 +776,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   if (processData().valType() != float_val)
   {
 #endif
-    // allow reset with value (ISO only)
+    // allow reset with value
     //mi32_val = 0;
     mi32_val = ai32_val;
 

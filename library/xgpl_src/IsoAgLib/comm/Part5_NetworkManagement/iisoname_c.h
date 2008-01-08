@@ -70,7 +70,7 @@
 namespace __IsoAgLib
 { // forward declarations
   class ProprietaryMessageHandler_c;
-  class TimePosGPS_c;
+  class TimePosGps_c;
 }
 
 // Begin Namespace IsoAgLib
@@ -305,7 +305,7 @@ private:
   friend class iIsoMonitor_c;
   friend class iMultiSend_c;
   friend class iMultiReceive_c;
-  friend class iTimePosGPS_c;
+  friend class iTimePosGps_c;
   friend class iTracMove_c;
   friend class iTracMoveSetPoint_c;
   friend class iTracGeneral_c;
@@ -334,7 +334,7 @@ private:
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
   friend class iIsoFilter_s;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
-  friend class __IsoAgLib::TimePosGPS_c;
+  friend class __IsoAgLib::TimePosGps_c;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

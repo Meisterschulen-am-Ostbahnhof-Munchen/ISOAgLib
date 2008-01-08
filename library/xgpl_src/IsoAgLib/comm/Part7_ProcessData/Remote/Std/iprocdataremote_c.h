@@ -166,7 +166,7 @@ public:
 
 
   /** constructor which can set all element vars
-      alternative parameter list (ISO only)
+      alternative parameter list
       @param aui16_DDI
       @param aui16_element
       ...
@@ -217,7 +217,7 @@ public:
                            );
    }
 
-  /** ISO only: initialise this ProcDataRemote_c instance to a well defined initial state
+  /** <!--ISO only:--> Initialise this ProcDataRemote_c instance to a well defined initial state
                 this alternative uses DDI and element number as parameter and not pointer to list of ElementDdi_s
       ISO parameter
       @param aui16_DDI

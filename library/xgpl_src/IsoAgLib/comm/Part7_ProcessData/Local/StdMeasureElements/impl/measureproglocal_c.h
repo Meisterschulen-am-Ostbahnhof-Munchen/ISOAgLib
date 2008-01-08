@@ -344,7 +344,7 @@ public:
     possible errors:
       * dependant error in ProcDataLocal_c if EMPF or SEND not valid
       * dependant error in CanIo_c on send problems
-    @param ai32_val reset measure value to this value (ISO only)
+    @param ai32_val reset measure value to this value
     @return true -> reseted measure val sent with success
   */
   virtual bool resetVal(int32_t ai32_val = 0);

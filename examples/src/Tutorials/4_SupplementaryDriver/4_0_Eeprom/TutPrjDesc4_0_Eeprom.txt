@@ -7,7 +7,7 @@
 
 
  \section PrjSpec4_0_Eeprom__c2c__sys__sys List of configuration settings for 4_0_Eeprom with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -507,7 +507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__esx__sys__sys List of configuration settings for 4_0_Eeprom with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -1007,7 +1007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__imi__sys__sys List of configuration settings for 4_0_Eeprom with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -1507,7 +1507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client_A1__rte List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -2007,7 +2007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client_A1__simulating List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -2507,7 +2507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client_A1__sys List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -3007,7 +3007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client_pcan__rte List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -3507,7 +3507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client_pcan__simulating List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -4007,7 +4007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__linux_server_client_pcan__sys List of configuration settings for 4_0_Eeprom with CAN Driver linux_server_client and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -4507,7 +4507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__rte__rte List of configuration settings for 4_0_Eeprom with CAN Driver rte and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -5007,7 +5007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__rte__simulating List of configuration settings for 4_0_Eeprom with CAN Driver rte and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -5507,7 +5507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__rte__sys List of configuration settings for 4_0_Eeprom with CAN Driver rte and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -6007,7 +6007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__simulating__rte List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver rte
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -6507,7 +6507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__simulating__simulating List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -7007,7 +7007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_linux__simulating__sys List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -7507,7 +7507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__simulating__simulating List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -8007,7 +8007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__simulating__sys List of configuration settings for 4_0_Eeprom with CAN Driver simulating and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -8507,7 +8507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__sontheim__simulating List of configuration settings for 4_0_Eeprom with CAN Driver sontheim and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -9007,7 +9007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__sontheim__sys List of configuration settings for 4_0_Eeprom with CAN Driver sontheim and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -9507,7 +9507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__vector_canlib__simulating List of configuration settings for 4_0_Eeprom with CAN Driver vector_canlib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -10007,7 +10007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__vector_canlib__sys List of configuration settings for 4_0_Eeprom with CAN Driver vector_canlib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -10507,7 +10507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__vector_xl_drv_lib__simulating List of configuration settings for 4_0_Eeprom with CAN Driver vector_xl_drv_lib and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -11007,7 +11007,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pc_win32__vector_xl_drv_lib__sys List of configuration settings for 4_0_Eeprom with CAN Driver vector_xl_drv_lib and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom
@@ -11507,7 +11507,7 @@ PRJ_RS232=1
 
 
  \section PrjSpec4_0_Eeprom__pm167__sys__sys List of configuration settings for 4_0_Eeprom with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_4_0_Eeprom in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_4_0_Eeprom

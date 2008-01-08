@@ -39,8 +39,7 @@ code completion, class browser, integrated debugger and several features more.
 There are some basic kdevelop3 projects in <tt>compiler_projects/kdevelop_tmake/IsoAgLib</tt> . In case of problems,
 <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> can help with some more examples.<br>
 The project files, which can be created by a helper tool of the \isoaglib, can be compiled very easily
-with standard GNUmake (<b>important:</b> this requires the existence of qmake of the Qt framework which is available as
-simple installable binary for all known Linux distributions).
+with standard GNUmake.
 
 \subsection CompDevVc6 Microsoft Visual Studio 6
 The automatic project file generating script can write DSP project files, which can be directly used to create an executeable .exe
@@ -301,7 +300,7 @@ The script parses the given project feature set selection and configuring file a
 	<tt>xgpl_src/IsoAgLib/</tt> (you can trigger the compiler to include it by simply
 	setting the compile time <tt>DEFINE PRJ_USE_AUTOGEN_CONFIG</tt> to <tt>.config_<project_name>.h</tt></li>
 <li>create suitable project files for the following build systems:<ul>
-	<li>Linux: <tt>make</tt> in the directory <tt>compiler_projects/kdevelop_qmake/</tt></li>
+	<li>Linux: <tt>make</tt> in the directory <tt>compiler_projects/kdevelop_make/</tt></li>
 	<li>Win32: Dev-C++ in the directory <tt>compiler_projects/Dev-C++/</tt></li>
 	<li>Win32: Visual Studio VC6 in the directory <tt>compiler_projects/VC6/</tt></li>
 	<li>Win32 for Embedded: Tasking EDE in the directory <tt>compiler_projects/EDE/</tt></li>
@@ -445,11 +444,7 @@ provided - and can be selected by the following configuration variables.
 	     projects
 
 \subsubsection ConfBuildLinux Build System Configuration for Linux
-In normal cases the update_makefile.sh script can find all needed helper programs on its own.
-But in some distributions, the tool <tt>qmake</tt> of Trolltech might be installed at a very uncommon place.
-The following places are search automatically:
-	- call system program <tt>which qmake</tt> to find qmake, if it is located in the program search path of the system
-	- search in directories with pattern <tt>/usr/lib/qt*</tt> or <tt>/usr/share/*</tt> (there should be only one version of qmake in the matched paths)
+The update_makefile.sh script should find all needed helper programs on its own.
 
 \subsubsection ConfBuildEde Build System Configuration for Cross Compilers (like Tasking EDE)
 Configuration options typical for embedded project (these are used for target systems like "esx", "imi", "pm167")

@@ -7,7 +7,7 @@
 
 
  \section PrjSpecImi__pc_win32__sontheim__simulating List of configuration settings for Imi with CAN Driver sontheim and RS232 Driver simulating
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_Imi in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_Imi
@@ -483,7 +483,7 @@ PRJ_EEPROM=1
 
 
  \section PrjSpecImi__pc_win32__sontheim__sys List of configuration settings for Imi with CAN Driver sontheim and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_qmake/ 
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
  Use the file conf_Imi in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_Imi
