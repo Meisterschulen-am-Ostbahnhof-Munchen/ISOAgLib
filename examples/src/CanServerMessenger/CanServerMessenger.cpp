@@ -5,7 +5,7 @@
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
-#include <IsoAgLib/util/icanpkg_c.h>
+#include <IsoAgLib/driver/can/icanpkg_c.h>
 
 //#include <iostream.h>
 //#include <iomanip.h>
