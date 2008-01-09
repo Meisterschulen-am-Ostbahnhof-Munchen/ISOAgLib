@@ -60,7 +60,7 @@
  * <li>Receive data (GPS position and direction) from the bus without sending any (=implement mode)
  * <ul>
  *  <li>Data storage class IsoAgLib::iTimePosGPS_c
- *  <li>configure to receive with IsoAgLib::iTimePosGPS_c::config()
+ *  <li>configure to receive with IsoAgLib::iTimePosGps_c::config()
  * </ul>
  * <li>Trigger periodic activities of ISO<i><sub>AgLib</sub></i>
  * <ul>
@@ -232,7 +232,7 @@ int main(int argc, char** argv)
                           // further parameters use the default values as given in the constructor
 
   // configure BaseData_c to send nothing on BUS but receive data (=implement mode)
-  iTimePosGPS_c& rc_timePosGps = getITimePosGpsInstance();
+  iTimePosGps_c& rc_timePosGps = getITimePosGpsInstance();
   rc_timePosGps.config (&c_myIdent.isoName(), IsoAgLib::IdentModeImplement);
 
   /** IMPORTANT:
