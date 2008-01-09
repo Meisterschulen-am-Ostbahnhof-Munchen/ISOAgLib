@@ -65,6 +65,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
   - fixed Working-Set-Master announce (TC client/server communication)
   - central mutex, so that a separate thread can safely access the \isoaglib, while no Scheduler_c::timeEvent() triggered internal activities of \isoaglib are running
   - reordering of directory structure, so that just a part of \isoaglib can be checked out, which contains only the library sources and managed BIOS files
+  - more user friendly layout and structure of html documentation pages
 
 For previous changes see the \ref PageOldNews or view the complete \ref PageChanges.
 
