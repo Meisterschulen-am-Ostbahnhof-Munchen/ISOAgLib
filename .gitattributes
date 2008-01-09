@@ -11,6 +11,18 @@ bin/update_makefile.sh -text
 bin/vt2iso -text
 /contact_and_support.txt -text
 doc/footer.html -text
+doc/graphics/HAL_esx.odg -text
+doc/graphics/HAL_esx.png -text
+doc/graphics/HAL_imi_pm167_pc.odg -text
+doc/graphics/HAL_imi_pm167_pc.png -text
+doc/graphics/HAL_suppl_esx.odg -text
+doc/graphics/HAL_suppl_esx.png -text
+doc/graphics/HAL_suppl_imi.odg -text
+doc/graphics/HAL_suppl_imi.png -text
+doc/graphics/HAL_suppl_pc.odg -text
+doc/graphics/HAL_suppl_pc.png -text
+doc/graphics/HAL_suppl_pm167.odg -text
+doc/graphics/HAL_suppl_pm167.png -text
 doc/graphics/commOverview.odg -text
 doc/graphics/commOverview.png -text
 doc/graphics/directory_structure.odg -text
@@ -32,6 +44,12 @@ doc/html/Diagramme/fertiliser_control_collaboration.png -text
 doc/html/Diagramme/service_network_conflict.png -text
 doc/html/Diagramme/service_network_connection.png -text
 doc/html/Diagramme/service_network_flexibility.png -text
+doc/html/Images/HAL_esx.png -text
+doc/html/Images/HAL_imi_pm167_pc.png -text
+doc/html/Images/HAL_suppl_esx.png -text
+doc/html/Images/HAL_suppl_imi.png -text
+doc/html/Images/HAL_suppl_pc.png -text
+doc/html/Images/HAL_suppl_pm167.png -text
 doc/html/Images/IsoAgLib_logo.png -text svneol=unset#image/png
 doc/html/Images/background-hill.gif -text
 doc/html/Images/commOverview.png -text

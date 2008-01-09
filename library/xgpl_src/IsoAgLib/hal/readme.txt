@@ -4,24 +4,62 @@ The directory structure of the \isoaglib HAL is designed to ease quick adaptatio
 
 \section MainHalAdaptationNew Adaptation to New Platform
 The following steps are enough for adaptation to a new hardware:
-    -# create a new SYSTEM_XY define in the header isoaglib_config.h for your platform ( compare to SYSTEM_ESX )
-    -# create a new #elif setting in isoaglib_config.h where the directory name for the HAL of the new platform is defined ( compare to SYSTEM_ESX )
-    -# create a copy of the directory <i>\<xgpl_src/IsoAgLib/hal/esx\></i> with the directory name as specified in isoaglib_config.h
-    -# do this also for <i>\<xgpl_src/supplementary_driver/hal/esx\></i> if you intend to use \isoaglib for actor, rs232 or sensor
+    -# create a new <tt>\#define SYSTEM_XY</tt> in the header <tt>isoaglib_config.h</tt> for your platform (compare to <tt>SYSTEM_ESX</tt>)
+    -# create a new <tt>\#elif</tt> setting in <tt>isoaglib_config.h</tt> where the directory name for the HAL of the new platform is defined (compare with <tt>SYSTEM_ESX</tt>)
+    -# create a copy of the directory <tt>xgpl_src/IsoAgLib/hal/esx</tt> with the directory name as specified in <tt>isoaglib_config.h</tt>
+    -# do this also for <tt>xgpl_src/supplementary_driver/hal/esx</tt> if you intend to use \isoaglib for actor, rs232 or sensor
     -# adapt the files in the new directories to your specific needs
-        - adapt #include statements for platform specific library / BIOS / RTOS
-        - adapt config settings in config.h ( compare to esx/config.h )
-        - adapt typedefs settings in typedef.h ( compare to esx/typedef.h )
-        - adapt the function mapping in the several files <i>\<target\>/\<device\>/\<device\>.h</i>
-        - implement functionality which is not provided by platform library in file named like system<b>_target_extensions.h</b> and system<b>_target_extensions.cpp</b>
-        - adapt CAN layer in hal_can_interface.h and hal_can_interface.cpp ( some CAN implementations use parameter structures which can't be mapped with inline functions )
-    -# insert your new SYSTEM_XY setting in your Makefiles or project configuration
-    -# send your adaptation to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> , so that your adaptation can be used and possibly optimized
+        - adapt <tt>\#include</tt> statements for platform specific library/BIOS/RTOS
+        - adapt config settings in <tt>config.h</tt> (compare to <tt>esx/config.h</tt>)
+        - adapt typedefs settings in <tt>typedef.h</tt> (compare to <tt>esx/typedef.h</tt>)
+        - adapt the function mapping in the several files <tt>target/device/device.h</tt>
+        - implement functionality which is not provided by platform library in file named like <tt>system<b>_target_extensions.h</b></tt> and <tt>system<b>_target_extensions.cpp</b></tt>
+        - adapt CAN layer in <tt>hal_can_interface.h</tt> and <tt>hal_can_interface.cpp</tt> (some CAN implementations use parameter structures which can't be mapped with inline functions) 
+    -# insert your new <tt>SYSTEM_XY</tt> setting in your Makefiles or project configuration
+    -# send your adaptation to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>, so that your adaptation can be used and possibly optimized
     within the user community
 
 \section MainHalStructure Structure of HAL for Main Parts
-\subsection MainHalEsx Structure of HAL for ESX of STW
 
+\subsection MainHalImiPM167Pc Structure of HAL for ESX, IMI and PM167 of STW and for PC
+\anchor MainHalEsx
+\anchor MainHalPm167 
+\anchor MainHalImi
+\anchor MainHalPc
+<img src="Images/HAL_esx.png" alt="Structure of HAL for ESX of STW" title="Structure of HAL for ESX of STW"><br>
+<img src="Images/HAL_imi_pm167_pc.png" alt="Structure of HAL for IMI/PM167/PC" title="Structure of HAL for IMI/PM167/PC"><br>
+For more information see the different header file references:
+- \ref hal/config.h "hal/config.h"
+- \ref hal/system.h "hal/system.h"
+- \ref hal/can.h "hal/can.h"
+- \ref hal/eeprom.h "hal/eeprom.h"
+- \ref esx/system/system.h "esx/system/system.h"
+- \ref esx/can/can.h "esx/can/can.h"
+- \ref esx/eeprom/eeprom.h "esx/eeprom/eeprom.h"
+- \ref esx/config.h "esx/config.h"
+- \ref esx/typedef.h "esx/typedef.h"
+- \ref esx/errcodes.h "esx/errcodes.h"
+- \ref imi/system/system.h "imi/system/system.h"
+- \ref imi/can/can.h "imi/can/can.h"
+- \ref imi/eeprom/eeprom.h "imi/eeprom/eeprom.h"
+- \ref imi/config.h "imi/config.h"
+- \ref imi/typedef.h "imi/typedef.h"
+- \ref imi/errcodes.h "imi/errcodes.h"
+- \ref pm167/system/system.h "pm167/system/system.h"
+- \ref pm167/can/can.h "pm167/can/can.h"
+- \ref pm167/eeprom/eeprom.h "pm167/eeprom/eeprom.h"
+- \ref pm167/config.h "pm167/config.h"
+- \ref pm167/typedef.h "pm167/typedef.h"
+- \ref pm167/errcodes.h "pm167/errcodes.h"
+- \ref pc/system/system.h "pc/system/system.h"
+- \ref pc/can/can.h "pc/can/can.h"
+- \ref pc/eeprom/eeprom.h "pc/eeprom/eeprom.h"
+- \ref pc/config.h "pc/config.h"
+- \ref pc/typedef.h "pc/typedef.h"
+- \ref pc/errcodes.h "pc/errcodes.h"
+
+
+<!--
 \dot
 digraph MainHalEsxStructure 
 {
@@ -33,7 +71,7 @@ digraph MainHalEsxStructure
     m_hal       [label="Hardware Abstraction Layer\nfor main library parts\npartly obligatory", color="green4", fontcolor="white"];
 
     hal_config  [label="Central Header for\nPlatform Configuration\nobligatory", color="green2", shape="ellipse", URL="\ref hal/config.h"];
-    hal_system  [label="Central Header for\nMain Target Functions ( e.g. get_time() )\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
+    hal_system  [label="Central Header for\nMain Target Functions (e.g. get_time())\nobligatory", color="green2", shape="ellipse", URL="\ref hal/system.h"];
     hal_can     [label="Central Header for\nPlatform specific CAN IO\nobligatory", color="green2", shape="ellipse", URL="\ref hal/can.h"];
     hal_eeprom  [label="Central Header for\nPlatform specific EEPROM IO\noptional", color="greenyellow", shape="ellipse", URL="\ref hal/eeprom.h"];
     hal_esx     [label="HAL for ESX of STW\nobligatory for this platform", color="green2"];
@@ -63,9 +101,6 @@ digraph MainHalEsxStructure
     hal_eeprom -> h_esx_eeprom [label="implement depend",style="dotted"];
 }
 \enddot
-
-
-\subsection MainHalImi Structure of HAL for IMI of STW
 
 \dot
 digraph MainHalImiStructure
@@ -110,7 +145,6 @@ digraph MainHalImiStructure
 \enddot
 
 
-\subsection MainHalPm167 Structure of HAL for PM167 of STW
 
 \dot
 digraph MainHalPm167Structure {
@@ -152,10 +186,6 @@ digraph MainHalPm167Structure {
     hal_eeprom -> h_pm167_eeprom [label="implement depend",style="dotted"];
 }
 \enddot
-
-
-\subsection MainHalPc Structure of HAL for PC
-
 \dot
 digraph MainHalPcStructure
 {
@@ -197,5 +227,6 @@ digraph MainHalPcStructure
     hal_eeprom -> h_pc_eeprom [label="implement depend",style="dotted"];
 }
 \enddot
+-->
 
 */
