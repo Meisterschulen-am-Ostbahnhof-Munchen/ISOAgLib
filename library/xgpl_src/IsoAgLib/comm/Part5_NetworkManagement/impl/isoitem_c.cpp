@@ -106,7 +106,7 @@ namespace __IsoAgLib {
 IsoItem_c::IsoItem_c()
   : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
-  , pvec_slaveIsoNames (NULL)
+  , mpvec_slaveIsoNames (NULL)
   , mi8_slavesToClaimAddress (0) // idle around
   , mi32_timeLastCompletedAnnounceStarted (-1)
   , mi32_timeCurrentAnnounceStarted (-1)
@@ -128,7 +128,7 @@ IsoItem_c::IsoItem_c()
 IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
   : BaseItem_c (arc_src)
 #ifdef USE_WORKING_SET
-  //, pvec_slaveIsoNames (...) // handled in code below!
+  //, mpvec_slaveIsoNames (...) // handled in code below!
   , mi8_slavesToClaimAddress (arc_src.mi8_slavesToClaimAddress)
   , mi32_timeLastCompletedAnnounceStarted (arc_src.mi32_timeLastCompletedAnnounceStarted)
   , mi32_timeCurrentAnnounceStarted (arc_src.mi32_timeCurrentAnnounceStarted)
@@ -141,13 +141,13 @@ IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
 
 {
   #ifdef USE_WORKING_SET
-  if ( arc_src.pvec_slaveIsoNames == NULL)
+  if ( arc_src.mpvec_slaveIsoNames == NULL)
   { // source is not a master, so simply copy the NULL
-    pvec_slaveIsoNames = NULL;
+    mpvec_slaveIsoNames = NULL;
   }
   else
   { // source is a master, so create a copy of the pointed list (stl::vector)
-    pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.pvec_slaveIsoNames));
+    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.mpvec_slaveIsoNames));
   }
   #endif
 }
@@ -165,13 +165,13 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arc_src)
   mb_repeatClaim = arc_src.mb_repeatClaim;
 
   #ifdef USE_WORKING_SET
-  if ( arc_src.pvec_slaveIsoNames == NULL)
+  if ( arc_src.mpvec_slaveIsoNames == NULL)
   { // source is not a master, so simply copy the NULL
-    pvec_slaveIsoNames = NULL;
+    mpvec_slaveIsoNames = NULL;
   }
   else
   { // source is a master, so create a copy of the pointed list (stl::vector)
-    pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.pvec_slaveIsoNames));
+    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.mpvec_slaveIsoNames));
   }
   mi8_slavesToClaimAddress = arc_src.mi8_slavesToClaimAddress;
   mi32_timeLastCompletedAnnounceStarted = arc_src.mi32_timeLastCompletedAnnounceStarted;
@@ -414,7 +414,7 @@ bool IsoItem_c::timeEvent( void )
         bool b_sendOutWsMessage=true;
         if ( mi8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
-          mi8_slavesToClaimAddress = pvec_slaveIsoNames->size();
+          mi8_slavesToClaimAddress = mpvec_slaveIsoNames->size();
 
           c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
           c_pkg.setUint8Data (0, (mi8_slavesToClaimAddress+1));
@@ -427,7 +427,7 @@ bool IsoItem_c::timeEvent( void )
           else
           { // Announce WS-Slave(s)
             c_pkg.setIsoPgn (WORKING_SET_MEMBER_PGN);
-            c_pkg.setDataUnion ((*pvec_slaveIsoNames) [pvec_slaveIsoNames->size()-mi8_slavesToClaimAddress].outputUnion());
+            c_pkg.setDataUnion ((*mpvec_slaveIsoNames) [mpvec_slaveIsoNames->size()-mi8_slavesToClaimAddress].outputUnion());
             mi8_slavesToClaimAddress--; // claimed address for one...
           }
         }
@@ -584,16 +584,16 @@ bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right)
 void
 IsoItem_c::setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames)
 {
-  if (pvec_slaveIsoNames)
+  if (mpvec_slaveIsoNames)
   { // already registered as working-set master.
     /** @todo SOON How to handle changing Workingset-State when it's already set? Maybe that's simply not allowed at all... */
   }
   else
   { // create a copy of the vector. (if it's set...)
     if (apvec_slaveIsoNames)
-      pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*apvec_slaveIsoNames);
+      mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*apvec_slaveIsoNames);
     else
-      pvec_slaveIsoNames = NULL;
+      mpvec_slaveIsoNames = NULL;
   }
 }
 
@@ -602,14 +602,14 @@ IsoItem_c::setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoName
 void
 IsoItem_c::setMaster (uint8_t aui8_slaveCount)
 {
-  if (pvec_slaveIsoNames)
+  if (mpvec_slaveIsoNames)
   { // already registered as working-set master.
     /** @todo SOON How to handle an UPDATE of the working-set definition? First keep it parallel until it finishes successful or fails? Maybe also check if this is a remote item?? */
   }
   else
   { // by creating the vector and setting the pointer, we're master now and have "aui8_slaveCount" slaves.
     // in case an entry is IsoNameUnspecified, it's definition has not yet arrived...
-    pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (aui8_slaveCount, IsoName_c::IsoNameUnspecified());
+    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (aui8_slaveCount, IsoName_c::IsoNameUnspecified());
   }
 }
 
@@ -619,10 +619,10 @@ void
 IsoItem_c::addSlave (IsoName_c const& rcc_slaveName)
 {
   /// @todo SOON We currently IGNORE any subsequent working-set announces! If the list is full, it stays full and no nothing is overwritten or alike...
-  if (pvec_slaveIsoNames)
+  if (mpvec_slaveIsoNames)
   {
-    STL_NAMESPACE::vector<IsoName_c>::iterator iter = pvec_slaveIsoNames->begin();
-    STL_NAMESPACE::vector<IsoName_c>::iterator end = pvec_slaveIsoNames->end();
+    STL_NAMESPACE::vector<IsoName_c>::iterator iter = mpvec_slaveIsoNames->begin();
+    STL_NAMESPACE::vector<IsoName_c>::iterator end = mpvec_slaveIsoNames->end();
     while (iter != end)
     {
       if ((*iter).isSpecified())

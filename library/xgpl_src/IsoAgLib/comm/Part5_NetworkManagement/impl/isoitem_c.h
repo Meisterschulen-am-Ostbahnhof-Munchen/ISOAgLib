@@ -305,7 +305,7 @@ public:
   int32_t startWsAnnounce();
 
   // check if this item is a master (i.e. the master pointer points to itself)
-  bool isMaster () const { return (pvec_slaveIsoNames != NULL); }
+  bool isMaster () const { return (mpvec_slaveIsoNames != NULL); }
 
   void setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
   void setMaster (uint8_t aui8_slaveCount);
