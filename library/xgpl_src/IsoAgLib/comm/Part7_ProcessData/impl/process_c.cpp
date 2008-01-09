@@ -788,46 +788,44 @@ bool Process_c::checkCreateRemoteReceiveFilter()
 }
 
 
-/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-  * @param rc_isoName const reference to the item which IsoItem_c state is changed
-  * @param apc_newItem pointer to the currently corresponding IsoItem_c
-  */
-void Process_c::reactOnMonitorListAdd( const IsoName_c& arcc_isoName, const IsoItem_c* /*apc_newItem*/ )
-{ // create FilterBoxes for remote ProcessData if needed
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(arcc_isoName) )
-  { // local IsoItem_c has finished adr claim
-    if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent)))
-    { // create IsoFilterBox
-      getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent), true);
-    }
-  }
-  else
-  { // remote IsoItem_c has finished adr claim
-    mb_needCallOfCheckCreateRemoteReceiveFilter = true;
-  }
-}
-
-
-/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-  * @param rc_isoName const reference to the item which IsoItem_c state is changed
-  * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-  */
-void Process_c::reactOnMonitorListRemove( const IsoName_c& arcc_isoName, uint8_t /*aui8_oldSa*/ )
+/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+ * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+ * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ */
+void
+Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(arcc_isoName) )
-  { // local IsoItem_c has lost SA
-    if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent)))
-    { // remove IsoFilterBox
-      getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoName, NULL, 8, Ident_c::ExtendedIdent));
-    }
-  }
-  else
-  { // remote IsoItem_c
-    /** @todo SOON: change handling so that DataLinkLayer issues error, when the target ISONAME is not available, so that the furhter sending of messages to this ISONAME
-              can be explicitly stopped, to avoid ongoing send tries to undefined destination.
-              As soon as this is done, the removal of receive filters should be de-activated.
-      */
-    deleteRemoteFilter(arcc_isoName);
+  switch (at_action)
+  {
+    case AddToMonitorList:
+      if (arcc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has finished adr claim
+        getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent), true);
+      }
+      else
+      { // remote IsoItem_c has finished adr claim
+        mb_needCallOfCheckCreateRemoteReceiveFilter = true;
+      }
+      break;
+
+    case RemoveFromMonitorList:
+      if (arcc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
+        /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent));
+      }
+      else
+      { // remote IsoItem_c
+        /** @todo SOON: change handling so that DataLinkLayer issues error, when the target ISONAME is not available, so that the furhter sending of messages to this ISONAME
+            can be explicitly stopped, to avoid ongoing send tries to undefined destination.
+            As soon as this is done, the removal of receive filters should be de-activated.
+        */
+        deleteRemoteFilter(arcc_isoItem.isoName());
+      }
+      break;
+
+    default:
+      break;
   }
 }
 

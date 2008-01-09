@@ -527,7 +527,6 @@ bool FilterBox_c::processMsg()
 /** some debug messages */
 void FilterBox_c::doDebug(uint8_t aui8_busNumber)
 {
-  bool b_detectedOverflow = false;
   #if CAN_INSTANCE_CNT == 1
   static uint16_t sui16_maxBufferUseage = 0;
   uint16_t &r_maxCnt = sui16_maxBufferUseage;

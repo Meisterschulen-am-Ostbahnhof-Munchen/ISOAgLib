@@ -1,3 +1,4 @@
+
 /***************************************************************************
                           isomonitor_c.cpp - object for monitoring members
                                               (list of IsoItem_c)
@@ -182,13 +183,13 @@ void IsoMonitor_c::init( void )
     bool b_configure = false;
 
     // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
-    getIsoRequestPgnInstance4Comm().registerPGN (*this, ADRESS_CLAIM_PGN);
+    getIsoRequestPgnInstance4Comm().registerPGN (*this, ADDRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
     getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MASTER_PGN);
     getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MEMBER_PGN);
 #endif
 
-  if( getCanInstance4Comm().insertStandardIsoFilter(*this,((ADRESS_CLAIM_PGN)+0xFF),false))
+  if( getCanInstance4Comm().insertStandardIsoFilter(*this,((ADDRESS_CLAIM_PGN)+0xFF),false))
       b_configure = true;
 #ifdef USE_WORKING_SET
     FilterBox_c* pc_filterBoxWsMaster = getCanInstance4Comm().insertStandardIsoFilter(*this,(WORKING_SET_MASTER_PGN),false);
@@ -231,13 +232,13 @@ void IsoMonitor_c::close( void )
     mvec_saClaimHandler.clear();
     mvec_isoMember.clear();
 
-    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADRESS_CLAIM_PGN);
+    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADDRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
     getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MASTER_PGN);
     getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MEMBER_PGN);
 #endif
 
-    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>((ADRESS_CLAIM_PGN)+0xFF) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>((ADDRESS_CLAIM_PGN)+0xFF) << 8), Ident_c::ExtendedIdent);
 #ifdef USE_WORKING_SET
     getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
@@ -269,6 +270,7 @@ bool IsoMonitor_c::timeEvent( void )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
     if ( !(*pc_iter)->timeEvent() ) return false;
+    /// @todo SOON Adapt the check on itemState. Check if 0x7C is correct...
     switch( (*pc_iter)->itemState() & 0x7C )
     {
     case IState_c::AddressClaim | IState_c::Active:
@@ -288,8 +290,8 @@ bool IsoMonitor_c::timeEvent( void )
 
     // do not change period
     case IState_c::PreAddressClaim | IState_c::Active: // shouldn't happen. after timeEvent we can not be any longer PreAddressClaim
-    case IState_c::Off:
-    case IState_c::Standby:
+    case IState_c::OffExplicitly:
+    case IState_c::OffUnable:
     default:
       // nothing to to do stay on 3000 ms timePeriod
       break;
@@ -364,9 +366,10 @@ bool IsoMonitor_c::timeEvent( void )
         else
         { // give it another chance
           pc_iter->setItemState( IState_c::PossiblyOffline );
+          pc_iter++;
           b_requestAdrClaim = true;
         }
-      } else  {
+      } else {
         pc_iter++;
       }
     } // for
@@ -593,7 +596,7 @@ bool IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName)
   @return pointer to new IsoItem_c or NULL if not succeeded
 */
 IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
-      uint8_t aui8_nr, IState_c::itemState_t ren_state)
+      uint8_t aui8_nr, IState_c::itemState_t ren_state, IdentItem_c* apc_identItemForLocalItems, bool ab_announceAddition)
 {
   IsoItem_c* pc_result = NULL;
 
@@ -607,7 +610,10 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW IsoItem_c
   // prepare temp item with wanted data
   mc_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
-    ac_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Member | IState_c::Active), getSingletonVecKey() );
+    ac_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Active), getSingletonVecKey() );
+  // if it's a local item, we need to set the back-reference.
+  if (apc_identItemForLocalItems)
+    mc_tempIsoMemberItem.setIdentItem(*apc_identItemForLocalItems);
 
   // now insert element
   const uint8_t b_oldSize = mvec_isoMember.size();
@@ -620,6 +626,11 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,
   else
   { // item was inserted
     pc_result = &(*mpc_isoMemberCache);
+    if (ab_announceAddition)
+    { // immediately announce addition.
+      // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
+      getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *pc_result);
+    }
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal++;
 
@@ -807,26 +818,8 @@ bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& ac_isoName, bool
   return false;
 }
 
-/** reset the Addres Claim state by:
-  * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-  * + remove pointed IsoItem_c and DINItem_c nodes and the respective pointer
-  * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
- */
-bool IsoMonitor_c::restartAddressClaim( const IsoName_c& arc_isoName )
-{
-  if ( existLocalIsoMemberISOName( arc_isoName, false ) )
-  { // there exists a local IdentItem_c with the given IsoName_c
-    // -> forward the function call
-    (*pc_searchCacheC1)->restartAddressClaim();
-    return true;
-  }
-  else
-  { // no local item has same IsoName_c
-    return false;
-  }
-}
 
-/** register a SaClaimHandler_c */
+/** register an SaClaimHandler_c */
 bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
@@ -840,13 +833,14 @@ bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
   // now: trigger suitable SaClaimHandler_c calls for all already known IsoNames in the list
   for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); iter++)
   { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
-    apc_client->reactOnMonitorListAdd( iter->isoName(), &(*iter) );
+    apc_client->reactOnIsoItemModification (AddToMonitorList, *iter);
   }
 
   return ( mvec_saClaimHandler.size() > oldSize )?true:false;
 }
 
-/** deregister a SaClaimHandler */
+
+/** deregister an SaClaimHandler */
 bool
 IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
 {
@@ -862,23 +856,16 @@ IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
   return (mvec_saClaimHandler.size() > oldSize)?true:false;
 }
 
-/** this function is used to broadcast a ISO monitor list change to all registered clients */
-void IsoMonitor_c::broadcastSaAdd2Clients( const IsoName_c& ac_isoName, const IsoItem_c* apc_isoItem ) const
+
+/** this function is used to broadcast an ISO monitor list change to all registered clients */
+void IsoMonitor_c::broadcastIsoItemModification2Clients( IsoItemModification_t at_isoItemModification, IsoItem_c const& arcc_isoItem ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
-    (*iter)->reactOnMonitorListAdd( ac_isoName, apc_isoItem );
+    (*iter)->reactOnIsoItemModification (at_isoItemModification, arcc_isoItem);
   }
 }
 
-/** this function is used to broadcast a ISO monitor list change to all registered clients */
-void IsoMonitor_c::broadcastSaRemove2Clients( const IsoName_c& ac_isoName, uint8_t aui8_oldSa ) const
-{
-  for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
-  { // call the handler function of the client
-    (*iter)->reactOnMonitorListRemove( ac_isoName, aui8_oldSa );
-  }
-}
 
 /**
   deliver member item with given isoName
@@ -961,15 +948,6 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& ac_isoName)
 {
   if (existIsoMemberISOName(ac_isoName))
   { // set correct state
-
-    #ifdef USE_WORKING_SET
-    // Are we deleting a WorkingSetMaster?
-    if (mpc_isoMemberCache->isMaster())
-    { // yes, so notify all slaves that they're now standalone!
-      notifyOnWsMasterLoss (*mpc_isoMemberCache);
-    }
-    #endif
-
     // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
     mvec_isoMember.erase(mpc_isoMemberCache);
     #ifdef DEBUG_HEAP_USEAGE
@@ -1060,14 +1038,22 @@ bool IsoMonitor_c::unifyIsoISOName (IsoName_c& rc_isoName, bool ab_dontUnify)
 }
 
 /** check if SA of an announcing IsoItem_c is unique and deliver
-  another free SA if not yet unique (else deliver its actual
-  SA if unique yet)
+  another free SA if not yet unique (else deliver its actual SA if unique yet)
   @param apc_isoItem pointer to announcing IsoItem_c
+  @param ab_resolveConflict true => don't use current SA because someone else
+                                    claimed it with a higher prior isoname,
+                                    so we have to change our SA. This is needed
+                                    as the new member is not yet in the list,
+                                    so the algorithm would still take the current SA.
+                                    We can't insert the new item, as we don't want
+                                    a state where two items have the same SA.
+                            false => no conflict to resolve, so we can take the current
+                                      source address if it's available!
   @return free unique SA (if possible the actual SA of the pointed item)
     (if wanted SA is not free for NOT-self-conf item or if no free SA is available
-     254 is answered -> special flag for NACK)
+      254 is answered -> special flag for NACK)
 */
-uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem)
+uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict)
 {
   uint8_t ui8_wishSa = apc_isoItem->nr();
   const bool cb_selfConf = apc_isoItem->selfConf();
@@ -1084,6 +1070,8 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem)
     }
   }
 
+  /// @todo SOON Maybe wrap around to SA 0 if we couldn't allocate one up to 253!?
+
   // while we have addresses to try, try!
   while (ui8_wishSa < 254)
   { // try the current ui8_wishSa
@@ -1092,7 +1080,7 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem)
           pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
     {
       if ((pc_iterItem->nr() == ui8_wishSa)
-           && (&(*pc_iterItem) != apc_isoItem)
+           && (ab_resolveConflict || (&(*pc_iterItem) != apc_isoItem))
          )
       { // the tried SA is already used by this item
         // -> break this search loop and try another ui8_wishSa
@@ -1154,7 +1142,7 @@ bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
   }
   // built request data string
 //  uint8_t pb_requestString[4];
-  data().setUint32Data( 0, ADRESS_CLAIM_PGN );
+  data().setUint32Data( 0, ADDRESS_CLAIM_PGN );
   data().setLen(3);
   // now IsoSystemPkg_c has right data -> send
   getCanInstance4Comm() << data();
@@ -1185,18 +1173,16 @@ bool IsoMonitor_c::processMsg()
   bool b_processed = false;
 
   IsoItem_c *pc_itemSameSa = NULL,
-          #ifdef USE_WORKING_SET
-            *pc_item = NULL,
-          #endif
             *pc_itemSameISOName = NULL;
 
 
   // decide whether the message should be processed
   if ( mc_serviceTool.isSpecified() )
   { // we are in diagnostic mode --> check if the message sender is the diagnostic tool
-    if (  existIsoMemberNr(data().isoSa()) )
+    IsoName_c const& rcc_isoNameSa = data().getISONameForSA();
+    if (rcc_isoNameSa.isSpecified())
     {
-      if ( isoMemberNr(data().isoSa()).isoName() != mc_serviceTool ) return false;
+      if ( rcc_isoNameSa != mc_serviceTool ) return false;
     }
     else if ( data().isoName() != mc_serviceTool ) return false;
     // if we reach here, the received message has to be processed, as the sender is the
@@ -1207,7 +1193,8 @@ bool IsoMonitor_c::processMsg()
   // Handle DESTINATION PGNs
   switch ((data().isoPgn() & 0x3FF00))
   {
-    case ADRESS_CLAIM_PGN: // adress claim
+    case ADDRESS_CLAIM_PGN: // adress claim
+      b_processed = true;
       if ( existIsoMemberISOName( data().isoName()) )
       {
         pc_itemSameISOName = &(isoMemberISOName(data().isoName()));
@@ -1217,93 +1204,116 @@ bool IsoMonitor_c::processMsg()
         pc_itemSameSa = &(isoMemberNr(data().isoSa()));
       }
 
-      // FIRST REMOVE any REMOTE IsoItem_c with SAME SA but different IsoName_c
-      if ( ( NULL != pc_itemSameSa                       )
-        && ( ! pc_itemSameSa->itemState(IState_c::Local) )
-        && ( pc_itemSameSa->isoName() != data().isoName()  ) )
-      { // REMOVE the node that is pointed by pc_itemSameSa
-        // - the destructor of the IsoItem_c informs all handlers about the loss
-        deleteIsoMemberNr( data().isoSa() );
-        pc_itemSameSa = NULL;
-      }
+      /// Receiving REMOTE Address-Claim
+      /// ##############################
 
-      /** @todo SOON AFTER CLARIFICATION OF STANDARD: Change handling of case where SAME ISONAME occurs. We shall not change our ISONAME while running in ISO! */
-      // SECOND: trigger total restart of ADR claim for any local IsoItem_c with
-      //         SAME IsoName_c
-      if ( ( NULL != pc_itemSameISOName ) && ( pc_itemSameISOName->itemState(IState_c::Local)) )
-      { // in ANY case - when another node sends SA claim with same NAME we MUST restart
-        // as nobody else on the network will detect the NAME clash
-        // - this restart triggers also the REMOVAL of the item pc_itemSameISOName
-        if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState( IState_c::Local ) ) )
-        { // there is also a SA conflict with a local IsoItem_c
-          if ( pc_itemSameSa != pc_itemSameISOName )
-          { // the received adr claim overlaps two different local IsoItem_c --> restart BOTH
-            // (even if pc_itemSameSa would have higher prio - this is needed, as the new remote item would be in conflict by SA with
-            //  the currently existing local pc_itemSameSa )
-            restartAddressClaim( pc_itemSameSa->isoName() );
-          }
-          // in case of sort of SA conflict with a local IsoItem_c, we must avoid a later reaction on this SA conflict
-          // => set the pointer to NULL to indicate the handled conflict
-          pc_itemSameSa = NULL;
-        }
-        // the case of a conflict on SA with a remote IsoItem_c is handled elsewhere as this block is only directed to handle
-        // conflicts with LOCAL IsoItem_c
-        restartAddressClaim( pc_itemSameISOName->isoName() );
-        pc_itemSameISOName = NULL;
-        // DO NOT set b_processed to true as the SA CLAIM shall trigger creation of fresh remote IsoItem_c
-      }
-
-      // THIRD: handle LOCAL item that has same SA
-      if ( ( NULL != pc_itemSameSa ) && ( pc_itemSameSa->itemState(IState_c::Local)) )
-      { // there exists a LOCAL item with same SA
-        // --> remove it when it has lower PRIO
-        int8_t i8_higherPrio = pc_itemSameSa->isoName(). higherPriThanPar(data().getDataUnionConst());
-        if ( ( i8_higherPrio < 0                              )
-               // the local IsoItem_c should be overwritten by the received adr claim, when the local
-               // item is not yet sent any adr claim (e.g. Off state or PreAddressClaim)
-               || ( ! pc_itemSameSa->itemStatePartialMatch(IState_c::itemState_t(IState_c::ClaimedAddress | IState_c::AddressClaim)) ) )
-        { // the LOCAL item has lower PRIO or has not yet fully claimed --> remove it
-          // the function SystemMgmt_c::restartAddressClaim() triggers removal of IsoItem_c
-          // and registers the next address claim try afterwards
-          restartAddressClaim( pc_itemSameSa->isoName() );
-          pc_itemSameSa = NULL;
+      if (NULL == pc_itemSameISOName)
+      { // We have NO item with this IsoName
+        /// Insert this new remote node (new isoname). Just check before if it steals a SA from someone
+        if (NULL == pc_itemSameSa)
+        { // New remote node took a fresh SA. The way it should be. Insert it to the list.
+          insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
         }
         else
-        { // let local IsoItem_c process the conflicting adr claim
-          // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
-          pc_itemSameSa->processMsg();
-          // set b_processed to TRUE, so that the next case FOUR is NOT active
-          // ==>> in case the remote IsoItem_c of the CAN message sender (key NAME)
-          //      exists already with _currently_ another SA in the IsoItem_c
-          //      WE DECIDE TO IGNORE THE SA CLAIM which would lead to a conflicting SA
-          //      ( in case our local IsoItem_c has higher PRIO )
-          b_processed = true;
+        { // New remote node stole a SA. Check if it stole from local or remote.
+          if (pc_itemSameSa->itemState(IState_c::Local))
+          { /// New remote node steals SA from Local node!
+            // --> change address if it has lower PRIO
+            int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar(data().getDataUnionConst());
+            // "ci8_higherPrio" can't be 0 because we have "NULL == pc_itemSameISOName", so we can't have the identical IsoName
+            if (ci8_higherPrio < 0)
+            { // the LOCAL item has lower PRIO
+              pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
+              pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict, so we can skip the "AddressClaim"-phase!
+
+              if (pc_itemSameSa->nr() == 254)
+              { // Couldn't get a new address -> remove the item and let IdentItem go to OffUnable!
+                if (pc_itemSameSa->getIdentItem())
+                { // as it should be! as it's local!
+                  pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+                }
+              }
+              insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
+            }
+            else
+            { // let local IsoItem_c process the conflicting adr claim
+              // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
+              pc_itemSameSa->processMsg();
+              insertIsoMember (data().isoName(), 0xFE, IState_c::AddressLost, NULL, true);
+              /// ATTENTION: We insert the IsoName WITHOUT a valid Address. (and even notify the registered clients about it!)
+              /// But this may also happen anyway if you register your handler at a later time -
+              /// then your handler will be called with "AddToMonitorList" for all yet known IsoItems -
+              /// and those don't need to have a valid SA at this moment!!
+            }
+          }
+          else
+          { /// New remote node steals SA from Remote node!
+            pc_itemSameSa->giveUpAddressAndBroadcast();
+            insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
+          }
         }
       }
+      else
+      { // We have an item with this IsoName
+        if (pc_itemSameISOName->itemState(IState_c::Local))
+        { // We have a local item with this IsoName
+          /// WE GOT A PROBLEM! SOMEONE IS SENDING WITH OUR ISONAME!
+          /// @todo SOON Handle the case when a remote message claims an address with a local running IsoName!
+          // for now, we shut down our own Ident...
+          if (pc_itemSameISOName->getIdentItem())
+          { // as it should be! as it's local!
+            pc_itemSameISOName->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+          }
+        }
+        else
+        { // We have a remote item with this IsoName
+          /// Change SA of existing remote node. Just check before if it steals a SA from someone
+          if (NULL == pc_itemSameSa)
+          { // (A9) Existing remote node took a fresh SA. The way it should be. Just change its address.
+            pc_itemSameISOName->processMsg();
+          }
+          else
+          { // Existing remote node took an already existing SA.
+            if (pc_itemSameSa == pc_itemSameISOName)
+            { // (A1) Existing remote node reclaimed its SA, so it's just a repeated address-claim.
+              pc_itemSameISOName->processMsg(); // only call to update the timestamp basically
+            }
+            else if (pc_itemSameSa->itemState(IState_c::Local))
+            { // (A5) Existing remote node steals SA from Local node!
+              // --> change address if it has lower PRIO
+              int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar(data().getDataUnionConst());
+              // "ci8_higherPrio" can't be 0 because we have "NULL == pc_itemSameISOName", so we can't have the identical IsoName
+              if (ci8_higherPrio < 0)
+              { // the LOCAL item has lower PRIO
+                pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
+                pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict, so we can skip the "AddressClaim"-phase!
 
-      // FOUR handle case where remote node has SAME IsoName_c (i.e. NAME)
-      if ( ( NULL != pc_itemSameISOName                       )
-        && ( ! pc_itemSameISOName->itemState(IState_c::Local) )
-        && ( ! b_processed                                   ) ///< this message has not yet been processed
-         )
-      { // there exists a REMOTE item with same IsoName_c
-        // --> simply let this item process
-        if ( pc_itemSameISOName->processMsg() ) b_processed = true;
-      }
-
-      // create NEW IsoItem_c in case no IsoItem_c with Pkg.IsoName_c exists
-      // and the message has not yet been marked as processed
-      if ( ( NULL == pc_itemSameISOName ) && ( ! b_processed ) )
-      { // create a suitable IsoItem_c and let it process
-        IsoItem_c* pc_newItem = insertIsoMember(data().isoName(), data().isoSa(),
-                              IState_c::itemState_t(IState_c::AddressClaim));
-        if ( NULL != pc_newItem )
-        { // new entry has been created
-          if ( pc_newItem->processMsg() ) b_processed = true;
+                if (pc_itemSameSa->nr() == 254)
+                { // Couldn't get a new address -> remove the item and let IdentItem go to OffUnable!
+                  if (pc_itemSameSa->getIdentItem())
+                  { // as it should be! as it's local!
+                    pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+                  }
+                }
+                pc_itemSameISOName->processMsg();
+              }
+              else
+              { // let local IsoItem_c process the conflicting adr claim
+                // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
+                pc_itemSameSa->processMsg();
+                pc_itemSameISOName->giveUpAddressAndBroadcast();
+              }
+            }
+            else
+            { // (A3) Existing remote node steals other remote node's SA
+              pc_itemSameSa->giveUpAddressAndBroadcast();
+              pc_itemSameISOName->processMsg(); // will set the new SA and do broadcasting
+            }
+          }
         }
       }
-
       break;
+
 #ifdef USE_PROCESS
     case PROCESS_DATA_PGN:
       static_cast<__IsoAgLib::CanPkg_c&>(getProcessInstance4Comm().data())
@@ -1317,40 +1327,53 @@ bool IsoMonitor_c::processMsg()
   switch ((data().isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
   {
     #ifdef USE_WORKING_SET
-    case WORKING_SET_MASTER_PGN: // working set master
+    case WORKING_SET_MASTER_PGN:
+    { // working set master
       b_processed = true;
-      if (existIsoMemberNr(data().isoSa()))
-      { // IsoItem_c with same SA has to exist!
-        IsoItem_c *pc_itemMaster = &(isoMemberNr(data().isoSa()));
-        pc_itemMaster->setMaster (pc_itemMaster); // set item as master
-        /** @todo SOON: IGNORE THAT WE GOT x MEMBERS FOR NOW
-            LATER WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
-            for timings see Iso11783-Part1
-          */
+      // get and check sender
+      IsoItem_c* pc_masterItem = data().getMonitorItemForSA();
+      // we have to check here because we also receive network-management messages here (i.e. "virtual bool isNetworkMgmt() const { return true; }").
+      if (pc_masterItem)
+      { // in Record Byte 1 (i.e. offset-byte 0) stands the number of TOTAL MEMBERS of this Working-Set.
+        // Note that this includes the Master, too - So we need to substract the master
+        pc_masterItem->setMaster (data().getUint8Data (1-1)-1);
+        /** @todo SOON: WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
+         * for now the slaves' isonames are just initialized with IsoNameUnspecified until the WORKING_SET_SLAVE message arrives...
+         * AND: Check what happens if the WS-sequence arrives a further time?
+         * --> for timings see Iso11783-Part1
+         */
       }
       else
-      {
-        // shouldn't happen!
-        getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
+      { // shouldn't happen normally (but could be a theoretical message on the bus,
+        // so we needed the check. But we don't have to do anything...
+        // ! Someone with an unknown SA sent a WORKING_SET_MASTER_PGN message...
+        /// @todo SOON Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
+        //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
-      break;
-    case WORKING_SET_MEMBER_PGN: // working set member
-      if (existIsoMemberNr(data().isoSa()))
-      { // IsoItem_c with same SA exists (THE SA IS THE MASTER!)
-        IsoItem_c *pc_itemMaster = &(isoMemberNr(data().isoSa()));
+    } break;
+
+    case WORKING_SET_MEMBER_PGN:
+    { // working set member
+      b_processed = true;
+      // get and check sender
+      IsoItem_c* pc_masterItem = data().getMonitorItemForSA();
+      // we have to check here because we also receive network-management messages here (i.e. "virtual bool isNetworkMgmt() const { return true; }").
+      if (pc_masterItem)
+      {
         // the working set master places the NAME field of each children
         // in the data part of this message type
-        pc_item = &(isoMemberISOName(data().isoName()));
-        pc_item->setMaster (pc_itemMaster); // set master on this isoItem
-        b_processed = true;
+        pc_masterItem->addSlave (data().isoName());
       }
       else
-      {
-        // shouldn't happen!
-        getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
+      { // shouldn't happen normally (but could be a theoretical message on the bus,
+        // so we needed the check. But we don't have to do anything...
+        // ! Someone with an unknown SA sent a WORKING_SET_MASTER_PGN message...
+        /// @todo SOON Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
+        //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
-      break;
+    } break;
     #endif
+
     default:
       break;
   } // end switch for NON-DESTINATION pgn
@@ -1363,7 +1386,7 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
 {
   switch (aui32_pgn)
   {
-    case ADRESS_CLAIM_PGN:
+    case ADDRESS_CLAIM_PGN:
       // update time of last adress claim request
       setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
 
@@ -1451,58 +1474,6 @@ IsoMonitor_c::updateEarlierAndLatestInterval()
 }
 
 
-#ifdef USE_WORKING_SET
-uint8_t IsoMonitor_c::getSlaveCount (IsoItem_c* apc_masterItem)
-{
-  uint8_t slaveCount;
-  IsoItem_c* pc_iterMaster;
-  // iterate through all items and check if it has the master set to us
-  // and is not the master itself!
-  slaveCount = 0;
-  for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    pc_iterMaster = pc_iter->getMaster ();
-    if ((& (*pc_iter) != apc_masterItem) && (pc_iterMaster == apc_masterItem)) {
-      slaveCount++;
-    }
-  }
-  return slaveCount;
-}
-
-IsoItem_c* IsoMonitor_c::getSlave (uint8_t index, IsoItem_c* apc_masterItem)
-{
-  uint8_t slaveCount;
-  IsoItem_c* pc_iterMaster;
-  // iterate through all items and check if it the (desired) Xth item
-  // if so, break and return it, else return NULL
-  slaveCount = 0;
-  for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); pc_iter++)
-  {
-    pc_iterMaster = pc_iter->getMaster ();
-    if ((& (*pc_iter) != apc_masterItem) && (pc_iterMaster == apc_masterItem)) {
-      if (slaveCount == index) return & (*pc_iter);
-      slaveCount++;
-    }
-  }
-  return NULL;
-}
-
-void
-IsoMonitor_c::notifyOnWsMasterLoss (IsoItem_c& arc_masterItem)
-{
-  // iterate through all items and check if they are slaves to the given master
-  for(Vec_ISOIterator pc_iter = mvec_isoMember.begin(); pc_iter != mvec_isoMember.end(); pc_iter++)
-  { // ALSO notify the master, as this function is NOT ONLY called from ~IsoItem_c(), but also
-    // intentionally from vtDocument_c to get the document NACKed!
-    if (pc_iter->getMaster() == (&arc_masterItem))
-    { // this ISOItem has the given MasterIsoItem as Master, so set it free now ;)
-      pc_iter->setMaster (NULL); // for ALL WS-Members (Master AND Slave)
-    }
-  }
-}
-#endif
-
-
 
 /** command switching to and from special service / diagnostic mode.
     setting the flag mc_serviceTool controls appropriate handling
@@ -1526,9 +1497,6 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& arc_serviceTool)
       }
       else
       { // remove the item from the monitor list
-        // first inform SA-Claim handlers on SA-Loss
-        broadcastSaRemove2Clients( pc_iter->isoName(), pc_iter->nr() );
-        // then remove item
         mvec_isoMember.erase( pc_iter );
         // reset iterator to begin
         pc_iter = mvec_isoMember.begin();

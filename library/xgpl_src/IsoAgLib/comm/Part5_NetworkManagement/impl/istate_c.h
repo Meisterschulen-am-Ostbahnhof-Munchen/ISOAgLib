@@ -105,27 +105,18 @@ public:
   enum itemState_t {
          IstateNull = 0x0,
          // only one states of following Line possible
-         Off = 0x4, Standby = 0xC, Active = 0x8,
+         /** @todo SOON Check the structure 4/C/8 as these fields are no bitmasks, but are handled like in the setter
+          *        Seems for enums bits are taken, which could be changed to use grouped bits as integer/enum. */
+         OffExplicitly = 0x4, OffUnable = 0xC, Active = 0x8,
          // only one states of following Line possible
-         PreAddressClaim = 0x10, AddressClaim = 0x20, ClaimedAddress = 0x40, FalseAlive = 0x80,
-         Stop = 0x100,
+         PreAddressClaim = 0x10, AddressClaim = 0x20, ClaimedAddress = 0x40, AddressLost = 0x80,
          // states of following Line independent parallel possible
          CausedConflict = 0x200,
          AffectedConflict = 0x400,
          Error = 0x800,
-         Member = 0x1000,  ///< This identifies a normal member
-         Service = 0x2000, ///< This flag could be used for ISO services
          Local = 0x4000,   ///< This flag identifies local items
          PossiblyOffline = 0x8000 ///< This flag indicates, that the node missed to anwer at least one AdrClaim request -> upon next miss it should be deleted from monitor list
   };
-
-  /**
-    enum for function parameters selcting Single Member type or type order;
-    the bits are so defined, that (protoOrder_t & itemState_t & 0x3) != 0
-    only if an IState_c itemState and a searched proto protoOrder_t
-    are fIffing for at least one protocol type
-  */
-//  enum protoOrder_t { DinOnly = 0x1, IsoOnly = 0x2, DinIso = 0x13, IsoDin = 0x23 };
 
   /**
     constructor of IState_c which can set the state to given initial value
@@ -149,12 +140,12 @@ public:
     set the state of an monitor list item and
     return the resulting state value
 
-    set state to Active, and reset Off and Standby on
+    set state to Active, and reset Off and OffUnable on
     Active, PreAddressClaim, AddressClaim, ClaimedAddress, FalseAlive;
 
     set: PreAddressClaim, AddressClaim and ClaimedAddress exclusive
 
-    set: Off, Standby, Active exclusive
+    set: Off, OffUnable, Active exclusive
     @param ren_itemState state information
     @param ab_clearOld optional clear old value for complete new set (default no clear)
     @return resulting state information
@@ -191,13 +182,6 @@ public:
   void clearItemState(itemState_t ren_itemState = itemState_t(~IstateNull))
     {en_itemState = itemState_t(en_itemState & ~ren_itemState);}
 
-  /**
-    check if an IState_c matches the searched protocols defined by protoOrder_t
-    @param ren_searchedProto
-    @return true -> at least one of the searched proto (DIN or ISO) is set for this item
-  */
-//  bool matchSearchedProto(protoOrder_t ren_searchedProto) const
-//     {return (((uint8_t)en_itemState & (uint8_t)ren_searchedProto & 0x3) != 0)?true:false;}
 
 private:
   /** state of this monitor item */
@@ -218,7 +202,7 @@ public:
     constructor of IStateExt_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Off value)
   */
-  IStateExt_c(itemState_t ren_itemState = Off, int ai_singletonVecKey = 0);
+  IStateExt_c(itemState_t ren_itemState = OffExplicitly, int ai_singletonVecKey = 0);
 
   /**
     constructor of IState_c which can set the state to given initial value
@@ -238,19 +222,6 @@ public:
     @return actual or resulting AddressClaim cnt
   */
   uint8_t addressClaimCnt(int8_t ac_cnt = Request);
-
-  /**
-    retreive the counter of false alive msgs
-    @return actual false alive cnt
-  */
-  uint8_t falseAliveCnt() const {return counter.b_falseAliveCnt;}
-
-  /**
-    set the counter of false alive msgs
-    @param ac_cnt new false alive counter  (default only Request)
-    @return actual or resulting false alive cnt
-  */
-  uint8_t falseAliveCnt(int8_t ac_cnt);
 
   /**
     retreive the counter of caused conflicts
@@ -287,7 +258,7 @@ private:
     uint16_t b_causedConflictCnt : 4;
     uint16_t b_affectedConflictCnt : 4;
     uint16_t b_addressClaimCnt : 4;
-    uint16_t b_falseAliveCnt : 4;
+  //uint16_t b_falseAliveCnt : 4;
   } counter;
 };
 

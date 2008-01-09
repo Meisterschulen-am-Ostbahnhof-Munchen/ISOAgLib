@@ -1404,92 +1404,70 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 
 
 
-/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-  * @param rc_isoName const reference to the item which IsoItem_c state is changed
-  * @param apc_newItem pointer to the currently corresponding IsoItem_c
-    */
+/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+ * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+ * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ */
 void
-MultiReceive_c::reactOnMonitorListAdd( const __IsoAgLib::IsoName_c& rc_isoName, const __IsoAgLib::IsoItem_c* apc_newItem )
+MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
-#ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "reactOnMonitorListAdd() handles CLAIM of IsoItem_c for device with DevClass: " << int(rc_isoName.devClass())
-      << ", Instance: " << int(rc_isoName.devClassInst()) << ", and manufacturer ID: " << int(rc_isoName.manufCode())
-      << "NOW use SA: " << int(apc_newItem->nr()) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &rc_isoName, NULL, 8), false);
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8), false);
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &rc_isoName, NULL, 8), false);
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &rc_isoName, NULL, 8), false);
-    getCanInstance4Comm().reconfigureMsgObj();
-  }
-
-  // apc_newItem is always != NULL
-  const uint8_t cui8_nr = apc_newItem->nr();
-  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
-       i_list_clients != mlist_clients.end();
-       i_list_clients++)
+  switch (at_action)
   {
-    if (i_list_clients->mc_isoName == rc_isoName)
-    { // yes, it's that ISOName that A) (locally) lost its SA before or B) (remotely) just changed it.
-      // note: we can receive (E)TPs for remote nodes, too. Needed for sniffing the WS-slave stuff!
-      // conclusion: just update it, regardless if it "lost (SA == 0xFF)" its SA before or not...
-      i_list_clients->mui8_cachedClientAddress = cui8_nr;
-    }
+    case AddToMonitorList:
+      if (arcc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has finished adr claim
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), true);
+      }
+      break;
+
+    case RemoveFromMonitorList:
+      if (arcc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
+        /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
+        /// @todo SOON Maybe clean up some streams and clients?
+        /// Shouldn't appear normally anyway, so don't care for right now...
+      }
+      break;
+
+    default:
+      break;
   }
 
-  // Notify all running streams
-  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin();
-       i_list_streams != mlist_streams.end(); i_list_streams++)
-  { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
-    const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi = i_list_streams->getIdent();
+  if ((at_action == AddToMonitorList) || (at_action == ChangedAddress) || (at_action == LostAddress) || (at_action == ReclaimedAddress))
+  {
+    /// If we're LostAddress, then we automatically have 0xFE now as SA...
+    const uint8_t cui8_nr = arcc_isoItem.nr();
+    for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
+        i_list_clients != mlist_clients.end();
+        i_list_clients++)
+    {
+      if (i_list_clients->mc_isoName == arcc_isoItem.isoName())
+      { // yes, it's that ISOName that A) (locally) lost its SA before or B) (remotely) just changed it.
+        // note: we can receive (E)TPs for remote nodes, too. Needed for sniffing the WS-slave stuff!
+        // conclusion: just update it, regardless if it "lost (SA == 0xFF)" its SA before or not...
+        i_list_clients->mui8_cachedClientAddress = cui8_nr;
+      }
+    }
+    // Notify all running streams
+    for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin();
+         i_list_streams != mlist_streams.end(); i_list_streams++)
+    { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
+      const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi = i_list_streams->getIdent();
     // re-vitalize the Addresses, so that following packets using this address will get processed again...
-    if (rc_rsi.getDaIsoName() == rc_isoName.toConstIisoName_c()) rc_rsi.setDa (cui8_nr);
-    if (rc_rsi.getSaIsoName() == rc_isoName.toConstIisoName_c()) rc_rsi.setSa (cui8_nr);
-  }
-}
-
-
-/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-  * @param rc_isoName const reference to the item which IsoItem_c state is changed
-  * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-  */
-void
-MultiReceive_c::reactOnMonitorListRemove( const __IsoAgLib::IsoName_c&
-#ifdef DEBUG
-rc_isoName
-#endif
-, uint8_t aui8_oldSa )
-{
-#ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "MR::reactOnMonitorListRemove() handles LOSS of IsoItem_c for device with DevClass: " << int(rc_isoName.devClass())
-      << ", Instance: " << int(rc_isoName.devClassInst()) << ", and manufacturer ID: " << int(rc_isoName.manufCode())
-      << " and PREVIOUSLY used SA: " << int(aui8_oldSa) << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
-  // Notify all registered clients
-  for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
-       i_list_clients != mlist_clients.end();
-       i_list_clients++)
-  { /** @todo SOON can we assume this is safe/consistent? or should we check our ISOName instead to be 100% sure */
-    if (aui8_oldSa == i_list_clients->mui8_cachedClientAddress) {
-      i_list_clients->mui8_cachedClientAddress = 0xFE; // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
+      if (rc_rsi.getDaIsoName() == arcc_isoItem.isoName().toConstIisoName_c()) rc_rsi.setDa (cui8_nr);
+      if (rc_rsi.getSaIsoName() == arcc_isoItem.isoName().toConstIisoName_c()) rc_rsi.setSa (cui8_nr);
     }
   }
-
-  // Notify all running streams
-  for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator i_list_streams = mlist_streams.begin();
-       i_list_streams != mlist_streams.end(); i_list_streams++)
-  { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
-    const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi = i_list_streams->getIdent();
-    // unset the Addresses, so that a following packet using this address does NOT get processed here!
-    if (rc_rsi.getDa() == aui8_oldSa) rc_rsi.setDa (0xFE); // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
-    if (rc_rsi.getSa() == aui8_oldSa) rc_rsi.setSa (0xFE); // as FE won't be valid as sender (FF would be broadcast) - so we don't get such packets in "processMsg()"
-  }
 }
+
+
 
 
 ///  Used for Debugging Tasks in Scheduler_c

@@ -114,7 +114,9 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey)
   , mpc_isoItem (NULL)
   , mui16_eepromAdr (aui16_eepromAdr)
-//  , ui8_lastUsedSa( 0xFF )
+#ifdef USE_WORKING_SET
+  , mpvec_slaveIsoNames (NULL)
+#endif
 {
   init (NULL, 0xFF, aui16_eepromAdr,
 #ifdef USE_WORKING_SET
@@ -154,7 +156,9 @@ IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t 
   int ai_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
   , mpc_isoItem (NULL)
-//  , ui8_lastUsedSa( 0xFF )
+#ifdef USE_WORKING_SET
+  , mpvec_slaveIsoNames (NULL)
+#endif
 {
   init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
         aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
@@ -268,9 +272,30 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
   }
 
 #ifdef USE_WORKING_SET
-  /// store SLAVE ISONAME pointer
-  mi8_slaveCount = ai8_slaveCount;
-  mpc_slaveIsoNameList = apc_slaveIsoNameList;
+  /// store SLAVE ISONAMEs
+  if (mpvec_slaveIsoNames)
+  { // first we need to remove the old ones
+    delete mpvec_slaveIsoNames;
+    mpvec_slaveIsoNames = NULL;
+  }
+  if (ai8_slaveCount >= 0)
+  { // we're workingset-master!
+    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c>();
+    // which is indicated by "mpvec_slaveIsoNames != NULL"
+    if (ai8_slaveCount > 0)
+    { // we have Slaves
+      mpvec_slaveIsoNames->reserve (ai8_slaveCount);
+      if (apc_slaveIsoNameList == NULL)
+      { // Catch bad case and to avoid dereferencing NULL we set ai8_slaveCount to 0.
+        getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
+        ai8_slaveCount = 0;
+      }
+      for (int i=0; i<ai8_slaveCount; i++)
+      { // copy the given Slave-IsoNames to the member stl-vector variable
+        mpvec_slaveIsoNames->push_back (apc_slaveIsoNameList [i]);
+      }
+    }
+  }
 #endif
 
   if (b_setActive)
@@ -325,32 +350,27 @@ void IdentItem_c::init(
 
 
 
-/** reset the Addres Claim state by:
-  * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-  * + remove pointed IsoItem_c nodes and the respective pointer
-  * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
+/** Go Offline by:
+  * + reset IdentItem::IState_c to IState_c::Off / OffUnable 
+  * + remove pointed IsoItem_c node and the respective pointer
+ * @param ab_explicitlyOffByUser ("Off" if explicitly called by user (true), "OffUnable" if we are unable to keep a claimed address (false))
   */
-void IdentItem_c::restartAddressClaim()
+void IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 {
-  bool b_configure = false;
-
-  if ( (mpc_isoItem != NULL)
-    && (mpc_isoItem->isoName() == isoName())
-    && (mpc_isoItem->itemState( IState_c::Local ))
-     )
-  { // item has claimed address -> send unregister cmd
-    // delete item from memberList
+  if (mpc_isoItem != NULL)
+  { // item is online
+    // -> send unregister cmd
+    // ->delete item from memberList
     getIsoRequestPgnInstance4Comm().unregisterLocalDevice( isoName() );
     getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
     mpc_isoItem = NULL;
   }
   clearItemState( IState_c::ClaimedAddress );
-  setItemState( IState_c::PreAddressClaim );
-  getIsoMonitorInstance4Comm().changeRetriggerTime();
-
-  if (b_configure)
-    getCanInstance4Comm().reconfigureMsgObj();
-
+  if (ab_explicitlyOffByUser) {
+    setItemState( IState_c::OffExplicitly );
+  } else {
+    setItemState( IState_c::OffUnable );
+  }
 }
 
 
@@ -364,11 +384,19 @@ IdentItem_c::~IdentItem_c()
   * -> IdentItem_c::close() send address release for identities
   */
 void IdentItem_c::close( void )
-{ // delete the corresponding IsoItem_c instances
-  // in the respective monitoring lists and set the state to IState_c::PreAddressClaim
-  restartAddressClaim();
+{ // delete the corresponding IsoItem_c instance in the respective monitoring list
+  // and set state to Off (explicitly requested)
+  goOffline (true);
   // unregister in IsoMonitor_c
   getIsoMonitorInstance4Comm().unregisterClient( this );
+  // if we have a list of slaves, then
+#ifdef USE_WORKING_SET
+  if (mpvec_slaveIsoNames)
+  { // delete list of slaves, too.
+    delete mpvec_slaveIsoNames;
+    mpvec_slaveIsoNames = NULL;
+  }
+#endif
 }
 
 
@@ -385,16 +413,29 @@ void IdentItem_c::close( void )
   */
 bool IdentItem_c::timeEvent( void )
 {
-   if (!itemState(IState_c::Off))
-   { // the system is not switched to off state
-    // and last timed action is 1sec lasted
-     // -> check for possible state switch or needed actions
-
-    // if state is prepare address claim check if isoName unique and insert item in list
-    if (itemState(IState_c::PreAddressClaim)) return timeEventPreAddressClaim();
-    else return timeEventActive();
+  if (NULL != getIsoItem())
+  { // If we have an IsoItem, see if it went off..
+    if ( (getIsoItem()->itemState (IState_c::OffExplicitly))
+      || (getIsoItem()->itemState (IState_c::OffUnable))
+       )
+    { // if the IsoItem dictates us to go offline, we're NOT offline by User of course...
+      goOffline(false);
+    }
   }
-  else return true;
+  if ( (itemState (IState_c::OffExplicitly))
+    || (itemState (IState_c::OffUnable))
+     )
+  { // We're OFF! So nothing to do!
+    return true;
+  }
+  else
+  { // the system is not switched to off state
+    // if state is prepare address claim check if isoName unique and insert item in list
+    if (itemState(IState_c::PreAddressClaim))
+      return timeEventPreAddressClaim();
+    else
+      return timeEventActive();
+  }
 }
 
 
@@ -423,19 +464,15 @@ bool IdentItem_c::timeEventPreAddressClaim( void )
   {
     // insert element in list
     mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_preferredSa,
-      IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
+      IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false); // do not yet announce. @todo SOON Maybe also announce right now?
 
     if (mpc_isoItem != NULL)
-    { // set item as member and as own identity and overwrite old value
-      mpc_isoItem->setItemState
-        (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
-
+    {
       // register the new item for ISORequestPGN
       getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
 
       #ifdef USE_WORKING_SET
-      // insert all slave ISOItem objects (if not yet there) and set me as their master
-      setToMaster ();
+      mpc_isoItem->setMasterSlaves (mpvec_slaveIsoNames);
       #endif
 
       mpc_isoItem->timeEvent();
@@ -490,14 +527,7 @@ bool IdentItem_c::timeEventActive( void )
   if (mpc_isoItem->itemState(IState_c::Local))
   {
     bool b_oldAddressClaimState = mpc_isoItem->itemState(IState_c::ClaimedAddress);
-    #ifdef USE_WORKING_SET
-    // check always for correct master state
-    // ( some conflicts with other remote BUS nodes could cause an overwrite
-    //    of the master node or of one of the slave node -> this function
-    //     resets everything to a well defined master->slave state )
-    /** @todo NOW: revise that (maybe) */
-    if ( mi8_slaveCount >= 0 ) setToMaster();
-    #endif
+
     mpc_isoItem->timeEvent();
     // check if IsoItem_c reports now to have finished address claim and store it in Ident_Item
     if ( (mpc_isoItem->itemState(IState_c::ClaimedAddress))
@@ -505,8 +535,6 @@ bool IdentItem_c::timeEventActive( void )
     { // item changed from address claim to claimed address state
       // -> create local filter for processs data
       setItemState(IState_c::ClaimedAddress);
-
-//      ui8_lastUsedSa = mpc_isoItem->nr(); // save SA for later filter removal
 
       if (mui16_eepromAdr != 0xFFFF)
       {
@@ -529,6 +557,7 @@ bool IdentItem_c::timeEventActive( void )
   }
   else
   { // remote ISO item has overwritten local item
+    /// @todo SOON This case shouldn't happen anymore!!!!!!!! --> See conflict handling when some sends an ADDRESS_CLAIM with our ISONAME!
     // ->see if we can still live with our IsoName
     // ->if not, we'lost because we can't change our IsoName
     IsoMonitor_c& rc_isoMonitor = getIsoMonitorInstance4Comm();
@@ -537,18 +566,14 @@ bool IdentItem_c::timeEventActive( void )
     if (cb_isoNameStillAvailable)
     { // insert element in list
       mpc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), mui8_preferredSa,
-        IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
+        IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false); // do not yet announce. @todo SOON Maybe also announce right now?
       if ( NULL != mpc_isoItem )
-      { // set item as member and as own identity and overwrite old value
-        mpc_isoItem->setItemState
-          (IState_c::itemState_t(IState_c::Member | IState_c::Local | IState_c::PreAddressClaim));
-
+      {
         // register the new item for ISORequestPGN
         getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
 
         #ifdef USE_WORKING_SET
-        // insert all slave ISOItem objects (if not yet there) and set me as their master
-        setToMaster ();
+        mpc_isoItem->setMasterSlaves (mpvec_slaveIsoNames);
         #endif
 
         mpc_isoItem->timeEvent();
@@ -570,7 +595,7 @@ bool IdentItem_c::timeEventActive( void )
       else
       { // now the ISOName is used by some other member on the BUS
         // ==> conflict
-        setItemState (Off); // withdraw from action
+        setItemState (OffUnable); // withdraw from action
         #if defined(SYSTEM_PC) && defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "WARNING: IsoName stolen by other member on the bus (remote), so we have to shut off forever!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -599,58 +624,5 @@ bool IdentItem_c::equalNr(uint8_t aui8_nr)
   return b_result;
 }
 
-
-#ifdef USE_WORKING_SET
-void IdentItem_c::setToMaster (int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList)
-{
-  IsoItem_c* pc_slaveIsoItem;
-
-  // if given, override list of slaves as given in constructor
-  if ((ai8_slaveCount != -1) && (apc_slaveIsoNameList != NULL)) {
-    mi8_slaveCount = (uint8_t) ai8_slaveCount;
-    mpc_slaveIsoNameList = apc_slaveIsoNameList;
-  }
-  else if ( mi8_slaveCount < 0 )
-  { // item wasn't created with explicit config for master item
-    return;
-  }
-
-  /// @todo NOW: What if the IsoItem is currently set to NULL?
-  // set our own ISOItem
-  mpc_isoItem->setMaster (mpc_isoItem);
-
-  // If Master/Slave situation....
-  if ( (mi8_slaveCount != 0) && (mpc_slaveIsoNameList != NULL) ) {
-    // loop over all slaves
-    for (uint8_t i=0; i<mi8_slaveCount; i++) {
-      // insert element in list
-      if ( getIsoMonitorInstance4Comm().existIsoMemberISOName(mpc_slaveIsoNameList[i]) ) {
-        pc_slaveIsoItem = &(getIsoMonitorInstance4Comm().isoMemberISOName(mpc_slaveIsoNameList[i]));
-      } else
-      {
-        pc_slaveIsoItem = getIsoMonitorInstance4Comm().insertIsoMember(mpc_slaveIsoNameList[i], 0xFE,
-                  IState_c::itemState_t(IState_c::Member | IState_c::PreAddressClaim));
-
-        if ( NULL != pc_slaveIsoItem) {
-          // set item as member and as own identity and overwrite old value
-          pc_slaveIsoItem->setItemState
-          (IState_c::itemState_t(IState_c::Member | IState_c::PreAddressClaim));
-
-          // register the new item for ISORequestPGN
-          getIsoRequestPgnInstance4Comm().registerLocalDevice( mpc_slaveIsoNameList[i] );
-
-        } else {
-          // there is neither a corresponding IsoItem_c in monitor list, nor is there the possibility to
-          // create a new ( memory problem, as insert of new member failed in IsoMonitor_c::insertIsoMember()
-          // failed )
-          return;
-        }
-      }
-      // set the isoItem's master....
-      pc_slaveIsoItem->setMaster (mpc_isoItem);
-    }
-  }
-}
-#endif
 
 } // end of namespace __IsoAgLib

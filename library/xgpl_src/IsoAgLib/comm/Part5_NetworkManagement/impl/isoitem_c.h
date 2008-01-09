@@ -1,6 +1,6 @@
 /***************************************************************************
                           isoitem_c.h - object which represents an item
-                                           in a iso monitor list
+                                           in an iso monitor list
                              -------------------
     begin                : Tue Jan 02 2001
     copyright            : (C) 2001 - 2004 by Dipl.-Inform. Achim Spangler
@@ -103,6 +103,9 @@ namespace __IsoAgLib {
   @see BaseItem
   @see ISOName
 */
+// forward declarations
+class IdentItem_c;
+
 class IsoItem_c : public BaseItem_c  {
 private:
   // private typedef alias names
@@ -240,6 +243,11 @@ public:
   void set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8_nr,
            itemState_t ren_status = IState_c::Active, int riSingletonKey = 0 );
 
+  /** this sets the back-reference to the associated IdentItem if this is a LOCAL Item!
+      there's no need to unset the back-reference, because the local/remote state
+      should be set at creation of the IsoItem. */
+  void setIdentItem (IdentItem_c& arc_identItem) { mpc_identItem = &arc_identItem; }
+
   /** set ISOName code of this item
     @param ac_isoName ISOName
   */
@@ -254,11 +262,6 @@ public:
     @return pointer to the name uint8_t string (7byte)
   */
   virtual const uint8_t* name() const;
-
-  /** check if the name field is empty (no name received)
-    @return true -> no name received
-  */
-  virtual bool isEmptyName() const;
 
   /** deliver name as pure ASCII string
     @param pc_name string where ASCII string is inserted
@@ -289,20 +292,24 @@ public:
    */
   bool sendSaClaim();
 
+  /// @param ab_fromConflict false => Initial Address-Claim, so we need to go to "AddressClaim"-phase!
+  ///                        true => go to "ClaimedAddress" state, no 250ms wait (for now) as we changed SA!
+  /// @todo SOON Do we really need this parameter? Should we wait 250ms on change of SA also???
+  /// @todo SOON Merge with sendSaClaim - create an enum for the three cases!
+  void sendAddressClaim (bool ab_fromConflict);
+
 #ifdef USE_WORKING_SET
   /** (Re-)Start sending the Working-Set Announce sequence
    * @return time-announce-started (=announce_key). You need this key to check for "isAnnounced(announce_key)".
    */
   int32_t startWsAnnounce();
 
-  // returns NULL if standalone, SELF if it is master itself, or the master ISOItem otherwise.
-  IsoItem_c* getMaster () const;
-
-  // attach to a master
-  void setMaster ( IsoItem_c* apc_masterItem );
-
   // check if this item is a master (i.e. the master pointer points to itself)
-  bool isMaster () const { return (this == mpc_masterItem); }
+  bool isMaster () const { return (pvec_slaveIsoNames != NULL); }
+
+  void setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
+  void setMaster (uint8_t aui8_slaveCount);
+  void addSlave (IsoName_c const& rcc_slaveName);
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
   bool isWsAnnounced (int32_t ai32_timeAnnounceStarted);
@@ -321,6 +328,16 @@ public:
     @return number
   */
   uint8_t nr()const{return mui8_nr;}
+
+  /**
+   * General Chandge Address function. Will set the Address and the call the necessary broadcast.
+   */
+  void changeAddressAndBroadcast (uint8_t aui8_newAddress);
+
+  /**
+   * some other node has stolen the Address, so we need to give up ours first.
+   */
+  void giveUpAddressAndBroadcast() { changeAddressAndBroadcast (0xFE); }
 
   /**
     lower comparison with another IsoItem_c on the rigth (compare the ISOName)
@@ -368,6 +385,7 @@ public:
   */
   bool equalNr(const uint8_t aui8_nr)const{return (nr() == aui8_nr)?true:false;}
 
+  IdentItem_c* getIdentItem() { return mpc_identItem; }
 
 protected: // methods
 
@@ -379,10 +397,13 @@ private: // methods
 
 private: // members
 #ifdef USE_WORKING_SET
-  /** pointer to the master IsoItem_c (if == this, then i'm master myself)
-    NULL if not part of a master/slave setup
-  */
-  IsoItem_c* mpc_masterItem;
+  /** pointer to a list of all slave nodes represented by their ISO-Name
+   * if this pointer is != NULL, this item IS a master and the list's size is the number of associated slaves.
+   * if this pointer is == NULL, this item is NOT a master.
+   * It may be a slave - this can be determined by searching
+   * through all Items' list for this Item's IsoName!
+   */
+  STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNames;
 
   /** mi8_slavesToClaimAddress
     * == -1  waiting to announce WS-master message
@@ -402,6 +423,9 @@ private: // members
 
   bool mb_repeatClaim;
 
+  /** If the IsoItem is LOCAL, you'll find a back-reference to the IdentItem here. */
+  IdentItem_c* mpc_identItem;
+
   /** ISOName of element */
   IsoName_c mc_isoName;
 };
@@ -411,10 +435,10 @@ typedef IsoItem_c ISOItem_c;
 
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t
-  @param arc_left left ServiceItem_c parameter
-  @param ab_right ISOName uint8_t right parameter
+  @param arcc_left left IsoItem_c parameter
+  @param arcc_right right IsoName_c parameter
 */
-bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right);
+bool lessThan(const IsoItem_c& arcc_left, const IsoName_c& arcc_right);
 
 }
 #endif

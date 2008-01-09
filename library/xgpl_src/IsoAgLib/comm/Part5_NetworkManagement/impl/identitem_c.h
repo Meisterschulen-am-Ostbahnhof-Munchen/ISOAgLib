@@ -225,18 +225,6 @@ public: // methods
     #endif
     int ai_singletonVecKey = 0);
 
-
-#ifdef USE_WORKING_SET
-  /** set this Ident as Working Set Master, create all IsoItem_c slave items
-      and set them to prepare address claim with master set to the responding master IsoItem_c
-      @param ab_slaveCount how many slaves does the master have?
-      @param apc_listSlaves the ISONames or whatever of all the slaves
-    */
-  void setToMaster (int8_t ai8_slaveCount=-1, const IsoName_c* apc_slaveIsoNameList=NULL);
-
-  bool isMaster() const { return (mi8_slaveCount >= 0); }
-#endif
-
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
     */
@@ -251,12 +239,12 @@ public: // methods
     */
   IsoName_c& modifyableIsoName() { return mc_isoName; }
 
-  /** reset the Addres Claim state by:
-    * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-    * + remove pointed IsoItem_c nodes and the respective pointer
-    * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
+  /** Go Offline by:
+    * + reset IdentItem::IState_c to IState_c::Off / OffUnable
+    * + remove pointed IsoItem_c node and the respective pointer
+    * @param ab_explicitlyOffByUser ("Off" if explicitly called by user (true), "OffUnable" if we are unable to keep a claimed address (false))
     */
-  void restartAddressClaim();
+  void goOffline (bool ab_explicitlyOffByUser);
 
   /** default destructor which has nothing to do */
   ~IdentItem_c();
@@ -321,6 +309,10 @@ public: // methods
 
   /** check if the ident has claimed address */
   bool isClaimedAddress( void ) const { return (getIsoItem() != NULL) ? (getIsoItem()->itemState (IState_c::ClaimedAddress)) : (itemState (IState_c::ClaimedAddress)); }
+
+#ifdef USE_WORKING_SET
+  bool isMaster() const { return (mpvec_slaveIsoNames != NULL); }
+#endif
 
 
 protected: // methods
@@ -404,12 +396,14 @@ private: // attributes
   IsoName_c mc_isoName;
 
   #ifdef USE_WORKING_SET
-  const IsoName_c* mpc_slaveIsoNameList;
-  int8_t mi8_slaveCount;
+  /** pointer to a list of all slave nodes represented by their ISO-Name
+   * if this pointer is != NULL, this item IS a master and the list's size is the number of associated slaves.
+   * if this pointer is == NULL, this item is NOT a master.
+   * It may be a slave - this can be determined by searching
+   * through all Items' list for this Item's IsoName!
+   */
+  STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNames;
   #endif
-
-//  uint8_t ui8_lastUsedSa;
-
 };
 
 }

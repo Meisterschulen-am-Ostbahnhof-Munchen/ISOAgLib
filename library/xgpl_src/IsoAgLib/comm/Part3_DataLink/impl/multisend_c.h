@@ -317,17 +317,11 @@ public: // methods
   /** default destructor which has nothing special to do (only call close!) */
   virtual ~MultiSend_c() { close(); }
 
-  /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-   * @param rc_isoName const reference to the item which IsoItem_c state is changed
-   * @param apc_newItem pointer to the currently corresponding IsoItem_c
-    */
-  virtual void reactOnMonitorListAdd( const __IsoAgLib::IsoName_c& rc_isoName, const __IsoAgLib::IsoItem_c* apc_newItem );
-
-  /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-   * @param rc_isoName const reference to the item which IsoItem_c state is changed
-   * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
+  /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+   * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+   * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  virtual void reactOnMonitorListRemove( const __IsoAgLib::IsoName_c& rc_isoName, uint8_t aui8_oldSa );
+  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*arcc_isoItem*/);
 
 
   /**

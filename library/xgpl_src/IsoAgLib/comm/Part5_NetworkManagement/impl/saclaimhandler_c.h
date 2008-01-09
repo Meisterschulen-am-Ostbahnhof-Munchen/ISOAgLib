@@ -66,24 +66,31 @@ namespace __IsoAgLib {
 
 
 
-/** Handler class which can be used to react on SA claims and esp. conflicts */
+/** Handler class which can be used to react on all actions depending on address-claims.
+ *  Actions that can take place are listed in the class-embdedded enum.
+ */
 class SaClaimHandler_c : public IsoRequestPgnHandler_c
 {
- public:
+public:
+
+  typedef enum IsoItemAction_en
+  { /// ATTENTION: If a node is added and "AddToMonitorList" is broadcast,
+    /// ~~~~~~~~~  the node doesn't need to have a valid Address at this moment!!
+    AddToMonitorList,        /// Initial Address-Claim --> Node added to IsoMonitor
+    ChangedAddress,          /// Changed Address
+    LostAddress,             /// Address stolen due to Address-Claim of other node with Same SA (New Address is 254)
+    ReclaimedAddress,        /// Reclaimed an Address after Address was stolen (Old Address was 254)
+    RemoveFromMonitorList    /// No more Address-Claims (after requests) --> Node removed from IsoMonitor
+  } IsoItemModification_t;
+
    SaClaimHandler_c() {}
    virtual ~SaClaimHandler_c() {}
 
-   /** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-     * @param rc_isoName const reference to the item which IsoItem_c state is changed
-     * @param apc_newItem pointer to the currently corresponding IsoItem_c
+   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+     * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+     * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
      */
-   virtual void reactOnMonitorListAdd( const IsoName_c& /*rc_isoName*/, const IsoItem_c* /*apc_newItem*/ ) {};
-
-   /** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-    * @param rc_isoName const reference to the item which IsoItem_c state is changed
-    * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-    */
-   virtual void reactOnMonitorListRemove( const IsoName_c& /*rc_isoName*/, uint8_t /*aui8_oldSa*/ ) {};
+   virtual void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*arcc_isoItem*/) {}
 };
 
 }

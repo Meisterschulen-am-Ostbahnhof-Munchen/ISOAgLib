@@ -202,40 +202,37 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
 
 
 
-/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
-  * @param rc_isoName const reference to the item which IsoItem_c state is changed
-  * @param apc_newItem pointer to the currently corresponding IsoItem_c
-  */
+/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+ * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+ * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+   */
 void
-IsoFilterManager_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* /*apc_newItem*/)
+IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
-  bool b_reconfig = false;
-  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
-       it_isoFilterBox != mvec_isoFilterBox.end();
-       it_isoFilterBox++)
-  { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    b_reconfig |= it_isoFilterBox->updateOnAdd();
+  if ((at_action == AddToMonitorList) || (at_action == ReclaimedAddress) || (at_action == ChangedAddress))
+  {
+    bool b_reconfig = false;
+    for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+        it_isoFilterBox != mvec_isoFilterBox.end();
+        it_isoFilterBox++)
+    { // the ISOFilterBoxes will take care if they have to do anything at all or not...
+      b_reconfig |= it_isoFilterBox->updateOnAdd();
+    }
+
+    if (b_reconfig)
+      getCanInstance4Comm().reconfigureMsgObj();
   }
-
-  if (b_reconfig)
-    getCanInstance4Comm().reconfigureMsgObj();
-}
-
-
-/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
-* @param rc_isoName const reference to the item which IsoItem_c state is changed
-* @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
-*/
-void
-IsoFilterManager_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*aui8_oldSa*/)
-{
-  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
-       it_isoFilterBox != mvec_isoFilterBox.end();
-       it_isoFilterBox++)
-  { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-    it_isoFilterBox->updateOnRemove (&rc_isoName);
+  else
+  { // ((at_action == RemoveFromMonitorList) || (at_action == LostAddress))
+    for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+         it_isoFilterBox != mvec_isoFilterBox.end();
+         it_isoFilterBox++)
+    { // the ISOFilterBoxes will take care if they have to do anything at all or not...
+      it_isoFilterBox->updateOnRemove (&arcc_isoItem.isoName());
+    }
   }
 }
+
 
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

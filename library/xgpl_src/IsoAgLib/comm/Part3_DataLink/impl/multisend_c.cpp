@@ -976,30 +976,37 @@ MultiSend_c::SendStream_c::abortSend()
   *mpen_sendSuccessNotify = SendAborted;
 }
 
-
-/** this function is called by IsoMonitor_c when a new CLAIMED IsoItem_c is registered.
- * @param rc_isoName const reference to the item which IsoItem_c state is changed
- * @param apc_newItem pointer to the currently corresponding IsoItem_c
+/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+ * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+ * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
-void MultiSend_c::reactOnMonitorListAdd( const IsoName_c& rc_isoName, const IsoItem_c* /*apc_newItem*/ )
+void
+MultiSend_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
-  if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
-  { // local IsoItem_c has finished adr claim
-    #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "MultiSend_c added receive filter for LocalIsoMember as it's now active (=claimed)." << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &rc_isoName, NULL, 8));
-    getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &rc_isoName, NULL, 8));
+  switch (at_action)
+  {
+    case AddToMonitorList:
+      if (arcc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has finished adr claim
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), true);
+      }
+      break;
+
+    case RemoveFromMonitorList:
+      if (arcc_isoItem.itemState (IState_c::Local))
+      { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
+        /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
+        /// @todo SOON Maybe clean up some streams and clients?
+        /// Shouldn't appear normally anyway, so don't care for right now...
+      }
+      break;
+
+    default:
+      break;
   }
-}
-
-
-/** this function is called by IsoMonitor_c when a device looses its IsoItem_c.
- * @param rc_isoName const reference to the item which IsoItem_c state is changed
- * @param aui8_oldSa previously used SA which is NOW LOST -> clients which were connected to this item can react explicitly
- */
-void MultiSend_c::reactOnMonitorListRemove( const IsoName_c& /*rc_isoName*/, uint8_t /*aui8_oldSa*/ )
-{ // not needed anymore, as IsoFilterManager_c handles all this
 }
 
 

@@ -124,12 +124,12 @@ IState_c::IState_c(const IState_c& arc_src)
   set the state of an monitor list item and
   return the resulting state value
 
-  set state to Active, and reset Off and Standby on
-  Active, PreAddressClaim, AddressClaim, ClaimedAddress, FalseAlive;
+  set state to Active, and reset Off and OffUnable on
+  Active, PreAddressClaim, AddressClaim, ClaimedAddress;
 
   set: PreAddressClaim, AddressClaim and ClaimedAddress exclusive
 
-  set: Off, Standby, Active exclusive
+  set: Off, OffUnable, Active exclusive
   @param ren_itemState state information
   @param ab_clearOld optional clear old value for complete new set (default no clear)
   @return resulting state information
@@ -137,26 +137,26 @@ IState_c::IState_c(const IState_c& arc_src)
 IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool ab_clearOld)
 {
   if (ab_clearOld) en_itemState = ren_itemState;
-  // set state to Active, and reset Off andStandby on
-  // Active, PreAddressClaim, AddressClaim, ClaimedAddress, FalseAlive
-  if ((ren_itemState & (Active|PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive)) > 0)
-  { // one of these states set -> clear Off and Standby
-    clearItemState(itemState_t(Off|Standby));
-    // set PreAddressClaim, AddressClaim and ClaimedAddress exclusive
-    if ((ren_itemState & (PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive)) > 0)
-    { // one of PreAddressClaim, AddressClaim and ClaimedAddress exclusive
+  // set state to Active, and reset Off and OffUnable on
+  // Active, PreAddressClaim, AddressClaim, ClaimedAddress
+  if ((ren_itemState & (Active|PreAddressClaim|AddressClaim|ClaimedAddress|AddressLost)) > 0)
+  { // one of these states set -> clear Off and OffUnable
+    clearItemState(itemState_t(OffExplicitly|OffUnable));
+    // set PreAddressClaim, AddressClaim, ClaimedAddress and AddressLost exclusive
+    if ((ren_itemState & (PreAddressClaim|AddressClaim|ClaimedAddress|AddressLost)) > 0)
+    { // one of PreAddressClaim, AddressClaim, ClaimedAddress and AddressLost exclusive
       // clear before set
-      clearItemState(itemState_t(PreAddressClaim|AddressClaim|ClaimedAddress|FalseAlive|PossiblyOffline));
+      clearItemState(itemState_t(PreAddressClaim|AddressClaim|ClaimedAddress|AddressLost|PossiblyOffline));
     }
     // now set always additionally the Active flag
     en_itemState = itemState_t(en_itemState | Active);
   }
 
   // set: Off, Standby, Active exclusive
-  if ((ren_itemState & (Off|Standby)) > 0)
-  { // one of Off, Standby, Active (handled above)
-    // clear: Off, Standby, Active
-    clearItemState(itemState_t(Off|Standby|Active));
+  if ((ren_itemState & (OffExplicitly|OffUnable)) > 0)
+  { // one of Off, OffUnable, Active (handled above)
+    // clear: Off, OffUnable, Active
+    clearItemState(itemState_t(OffExplicitly|OffUnable|Active));
   }
 
   // now simple set the new value
@@ -177,7 +177,7 @@ IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool ab_
 */
 IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : IState_c(ren_itemState, ai_singletonVecKey)
 {
-  counter.b_addressClaimCnt = counter.b_falseAliveCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
+  counter.b_addressClaimCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;
 };
 
@@ -187,7 +187,7 @@ IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : I
 */
 IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : IState_c(ab_state, ai_singletonVecKey)
 {
-  counter.b_addressClaimCnt = counter.b_falseAliveCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
+  counter.b_addressClaimCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;
 }
 
@@ -198,7 +198,6 @@ IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : IState_c(ab
 IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : IState_c(arc_src)
 {
   counter.b_addressClaimCnt = arc_src.counter.b_addressClaimCnt;
-  counter.b_falseAliveCnt = arc_src.counter.b_falseAliveCnt;
   counter.b_causedConflictCnt = arc_src.counter.b_causedConflictCnt;
   counter.b_affectedConflictCnt = arc_src.counter.b_affectedConflictCnt;
   mi16_lastCausedConflictTime = arc_src.mi16_lastCausedConflictTime;
@@ -218,31 +217,6 @@ uint8_t IStateExt_c::addressClaimCnt(int8_t ac_cnt)
     counter.b_addressClaimCnt = ac_cnt;
   }
   return (itemState(IState_c::AddressClaim))?counter.b_addressClaimCnt:0;
-};
-
-/**
-  set and/or retreive the counter of false alive msgs
-  @param ac_cnt optional new false alive counter  (default only Request)
-  @return actual or resulting false alive cnt
-*/
-uint8_t IStateExt_c::falseAliveCnt(int8_t ac_cnt)
-{
-  switch (ac_cnt)
-  {
-    case Incr: // -2 --> correct timed alive in FalseAlive state -> Increment
-      if (counter.b_falseAliveCnt < 0xF) counter.b_falseAliveCnt++;
-      break;
-    case Decr: // -3 --> wrong timed alive in FalseAlive state -> Decrement
-      if (counter.b_falseAliveCnt > 0) counter.b_falseAliveCnt--;
-      break;
-    case Request: // -1 --> only answer cnt
-      break;
-    default: // new dircet given value >= 0
-      if ((ac_cnt >= 0) && (ac_cnt < 0xF)) counter.b_falseAliveCnt = ac_cnt;
-      break;
-  }
-
-  return (itemState(IState_c::FalseAlive))?counter.b_falseAliveCnt:0;
 };
 
 /**

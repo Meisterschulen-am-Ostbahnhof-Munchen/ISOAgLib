@@ -283,16 +283,17 @@ public:
   /** insert a new IsoItem_c in the list; with unset aui8_nr the member is initiated as
     address claim state; otherwise the given state can be given or state Active is used
     possible errors:
-      * Err_c::badAlloc not enough memory to insert new IsoItem_c isntance
+      * Err_c::badAlloc not enough memory to insert new IsoItem_c instance
       * Err_c::busy another member with same ident exists already in the list
     @param ac_isoName ISOName of the member
     @param aui8_nr member number
-    @param aui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
-    @param ren_status wanted status
+    @param ren_state wanted status
+    @param apc_identItemForLocalItems back reference to the IdentItem, set if the IsoItem is local...
+    @param ab_announceAddition
     @return pointer to new IsoItem_c or NULL if not succeeded
   */
   IsoItem_c* insertIsoMember(const IsoName_c& ac_isoName, uint8_t aui8_nr = 0xFF,
-                     IState_c::itemState_t ren_state = IState_c::Active);
+                             IState_c::itemState_t ren_state = IState_c::Active, IdentItem_c* apc_identItemForLocalItems = NULL, bool ab_announceAddition=false);
 
 
   /** deliver the amount of local members which matches the searched proto types
@@ -341,27 +342,13 @@ public:
      */
   bool existLocalIsoMemberISOName (const IsoName_c& ac_isoName, bool ab_forceClaimedAddress = false);
 
-  /**
-      * reset the Address Claim state by:
-      * + reset IdentItem::IStat_c to IState_c::PreAddressClaim
-      * + remove pointed IsoItem_c nodes and the respective pointer
-      * @param ac_isoName  ISOName
-      * @return true -> there was an item with given IsoName_c that has been resetted to IState_c::PreAddressClaim
-     */
-  bool restartAddressClaim( const IsoName_c& arc_isoName );
-
   /** register a SaClaimHandler_c */
   bool registerSaClaimHandler (SaClaimHandler_c* apc_client);
 
   /** deregister a SaClaimHandler */
   bool deregisterSaClaimHandler (SaClaimHandler_c* apc_client);
 
-
-  /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaAdd2Clients( const IsoName_c& ac_isoName, const IsoItem_c* apc_isoItem ) const;
-
-  /** this function is used to broadcast a ISO monitor list change to all registered clients */
-  void broadcastSaRemove2Clients( const IsoName_c& ac_isoName, uint8_t aui8_oldSa ) const;
+  void broadcastIsoItemModification2Clients( IsoItemModification_t at_isoItemModification, IsoItem_c const& arcc_isoItem ) const;
 
   /**
     deliver member item with given isoName
@@ -409,14 +396,22 @@ public:
   bool deleteIsoMemberNr(uint8_t aui8_nr);
 
   /** check if SA of an announcing IsoItem_c is unique and deliver
-    another free SA if not yet unique (else deliver its actual
-    SA if unique yet)
+    another free SA if not yet unique (else deliver its actual SA if unique yet)
     @param apc_isoItem pointer to announcing IsoItem_c
+    @param ab_resolveConflict true => don't use current SA because someone else
+                                      claimed it with a higher prior isoname,
+                                      so we have to change our SA. This is needed
+                                      as the new member is not yet in the list,
+                                      so the algorithm would still take the current SA.
+                                      We can't insert the new item, as we don't want
+                                      a state where two items have the same SA.
+                              false => no conflict to resolve, so we can take the current
+                                       source address if it's available!
     @return free unique SA (if possible the actual SA of the pointed item)
       (if wanted SA is not free for NOT-self-conf item or if no free SA is available
        254 is answered -> special flag for NACK)
   */
-  uint8_t unifyIsoSa(const IsoItem_c* apc_isoItem);
+  uint8_t unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict);
 
   /**
     change isoName if actual isoName isn't unique
@@ -459,14 +454,6 @@ public:
     @param apc_masterItem this is the master of which we want to know how many slaves he has
   */
   uint8_t getSlaveCount (IsoItem_c* apc_masterItem);
-
-  /** notify that a ws-master is in destruction,
-    so that all slaves can be notified and can set their master to NULL,
-    so they become STANDALONE IsoItems instead then (again).
-    @param xth tells which slave of the working set to get
-    @param apc_masterItem this is the master of which we want all the slaves
-  */
-  void notifyOnWsMasterLoss (IsoItem_c& arc_masterItem);
 
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 

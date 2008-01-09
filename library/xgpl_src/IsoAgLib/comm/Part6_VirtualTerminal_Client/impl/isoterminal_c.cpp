@@ -412,70 +412,76 @@ IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem
 }
 
 
-///! Attention: This function is also called from "init()", not only from ISOMonitor!
+
+/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
+ * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
+ * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ */
 void
-IsoTerminal_c::reactOnMonitorListAdd (const IsoName_c& rc_isoName, const IsoItem_c* apc_newItem)
+IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
   // we only care for the VTs
-  if (rc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
+  if (arcc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
 
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
-  { // check if newly added VtServerInstance is already in our list
-    if (lit_vtServerInst->getIsoItem())
-    {
-      if (rc_isoName == lit_vtServerInst->getIsoItem()->isoName())
-      { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
-        return;
-      }
-    }
-  }
-
-  // VtServerInstance not yet in list, so add it ...
-  ml_vtServerInst.push_back (VtServerInstance_c (*apc_newItem, rc_isoName, *this SINGLETON_VEC_KEY_WITH_COMMA));
-  VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
-
-  // ... and notify all vtClientServerComm instances
-  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+  switch (at_action)
   {
-    if (mvec_vtClientServerComm[ui8_index])
-      mvec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (r_vtServerInst);
-  }
-}
-
-
-void
-IsoTerminal_c::reactOnMonitorListRemove (const IsoName_c& rc_isoName, uint8_t /*aui8_oldSa*/)
-{
-  // we only care for the VTs
-  if (rc_isoName.getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
-
-  // check if it is mine???
-  STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
-
-  for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
-  { // check if lost VtServerInstance is in our list
-    if (lit_vtServerInst->getIsoItem())
-    {
-      if (rc_isoName == lit_vtServerInst->getIsoItem()->isoName())
-      { // the VtServerInstance is already known and in our list, so it could be deleted
-        // notify all clients on early loss of that VtServerInstance
-        for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
-        {
-          if (mvec_vtClientServerComm[ui8_index])
+    case AddToMonitorList:
+      { ///! Attention: This function is also called from "init()", not only from ISOMonitor!
+        for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+        { // check if newly added VtServerInstance is already in our list
+          if (lit_vtServerInst->getIsoItem())
           {
-            mvec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*lit_vtServerInst);
+            if (arcc_isoItem.isoName() == lit_vtServerInst->getIsoItem()->isoName())
+            { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
+              return;
+            }
           }
         }
 
-        ml_vtServerInst.erase (lit_vtServerInst);
-        break;
-      }
-    }
-  }
+        // VtServerInstance not yet in list, so add it ...
+        /// @todo It should enough if we store the IsoItem*, we don't need both the IsoItem AND IsoName...
+        ml_vtServerInst.push_back (VtServerInstance_c (arcc_isoItem, arcc_isoItem.isoName(), *this SINGLETON_VEC_KEY_WITH_COMMA));
+        VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
 
+        // ... and notify all vtClientServerComm instances
+        for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+        {
+          if (mvec_vtClientServerComm[ui8_index])
+            mvec_vtClientServerComm[ui8_index]->notifyOnNewVtServerInstance (r_vtServerInst);
+        }
+      } break;
+
+    case RemoveFromMonitorList:
+      for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
+      { // check if lost VtServerInstance is in our list
+        if (lit_vtServerInst->getIsoItem())
+        {
+          if (arcc_isoItem.isoName() == lit_vtServerInst->getIsoItem()->isoName())
+          { // the VtServerInstance is already known and in our list, so it could be deleted
+            // notify all clients on early loss of that VtServerInstance
+            for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+            {
+              if (mvec_vtClientServerComm[ui8_index])
+              {
+                mvec_vtClientServerComm[ui8_index]->notifyOnVtServerInstanceLoss(*lit_vtServerInst);
+              }
+            }
+
+            ml_vtServerInst.erase (lit_vtServerInst);
+            break;
+          }
+        }
+      }
+      break;
+
+    default:
+      // for right now, don't care if VT changes its SourceAddress.
+      break;
+  }
 }
+
 
 
 

@@ -98,12 +98,15 @@
 
 namespace __IsoAgLib {
 
-/** default constructor - all data has to be initialized with a call to "set(..)"
-*/
+/** default constructor - only used in creation of IsoMonitor_c's temp member variable.
+ * all data has to be initialized with a call to "set(..)"
+ * afterwards the IsoItem is being inserted to the list using the copy constructor!
+ * --> so these constructors are very dumb now!
+ */
 IsoItem_c::IsoItem_c()
   : BaseItem_c(0, IState_c::IstateNull, 0)
   #ifdef USE_WORKING_SET
-  , mpc_masterItem (NULL)
+  , pvec_slaveIsoNames (NULL)
   , mi8_slavesToClaimAddress (0) // idle around
   , mi32_timeLastCompletedAnnounceStarted (-1)
   , mi32_timeCurrentAnnounceStarted (-1)
@@ -111,21 +114,21 @@ IsoItem_c::IsoItem_c()
   #endif
   , mui8_nr(0xFE)
   , mb_repeatClaim (false) // wouldn't be needed to be set here as it's set when entering AddressClaim
+  , mpc_identItem (NULL) // per default not a local item which has a back-reference to an IdentItem
   , mc_isoName (IsoName_c::IsoNameUnspecified())
 {
 }
 
-/** copy constructor for ISOItem
-  The copy constructor checks if the source item is
-  a master ( i.e. the mpc_masterItem pointer points to this )
-  -> it doesn't simply copy the pointer, but sets its
-  own pointer also to the this-pointer of the new instance
+/** copy constructor for IsoItem
+  All members are simply copied.
+  This constructor is only used at construction-time.
+  No IsoItems are copied later on as they're in (s)lists and not vectors..
   @param arc_src source IsoItem_c instance
 */
 IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
   : BaseItem_c (arc_src)
 #ifdef USE_WORKING_SET
-  //, mpc_masterItem (NULL) // handled in code below!
+  //, pvec_slaveIsoNames (...) // handled in code below!
   , mi8_slavesToClaimAddress (arc_src.mi8_slavesToClaimAddress)
   , mi32_timeLastCompletedAnnounceStarted (arc_src.mi32_timeLastCompletedAnnounceStarted)
   , mi32_timeCurrentAnnounceStarted (arc_src.mi32_timeCurrentAnnounceStarted)
@@ -133,92 +136,108 @@ IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
 #endif
   , mui8_nr (arc_src.mui8_nr)
   , mb_repeatClaim (arc_src.mb_repeatClaim)
+  , mpc_identItem (arc_src.mpc_identItem)
   , mc_isoName (arc_src.mc_isoName)
 
 {
-  // mark this item as prepare address claim if local
-  setItemState (IState_c::Member);
-
   #ifdef USE_WORKING_SET
-  // no need of setting "mi8_slavesToClaimAddress", as it will be set when setting state to CleaimedAddress!
-  /// @todo NOW: Check if this constructor is really needed and what it should do!
-  /// @todo NOW: Check if we need to copy the new 3 member variables, too. Also for the below constructors!!!
-  // check if the master item pointer of the source item
-  // is pointing to itself, as then this new created instance shall
-  // not copy the pointer, but set the pointer to itself, as this
-  // indicates the Master State
-  if ( arc_src.isMaster() )
-  { // set our mpc_masterItem also to this, to indicate master state
-    mpc_masterItem = this;
+  if ( arc_src.pvec_slaveIsoNames == NULL)
+  { // source is not a master, so simply copy the NULL
+    pvec_slaveIsoNames = NULL;
   }
   else
-  { // just copy the master pointer from source
-    mpc_masterItem = arc_src.getMaster ();
+  { // source is a master, so create a copy of the pointed list (stl::vector)
+    pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.pvec_slaveIsoNames));
   }
   #endif
-
-  updateTime (/*get current time due to default parameter*/);
-  if (itemState(IState_c::Local))
-  {
-    setItemState(IState_c::PreAddressClaim);
-    timeEvent(); // call time for further init
-  }
 }
 
-/** assign constructor for ISOItem
+
+/** assignment operator for IsoItem_c
   @param arc_src source IsoItem_c object
 */
 IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arc_src)
 {
-//   MonitorItem_c::operator=(arc_src);
-  BaseItem_c::operator=(arc_src);
-  setISOName(arc_src.isoName());
-  setNr(arc_src.nr());
+  BaseItem_c::operator= (arc_src);
+  mc_isoName = arc_src.mc_isoName;
+  mpc_identItem = arc_src.mpc_identItem;
+  mui8_nr = arc_src.mui8_nr;
+  mb_repeatClaim = arc_src.mb_repeatClaim;
 
-  setItemState (IState_c::Member);
   #ifdef USE_WORKING_SET
-  // no need of setting "mi8_slavesToClaimAddress" here as it will be set when setting state to ClaimedAddress
-  /** @todo NOW: What to do with the mpc_masterItem? */
+  if ( arc_src.pvec_slaveIsoNames == NULL)
+  { // source is not a master, so simply copy the NULL
+    pvec_slaveIsoNames = NULL;
+  }
+  else
+  { // source is a master, so create a copy of the pointed list (stl::vector)
+    pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.pvec_slaveIsoNames));
+  }
   mi8_slavesToClaimAddress = arc_src.mi8_slavesToClaimAddress;
   mi32_timeLastCompletedAnnounceStarted = arc_src.mi32_timeLastCompletedAnnounceStarted;
   mi32_timeCurrentAnnounceStarted = arc_src.mi32_timeCurrentAnnounceStarted;
   mb_repeatAnnounce = arc_src.mb_repeatAnnounce;
   #endif
-  updateTime (/*get current time due to default parameter*/);
-  // mark this item as prepare address claim if local
-  if (itemState(IState_c::Local))
-  {
-    setItemState(IState_c::PreAddressClaim);
-    timeEvent(); // call time for further init
-  }
   return *this;
 }
+
+
+/** default destructor */
+IsoItem_c::~IsoItem_c()
+{ // first inform SA-Claim handlers on SA-Loss
+  /// @todo SOON We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
+  getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::RemoveFromMonitorList, *this);
+#ifdef USE_WORKING_SET
+  if (mpvec_slaveIsoNames)
+    delete mpvec_slaveIsoNames;
+#endif
+}
+
+
+/**
+ * General Change Address function. Will set the Address and then call the necessary broadcast.
+ */
+void
+IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
+{
+  uint8_t ui8_adrBefore = nr();
+  bool b_adrBefore = (nr() < 0xFE);
+  setNr (aui8_newAddress);
+  bool b_adrAfter = (nr() < 0xFE);
+  if (b_adrBefore && !b_adrAfter)
+  { // address lost
+    setItemState (IState_c::AddressLost);
+    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::LostAddress, *this);
+  }
+  else if (!b_adrBefore && b_adrAfter)
+  { // reclaimed address
+    setItemState (IState_c::ClaimedAddress);
+    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::ReclaimedAddress, *this);
+  }
+  else if (b_adrBefore && b_adrAfter)
+  { // changed address
+    if (ui8_adrBefore != nr())
+    { // only act on a real Change
+      getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::ChangedAddress, *this);
+    }
+  }
+  // else /*if*/ (!b_adrBefore && !b_adrAfter)
+  // {
+  //   // nothing to do in this case
+  // }
+}
+
 
 /**
   lower comparison between left ISOName uint8_t and right MonitorItem
   @param ab_left ISOName uint8_t left parameter
   @param arc_right rigth ServiceItem_c parameter
-*/
+ */
 bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right)
 {
   return (ac_left < arc_right.isoName())?true:false;
 }
 
-/** default destructor */
-IsoItem_c::~IsoItem_c()
-{
-  if ( itemState(IState_c::ClaimedAddress ) )
-  { // broadcast to handler classes the event of LOSS of this SA
-    getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( isoName(), nr() );
-  }
-  #ifdef USE_WORKING_SET
-  // check if we were a working-set master
-  if (isMaster()) // => pointing to ourself => workingset-master!
-  { // tell all workingset-slaves now that their master is gone so they are now STANDALONE again
-    getIsoMonitorInstance4Comm().notifyOnWsMasterLoss(*this);
-  }
-  #endif
-}
 
 /** deliver name
   @return pointer to the name uint8_t string (8byte)
@@ -228,13 +247,6 @@ const uint8_t* IsoItem_c::name() const
   return isoName().outputString();
 }
 
-/** check if the name field is empty (no name received)
-  @return true -> no name received
-*/
-bool IsoItem_c::isEmptyName() const
-{
-  return false;
-}
 
 /** deliver name as pure ASCII string
   @param pc_name string where ASCII string is inserted
@@ -253,6 +265,7 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
   pc_asciiName[ui8_len-1] = '\0';
 }
 
+
 /** set all element data with one call
   @param ai32_time creation time of this item instance
   @param ac_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
@@ -269,6 +282,52 @@ void IsoItem_c::set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8
 }
 
 
+
+/// @param ab_fromConflict false => Initial Address-Claim, so we need to go to "AddressClaim"-phase!
+///                        true => go to "ClaimedAddress" state, no 250ms wait (for now) as we changed SA!
+/// @todo SOON Do we really need this parameter? Should we wait 250ms on change of SA also???
+/// @todo SOON Merge with sendSaClaim - create an enum for the three cases!
+void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
+{
+  CanIo_c& c_can = getCanInstance4Comm();
+  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
+
+  if (nr() == 254)
+  { // no success -> send NACK and switch to off | error state
+    setItemState(IState_c::itemState_t(IState_c::OffUnable | IState_c::Error));
+    clearItemState(IState_c::PreAddressClaim);
+    /** @todo SOON Do we need to notify the IdentItem of the OFF state? Or will it check that regularly?
+              Somehow this IsoItem needs to be thrown out of the list! */
+  }
+  else
+  { // success -> start address claim mode
+    if (ab_fromConflict)
+    { // we had an SA conflict and changed our SA, so let's just get another and keep "ClaimedAddress"
+      setItemState(IState_c::ClaimedAddress);
+    }
+    else
+    { // we're initially claiming an address, so we need to wait 250ms...
+      setItemState(IState_c::AddressClaim);
+    }
+  }
+
+  // now nr() has now suitable value
+  c_pkg.setIsoPri(6);
+  c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
+  c_pkg.setIsoPs(255); // global information
+  c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
+  // set NAME to CANPkg
+  c_pkg.setDataUnion( outputNameUnion() );
+  // now IsoSystemPkg_c has right data -> send
+  c_can << c_pkg;
+  // update timestamp
+  updateTime();
+
+  mb_repeatClaim = false;
+}
+
+
 /** periodically time evented actions:
     * find free SA or check if last SA is available
     * send adress claim
@@ -280,9 +339,10 @@ bool IsoItem_c::timeEvent( void )
 {
   CanIo_c& c_can = getCanInstance4Comm();
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+  IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
+
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
-  IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
     int32_t i32_lastAdrRequestTime = c_isoMonitor.lastIsoSaRequest();
@@ -295,47 +355,19 @@ bool IsoItem_c::timeEvent( void )
         i32_wait = 2500;
       }
       if ((i32_time - i32_lastAdrRequestTime) > i32_wait)
-      { // last iso adress claim request is still valid and should have been
-        // answered till now
-        //check if this item is self conf
+      { // last iso adress claim request is still valid and should have been answered till now
+        // check if this item is self conf
         // unifyIsoSa delivers actual SA of this item if free
-        // if actual SA isn't free and item is NOT-self-conf -> NACK flag 254
-        // is answered
+        // if actual SA isn't free and item is NOT-self-conf -> NACK flag 254 is answered
         // if actual SA is not free for self-conf item
         // -> a free SA is searched and answered
         // - if no free SA is found, 254 is answered for NACK
-        setNr(c_isoMonitor.unifyIsoSa(this));
+        setNr(c_isoMonitor.unifyIsoSa (this, false)); // false: We're NOT resolving a conflict here.
 
-        if (nr() == 254)
-        { // no success -> send NACK and switch to off | error state
-          setItemState(IState_c::itemState_t(IState_c::Off | IState_c::Error));
-          clearItemState(IState_c::PreAddressClaim);
-        }
-        else
-        { // success -> start address claim mode
-          setItemState(IState_c::AddressClaim);
-          mb_repeatClaim = false;
-        }
-
-        // now nr() has now suitable value
-        c_pkg.setIsoPri(6);
-        c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
-        c_pkg.setIsoPs(255); // global information
-        c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
-        // set NAME to CANPkg
-        c_pkg.setDataUnion( outputNameUnion() );
-        // now IsoSystemPkg_c has right data -> send
-        // if (!(c_pkg.identType() == Ident_c::ExtendedIdent))
-        // CanPkg_c::identType() changed to static
-        if (!(CanPkg_c::identType() == Ident_c::ExtendedIdent))
-        {
-          // c_pkg.setIdentType(Ident_c::ExtendedIdent);
-          // CanPkg_c::setIdentType changed to static
-          CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
-        }
-        c_can << c_pkg;
-        // update timestamp
-        updateTime();
+        sendAddressClaim (false); // false: Initial Address-Claim, so we need to go to "AddressClaim"-phase!
+        // we may be "Off" here now but can't delete ourself,
+        // so we check IsoItems for Off after we called their timeEvent.
+        // => This way we can remove it immediately after detecting that we couldn't exist (anymore)
       }
     }
     else
@@ -364,13 +396,13 @@ bool IsoItem_c::timeEvent( void )
           mb_repeatClaim = false;
         }
         // now inform the ISO monitor list change clients on NEW client use
-        getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
+        getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *this);
       }
     }
   }
   #ifdef USE_WORKING_SET
   else if ( itemState(IState_c::ClaimedAddress) )
-  { // do stuff if completely announced only
+  { // do workingset-stuff if completely announced only
     if (isMaster())
     { // We're master, so check if something has to be done..
       if ( mi8_slavesToClaimAddress == 0 )
@@ -382,7 +414,7 @@ bool IsoItem_c::timeEvent( void )
         bool b_sendOutWsMessage=true;
         if ( mi8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
-          mi8_slavesToClaimAddress = getIsoMonitorInstance4Comm().getSlaveCount (this); // slavesToClaimAddress will be 0..numberOfSlaves hopefully
+          mi8_slavesToClaimAddress = pvec_slaveIsoNames->size();
 
           c_pkg.setIsoPgn (WORKING_SET_MASTER_PGN);
           c_pkg.setUint8Data (0, (mi8_slavesToClaimAddress+1));
@@ -395,7 +427,7 @@ bool IsoItem_c::timeEvent( void )
           else
           { // Announce WS-Slave(s)
             c_pkg.setIsoPgn (WORKING_SET_MEMBER_PGN);
-            c_pkg.setDataUnion (getIsoMonitorInstance4Comm().getSlave (getIsoMonitorInstance4Comm().getSlaveCount(this)-mi8_slavesToClaimAddress, this)->outputNameUnion());
+            c_pkg.setDataUnion ((*pvec_slaveIsoNames) [pvec_slaveIsoNames->size()-mi8_slavesToClaimAddress].outputUnion());
             mi8_slavesToClaimAddress--; // claimed address for one...
           }
         }
@@ -440,12 +472,13 @@ bool IsoItem_c::processMsg()
   IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
       i32_now = Scheduler_Task_c::getLastRetriggerTime();
+  /// @todo SOON what is the sense of the check below?
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
   else updateTime(i32_pkgTime);
 
   switch ((c_pkg.isoPgn() & 0x3FF00))
   {
-    case ADRESS_CLAIM_PGN: // adress claim
+    case ADDRESS_CLAIM_PGN: // adress claim
       // check if this item is local
       if ( itemState(IState_c::Local ) )
       { // IsoItem_c::processMsg() is only called for local item, when
@@ -453,7 +486,7 @@ bool IsoItem_c::processMsg()
         // by resending OUR SA CLAIM
         c_pkg.setMonitorItemForSA( this );
         c_pkg.setIsoPri(6);
-        c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
+        c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
         c_pkg.setIsoPs(255); // global information
           // set NAME to CANPkg
         c_pkg.setDataUnion(outputNameUnion());
@@ -461,21 +494,8 @@ bool IsoItem_c::processMsg()
         getCanInstance4Comm() << c_pkg;
       }
       else
-      { // remote item (( the case with change of isoName should NO MORE HAPPEN as IsoMonitor_c
-        // simply removes IsoItem_c instances with same SA and different IsoName_c ))
-        const bool b_isChange = ( ( c_pkg.isoSa() != nr() ) || ( isoName() != *(c_pkg.getDataUnionConst()) ) );
-        const bool b_wasClaimed = itemState(IState_c::ClaimedAddress);
-        if ( b_wasClaimed &&  b_isChange )
-        { // the previously using item had already claimed an address
-          getIsoMonitorInstance4Comm().broadcastSaRemove2Clients( isoName(), nr() );
-        }
-        setItemState(IState_c::ClaimedAddress);
-        setNr(c_pkg.isoSa());
-        inputNameUnion(c_pkg.getDataUnionConst());
-        if ( (!b_wasClaimed) || b_isChange )
-        { // now inform the ISO monitor list change clients on NEW client use
-          getIsoMonitorInstance4Comm().broadcastSaAdd2Clients( isoName(), this );
-        }
+      { // remote item
+        changeAddressAndBroadcast (c_pkg.isoSa());
       }
       b_result = true;
     break;
@@ -485,7 +505,7 @@ bool IsoItem_c::processMsg()
 }
 
 
-/** send a SA claim message
+/** send an SA claim message
   * - needed to respond on request for claimed SA fomr other nodes
   * - also needed when a local ident triggers a periodic request for SA
   * @return true -> this item has already a claimed SA -> it sent its SA; false -> didn't send SA, as not yet claimed or not local
@@ -502,7 +522,7 @@ bool IsoItem_c::sendSaClaim()
   #endif
   IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   c_pkg.setIsoPri(6);
-  c_pkg.setIsoPgn(ADRESS_CLAIM_PGN);
+  c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
   c_pkg.setMonitorItemForSA( this );
   // set NAME to CANPkg
@@ -560,6 +580,67 @@ bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right)
 
 
 #ifdef USE_WORKING_SET
+/// This is for IdentItem's setting of WS-master/slave
+void
+IsoItem_c::setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames)
+{
+  if (pvec_slaveIsoNames)
+  { // already registered as working-set master.
+    /** @todo SOON How to handle changing Workingset-State when it's already set? Maybe that's simply not allowed at all... */
+  }
+  else
+  { // create a copy of the vector. (if it's set...)
+    if (apvec_slaveIsoNames)
+      pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*apvec_slaveIsoNames);
+    else
+      pvec_slaveIsoNames = NULL;
+  }
+}
+
+
+/// This is for incoming WORKING_SET_MASTER_PGN
+void
+IsoItem_c::setMaster (uint8_t aui8_slaveCount)
+{
+  if (pvec_slaveIsoNames)
+  { // already registered as working-set master.
+    /** @todo SOON How to handle an UPDATE of the working-set definition? First keep it parallel until it finishes successful or fails? Maybe also check if this is a remote item?? */
+  }
+  else
+  { // by creating the vector and setting the pointer, we're master now and have "aui8_slaveCount" slaves.
+    // in case an entry is IsoNameUnspecified, it's definition has not yet arrived...
+    pvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (aui8_slaveCount, IsoName_c::IsoNameUnspecified());
+  }
+}
+
+
+/// This is for incoming WORKING_SET_SLAVE_PGN
+void
+IsoItem_c::addSlave (IsoName_c const& rcc_slaveName)
+{
+  /// @todo SOON We currently IGNORE any subsequent working-set announces! If the list is full, it stays full and no nothing is overwritten or alike...
+  if (pvec_slaveIsoNames)
+  {
+    STL_NAMESPACE::vector<IsoName_c>::iterator iter = pvec_slaveIsoNames->begin();
+    STL_NAMESPACE::vector<IsoName_c>::iterator end = pvec_slaveIsoNames->end();
+    while (iter != end)
+    {
+      if ((*iter).isSpecified())
+      { // skip if this slave entry is already set.
+        continue;
+      }
+      else
+      { // found a free slave-entry!
+        (*iter) = rcc_slaveName;
+        // added the slave, so exit function successfully.
+        return;
+      }
+    }
+  }
+  //else someone sent a WORKING_SET_SLAVE_PGN seemingly without sending a WORKING_SET_MASTER_PGN message first..
+}
+
+
 int32_t IsoItem_c::startWsAnnounce()
 {
   int32_t const ci32_timeNow = HAL::getTime();
@@ -578,22 +659,6 @@ int32_t IsoItem_c::startWsAnnounce()
   return ci32_timeNow; // which is the NOW-time!
 }
 
-
-/** returns a pointer to the referenced master ISOItem */
-IsoItem_c* IsoItem_c::getMaster() const
-{
-  return mpc_masterItem;
-}
-
-
-/** attaches to a working set master and become slave hereby
-  if called with NULL the ISOItem loses working-set membership and becomes STANDALONE again!
- */
-void
-IsoItem_c::setMaster (IsoItem_c* apc_masterItem)
-{
-  mpc_masterItem = apc_masterItem;
-}
 
 
 /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
