@@ -9,7 +9,7 @@
 	    <li> \ref Authors</li>
         </ul>
     </li>
-    <li> \ref outlook "Solutions" </li>
+    <li> \ref applications "Applications" </li>
     <li class="folder"> \ref PageDownload "Download \& Installation"
         <ul>
         <li> \ref HowtoDownload "Downloading Archives" </li>

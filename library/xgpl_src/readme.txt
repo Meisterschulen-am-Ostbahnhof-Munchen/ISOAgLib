@@ -221,7 +221,7 @@ So the content for the several "/impl" subdirectories is really only meant for e
 are implemented - %e.%g. for implementation of extensions and bug-fixes.
 
 \subsection StructureHal HAL Structure
-The platform dependent variants of the HAL are grouped by the name of the respective plateform. This name is defined in the central
+The platform dependent variants of the HAL are grouped by the name of the respective platform. This name is defined in the central
 configuration file isoaglib_config.h , where either the corresponding #define like SYSTEM_ESX can be constantly defined or can be
 provided as runtime defines during the Make-Process (as compiler option). The conditional #ifdef rules in isoaglib_config.h
 allow the headers of the \isoaglib to fetch the corresponding headers from the central headers in the
