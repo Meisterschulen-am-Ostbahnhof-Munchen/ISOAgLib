@@ -78,8 +78,8 @@ void GpsManager_c::writeHeader()
 */
 void GpsManager_c::writeData()
 {
-  IsoAgLib::iGPS_c& c_gps = IsoAgLib::getIGpsInstance();
-  IsoAgLib::iTimePosGPS_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
+  IsoAgLib::iGps_c& c_gps = IsoAgLib::getIGpsInstance();
+  IsoAgLib::iTimePosGps_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
   IsoAgLib::iRS232IO_c& c_rs232 = IsoAgLib::getIrs232Instance();
 
 // Neu Ehrl: array (char position[20] ist zu klein -> Erhöhung von 20 auf 30!!
@@ -135,16 +135,16 @@ void GpsManager_c::writeData()
   // rec-mode
   switch (c_gps.rec_mode())
   {
-    case IsoAgLib::iGPS_c::noGps:
+    case IsoAgLib::iGps_c::noGps:
       c_rs232 << "0;";
       break;
-    case IsoAgLib::iGPS_c::gps:
+    case IsoAgLib::iGps_c::gps:
       c_rs232 << "1;";
       break;
-    case IsoAgLib::iGPS_c::dgps:
+    case IsoAgLib::iGps_c::dgps:
       c_rs232 << "2;";
       break;
-    case IsoAgLib::iGPS_c::rtkgps:
+    case IsoAgLib::iGps_c::rtkgps:
       c_rs232 << "3;";
       break;
   }

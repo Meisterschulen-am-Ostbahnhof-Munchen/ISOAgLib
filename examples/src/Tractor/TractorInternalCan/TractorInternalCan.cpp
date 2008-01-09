@@ -341,7 +341,7 @@ void MyInternalCanHandler_c::init()
 */
 bool MyInternalCanHandler_c::processMsg()
 {
-  IsoAgLib::iTimePosGPS_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
+  IsoAgLib::iTimePosGps_c& c_timePosGps = IsoAgLib::getITimePosGpsInstance();
   IsoAgLib::iTracGeneral_c& c_tracGeneral = IsoAgLib::getITracGeneralInstance();
   IsoAgLib::iTracMove_c& c_tracMove = IsoAgLib::getITracMoveInstance();
   IsoAgLib::iTracPTO_c& c_tracPto = IsoAgLib::getITracPtoInstance();
