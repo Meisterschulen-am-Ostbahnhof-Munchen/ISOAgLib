@@ -71,7 +71,7 @@ extern unsigned int polygontypetoi (char *text_polygontype);
 extern unsigned int validationtypetoi (char *text_validationtype);
 extern unsigned int filltypetoi (char *text_filltype);
 extern unsigned int eventtoi (char *text_eventName);
-extern unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
+extern unsigned int auxfunctiontypetoi(char *text_auxFunctionType);
 extern unsigned int gcoptionstoi (char *text_options);
 extern unsigned int inputobjectoptiontoi (char *text_inputobjectoptions);
 extern unsigned int buttonoptiontoi (char *text_buttonoptions);

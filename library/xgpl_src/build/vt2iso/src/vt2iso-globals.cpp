@@ -401,7 +401,7 @@ eventtoi (char *text_eventName)
 }
 
 unsigned int
-auxfunctiontyptetoi(char *text_auxFunctionType)
+auxfunctiontypetoi(char *text_auxFunctionType)
 {
   int l, retval=0;
   for (l=0; l<maxAuxFunctionTypes; l++) {
