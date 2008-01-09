@@ -149,7 +149,7 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 
 class TimePosGps_c;
 typedef TimePosGps_c TimePosGPS_c; /// this typedef is only for some time to provide backward compatibility at API level
-typedef SINGLETON_DERIVED(TimePosGpS_c,BaseCommon_c) SingletonTimePosGps_c;
+typedef SINGLETON_DERIVED(TimePosGps_c,BaseCommon_c) SingletonTimePosGps_c;
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
