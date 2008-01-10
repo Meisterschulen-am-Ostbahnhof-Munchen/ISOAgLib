@@ -468,7 +468,7 @@ unsigned int filltypetoi (char *text_filltype);
 
 unsigned int eventToi (char *text_eventName);
 
-unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
+unsigned int auxfunctiontypetoi(char *text_auxFunctionType);
 
 
 ///### Extension for GUI Editor BEGIN-### #############################################
@@ -485,7 +485,7 @@ unsigned int auxfunctiontyptetoi(char *text_auxFunctionType);
 
 unsigned int getacoustsignfromstring (char *text_acousticsignal);
 unsigned int getarchbargraphoptfromstring (char *text_options);
-unsigned int getauxfunctyptefromstring(char *text_auxFuncType);
+unsigned int getauxfunctypefromstring(char *text_auxFuncType);
 unsigned int getboolfromstring (char *text_boolstr);
 unsigned int getcolordepthfromstring (char* text_colordepth);
 unsigned int getcolorfromstring (char *text_backgrndcol);

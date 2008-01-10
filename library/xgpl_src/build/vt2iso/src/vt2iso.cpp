@@ -4259,7 +4259,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
           fprintf (partFile_attributes, ", %d, %d", colortoi (attrString [attrBackground_colour]),
-                   auxfunctiontyptetoi(attrString [attrFunction_type]));
+                   auxfunctiontypetoi(attrString [attrFunction_type]));
           break;
 
         case otAuxiliaryinput:
@@ -4269,7 +4269,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
           fprintf (partFile_attributes, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]),
-                   auxfunctiontyptetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
+                   auxfunctiontypetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
           break;
 
         case otGraphicsContext:

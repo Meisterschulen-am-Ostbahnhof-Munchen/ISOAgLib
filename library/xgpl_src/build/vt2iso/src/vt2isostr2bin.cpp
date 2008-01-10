@@ -835,7 +835,7 @@ unsigned int eventToi (char *text_eventName)
   return retval;
 }
 
-unsigned int auxfunctiontyptetoi(char *text_auxFunctionType)
+unsigned int auxfunctiontypetoi(char *text_auxFunctionType)
 {
   int l, retval=0;
   for (l=0; l<maxAuxFunctionTypes; l++) {
@@ -873,11 +873,11 @@ unsigned int getarchbargraphoptfromstring (char *text_options)
 }
 
 
-unsigned int getauxfunctyptefromstring(char *text_auxFuncType)
+unsigned int getauxfunctypefromstring(char *text_auxFuncType)
 {
  unsigned int ui_res=0;
     if (isalpha(text_auxFuncType[0]))
-        ui_res = (unsigned int) auxfunctiontyptetoi (text_auxFuncType);
+        ui_res = (unsigned int) auxfunctiontypetoi (text_auxFuncType);
     else if ( isdigit(text_auxFuncType[0]) )
         ui_res = atoi(text_auxFuncType);
     else ui_res = 0;
