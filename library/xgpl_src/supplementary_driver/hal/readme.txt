@@ -11,7 +11,7 @@ More information can be found in the general HAL header files:
 - \ref hal/actor.h "hal/actor.h"
 - \ref hal/rs232.h "hal/rs232.h"
 - \ref hal/sensor.h "hal/sensor.h"
-and in the device specific headers:
+<br>and in the device specific headers:
 - \ref esx/actor/actor.h "esx/actor/actor.h"
 - \ref esx/rs232/rs232.h "esx/rs232/rs232.h"
 - \ref esx/sensor/sensor.h "esx/sensor/sensor.h"
