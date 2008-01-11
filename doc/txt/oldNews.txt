@@ -22,7 +22,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
      exactly know when the timeEvent() function of \isoaglib has to be called again.
   - <b>September 2006:</b> <b>\isoaglib</b> now is a real ISO library! Complete removal of all DIN-related or DIN-dependent code, classes and preprocessor directives.
     The following steps had to be done:
-    + remove all unneeded DIN9684 and all its #ifdefs
+    + remove all unneeded DIN9684 and all its \#ifdefs
     + merge ISONAME_c and DevKey_c to the new ISONAME_c as the only
       class to represent the device key
     + merge SystemMgmt_c and IsoMonitor_c to the new IsoMonitor_c class
@@ -60,7 +60,7 @@ Information on Obligatory Elemutton has its own scaling-factor/centering-offset 
         - Vector-Informatik supports now the Open Sourve IDE <b>Dev-C++</b>, so that you don't need Microsoft compilers to get the tutorials to run with real CAN hardware on Win32.
         - New area of customer only extension modules. Specific extansions like complete level 2 and 3 Tractor ECU Client and Server support need several additional functions, that
             are at the moment only implemented by <a href="http://www.osb-ag.de/">OSB</a> and nobody else from the user community. Thus we don't want to give it for free to anonymous
-            parties (including our competitors). Researchers and potential customer may ask <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> for granting personal access
+            parties (including our competitors). Researchers and potential customer may ask <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> for granting personal access
             to the repository.
     - <b>2005-March:</b> MultiReceive classes implemented.
 

@@ -207,7 +207,7 @@
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 
-/** the following #define should be activated when a ECU based tractor shall take sensor signals as
+/** the following \#define should be activated when a ECU based tractor shall take sensor signals as
  *  source of simulated speed and PTO
  */
 // #define USE_SENSOR_FOR_SPEED_PTO

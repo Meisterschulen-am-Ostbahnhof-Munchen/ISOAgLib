@@ -19,35 +19,34 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section InfGeneralInformation General Information
 The \isoaglib was primarily developed for massive automatic process data recording within the research group
 <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/forschung/forschung.html">IKB-D&uuml;rnast</a>
-. Since publication of this project it is used for:
-	- Implement Indicator (IMI) which detects working state dependent on configuration and tractor base
-    data information (LBS-Base) and records process data:
-		- working state
-		- working width
-		- working time
-		- working distance
-		- working area
-		- whole time
-		- whole distance
-	- IMI for transport work, where no working width and area are point of interest
-	- simulated tractor which sets LBS-Base data according to settings of analog sensor inputs
-    and sends them on BUS, and which manages measuring programs for IMIs dependent on digital inputs (switch)
+Since publication of this project it is used for:
+- Implement Indicator (IMI) which detects working state dependent on configuration and tractor base data information (LBS-Base) and records process data:
+    - working state
+    - working width
+    - working time
+    - working distance
+    - working area
+    - whole time
+    - whole distance
+    - IMI for transport work, where no working width and area are point of interest
+    - simulated tractor which sets LBS-Base data according to settings of analog sensor inputs 
+      and sends them on BUS, and which manages measuring programs for IMIs dependent on digital inputs (switch)
 - Task Controller which retrieves GPS information from a Fieldstar (TM) terminal, combines them
     with dynamic detected process data of pre configured IMI types and polls the information
-		via RS232 to a PC or PCMCIA Flashdisk in simple table format. Last but not least it measures the hitch force
-		(with sensors of EHR) and the fuel consumption and polls them, too. The Task Controller
-		detects dependent on GPS, if the actual position is in one of the configured (EEPROM)
-		areas of type mounting, transport or field. With this it can gather the information
-		for each area type in its own subset.
+    via RS232 to a PC or PCMCIA Flashdisk in simple table format. Last but not least it measures the hitch force
+    (with sensors of EHR) and the fuel consumption and polls them, too. The Task Controller
+    detects dependent on GPS, if the actual position is in one of the configured (EEPROM)
+    areas of type mounting, transport or field. With this it can gather the information
+    for each area type in its own subset.
 
 The <b>main basic design principles</b> of the \isoaglib are:
-	- use Hardware-Adaptation-Layer to restrict hardware dependent parts, to
-    ease adaptation to different ECU types
-	- use hardware independent Communication-Layer, which implements all interaction via ISO11783
-	- very capable and flexible "Licensing"design -&gt; e.g. it can handle received setpoints from a group of
-    different senders, so that the main application can decide, which sender to accept
-	- modularized structure to ease source code administration and to enable de/activation of
-    specific function groups (e.g. RS232, sensor, actor)
+- use Hardware-Adaptation-Layer to restrict hardware dependent parts, to
+  ease adaptation to different ECU types
+- use hardware independent Communication-Layer, which implements all interaction via ISO11783
+- very capable and flexible "Licensing"design -&gt; e.g. it can handle received setpoints from a group of
+  different senders, so that the maiservice_network_connection application can decide, which sender to accept
+- modularized structure to ease source code administration and to enable de/activation of
+  specific function groups (e.g. RS232, sensor, actor)
 
 The \isoaglib version <b>1.0.0rc1</b> was running stable already and has been used for the
 <a href="http://www.fritzmeier.com/engl/frameset_engl.htm?/engl/environment/environment_miniveg.htm">Chlorophyll Sensor MiniVeg N</a>

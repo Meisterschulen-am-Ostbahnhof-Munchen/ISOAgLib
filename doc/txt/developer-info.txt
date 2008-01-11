@@ -78,8 +78,8 @@ of a core service class depends of the previous initialisation of one or more
 other classes.
 
 Please contact the maintainers
-<a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> and
-<a href="mailto:Martin.Wodok@osb-ag:de">Martin Wodok</a> if you do not
+<a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> and
+<a href="mailto:Martin.Wodok_at_osb-ag:de">Martin Wodok</a> if you do not
 understand some parts after having read the provided documentation.
 
 
@@ -147,7 +147,7 @@ The \isoaglib <b>doesn't use</b>:
 
 Thus compilers which support the so called <b>Extended EC++</b> specification can be used, as long as they provide an adapted
 version of the STL.
-List of known <b>Extended EC++</b> aware Compilers ( please inform <a href="mailto:a.spangler@osb-ag:de">me</a> if you know other
+List of known <b>Extended EC++</b> aware Compilers ( please inform <a href="mailto:a.spangler_at_osb-ag:de">me</a> if you know other
 <b>Extended EC++</b> compilers which match these requirements ):
     - <a href="http://www.iar.com/">IAR</a>
     - ... ?
@@ -155,7 +155,7 @@ List of known <b>Extended EC++</b> aware Compilers ( please inform <a href="mail
 <b>Important note on some compiler specific language extensions - anachronisms:</b><br>
 Compilers like Tasking Version 7.56 instantiate implicitly <b>static const</b> variables, so that
 the linker is disturbed by multiple definition of the corresponding symbols. This is not C++ standard conformant,
-as <b>static const</b> is the typesafe replacement of C-style #define constants.<br>
+as <b>static const</b> is the typesafe replacement of C-style \#define constants.<br>
 So please make shure that you don't activate options of your compiler that would also instantiate variables/symbols for
 <b>static const</b> variables.
 <br>
@@ -190,7 +190,7 @@ research world examples provide a sufficient introduction in the usage of
 C++ and the \isoaglib.<br>
 As soon as the internals of the \isoaglib should be understood, the needed level of C++ skills is increased dependent on the configuration of the \isoaglib. Companies who are interested in a reliable guarantee that needed bugfixes
 or extensions are realized by external developers (if local developers
-are not familiar with C++ and the \isoaglib) should contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+are not familiar with C++ and the \isoaglib) should contact <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
  to establish commercial support contracts including training, project attendance and \isoaglib ISO 900x certification.<br>
 <br><b>
 Everybody who wants to get familiar with the \isoaglib should start with the <a class="el" href="examples.html">tutorial examples</a>.</b><br>
@@ -216,7 +216,7 @@ The HEAP allocation strategy results in the need of <b>11 KByte</b> <tt>HEAPSIZE
 terminal types and is able to directly control fertilizer spreaders which are accessible by process data.<br>
 <b>===>></b> Probability for need of more than 20 - 30 KByte is really low for other production systems<br>
 
-\isoaglib provides some debugging #define settings to collect information on needed <tt>HEAPSIZE</tt> for the monitored runtime conditions:
+\isoaglib provides some debugging <tt>\#define</tt> settings to collect information on needed <tt>HEAPSIZE</tt> for the monitored runtime conditions:
   - <tt>DEBUG_HEAP_USEAGE</tt> causes output of used HEAP amount for each change of HEAP-placed items (see above for information on items which are placed at HEAP)
     on RS232 (please activate RS232 output in project settings for your project)<br>
     -->> direct derive of needed <tt>HEAPSIZE</tt>, if appropriate worst case load conditions are tested

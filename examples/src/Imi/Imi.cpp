@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          imi.cpp  -  example main application for IMI
+                          Imi.cpp  -  example main application for IMI
                              -------------------
     begin                : Mon Okt 16 08:00:00 CEST 2000
 
@@ -63,7 +63,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example imi.cpp
+/** \example Imi.cpp
  * This example claims an address for an IMI on Scheduler_c, requests the member
  * names of the other systems after succeded address claim and create the
  * local process data that should be recorded. All informations including
@@ -74,20 +74,20 @@
  * This leads to the solution: "one binary fits all"
  *
  * <h1>Needed Modules</h1>
- * This example needs the following source modules<ul>
- * <li>lbsLibModuleBase
- * <li>lbsLibModuleProcess
- * <li>lbsLibModuleEeprom
- * <li>lbsLibModuleVirttermDin (optional!!)
- * <li>lbsLibModuleIso11783 (optional!)
- * </ul>
+ * This example needs the following source modules
+ * - lbsLibModuleBase
+ * - lbsLibModuleProcess
+ * - lbsLibModuleEeprom
+ * - lbsLibModuleVirttermDin (optional!!)
+ * - lbsLibModuleIso11783 (optional!)
+ *
  * <H1>Appropriate Config Settings in isoaglib_config.h</H1>
  * This example needs the following active config constants in the
- * Modulesection of isoaglib_config.h<ul>
- * <li>USE_PROCESS (undefine SIMPLE_SETPOINT)
- * <li>USE_EEPROM_IO
- * <li>USE_ISO_11783 (optional!)
- * </ul>.                                                                  */
+ * Modulesection of isoaglib_config.h
+ * - USE_PROCESS (undefine SIMPLE_SETPOINT)
+ * - USE_EEPROM_IO
+ * - USE_ISO_11783 (optional!)
+ *                                                                         */
 /* *************************************************************************/
 
 // include the central interface header for the hardware adaptation layer part
