@@ -1,9 +1,9 @@
 /** \page LgplSrcOverview License Parts Structural Overview
 The core components of the \isoaglib which are licensed under the conditions of the LGPL license of the
  <a href="http://www.fsf.org">Free Software Foundation</a> are placed in the directory
- <i>\<xgpl_src\></i> . Please note that the license requires each user to provide
+ <tt>xgpl_src</tt> . Please note that the license requires each user to provide
  public access to each change of the files within this core directory.
- As the <a href="mailto:Achim.Spangler@osb-ag:de">maintainers of this library</a>
+ As the <a href="mailto:Achim.Spangler_at_osb-ag:de">maintainers of this library</a>
  will collect and incorporate all contributions. This process guarantees that each
  contributor will get more than he personally provided. \n
  The main contributors to this project are in order of the importance of their part:
@@ -222,8 +222,8 @@ are implemented - %e.%g. for implementation of extensions and bug-fixes.
 
 \subsection StructureHal HAL Structure
 The platform dependent variants of the HAL are grouped by the name of the respective platform. This name is defined in the central
-configuration file isoaglib_config.h , where either the corresponding #define like SYSTEM_ESX can be constantly defined or can be
-provided as runtime defines during the Make-Process (as compiler option). The conditional #ifdef rules in isoaglib_config.h
+configuration file <tt>isoaglib_config.h</tt>, where either the corresponding <tt>\#define</tt> like <tt>SYSTEM_ESX</tt> can be constantly defined or can be
+provided as runtime defines during the Make-Process (as compiler option). The conditional <tt>\#ifdef</tt> rules in <tt>isoaglib_config.h</tt>
 allow the headers of the \isoaglib to fetch the corresponding headers from the central headers in the
 directories <tt>xgpl_src/IsoAgLib/hal</tt> and <tt>xgpl_src/supplementary_driver/hal</tt>.
 Each platform has its own subdirectory in the previous mentioned directories.
