@@ -11335,11 +11335,11 @@ PRJ_RS232=1
 // Initialization of CAN filters and of local process data might get too slow under worst case conditions
 // #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
 
-/** allow configuration by parameter value YES */
+/// allow configuration by parameter value YES
 #ifndef YES
   #define YES 1
 #endif
-/** allow configuration by parameter value NO */
+/// allow configuration by parameter value NO
 #ifndef NO
   #define NO 0
 #endif
@@ -11484,19 +11484,19 @@ PRJ_RS232=1
 /// set CAN Ident_c for filtering out EEEditor msgs
 // #define CONFIG_EEPROM_USE_CAN_REC_IDENT 0x700
 
-/** set CAN Msg obejct for receiving EEEditor msg */
+/// set CAN Msg obejct for receiving EEEditor msg
 // #define CONFIG_EEPROM_USE_CAN_REC_OBJ   13
 
-/** set CAN Msg obejct for sending EEEditor msg */
+/// set CAN Msg obejct for sending EEEditor msg
 // #define CONFIG_EEPROM_USE_CAN_SEND_OBJ  14
 
-/** set CAN BUS number for CAN EEPROM Editor */
+/// set CAN BUS number for CAN EEPROM Editor
 // #define CONFIG_EEPROM_USE_CAN_BUS       0
 
-/** set CAN puffer size for receive and send */
+/// set CAN puffer size for receive and send
 // #define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
 
-/** to use standard ident (11bit) ->0, 29bit -> 1 */
+/// to use standard ident (11bit) ->0, 29bit -> 1 
 // #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
