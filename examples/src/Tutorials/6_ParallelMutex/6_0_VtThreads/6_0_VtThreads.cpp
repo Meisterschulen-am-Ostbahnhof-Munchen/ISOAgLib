@@ -10,10 +10,10 @@
 /* *************************************************************************
  * This example main application is published NOT as GPL`ed Open Source,   *
  * so that you can include this source file in propietary closed projects. *
- * Everybody is encouraged to use the examples in the examples    *
+ * Everybody is encouraged to use the examples in the examples             *
  * directory for a quick and easy start of development for IsoAgLib        *
  * applications.                                                           *
- *    start_task_timer                                                                    *
+ *                                                                         *
  * So nobody is bound to publish changes of the example source files.      *
  * But every changed example, which could help learning the use of the     *
  * GPLed "IsoAgLib", is invited to be sent to the original author, so      *
@@ -180,7 +180,7 @@
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
- * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
+ * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_6_0_VtThreads ( see also at \ref PrjConfig6_0_VtThreads ).
  *                                                                         */
 /* *************************************************************************/
@@ -637,13 +637,13 @@ int main()
       only during address claim, mask updload and other special
       circumstances in a high repetition rate )
     - The main loop is running until iSystem_c::canEn() is returning false.
-      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      This function can be configured by the \#define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
       in isoaglib_config.h to ignore short CAN_EN loss.
     - This explicit control of power state without automatic powerdown on CanEn loss
       can be controled with the central config define
-      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      \#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
       or
-      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      \#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
       in the header xgpl_src/IsoAgLib/isoaglib_config.h
     - This can be also controlled during runtime with the function call:
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )

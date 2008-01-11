@@ -11988,7 +11988,7 @@ PRJ_RS232=1
  \section PrjConfig2_10_RemoteWriteSetpointSimpleSetpointIso List of configuration settings for 2_10_RemoteWriteSetpointSimpleSetpointIso
  This is only a copy with doxygen ready comment blocks from the original file ../../../examples/src/Tutorials/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso/config_2_10_RemoteWriteSetpointSimpleSetpointIso.h 
  This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_2_10_RemoteWriteSetpointSimpleSetpointIso.h ( Important: place the directory of the application source files in the include search path )
+ project define \#define PRJ_USE_AUTOGEN_CONFIG config_2_10_RemoteWriteSetpointSimpleSetpointIso.h ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_2_10_RemoteWriteSetpointSimpleSetpointIso in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code

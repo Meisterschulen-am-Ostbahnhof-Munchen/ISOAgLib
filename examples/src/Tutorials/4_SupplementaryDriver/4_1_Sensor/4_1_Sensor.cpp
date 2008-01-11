@@ -174,7 +174,7 @@
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
- * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
+ * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_4_1_Sensor ( see also at \ref PrjConfig4_1_Sensor ).
  *                                                                         */
 /* *************************************************************************/

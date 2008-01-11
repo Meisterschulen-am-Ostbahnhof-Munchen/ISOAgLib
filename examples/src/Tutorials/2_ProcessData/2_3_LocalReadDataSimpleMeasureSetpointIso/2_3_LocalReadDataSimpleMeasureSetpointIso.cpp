@@ -198,7 +198,7 @@
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
- * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
+ * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_2_3_LocalReadDataSimpleMeasureSetpointIso ( see also at \ref PrjConfig2_3_LocalReadDataSimpleMeasureSetpointIso ).
  *                                                                         */
 /* *************************************************************************/
@@ -287,7 +287,7 @@ int main()
 			only during address claim, mask updload and other special
 			circumstances in a high repetition rate )
 		- The main loop is running until iSystem_c::canEn() is returning false.
-			This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+			This function can be configured by the \#define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
 			in isoaglib_config.h to ignore short CAN_EN loss.
 		- This explicit control of power state without automatic powerdown on CanEn loss
 			can be controled with the central config define

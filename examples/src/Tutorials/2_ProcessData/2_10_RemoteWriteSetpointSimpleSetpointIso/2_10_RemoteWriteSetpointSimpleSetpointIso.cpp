@@ -102,10 +102,10 @@
  * <li>Call the script update_makefile.sh with the spec file
  *     conf_2_10_RemoteWriteSetpointSimpleSetpointIso from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_2_10_RemoteWriteSetpointSimpleSetpointIso</i>
+ *     <tt>\#> update_makefile.sh conf_2_10_RemoteWriteSetpointSimpleSetpointIso</tt>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd 2_10_RemoteWriteSetpointSimpleSetpointIso</i> to go to the subdirectory 2_10_RemoteWriteSetpointSimpleSetpointIso
- *     <li><i>#> make</i><br>
+ *     <li><tt>\#>cd 2_10_RemoteWriteSetpointSimpleSetpointIso</tt> to go to the subdirectory 2_10_RemoteWriteSetpointSimpleSetpointIso
+ *     <li><tt>\#> make</tt><br>
  *     <li>GNU make will then use the fresh created Makefile to create the executable 2_10_RemoteWriteSetpointSimpleSetpointIso in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
@@ -185,7 +185,7 @@
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
- * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
+ * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_2_10_RemoteWriteSetpointSimpleSetpointIso ( see also at \ref PrjConfig2_10_RemoteWriteSetpointSimpleSetpointIso ).
  *                                                                         */
 /* *************************************************************************/
@@ -432,13 +432,13 @@ int main()
       only during address claim, mask updload and other special
       circumstances in a high repetition rate )
     - The main loop is running until iSystem_c::canEn() is returning false.
-      This function can be configured by the #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
+      This function can be configured by the \#define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC
       in isoaglib_config.h to ignore short CAN_EN loss.
     - This explicit control of power state without automatic powerdown on CanEn loss
       can be controled with the central config define
-      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
+      \#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
       or
-      #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
+      \#define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownOnCanEnLoss
       in the header xgpl_src/IsoAgLib/isoaglib_config.h
     - This can be also controlled during runtime with the function call:
       getIsystemInstance().setPowerdownStrategy( IsoAgLib::PowerdownByExplcitCall )
