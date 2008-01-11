@@ -88,30 +88,27 @@ their tutorial programs to run with Dev-C++.
 As <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> had several issues with MS Visual Studio, and the STL version of the standard <b>gcc</b> compiler
 is quite good, <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> decided to maintain mainly the free IDE "Dev-C++" (http://www.bloodshed.net/dev/devcpp.html)
 for Win32 platforms.
-This IDE has some important features:<ul>
-<li>simple install
-<li>automatic update within the extras menu
-<li>download of extension modules within easy to handle download and install dialog window
+This IDE has some important features:
+- simple install
+- automatic update within the extras menu
+- download of extension modules within easy to handle download and install dialog window
 	(<b>important</b>: the tools for <b>vt2iso</b> compilation: <i>xerces</i> and the image manipulation libraries <i>FreeImage</i> and <i>ImLib</i> can be
 	  downloaded and installed this way)
-<li>project file format is a clean ASCII file, so that the project generation script can
+- project file format is a clean ASCII file, so that the project generation script can
     directly create a running project for Dev-C++
-</ul>
+
 
 \subsubsection InstallDevCpp Installation of Dev-C++
-<ol>
-<li>Please download at least the version 4.9.9.0 from http://www.bloodshed.net/dev/devcpp.html
-<li>Check for updates with Dev-C++ menu entry (TOOLS->CHECK FOR UPDATES)
-<li>Select the mirror "PlanetMirror.com" from the list (at least the german version has a dead
+-# Please download at least the version 4.9.9.0 from http://www.bloodshed.net/dev/devcpp.html
+-# Check for updates with Dev-C++ menu entry (TOOLS->CHECK FOR UPDATES)
+-# Select the mirror "PlanetMirror.com" from the list (at least the german version has a dead
 	default mirror entry in the list) in the dialog window "WebUpdate"
-<li>Click on button "Check for updates" in the dialog window "WebUpdate"
-<li>Select at least the following packages for download (as they are needed for <b>vt2iso</b>)<ul>
-	<li>FreeImage.DevPak
-	<li>ImageLib.DevPak
-	<li>xerces-c_2_5_0-mingw.DevPak (see for special download instructions at \ref Win32Xerces)
-	<li>(optionally further documentation or utility packages)
-	</ul>
-</ol>
+-# Click on button "Check for updates" in the dialog window "WebUpdate"
+-# Select at least the following packages for download (as they are needed for <b>vt2iso</b>)
+	- FreeImage.DevPak
+	- ImageLib.DevPak
+	- <tt>xerces-c_2_5_0-mingw.DevPak</tt> (see special download instructions in \ref Win32Xerces)
+	- (optionally further documentation or utility packages)
 
 
 \subsection CompTasking Tasking for Embedded Targets
@@ -153,10 +150,9 @@ The script <tt>compiler_projects/projectGeneration/update_makefile.sh</tt> can c
 project specific configuration headers for all projects. The feature setup is feed to this script
 by configuration files with a very simple syntax. Please have a look at the comments inside the several
 <tt>conf_*</tt> files in the directory <tt>compiler_projects/projectGeneration/</tt> .
-Call the script like this:<ul>
-<li><tt>cd compiler_projects/projectGeneration</tt>
-<li><tt>update_makefile.sh conf_0_0_AddressClaimIso</tt>
-</ul>
+Call the script like this:
+- <tt>cd compiler_projects/projectGeneration</tt>
+- <tt>update_makefile.sh conf_0_0_AddressClaimIso</tt>
 
 
 \subsection UseMSYS Running script on Win32 using MSYS
@@ -168,40 +164,31 @@ MinGW compiler is also integrated into the Dev-C++ tool.
 
 \subsection ScriptIntegrateWin32Can Integration of Win32 CAN card drivers
 The \isoaglib provides now also for Win32 the CAN server application with the following features:
-<ol>
-<li>several \isoaglib applications can run on the same host and communicate which each other through the CAN server (socket communication)
-<li>the connected \isoaglib appliactions can access a physical CAN bus via the CAN server application. Supported HW types are:
-    <ul>
-    <li>Peak CAN USB driver
-    <li>Vector Informatik driver (<b>CANLIB</b> and <b>XL Driver Library</b>)
-    <li>Sontheim CAN card driver
-    <li>RTE CAN driver (linux only)
-    <li>A1 CAN driver (linux only)
-    </ul>
-</ol>
+-# several \isoaglib applications can run on the same host and communicate which each other through the CAN server (socket communication)
+-# the connected \isoaglib appliactions can access a physical CAN bus via the CAN server application. Supported HW types are:
+    - Peak CAN USB driver
+    - Vector Informatik driver (<b>CANLIB</b> and <b>XL Driver Library</b>)
+    - Sontheim CAN card driver
+    - RTE CAN driver (linux only)
+    - A1 CAN driver (linux only)
 
 The necessary configuration options for the \isoaglib applications are (e.g. conf_0_0_AddressClaimIso):
-<ul>
-<li><tt>USE_CAN_DRIVER="socket_server"</tt>
-<li><tt>USE_CAN_DEVICE_FOR_SERVER="pc"</tt>
-</ul>
+- <tt>USE_CAN_DRIVER="socket_server"</tt>
+- <tt>USE_CAN_DEVICE_FOR_SERVER="pc"</tt>
 
 Create your Dev-C++ or VC6 project with the <tt>update_makefile.sh</tt> script and build the project.
 
 To build the CAN server applications the following projects are already provided:
-<ol>
-<li> <tt>can_server.[dev|vcproj]</tt> (no access to a physical CAN bus, only for host internal communication)
-<li> <tt>can_server_pcan.[dev|vcproj]</tt> (support for Peak CAN card)
-<li> <tt>can_server_sontheim.[dev|vcproj]</tt> (support for Sontheim CAN card)
-<li> <tt>can_server_vector.[dev|vcproj]</tt> (support for Vector Informatik CAN card, CANLIB) 
-<li> <tt>can_server_vector_xl.[dev|vcproj]</tt> (support for Vector Informatik CAN card, XL Driver Library) 
-</ol>
+-# <tt>can_server.[dev|vcproj]</tt> (no access to a physical CAN bus, only for host internal communication)
+-# <tt>can_server_pcan.[dev|vcproj]</tt> (support for Peak CAN card)
+-# <tt>can_server_sontheim.[dev|vcproj]</tt> (support for Sontheim CAN card)
+-# <tt>can_server_vector.[dev|vcproj]</tt> (support for Vector Informatik CAN card, CANLIB) 
+-# <tt>can_server_vector_xl.[dev|vcproj]</tt> (support for Vector Informatik CAN card, XL Driver Library) 
 
 These projects consist of:
-<ol>
-<li> Source file <tt>can_server_sock.cpp</tt> (main CAN server logic)
-<li> Source file { <tt>can_server_pc.cpp | can_server_peak.cpp | can_server_sontheim.cpp | can_server_vector.cpp | can_server_vector_xl.cpp</tt> } (CAN card specific logic)
-</ol>
+-# Source file <tt>can_server_sock.cpp</tt> (main CAN server logic)
+-# Source file { <tt>can_server_pc.cpp | can_server_peak.cpp | can_server_sontheim.cpp | can_server_vector.cpp | can_server_vector_xl.cpp</tt> } (CAN card specific logic)
+
 and the necessary pathes for CAN card specfic header files and libraries for compiling and linking. Please adapt the include pathes for header and libraries to your own settings (e.g.: <tt>C:\\Development\\pthread, C:\\Development\\PCAN, C:\\Development\\CANLIB, C:\\Development\\pthread, C:\\Development\\pthread\\pthreadVC2.lib,</tt> ...)
 
 The project files are located in the directory <tt>IsoAgLib/examples/compiler_projects/Dev-C++/canserver</tt> and <tt>IsoAgLib/examples/compiler_projects/VC6/canserver</tt>.
@@ -283,7 +270,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
 ./compiler_projects/projectGeneration/update_makefile.sh parses the selected project configuration file and overwrites the default values for all contained settings.
 It collects then the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the directory xgpl_src/IsoAgLib with the
-name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
+name scheme ".config_<project_name>.h". If the \#define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
 the central configuration header xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
 Please set additionally the SYSTEM_FOO for the wanted platform - ./compiler_projects/projectGeneration/update_makefile.sh will output the correct define at the end of the
 run.

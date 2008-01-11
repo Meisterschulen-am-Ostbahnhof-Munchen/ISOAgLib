@@ -20,7 +20,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
         <li> \ref MainFeatures </li>
         <li> \ref UsingProjects </li>
         <li> \ref Maintainers "Maintainers" </li>
-        <li> \ref Authors
+        <li> \ref Authors </li>
     </ul>
 </td></tr>
 </table>
@@ -109,7 +109,7 @@ But this tool would only help to start the virtual mask definition with XML, as 
   <a href="mailto:Brad.Cox@agcocorp:com">Brad Cox</a> developed a tool
   for his company that is able to convert the project files of the WTK
   mask generator to the XML definition.  Please contact
-  <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a> if you
+  <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> if you
   are interested in this tool for your own use, as Brad Cox indicated
   that he might be willing to provide this under some conditions.
 
@@ -185,7 +185,7 @@ The following table contains a few commercial products which use \isoaglib:
     <td valign="top"><i><ul><li>User Interface</li><li>ISO control system</li></ul></i></td>
     <td><i>"The challenge was to bring Zunhammer liquid manure spreader to ISO compatibility within four weeks.
         The control of the spreader had to be done by ISO terminal.
-        The open source library \isoaglib was the righ&sect;t instrument and together with the Zunhammer development team the we managed to build a running prototype punctual to the Agritechnica 2005.
+        The open source library \isoaglib was the right instrument and together with the Zunhammer development team we managed to build a running prototype punctual to the Agritechnica 2005.
         The time frame of four weeks was achived."</i>
 </td></tr>
 </table>

@@ -131,7 +131,7 @@ you can ask your proxy administrator to allow these commands to pass through.
 \section HowtoGetHelp Getting Help
 As this is an Open Source project, not only the maintainers of the project can provide sufficient help for all users <b>free of charge</b>.
 So either you sign a support contract to get personal support.<br>
-You can also post your requests in the \ref Mailing-List.
+You can also post your requests in the \ref Mailing-Lists.
 
 See \ref Contributing if you want to help developing \isoaglib further and share some ideas or work.
 

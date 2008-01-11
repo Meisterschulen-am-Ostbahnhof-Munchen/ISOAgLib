@@ -141,7 +141,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
   - change problematic source codes (esp. too big inline functions) which were indicated by the stricter warning level of gcc
   - add sending of Broadcast-TP with iMultiSendStreamer_c
   - add parallel receive of Broadcast-TP to FastPacket, so that all flavours of NMEA2000 senders should be matched by TimePosGps_c,
-    the sending of FastPacket can be controlled with #define SEND_NMEA2000_FAST_PACKET
+    the sending of FastPacket can be controlled with <tt>\#define SEND_NMEA2000_FAST_PACKET</tt>
   - add IsoFilterBox_c to define receive filters based on ISONAME instead of SA
   - Now only enqueueing commands if pool is already uploaded
   - get support for PEAK CAN cards at Linux development hosts
@@ -166,7 +166,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 	- different font used for outputstrings in buttons to enable different scaling factors depending on the size of the button
 	- iProcDataLocalSimpleSetpoint_c::init() and iProcDataLocalSimpleMeasure_c::init() bugfix
 	- periodic SA request (about one minute period) for early detect of lost nodes on the BUS to get early cleanup of monitor list
-	  ( this feature is only active, when the automatic deletion of stale ISO nodes is activated by #define CONFIG_ISO_ITEM_MAX_AGE > 0 )
+	  ( this feature is only active, when the automatic deletion of stale ISO nodes is activated by <tt>\#define CONFIG_ISO_ITEM_MAX_AGE > 0</tt> )
 	- Now supporting differentially scaled fontattributes in buttons
 	- Changed Scaling to get more exact. removed 20bit fixpoint by factorM and factorD
 	- Softkey child object positioning revised
@@ -204,7 +204,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 	- reaction on language (change) PGN now possible via hook-function
 	- old class Base_c is subdivided into smaller classes, so that a project can better select the wanted information types.
 		This allows also the better maintenance of anonymous accessible parts (most of the features existing in pre-1.2.0 release)
-		and special extansions, that is only possible by personal access. Please contact  <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+		and special extansions, that is only possible by personal access. Please contact  <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
 		to gain access to the extension parts.
 
 \subsection Change_I 1.0.0 to 1.1.0
@@ -227,7 +227,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 	- done several cleanups and additions to <b>ISO 11783 Virtual Terminal</b>
 	- enhance documentation for feature setup files for individual projects and reorganize the existing files, to make them easier to understand
 	- enable HTTPS access to the subversion repository, as some proxies might hinder WebDAV access, which is needed by Subversion/Apache2<br>
-		so please try HTTPS access in case you have problems with accessing the repository, before you contact <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>
+		so please try HTTPS access in case you have problems with accessing the repository, before you contact <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
 	- some cleanup of workarounds which are needed due to Tasking compiler faults - the STL of versions up to 7.56 have wrong includes
 		( see file "include.cpp/algorithm" which includes "include.cpp/stl_algobase.h" which includes "string.h" into global namespace;
 		  a C++ system header shall include C-Library functions into the "std::" namespace -> it should include <tt>\<cstring\></tt> instead;

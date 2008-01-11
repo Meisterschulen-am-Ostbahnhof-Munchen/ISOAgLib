@@ -53,7 +53,7 @@ of the \isoaglib.
 So you must restrict your direct usage of \isoaglib parts to the interface namespaces <i>IsoAgLib</i> and <i>HAL</i>.
 This causes no runtime and firmware size overhead, as the mapping between the interface elements and their corresponding internal elements
 is realized by inlining, which is replaced by the compiler with direct usage of internal parts.
-Please contact the maintainer <a href="mailto:a.spangler@osb-ag:de">Achim Spangler</a>, in case you need for some reasons direct access to internal
+Please contact the maintainer <a href="mailto:a.spangler_at_osb-ag:de">Achim Spangler</a>, in case you need for some reasons direct access to internal
 parts. In case your planned function is really no extension to the \isoaglib, the interface might be extended to provide the
 needed access.
 */
