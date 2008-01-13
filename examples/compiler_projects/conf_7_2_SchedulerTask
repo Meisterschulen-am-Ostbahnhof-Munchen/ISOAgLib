@@ -121,8 +121,8 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=pc|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
-PRJ_CAN_DEVICE_FOR_SERVER="pc"
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
