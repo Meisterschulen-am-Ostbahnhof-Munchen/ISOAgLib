@@ -6,7 +6,7 @@ EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
 CAN_LIST="simulating:sys:socket_server:msq_server"
 RS232_LIST="simulating:sys:rte"
-DEVICE_LIST="pc:pcan:A1:rte:sontheim:vector_canlib:vector_xl"
+DEVICE_LIST="no_card:pcan:A1:rte:sontheim:vector_canlib:vector_xl"
 for conf_example in $EXAMPLE_LIST ; do
   echo "Processing... ". $conf_example
   EXAMPLE_DIR=""
@@ -34,7 +34,7 @@ for conf_example in $EXAMPLE_LIST ; do
             if test $can_drv != "socket_server" -a $can_drv != "simulating" ; then
               continue
             fi
-            if test $can_device != "pc" ; then
+            if test $can_device != "no_card" ; then
               continue
             fi
           elif test $target = "pc_linux" ; then
@@ -44,11 +44,11 @@ for conf_example in $EXAMPLE_LIST ; do
             if test $can_device = "sontheim" -o $can_device = 'vector_canlib' -o $can_device = 'vector_xl' ; then
               continue
             fi
-            if test $can_drv = "simulating" -a $can_device != "pc" ; then
+            if test $can_drv = "simulating" -a $can_device != "no_card" ; then
               continue
             fi
           else
-            if test $can_device != "pc" ; then
+            if test $can_device != "no_card" ; then
               continue;
             fi
           fi
