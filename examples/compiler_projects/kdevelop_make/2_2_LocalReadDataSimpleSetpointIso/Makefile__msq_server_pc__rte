@@ -178,7 +178,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg
 
 #Special Sources for CAN Server
 SOURCES_SERVER = ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_pc.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_no_card.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
 
 #Special Rules for CAN Server
