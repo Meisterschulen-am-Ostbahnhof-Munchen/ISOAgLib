@@ -100,7 +100,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # the corresponding default values are used
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
 # + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server" -> select wanted driver connection for CAN (deprecated: "rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim")
-# + USE_CAN_DEVICE_FOR_SERVER="pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" -> use this device for building the can_server
+# + USE_CAN_DEVICE_FOR_SERVER="no_card"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" -> use this device for building the can_server
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -429,7 +429,7 @@ create_filelist( )
     if [ -n "$COMM_PROC_FEATURES" ] ; then
       COMM_PROC_FEATURES="$COMM_PROC_FEATURES -o "
     fi
-    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/igeneralcommand*' -o -path '*/Part7_ProcessData/impl/generalcommand*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'"
+    COMM_PROC_FEATURES="$COMM_PROC_FEATURES -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/iprocesscmd*' -o -path '*/Part7_ProcessData/impl/processcmd*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'"
 
     if [ $PRJ_ISO11783 -gt 0 -a $PROC_LOCAL -gt 0 ] ; then
   # allow DevPropertyHandler
@@ -2250,7 +2250,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     ( "simulating"|"sys"|"msq_server"|"socket_server", deprecated: "rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim" ).
   --pc-can-device-for-server=CAN_DEVICE_FOR_SERVER
                                     use this device for building the can_server
-                                    ( "pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" ).
+                                    ( "no_card"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ( "simulating"|"sys"|"rte" ).
   --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
@@ -2460,7 +2460,7 @@ case "$USE_CAN_DRIVER" in
           USE_CAN_DEVICE_FOR_SERVER="A1"
           ;;
         *)
-          USE_CAN_DEVICE_FOR_SERVER="pc"
+          USE_CAN_DEVICE_FOR_SERVER="no_card"
           ;;
       esac
     fi
@@ -2473,7 +2473,7 @@ case "$USE_CAN_DRIVER" in
           USE_CAN_DEVICE_FOR_SERVER="A1"
           ;;
         *)
-          USE_CAN_DEVICE_FOR_SERVER="pc"
+          USE_CAN_DEVICE_FOR_SERVER="no_card"
           ;;
       esac
     fi

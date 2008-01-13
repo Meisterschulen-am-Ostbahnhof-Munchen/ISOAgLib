@@ -2969,7 +2969,7 @@ library/xgpl_src/IsoAgLib/hal/mitron167/typedef.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_A1.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/can/can_server_pc.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_no_card.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_pcan.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_rte.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp -text
