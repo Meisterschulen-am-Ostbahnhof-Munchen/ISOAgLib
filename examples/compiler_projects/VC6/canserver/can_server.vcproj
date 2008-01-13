@@ -208,7 +208,7 @@
 			Filter="cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_pc.cpp"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_no_card.cpp"
 				>
 			</File>
 			<File

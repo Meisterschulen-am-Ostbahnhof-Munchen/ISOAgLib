@@ -40,7 +40,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit2]
-FileName=..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_pc.cpp
+FileName=..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_no_card.cpp
 CompileCpp=1
 Folder=Project1
 Compile=1
