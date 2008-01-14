@@ -209,6 +209,16 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
 void
 IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
+#ifdef DEBUG_NETWORK_MANAGEMENT
+  INTERNAL_DEBUG_DEVICE << "React on IsoItem modification ";
+
+       if (at_action == AddToMonitorList)      { INTERNAL_DEBUG_DEVICE << "AddToMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
+  else if (at_action == ChangedAddress)        { INTERNAL_DEBUG_DEVICE << "ChangedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
+  else if (at_action == LostAddress)           { INTERNAL_DEBUG_DEVICE << "LostAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
+  else if (at_action == ReclaimedAddress)      { INTERNAL_DEBUG_DEVICE << "ReclaimedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
+  else if (at_action == RemoveFromMonitorList) { INTERNAL_DEBUG_DEVICE << "RemoveFromMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
+#endif
+
   if ((at_action == AddToMonitorList) || (at_action == ReclaimedAddress) || (at_action == ChangedAddress))
   {
     bool b_reconfig = false;

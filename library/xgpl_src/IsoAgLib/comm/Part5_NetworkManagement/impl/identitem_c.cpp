@@ -114,6 +114,7 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey)
   , mpc_isoItem (NULL)
   , mui16_eepromAdr (aui16_eepromAdr)
+  , mui8_globalRunState (GlobalRunStateNeverClaimed)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
@@ -156,6 +157,7 @@ IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t 
   int ai_singletonVecKey)
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
   , mpc_isoItem (NULL)
+  , mui8_globalRunState (GlobalRunStateNeverClaimed)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
@@ -213,6 +215,10 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     rc_eeprom.readString (p8ui8_isoNameEeprom, 8);
     mc_isoName = IsoName_c (p8ui8_isoNameEeprom);
 
+#ifdef DEBUG_NETWORK_MANAGEMENT
+      INTERNAL_DEBUG_DEVICE << "Read global run state " << (int)mui8_globalRunState << " from EEPROM.";
+#endif
+
     // use fallback to free definition, when the EEPROM has only invalid SA
     if ( mui8_preferredSa == 0xFF ) mui8_preferredSa = 0xFE;
 
@@ -225,10 +231,19 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
       if (mui8_globalRunState == GlobalRunStateNeverClaimed)
       { // FIRST ECU power-up, try with given program parameters (eeprom is only for storage of claimed iso-name!)
         b_useParameters = true;
+
+#ifdef DEBUG_NETWORK_MANAGEMENT
+      INTERNAL_DEBUG_DEVICE << " GlobalRunStateNeverClaimed" << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
       }
       else if (mui8_globalRunState == GlobalRunStateAlreadyClaimed)
       { // FURTHER ECU power-up, use claimed name stored in EEPROM
         // but only if not a new firmware was flashed with new ISO-Name and the EEPROM was NOT reset!
+
+#ifdef DEBUG_NETWORK_MANAGEMENT
+      INTERNAL_DEBUG_DEVICE << " GlobalRunStateAlreadyClaimed" << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
         if (mc_isoName.isEqualRegardingNonInstFields (*apc_isoNameParam))
         { // no firmware change, so go ahead!
           b_useParameters=false; // use EEPROM values - fine...
@@ -241,6 +256,10 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
       else
       { // Illegal value in EEPROM
         b_useParameters=true;
+
+#ifdef DEBUG_NETWORK_MANAGEMENT
+      INTERNAL_DEBUG_DEVICE << " Illegal value in EEPROM." << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
       }
     }
    #else
@@ -536,6 +555,13 @@ bool IdentItem_c::timeEventActive( void )
       // -> create local filter for processs data
       setItemState(IState_c::ClaimedAddress);
 
+      // set global run state because address claimed already
+      mui8_globalRunState = GlobalRunStateAlreadyClaimed;
+
+#ifdef DEBUG_NETWORK_MANAGEMENT
+      INTERNAL_DEBUG_DEVICE << "Write global run state " << (int)mui8_globalRunState << " to EEPROM." << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
       if (mui16_eepromAdr != 0xFFFF)
       {
         #ifdef USE_EEPROM_IO
@@ -544,6 +570,7 @@ bool IdentItem_c::timeEventActive( void )
         rc_eeprom.setp (mui16_eepromAdr);
         rc_eeprom << mui8_globalRunState << mui8_preferredSa;
         rc_eeprom.writeString (pcui8_isoName, 8);
+
         #else
         // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
         getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
