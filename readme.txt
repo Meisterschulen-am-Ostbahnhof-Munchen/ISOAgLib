@@ -63,6 +63,8 @@ To learn more about \isoaglib you can check the navigation menu for further topi
   - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after addition or deletion of FilterBox_c instances and message processing in order as received
   - PC can_server port vor Windows available (socket communication which can also be used under Linux)
   - fixed Working-Set-Master announce (TC client/server communication)
+  - Network Management rewritten (better handling of source address change and conflict)
+  - improved IsoAgLib scheduler, now with application interface
   - central mutex, so that a separate thread can safely access the \isoaglib, while no Scheduler_c::timeEvent() triggered internal activities of \isoaglib are running
   - reordering of directory structure, so that just a part of \isoaglib can be checked out, which contains only the library sources and managed BIOS files
   - more user friendly layout and structure of html documentation pages
