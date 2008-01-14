@@ -109,7 +109,7 @@ uint8_t vtObjectFontAttributes_c::marr_font2PixelDimensionTableH [15] = {8,  8, 
 
 // //////////////////////////////// +X2C Operation 168 : stream
 //! Parameter:
-//! @param:destMemory:
+//! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 int16_t

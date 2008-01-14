@@ -92,7 +92,7 @@ class vtObjectWorkingSet_c : public vtObject_c
 {
 public:
   //  Operation: stream
-  //! @param:destMemory:
+  //! @param destMemory:
   //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
   //! @param sourceOffset:
   int16_t stream(uint8_t* destMemory,

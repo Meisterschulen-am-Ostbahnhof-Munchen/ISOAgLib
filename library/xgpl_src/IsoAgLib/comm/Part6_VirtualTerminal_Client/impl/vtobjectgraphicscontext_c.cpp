@@ -94,7 +94,7 @@
 #undef MACRO_vtObjectTypeS
 
 namespace __IsoAgLib {
-//! @param:destMemory:
+//! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 //! @todo REQUEST Not data mask scaling (done by client) supported for graphics context.

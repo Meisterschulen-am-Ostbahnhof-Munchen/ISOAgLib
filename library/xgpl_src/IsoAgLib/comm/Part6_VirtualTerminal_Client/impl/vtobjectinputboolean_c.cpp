@@ -87,7 +87,7 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 // Operation : stream
-//! @param:destMemory:
+//! @param destMemory:
 //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
 //! @param sourceOffset:
 int16_t
