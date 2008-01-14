@@ -1,4 +1,5 @@
 /** @page AppLayerPage Management of Periodic PGN Base Information
+\anchor BaseDataPage
 The \isoaglib stores the information of several base information,
 so that they can be easily evaluated from the application, independent
 from the time relation between CAN-receive time and access time.
