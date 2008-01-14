@@ -53,7 +53,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/esx/system/system_system_target_extensions.h
+/** \file esx/system/system_target_extensions.h
  * A module targetExtensions should be used
  * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of

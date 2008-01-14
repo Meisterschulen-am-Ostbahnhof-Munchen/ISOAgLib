@@ -53,7 +53,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/mitron167/system/SystemTargetExtensions.cc
+/** \file mitron167/system/system_target_extensions.cpp
  * A module targetExtensions should be used
  * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of

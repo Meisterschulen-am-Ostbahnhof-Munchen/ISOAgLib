@@ -51,7 +51,7 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-/** @file canFifo.cpp
+/** @file canfifo_c.cpp
  * Source file containing the methods for buffer reading/writing
  */
 

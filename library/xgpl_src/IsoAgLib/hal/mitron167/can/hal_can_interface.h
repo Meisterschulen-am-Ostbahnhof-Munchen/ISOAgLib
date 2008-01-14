@@ -54,7 +54,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file hal_can_interface.h
+/** \file mitron167/can/hal_can_interface.h
  * The module halCanInterface implements a standard
  * interface for the CAN interactions of the IsoAgLib
  * This way the the adaptation of the IsoAgLib can be
