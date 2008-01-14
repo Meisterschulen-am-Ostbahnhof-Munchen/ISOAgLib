@@ -64,9 +64,14 @@ To learn more about \isoaglib you can check the navigation menu for further topi
   - PC can_server port vor Windows available (socket communication which can also be used under Linux)
   - fixed Working-Set-Master announce (TC client/server communication)
   - Network Management rewritten (better handling of source address change and conflict)
-  - improved IsoAgLib scheduler, now with application interface
-  - central mutex, so that a separate thread can safely access the \isoaglib, while no Scheduler_c::timeEvent() triggered internal activities of \isoaglib are running
-  - reordering of directory structure, so that just a part of \isoaglib can be checked out, which contains only the library sources and managed BIOS files
+  - improved IsoAgLib scheduler
+  - enhanced application integration:
+    - in IsoAgLib thread scope: application can register individual scheduler clients for periodic activities with well definied timing
+    - in separate thread scope: central mutex, to allow safe access to \isoaglib functions (no Scheduler_c::timeEvent() triggered internal activities of \isoaglib are running)
+  - naming scheme of variables changed (member variables and function parameters)
+  - directory structure reordered:
+    - subdirectories naming follows the ISO standard (e.g. "Part7_ProcessData")
+    - svn checkout of separate parts possible (e.g. only library sources and managed BIOS files without examples)
   - more user friendly layout and structure of html documentation pages
 
 For previous changes see the \ref PageOldNews or view the complete \ref PageChanges.
