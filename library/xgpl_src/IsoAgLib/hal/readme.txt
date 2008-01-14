@@ -16,7 +16,7 @@ The following steps are enough for adaptation to a new hardware:
         - implement functionality which is not provided by platform library in file named like <tt>system<b>_target_extensions.h</b></tt> and <tt>system<b>_target_extensions.cpp</b></tt>
         - adapt CAN layer in <tt>hal_can_interface.h</tt> and <tt>hal_can_interface.cpp</tt> (some CAN implementations use parameter structures which can't be mapped with inline functions) 
     -# insert your new <tt>SYSTEM_XY</tt> setting in your Makefiles or project configuration
-    -# send your adaptation to <a href="mailto:Achim.Spangler@osb-ag:de">Achim Spangler</a>, so that your adaptation can be used and possibly optimized
+    -# send your adaptation to <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>, so that your adaptation can be used and possibly optimized
     within the user community
 
 \section MainHalStructure Structure of HAL for Main Parts
