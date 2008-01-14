@@ -57,7 +57,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/c2c/sensor/sensor_target_extensions.h
+/** \file hal/c2c/sensor/sensor_target_extensions.h
  * A module targetExtensions should be used
  * for all methods, which can't be simply 
  * mapped from ECU standard BIOS to the needs of
