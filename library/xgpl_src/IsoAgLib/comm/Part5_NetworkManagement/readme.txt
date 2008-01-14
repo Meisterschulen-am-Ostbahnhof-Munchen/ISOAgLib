@@ -1,4 +1,5 @@
 /*! \page NetworkMgmtPage Device AddressClaim and Management of Information in Monitor Lists
+\anchor SystemMgmtPage
 \section NetworkMgmt Network Management
 The IsoAgLib allows to claim address a local device (identity) with a single
 function call at the BUS. Additionally it provides simple access to individual
@@ -21,32 +22,32 @@ claiming address, or which has already claimed an address.
 The source files for system management are organised so that all protocol specific
 stuff is placed in specific subdirectories. <br>
 <b>Sources for any protocols</b><br>
-- files in <i>\<xgpl_src/IsoAgLib/comm/System\></i> (<b>no subdirectories</b>)
-- everything in subdirectory <i>\<xgpl_src/IsoAgLib/comm/System<b>/impl</b>\></i>
+- files in <tt>xgpl_src/IsoAgLib/comm/System</tt> (<b>no subdirectories</b>)
+- everything in subdirectory <tt>xgpl_src/IsoAgLib/comm/System<b>/impl</b></tt>
 <br>
 <b>Sources for ISO 11783</b>
-- everything in subdirectory <i>\<xgpl_src/IsoAgLib/comm/System<b>/ISO11783</b>\></i>
+- everything in subdirectory <tt>xgpl_src/IsoAgLib/comm/System<b>/ISO11783</b></tt>
 <br>
 \subsection SystemMgmtDefines Project configuration for ISO 11783
 As some parts in the IsoAgLib are dependent on the supported protocols, it is <b>very</b>
-important to define the individual protocols to implement by some #define's. This can
+important to define the individual protocols to implement by some \#define's. This can
 be achieved by the default settings in the central project configuration file
-<i>\<xgpl_src/IsoAgLib/isoaglib_config.h\></i> and by the compiler-defines in the Makefile.
-The decision on the protocols is based on the availability of the following #define clauses:
-- #define USE_ISO_11783
-These define settings can be derived from the #define values of:
-- USE_ISO_11783_YN YES|NO
-In case neither USE_xy nor USE_xy_YN is defined, the config files
-<i>\<xgpl_src/IsoAgLib/isoaglib_config.h\></i> defines a default setting.
+<tt>xgpl_src/IsoAgLib/isoaglib_config.h</tt> and by the compiler-defines in the Makefile.
+The decision on the protocols is based on the availability of the following <tt>\#define</tt> clauses:
+- <tt>\#define USE_ISO_11783</tt>
+These define settings can be derived from the <tt>\#define</tt> values of:
+- <tt>USE_ISO_11783_YN YES|NO</tt>
+In case neither <tt>USE_xy</tt> nor <tt>USE_xy_YN</tt> is defined, the config files
+<tt>xgpl_src/IsoAgLib/isoaglib_config.h</tt> defines a default setting.
 Thus you can change the default rules for your individual needs in this file.
 
 \section SystemMgmtAddressClaim Address Claim of Local Device
 
 \subsection SystemMgmtAnnIso Start ISO 11783 AddressClaim
 You can claim an address for a member with the following code lines.
-The necessary header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h 
-if the define PRJ_USE_AUTOGEN_CONFIG is set to config_0_0_AddressClaimIso 
-(see also the list of configuration settings for 0_0_AddressClaimIso).
+The necessary header is automatically included by <tt>xgpl_src/IsoAgLib/isoaglib_config.h</tt>
+if the define <tt>PRJ_USE_AUTOGEN_CONFIG</tt> is set to <tt>config_0_0_AddressClaimIso</tt>
+(see also the list of configuration settings for <tt>0_0_AddressClaimIso</tt>).
 \ref 0_0_AddressClaimIso.cpp
 \code
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/IsoAgLib/isoaglib_config.h
