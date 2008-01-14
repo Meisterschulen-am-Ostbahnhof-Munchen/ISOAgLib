@@ -27,7 +27,19 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section Changes Changes
 
 \subsection Change_O 2.0 to 2.1
+  - Network Management regarding SA-changes and SA-conflicts and IState rewritten, also SaClaimHandler
+  - interface iSchedulerTask_c for IsoAgLib scheduler added
+  - VT object pools: vt2iso now decides automatically which classes are necessary (smaller client size)
   - Process data: GeneralCommand_c renamed to ProcessCmd_c
+  - bug fix in ManageMeasureProgLocal_c::timeEvent(): reset mpc_progCache after erase
+  - vt-client: now no more overwriting in queue on ChangeActiveMask command
+  - ManageMeasureProgLocal_c::insertMeasureprog() rewritten
+  - remove DIN specific enum progType_t, use instead new flag mb_active in ProcessElementBase_c
+  - Modified the constructor of AddressResolveResults_c to have a correct instantiation on embedded target of a static object
+  - introduce new functions Ident_c::setWord() (set a uint16_t part of the identifier at once) and CanPkgExt_c::setIsoDpPf()
+  - use MALLOC_TEMPLATE #define, which can be defined individual for compiler in compiler_adaption.h
+  - changes when more than one protocol instances are used (singletonVecKey, ...) 
+  - MultiReceive filter-cleanup (removed manual 8dlc-check, added missing deleteFilter, adapted insertFilter)
   - new naming scheme (m-prefix for member-variables, ...)
   - ProcIdent_c and all derived classes (local and remote): parameter c_ownerISOName removed from init() and constructor
   - changed handling of received process data messages (first local then remote check)
