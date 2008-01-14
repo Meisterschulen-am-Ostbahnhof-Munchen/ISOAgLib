@@ -187,7 +187,7 @@ To build the CAN server applications the following projects are already provided
 
 These projects consist of:
 -# Source file <tt>can_server_sock.cpp</tt> (main CAN server logic)
--# Source file { <tt>can_server_pc.cpp | can_server_peak.cpp | can_server_sontheim.cpp | can_server_vector.cpp | can_server_vector_xl.cpp</tt> } (CAN card specific logic)
+-# Source file { <tt>can_server_no_card.cpp | can_server_peak.cpp | can_server_sontheim.cpp | can_server_vector.cpp | can_server_vector_xl.cpp</tt> } (CAN card specific logic)
 
 and the necessary pathes for CAN card specfic header files and libraries for compiling and linking. Please adapt the include pathes for header and libraries to your own settings (e.g.: <tt>C:\\Development\\pthread, C:\\Development\\PCAN, C:\\Development\\CANLIB, C:\\Development\\pthread, C:\\Development\\pthread\\pthreadVC2.lib,</tt> ...)
 
