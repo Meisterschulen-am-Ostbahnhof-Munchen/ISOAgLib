@@ -97,7 +97,7 @@ namespace __IsoAgLib {
 
 
 //! Constructor: initializes the list and local variables
-//! create one <list> element including one Chunk,
+//! create one \<list\> element including one Chunk,
 //! init mpc_iterWriteChunk, mpc_iterParsedChunk, mui32_writeCnt, mui32_parsedCnt
 StreamChunk_c::StreamChunk_c (StreamType_t at_streamType,
                               const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi,

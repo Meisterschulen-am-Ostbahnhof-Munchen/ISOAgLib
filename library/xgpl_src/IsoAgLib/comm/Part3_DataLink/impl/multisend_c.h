@@ -271,7 +271,7 @@ public:
 
     /** standard delay between two sent packets (between 50 and 200)
     uint16_t ui16_delay;
-    \__-> now using maxDelay from MultiSend, because not everybody can have its own delay, we'll have to take the max. */
+    __-> now using maxDelay from MultiSend, because not everybody can have its own delay, we'll have to take the max. */
 
     /** pointer to the data */
     const HUGE_MEM uint8_t* mhpbui8_data;

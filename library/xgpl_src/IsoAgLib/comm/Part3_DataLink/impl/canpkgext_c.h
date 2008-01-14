@@ -158,7 +158,7 @@ class CanPkgExt_c : public CanPkg_c
 
   /**
     simply deliver a uint8_t from a specific position with operator[]
-    @param ab_pos position of dellivered uint8_t [0..7]
+    @param aui8_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos ab_pos
   */
   uint8_t operator[](uint8_t aui8_pos) const {return msc_data[aui8_pos];}
@@ -212,35 +212,35 @@ class CanPkgExt_c : public CanPkg_c
   { msc_data.setFloatData(aui8_pos, af_val);}
   /**
     simply deliver a uint8_t from a specific position with
-    @param ab_pos position of dellivered uint8_t [0..7]
+    @param aui8_pos position of dellivered uint8_t [0..7]
     @return uint8_t balue in CAN data string at pos ab_pos
   */
   uint8_t getUint8Data(uint8_t aui8_pos) const {return msc_data.getUint8Data(aui8_pos);}
 
   /**
     simply deliver a uint16_t from a specific starting position with
-    @param ab_pos position of dellivered uint16_t [0..6]
+    @param aui8_pos position of dellivered uint16_t [0..6]
     @return uint16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
   uint16_t getUint16Data(uint8_t aui8_pos) const {return msc_data.getUint16Data(aui8_pos);}
 
   /**
     simply deliver a int16_t from a specific starting position with
-    @param ab_pos position of dellivered int16_t [0..6]
+    @param aui8_pos position of dellivered int16_t [0..6]
     @return int16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
   int16_t getInt16Data(uint8_t aui8_pos) const {return msc_data.getInt16Data(aui8_pos);}
 
   /**
     simply deliver a uint32_t from a specific starting position with
-    @param ab_pos position of dellivered uint32_t [0..4]
+    @param aui8_pos position of dellivered uint32_t [0..4]
     @return uint32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
   uint32_t getUint32Data(uint8_t aui8_pos) const {return msc_data.getUint32Data(aui8_pos);}
 
   /**
     simply deliver a int32_t from a specific starting position with
-    @param ab_pos position of dellivered int32_t [0..4]
+    @param aui8_pos position of dellivered int32_t [0..4]
     @return int32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
   */
   int32_t getInt32Data(uint8_t aui8_pos) const {return msc_data.getInt32Data(aui8_pos);}
