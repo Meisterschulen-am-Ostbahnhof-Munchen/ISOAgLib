@@ -57,7 +57,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file IsoAgLib/hal/c2c/system/SystemTargetExtensions.cc
+/** \file c2c/system/system_target_extensions.cpp
  * A module targetExtensions should be used
  * for all methods, which can't be simply 
  * mapped from ECU standard BIOS to the needs of
