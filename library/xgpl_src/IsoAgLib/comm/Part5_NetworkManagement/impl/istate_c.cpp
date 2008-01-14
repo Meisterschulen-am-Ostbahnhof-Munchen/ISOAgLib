@@ -86,13 +86,15 @@
 /* ************************************** */
 /* import some namespaces for easy access */
 /* ************************************** */
-using namespace __IsoAgLib;
+//using namespace __IsoAgLib;  // using direct specification "__IsoAgLib::xyz" 
+                               // so that it will be correctly referenced in 
+                               // the generated documantation (doxygen)
 
 /**
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey)
+__IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey)
 	: ClientBase( ai_singletonVecKey )
 {
   en_itemState = ren_itemState;
@@ -102,7 +104,7 @@ IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey)
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IState_c::IState_c(uint8_t ab_state, int ai_singletonVecKey )
+__IsoAgLib::IState_c::IState_c(uint8_t ab_state, int ai_singletonVecKey )
 	: ClientBase( ai_singletonVecKey )
 {
   en_itemState = itemState_t(ab_state);
@@ -112,7 +114,7 @@ IState_c::IState_c(uint8_t ab_state, int ai_singletonVecKey )
   copy constructor for IState_c
   @param arc_src source for this new instance
 */
-IState_c::IState_c(const IState_c& arc_src)
+__IsoAgLib::IState_c::IState_c(const __IsoAgLib::IState_c& arc_src)
 	: ClientBase( arc_src )
 {
   en_itemState = arc_src.en_itemState;
@@ -134,7 +136,7 @@ IState_c::IState_c(const IState_c& arc_src)
   @param ab_clearOld optional clear old value for complete new set (default no clear)
   @return resulting state information
 */
-IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool ab_clearOld)
+__IsoAgLib::IState_c::itemState_t __IsoAgLib::IState_c::setItemState(itemState_t ren_itemState, bool ab_clearOld)
 {
   if (ab_clearOld) en_itemState = ren_itemState;
   // set state to Active, and reset Off and OffUnable on
@@ -175,7 +177,7 @@ IState_c::itemState_t IState_c::setItemState(itemState_t ren_itemState, bool ab_
   constructor of IStateExt_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : IState_c(ren_itemState, ai_singletonVecKey)
+__IsoAgLib::IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : __IsoAgLib::IState_c(ren_itemState, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;
@@ -185,7 +187,7 @@ IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singletonVecKey)  : I
   constructor of IState_c which can set the state to given initial value
   @param ren_itemState optional wanted state information (default <empty> value)
 */
-IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : IState_c(ab_state, ai_singletonVecKey)
+__IsoAgLib::IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : __IsoAgLib::IState_c(ab_state, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;
@@ -195,7 +197,7 @@ IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : IState_c(ab
   copy constructor for IState_c
   @param arc_src source for this new instance
 */
-IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : IState_c(arc_src)
+__IsoAgLib::IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : __IsoAgLib::IState_c(arc_src)
 {
   counter.b_addressClaimCnt = arc_src.counter.b_addressClaimCnt;
   counter.b_causedConflictCnt = arc_src.counter.b_causedConflictCnt;
@@ -209,14 +211,14 @@ IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : IState_c(arc_src)
   @param ac_cnt optional new AddressClaim counter  (default only Request)
   @return actual or resulting AddressClaim cnt
 */
-uint8_t IStateExt_c::addressClaimCnt(int8_t ac_cnt)
+uint8_t __IsoAgLib::IStateExt_c::addressClaimCnt(int8_t ac_cnt)
 {
   if (ac_cnt > Request)
   {
-    setItemState(IState_c::AddressClaim);
+    setItemState(__IsoAgLib::IState_c::AddressClaim);
     counter.b_addressClaimCnt = ac_cnt;
   }
-  return (itemState(IState_c::AddressClaim))?counter.b_addressClaimCnt:0;
+  return (itemState(__IsoAgLib::IState_c::AddressClaim))?counter.b_addressClaimCnt:0;
 };
 
 /**
@@ -224,7 +226,7 @@ uint8_t IStateExt_c::addressClaimCnt(int8_t ac_cnt)
   @param ac_cnt optional new false alive counter  (default only Request)
   @return actual or resulting false alive cnt
 */
-uint8_t IStateExt_c::causedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
+uint8_t __IsoAgLib::IStateExt_c::causedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
 {
   switch (ac_cnt)
   {
@@ -244,13 +246,13 @@ uint8_t IStateExt_c::causedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
     case Request: // -1 --> only answer cnt
       break;
     default: // new dircet given value >= 0
-      if (ac_cnt > 0) setItemState(IState_c::CausedConflict);
-      else clearItemState(IState_c::CausedConflict);
+      if (ac_cnt > 0) setItemState(__IsoAgLib::IState_c::CausedConflict);
+      else clearItemState(__IsoAgLib::IState_c::CausedConflict);
       if ((ac_cnt >= 0) && (ac_cnt < 0xF)) counter.b_causedConflictCnt = ac_cnt;
       break;
   }
 
-  return (itemState(IState_c::CausedConflict))?counter.b_causedConflictCnt:0;
+  return (itemState(__IsoAgLib::IState_c::CausedConflict))?counter.b_causedConflictCnt:0;
 };
 
 /**
@@ -258,7 +260,7 @@ uint8_t IStateExt_c::causedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
   @param ac_cnt optional new false alive counter  (default only Request)
   @return actual or resulting false alive cnt
 */
-uint8_t IStateExt_c::affectedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
+uint8_t __IsoAgLib::IStateExt_c::affectedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
 {
   switch (ac_cnt)
   {
@@ -278,11 +280,11 @@ uint8_t IStateExt_c::affectedConflictCnt(int8_t ac_cnt, int32_t ai32_time)
     case Request: // -1 --> only answer cnt
       break;
     default: // new dircet given value >= 0
-      if (ac_cnt > 0) setItemState(IState_c::AffectedConflict);
-      else clearItemState(IState_c::AffectedConflict);
+      if (ac_cnt > 0) setItemState(__IsoAgLib::IState_c::AffectedConflict);
+      else clearItemState(__IsoAgLib::IState_c::AffectedConflict);
       if ((ac_cnt >= 0) && (ac_cnt < 0xF)) counter.b_affectedConflictCnt = ac_cnt;
       break;
   }
 
-  return (itemState(IState_c::AffectedConflict))?counter.b_affectedConflictCnt:0;
+  return (itemState(__IsoAgLib::IState_c::AffectedConflict))?counter.b_affectedConflictCnt:0;
 };
