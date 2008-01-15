@@ -396,6 +396,11 @@ public:
 
   IdentItem_c* getIdentItem() { return mpc_identItem; }
 
+  /** take away master state of this item -> is than standalone
+      BE CAREFUL: you should know what you are doing!!!
+    */
+  void removeMasterState() { if( isMaster() ) { delete mpvec_slaveIsoNames; mpvec_slaveIsoNames = NULL; } }
+
 protected: // methods
 
 private: // methods
@@ -404,11 +409,11 @@ private: // methods
   */
   uint8_t calc_randomWait();
 
+private: // members
+#ifdef USE_WORKING_SET
   // return pointer to vector of clients
   STL_NAMESPACE::vector<IsoName_c>* getVectorOfClients() const { return mpvec_slaveIsoNames;}
 
-private: // members
-#ifdef USE_WORKING_SET
   /** pointer to a list of all slave nodes represented by their ISO-Name
    * if this pointer is != NULL, this item IS a master and the list's size is the number of associated slaves.
    * if this pointer is == NULL, this item is NOT a master.
