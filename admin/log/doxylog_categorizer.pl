@@ -10,8 +10,15 @@
 #	WARN_IF_UNDOCUMENTED	= YES
 #	WARN_IF_DOC_ERROR	= YES
 #                
-
-open(FILE, @ARGV[0]) or die "Can't find file $FILE: $!\nusage: @ARGV[0] doxylog\n\n";
+if( @ARGV == 0 )
+{
+  $fname = "doxywarnings.txt";
+}
+else
+{
+  $fname = @ARGV[0];
+}
+open(FILE, $fname) or die "Can't find file $FILE: $!\nusage: doxylog_categorizer.pl doxylog-file\n\n";
 @raw=<FILE>;
 close(FILE);
 
@@ -170,39 +177,39 @@ while ( defined( $line = shift(@raw) ) )
 #
 # write output
 #
-open(FILE, ">@ARGV[0]".".multiple_groups" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".multiple_groups.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $multiple_groups);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".misc" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".misc.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $misc);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".no_class_member" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".no_class_member.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $no_class_member);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".no_file_member" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".no_file_member.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $no_file_member);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".unresolved_ref" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".unresolved_ref.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $unresolved_ref);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".param_undoc" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".param_undoc.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $param_undoc);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".func_nodef" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".func_nodef.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $func_nodef);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".param_not_found" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".param_not_found.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $param_not_found);
 close(FILE);
 
-open(FILE, ">@ARGV[0]".".comment_block" ) or die "Can't open file $FILE: $!\n";
+open(FILE, ">$fname".".comment_block.log" ) or die "Can't open file $FILE: $!\n";
 print(FILE $comment_block);
 close(FILE);
 

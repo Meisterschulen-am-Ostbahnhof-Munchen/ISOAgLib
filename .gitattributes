@@ -3,8 +3,8 @@
 /Doxyfile -text
 /LICENSE -text
 admin/buildArchives/create_win32_projects.sh -text
-admin/doxylog_categorizer.pl -text
 admin/includeTaggedFile.pl -text
+admin/log/doxylog_categorizer.pl -text
 admin/testscripts/compileSelectedTutorials.sh -text
 admin/testscripts/compileTutorials.sh -text
 bin/proc2iso -text
