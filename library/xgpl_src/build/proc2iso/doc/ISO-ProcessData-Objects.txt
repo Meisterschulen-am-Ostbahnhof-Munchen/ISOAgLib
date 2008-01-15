@@ -25,9 +25,8 @@ bool b_registerSuccess = getIProcessInstance().getDevPropertyHandlerInstance().r
 
 \section XMLGeneralStructure General structure of the XML-file
 First of all some general rules for the structure of a device description.
-<ul>
-<li> All elements of one device must be included in one XML-file.
-<li> Per XML-file only one <b><device ></b> XML-element is allowed. It is the root element and includes all other XML-elements.<br>
+- All elements of one device must be included in one XML-file.
+- Per XML-file only one <b>\<device\></b> XML-element is allowed. It is the root element and includes all other XML-elements.<br>
 Have a look at a little codesnippet to show that root element:
 \code
 <device designator="Device1" software_version="0.1" workingset_mastername="Ma00a1900ffe0001b" serialnumber="WXYZ999" structure_label="STRUCT4"

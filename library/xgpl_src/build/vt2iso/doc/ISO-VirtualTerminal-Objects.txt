@@ -351,7 +351,7 @@ This mechanism is also NOT something from the ISO standard but an internal calcu
 \section XMLNesting Using objects: Allowed object nesting
 
 There are two ways of using/referencing objects:
- - The "normal" way (as it reads in the ISO-Specification) : Using <include_object name='...'> to include/reference an object that was defined directly in the <objectpool> (i.e. nested in the <objectpool ...> tag!)
+ - The "normal" way (as it reads in the ISO-Specification) : Using \<include_object name='...'\> to include/reference an object that was defined directly in the \<objectpool\> (i.e. nested in the \<objectpool ...\> tag!)
 \code
 <objectpool {attributes if first XML-file}>
   <outputstring name='MyOutputString1' value='foo' {more attributes} />
@@ -390,23 +390,20 @@ There are two ways of using/referencing objects:
 
 Note that the <i> pos_x </i> and <i> pos_y </i> attributes are always associated with the parent object, hence in the first example the position is given in the outputstring objects and in the second example it (as it makes no sense specifying it in the outputstrings here) is given in the include_object reference (include_object and include_macro are no real own object but parts of the parent object!).
 <p>
-Now how does the <picturegraphic> object implementation work?<br>
+Now how does the \<picturegraphic\> object implementation work?<br>
 Note that the "normal/standard" bitmaps will be searched in the "std_bitmap_path" and the fixed-size-bitmaps will be searched in the "fix_bitmap_path". Simply add these attributes in the &lt;objectpool&gt; element in your first XML file.
-The attributes of <picturegraphic> mean:
-<ul>
-  <li> file='<filename>': default value for all bitmap-depths. Will simply set file1='<filename>', file4='<filename>' and file8='<filename>' as default. This can be overridden by
-  <li> file1='<filename1bit>': Filename for the 2-colored bitmap (will override value set by file='<filename>' (if given)).
-  <li> file4='<filename4bit>': Filename for the 16-colored bitmap (will override value set by file='<filename>' (if given)).
-  <li> file8='<filename8bit>': Filename for the 256-colored bitmap (will override value set by file='<filename>' (if given)).
-  <li> rle='<mode>': Try RLE-encoding for "1bit"-bitmaps, "4bit"-bitmaps or "8bit"-bitmaps. If set to "auto" it will try to RLE-encode every bitmap generated.
-  <li> format='...': The given bitmap should be treated as a 1bit/4bit/8bit-bitmap. This means for:
-        <ul>
-          <li> 1bit: Only a 2-colored version is generated.
-          <li> 4bit: Also a 2-colored version is generated, but also a 16-colored version.
-          <li> 8bit: Also a 2-colored version is generated, a 16-colored version is generated if file='...' or file4='...' is specified. In case you don't want the 16-colored version to be generated, set file4='' (On a 16-color VT the 2-colored bitmap is used then!).
-        </ul>
-</ul>
-You can nest any count of <fixedbitmap> elements into the <picturegraphic> element. Let's assume you specified a bitmap with width="30" (and height also 30) in an objectpool of 200x200. On a VT with a dimension of 240x240 that would make a size of 36x36. If you have such a VT that does not support scaling, you can specify a to-36x36-pre-scaled version of that bitmap in such a <fixedbitmap> element. <br>
+The attributes of \<picturegraphic\> mean:
+- file='\<filename\>': default value for all bitmap-depths. Will simply set file1='\<filename\>', file4='\<filename\>' and file8='\<filename\>' as default. This can be overridden by
+- file1='\<filename1bit\>': Filename for the 2-colored bitmap (will override value set by file='\<filename\>' (if given)).
+- file4='\<filename4bit\>': Filename for the 16-colored bitmap (will override value set by file='\<filename\>' (if given)).
+- file8='\<filename8bit\>': Filename for the 256-colored bitmap (will override value set by file='\<filename\>' (if given)).
+- rle='\<mode\>': Try RLE-encoding for "1bit"-bitmaps, "4bit"-bitmaps or "8bit"-bitmaps. If set to "auto" it will try to RLE-encode every bitmap generated.
+- format='...': The given bitmap should be treated as a 1bit/4bit/8bit-bitmap. This means for:
+  - 1bit: Only a 2-colored version is generated.
+  - 4bit: Also a 2-colored version is generated, but also a 16-colored version.
+  - 8bit: Also a 2-colored version is generated, a 16-colored version is generated if file='...' or file4='...' is specified. In case you don't want the 16-colored version to be generated, set file4='' (On a 16-color VT the 2-colored bitmap is used then!).
+
+You can nest any count of \<fixedbitmap\> elements into the <picturegraphic> element. Let's assume you specified a bitmap with width="30" (and height also 30) in an objectpool of 200x200. On a VT with a dimension of 240x240 that would make a size of 36x36. If you have such a VT that does not support scaling, you can specify a to-36x36-pre-scaled version of that bitmap in such a \<fixedbitmap\> element. <br>
 Let's take a look at the following snippet:
 \code
   <picturegraphic name='BigLogo' width='100' transparency_colour='white' options='transparent+flashing' 
@@ -689,7 +686,6 @@ The following table lists the available VT commands, most of which can be includ
 <table border="1" cellspacing="3" cellpadding="3">
  <tr>
  <th>Messages</th><th>Attributes</th><th>Description</th></tr>
- <tr>
  <tr>
  <td>command_hide_show_object</td>
  <td>&apsobject_id&aps<br>
