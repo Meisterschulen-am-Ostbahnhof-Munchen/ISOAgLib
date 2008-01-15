@@ -11436,7 +11436,7 @@ PRJ_RS232=1
  \section PrjConfigTractorInternalCan List of configuration settings for TractorInternalCan
  This is only a copy with doxygen ready comment blocks from the original file ../../../examples/src/Tractor/TractorInternalCan/config_TractorInternalCan.h 
  This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_TractorInternalCan.h ( Important: place the directory of the application source files in the include search path )
+ project define <tt>\#define PRJ_USE_AUTOGEN_CONFIG config_TractorInternalCan.h</tt> ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_TractorInternalCan in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code

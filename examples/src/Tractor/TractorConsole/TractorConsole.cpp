@@ -165,8 +165,8 @@
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
- * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
- * if the #define PRJ_USE_AUTOGEN_CONFIG is set to
+ * This header is automatically included by <tt>xgpl_src/IsoAgLib/isoaglib_config.h</tt>
+ * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_TractorConsole ( see also at \ref PrjConfigTractorConsole ).
  *                                                                         */
 /* *************************************************************************/

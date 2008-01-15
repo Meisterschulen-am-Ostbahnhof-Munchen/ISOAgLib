@@ -11436,7 +11436,7 @@ PRJ_RS232=1
  \section PrjConfigTractorConsole List of configuration settings for TractorConsole
  This is only a copy with doxygen ready comment blocks from the original file ../../../examples/src/Tractor/TractorConsole/config_TractorConsole.h 
  This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_TractorConsole.h ( Important: place the directory of the application source files in the include search path )
+project define <tt>\#define PRJ_USE_AUTOGEN_CONFIG config_TractorConsole.h</tt> ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_TractorConsole in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/EDE/ as input file for ./update_makefile.sh to create the project generation files.
 \code

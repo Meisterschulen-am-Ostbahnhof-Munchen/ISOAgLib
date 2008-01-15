@@ -964,7 +964,7 @@ PRJ_EEPROM=1
  \section PrjConfigImi List of configuration settings for Imi
  This is only a copy with doxygen ready comment blocks from the original file ../../../examples/config_Imi.h 
  This header is included by <IsoAgLib/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
- project define #define PRJ_USE_AUTOGEN_CONFIG config_Imi.h ( Important: place the directory of the application source files in the include search path )
+ project define \#define PRJ_USE_AUTOGEN_CONFIG config_Imi.h ( Important: place the directory of the application source files in the include search path )
 
  Use the file conf_Imi in the directory /home/spangler/Projekte/IsoAgLib/compiler_projects/Dev-C++/ as input file for ./update_makefile.sh to create the project generation files.
 \code
