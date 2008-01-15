@@ -53,7 +53,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file hal/esx/system/sensor_target_extensions.h
+/** \file hal/esx/system/sensor/sensor_target_extensions.h
  * A module targetExtensions should be used
  * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of

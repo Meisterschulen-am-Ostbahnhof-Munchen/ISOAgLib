@@ -231,8 +231,8 @@ namespace __HAL
    }
 
    /**
-      send '\0' terminated string on RS232
-      @param pbString pointer to '\0' terminated (!) source data string
+      send '\\0' terminated string on RS232
+      @param pbString pointer to '\\0' terminated (!) source data string
       @return HAL_NO_ERR -> o.k. else send buffer overflow
    */
    int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)

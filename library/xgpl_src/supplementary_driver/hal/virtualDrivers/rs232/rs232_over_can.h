@@ -56,7 +56,7 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file supplementary_driver/hal/virtualDrivers/rs232_over_can.h
+/** \file supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.

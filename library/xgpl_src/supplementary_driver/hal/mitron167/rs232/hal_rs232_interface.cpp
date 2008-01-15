@@ -398,8 +398,8 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     return HAL_NO_ERR;
   }
   /**
-    send '\0' terminated string on RS232
-    @param pbString pointer to '\0' terminated (!) source data string
+    send '\\0' terminated string on RS232
+    @param pbString pointer to '\\0' terminated (!) source data string
     @return HAL_NO_ERR -> o.k. else send puffer overflow
   */
   int16_t put_rs232String(const uint8_t *pbString) {
