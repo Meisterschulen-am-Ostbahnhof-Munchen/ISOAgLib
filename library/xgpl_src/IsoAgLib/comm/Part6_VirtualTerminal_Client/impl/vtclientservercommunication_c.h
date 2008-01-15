@@ -541,7 +541,7 @@ private: // attributes
 
   /// the following languages are
   /// -1: not supported language (==> so using default language for upload, but important to differentiate for the application!)
-  ///  0: default language (first in <workingset>-object)
+  ///  0: default language (first in \<workingset\>-object)
   ///  1: second language
   ///  2: third language
   int8_t mi8_vtLanguage; // always valid, as we're waiting for a VT's language first before starting anything...
