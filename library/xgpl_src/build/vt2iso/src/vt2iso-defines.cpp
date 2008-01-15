@@ -425,7 +425,8 @@ char truthTable [maxTruthTable] [stringLength+1] = {
   "true",
   "on",
   "show",
-  "enable"
+  "enable",
+  "1"
 };
 
 char falseTable [maxFalseTable] [stringLength+1] = {
@@ -433,7 +434,8 @@ char falseTable [maxFalseTable] [stringLength+1] = {
   "false",
   "off",
   "hide",
-  "disable"
+  "disable",
+  "0"
 };
 
 char formatTable [maxFormatTable] [stringLength+1] = {

@@ -45,12 +45,28 @@ unsigned int
 colortoi (char* text_color)
 {
   int l;
-  for (l=0; l<16; l++) {
+  for (l=0; l<maxColorTable; l++) {
     if (strncmp (text_color, colorTable [l], stringLength) == 0) {
       return l;
     }
   }
   return atoi (text_color);
+}
+
+int itocolor(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxColorTable )
+  {
+   c_outputText = colorTable[ui_index];
+
+  }
+  else
+ {
+    char c_tmp_buf[stringLength];
+    sprintf(c_tmp_buf,"%d",ui_index);
+    c_outputText = c_tmp_buf;
+ }
+  return 0;
 }
 
 unsigned int
@@ -77,6 +93,7 @@ colordepthtoi (char* text_colordepth)
   return 2;
 }
 
+
 signed int
 fonttypetoi (char* text_fonttype)
 {
@@ -97,6 +114,32 @@ fonttypetoi (char* text_fonttype)
   std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1;
 }
+
+
+int itofonttype(unsigned int ui_index, string& c_outputText)
+{
+
+  if(ui_index < 8 )
+  {
+    char c_tmpBuf[stringLength];
+    sprintf(c_tmpBuf,"%d",ui_index);
+    c_outputText = c_tmpBuf;
+  }
+  else if( ui_index == 255)
+  {
+    c_outputText = "proprietary";
+  }
+  else
+  {
+    if(ui_index < maxFonttypeTable )
+    {
+      c_outputText = fonttypeTable[ui_index];
+    }
+    else return -1;
+  }
+  return 0;
+}
+
 
 signed int
 booltoi (char *text_bool)
@@ -129,6 +172,17 @@ fontsizetoi (char *text_fontsize)
   return -1;
 }
 
+int itofontsize(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxFontsizeTable )
+  {
+    c_outputText = fontsizeTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
+
 signed int
 formattoi (char *text_format)
 {
@@ -139,6 +193,16 @@ formattoi (char *text_format)
     }
   }
   std::cout << "INVALID FORMAT '" << text_format << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
+}
+
+int itoformat(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxFormatTable )
+  {
+    c_outputText = formatTable[ui_index];
+    return 0;
+  }
   return -1;
 }
 
@@ -154,6 +218,17 @@ horizontaljustificationtoi (char *text_horiz)
   std::cout << "INVALID HORIZONTALJUSTIFICATION '" << text_horiz << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1;
 }
+
+int itohorizontaljustification(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxHorizontalJustificationTable )
+  {
+    c_outputText = horizontalJustificationTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
 
 unsigned int
 stringoptionstoi (char *text_options)
@@ -264,6 +339,17 @@ prioritytoi (char *text_priority)
   return -1;
 }
 
+int itopriority(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxPriorityAcousticSignalTable )
+  {
+    c_outputText = priorityAcousticSignalTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
+
 signed int
 acousticsignaltoi (char *text_acousticsignal)
 {
@@ -274,6 +360,16 @@ acousticsignaltoi (char *text_acousticsignal)
     }
   }
   std::cout << "INVALID ACOUSTIC SIGNAL '" << text_acousticsignal << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
+}
+
+int itoacousticsignal(unsigned int ui_index,string& c_outputText)
+{
+  if(ui_index < maxPriorityAcousticSignalTable )
+  {
+    c_outputText = priorityAcousticSignalTable[ui_index];
+    return 0;
+  }
   return -1;
 }
 
@@ -310,6 +406,25 @@ linedirectiontoi (char *text_linedirection)
   }
   return retval;
 }
+
+int itolineardirection(unsigned int ui_index, string& c_outputText)
+{
+  char c_tmpBuf[stringLength];
+  if(ui_index == 0)
+  {
+    sprintf(c_tmpBuf,"%s","toplefttobottomright");
+    c_outputText = c_tmpBuf;
+  }
+  else if(ui_index == 1)
+  {
+    sprintf(c_tmpBuf,"%s","bottomlefttotopright");
+    c_outputText = c_tmpBuf;
+  }
+  else return -1;
+
+  return 0;
+}
+
 
 unsigned int
 linearttoi (char *text_lineart)
@@ -351,6 +466,16 @@ ellipsetypetoi (char *text_ellipsetype)
   return retval;
 }
 
+int itoellipsetype(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxEllipseTypeTable )
+  {
+    c_outputText = ellipseTypeTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
 unsigned int
 polygontypetoi (char *text_polygontype)
 {
@@ -364,6 +489,17 @@ polygontypetoi (char *text_polygontype)
   return retval;
 }
 
+int itopolygontype(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxPolygonTypeTable )
+  {
+    c_outputText = polygonTypeTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
+
 unsigned int
 validationtypetoi (char *text_validationtype)
 {
@@ -373,6 +509,28 @@ validationtypetoi (char *text_validationtype)
   }
   return retval;
 }
+
+int itovalidationtype(unsigned int ui_index, string& c_outputText)
+{
+  char c_tmpBuf[stringLength];
+
+  if(ui_index == 0)
+  {
+    sprintf(c_tmpBuf,"%s","valid_characters");
+    c_outputText = c_tmpBuf;
+  }
+  else if(ui_index == 1)
+  {
+    sprintf(c_tmpBuf,"%s","invalid_characters");
+    c_outputText = c_tmpBuf;
+  }
+  else return -1;
+
+ return 0;
+}
+
+
+
 
 unsigned int
 filltypetoi (char *text_filltype)
@@ -386,6 +544,17 @@ filltypetoi (char *text_filltype)
   }
   return retval;
 }
+
+int itofilltype(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxFillTypeTable )
+  {
+    c_outputText = fillTypeTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
 
 unsigned int
 eventtoi (char *text_eventName)
@@ -412,6 +581,17 @@ auxfunctiontypetoi(char *text_auxFunctionType)
   }
   return retval;
 }
+
+int itofunctiontype(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxAuxFunctionTypes )
+  {
+    c_outputText = auxFunctionTypeTable[ui_index];
+    return 0;
+  }
+  return -1;
+}
+
 
 unsigned int
 gcoptionstoi (char *text_options)

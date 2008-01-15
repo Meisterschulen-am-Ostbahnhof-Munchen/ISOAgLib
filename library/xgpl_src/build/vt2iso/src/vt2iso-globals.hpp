@@ -42,6 +42,23 @@
 
 #include "vt2iso-defines.hpp"
 #include <iostream>
+#include <string>
+
+
+
+extern int itocolor(unsigned int ui_index, std::string& c_outputText);
+extern int itofontsize(unsigned int ui_index, std::string& c_outputText);
+extern int itofonttype(unsigned int ui_index, std::string& c_outputText);
+extern int itoformat(unsigned int ui_index, std::string& c_outputText);
+extern int itohorizontaljustification(unsigned int ui_index, std::string& c_outputText);
+extern int itopolygontype(unsigned int ui_index, std::string& c_outputText);
+extern int itoellipsetype(unsigned int ui_index, std::string& c_outputText);
+extern int itoacousticsignal(unsigned int ui_index, std::string& c_outputText);
+extern int itopriority(unsigned int ui_index, std::string& c_outputText);
+extern int itofunctiontype(unsigned int ui_index, std::string& c_outputText);
+extern int itofilltype(unsigned int ui_index, std::string& c_outputText);
+extern int itovalidationtype(unsigned int ui_index, std::string& c_outputText);
+extern int itolineardirection(unsigned int ui_index, std::string& c_outputText);
 
 
 extern unsigned int colortoi (char* text_color);

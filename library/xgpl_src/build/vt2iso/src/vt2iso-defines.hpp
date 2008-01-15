@@ -372,7 +372,8 @@ extern char attrNameTable [maxAttributeNames] [stringLength+1];
 #define maxCommandsToCompare (maxCommands)
 extern char ctCommandTable [maxCommandsToCompare] [stringLength+1];
 
-extern char colorTable [16] [stringLength+1];
+#define maxColorTable 16
+extern char colorTable [maxColorTable] [stringLength+1];
 
 extern char masktypeTable [3] [stringLength+1];
 
@@ -387,10 +388,10 @@ extern char fontstyleTable [maxFontstyleTable] [stringLength+1];
 #define maxFonttypeTable 9
 extern char fonttypeTable [maxFonttypeTable] [stringLength+1];
 
-#define maxTruthTable 5
+#define maxTruthTable 6
 extern char truthTable [maxTruthTable] [stringLength+1];
 
-#define maxFalseTable 5
+#define maxFalseTable 6
 extern char falseTable [maxFalseTable] [stringLength+1];
 
 #define maxFormatTable 2
