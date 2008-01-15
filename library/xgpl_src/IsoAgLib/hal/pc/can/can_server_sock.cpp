@@ -92,7 +92,7 @@
 using namespace __HAL;
 
 
-server_c::server_c()
+__HAL::server_c::server_c()
   : mb_logMode(FALSE), mb_inputFileMode(FALSE), mi16_reducedLoadOnIsoBus(-1)
 {
   memset(mf_canOutput, 0, sizeof(mf_canOutput));

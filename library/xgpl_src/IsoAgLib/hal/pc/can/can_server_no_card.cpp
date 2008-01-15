@@ -59,6 +59,8 @@
 #define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 
+using namespace __HAL;
+
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
 bool isBusOpen(uint8_t ui8_bus)

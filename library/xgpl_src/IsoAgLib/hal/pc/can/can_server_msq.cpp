@@ -117,7 +117,7 @@ using namespace __HAL;
 #define PRIORITY_CAN_COMMAND  0
 
 
-server_c::server_c()
+__HAL::server_c::server_c()
   : mb_logMode(FALSE), mb_inputFileMode(FALSE), mi32_lastPipeId(0), mi16_reducedLoadOnIsoBus(-1)
 {
   memset(mf_canOutput, 0, sizeof(mf_canOutput));

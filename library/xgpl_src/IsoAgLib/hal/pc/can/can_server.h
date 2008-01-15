@@ -115,8 +115,6 @@ struct canMsg_s {
   uint8_t         ui8_data[8];
 };
 
-using namespace __HAL;
-
 namespace __HAL {
 
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
@@ -350,15 +348,15 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
 uint32_t initCardApi();
 bool     resetCard(void);
 
-bool     openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData);
-void     closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData);
+bool     openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, __HAL::server_c* pc_serverData);
+void     closeBusOnCard(uint8_t ui8_bus, __HAL::server_c* pc_serverData);
 
-int16_t  sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData);
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData);
+int16_t  sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
+uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
 
 bool     isBusOpen(uint8_t ui8_bus);
 
-void addSendTimeStampToList(client_c *ps_client, int32_t i32_sendTimeStamp);
+void addSendTimeStampToList(__HAL::client_c *ps_client, int32_t i32_sendTimeStamp);
 #endif
 
 
