@@ -139,13 +139,17 @@
 /** define whether to use SLIST or LIST
  * on win32 systems we'll use the native stl list
  * comparison */
-#if not defined(USABLE_LIST) && not defined(WIN32) && not defined(DO_USE_SLIST)
+#ifndef USABLE_LIST
+#ifndef WIN32
+#ifndef DO_USE_SLIST
 #if defined (__GNUC__) || defined(__TSW_CPP__)
   /** both the GCC and Tasking Compiler support slist */
   #define USABLE_SLIST slist
   #define DO_USE_SLIST
 #else
   #define USABLE_SLIST list
+#endif
+#endif
 #endif
 #endif
 

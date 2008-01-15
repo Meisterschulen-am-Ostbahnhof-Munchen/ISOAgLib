@@ -396,10 +396,12 @@ public:
 
   IdentItem_c* getIdentItem() { return mpc_identItem; }
 
+#ifdef USE_WORKING_SET
   /** take away master state of this item -> is than standalone
       BE CAREFUL: you should know what you are doing!!!
     */
   void removeMasterState() { if( isMaster() ) { delete mpvec_slaveIsoNames; mpvec_slaveIsoNames = NULL; } }
+#endif
 
 protected: // methods
 
