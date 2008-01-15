@@ -54,7 +54,7 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file hal/pc/can.h
+/** \file library/xgpl_src/IsoAgLib/hal/pc/can/can.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
