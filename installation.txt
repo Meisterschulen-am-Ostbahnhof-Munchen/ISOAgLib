@@ -166,11 +166,11 @@ MinGW compiler is also integrated into the Dev-C++ tool.
 The \isoaglib provides now also for Win32 the CAN server application with the following features:
 -# several \isoaglib applications can run on the same host and communicate which each other through the CAN server (socket communication)
 -# the connected \isoaglib appliactions can access a physical CAN bus via the CAN server application. Supported HW types are:
-    - Peak CAN USB driver
-    - Vector Informatik driver (<b>CANLIB</b> and <b>XL Driver Library</b>)
-    - Sontheim CAN card driver
-    - RTE CAN driver (linux only)
-    - A1 CAN driver (linux only)
+  - Peak CAN USB driver
+  - Vector Informatik driver (<b>CANLIB</b> and <b>XL Driver Library</b>)
+  - Sontheim CAN card driver
+  - RTE CAN driver (linux only)
+  - A1 CAN driver (linux only)
 
 The necessary configuration options for the \isoaglib applications are (e.g. conf_0_0_AddressClaimIso):
 - <tt>USE_CAN_DRIVER="socket_server"</tt>

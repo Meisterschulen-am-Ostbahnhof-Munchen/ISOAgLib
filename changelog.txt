@@ -37,7 +37,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
   - remove DIN specific enum progType_t, use instead new flag mb_active in ProcessElementBase_c
   - Modified the constructor of AddressResolveResults_c to have a correct instantiation on embedded target of a static object
   - introduce new functions Ident_c::setWord() (set a uint16_t part of the identifier at once) and CanPkgExt_c::setIsoDpPf()
-  - use MALLOC_TEMPLATE #define, which can be defined individual for compiler in compiler_adaption.h
+  - use MALLOC_TEMPLATE \#define, which can be defined individual for compiler in compiler_adaption.h
   - changes when more than one protocol instances are used (singletonVecKey, ...) 
   - MultiReceive filter-cleanup (removed manual 8dlc-check, added missing deleteFilter, adapted insertFilter)
   - new naming scheme (m-prefix for member-variables, ...)
