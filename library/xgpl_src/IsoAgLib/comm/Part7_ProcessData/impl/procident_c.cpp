@@ -175,7 +175,7 @@ void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t a
 
 /**
   copy constructor for class instance
-  @rrrefcSrc source ProcIdent_c instance
+  @param source ProcIdent_c instance
   @return reference to source for cmd like "proc1 = proc2 = proc3;"
 */
 ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& arc_src){
