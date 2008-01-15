@@ -57,7 +57,7 @@
   platform type.<ul>
   <li> define a new SYSTEM_XX define in the header isoaglib_config.h
   <li> comment out all the other SYSTEM_YY constants in isoaglib_config.h
-  <li> create new #elif part in isoaglib_config.h to define subdirectory
+  <li> create new \#elif part in isoaglib_config.h to define subdirectory
      name bios_xy for the new platform
   <li> create new directories IsoAgLib/hal/XY (and
        optional supplementary_driver/hal/XY) as copy from
@@ -640,7 +640,7 @@
   #endif
 
 /**
-  * @def USE_BASE_YN
+  * @def USE_PROCESS_YN
   * activate module for base data ( periodic sent main tractor data like speed, PTO, Hitch )
   * ( even if IsoAgLib is mainly independent from this setting, the IsoItem_c::processMsg()
   *   requires this setting, to detect if a call to Base_c:processMsg() is defined -
