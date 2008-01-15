@@ -305,7 +305,16 @@ public:
   int32_t startWsAnnounce();
 
   // check if this item is a master (i.e. the master pointer points to itself)
+  // NOTE: this function need NOT to be used in combination with function getMaster()
+  //       as it already checks isMaster()
   bool isMaster () const { return (mpvec_slaveIsoNames != NULL); }
+  // check if this item belong to a working set -> either master or client
+  // NOTE: only to be used for checking -> if master IsoItem_c is need use function getMaster()
+  bool isWsmMember () { return (getMaster() != NULL ? true : false); }
+  /** get master of this isoItem
+      @return  this if master himself; get master if client; NULL if standalone
+    */
+  IsoItem_c* getMaster();
 
   void setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
   void setMaster (uint8_t aui8_slaveCount);
@@ -394,6 +403,9 @@ private: // methods
     @return wait offset in msec. [0..153]
   */
   uint8_t calc_randomWait();
+
+  // return pointer to vector of clients
+  STL_NAMESPACE::vector<IsoName_c>* getVectorOfClients() const { return mpvec_slaveIsoNames;}
 
 private: // members
 #ifdef USE_WORKING_SET

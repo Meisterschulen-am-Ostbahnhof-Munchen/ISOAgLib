@@ -660,6 +660,37 @@ int32_t IsoItem_c::startWsAnnounce()
 }
 
 
+/** get master of this IsoItem
+    @return  this if master himself; get master if client; NULL if standalone
+  */
+IsoItem_c* IsoItem_c::getMaster()
+{
+  // check if called for a master isoItem_c
+  if ( isMaster() ) return this;
+
+  uint8_t ui8_numberOfMembers = getIsoMonitorInstance().isoMemberCnt(true);
+  for ( uint8_t ui8_index = 0; ui8_index < ui8_numberOfMembers; ui8_index++)
+  {
+    IsoItem_c& refc_isoItem = getIsoMonitorInstance().isoMemberInd(ui8_index, true);
+    if ( refc_isoItem.isMaster() )
+    {
+      STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNamesTmp = refc_isoItem.getVectorOfClients();
+      if (mpvec_slaveIsoNamesTmp == NULL) continue;
+
+      for (IsoName_c* c_isoNameOfClient = &*mpvec_slaveIsoNamesTmp->begin(); c_isoNameOfClient != &*mpvec_slaveIsoNamesTmp->end(); c_isoNameOfClient++)
+      {
+        if ( *c_isoNameOfClient == isoName() )
+        { // found master to this
+          return &refc_isoItem;
+        }
+      }
+    }
+  }
+  // master of client cannot be found -> standalone client
+  return NULL;
+}
+
+
 
 /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
 /// Only check for valid announce keys (i.e. ai32_timeAnnounceStarted).
