@@ -332,7 +332,7 @@ VtClientServerCommStreamer_c::restoreDataNextStreamPart()
 /** *****************************************************/
 
 /** static instance to store temporarily before push_back into list */
-SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
+__IsoAgLib::SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
 
 
 void
