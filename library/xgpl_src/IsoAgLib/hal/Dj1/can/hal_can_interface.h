@@ -54,7 +54,7 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file hal_can_interface.h
+/** \file library/xgpl_src/IsoAgLib/hal/Dj1/can/hal_can_interface.h
  * The module halCanInterface implements a standard
  * interface for the CAN interactions of the IsoAgLib
  * This way the the adoption of the IsoAgLib can be
