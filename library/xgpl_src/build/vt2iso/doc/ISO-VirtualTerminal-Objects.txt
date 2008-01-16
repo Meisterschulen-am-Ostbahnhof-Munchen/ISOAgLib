@@ -403,7 +403,7 @@ The attributes of \<picturegraphic\> mean:
   - 4bit: Also a 2-colored version is generated, but also a 16-colored version.
   - 8bit: Also a 2-colored version is generated, a 16-colored version is generated if file='...' or file4='...' is specified. In case you don't want the 16-colored version to be generated, set file4='' (On a 16-color VT the 2-colored bitmap is used then!).
 
-You can nest any count of \<fixedbitmap\> elements into the <picturegraphic> element. Let's assume you specified a bitmap with width="30" (and height also 30) in an objectpool of 200x200. On a VT with a dimension of 240x240 that would make a size of 36x36. If you have such a VT that does not support scaling, you can specify a to-36x36-pre-scaled version of that bitmap in such a \<fixedbitmap\> element. <br>
+You can nest any count of \<fixedbitmap\> elements into the \<picturegraphic\> element. Let's assume you specified a bitmap with width="30" (and height also 30) in an objectpool of 200x200. On a VT with a dimension of 240x240 that would make a size of 36x36. If you have such a VT that does not support scaling, you can specify a to-36x36-pre-scaled version of that bitmap in such a \<fixedbitmap\> element. <br>
 Let's take a look at the following snippet:
 \code
   <picturegraphic name='BigLogo' width='100' transparency_colour='white' options='transparent+flashing' 
