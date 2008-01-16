@@ -1,0 +1,166 @@
+IsoAgLib AddressClaim Tests
+===========================
+
+Authors
+- Franz Alt (f.alt@osb-ag.de)
+- Thomas Mellman (t.mellman@osb-ag.de)
+
+This directory contains several test scripts to test the address claim
+functionality of the IsoAgLib.
+
+I. Test cases
+
+I.1. Testcase A
+
+Two test client with the same ISO name should start up
+
+I.1.1. Variant 1
+
+Startup two test clients with an empty EEPROM
+
+Expected behaviour:
+Both clients should startup normally. The second test client must change it's
+source address (SA)
+
+I.1.2. Variant 2
+
+Startup two test clients with stored ISO names at EEPROM
+
+Expected behavour:
+The first client should startup normally. The second one shouldn't startup
+because the same ISO name as the first client.
+
+I.2. Testcase B
+
+One test client is running while another client tries to steal the SA with a
+higher prior ISO name
+
+Expected behaviour:
+The test client changes it's SA
+
+I.3. Testcase C
+
+One test client is running while another client tries to steal the SA with a
+lower prior ISO name
+
+Expected behaviour:
+The test client lost the SA for a short time but claimes it's former SA again
+
+I.4. Testcase D
+
+One test client is running while another client tries to claim an address with
+the same ISO name and a different SA as the test client
+
+Expected behaviour:
+The test client detects that another client tries to claim an address with the
+same ISO name and shutdown itself
+
+I.5. Testcase E
+
+One test client is running while another client tries to claim an address with
+the same ISO name and the same SA as the test client
+
+Expected behaviour:
+The test client detects that another client tries to claim an address with the
+same ISO name and shutdown itself
+
+I.6. Testcase F
+
+One test client is connected to another client that changes it's SA after some
+time
+
+Expected behaviour:
+The connection to the client that changes it's SA is still alive after the test
+
+I.7. Testcase G
+
+One test client is connected to another client (1) that is also connected to
+another client (2). 2 tries to steal the SA from 1
+
+I.7.1. Variant 1
+
+The client (1) connected to the test client changes it's SA
+
+Expected behaviour:
+Client 1 changes it's SA
+
+I.7.2. Variant 2
+
+The client (1) connected to the test client insists on it's SA
+
+Expected behaviour:
+Client 1 insists on it's SA
+
+II. Requirements
+
+Before all tests can be executed the following components must be available:
+
+* Tutorial 3.0
+* CAN-Server (included when compiling tutorial 3.0)
+* CAN-Server-Messenger
+
+Those components where automatically copied into the directory where the
+runall.sh script is contained.
+
+To test the interaction with a virtual terminal you'll need a symbolic link to
+a startVT.sh and stopVT.sh script. These scripts should start and stop your own
+virtual terminal. If you don't have an virtual terminal you can't execute the
+test cases from above!
+
+II.1. Adaptions for testcase F
+
+If the source address should be changed after a while, the following lines of
+code could be integrated into an existing client or virtual terminal:
+
+  ui16_SaChangeCycle++;
+
+  /* change SA after n cycles */
+  if (ui16_SaChangeCycle == n)
+  {
+    __IsoAgLib::IsoSystemPkg_c& c_pkg = __IsoAgLib::getIsoMonitorInstance().data();
+    c_pkg.setExtCanPkg8(6, ADDRESS_CLAIM_PGN, ADDRESS_CLAIM_PGN, 255, 0x27, 0x1b, 0x0, 0xc0, 0xc, 0x0, 0x1d, 0x0, 0x20);
+    __IsoAgLib::getCanInstance() << c_pkg;
+  }
+
+Testcase F is disabled by default at runall.sh !!!
+
+III. Automated test scripts
+
+All test cases from above could be executed through the runall.sh script. This
+script executes all *_ex.sh test scripts and generates an report file at the
+end. The test scripts without the *_ex.sh prefix don't call the virtual
+terminal and the layout manager. These scripts could be used to manually verify
+the address claim behaviour.
+
+The test results are printed into the report file. For each test case the
+normal diff output and the sdiff output are shown. This makes it possible to
+compare the expected results from the generated ones.
+
+Example report snippet:
+
+-------------------------------------------------------------------------------
+diff result:
+12d11
+<  0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+
+sdiff result:
+ 0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
+ 0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
+ 0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
+ 0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
+ 0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
+ 0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
+ 0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
+ 0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
+ 0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+ 0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0 
+ 0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+ 0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0          <
+-------------------------------------------------------------------------------
+
+IV. Manually tests
+
+In case of errors at the automated tests manually tests could be performed by
+the integrator. All test scripts with an _ex.sh prefix could be started
+manually. During the test scripts the clients should be accessed through the
+virtual terminal - depending on the current test case!
