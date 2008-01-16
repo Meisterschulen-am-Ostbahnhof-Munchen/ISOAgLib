@@ -77,11 +77,10 @@ class SpecialParsingBase_c
     * @param pNode pointer to element in xml file
     * @param objectType objectType of known xml tag
     * @param objName name of object
+    * @param pui_objID pointer to variable of object ID
     * @param pb_isObjID pointer to flag if object is wished
-    * @param pui16_objID pointer to variable of object ID
     * @param pcch_SKM pointer to softkeymask if object is a datamask or alarmmask
-    * @param pcch_varRef1st pointer to variable reference if given
-    * @param pcch_varRef2nd pointer to 2nd variable reference (only used for linear and arched bar graph)
+    * @param pcch_varRef pointer to variable reference if given
   */
   virtual bool parseKnownTag (DOMNode* pNode, const uint8_t objectType,
                               const char* objName, unsigned int* pui_objID,

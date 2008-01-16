@@ -79,9 +79,9 @@ class SpecialParsingBasePropTag_c
 
   /** that function tries to parse an unknown tag from vt2iso
     * @return returns 0 if successful else anything unequal to 0
-    * @param pNode pointer to element in xml file
-    * @param objectType object type of pNode
-    * @param pb_isObjID pointer to boolean
+    * @param ap_Node pointer to element in xml file
+    * @param aui_objectType object type of pNode
+    * @param rpcch_objName pointer to object name character string
   */
   virtual bool parseUnknownTag (DOMNode* ap_Node, unsigned int aui_objectType, char* rpcch_objName) = 0;
 
