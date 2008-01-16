@@ -372,7 +372,7 @@ private: // methods
       NEVER assign a IdentItem_c to another instance!!!!
       ==> the asignment is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      @param arc_src source
+      <!--@param arc_src source-->
     */
   IdentItem_c& operator=(const IdentItem_c& /* arc_src */){return *this; }
 

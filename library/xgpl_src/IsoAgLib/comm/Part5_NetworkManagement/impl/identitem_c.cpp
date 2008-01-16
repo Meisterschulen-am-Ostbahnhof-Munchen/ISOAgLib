@@ -129,18 +129,19 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
 
 
 /** constructor for ISO identity, which starts address claim for this identity
-    @param apc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param ab_selfConf          true -> this member as a self configurable source adress
     @param aui8_indGroup        select the industry group, 2 == agriculture
+    @param aui8_devClass	device class identifier
+    @param aui8_devClassInst    instance of device class
     @param ab_func              function code of the member (25 = network interconnect)
     @param aui16_manufCode      11bit manufactor code
     @param aui32_serNo          21bit serial number
-    @param aui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+    @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
                                 SA for self conf ISO device) (default 254 for no special wish)
     @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
                                 (default 0xFFFF for NO EEPROM store)
     @param ab_funcInst          function instance of this member (default 0)
     @param ab_ecuInst           ECU instance of this member (default 0)
+    @param ab_selfConf          true -> this member as a self configurable source adress
     @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
@@ -329,9 +330,9 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
 
 
 /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
-    @param apc_isoName           pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param ab_selfConf          true -> this member as a self configurable source adress
     @param aui8_indGroup        select the industry group, 2 == agriculture
+    @param aui8_devClass	device class identifier
+    @param aui8_devClassInst	device class instance 
     @param ab_func              function code of the member (25 = network interconnect)
     @param aui16_manufCode      11bit manufactor code
     @param aui32_serNo          21bit serial number
@@ -341,6 +342,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
                                 (default 0xFFFF for NO EEPROM store)
     @param ab_funcInst          function instance of this member (default 0)
     @param ab_ecuInst           ECU instance of this member (default 0)
+    @param ab_selfConf          true -> this member as a self configurable source adress
     @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
                                 in case an address claim for the slave devices shall be sent by this ECU, they
                                 must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )

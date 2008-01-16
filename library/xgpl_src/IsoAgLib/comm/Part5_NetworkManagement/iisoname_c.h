@@ -274,7 +274,7 @@ public:
   void setFuncInst(uint8_t ab_funcInst) { IsoName_c::setFuncInst( ab_funcInst );}
 
   /** set ECU instance code
-    @param ab_funcInst instance number of ECU with same function, device class and function instance
+    @param ab_ecuInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
   void setEcuInst(uint8_t ab_ecuInst) { IsoName_c::setEcuInst( ab_ecuInst );}

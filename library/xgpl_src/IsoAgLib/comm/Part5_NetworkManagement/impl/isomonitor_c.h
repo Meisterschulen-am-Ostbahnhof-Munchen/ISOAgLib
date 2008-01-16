@@ -445,7 +445,7 @@ public:
   bool sendRequestForClaimedAddress( bool ab_force = false );
 
   /** get the Xth slave of the master isoItem
-    @param xth tells which slave of the working set to get
+    @param index tells which slave of the working set to get
     @param apc_masterItem this is the master of which we want all the slaves
   */
   IsoItem_c* getSlave (uint8_t index, IsoItem_c* apc_masterItem);

@@ -126,7 +126,7 @@ public:
 
   /**
     constructor of IState_c which can set the state to given initial value
-    @param ren_itemState optional wanted state information (default <empty> value)
+    @param ab_state optional wanted state information (default \<empty\> value)
   */
   IState_c(uint8_t ab_state, int ai_singletonVecKey = 0);
 
@@ -206,7 +206,7 @@ public:
 
   /**
     constructor of IState_c which can set the state to given initial value
-    @param ren_itemState optional wanted state information (default <empty> value)
+    @param ab_state optional wanted state information (default \<empty\> value)
   */
   IStateExt_c(uint8_t ab_state, int ai_singletonVecKey = 0);
 

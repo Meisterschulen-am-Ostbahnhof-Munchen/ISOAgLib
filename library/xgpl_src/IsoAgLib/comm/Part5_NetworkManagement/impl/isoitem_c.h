@@ -182,7 +182,7 @@ public:
   uint32_t serNo() const {return mc_isoName. serNo();}
 
   /** set the NAME data from 8 uint8_t string
-    @param apb_src pointer to 8byte source string
+    @param apu_src pointer to 8byte source string
   */
   void inputNameUnion(const Flexible8ByteString_c* apu_src) {mc_isoName.inputUnion(apu_src);}
 
@@ -217,7 +217,7 @@ public:
   void setFuncInst(uint8_t ab_funcInst) {mc_isoName.setFuncInst(ab_funcInst);}
 
   /** set ECU instance code
-    @param ab_funcInst instance number of ECU with same function, device class and function instance
+    @param ab_ecuInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
   void setEcuInst(uint8_t ab_ecuInst) {mc_isoName.setEcuInst(ab_ecuInst);}
@@ -328,7 +328,7 @@ public:
 
   /**
     set number of this item
-    @param ac_isoName number
+    @param aui8_nr number
   */
   void setNr(uint8_t aui8_nr){mui8_nr = aui8_nr;}
 
@@ -363,7 +363,7 @@ public:
 
   /**
     lower comparison between left ISOName uint8_t and right MonitorItem
-    @param ab_left ISOName uint8_t left parameter
+    @param ac_left ISOName uint8_t left parameter
     @param arc_right rigth ServiceItem_c parameter
   */
   friend bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right);
@@ -371,21 +371,21 @@ public:
   /**
     lower comparison between left IsoItem_c and right ISOName uint8_t
     @param arc_left left ServiceItem_c parameter
-    @param ab_right ISOName uint8_t right parameter
+    @param arc_right ISOName uint8_t right parameter
   */
-  friend bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right);
+  friend bool lessThan(const IsoItem_c& arc_left, const IsoName_c& arc_right);
 
   /**
     equality comparison with ISOName uint8_t on the rigth
     @param arc_right rigth parameter for lower compare
   */
-  bool operator==(const IsoName_c& ac_right)const { return (isoName() == ac_right)?true:false;}
+  bool operator==(const IsoName_c& arc_right)const { return (isoName() == arc_right)?true:false;}
 
   /**
     difference comparison with ISOName uint8_t on the rigth
     @param arc_right rigth parameter for lower compare
   */
-  bool operator!=(const IsoName_c& ac_right) const{ return (isoName() != ac_right)?true:false;}
+  bool operator!=(const IsoName_c& arc_right) const{ return (isoName() != arc_right)?true:false;}
 
   /**
     compare given number to nr of this item and return result

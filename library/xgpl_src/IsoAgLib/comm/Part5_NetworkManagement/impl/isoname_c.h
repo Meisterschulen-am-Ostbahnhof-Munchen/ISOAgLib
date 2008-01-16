@@ -265,7 +265,7 @@ public:
   void inputString(const uint8_t* apb_src);
 
   /** set the NAME data from 8 uint8_t string
-    @param apb_src pointer to 8byte source string
+    @param apu_src pointer to 8byte source string
   */
   void inputUnion(const Flexible8ByteString_c* apu_src);
 

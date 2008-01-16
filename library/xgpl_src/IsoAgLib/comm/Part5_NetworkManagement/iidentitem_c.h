@@ -136,13 +136,8 @@ public:
   /**
     default constructor, which can optionally start address claim for this identity, if enough information
     is provided with the parameters (at least apc_isoName, apb_name
-    @param apc_isoName           optional pointer to the ISOName variable of this identity, which is resident somewhere else (f.e. main() task)
-    @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
-    @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
-                                IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
+    @param aui16_saEepromAdr
+    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iIdentItem_c (uint16_t aui16_saEepromAdr = 0xFFFF, int ai_singletonVecKey = 0)
     : IdentItem_c (aui16_saEepromAdr, ai_singletonVecKey) {}
@@ -151,12 +146,14 @@ public:
   /**
     constructor for ISO identity, which starts address claim for this identity
     @param aui8_indGroup        select the industry group, 2 == agriculture
+    @param aui8_devClass	device class
+    @param aui8_devClassInst	deveice class instance
     @param ab_func              function code of the member (25 = network interconnect)
     @param aui16_manufCode      11bit manufactor code
     @param aui32_serNo          21bit serial number
     @param ab_preferredSa       preselected source adress (SA) of the ISO item (fixed SA or last time
                                 SA for self conf ISO device) (default 254 for free self-conf)
-    @param aui16_saEepromAdr    EEPROM adress, where the used source adress is stored for self_conf members
+    @param aui16_eepromAdr    EEPROM adress, where the used source adress is stored for self_conf members
                                 (default 0xFFFF for NO EEPROM store)
     @param ab_funcInst          function instance of this member (default 0)
     @param ab_ecuInst           ECU instance of this member (default 0)
@@ -185,7 +182,9 @@ public:
 
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
       @param aui8_indGroup        select the industry group, 2 == agriculture
-      @param ab_func              function code of the member (25 = network interconnect)
+      @param aui8_devClass	  device class
+      @param aui8_devClassInst	  deveice class instance
+       @param ab_func             function code of the member (25 = network interconnect)
       @param aui16_manufCode      11bit manufactor code
       @param aui32_serNo          21bit serial number
       @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time

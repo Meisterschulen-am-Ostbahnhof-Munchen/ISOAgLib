@@ -313,7 +313,7 @@ void IsoName_c::inputString(const uint8_t* apb_src)
 }
 
 /** set the NAME data from 8 uint8_t string
-  @param apb_src pointer to 8byte source string
+  @param apu_src pointer to 8byte source string
 */
 void IsoName_c::inputUnion(const Flexible8ByteString_c* apu_src)
 {
@@ -375,7 +375,7 @@ void IsoName_c::setFuncInst(uint8_t ab_funcInst)
 }
 
 /** set ECU instance code
-  @param ab_funcInst instance number of ECU with same function, device class and function instance
+  @param ab_ecuInst instance number of ECU with same function, device class and function instance
       (default 0 - normally)
 */
 void IsoName_c::setEcuInst(uint8_t ab_ecuInst)
@@ -403,7 +403,7 @@ void IsoName_c::setSerNo(uint32_t aui32_serNo)
 
 /** check if this NAME has higher prio
   than the given NAME 8-uint8_t string
-  @param apb_compare
+  @param apu_compare
   @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
 */
 int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) const

@@ -184,7 +184,7 @@ public:
     and set a Member Array Iterator to the result
     @param ac_isoName searched ISOName
     @param pb_success bool pointer to store the success (true on success)
-    @param pbc_iter optional member array iterator which points to searched IsoItem_c on success
+    @param ab_forceClaimedAddress (default:false)
     @return reference to the searched item
   */
   iIsoItem_c& isoMemberISOName(const iIsoName_c& ac_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false )

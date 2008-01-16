@@ -92,7 +92,7 @@
 
 /**
   constructor of IState_c which can set the state to given initial value
-  @param ren_itemState optional wanted state information (default <empty> value)
+  @param ren_itemState optional wanted state information (default \<empty\> value)
 */
 __IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey)
 	: ClientBase( ai_singletonVecKey )
@@ -185,7 +185,7 @@ __IsoAgLib::IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singleton
 
 /**
   constructor of IState_c which can set the state to given initial value
-  @param ren_itemState optional wanted state information (default <empty> value)
+  @param ren_itemState optional wanted state information (default \<empty\> value)
 */
 __IsoAgLib::IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : __IsoAgLib::IState_c(ab_state, ai_singletonVecKey)
 {

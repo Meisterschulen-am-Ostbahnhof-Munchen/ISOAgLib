@@ -48,7 +48,7 @@ You can claim an address for a member with the following code lines.
 The necessary header is automatically included by <tt>xgpl_src/IsoAgLib/isoaglib_config.h</tt>
 if the define <tt>PRJ_USE_AUTOGEN_CONFIG</tt> is set to <tt>config_0_0_AddressClaimIso</tt>
 (see also the list of configuration settings for <tt>0_0_AddressClaimIso</tt>).
-\ref 0_0_AddressClaimIso.cpp 
+See \ref 0_0_AddressClaimIso.cpp.
 
 \code
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/IsoAgLib/isoaglib_config.h

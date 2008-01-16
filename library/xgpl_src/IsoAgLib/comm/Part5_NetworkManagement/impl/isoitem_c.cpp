@@ -230,7 +230,7 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
 
 /**
   lower comparison between left ISOName uint8_t and right MonitorItem
-  @param ab_left ISOName uint8_t left parameter
+  @param ac_left ISOName uint8_t left parameter
   @param arc_right rigth ServiceItem_c parameter
  */
 bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right)
@@ -249,7 +249,7 @@ const uint8_t* IsoItem_c::name() const
 
 
 /** deliver name as pure ASCII string
-  @param pc_name string where ASCII string is inserted
+  @param pc_asciiName string where ASCII string is inserted
   @param aui8_maxLen max length for name
 */
 void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
@@ -270,7 +270,7 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
   @param ai32_time creation time of this item instance
   @param ac_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param aui8_nr number of this item
-  @param ab_status state of this ident (off, claimed address, ...)
+  @param ren_status state of this ident (off, claimed address, ...)
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void IsoItem_c::set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8_nr,

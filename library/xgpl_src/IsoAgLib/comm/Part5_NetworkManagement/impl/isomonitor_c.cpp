@@ -132,7 +132,7 @@ namespace __IsoAgLib {
 #endif
 
 /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance
-  @param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)
+  <!--@param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)-->
 */
 IsoMonitor_c::IsoMonitor_c()
   : SingletonIsoMonitor_c(), mvec_isoMember(), mc_serviceTool( IsoName_c::IsoNameUnspecified() )
@@ -385,7 +385,7 @@ bool IsoMonitor_c::timeEvent( void )
 
 /** deliver the count of members in the Monitor-List with given ECU-Type (which is an own IsoAgLib-definition!)
   which optional (!!) match the condition of address claim state
-  @param aui8_ecuType searched ECU-Type code
+  @param a_ecuType searched ECU-Type code
   @param ab_forceClaimedAddress true -> only members with claimed address are used
         (optional, default false)
   @return count of members in Monitor-List with ECU-Type == aui8_ecuType
@@ -412,7 +412,7 @@ uint8_t IsoMonitor_c::isoMemberEcuTypeCnt (IsoName_c::ecuType_t a_ecuType, bool 
   @see isoMemberEcuTypeCnt
   possible errors:
     * Err_c::range there exist less than aui8_ind members with ECU-Type aui8_ecuType
-  @param aui8_ecuType searched ECU-Type code
+  @param a_ecuType searched ECU-Type code
   @param aui8_ind position of the wanted member in the
                 sublist of member with given ECU-Type (first item has aui8_ind == 0 !!)
   @param ab_forceClaimedAddress true -> only members with claimed address are used
@@ -592,7 +592,9 @@ bool IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName)
     * busy another member with same ident exists already in the list
   @param ac_isoName ISOName of the member
   @param aui8_nr member number
-  @param ren_status wanted status
+  @param ren_state wanted status
+  @param apc_identItemForLocalItems 
+  @param ab_announceAddition
   @return pointer to new IsoItem_c or NULL if not succeeded
 */
 IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& ac_isoName,

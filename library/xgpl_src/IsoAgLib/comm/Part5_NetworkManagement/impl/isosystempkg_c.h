@@ -107,7 +107,7 @@ public:
   IsoSystemPkg_c();
   /** default destructor */
   ~IsoSystemPkg_c();
-  /**
+  /*
     ==> OBSOLETE, because now all can-pkg-data is STATIC!
     ==> REACTIVATE if some NON-STATIC member vars will be added!
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
