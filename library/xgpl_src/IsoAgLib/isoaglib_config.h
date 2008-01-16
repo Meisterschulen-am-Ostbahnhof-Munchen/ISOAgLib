@@ -156,12 +156,12 @@
  */
 /*@{*/
 #ifndef CONFIG_CAN_SEND_BUFFER_SIZE
-  /// set puffer size for CAN send
+  /// set buffer size for CAN send
   #define CONFIG_CAN_SEND_BUFFER_SIZE 20
 #endif
 
 #ifndef CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN
-  /// set default puffer size for CAN receive
+  /// set default buffer size for CAN receive
   #define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN 15
 #endif
 
@@ -304,12 +304,12 @@
 #endif
 
 #ifndef CONFIG_RS232_DEFAULT_SND_PUF_SIZE
-  /// define default size of RS232 send puffer - can be manually overridden in project config file
+  /// define default size of RS232 send buffer - can be manually overridden in project config file
   #define CONFIG_RS232_DEFAULT_SND_PUF_SIZE 200
 #endif
 
 #ifndef CONFIG_RS232_DEFAULT_REC_PUF_SIZE
-  /// define size of RS232 receive puffer - can be manually overridden in project config file
+  /// define size of RS232 receive buffer - can be manually overridden in project config file
   #define CONFIG_RS232_DEFAULT_REC_PUF_SIZE 10
 #endif
 /*@}*/
@@ -526,7 +526,7 @@
 #endif
 
 #ifndef CONFIG_EEPROM_USE_CAN_BUFFER_SIZE
-  /** set CAN puffer size for receive and send */
+  /** set CAN buffer size for receive and send */
   #define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
 #endif
 
