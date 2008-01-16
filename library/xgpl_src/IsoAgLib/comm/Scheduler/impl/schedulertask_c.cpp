@@ -205,14 +205,13 @@ Scheduler_Task_c::getAvailableExecTime()
 int32_t Scheduler_Task_c::msi32_demandedExecEnd= -1;
 int32_t Scheduler_Task_c::msi32_retriggerTime= 0;
 
-//!  this function is called at the end of system init, to set the trigger times to a suitable and realizable
-//!  start state, so that the scheduler can find
-//!  a correct calling order.
-//!  this is needed cause of long initial tests (esp.
-//!  single device power switch test with 5
-//!  devices with 1 second per device)
-//! Parameter:
-//! @param int32_StartTaskTime: individual time offset, to avoid concurring tasks (if starting at same time with same period, the scheduler has every round a time problem)
+//! this function is called at the end of system init, to set the trigger times to a suitable and realizable
+//! start state, so that the scheduler can find
+//! a correct calling order.
+//! this is needed cause of long initial tests (esp.
+//! single device power switch test with 5
+//! devices with 1 second per device)
+//! @param rint32_StartTaskTime individual time offset, to avoid concurring tasks (if starting at same time with same period, the scheduler has every round a time problem)
 void Scheduler_Task_c::startTaskTiming(int32_t rint32_StartTaskTime)
 {
   mi32_nextRetriggerTime = rint32_StartTaskTime;

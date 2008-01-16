@@ -144,7 +144,7 @@ public:
   //  Operation: timeEventExec
   //!  This function is called by the central scheduler to stimulate periodic activities for each task.
   //!  The parameter tells the task the available time for execution.
-  //! @param ai32_demandedExecEnd: available execution time. functon timeEvent() of Scheduler_Task_c Childs
+  //! @param ai32_demandedExecEnd available execution time. functon timeEvent() of Scheduler_Task_c Childs
   //!                              MUST be finished before the time, to avoid scheduling problems.
   //!                              default value -1 == unrestricted time for execution.
   //! @return true if client could finish his job else false
@@ -307,10 +307,9 @@ SchedulerEntry_c::operator=(const SchedulerEntry_c& arc_rightSide)
   return *this;
 }
 
-//!  Compare retriger time of this item by operator< with parameter
-//!  @return true -> this item must be triggered first
-//! Parameter:
-//! @param arc_rightSide: Reference to the right side for the lower-comparison
+//! Compare retriger time of this item by operator< with parameter
+//! @return true -> this item must be triggered first
+//! @param arc_rightSide Reference to the right side for the lower-comparison
 inline
 bool
 SchedulerEntry_c::operator<(const SchedulerEntry_c& arc_rightSide) const
@@ -429,8 +428,8 @@ SchedulerEntry_c::getNextTriggerTime() const
   else return mpc_taskInstance->getNextTriggerTime();
 }
 
-//!  Allows Scheduler_c to set new TimePeriod
-//! @param uint16_t aui16_timePeriod
+//! Allows Scheduler_c to set new TimePeriod
+//! @param aui16_timePeriod
 inline
 bool
 SchedulerEntry_c::setTimePeriod(uint16_t aui16_timePeriod) const
@@ -441,7 +440,7 @@ SchedulerEntry_c::setTimePeriod(uint16_t aui16_timePeriod) const
 }
 
 //!  Allows Scheduler_c to change next retriggerTime
-//! @param int32_t ai32_nextRetriggerTime
+//! @param ai32_nextRetriggerTime
 //!  @return bool -> change was done
 inline
 bool

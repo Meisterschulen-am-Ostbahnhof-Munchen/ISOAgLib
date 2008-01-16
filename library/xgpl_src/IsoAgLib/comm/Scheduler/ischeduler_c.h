@@ -96,7 +96,7 @@ public:
     registered within iScheduler_c for periodic timeEvent.
     Define common trigger timestamp, so that distributed activities can be performed with
     common time base.
-    @param i32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
+    @param ia32_demandedExecEndScheduler optional timestamp, where timeEvent shall return execution to calling function
            -> allow tight integration of IsoAgLib into application specific scheduler, as In-Time execution is
            guaranteed (default -1 -> no execution stop defined)
   @return idleTime for main application (> 0 wait for next call; == 0 call function again)
@@ -104,8 +104,6 @@ public:
           idleTime == -100 only in case of USE_MUTUAL_EXCLUSION, it means that the Mutex was already locked and the resource cannot
           be acquired.
   */
-
-
   int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1) {
             #ifdef USE_MUTUAL_EXCLUSION
             /** Try to acquire the Resource */
