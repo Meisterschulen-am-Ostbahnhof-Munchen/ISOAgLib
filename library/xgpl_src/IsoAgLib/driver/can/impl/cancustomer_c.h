@@ -127,7 +127,7 @@ public:
   /**
     process a message -> the specialized/derived version of this virtual
     function is called during processing of received CAN telegrams in CanIo_c::processMsg
-    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)
     @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processMsg();
@@ -135,7 +135,7 @@ public:
   /**
     process a message -> the specialized/derived version of this virtual
     function can be called during processing of received CAN telegrams in CanIo_c::processMsg
-    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its puffer)
+    <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
     @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processInvalidMsg() { return false; }
@@ -146,20 +146,19 @@ public:
 /// MULTI-PACKET (TP/ETP) METHODS
 /// /////////////////////////////
 
-  //  Operation: reactOnStreamStart
-  //! Parameter:
-  //! @param ac_ident:
-  //! @param aui32_totalLen:
+  /// Operation: reactOnStreamStart
+  /// <!--@param ac_ident
+  /// @param aui32_totalLen-->
   virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& /*ac_ident*/, uint32_t /*aui32_totalLen*/) { return false; }
 
   //  Operation: reactOnAbort
   virtual void reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/) {}
 
-  //  Operation: processPartStreamDataChunk
-  //! Parameter:
-  //! @param arc_stream: stream that is to be processed
+  /// Operation: processPartStreamDataChunk
+  ///
+  //! <!--@param arc_stream: stream that is to be processed
   //! @param ab_isFirstChunk: is it the first chunk? do we have to perform some decision action?
-  //! @param ab_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!
+  //! @param ab_isLastChunk: this also indicates that the MultiPacket-Message has been acknowledged via "End Of Message Acknowledge"!-->
   //! @return .... keep stuff
   //! @todo COMMENT describe return value here
   virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& /*apc_stream*/, bool /*ab_isFirstChunk*/, bool /*ab_isLastChunk*/) { return false; }

@@ -166,7 +166,7 @@ MsgObj_c::~MsgObj_c()
   possible errors:
   * range BUS or MsgObj numbers out of allowed limits
   * hwConfig BUS not initialized or ID can't be changed
-  @param arc_right reference to MsgObj_c which should be merged into this instance
+  @param right reference to MsgObj_c which should be merged into this instance
   @return true -> successful merged; false -> too many FilterBorefs for one MsgObj
 */
 bool MsgObj_c::merge(MsgObj_c& right)
@@ -354,7 +354,7 @@ bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
       getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:
-      /* undefined BUS number, undefined BIOS-Obj number, wrong puffer size */
+      /* undefined BUS number, undefined BIOS-Obj number, wrong buffer size */
       getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
     default:

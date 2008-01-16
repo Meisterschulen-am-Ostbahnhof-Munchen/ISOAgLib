@@ -253,7 +253,7 @@ public:
   #endif
 
   /* ************************************************** */
-  /* ***** insert/get/process puffered CanPkg_c ******** */
+  /* ***** insert/get/process buffered CanPkg_c ******* */
   /* ************************************************** */
 
   /** control the processing of a received message

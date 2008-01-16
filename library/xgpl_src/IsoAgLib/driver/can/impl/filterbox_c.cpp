@@ -152,7 +152,7 @@ FilterBox_c::~FilterBox_c()
   copy values of arc_src FilterBox_c object to this instance
 
   possible errors:
-      * badAlloc on not enough memory for copying puffed CAN msg from source
+      * badAlloc on not enough memory for copying buffed CAN msg from source
 
   @param arc_src FilterBox_c instance with data to assign to this instance
   @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
@@ -263,7 +263,7 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
       getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:
-      /* undefined BUS number, undefined BIOS-Obj number, wrong puffer size */
+      /* undefined BUS number, undefined BIOS-Obj number, wrong buffer size */
       getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
     default:
@@ -296,8 +296,8 @@ void FilterBox_c::closeHAL()
 
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
- @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+ @param arc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param arc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
 
@@ -373,7 +373,7 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 }
 
 /* ************************************************** */
-/* ***** insert/get/process puffered CanPkg_c ******** */
+/* ***** insert/get/process buffered CanPkg_c ******** */
 /* ************************************************** */
 
 /**

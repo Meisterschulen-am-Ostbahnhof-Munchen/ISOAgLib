@@ -97,14 +97,12 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
     In all other cases, the special value 0xFF is indicator for empty parameter list.
 
     possible errors:
-        * Err_c::range on undefined BUS,  msgOb_nr or sendPufferSize,
+        * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
         * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
         * Err_c::busy on already used sending Msg-Obj
     @param aui8_busNumber number of the CAN bus
     @param aui16_bitrate bitrate (default by define in isoaglib_config.h)
-    @param t_identLength optional length of the ident
-           (S (11bit), E (29bit))
-           (default by define in isoaglib_config.h)
+    @param ren_identType 
     @param aui8_minObjNr optional minimum number for hardware CAN
            message object (important for sharing CAN controller with
          other tasks) (default by define in isoaglib_config.h)
@@ -153,7 +151,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
   void setSendpause(uint16_t aui16_minDelay) const { CanIo_c::setSendpause(aui16_minDelay);};
 
   /**
-    deliver the numbers which can be placed at the moment in the send puffer
+    deliver the numbers which can be placed at the moment in the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return number of msgs which fit into send buffer
@@ -390,7 +388,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
 
   /**
     function for sending data out of iCANPkg
-    if send puffer is full a local loop waits till puffer has enough space
+    if send buffer is full a local loop waits till buffer has enough space
     (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
     possible errors:
@@ -408,7 +406,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
     {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<iCanPkg_c&>(arc_src)));};
   /**
     function for sending data out of iCANPkg
-    if send puffer is full a local loop waits till puffer has enough space
+    if send buffer is full a local loop waits till buffer has enough space
     (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
     possible errors:

@@ -161,7 +161,7 @@ CanIo_c::singletonInit()
 }
 
 /** Initialize the CAN hardware, and instantiate one msg object for
-   sending of messages. Do configuration for BUS number, sending bitrate,
+  sending of messages. Do configuration for BUS number, sending bitrate,
   CAN ident length, minx/max hardware/BIOS Msg Obj numbers by parameters;
   called by specified constructor or external functions;
   wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
@@ -174,12 +174,12 @@ CanIo_c::singletonInit()
   In all other cases, the special value 0xFF is indicator for empty parameter list.
 
   possible errors:
-      * Err_c::range on undefined BUS,  msgOb_nr or sendPufferSize,
+      * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
       * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
       * Err_c::busy on already used sending Msg-Obj
   @param aui8_busNumber optional number of the CAN bus
   @param aui16_bitrate optional bitrate (default by define in isoaglib_config.h)
-  @param identType_t optional length of the ident
+  @param ren_identType optional length of the ident
     (S (11bit), E (29bit), B
     (send both standard and extended ident msg) (default by define in isoaglib_config.h)
   @param aui8_minObjNr optional minimum number for hardware CAN message object
@@ -448,7 +448,7 @@ void CanIo_c::setSendpause(uint16_t aui16_minDelay) const
   HAL::can_configMsgobjSendpause(mui8_busNumber, ui8_sendObjNr, aui16_minDelay);
 }
 
-/** deliver the numbers which can be placed at the moment in the send puffer
+/** deliver the numbers which can be placed at the moment in the send buffer
   @param ren_identType type of searched ident: standard 11bit or extended 29bit
     (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
   @return number of msgs which fit into send buffer
@@ -467,8 +467,8 @@ uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t /*ren_identType*/)
 
 
 /** clear the send buffer
-  @param ren_identType type of searched ident: standard 11bit or extended 29bit
-    (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
+  <!--@param ren_identType type of searched ident: standard 11bit or extended 29bit
+    (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)-->
 */
 void CanIo_c::sendCanClearbuf(Ident_c::identType_t /*ren_identType*/)
 {
@@ -1213,7 +1213,7 @@ uint32_t ui32_msgNbr;
 }
 
 /** function for sending data out of CanPkgExt_c (uses BIOS function)
-  if send puffer is full a local loop waits till puffer has enough space
+  if send buffer is full a local loop waits till buffer has enough space
   (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
   possible errors:
@@ -1221,7 +1221,7 @@ uint32_t ui32_msgNbr;
       * Err_c::range on undef BUS or BIOS send obj nr
       * Err_c::can_warn on physical CAN-BUS problems
       * Err_c::can_off on physical CAN-BUS off state
-  @param arc_src CanPkgExt_c which holds the to be sent data
+  @param rc_src CanPkgExt_c which holds the to be sent data
   @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
 */
 CanIo_c& CanIo_c::operator<<(CanPkgExt_c& rc_src)
@@ -1250,7 +1250,7 @@ CanIo_c& CanIo_c::operator<<(CanPkgExt_c& rc_src)
 }
 
 /** function for sending data out of CanPkg_c (uses BIOS function)
-  if send puffer is full a local loop waits till puffer has enough space
+  if send buffer is full a local loop waits till buffer has enough space
   (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
   possible errors:
@@ -1258,7 +1258,7 @@ CanIo_c& CanIo_c::operator<<(CanPkgExt_c& rc_src)
       * Err_c::range on undef BUS or BIOS send obj nr
       * Err_c::can_warn on physical CAN-BUS problems
       * Err_c::can_off on physical CAN-BUS off state
-  @param arc_src CanPkg_c which holds the to be sent data
+  @param rc_src CanPkg_c which holds the to be sent data
   @return reference to this CanIo_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
 */
 CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
@@ -1334,7 +1334,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
       getILibErrInstance().registerError( iLibErr_c::CanOff, iLibErr_c::Can );
       break;
     case HAL_OVERFLOW_ERR:
-      // overflow of send puffer
+      // overflow of send buffer
       getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:
@@ -1826,7 +1826,7 @@ FilterBox_c* CanIo_c::getFilterBox(Ident_c& at_mask, Ident_c& at_filter) const
 /** verify given BUS number and MsgObj number, if they are correct
   (mostly used by MsgObj_c to verify itself)
   @param aui8_busNr number of the BUS
-  @param aui8_msgobjNr number of the MsgObj
+  @param aui8_objNr number of the MsgObj
   @return true -> values are correct
 */
 bool CanIo_c::verifyBusMsgobjNr(uint8_t aui8_busNr, uint8_t aui8_objNr)

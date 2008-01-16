@@ -196,7 +196,7 @@ class CanIo_c : public SingletonCanIo_c {
       In all other cases, the special value 0xFF is indicator for empty parameter list.
 
       possible errors:
-          * Err_c::range on undefined BUS,  msgOb_nr or sendPufferSize,
+          * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
           * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
           * Err_c::busy on already used sending Msg-Obj
 
@@ -283,7 +283,7 @@ class CanIo_c : public SingletonCanIo_c {
   */
   void setSendpause(uint16_t aui16_minDelay) const;
 
-  /** deliver the numbers which can be placed at the moment in the send puffer
+  /** deliver the numbers which can be placed at the moment in the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return number of msgs which fit into send buffer
@@ -446,7 +446,7 @@ class CanIo_c : public SingletonCanIo_c {
   uint8_t getProcessedMsgCnt( void ) const { return mui8_processedMsgCnt;}
 
   /** function for sending data out of CanPkg_c (uses BIOS function)
-      if send puffer is full a local loop waits till puffer has enough space
+      if send buffer is full a local loop waits till buffer has enough space
       (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
       possible errors:
@@ -464,7 +464,7 @@ class CanIo_c : public SingletonCanIo_c {
   CanIo_c& operator<<(CanPkg_c& arc_src);
 
   /** function for sending data out of CanPkgExt_c (uses BIOS function)
-      if send puffer is full a local loop waits till puffer has enough space
+      if send buffer is full a local loop waits till buffer has enough space
       (every 100ms the watchdog is triggered, to avoid watchdog reset)
 
       possible errors:

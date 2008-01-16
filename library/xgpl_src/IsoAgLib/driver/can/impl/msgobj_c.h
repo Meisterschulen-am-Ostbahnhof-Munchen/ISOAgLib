@@ -287,7 +287,7 @@ public:
   bool prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* cp_elem, uint32_t aui32_numEl);
 
   /** set Bus Number of this MsgObj_c
-    @param rb_val wanted bus number
+    @param ab_val wanted bus number
   */
   void setBusNumber(uint8_t ab_val){bit_data.busNumber = (ab_val<8)?ab_val:0;}
 
