@@ -322,8 +322,8 @@
 /** @todo ON REQUEST: try to remove these include hacks, as soon as Tasking provides a bugfix
     for their broken version 7.x STL headers.
     Official STL headers like "c166/include.cpp/stl_algobase.h"
-    where the C-Header <string.h> is imported into the global namespace, prevent
-    a later include of <cstring> ( the correct C++ standard method ) to get
+    where the C-Header \<string.h\> is imported into the global namespace, prevent
+    a later include of \<cstring\> ( the correct C++ standard method ) to get
     functions like memmove into "STL_NAMESPACE::" namespace.
     To avoid comparable problems with other compilers, and to avoid any compatibility
     problems with other correct compilers, but which are not used by the maintainers,
