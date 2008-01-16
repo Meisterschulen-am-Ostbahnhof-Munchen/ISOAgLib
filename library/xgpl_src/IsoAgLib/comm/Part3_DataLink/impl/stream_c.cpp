@@ -230,7 +230,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 
 // //////////////////////////////// +X2C Operation 814 : handleDataPacket
 //! Parameter:
-//! @param pui8_offsetOfData: the offset given in the 8 byte data can pkg!
+//! @param apu_data the offset given in the 8 byte data can pkg!
 bool
 Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
 { // ~X2C

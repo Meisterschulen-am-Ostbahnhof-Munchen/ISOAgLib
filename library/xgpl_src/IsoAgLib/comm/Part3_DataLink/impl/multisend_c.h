@@ -326,8 +326,8 @@ public: // methods
 
   /**
     send an ISO target multipacket message with active retrieve of data-parts to send
-    @param ab_send dynamic member no of sender
-    @param ab_empf dynamic member no of receiver
+    @param arc_isoNameSender dynamic member no of sender
+    @param arc_isoNameReceiver dynamic member no of receiver
     @param apc_mss allow active build of data stream parts for upload by deriving data source class
                   from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                   retrieve of data to send. This is especially important for ISO_Terminal,
@@ -343,10 +343,10 @@ public: // methods
 
   /**
     send an ISO target multipacket message
-    @param ab_send dynamic member no of sender
-    @param ab_empf dynamic member no of receiver
+    @param arc_isoNameSender dynamic member no of sender
+    @param arc_isoNameReceiver dynamic member no of receiver
     @param rhpb_data HUGE_MEM pointer to the data
-    @param ai32_dataSize size of the complete mask
+    @param aui32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
     @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
@@ -357,9 +357,12 @@ public: // methods
 
   /**
     send an ISO broadcast multipacket message
-    @param ab_send dynamic member no of sender
-    @param mhpbui8_data HUGE_MEM pointer to the data
+    @param arc_isoNameSender dynamic member no of sender
+    @param rhpb_data HUGE_MEM pointer to the data
     @param aui16_dataSize size of the complete message, limited to TP (1785 bytes) only!
+    @param ai32_pgn PGN to use for the upload
+    @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
+            is written by MultiSend_c
     @return true -> MultiSend_c was ready
   */
   bool sendIsoBroadcast (const IsoName_c& arc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)

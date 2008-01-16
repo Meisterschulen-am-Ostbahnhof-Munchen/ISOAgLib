@@ -75,8 +75,8 @@ public:
 
   /**
     send an ISO target multipacket message with active retrieve of data-parts to send
-    @param ab_send dynamic member no of sender
-    @param ab_empf dynamic member no of receiver
+    @param arc_isoNameSender dynamic member no of sender
+    @param arc_isoNameReceiver dynamic member no of receiver
     @param apc_mss allow active build of data stream parts for upload by deriving data source class
                   from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                   retrieve of data to send. This is especially important for ISO_Terminal,
@@ -92,8 +92,8 @@ public:
 
   /**
     send a ISO target multipacket message
-    @param ab_send dynamic member no of sender
-    @param ab_empf dynamic member no of receiver
+    @param arc_isoNameSender dynamic member no of sender
+    @param arc_isoNameReceiver dynamic member no of receiver
     @param rhpb_data HUGE_MEM pointer to the data
     @param ai32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
@@ -106,9 +106,9 @@ public:
 
   /**
     send a ISO broadcast multipacket message
-    @param ab_send dynamic member no of sender
-    @param ab_empf dynamic member no of receiver
-    @param hpb_data HUGE_MEM pointer to the data
+    @param arc_isoNameSender dynamic member no of sender
+    @param arc_isoNameReceiver dynamic member no of receiver
+    @param rhpb_data HUGE_MEM pointer to the data
     @param ai32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target

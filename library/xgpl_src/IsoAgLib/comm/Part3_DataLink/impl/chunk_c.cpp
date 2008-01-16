@@ -134,7 +134,7 @@ Chunk_c::insert(uint8_t aui8_data)
 // //////////////////////////////// +X2C Operation : insert7Bytes
 //! inserts (push-back) 7 bytes into the vector if possible
 //! Parameter:
-//! @param aui8_data: Bytes to be inserted
+//! @param pui8_data: Bytes to be inserted
 //! @return Number of inserted bytes
 uint8_t
 Chunk_c::insert7Bytes(const uint8_t* pui8_data)

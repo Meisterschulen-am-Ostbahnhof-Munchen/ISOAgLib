@@ -829,10 +829,11 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
 } // -X2C
 
 
-//  Operation: getStream (private!)
-//! Parameter:
-//! @param ac_streamIdent:
-//! @return NULL for "doesn't exist", otherwise valid "DEF_Stream_c_IMPL*"
+/// Operation: getStream (private!)
+///
+/// @param sa source address
+/// @param da destination address
+/// @return NULL for "doesn't exist", otherwise valid "DEF_Stream_c_IMPL*"
 Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
                                     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                     , bool ab_fastPacket
@@ -964,8 +965,6 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& arc_stream)
 
 
 // //////////////////////////////// +X2C Operation 2851 : timeEvent
-//! Parameter:
-//! @param ai32_endTime:
 bool
 MultiReceive_c::timeEvent( void )
 { // ~X2C
@@ -1098,14 +1097,14 @@ MultiReceive_c::removeKeptStream(IsoAgLib::iStream_c* apc_keptStream)
 
 // //////////////////////////////// +X2C Operation 2853 : sendCurrentCts
 //! Parameter:
-//! @param apc_stream:
+//! @param apc_stream
 void
 MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* apc_stream)
 { // ~X2C
   // This function actually IS only called if in state "AwaitCtsSend" !
 
-  /** may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams... ;-)
-      and we don't want to hold connections open that are very short, so well........... */
+  /* may also be 0, meaning HOLD CONNECTION OPEN, but we can handle multiple streams... ;-)
+     and we don't want to hold connections open that are very short, so well........... */
 
   // the following "> 0" check shouldn't be needed because if we reach here, we shouldn't
   uint32_t ui32_allowPackets = (getStreamCount() > 0) ? ((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount()) : 1;

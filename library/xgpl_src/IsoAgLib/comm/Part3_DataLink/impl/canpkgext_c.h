@@ -173,7 +173,7 @@ class CanPkgExt_c : public CanPkg_c
 
   /**
     set an uint16_t value at specified position in string
-    @param aui8_devClassInst position [0..6]
+    @param aui8_pos position [0..6]
     @param aui16_val uint16_t value to set
   */
   void setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
@@ -181,7 +181,7 @@ class CanPkgExt_c : public CanPkg_c
 
   /**
     set an int16_t value at specified position in string
-    @param aui8_devClassInst position [0..6]
+    @param aui8_pos position [0..6]
     @param ai16_val int16_t value to set
   */
   void setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
@@ -189,7 +189,7 @@ class CanPkgExt_c : public CanPkg_c
 
   /**
     set an uint32_t value at specified position in string
-    @param aui8_devClassInst position [0..4]
+    @param aui8_pos position [0..4]
     @param aui32_val uint32_t value to set
   */
   void setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
@@ -197,7 +197,7 @@ class CanPkgExt_c : public CanPkg_c
 
   /**
     set an int32_t value at specified position in string
-    @param aui8_devClassInst position [0..4]
+    @param aui8_pos position [0..4]
     @param ai32_val int32_t value to set
   */
   void setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
@@ -494,7 +494,7 @@ private:
   MessageState_t address2IdentLocalDa();
 
   /** set address in context of sending a message
-      @param  addressResolveResults  source or destination address
+      @param  arc_addressResolveResults  source or destination address
       @param  scope                  local or remote
       @return  true -> monitoritem_c, isoName_c is a valid combination
     */

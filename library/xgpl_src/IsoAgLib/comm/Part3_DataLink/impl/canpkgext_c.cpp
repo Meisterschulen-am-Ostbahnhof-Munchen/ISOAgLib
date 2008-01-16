@@ -433,7 +433,7 @@ MessageState_t CanPkgExt_c::address2IdentRemoteSa()
 
 
 /** resolve a given monitoritem and get address if possible
-    @param  arc_addressResolveResults  address to resolve
+    @param arc_addressResolveResults address to resolve
     @return true -> monitoritem could be resolved
             false -> nothing more to be done
   */

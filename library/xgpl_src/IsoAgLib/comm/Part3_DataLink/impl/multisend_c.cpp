@@ -481,8 +481,8 @@ MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
 
 /**
   internal function to send a ISO target multipacket message
-  @param ab_send dynamic member no of sender
-  @param ab_empf dynamic member no of receiver
+  @param arc_isoNameSender dynamic member no of sender
+  @param arc_isoNameReceiver dynamic member no of receiver
   @param rhpb_data HUGE_MEM pointer to the data
   @param ai32_dataSize size of the complete mask
   @param ai32_pgn PGN to use for the upload
@@ -493,6 +493,7 @@ MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
                  retrieve of data to send. This is especially important for ISO_Terminal,
                  which assembles the data pool dependent on the terminal capabilities during upload
                  ( e.g. bitmap variants )
+  @param ren_msgType
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
