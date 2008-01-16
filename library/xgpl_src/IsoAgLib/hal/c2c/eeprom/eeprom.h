@@ -170,8 +170,8 @@ namespace HAL
     @param iObjNrTransmitCan CAN Msg Obj number for send of Editor msg
     @param dwReceiveCanId CAN Ident_c to use for receive of Editor msg
     @param bUseExtendedCAN set to 0 for standard 11bit, to 1 for extended 29bit Ident
-    @param iNumberMsgsReceive size of CAN receive puffer size
-    @param iNumberMsgsTransmit size of CAN send puffer size
+    @param iNumberMsgsReceive size of CAN receive buffer size
+    @param iNumberMsgsTransmit size of CAN send buffer size
     @return HAL_NO_ERR if no error occured
   */
   inline int16_t InitEEEditor(  uint8_t bBus,

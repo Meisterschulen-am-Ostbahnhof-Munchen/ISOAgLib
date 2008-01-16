@@ -77,13 +77,14 @@ extern "C" {
    /** \name CAN Interrupt handler  */
    /*@{*/
 /** user defined CAN IRQ Function
-    @param bBus bus number [0,1]
-    @param bOjekt Message Object number [1...14] (send)
+    @param aui8_busNr bus number [0,1]
+    @param aui8_ObjNr Message Object number [1...14] (send)
     @param tCanregister pointer to the CAN register
+    @param aui8_bXtd
     @return tCanregister
   */
 
-void IwriteCentralCanfifo(uint8_t aui8_busNr,uint8_t aui8_ObjNr,canSlotMBox_t *tCanregister, uint8_t aui8_bXtd)
+void IwriteCentralCanfifo(uint8_t aui8_busNr,uint8_t aui8_ObjNr, canSlotMBox_t *tCanregister, uint8_t aui8_bXtd)
 {
 
    int32_t i32_fbIndex = -1; /** initialization value*/
@@ -423,7 +424,7 @@ int32_t can_getMaxSendDelay(uint8_t aui8_busNr)
               HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
               HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
    */
-   int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+   int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
    {
       uint16_t cinterfaceBaudrate;
 
@@ -472,7 +473,7 @@ int32_t can_getMaxSendDelay(uint8_t aui8_busNr)
       @return HAL_NO_ERR == no error;
               HAL_RANGE_ERR == wrong BUS nr
    */
-   int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+   int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
    {
       canMaskStruct_t cinterfaceAcceptanceMasks;
 

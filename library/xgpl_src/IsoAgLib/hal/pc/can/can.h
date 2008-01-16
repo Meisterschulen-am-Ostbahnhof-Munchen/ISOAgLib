@@ -200,7 +200,7 @@ namespace HAL
     (11bit, 29bit and last msg mask)
     @param aui8_busNr number of the BUS to init (default 0)
     @param ab_baudrate baudrate in [kbaud]
-    @param aui16_maskStd 11bit global mask
+    @param ab_maskStd 11bit global mask
     @param aui32_maskExt 29bit global mask
     @param aui32_maskLastmsg mask of last CAN msg
     @return HAL_NO_ERR == no error;
@@ -216,7 +216,7 @@ namespace HAL
     set the global masks
     (11bit, 29bit and last msg mask)
     @param aui8_busNr number of the BUS to config (default 0)
-    @param aui16_maskStd 11bit global mask
+    @param ab_maskStd 11bit global mask
     @param aui32_maskExt 29bit global mask
     @param aui32_maskLastmsg mask of last CAN msg
     @return HAL_NO_ERR == no error;
@@ -281,7 +281,7 @@ namespace HAL
     pause time between two messages [msec.]
     @param aui8_busNr number of the BUS to config
     @param aui8_msgobjNr number of the MsgObj to config
-    @param aui16_minSendPause minimum send pause between two sent messages [msec.]
+    @param aui16_minSend minimum send pause between two sent messages [msec.]
     @return HAL_NO_ERR == no error;
             C_CONFIG == BUS not initialised or ident can't be changed
             C_RANGE == wrong BUS or MsgObj number

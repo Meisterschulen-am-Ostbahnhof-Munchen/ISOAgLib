@@ -439,10 +439,10 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 
 }
 /**
-       lock a MsgObj to avoid further placement of messages into buffer.
+  lock a MsgObj to avoid further placement of messages into buffer.
   @param rui8_busNr number of the BUS to config
   @param rui8_msgobjNr number of the MsgObj to config
-       @param rb_doLock true==lock(default); false==unlock
+  @param rb_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
@@ -472,7 +472,7 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
        check if MsgObj is currently locked
   @param rui8_busNr number of the BUS to check
   @param rui8_msgobjNr number of the MsgObj to check
-       @return true -> MsgObj is currently locked
+  @return true -> MsgObj is currently locked
 */
 bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
 {

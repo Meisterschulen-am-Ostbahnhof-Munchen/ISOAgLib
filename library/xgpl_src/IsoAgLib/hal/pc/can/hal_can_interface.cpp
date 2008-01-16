@@ -582,12 +582,15 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   return sendCanMsg(aui8_busNr, aui8_msgobjNr, pt_send);
 }
 
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
 /**
   get the ident of a received message to decide about the further
   processing before the whole data string is retreived
   @param aui8_busNr number of the BUS to config
-  @param aui8_msgobjNr number of the MsgObj to config
-  @param reflIdent reference to the var, where the ident should be inserted
+  @param refMsgobjNr reference to the number of the MsgObj to config
+  @param refui32_msgId reference to the var, where the identifier should be stored
+  @param refb_msgtype
+  @param i32_rcvTime
   @return error code
   HAL_NO_ERR == No problem
   HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
@@ -596,9 +599,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   HAL_RANGE_ERR == wrong BUS or MsgObj number
   HAL_WARN_ERR == BUS WARN or no received message
 */
-
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t &refMsgobjNr, uint32_t& refui32_msgId,uint8_t& refb_msgtype, int32_t& i32_rcvTime)
+int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t &refMsgobjNr, uint32_t& refui32_msgId, uint8_t& refb_msgtype, int32_t& i32_rcvTime)
 {
   tReceive* pt_receive = &t_cinterfMsgobjReceive;
   int16_t i16_retVal = HAL_NO_ERR;

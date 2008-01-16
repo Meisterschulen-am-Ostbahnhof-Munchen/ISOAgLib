@@ -997,7 +997,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     }
 
 
-    // update ringpuffer
+    // update ringbuffer
     rec_bufOut[bBusNumber][bMsgObj] = ((i32_out + 1) % rec_bufSize[bBusNumber][bMsgObj]);
     rec_bufCnt[bBusNumber][bMsgObj] -= 1;
   }

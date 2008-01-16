@@ -562,7 +562,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     ptReceive->bMsgObj = ui8_useMsgObj;
 #endif
     memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
-    // update ringpuffer
+    // update ringbuffer
     arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufOut = ((i16_out + 1) % arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufSize);
     arrMsgObj[bBusNumber][ui8_useMsgObj].rec_bufCnt -= 1;
   }

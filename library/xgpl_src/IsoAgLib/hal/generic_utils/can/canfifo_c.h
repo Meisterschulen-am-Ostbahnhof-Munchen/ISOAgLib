@@ -52,11 +52,11 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-/** @file canfifo_c.h
+/*! @file canfifo_c.h
  * Header file containing the non-blocking buffer class interface.
  */
 
-/**
+/*!
 * compilation define:
 * - CAN_FIFO_READ_WAITING : when the consumer in the read operation waits the time necessary to the producer for writing.*.
 */
@@ -143,27 +143,32 @@ bool b_Reading; /*!< \brief the consumer is reading */
 } //end extern C
 
 /**
-* The consumer does below actions:
-* - check whether there is anything to read (buffer not wide)
-* - if something to read, gets the data
-* - increment AC position counter. This operation must be atomic.
-*.
-@param aref_readData : after the call,it contains the read data .
-@return false if nothing to read.
+ The consumer does below actions:
+ - check whether there is anything to read (buffer not wide)
+ - if something to read, gets the data
+ - increment AC position counter. This operation must be atomic.
+ .
+ @param aui8_busNum
+ @param ar_readData after the call,it contains the read data
+ @return false if nothing to read.
 */
 int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData);
 
 /**
-* The productor does the below actions:
-* - before writing, checks whether the buffer is full;
-* - then gives to UC an odd value,which means "I'm writing".
-*   This assignement must be an atomic operation .
-* - it writes the data to the buffer;
-* - then gives to the UC an even value, which means "I have finished to write".
-*   Again this assignement must be an atomic operation
-* .
-@param acref_writeData : Data to be written.
-@return false whether the buffer is full and productor should wait.
+ The productor does the below actions:
+ - before writing, checks whether the buffer is full;
+ - then gives to UC an odd value,which means "I'm writing".
+   This assignement must be an atomic operation .
+ - it writes the data to the buffer;
+ - then gives to the UC an even value, which means "I have finished to write".
+   Again this assignement must be an atomic operation
+ .
+  @param aui8_busNum
+  @param ai32_fbIdx
+  @param ai32_msgId
+  @param irqData
+  @param aui8_bXtd (default:1)
+  @return false whether the buffer is full and productor should wait.
 */
 bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId, void* irqData,uint8_t aui8_bXtd=1);
 
