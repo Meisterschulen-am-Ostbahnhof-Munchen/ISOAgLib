@@ -173,7 +173,7 @@ typedef struct
     /*@{*/
 
     /** set rear PTO
-      @param ai16_val value to store as the speed of the rear PTO [1RPM]
+      @param aui16_val value to store as the speed of the rear PTO [1RPM]
       */
     void setPtoRear(const uint16_t aui16_val)
     {
@@ -184,7 +184,7 @@ typedef struct
     }
 
     /** set front PTO
-        @param ai16_val value to store as the speed of the front PTO [1RPM]
+        @param aui16_val value to store as the speed of the front PTO [1RPM]
       */
     void setPtoFront(const uint16_t aui16_val)
     {
@@ -195,7 +195,7 @@ typedef struct
     }
 
     /** set rear PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
-    @param ai16_val8DigitPerRpm value to store as the speed of the rear PTO [1/8RPM]
+    @param aui16_val8DigitPerRpm value to store as the speed of the rear PTO [1/8RPM]
      */
     void setPtoRear8DigitPerRpm(const uint16_t aui16_val8DigitPerRpm)
     {
@@ -206,7 +206,7 @@ typedef struct
     }
 
     /** set front PTO with unit [1/8RPM] so that the full resolution of ISOBUS messages can be used with integer arithmetic
-    @param ai16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
+    @param aui16_val8DigitPerRpm value to store as the speed of the front PTO [1/8RPM]
      */
     void setPtoFront8DigitPerRpm(const uint16_t aui16_val8DigitPerRpm)
     {

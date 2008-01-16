@@ -161,13 +161,13 @@ namespace __IsoAgLib {
     void setDistReal(const uint32_t& rreflVal) { mui32_distReal = rreflVal; }
 
     /** set the value of real speed (measured by radar)
-        @param ai16_val value to store as real radar measured speed
+        @param ai32_val value to store as real radar measured speed
       */
     void setSpeedReal(const int32_t& ai32_val)
 			{mi32_speedReal = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mi32_selectedSpeed = ai32_val;}
 
     /** set the value of theoretical speed (calculated from gear)
-        @param ai16_val value to store as theoretical gear calculated speed
+        @param ai32_val value to store as theoretical gear calculated speed
       */
     void setSpeedTheor(const int32_t& ai32_val)
 			{mi32_speedTheor = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mi32_selectedSpeed = ai32_val;}

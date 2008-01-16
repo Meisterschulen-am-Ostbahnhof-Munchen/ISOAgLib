@@ -206,9 +206,9 @@ class TimePosGps_c : public SingletonTimePosGps_c
   virtual ~TimePosGps_c() { BaseCommon_c::close();}
 
   /** process a message request for PGN
-      @param  aui32_pgn  PGN
-      @param  aui8_sa    source address
-      @param  aui8_da    destination address
+      @param aui32_pgn PGN
+      @param apc_isoItemSender pointer to source address
+      @param apc_isoItemReceiver pointer to destination address
     */
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
@@ -418,7 +418,7 @@ public:
   void setSecond(uint8_t ab_second){mi32_lastCalendarSet = System_c::getTime();bit_calendar.second = ab_second; mt_cachedLocalSeconds1970AtLastSet = 0;}
 
   /** set the calendar millisecond value
-    @param ab_millisecond actual calendar second value
+    @param aui16_millisecond actual calendar second value
     */
   void setMillisecond(uint16_t aui16_millisecond){mi32_lastCalendarSet = System_c::getTime();bit_calendar.msec = aui16_millisecond; mt_cachedLocalSeconds1970AtLastSet = 0;}
 

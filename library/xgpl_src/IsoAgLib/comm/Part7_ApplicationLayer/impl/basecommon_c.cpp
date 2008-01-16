@@ -222,7 +222,7 @@ bool BaseCommon_c::checkParseReceived(const IsoName_c& arc_currentSender) const
     ==> sends base data msg if configured in the needed rates
     possible errors:
       * dependant error in CanIo_c on CAN send problems
-    @param ai32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function
+    <!--@param ai32_demandedExecEnd optional timestamp, where timeEvent shall return execution to calling function-->
     @see CanPkg_c::getData
     @see CanPkgExt_c::getData
     @see CanIo_c::operator<<

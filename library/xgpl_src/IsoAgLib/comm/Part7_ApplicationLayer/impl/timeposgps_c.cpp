@@ -442,10 +442,10 @@ namespace __IsoAgLib {
   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
       @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param ab_implementMode implement mode (true) or tractor mode (false)!!!
+      @param at_identModeGps implement mode (true) or tractor mode (false)!!!
       @return true -> configuration was successfull
     */
-  bool TimePosGps_c::configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t  at_identModeGps)
+  bool TimePosGps_c::configGps(const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identModeGps)
   {
     if (   at_identModeGps == IsoAgLib::IdentModeTractor
         && apc_isoName == NULL
@@ -1080,10 +1080,10 @@ namespace __IsoAgLib {
     mi32_lastIsoPositionSimple = getLastRetriggerTime();
   }
 
-/** send COG and SOG as 250ms rapid update, but with single packet only */
-/**
-** not using anymore as we changed from PGN 130577 to 129026
-**
+/* send COG and SOG as 250ms rapid update, but with single packet only */
+/*
+ * not using anymore as we changed from PGN 130577 to 129026
+ *
   void TimePosGps_c::isoSendDirectionStream( void )
   {
     const int32_t ci32_now = getLastRetriggerTime();
