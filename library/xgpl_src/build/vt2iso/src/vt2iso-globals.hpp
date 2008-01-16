@@ -59,6 +59,7 @@ extern int itofunctiontype(unsigned int ui_index, std::string& c_outputText);
 extern int itofilltype(unsigned int ui_index, std::string& c_outputText);
 extern int itovalidationtype(unsigned int ui_index, std::string& c_outputText);
 extern int itolineardirection(unsigned int ui_index, std::string& c_outputText);
+extern int itometeroptions(uint8_t ui_options, string& c_outputText);
 
 
 extern unsigned int colortoi (char* text_color);

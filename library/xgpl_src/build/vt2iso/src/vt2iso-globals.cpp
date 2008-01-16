@@ -302,6 +302,32 @@ meteroptionstoi (char *text_options)
   return retval;
 }
 
+
+int itometeroptions(uint8_t ui8_options, string& c_outputText)
+{
+  uint16_t pos,idx;
+  bool b_addPlus = false;
+  std::string c_attr;
+
+  for (pos=1, idx=0 ; pos <= (1<<7); pos<<=1, idx++)
+  {
+    if (ui8_options & pos)
+    {
+      if (b_addPlus) c_attr.append( "+" );
+      b_addPlus = true;
+
+      std:string tmp = meterOptionsTable[idx];
+      c_attr.append( tmp );
+    }
+  }
+  if (!b_addPlus) c_attr.append( "none" );
+
+  c_outputText = c_attr;
+  return 0;
+
+}
+
+
 unsigned int
 linearbargraphoptionstoi (char *text_options)
 {
