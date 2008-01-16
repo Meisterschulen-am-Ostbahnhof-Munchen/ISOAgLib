@@ -8,88 +8,118 @@ Authors
 This directory contains several test scripts to test the address claim
 functionality of the IsoAgLib.
 
-I. Test cases
+I. Test cases (see Matrix, below)
 
 I.1. Testcase A
 
-Two test client with the same ISO name should start up
+Two test clients with the same ISO Name and preferred-SA start up and
+register themselves.  There are no other clients on the network.
 
 I.1.1. Variant 1
 
-Startup two test clients with an empty EEPROM
+Startup two test clients with empty EEPROMs
 
 Expected behaviour:
-Both clients should startup normally. The second test client must change it's
-source address (SA)
+On startup, the second test client should claim a Source Address (SA)
+different from its preferred-SA.
 
 I.1.2. Variant 2
 
-Startup two test clients with stored ISO names at EEPROM
+Startup two test clients whose (identical) SA and ISO Names are already stored
+in their respective EEPROMs.
 
 Expected behavour:
-The first client should startup normally. The second one shouldn't startup
-because the same ISO name as the first client.
+The first client should startup normally.  The second one should not startup
+at all because its ISO Name already exists in the network.
 
 I.2. Testcase B
 
-One test client is running while another client tries to steal the SA with a
-higher prior ISO name
+A test client is running when another client tries to steal its SA with a
+higher priority ISO Name.
 
 Expected behaviour:
-The test client changes it's SA
+The test client changes it's SA.
 
 I.3. Testcase C
 
-One test client is running while another client tries to steal the SA with a
-lower prior ISO name
+A test client is running when another client tries to steal its SA with a
+lower priority ISO Name
 
 Expected behaviour:
-The test client lost the SA for a short time but claimes it's former SA again
+The test client reclaims its (original) SA.
 
 I.4. Testcase D
 
-One test client is running while another client tries to claim an address with
-the same ISO name and a different SA as the test client
+A test client is running when another client with the same ISO Name
+tries to claim a (different) SA.
 
 Expected behaviour:
-The test client detects that another client tries to claim an address with the
-same ISO name and shutdown itself
+The test client detects that another client is on the network with the
+same ISO Name and so shuts itself down.
 
 I.5. Testcase E
 
-One test client is running while another client tries to claim an address with
-the same ISO name and the same SA as the test client
+A test client is running when another client tries to claim an identical
+SA and an identical ISO Name.
 
 Expected behaviour:
-The test client detects that another client tries to claim an address with the
-same ISO name and shutdown itself
+The test client detects that another client is on the network with the
+same ISO Name and so shuts itself down.
 
 I.6. Testcase F
 
-One test client is connected to another client that changes it's SA after some
-time
+A test client is connected to another client who then changes its SA.
 
 Expected behaviour:
-The connection to the client that changes it's SA is still alive after the test
+The test client adjusts its DA appropriately to retain the connection.
 
 I.7. Testcase G
 
-One test client is connected to another client (1) that is also connected to
-another client (2). 2 tries to steal the SA from 1
+A test client is connected to another client (2) that is also connected to
+a third client (3).  Client 3 tries to steal the SA from Client 2.
 
 I.7.1. Variant 1
 
-The client (1) connected to the test client changes it's SA
+Client 2 changes it's SA
 
 Expected behaviour:
-Client 1 changes it's SA
+Client 1 changes it's DA, retaining the connection.
 
 I.7.2. Variant 2
 
-The client (1) connected to the test client insists on it's SA
+Client 2 insists on it's SA
 
 Expected behaviour:
-Client 1 insists on it's SA
+Client 1 continues to use the original DA.
+
+I.8 Matrix
+
+    A.1) (normal case of the consecutive startup of identical units)
+	C1 SA1 N1
+	C2 SA1 N1
+    A.2) (consecutive startup of identical units after independent startup)
+	C1 SA1 N1
+	C2 SA1 N1
+    B)
+	C1 SA1 N1
+	C2 SA1 N2<N1
+    C)
+	C1 SA1 N1
+	C2 SA1 N2>N1
+    D)
+	C1 SA1 N1
+	C2 SA2 N1
+    E) (abnormal case of consecutive start of identical units: duplicate ISO-Name is broadcast)
+	C1 SA1 N1
+	C2 SA1 N1
+    F)
+	C1 SA1 N1
+	C2 SA2->SA4 N2
+	C3 SA3 N3
+    G)
+	C1 SA1 N1
+	C2 SA2 N2
+	C3 SA2 N3
 
 II. Requirements
 
@@ -100,17 +130,20 @@ Before all tests can be executed the following components must be available:
 * CAN-Server-Messenger
 
 Those components where automatically copied into the directory where the
-runall.sh script is contained.
+runall.sh script is contained.  [TODO: Clarify]
 
-To test the interaction with a virtual terminal you'll need a symbolic link to
-a startVT.sh and stopVT.sh script. These scripts should start and stop your own
-virtual terminal. If you don't have an virtual terminal you can't execute the
-test cases from above!
+A Virtual Terminal is required to run the tests.  [TODO: clarify]
+
+Two user-provided scripts are also required to run the tests.  They are
+called startVT.sh and stopVT.sh and are used to start and stop the virtual
+terminal.  They must reside in the Current Working Directory.
 
 II.1. Adaptions for testcase F
 
-If the source address should be changed after a while, the following lines of
-code could be integrated into an existing client or virtual terminal:
+Test F requires that Client 2 modify its SA during operation.
+This is special functionality required only for the test.
+One way to achieve it is to add the following modification [TODO:
+where?] to a special copy of the virtual terminal just for this test:
 
   ui16_SaChangeCycle++;
 
@@ -122,19 +155,19 @@ code could be integrated into an existing client or virtual terminal:
     __IsoAgLib::getCanInstance() << c_pkg;
   }
 
-Testcase F is disabled by default at runall.sh !!!
+Testcase F is disabled by default at runall.sh.
 
 III. Automated test scripts
 
-All test cases from above could be executed through the runall.sh script. This
-script executes all *_ex.sh test scripts and generates an report file at the
-end. The test scripts without the *_ex.sh prefix don't call the virtual
-terminal and the layout manager. These scripts could be used to manually verify
+All of the above test cases are executed by the runall.sh script.  This
+script executes the *_ex.sh test scripts and generates a report file.
+The test scripts without the *_ex.sh suffix don't use the virtual
+terminal and the layout manager.  These scripts can be used to manually verify
 the address claim behaviour.
 
-The test results are printed into the report file. For each test case the
-normal diff output and the sdiff output are shown. This makes it possible to
-compare the expected results from the generated ones.
+The test results are output to the report file.  For each test case the
+diff output and the sdiff output are shown.  This makes it possible to
+compare the generated and the expected results.
 
 Example report snippet:
 
@@ -160,7 +193,8 @@ sdiff result:
 
 IV. Manually tests
 
-In case of errors at the automated tests manually tests could be performed by
-the integrator. All test scripts with an _ex.sh prefix could be started
-manually. During the test scripts the clients should be accessed through the
-virtual terminal - depending on the current test case!
+In case of errors at the automated tests, manual tests can be performed
+All test scripts with an _ex.sh suffix can be started manually.
+During the test scripts the clients should be accessed through the
+virtual terminal - depending on the current test case! [TODO: clarify]
+
