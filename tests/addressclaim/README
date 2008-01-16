@@ -129,33 +129,33 @@ II. Requirements
   * CAN-Server (included when compiling tutorial 3.0)
   * CAN-Server-Messenger
 
-  Those components where automatically copied into the directory where the
-  runall.sh script is contained.  [TODO: Clarify]
+    Those components where automatically copied into the directory where the
+    runall.sh script is contained.  [TODO: Clarify]
 
-  A Virtual Terminal is required to run the tests.  [TODO: clarify]
+  * A Virtual Terminal is required to run the tests.  [TODO: clarify]
 
-  Two user-provided scripts are also required to run the tests.  They are
-  called startVT.sh and stopVT.sh and are used to start and stop the virtual
-  terminal.  They must reside in the Current Working Directory.
+  * Two user-provided scripts are also required to run the tests.  They are
+    called startVT.sh and stopVT.sh and are used to start and stop the virtual
+    terminal.  They must reside in the Current Working Directory.
 
   II.1. Adaptions for testcase F
 
-  Test F requires that Client 2 modify its SA during operation.
-  This is special functionality required only for the test.
-  One way to achieve it is to add the following modification [TODO:
-  where?] to a special copy of the virtual terminal just for this test:
+    Test F requires that Client 2 modify its SA during operation.
+    This is special functionality required only for the test.
+    One way to achieve it is to add the following modification [TODO:
+    where?] to a special copy of the virtual terminal just for this test:
 
-    ui16_SaChangeCycle++;
+      ui16_SaChangeCycle++;
 
-    /* change SA after n cycles */
-    if (ui16_SaChangeCycle == n)
-    {
-      __IsoAgLib::IsoSystemPkg_c& c_pkg = __IsoAgLib::getIsoMonitorInstance().data();
-      c_pkg.setExtCanPkg8(6, ADDRESS_CLAIM_PGN, ADDRESS_CLAIM_PGN, 255, 0x27, 0x1b, 0x0, 0xc0, 0xc, 0x0, 0x1d, 0x0, 0x20);
-      __IsoAgLib::getCanInstance() << c_pkg;
-    }
+      /* change SA after n cycles */
+      if (ui16_SaChangeCycle == n)
+      {
+	__IsoAgLib::IsoSystemPkg_c& c_pkg = __IsoAgLib::getIsoMonitorInstance().data();
+	c_pkg.setExtCanPkg8(6, ADDRESS_CLAIM_PGN, ADDRESS_CLAIM_PGN, 255, 0x27, 0x1b, 0x0, 0xc0, 0xc, 0x0, 0x1d, 0x0, 0x20);
+	__IsoAgLib::getCanInstance() << c_pkg;
+      }
 
-  Testcase F is disabled by default at runall.sh.
+    Testcase F is disabled by default at runall.sh.
 
 III. Automated test scripts
 
@@ -174,21 +174,21 @@ III. Automated test scripts
   -------------------------------------------------------------------------------
   diff result:
   12d11
-  <  0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+  <  0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0
 
   sdiff result:
-   0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
-   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
-   0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
-   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
-   0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
-   0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
-   0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
-   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
-   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
-   0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0 
-   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
-   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0          <
+   0 0 1 3 6 18eafffe   0   ee  0                            0 0 1 3 6 18eafffe   0   ee  0  
+   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20       0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20
+   0 0 1 3 6 18eafffe   0   ee  0                            0 0 1 3 6 18eafffe   0   ee  0  
+   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20       0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20
+   0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0       0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0
+   0 0 1 3 6 18eafffe   0   ee  0                            0 0 1 3 6 18eafffe   0   ee  0  
+   0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0       0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0
+   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20       0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20
+   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0       0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0
+   0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0       0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0
+   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0       0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0
+   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0        <
   -------------------------------------------------------------------------------
 
 IV. Manually tests
