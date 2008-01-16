@@ -82,8 +82,6 @@ public:
     @param ren_analogType default-argument for choosing iSensor_c::voltage(default) or iSensor_c::current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
     @param ab_fastAdc default-argument for setting fast ADC method (false as default)
-    @param ai32_scaleMin set the min return value where BIOS sensor value should be scaled (default no scale)
-    @param ai32_scaleMax set the max return value where BIOS sensor value should be scaled (default no scale)
   */
   iAnalogI_c(uint8_t ab_channel = 0xFF, iSensor_c::analogType_t ren_analogType = iSensor_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
     : AnalogI_c(ab_channel, ren_analogType, ab_useMean, ab_fastAdc ) {};
@@ -99,8 +97,6 @@ public:
     @param ren_analogType default-argument for choosing iSensor_c::voltage(default) or iSensor_c::current as input type
     @param ab_useMean default-argument for setting the calculation of mean value on true (false as default)
     @param ab_fastAdc default-argument for setting fast ADC method (false as default)
-    @param ai32_scaleMin set the min return value where BIOS sensor value should be scaled (default no scale)
-    @param ai32_scaleMax set the max return value where BIOS sensor value should be scaled (default no scale)
   */
   void init(uint8_t ab_channel, iSensor_c::analogType_t ren_analogType = iSensor_c::voltage, bool ab_useMean = false, bool ab_fastAdc = false )
     { AnalogI_c::init(ab_channel, ren_analogType, ab_useMean, ab_fastAdc );};
@@ -138,7 +134,7 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   iAnalogI_c(const iAnalogI_c& /*arc_src*/) : AnalogI_c() {};
   /**
@@ -146,7 +142,7 @@ private:
     NEVER assign a AnalogI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   iAnalogI_c& operator=(const iAnalogI_c& /*arc_src*/){ return *this;};
 };

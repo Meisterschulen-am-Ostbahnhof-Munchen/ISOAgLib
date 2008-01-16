@@ -207,7 +207,7 @@ private:
     NEVER assign a DigitalO_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   DigitalO_c& operator=(const DigitalO_c& /*arc_src*/){return *this;};
 

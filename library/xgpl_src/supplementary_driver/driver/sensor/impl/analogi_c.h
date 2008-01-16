@@ -175,7 +175,7 @@ protected:
     NEVER assign a AnalogI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   AnalogI_c& operator=(const AnalogI_c& /*arc_src*/){ return *this;};
 private: // Private attributes

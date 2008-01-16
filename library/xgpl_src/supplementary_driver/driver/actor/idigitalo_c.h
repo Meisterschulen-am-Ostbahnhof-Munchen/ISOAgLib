@@ -168,7 +168,7 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   iDigitalO_c(const iDigitalO_c& /*arc_src*/) : DigitalO_c() {};
   /**
@@ -176,7 +176,7 @@ private:
     NEVER assign a iDigitalO_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   iDigitalO_c& operator=(const iDigitalO_c& /*arc_src*/){ return *this;};
 };

@@ -185,7 +185,7 @@ protected:
     NEVER assign a AnalogIRangeCheck_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   AnalogIRangeCheck_c& operator=(const AnalogIRangeCheck_c& /* arc_src */){ return *this;};
 private:

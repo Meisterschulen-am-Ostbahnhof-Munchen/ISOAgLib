@@ -171,7 +171,7 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   iAnalogIRangeCheck_c(const iAnalogIRangeCheck_c& /*arc_src*/) : AnalogIRangeCheck_c() {};
   /**
@@ -179,7 +179,7 @@ private:
     NEVER assign a AnalogIRangeCheck_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    <!--@param arc_src source-->
   */
   iAnalogIRangeCheck_c& operator=(const iAnalogIRangeCheck_c& /*arc_src*/){ return *this;};
 };
