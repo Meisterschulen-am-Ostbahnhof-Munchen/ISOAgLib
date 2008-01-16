@@ -58,23 +58,25 @@ namespace IsoAgLib {
 class iVtObjectGraphicsContext_c : public __IsoAgLib::vtObjectGraphicsContext_c
 {
 public:
-  //  Operation: init
-  //! @param vtObjectGraphicsContextSROM
-  //! @param b_initPointer
+  /// Operation: init
+  ///
+  /// @param vtObjectGraphicsContextSROM
+  /// @param b_initPointer
   void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectGraphicsContext_c::init (vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   };
 
-  //  Operation: get_vtObjectGraphicsContext_a
+  /// Operation: get_vtObjectGraphicsContext_a
   const iVtObjectGraphicsContext_s& get_vtObjectGraphicsContext_a() {
     return *vtObjectGraphicsContext_c::get_vtObjectGraphicsContext_a();
   };
 
-  //! This command alters the graphics cursor X/Y attributes of the object (Sub-Command ID 0).
-  //! @param ac_point Position of cursor to be set
-  //! @param b_updateObject Keep track of object changes (by use of RAM copy instead of static ROM image).
-  //! @param b_enableReplaceOfCmd Allow command queue optimization by replacing allready queued commands
-  //!   by currently received.
+  /// This command alters the graphics cursor X/Y attributes of the object (Sub-Command ID 0).
+  ///
+  /// @param ac_point Position of cursor to be set
+  /// @param b_updateObject Keep track of object changes (by use of RAM copy instead of static ROM image).
+  /// @param b_enableReplaceOfCmd Allow command queue optimization by replacing allready queued commands
+  ///   by currently received.
   void setGraphicsCursor(const iVtPoint_c& ac_point,
                          bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::setGraphicsCursor( ac_point, b_updateObject, b_enableReplaceOfCmd);
@@ -204,9 +206,9 @@ public:
   //! If a fill object is currently defined and the polygon is closed, the polygon is filled.
   //! The graphics cursor is moved to the last point in the list.
   //! @param cnt Number of additional points
-  //! @param aps_data Pointer to array of polygon points
-  //! @param b_updateObject
-  //! @param b_enableReplaceOfCmd
+  //! @param apc_data Pointer to array of polygon points
+  //! @param b_updateObject (default:false)
+  //! @param b_enableReplaceOfCmd (default:false)
   void drawPolygon(uint16_t cnt, const iVtPoint_c* const apc_data,
                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::drawPolygon (cnt, apc_data, b_updateObject, b_enableReplaceOfCmd);
@@ -330,9 +332,9 @@ public:
   //! Context Object.
   //! Any colours outside of the colours allowed by this Picture Graphic Object shall
   //! be treated as transparent.
-  //! @param iVtObjectPictureGraphicPicture Graphic Object to copy viewport to.
-  //! @param b_updateObject
-  //! @param b_enableReplaceOfCmd
+  //! @param iVtObjectPictureGraphic Graphic Object to copy viewport to.
+  //! @param b_updateObject (default:false)
+  //! @param b_enableReplaceOfCmd (default:false)
   void copyViewport2PictureGraphic(const iVtObjectPictureGraphic_c* const iVtObjectPictureGraphic,
                                    bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectGraphicsContext_c::copyViewport2PictureGraphic (iVtObjectPictureGraphic, b_updateObject, b_enableReplaceOfCmd);

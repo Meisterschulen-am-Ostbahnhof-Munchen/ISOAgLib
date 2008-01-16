@@ -69,10 +69,10 @@ class iVtObjectInputAttributes_c : public __IsoAgLib::vtObjectInputAttributes_c
 
 public:
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectInputAttributesSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  ///
+  /// @param vtObjectInputAttributesSROM
+  /// @param b_initPointer
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectInputAttributes_c::init (vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }

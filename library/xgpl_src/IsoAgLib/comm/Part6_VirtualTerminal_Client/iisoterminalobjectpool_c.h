@@ -171,7 +171,7 @@ public:
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
-    @param ui8_keyActivationCode 0, 1 or 2. In case of a Latchable Button use [BUTTON_HAS_BEEN_UNLATCHED, BUTTON_HAS_BEEN_LATCHED], for Unlatchable Buttons use [BUTTON_HAS_BEEN_PRESSED, BUTTON_IS_STILL_HELD] (notice there's NO BUTTON_HAS_BEEN_RELEASED !]. For keys use one of [KEY_HAS_BEEN_RELEASED, KEY_HAS_BEEN_PRESSED, KEY_IS_STILL_HELD]
+    @param aui8_keyActivationCode 0, 1 or 2. In case of a Latchable Button use [BUTTON_HAS_BEEN_UNLATCHED, BUTTON_HAS_BEEN_LATCHED], for Unlatchable Buttons use [BUTTON_HAS_BEEN_PRESSED, BUTTON_IS_STILL_HELD] (notice there's NO BUTTON_HAS_BEEN_RELEASED !]. For keys use one of [KEY_HAS_BEEN_RELEASED, KEY_HAS_BEEN_PRESSED, KEY_IS_STILL_HELD]
     @param aui16_objId ObjectID of the vtObjectButton / vtObjectSoftKey object
     @param aui16_objIdMask ObjectID of the Mask that contains the vtObjectButton / vtObjectSoftKey object
     @param aui8_keyCode KeyCode as defined in the vtObjectButton / vtObjectSoftKey object
@@ -182,8 +182,8 @@ public:
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Pointing Event" Message
-    @param aui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
-    @param aui16_yPosition of where the user has clicked (besides buttons and input objects) or touched
+    <!--@param aui16_xPosition of where the user has clicked (besides buttons and input objects) or touched
+    @param aui16_yPosition of where the user has clicked (besides buttons and input objects) or touched-->
   */
   virtual void eventPointingEvent (uint16_t /*aui16_xPosition*/, uint16_t /*aui16_yPosition*/) {}
 
@@ -230,9 +230,9 @@ public:
     This function is called right before a language update is being sent to the VT,
     so the application has a chance to e.g. switch to a "Wait while updating language..." datamask
     before the object pool is being updated...
-    @param ai8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) will be uploaded/updated)
+    <!--@param ai8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) will be uploaded/updated)
                              0..(n-1) for the index to the supported languages. 0 is the first (=default) language. 1 the second, etc.
-    @param aui16_languageCode the language code of the afterwards being uploaded language (one of your supported languages!)
+    @param aui16_languageCode the language code of the afterwards being uploaded language (one of your supported languages!)-->
   */
   virtual void eventPrepareForLanguageChange (int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/) {}
 
@@ -317,11 +317,11 @@ public:
     --> Standard implementation will simply clip all color-values to
     BLACK (Color 0) besides the background/transparency colors to WHITE (Color 1)
     Please overload this function if other behaviour is wanted
-    @param colorValue The color-value that was originally defined in the object
+    <!--@param colorValue The color-value that was originally defined in the object
     @param colorDepth 0 for 1bit-color depth (2-colored VT, black/white)
                       1 for 4bit-color depth (16-colored VT)
                       2 for 8bit-color depth (256-colored VT)
-    @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...
+    @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...-->
     @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
   */
   virtual uint8_t convertColour(uint8_t /* colorValue */, uint8_t /* colorDepth */, IsoAgLib::iVtObject_c* /* obj */, IsoAgLib::e_vtColour whichColour)

@@ -68,10 +68,10 @@ class iVtObjectDataMask_c : public __IsoAgLib::vtObjectDataMask_c
 
 public:
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectDataMaskSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  ///
+  /// @param vtObjectDataMaskSROM
+  /// @param b_initPointer
   void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectDataMask_c::init (vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
@@ -79,28 +79,28 @@ public:
   //  Operation: get_vtObjectDataMask_a
   const iVtObjectDataMask_s& get_vtObjectDataMask_a() { return *vtObjectDataMask_c::get_vtObjectDataMask_a(); }
 
-  //  Operation: setSoftKeyMask
-  //! Parameter:
-  //! @param newSoftKeyMask:
-  //! @param b_updateObject:
+  /// Operation: setSoftKeyMask
+  ///
+  /// @param newSoftKeyMask
+  /// @param b_updateObject
   void setSoftKeyMask(iVtObjectSoftKeyMask_c* newSoftKeyMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectDataMask_c::setSoftKeyMask (newSoftKeyMask, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setBackgroundColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
+  /// Operation: setBackgroundColour
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectDataMask_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: moveChildLocation
-  //! Parameter:
-  //! @param apc_object:
-  //! @param apc_childObject:
-  //! @param dx:
-  //! @param dy:
+  /// Operation: moveChildLocation
+  ///
+  /// @param apc_childObject
+  /// @param b_updateObject (default:false)
+  /// @param dx
+  /// @param dy
   bool moveChildLocation(iVtObject_c* apc_childObject, int8_t dx, int8_t dy, bool b_updateObject=false) {
     return vtObjectDataMask_c::moveChildLocation (apc_childObject, dx, dy, b_updateObject);
   }

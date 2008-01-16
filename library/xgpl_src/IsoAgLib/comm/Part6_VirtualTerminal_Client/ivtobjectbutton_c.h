@@ -68,10 +68,10 @@ class iVtObjectButton_c : public __IsoAgLib::vtObjectButton_c
 
 public:
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectButtonSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  /// 
+  /// @param vtObjectButtonSROM
+  /// @param b_initPointer
   void init(const iVtObjectButton_s* vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectButton_c::init (vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
@@ -82,35 +82,35 @@ public:
 
 
 
-  //  Operation: setSize
-  //! Parameter:
-  //! @param newWidth:
-  //! @param newHeight:
-  //! @param b_updateObject:
+  /// Operation: setSize
+  /// 
+  /// @param newWidth
+  /// @param newHeight
+  /// @param b_updateObject
   void setSize(uint16_t newWidth, uint16_t newHeight, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectButton_c::setSize (newWidth, newHeight, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setWidth
-  //! Parameter:
-  //! @param newWidth:
-  //! @param b_updateObject:
+  /// Operation: setWidth
+  /// 
+  /// @param newValue
+  /// @param b_updateObject
   void setWidth(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectButton_c::setWidth (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setHeight
-  //! Parameter:
-  //! @param newHeight:
-  //! @param b_updateObject:
+  /// Operation: setHeight
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setHeight(uint16_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectButton_c::setHeight (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setBackgroundColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
+  /// Operation: setBackgroundColour
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setBackgroundColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectButton_c::setBackgroundColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   }

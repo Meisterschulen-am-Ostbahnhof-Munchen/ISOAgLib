@@ -80,10 +80,11 @@ public:
   //  Operation: get_vtObjectWorkingSet_a
   const iVtObjectWorkingSet_s& get_vtObjectWorkingSet_a() { return *vtObjectWorkingSet_c::get_vtObjectWorkingSet_a(); }
 
-  //  Operation: changeActiveMask
-  //! Parameter:
-  //! @param apc_vtObjectMask:
-  //! @param b_updateObject:
+  /// Operation: changeActiveMask
+  ///
+  /// @param apc_iVtObjectMask
+  /// @param b_updateObject
+  /// @param b_enableReplaceOfCmd
   void changeActiveMask(iVtObjectMask_c* apc_iVtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false) {
     vtObjectWorkingSet_c::changeActiveMask (apc_iVtObjectMask, b_updateObject, b_enableReplaceOfCmd);
   }

@@ -70,10 +70,10 @@ public:
   iVtObjectFontAttributes_c();
 
   virtual ~iVtObjectFontAttributes_c();
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectFontAttributesSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  ///
+  /// @param vtObjectFontAttributesSROM
+  /// @param b_initPointer
   void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectFontAttributes_c::init (vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   };
@@ -84,45 +84,45 @@ public:
   //  Operation: getScaledWidthHeight
   uint16_t getScaledWidthHeight();
 
-  //  Operation: setFontColour
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
+  /// Operation: setFontColour
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setFontColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFontAttributes_c::setFontColour (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
-  //  Operation: setFontSize
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
+  /// Operation: setFontSize
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setFontSize(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFontAttributes_c::setFontSize (newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
-  //  Operation: setFontType
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
+  /// Operation: setFontType
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setFontType(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFontAttributes_c::setFontType(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
-  //  Operation: setFontStyle
-  //! Parameter:
-  //! @param newValue:
-  //! @param b_updateObject:
+  /// Operation: setFontStyle
+  ///
+  /// @param newValue
+  /// @param b_updateObject
   void setFontStyle(uint8_t newValue,  bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFontAttributes_c::setFontStyle(newValue, b_updateObject, b_enableReplaceOfCmd);
   };
 
-  //  Operation: setFontAttributes
-  //! Parameter:
-  //! @param newFontColour:
-  //! @param newFontSize:
-  //! @param newFontType:
-  //! @param newFontStyle:
-  //! @param b_updateObject:
+  /// Operation: setFontAttributes
+  ///
+  /// @param newFontColour
+  /// @param newFontSize
+  /// @param newFontType
+  /// @param newFontStyle
+  /// @param b_updateObject
   void setFontAttributes(uint8_t newFontColour, uint8_t newFontSize, uint8_t newFontType, uint8_t newFontStyle, bool b_updateObject=false, bool b_enableReplaceOfCmd=false){
     vtObjectFontAttributes_c::setFontAttributes(newFontColour, newFontSize, newFontType, newFontStyle, b_updateObject, b_enableReplaceOfCmd);
   }

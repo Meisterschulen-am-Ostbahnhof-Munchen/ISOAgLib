@@ -70,10 +70,10 @@ class iVtObjectFillAttributes_c : public __IsoAgLib::vtObjectFillAttributes_c
 
 public:
 
-  //  Operation: init
-  //! Parameter:
-  //! @param vtObjectFillAttributesSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  ///
+  /// @param vtObjectFillAttributesSROM
+  /// @param b_initPointer
   void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObjectFillAttributes_c::init (vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }
@@ -82,33 +82,36 @@ public:
   const iVtObjectFillAttributes_s& get_vtObjectFillAttributes_a() { return *vtObjectFillAttributes_c::get_vtObjectFillAttributes_a(); }
 
 
-  //  Operation: setFillType
-  //! Parameter:
-  //! @param newFillType:
-  //! @param b_updateObject:
+  /// Operation: setFillType
+  ///
+  /// @param newFillType
+  /// @param b_updateObject
   void setFillType(uint8_t newFillType, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillType(newFillType, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFillColour
-  //! @param newFillColour:
-  //! @param b_updateObject:
+  /// Operation: setFillColour
+  ///
+  /// @param newFillColour
+  /// @param b_updateObject
   void setFillColour(uint8_t newFillColour, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillColour(newFillColour, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFillPattern
-  //! @param newFillPatternObject:
-  //! @param b_updateObject:
+  /// Operation: setFillPattern
+  /// 
+  /// @param newFillPatternObject
+  /// @param b_updateObject
   void setFillPattern(iVtObjectPictureGraphic_c* newFillPatternObject, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillPattern(newFillPatternObject, b_updateObject, b_enableReplaceOfCmd);
   }
 
-  //  Operation: changeFillAttributes
-  //! @param newFillType:
-  //! @param newFillColour:
-  //! @param newFillPatternObject:
-  //! @param b_updateObject:
+  /// Operation: changeFillAttributes
+  ///
+  /// @param newFillType
+  /// @param newFillColour
+  /// @param newFillPattern
+  /// @param b_updateObject
   void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectFillAttributes_c::setFillAttributes(newFillType, newFillColour, newFillPattern, b_updateObject, b_enableReplaceOfCmd);
   }
