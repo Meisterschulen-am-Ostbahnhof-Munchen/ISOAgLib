@@ -222,7 +222,7 @@ public:
     @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
   template<class T>
-    EepromIo_c& operator<<(const T& rTemlpateVal){return writeIntern(((const uint8_t*)(&rTemlpateVal)), sizeof(T));}
+    EepromIo_c& operator<<(const T& rTemplateVal){return writeIntern(((const uint8_t*)(&rTemplateVal)), sizeof(T));}
   /**
     write a text string value to EEPROM from actual write position on (tellp() )
 
@@ -273,7 +273,7 @@ public:
     @return reference to this EepromIo_c instance (for chains like "eeprom >> val1 >> val2 >> ... >> val_n;")
   */
   template<class T>
-  EepromIo_c& operator>>(T& rTemlpateVal){return readIntern(((uint8_t*)(&rTemlpateVal)), sizeof(T));}
+  EepromIo_c& operator>>(T& rTemplateVal){return readIntern(((uint8_t*)(&rTemplateVal)), sizeof(T));}
 
   /**
     read operator for strings with given length; uses BIOS function
