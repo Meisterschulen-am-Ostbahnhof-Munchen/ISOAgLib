@@ -41,6 +41,30 @@
 
 using namespace std;
 
+
+bool itogeneraloption(uint8_t ui8_options, std::string& c_outputText, uint8_t ui8_numEntries, char* pchar_table )
+{
+  uint16_t pos,idx;
+  bool b_addPlus = false;
+  c_outputText.clear();
+
+  for (pos=0 ; pos < ui8_numEntries; pos++)
+  {
+    if (ui8_options & (1<<pos))
+    {
+      if (b_addPlus) c_outputText.append( "+" );
+      b_addPlus = true;
+
+      // multidimensional array access!
+      c_outputText.append( &pchar_table[pos*(stringLength+1)] );
+    }
+  }
+  if (!b_addPlus) c_outputText.append( "none" );
+
+  return true;
+}
+
+
 unsigned int
 colortoi (char* text_color)
 {
@@ -53,7 +77,7 @@ colortoi (char* text_color)
   return atoi (text_color);
 }
 
-int itocolor(unsigned int ui_index, string& c_outputText)
+bool itocolor(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxColorTable )
   {
@@ -66,7 +90,7 @@ int itocolor(unsigned int ui_index, string& c_outputText)
     sprintf(c_tmp_buf,"%d",ui_index);
     c_outputText = c_tmp_buf;
  }
-  return 0;
+  return true;
 }
 
 unsigned int
@@ -116,7 +140,7 @@ fonttypetoi (char* text_fonttype)
 }
 
 
-int itofonttype(unsigned int ui_index, string& c_outputText)
+bool itofonttype(unsigned int ui_index, string& c_outputText)
 {
 
   if(ui_index < 8 )
@@ -135,9 +159,9 @@ int itofonttype(unsigned int ui_index, string& c_outputText)
     {
       c_outputText = fonttypeTable[ui_index];
     }
-    else return -1;
+    else return false;
   }
-  return 0;
+  return true;
 }
 
 
@@ -172,14 +196,14 @@ fontsizetoi (char *text_fontsize)
   return -1;
 }
 
-int itofontsize(unsigned int ui_index, string& c_outputText)
+bool itofontsize(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxFontsizeTable )
   {
     c_outputText = fontsizeTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 
@@ -196,14 +220,14 @@ formattoi (char *text_format)
   return -1;
 }
 
-int itoformat(unsigned int ui_index, string& c_outputText)
+bool itoformat(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxFormatTable )
   {
     c_outputText = formatTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 signed int
@@ -219,14 +243,14 @@ horizontaljustificationtoi (char *text_horiz)
   return -1;
 }
 
-int itohorizontaljustification(unsigned int ui_index, string& c_outputText)
+bool itohorizontaljustification(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxHorizontalJustificationTable )
   {
     c_outputText = horizontalJustificationTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 
@@ -242,6 +266,11 @@ stringoptionstoi (char *text_options)
   return retval;
 }
 
+bool itostringoptions(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxStringOptionsTable, &stringOptionsTable[0][0]);
+}
+
 unsigned int
 inputnumberoptionstoi (char *text_options)
 {
@@ -254,6 +283,12 @@ inputnumberoptionstoi (char *text_options)
   return retval;
 }
 
+bool itoinputnumberoptions(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxInputNumberOptionsTable, &inputNumberOptionsTable[0][0]);
+}
+
+
 unsigned int
 numberoptionstoi (char *text_options)
 {
@@ -264,6 +299,11 @@ numberoptionstoi (char *text_options)
     }
   }
   return retval;
+}
+
+bool itonumberoptions(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxOutputNumberOptionsTable, &outputNumberOptionsTable[0][0]);
 }
 
 unsigned int
@@ -278,6 +318,12 @@ picturegraphicoptionstoi (char *text_options)
   return retval;
 }
 
+bool itopicturegraphicoptions(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxPictureGraphicOptionsTable, &pictureGraphicOptionsTable[0][0]);
+}
+
+
 unsigned int
 picturegraphicrletoi (char *text_options)
 {
@@ -289,6 +335,12 @@ picturegraphicrletoi (char *text_options)
   }
   return retval;
 }
+
+bool itopicturegraphicrle(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxPictureGraphicRleTable, &pictureGraphicRleTable[0][0]);
+}
+
 
 unsigned int
 meteroptionstoi (char *text_options)
@@ -302,29 +354,9 @@ meteroptionstoi (char *text_options)
   return retval;
 }
 
-
-int itometeroptions(uint8_t ui8_options, string& c_outputText)
+bool itometeroptions(uint8_t ui8_options, string& c_outputText)
 {
-  uint16_t pos,idx;
-  bool b_addPlus = false;
-  std::string c_attr;
-
-  for (pos=1, idx=0 ; pos <= (1<<7); pos<<=1, idx++)
-  {
-    if (ui8_options & pos)
-    {
-      if (b_addPlus) c_attr.append( "+" );
-      b_addPlus = true;
-
-      std:string tmp = meterOptionsTable[idx];
-      c_attr.append( tmp );
-    }
-  }
-  if (!b_addPlus) c_attr.append( "none" );
-
-  c_outputText = c_attr;
-  return 0;
-
+  return itogeneraloption(ui8_options, c_outputText, maxMeterOptionsTable, &meterOptionsTable[0][0]);
 }
 
 
@@ -340,6 +372,11 @@ linearbargraphoptionstoi (char *text_options)
   return retval;
 }
 
+bool itolinearbargraphoptions(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxLinearBarGraphOptionsTable, &linearBarGraphOptionsTable[0][0]);
+}
+
 unsigned int
 archedbargraphoptionstoi (char *text_options)
 {
@@ -350,6 +387,11 @@ archedbargraphoptionstoi (char *text_options)
     }
   }
   return retval;
+}
+
+bool itoarchedbargraphoptions(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxArchedBarGraphOptionsTable, &archedBarGraphOptionsTable[0][0]);
 }
 
 signed int
@@ -365,14 +407,14 @@ prioritytoi (char *text_priority)
   return -1;
 }
 
-int itopriority(unsigned int ui_index, string& c_outputText)
+bool itopriority(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxPriorityAcousticSignalTable )
   {
     c_outputText = priorityAcousticSignalTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 
@@ -389,14 +431,14 @@ acousticsignaltoi (char *text_acousticsignal)
   return -1;
 }
 
-int itoacousticsignal(unsigned int ui_index,string& c_outputText)
+bool itoacousticsignal(unsigned int ui_index,string& c_outputText)
 {
   if(ui_index < maxPriorityAcousticSignalTable )
   {
     c_outputText = priorityAcousticSignalTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 unsigned int
@@ -423,6 +465,11 @@ fontstyletoi (char *text_fontstyle)
   return retval;
 }
 
+bool itofontstyle(uint8_t ui8_options, std::string& c_outputText)
+{ // the additional check in the above function is not necessary
+  return itogeneraloption(ui8_options, c_outputText, maxFontstyleTable, &fontstyleTable[0][0]);
+}
+
 unsigned int
 linedirectiontoi (char *text_linedirection)
 {
@@ -433,7 +480,7 @@ linedirectiontoi (char *text_linedirection)
   return retval;
 }
 
-int itolineardirection(unsigned int ui_index, string& c_outputText)
+bool itolineardirection(unsigned int ui_index, string& c_outputText)
 {
   char c_tmpBuf[stringLength];
   if(ui_index == 0)
@@ -446,9 +493,9 @@ int itolineardirection(unsigned int ui_index, string& c_outputText)
     sprintf(c_tmpBuf,"%s","bottomlefttotopright");
     c_outputText = c_tmpBuf;
   }
-  else return -1;
+  else return false;
 
-  return 0;
+  return true;
 }
 
 
@@ -465,6 +512,18 @@ linearttoi (char *text_lineart)
     text_lineart++;
   }
   return retval;
+}
+
+bool itolineart(int i_lineart, std::string& c_outputText)
+{
+  c_outputText.clear();
+  for (int8_t i8_cnt = 15; i8_cnt >= 0; i8_cnt--)
+  {
+    if (i_lineart & (1<<i8_cnt))
+      c_outputText.append("1");
+    else
+      c_outputText.append("0");
+  }
 }
 
 unsigned int
@@ -492,14 +551,14 @@ ellipsetypetoi (char *text_ellipsetype)
   return retval;
 }
 
-int itoellipsetype(unsigned int ui_index, string& c_outputText)
+bool itoellipsetype(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxEllipseTypeTable )
   {
     c_outputText = ellipseTypeTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 unsigned int
@@ -515,14 +574,14 @@ polygontypetoi (char *text_polygontype)
   return retval;
 }
 
-int itopolygontype(unsigned int ui_index, string& c_outputText)
+bool itopolygontype(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxPolygonTypeTable )
   {
     c_outputText = polygonTypeTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 
@@ -536,7 +595,7 @@ validationtypetoi (char *text_validationtype)
   return retval;
 }
 
-int itovalidationtype(unsigned int ui_index, string& c_outputText)
+bool itovalidationtype(unsigned int ui_index, string& c_outputText)
 {
   char c_tmpBuf[stringLength];
 
@@ -550,9 +609,9 @@ int itovalidationtype(unsigned int ui_index, string& c_outputText)
     sprintf(c_tmpBuf,"%s","invalid_characters");
     c_outputText = c_tmpBuf;
   }
-  else return -1;
+  else return false;
 
- return 0;
+ return true;
 }
 
 
@@ -571,14 +630,14 @@ filltypetoi (char *text_filltype)
   return retval;
 }
 
-int itofilltype(unsigned int ui_index, string& c_outputText)
+bool itofilltype(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxFillTypeTable )
   {
     c_outputText = fillTypeTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 
@@ -608,14 +667,14 @@ auxfunctiontypetoi(char *text_auxFunctionType)
   return retval;
 }
 
-int itofunctiontype(unsigned int ui_index, string& c_outputText)
+bool itofunctiontype(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxAuxFunctionTypes )
   {
     c_outputText = auxFunctionTypeTable[ui_index];
-    return 0;
+    return true;
   }
-  return -1;
+  return false;
 }
 
 
@@ -631,6 +690,11 @@ gcoptionstoi (char *text_options)
   return retval;
 }
 
+bool itogcoptions(uint8_t ui8_options, string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxGCOptions, &GCOptionsTable[0][0]);
+}
+
 unsigned int
 inputobjectoptiontoi (char *text_inputobjectoptions)
 {
@@ -643,6 +707,11 @@ inputobjectoptiontoi (char *text_inputobjectoptions)
   return retval;
 }
 
+bool itoinputobjectoptions(uint8_t ui8_options, string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxInputObjectOptionsTable, &inputobjectOptionsTable[0][0]);
+}
+
 unsigned int
 buttonoptiontoi (char *text_buttonoptions)
 {
@@ -653,4 +722,9 @@ buttonoptiontoi (char *text_buttonoptions)
     }
   }
   return retval;
+}
+
+bool itobuttonoptions(uint8_t ui8_options, string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxButtonOptions, &buttonOptionsTable[0][0]);
 }

@@ -46,20 +46,32 @@
 
 
 
-extern int itocolor(unsigned int ui_index, std::string& c_outputText);
-extern int itofontsize(unsigned int ui_index, std::string& c_outputText);
-extern int itofonttype(unsigned int ui_index, std::string& c_outputText);
-extern int itoformat(unsigned int ui_index, std::string& c_outputText);
-extern int itohorizontaljustification(unsigned int ui_index, std::string& c_outputText);
-extern int itopolygontype(unsigned int ui_index, std::string& c_outputText);
-extern int itoellipsetype(unsigned int ui_index, std::string& c_outputText);
-extern int itoacousticsignal(unsigned int ui_index, std::string& c_outputText);
-extern int itopriority(unsigned int ui_index, std::string& c_outputText);
-extern int itofunctiontype(unsigned int ui_index, std::string& c_outputText);
-extern int itofilltype(unsigned int ui_index, std::string& c_outputText);
-extern int itovalidationtype(unsigned int ui_index, std::string& c_outputText);
-extern int itolineardirection(unsigned int ui_index, std::string& c_outputText);
-extern int itometeroptions(uint8_t ui_options, std::string& c_outputText);
+extern bool itocolor(unsigned int ui_index, std::string& c_outputText);
+extern bool itofontsize(unsigned int ui_index, std::string& c_outputText);
+extern bool itofonttype(unsigned int ui_index, std::string& c_outputText);
+extern bool itoformat(unsigned int ui_index, std::string& c_outputText);
+extern bool itohorizontaljustification(unsigned int ui_index, std::string& c_outputText);
+extern bool itopolygontype(unsigned int ui_index, std::string& c_outputText);
+extern bool itoellipsetype(unsigned int ui_index, std::string& c_outputText);
+extern bool itoacousticsignal(unsigned int ui_index, std::string& c_outputText);
+extern bool itopriority(unsigned int ui_index, std::string& c_outputText);
+extern bool itofunctiontype(unsigned int ui_index, std::string& c_outputText);
+extern bool itofilltype(unsigned int ui_index, std::string& c_outputText);
+extern bool itovalidationtype(unsigned int ui_index, std::string& c_outputText);
+extern bool itolineardirection(unsigned int ui_index, std::string& c_outputText);
+extern bool itometeroptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itoarchedbargraphoptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itostringoptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itoinputnumberoptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itonumberoptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itopicturegraphicoptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itopicturegraphicrle(uint8_t ui8_options, std::string& c_outputText);
+extern bool itolinearbargraphoptions(uint8_t ui8_options, std::string& c_outputText);
+extern bool itogcoptions(uint8_t ui8_options, string& c_outputText);
+extern bool itoinputobjectoptions(uint8_t ui8_options, string& c_outputText);
+extern bool itobuttonoptions(uint8_t ui8_options, string& c_outputText);
+extern bool itofontstyle(uint8_t ui8_options, std::string& c_outputText);
+extern bool itolineart(int i_lineart, std::string& c_outputText);
 
 
 extern unsigned int colortoi (char* text_color);
