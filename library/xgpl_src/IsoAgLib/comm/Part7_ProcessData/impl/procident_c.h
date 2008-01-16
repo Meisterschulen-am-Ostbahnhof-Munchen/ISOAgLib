@@ -112,8 +112,8 @@ public:
     constructor which can optional set all member values
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
-                         (array is terminated by ElementDdi_s.ddi == 0xFFFF)
-    @param mui16_element device element number
+                         (array is terminated by ElementDdi_s.ddi == 0xFFFF, default: NULL)
+    @param mui16_element device element number (default: 0xFFFF)
 
     common parameter
     @param ac_isoName optional ISOName code of Process-Data
@@ -241,7 +241,7 @@ public:
 
   /**
     set DDI, value group and setpoint/measure type of process msg
-    @param al_elementDDI
+    @param ps_elementDDI
   */
   void setElementDDI(const IsoAgLib::ElementDdi_s* ps_elementDDI);
 

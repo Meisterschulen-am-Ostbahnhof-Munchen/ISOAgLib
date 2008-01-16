@@ -284,12 +284,13 @@ public:
 
   /**
     set isoName of cammanding member
-    @param ac_isoName ISOName of commanding member
+    @param ac_val ISOName of commanding member
   */
   void setISOName(const IsoName_c& ac_val){mc_requestISOName = ac_val;}
   /**
     set isoName of cammanding member
-    @param ac_isoName ISOName of commanding member
+    @param aui8_devClass device class of commanding member
+    @param aui8_devClassInst device class instance of commanding member
   */
   void setISOName(uint8_t aui8_devClass, uint8_t aui8_devClassInst){mc_requestISOName.set( aui8_devClass, aui8_devClassInst );}
   /**

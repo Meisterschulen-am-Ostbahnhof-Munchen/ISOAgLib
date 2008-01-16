@@ -156,7 +156,7 @@ public:
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
     @param ac_isoName optional ISOName of partner member for this measure program
   */
@@ -425,7 +425,7 @@ public:
 
   /**
     compare two items for PRI and ISOName
-    @param arc_right compared object
+    @param right compared object
     @return true -> both instances are equal (ISOName and active flag)
   */
   bool operator==(const MeasureProgBase_c& right) const
@@ -433,7 +433,7 @@ public:
 
   /**
     compare two MeasureProg with <
-    @param arc_right compared object
+    @param right compared object
     @return true -> this instance is < than the other (ISOName and active flag)
   */
   bool operator<(const MeasureProgBase_c& right) const
@@ -441,7 +441,7 @@ public:
 
   /**
     compare two MeasureProg with <=
-    @param arc_right compared object
+    @param right compared object
     @return true -> this instance is <= than the other (ISOName and active flag)
   */
   bool operator<=(const MeasureProgBase_c& right) const
@@ -457,7 +457,7 @@ public:
 
   /**
     compare two MeasureProg with >=
-    @param arc_right compared object
+    @param right compared object
     @return true -> this instance is >= than the other (ISOName and active flag)
   */
   bool operator>=(const MeasureProgBase_c& right) const

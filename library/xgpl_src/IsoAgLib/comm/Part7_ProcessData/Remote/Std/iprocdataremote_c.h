@@ -156,7 +156,7 @@ public:
   iProcDataRemote_c(const ElementDdi_s* ps_elementDDI = NULL,
                     uint16_t aui16_element = 0xFFFF,
                     const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
-                    const iIsoName_c* apc_commanderISOName = NULL,
+                    const iIsoName_c* apc_commanderIsoName = NULL,
                     ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                     int ai_singletonVecKey = 0)
   : ProcDataRemote_c( ps_elementDDI, aui16_element,

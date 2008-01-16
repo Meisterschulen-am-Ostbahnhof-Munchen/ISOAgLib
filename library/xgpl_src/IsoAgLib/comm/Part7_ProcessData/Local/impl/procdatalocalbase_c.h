@@ -138,9 +138,9 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     possible errors:
         * Err_c::badAlloc not enough memory to insert first  MeasureProgLocal
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-    common parameter
+    @param aui16_element (default:0xFFFF)
     @param ac_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
@@ -327,7 +327,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
 
   /** stop all measurement progs in all local process instances, started with given isoName
     (not used for simple measurement)
-    @param rc_isoName
+    <!--@param rc_isoName-->
   */
   virtual void stopRunningMeasurement(const IsoName_c& /* rc_isoName */) {}
 

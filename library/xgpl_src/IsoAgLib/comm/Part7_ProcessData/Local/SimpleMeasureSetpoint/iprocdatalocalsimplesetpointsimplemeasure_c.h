@@ -120,7 +120,7 @@ public:
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-
+    @param aui16_element (default:0xFFFF)
     @param ac_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
@@ -172,7 +172,7 @@ public:
     ISO parameter
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
-
+    @param aui16_element (default:0xFFFF)
     @param ac_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
@@ -324,14 +324,14 @@ public:
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ai32_val new measure value
+    @param ai16_val new measure value
   */
   void setMasterMeasurementVal(int16_t ai16_val)
     {ProcDataLocalSimpleSetpointSimpleMeasure_c::setMasterMeasurementVal((int32_t)ai16_val);}
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ai32_val new measure value
+    @param ab_val new measure value
   */
   void setMasterMeasurementVal(uint8_t ab_val)
     {ProcDataLocalSimpleSetpointSimpleMeasure_c::setMasterMeasurementVal((int32_t)ab_val);}

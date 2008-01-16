@@ -164,7 +164,8 @@ public:
 
   /**
     set isoName of commanding member
-    @param ac_isoName ISOName of commanding member
+    @param aui8_devClass device class identifier
+    @param aui8_devClassInst device class instance
   */
   void setISOName(uint8_t aui8_devClass, uint8_t aui8_devClassInst){SetpointRegister_c::setISOName( aui8_devClass, aui8_devClassInst );}
   /**

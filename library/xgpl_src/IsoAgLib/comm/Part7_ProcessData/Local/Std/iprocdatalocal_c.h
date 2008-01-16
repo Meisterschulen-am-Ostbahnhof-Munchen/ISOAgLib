@@ -446,14 +446,14 @@ public:
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ai32_val new measure value
+    @param ai16_val new measure value
   */
   void setMasterMeasurementVal(int16_t ai16_val)
     {ProcDataLocal_c::setMasterMeasurementVal((int32_t)ai16_val);}
 
   /**
     set the masterMeasurementVal from main application independent from any measure progs
-    @param ai32_val new measure value
+    @param ab_val new measure value
   */
   void setMasterMeasurementVal(uint8_t ab_val)
     {ProcDataLocal_c::setMasterMeasurementVal((int32_t)ab_val);}
@@ -553,7 +553,7 @@ public:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
     @param ac_isoName DEVCLASS code of searched measure program
-    @param ab_doCreated true -> create suitable measure program if not found
+    @param ab_doCreate true -> create suitable measure program if not found
   */
   iMeasureProgLocal_c& prog(const iIsoName_c& ac_isoName, bool ab_doCreate)
     { return static_cast<iMeasureProgLocal_c&>(ProcDataLocal_c::prog(ac_isoName, ab_doCreate));}

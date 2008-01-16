@@ -130,7 +130,7 @@ public:
   
   /**
     set the pointer to Scheduler_c and ProcessData by references to the object instances
-    @param arc_processData optional reference to containing ProcessData instance
+    @param rc_processData optional reference to containing ProcessData instance
   */
   void set(ProcDataBase_c& rc_processData );
   /**

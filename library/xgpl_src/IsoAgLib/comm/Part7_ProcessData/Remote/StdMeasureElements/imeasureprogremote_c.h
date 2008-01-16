@@ -106,10 +106,10 @@ public:
     set if this MeasureProgRemote_c instance should store
     target/partner process data messages not direct addressed
     to a local member (default store not)
-    @param ab_useForeign wanted mode (default true)
+    @param ab_useForeign wanted mode (default: true)
   */
-  void receiveForeignMeasurement(bool ab_useForegin = true)
-    {MeasureProgRemote_c::receiveForeignMeasurement(ab_useForegin);};
+  void receiveForeignMeasurement(bool ab_useForeign = true)
+    {MeasureProgRemote_c::receiveForeignMeasurement(ab_useForeign);};
 
   /**
     check if this measure prog is running

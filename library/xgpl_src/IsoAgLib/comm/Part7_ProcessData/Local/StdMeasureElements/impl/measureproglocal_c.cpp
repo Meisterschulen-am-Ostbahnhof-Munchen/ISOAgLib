@@ -97,7 +97,7 @@ namespace __IsoAgLib {
     @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
     @param ai32_masterVal optional actual central local measured value used as masterVal (def 0)
     @param ai32_initialVal optional initial value (e.g which was stored in EEPROM) (default 0)
-    @param aui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
+    @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
   */
 void MeasureProgLocal_c::init(
   ProcDataBase_c *const apc_processData,

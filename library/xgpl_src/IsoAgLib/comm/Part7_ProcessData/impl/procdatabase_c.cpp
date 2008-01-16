@@ -128,7 +128,7 @@ namespace __IsoAgLib {
    ISO parameters:
    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                         (array is terminated by ElementDdi_s.mui16_element == 0xFFFF)
-   @param mui16_element  device element number
+   @param aui16_element  device element number
 
    common parameters:
    @param ac_isoName optional ISOName code of Process-Data

@@ -272,7 +272,6 @@ public:
   /**
     send a exact-setpoint to a specified target (selected by GPT)
     @param ac_targetISOName ISOName of target
-    @param ren_type optional PRI specifier of the message (default Proc_c::Target )
     @return true -> successful sent
   */
   bool sendMasterSetpointVal( const iIsoName_c& ac_targetISOName ) const
@@ -324,14 +323,14 @@ public:
 
   /**
     set the masterVal from main application independent from any measure progs
-    @param ai32_val new measure value
+    @param ai16_val new measure value
   */
   void setMasterMeasurementVal(int16_t ai16_val)
     {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)ai16_val);}
 
   /**
     set the masterVal from main application independent from any measure progs
-    @param ai32_val new measure value
+    @param ab_val new measure value
   */
   void setMasterMeasurementVal(uint8_t ab_val)
     {ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal((int32_t)ab_val);}
@@ -432,7 +431,7 @@ public:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
     @param ac_isoName DEVCLASS code of searched measure program
-    @param ab_doCreated true -> create suitable measure program if not found
+    @param ab_doCreate true -> create suitable measure program if not found
   */
   iMeasureProgLocal_c& prog(const iIsoName_c& ac_isoName, bool ab_doCreate)
     { return static_cast<iMeasureProgLocal_c&>(ProcDataLocalSimpleSetpoint_c::prog(ac_isoName, ab_doCreate));}

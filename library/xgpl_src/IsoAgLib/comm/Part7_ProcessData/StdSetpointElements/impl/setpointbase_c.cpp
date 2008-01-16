@@ -138,11 +138,11 @@ SetpointBase_c::~SetpointBase_c(){
 /**
   init this item after the containing object item
   was inserted in a list completely
-  @param apc_data pointer to containing ProcessData instance
+  @param pc_data pointer to containing ProcessData instance
 */
-void SetpointBase_c::init( ProcDataBase_c* pc_data)
+void SetpointBase_c::init( ProcDataBase_c* pc_data )
 {
-  set( pc_data);
+  set( pc_data );
 }
 
 /**
@@ -174,7 +174,7 @@ void SetpointBase_c::processMsg(){
       * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
       * dependant error in CanIo_c on CAN send problems
   @param arc_src reference to SetpointRegister_c with registered setpoints
-  @param ab_override true -> override registered setpoint with ai32_overrideVal
+  @param b_override true -> override registered setpoint with ai32_overrideVal
   @param ai32_overrideVal value which can override registered setpoint on ab_override == true
 */
 void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,

@@ -422,7 +422,7 @@ void ManageMeasureProgLocal_c::processProg(){
       * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
   @param ac_isoName DEVCLASS code of searched measure program
-  @param ab_doCreated true -> create suitable measure program if not found
+  @param ab_doCreate true -> create suitable measure program if not found
 */
 MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& ac_isoName, bool ab_doCreate){
   // update the prog cache

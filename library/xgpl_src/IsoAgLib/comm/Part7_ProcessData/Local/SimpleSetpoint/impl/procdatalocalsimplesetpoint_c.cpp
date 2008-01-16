@@ -101,6 +101,7 @@ namespace __IsoAgLib {
   ISO parameter
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
+  @param aui16_element
 
   @param ac_isoName optional ISOName code of this instance
   @param apc_externalOverridingIsoName pointer to updated ISOName variable
@@ -154,6 +155,7 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(const IsoAgLib::Ele
   ISO parameter
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
+  @param aui16_element
 
   @param ac_isoName optional ISOName code of this instance
   @param apc_externalOverridingIsoName pointer to updated ISOName variable
