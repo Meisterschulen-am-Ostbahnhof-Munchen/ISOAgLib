@@ -7,21 +7,20 @@
 </ul>
 
 \section XMLUsage Usage in your own project
-<ul>
-<li> First, include the necessary header in your main-file
-<li> That could be like that:
+- First, include the necessary header in your main-file
+- That could be like that:
 \code
 #include "../2_0_LocalReadDataStdIso/devicedescription/DeviceDescription.xml-func.h"
 \endcode
-<li> That header includes the bytestream generated from proc2iso and all process data declarations.
-<li> To make that device description known in the TC client it has to be stored in a map (with possibly more and other device descriptions)
+- That header includes the bytestream generated from proc2iso and all process data declarations.
+- To make that device description known in the TC client it has to be stored in a map (with possibly more and other device descriptions)
 \code
 bool b_registerSuccess = getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(&c_myIdent, deviceDescription_de,
                          ui32_arrayLength_de, true);
 \endcode
-<li> If the device pool was registered successfully the function returns true. The ending of <i>deviceDescription_xx</i> and
-     <i>ui32_arrayLength_xx</i> depends on the language <br>
-     code in the localization label of the device description and has to be hand customized.
+- If the device pool was registered successfully the function returns true. The ending of <tt>deviceDescription_xx</tt> and
+  <tt>ui32_arrayLength_xx</tt> depends on the language <br>
+  code in the localization label of the device description and has to be hand customized.
 
 \section XMLGeneralStructure General structure of the XML-file
 First of all some general rules for the structure of a device description.
@@ -34,7 +33,7 @@ Have a look at a little codesnippet to show that root element:
 [...]
 </device>
 \endcode
-</ul>
+
 A further code example shows how XML-elements have to be nested in the root element:
 \code
 <device designator="Device1" software_version="0.1" workingset_mastername="Ma00a1900ffe0001b" serialnumber="WXYZ999" structure_label="STRUCT4"
