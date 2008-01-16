@@ -97,7 +97,7 @@ namespace __HAL {
     ADC value at pwm output
     for call of __HAL:: functions (differences mostly caused
     by multiplexers)
-    @param channel number from interval [0..maxNo]
+    @param ab_channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
   inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
@@ -105,7 +105,7 @@ namespace __HAL {
   /**
     deliver channel number for checking/requesting of
     current output through given PWM output
-    @param channel number from interval [0..maxNo]
+    @param ab_channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
   inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
@@ -126,7 +126,7 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutputGroup PWM output channel [OUT1..OUT2]
+    @param bOutput PWM output channel [OUT1..OUT2]
     @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */

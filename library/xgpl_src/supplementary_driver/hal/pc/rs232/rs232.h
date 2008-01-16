@@ -116,27 +116,27 @@ namespace HAL
   inline int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
     {return __HAL::setRs232Baudrate(wBaudrate, aui8_channel) ;};
   /**
-    get the amount of data [uint8_t] in receive puffer
-    @return receive puffer data byte
+    get the amount of data [uint8_t] in receive buffer
+    @return receive buffer data byte
   */
   inline int16_t getRs232RxBufCount(uint8_t aui8_channel)
     {return __HAL::getRs232RxBufCount(aui8_channel);};
   /**
-    get the amount of data [uint8_t] in send puffer
-    @return send puffer data byte
+    get the amount of data [uint8_t] in send buffer
+    @return send buffer data byte
   */
   inline int16_t getRs232TxBufCount(uint8_t aui8_channel)
     {return __HAL::getRs232TxBufCount(aui8_channel);};
   /**
-    configure a receive puffer and set optional irq function pointer for receive
-    @param wBuffersize wanted puffer size
+    configure a receive buffer and set optional irq function pointer for receive
+    @param wBuffersize wanted buffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
   inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
     {return __HAL::configRs232RxObj(wBuffersize,pFunction, aui8_channel) ;};
   /**
-    configure a send puffer and set optional irq function pointer for send
-    @param wBuffersize wanted puffer size
+    configure a send buffer and set optional irq function pointer for send
+    @param wBuffersize wanted buffer size
     @param funktionAfterTransmit pointer to irq function or NULL if not wanted
     @param funktionBeforTransmit pointer to irq function or NULL if not wanted
   */
@@ -151,17 +151,17 @@ namespace HAL
     {return __HAL::getRs232Error(Errorcode, aui8_channel);};
 
   /**
-    read single int8_t from receive puffer
+    read single int8_t from receive buffer
     @param pbRead pointer to target data
-    @return HAL_NO_ERR -> o.k. else puffer underflow
+    @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   inline int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
     {return __HAL::getRs232Char(pbRead, aui8_channel);};
   /**
-    read bLastChar terminated string from receive puffer
+    read bLastChar terminated string from receive buffer
     @param pbRead pointer to target data
     @param bLastChar terminating char
-    @return HAL_NO_ERR -> o.k. else puffer underflow
+    @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   inline int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
     {return __HAL::getRs232String(pbRead,bLastChar, aui8_channel);};
@@ -169,7 +169,7 @@ namespace HAL
   /**
     send single uint8_t on RS232
     @param bByte data uint8_t to send
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
     {return __HAL::put_rs232Char(bByte, aui8_channel);};
@@ -177,26 +177,26 @@ namespace HAL
     send string of n uint8_t on RS232
     @param bpWrite pointer to source data string
     @param wNumber number of data uint8_t to send
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
     {return __HAL::put_rs232NChar(bpWrite,wNumber, aui8_channel);};
   /**
     send '\0' terminated string on RS232
     @param pbString pointer to '\0' terminated (!) source data string
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
     {return __HAL::put_rs232String(pbString, aui8_channel);};
 
 
   /**
-    clear receive puffer
+    clear receive buffer
   */
   inline void clearRs232RxBuffer(uint8_t aui8_channel)
     {__HAL::clearRs232RxBuffer(aui8_channel);};
   /**
-    clear send puffer
+    clear send buffer
   */
   inline void clearRs232TxBuffer(uint8_t aui8_channel)
     {__HAL::clearRs232TxBuffer(aui8_channel);};

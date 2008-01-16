@@ -57,8 +57,8 @@ namespace __HAL
       No AMS5-BIOS channel is a "PWM" channel!
       Use symbolic output channels form "config.h"!
 
-      @param  aui8_channel channel number of output
-      @param  wValue range depends on channel!
+      @param aui8_channel channel number of output
+      @param wValue range depends on channel!
       @return HAL_NO_ERR
               HAL_RANGE_ERR  value is out of range
               HAL_CONFIG_ERR channel is not availabel 

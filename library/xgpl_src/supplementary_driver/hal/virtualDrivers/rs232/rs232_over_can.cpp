@@ -58,7 +58,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 /**
 send single uint8_t on RS232
 @param bByte data uint8_t to send
-@return HAL_NO_ERR -> o.k. else send puffer overflow
+@return HAL_NO_ERR -> o.k. else send buffer overflow
 */
 int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
@@ -68,7 +68,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 send string of n uint8_t on RS232
 @param bpWrite pointer to source data string
 @param wNumber number of data uint8_t to send
-@return HAL_NO_ERR -> o.k. else send puffer overflow
+@return HAL_NO_ERR -> o.k. else send buffer overflow
 */
 int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
@@ -128,7 +128,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 /**
 send '\0' terminated string on RS232
 @param pbString pointer to '\0' terminated (!) source data string
-@return HAL_NO_ERR -> o.k. else send puffer overflow
+@return HAL_NO_ERR -> o.k. else send buffer overflow
 */
 int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {

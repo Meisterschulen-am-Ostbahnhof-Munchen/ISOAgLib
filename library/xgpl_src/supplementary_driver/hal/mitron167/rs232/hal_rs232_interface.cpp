@@ -79,11 +79,11 @@ extern "C" {
   #include <cstring>
 
 
-static const uchar* puc_startPuffer =    __HAL::serial.rx.ascii.data;
-static const uchar* puc_endPuffer   =  &(__HAL::serial.rx.ascii.data[SD_MAX_ASCII_CHARS]);
+static const uchar* puc_startBuffer =    __HAL::serial.rx.ascii.data;
+static const uchar* puc_endBuffer   =  &(__HAL::serial.rx.ascii.data[SD_MAX_ASCII_CHARS]);
 
-static uchar* puc_rs232BufferWrite = (uchar*) puc_startPuffer;
-static uchar* puc_rs232BufferRead  = (uchar*) puc_startPuffer;
+static uchar* puc_rs232BufferWrite = (uchar*) puc_startBuffer;
+static uchar* puc_rs232BufferRead  = (uchar*) puc_startBuffer;
 
 static bool b_isChannelOpen = false;
 
@@ -110,24 +110,24 @@ bool stackparm writeDataToRs232RingBuffer( uchar ruc_item, bool ab_force = false
   if ( ( isRs232RingBufferFull() ) && ( ! ab_force ) ) return false;
 
   // make some minimum validation checks
-  if ( ( puc_rs232BufferWrite < puc_startPuffer ) || ( puc_rs232BufferWrite > puc_endPuffer ) )
+  if ( ( puc_rs232BufferWrite < puc_startBuffer ) || ( puc_rs232BufferWrite > puc_endBuffer ) )
   { // pointer is wrong -> reset
     clearRs232RxBuffer();
   }
   // shield from interruption
   _atomic( 3 );
-  // now - even if puffer integrity was corrupted - everything is valid again
+  // now - even if buffer integrity was corrupted - everything is valid again
   *puc_rs232BufferWrite++ = ruc_item;
   // puc_rs232BufferWrite++;
   // increase size to avoid problems with combined access
   __HAL::serial.rx.ascii.count++;
 
   // check if roundup is needed
-  if ( puc_rs232BufferWrite > puc_endPuffer ) puc_rs232BufferWrite = (uchar*) puc_startPuffer;
+  if ( puc_rs232BufferWrite > puc_endBuffer ) puc_rs232BufferWrite = (uchar*) puc_startBuffer;
 
-  // check if puffer is overflown
+  // check if buffer is overflown
   if ( __HAL::serial.rx.ascii.count > SD_MAX_ASCII_CHARS )
-  { // to much in puffer -> change read pointer
+  { // to much in buffer -> change read pointer
     // shield from interruption
     _atomic( 3 );
     puc_rs232BufferRead++;
@@ -143,7 +143,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   if ( isRs232RingBufferEmpty() ) return false;
 
   // make some minimum validation checks
-  if ( ( puc_rs232BufferRead < puc_startPuffer ) || ( puc_rs232BufferRead > puc_endPuffer ) )
+  if ( ( puc_rs232BufferRead < puc_startBuffer ) || ( puc_rs232BufferRead > puc_endBuffer ) )
   { // pointer is wrong -> reset
     clearRs232RxBuffer();
     // buffer now empty -> nothing to read
@@ -160,7 +160,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   __HAL::serial.rx.ascii.count--;
 
   // check if roundup is needed
-  if ( puc_rs232BufferRead > puc_endPuffer ) puc_rs232BufferRead = (uchar*) puc_startPuffer;
+  if ( puc_rs232BufferRead > puc_endBuffer ) puc_rs232BufferRead = (uchar*) puc_startBuffer;
 
   // item inserted in pointer-parameter -> successful
   return true;
@@ -180,7 +180,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
   int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake) {
-    puc_rs232BufferWrite = puc_rs232BufferRead = (uchar*) puc_startPuffer;
+    puc_rs232BufferWrite = puc_rs232BufferRead = (uchar*) puc_startBuffer;
     __HAL::serial.rx.ascii.count = 0;
     // derive preload value for baudrate
     uint16_t ui16_preLoad = 0x14; // 19200 Baud
@@ -266,25 +266,25 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     return HAL_NO_ERR;
   }
   /**
-    get the amount of data [uint8_t] in receive puffer
-    @return receive puffer data byte
+    get the amount of data [uint8_t] in receive buffer
+    @return receive buffer data byte
   */
   int16_t getRs232RxBufCount(void) {
     return getRs232RingBufferSize();
   }
   /**
-    get the amount of data [uint8_t] in send puffer
-    @return send puffer data byte
+    get the amount of data [uint8_t] in send buffer
+    @return send buffer data byte
   */
   int16_t getRs232TxBufCount(void) {
-    // the Mitron RS232 system uses a circular puffer for send -> calculate the size based on its size,push,pop settings
+    // the Mitron RS232 system uses a circular buffer for send -> calculate the size based on its size,push,pop settings
     if ( serial.tx.buffer.size == 0 ) return 0;
     else if ( serial.tx.buffer.push >= serial.tx.buffer.pop ) return ( serial.tx.buffer.push - serial.tx.buffer.pop );
     else return ( ( serial.tx.buffer.size - serial.tx.buffer.pop ) + serial.tx.buffer.push );
   }
   /**
-    configure a receive puffer and set optional irq function pointer for receive
-    @param wBuffersize wanted puffer size
+    configure a receive buffer and set optional irq function pointer for receive
+    @param wBuffersize wanted buffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
   int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t _huge *bByte)) {
@@ -292,8 +292,8 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     return HAL_NO_ERR;
   }
     /**
-    configure a send puffer and set optional irq function pointer for send
-    @param wBuffersize wanted puffer size
+    configure a send buffer and set optional irq function pointer for send
+    @param wBuffersize wanted buffer size
     @param funktionAfterTransmit pointer to irq function or NULL if not wanted
     @param funktionBeforTransmit pointer to irq function or NULL if not wanted
   */
@@ -317,9 +317,9 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   }
 
   /**
-    read single int8_t from receive puffer
+    read single int8_t from receive buffer
     @param pbRead pointer to target data
-    @return HAL_NO_ERR -> o.k. else puffer underflow
+    @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   int16_t getRs232Char(uint8_t *pbRead) {
     // if no successful read is possible - terminating '\0' is inserted at pointer
@@ -333,10 +333,10 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     }
   }
   /**
-    read bLastChar terminated string from receive puffer
+    read bLastChar terminated string from receive buffer
     @param pbRead pointer to target data
     @param bLastChar terminating char
-    @return HAL_NO_ERR -> o.k. else puffer underflow
+    @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   int16_t getRs232String(uint8_t *pbRead, uint8_t bLastChar) {
     uchar *pc_write = pbRead;
@@ -359,7 +359,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   /**
     send single uint8_t on RS232
     @param bByte data uint8_t to send
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   int16_t put_rs232Char(uint8_t bByte) {
     // direct call Mitron send function
@@ -381,7 +381,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     send string of n uint8_t on RS232
     @param bpWrite pointer to source data string
     @param wNumber number of data uint8_t to send
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   int16_t put_rs232NChar(const uint8_t *bpWrite, uint16_t wNumber) {
    #if 1
@@ -400,7 +400,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   /**
     send '\\0' terminated string on RS232
     @param pbString pointer to '\\0' terminated (!) source data string
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   int16_t put_rs232String(const uint8_t *pbString) {
     // Mitron provides function for this task
@@ -415,17 +415,17 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
   }
 
   /**
-    clear receive puffer
+    clear receive buffer
   */
   void stackparm clearRs232RxBuffer(void) {
     // shield from interruption
     _atomic( 4 );
-    puc_rs232BufferWrite = puc_rs232BufferRead = (uchar*) puc_startPuffer;
+    puc_rs232BufferWrite = puc_rs232BufferRead = (uchar*) puc_startBuffer;
     __HAL::serial.rx.ascii.count = 0;
     serial.rx.ascii.data[0] = '\0';
   }
   /**
-    clear send puffer
+    clear send buffer
   */
   void clearRs232TxBuffer(void) {
     IEN = 0;      // deactivate IRQs during move of rest of buffer content

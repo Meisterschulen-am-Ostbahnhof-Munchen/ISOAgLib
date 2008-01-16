@@ -121,7 +121,7 @@ namespace __HAL {
     ADC value at digital input
     for call of __HAL:: functions (differences mostly caused
     by multiplexers)
-    @param channel number from interval [0..maxNo]
+    @param ab_channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
   inline uint8_t getDiginAdcCheckNr(uint8_t ab_channel)

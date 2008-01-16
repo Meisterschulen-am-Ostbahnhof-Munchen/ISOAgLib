@@ -204,11 +204,11 @@ namespace HAL
   };
 
 
-  /** deliver the measure voltage at the PWM output.
+/** deliver the measure voltage at the PWM output.
     Use this for application specific state evaluation for cases, where the standard
     getDigoutDiagnose function can go wrong.
-      @return voltage at PWM channel [mV]
-  */
+    @return voltage at PWM channel [mV]
+*/
 //jtm    int16_t getDigoutAdc( uint8_t aui8_channel );
   inline int16_t getDigoutAdc( uint8_t aui8_channel )
   {

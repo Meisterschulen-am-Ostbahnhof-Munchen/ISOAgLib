@@ -11,7 +11,7 @@
 namespace __HAL {
 HANDLE hCom[RS232_INSTANCE_CNT];
 DCB oldConfig[RS232_INSTANCE_CNT];
-STL_NAMESPACE::deque<int8_t> deq_readPuff[RS232_INSTANCE_CNT];
+STL_NAMESPACE::deque<int8_t> deq_readBuff[RS232_INSTANCE_CNT];
 
 int8_t c_read;
 
@@ -148,8 +148,8 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   // wait some time to avoid buffer error
   Sleep(10);
 
-  // reset read puffer
-  deq_readPuff[comport].clear();
+  // reset read buffer
+  deq_readBuff[comport].clear();
 
   return HAL_NO_ERR;
 }
@@ -218,7 +218,7 @@ BOOL WriteABuffer(HANDLE &r_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
 /**
   send single uint8_t on RS232
   @param bByte data uint8_t to send
-  @return HAL_NO_ERR -> o.k. else send puffer overflow
+  @return HAL_NO_ERR -> o.k. else send buffer overflow
  */
 int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
@@ -233,7 +233,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
   send string of n uint8_t on RS232
   @param bpWrite pointer to source data string
   @param wNumber number of data uint8_t to send
-  @return HAL_NO_ERR -> o.k. else send puffer overflow
+  @return HAL_NO_ERR -> o.k. else send buffer overflow
  */
 int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
@@ -246,7 +246,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 /**
   send '\0' terminated string on RS232
   @param pbString pointer to '\0' terminated (!) source data string
-  @return HAL_NO_ERR -> o.k. else send puffer overflow
+  @return HAL_NO_ERR -> o.k. else send buffer overflow
  */
 int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
@@ -260,8 +260,8 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 
 
 /**
-  get the amount of data [uint8_t] in receive puffer
-  @return receive puffer data byte
+  get the amount of data [uint8_t] in receive buffer
+  @return receive buffer data byte
  */
 int16_t getRs232RxBufCount(uint8_t comport)
 {
@@ -270,35 +270,35 @@ int16_t getRs232RxBufCount(uint8_t comport)
   DWORD tempLen;
   ReadFile(hCom[comport],c_temp,299,&tempLen,NULL);
 
-  for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readPuff[comport].push_back( c_temp[ind] );
+  for ( uint16_t ind = 0; ind < tempLen; ind++ ) deq_readBuff[comport].push_back( c_temp[ind] );
 
-  return deq_readPuff[comport].size();
+  return deq_readBuff[comport].size();
 }
 
 /**
-  read bLastChar terminated string from receive puffer
+  read bLastChar terminated string from receive buffer
   @param pbRead pointer to target data
   @param bLastChar terminating char
-  @return HAL_NO_ERR -> o.k. else puffer underflow
+  @return HAL_NO_ERR -> o.k. else buffer underflow
  */
 int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t comport)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return 0;
   getRs232RxBufCount(comport);
-  if (! deq_readPuff[comport].empty())
+  if (! deq_readBuff[comport].empty())
   {
-    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readPuff[comport].begin(); iter != deq_readPuff[comport].end(); iter++ )
+    for ( STL_NAMESPACE::deque<int8_t>::iterator iter = deq_readBuff[comport].begin(); iter != deq_readBuff[comport].end(); iter++ )
     { // check if terminating char is found
       if ( *iter == ui8_terminateChar )
       { // found -> copy area from begin to iterator
         uint16_t ind = 0;
-        for ( ; (deq_readPuff[comport].front() != ui8_terminateChar); ind++ )
+        for ( ; (deq_readBuff[comport].front() != ui8_terminateChar); ind++ )
         {
-          pbRead[ind] = deq_readPuff[comport].front();
-          deq_readPuff[comport].pop_front();
+          pbRead[ind] = deq_readBuff[comport].front();
+          deq_readBuff[comport].pop_front();
         }
         // lastly pop the termination char and terminate the result string
-        deq_readPuff[comport].pop_front();
+        deq_readBuff[comport].pop_front();
         pbRead[ind] = '\0';
         return HAL_NO_ERR;
       }
@@ -309,18 +309,18 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
 
 
 /**
-  read single int8_t from receive puffer
+  read single int8_t from receive buffer
   @param pbRead pointer to target data
-  @return HAL_NO_ERR -> o.k. else puffer underflow
+  @return HAL_NO_ERR -> o.k. else buffer underflow
  */
 int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   getRs232RxBufCount(aui8_channel);
-  if (! deq_readPuff[aui8_channel].empty())
+  if (! deq_readBuff[aui8_channel].empty())
   {
-    pbRead[0] = deq_readPuff[aui8_channel].front();
-    deq_readPuff[aui8_channel].pop_front();
+    pbRead[0] = deq_readBuff[aui8_channel].front();
+    deq_readBuff[aui8_channel].pop_front();
     return HAL_NO_ERR;
   }
   else
@@ -337,8 +337,8 @@ int8_t *KeyGetString(int8_t *buffer, int16_t len)
 #endif
 
 /**
-  get the amount of data [uint8_t] in send puffer
-  @return send puffer data byte
+  get the amount of data [uint8_t] in send buffer
+  @return send buffer data byte
  */
 int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
@@ -347,8 +347,8 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
   return 0;
 }
 /**
-  configure a receive puffer and set optional irq function pointer for receive
-  @param wBuffersize wanted puffer size
+  configure a receive buffer and set optional irq function pointer for receive
+  @param wBuffersize wanted buffer size
   @param pFunction pointer to irq function or NULL if not wanted
  */
 int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
@@ -358,8 +358,8 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
   return HAL_NO_ERR;
 }
 /**
-  configure a send puffer and set optional irq function pointer for send
-  @param wBuffersize wanted puffer size
+  configure a send buffer and set optional irq function pointer for send
+  @param wBuffersize wanted buffer size
   @param funktionAfterTransmit pointer to irq function or NULL if not wanted
   @param funktionBeforTransmit pointer to irq function or NULL if not wanted
  */
@@ -383,7 +383,7 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 
 
 /**
-  clear receive puffer
+  clear receive buffer
  */
 void clearRs232RxBuffer(uint8_t aui8_channel)
 {
@@ -392,7 +392,7 @@ void clearRs232RxBuffer(uint8_t aui8_channel)
 };
 
 /**
-  clear send puffer
+  clear send buffer
  */
 void clearRs232TxBuffer(uint8_t aui8_channel)
 {

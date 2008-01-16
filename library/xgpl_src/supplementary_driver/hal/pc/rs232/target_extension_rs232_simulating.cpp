@@ -152,8 +152,8 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
   return HAL_NO_ERR;
 }
 /**
-  get the amount of data [uint8_t] in receive puffer
-  @return receive puffer data byte
+  get the amount of data [uint8_t] in receive buffer
+  @return receive buffer data byte
 */
 int16_t getRs232RxBufCount(uint8_t aui8_channel)
 {
@@ -161,8 +161,8 @@ int16_t getRs232RxBufCount(uint8_t aui8_channel)
   return 2;
 }
 /**
-  get the amount of data [uint8_t] in send puffer
-  @return send puffer data byte
+  get the amount of data [uint8_t] in send buffer
+  @return send buffer data byte
 */
 int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
@@ -172,20 +172,20 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
   return 0;
 }
 /**
-  configure a receive puffer and set optional irq function pointer for receive
-  @param wBuffersize wanted puffer size
+  configure a receive buffer and set optional irq function pointer for receive
+  @param wBuffersize wanted buffer size
   @param pFunction pointer to irq function or NULL if not wanted
 */
 int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  printf("configRs232RxObj aufgerufen mit empfang puffersize %d \n", wBuffersize);
+  printf("configRs232RxObj aufgerufen mit empfang buffersize %d \n", wBuffersize);
 //  return (pFunction!=NULL)?HAL_NO_ERR:HAL_CONFIG_ERR;
   return HAL_NO_ERR;
 }
 /**
-  configure a send puffer and set optional irq function pointer for send
-  @param wBuffersize wanted puffer size
+  configure a send buffer and set optional irq function pointer for send
+  @param wBuffersize wanted buffer size
   @param funktionAfterTransmit pointer to irq function or NULL if not wanted
   @param funktionBeforTransmit pointer to irq function or NULL if not wanted
 */
@@ -193,7 +193,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
                                 void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  printf("configRs232TxObj aufgerufen mit sende puffersize %d \n", wBuffersize);
+  printf("configRs232TxObj aufgerufen mit sende buffersize %d \n", wBuffersize);
 //  return ((funktionAfterTransmit!=NULL)&&(funktionBeforTransmit!=NULL))?HAL_NO_ERR:HAL_CONFIG_ERR;
   return HAL_NO_ERR;
 }
@@ -209,9 +209,9 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 }
 
 /**
-  read single int8_t from receive puffer
+  read single int8_t from receive buffer
   @param pbRead pointer to target data
-  @return HAL_NO_ERR -> o.k. else puffer underflow
+  @return HAL_NO_ERR -> o.k. else buffer underflow
 */
 int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 {
@@ -224,10 +224,10 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
   return HAL_NO_ERR;
 }
 /**
-  read bLastChar terminated string from receive puffer
+  read bLastChar terminated string from receive buffer
   @param pbRead pointer to target data
   @param bLastChar terminating char
-  @return HAL_NO_ERR -> o.k. else puffer underflow
+  @return HAL_NO_ERR -> o.k. else buffer underflow
 */
 int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
 {
@@ -241,7 +241,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
 /**
   send single uint8_t on RS232
   @param bByte data uint8_t to send
-  @return HAL_NO_ERR -> o.k. else send puffer overflow
+  @return HAL_NO_ERR -> o.k. else send buffer overflow
 */
 int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
@@ -259,7 +259,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
   send string of n uint8_t on RS232
   @param bpWrite pointer to source data string
   @param wNumber number of data uint8_t to send
-  @return HAL_NO_ERR -> o.k. else send puffer overflow
+  @return HAL_NO_ERR -> o.k. else send buffer overflow
 */
 int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
@@ -291,7 +291,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 /**
   send '\0' terminated string on RS232
   @param pbString pointer to '\0' terminated (!) source data string
-  @return HAL_NO_ERR -> o.k. else send puffer overflow
+  @return HAL_NO_ERR -> o.k. else send buffer overflow
 */
 int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
@@ -303,21 +303,21 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 }
 
 /**
-  clear receive puffer
+  clear receive buffer
 */
 void clearRs232RxBuffer(uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
-  printf("empfangspuffer gecleared\n");
+  printf("empfangsbuffer gecleared\n");
 };
 
 /**
-  clear send puffer
+  clear send buffer
 */
 void clearRs232TxBuffer(uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
-  printf("sendepuffer gecleared\n");
+  printf("sendebuffer gecleared\n");
 }
 
 } // End of name space __HAL

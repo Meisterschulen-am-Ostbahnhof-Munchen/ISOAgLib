@@ -114,27 +114,27 @@ namespace HAL
   inline int16_t setRs232Baudrate(uint16_t wBaudrate)
     {return __HAL::set_rs232_baudrate(wBaudrate) ;};
   /**
-    get the amount of data [uint8_t] in receive puffer
-    @return receive puffer data byte
+    get the amount of data [uint8_t] in receive buffer
+    @return receive buffer data byte
   */
   inline int16_t getRs232RxBufCount(void)
     {return __HAL::get_rs232_rx_buf_count();};
   /**
-    get the amount of data [uint8_t] in send puffer
-    @return send puffer data byte
+    get the amount of data [uint8_t] in send buffer
+    @return send buffer data byte
   */
   inline int16_t getRs232TxBufCount(void)
     {return __HAL::get_rs232_tx_buf_count();};
   /**
-    configure a receive puffer and set optional irq function pointer for receive
-    @param wBuffersize wanted puffer size
+    configure a receive buffer and set optional irq function pointer for receive
+    @param wBuffersize wanted buffer size
     @param pFunction pointer to irq function or NULL if not wanted
   */
   inline int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte))
     {return __HAL::config_rs232_rx_obj(wBuffersize,pFunction) ;};
   /**
-    configure a send puffer and set optional irq function pointer for send
-    @param wBuffersize wanted puffer size
+    configure a send buffer and set optional irq function pointer for send
+    @param wBuffersize wanted buffer size
     @param funktionAfterTransmit pointer to irq function or NULL if not wanted
     @param funktionBeforTransmit pointer to irq function or NULL if not wanted
   */
@@ -149,17 +149,17 @@ namespace HAL
     {return __HAL::get_rs232_error(Errorcode);};
 
   /**
-    read single int8_t from receive puffer
+    read single int8_t from receive buffer
     @param pbRead pointer to target data
-    @return HAL_NO_ERR -> o.k. else puffer underflow
+    @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   inline int16_t getRs232Char(uint8_t *pbRead)
     {return __HAL::get_rs232_char(pbRead);};
   /**
-    read bLastChar terminated string from receive puffer
+    read bLastChar terminated string from receive buffer
     @param pbRead pointer to target data
     @param bLastChar terminating char
-    @return HAL_NO_ERR -> o.k. else puffer underflow
+    @return HAL_NO_ERR -> o.k. else buffer underflow
   */
   inline int16_t get_rs232_string(uint8_t *pbRead,uint8_t bLastChar)
     {return __HAL::get_rs232_string(pbRead,bLastChar);};
@@ -167,7 +167,7 @@ namespace HAL
   /**
     send single uint8_t on RS232
     @param bByte data uint8_t to send
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232Char(uint8_t bByte)
     {return __HAL::put_rs232_char(bByte);};
@@ -175,25 +175,25 @@ namespace HAL
     send string of n uint8_t on RS232
     @param bpWrite pointer to source data string
     @param wNumber number of data uint8_t to send
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232NChar(uint8_t *bpWrite,uint16_t wNumber)
     {return __HAL::put_rs232_n_char(bpWrite,wNumber);};
   /**
     send '\0' terminated string on RS232
     @param pbString pointer to '\0' terminated (!) source data string
-    @return HAL_NO_ERR -> o.k. else send puffer overflow
+    @return HAL_NO_ERR -> o.k. else send buffer overflow
   */
   inline int16_t put_rs232String(uint8_t *pbString)
     {return __HAL::put_rs232_string(pbString);};
 
   /**
-    clear receive puffer
+    clear receive buffer
   */
   inline void clearRs232RxBuffer(void)
     {__HAL::clear_rs232_rx_buffer();};
   /**
-    clear send puffer
+    clear send buffer
   */
   inline void clearRs232TxBuffer(void)
     {__HAL::clear_rs232_tx_buffer();};
