@@ -10,191 +10,191 @@ functionality of the IsoAgLib.
 
 I. Test cases (see Matrix, below)
 
-I.1. Testcase A
+  I.1. Testcase A
 
-Two test clients with the same ISO Name and preferred-SA start up and
-register themselves.  There are no other clients on the network.
+    Two test clients with the same ISO Name and preferred-SA start up and
+    register themselves.  There are no other clients on the network.
 
-I.1.1. Variant 1
+  I.1.1. Variant 1
 
-Startup two test clients with empty EEPROMs
+    Startup two test clients with empty EEPROMs
 
-Expected behaviour:
-On startup, the second test client should claim a Source Address (SA)
-different from its preferred-SA.
+    Expected behaviour:
+      On startup, the second test client should claim a Source Address (SA)
+      different from its preferred-SA.
 
-I.1.2. Variant 2
+  I.1.2. Variant 2
 
-Startup two test clients whose (identical) SA and ISO Names are already stored
-in their respective EEPROMs.
+    Startup two test clients whose (identical) SA and ISO Names are already stored
+    in their respective EEPROMs.
 
-Expected behavour:
-The first client should startup normally.  The second one should not startup
-at all because its ISO Name already exists in the network.
+    Expected behavour:
+      The first client should startup normally.  The second one should not startup
+      at all because its ISO Name already exists in the network.
 
-I.2. Testcase B
+  I.2. Testcase B
 
-A test client is running when another client tries to steal its SA with a
-higher priority ISO Name.
+    A test client is running when another client tries to steal its SA with a
+    higher priority ISO Name.
 
-Expected behaviour:
-The test client changes it's SA.
+    Expected behaviour:
+      The test client changes it's SA.
 
-I.3. Testcase C
+  I.3. Testcase C
 
-A test client is running when another client tries to steal its SA with a
-lower priority ISO Name
+    A test client is running when another client tries to steal its SA with a
+    lower priority ISO Name
 
-Expected behaviour:
-The test client reclaims its (original) SA.
+    Expected behaviour:
+      The test client reclaims its (original) SA.
 
-I.4. Testcase D
+  I.4. Testcase D
 
-A test client is running when another client with the same ISO Name
-tries to claim a (different) SA.
+    A test client is running when another client with the same ISO Name
+    tries to claim a (different) SA.
 
-Expected behaviour:
-The test client detects that another client is on the network with the
-same ISO Name and so shuts itself down.
+    Expected behaviour:
+      The test client detects that another client is on the network with the
+      same ISO Name and so shuts itself down.
 
-I.5. Testcase E
+  I.5. Testcase E
 
-A test client is running when another client tries to claim an identical
-SA and an identical ISO Name.
+    A test client is running when another client tries to claim an identical
+    SA and an identical ISO Name.
 
-Expected behaviour:
-The test client detects that another client is on the network with the
-same ISO Name and so shuts itself down.
+    Expected behaviour:
+      The test client detects that another client is on the network with the
+      same ISO Name and so shuts itself down.
 
-I.6. Testcase F
+  I.6. Testcase F
 
-A test client is connected to another client who then changes its SA.
+    A test client is connected to another client who then changes its SA.
 
-Expected behaviour:
-The test client adjusts its DA appropriately to retain the connection.
+    Expected behaviour:
+      The test client adjusts its DA appropriately to retain the connection.
 
-I.7. Testcase G
+  I.7. Testcase G
 
-A test client is connected to another client (2) that is also connected to
-a third client (3).  Client 3 tries to steal the SA from Client 2.
+    A test client is connected to another client (2) that is also connected to
+    a third client (3).  Client 3 tries to steal the SA from Client 2.
 
-I.7.1. Variant 1
+    I.7.1. Variant 1
 
-Client 2 changes it's SA
+      Client 2 changes it's SA
 
-Expected behaviour:
-Client 1 changes it's DA, retaining the connection.
+      Expected behaviour:
+	Client 1 changes it's DA, retaining the connection.
 
-I.7.2. Variant 2
+    I.7.2. Variant 2
 
-Client 2 insists on it's SA
+      Client 2 insists on it's SA
 
-Expected behaviour:
-Client 1 continues to use the original DA.
+      Expected behaviour:
+	Client 1 continues to use the original DA.
 
-I.8 Matrix
+  I.8 Matrix
 
-    A.1) (normal case of the consecutive startup of identical units)
-	C1 SA1 N1
-	C2 SA1 N1
-    A.2) (consecutive startup of identical units after independent startup)
-	C1 SA1 N1
-	C2 SA1 N1
-    B)
-	C1 SA1 N1
-	C2 SA1 N2<N1
-    C)
-	C1 SA1 N1
-	C2 SA1 N2>N1
-    D)
-	C1 SA1 N1
-	C2 SA2 N1
-    E) (abnormal case of consecutive start of identical units: duplicate ISO-Name is broadcast)
-	C1 SA1 N1
-	C2 SA1 N1
-    F)
-	C1 SA1 N1
-	C2 SA2->SA4 N2
-	C3 SA3 N3
-    G)
-	C1 SA1 N1
-	C2 SA2 N2
-	C3 SA2 N3
+      A.1) (normal case of the consecutive startup of identical units)
+	  C1 SA1 N1
+	  C2 SA1 N1
+      A.2) (consecutive startup of identical units after independent startup)
+	  C1 SA1 N1
+	  C2 SA1 N1
+      B)
+	  C1 SA1 N1
+	  C2 SA1 N2<N1
+      C)
+	  C1 SA1 N1
+	  C2 SA1 N2>N1
+      D)
+	  C1 SA1 N1
+	  C2 SA2 N1
+      E) (abnormal case of consecutive start of identical units: duplicate ISO-Name is broadcast)
+	  C1 SA1 N1
+	  C2 SA1 N1
+      F)
+	  C1 SA1 N1
+	  C2 SA2->SA4 N2
+	  C3 SA3 N3
+      G)
+	  C1 SA1 N1
+	  C2 SA2 N2
+	  C3 SA2 N3
 
 II. Requirements
 
-Before all tests can be executed the following components must be available:
+  Before all tests can be executed the following components must be available:
 
-* Tutorial 3.0
-* CAN-Server (included when compiling tutorial 3.0)
-* CAN-Server-Messenger
+  * Tutorial 3.0
+  * CAN-Server (included when compiling tutorial 3.0)
+  * CAN-Server-Messenger
 
-Those components where automatically copied into the directory where the
-runall.sh script is contained.  [TODO: Clarify]
+  Those components where automatically copied into the directory where the
+  runall.sh script is contained.  [TODO: Clarify]
 
-A Virtual Terminal is required to run the tests.  [TODO: clarify]
+  A Virtual Terminal is required to run the tests.  [TODO: clarify]
 
-Two user-provided scripts are also required to run the tests.  They are
-called startVT.sh and stopVT.sh and are used to start and stop the virtual
-terminal.  They must reside in the Current Working Directory.
+  Two user-provided scripts are also required to run the tests.  They are
+  called startVT.sh and stopVT.sh and are used to start and stop the virtual
+  terminal.  They must reside in the Current Working Directory.
 
-II.1. Adaptions for testcase F
+  II.1. Adaptions for testcase F
 
-Test F requires that Client 2 modify its SA during operation.
-This is special functionality required only for the test.
-One way to achieve it is to add the following modification [TODO:
-where?] to a special copy of the virtual terminal just for this test:
+  Test F requires that Client 2 modify its SA during operation.
+  This is special functionality required only for the test.
+  One way to achieve it is to add the following modification [TODO:
+  where?] to a special copy of the virtual terminal just for this test:
 
-  ui16_SaChangeCycle++;
+    ui16_SaChangeCycle++;
 
-  /* change SA after n cycles */
-  if (ui16_SaChangeCycle == n)
-  {
-    __IsoAgLib::IsoSystemPkg_c& c_pkg = __IsoAgLib::getIsoMonitorInstance().data();
-    c_pkg.setExtCanPkg8(6, ADDRESS_CLAIM_PGN, ADDRESS_CLAIM_PGN, 255, 0x27, 0x1b, 0x0, 0xc0, 0xc, 0x0, 0x1d, 0x0, 0x20);
-    __IsoAgLib::getCanInstance() << c_pkg;
-  }
+    /* change SA after n cycles */
+    if (ui16_SaChangeCycle == n)
+    {
+      __IsoAgLib::IsoSystemPkg_c& c_pkg = __IsoAgLib::getIsoMonitorInstance().data();
+      c_pkg.setExtCanPkg8(6, ADDRESS_CLAIM_PGN, ADDRESS_CLAIM_PGN, 255, 0x27, 0x1b, 0x0, 0xc0, 0xc, 0x0, 0x1d, 0x0, 0x20);
+      __IsoAgLib::getCanInstance() << c_pkg;
+    }
 
-Testcase F is disabled by default at runall.sh.
+  Testcase F is disabled by default at runall.sh.
 
 III. Automated test scripts
 
-All of the above test cases are executed by the runall.sh script.  This
-script executes the *_ex.sh test scripts and generates a report file.
-The test scripts without the *_ex.sh suffix don't use the virtual
-terminal and the layout manager.  These scripts can be used to manually verify
-the address claim behaviour.
+  All of the above test cases are executed by the runall.sh script.  This
+  script executes the *_ex.sh test scripts and generates a report file.
+  The test scripts without the *_ex.sh suffix don't use the virtual
+  terminal and the layout manager.  These scripts can be used to manually verify
+  the address claim behaviour.
 
-The test results are output to the report file.  For each test case the
-diff output and the sdiff output are shown.  This makes it possible to
-compare the generated and the expected results.
+  The test results are output to the report file.  For each test case the
+  diff output and the sdiff output are shown.  This makes it possible to
+  compare the generated and the expected results.
 
-Example report snippet:
+  Example report snippet:
 
--------------------------------------------------------------------------------
-diff result:
-12d11
-<  0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+  -------------------------------------------------------------------------------
+  diff result:
+  12d11
+  <  0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
 
-sdiff result:
- 0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
- 0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
- 0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
- 0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
- 0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
- 0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
- 0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
- 0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
- 0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
- 0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0 
- 0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
- 0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0          <
--------------------------------------------------------------------------------
+  sdiff result:
+   0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
+   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
+   0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
+   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
+   0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
+   0 0 1 3 6 18eafffe   0   ee  0                              0 0 1 3 6 18eafffe   0   ee  0  
+   0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0         0 0 1 8 6 18eeff80   1b  0   c0  c   0   19  f0  a0 
+   0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20         0 0 1 8 6 18eeff26   1b  0   c0  c   0   1d  0   20 
+   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+   0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1c  0   e0  ff  0   19  e   a0 
+   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0         0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0 
+   0 0 1 8 6 18eeff81   1b  0   e0  ff  0   19  e   a0          <
+  -------------------------------------------------------------------------------
 
 IV. Manually tests
 
-In case of errors at the automated tests, manual tests can be performed
-All test scripts with an _ex.sh suffix can be started manually.
-During the test scripts the clients should be accessed through the
-virtual terminal - depending on the current test case! [TODO: clarify]
+  In case of errors at the automated tests, manual tests can be performed
+  All test scripts with an _ex.sh suffix can be started manually.
+  During the test scripts the clients should be accessed through the
+  virtual terminal - depending on the current test case! [TODO: clarify]
 
