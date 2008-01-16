@@ -186,9 +186,9 @@ public:
   VtClientServerCommStreamer_c(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool) : mrc_pool (arc_pool) {}
 
   virtual ~VtClientServerCommStreamer_c(){}
-  /** place next data to send direct into send puffer of pointed
+  /** place next data to send direct into send buffer of pointed
       stream send package - MultiSendStreamer_c will send this
-      puffer afterwards
+      buffer afterwards
       - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
     */
   void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);

@@ -91,17 +91,17 @@ namespace __IsoAgLib {
 class vtObjectWorkingSet_c : public vtObject_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
+  /// Operation: stream
+  /// @param destMemory
+  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
+  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectWorkingSetSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  /// @param vtObjectWorkingSetSROM
+  /// @param b_initPointer
   void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); };
 
   //  Operation: get_vtObjectWorkingSet_a
@@ -113,9 +113,9 @@ public:
   //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: changeActiveMask
-  //! @param apc_vtObjectMask:
-  //! @param b_updateObject:
+  /// Operation: changeActiveMask
+  /// @param apc_vtObjectMask
+  /// @param b_updateObject
   void changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMask, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   void changeBackgroundColour(uint8_t newColour, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);

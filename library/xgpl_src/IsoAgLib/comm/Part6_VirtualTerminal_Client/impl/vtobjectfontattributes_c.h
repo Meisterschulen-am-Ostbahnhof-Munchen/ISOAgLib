@@ -62,17 +62,17 @@ namespace __IsoAgLib {
 class vtObjectFontAttributes_c : public vtObject_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
+  /// Operation: stream
+  /// @param destMemory
+  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
+  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectFontAttributesSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  /// @param vtObjectFontAttributesSROM
+  /// @param b_initPointer
   void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);}
 

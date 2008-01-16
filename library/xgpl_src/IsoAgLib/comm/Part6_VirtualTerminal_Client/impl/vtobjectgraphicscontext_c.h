@@ -126,9 +126,9 @@ public:
   //! @param sourceOffset
   int16_t stream(uint8_t* destMemory, uint16_t maxBytes, objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectGraphicsContextSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  /// @param vtObjectGraphicsContextSROM
+  /// @param b_initPointer
   void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
     vtObject_c::init ((iVtObject_s*) vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
   }

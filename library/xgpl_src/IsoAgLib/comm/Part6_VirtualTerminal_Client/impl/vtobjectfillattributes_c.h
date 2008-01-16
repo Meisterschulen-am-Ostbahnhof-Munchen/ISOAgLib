@@ -99,9 +99,9 @@ public:
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectFillAttributesSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  /// @param vtObjectFillAttributesSROM
+  /// @param b_initPointer
   void init(const iVtObjectFillAttributes_s* vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectFillAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
@@ -114,32 +114,36 @@ public:
   //  Operation: size
   uint32_t fitTerminal() const;
 
-  //  Operation: setFillType
-  //! @param newFillType:
-  //! @param b_updateObject:
+  /// Operation: setFillType
+  /// @param newValue
+  /// @param b_updateObject default:false
+  /// @param b_enableReplaceOfCmd default:false
   void setFillType(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillType) : 0, sizeof(iVtObjectFillAttributes_s), 1 /* "Fill Type" */, newValue, newValue, b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFillColour
-  //! @param newFillColour:
-  //! @param b_updateObject:
+  /// Operation: setFillColour
+  /// @param newValue
+  /// @param b_updateObject default:false
+/// @param b_enableReplaceOfCmd default:false
   void setFillColour(uint8_t newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValue8SetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillColour) : 0, sizeof(iVtObjectFillAttributes_s), 2 /* "Fill Colour" */, newValue, __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (newValue, this, IsoAgLib::FillColour), b_enableReplaceOfCmd);
   }
 
-  //  Operation: setFillPattern
-  //! @param newFillPatternObject:
-  //! @param b_updateObject:
+  /// Operation: setFillPattern
+  /// @param newValue
+  /// @param b_updateObject default:false
+  /// @param b_enableReplaceOfCmd default:false
   void setFillPattern(IsoAgLib::iVtObjectPictureGraphic_c* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     saveValuePSetAttribute ((b_updateObject) ? MACRO_getStructOffset(get_vtObjectFillAttributes_a(), fillPatternObject) : 0, sizeof(iVtObjectFillAttributes_s), 3 /* "Fill Pattern" */, newValue, b_enableReplaceOfCmd);
   }
 
   //  Operation: changeFillAttributes
-  //! @param newFillType:
-  //! @param newFillColour:
-  //! @param newFillPatternObject
-  //! @param b_updateObject:
+  //! @param newFillType
+  //! @param newFillColour
+  //! @param newFillPattern
+  //! @param b_updateObject default:false
+  /// @param b_enableReplaceOfCmd default:false
   void setFillAttributes(uint8_t newFillType, uint8_t newFillColour, IsoAgLib::iVtObjectPictureGraphic_c* newFillPattern, bool b_updateObject=false, bool b_enableReplaceOfCmd=false);
 
 #ifdef USE_ISO_TERMINAL_GETATTRIBUTES

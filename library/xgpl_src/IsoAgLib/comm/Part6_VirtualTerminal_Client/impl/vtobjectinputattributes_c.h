@@ -91,17 +91,17 @@ namespace __IsoAgLib {
 class vtObjectInputAttributes_c : public IsoAgLib::iVtObjectString_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
+  /// Operation: stream
+  /// @param destMemory
+  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
+  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectInputAttributesSROM:
-  //! @param b_initPointer:
+  ///  Operation: init
+  /// @param vtObjectInputAttributesSROM
+  /// @param b_initPointer
   void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
@@ -117,9 +117,10 @@ public:
   //  Operation: getString
   const char* getString();
 
-  //  Operation: setValidationStringCopy
-  //! @param newValidationString:
-  //! @param b_updateObject:
+  /// Operation: setValidationStringCopy
+  /// @param newValidationString
+  /// @param b_updateObject default:false
+  /// @param b_enableReplaceOfCmd default:false
   void setValidationStringCopy(const char* newValidationString, bool b_updateObject= false, bool b_enableReplaceOfCmd=false);
 
   //  Operation: setValidationStringRef

@@ -227,9 +227,9 @@ void SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
 }
 
 
-/** place next data to send direct into send puffer of pointed
+/** place next data to send direct into send buffer of pointed
     stream send package - MultiSendStreamer_c will send this
-    puffer afterwards
+    buffer afterwards
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
  */
 void

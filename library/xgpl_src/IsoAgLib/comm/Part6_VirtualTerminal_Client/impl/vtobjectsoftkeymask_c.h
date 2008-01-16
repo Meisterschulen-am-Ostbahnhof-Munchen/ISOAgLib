@@ -92,17 +92,17 @@ namespace __IsoAgLib {
 class vtObjectSoftKeyMask_c : public vtObject_c
 {
 public:
-  //  Operation: stream
-  //! @param destMemory:
-  //! @param maxBytes: don't stream out more than that or you'll overrun the internal upload-buffer
-  //! @param sourceOffset:
+  /// Operation: stream
+  /// @param destMemory
+  /// @param maxBytes don't stream out more than that or you'll overrun the internal upload-buffer
+  /// @param sourceOffset
   int16_t stream(uint8_t* destMemory,
                  uint16_t maxBytes,
                  objRange_t sourceOffset);
 
-  //  Operation: init
-  //! @param vtObjectSoftKeyMaskSROM:
-  //! @param b_initPointer:
+  /// Operation: init
+  /// @param vtObjectSoftKeyMaskSROM
+  /// @param b_initPointer
   void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   { vtObject_c::init ((iVtObject_s*) vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
 
