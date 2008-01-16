@@ -92,12 +92,12 @@ namespace IsoAgLib {
     /*@{*/
 
     /** set rear PTO
-        @param ai16_val value to store as the speed of the rear PTO
+        @param aui16_val value to store as the speed of the rear PTO
       */
     void setPtoRear(const uint16_t aui16_val) { TracPTO_c::setPtoRear(aui16_val);}
 
     /** set front PTO
-        @param ai16_val value to store as the speed of the front PTO
+        @param aui16_val value to store as the speed of the front PTO
       */
     void setPtoFront(const uint16_t aui16_val) { TracPTO_c::setPtoFront(aui16_val);}
 

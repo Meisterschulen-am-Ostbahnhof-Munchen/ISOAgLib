@@ -87,7 +87,7 @@ namespace IsoAgLib {
   { return TracMove_c::config_base(apc_isoName, at_identMode, aui16_suppressMask ); }
 
   /** update selected speed with actually best available speed
-      @param t_speedSrc  from which source is the speed available
+      @param at_speedSource  from which source is the speed available
     */
   void updateSpeed(IsoAgLib::SpeedSource_t at_speedSource) {TracMove_c::updateSpeed(at_speedSource);}
 
@@ -100,14 +100,14 @@ namespace IsoAgLib {
   /** \name Set Values for periodic send on BUS  */
   /*@{*/
   /** set the value of real speed (measured by radar)
-      @param ai16_val value to store as real radar measured speed
+      @param ai32_val value to store as real radar measured speed
     */
   void setSpeedReal(const int32_t& ai32_val)
   {
     TracMove_c::setSpeedReal(ai32_val);
   }
   /** set the value of theoretical speed (calculated from gear)
-      @param ai16_val value to store as theoretical gear calculated speed
+      @param ai32_val value to store as theoretical gear calculated speed
     */
   void setSpeedTheor(const int32_t& ai32_val)
   {
@@ -149,7 +149,7 @@ namespace IsoAgLib {
   void setSelectedDirection(const IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setSelectedDirection(t_val);}
 
   /** set current value of the speed as determined from a number of sources by the machine
-      @param ui16_val  current value of speed
+      @param ui32_val  current value of speed
     */
   void setSelectedSpeed(const int32_t& i32_val) {TracMove_c::setSelectedSpeed(i32_val);}
 
