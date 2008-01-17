@@ -55,7 +55,7 @@ extern bool itopolygontype(unsigned int ui_index, std::string& c_outputText);
 extern bool itoellipsetype(unsigned int ui_index, std::string& c_outputText);
 extern bool itoacousticsignal(unsigned int ui_index, std::string& c_outputText);
 extern bool itopriority(unsigned int ui_index, std::string& c_outputText);
-extern bool itofunctiontype(unsigned int ui_index, std::string& c_outputText);
+extern bool itoauxfunctiontype(unsigned int ui_index, std::string& c_outputText);
 extern bool itofilltype(unsigned int ui_index, std::string& c_outputText);
 extern bool itovalidationtype(unsigned int ui_index, std::string& c_outputText);
 extern bool itolineardirection(unsigned int ui_index, std::string& c_outputText);

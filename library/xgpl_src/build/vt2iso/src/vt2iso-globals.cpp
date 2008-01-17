@@ -684,7 +684,7 @@ auxfunctiontypetoi(char *text_auxFunctionType)
   return retval;
 }
 
-bool itofunctiontype(unsigned int ui_index, string& c_outputText)
+bool itoauxfunctiontype(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxAuxFunctionTypes )
   {
