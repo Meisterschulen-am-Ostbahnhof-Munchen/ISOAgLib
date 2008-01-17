@@ -117,6 +117,18 @@ colordepthtoi (char* text_colordepth)
   return 2;
 }
 
+bool itocolordepth(uint8_t ui8_options, std::string& c_outputText)
+{
+  c_outputText.clear();
+  switch (ui8_options) {
+    case 0: c_outputText="1bit"; break;
+    case 1: c_outputText="4bit"; break;
+    case 2: c_outputText="8bit"; break;
+    default: return false;
+  }
+  return true;
+}
+
 
 signed int
 fonttypetoi (char* text_fonttype)
@@ -536,6 +548,11 @@ linesuppressiontoi (char *text_linesuppression)
     }
   }
   return retval;
+}
+
+bool itolinesuppression(uint8_t ui8_options, std::string& c_outputText)
+{
+  return itogeneraloption(ui8_options, c_outputText, maxLineSuppressionTable, &lineSuppressionTable[0][0]);
 }
 
 unsigned int

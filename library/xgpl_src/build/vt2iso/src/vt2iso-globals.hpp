@@ -70,8 +70,10 @@ extern bool itolinearbargraphoptions(uint8_t ui8_options, std::string& c_outputT
 extern bool itogcoptions(uint8_t ui8_options, string& c_outputText);
 extern bool itoinputobjectoptions(uint8_t ui8_options, string& c_outputText);
 extern bool itobuttonoptions(uint8_t ui8_options, string& c_outputText);
+extern bool itolinesuppression(uint8_t ui8_options, std::string& c_outputText);
 extern bool itofontstyle(uint8_t ui8_options, std::string& c_outputText);
 extern bool itolineart(int i_lineart, std::string& c_outputText);
+extern bool itocolordepth(uint8_t ui8_options, std::string& c_outputText);
 
 
 extern unsigned int colortoi (char* text_color);
