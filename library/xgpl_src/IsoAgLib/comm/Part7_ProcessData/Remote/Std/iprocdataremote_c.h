@@ -160,7 +160,7 @@ public:
                     ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                     int ai_singletonVecKey = 0)
   : ProcDataRemote_c( ps_elementDDI, aui16_element,
-                     ac_isoName, apc_commanderISOName,
+                     ac_isoName, apc_commanderIsoName,
                      apc_processDataChangeHandler, ai_singletonVecKey)
   {}
 
