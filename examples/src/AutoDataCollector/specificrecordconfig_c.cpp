@@ -125,7 +125,7 @@ SpecificRecordConfig_c::~SpecificRecordConfig_c()
 /**
 	utility function to get a string with only lower letters
 	@param pui8_string string which is then transformed
-	@param ab_len length of string
+	@param aui8_len length of string
 */
 void tolowerStr(uint8_t* pui8_string, uint8_t aui8_len)
 {
@@ -449,7 +449,7 @@ void SpecificRecordConfig_c::readIdentData()
 	utility function to find data for a proc data info
 	-> if success is reported, the searched proc data is in the cached
 	tuple
-	@param aui8_ind index [0..n-1] of the wanted proc data definition
+	@param ai_ind index [0..n-1] of the wanted proc data definition
 	@return true -> wanted proc data is now cached
 */
 bool SpecificRecordConfig_c::findProcInd(int ai_ind)

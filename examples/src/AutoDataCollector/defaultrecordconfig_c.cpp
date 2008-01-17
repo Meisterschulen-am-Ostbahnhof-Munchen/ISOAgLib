@@ -43,8 +43,6 @@
 /**
 	constructor which initialises all data and can call init to read
 	config data from EEPROM (if eeprom adress is given)
-	@param apc_lbs pointer to LBS_Lib::nLBS::iLBS (optional)
-	@param apc_system pointer to LBS_Lib::nHwSystem::iSystem (optional)
 	@param aui16_eepromAdr adress in EEPROM where config data is stored
 */
 DefaultRecordConfig_c::DefaultRecordConfig_c(uint16_t aui16_eepromAdr)
