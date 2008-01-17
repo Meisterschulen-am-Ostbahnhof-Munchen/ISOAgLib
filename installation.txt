@@ -1059,19 +1059,16 @@ distribution specific package manager. Select at least a Xerces-C package which 
 the corresponding headers in /usr/include/xercesc/ (or /usr/local/include/xercesc/).
 
 \subsubsection Win32Xerces Installation of Xerces-C on Windows
-<ol>
-<li>Download the Dev-C++ prepared binary of Xerces-C from http://devpaks.org/show.php?devpak=41
-<li>Call the packagemanager for Dev-C++ (menu TOOLS->PACKAGE MANAGER) and select
+-# Download the Dev-C++ prepared binary of Xerces-C from http://devpaks.org/show.php?devpak=41
+-# Call the packagemanager for Dev-C++ (menu TOOLS->PACKAGE MANAGER) and select
     the downloaded archive xerces-c_2_5_0-mingw.DevPak for install
-</ol>
+
 
 \subsection CompileVt2Iso Compiling vt2iso
 
 \subsubsection CompileVt2IsoLinux Compiling vt2iso on Linux
-<ol>
-<li><tt>cd build_utils/vt2iso</tt>
-<li><tt>make</tt>
-</ol>
+-# <tt>cd build_utils/vt2iso</tt>
+-# <tt>make</tt>
 
 
 \subsubsection CompileVt2IsoWin32 Compiling VT2Iso on Win32 with Dev-C++

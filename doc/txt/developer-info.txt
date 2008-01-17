@@ -88,7 +88,8 @@ Information on the communication services or the hardware abstraction layer can 
 
 - \ref LgplSrcOverview "GPL licensed parts overview"
 
-- \ref CommOverPage "Communication Services overview"
+- Communication Services
+    - \ref CommOverPage "Communication Services overview"
     - \ref SchedulerPage "Central Scheduler"
     - \ref NetworkMgmtPage "Network Management (i.e. monitor lists)"
     - \ref AppLayerPage "Base Data handling"

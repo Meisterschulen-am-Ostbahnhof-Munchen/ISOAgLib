@@ -59,6 +59,8 @@ raise their veto. Licensing changes might be needed, if some projects or users w
 But also fundamental changes in the design and structure of \isoaglib will be discussed with the authors (as far as they are still active and
 reachable).
 
+Please take a look at the \ref PageTodo page for a brief overview on contribution topics.
+
 Your contributions can be integrated into the repository if you work as described:
 - Use Subversion or one of its GUI Tools (e.g. TortoiseSVN) to create a local working copy
 - Update your repository (especially important for creation of diffs) with
