@@ -47,14 +47,14 @@
 #include <iomanip>
 
 #if defined( WIN32 )
-typedef unsigned char uint8_t;
-typedef unsigned int uint16_t;
+typedef unsigned char fiuint8_t;
+typedef unsigned int fiuint16_t;
 #endif
 
 typedef struct tagBGR {
-  uint8_t rgbBlue;
-  uint8_t rgbGreen;
-  uint8_t rgbRed;
+  fiuint8_t rgbBlue;
+  fiuint8_t rgbGreen;
+  fiuint8_t rgbRed;
 } BGR_s;
 
 extern BGR_s vtColorTable[256];
@@ -185,15 +185,15 @@ int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int aui_x, unsigned int au
       {
         if ((i % 8) == 0) std::cerr << std::endl;
         else std::cerr << "     ";
-        std::cerr << std::setw(2) << uint16_t(vtColorTable[i].rgbRed) << std::setw(2) << uint16_t(vtColorTable[i].rgbGreen) << std::setw(2) << uint16_t(vtColorTable[i].rgbBlue);
+        std::cerr << std::setw(2) << fiuint16_t(vtColorTable[i].rgbRed) << std::setw(2) << fiuint16_t(vtColorTable[i].rgbGreen) << std::setw(2) << fiuint16_t(vtColorTable[i].rgbBlue);
         if (i == mi_colorMismatch) std::cerr << "*|*"; else std::cerr << " | ";
-        std::cerr << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << uint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
+        std::cerr << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
       }
       std::cerr << std::endl;
       return -2;
     }
 
-    uint8_t idx;
+    fiuint8_t idx;
     FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
     return idx;
   }
@@ -228,7 +228,7 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_
 
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
-   uint8_t idx;
+   fiuint8_t idx;
    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
    return vtColorTable[idx].rgbRed;
  }
@@ -253,7 +253,7 @@ unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_
 {
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
-   uint8_t idx;
+   fiuint8_t idx;
    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
    return vtColorTable[idx].rgbGreen;
  }
@@ -279,7 +279,7 @@ unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_
 {
  if (mb_palettized)
  { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
-   uint8_t idx;
+   fiuint8_t idx;
    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
    return vtColorTable[idx].rgbBlue;
  }
