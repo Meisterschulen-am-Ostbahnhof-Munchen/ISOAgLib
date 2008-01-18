@@ -999,6 +999,7 @@ uint32_t ui32_msgNbr;
   int32_t i32_retVal = HAL_NO_ERR;
   bool b_processed,to_be_processed,b_forceProcessAll= false;
 
+
   while(i32_retVal != HAL_UNKNOWN_ERR ) // something has been received from CAN
   {
 
@@ -1015,6 +1016,7 @@ uint32_t ui32_msgNbr;
       i32_fbIdx = ui32_msgNbr-minReceiveObjNr();
 
     #endif
+
 
       b_processed = false;
       to_be_processed = false;
@@ -2325,6 +2327,9 @@ void CanIo_c::printMyFilterBox(){
   for ( uint32_t i = 0; i < m_arrFilterBox.size(); i++ )
   {
     INTERNAL_DEBUG_DEVICE << "CANIO::VECTOR FilterBox :Filter: 0x"
+    #ifdef SYSTEM_PC
+        << std::hex
+    #endif
         << m_arrFilterBox[i].filter().ident()
         << ", Mask: 0x"
     #ifdef SYSTEM_PC
