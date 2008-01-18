@@ -140,20 +140,9 @@ II. Requirements
 
   II.1. Adaptions for testcase F
 
-    Test F requires that Client 2 modify its SA during operation.
-    This is special functionality required only for the test.
-    One way to achieve it is to add the following modification [TODO:
-    where?] to a special copy of the virtual terminal just for this test:
-
-      ui16_SaChangeCycle++;
-
-      /* change SA after n cycles */
-      if (ui16_SaChangeCycle == n)
-      {
-	__IsoAgLib::IsoSystemPkg_c& c_pkg = __IsoAgLib::getIsoMonitorInstance().data();
-	c_pkg.setExtCanPkg8(6, ADDRESS_CLAIM_PGN, ADDRESS_CLAIM_PGN, 255, 0x27, 0x1b, 0x0, 0xc0, 0xc, 0x0, 0x1d, 0x0, 0x20);
-	__IsoAgLib::getCanInstance() << c_pkg;
-      }
+    Test F requires that client 2 modify it's own SA during operation. This is
+    special functionality required only for the test. One way to achieve this
+    is to add the SA change into the clients main loop.
 
     Testcase F is disabled by default at runall.sh.
 
