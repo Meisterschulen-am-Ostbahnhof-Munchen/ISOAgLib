@@ -210,22 +210,40 @@ void
 IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
 {
 #ifdef DEBUG_NETWORK_MANAGEMENT
-  INTERNAL_DEBUG_DEVICE << "React on IsoItem modification ";
+  INTERNAL_DEBUG_DEVICE << "[DNN] IsoFilterManager_c: React on IsoItem (" << 
+    #ifdef SYSTEM_PC
+        "0x" << STL_NAMESPACE::hex
+    #endif //SYSTEM_PC
+  << (int)arcc_isoItem.nr() << ") modification ";
 
        if (at_action == AddToMonitorList)      { INTERNAL_DEBUG_DEVICE << "AddToMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
   else if (at_action == ChangedAddress)        { INTERNAL_DEBUG_DEVICE << "ChangedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
   else if (at_action == LostAddress)           { INTERNAL_DEBUG_DEVICE << "LostAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
   else if (at_action == ReclaimedAddress)      { INTERNAL_DEBUG_DEVICE << "ReclaimedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
   else if (at_action == RemoveFromMonitorList) { INTERNAL_DEBUG_DEVICE << "RemoveFromMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
-#endif
+#endif //DEBUG_NETWORK_MANAGEMENT
 
-  if ((at_action == AddToMonitorList) || (at_action == ReclaimedAddress) || (at_action == ChangedAddress))
+  if ((at_action == AddToMonitorList) || (at_action == ReclaimedAddress))
   {
     bool b_reconfig = false;
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
         it_isoFilterBox != mvec_isoFilterBox.end();
         it_isoFilterBox++)
     { // the ISOFilterBoxes will take care if they have to do anything at all or not...
+      b_reconfig |= it_isoFilterBox->updateOnAdd();
+    }
+
+    if (b_reconfig)
+      getCanInstance4Comm().reconfigureMsgObj();
+  }
+  else if (at_action == ChangedAddress)
+  {
+    bool b_reconfig = false;
+    for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+        it_isoFilterBox != mvec_isoFilterBox.end();
+        it_isoFilterBox++)
+    { // the ISOFilterBoxes will take care if they have to do anything at all or not...
+      it_isoFilterBox->updateOnRemove(&arcc_isoItem.isoName());
       b_reconfig |= it_isoFilterBox->updateOnAdd();
     }
 
