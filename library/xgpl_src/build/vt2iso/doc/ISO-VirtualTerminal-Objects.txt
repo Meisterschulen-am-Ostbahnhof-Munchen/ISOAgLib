@@ -8,7 +8,7 @@
 </ul>
 
 \section XMLUsage Usage in your own project
-First of all, it is very helpful to have a look to the <b> Tutorial 3.0</b>. Other than that, read on here or take a look at the section \ref IndexGettingHelp "Getting Help".
+First of all, it is very helpful to have a look to the <b> Tutorial 3.0</b>. Other than that, read on here or take a look at the section \ref GettingHelp "Getting Help".
 <p>
 \subsection vt2isoImplementation Modes
 Generally, there are two ways you can implement your generated objectpool into your application: As a <b>Standalone Class (direct)</b> or as a <b>Derived Class (derived)</b>. Note that always both versions are created by vt2iso.
