@@ -59,7 +59,10 @@
 # settings. The vars are used to defined the features which are
 # needed by the application
 # ####################################################################### #
+
+# use /bin/echo instead of the shell's echo (could have different parameter options, e.g. dash!)
 alias echo=$(which echo)
+
 PARAMETER_TARGET_SYSTEM="UseConfigFile"
 PARAMETER_CAN_DRIVER="UseConfigFile"
 PARAMETER_CAN_DEVICE_FOR_SERVER="UseConfigFile"
@@ -888,14 +891,14 @@ create_filelist( )
   #echo "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >> $FILELIST_DOXYGEN_READY
   #echo "*/" >> $FILELIST_DOXYGEN_READY
   #echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-  echo -e "\n\n \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $FILELIST_DOXYGEN_READY
+  echo -e "\n\n @section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $FILELIST_DOXYGEN_READY
 
   # write block of source files
   #echo "/**" >> $FILELIST_DOXYGEN_READY
   #echo "* \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
   #echo "*/" >> $FILELIST_DOXYGEN_READY
   #echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-  echo -e "\n\n \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
+  echo -e "\n\n @section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
   echo "\code" >> $FILELIST_DOXYGEN_READY
   cat $FILELIST_COMBINED_PURE >> $FILELIST_DOXYGEN_READY
   echo "\endcode" >> $FILELIST_DOXYGEN_READY
@@ -908,7 +911,7 @@ create_filelist( )
   #echo "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
   #echo "*/" >> $FILELIST_DOXYGEN_READY
   #echo "/*@{*/" >> $FILELIST_DOXYGEN_READY
-  echo -e "\n\n \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
+  echo -e "\n\n @section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
   echo "\code" >> $FILELIST_DOXYGEN_READY
   cat $FILELIST_COMBINED_HDR >> $FILELIST_DOXYGEN_READY
   echo "\endcode" >> $FILELIST_DOXYGEN_READY
@@ -2679,7 +2682,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
   #rm -f /tmp/$CONF_BASE
   #echo "/*@}*/" >> $CONFIG_SPEC_DOXYGEN_READY
 
-  echo -e "$ENDLINE$ENDLINE \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
+  echo -e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
   echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >> $CONFIG_SPEC_DOXYGEN_READY
   echo " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
   echo "\code" >> $CONFIG_SPEC_DOXYGEN_READY
