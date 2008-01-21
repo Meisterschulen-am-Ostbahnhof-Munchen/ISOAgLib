@@ -90,7 +90,7 @@ Therefore windows user need to install a perl distribution.<br>
 <li>Download and install the latest Doxygen version from http://www.stack.nl/~dimitri/doxygen/ for your specific plattform
 <li>Download and install graphviz with the tool "dot" from http://www.graphviz.org/Download.php
 <li>For Win32 users: download and install <a href="http://www.activestate.com/Products/activeperl/">ActivePerl</a>
-<li>Let Doxygen create the documentation with the config file <tt>Doxyfile</tt> which is located in the root directory of the project
+<li>Let Doxygen create the documentation using the default configfile with <tt>~/[your project path]/IsoAgLib$ doxygen doc/Doxyfile</tt>.
 </ol>
 
 

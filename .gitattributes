@@ -1,6 +1,5 @@
 * text=auto !eol
 /AUTHORS -text
-/Doxyfile -text
 /LICENSE -text
 admin/buildArchives/create_win32_projects.sh -text
 admin/includeTaggedFile.pl -text
@@ -11,6 +10,7 @@ bin/proc2iso -text
 bin/update_makefile.sh -text
 bin/vt2iso -text
 /contact_and_support.txt -text
+doc/Doxyfile -text
 doc/footer.html -text
 doc/graphics/HAL_esx.odg -text
 doc/graphics/HAL_esx.png -text
