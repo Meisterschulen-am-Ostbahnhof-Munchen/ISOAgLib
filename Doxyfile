@@ -1111,7 +1111,10 @@ SEARCH_INCLUDES        = YES
 # contain include files that are not input files but should be processed by 
 # the preprocessor.
 
-INCLUDE_PATH           = library
+INCLUDE_PATH           = library \
+                         library/commercial_BIOS/bios_esx \
+                         library/commercial_BIOS/bios_esxu \
+                         library/commercial_BIOS/bios_mitron167
 
 # You can use the INCLUDE_FILE_PATTERNS tag to specify one or more wildcard 
 # patterns (like *.h and *.hpp) to filter out the header-files in the 
