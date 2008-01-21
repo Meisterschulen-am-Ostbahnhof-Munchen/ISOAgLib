@@ -46,10 +46,8 @@
 #include <iostream>
 #include <iomanip>
 
-#if defined( WIN32 )
 typedef unsigned char fiuint8_t;
 typedef unsigned int fiuint16_t;
-#endif
 
 typedef struct tagBGR {
   fiuint8_t rgbBlue;
