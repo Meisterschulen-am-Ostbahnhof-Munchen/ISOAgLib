@@ -536,6 +536,7 @@ bool itolineart(int i_lineart, std::string& c_outputText)
     else
       c_outputText.append("0");
   }
+  return true;
 }
 
 unsigned int
