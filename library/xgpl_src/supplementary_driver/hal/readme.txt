@@ -56,9 +56,9 @@ digraph SupplHalEsx
 \subsection SupplHalImi HAL for Supplementary Drivers on IMI of STW
 <img src="Images/HAL_suppl_imi.png" title="HAL for Supplementary Drivers on IMI of STW" alt="HAL for Supplementary Drivers on IMI of STW"><br>
 More information can be found in the general HAL header files (see links in previous subsection) and in the device specific headers:
-- \ref imi/actor/actor.h "imi/actor/actor.h"
-- \ref imi/rs232/rs232.h "imi/rs232/rs232.h"
-- \ref imi/sensor/sensor.h "imi/sensor/sensor.h"
+- \ref supplementary_driver/hal/imi/actor/actor.h "supplementary_driver/hal/imi/actor/actor.h"
+- \ref supplementary_driver/hal/imi/rs232/rs232.h "supplementary_driver/hal/imi/rs232/rs232.h"
+- \ref supplementary_driver/hal/imi/sensor/sensor.h "supplementary_driver/hal/imi/sensor/sensor.h"
 
 <!--
 \dot
@@ -95,7 +95,7 @@ digraph SupplHalImi
 \subsection SupplHalPm167 HAL for Supplementary Drivers on Pm167 of STW
 <img src="Images/HAL_suppl_pm167.png" title="HAL for Supplementary Drivers on PM167" alt="HAL for Supplementary Drivers on PM167"><br>
 More information can be found in the general HAL header files (see links in first subsection) and in the device specific headers:
-- \ref pm167/rs232/rs232.h "pm167/rs232/rs232.h"
+- \ref supplementary_driver/hal/pm167/rs232/rs232.h "supplementary_driver/hal/pm167/rs232/rs232.h"
 
 <!--
 \dot
@@ -126,9 +126,9 @@ digraph SupplHalPm167
 \subsection SupplHalPc HAL for Supplementary Drivers on PC
 <img src="Images/HAL_suppl_pc.png" title="HAL for Supplementary Drivers on PC" alt="HAL for Supplementary Drivers on PC"><br>
 More information can be found in the general HAL header files (see links in first subsection) and in the device specific headers:
-- \ref pc/actor/actor.h "pc/actor/actor.h"
-- \ref pc/rs232/rs232.h "pc/rs232/rs232.h"
-- \ref pc/sensor/sensor.h "pc/sensor/sensor.h"
+- \ref supplementary_driver/hal/pc/actor/actor.h "supplementary_driver/hal/pc/actor/actor.h"
+- \ref supplementary_driver/hal/pc/rs232/rs232.h "supplementary_driver/hal/pc/rs232/rs232.h"
+- \ref supplementary_driver/hal/pc/sensor/sensor.h "supplementary_driver/hal/pc/sensor/sensor.h"
 
 <!--
 \dot
