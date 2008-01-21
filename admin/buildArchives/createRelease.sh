@@ -27,7 +27,7 @@ find $ISOAGLIB_ROOT -name "*.html" -o -name "*.png" -o -name "*.md5" -o -name "*
 
 
 # B) Create Doc
-doxygen Doxyfile
+doxygen doc/Doxyfile
 
 # B) Build Packages
 cd $START
