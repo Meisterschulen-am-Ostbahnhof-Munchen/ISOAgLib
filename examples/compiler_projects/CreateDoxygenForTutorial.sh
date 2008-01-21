@@ -1,4 +1,8 @@
 #!/bin/sh
+
+# use /bin/echo instead of the shell's echo (could have different parameter options, e.g. dash!)
+alias echo=$(which echo)
+
 DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
@@ -100,11 +104,11 @@ for conf_example in $EXAMPLE_LIST ; do
   echo "/** \page TutPrjDesc$EXAMPLE_DOXY Tutorial project description for build of Tutorial $EXAMPLE_DOXY" > $COLLECT_NAME
   echo "  This page contains the needed project specification and the resulting project file lists" >> $COLLECT_NAME
   echo "  and configuration header contents to build the project." >> $COLLECT_NAME
-  echo -e "\n\n" >> $COLLECT_NAME
+  echo -e '\n\n' >> $COLLECT_NAME
   cat $COLLECT_DIR/spec_*.txt >> $COLLECT_NAME
-  echo -e "\n\n" >> $COLLECT_NAME
+  echo -e '\n\n' >> $COLLECT_NAME
   cat $COLLECT_DIR/config_*.txt >> $COLLECT_NAME
-  echo -e "\n\n" >> $COLLECT_NAME
+  echo -e '\n\n' >> $COLLECT_NAME
   cat $COLLECT_DIR/file*.txt >> $COLLECT_NAME
   echo " */" >> $COLLECT_NAME
   rm -f $COLLECT_DIR/spec_*.txt $COLLECT_DIR/config_*.txt $COLLECT_DIR/file*.txt
