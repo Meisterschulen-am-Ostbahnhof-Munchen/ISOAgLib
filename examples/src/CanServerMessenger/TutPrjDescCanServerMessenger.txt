@@ -1,10 +1,6 @@
 /** \page TutPrjDescCanServerMessenger Tutorial project description for build of Tutorial CanServerMessenger
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
-
 
  \section PrjSpecCanServerMessenger__c2c__sys__sys List of configuration settings for CanServerMessenger with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 

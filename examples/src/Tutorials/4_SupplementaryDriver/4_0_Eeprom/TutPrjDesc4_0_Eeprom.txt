@@ -1,10 +1,6 @@
 /** \page TutPrjDesc4_0_Eeprom Tutorial project description for build of Tutorial 4_0_Eeprom
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
-
 
  \section PrjSpec4_0_Eeprom__c2c__sys__sys List of configuration settings for 4_0_Eeprom with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
@@ -12004,9 +12000,6 @@ PRJ_RS232=1
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
 \endcode
--e 
-
-
 
 
  \section PrjConfig4_0_Eeprom List of configuration settings for 4_0_Eeprom
@@ -12217,9 +12210,6 @@ PRJ_RS232=1
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
--e 
-
-
 
 
  \section FileLists4_0_Eeprom__c2c__sys__sys List of Files for 4_0_Eeprom with CAN Driver sys and RS232 Driver sys

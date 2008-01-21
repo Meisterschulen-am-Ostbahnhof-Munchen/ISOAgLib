@@ -1,9 +1,6 @@
 /** \page TutPrjDescTractorInternalCan Tutorial project description for build of Tutorial TractorInternalCan
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
 
 
  \section PrjSpecTractorInternalCan__c2c__sys__sys List of configuration settings for TractorInternalCan with CAN Driver sys and RS232 Driver sys
@@ -11428,9 +11425,6 @@ PRJ_RS232=1
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
 \endcode
--e 
-
-
 
 
  \section PrjConfigTractorInternalCan List of configuration settings for TractorInternalCan
@@ -11653,9 +11647,6 @@ PRJ_RS232=1
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
--e 
-
-
 
 
  \section FileListsTractorInternalCan__c2c__sys__sys List of Files for TractorInternalCan with CAN Driver sys and RS232 Driver sys

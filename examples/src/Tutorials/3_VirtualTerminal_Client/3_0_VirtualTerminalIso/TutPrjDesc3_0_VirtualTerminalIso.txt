@@ -1,7 +1,6 @@
 /** \page TutPrjDesc3_0_VirtualTerminalIso Tutorial project description for build of Tutorial 3_0_VirtualTerminalIso
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
 
 
 \section PrjSpec3_0_VirtualTerminalIso__c2c__sys__sys List of configuration settings for 3_0_VirtualTerminalIso with CAN Driver sys and RS232 Driver sys
@@ -12081,10 +12080,6 @@ PRJ_EEPROM=1
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
 \endcode
 
--e 
-
-
-
 
 \section PrjConfig3_0_VirtualTerminalIso List of configuration settings for 3_0_VirtualTerminalIso
 This is only a copy with doxygen ready comment blocks from the original file <tt>../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIso.h</tt>
@@ -12303,9 +12298,6 @@ Use the file <tt>conf_3_0_VirtualTerminalIso</tt> in the directory <tt>/home/spa
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
-
--e 
-
 
 
 \section PageFileLists3_0_VirtualTerminalIso__c2c__sys__sys List of (Source-)Files for 3_0_VirtualTerminalIso with CAN Driver sys and RS232 Driver sys

@@ -1,9 +1,6 @@
 /** \page TutPrjDesc4_1_Sensor Tutorial project description for build of Tutorial 4_1_Sensor
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
 
 
  \section PrjSpec4_1_Sensor__c2c__sys__sys List of configuration settings for 4_1_Sensor with CAN Driver sys and RS232 Driver sys
@@ -11980,10 +11977,6 @@ PRJ_SENSOR_COUNTER=1
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
 \endcode
--e 
-
-
-
 
  \section PrjConfig4_1_Sensor List of configuration settings for 4_1_Sensor
  This is only a copy with doxygen ready comment blocks from the original file ../../../examples/src/Tutorials/4_SupplementaryDriver//4_1_Sensor/config_4_1_Sensor.h 
@@ -12193,10 +12186,6 @@ PRJ_SENSOR_COUNTER=1
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
--e 
-
-
-
 
  \section FileLists4_1_Sensor__c2c__sys__sys List of Files for 4_1_Sensor with CAN Driver sys and RS232 Driver sys
 

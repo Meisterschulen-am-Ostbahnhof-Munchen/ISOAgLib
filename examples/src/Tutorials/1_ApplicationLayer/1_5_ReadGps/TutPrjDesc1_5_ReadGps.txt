@@ -1,9 +1,6 @@
 /** \page TutPrjDesc1_5_ReadGps Tutorial project description for build of Tutorial 1_5_ReadGps
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
 
 
  \section PrjSpec1_5_ReadGps__c2c__sys__sys List of configuration settings for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys
@@ -12028,9 +12025,6 @@ PRJ_TIME_GPS=1
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
 \endcode
--e 
-
-
 
 
  \section PrjConfig1_5_ReadGps List of configuration settings for 1_5_ReadGps
@@ -12250,9 +12244,6 @@ PRJ_TIME_GPS=1
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
--e 
-
-
 
 
  \section FileLists1_5_ReadGps__c2c__sys__sys List of Files for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys

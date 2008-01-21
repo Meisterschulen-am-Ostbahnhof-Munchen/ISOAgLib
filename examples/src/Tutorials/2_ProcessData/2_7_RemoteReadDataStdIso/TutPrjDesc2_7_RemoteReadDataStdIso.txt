@@ -1,9 +1,6 @@
 /** \page TutPrjDesc2_7_RemoteReadDataStdIso Tutorial project description for build of Tutorial 2_7_RemoteReadDataStdIso
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
 
 
  \section PrjSpec2_7_RemoteReadDataStdIso__c2c__sys__sys List of configuration settings for 2_7_RemoteReadDataStdIso with CAN Driver sys and RS232 Driver sys
@@ -12004,9 +12001,6 @@ PROC_REMOTE_STD=1
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
 
 \endcode
--e 
-
-
 
 
  \section PrjConfig2_7_RemoteReadDataStdIso List of configuration settings for 2_7_RemoteReadDataStdIso
@@ -12223,9 +12217,6 @@ PROC_REMOTE_STD=1
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
--e 
-
-
 
 
  \section FileLists2_7_RemoteReadDataStdIso__c2c__sys__sys List of Files for 2_7_RemoteReadDataStdIso with CAN Driver sys and RS232 Driver sys

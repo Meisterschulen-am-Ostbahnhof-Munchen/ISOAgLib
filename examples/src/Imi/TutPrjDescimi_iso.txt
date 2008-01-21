@@ -1,10 +1,6 @@
 /** \page TutPrjDescImi Tutorial project description for build of Tutorial Imi
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
--e 
-
-
-
 
  \section PrjSpecImi__pc_win32__sontheim__simulating List of configuration settings for Imi with CAN Driver sontheim and RS232 Driver simulating
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projects/kdevelop_make/ 
@@ -956,10 +952,6 @@ PRJ_EEPROM=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 \endcode
--e 
-
-
-
 
  \section PrjConfigImi List of configuration settings for Imi
  This is only a copy with doxygen ready comment blocks from the original file ../../../examples/config_Imi.h 
@@ -1177,10 +1169,6 @@ PRJ_EEPROM=1
 
 // START_INDIVIDUAL_PROJECT_CONFIG
 \endcode
--e 
-
-
-
 
  \section FileListsImi__pc_win32__sontheim__simulating List of Files for Imi with CAN Driver sontheim and RS232 Driver simulating
 
