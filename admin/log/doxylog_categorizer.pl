@@ -30,7 +30,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $no_class_member .= $line;
       }
@@ -48,7 +48,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $multiple_groups .= $line;
       }
@@ -66,7 +66,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $no_file_member .= $line;
       }
@@ -84,7 +84,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $unresolved_ref .= $line;
       }
@@ -102,7 +102,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $param_undoc .= $line;
       }
@@ -120,7 +120,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $func_nodef .= $line;
       }
@@ -138,7 +138,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $param_not_found .= $line;
       }
@@ -156,7 +156,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $comment_block .= $line;
       }
@@ -174,7 +174,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $parsing_initializer .= $line;
       }
@@ -192,7 +192,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $include_not_found .= $line;
       }
@@ -210,7 +210,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $parse_error .= $line;
       }
@@ -228,7 +228,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line !~ m/^Error / )
+      if ( $line !~ m/^(\/|Error |<unknown)/ )
       {
         $file_tag_wrong .= $line;
       }
@@ -246,7 +246,7 @@ while ( defined( $line = shift(@raw) ) )
 
     while( defined( $line = shift( @raw ) ) )
     {
-      if ( $line !~ m/^\// && $line != m/^<unknown/ )
+      if ( $line !~ m/^(\/|<unknown)/ )
       {
         $error_map_file .= $line;
       }
