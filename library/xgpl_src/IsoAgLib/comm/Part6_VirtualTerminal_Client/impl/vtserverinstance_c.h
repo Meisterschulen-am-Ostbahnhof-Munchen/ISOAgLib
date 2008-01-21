@@ -131,7 +131,14 @@ public:
     uint32_t lastReceivedHardware;
     uint32_t lastRequestedHardware;
     uint8_t  hwGraphicType; // 0, 1 or 2 (2, 16 or 256 colors)
-    uint8_t  hwHardware; // bit 0: touchscreen, bit 1: pointing device, bit 2: multiple freuency audio, bit 3: adjustable audio volume
+
+    //Bit 0 = 1 = VT has a touch screen or pointing device and supports Pointing Event message.
+    //Bit 1 = 1 = VT reports drag operation via Pointing Event message (Bit 0 shall be set to 1)
+    //Bit 2 = 1 = VT has multiple frequency audio output
+    //Bit 3 = 1 = VT has adjustable volume audio output
+    //Bit 4 = 1 = VT supports simultaneous activations of all combinations of physical soft keys (See Clause 4.6.15 Soft key and button activation)
+    //Bit 5 = 1 = VT supports intermediate coordinates during a drag operation (Bit 1 shall be set to a 1)
+    uint8_t  hwHardware;
     uint16_t hwWidth;   // hwWidth and
     uint16_t hwHeight;  // hwHeight have to be the same (only square mask dimension!)
 
@@ -177,6 +184,7 @@ public:
   uint32_t                   getVtHardwareDimension();
   uint16_t                   getVtFontSizes();
   vtCapabilities_s*          getVtCapabilities()      { return &ms_vtCapabilitiesA; }
+  const vtCapabilities_s*          getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
   const IsoAgLib::vtState_s* getVtState() const       { return &ms_vtStateA; }
   localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
   const IsoItem_c*           getIsoItem()             { return mcpc_isoItem; }
