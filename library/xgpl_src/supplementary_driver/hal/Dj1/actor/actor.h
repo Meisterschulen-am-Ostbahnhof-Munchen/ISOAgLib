@@ -107,7 +107,7 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-      @param bOutputGroup PWM output channel [0..1]
+      @param bOutput PWM output channel [0..1]
       @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
       @return error state (HAL_NO_ERR == o.k.; HAL_RANGE_ERR == wrong channel OR frequency)
   */
@@ -327,7 +327,7 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-      @param bOutputGroup PWM output channel [0..1]
+      @param bOutput PWM output channel [0..1]
       @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
       @return error state (HAL_NO_ERR == o.k.; HAL_RANGE_ERR == wrong channel OR frequency)
   */

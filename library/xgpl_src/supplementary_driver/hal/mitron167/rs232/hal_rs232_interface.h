@@ -150,7 +150,7 @@ namespace __HAL {
   */
   int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber);
   /**
-    send '\0' terminated string on RS232
+    send '\\0' terminated string on RS232
     @param pbString pointer to '\\0' terminated (!) source data string
     @return HAL_NO_ERR -> o.k. else send buffer overflow
   */

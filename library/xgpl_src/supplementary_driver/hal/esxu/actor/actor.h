@@ -133,7 +133,7 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutputGroup PWM output channel [OUT1..OUT2]
+    @param bOutput PWM output channel [OUT1..OUT2]
     @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */

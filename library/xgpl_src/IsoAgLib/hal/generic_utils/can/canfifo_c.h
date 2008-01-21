@@ -64,8 +64,6 @@
 
 #define _CANFIFO_H
 
-
-
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 
 #ifdef SYSTEM_PC

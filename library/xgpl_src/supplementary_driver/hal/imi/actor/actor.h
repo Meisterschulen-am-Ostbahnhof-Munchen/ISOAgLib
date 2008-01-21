@@ -125,7 +125,7 @@ namespace HAL
   /**
     set pwm value 0 ... 100 %
     for the single output UCout
-    @param bOutputNo channel number of output 0 (is ignored)
+    <!--@param bOutputNo channel number of output 0 (is ignored)-->
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
