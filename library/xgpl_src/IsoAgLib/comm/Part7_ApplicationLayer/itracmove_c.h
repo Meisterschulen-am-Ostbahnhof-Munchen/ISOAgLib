@@ -149,7 +149,7 @@ namespace IsoAgLib {
   void setSelectedDirection(const IsoAgLib::IsoDirectionFlag_t t_val) {TracMove_c::setSelectedDirection(t_val);}
 
   /** set current value of the speed as determined from a number of sources by the machine
-      @param ui32_val  current value of speed
+      @param i32_val  current value of speed
     */
   void setSelectedSpeed(const int32_t& i32_val) {TracMove_c::setSelectedSpeed(i32_val);}
 
