@@ -54,8 +54,7 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file
- * 
+/** \file supplementary_driver/hal/pc/actor/actor.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -121,12 +120,12 @@ namespace HAL
 
   /**
     set pwm value 0 ... 100 %
-    @param aui8_channel channel number of output [0..11]
+    @param bOutputNo channel number of output [0..11]
     @param wPWMValue Value to set; depends on configured PWM freq; [0..0xFFFF]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel)
   */
-  inline int16_t setDigout(uint8_t aui8_channel, uint16_t wPWMValue)
-    {return __HAL::setDigout(aui8_channel, wPWMValue);};
+  inline int16_t setDigout(uint8_t bOutputNo, uint16_t wPWMValue)
+    {return __HAL::setDigout(bOutputNo, wPWMValue);};
 
   /** deliver the actual current of the digital output
     * @param aui8_channel channel to check
