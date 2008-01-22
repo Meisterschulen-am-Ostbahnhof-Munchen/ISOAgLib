@@ -133,7 +133,7 @@ public:
     {set(aui16_objId, apc_string, overrideSendLength, ui8_cmdByte);};
   SendUploadBase_c (const SendUploadBase_c& r_source);
   SendUploadBase_c (uint8_t* apui8_buffer, uint32_t bufferSize)
-    {set(apui8_buffer, bufferSize);};
+  {set(apui8_buffer, bufferSize);}
   const SendUploadBase_c& operator= (const SendUploadBase_c& r_source);
 
   int32_t getUploadTimeout() const { return mui32_uploadTimeout;}

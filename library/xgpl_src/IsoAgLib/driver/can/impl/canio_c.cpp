@@ -1109,29 +1109,29 @@ uint32_t ui32_msgNbr;
           {
             if(!(m_arrFilterBox[i32_fbIdx].isIdle())  &&  m_arrFilterBox[i32_fbIdx].matchMsgId(i32_ident,identType))
             {
-               // !! the interested FilterBox processes the message
-                #ifdef DEBUG
-                  INTERNAL_DEBUG_DEVICE << " CONSUMING FB IDX :"
-                  #ifdef SYSTEM_PC
-                  << STL_NAMESPACE::dec
-                  #endif
-                  << m_arrFilterBox[i32_fbIdx].getFbVecIdx();
-                  INTERNAL_DEBUG_DEVICE << ", FB IDX READ from CAN : "
-                  #ifdef SYSTEM_PC
-                  << STL_NAMESPACE::dec
-                  #endif
-                  << i32_fbIdx;
-                  INTERNAL_DEBUG_DEVICE << " interested in the MSG Id : 0x"
-                  #ifdef SYSTEM_PC
-                  << STL_NAMESPACE::hex
-                  #endif
-                  << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
-               #endif
-                b_processed = m_arrFilterBox[i32_fbIdx].processMsg();
-                if(b_processed)
-                {
-                  mui8_processedMsgCnt++;
-                }
+              // !! the interested FilterBox processes the message
+              #if 0 //#ifdef DEBUG
+                INTERNAL_DEBUG_DEVICE << " CONSUMING FB IDX :"
+                #ifdef SYSTEM_PC
+                << STL_NAMESPACE::dec
+                #endif
+                << m_arrFilterBox[i32_fbIdx].getFbVecIdx();
+                INTERNAL_DEBUG_DEVICE << ", FB IDX READ from CAN : "
+                #ifdef SYSTEM_PC
+                << STL_NAMESPACE::dec
+                #endif
+                << i32_fbIdx;
+                INTERNAL_DEBUG_DEVICE << " interested in the MSG Id : 0x"
+                #ifdef SYSTEM_PC
+                << STL_NAMESPACE::hex
+                #endif
+                << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
+              #endif
+              b_processed = m_arrFilterBox[i32_fbIdx].processMsg();
+              if(b_processed)
+              {
+                mui8_processedMsgCnt++;
+              }
             }
           }
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL

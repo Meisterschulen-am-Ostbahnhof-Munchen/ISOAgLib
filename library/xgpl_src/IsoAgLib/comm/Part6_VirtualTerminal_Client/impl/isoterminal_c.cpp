@@ -406,7 +406,7 @@ IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
     if (static_cast<__IsoAgLib::IdentItem_c&>(mrc_wsMasterIdentItem) == mvec_vtClientServerComm[ui8_index]->getIdentItem())
-      return mvec_vtClientServerComm[ui8_index]->sendCommandForDEBUG(apui8_buffer, ui32_size);
+      return mvec_vtClientServerComm[ui8_index]->sendCommand(apui8_buffer, ui32_size);
   }
   return false;
 }

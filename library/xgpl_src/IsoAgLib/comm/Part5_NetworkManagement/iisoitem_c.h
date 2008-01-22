@@ -59,7 +59,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/isoitem_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 namespace __IsoAgLib
 { // forward declarations (for friends)

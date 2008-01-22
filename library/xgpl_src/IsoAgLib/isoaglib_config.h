@@ -789,11 +789,11 @@
 
 #ifndef USE_WORKING_SET
   /// auto-define USE_WORKING_SET dependend on the parts that need it!
-  #if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER) || defined (USE_PROC_DATA_DESCRIPTION_POOL)  
+  #if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TERMINAL_SERVER) || defined (USE_PROC_DATA_DESCRIPTION_POOL)
     #define USE_WORKING_SET
   #endif
 #endif
-#if defined USE_ISO_TERMINAL 
+#if defined USE_ISO_TERMINAL
   #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1
     #define _autogen_config_header1_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION1/IsoTerminalObjectSelection.inc>
     #include _autogen_config_header1_
@@ -835,7 +835,7 @@
     #define USE_VTOBJECT_polygon
     #define USE_VTOBJECT_rectangle
   #endif
-  
+
   #ifndef USE_VTOBJECT_numbervariable
     #ifdef USE_VTOBJECT_inputnumber
       #define USE_VTOBJECT_numbervariable
@@ -848,13 +848,13 @@
   #ifndef USE_VTOBJECT_stringvariable
     #ifdef USE_VTOBJECT_inputstring
       #define USE_VTOBJECT_stringvariable
-    #else 
-      #if USE_VTOBJECT_outputstring
+    #else
+      #ifdef USE_VTOBJECT_outputstring
         #define USE_VTOBJECT_stringvariable
       #endif
     #endif
   #endif
-  
+
 // e.g. #include <MaskDefinition/IsoTerminalObjectSelection.inc>
 #endif
 

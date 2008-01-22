@@ -132,6 +132,7 @@ namespace __IsoAgLib {
 
 
 /** @todo SOON remove any IsoTerminal dependant stuff from MultiSend!!! */
+#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_Retries_TPCommands 2
@@ -155,7 +156,7 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
 
   ui8_retryCount = 0; // hacked, no retry here!!!
 
-  mui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
+  mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
 
   #ifdef DEBUG_HEAP_USEAGE
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )

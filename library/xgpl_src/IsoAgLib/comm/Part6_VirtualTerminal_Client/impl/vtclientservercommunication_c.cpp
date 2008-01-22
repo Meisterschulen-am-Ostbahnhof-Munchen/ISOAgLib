@@ -1463,10 +1463,10 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 }
 
 bool
-VtClientServerCommunication_c::sendCommandForDEBUG (uint8_t* apui8_buffer, uint32_t ui32_size)
+VtClientServerCommunication_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
 {
 #ifdef DEBUG
-  INTERNAL_DEBUG_DEVICE << "Enqueued Debug-TP-bytes: " << mq_sendUpload.size() << " -> ";
+  INTERNAL_DEBUG_DEVICE << "Enqueued TP-bytes: " << mq_sendUpload.size() << " -> ";
 #endif
 
   msc_tempSendUpload.set (apui8_buffer, ui32_size);
