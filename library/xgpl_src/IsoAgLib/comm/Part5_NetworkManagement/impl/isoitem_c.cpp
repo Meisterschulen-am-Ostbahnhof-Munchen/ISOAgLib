@@ -571,7 +571,7 @@ uint8_t IsoItem_c::calc_randomWait()
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t
   @param arc_left left ServiceItem_c parameter
-  @param ab_right ISOName uint8_t right parameter
+  @param ac_right ISOName uint8_t right parameter
 */
 bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right)
 {

@@ -192,7 +192,7 @@ public:
   /**
     process a message -> the specialized/derived version of this virtual
     function is called during processing of received CAN telegrams in CanIo_c::processMsg
-    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)
+    <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
     @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processMsg();
@@ -200,7 +200,7 @@ public:
  /**
     process a message -> the specialized/derived version of this virtual
     function can be called during processing of received CAN telegrams in CanIo_c::processMsg
-    @param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)
+    <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
     @see __IsoAgLib::CanIo_c::processMsg
   */
   virtual bool processInvalidMsg();
