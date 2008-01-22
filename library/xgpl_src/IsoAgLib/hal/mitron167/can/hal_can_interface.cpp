@@ -1100,7 +1100,7 @@ int16_t can_configMsgobjLock( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab
   pause time between two messages [msec.]
   @param aui8_busNr number of the BUS to config
   @param aui8_msgobjNr number of the MsgObj to config
-  @param aui16_minSendPause minimum send pause between two sent messages [msec.]
+  @param aui16_minSend minimum send pause between two sent messages [msec.]
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number

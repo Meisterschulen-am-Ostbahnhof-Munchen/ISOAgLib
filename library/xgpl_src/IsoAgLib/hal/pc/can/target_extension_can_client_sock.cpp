@@ -440,29 +440,29 @@ int16_t chgCanObjId ( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32
 }
 /**
   lock a MsgObj to avoid further placement of messages into buffer.
-  @param rui8_busNr number of the BUS to config
-  @param rui8_msgobjNr number of the MsgObj to config
-  @param rb_doLock true==lock(default); false==unlock
+  @param aui8_busNr number of the BUS to config
+  @param aui8_msgobjNr number of the MsgObj to config
+  @param ab_doLock true==lock(default); false==unlock
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
        */
-int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
+int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock )
 {
 
   transferBuf_s s_transferBuf;
 
-  DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", rui8_busNr, rui8_msgobjNr, rb_doLock);
+  DEBUG_PRINT3("lockCanObj, bus %d, obj %d, lock %d\n", aui8_busNr, aui8_msgobjNr, ab_doLock);
 
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
+  if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
-  if (rb_doLock)
+  if (ab_doLock)
     s_transferBuf.ui16_command = COMMAND_LOCK;
   else
     s_transferBuf.ui16_command = COMMAND_UNLOCK;
 
-  s_transferBuf.s_config.ui8_bus = rui8_busNr;
-  s_transferBuf.s_config.ui8_obj = rui8_msgobjNr;
+  s_transferBuf.s_config.ui8_bus = aui8_busNr;
+  s_transferBuf.s_config.ui8_obj = aui8_msgobjNr;
 
   return send_command(&s_transferBuf, i32_commandSocket);
 
@@ -470,24 +470,24 @@ int16_t lockCanObj( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
 
 /**
        check if MsgObj is currently locked
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
+  @param aui8_busNr number of the BUS to check
+  @param aui8_msgobjNr number of the MsgObj to check
   @return true -> MsgObj is currently locked
 */
-bool getCanMsgObjLocked( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 {
 
   int16_t i16_rc;
   transferBuf_s s_transferBuf;
 
-  DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", rui8_busNr, rui8_msgobjNr);
+  DEBUG_PRINT2("getCanMsgObjLocked, bus %d, obj %d\n", aui8_busNr, aui8_msgobjNr);
 
-  if ( ( rui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
+  if ( ( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
   else {
 
     s_transferBuf.ui16_command = COMMAND_QUERYLOCK;
-    s_transferBuf.s_config.ui8_bus = rui8_busNr;
-    s_transferBuf.s_config.ui8_obj = rui8_msgobjNr;
+    s_transferBuf.s_config.ui8_bus = aui8_busNr;
+    s_transferBuf.s_config.ui8_obj = aui8_msgobjNr;
 
     i16_rc = send_command(&s_transferBuf, i32_commandSocket);
 
@@ -692,18 +692,18 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 /** @todo SOON: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
  *        this as error code. THEN change this function to use negative values as error codes
  */
-int32_t getMaxSendDelay(uint8_t /* rui8_busNr */)
+int32_t getMaxSendDelay(uint8_t /* aui8_busNr */)
 {
 #if 0
   transferBuf_s s_transferBuf;
 
-  DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", rui8_busNr);
+  DEBUG_PRINT1("getMaxSendDelay called, bus %d\n", aui8_busNr);
 
 /*  if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) return HAL_RANGE_ERR; */
 
   s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
   s_transferBuf.ui16_command = COMMAND_SEND_DELAY;
-  s_transferBuf.s_config.ui8_bus = rui8_busNr;
+  s_transferBuf.s_config.ui8_bus = aui8_busNr;
   // the other fields of the s_config struct are NOT of interest here!
 
   int i16_rc = send_command(&s_transferBuf, i32_commandSocket);

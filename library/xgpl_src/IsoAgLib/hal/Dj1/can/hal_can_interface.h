@@ -121,7 +121,7 @@ namespace __HAL
             HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
   */
   extern int16_t Can_GlobalInit  ( uint8_t aui8_busNr, uint16_t ab_baudrate, 
-              uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
+              uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
 
 
   /**
@@ -134,7 +134,7 @@ namespace __HAL
     @return HAL_NO_ERR == no error
             HAL_RANGE_ERR == wrong BUS number
   */
-  extern int16_t Can_GlobalMask ( uint8_t aui8_busNr, uint16_t ab_maskStd, 
+  extern int16_t Can_GlobalMask ( uint8_t aui8_busNr, uint16_t aui16_maskStd, 
                            uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
 
 
@@ -156,8 +156,8 @@ namespace __HAL
     class Ident_c has ident and type 11/29bit)
     @param aui8_busNr number of the BUS to config
     @param aui8_msgobjNr number of the MsgObj to config
-    @param Ident filter ident value of this MsgObj
-    @param Type  0=Std, 1=Ext, 2=Both  (Both goes to extended)
+    @param arc_ident filter ident value of this MsgObj
+    <!--@param Type  0=Std, 1=Ext, 2=Both  (Both goes to extended)-->
     @param ab_rxtx 0==RX receive; 1==TX transmit
     @return HAL_NO_ERR == no error;
             HAL_BUSY_ERR == this MsgObj is already used
@@ -173,8 +173,8 @@ namespace __HAL
     (class __IsoAgLib::Ident_c has ident and type 11/29bit)
     @param aui8_busNr number of the BUS to config
     @param aui8_msgobjNr number of the MsgObj to config
-    @param Ident filter ident value of this MsgObj
-    @param Type  0=Std, 1=Ext, 2=Both  (Both goes to extended)
+    @param arc_ident filter ident value of this MsgObj
+    <!--@param Type  0=Std, 1=Ext, 2=Both  (Both goes to extended)-->
     @return HAL_NO_ERR == no error;
             HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number

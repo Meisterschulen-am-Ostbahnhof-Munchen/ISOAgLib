@@ -134,7 +134,7 @@ namespace HAL
 
 	/** deliver the actual current of the digital output.
 		* This is UNDEFINED for ADIS - IMI
-    * @param aui8_channel channel to check
+    <!--* @param aui8_channel channel to check-->
     * @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
     */
   inline int16_t getDigoutCurrent( uint8_t /* aui8_channel */ )
@@ -143,9 +143,9 @@ namespace HAL
   }
   /** deliver the state of a digital output.
 		* This is UNDEFINED for ADIS - IMI
-    * @param aui8_channel channel to check
+    <!--* @param aui8_channel channel to check
     * @param aui16_minCurrent minimal allowed current in [mA]
-    * @param aui16_maxCurrent maximum allowed current in [mA]
+    * @param aui16_maxCurrent maximum allowed current in [mA]-->
     * @return HAL_NO_ERR, HAL_DIGOUT_OPEN, HAL_DIGOUT_SHORTCUT, HAL_DIGOUT_OVERTEMP,
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
     */

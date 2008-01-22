@@ -171,7 +171,7 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
           HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
-int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
+int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
 
 /**
   set the global masks
@@ -183,14 +183,14 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr
 */
-int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
+int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
 
 /**
   change the the send rate for one MsgObj by setting the minimum
   pause time between two messages [msec.]
   @param aui8_busNr number of the BUS to config
   @param aui8_msgobjNr number of the MsgObj to config
-  @param aui16_minSendPause minimum send pause between two sent messages [msec.]
+  @param aui16_minSend minimum send pause between two sent messages [msec.]
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number

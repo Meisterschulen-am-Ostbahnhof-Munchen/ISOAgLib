@@ -124,7 +124,7 @@ static int32_t i32_cinterfLastSuccSend[cui32_maxCanBusCnt];
 static int32_t i32_cinterfLastSuccReceive[cui32_maxCanBusCnt];
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
-void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc);
+void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc);
 /** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
 static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
 /** actual index in gwBusLoad */
@@ -312,7 +312,7 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
           HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
-int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   // init variables
   int32_t i32_now = getTime();
@@ -339,7 +339,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
 #endif
 
   // now config BUS
-  return init_can(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
+  return init_can(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
 }
 
 /**
@@ -352,10 +352,10 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr
 */
-int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   getCanBusStatus(aui8_busNr, &t_cinterfCanState);
-  int16_t i16_retVal = changeGlobalMask(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg);
+  int16_t i16_retVal = changeGlobalMask(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg);
   if (i16_retVal == HAL_WARN_ERR) i16_retVal = HAL_NO_ERR;
   return i16_retVal;
 }
@@ -467,7 +467,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr,
   pause time between two messages [msec.]
   @param aui8_busNr number of the BUS to config
   @param aui8_msgobjNr number of the MsgObj to config
-  @param aui16_minSendPause minimum send pause between two sent messages [msec.]
+  @param aui16_minSend minimum send pause between two sent messages [msec.]
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number

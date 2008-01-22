@@ -143,7 +143,7 @@ namespace __HAL
               HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
               HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
    */
-   int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
+   int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
 
    /**
       set the global masks
@@ -155,7 +155,7 @@ namespace __HAL
       @return HAL_NO_ERR == no error;
               HAL_RANGE_ERR == wrong BUS nr
    */
-   int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
+   int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg);
 
    /**
       close CAN BUS

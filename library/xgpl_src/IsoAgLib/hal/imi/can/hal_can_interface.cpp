@@ -92,7 +92,7 @@ static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 static int32_t i32_cinterfBeginBit1err[cui32_maxCanBusCnt];
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
-void updateCanBusLoad(uint8_t rui8_busNr, uint8_t rb_dlc);
+void updateCanBusLoad(uint8_t aui8_busNr, uint8_t ab_dlc);
 /** array of 100msec. timeslice conters of received and sent msg per BUS [uint8_t] */
 static uint16_t gwCinterfBusLoad[cui32_maxCanBusCnt][10];
 /** actual index in gwBusLoad */
@@ -277,7 +277,7 @@ bool can_stateGlobalWarn(uint8_t aui8_busNr)
 
 /**
   test if the CAN BUS is in OFF state
-  @param rui8_busNr number of the BUS to check (default 0)
+  @param aui8_busNr number of the BUS to check (default 0)
   @return true == CAN BUS is in OFF state, else normal operation
 */
 bool can_stateGlobalOff(uint8_t aui8_busNr)
@@ -398,7 +398,7 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
           HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
-int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   // init variables
   int32_t i32_now = get_time();
@@ -410,7 +410,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   #endif
 
   // now config BUS
-  return init_can(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
+  return init_can(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
 }
 
 /**
@@ -423,12 +423,12 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr
 */
-int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   get_can_bus_status(aui8_busNr, &t_cinterfCanState);
   // the STW BIOS init_can simply changes the global masks, and ignores the bitrate, when init_can is called for an already
   // configured CAN BUS
-  int16_t i16_retVal = init_can(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg, t_cinterfCanState.wBitrate);
+  int16_t i16_retVal = init_can(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg, t_cinterfCanState.wBitrate);
   if (i16_retVal == HAL_WARN_ERR) i16_retVal = HAL_NO_ERR;
   return i16_retVal;
 }
@@ -546,7 +546,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
   pause time between two messages [msec.]
   @param aui8_busNr number of the BUS to config
   @param aui8_msgobjNr number of the MsgObj to config
-  @param aui16_minSendPause minimum send pause between two sent messages [msec.]
+  @param aui16_minSend minimum send pause between two sent messages [msec.]
   @return HAL_NO_ERR == no error;
           HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
           HAL_RANGE_ERR == wrong BUS or MsgObj number
@@ -585,7 +585,7 @@ int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
   functions:
   * MASK_TYPE ident() -> deliver ident value
   * __IsoAgLib::Ident_c::identType_t identType() -> deliver type of ident
-  * void getData(MASK_TYPE& at_ident, uint8_t& rui8_identType,
+  * void getData(MASK_TYPE& at_ident, uint8_t& aui8_identType,
                  uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
     -> put DLC in referenced r_dlc and insert data in uint8_t string pb_data
   @param aui8_busNr number of the BUS to config
@@ -630,7 +630,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
 
 #endif
 
-// add offset 1 to rui8_msgobjNr as ESX BIOS starts counting with 1
+// add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
 

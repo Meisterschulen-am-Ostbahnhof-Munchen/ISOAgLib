@@ -200,30 +200,30 @@ namespace HAL
     (11bit, 29bit and last msg mask)
     @param aui8_busNr number of the BUS to init (default 0)
     @param ab_baudrate baudrate in [kbaud]
-    @param ab_maskStd 11bit global mask
+    @param aui16_maskStd 11bit global mask
     @param aui32_maskExt 29bit global mask
     @param aui32_maskLastmsg mask of last CAN msg
     @return HAL_NO_ERR == no error;
             C_RANGE == wrong BUS nr or wrong baudrate;
             C_WARN == BUS previously initialised - no problem if only masks had to be changed
   */
-  inline int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd,
+  inline int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd,
         uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
-    {return __HAL::can_configGlobalInit(aui8_busNr, ab_baudrate, ab_maskStd,
+    {return __HAL::can_configGlobalInit(aui8_busNr, ab_baudrate, aui16_maskStd,
         aui32_maskExt, aui32_maskLastmsg);};
 
   /**
     set the global masks
     (11bit, 29bit and last msg mask)
     @param aui8_busNr number of the BUS to config (default 0)
-    @param ab_maskStd 11bit global mask
+    @param aui16_maskStd 11bit global mask
     @param aui32_maskExt 29bit global mask
     @param aui32_maskLastmsg mask of last CAN msg
     @return HAL_NO_ERR == no error;
             C_RANGE == wrong BUS nr
   */
-  inline int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
-    {return __HAL::can_configGlobalMask(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg);};
+  inline int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+    {return __HAL::can_configGlobalMask(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg);};
 
   /**
     close CAN BUS

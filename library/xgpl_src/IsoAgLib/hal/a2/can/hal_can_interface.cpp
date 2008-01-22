@@ -428,7 +428,7 @@ bool can_stateMsgobjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
           HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
           HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
 */
-int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   // init variables
   int32_t i32_now = get_time();
@@ -450,7 +450,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
 
   // now config BUS
   //BW
-  return initCan(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
+  return initCan(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg, ab_baudrate);
 }
 
 /**
@@ -463,13 +463,13 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   @return HAL_NO_ERR == no error;
           HAL_RANGE_ERR == wrong BUS nr
 */
-int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   getCanBusStatus(aui8_busNr, &t_cinterfCanState); //BW
   // the STW BIOS init_can simply changes the global masks, and ignores the bitrate, when init_can is called for an already
   // configured CAN BUS
   //BW
-  int16_t i16_retVal = initCan(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg, t_cinterfCanState.wBitrate);
+  int16_t i16_retVal = initCan(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg, t_cinterfCanState.wBitrate);
   if (i16_retVal == HAL_WARN_ERR) i16_retVal = HAL_NO_ERR;
   return i16_retVal;
 }

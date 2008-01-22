@@ -222,9 +222,9 @@ namespace HAL
             C_RANGE == wrong BUS nr or wrong baudrate;
             C_WARN == BUS previously initialised - no problem if only masks had to be changed
   */
-  inline int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t ab_maskStd,
+  inline int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd,
         uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
-    {return __HAL::can_configGlobalInit(aui8_busNr, ab_baudrate, ab_maskStd,
+    {return __HAL::can_configGlobalInit(aui8_busNr, ab_baudrate, aui16_maskStd,
         aui32_maskExt, aui32_maskLastmsg);};
 
   /**
@@ -237,8 +237,8 @@ namespace HAL
     @return C_NO_ERR == no error;
             C_RANGE == wrong BUS nr
   */
-  inline int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t ab_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
-    {return __HAL::can_configGlobalMask(aui8_busNr, ab_maskStd, aui32_maskExt, aui32_maskLastmsg);};
+  inline int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
+    {return __HAL::can_configGlobalMask(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg);};
 
   /**
     close CAN BUS
@@ -310,7 +310,7 @@ namespace HAL
     pause time between two messages [msec.]
     @param aui8_busNr number of the BUS to config
     @param aui8_msgobjNr number of the MsgObj to config
-    @param aui16_minSendPause minimum send pause between two sent messages [msec.]
+    @param aui16_minSend minimum send pause between two sent messages [msec.]
     @return C_NO_ERR == no error;
             C_CONFIG == BUS not initialised or ident can't be changed
             C_RANGE == wrong BUS or MsgObj number
