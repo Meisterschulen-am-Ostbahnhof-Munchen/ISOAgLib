@@ -334,12 +334,12 @@ public: // methods
                   which assembles the data pool dependent on the terminal capabilities during upload
                   ( e.g. bitmap variants )
     @param ai32_pgn PGN to use for the upload
-    @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
+    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rrefen_sendSuccessNotify, ai32_pgn, apc_mss, ((apc_mss->getStreamSize() >= 1786) ? IsoETP : IsoTP)); }
+  bool sendIsoTarget (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, ((apc_mss->getStreamSize() >= 1786) ? IsoETP : IsoTP)); }
 
   /**
     send an ISO target multipacket message
@@ -348,12 +348,12 @@ public: // methods
     @param rhpb_data HUGE_MEM pointer to the data
     @param aui32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
-    @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
+    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, aui32_dataSize, rrefen_sendSuccessNotify, ai32_pgn, NULL, ((aui32_dataSize >= 1786) ? IsoETP : IsoTP)); }
+  bool sendIsoTarget (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, ((aui32_dataSize >= 1786) ? IsoETP : IsoTP)); }
 
   /**
     send an ISO broadcast multipacket message
@@ -361,27 +361,27 @@ public: // methods
     @param rhpb_data HUGE_MEM pointer to the data
     @param aui16_dataSize size of the complete message, limited to TP (1785 bytes) only!
     @param ai32_pgn PGN to use for the upload
-    @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
+    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
     @return true -> MultiSend_c was ready
   */
-  bool sendIsoBroadcast (const IsoName_c& arc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rrefen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
-  bool sendIsoBroadcast(const IsoName_c& arc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern(arc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), rrefen_sendSuccessNotify, ai32_pgn, apc_mss, IsoTPbroadcast);}
+  bool sendIsoBroadcast (const IsoName_c& arc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
+  bool sendIsoBroadcast(const IsoName_c& arc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern(arc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, IsoTPbroadcast);}
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-  bool sendIsoFastPacket (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, aui16_dataSize, rrefen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
+  bool sendIsoFastPacket (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
 
-  bool sendIsoFastPacket (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rrefen_sendSuccessNotify, ai32_pgn, apc_mss, NmeaFastPacket); }
+  bool sendIsoFastPacket (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, arc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, NmeaFastPacket); }
 
-  bool sendIsoFastPacketBroadcast (const IsoName_c& arc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rrefen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
+  bool sendIsoFastPacketBroadcast (const IsoName_c& arc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
 
-  bool sendIsoFastPacketBroadcast (const IsoName_c& arc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return sendIntern (arc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), rrefen_sendSuccessNotify, ai32_pgn, apc_mss, NmeaFastPacket); }
+  bool sendIsoFastPacketBroadcast (const IsoName_c& arc_isoNameSender, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (arc_isoNameSender, IsoName_c::IsoNameUnspecified(), NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, NmeaFastPacket); }
   #endif
 
   /**
@@ -468,12 +468,11 @@ private: // Private methods
     internal function to send a ISO target multipacket message
     @param arc_isoNameSender
     @param arc_isoNameReceiver
-    @param ab_empf dynamic member no of receiver
     @param rhpb_data HUGE_MEM pointer to the data
     @param ai32_dataSize size of the complete mask
-    @param ai32_pgn PGN to use for the upload
     @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
+    @param ai32_pgn PGN to use for the upload
     @param apc_mss allow active build of data stream parts for upload by deriving data source class
                   from IsoAgLib::MultiSendStreamer_c, which defines virtual functions to control the
                   retrieve of data to send. This is especially important for ISO_Terminal,

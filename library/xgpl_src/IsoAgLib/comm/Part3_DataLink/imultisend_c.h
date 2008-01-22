@@ -83,12 +83,12 @@ public:
                   which assembles the data pool dependent on the terminal capabilities during upload
                   ( e.g. bitmap variants )
     @param ai32_pgn PGN to use for the upload
-    @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
+    @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver, iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-  { return MultiSend_c::sendIsoTarget (arc_isoNameSender, arc_isoNameReceiver, apc_mss, ai32_pgn, rrefen_sendSuccessNotify);}
+  bool sendIsoTarget (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver, iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+  { return MultiSend_c::sendIsoTarget (arc_isoNameSender, arc_isoNameReceiver, apc_mss, ai32_pgn, rpen_sendSuccessNotify);}
 
   /**
     send a ISO target multipacket message
@@ -101,20 +101,19 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoTarget (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, ai32_dataSize, ai32_pgn, rrefen_sendSuccessNotify ); }
+  bool sendIsoTarget (const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoTarget (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify ); }
 
   /**
     send a ISO broadcast multipacket message
     @param arc_isoNameSender dynamic member no of sender
-    @param arc_isoNameReceiver dynamic member no of receiver
     @param rhpb_data HUGE_MEM pointer to the data
     @param ai32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast (const iIsoName_c& arc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rrefen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoBroadcast (arc_isoNameSender, rhpb_data, ai32_dataSize, ai32_pgn, rrefen_sendSuccessNotify); }
+  bool sendIsoBroadcast (const iIsoName_c& arc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoBroadcast (arc_isoNameSender, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify); }
 
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning(); }

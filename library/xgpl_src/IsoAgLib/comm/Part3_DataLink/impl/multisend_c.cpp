@@ -289,7 +289,7 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
   this init() function immediately sends out the first package (RTS or FpFirstFrame
   */
 void
-MultiSend_c::SendStream_c::init (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
+MultiSend_c::SendStream_c::init (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   mui32_pgn = aui32_pgn;
   if ((mui32_pgn & 0x0FF00) < 0x0F000) mui32_pgn &= 0x3FF00;
@@ -299,7 +299,7 @@ MultiSend_c::SendStream_c::init (const IsoName_c& arc_isoNameSender, const IsoNa
   mui32_dataSize = aui32_dataSize;   // initialise data for begin
   mpc_mss = apc_mss;
   men_msgType = ren_msgType;
-  mpen_sendSuccessNotify = &rrefen_sendSuccessNotify;
+  mpen_sendSuccessNotify = &rpen_sendSuccessNotify;
 
   mui32_dataBufferOffset = 0;
   mui8_sequenceNr = 0; // sequence number always start with 0, so that's okay! (for both ISO and NMEA)
@@ -486,7 +486,7 @@ MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
   @param rhpb_data HUGE_MEM pointer to the data
   @param ai32_dataSize size of the complete mask
   @param ai32_pgn PGN to use for the upload
-  @param rrefen_sendSuccessNotify -> pointer to send state var, where the current state
+  @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
           is written by MultiSend_c
   @param apc_mss allow active build of data stream parts for upload by deriving data source class
                  from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
@@ -497,7 +497,7 @@ MultiSend_c::addSendStream(const IsoName_c& arc_isoNameSender, const IsoName_c& 
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rrefen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
+MultiSend_c::sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   /// first check if new transfer can be started
   /// - is the sender correct?
@@ -522,7 +522,7 @@ MultiSend_c::sendIntern (const IsoName_c& arc_isoNameSender, const IsoName_c& ar
 
   if (pc_newSendStream)
   {
-    pc_newSendStream->init (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, ai32_dataSize, rrefen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
+    pc_newSendStream->init (arc_isoNameSender, arc_isoNameReceiver, rhpb_data, ai32_dataSize, rpen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
     // let this SendStream get sorted in now...
     calcAndSetNextTriggerTime();
     return true;

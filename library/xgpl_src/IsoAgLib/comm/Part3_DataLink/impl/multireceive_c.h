@@ -188,13 +188,15 @@ public:
   void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& arc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
 
   //  Operation: createStream
-  //! Parameter:
-  //! @param ac_streamIdent:
+  //! 
+  //! @param at_streamType
+  //! @param ac_streamIdent
+  //! @param aui32_msgSize
   Stream_c* createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent, uint32_t aui32_msgSize);
 
   //  Operation: getStream
   //! Parameter:
-  //! @param ac_streamIdent:
+  //! @param ac_streamIdent
   Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   , bool ab_fastPacket=false
@@ -269,10 +271,11 @@ private:
   CanPkgExt_c mc_data;
 
   //  Operation: getStream
-  //! Parameter:
-  //! @param ac_streamIdent:
+  //! 
+  //! @param aui8_sa
+  //! @param aui8_da
   //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
-  Stream_c* getStream(uint8_t sa, uint8_t da
+  Stream_c* getStream(uint8_t aui8_sa, uint8_t aui8_da
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   , bool ab_fastPacket
   #endif

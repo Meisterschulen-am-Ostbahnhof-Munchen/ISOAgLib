@@ -769,7 +769,9 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:
 //! ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
-//! @param ac_streamIdent:
+//! @param at_stramType
+//! @param ac_streamIdent
+//! @param uint32_msgSize
 Stream_c*
 MultiReceive_c::createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent, uint32_t aui32_msgSize)
 { // ~X2C
@@ -800,7 +802,7 @@ MultiReceive_c::createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStream
 
 // //////////////////////////////// +X2C Operation 849 : getStream (the public one)
 //! Parameter:
-//! @param ac_streamIdent:
+//! @param ac_streamIdent
 Stream_c*
 MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
                           #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -831,10 +833,10 @@ MultiReceive_c::getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
 
 /// Operation: getStream (private!)
 ///
-/// @param sa source address
-/// @param da destination address
+/// @param aui8_sa source address
+/// @param aui8_da destination address
 /// @return NULL for "doesn't exist", otherwise valid "DEF_Stream_c_IMPL*"
-Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
+Stream_c* MultiReceive_c::getStream(uint8_t aui8_sa, uint8_t aui8_da
                                     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                     , bool ab_fastPacket
                                     #endif
@@ -844,9 +846,9 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
   while (i_list_streams != mlist_streams.end()) {
     DEF_Stream_c_IMPL& curStream = *i_list_streams;
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-    if ((curStream.getIdent().matchSaDa (sa, da)) && (ab_fastPacket == (curStream.getStreamType() == StreamFastPacket)))
+    if ((curStream.getIdent().matchSaDa (aui8_sa, aui8_da)) && (ab_fastPacket == (curStream.getStreamType() == StreamFastPacket)))
     #else
-    if (curStream.getIdent().matchSaDa (sa, da))
+    if (curStream.getIdent().matchSaDa (aui8_sa, aui8_da))
     #endif
     {
       if (curStream.getStreamingState() == StreamFinished)
@@ -875,7 +877,7 @@ Stream_c* MultiReceive_c::getStream(uint8_t sa, uint8_t da
 
 // //////////////////////////////// +X2C Operation : removeStream
 //! Parameter:
-//! @param apc_stream:
+//! @param apc_stream
 //! Only removes the stream from list, won't call any clients or alike...
 void
 MultiReceive_c::removeStream(Stream_c* apc_stream)
@@ -1138,7 +1140,8 @@ MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* apc_stream)
 
 // //////////////////////////////// +X2C Operation : sendConnAbort
 //! Parameter:
-//! @param apc_stream:
+//! @param at_streamType stream type
+//! @param ac_rsi receive stream identifier
 void
 MultiReceive_c::sendConnAbort(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_rsi)
 { // ~X2C
@@ -1274,7 +1277,7 @@ MultiReceive_c::close( void )
 
 //  Operation: getClient
 //! Parameter:
-//! @param ac_streamIdent:
+//! @param ac_streamIdent
 //! @return NULL for "doesn't exist", otherwise valid "CanCustomer_c*"
 CanCustomer_c*
 MultiReceive_c::getClient (IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent)
