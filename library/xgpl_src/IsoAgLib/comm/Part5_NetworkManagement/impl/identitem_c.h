@@ -203,7 +203,7 @@ public: // methods
       @param ab_func              function code of the member (25 = network interconnect)
       @param aui16_manufCode      11bit manufactor code
       @param aui32_serNo          21bit serial number
-      @param aui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
+      @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
                                   SA for self conf ISO device) (default 254 for no special wish)
       @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
                                   (default 0xFFFF for NO EEPROM store)
@@ -219,7 +219,7 @@ public: // methods
     */
   void init(
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t ab_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
+    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
     #ifdef USE_WORKING_SET
     int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL,
     #endif

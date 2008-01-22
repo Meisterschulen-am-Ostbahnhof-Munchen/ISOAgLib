@@ -129,7 +129,7 @@ public:
     @param arc_src reference to source BaseItem_c to copy values from
     @return reference to the source BaseItem_c instance for assign chains like "base1 = base2 = base3;"
   */
-  BaseItem_c& operator=(const BaseItem_c& src);
+   BaseItem_c& operator=(const BaseItem_c& arc_src);
 
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
@@ -173,7 +173,7 @@ public:
   /**
     check if given time intervall is lasted
     @param aui16_timeInterval time intervall in msec
-    @param ai32_time optional timestamp in [msec]
+    <!--@param ai32_time optional timestamp in [msec]-->
     @return true -> time last timestamp older than intervall
   */
   bool checkTime(uint16_t aui16_timeInterval) const;

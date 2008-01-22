@@ -1,4 +1,4 @@
-/***************************************************************************
+*/**************************************************************************
                           iidentitem_c.h  - object for managing identity/ies
                                           of the ECU
                              -------------------
@@ -151,7 +151,7 @@ public:
     @param ab_func              function code of the member (25 = network interconnect)
     @param aui16_manufCode      11bit manufactor code
     @param aui32_serNo          21bit serial number
-    @param ab_preferredSa       preselected source adress (SA) of the ISO item (fixed SA or last time
+    @param aui8_preferredSa       preselected source adress (SA) of the ISO item (fixed SA or last time
                                 SA for self conf ISO device) (default 254 for free self-conf)
     @param aui16_eepromAdr    EEPROM adress, where the used source adress is stored for self_conf members
                                 (default 0xFFFF for NO EEPROM store)
@@ -167,14 +167,14 @@ public:
   */
   iIdentItem_c (
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func,
-    uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF,
+    uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t aui8_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF,
     uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
     #ifdef USE_WORKING_SET
     int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL,
     #endif
     int ai_singletonVecKey = 0)
     : IdentItem_c (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
-                   ab_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
+                   aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
                  #ifdef USE_WORKING_SET
                    ai8_slaveCount, apc_slaveIsoNameList,
                  #endif
@@ -203,13 +203,13 @@ public:
     */
   void init(
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t ab_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
+    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
     #ifdef USE_WORKING_SET
     int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL,
     #endif
     int ai_singletonVecKey = 0)
   { IdentItem_c::init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode,
-                       aui32_serNo, ab_preferredSa, aui16_saEepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
+                       aui32_serNo, aui8_preferredSa, aui16_saEepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
                        #ifdef USE_WORKING_SET
                        ai8_slaveCount, apc_slaveIsoNameList,
                        #endif
