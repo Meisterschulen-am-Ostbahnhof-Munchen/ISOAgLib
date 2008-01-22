@@ -170,7 +170,7 @@ void CanPkg_c::set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len
 /**
   set data with size bytes from source array;
   if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered
-  @param abp_data pointer to source data uint8_t array
+  @param apb_data pointer to source data uint8_t array
   @param aui8_len amount/len of the source data string
 */
 void CanPkg_c::setDataFromString(const uint8_t* apb_data, uint8_t aui8_len)
@@ -188,7 +188,7 @@ void CanPkg_c::setDataFromString(const uint8_t* apb_data, uint8_t aui8_len)
   if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered.
   this variant of the setDataFromString allows to set the CAN data from specified offset position onwards.
   @param aui8_targetPositionOffset
-  @param abp_data pointer to source data uint8_t array
+  @param apb_data pointer to source data uint8_t array
   @param aui8_len amount/len of the source data string
 */
 void CanPkg_c::setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_t* apb_data, uint8_t aui8_len)
