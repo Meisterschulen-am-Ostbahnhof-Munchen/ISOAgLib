@@ -73,7 +73,7 @@ typedef struct   {
 /* --- GLOBAL VARIABLES --- */
 /* --- PROTOTYPEN --- */
 int16_t  setPwmFreq(uint8_t bOutputGroup, uint32_t dwFrequency);  /* define the frequency of the pwm signal */
-int16_t  setDigout(uint8_t bOutputNo, uint16_t wPWMValue);          /* set pwm value 0 ... 100 %*/
+int16_t  setDigout(uint8_t aui8_channel, uint16_t wPWMValue);          /* set pwm value 0 ... 100 %*/
 
 
   /**

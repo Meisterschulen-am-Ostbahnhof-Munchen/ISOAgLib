@@ -54,7 +54,8 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file supplementary_driver/hal/pc/sensor/sensor.h
+/** \file
+ * 
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.

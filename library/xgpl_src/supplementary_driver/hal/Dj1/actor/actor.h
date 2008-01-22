@@ -53,7 +53,8 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file supplementary_driver/hal/Dj1/actor/actor.h
+/** \file
+ * 
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -107,14 +108,14 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-      @param bOutput PWM output channel [0..1]
+      @param bOutputChannel PWM output channel [0..1]
       @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
       @return error state (HAL_NO_ERR == o.k.; HAL_RANGE_ERR == wrong channel OR frequency)
   */
-  inline int16_t setPwmFreq ( uint8_t bOutput, uint32_t dwFrequency )
+  inline int16_t setPwmFreq ( uint8_t bOutputChannel, uint32_t dwFrequency )
   {
-//jtm    return __HAL::set_pwm_freq(bOutput, dwFrequency);
-    return ( (__HAL::DjBios_OutSetFreq ( bOutput, dwFrequency ) == __HAL::BIOS_OUT_NO_ERR) ? HAL_NO_ERR : HAL_RANGE_ERR );
+//jtm    return __HAL::set_pwm_freq(bOutputChannel, dwFrequency);
+    return ( (__HAL::DjBios_OutSetFreq ( bOutputChannel, dwFrequency ) == __HAL::BIOS_OUT_NO_ERR) ? HAL_NO_ERR : HAL_RANGE_ERR );
 //    return ( HAL_NO_ERR );
   }
 
@@ -273,7 +274,8 @@ namespace HAL
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file supplementary_driver/hal/Dj1/actor/actor.h
+/** \file
+ * 
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -327,14 +329,14 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-      @param bOutput PWM output channel [0..1]
+      @param bOutputChannel PWM output channel [0..1]
       @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
       @return error state (HAL_NO_ERR == o.k.; HAL_RANGE_ERR == wrong channel OR frequency)
   */
-  inline int16_t setPwmFreq ( uint8_t bOutput, uint32_t dwFrequency )
+  inline int16_t setPwmFreq ( uint8_t bOutputChannel, uint32_t dwFrequency )
   {
-//jtm    return __HAL::set_pwm_freq(bOutput, dwFrequency);
-    return ( (__HAL::DjBios_OutSetFreq ( bOutput, dwFrequency ) == __HAL::BIOS_OUT_NO_ERR) ? HAL_NO_ERR : HAL_RANGE_ERR );
+//jtm    return __HAL::set_pwm_freq(bOutputChannel, dwFrequency);
+    return ( (__HAL::DjBios_OutSetFreq ( bOutputChannel, dwFrequency ) == __HAL::BIOS_OUT_NO_ERR) ? HAL_NO_ERR : HAL_RANGE_ERR );
 //    return ( HAL_NO_ERR );
   }
 

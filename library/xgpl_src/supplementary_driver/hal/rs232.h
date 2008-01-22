@@ -54,7 +54,8 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file supplementary_driver/hal/rs232.h
+/** \file
+ * 
   * include dependent on used target (defined in
 	  IsoAgLib/isoaglib_config.h) the suitable HAL
 		specific header for RS232 communication.

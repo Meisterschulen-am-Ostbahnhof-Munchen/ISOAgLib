@@ -54,7 +54,8 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file supplementary_driver/hal/datastreams.h
+/** \file
+ * 
   * include dependent on used target (defined in
 	  IsoAgLib/isoaglib_config.h) the suitable HAL
 		specific header for datastreams output control.

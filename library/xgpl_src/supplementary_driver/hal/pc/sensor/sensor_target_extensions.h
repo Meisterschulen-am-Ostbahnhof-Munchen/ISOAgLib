@@ -53,7 +53,8 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file supplementary_driver/implementation/__HAL/bios_pc/HwSensor/bios_extender.h
+/** \file
+ * 
  * A module biosExtenders should be used
  * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of

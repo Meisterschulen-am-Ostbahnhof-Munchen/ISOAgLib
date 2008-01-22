@@ -55,7 +55,8 @@
  ***************************************************************************/
 
 /* ********************************************************** */
-/** \file supplementary_driver/hal/c2c/actor/actor_target_extensions.cpp
+/** \file
+ * 
  * A module targetExtensions should be used
  * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
