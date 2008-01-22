@@ -56,8 +56,7 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file
- * 
+/** \file supplementary_driver/hal/c2c/actor/actor.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -127,14 +126,14 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutputChannel PWM output channel [OUT1..OUT2]
+    @param bOutput PWM output channel [OUT1..OUT2]
     @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */
-  inline int16_t setPwmFreq(uint8_t bOutputChannel, uint32_t dwFrequency)
+  inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
   // C2C BIOS lets PWM channels OUT1, OUT2 configure individual PWM FREQ
     {
-    return __HAL::set_pwm_freq(bOutputChannel, dwFrequency);
+    return __HAL::set_pwm_freq(bOutput, dwFrequency);
 	}
 
   /**

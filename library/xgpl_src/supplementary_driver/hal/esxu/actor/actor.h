@@ -56,8 +56,7 @@
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file
- * 
+/** \file supplementary_driver/hal/esxu/actor/actor.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -134,19 +133,19 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutputChannel PWM output channel [OUT1..OUT2]
+    @param bOutput PWM output channel [OUT1..OUT2]
     @param dwFrequency PWM frequency in mHz [5x10^3..1x10^8]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */
-  inline int16_t setPwmFreq(uint8_t bOutputChannel, uint32_t dwFrequency)
+  inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
   // ESXu BIOS lets PWM channels OUT1, OUT2 configure individual PWM FREQ
     {
-    int16_t retval = __HAL::set_pwm_freq(bOutputChannel, dwFrequency);
+    int16_t retval = __HAL::set_pwm_freq(bOutput, dwFrequency);
 
 #if defined( DEBUG_HAL )
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "set_pwm_freq( "
-<< (uint16_t)bOutputChannel << ", "
+<< (uint16_t)bOutput << ", "
 << (uint16_t)dwFrequency
 << " ) returns " << retval << "\r";
 #endif
@@ -203,8 +202,6 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 	over the mask out.
 	If the bit is not set in the mask, the output remains unchanged.
 
-    @param wOutputMask
-    @param wDigitalValue
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t setDigoutMask(uint16_t wOutputMask, uint16_t wDigitalValue)
