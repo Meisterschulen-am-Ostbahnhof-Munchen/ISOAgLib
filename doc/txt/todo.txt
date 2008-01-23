@@ -35,4 +35,7 @@ help contributing for their implementation with source code.
 	- Extend tutorial examples<br>
 		<b>Ongoing process when need for some more practical demonstration is detected<br>
 			( Please have a close look on all <a class="el" href="examples.html">tutorial examples</a> before requesting further examples )</b>
+
+See also the generated \ref todo from the library code.
+
 */
