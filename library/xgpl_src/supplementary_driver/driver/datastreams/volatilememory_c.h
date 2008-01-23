@@ -99,8 +99,8 @@ public:
 
   //  Operation: VolatileMemory_c
   VolatileMemory_c(const uint8_t* ap_volatileMemory) : p_volatileMemory ( ap_volatileMemory ) {};
-  
-  VolatileMemory_c(const VolatileMemory_c& arc_src) : StreamInput_c (), p_volatileMemory ( arc_src.p_volatileMemory ) {};
+
+  VolatileMemory_c(const VolatileMemory_c& arcc_src) : StreamInput_c (), p_volatileMemory ( arcc_src.p_volatileMemory ) {};
 
   //  Operation: operator >>
   virtual StreamInput_c& operator >> (uint8_t& ui8_data);
@@ -108,7 +108,7 @@ public:
   //  Operation: eof
   virtual bool eof() const;
 
-  const VolatileMemory_c& operator = (const VolatileMemory_c& arc_src);
+  const VolatileMemory_c& operator = (const VolatileMemory_c& arcc_src);
 
 protected:
 

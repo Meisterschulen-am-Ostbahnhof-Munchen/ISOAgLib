@@ -177,17 +177,17 @@ protected:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    @param arcc_src source
   */
-  AnalogIRangeCheck_c(const AnalogIRangeCheck_c& arc_src) : AnalogI_c(arc_src) {};
+  AnalogIRangeCheck_c(const AnalogIRangeCheck_c& arcc_src) : AnalogI_c(arcc_src) {};
   /**
     HIDDEN! assignment for AnalogIRangeCheck_c
     NEVER assign a AnalogIRangeCheck_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!--@param arc_src source-->
+    <!--@param arcc_src source-->
   */
-  AnalogIRangeCheck_c& operator=(const AnalogIRangeCheck_c& /* arc_src */){ return *this;};
+  AnalogIRangeCheck_c& operator=(const AnalogIRangeCheck_c& /* arcc_src */){ return *this;};
 private:
   /** min range limit */
   uint16_t ui16_minValid;

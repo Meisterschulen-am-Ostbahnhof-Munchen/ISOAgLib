@@ -199,17 +199,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arc_src source
+    @param arcc_src source
   */
-  DigitalO_c(const DigitalO_c& arc_src) : ActorBase_c(arc_src) {};
+  DigitalO_c(const DigitalO_c& arcc_src) : ActorBase_c(arcc_src) {};
   /**
     HIDDEN! assignment for Digital_O
     NEVER assign a DigitalO_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!--@param arc_src source-->
+    <!--@param arcc_src source-->
   */
-  DigitalO_c& operator=(const DigitalO_c& /*arc_src*/){return *this;};
+  DigitalO_c& operator=(const DigitalO_c& /*arcc_src*/){return *this;};
 
   uint16_t ui16_value;
   /** minimal allowed current in active state */
