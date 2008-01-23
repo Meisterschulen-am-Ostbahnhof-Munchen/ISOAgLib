@@ -92,11 +92,11 @@ iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 { }
 
 /** copy constructor which sets the error value to the err value of the source */
-iLibErr_c::iLibErr_c(const iLibErr_c& arc_src)
+iLibErr_c::iLibErr_c(const iLibErr_c& arcc_src)
 {
   for (int i=0; i<AllErrLocations; i++)
   { // copy all IsoaglibBitset for all locations!
-    errTypeAtLoc [i] = arc_src.errTypeAtLoc [i];
+    errTypeAtLoc [i] = arcc_src.errTypeAtLoc [i];
   }
 }
 

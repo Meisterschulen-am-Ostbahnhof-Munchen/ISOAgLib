@@ -346,8 +346,8 @@ class Flexible8ByteString_c;
 class Flexible4ByteString_c {
 
  public:
-  Flexible4ByteString_c( const Flexible4ByteString_c& arc_src )
-  {uint32[0] = arc_src.uint32[0];};
+  Flexible4ByteString_c( const Flexible4ByteString_c& arcc_src )
+  {uint32[0] = arcc_src.uint32[0];};
 
   /**
     simply set a Flexible4ByteString_c at a specific value index with.
@@ -385,50 +385,50 @@ class Flexible4ByteString_c {
 
 
   /** assignment */
-  const Flexible4ByteString_c& operator=( const Flexible4ByteString_c& arc_src )
-  { uint32[0] = arc_src.uint32[0]; return *this; };
+  const Flexible4ByteString_c& operator=( const Flexible4ByteString_c& arcc_src )
+  { uint32[0] = arcc_src.uint32[0]; return *this; };
   /** compare for EQUAL */
-  bool operator==( const Flexible4ByteString_c& arc_cmp ) const
+  bool operator==( const Flexible4ByteString_c& arcc_cmp ) const
   { // use inline implementation for this case
-    return ( uint32[0] == arc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] == arcc_cmp.uint32[0] )?true:false;
   };
   /** compare for DIFFERENT */
-  bool operator!=( const Flexible4ByteString_c& arc_cmp ) const
+  bool operator!=( const Flexible4ByteString_c& arcc_cmp ) const
   {
-    return ( uint32[0] != arc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] != arcc_cmp.uint32[0] )?true:false;
   };
 
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   /** compare for LOWER */
-  bool operator<( const Flexible4ByteString_c& arc_cmp ) const
+  bool operator<( const Flexible4ByteString_c& arcc_cmp ) const
   { // use inline implementation for this case
-    return ( uint32[0] < arc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] < arcc_cmp.uint32[0] )?true:false;
   };
   /** compare for LARGER */
-  bool operator>( const Flexible4ByteString_c& arc_cmp ) const
+  bool operator>( const Flexible4ByteString_c& arcc_cmp ) const
   { // use inline implementation for this case
-    return ( uint32[0] > arc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] > arcc_cmp.uint32[0] )?true:false;
   };
   /** compare with:
     @return 0 == equal;
            +1 == this item has higher value than par;
            -1 == this item has lower value than par */
-  int compare( const Flexible4ByteString_c& arc_cmp ) const
+  int compare( const Flexible4ByteString_c& arcc_cmp ) const
   {
-    if      (uint32[0] < arc_cmp.uint32[0]) return -1;
-    else if (uint32[0] > arc_cmp.uint32[0]) return +1;
+    if      (uint32[0] < arcc_cmp.uint32[0]) return -1;
+    else if (uint32[0] > arcc_cmp.uint32[0]) return +1;
     return 0;
   };
   #else
   /** compare for LOWER */
-  bool operator<( const Flexible4ByteString_c& arc_cmp ) const;
+  bool operator<( const Flexible4ByteString_c& arcc_cmp ) const;
   /** compare for LARGER */
-  bool operator>( const Flexible4ByteString_c& arc_cmp ) const;
+  bool operator>( const Flexible4ByteString_c& arcc_cmp ) const;
   /** compare with:
     @return 0 == equal;
            +1 == this item has higher value than par;
            -1 == this item has lower value than par */
-  int compare( const Flexible4ByteString_c& arc_cmp ) const;
+  int compare( const Flexible4ByteString_c& arcc_cmp ) const;
   #endif
 
 
@@ -607,7 +607,7 @@ class Flexible4ByteString_c {
 class Flexible8ByteString_c {
 
  public:
-  Flexible8ByteString_c( const Flexible8ByteString_c& arc_src );
+  Flexible8ByteString_c( const Flexible8ByteString_c& arcc_src );
   /** constructor for INIT directly from a flexible positioned Stream.
       IMPORTANT: this works also when the string starts at ODD position!
   */
@@ -646,59 +646,59 @@ class Flexible8ByteString_c {
 
 #if (SIZEOF_INT >= 4) && !defined( __IAR_SYSTEMS_ICC__ )
   /** assignment */
-  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& arc_src )
-  { uint64[0] = arc_src.uint64[0]; return *this; };
+  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& arcc_src )
+  { uint64[0] = arcc_src.uint64[0]; return *this; };
   /** compare for EQUAL */
-  bool operator==( const Flexible8ByteString_c& arc_cmp ) const
+  bool operator==( const Flexible8ByteString_c& arcc_cmp ) const
   { // use inline implementation for this case
-    return ( uint64[0] == arc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] == arcc_cmp.uint64[0] )?true:false;
   };
   /** compare for DIFFERENT */
-  bool operator!=( const Flexible8ByteString_c& arc_cmp ) const
+  bool operator!=( const Flexible8ByteString_c& arcc_cmp ) const
   {
-    return ( uint64[0] != arc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] != arcc_cmp.uint64[0] )?true:false;
   };
   #else
   /** assignment */
-  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& arc_src );
+  const Flexible8ByteString_c& operator=( const Flexible8ByteString_c& arcc_src );
   /** compare for EQUAL */
-  bool operator==( const Flexible8ByteString_c& arc_cmp ) const;
+  bool operator==( const Flexible8ByteString_c& arcc_cmp ) const;
   /** compare for DIFFERENT */
-  bool operator!=( const Flexible8ByteString_c& arc_cmp ) const;
+  bool operator!=( const Flexible8ByteString_c& arcc_cmp ) const;
   #endif
 
 
   #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && SIZEOF_INT >= 4
   /** compare for LOWER */
-  bool operator<( const Flexible8ByteString_c& arc_cmp ) const
+  bool operator<( const Flexible8ByteString_c& arcc_cmp ) const
   { // use inline implementation for this case
-    return ( uint64[0] < arc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] < arcc_cmp.uint64[0] )?true:false;
   };
   /** compare for LARGER */
-  bool operator>( const Flexible8ByteString_c& arc_cmp ) const
+  bool operator>( const Flexible8ByteString_c& arcc_cmp ) const
   { // use inline implementation for this case
-    return ( uint64[0] > arc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] > arcc_cmp.uint64[0] )?true:false;
   };
   /** compare with:
     @return 0 == equal;
            +1 == this item has higher value than par;
            -1 == this item has lower value than par */
-  int compare( const Flexible8ByteString_c& arc_cmp ) const
+  int compare( const Flexible8ByteString_c& arcc_cmp ) const
   {
-    if      (uint64[0] < arc_cmp.uint64[0]) return -1;
-    else if (uint64[0] > arc_cmp.uint64[0]) return +1;
+    if      (uint64[0] < arcc_cmp.uint64[0]) return -1;
+    else if (uint64[0] > arcc_cmp.uint64[0]) return +1;
     return 0;
   };
   #else
   /** compare for LOWER */
-  bool operator<( const Flexible8ByteString_c& arc_cmp ) const;
+  bool operator<( const Flexible8ByteString_c& arcc_cmp ) const;
   /** compare for LARGER */
-  bool operator>( const Flexible8ByteString_c& arc_cmp ) const;
+  bool operator>( const Flexible8ByteString_c& arcc_cmp ) const;
   /** compare with:
     @return 0 == equal;
            +1 == this item has higher value than par;
            -1 == this item has lower value than par */
-  int compare( const Flexible8ByteString_c& arc_cmp ) const;
+  int compare( const Flexible8ByteString_c& arcc_cmp ) const;
   #endif
 
   /**

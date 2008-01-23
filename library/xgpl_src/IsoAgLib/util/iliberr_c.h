@@ -271,7 +271,7 @@ private:
   iLibErr_c();
 
   /** copy constructor which sets the error value to the err value of the source */
-  iLibErr_c(const iLibErr_c& arc_src);
+  iLibErr_c(const iLibErr_c& arcc_src);
 
   /**
     initialize directly after the singleton instance is created.
