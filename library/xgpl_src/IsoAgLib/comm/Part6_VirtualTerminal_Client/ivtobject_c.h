@@ -493,7 +493,7 @@ public:
   virtual void setOriginSKM(bool b_SKM);
 
   //  Operation: setOriginBTN
-  //! @param b_btn:
+  //! @param p_btn:
   virtual void setOriginBTN(iVtObjectButton_c* p_btn);
 
   void setClientID (uint8_t ui8_clientID) { s_properties.clientId = ui8_clientID; }
