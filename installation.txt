@@ -111,19 +111,48 @@ This IDE has some important features:
 	- (optionally further documentation or utility packages)
 
 
-\subsection CompTasking Tasking for Embedded Targets
+\subsection CompTasking TASKING for Embedded Targets
+<a href="http://www.tasking.com/">TASKING</a> provides cross compilers for different target platforms that can be used 
+for \isoaglib appliations.
 
-The Tasking Compiler of version >= 7.56 is handling C++ in a sufficient manner and provides
-a conformant STL (important: the STL version 8.0 consumed too much memory - try one of the newer versions, as Tasking
-introduced some compiler switches to avoid code bloat by STLport - just ask Tasking for the 7.56 STL version, if the ROM overhead
-is still too big; the overhead was caused by the change from
-and adapted SGI STL to the STLport system; while SGI STL uses templates only, the STLport defines several STL functions
-as functions which can be compiled to a linkeable library; this approach is fine, as long as the target linker is able
-to select just the needed functions from the STLport libraries; at least Tasking Compiler Version 8.0 included a lot too much
-object code into the firmware, so that the overhead was not acceptible).
+The TASKING compiler of version >= 7.56 is handling C++ in a sufficient manner and provides a conformant STL.
+However the 8.0 version consumes too much memory with the default settings for the STLport library
+(try one of the newer versions, as TASKING introduced some compiler switches to avoid code bloat by STLport - 
+just ask TASKING for the 7.56 STL version, if the ROM overhead is still too big; 
+the overhead was caused by the change from and adapted SGI STL to the STLport system; 
+while SGI STL uses templates only, the STLport defines several STL functions as functions which can be compiled to a 
+linkeable library; this approach is fine, as long as the target linker is able to select just the needed functions from 
+the STLport libraries; at least TASKING Compiler version 8.0 included a lot too much object code into the firmware, 
+so that the overhead was not acceptible).
 
-\isoaglib also provides some project files for the tutorials which can be used by the
-Tasking compiler.
+To reduce this memory overhead it is highly recommended not to include the STLport <tt>IOSTREAMS</tt> part.
+Therefore a few defines have to be set for the compiling process. Those are:
+- <tt>_STLP_USE_NO_IOSTREAMS</tt>
+- <tt>_STLP_NO_NEW_IOSTREAMS</tt>
+- <tt>_STLP_NO_OWN_IOSTREAMS</tt>
+- <tt>_STLP_HAS_NO_NEW_IOSTREAMS</tt>
+
+<b>Please note:</b>
+- STW recommends to stick with the 7.56 version futher on (because of TÜV certification)
+- if you do not rely on TÜV certification it is safe to use the 8.x version (with the above settings)
+- it is not recommended to use the latest version of the TASKING VX-Toolchain, because it uses a <i>completely different 
+  project file format</i> which has not yet been tested properly with \isoaglib.
+
+<!--The following table shows a report with the data of RAM/ROM requests from the tutorial 3_0
+with different compilation options.
+<table>
+<tr><th>compiler option        </th> <th>     </th> <th>RAM  </th> <th>ROM   </th> </tr>
+<tr><td>without STLport library</td> <td>     </td> <td>69349</td> <td>308359</td> </tr>
+<tr><td>with STLport           </td> <td>test1</td> <td>59965</td> <td>540422</td> </tr>
+<tr><td>                       </td> <td>test2</td> <td>59965</td> <td>540422</td> </tr>
+<tr><td>                       </td> <td>test3</td> <td>59977</td> <td>563186</td> </tr>
+<tr><td>with STLport optional  </td> <td>test1</td> <td>59225</td> <td>490777</td> </tr>
+<tr><td>                       </td> <td>test2</td> <td>59225</td> <td>490777</td> </tr>
+<tr><td>                       </td> <td>test3</td> <td>59237</td> <td>543541</td> </tr>
+</table>
+-->
+
+\isoaglib also provides some project files for the tutorials which can be used by the TASKING compiler.
 
 \subsubsection TaskingHeapsize Set Heapsize in Linker/Locator Specification (ILO file)
 The \isoaglib stores some information in dynamic lists, so that you need some heap memory.
@@ -290,7 +319,7 @@ The script parses the given project feature set selection and configuring file a
 	<li>Linux: <tt>make</tt> in the directory <tt>compiler_projects/kdevelop_make/</tt></li>
 	<li>Win32: Dev-C++ in the directory <tt>compiler_projects/Dev-C++/</tt></li>
 	<li>Win32: Visual Studio VC6 in the directory <tt>compiler_projects/VC6/</tt></li>
-	<li>Win32 for Embedded: Tasking EDE in the directory <tt>compiler_projects/EDE/</tt></li>
+	<li>Win32 for Embedded: TASKING EDE in the directory <tt>compiler_projects/EDE/</tt></li>
 	</ul></li>
 <li>tells you which DEFINES must be set for compile, if none of the automatically created project files will be used.</li>
 </ol>
@@ -433,12 +462,12 @@ provided - and can be selected by the following configuration variables.
 \subsubsection ConfBuildLinux Build System Configuration for Linux
 The update_makefile.sh script should find all needed helper programs on its own.
 
-\subsubsection ConfBuildEde Build System Configuration for Cross Compilers (like Tasking EDE)
+\subsubsection ConfBuildEde Build System Configuration for Cross Compilers (like TASKING EDE)
 Configuration options typical for embedded project (these are used for target systems like "esx", "imi", "pm167")
 where the system libraries aren't placed in standard directories (UNIX/Linux has standard directories <tt>/usr/include</tt>, <tt>/usr/local/include</tt>, <tt>/usr/lib</tt>
 and <tt>/usr/local/lib</tt> -> \isoaglib awaits the libraries in this directories for UNIX/Linux).<br>
 These settings are at the moment only used for project generation of
-	- Tasking EDE
+	- TASKING EDE
 
 The following config variables should match the need of most cross compilers:
 	- <tt>USE_EMBED_COMPILER_DIR</tt> path to the embedded compiler
@@ -893,7 +922,7 @@ PRJ_RS232_OVER_CAN=1
 
 
 # ###############################################################
-# Build System Configuration for Cross Compilers ( like Tasking EDE )
+# Build System Configuration for Cross Compilers ( like TASKING EDE )
 # ###############################################################
 
 # #############################################
@@ -907,7 +936,7 @@ PRJ_RS232_OVER_CAN=1
 # in this directories for UNIX/LINUX )
 # These settings are at the moment only used for project
 # generation of
-# + Tasking EDE
+# + TASKING EDE
 #
 # But this could be extended to other compilers.
 # These config settings allow to create project files
@@ -1046,7 +1075,7 @@ installation afford with any make or manual install (see \ref InstallDevCpp).
 In case you still want to use Visual Studio, then please look at the manuals on the project webpage.
 
 (Remark: As this program is only running on development PC, the compiler needn't be able to generate
-  code for embedded platforms -> Tasking not needed for this on Win32)
+  code for embedded platforms -> TASKING not needed for this on Win32)
 
 \subsection InstallXerces Install XML Parser Library Xerces of the Apache Foundation
 
