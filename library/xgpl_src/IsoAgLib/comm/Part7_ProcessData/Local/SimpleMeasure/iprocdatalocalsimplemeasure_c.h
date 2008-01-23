@@ -136,7 +136,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     @param aui16_element (default:0xFFFF)
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -160,7 +160,7 @@ public:
   */
   iProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                 uint16_t aui16_element = 0xFFFF,
-                                const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+                                const iIsoName_c& arcc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                                 const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
                                 uint16_t aui16_eepromAdr = 0xFFFF,
@@ -168,7 +168,7 @@ public:
                                 ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                                 int ai_singletonVecKey = 0
   ) : ProcDataLocalSimpleMeasure_c(ps_elementDDI, aui16_element,
-                                   ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
+                                   arcc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                    aui16_eepromAdr,
 #endif
@@ -185,7 +185,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -209,7 +209,7 @@ public:
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t aui16_element,
-            const iIsoName_c& ac_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+            const iIsoName_c& arcc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
             const iIsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -219,7 +219,7 @@ public:
             int ai_singletonVecKey = 0
             )
   {ProcDataLocalSimpleMeasure_c::init(ps_elementDDI, aui16_element,
-                                      ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
+                                      arcc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                       aui16_eepromAdr,
 #endif

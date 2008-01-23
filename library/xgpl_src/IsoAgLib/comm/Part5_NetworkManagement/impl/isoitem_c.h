@@ -234,13 +234,13 @@ public:
 
   /** set all element data with one call
     @param ai32_time creation time of this item instance
-    @param ac_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
+    @param arcc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
     @param aui8_nr number of this item
     @param ab_status state of this ident (off, claimed address, ...)
     @param aui16_saEepromAdr EEPROM adress to store actual SA -> next boot with same adr
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8_nr,
+  void set(int32_t ai32_time, const IsoName_c& arcc_isoName, uint8_t aui8_nr,
            itemState_t ren_status = IState_c::Active, int riSingletonKey = 0 );
 
   /** this sets the back-reference to the associated IdentItem if this is a LOCAL Item!
@@ -249,9 +249,9 @@ public:
   void setIdentItem (IdentItem_c& arcc_identItem) { mpc_identItem = &arcc_identItem; }
 
   /** set ISOName code of this item
-    @param ac_isoName ISOName
+    @param arcc_isoName ISOName
   */
-  void setISOName(const IsoName_c& ac_isoName) {mc_isoName = ac_isoName;}
+  void setISOName(const IsoName_c& arcc_isoName) {mc_isoName = arcc_isoName;}
 
   /** deliver ISOName code of this item
     @return ISOName

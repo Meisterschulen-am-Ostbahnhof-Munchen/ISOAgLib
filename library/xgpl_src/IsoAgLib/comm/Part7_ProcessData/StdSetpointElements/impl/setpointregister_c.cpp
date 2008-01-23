@@ -90,7 +90,7 @@
 namespace __IsoAgLib {
 /**
   initialise this SetpointRegister_c to a well defined starting condition
-  @param ac_isoName device key of commander of this setpoint register set
+  @param arcc_isoName device key of commander of this setpoint register set
   @param ai32_exact exact setpoint value
   @param ai32_min minimum setpoint value
   @param ai32_max maximum setpoint value
@@ -99,7 +99,7 @@ namespace __IsoAgLib {
   @param ab_master true -> this setpoint register instance represents the actual master setpoint
   @param ab_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(const IsoName_c& ac_isoName, int32_t ai32_exact, int32_t ai32_min, int32_t ai32_max, int32_t ai32_default,
+void SetpointRegister_c::init(const IsoName_c& arcc_isoName, int32_t ai32_exact, int32_t ai32_min, int32_t ai32_max, int32_t ai32_default,
         bool ab_handled, bool ab_master, bool ab_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setExact(ai32_exact);
@@ -107,7 +107,7 @@ void SetpointRegister_c::init(const IsoName_c& ac_isoName, int32_t ai32_exact, i
   setMax(ai32_max);
   setDefault(ai32_default);
 
-  setISOName(ac_isoName);
+  setISOName(arcc_isoName);
   setHandled(ab_handled, 0);
   setMaster(ab_master);
   setValid(ab_valid);

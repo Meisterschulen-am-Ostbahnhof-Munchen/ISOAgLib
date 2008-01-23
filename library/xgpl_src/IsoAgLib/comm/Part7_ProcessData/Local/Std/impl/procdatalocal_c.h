@@ -195,7 +195,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -219,7 +219,7 @@ public:
   */
   ProcDataLocal_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                   uint16_t aui16_element = 0xFFFF,
-                  const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+                  const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
                   const IsoName_c *apc_externalOverridingIsoName = NULL,
                   bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -238,7 +238,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -262,7 +262,7 @@ public:
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
             uint16_t aui16_element = 0xFFFF,
-            const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -283,11 +283,11 @@ public:
   /**
     check if specific measureprog exist
 
-    @param ac_isoName DEVCLASS code of searched measure program
+    @param arcc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(const IsoName_c& ac_isoName)
-      {return mc_measureprog.existProg(ac_isoName);};
+  bool existProg(const IsoName_c& arcc_isoName)
+      {return mc_measureprog.existProg(arcc_isoName);};
 
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
@@ -296,11 +296,11 @@ public:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-    @param ac_isoName DEVCLASS code of searched measure program
+    @param arcc_isoName DEVCLASS code of searched measure program
     @param ab_doCreate true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(const IsoName_c& ac_isoName, bool ab_doCreate)
-    { return mc_measureprog.prog(ac_isoName, ab_doCreate);};
+  MeasureProgLocal_c& prog(const IsoName_c& arcc_isoName, bool ab_doCreate)
+    { return mc_measureprog.prog(arcc_isoName, ab_doCreate);};
 
 
   #ifdef USE_EEPROM_IO

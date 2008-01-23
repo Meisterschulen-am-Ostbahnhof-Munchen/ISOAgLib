@@ -103,18 +103,18 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element device element number
 
-  @param ac_isoName optional ISOName code of this instance
+  @param arcc_isoName optional ISOName code of this instance
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI,
-                                                             uint16_t aui16_element, const IsoName_c& ac_isoName,
+                                                             uint16_t aui16_element, const IsoName_c& arcc_isoName,
                                                              const IsoName_c* apc_commanderISOName,
                                                              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                                              int ai_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI, aui16_element,
-                         ac_isoName, apc_commanderISOName,
+                         arcc_isoName, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
   , mc_setpoint(this)
   , mc_measure(this)
@@ -127,19 +127,19 @@ ProcDataRemoteSimpleMeasure_c::ProcDataRemoteSimpleMeasure_c(const IsoAgLib::Ele
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-  @param ac_isoName optional ISOName code of this instance
+  @param arcc_isoName optional ISOName code of this instance
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI,uint16_t aui16_element,
-                                         const IsoName_c& ac_isoName,
+                                         const IsoName_c& arcc_isoName,
                                          const IsoName_c* apc_commanderISOName,
                                          IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                          int ai_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI, aui16_element,
-                             ac_isoName, apc_commanderISOName,
+                             arcc_isoName, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
   mc_setpoint.init( this );
   mc_measure.init( this );

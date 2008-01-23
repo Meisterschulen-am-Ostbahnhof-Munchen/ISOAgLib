@@ -374,10 +374,10 @@ public:
   /**
     some LBS+ terminals wants process data interaction for syncronisation of
     terminal mask with ISOName of terminal even for local process data
-    @param ac_isoName ISOName of terminal, for which the ISOName of data is converted
+    @param arcc_isoName ISOName of terminal, for which the ISOName of data is converted
     @param aui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
   */
-  void useTermISONameForLocalProc(const IsoName_c& ac_isoName, const IsoName_c& ac_useProcISOName = IsoName_c::IsoNameUnspecified());
+  void useTermISONameForLocalProc(const IsoName_c& arcc_isoName, const IsoName_c& ac_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
   ProcessCmd_c mc_processCmd;

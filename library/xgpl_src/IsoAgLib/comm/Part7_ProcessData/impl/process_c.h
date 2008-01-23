@@ -332,10 +332,10 @@ public:
     delete FilterBox_c for receive from remote isoName if needed
     (important to delete old Filter Boxes after deletion of
     of remote device from monitor list or after re-adressclaim with different SA)
-    @param ac_isoName ISOName code of remote owner who sent the message
+    @param arcc_isoName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box deleted
   */
-  bool deleteRemoteFilter(const IsoName_c& ac_isoName);
+  bool deleteRemoteFilter(const IsoName_c& arcc_isoName);
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
@@ -413,28 +413,28 @@ private: // Private methods
 
   /**
     insert FilterBox_c for receive from remote isoName if needed
-    @param ac_isoName ISOName code of remote owner who sent the message
+    @param arcc_isoName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box created
   */
-  bool createRemoteFilter(const IsoName_c& ac_isoName);
+  bool createRemoteFilter(const IsoName_c& arcc_isoName);
 
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
-  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);
+  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);
 
   /** checks if a DDI can be added to a group and if yes then add it! */
-  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
+  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
 
   /** adds a proprietary DDI to a group */
-  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &ac_isoName);
+  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &arcc_isoName);
 
   /** checks if several DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
+  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
 
   /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
-  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
+  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
 
   /** checks if proprietary DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
+  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
 
 private: // Private attributes
   /**

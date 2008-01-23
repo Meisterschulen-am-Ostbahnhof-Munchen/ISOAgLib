@@ -421,12 +421,12 @@ void ManageMeasureProgLocal_c::processProg(){
   possible errors:
       * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-  @param ac_isoName DEVCLASS code of searched measure program
+  @param arcc_isoName DEVCLASS code of searched measure program
   @param ab_doCreate true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& ac_isoName, bool ab_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& arcc_isoName, bool ab_doCreate){
   // update the prog cache
-  if (!updateProgCache(ac_isoName, ab_doCreate) && (!ab_doCreate))
+  if (!updateProgCache(arcc_isoName, ab_doCreate) && (!ab_doCreate))
   { // not found and no creation wanted
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
@@ -473,9 +473,9 @@ void ManageMeasureProgLocal_c::setGlobalVal( float af_val )
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-  @param ac_isoName commanding ISOName
+  @param arcc_isoName commanding ISOName
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName)
+void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& arcc_isoName)
 {
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -539,7 +539,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName)
   #endif
 
   // set type and isoName for item
-  mpc_progCache->setISOName(ac_isoName);
+  mpc_progCache->setISOName(arcc_isoName);
 
   mpc_progCache->setActive(true);
 }
@@ -550,11 +550,11 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& ac_isoName)
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-  @param ac_isoName commanding ISOName
+  @param arcc_isoName commanding ISOName
   @param ab_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool ab_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& arcc_isoName, bool ab_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty
@@ -563,7 +563,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid
   if ( (!vec_prog().empty())
-    && (mpc_progCache->isoName() == ac_isoName) )
+    && (mpc_progCache->isoName() == arcc_isoName) )
   { // old is valid -> return true
     b_result =  true;
   }
@@ -572,7 +572,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool
     // target process msg
     for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
     { // check if isoName and type fit
-      if ( pc_iter->isoName() == ac_isoName )
+      if ( pc_iter->isoName() == arcc_isoName )
       {
         b_result = true;
         mpc_progCache = pc_iter;
@@ -589,7 +589,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& ac_isoName, bool
       }
       else
       { // no suitable item was found -> create suitable one
-        insertMeasureprog(ac_isoName);
+        insertMeasureprog(arcc_isoName);
       } // do create if not found
     }// no suitable found
   }

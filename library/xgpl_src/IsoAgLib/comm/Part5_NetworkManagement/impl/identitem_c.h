@@ -272,10 +272,10 @@ public: // methods
   bool operator==(IdentItem_c& arc_src) const {return (mc_isoName == arc_src.mc_isoName); }
 
   /** check for equality with given ISOName
-      @param ac_isoName compared ISOName
+      @param arcc_isoName compared ISOName
       @return true -> item has same ISOName
     */
-  bool operator==(const IsoName_c& ac_isoName) const {return (mc_isoName == ac_isoName); }
+  bool operator==(const IsoName_c& arcc_isoName) const {return (mc_isoName == arcc_isoName); }
 
   /** check for difference to another item
       @param arc_src compared IdentItem_c element
@@ -284,10 +284,10 @@ public: // methods
   bool operator!=(IdentItem_c& arc_src) const {return (mc_isoName != arc_src.mc_isoName); }
 
   /** check for difference to given ISOName
-      @param ac_isoName compared ISOName
+      @param arcc_isoName compared ISOName
       @return true -> other item has different ISOName
     */
-  bool operator!=(const IsoName_c& ac_isoName) const {return (mc_isoName != ac_isoName); }
+  bool operator!=(const IsoName_c& arcc_isoName) const {return (mc_isoName != arcc_isoName); }
 
   /** check if this item has lower ISOName than another one
       @param arc_src compared IdentItem_c element
@@ -296,10 +296,10 @@ public: // methods
   bool operator<(IdentItem_c& arc_src) const {return (mc_isoName < arc_src.mc_isoName); }
 
   /** check if this item has lower ISOName than given ISOName
-      @param ac_isoName compared ISOName
+      @param arcc_isoName compared ISOName
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(const IsoName_c& ac_isoName) const {return (mc_isoName < ac_isoName); }
+  bool operator<(const IsoName_c& arcc_isoName) const {return (mc_isoName < arcc_isoName); }
 
   /** check if given number is equal to member number of this item
       @param aui8_nr compared number

@@ -159,11 +159,11 @@ private:
 
   /**
     check if specific measureprog exist
-    @param ac_isoName DEVCLASS code of searched measure program
+    @param arcc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(const IsoName_c& ac_isoName)
-      {return updateProgCache(ac_isoName, false);}
+  bool existProg(const IsoName_c& arcc_isoName)
+      {return updateProgCache(arcc_isoName, false);}
 
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
@@ -172,10 +172,10 @@ private:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-    @param ac_isoName DEVCLASS code of searched measure program
+    @param arcc_isoName DEVCLASS code of searched measure program
     @param ab_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(const IsoName_c& ac_isoName, bool ab_doCreate);
+  MeasureProgLocal_c& prog(const IsoName_c& arcc_isoName, bool ab_doCreate);
 
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ai32_val );
@@ -229,20 +229,20 @@ private:
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-    @param ac_isoName commanding ISOName
+    @param arcc_isoName commanding ISOName
   */
-  void insertMeasureprog(const IsoName_c& ac_isoName);
+  void insertMeasureprog(const IsoName_c& arcc_isoName);
   /**
     update the programm cache, create an programm item, if wanted
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-    @param ac_isoName commanding ISOName
+    @param arcc_isoName commanding ISOName
     @param ab_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(const IsoName_c& ac_isoName, bool ab_createIfNotFound);
+  bool updateProgCache(const IsoName_c& arcc_isoName, bool ab_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal mvecc_prog;

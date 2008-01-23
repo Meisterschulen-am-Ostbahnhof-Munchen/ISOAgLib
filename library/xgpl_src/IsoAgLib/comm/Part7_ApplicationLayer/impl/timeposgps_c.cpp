@@ -1257,23 +1257,23 @@ void TimePosGps_c::isoSendDirection( void )
   #endif // END OF ENABLE_NMEA_2000_MULTI_PACKET
 
   /** send ISO11783 calendar PGN
-      @param ac_isoName ISOName code off calling item which wants to send
+      @param arcc_isoName ISOName code off calling item which wants to send
       possible errors:
           * dependant error in CanIo_c on CAN send problems
       @see CanPkg_c::getData
       @see CanPkgExt_c::getData
       @see CanIo_c::operator<<
     */
-  void TimePosGps_c::sendCalendar(const IsoName_c& ac_isoName)
+  void TimePosGps_c::sendCalendar(const IsoName_c& arcc_isoName)
   {
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(ac_isoName, true)) return;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(arcc_isoName, true)) return;
 
-    data().setISONameForSA( ac_isoName );
+    data().setISONameForSA( arcc_isoName );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
     data().setLen(8);
 
-    if ( ( getSelectedDataSourceISOName() == ac_isoName ) )
+    if ( ( getSelectedDataSourceISOName() == arcc_isoName ) )
     { // this item (identified by ISOName is configured to send
       if ( checkMode(IsoAgLib::IdentModeTractor) )
         setSelectedDataSourceISOName(*getISOName());

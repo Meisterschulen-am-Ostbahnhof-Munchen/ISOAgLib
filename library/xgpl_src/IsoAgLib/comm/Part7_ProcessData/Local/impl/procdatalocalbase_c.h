@@ -141,7 +141,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     @param aui16_element (default:0xFFFF)
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -164,7 +164,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataLocalBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
-                       const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+                       const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
                        const IsoName_c *apc_externalOverridingIsoName = NULL,
                        bool ab_cumulativeValue = false
 #ifdef USE_EEPROM_IO
@@ -174,11 +174,11 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                        , int ai_singletonVecKey = 0
                        )
     : ProcDataBase_c( aps_elementDDI, aui16_element,
-                      ac_isoName, apc_externalOverridingIsoName, apc_processDataChangeHandler, ai_singletonVecKey
+                      arcc_isoName, apc_externalOverridingIsoName, apc_processDataChangeHandler, ai_singletonVecKey
                      )
 
     {
-      init( aps_elementDDI, aui16_element, ac_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
+      init( aps_elementDDI, aui16_element, arcc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
       #ifdef USE_EEPROM_IO
           , aui16_eepromAdr
       #endif // USE_EEPROM_IO
@@ -193,7 +193,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -216,7 +216,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-            const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false
 #ifdef USE_EEPROM_IO

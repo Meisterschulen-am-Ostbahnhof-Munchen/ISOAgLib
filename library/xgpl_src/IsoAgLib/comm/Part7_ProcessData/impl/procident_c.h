@@ -116,14 +116,14 @@ public:
     @param mui16_element device element number (default: 0xFFFF)
 
     common parameter
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
               const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
               uint16_t mui16_element = 0xFFFF,
-              const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+              const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
               const IsoName_c *apc_externalOverridingIsoName = NULL,
               int ai_singletonVecKey = 0);
 
@@ -138,14 +138,14 @@ public:
     @param mui16_element device element number
 
     common parameter
-    @param ac_isoName ISOName code of Process-Data
+    @param arcc_isoName ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
             const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t mui16_element,
-            const IsoName_c& ac_isoName,
+            const IsoName_c& arcc_isoName,
             const IsoName_c *apc_externalOverridingIsoName = NULL);
 
   /**
@@ -303,11 +303,11 @@ public:
                  uint16_t aui16_element
                ) const;
 
-  bool check4GroupMatch(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& ac_isoName);
+  bool check4GroupMatch(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName);
 
-  bool check4GroupMatchExisting(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& ac_isoName);
+  bool check4GroupMatchExisting(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName);
 
-  bool checkProprietary4GroupMatch(uint16_t aui_deviceElement, const IsoName_c& ac_isoName);
+  bool checkProprietary4GroupMatch(uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
 
   static bool isPair(uint16_t aui16_ElementDDI, uint16_t aui16_DDI);
 

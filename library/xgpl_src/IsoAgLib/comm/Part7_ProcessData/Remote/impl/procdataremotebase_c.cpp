@@ -97,18 +97,18 @@ namespace __IsoAgLib {
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
     common parameter
-    @param ac_isoName optional ISOName code of this instance
+    @param arcc_isoName optional ISOName code of this instance
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
 void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                                  const IsoName_c& ac_isoName, const IsoName_c* apc_commanderISOName,
+                                  const IsoName_c& arcc_isoName, const IsoName_c* apc_commanderISOName,
                                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                   int ai_singletonVecKey)
 {
   ProcDataBase_c::init( ps_elementDDI, aui16_element,
-                        ac_isoName, NULL, apc_processDataChangeHandler);
+                        arcc_isoName, NULL, apc_processDataChangeHandler);
 
   setSingletonKey( ai_singletonVecKey );
   setCommanderISOName(apc_commanderISOName);

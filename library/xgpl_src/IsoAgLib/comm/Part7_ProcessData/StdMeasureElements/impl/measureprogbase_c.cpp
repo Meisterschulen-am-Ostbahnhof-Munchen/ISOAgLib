@@ -107,11 +107,11 @@ namespace __IsoAgLib {
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
     @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param ac_isoName optional ISOName of partner member for this measure program
+    @param arcc_isoName optional ISOName of partner member for this measure program
   */
 void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   int32_t ai32_val,
-  const IsoName_c& ac_isoName)
+  const IsoName_c& arcc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -132,7 +132,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
   // store the parameter init vals
-  mc_isoName = ac_isoName;
+  mc_isoName = arcc_isoName;
   mi32_val = ai32_val;
   mb_active = false;
 

@@ -164,7 +164,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -188,7 +188,7 @@ public:
   */
   ProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                uint16_t aui16_element = 0xFFFF,
-                               const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+                               const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
                                const IsoName_c *apc_externalOverridingIsoName = NULL,
                                bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -207,7 +207,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -230,7 +230,7 @@ public:
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-            const IsoName_c& ac_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,

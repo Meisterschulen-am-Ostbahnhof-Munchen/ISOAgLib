@@ -134,13 +134,13 @@ public:
   /** check if a memberItem with given ISOName exist
     which optional (!!) match the condition of address claim state
     and update local mpc_isoMemberCache
-    @param ac_isoName searched ISOName
+    @param arcc_isoName searched ISOName
     @param ab_forceClaimedAddress true -> only members with claimed address are used
           (optional, default false)
     @return true -> searched member exist
   */
-  bool existIsoMemberISOName(const iIsoName_c& ac_isoName, bool ab_forceClaimedAddress = false)
-  { return IsoMonitor_c::existIsoMemberISOName(ac_isoName, ab_forceClaimedAddress );}
+  bool existIsoMemberISOName(const iIsoName_c& arcc_isoName, bool ab_forceClaimedAddress = false)
+  { return IsoMonitor_c::existIsoMemberISOName(arcc_isoName, ab_forceClaimedAddress );}
 
   /** check if a member with given number exist
     which optional (!!) match the condition of address claim state
@@ -163,12 +163,12 @@ public:
     (check with existIsoMemberISOName before access to not defined item)
     possible errors:
       * Err_c::elNonexistent on failed search
-    @param ac_isoName searched ISOName
+    @param arcc_isoName searched ISOName
     @return reference to searched ISOItem
      @exception containerElementNonexistant
   */
-  iIsoItem_c& isoMemberISOName(const iIsoName_c& ac_isoName, bool ab_forceClaimedAddress = false)
-    { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( ac_isoName, ab_forceClaimedAddress));}
+  iIsoItem_c& isoMemberISOName(const iIsoName_c& arcc_isoName, bool ab_forceClaimedAddress = false)
+    { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( arcc_isoName, ab_forceClaimedAddress));}
 
   /** deliver member item with given nr
     (check with existIsoMemberNr before access to not defined item)
@@ -182,13 +182,13 @@ public:
 
   /** deliver member item with given ISOName, set pointed bool var to true on success
     and set a Member Array Iterator to the result
-    @param ac_isoName searched ISOName
+    @param arcc_isoName searched ISOName
     @param pb_success bool pointer to store the success (true on success)
     @param ab_forceClaimedAddress (default:false)
     @return reference to the searched item
   */
-  iIsoItem_c& isoMemberISOName(const iIsoName_c& ac_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false )
-  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( ac_isoName, pb_success, ab_forceClaimedAddress ));}
+  iIsoItem_c& isoMemberISOName(const iIsoName_c& arcc_isoName, bool *const pb_success, bool ab_forceClaimedAddress = false )
+  { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberISOName( arcc_isoName, pb_success, ab_forceClaimedAddress ));}
 
   /** check if one of the own local members is active with claimed address at ISO11783
     @return true -> at least one of the own identities is active with claimed address at ISO11783

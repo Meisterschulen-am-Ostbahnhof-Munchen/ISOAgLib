@@ -268,16 +268,16 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
 
 /** set all element data with one call
   @param ai32_time creation time of this item instance
-  @param ac_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
+  @param arcc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param aui8_nr number of this item
   @param ren_status state of this ident (off, claimed address, ...)
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
-void IsoItem_c::set(int32_t ai32_time, const IsoName_c& ac_isoName, uint8_t aui8_nr,
+void IsoItem_c::set(int32_t ai32_time, const IsoName_c& arcc_isoName, uint8_t aui8_nr,
         itemState_t ren_status, int ai_singletonVecKey )
 {
   BaseItem_c::set( ai32_time, ren_status, ai_singletonVecKey );
-  setISOName(ac_isoName);
+  setISOName(arcc_isoName);
   setNr(aui8_nr);
 }
 

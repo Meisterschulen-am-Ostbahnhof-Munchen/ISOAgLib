@@ -124,17 +124,17 @@ namespace __IsoAgLib {
     @param mui16_element device element number
 
     common parameter
-    @param ac_isoName optional ISOName code of Process-Data
+    @param arcc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
-                            const IsoName_c& ac_isoName, const IsoName_c *apc_externalOverridingIsoName, int ai_singletonVecKey)
+                            const IsoName_c& arcc_isoName, const IsoName_c *apc_externalOverridingIsoName, int ai_singletonVecKey)
   : ClientBase( ai_singletonVecKey ),
     mpc_externalOverridingIsoName(NULL),
 		mc_isoName(IsoName_c::IsoNameUnspecified())
 {
-  init( aps_elementDDI, aui16_element, ac_isoName, apc_externalOverridingIsoName);
+  init( aps_elementDDI, aui16_element, arcc_isoName, apc_externalOverridingIsoName);
 }
 
 /** copy constructor */
@@ -155,12 +155,12 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& arcc_src )
     @param mui16_element device element number
 
     common parameter
-    @param ac_isoName ISOName code of Process-Data
+    @param arcc_isoName ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to the optional ISOName var (for automatic update as soon
             as corresponding device is registered as having claimed address in monitor table list)
 */
 void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
-                        const IsoName_c& ac_isoName, const IsoName_c *apc_externalOverridingIsoName)
+                        const IsoName_c& arcc_isoName, const IsoName_c *apc_externalOverridingIsoName)
 {
   setElementDDI(aps_elementDDI);
   setElementNumber(aui16_element);
@@ -170,7 +170,7 @@ void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t a
   // the ISOName of ident is best defined by pointed value of apc_externalOverridingIsoName
   if ( apc_externalOverridingIsoName != 0 ) mc_isoName = *apc_externalOverridingIsoName;
   // last choice is definition of mc_isoName by process data identiy
-  else mc_isoName = ac_isoName;
+  else mc_isoName = arcc_isoName;
 }
 
 /**
@@ -280,11 +280,11 @@ bool ProcIdent_c::hasType(bool ab_isSetpoint, ProcessCmd_c::ValueGroup_t t_ddiTy
   else return true;
 }
 
-bool ProcIdent_c::check4GroupMatch(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& ac_isoName)
+bool ProcIdent_c::check4GroupMatch(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName)
 {
   bool b_foundPair = false;
   // first check if ISOName matches
-  if (ac_isoName != mc_isoName) return b_foundPair;
+  if (arcc_isoName != mc_isoName) return b_foundPair;
 
   if (aui16_element != element()) return b_foundPair;
 
@@ -296,22 +296,22 @@ bool ProcIdent_c::check4GroupMatch(uint16_t aui16_DDI, uint16_t aui16_element, c
   return b_foundPair;
 }
 
-bool ProcIdent_c::check4GroupMatchExisting(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& ac_isoName)
+bool ProcIdent_c::check4GroupMatchExisting(uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName)
 {
   bool b_foundPair = false;
   // first check if ISOName matches
-  if (ac_isoName != mc_isoName) return b_foundPair;
+  if (arcc_isoName != mc_isoName) return b_foundPair;
 
   if (aui16_element != element()) return b_foundPair;
 
   return hasDDI(aui16_DDI);
 }
 
-bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t aui16_element, const IsoName_c& ac_isoName)
+bool ProcIdent_c::checkProprietary4GroupMatch(uint16_t aui16_element, const IsoName_c& arcc_isoName)
 {
   bool b_foundPair = false;
   // first check if DevClass is the same like Name's DevClass
-  if ( mpc_externalOverridingIsoName && (ac_isoName.devClass() != mpc_externalOverridingIsoName->devClass()) ) return b_foundPair;
+  if ( mpc_externalOverridingIsoName && (arcc_isoName.devClass() != mpc_externalOverridingIsoName->devClass()) ) return b_foundPair;
 
   // if it is not the same device element continue
   if (aui16_element != element()) return b_foundPair;
