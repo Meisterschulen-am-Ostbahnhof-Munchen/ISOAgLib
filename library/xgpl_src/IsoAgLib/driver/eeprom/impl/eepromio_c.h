@@ -233,10 +233,10 @@ public:
 
     @see EepromIo_c::tellp
     @see EepromIo_c::setp
-    @param arc_val string to write into EEPROM
+    @param arcc_val string to write into EEPROM
     @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
   */
-  inline EepromIo_c& operator<<(const cc_string& arc_val);
+  inline EepromIo_c& operator<<(const cc_string& arcc_val);
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )
 
@@ -426,17 +426,17 @@ private:
 
   @see __IsoAgLib::EepromIo_c::tellp
   @see __IsoAgLib::EepromIo_c::setp
-  @param arc_val string to write into EEPROM
+  @param arcc_val string to write into EEPROM
   @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
 */
-inline EepromIo_c& EepromIo_c::operator<<(const cc_string& arc_val)
+inline EepromIo_c& EepromIo_c::operator<<(const cc_string& arcc_val)
 { // check if enough space for string is after actual write position
   // second parameter true -> set range if end is reached
-  if (!eofp(arc_val.size() * sizeof(int8_t), true))
+  if (!eofp(arcc_val.size() * sizeof(int8_t), true))
   { // use private write function to read in correct number of bytes into data string
-   write (mui16_wPosition, arc_val.size() * sizeof(int8_t),
-            static_cast<const uint8_t*>(static_cast<const void*>(arc_val.c_str())));
-    mui16_wPosition += (arc_val.size() * sizeof(int8_t)); //inkrement position
+   write (mui16_wPosition, arcc_val.size() * sizeof(int8_t),
+            static_cast<const uint8_t*>(static_cast<const void*>(arcc_val.c_str())));
+    mui16_wPosition += (arcc_val.size() * sizeof(int8_t)); //inkrement position
   }
   return *this;
 };

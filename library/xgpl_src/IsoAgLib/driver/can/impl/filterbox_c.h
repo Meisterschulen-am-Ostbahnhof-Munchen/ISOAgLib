@@ -139,22 +139,22 @@ public:
   FilterBox_c();
 
   /** copy constructor which uses data of another FilterBox_c instance
-    @param arc_src reference to the source FilterBox_c instance for copying
+    @param arcc_src reference to the source FilterBox_c instance for copying
      @exception badAlloc
   */
-  FilterBox_c(const FilterBox_c& arc_src);
+  FilterBox_c(const FilterBox_c& arcc_src);
 
   /** destructor of this FilterBox_c instance */
   ~FilterBox_c();
 
-  /** copy values of arc_src FilterBox_c object to this instance
+  /** copy values of arcc_src FilterBox_c object to this instance
     possible errors:
         * Err_c::badAlloc on not enough memory for copying puffed CAN msg from source
 
-    @param arc_src FilterBox_c instance with data to assign to this instance
+    @param arcc_src FilterBox_c instance with data to assign to this instance
     @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
   */
-  FilterBox_c& operator=(const FilterBox_c& arc_src);
+  FilterBox_c& operator=(const FilterBox_c& arcc_src);
 
   /** clear the data of this instance */
   void clearData();
@@ -194,14 +194,14 @@ public:
   /* *************************************** */
 
   /** set the mask (t_mask) and filter (t_filter) of this FilterBox
-    @param at_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-    @param at_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param arcc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param arcc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
     @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg>>>>>>> .r2856
     @param ren_identType select if FilterBox_c is used for standard 11bit or extended 29bit ident
   */
-   void set (const Ident_c& arc_mask,
-            const Ident_c& arc_filter,
+   void set (const Ident_c& arcc_mask,
+            const Ident_c& arcc_filter,
             CanCustomer_c *apc_customer = NULL,
             int8_t ai8_dlcForce = -1);
 

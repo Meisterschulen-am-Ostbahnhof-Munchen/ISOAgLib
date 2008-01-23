@@ -314,10 +314,10 @@ public:
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CanPkgExt_c::operator=
     @see CanPkgExt_c::getData
-    @param arc_right reference to the source CanPkg_c on the right
+    @param arcc_right reference to the source CanPkg_c on the right
     @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CanPkg_c& operator=(const CanPkg_c& arc_right);
+  virtual const CanPkg_c& operator=(const CanPkg_c& arcc_right);
   */
 
   /**
@@ -349,9 +349,9 @@ public:
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     compare for equality with other CANPkg
-    @param arc_cmp reference to the to be compared CANPkg
+    @param arcc_cmp reference to the to be compared CANPkg
     @return true -> both CanPkg_c have the same data
-  bool operator==(const CanPkg_c& arc_cmp) const;
+  bool operator==(const CanPkg_c& arcc_cmp) const;
   */
 
   /**
@@ -360,9 +360,9 @@ public:
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     compare for difference to other CANPkg
-    @param arc_cmp reference to the to be compared CANPkg
+    @param arcc_cmp reference to the to be compared CANPkg
     @return true -> both CanPkg_c have different data
-  bool operator!=(const CanPkg_c& arc_cmp) const;
+  bool operator!=(const CanPkg_c& arcc_cmp) const;
   */
 
 //protected: // Protected attributes

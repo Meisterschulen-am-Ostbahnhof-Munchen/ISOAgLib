@@ -138,9 +138,9 @@ public:
   MsgObj_c();
 
   /** copy constructor for this class, which gets data from another MsgObj_c instance
-    @param arc_src source MsgObj_c instance which should be cloned by this instance
+    @param arcc_src source MsgObj_c instance which should be cloned by this instance
   */
-  MsgObj_c(const MsgObj_c& arc_src);
+  MsgObj_c(const MsgObj_c& arcc_src);
 
   /** destructor of MsgObj_c instance, which closes the hardware MsgObj_c */
   ~MsgObj_c();
@@ -154,17 +154,17 @@ public:
   //+++++++++++++++++++++++++++++++++++
   // help functions for work on MsgObj_c
   //+++++++++++++++++++++++++++++++++++
-  /** merge two msgObj instances arc_left and arc_right and tell with ab_extendedType
+  /** merge two msgObj instances arcc_left and arcc_right and tell with ab_extendedType
     if 11bit or 29 bit identifiers are used
     (uses BIOS function)
 
     possible errors:
     * Err_c::range BUS or MsgObj numbers out of allowed limits
     * Err_c::hwConfig BUS not initialized or ID can't be changed
-    @param arc_right reference to MsgObj_c which should be merged into this instance
+    @param arcc_right reference to MsgObj_c which should be merged into this instance
     @return true -> successful merged; false -> too many FilterBox_c refs for one MsgObj_c
   */
-  bool merge(MsgObj_c& arc_right);
+  bool merge(MsgObj_c& arcc_right);
 
   /** close the t_data of this instance and close hardware CAN Msg Obj if it's open
     possible errors:
@@ -188,16 +188,16 @@ public:
   // functions for configuring MsgObj_c
   //+++++++++++++++++++++++++++++++++++
   /** checks wether the filter of the given MsgObj_c is the same
-    @param arc_other reference to MsgObj_c whoose filter should be compared with local filter
+    @param arcc_other reference to MsgObj_c whoose filter should be compared with local filter
     @return true -> other MsgObj_c has same filter
   */
-  inline bool operator==(const MsgObj_c& arc_other)const
-    {return (arc_other.filter() == mc_filter);}
+  inline bool operator==(const MsgObj_c& arcc_other)const
+    {return (arcc_other.filter() == mc_filter);}
 
   /** set t_filter of this MsgObj_c
-    @param arc_val filter to set for this MsgObj_c
+    @param arcc_val filter to set for this MsgObj_c
   */
- inline void setFilter(const Ident_c& arc_val){mc_filter = arc_val;}
+ inline void setFilter(const Ident_c& arcc_val){mc_filter = arcc_val;}
 
 
   /** get the t_filter of this MsgObj_c
@@ -207,8 +207,8 @@ public:
   /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
       Update the mask only, when the ident type of the referenced mask is the same.
     */
-  void updateFilterWithMask( const Ident_c& arc_mask )
-    { mc_filter.updateWithMask( arc_mask );}
+  void updateFilterWithMask( const Ident_c& arcc_mask )
+    { mc_filter.updateWithMask( arcc_mask );}
 
   /** get the common filter part of all merged FilterBox instances
     @return common filter of all FilterBoxes in this MsgObj_c instance
@@ -216,10 +216,10 @@ public:
   void commonFilterAfterMerge( Ident_c& arc_globalMask );
 
   /** check if actual filter with specific filter type are equal to given combination
-    @param arc_filter compared filter setting
+    @param arcc_filter compared filter setting
   */
-  bool equalFilter(const Ident_c& arc_filter) const
-    {return (arc_filter == mc_filter)?true:false;}
+  bool equalFilter(const Ident_c& arcc_filter) const
+    {return (arcc_filter == mc_filter)?true:false;}
 
   /** configures the CAN hardware of given Msg Object (uses BIOS function)
     possible errors:

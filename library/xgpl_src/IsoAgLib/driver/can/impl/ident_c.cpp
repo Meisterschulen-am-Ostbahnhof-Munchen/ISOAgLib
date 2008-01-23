@@ -100,10 +100,10 @@ namespace __IsoAgLib
   }
 
   /** constructor which gets its values from other instance
-    @param arc_src source Ident_c instance
+    @param arcc_src source Ident_c instance
   */
-  Ident_c::Ident_c(const Ident_c& arc_src)
-    {CNAMESPACE::memcpy(this, &arc_src, sizeof(Ident_c));}
+  Ident_c::Ident_c(const Ident_c& arcc_src)
+    {CNAMESPACE::memcpy(this, &arcc_src, sizeof(Ident_c));}
 
   /** destructor which has nothing to do */
   Ident_c::~Ident_c()
@@ -112,14 +112,14 @@ namespace __IsoAgLib
 
   /** compare this ident setting with another
     (use memory operation for max speed)
-    @param arc_src compared ident
+    @param arcc_src compared ident
     @return true -> referenced ident has same setting and type
   */
-  bool Ident_c::operator==(const Ident_c& arc_src) const
+  bool Ident_c::operator==(const Ident_c& arcc_src) const
   {
-    return ((ident()==arc_src.ident())
-            &&(identType()==arc_src.identType())
-            &&(empty()==arc_src.empty()))?true:false;
+    return ((ident()==arcc_src.ident())
+            &&(identType()==arcc_src.identType())
+            &&(empty()==arcc_src.empty()))?true:false;
   }
 
   /** set this ident
@@ -184,14 +184,14 @@ namespace __IsoAgLib
   }
 
   /** deliver amount of different bits from own ident to compared ident
-    @param arc_ident reference to compared ident
+    @param arcc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t Ident_c::bit_diff(const Ident_c& arc_ident)const
+  uint8_t Ident_c::bit_diff(const Ident_c& arcc_ident)const
   {
     uint8_t cnt = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = t_ident ^ arc_ident.t_ident;
+    MASK_TYPE ui32_comp = t_ident ^ arcc_ident.t_ident;
       for(MASK_TYPE ui32_new = (ui32_comp & (ui32_comp-1)); ui32_new != ui32_comp;
         ui32_comp=ui32_new, ui32_new &= (ui32_new-1))cnt++;
       return cnt;
@@ -199,16 +199,16 @@ namespace __IsoAgLib
 
   /**
     deliver amount of different bits from own ident to compared ident
-    @param arc_ident reference to compared ident
+    @param arcc_ident reference to compared ident
     @param at_mask
     @return amount of different bits
   */
-  uint8_t Ident_c::bitDiffWithMask(const Ident_c& arc_ident, MASK_TYPE at_mask, unsigned int& ui_lsbFromDiff ) const
+  uint8_t Ident_c::bitDiffWithMask(const Ident_c& arcc_ident, MASK_TYPE at_mask, unsigned int& ui_lsbFromDiff ) const
   {
     unsigned int cnt = 0;
     ui_lsbFromDiff = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = (t_ident & at_mask) ^ (arc_ident.t_ident & at_mask);
+    MASK_TYPE ui32_comp = (t_ident & at_mask) ^ (arcc_ident.t_ident & at_mask);
     for ( MASK_TYPE testMask = 1; testMask <= 0x10000000; testMask <<= 1 )
     {
       if ( ui32_comp & testMask )
@@ -229,15 +229,15 @@ namespace __IsoAgLib
 
   /**
     deliver amount of different bits from own ident to compared ident
-    @param arc_ident reference to compared ident
+    @param arcc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t Ident_c::bitDiff(const Ident_c& arc_ident, unsigned int& ui_lsbFromDiff) const
+  uint8_t Ident_c::bitDiff(const Ident_c& arcc_ident, unsigned int& ui_lsbFromDiff) const
   {
     unsigned int cnt = 0;
     ui_lsbFromDiff = 0;
     // XOR delivers '1' where both values are different
-    MASK_TYPE ui32_comp = t_ident ^ arc_ident.t_ident;
+    MASK_TYPE ui32_comp = t_ident ^ arcc_ident.t_ident;
     for ( MASK_TYPE testMask = 1; testMask <= 0x10000000; testMask <<= 1 )
     {
       if ( ui32_comp & testMask )

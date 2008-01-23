@@ -122,27 +122,27 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
   Ident_c(MASK_TYPE at_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
 
   /** constructor which gets its values from other instance
-    @param arc_src source Ident_c instance
+    @param arcc_src source Ident_c instance
   */
-  Ident_c(const Ident_c& arc_src);
+  Ident_c(const Ident_c& arcc_src);
 
   /** destructor which has nothing to do */
   ~Ident_c();
 
   /** compare this ident setting with another
     (use memory operation for max speed)
-    @param arc_src compared ident
+    @param arcc_src compared ident
     @return true -> referenced ident has same setting and type
   */
-  bool operator==(const Ident_c& arc_src) const;
+  bool operator==(const Ident_c& arcc_src) const;
 
   /** compare this ident setting with another
     (use memory operation for max speed)
-    @param arc_src compared ident
+    @param arcc_src compared ident
     @return true -> referenced ident has different setting and type
   */
-  bool operator!=(const Ident_c& arc_src) const
-    {return (!(operator==(arc_src)));}
+  bool operator!=(const Ident_c& arcc_src) const
+    {return (!(operator==(arcc_src)));}
 
   /** compare this ident value and ident type
     @param at_ident compared ident setting
@@ -160,12 +160,12 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     {return (data.type == StandardIdent)?(at_mask & t_ident & 0x7FF):(at_mask & t_ident);}
 
   /** deliver ident value masked by given ident
-    @param arc_mask mask value
+    @param arcc_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
-  MASK_TYPE masked(const Ident_c& arc_mask = ~0) const
+  MASK_TYPE masked(const Ident_c& arcc_mask = ~0) const
     {return (data.type == StandardIdent)
-      ?(arc_mask.t_ident & t_ident & 0x7FF):(arc_mask.t_ident & t_ident);}
+      ?(arcc_mask.t_ident & t_ident & 0x7FF):(arcc_mask.t_ident & t_ident);}
 
   /** update the ident with bitwise AND with given ident setting
     @param rc_bitAnd Ident_c variable with ident to bit_AND
@@ -174,28 +174,28 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     {if (rc_bitAnd.data.type == data.type) t_ident &= rc_bitAnd.t_ident;data.empty = 0;}
 
   /** deliver amount of different bits from own ident to compared ident
-    @param arc_ident reference to compared ident
+    @param arcc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t bit_diff(const Ident_c& arc_ident) const;
+  uint8_t bit_diff(const Ident_c& arcc_ident) const;
   /**
     deliver amount of different bits from own ident to compared ident
-    @param arc_ident reference to compared ident
+    @param arcc_ident reference to compared ident
     @param at_mask
     @return amount of different bits
   */
-  uint8_t bitDiffWithMask(const Ident_c& arc_ident, MASK_TYPE at_mask, unsigned int& ui_lsbFromDiff) const;
+  uint8_t bitDiffWithMask(const Ident_c& arcc_ident, MASK_TYPE at_mask, unsigned int& ui_lsbFromDiff) const;
   /**
     deliver amount of different bits from own ident to compared ident
-    @param arc_ident reference to compared ident
+    @param arcc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t bitDiff(const Ident_c& arc_ident, unsigned int& ui_lsbFromDiff) const;
+  uint8_t bitDiff(const Ident_c& arcc_ident, unsigned int& ui_lsbFromDiff) const;
   /** update the ident value with the given mask --> clear any bit in ident, which are not set in given mask.
       Update the mask only, when the ident type of the referenced mask is the same.
     */
-  void updateWithMask( const Ident_c& arc_mask )
-    { if ( data.type == arc_mask.data.type ) t_ident &= arc_mask.t_ident;}
+  void updateWithMask( const Ident_c& arcc_mask )
+    { if ( data.type == arcc_mask.data.type ) t_ident &= arcc_mask.t_ident;}
   /**
     deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
@@ -282,10 +282,10 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
   void setIdentType(Ident_c::identType_t at_type){data.type = at_type;}
 
   /** set this ident according to other Ident
-    @param arc_src source Ident_c instance
+    @param arcc_src source Ident_c instance
   */
-  const Ident_c& operator=(const Ident_c& arc_src)
-    {t_ident = arc_src.t_ident; setIdentType( arc_src.identType() );setEmpty(arc_src.empty());return arc_src;}
+  const Ident_c& operator=(const Ident_c& arcc_src)
+    {t_ident = arcc_src.t_ident; setIdentType( arcc_src.identType() );setEmpty(arcc_src.empty());return arcc_src;}
 
 private:
   union {
