@@ -138,7 +138,7 @@ static const uint8_t scui8_tpPriority=6;
 
 
 MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_client,
-                                                          const IsoName_c& arc_isoNameClient,
+                                                          const IsoName_c& arcc_isoNameClient,
                                                           uint32_t aui32_pgn,
                                                           uint32_t aui32_pgnMask,
                                                           bool ab_alsoBroadcast,
@@ -149,7 +149,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
                                                           SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                                                         )
   : SINGLETON_PARENT_CONSTRUCTOR mpc_client(&arc_client)
-  , mc_isoName (arc_isoNameClient)
+  , mc_isoName (arcc_isoNameClient)
   , mui32_pgn(aui32_pgn)
   , mui32_pgnMask(aui32_pgnMask)
   , mb_alsoBroadcast (ab_alsoBroadcast)
@@ -158,8 +158,8 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
   , mb_isFastPacket (ab_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
   #endif
 {
-  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName(arc_isoNameClient, true)) // it needs to have claimed an address
-    mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName(arc_isoNameClient).nr();
+  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName(arcc_isoNameClient, true)) // it needs to have claimed an address
+    mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName(arcc_isoNameClient).nr();
   else //    shouldn't occur...
   {
     mui8_cachedClientAddress = 0xFE;
@@ -180,23 +180,23 @@ MultiReceive_c::~MultiReceive_c()
 
 
 void
-MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& arc_streamIdent, uint8_t aui8_multiReceiveErrorCode)
+MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& arcc_streamIdent, uint8_t aui8_multiReceiveErrorCode)
 {
-  if (arc_streamIdent.getDa() == 0xFF)
+  if (arcc_streamIdent.getDa() == 0xFF)
   { // BAM
     for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin(); i_list_clients != mlist_clients.end(); i_list_clients++)
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.mb_alsoBroadcast) {
-        curClientWrapper.mpc_client->notificationOnMultiReceiveError (arc_streamIdent, aui8_multiReceiveErrorCode, false);
+        curClientWrapper.mpc_client->notificationOnMultiReceiveError (arcc_streamIdent, aui8_multiReceiveErrorCode, false);
       }
     }
   }
   else
   { // really destin specific
-    if (getClient(arc_streamIdent))
+    if (getClient(arcc_streamIdent))
     {
-      getClient(arc_streamIdent)->notificationOnMultiReceiveError (arc_streamIdent, aui8_multiReceiveErrorCode, false);
+      getClient(arcc_streamIdent)->notificationOnMultiReceiveError (arcc_streamIdent, aui8_multiReceiveErrorCode, false);
     }
     else
     {
@@ -205,7 +205,7 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& arc_stre
       { // // inform all clients that want Broadcast-TP-Messages
         MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
         if (curClientWrapper.mb_alsoGlobalErrors) {
-          curClientWrapper.mpc_client->notificationOnMultiReceiveError (arc_streamIdent, aui8_multiReceiveErrorCode, true);
+          curClientWrapper.mpc_client->notificationOnMultiReceiveError (arcc_streamIdent, aui8_multiReceiveErrorCode, true);
         }
       }
     }
@@ -622,7 +622,7 @@ MultiReceive_c::processMsg()
 
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
+MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arcc_isoName,
                                uint32_t aui32_pgn, uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast, bool ab_alsoGlobalErrors
                                #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -634,7 +634,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_i
   // Already in list?
   while (list_clients_i != mlist_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
-    if ((iterMRCW.mpc_client == (&arc_client)) && (iterMRCW.mc_isoName == arc_isoName) && (iterMRCW.mui32_pgn == aui32_pgn)
+    if ((iterMRCW.mpc_client == (&arc_client)) && (iterMRCW.mc_isoName == arcc_isoName) && (iterMRCW.mui32_pgn == aui32_pgn)
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       && (iterMRCW.mb_isFastPacket == ab_isFastPacket)
     #endif
@@ -643,7 +643,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arc_i
     list_clients_i++;
   }
   // Not already in list, so insert!
-  mlist_clients.push_back (MultiReceiveClientWrapper_s (arc_client, arc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
+  mlist_clients.push_back (MultiReceiveClientWrapper_s (arc_client, arcc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
                                                        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                                        , ab_isFastPacket
                                                        #endif
@@ -711,7 +711,7 @@ MultiReceive_c::deregisterClient (CanCustomer_c& arc_client)
 
 // Operation: deregisterClient
 void
-MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
+MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arcc_isoName,
                                  uint32_t aui32_pgn, uint32_t aui32_pgnMask)
 {
   // first of all remove all streams that are for this client with this filter/mask/isoname tuple
@@ -729,7 +729,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
     if (i_list_clients != mlist_clients.end())
     {
       if ( (i_list_clients->mpc_client == &arc_client)
-        && (i_list_clients->mc_isoName == arc_isoName)
+        && (i_list_clients->mc_isoName == arcc_isoName)
         && (i_list_clients->mui32_pgn == aui32_pgn)
         && (i_list_clients->mui32_pgnMask == aui32_pgnMask)
          )
@@ -745,7 +745,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator pc_iter = mlist_clients.begin(); pc_iter != mlist_clients.end(); )
   {
     if ( (pc_iter->mpc_client == &arc_client)
-      && (pc_iter->mc_isoName == arc_isoName)
+      && (pc_iter->mc_isoName == arcc_isoName)
       && (pc_iter->mui32_pgn == aui32_pgn)
       && (pc_iter->mui32_pgnMask == aui32_pgnMask)
        )

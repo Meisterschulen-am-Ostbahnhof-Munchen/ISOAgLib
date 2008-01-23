@@ -134,7 +134,7 @@ namespace __IsoAgLib {
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
   MultiReceiveClientWrapper_s( CanCustomer_c& apc_client,
-                               const IsoName_c& arc_isoNameClient,
+                               const IsoName_c& arcc_isoNameClient,
                                uint32_t aui32_pgn,
                                uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast,
@@ -176,7 +176,7 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (CanCustomer_c& arc_client, const IsoName_c& arc_isoName,
+  void registerClient   (CanCustomer_c& arc_client, const IsoName_c& arcc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
                          bool mb_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -185,7 +185,7 @@ public:
                          );
 
   void deregisterClient (CanCustomer_c& apc_client);
-  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& arc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
+  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& arcc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
 
   //  Operation: createStream
   //! 
@@ -298,7 +298,8 @@ private:
 
   //  Operation: sendEndOfMessageAck
   //! Parameter:
-  //! @param apc_stream:
+  //! @param arc_stream
+  //! @param b_lastChunk
   void sendEndOfMessageAck(DEF_Stream_c_IMPL* apc_stream);
 
 
