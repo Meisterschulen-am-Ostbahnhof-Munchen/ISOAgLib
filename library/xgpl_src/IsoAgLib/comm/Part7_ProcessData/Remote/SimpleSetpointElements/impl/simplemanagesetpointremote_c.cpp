@@ -108,23 +108,23 @@ void SimpleManageSetpointRemote_c::init( ProcDataBase_c *const apc_processData )
     mi32_setpointMasterVal = 0;
 }
 /** copy constructor */
-SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& arc_src )
-: ProcessElementBase_c( arc_src )
+SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& arcc_src )
+: ProcessElementBase_c( arcc_src )
 {
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 }
 /** assignment operator */
-const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( const SimpleManageSetpointRemote_c& arc_src )
+const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( const SimpleManageSetpointRemote_c& arcc_src )
 {
-  ProcessElementBase_c::operator=( arc_src );
-  assignFromSource( arc_src );
+  ProcessElementBase_c::operator=( arcc_src );
+  assignFromSource( arcc_src );
   return *this;
 }
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void SimpleManageSetpointRemote_c::assignFromSource( const SimpleManageSetpointRemote_c& arc_src )
+void SimpleManageSetpointRemote_c::assignFromSource( const SimpleManageSetpointRemote_c& arcc_src )
 {
-  mi32_setpointMasterVal = arc_src.mi32_setpointMasterVal;
+  mi32_setpointMasterVal = arcc_src.mi32_setpointMasterVal;
 }
 
 /** processing of a setpoint message */

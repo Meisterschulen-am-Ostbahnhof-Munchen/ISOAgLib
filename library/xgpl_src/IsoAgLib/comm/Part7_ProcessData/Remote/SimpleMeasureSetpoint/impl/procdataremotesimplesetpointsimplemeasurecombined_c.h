@@ -182,18 +182,18 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
 
    /**
     assignment operator for this object
-    @param arc_src source instance
+    @param arcc_src source instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
   const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c&
-    operator=(const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src);
+    operator=(const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src);
 
   /**
     copy constructor for IsoAgLibProcDataRemote
-    @param arc_src source instance
+    @param arcc_src source instance
   */
    ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
-    const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src);
+    const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src);
 
   /** default destructor which has nothing to do */
   ~ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c();
@@ -251,7 +251,7 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   /** processing of a setpoint message */
   virtual void processSetpoint();
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src );
+  void assignFromSource( const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src );
 
 
   #ifdef USE_FLOAT_DATA_TYPE

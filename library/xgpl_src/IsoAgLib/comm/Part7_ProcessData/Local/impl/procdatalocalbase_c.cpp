@@ -181,31 +181,31 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint
 }
 
 /** copy constructor */
-ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& arc_src )
-  : ProcDataBase_c( arc_src )
+ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& arcc_src )
+  : ProcDataBase_c( arcc_src )
 {
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerLocalProcessData( this );
 }
 /** assignment operator */
-const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBase_c& arc_src )
+const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBase_c& arcc_src )
 {
-  ProcDataBase_c::operator=( arc_src );
-  assignFromSource( arc_src );
+  ProcDataBase_c::operator=( arcc_src );
+  assignFromSource( arcc_src );
   return *this;
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& arc_src )
+void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& arcc_src )
 {
-  mi32_masterVal = arc_src.mi32_masterVal;
+  mi32_masterVal = arcc_src.mi32_masterVal;
 #ifdef USE_EEPROM_IO
-  mi32_eepromVal = arc_src.mi32_eepromVal;
-  mi32_lastEepromStore = arc_src.mi32_lastEepromStore;
-  mui16_eepromAdr = arc_src.mui16_eepromAdr;
+  mi32_eepromVal = arcc_src.mi32_eepromVal;
+  mi32_lastEepromStore = arcc_src.mi32_lastEepromStore;
+  mui16_eepromAdr = arcc_src.mui16_eepromAdr;
 #endif // USE_EEPROM_IO
-  mb_cumulativeValue = arc_src.mb_cumulativeValue;
+  mb_cumulativeValue = arcc_src.mb_cumulativeValue;
 }
 
 

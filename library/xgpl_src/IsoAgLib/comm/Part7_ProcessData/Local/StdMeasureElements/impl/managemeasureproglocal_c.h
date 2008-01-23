@@ -140,10 +140,10 @@ private:
   void init( ProcDataBase_c *const apc_processData = NULL );
 
   /** copy constructor */
-  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arc_src );
+  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arcc_src );
 
   /** assignment operator */
-  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& arc_src );
+  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& arcc_src );
 
   /**
     perform periodic actions
@@ -250,7 +250,7 @@ private:
   Vec_MeasureProgLocalIterator mpc_progCache;
  private:
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ManageMeasureProgLocal_c& arc_src );
+  void assignFromSource( const ManageMeasureProgLocal_c& arcc_src );
   /** create first default measure prog, if no measure prog in list */
   void checkInitList( void );
 

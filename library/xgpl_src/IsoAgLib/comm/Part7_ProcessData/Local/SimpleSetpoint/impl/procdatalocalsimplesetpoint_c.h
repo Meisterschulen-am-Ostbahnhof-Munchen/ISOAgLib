@@ -228,10 +228,10 @@ public:
       );
 
   /** copy constructor */
-  ProcDataLocalSimpleSetpoint_c( const ProcDataLocalSimpleSetpoint_c& arc_src );
+  ProcDataLocalSimpleSetpoint_c( const ProcDataLocalSimpleSetpoint_c& arcc_src );
 
   /** assignment operator */
-  const ProcDataLocalSimpleSetpoint_c& operator=( const ProcDataLocalSimpleSetpoint_c& arc_src );
+  const ProcDataLocalSimpleSetpoint_c& operator=( const ProcDataLocalSimpleSetpoint_c& arcc_src );
 
   /** default destructor which has nothing to do */
   ~ProcDataLocalSimpleSetpoint_c();

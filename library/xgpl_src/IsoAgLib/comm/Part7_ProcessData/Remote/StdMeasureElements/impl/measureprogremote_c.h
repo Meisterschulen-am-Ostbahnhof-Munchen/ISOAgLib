@@ -118,15 +118,15 @@ public:
   void init( ProcDataBase_c *const apc_processData );
   /**
     assignment of MeasureProgRemote_c objects
-    @param arc_src source MeasureProgRemote_c instance
+    @param arcc_src source MeasureProgRemote_c instance
     @return reference to the source instance for commands like "prog1 = prog2 = prog3 ...;
   */
-  const MeasureProgRemote_c& operator=(const MeasureProgRemote_c& arc_src);
+  const MeasureProgRemote_c& operator=(const MeasureProgRemote_c& arcc_src);
   /**
     copy constructor for MeasureProgRemote
-    @param arc_src source MeasureProgRemote_c instance
+    @param arcc_src source MeasureProgRemote_c instance
   */
-   MeasureProgRemote_c(const MeasureProgRemote_c& arc_src);
+   MeasureProgRemote_c(const MeasureProgRemote_c& arcc_src);
   /** default destructor which has nothing to do */
   ~MeasureProgRemote_c();
 

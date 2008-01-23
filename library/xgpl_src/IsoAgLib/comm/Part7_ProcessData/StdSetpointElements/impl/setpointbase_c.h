@@ -114,15 +114,15 @@ public:
   SetpointBase_c( ProcDataBase_c &arc_processData );
   /**
     assignement from another object
-    @param arc_src source SetpointBase_c instance
+    @param arcc_src source SetpointBase_c instance
     @return reference to source for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointBase_c& operator=( const SetpointBase_c& arc_src );
+  const SetpointBase_c& operator=( const SetpointBase_c& arcc_src );
   /**
     copy constructor for SetpointBase
-    @param arc_src source SetpointBase_c instance
+    @param arcc_src source SetpointBase_c instance
   */
-   SetpointBase_c( const SetpointBase_c& arc_src);
+   SetpointBase_c( const SetpointBase_c& arcc_src);
   /** default destructor which has nothing to do */
   virtual ~SetpointBase_c();
   /**
@@ -151,11 +151,11 @@ protected: // Protected methods
     possible errors:
         * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
         * dependant error in CanIo_c on CAN send problems
-    @param arc_src reference to SetpointRegister_c with registered setpoints
+    @param arcc_src reference to SetpointRegister_c with registered setpoints
     @param ab_override true -> override registered setpoint with ai32_overrideVal
     @param ai32_overrideVal value which can override registered setpoint on ab_override == true
   */
-  void sendSetpointVals( const SetpointRegister_c& arc_src,
+  void sendSetpointVals( const SetpointRegister_c& arcc_src,
                           bool ab_override = false, int32_t ai32_overrideVal = 0)const;
 };
 

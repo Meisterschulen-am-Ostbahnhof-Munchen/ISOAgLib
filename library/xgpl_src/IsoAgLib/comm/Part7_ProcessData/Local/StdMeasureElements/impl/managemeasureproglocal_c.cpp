@@ -157,24 +157,24 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const apc_processData )
   mpc_progCache = vec_prog().begin();
 }
 /** copy constructor */
-ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arc_src )
-: ProcessElementBase_c( arc_src )
+ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arcc_src )
+: ProcessElementBase_c( arcc_src )
 {
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 }
 /** assignment operator */
-const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& arc_src )
+const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& arcc_src )
 {
-  ProcessElementBase_c::operator=( arc_src );
-  assignFromSource( arc_src );
+  ProcessElementBase_c::operator=( arcc_src );
+  assignFromSource( arcc_src );
   return *this;
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& arc_src )
+void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& arcc_src )
 { // copy dynamic array
-  mvecc_prog = arc_src.mvecc_prog;
+  mvecc_prog = arcc_src.mvecc_prog;
   // now initialise the elements
-  if (vec_prog().size() < arc_src.constVecProg().size())
+  if (vec_prog().size() < arcc_src.constVecProg().size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -212,10 +212,10 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)
   {
-    pc_iter->set( arc_src.processData() );
+    pc_iter->set( arcc_src.processData() );
     // if the actual initialised item is the same as the cached item from
     // source set the cache of the copy (this instance)
-    if (*pc_iter == *arc_src.mpc_progCache) mpc_progCache = pc_iter;
+    if (*pc_iter == *arcc_src.mpc_progCache) mpc_progCache = pc_iter;
   }
 }
 

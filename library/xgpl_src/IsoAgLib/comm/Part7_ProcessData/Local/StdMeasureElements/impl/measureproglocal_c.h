@@ -178,15 +178,15 @@ public:
 #endif
   /**
     assignment of MeasureProgLocal_c objects
-    @param arc_src source MeasureProgLocal_c instance
+    @param arcc_src source MeasureProgLocal_c instance
     @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
   */
-  const MeasureProgLocal_c& operator=(const MeasureProgLocal_c& arc_src);
+  const MeasureProgLocal_c& operator=(const MeasureProgLocal_c& arcc_src);
   /**
     copy constructor for MeasureProgLocal
-    @param arc_src source MeasureProgLocal_c instance
+    @param arcc_src source MeasureProgLocal_c instance
   */
-   MeasureProgLocal_c(const MeasureProgLocal_c& arc_src);
+   MeasureProgLocal_c(const MeasureProgLocal_c& arcc_src);
   /** default destructor which has nothing to do */
   virtual ~MeasureProgLocal_c();
   /**
@@ -405,7 +405,7 @@ public:
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const MeasureProgLocal_c& arc_src );
+  void assignFromSource( const MeasureProgLocal_c& arcc_src );
   /**  update proportional dependent values */
   void updatePropDepVals();
 

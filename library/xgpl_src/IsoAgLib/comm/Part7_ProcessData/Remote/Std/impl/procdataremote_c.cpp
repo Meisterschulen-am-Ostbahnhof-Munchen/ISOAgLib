@@ -145,28 +145,28 @@ void ProcDataRemote_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_
 }
 /**
   assignment operator for this object
-  @param arc_src source instance
+  @param arcc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& arc_src){
+const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& arcc_src){
   // call the assignment operator for the base class
-  ProcDataRemoteBase_c::operator=(arc_src);
+  ProcDataRemoteBase_c::operator=(arcc_src);
 
   // now copy the element var
-  mc_setpoint = arc_src.mc_setpoint;
-  mc_measure = arc_src.mc_measure;
+  mc_setpoint = arcc_src.mc_setpoint;
+  mc_measure = arcc_src.mc_measure;
   // return reference to source
-  return arc_src;
+  return arcc_src;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param arc_src source instance
+  @param arcc_src source instance
 */
-ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& arc_src)
-  : ProcDataRemoteBase_c(arc_src),
-    mc_setpoint(arc_src.mc_setpoint),
-    mc_measure(arc_src.mc_measure)
+ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& arcc_src)
+  : ProcDataRemoteBase_c(arcc_src),
+    mc_setpoint(arcc_src.mc_setpoint),
+    mc_measure(arcc_src.mc_measure)
 {
 }
 

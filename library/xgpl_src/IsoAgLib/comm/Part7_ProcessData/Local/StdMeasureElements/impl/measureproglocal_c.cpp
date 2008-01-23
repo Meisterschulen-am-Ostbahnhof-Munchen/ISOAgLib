@@ -153,36 +153,36 @@ void MeasureProgLocal_c::init(
 
 
 /** assignment of MeasureProgLocal_c objects
-    @param arc_src source MeasureProgLocal_c instance
+    @param arcc_src source MeasureProgLocal_c instance
     @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
   */
-const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& arc_src){
+const MeasureProgLocal_c& MeasureProgLocal_c::operator=(const MeasureProgLocal_c& arcc_src){
   // call base class operator
-  MeasureProgBase_c::operator=(arc_src);
+  MeasureProgBase_c::operator=(arcc_src);
 
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 
   // return reference to source
-  return arc_src;
+  return arcc_src;
 }
 
 /** copy constructor for MeasureProgLocal
-    @param arc_src source MeasureProgLocal_c instance
+    @param arcc_src source MeasureProgLocal_c instance
   */
-MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& arc_src)
-   : MeasureProgBase_c(arc_src){
-  assignFromSource( arc_src );
+MeasureProgLocal_c::MeasureProgLocal_c(const MeasureProgLocal_c& arcc_src)
+   : MeasureProgBase_c(arcc_src){
+  assignFromSource( arcc_src );
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& arc_src )
+void MeasureProgLocal_c::assignFromSource( const MeasureProgLocal_c& arcc_src )
 { // copy element vars
-  mb_triggeredIncrement = arc_src.mb_triggeredIncrement;
-  mi32_lastMasterVal = arc_src.mi32_lastMasterVal;
-  mi32_medCnt = arc_src.mi32_medCnt;
-  mi32_medSum = arc_src.mi32_medSum;
-  mi32_integ = arc_src.mi32_integ;
+  mb_triggeredIncrement = arcc_src.mb_triggeredIncrement;
+  mi32_lastMasterVal = arcc_src.mi32_lastMasterVal;
+  mi32_medCnt = arcc_src.mi32_medCnt;
+  mi32_medSum = arcc_src.mi32_medSum;
+  mi32_integ = arcc_src.mi32_integ;
 }
 
 

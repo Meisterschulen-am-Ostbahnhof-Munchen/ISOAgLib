@@ -152,14 +152,14 @@ namespace __IsoAgLib {
 
 /**
   assignment operator for this base object
-  @param arc_src source instance
+  @param arcc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& arc_src)
+const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& arcc_src)
 { // call base class operator
-  ProcIdent_c::operator=(arc_src);
+  ProcIdent_c::operator=(arcc_src);
 
-  assignFromSource(arc_src);
+  assignFromSource(arcc_src);
 
   // return source reference
   return *this;
@@ -168,20 +168,20 @@ const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& arc_src)
 
 /**
   copy constructor for ProcDataBase_c
-  @param arc_src source instance
+  @param arcc_src source instance
 */
-ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& arc_src)
-   : ProcIdent_c(arc_src)
+ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& arcc_src)
+   : ProcIdent_c(arcc_src)
 {
-  assignFromSource(arc_src);
+  assignFromSource(arcc_src);
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataBase_c::assignFromSource( const ProcDataBase_c& arc_src )
+void ProcDataBase_c::assignFromSource( const ProcDataBase_c& arcc_src )
 { // copy element vars
-  men_procValType = arc_src.men_procValType;
-  mpc_processDataChangeHandler = arc_src.mpc_processDataChangeHandler;
+  men_procValType = arcc_src.men_procValType;
+  mpc_processDataChangeHandler = arcc_src.mpc_processDataChangeHandler;
 }
 
 

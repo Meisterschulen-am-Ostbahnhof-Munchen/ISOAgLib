@@ -219,16 +219,16 @@ public:
 
   /**
       assignment operator for this object
-      @param arc_src source instance
+      @param arcc_src source instance
       @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
     */
-  const ProcDataRemote_c& operator=(const ProcDataRemote_c& arc_src);
+  const ProcDataRemote_c& operator=(const ProcDataRemote_c& arcc_src);
 
   /**
       copy constructor for IsoAgLibProcDataRemote
-      @param arc_src source instance
+      @param arcc_src source instance
     */
-   ProcDataRemote_c(const ProcDataRemote_c& arc_src);
+   ProcDataRemote_c(const ProcDataRemote_c& arcc_src);
 
   /** default destructor which has nothing to do */
   ~ProcDataRemote_c();

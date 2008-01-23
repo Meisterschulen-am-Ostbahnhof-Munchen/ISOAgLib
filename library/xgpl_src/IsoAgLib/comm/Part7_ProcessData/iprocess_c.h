@@ -151,23 +151,23 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameReceiver isoName of searched local Process Data instance
+    @param arcc_isoNameReceiver isoName of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& arc_isoNameReceiver)
-  { return Process_c::existProcDataLocal(aui16_DDI, aui16_element, arc_isoNameReceiver);}
+  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& arcc_isoNameReceiver)
+  { return Process_c::existProcDataLocal(aui16_DDI, aui16_element, arcc_isoNameReceiver);}
   /**
     checks if a suitable iProcessDataRemote_c item exist
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arc_isoNameReceiver isoName code of searched local Process Data instance
+    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
+    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                            const iIsoName_c& arc_isoNameSender, const iIsoName_c& arc_isoNameReceiver)
-  { return Process_c::existProcDataRemote( aui16_DDI, aui16_element, arc_isoNameSender, arc_isoNameReceiver);}
+                            const iIsoName_c& arcc_isoNameSender, const iIsoName_c& arcc_isoNameReceiver)
+  { return Process_c::existProcDataRemote( aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoNameReceiver);}
 
   /**
     delivers count of local process data entries with similar ident
@@ -175,11 +175,11 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoName isoName code of searched local Process Data instance
+    @param arcc_isoName isoName code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& arc_isoName)
-  {return Process_c::procDataLocalCnt(aui16_DDI, aui16_element, arc_isoName);}
+  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& arcc_isoName)
+  {return Process_c::procDataLocalCnt(aui16_DDI, aui16_element, arcc_isoName);}
 
   /**
     delivers count of remote process data entries with similar ident
@@ -187,15 +187,15 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arc_isoName isoName code of searched remote Process Data instance
+    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
+    @param arcc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt( uint16_t aui16_DDI,
                              uint16_t aui16_element,
-                             const iIsoName_c& arc_isoNameSender,
-                             const iIsoName_c& arc_isoName)
-  { return Process_c::procDataRemoteCnt( aui16_DDI, aui16_element, arc_isoNameSender, arc_isoName); }
+                             const iIsoName_c& arcc_isoNameSender,
+                             const iIsoName_c& arcc_isoName)
+  { return Process_c::procDataRemoteCnt( aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoName); }
 
   // addDDI2ExistingProcData only possible for remote process data project (iProcDataRemote_c has to be defined)
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */

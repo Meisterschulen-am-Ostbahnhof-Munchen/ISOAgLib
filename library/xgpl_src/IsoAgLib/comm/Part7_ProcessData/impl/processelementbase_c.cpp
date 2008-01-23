@@ -115,23 +115,23 @@ ProcessElementBase_c::ProcessElementBase_c(
 }
 /**
   copy constructor
-  @param arc_src source ProcessElementBase_c instance
+  @param arcc_src source ProcessElementBase_c instance
 */
-ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& arc_src)
-  : ClientBase(arc_src), mpc_processData(arc_src.mpc_processData)
+ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& arcc_src)
+  : ClientBase(arcc_src), mpc_processData(arcc_src.mpc_processData)
 {}
 
 /**
   assignment operator for ProcessElementBase
-  @param arc_src source ProcessElementBase_c instance
+  @param arcc_src source ProcessElementBase_c instance
 */
-const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& arc_src){
-  setSingletonKey(arc_src.getSingletonVecKey());
+const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& arcc_src){
+  setSingletonKey(arcc_src.getSingletonVecKey());
   // copy element vars
-  mpc_processData = arc_src.mpc_processData;
+  mpc_processData = arcc_src.mpc_processData;
 
   // return the source reference
-  return arc_src;
+  return arcc_src;
 }
 
 /** default destructor which has nothing to do */
@@ -143,12 +143,12 @@ ProcessElementBase_c::~ProcessElementBase_c(){
   set the pointer to Scheduler_c and ProcessData by references to the object instances
   @param arc_processData optional reference to containing ProcessData instance
 */
-void ProcessElementBase_c::set(ProcDataBase_c& rc_processData )
+void ProcessElementBase_c::set(ProcDataBase_c& arc_processData )
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
-  ClientBase::setSingletonKey(rc_processData.getSingletonVecKey());
+  ClientBase::setSingletonKey(arc_processData.getSingletonVecKey());
   #endif
-  mpc_processData = &rc_processData;
+  mpc_processData = &arc_processData;
 };
 
 /**

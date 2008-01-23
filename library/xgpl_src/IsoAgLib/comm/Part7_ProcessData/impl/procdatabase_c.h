@@ -173,15 +173,15 @@ public:
             int ai_singletonVecKey = 0);
 
   /** assignment operator for this base object
-    @param arc_src source instance
+    @param arcc_src source instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-  const ProcDataBase_c& operator=(const ProcDataBase_c& arc_src);
+  const ProcDataBase_c& operator=(const ProcDataBase_c& arcc_src);
 
   /** copy constructor for ProcDataBase_c
-    @param arc_src source instance
+    @param arcc_src source instance
   */
-  ProcDataBase_c(const ProcDataBase_c& arc_src);
+  ProcDataBase_c(const ProcDataBase_c& arcc_src);
 
   /** default destructor which has nothing to do */
   virtual ~ProcDataBase_c();
@@ -304,7 +304,7 @@ protected: // Protected methods
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ProcDataBase_c& arc_src );
+  void assignFromSource( const ProcDataBase_c& arcc_src );
 
   /** process a measure prog message
     -> fully dependent on children type local/remote

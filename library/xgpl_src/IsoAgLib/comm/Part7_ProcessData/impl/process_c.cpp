@@ -417,12 +417,12 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameReceiver isoName code of searched local Process Data instance
+  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
   @return true -> suitable instance found
 */
-bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoNameReceiver)
+bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver)
 {
-  return updateLocalCache( aui16_DDI, aui16_element, arc_isoNameReceiver);
+  return updateLocalCache( aui16_DDI, aui16_element, arcc_isoNameReceiver);
 }
 
 /**
@@ -430,14 +430,14 @@ bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, 
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against isoName())
-  @param arc_isoNameReceiver isoName code of searched local Process Data instance
+  @param arcc_isoNameSender isoName of the sender (used for check against isoName())
+  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
   @return true -> suitable instance found
 */
 bool Process_c::existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                                     const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
+                                     const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
 {
- return updateRemoteCache( aui16_DDI, aui16_element, arc_isoNameSender, arc_isoNameReceiver);
+ return updateRemoteCache( aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoNameReceiver);
 }
 
 /**
@@ -450,12 +450,12 @@ bool Process_c::existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameReceiver isoName code of searched local Process Data instance
+  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
   @return reference to searched/created ProcDataLocal_c instance
 */
-ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoNameReceiver)
+ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver)
 {
-  bool b_found = updateLocalCache( aui16_DDI, aui16_element, arc_isoNameReceiver);
+  bool b_found = updateLocalCache( aui16_DDI, aui16_element, arcc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
@@ -473,15 +473,15 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui1
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against isoName())
-  @param arc_isoNameReceiver isoName code of searched local Process Data instance
+  @param arcc_isoNameSender isoName of the sender (used for check against isoName())
+  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
   @return reference to searched/created ProcDataRemoteBase_c instance
   @exception badAlloc
 */
 ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                                                 const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
+                                                 const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
 {
-  bool b_found = updateRemoteCache(aui16_DDI, aui16_element, arc_isoNameSender, arc_isoNameReceiver);
+  bool b_found = updateRemoteCache(aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
@@ -496,10 +496,10 @@ ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t au
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoName isoName code of searched local Process Data instance
+  @param arcc_isoName isoName code of searched local Process Data instance
   @return count of similar local process data entries
 */
-uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoName)
+uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName)
 {
   uint8_t ui8_cnt=0;
 
@@ -508,7 +508,7 @@ uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element,
        pc_iter++ )
   { // search for all local items which match the searched identity
     // don't check sender devClass => 0xFF
-    if ((*pc_iter)->matchISO (IsoName_c::IsoNameUnspecified(), arc_isoName, aui16_DDI, aui16_element))
+    if ((*pc_iter)->matchISO (IsoName_c::IsoNameUnspecified(), arcc_isoName, aui16_DDI, aui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -521,12 +521,12 @@ uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element,
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against ownerisoName())
-  @param arc_isoName isoName code of searched remote Process Data instance
+  @param arcc_isoNameSender isoName of the sender (used for check against ownerisoName())
+  @param arcc_isoName isoName code of searched remote Process Data instance
   @return count of similar remote process data entries
 */
 uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element,
-                                      const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoName)
+                                      const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoName)
 {
   uint8_t ui8_cnt=0;
 
@@ -534,7 +534,7 @@ uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element
        ( pc_iter != c_arrClientC2.end() );
        pc_iter++ )
   { // search for all local items which match the searched identity
-    if ((*pc_iter)->matchISO(arc_isoNameSender, arc_isoName, aui16_DDI, aui16_element))
+    if ((*pc_iter)->matchISO(arcc_isoNameSender, arcc_isoName, aui16_DDI, aui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -546,9 +546,9 @@ uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameReceiver isoName code of created local Process Data instance
+  @param arcc_isoNameReceiver isoName code of created local Process Data instance
 */
-bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arc_isoNameReceiver)
+bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver)
 {
   bool b_foundLazy = false;
 
@@ -557,7 +557,7 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
       // don't check sender devClass => 0xFF
-      if ((*pc_searchCacheC1)->matchISO (IsoName_c::IsoNameUnspecified(), arc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
+      if ((*pc_searchCacheC1)->matchISO (IsoName_c::IsoNameUnspecified(), arcc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
@@ -568,7 +568,7 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
       bool b_matched = false;
 
       // don't check sender devClass => 0xFF
-      if ((*pc_iter)->matchISO(IsoName_c::IsoNameUnspecified(), arc_isoNameReceiver, aui16_DDI, aui16_element))
+      if ((*pc_iter)->matchISO(IsoName_c::IsoNameUnspecified(), arcc_isoNameReceiver, aui16_DDI, aui16_element))
         b_matched = true;
 
       if (b_matched)
@@ -589,18 +589,18 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arc_isoNameSender isoName of the sender (used for check against isoName())
-  @param arc_isoNameReceiver isoName code of searched local Process Data instance
+  @param arcc_isoNameSender isoName of the sender (used for check against isoName())
+  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
 */
 bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
-                                   const IsoName_c& arc_isoNameSender, const IsoName_c& arc_isoNameReceiver)
+                                   const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
   {
     if ( pc_searchCacheC2 != c_arrClientC2.end() )
     {
-      if ((*pc_searchCacheC2)->matchISO(arc_isoNameSender, arc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
+      if ((*pc_searchCacheC2)->matchISO(arcc_isoNameSender, arcc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
@@ -609,7 +609,7 @@ bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
     { // check for lazy match with INSTANCE == 0xFF (==joker)
       bool b_matched = false;
 
-      if ((*pc_iter)->matchISO(arc_isoNameSender, arc_isoNameReceiver, aui16_DDI, aui16_element))
+      if ((*pc_iter)->matchISO(arcc_isoNameSender, arcc_isoNameReceiver, aui16_DDI, aui16_element))
         b_matched = true;
 
       if (b_matched)

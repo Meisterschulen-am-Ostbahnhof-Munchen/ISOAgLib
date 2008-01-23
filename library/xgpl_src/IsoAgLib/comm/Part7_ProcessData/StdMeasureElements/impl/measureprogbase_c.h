@@ -134,49 +134,49 @@ public:
     constructor which can optional set most element vars
     @param apc_processData optional pointer to containing ProcDataBase_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param ac_isoName optional ISOName of partner member for this measure program
+    @param arcc_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
     ProcDataBase_c *const apc_processData = NULL,
     int32_t ai32_val = 0,
-    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(apc_processData),
-      mvec_measureSubprog() {init(apc_processData, ai32_val, ac_isoName);}
+    const IsoName_c& arcc_isoName = IsoName_c::IsoNameUnspecified() ) : ProcessElementBase_c(apc_processData),
+      mvec_measureSubprog() {init(apc_processData, ai32_val, arcc_isoName);}
 
   /**
     constructor which can optional set most element vars
-    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param arcc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param ac_isoName optional ISOName of partner member for this measure program
+    @param arcc_isoName optional ISOName of partner member for this measure program
   */
   MeasureProgBase_c(
-    ProcDataBase_c &arc_processData,
+    ProcDataBase_c &arcc_processData,
     int32_t ai32_val = 0,
-    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(arc_processData),
-      mvec_measureSubprog() {init(&arc_processData, ai32_val, ac_isoName);}
+    const IsoName_c& arcc_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(arcc_processData),
+      mvec_measureSubprog() {init(&arcc_processData, ai32_val, arcc_isoName);}               arcc_
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
     @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param ac_isoName optional ISOName of partner member for this measure program
+    @param arcc_isoName optional ISOName of partner member for this measure program
   */
   void init(
     ProcDataBase_c *const apc_processData,
     int32_t ai32_val = 0,
-    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified());
+    const IsoName_c& arcc_isoName = IsoName_c::IsoNameUnspecified());
 
   /**
     assignment of MeasureProgBase_c objects
-    @param arc_src source MeasureProgBase_c instance
+    @param arcc_src source MeasureProgBase_c instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-  const MeasureProgBase_c& operator=(const MeasureProgBase_c& arc_src);
+  const MeasureProgBase_c& operator=(const MeasureProgBase_c& arcc_src);
 
   /**
     copy constructor
-    @param arc_src source MeasureProgBase_c instance
+    @param arcc_src source MeasureProgBase_c instance
   */
-   MeasureProgBase_c(const MeasureProgBase_c& arc_src);
+   MeasureProgBase_c(const MeasureProgBase_c& arcc_src);
 
   /** default destructor which has nothing to do */
   virtual ~MeasureProgBase_c();
@@ -263,14 +263,14 @@ public:
 #ifdef USE_FLOAT_DATA_TYPE
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param arc_processData optional reference to containing ProcDataBase_c instance (default NULL)
+    @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param af_val optional individual measure val for this program instance (can differ from master measure value)
-    @param ac_isoName optional ISOName of partner member for this measure program
+    @param arcc_isoName optional ISOName of partner member for this measure program
   */
   void init(
     ProcDataBase_c *const apc_processData,
     float af_val,
-    const IsoName_c& ac_isoName = IsoName_c::IsoNameUnspecified());
+    const IsoName_c& arcc_isoName = IsoName_c::IsoNameUnspecified());
 
   /**
     deliver actual last received value
@@ -403,10 +403,10 @@ public:
 
   /**
     set the mc_isoName code for this measureprog
-    @param ac_isoName ISOName for exact specification of partner system
+    @param arcc_isoName ISOName for exact specification of partner system
   */
   // This has something to do with the init failing for the iProcDataRemote_c object. -bac
-  void setISOName(const IsoName_c& ac_isoName){mc_isoName = ac_isoName;}
+  void setISOName(const IsoName_c& arcc_isoName){mc_isoName = arcc_isoName;}
 
   /**
     process a message;
@@ -425,43 +425,43 @@ public:
 
   /**
     compare two items for PRI and ISOName
-    @param right compared object
+    @param arcc_right compared object
     @return true -> both instances are equal (ISOName and active flag)
   */
-  bool operator==(const MeasureProgBase_c& right) const
-    {return (calcCompVal() == right.calcCompVal());}
+  bool operator==(const MeasureProgBase_c& arcc_right) const
+    {return (calcCompVal() == arcc_right.calcCompVal());}
 
   /**
     compare two MeasureProg with <
-    @param right compared object
+    @param arcc_right compared object
     @return true -> this instance is < than the other (ISOName and active flag)
   */
-  bool operator<(const MeasureProgBase_c& right) const
-    {return (calcCompVal() < right.calcCompVal());}
+  bool operator<(const MeasureProgBase_c& arcc_right) const
+    {return (calcCompVal() < arcc_right.calcCompVal());}
 
   /**
     compare two MeasureProg with <=
-    @param right compared object
+    @param arcc_right compared object
     @return true -> this instance is <= than the other (ISOName and active flag)
   */
-  bool operator<=(const MeasureProgBase_c& right) const
-    {return (calcCompVal() <= right.calcCompVal());}
+  bool operator<=(const MeasureProgBase_c& arcc_right) const
+    {return (calcCompVal() <= arcc_right.calcCompVal());}
 
   /**
     compare two MeasureProg with >
-    @param arc_right compared object
+    @param arcc_right compared object
     @return true -> this instance is > than the other (ISOName and active flag)
   */
-  bool operator>(const MeasureProgBase_c& right) const
-    {return (calcCompVal() > right.calcCompVal());}
+  bool operator>(const MeasureProgBase_c& arcc_right) const
+    {return (calcCompVal() > arcc_right.calcCompVal());}
 
   /**
     compare two MeasureProg with >=
-    @param right compared object
+    @param arcc_right compared object
     @return true -> this instance is >= than the other (ISOName and active flag)
   */
-  bool operator>=(const MeasureProgBase_c& right) const
-    {return (calcCompVal() >= right.calcCompVal());}
+  bool operator>=(const MeasureProgBase_c& arcc_right) const
+    {return (calcCompVal() >= arcc_right.calcCompVal());}
 
 protected: // Protected methods
   /**
@@ -563,7 +563,7 @@ protected: // Protected attributes
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const MeasureProgBase_c& arc_src );
+  void assignFromSource( const MeasureProgBase_c& arcc_src );
 
   /**
     calculates a single value from identifying values

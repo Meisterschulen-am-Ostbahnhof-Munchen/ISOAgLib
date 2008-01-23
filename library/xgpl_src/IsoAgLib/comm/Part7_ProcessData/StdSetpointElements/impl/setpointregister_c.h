@@ -144,25 +144,25 @@ public:
 
   /**
     operator= for SetpointRegister_c class
-    @param arc_src source SetpointRegister_c instance
+    @param arcc_src source SetpointRegister_c instance
     @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointRegister_c& operator=(const SetpointRegister_c& arc_src);
+  const SetpointRegister_c& operator=(const SetpointRegister_c& arcc_src);
   /**
     copy constructor for SetpointRegister_c class
-    @param arc_src source SetpointRegister_c instance
+    @param arcc_src source SetpointRegister_c instance
   */
-  SetpointRegister_c(const SetpointRegister_c& arc_src);
+  SetpointRegister_c(const SetpointRegister_c& arcc_src);
 
   /** default destructor which has nothing to do */
   ~SetpointRegister_c();
 
   /**
     compare two Setpoint Register items by value
-    @param arc_src compared instance
+    @param arcc_src compared instance
     @return true -> both setpoint sets are equal
   */
-  bool operator==(const SetpointRegister_c& arc_src)const;
+  bool operator==(const SetpointRegister_c& arcc_src)const;
 
   /* ************************************ */
   /* ***reading member variable access*** */
@@ -369,7 +369,7 @@ public:
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointRegister_c& arc_src );
+  void assignFromSource( const SetpointRegister_c& arcc_src );
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {

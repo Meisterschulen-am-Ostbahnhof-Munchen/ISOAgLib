@@ -138,12 +138,12 @@ namespace __IsoAgLib {
 }
 
 /** copy constructor */
-ProcIdent_c::ProcIdent_c( const ProcIdent_c& arc_src )
-  : ClientBase( arc_src ),
-	  mpc_externalOverridingIsoName( arc_src.mpc_externalOverridingIsoName ),
-		mc_isoName( arc_src.mc_isoName )
+ProcIdent_c::ProcIdent_c( const ProcIdent_c& arcc_src )
+  : ClientBase( arcc_src ),
+	  mpc_externalOverridingIsoName( arcc_src.mpc_externalOverridingIsoName ),
+		mc_isoName( arcc_src.mc_isoName )
 {
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 }
 
 
@@ -175,25 +175,25 @@ void ProcIdent_c::init( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t a
 
 /**
   copy constructor for class instance
-  @param arc_src ProcIdent_c instance
+  @param arcc_src ProcIdent_c instance
   @return reference to source for cmd like "proc1 = proc2 = proc3;"
 */
-ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& arc_src){
+ProcIdent_c& ProcIdent_c::operator=(const ProcIdent_c& arcc_src){
   // first assign base class
-  ClientBase::operator=(arc_src);
+  ClientBase::operator=(arcc_src);
   // now assign flags of this class
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 
   return *this;
 }
 
 /** internal base function for copy constructor and assignement */
-void ProcIdent_c::assignFromSource( const ProcIdent_c& arc_src )
+void ProcIdent_c::assignFromSource( const ProcIdent_c& arcc_src )
 {
-  mc_isoName = arc_src.mc_isoName;
-  mpc_externalOverridingIsoName = arc_src.mpc_externalOverridingIsoName;
+  mc_isoName = arcc_src.mc_isoName;
+  mpc_externalOverridingIsoName = arcc_src.mpc_externalOverridingIsoName;
   // elementDDI() returns list reference, setElementDDI() expects pointer to list
-  setElementDDI(&(arc_src.elementDDI()));
+  setElementDDI(&(arcc_src.elementDDI()));
 }
 
 /** default destructor which has nothing to do */
@@ -216,19 +216,19 @@ void ProcIdent_c::setExternalOverridingIsoName(const IsoName_c* apc_val)
    (important for matching received process data msg);
    if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
    <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-   <li>parameter arc_isoName == isoName()
+   <li>parameter arcc_isoName == isoName()
    </ul>
 
    ISO parameter
-   @param arc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
-   @param arc_isoNameReceiver compared isoName value
+   @param arcc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
+   @param arcc_isoNameReceiver compared isoName value
    @param aui16_DDI compared DDI value
    @param aui16_element compared element value
 
    @return true -> this instance has same Process-Data identity
 */
-bool ProcIdent_c::matchISO( const IsoName_c& arc_isoNameSender,
-                            const IsoName_c& arc_isoNameReceiver,
+bool ProcIdent_c::matchISO( const IsoName_c& arcc_isoNameSender,
+                            const IsoName_c& arcc_isoNameReceiver,
                             uint16_t aui16_DDI,
                             uint16_t aui16_element
                           ) const
@@ -243,13 +243,13 @@ bool ProcIdent_c::matchISO( const IsoName_c& arc_isoNameSender,
   if (iter == mlist_elementDDI.end())
     return false;
 
-  if (arc_isoNameSender.isSpecified())
+  if (arcc_isoNameSender.isSpecified())
   { // check in remote case: check if devClass of ownerISOName in procident matches devClass of sender
-    if (isoName() != arc_isoNameSender) return false;
+    if (isoName() != arcc_isoNameSender) return false;
   }
   else
   { // check in local case: check if procident devClass matches devClass of empf
-    if (isoName() != arc_isoNameReceiver) return false;
+    if (isoName() != arcc_isoNameReceiver) return false;
   }
 
   if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;

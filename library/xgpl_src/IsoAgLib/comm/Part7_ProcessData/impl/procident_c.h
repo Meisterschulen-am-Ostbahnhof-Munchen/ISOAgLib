@@ -128,7 +128,7 @@ public:
               int ai_singletonVecKey = 0);
 
   /** copy constructor */
-  ProcIdent_c( const ProcIdent_c& arc_src );
+  ProcIdent_c( const ProcIdent_c& arcc_src );
 
   /**
     initialisation which can set this process data instance to a defined intial state
@@ -150,42 +150,42 @@ public:
 
   /**
     copy constructor for class instance
-    @param arc_src source ProcIdent_c instance
+    @param arcc_src source ProcIdent_c instance
     @return reference to source for cmd like "proc1 = proc2 = proc3;"
   */
-  ProcIdent_c& operator=(const ProcIdent_c& arc_src);
+  ProcIdent_c& operator=(const ProcIdent_c& arcc_src);
   /** default destructor which has nothing to do */
   ~ProcIdent_c();
 
 #if 0
   /**
     comparison of two process ident instances
-    @param arc_right compared object
+    @param arcc_right compared object
     @return true -> this instance is equal to the other
   */
-  bool operator==(const ProcIdent_c& rrfec_right) const
-    {return (calcIdentVal() == rrfec_right.calcIdentVal());};
+  bool operator==(const ProcIdent_c& arcc_right) const
+    {return (calcIdentVal() == arcc_right.calcIdentVal());};
   /**
     differ comparison operator with another ProcIdent_c instance
-    @param arc_right compared object
+    @param arcc_right compared object
     @return true -> this indstance is different from the other
   */
-  bool operator!=(const ProcIdent_c& rrfec_right) const
-    {return (calcIdentVal() != rrfec_right.calcIdentVal());};
+  bool operator!=(const ProcIdent_c& arcc_right) const
+    {return (calcIdentVal() != arcc_right.calcIdentVal());};
   /**
     lower than comparison with another ProcIdent_c instance
-    @param arc_right compared object
+    @param arcc_right compared object
     @return true -> this instance is < than the other
   */
-  bool operator<(const ProcIdent_c& rrfec_right) const
-    {return (calcIdentVal() < rrfec_right.calcIdentVal());};
+  bool operator<(const ProcIdent_c& arcc_right) const
+    {return (calcIdentVal() < arcc_right.calcIdentVal());};
   /**
     greater than comparison with another ProcIdent_c instance
-    @param arc_right compared object
+    @param arcc_right compared object
     @return true -> this indstance is > than the other
   */
-  bool operator>(const ProcIdent_c& rrfec_right) const
-    {return (calcIdentVal() > rrfec_right.calcIdentVal());};
+  bool operator>(const ProcIdent_c& arcc_right) const
+    {return (calcIdentVal() > arcc_right.calcIdentVal());};
 #endif
 
   // member variable access
@@ -286,19 +286,19 @@ public:
     (important for matching received process data msg);
     if INSTANCE is defined (!= 0xFF) then one of the following conditions must be true:<ul>
     <li>parameter INSTANCE == ident INSTANCE (devClassInst())
-    <li>parameter arc_isoName == isoName()
+    <li>parameter arcc_isoName == isoName()
     </ul>
 
     ISO parameter
-    @param arc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
-    @param arc_isoNameReceiver compared isoName value
+    @param arcc_isoNameSender compare this parameter with owner isoName (only for remote, local calls: IsoNameUnspecified)
+    @param arcc_isoNameReceiver compared isoName value
     @param aui16_DDI compared DDI value
     @param aui16_element compared element value
 
     @return true -> this instance has same Process-Data identity
   */
-  bool matchISO( const IsoName_c& arc_isoNameSender,
-                 const IsoName_c& arc_isoNameReceiver,
+  bool matchISO( const IsoName_c& arcc_isoNameSender,
+                 const IsoName_c& arcc_isoNameReceiver,
                  uint16_t aui16_DDI,
                  uint16_t aui16_element
                ) const;
@@ -321,7 +321,7 @@ public:
 
 private: // Private attributes
   /** internal base function for copy constructor and assignement */
-  void assignFromSource( const ProcIdent_c& arc_src );
+  void assignFromSource( const ProcIdent_c& arcc_src );
 
   /** DEVCLASS code of process data identity */
   const IsoName_c* mpc_externalOverridingIsoName; // only defined for own local data, otherwise NULL

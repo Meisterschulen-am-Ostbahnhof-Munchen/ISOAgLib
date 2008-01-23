@@ -117,14 +117,14 @@ public:
   ProcessElementBase_c( ProcDataBase_c &arc_processData );
   /**
     copy constructor
-    @param arc_src source ProcessElementBase_c instance
+    @param arcc_src source ProcessElementBase_c instance
   */
-   ProcessElementBase_c(const ProcessElementBase_c& arc_src);
+   ProcessElementBase_c(const ProcessElementBase_c& arcc_src);
   /**
     assignment operator for ProcessElementBase
-    @param arc_src source ProcessElementBase_c instance
+    @param arcc_src source ProcessElementBase_c instance
   */
-  const ProcessElementBase_c& operator=(const ProcessElementBase_c& arc_src);
+  const ProcessElementBase_c& operator=(const ProcessElementBase_c& arcc_src);
   /** default destructor which has nothing to do */
   ~ProcessElementBase_c();
   

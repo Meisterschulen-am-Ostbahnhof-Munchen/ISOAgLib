@@ -150,33 +150,33 @@ void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(const IsoAgLib::E
 
 /**
   assignment operator for this object
-  @param arc_src source instance
+  @param arcc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
 const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c&
   ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::operator=(
-    const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src)
+    const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src)
 {
-  ProcDataRemoteBase_c::operator=( arc_src );
-  assignFromSource( arc_src );
+  ProcDataRemoteBase_c::operator=( arcc_src );
+  assignFromSource( arcc_src );
   return *this;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param arc_src source instance
+  @param arcc_src source instance
 */
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
-  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src)
-  : ProcDataRemoteBase_c( arc_src )
+  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src)
+  : ProcDataRemoteBase_c( arcc_src )
 {
-  assignFromSource( arc_src );
+  assignFromSource( arcc_src );
 }
 /** base function for assignment of element vars for copy constructor and operator= */
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::assignFromSource(
-  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arc_src )
+  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src )
 {
-  mi32_masterVal = arc_src.mi32_masterVal;
+  mi32_masterVal = arcc_src.mi32_masterVal;
 }
 
 /** default destructor which has nothing to do */

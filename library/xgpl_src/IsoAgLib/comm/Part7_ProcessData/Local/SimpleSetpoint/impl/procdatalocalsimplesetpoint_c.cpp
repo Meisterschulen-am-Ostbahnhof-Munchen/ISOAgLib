@@ -202,17 +202,17 @@ void ProcDataLocalSimpleSetpoint_c::init(const IsoAgLib::ElementDdi_s* ps_elemen
 }
 
 /** copy constructor */
-ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c( const ProcDataLocalSimpleSetpoint_c& arc_src )
-: ProcDataLocalBase_c( arc_src ), mc_measureprog( arc_src.mc_measureprog ), mc_setpoint( arc_src.mc_setpoint )
+ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c( const ProcDataLocalSimpleSetpoint_c& arcc_src )
+: ProcDataLocalBase_c( arcc_src ), mc_measureprog( arcc_src.mc_measureprog ), mc_setpoint( arcc_src.mc_setpoint )
 {
 }
 
 /** assignment operator */
-const ProcDataLocalSimpleSetpoint_c& ProcDataLocalSimpleSetpoint_c::operator=( const ProcDataLocalSimpleSetpoint_c& arc_src )
+const ProcDataLocalSimpleSetpoint_c& ProcDataLocalSimpleSetpoint_c::operator=( const ProcDataLocalSimpleSetpoint_c& arcc_src )
 {
-  ProcDataLocalBase_c::operator=(arc_src);
-  mc_measureprog = arc_src.mc_measureprog;
-  mc_setpoint = arc_src.mc_setpoint;
+  ProcDataLocalBase_c::operator=(arcc_src);
+  mc_measureprog = arcc_src.mc_measureprog;
+  mc_setpoint = arcc_src.mc_setpoint;
   return *this;
 }
 

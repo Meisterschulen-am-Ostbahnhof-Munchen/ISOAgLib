@@ -117,24 +117,24 @@ void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, u
 }
 
 /** assignment operator for this object
-  @param arc_src source instance
+  @param arcc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& arc_src){
+const ProcDataRemoteBase_c& ProcDataRemoteBase_c::operator=(const ProcDataRemoteBase_c& arcc_src){
   // call the assignment operator for the base class
-  ProcDataBase_c::operator=(arc_src);
-  mpc_externalOverridingIsoName = arc_src.mpc_externalOverridingIsoName;
+  ProcDataBase_c::operator=(arcc_src);
+  mpc_externalOverridingIsoName = arcc_src.mpc_externalOverridingIsoName;
   // return reference to source
   return *this;
 }
 
 /** copy constructor for IsoAgLibProcDataRemote
-  @param arc_src source instance
+  @param arcc_src source instance
 */
-ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arc_src)
-  : ProcDataBase_c(arc_src)
+ProcDataRemoteBase_c::ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arcc_src)
+  : ProcDataBase_c(arcc_src)
 { // now copy the element var
-  mpc_externalOverridingIsoName = arc_src.mpc_externalOverridingIsoName;
+  mpc_externalOverridingIsoName = arcc_src.mpc_externalOverridingIsoName;
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerRemoteProcessData( this );

@@ -112,23 +112,23 @@ SetpointBase_c::SetpointBase_c(
 
 /**
   assignement from another object
-  @param arc_src source SetpointBase_c instance
+  @param arcc_src source SetpointBase_c instance
   @return reference to source for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointBase_c& SetpointBase_c::operator=(const SetpointBase_c& arc_src){
+const SetpointBase_c& SetpointBase_c::operator=(const SetpointBase_c& arcc_src){
   // call the base class operator
-  ProcessElementBase_c::operator=(arc_src);
+  ProcessElementBase_c::operator=(arcc_src);
 
   // return reference
-  return arc_src;
+  return arcc_src;
 }
 
 /**
   copy constructor for SetpointBase
-  @param arc_src source SetpointBase_c instance
+  @param arcc_src source SetpointBase_c instance
 */
-SetpointBase_c::SetpointBase_c( const SetpointBase_c& arc_src)
-  : ProcessElementBase_c( arc_src){
+SetpointBase_c::SetpointBase_c( const SetpointBase_c& arcc_src)
+  : ProcessElementBase_c( arcc_src){
 }
 
 /** default destructor which has nothing to do */
@@ -173,11 +173,11 @@ void SetpointBase_c::processMsg(){
   possible errors:
       * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
       * dependant error in CanIo_c on CAN send problems
-  @param arc_src reference to SetpointRegister_c with registered setpoints
+  @param arcc_src reference to SetpointRegister_c with registered setpoints
   @param b_override true -> override registered setpoint with ai32_overrideVal
   @param ai32_overrideVal value which can override registered setpoint on ab_override == true
 */
-void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,
+void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arcc_src,
                                        bool b_override, int32_t ai32_overrideVal) const
 {
   int32_t i32_value;
@@ -188,25 +188,25 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,
    || (ai32_overrideVal == SETPOINT_ERROR_COMMAND)
       ) b_isCmd = true;
 
-  if (arc_src.existExact())
+  if (arcc_src.existExact())
   { // exact setpoint exist
     en_valueGroup = ProcessCmd_c::exactValue;
-    i32_value = (b_override) ? ai32_overrideVal : arc_src.exact();
+    i32_value = (b_override) ? ai32_overrideVal : arcc_src.exact();
   }
-  else if (arc_src.existMin())
+  else if (arcc_src.existMin())
   { // min setpoint exist
     en_valueGroup = ProcessCmd_c::minValue;
-    i32_value = (b_override) ? ai32_overrideVal : arc_src.min();
+    i32_value = (b_override) ? ai32_overrideVal : arcc_src.min();
   }
-  else if (arc_src.existMax())
+  else if (arcc_src.existMax())
   { // max setpoint exist
      en_valueGroup = ProcessCmd_c::maxValue;
-     i32_value = (b_override) ? ai32_overrideVal : arc_src.max();
+     i32_value = (b_override) ? ai32_overrideVal : arcc_src.max();
   }
-  else if (arc_src.existDefault())
+  else if (arcc_src.existDefault())
   { // default setpoint exist
      en_valueGroup = ProcessCmd_c::defaultValue;
-     i32_value = (b_override) ? ai32_overrideVal : arc_src.getDefault();
+     i32_value = (b_override) ? ai32_overrideVal : arcc_src.getDefault();
   }
 
   if (en_valueGroup != ProcessCmd_c::noValue)
@@ -215,7 +215,7 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& arc_src,
      getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               en_valueGroup, ProcessCmd_c::setValue);
 
-     pprocessData()->sendValISOName( arc_src.isoName(), i32_value);
+     pprocessData()->sendValISOName( arcc_src.isoName(), i32_value);
   }
 }
 

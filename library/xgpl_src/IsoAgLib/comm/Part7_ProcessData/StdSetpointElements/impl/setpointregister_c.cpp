@@ -115,34 +115,34 @@ void SetpointRegister_c::init(const IsoName_c& ac_isoName, int32_t ai32_exact, i
 
 /**
   operator= for SetpointRegister_c class
-  @param arc_src source SetpointRegister_c instance
+  @param arcc_src source SetpointRegister_c instance
   @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& arc_src){
-  assignFromSource(arc_src);
+const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& arcc_src){
+  assignFromSource(arcc_src);
   return *this;
 }
 
 /**
   copy constructor for SetpointRegister_c class
-  @param arc_src source SetpointRegister_c instance
+  @param arcc_src source SetpointRegister_c instance
 */
-SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& arc_src){
-  assignFromSource(arc_src);
+SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& arcc_src){
+  assignFromSource(arcc_src);
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointRegister_c::assignFromSource( const SetpointRegister_c& arc_src )
+void SetpointRegister_c::assignFromSource( const SetpointRegister_c& arcc_src )
 { // direct value set to avoid special functions of equivalent set functions
-  mi32_exactOrMin = arc_src.mi32_exactOrMin;
-  mi32_max = arc_src.mi32_max;
-  mi32_default = arc_src.mi32_default;
-  data.en_definedSetpoints = arc_src.data.en_definedSetpoints;
+  mi32_exactOrMin = arcc_src.mi32_exactOrMin;
+  mi32_max = arcc_src.mi32_max;
+  mi32_default = arcc_src.mi32_default;
+  data.en_definedSetpoints = arcc_src.data.en_definedSetpoints;
 
 
-  setISOName(arc_src.isoName());
-  setHandled(arc_src.handled(), arc_src.mi32_lastHandledTime);
-  setMaster(arc_src.master());
-  setValid(arc_src.valid());
+  setISOName(arcc_src.isoName());
+  setHandled(arcc_src.handled(), arcc_src.mi32_lastHandledTime);
+  setMaster(arcc_src.master());
+  setValid(arcc_src.valid());
 }
 
 /** default destructor which has nothing to do */
@@ -151,15 +151,15 @@ SetpointRegister_c::~SetpointRegister_c(){
 
 /**
   compare two Setpoint Register items by value
-  @param arc_src compared instance
+  @param arcc_src compared instance
   @return true -> both setpoint sets are equal
 */
-bool SetpointRegister_c::operator==(const SetpointRegister_c& arc_src)const{
-  return ((mi32_exactOrMin == arc_src.mi32_exactOrMin)
-        && (mi32_max == arc_src.mi32_max)
-        && (mi32_default == arc_src.mi32_default)
-        && (data.en_definedSetpoints == arc_src.data.en_definedSetpoints)
-        && (isoName() == arc_src.isoName()))
+bool SetpointRegister_c::operator==(const SetpointRegister_c& arcc_src)const{
+  return ((mi32_exactOrMin == arcc_src.mi32_exactOrMin)
+        && (mi32_max == arcc_src.mi32_max)
+        && (mi32_default == arcc_src.mi32_default)
+        && (data.en_definedSetpoints == arcc_src.data.en_definedSetpoints)
+        && (isoName() == arcc_src.isoName()))
         ? true:false;
 }
 

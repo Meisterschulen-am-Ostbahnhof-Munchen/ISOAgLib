@@ -139,15 +139,15 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
               int ai_singletonVecKey = 0);
 
   /** assignment operator for this object
-      @param arc_src source instance
+      @param arcc_src source instance
       @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
     */
-  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& arc_src);
+  const ProcDataRemoteBase_c& operator=(const ProcDataRemoteBase_c& arcc_src);
 
   /** copy constructor for IsoAgLibProcDataRemote
-      @param arc_src source instance
+      @param arcc_src source instance
     */
-   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arc_src);
+   ProcDataRemoteBase_c(const ProcDataRemoteBase_c& arcc_src);
 
   /** default destructor which has nothing to do */
   ~ProcDataRemoteBase_c();

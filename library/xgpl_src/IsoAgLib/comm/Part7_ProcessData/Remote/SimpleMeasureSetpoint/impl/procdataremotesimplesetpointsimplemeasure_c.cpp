@@ -150,28 +150,28 @@ void ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDd
 
 /**
   assignment operator for this object
-  @param arc_src source instance
+  @param arcc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
 const ProcDataRemoteSimpleSetpointSimpleMeasure_c&
   ProcDataRemoteSimpleSetpointSimpleMeasure_c::operator=(
-    const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arc_src)
+    const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arcc_src)
 {
-  ProcDataRemoteBase_c::operator=( arc_src );
-  mc_measure = arc_src.mc_measure;
-  mc_setpoint = arc_src.mc_setpoint;
+  ProcDataRemoteBase_c::operator=( arcc_src );
+  mc_measure = arcc_src.mc_measure;
+  mc_setpoint = arcc_src.mc_setpoint;
   return *this;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param arc_src source instance
+  @param arcc_src source instance
 */
 ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleMeasure_c(
-  const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arc_src)
-  : ProcDataRemoteBase_c( arc_src ),
-    mc_measure( arc_src.mc_measure ),
-    mc_setpoint( arc_src.mc_setpoint )
+  const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arcc_src)
+  : ProcDataRemoteBase_c( arcc_src ),
+    mc_measure( arcc_src.mc_measure ),
+    mc_setpoint( arcc_src.mc_setpoint )
 {
 }
 

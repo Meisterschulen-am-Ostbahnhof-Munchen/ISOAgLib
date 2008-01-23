@@ -185,16 +185,16 @@ class ProcDataRemoteSimpleSetpointSimpleMeasure_c : public ProcDataRemoteBase_c 
 
    /**
     assignment operator for this object
-    @param arc_src source instance
+    @param arcc_src source instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-  const ProcDataRemoteSimpleSetpointSimpleMeasure_c& operator=(const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arc_src);
+  const ProcDataRemoteSimpleSetpointSimpleMeasure_c& operator=(const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arcc_src);
 
   /**
     copy constructor for IsoAgLibProcDataRemote
-    @param arc_src source instance
+    @param arcc_src source instance
   */
-   ProcDataRemoteSimpleSetpointSimpleMeasure_c(const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arc_src);
+   ProcDataRemoteSimpleSetpointSimpleMeasure_c(const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arcc_src);
 
   /** default destructor which has nothing to do */
   ~ProcDataRemoteSimpleSetpointSimpleMeasure_c();

@@ -70,7 +70,7 @@ class ProcessWsmTaskMsgHandler_c
 {
 public:
   virtual ~ProcessWsmTaskMsgHandler_c() {};
-  virtual void processWsmTaskMessage (uint8_t /* ui8_tcStatus */, const IsoName_c& /* arc_isoName */) = 0;
+  virtual void processWsmTaskMessage (uint8_t /* ui8_tcStatus */, const IsoName_c& /* arcc_isoName */) = 0;
 };
 
 }
