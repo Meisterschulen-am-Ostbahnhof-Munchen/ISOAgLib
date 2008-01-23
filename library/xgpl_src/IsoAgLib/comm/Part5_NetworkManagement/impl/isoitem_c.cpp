@@ -123,60 +123,60 @@ IsoItem_c::IsoItem_c()
   All members are simply copied.
   This constructor is only used at construction-time.
   No IsoItems are copied later on as they're in (s)lists and not vectors..
-  @param arc_src source IsoItem_c instance
+  @param arcc_src source IsoItem_c instance
 */
-IsoItem_c::IsoItem_c(const IsoItem_c& arc_src)
-  : BaseItem_c (arc_src)
+IsoItem_c::IsoItem_c(const IsoItem_c& arcc_src)
+  : BaseItem_c (arcc_src)
 #ifdef USE_WORKING_SET
   //, mpvec_slaveIsoNames (...) // handled in code below!
-  , mi8_slavesToClaimAddress (arc_src.mi8_slavesToClaimAddress)
-  , mi32_timeLastCompletedAnnounceStarted (arc_src.mi32_timeLastCompletedAnnounceStarted)
-  , mi32_timeCurrentAnnounceStarted (arc_src.mi32_timeCurrentAnnounceStarted)
-  , mb_repeatAnnounce (arc_src.mb_repeatAnnounce)
+  , mi8_slavesToClaimAddress (arcc_src.mi8_slavesToClaimAddress)
+  , mi32_timeLastCompletedAnnounceStarted (arcc_src.mi32_timeLastCompletedAnnounceStarted)
+  , mi32_timeCurrentAnnounceStarted (arcc_src.mi32_timeCurrentAnnounceStarted)
+  , mb_repeatAnnounce (arcc_src.mb_repeatAnnounce)
 #endif
-  , mui8_nr (arc_src.mui8_nr)
-  , mb_repeatClaim (arc_src.mb_repeatClaim)
-  , mpc_identItem (arc_src.mpc_identItem)
-  , mc_isoName (arc_src.mc_isoName)
+  , mui8_nr (arcc_src.mui8_nr)
+  , mb_repeatClaim (arcc_src.mb_repeatClaim)
+  , mpc_identItem (arcc_src.mpc_identItem)
+  , mc_isoName (arcc_src.mc_isoName)
 
 {
   #ifdef USE_WORKING_SET
-  if ( arc_src.mpvec_slaveIsoNames == NULL)
+  if ( arcc_src.mpvec_slaveIsoNames == NULL)
   { // source is not a master, so simply copy the NULL
     mpvec_slaveIsoNames = NULL;
   }
   else
   { // source is a master, so create a copy of the pointed list (stl::vector)
-    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.mpvec_slaveIsoNames));
+    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arcc_src.mpvec_slaveIsoNames));
   }
   #endif
 }
 
 
 /** assignment operator for IsoItem_c
-  @param arc_src source IsoItem_c object
+  @param arcc_src source IsoItem_c object
 */
-IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arc_src)
+IsoItem_c& IsoItem_c::operator=(const IsoItem_c& arcc_src)
 {
-  BaseItem_c::operator= (arc_src);
-  mc_isoName = arc_src.mc_isoName;
-  mpc_identItem = arc_src.mpc_identItem;
-  mui8_nr = arc_src.mui8_nr;
-  mb_repeatClaim = arc_src.mb_repeatClaim;
+  BaseItem_c::operator= (arcc_src);
+  mc_isoName = arcc_src.mc_isoName;
+  mpc_identItem = arcc_src.mpc_identItem;
+  mui8_nr = arcc_src.mui8_nr;
+  mb_repeatClaim = arcc_src.mb_repeatClaim;
 
   #ifdef USE_WORKING_SET
-  if ( arc_src.mpvec_slaveIsoNames == NULL)
+  if ( arcc_src.mpvec_slaveIsoNames == NULL)
   { // source is not a master, so simply copy the NULL
     mpvec_slaveIsoNames = NULL;
   }
   else
   { // source is a master, so create a copy of the pointed list (stl::vector)
-    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arc_src.mpvec_slaveIsoNames));
+    mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (*(arcc_src.mpvec_slaveIsoNames));
   }
-  mi8_slavesToClaimAddress = arc_src.mi8_slavesToClaimAddress;
-  mi32_timeLastCompletedAnnounceStarted = arc_src.mi32_timeLastCompletedAnnounceStarted;
-  mi32_timeCurrentAnnounceStarted = arc_src.mi32_timeCurrentAnnounceStarted;
-  mb_repeatAnnounce = arc_src.mb_repeatAnnounce;
+  mi8_slavesToClaimAddress = arcc_src.mi8_slavesToClaimAddress;
+  mi32_timeLastCompletedAnnounceStarted = arcc_src.mi32_timeLastCompletedAnnounceStarted;
+  mi32_timeCurrentAnnounceStarted = arcc_src.mi32_timeCurrentAnnounceStarted;
+  mb_repeatAnnounce = arcc_src.mb_repeatAnnounce;
   #endif
   return *this;
 }
@@ -230,12 +230,12 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
 
 /**
   lower comparison between left ISOName uint8_t and right MonitorItem
-  @param ac_left ISOName uint8_t left parameter
-  @param arc_right rigth ServiceItem_c parameter
+  @param arcc_left ISOName uint8_t left parameter
+  @param arcc_right rigth ServiceItem_c parameter
  */
-bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right)
+bool operator<(const IsoName_c& arcc_left, const IsoItem_c& arcc_right)
 {
-  return (ac_left < arc_right.isoName())?true:false;
+  return (arcc_left < arcc_right.isoName())?true:false;
 }
 
 
@@ -570,12 +570,12 @@ uint8_t IsoItem_c::calc_randomWait()
 
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t
-  @param arc_left left ServiceItem_c parameter
-  @param ac_right ISOName uint8_t right parameter
+  @param arcc_left left ServiceItem_c parameter
+  @param arcc_right ISOName uint8_t right parameter
 */
-bool lessThan(const IsoItem_c& arc_left, const IsoName_c& ac_right)
+bool lessThan(const IsoItem_c& arcc_left, const IsoName_c& arcc_right)
 {
-  return (arc_left.isoName() < ac_right)?true:false;
+  return (arcc_left.isoName() < arcc_right)?true:false;
 }
 
 

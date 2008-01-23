@@ -113,13 +113,13 @@ struct IsoFilter_s
 
   /** operator== does INTENTIONALLY NOT compare the dlcForce field as you can't have the same filter for
       the same customer just with another dlcForce! do NEVER do this! */
-  bool operator == (const IsoFilter_s& arc_isoFilter) const
-  { return equalMaskAndFilter (arc_isoFilter) && (mpc_canCustomer == arc_isoFilter.mpc_canCustomer) /*&& (mi8_dlcForce == arc_isoFilter.mi8_dlcForce) */;}
-  bool operator != (const IsoFilter_s& arc_isoFilter) const
-  { return !operator == (arc_isoFilter); }
+  bool operator == (const IsoFilter_s& arcc_isoFilter) const
+  { return equalMaskAndFilter (arcc_isoFilter) && (mpc_canCustomer == arcc_isoFilter.mpc_canCustomer) /*&& (mi8_dlcForce == arcc_isoFilter.mi8_dlcForce) */;}
+  bool operator != (const IsoFilter_s& arcc_isoFilter) const
+  { return !operator == (arcc_isoFilter); }
 
 private:
-  bool equalMaskAndFilter (const IsoFilter_s& arc_isoFilter) const;
+  bool equalMaskAndFilter (const IsoFilter_s& arcc_isoFilter) const;
 
 private:
   Ident_c mc_identMask;
@@ -144,7 +144,7 @@ public:
   bool hasIsoFilter (const IsoFilter_s& arcs_isoFilter) { return (ms_isoFilter == arcs_isoFilter); }
 
   bool updateOnAdd    ();
-  void updateOnRemove (const IsoName_c* arc_isoName);
+  void updateOnRemove (const IsoName_c* arcc_isoName);
 
   //! Here could come another constructor that takes a variable list of filters and
   //! keeps them all connected. Yet to be done, but not important right now...

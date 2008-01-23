@@ -112,12 +112,12 @@ __IsoAgLib::IState_c::IState_c(uint8_t ab_state, int ai_singletonVecKey )
 
 /**
   copy constructor for IState_c
-  @param arc_src source for this new instance
+  @param arcc_src source for this new instance
 */
-__IsoAgLib::IState_c::IState_c(const __IsoAgLib::IState_c& arc_src)
-	: ClientBase( arc_src )
+__IsoAgLib::IState_c::IState_c(const __IsoAgLib::IState_c& arcc_src)
+	: ClientBase( arcc_src )
 {
-  en_itemState = arc_src.en_itemState;
+  en_itemState = arcc_src.en_itemState;
 }
 
 
@@ -195,15 +195,15 @@ __IsoAgLib::IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) :
 
 /**
   copy constructor for IState_c
-  @param arc_src source for this new instance
+  @param arcc_src source for this new instance
 */
-__IsoAgLib::IStateExt_c::IStateExt_c(const IStateExt_c& arc_src) : __IsoAgLib::IState_c(arc_src)
+__IsoAgLib::IStateExt_c::IStateExt_c(const IStateExt_c& arcc_src) : __IsoAgLib::IState_c(arcc_src)
 {
-  counter.b_addressClaimCnt = arc_src.counter.b_addressClaimCnt;
-  counter.b_causedConflictCnt = arc_src.counter.b_causedConflictCnt;
-  counter.b_affectedConflictCnt = arc_src.counter.b_affectedConflictCnt;
-  mi16_lastCausedConflictTime = arc_src.mi16_lastCausedConflictTime;
-  mi16_lastAffectedConflictTime = arc_src.mi16_lastAffectedConflictTime;
+  counter.b_addressClaimCnt = arcc_src.counter.b_addressClaimCnt;
+  counter.b_causedConflictCnt = arcc_src.counter.b_causedConflictCnt;
+  counter.b_affectedConflictCnt = arcc_src.counter.b_affectedConflictCnt;
+  mi16_lastCausedConflictTime = arcc_src.mi16_lastCausedConflictTime;
+  mi16_lastAffectedConflictTime = arcc_src.mi16_lastAffectedConflictTime;
 }
 
 /**

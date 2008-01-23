@@ -100,10 +100,10 @@ BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int 
 
 /**
   copy constructor which takes it initial values from another BaseItem_c instance
-  @param arc_baseItem reference to the source BaseItem_c instance
+  @param arcc_baseItem reference to the source BaseItem_c instance
 */
-BaseItem_c::BaseItem_c(const BaseItem_c& arc_baseItem)
-: IStateExt_c(arc_baseItem), mi32_lastTime(arc_baseItem.mi32_lastTime)
+BaseItem_c::BaseItem_c(const BaseItem_c& arcc_baseItem)
+: IStateExt_c(arcc_baseItem), mi32_lastTime(arcc_baseItem.mi32_lastTime)
 {}
 
 /** destructor which sets the update timestamp to 0 */

@@ -1480,9 +1480,9 @@ IsoMonitor_c::updateEarlierAndLatestInterval()
 /** command switching to and from special service / diagnostic mode.
     setting the flag mc_serviceTool controls appropriate handling
   */
-void IsoMonitor_c::setDiagnosticMode( const IsoName_c& arc_serviceTool)
+void IsoMonitor_c::setDiagnosticMode( const IsoName_c& arcc_serviceTool)
 {
-  mc_serviceTool = arc_serviceTool;
+  mc_serviceTool = arcc_serviceTool;
   if ( mc_serviceTool.isUnspecified() )
   { // back to normal operation --> trigger send of Req4SaClaim
     sendRequestForClaimedAddress( true );

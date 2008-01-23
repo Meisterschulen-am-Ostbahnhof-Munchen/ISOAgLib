@@ -364,17 +364,17 @@ private: // methods
       ONLY copy pointers to the wanted instance!!!
       ==> the copy constructor is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      @param arc_src source
+      @param arcc_src source
     */
-  IdentItem_c(const IdentItem_c& arc_src) : BaseItem_c(arc_src) {}
+  IdentItem_c(const IdentItem_c& arcc_src) : BaseItem_c(arcc_src) {}
 
   /** HIDDEN! assignment for IdentItem_c
       NEVER assign a IdentItem_c to another instance!!!!
       ==> the asignment is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      <!--@param arc_src source-->
+      <!--@param arcc_src source-->
     */
-  IdentItem_c& operator=(const IdentItem_c& /* arc_src */){return *this; }
+  IdentItem_c& operator=(const IdentItem_c& /* arcc_src */){return *this; }
 
 
 private: // attributes

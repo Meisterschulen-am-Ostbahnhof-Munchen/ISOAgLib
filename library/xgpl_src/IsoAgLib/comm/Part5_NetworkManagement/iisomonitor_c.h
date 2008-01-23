@@ -210,8 +210,8 @@ public:
   /** command switching to and from special service / diagnostic mode.
       setting the flag mc_serviceTool controls appropriate handling
     */
-  void setDiagnosticMode( const iIsoName_c& arc_serviceTool = iIsoName_c::iIsoNameUnspecified())
-  { IsoMonitor_c::setDiagnosticMode( arc_serviceTool );}
+  void setDiagnosticMode( const iIsoName_c& arcc_serviceTool = iIsoName_c::iIsoNameUnspecified())
+  { IsoMonitor_c::setDiagnosticMode( arcc_serviceTool );}
 
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.

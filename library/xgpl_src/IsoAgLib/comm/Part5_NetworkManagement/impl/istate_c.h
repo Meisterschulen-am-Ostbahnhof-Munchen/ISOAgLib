@@ -132,9 +132,9 @@ public:
 
   /**
     copy constructor for IState_c
-    @param arc_src source for this new instance
+    @param arcc_src source for this new instance
   */
-  IState_c(const IState_c& arc_src);
+  IState_c(const IState_c& arcc_src);
 
   /**
     set the state of an monitor list item and
@@ -212,9 +212,9 @@ public:
 
   /**
     copy constructor for IState_c
-    @param arc_src source for this new instance
+    @param arcc_src source for this new instance
   */
-  IStateExt_c(const IStateExt_c& arc_src);
+  IStateExt_c(const IStateExt_c& arcc_src);
 
   /**
     set and/or retreive the AddressClaim counter

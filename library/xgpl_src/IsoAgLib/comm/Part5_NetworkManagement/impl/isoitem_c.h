@@ -119,14 +119,14 @@ public:
     a master ( i.e. the mpc_masterItem pointer points to this )
     -> it doesn't simply copy the pointer, but sets its
     own pointer also to the this-pointer of the new instance
-    @param arc_src source IsoItem_c instance
+    @param arcc_src source IsoItem_c instance
   */
-  IsoItem_c(const IsoItem_c& arc_src);
+  IsoItem_c(const IsoItem_c& arcc_src);
 
   /** assign constructor for ISOItem
-    @param arc_src source IsoItem_c object
+    @param arcc_src source IsoItem_c object
   */
-  IsoItem_c& operator=(const IsoItem_c& arc_src);
+  IsoItem_c& operator=(const IsoItem_c& arcc_src);
 
   /** default destructor */
   virtual ~IsoItem_c();
@@ -246,7 +246,7 @@ public:
   /** this sets the back-reference to the associated IdentItem if this is a LOCAL Item!
       there's no need to unset the back-reference, because the local/remote state
       should be set at creation of the IsoItem. */
-  void setIdentItem (IdentItem_c& arc_identItem) { mpc_identItem = &arc_identItem; }
+  void setIdentItem (IdentItem_c& arcc_identItem) { mpc_identItem = &arcc_identItem; }
 
   /** set ISOName code of this item
     @param ac_isoName ISOName
@@ -350,42 +350,42 @@ public:
 
   /**
     lower comparison with another IsoItem_c on the rigth (compare the ISOName)
-    @param arc_right rigth parameter for lower compare
+    @param arcc_right rigth parameter for lower compare
   */
-  bool operator<(const IsoItem_c& arc_right) const
-    {return (isoName() < arc_right.isoName())?true:false;}
+  bool operator<(const IsoItem_c& arcc_right) const
+    {return (isoName() < arcc_right.isoName())?true:false;}
 
   /**
     lower comparison with ISOName uint8_t on the rigth
-    @param arc_right rigth parameter for lower compare
+    @param arcc_isoName rigth parameter for lower compare
   */
-  bool operator<(const IsoName_c& ac_isoName)const{return (isoName() < ac_isoName)?true:false;}
+  bool operator<(const IsoName_c& arcc_isoName)const{return (isoName() < arcc_isoName)?true:false;}
 
   /**
     lower comparison between left ISOName uint8_t and right MonitorItem
-    @param ac_left ISOName uint8_t left parameter
-    @param arc_right rigth ServiceItem_c parameter
+    @param arcc_left ISOName uint8_t left parameter
+    @param arcc_right rigth ServiceItem_c parameter
   */
-  friend bool operator<(const IsoName_c& ac_left, const IsoItem_c& arc_right);
+  friend bool operator<(const IsoName_c& arcc_left, const IsoItem_c& arcc_right);
 
   /**
     lower comparison between left IsoItem_c and right ISOName uint8_t
-    @param arc_left left ServiceItem_c parameter
-    @param arc_right ISOName uint8_t right parameter
+    @param arcc_left left ServiceItem_c parameter
+    @param arcc_right ISOName uint8_t right parameter
   */
-  friend bool lessThan(const IsoItem_c& arc_left, const IsoName_c& arc_right);
+  friend bool lessThan(const IsoItem_c& arcc_left, const IsoName_c& arcc_right);
 
   /**
     equality comparison with ISOName uint8_t on the rigth
-    @param arc_right rigth parameter for lower compare
+    @param arcc_right rigth parameter for lower compare
   */
-  bool operator==(const IsoName_c& arc_right)const { return (isoName() == arc_right)?true:false;}
+  bool operator==(const IsoName_c& arcc_right)const { return (isoName() == arcc_right)?true:false;}
 
   /**
     difference comparison with ISOName uint8_t on the rigth
-    @param arc_right rigth parameter for lower compare
+    @param arcc_right rigth parameter for lower compare
   */
-  bool operator!=(const IsoName_c& arc_right) const{ return (isoName() != arc_right)?true:false;}
+  bool operator!=(const IsoName_c& arcc_right) const{ return (isoName() != arcc_right)?true:false;}
 
   /**
     compare given number to nr of this item and return result

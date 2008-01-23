@@ -116,9 +116,9 @@ public:
 
   /**
     copy constructor which takes it initial values from another BaseItem_c instance
-    @param arc_baseItem reference to the source BaseItem_c instance
+    @param arcc_baseItem reference to the source BaseItem_c instance
   */
-  BaseItem_c(const BaseItem_c& arc_baseItem);
+  BaseItem_c(const BaseItem_c& arcc_baseItem);
 
   /** destructor which sets the update timestamp to 0 */
   ~BaseItem_c();
@@ -126,10 +126,10 @@ public:
   /**
     operator= which defines src as const to avoid
     compile warnings with the automatic generated version
-    @param arc_src reference to source BaseItem_c to copy values from
+    @param arcc_src reference to source BaseItem_c to copy values from
     @return reference to the source BaseItem_c instance for assign chains like "base1 = base2 = base3;"
   */
-   BaseItem_c& operator=(const BaseItem_c& arc_src);
+   BaseItem_c& operator=(const BaseItem_c& arcc_src);
 
   /**
     set pointer to containing Scheduler_c instance and update timestamp of object
