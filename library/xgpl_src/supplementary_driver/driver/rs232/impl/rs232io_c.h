@@ -281,10 +281,10 @@ public:
 
     possible errors:
         * Err_c::rs232_overflow send buffer buffer overflow during send
-    @param arcc_data sent data string
+    @param acrc_data sent data string
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& operator<<(const STL_NAMESPACE::string& arcc_data);
+  RS232IO_c& operator<<(const STL_NAMESPACE::string& acrc_data);
   /**
     send NULL terminated string on RS232 (terminating NULL isn't sent)
 

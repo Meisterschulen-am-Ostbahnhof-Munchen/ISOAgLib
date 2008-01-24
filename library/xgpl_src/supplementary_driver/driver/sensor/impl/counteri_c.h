@@ -185,17 +185,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!--@param arcc_src source-->
+    <!--@param acrc_src source-->
   */
-  CounterI_c(const CounterI_c& /*arcc_src*/) : SensorBase_c(0) {};
+  CounterI_c(const CounterI_c& /*acrc_src*/) : SensorBase_c(0) {};
   /**
     HIDDEN! assignment for CounterI_c
     NEVER assign a CounterI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!-- @param arcc_src source -->
+    <!-- @param acrc_src source -->
   */
-  CounterI_c& operator=(const CounterI_c& /*arcc_src*/){ return *this;};
+  CounterI_c& operator=(const CounterI_c& /*acrc_src*/){ return *this;};
 };
 }
 #endif

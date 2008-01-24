@@ -134,17 +134,17 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!--@param arcc_src source-->
+    <!--@param acrc_src source-->
   */
-  iAnalogI_c(const iAnalogI_c& /*arcc_src*/) : AnalogI_c() {};
+  iAnalogI_c(const iAnalogI_c& /*acrc_src*/) : AnalogI_c() {};
   /**
     HIDDEN! assignment for AnalogI_c
     NEVER assign a AnalogI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!--@param arcc_src source-->
+    <!--@param acrc_src source-->
   */
-  iAnalogI_c& operator=(const iAnalogI_c& /*arcc_src*/){ return *this;};
+  iAnalogI_c& operator=(const iAnalogI_c& /*acrc_src*/){ return *this;};
 };
 }
 #endif

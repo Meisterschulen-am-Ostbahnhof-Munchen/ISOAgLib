@@ -167,17 +167,17 @@ protected:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param arcc_src source
+    @param acrc_src source
   */
-  AnalogI_c(const AnalogI_c& arcc_src) : SensorBase_c(arcc_src) {};
+  AnalogI_c(const AnalogI_c& acrc_src) : SensorBase_c(acrc_src) {};
   /**
     HIDDEN! assignment for AnalogI_c
     NEVER assign a AnalogI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    <!--@param arcc_src source-->
+    <!--@param acrc_src source-->
   */
-  AnalogI_c& operator=(const AnalogI_c& /*arcc_src*/){ return *this;};
+  AnalogI_c& operator=(const AnalogI_c& /*acrc_src*/){ return *this;};
 private: // Private attributes
   /**
     input type: voltage or current

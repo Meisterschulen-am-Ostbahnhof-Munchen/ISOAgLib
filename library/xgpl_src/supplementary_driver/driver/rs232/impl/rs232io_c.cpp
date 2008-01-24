@@ -383,12 +383,12 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
 
     possible errors:
         * Err_c::rs232_overflow send buffer buffer overflow during send
-    @param arcc_data sent data string
+    @param acrc_data sent data string
     @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
   */
-  RS232IO_c& RS232IO_c::operator<<(const STL_NAMESPACE::string& arcc_data)
+  RS232IO_c& RS232IO_c::operator<<(const STL_NAMESPACE::string& acrc_data)
   {
-    send(((uint8_t*)(arcc_data.c_str())), (uint8_t)arcc_data.size());
+    send(((uint8_t*)(acrc_data.c_str())), (uint8_t)acrc_data.size());
     return *this;
   }
 
