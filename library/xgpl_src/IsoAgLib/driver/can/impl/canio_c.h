@@ -457,11 +457,11 @@ class CanIo_c : public SingletonCanIo_c {
           * Err_c::can_off on physical CAN-BUS off state
       @see CANPkg
       @see HAL::sendCanMsg
-      @param arc_src CanPkg_c which holds the to be sent data
+      @param acrc_src CanPkg_c which holds the to be sent data
       @return reference to this CanIo_c instance ==>
             needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
     */
-  CanIo_c& operator<<(CanPkg_c& arc_src);
+  CanIo_c& operator<<(CanPkg_c& acrc_src);
 
   /** function for sending data out of CanPkgExt_c (uses BIOS function)
       if send buffer is full a local loop waits till buffer has enough space
@@ -472,10 +472,10 @@ class CanIo_c : public SingletonCanIo_c {
           * Err_c::range on undef BUS or BIOS send obj nr
           * Err_c::can_warn on physical CAN-BUS problems
           * Err_c::can_off on physical CAN-BUS off state
-      @param arc_src CanPkgExt_c which holds the to be sent data
+      @param acrc_src CanPkgExt_c which holds the to be sent data
       @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
     */
-  CanIo_c& operator<<(CanPkgExt_c& rc_src);
+  CanIo_c& operator<<(CanPkgExt_c& acrc_src);
 
   /** check for can send conflict error and stop send retry on error
       (thus avoid BUS OFF)

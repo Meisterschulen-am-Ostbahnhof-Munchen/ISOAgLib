@@ -124,19 +124,19 @@ FilterBox_c::FilterBox_c()
 /**
   copy constructor which uses data of another FilterBox_c instance
 
-  @param arcc_src reference to the source FilterBox_c instance for copying
+  @param acrc_src reference to the source FilterBox_c instance for copying
    @exception badAlloc
 */
-FilterBox_c::FilterBox_c(const FilterBox_c& arcc_src)
-  : mc_filter(arcc_src.mc_filter),
-    mc_mask(arcc_src.mc_mask),
-    mvec_customer(arcc_src.mvec_customer),
-    mui8_filterBoxNr(arcc_src.mui8_filterBoxNr),
-    mui8_busNumber(arcc_src.mui8_busNumber),
-    mi32_fbVecIdx(arcc_src.mi32_fbVecIdx)
+FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
+  : mc_filter(acrc_src.mc_filter),
+    mc_mask(acrc_src.mc_mask),
+    mvec_customer(acrc_src.mvec_customer),
+    mui8_filterBoxNr(acrc_src.mui8_filterBoxNr),
+    mui8_busNumber(acrc_src.mui8_busNumber),
+    mi32_fbVecIdx(acrc_src.mi32_fbVecIdx)
 #if ((defined( USE_ISO_11783)) \
 		    && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , mb_performIsobusResolve(arcc_src.mb_performIsobusResolve)
+    , mb_performIsobusResolve(acrc_src.mb_performIsobusResolve)
   #endif
 {}
 
@@ -149,27 +149,27 @@ FilterBox_c::~FilterBox_c()
 }
 
 /**
-  copy values of arcc_src FilterBox_c object to this instance
+  copy values of acrc_src FilterBox_c object to this instance
 
   possible errors:
       * badAlloc on not enough memory for copying buffed CAN msg from source
 
-  @param arcc_src FilterBox_c instance with data to assign to this instance
+  @param acrc_src FilterBox_c instance with data to assign to this instance
   @return reference to this instance for chains like "box_1 = box_2 = ... = box_n;"
 */
 
-FilterBox_c& FilterBox_c::operator=(const FilterBox_c& arcc_src){
-  if ( this != &arcc_src)
+FilterBox_c& FilterBox_c::operator=(const FilterBox_c& acrc_src){
+  if ( this != &acrc_src)
   {
-    mc_filter = arcc_src.mc_filter;
-    mc_mask = arcc_src.mc_mask;
+    mc_filter = acrc_src.mc_filter;
+    mc_mask = acrc_src.mc_mask;
 
-    // arcc_src and self are different object instances
-    mvec_customer = arcc_src.mvec_customer;
+    // acrc_src and self are different object instances
+    mvec_customer = acrc_src.mvec_customer;
 
-    mui8_busNumber = arcc_src.mui8_busNumber;
-    mui8_filterBoxNr = arcc_src.mui8_filterBoxNr;
-    mi32_fbVecIdx = arcc_src.mi32_fbVecIdx;
+    mui8_busNumber = acrc_src.mui8_busNumber;
+    mui8_filterBoxNr = acrc_src.mui8_filterBoxNr;
+    mi32_fbVecIdx = acrc_src.mi32_fbVecIdx;
   }
   return *this;
 }
@@ -296,21 +296,21 @@ void FilterBox_c::closeHAL()
 
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
- @param arcc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param arcc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+ @param acrc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param acrc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
 
 
   @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
-void FilterBox_c::set (const Ident_c& arcc_mask,
-                       const Ident_c& arcc_filter,
+void FilterBox_c::set (const Ident_c& acrc_mask,
+                       const Ident_c& acrc_filter,
                        CanCustomer_c* apc_customer,
                        int8_t ai8_dlcForce)
 {
-  mc_filter = arcc_filter;
-  mc_mask = arcc_mask;
+  mc_filter = acrc_filter;
+  mc_mask = acrc_mask;
 
   STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
   for (; pc_iter != mvec_customer.end(); pc_iter++)

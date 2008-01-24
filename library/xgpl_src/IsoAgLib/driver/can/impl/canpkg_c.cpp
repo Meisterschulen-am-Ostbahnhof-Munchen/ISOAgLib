@@ -122,14 +122,14 @@ CanPkg_c::~CanPkg_c(){
   @see __IsoAgLib::FilterBox_c::operator>>
   @see CanPkgExt_c::operator=
   @see CanPkgExt_c::getData
-  @param arcc_right reference to the source CanPkg_c on the right
+  @param acrc_right reference to the source CanPkg_c on the right
   @return reference to the source CanPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
-const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& arcc_right)
+const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& acrc_right)
 {
-  msc_ident = arcc_right.msc_ident;
-  msui8_len = arcc_right.msui8_len;
-  msc_data = arcc_right.msc_data;
-  msi32_time = arcc_right.msi32_time;
+  msc_ident = acrc_right.msc_ident;
+  msui8_len = acrc_right.msui8_len;
+  msc_data = acrc_right.msc_data;
+  msi32_time = acrc_right.msi32_time;
 
   return *this;
 }
@@ -208,15 +208,15 @@ void CanPkg_c::setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_
 
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compare for equality with other CANPkg
-  @param arcc_cmp reference to the to be compared CANPkg
+  @param acrc_cmp reference to the to be compared CANPkg
   @return true -> both CanPkg_c have the same data
-bool CanPkg_c::operator==(const CanPkg_c& arcc_cmp) const
+bool CanPkg_c::operator==(const CanPkg_c& acrc_cmp) const
 {
   bool b_result = true;
-  if (msc_data != arcc_cmp.msc_data) b_result = false;
-  if (msc_ident != arcc_cmp.msc_ident) b_result = false;
-  if (msui8_len != arcc_cmp.msui8_len) b_result = false;
-  if (msi32_time != arcc_cmp.msi32_time) b_result = false;
+  if (msc_data != acrc_cmp.msc_data) b_result = false;
+  if (msc_ident != acrc_cmp.msc_ident) b_result = false;
+  if (msui8_len != acrc_cmp.msui8_len) b_result = false;
+  if (msi32_time != acrc_cmp.msi32_time) b_result = false;
   return b_result;
 }
 */
@@ -227,18 +227,18 @@ bool CanPkg_c::operator==(const CanPkg_c& arcc_cmp) const
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   compare for difference to other CANPkg
-  @param arcc_cmp reference to the to be compared CANPkg
+  @param acrc_cmp reference to the to be compared CANPkg
   @return true -> both CanPkg_c have different data
-bool CanPkg_c::operator!=(const CanPkg_c& arcc_cmp) const
+bool CanPkg_c::operator!=(const CanPkg_c& acrc_cmp) const
 {
   ANYWAY I THINK THIS LOGIC IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!
 
   bool b_result = true;
 
-  if (msc_data == arcc_cmp.msc_data) b_result = false;
-  if (msc_ident == arcc_cmp.msc_ident) b_result = false;
-  if (msui8_len == arcc_cmp.msui8_len) b_result = false;
-  if (msi32_time == arcc_cmp.msi32_time) b_result = false;
+  if (msc_data == acrc_cmp.msc_data) b_result = false;
+  if (msc_ident == acrc_cmp.msc_ident) b_result = false;
+  if (msui8_len == acrc_cmp.msui8_len) b_result = false;
+  if (msi32_time == acrc_cmp.msi32_time) b_result = false;
 
   return b_result;
   return false;

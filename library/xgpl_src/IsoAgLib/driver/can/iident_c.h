@@ -85,27 +85,27 @@ public:
     : Ident_c(at_ident, ren_identType) {};
   /**
     @brief constructor which gets its values from other instance
-    @param arcc_src source Ident_c instance
+    @param acrc_src source Ident_c instance
   */
-  iIdent_c(const Ident_c& arcc_src) : Ident_c(arcc_src) {};
+  iIdent_c(const Ident_c& acrc_src) : Ident_c(acrc_src) {};
   
   /**
     @brief compare this ident setting with another
     (use memory operation for max speed)
-    @param arcc_src compared ident
+    @param acrc_src compared ident
     @return true -> referenced ident has same setting and type
   */
-  bool operator==(const Ident_c& arcc_src) const
-    {return Ident_c::operator==(arcc_src);};
+  bool operator==(const Ident_c& acrc_src) const
+    {return Ident_c::operator==(acrc_src);};
 
   /**
     @brief compare this ident setting with another
     (use memory operation for max speed)
-    @param arcc_src compared ident
+    @param acrc_src compared ident
     @return true -> referenced ident has different setting and type
   */
-  bool operator!=(const Ident_c& arcc_src) const
-    {return Ident_c::operator!=(arcc_src);};
+  bool operator!=(const Ident_c& acrc_src) const
+    {return Ident_c::operator!=(acrc_src);};
   /**
     @brief compare this ident value and ident type
     @param at_ident compared ident setting
@@ -123,11 +123,11 @@ public:
     {return Ident_c::masked(at_mask);};
   /**
     @brief:deliver ident value masked by given ident
-    @param arcc_mask mask value
+    @param acrc_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
-  MASK_TYPE masked(const Ident_c& arcc_mask = ~0) const
-    {return Ident_c::masked(arcc_mask);};
+  MASK_TYPE masked(const Ident_c& acrc_mask = ~0) const
+    {return Ident_c::masked(acrc_mask);};
   /**
     @brief update the ident with bitwise AND with given ident setting
     @param rc_bitAnd Ident_c variable with ident to bit_AND
@@ -137,11 +137,11 @@ public:
     
   /**
     @brief:deliver amount of different bits from own ident to compared ident
-    @param arcc_ident reference to compared ident
+    @param acrc_ident reference to compared ident
     @return amount of different bits
   */
-  uint8_t bit_diff(const Ident_c& arcc_ident) const
-    {return Ident_c::bit_diff(arcc_ident);};
+  uint8_t bit_diff(const Ident_c& acrc_ident) const
+    {return Ident_c::bit_diff(acrc_ident);};
   /**
     @brief:deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
@@ -198,10 +198,10 @@ public:
     {Ident_c::setIdentType(at_type);};
   /**
     @brief set this ident according to other Ident
-    @param arcc_src source Ident_c instance
+    @param acrc_src source Ident_c instance
   */
-  const iIdent_c& operator=(const iIdent_c& arcc_src)
-    {return ((const iIdent_c&)Ident_c::operator=(((const Ident_c&)arcc_src)));};
+  const iIdent_c& operator=(const iIdent_c& acrc_src)
+    {return ((const iIdent_c&)Ident_c::operator=(((const Ident_c&)acrc_src)));};
 };
 
 }

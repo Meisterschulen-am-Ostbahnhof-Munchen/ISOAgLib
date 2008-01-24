@@ -398,12 +398,12 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
         * Err_c::can_warn on physical CAN-BUS problems
         * Err_c::can_off on physical CAN-BUS off state
     @see iCanPkg_c
-    @param arc_src iCanPkg_c which holds the to be sent data
+    @param acrc_src iCanPkg_c which holds the to be sent data
     @return reference to this iCanIo_c instance ==>
           needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
   */
-  iCanIo_c& operator<<(iCanPkg_c& arc_src)
-    {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<iCanPkg_c&>(arc_src)));};
+  iCanIo_c& operator<<(iCanPkg_c& acrc_src)
+    {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<iCanPkg_c&>(acrc_src)));};
   /**
     function for sending data out of iCANPkg
     if send buffer is full a local loop waits till buffer has enough space
@@ -416,12 +416,12 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
         * Err_c::can_warn on physical CAN-BUS problems
         * Err_c::can_off on physical CAN-BUS off state
     @see iCanPkg_c
-    @param arc_src iCanPkg_c which holds the to be sent data
+    @param acrc_src iCanPkg_c which holds the to be sent data
     @return reference to this iCanIo_c instance ==>
           needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
   */
-  iCanIo_c& operator<<(iCanPkgExt_c& arc_src)
-    {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<__IsoAgLib::CanPkgExt_c&>(arc_src)));};
+  iCanIo_c& operator<<(iCanPkgExt_c& acrc_src)
+    {return static_cast<iCanIo_c&>(CanIo_c::operator<<(static_cast<__IsoAgLib::CanPkgExt_c&>(acrc_src)));};
 
  private:
   /** allow getIcanInstance() access to shielded base class.

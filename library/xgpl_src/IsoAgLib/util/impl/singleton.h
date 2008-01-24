@@ -145,13 +145,13 @@
   class ClientBase {
    public:
     ClientBase( int ai_singletonVecKey = 0 ) : mi_singletonVecKey(ai_singletonVecKey){};
-    ClientBase( const ClientBase& rc_src )
-      : mi_singletonVecKey(rc_src.mi_singletonVecKey) { };
+    ClientBase( const ClientBase& acrc_src )
+      : mi_singletonVecKey(acrc_src.mi_singletonVecKey) { };
     int getSingletonVecKey() const { return mi_singletonVecKey;};
     void setSingletonKey( int aiKey ) { mi_singletonVecKey = aiKey;};
    protected:
-    const ClientBase& operator=( const ClientBase& arc_src )
-    { mi_singletonVecKey = arc_src.mi_singletonVecKey; return *this;};
+    const ClientBase& operator=( const ClientBase& acrc_src )
+    { mi_singletonVecKey = acrc_src.mi_singletonVecKey; return *this;};
    private:
     int mi_singletonVecKey;
   };
@@ -287,12 +287,12 @@
       * to store the dedicated BUS for later accesses by autoInstance()
       */
     ClientBase( int /* ai_singletonVecKey is intentionally unused for one-instance version of Singleton */ = 0 ) {};
-    ClientBase( const ClientBase& /* rc_src is intentionally unused for one-instance version of Singleton */ ) { };
+    ClientBase( const ClientBase& /* acrc_src is intentionally unused for one-instance version of Singleton */ ) { };
 
     int getSingletonVecKey() const { return 0;};
     void setSingletonKey( int /* riKey is intentionally unused for one-instance version of Singleton */ ) { };
    protected:
-    const ClientBase& operator=( const ClientBase& /* arc_src is intentionally unused for one-instance version of Singleton */ ) { return *this;};
+    const ClientBase& operator=( const ClientBase& /* acrc_src is intentionally unused for one-instance version of Singleton */ ) { return *this;};
   };
 #endif
 #if defined(CAN_INSTANCE_CNT) && (CAN_INSTANCE_CNT != 1 )

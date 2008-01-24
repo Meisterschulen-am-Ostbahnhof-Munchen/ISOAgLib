@@ -761,13 +761,13 @@ void Flexible4ByteString_c::setFlexible4DataValueInd(uint8_t aui8_ind, const Fle
   uint32[0] = ac_value.uint32[aui8_ind];
 };
 
-Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& arcc_src )
+Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& acrc_src )
 {
   #if SIZEOF_INT < 4 || defined( __IAR_SYSTEMS_ICC__ )
-  uint32[1] = arcc_src.uint32[1];
-  uint32[0] = arcc_src.uint32[0];
+  uint32[1] = acrc_src.uint32[1];
+  uint32[0] = acrc_src.uint32[0];
   #else
-  uint64[0] = arcc_src.uint64[0];
+  uint64[0] = acrc_src.uint64[0];
   #endif
 };
 
@@ -835,49 +835,49 @@ void Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_
 
 #if   SIZEOF_INT < 4
 /** assignment */
-const Flexible8ByteString_c& Flexible8ByteString_c::operator=( const Flexible8ByteString_c& arcc_src )
+const Flexible8ByteString_c& Flexible8ByteString_c::operator=( const Flexible8ByteString_c& acrc_src )
 {
-  uint32[1] = arcc_src.uint32[1];
-  uint32[0] = arcc_src.uint32[0];
+  uint32[1] = acrc_src.uint32[1];
+  uint32[0] = acrc_src.uint32[0];
   return *this;
 };
 
 
 /** compare for EQUAL */
-bool Flexible8ByteString_c::operator==( const Flexible8ByteString_c& arcc_cmp ) const
+bool Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  return ( ( uint32[1] == arcc_cmp.uint32[1] )
-        && ( uint32[0] == arcc_cmp.uint32[0] ) )?true:false;
+  return ( ( uint32[1] == acrc_cmp.uint32[1] )
+        && ( uint32[0] == acrc_cmp.uint32[0] ) )?true:false;
 };
 /** compare for DIFFERENT */
-bool Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& arcc_cmp ) const
+bool Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  return ( ( uint32[1] != arcc_cmp.uint32[1] )
-        && ( uint32[0] != arcc_cmp.uint32[0] ) )?true:false;
+  return ( ( uint32[1] != acrc_cmp.uint32[1] )
+        && ( uint32[0] != acrc_cmp.uint32[0] ) )?true:false;
 };
 #endif // end SIZEOF_INT < 4
 
 
 #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
 /** compare for LOWER */
-bool Flexible4ByteString_c::operator<( const Flexible4ByteString_c& arcc_cmp ) const
+bool Flexible4ByteString_c::operator<( const Flexible4ByteString_c& acrc_cmp ) const
 {
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 3; ind >= 0; ind-- )
-    { if (uint8[ind] >= arcc_cmp.uint8[ind]) return false;}
+    { if (uint8[ind] >= acrc_cmp.uint8[ind]) return false;}
     // if reach here - all comparisons lead to EQUAL
     return true;
 }
 /** compare for LARGER */
-bool Flexible4ByteString_c::operator>( const Flexible4ByteString_c& arcc_cmp ) const
+bool Flexible4ByteString_c::operator>( const Flexible4ByteString_c& acrc_cmp ) const
 {
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 3; ind >= 0; ind-- )
-    { if (uint8[ind] <= arcc_cmp.uint8[ind]) return false;}
+    { if (uint8[ind] <= acrc_cmp.uint8[ind]) return false;}
     // if reach here - all comparisons lead to EQUAL
     return true;
 };
@@ -886,14 +886,14 @@ bool Flexible4ByteString_c::operator>( const Flexible4ByteString_c& arcc_cmp ) c
   @return 0 == equal;
           +1 == this item has higher value than par;
           -1 == this item has lower value than par */
-int Flexible4ByteString_c::compare( const Flexible4ByteString_c& arcc_cmp ) const
+int Flexible4ByteString_c::compare( const Flexible4ByteString_c& acrc_cmp ) const
 {
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 3; ind >= 0; ind-- )
-    { if      (uint8[ind] < arcc_cmp.uint8[ind]) return -1;
-      else if (uint8[ind] > arcc_cmp.uint8[ind]) return +1;}
+    { if      (uint8[ind] < acrc_cmp.uint8[ind]) return -1;
+      else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;}
     // if reach here - all comparisons lead to EQUAL
     return 0;
 };
@@ -902,36 +902,36 @@ int Flexible4ByteString_c::compare( const Flexible4ByteString_c& arcc_cmp ) cons
 
 #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
 /** compare for LOWER */
-bool Flexible8ByteString_c::operator<( const Flexible8ByteString_c& arcc_cmp ) const
+bool Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) const
 {
   #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 7; ind >= 0; ind-- )
-    { if (uint8[ind] >= arcc_cmp.uint8[ind]) return false;}
+    { if (uint8[ind] >= acrc_cmp.uint8[ind]) return false;}
     // if reach here - all comparisons lead to EQUAL
     return true;
   #else
-  if ( uint32[1] >= arcc_cmp.uint32[1] ) return false;
-  if ( uint32[0] >= arcc_cmp.uint32[0] ) return false;
+  if ( uint32[1] >= acrc_cmp.uint32[1] ) return false;
+  if ( uint32[0] >= acrc_cmp.uint32[0] ) return false;
   return true;
   #endif
 };
 /** compare for LARGER */
-bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& arcc_cmp ) const
+bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) const
 {
   #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 7; ind >= 0; ind-- )
-    { if (uint8[ind] <= arcc_cmp.uint8[ind]) return false;}
+    { if (uint8[ind] <= acrc_cmp.uint8[ind]) return false;}
     // if reach here - all comparisons lead to EQUAL
     return true;
   #else
-  if ( uint32[1] <= arcc_cmp.uint32[1] ) return false;
-  if ( uint32[0] <= arcc_cmp.uint32[0] ) return false;
+  if ( uint32[1] <= acrc_cmp.uint32[1] ) return false;
+  if ( uint32[0] <= acrc_cmp.uint32[0] ) return false;
   return true;
   #endif
 };
@@ -939,22 +939,22 @@ bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& arcc_cmp ) c
   @return 0 == equal;
           +1 == this item has higher value than par;
           -1 == this item has lower value than par */
-int Flexible8ByteString_c::compare( const Flexible8ByteString_c& arcc_cmp ) const
+int Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) const
 {
   #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 7; ind >= 0; ind-- )
-    { if      (uint8[ind] < arcc_cmp.uint8[ind]) return -1;
-      else if (uint8[ind] > arcc_cmp.uint8[ind]) return +1;}
+    { if      (uint8[ind] < acrc_cmp.uint8[ind]) return -1;
+      else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;}
     // if reach here - all comparisons lead to EQUAL
     return 0;
   #elif SIZEOF_INT < 4
-    if      (uint32[1] < arcc_cmp.uint32[1]) return -1;
-    else if (uint32[1] > arcc_cmp.uint32[1]) return +1;
-    if      (uint32[0] < arcc_cmp.uint32[0]) return -1;
-    else if (uint32[0] > arcc_cmp.uint32[0]) return +1;
+    if      (uint32[1] < acrc_cmp.uint32[1]) return -1;
+    else if (uint32[1] > acrc_cmp.uint32[1]) return +1;
+    if      (uint32[0] < acrc_cmp.uint32[0]) return -1;
+    else if (uint32[0] > acrc_cmp.uint32[0]) return +1;
     return 0;
   #endif
 };

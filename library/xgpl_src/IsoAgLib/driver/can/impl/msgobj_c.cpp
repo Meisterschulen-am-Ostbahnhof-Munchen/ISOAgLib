@@ -116,7 +116,7 @@ MsgObj_c::MsgObj_c()
 }
 
 /** copy constructor for this class, which gets data from another MsgObj_c instance
-  @param arcc_src source MsgObj_c instance which should be cloned by this instance
+  @param acrc_src source MsgObj_c instance which should be cloned by this instance
 */
 MsgObj_c::MsgObj_c(const MsgObj_c& src)
 { // set all member variables to the corresponding value from the source instance
@@ -159,17 +159,17 @@ MsgObj_c::~MsgObj_c()
   }
 }
 
-/** merge two msgObj instances arcc_left and arcc_right and tell with ab_extendedType
+/** merge two msgObj instances acrc_left and acrc_right and tell with ab_extendedType
   if 11bit or 29 bit identifiers are used
   (uses BIOS function)
 
   possible errors:
   * range BUS or MsgObj numbers out of allowed limits
   * hwConfig BUS not initialized or ID can't be changed
-  @param arcc_right reference to MsgObj_c which should be merged into this instance
+  @param acrc_right reference to MsgObj_c which should be merged into this instance
   @return true -> successful merged; false -> too many FilterBorefs for one MsgObj
 */
-bool MsgObj_c::merge(MsgObj_c& arcc_right)
+bool MsgObj_c::merge(MsgObj_c& acrc_right)
 {
 
 #ifdef DEBUG
@@ -177,12 +177,12 @@ bool MsgObj_c::merge(MsgObj_c& arcc_right)
   #ifdef SYSTEM_PC
   << STL_NAMESPACE::hex
   #endif
-  << arcc_right.filter().ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+  << acrc_right.filter().ident() << INTERNAL_DEBUG_DEVICE_ENDL;
   INTERNAL_DEBUG_DEVICE << "MERGE : current OBJ filter = 0x" << mc_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
 
 #endif
   // use only common bits for t_filter
-  mc_filter.ident_bitAnd(arcc_right.filter());
+  mc_filter.ident_bitAnd(acrc_right.filter());
 
 
   #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
@@ -192,10 +192,10 @@ bool MsgObj_c::merge(MsgObj_c& arcc_right)
 
 
   // collect FilterBox_c references
-  while ( !arcc_right.marr_filterBoxIndex.empty() )
+  while ( !acrc_right.marr_filterBoxIndex.empty() )
   {
-    marr_filterBoxIndex.push_back( arcc_right.marr_filterBoxIndex.back() );
-    arcc_right.marr_filterBoxIndex.pop_back();
+    marr_filterBoxIndex.push_back( acrc_right.marr_filterBoxIndex.back() );
+    acrc_right.marr_filterBoxIndex.pop_back();
   }
 
   //exit function with success indication

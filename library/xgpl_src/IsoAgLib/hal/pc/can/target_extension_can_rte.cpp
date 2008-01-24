@@ -133,14 +133,14 @@ class RteCanPkg {
     RteCanPkg( uint32_t aui32_id = 0, uint8_t aui8_xtd = 0, uint8_t aui8_size = 0, const uint8_t* apui8_data = NULL )
       { id = aui32_id; b_xtd = aui8_xtd; size = ( aui8_size <= 8 )?aui8_size:8; memcpy( data, apui8_data, size ); };
 
-    bool operator==( const RteCanPkg& arc_src ) const
-      { return ( ( id == arc_src.id ) && ( b_xtd == arc_src.b_xtd ) && ( size == arc_src.size ) && ( memcmp( data, arc_src.data, size ) == 0 ) )?true:false; } ;
+    bool operator==( const RteCanPkg& acrc_src ) const
+      { return ( ( id == acrc_src.id ) && ( b_xtd == acrc_src.b_xtd ) && ( size == acrc_src.size ) && ( memcmp( data, acrc_src.data, size ) == 0 ) )?true:false; } ;
 
-    bool operator!=( const RteCanPkg& arc_src ) const
-      { return ( ( id != arc_src.id ) || ( b_xtd != arc_src.b_xtd ) || ( size != arc_src.size ) || ( memcmp( data, arc_src.data, size ) != 0 ) )?true:false; } ;
+    bool operator!=( const RteCanPkg& acrc_src ) const
+      { return ( ( id != acrc_src.id ) || ( b_xtd != acrc_src.b_xtd ) || ( size != acrc_src.size ) || ( memcmp( data, acrc_src.data, size ) != 0 ) )?true:false; } ;
 
-    const RteCanPkg& operator=( const RteCanPkg& arc_src )
-      { id = arc_src.id; b_xtd = arc_src.b_xtd; size = arc_src.size; memcpy( data, arc_src.data, size ); return *this;};
+    const RteCanPkg& operator=( const RteCanPkg& acrc_src )
+      { id = acrc_src.id; b_xtd = acrc_src.b_xtd; size = acrc_src.size; memcpy( data, acrc_src.data, size ); return *this;};
 };
 
 static STL_NAMESPACE::list<RteCanPkg> arr_canQueue[cui32_maxCanBusCnt];

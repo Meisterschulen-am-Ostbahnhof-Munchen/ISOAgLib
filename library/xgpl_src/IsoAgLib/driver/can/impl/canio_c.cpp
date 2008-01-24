@@ -1223,10 +1223,10 @@ uint32_t ui32_msgNbr;
       * Err_c::range on undef BUS or BIOS send obj nr
       * Err_c::can_warn on physical CAN-BUS problems
       * Err_c::can_off on physical CAN-BUS off state
-  @param rc_src CanPkgExt_c which holds the to be sent data
+  @param acrc_src CanPkgExt_c which holds the to be sent data
   @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
 */
-CanIo_c& CanIo_c::operator<<(CanPkgExt_c& rc_src)
+CanIo_c& CanIo_c::operator<<(CanPkgExt_c& acrc_src)
 {
   if ( ! isReady2Send() ) return *this;
   //check if source and destination address are valid
@@ -1235,20 +1235,20 @@ CanIo_c& CanIo_c::operator<<(CanPkgExt_c& rc_src)
   // resolving is only used for extended ident messages
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
   if ( ( mb_canChannelCouldSendIso                           )
-    && ( rc_src.identType() == Ident_c::ExtendedIdent     )
-    && ( ! rc_src.isProprietaryMessageOnStandardizedCan() ) )
+    && ( acrc_src.identType() == Ident_c::ExtendedIdent     )
+    && ( ! acrc_src.isProprietaryMessageOnStandardizedCan() ) )
   #else
-  if ( ( mb_canChannelCouldSendIso ) && ( rc_src.identType() == Ident_c::ExtendedIdent ) )
+  if ( ( mb_canChannelCouldSendIso ) && ( acrc_src.identType() == Ident_c::ExtendedIdent ) )
   #endif // end of ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
   #endif
   {
-    if ( ! rc_src.resolveSendingInformation() )
+    if ( ! acrc_src.resolveSendingInformation() )
     { // preconditions for correct sending are not fullfilled -> set error state
       getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
       return *this;
     }
   }
-  return CanIo_c::operator<<( static_cast<CanPkg_c&>(rc_src) );
+  return CanIo_c::operator<<( static_cast<CanPkg_c&>(acrc_src) );
 }
 
 /** function for sending data out of CanPkg_c (uses BIOS function)
@@ -1260,10 +1260,10 @@ CanIo_c& CanIo_c::operator<<(CanPkgExt_c& rc_src)
       * Err_c::range on undef BUS or BIOS send obj nr
       * Err_c::can_warn on physical CAN-BUS problems
       * Err_c::can_off on physical CAN-BUS off state
-  @param rc_src CanPkg_c which holds the to be sent data
+  @param acrc_src CanPkg_c which holds the to be sent data
   @return reference to this CanIo_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
 */
-CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
+CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
 { // immediately return if CAN is not yet configured for send
   if ( ! isReady2Send() ) return *this;
 
@@ -1274,7 +1274,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
   if ( mui8_busNumber == 1 ) {
     INTERNAL_DEBUG_DEVICE
       << "CanIo_c::operator<< mit MIN MsgObj Nr: " << uint16_t( ui8_sendObjNr )
-      << "Xtd: " << rc_src.identType()
+      << "Xtd: " << acrc_src.identType()
       << "\n\r";
   }
   #endif
@@ -1304,7 +1304,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& rc_src)
   doDebug(mui8_busNumber, ui8_sendObjNr);
   #endif
 
-  int16_t i16_sendFuncState = HAL::can_useMsgobjSend(mui8_busNumber, ui8_sendObjNr, &rc_src);
+  int16_t i16_sendFuncState = HAL::can_useMsgobjSend(mui8_busNumber, ui8_sendObjNr, &acrc_src);
 
   #ifdef DEBUG
   doDebug(mui8_busNumber, ui8_sendObjNr);
