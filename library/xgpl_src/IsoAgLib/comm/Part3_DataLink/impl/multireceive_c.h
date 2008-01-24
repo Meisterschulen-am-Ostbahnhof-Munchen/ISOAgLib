@@ -298,8 +298,7 @@ private:
 
   //  Operation: sendEndOfMessageAck
   //! Parameter:
-  //! @param arc_stream
-  //! @param b_lastChunk
+  //! @param apc_stream
   void sendEndOfMessageAck(DEF_Stream_c_IMPL* apc_stream);
 
 
