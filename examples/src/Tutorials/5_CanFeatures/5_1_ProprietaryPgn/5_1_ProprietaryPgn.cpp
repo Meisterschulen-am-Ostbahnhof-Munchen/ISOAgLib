@@ -207,16 +207,16 @@ iIsoName_c c_remoteECU (true, // ab_selfConf
 
 
   /** initialize proprietary Can client Application */
-  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& arc_item, const IsoAgLib::iIsoName_c& arc_rremoteECU SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  void ProprietaryCanClient_c::init( const IsoAgLib::iIdentItem_c& acrc_item, const IsoAgLib::iIsoName_c& acrc_rremoteECU SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   {
     /** pc_identItem is used in main event */
-    pc_identItem = &arc_item;
+    pc_identItem = &acrc_item;
     /** filter for proprietary A1 */
     uint32_t ui32_filter = PROPRIETARY_A_PGN << 8;
     /** Mask for Proprietary A1 */
     uint32_t ui32_mask   = 0x3FF0000;
     /** define receive filter. Note: ident only for proprietary A, A1 PGN, otherwise NULL */
-    defineReceiveFilter( ui32_mask,  ui32_filter, arc_rremoteECU, &arc_item SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+    defineReceiveFilter( ui32_mask,  ui32_filter, acrc_rremoteECU, &acrc_item SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
 
     #ifndef PROP_CLIENT_B
     /** CLIENT A uses periodically sending! */

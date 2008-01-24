@@ -48,12 +48,12 @@
 class DevClassFlexManager_c : public ProcDataManager_c  {
 public:
   DevClassFlexManager_c(DefaultRecordConfig_c* apc_defaultRecordConfig = NULL, uint16_t aui16_eepromOffsetAdr = 0xFFFF);
-  DevClassFlexManager_c(const DevClassFlexManager_c& arc_src);
+  DevClassFlexManager_c(const DevClassFlexManager_c& acrc_src);
   virtual ~DevClassFlexManager_c();
   void init(DefaultRecordConfig_c* apc_defaultRecordConfig);
-  bool operator==(const DevClassFlexManager_c& arc_comp)const{return (c_remoteISOName == arc_comp.c_remoteISOName)?true:false;};
-  bool operator!=(const DevClassFlexManager_c& arc_comp)const{return (c_remoteISOName != arc_comp.c_remoteISOName)?true:false;};
-  bool operator<(const DevClassFlexManager_c& arc_comp)const{return (c_remoteISOName < arc_comp.c_remoteISOName)?true:false;};
+  bool operator==(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName == acrc_comp.c_remoteISOName)?true:false;};
+  bool operator!=(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName != acrc_comp.c_remoteISOName)?true:false;};
+  bool operator<(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName < acrc_comp.c_remoteISOName)?true:false;};
 
   bool operator==(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName == ac_comp)?true:false;};
   bool operator!=(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName != ac_comp)?true:false;};

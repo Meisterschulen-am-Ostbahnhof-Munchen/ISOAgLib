@@ -64,9 +64,9 @@ public:
   SpecificRecordConfig_c( uint16_t aui16_eepromAdr = 0, DefaultRecordConfig_c* apc_defaultConfig = NULL, IsoAgLib::iDINItem_c* apc_memberItem = NULL);
   /**
     copy Constructor
-    @param arc_src reference to source instance
+    @param acrc_src reference to source instance
   */
-  SpecificRecordConfig_c(const SpecificRecordConfig_c& arc_src);
+  SpecificRecordConfig_c(const SpecificRecordConfig_c& acrc_src);
   /**
     destructor
   */

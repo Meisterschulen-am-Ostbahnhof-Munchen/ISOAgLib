@@ -69,33 +69,33 @@ DevClassFlexManager_c::DevClassFlexManager_c(DefaultRecordConfig_c* apc_defaultR
   // set proc_cnt to 1 (working state) unless more info found
   set_proc_cnt(1);
 }
-DevClassFlexManager_c::DevClassFlexManager_c(const DevClassFlexManager_c& arc_src)
- : ProcDataManager_c(arc_src)
+DevClassFlexManager_c::DevClassFlexManager_c(const DevClassFlexManager_c& acrc_src)
+ : ProcDataManager_c(acrc_src)
 {
-    pc_defaultRecordConfig = arc_src.pc_defaultRecordConfig;
-    configField.posApplrateX = arc_src.configField.posApplrateX;
-    configField.requestSingleVals = arc_src.configField.requestSingleVals;
+    pc_defaultRecordConfig = acrc_src.pc_defaultRecordConfig;
+    configField.posApplrateX = acrc_src.configField.posApplrateX;
+    configField.requestSingleVals = acrc_src.configField.requestSingleVals;
     // don't copy proc data pointer array - start with deactivated
     _pc_proc = NULL;
 
-    ui16_eepromOffsetAdr = arc_src.ui16_eepromOffsetAdr;
+    ui16_eepromOffsetAdr = acrc_src.ui16_eepromOffsetAdr;
 
-    configField.timeWert = arc_src.configField.timeWert;
+    configField.timeWert = acrc_src.configField.timeWert;
 
-    configField.applrateXHa = arc_src.configField.applrateXHa;
-    configField.applrateXMin = arc_src.configField.applrateXMin;
-    configField.applrateX = arc_src.configField.applrateX;
-    configField.applrateTankX = arc_src.configField.applrateTankX;
+    configField.applrateXHa = acrc_src.configField.applrateXHa;
+    configField.applrateXMin = acrc_src.configField.applrateXMin;
+    configField.applrateX = acrc_src.configField.applrateX;
+    configField.applrateTankX = acrc_src.configField.applrateTankX;
 
-    configField.transportDummyWidth = arc_src.configField.transportDummyWidth;
-    configField.recordWorkDist = arc_src.configField.recordWorkDist;
-    configField.fieldstarSend = arc_src.configField.fieldstarSend;
-    configField.recordAsDevClass = arc_src.configField.recordAsDevClass;
-    configField.workWertInst = arc_src.configField.workWertInst;
-    configField.useMeasureProgs = arc_src.configField.useMeasureProgs;
-    configField.timeDistDevClass = arc_src.configField.timeDistDevClass;
+    configField.transportDummyWidth = acrc_src.configField.transportDummyWidth;
+    configField.recordWorkDist = acrc_src.configField.recordWorkDist;
+    configField.fieldstarSend = acrc_src.configField.fieldstarSend;
+    configField.recordAsDevClass = acrc_src.configField.recordAsDevClass;
+    configField.workWertInst = acrc_src.configField.workWertInst;
+    configField.useMeasureProgs = acrc_src.configField.useMeasureProgs;
+    configField.timeDistDevClass = acrc_src.configField.timeDistDevClass;
 
-    c_flexibleHeader = arc_src.c_flexibleHeader;
+    c_flexibleHeader = acrc_src.c_flexibleHeader;
 }
 
 DevClassFlexManager_c::~DevClassFlexManager_c()

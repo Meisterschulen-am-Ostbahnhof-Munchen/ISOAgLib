@@ -60,9 +60,9 @@ public:
 	DefaultRecordConfig_c( uint16_t aui16_eepromAdr = 0 );
 	/**
 		copy Constructor
-		@param arc_src reference to source instance
+		@param acrc_src reference to source instance
 	*/
-	DefaultRecordConfig_c(const DefaultRecordConfig_c& arc_src);
+	DefaultRecordConfig_c(const DefaultRecordConfig_c& acrc_src);
 	/**
 		destructor
 	*/

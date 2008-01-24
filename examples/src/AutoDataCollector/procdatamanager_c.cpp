@@ -53,12 +53,12 @@ ProcDataManager_c::~ProcDataManager_c()
 {
 }
 
-ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& arc_src)
+ProcDataManager_c::ProcDataManager_c(const ProcDataManager_c& acrc_src)
 {
-  pc_monitor = arc_src.pc_monitor;
-  pc_data = arc_src.pc_data;
-  ui8_cnt = arc_src.ui8_cnt;
-	c_remoteISOName = arc_src.c_remoteISOName;
+  pc_monitor = acrc_src.pc_monitor;
+  pc_data = acrc_src.pc_data;
+  ui8_cnt = acrc_src.ui8_cnt;
+	c_remoteISOName = acrc_src.c_remoteISOName;
 	// don't copy actation state - start with deactivated
   b_activated = false;
 }

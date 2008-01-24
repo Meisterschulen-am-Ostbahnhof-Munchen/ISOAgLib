@@ -84,35 +84,35 @@ SpecificRecordConfig_c::SpecificRecordConfig_c(uint16_t aui16_eepromAdr, Default
 }
 /**
 	copy Constructor
-	@param arc_src reference to source instance
+	@param acrc_src reference to source instance
 */
-SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& arc_src)
+SpecificRecordConfig_c::SpecificRecordConfig_c(const SpecificRecordConfig_c& acrc_src)
 {
-	ui16_eepromAdr = arc_src.ui16_eepromAdr;
+	ui16_eepromAdr = acrc_src.ui16_eepromAdr;
 
-	ui16_procEepromAdr = arc_src.ui16_procEepromAdr;
-	ui16_cachedProcEepromAdr = arc_src.ui16_cachedProcEepromAdr;
-	i16_cachedProcInd = arc_src.i16_cachedProcInd;
-	memmove(pui8_cachedTagName, arc_src.pui8_cachedTagName, TAG_NAME_LEN + 1);
-	memmove(pui8_cachedTagData, arc_src.pui8_cachedTagData, TAG_VALUE_LEN + 1);
+	ui16_procEepromAdr = acrc_src.ui16_procEepromAdr;
+	ui16_cachedProcEepromAdr = acrc_src.ui16_cachedProcEepromAdr;
+	i16_cachedProcInd = acrc_src.i16_cachedProcInd;
+	memmove(pui8_cachedTagName, acrc_src.pui8_cachedTagName, TAG_NAME_LEN + 1);
+	memmove(pui8_cachedTagData, acrc_src.pui8_cachedTagData, TAG_VALUE_LEN + 1);
 
-	ui8_configDataCnt = arc_src.ui8_configDataCnt;
-	ui8_devClass = arc_src.ui8_devClass;
-	ui8_devClassInst = arc_src.ui8_devClassInst;
-	ui8_nameLen = arc_src.ui8_nameLen;
-	memmove(pui8_name, arc_src.pui8_name, 11);
+	ui8_configDataCnt = acrc_src.ui8_configDataCnt;
+	ui8_devClass = acrc_src.ui8_devClass;
+	ui8_devClassInst = acrc_src.ui8_devClassInst;
+	ui8_nameLen = acrc_src.ui8_nameLen;
+	memmove(pui8_name, acrc_src.pui8_name, 11);
 
 	// optional data
-	ui8_timeWert = arc_src.ui8_timeWert;
-	ui8_workWertInst = arc_src.ui8_workWertInst;
-	ui8_applrateRecording = arc_src.ui8_applrateRecording;
-	b_transportDummyWidth = arc_src.b_transportDummyWidth;
-	b_transportWorkDist = arc_src.b_transportWorkDist;
-	b_fieldstarSend = arc_src.b_fieldstarSend;
-	ui8_useMeasureProgs = arc_src.ui8_useMeasureProgs;
-	c_recordAsISOName = arc_src.c_recordAsISOName;
-	ui8_procCnt = arc_src.ui8_procCnt;
-	ui8_timeDistDevClass = arc_src.ui8_timeDistDevClass;
+	ui8_timeWert = acrc_src.ui8_timeWert;
+	ui8_workWertInst = acrc_src.ui8_workWertInst;
+	ui8_applrateRecording = acrc_src.ui8_applrateRecording;
+	b_transportDummyWidth = acrc_src.b_transportDummyWidth;
+	b_transportWorkDist = acrc_src.b_transportWorkDist;
+	b_fieldstarSend = acrc_src.b_fieldstarSend;
+	ui8_useMeasureProgs = acrc_src.ui8_useMeasureProgs;
+	c_recordAsISOName = acrc_src.c_recordAsISOName;
+	ui8_procCnt = acrc_src.ui8_procCnt;
+	ui8_timeDistDevClass = acrc_src.ui8_timeDistDevClass;
 }
 /**
 	destructor

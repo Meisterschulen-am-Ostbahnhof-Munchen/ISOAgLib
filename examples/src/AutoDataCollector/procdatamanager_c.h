@@ -51,7 +51,7 @@ of process data for writing by Task Controller
 class ProcDataManager_c {
 public:
   ProcDataManager_c(uint8_t aui8_cnt = 0);
-  ProcDataManager_c(const ProcDataManager_c& arc_src);
+  ProcDataManager_c(const ProcDataManager_c& acrc_src);
   virtual ~ProcDataManager_c();
   /**
     activate with creating the needed ProcessData

@@ -70,24 +70,24 @@ DefaultRecordConfig_c::DefaultRecordConfig_c(uint16_t aui16_eepromAdr)
 }
 /**
 	copy Constructor
-	@param arc_src reference to source instance
+	@param acrc_src reference to source instance
 */
-DefaultRecordConfig_c::DefaultRecordConfig_c(const DefaultRecordConfig_c& arc_src)
+DefaultRecordConfig_c::DefaultRecordConfig_c(const DefaultRecordConfig_c& acrc_src)
 {
-	ui16_eepromAdr = arc_src.ui16_eepromAdr;
+	ui16_eepromAdr = acrc_src.ui16_eepromAdr;
 
-	b_accumulatedTimeDist = arc_src.b_accumulatedTimeDist;
-	b_diagnoseData = arc_src.b_diagnoseData;
-	ui16_recordingRate = arc_src.ui16_recordingRate;
-	ui8_timeWert = arc_src.ui8_timeWert;
-	ui8_workWertInst = arc_src.ui8_workWertInst;
-	ui8_applrateRecording = arc_src.ui8_applrateRecording;
-	b_transportDummyWidth = arc_src.b_transportDummyWidth;
-	b_transportWorkDist = arc_src.b_transportWorkDist;
-	ui8_useMeasureProgs = arc_src.ui8_useMeasureProgs;
-	b_fuelConsumption = arc_src.b_fuelConsumption;
-	ui8_draftForce = arc_src.ui8_draftForce;
-	ui8_deviceSpecificConfigCnt = arc_src.ui8_deviceSpecificConfigCnt;
+	b_accumulatedTimeDist = acrc_src.b_accumulatedTimeDist;
+	b_diagnoseData = acrc_src.b_diagnoseData;
+	ui16_recordingRate = acrc_src.ui16_recordingRate;
+	ui8_timeWert = acrc_src.ui8_timeWert;
+	ui8_workWertInst = acrc_src.ui8_workWertInst;
+	ui8_applrateRecording = acrc_src.ui8_applrateRecording;
+	b_transportDummyWidth = acrc_src.b_transportDummyWidth;
+	b_transportWorkDist = acrc_src.b_transportWorkDist;
+	ui8_useMeasureProgs = acrc_src.ui8_useMeasureProgs;
+	b_fuelConsumption = acrc_src.b_fuelConsumption;
+	ui8_draftForce = acrc_src.ui8_draftForce;
+	ui8_deviceSpecificConfigCnt = acrc_src.ui8_deviceSpecificConfigCnt;
 }
 /**
 	destructor
