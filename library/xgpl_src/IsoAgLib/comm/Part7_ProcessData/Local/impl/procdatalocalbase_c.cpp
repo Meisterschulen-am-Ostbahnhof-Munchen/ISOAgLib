@@ -135,7 +135,7 @@ namespace __IsoAgLib {
   @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element
-  @param arcc_isoName optional ISOName code of Process-Data
+  @param acrc_isoName optional ISOName code of Process-Data
   @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
           -# for process data like distance, time, area
@@ -158,7 +158,7 @@ namespace __IsoAgLib {
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                               const IsoName_c& arcc_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                               const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
                                bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                uint16_t aui16_eepromAdr,
@@ -167,7 +167,7 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint
                                int ai_singletonVecKey
                                )
 {
-  ProcDataBase_c::init( ps_elementDDI, aui16_element, arcc_isoName, apc_externalOverridingIsoName,
+  ProcDataBase_c::init( ps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName,
                         apc_processDataChangeHandler, ai_singletonVecKey);
 
   mb_cumulativeValue = ab_cumulativeValue;
@@ -181,31 +181,31 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint
 }
 
 /** copy constructor */
-ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& arcc_src )
-  : ProcDataBase_c( arcc_src )
+ProcDataLocalBase_c::ProcDataLocalBase_c( const ProcDataLocalBase_c& acrc_src )
+  : ProcDataBase_c( acrc_src )
 {
-  assignFromSource( arcc_src );
+  assignFromSource( acrc_src );
 
   // now register the pointer to this instance in Process_c
   getProcessInstance4Comm().registerLocalProcessData( this );
 }
 /** assignment operator */
-const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBase_c& arcc_src )
+const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBase_c& acrc_src )
 {
-  ProcDataBase_c::operator=( arcc_src );
-  assignFromSource( arcc_src );
+  ProcDataBase_c::operator=( acrc_src );
+  assignFromSource( acrc_src );
   return *this;
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& arcc_src )
+void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& acrc_src )
 {
-  mi32_masterVal = arcc_src.mi32_masterVal;
+  mi32_masterVal = acrc_src.mi32_masterVal;
 #ifdef USE_EEPROM_IO
-  mi32_eepromVal = arcc_src.mi32_eepromVal;
-  mi32_lastEepromStore = arcc_src.mi32_lastEepromStore;
-  mui16_eepromAdr = arcc_src.mui16_eepromAdr;
+  mi32_eepromVal = acrc_src.mi32_eepromVal;
+  mi32_lastEepromStore = acrc_src.mi32_lastEepromStore;
+  mui16_eepromAdr = acrc_src.mui16_eepromAdr;
 #endif // USE_EEPROM_IO
-  mb_cumulativeValue = arcc_src.mb_cumulativeValue;
+  mb_cumulativeValue = acrc_src.mb_cumulativeValue;
 }
 
 

@@ -150,9 +150,9 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
   */
   void init( ProcDataBase_c *const apc_processData = NULL );
   /** copy constructor */
-  SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& arc_src );
+  SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& acrc_src );
   /** assignment operator */
-  const SimpleManageSetpointLocal_c& operator=( const SimpleManageSetpointLocal_c& arc_src );
+  const SimpleManageSetpointLocal_c& operator=( const SimpleManageSetpointLocal_c& acrc_src );
   /** processing of a setpoint message */
   void processSetpoint();
   /**

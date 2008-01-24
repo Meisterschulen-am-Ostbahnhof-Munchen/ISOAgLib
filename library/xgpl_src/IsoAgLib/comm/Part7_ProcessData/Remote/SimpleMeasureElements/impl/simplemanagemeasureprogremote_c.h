@@ -123,9 +123,9 @@ class SimpleManageMeasureProgRemote_c : public ProcessElementBase_c
   */
   void init( ProcDataBase_c *const apc_processData = NULL );
   /** copy constructor */
-  SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& arcc_src );
+  SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& acrc_src );
   /** assignment operator */
-  const SimpleManageMeasureProgRemote_c& operator=( const SimpleManageMeasureProgRemote_c& arcc_src );
+  const SimpleManageMeasureProgRemote_c& operator=( const SimpleManageMeasureProgRemote_c& acrc_src );
 
 
   /**

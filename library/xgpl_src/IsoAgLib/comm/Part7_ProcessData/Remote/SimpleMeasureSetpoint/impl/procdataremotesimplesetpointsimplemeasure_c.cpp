@@ -103,7 +103,7 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element device element number
 
-  @param arcc_isoName optional ISOName code of this instance
+  @param acrc_isoName optional ISOName code of this instance
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -111,12 +111,12 @@ namespace __IsoAgLib {
 ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleMeasure_c(
               const IsoAgLib::ElementDdi_s* ps_elementDDI,
               uint16_t aui16_element,
-              const IsoName_c& arcc_isoName,
+              const IsoName_c& acrc_isoName,
               const IsoName_c* apc_commanderISOName,
               IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
               int ai_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI, aui16_element,
-                         arcc_isoName, apc_commanderISOName,
+                         acrc_isoName, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
   , mc_measure( this )
   , mc_setpoint( this )
@@ -129,20 +129,20 @@ ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleM
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element device element number
 
-  @param arcc_isoName optional ISOName code of this instance
+  @param acrc_isoName optional ISOName code of this instance
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
                                                        uint16_t aui16_element,
-                                                       const IsoName_c& arcc_isoName,
+                                                       const IsoName_c& acrc_isoName,
                                                        const IsoName_c* apc_commanderISOName,
                                                        IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                                        int ai_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI, aui16_element,
-                             arcc_isoName, apc_commanderISOName,
+                             acrc_isoName, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
   mc_measure.init( this );
   mc_setpoint.init( this );
@@ -150,28 +150,28 @@ void ProcDataRemoteSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDd
 
 /**
   assignment operator for this object
-  @param arcc_src source instance
+  @param acrc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
 const ProcDataRemoteSimpleSetpointSimpleMeasure_c&
   ProcDataRemoteSimpleSetpointSimpleMeasure_c::operator=(
-    const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arcc_src)
+    const ProcDataRemoteSimpleSetpointSimpleMeasure_c& acrc_src)
 {
-  ProcDataRemoteBase_c::operator=( arcc_src );
-  mc_measure = arcc_src.mc_measure;
-  mc_setpoint = arcc_src.mc_setpoint;
+  ProcDataRemoteBase_c::operator=( acrc_src );
+  mc_measure = acrc_src.mc_measure;
+  mc_setpoint = acrc_src.mc_setpoint;
   return *this;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param arcc_src source instance
+  @param acrc_src source instance
 */
 ProcDataRemoteSimpleSetpointSimpleMeasure_c::ProcDataRemoteSimpleSetpointSimpleMeasure_c(
-  const ProcDataRemoteSimpleSetpointSimpleMeasure_c& arcc_src)
-  : ProcDataRemoteBase_c( arcc_src ),
-    mc_measure( arcc_src.mc_measure ),
-    mc_setpoint( arcc_src.mc_setpoint )
+  const ProcDataRemoteSimpleSetpointSimpleMeasure_c& acrc_src)
+  : ProcDataRemoteBase_c( acrc_src ),
+    mc_measure( acrc_src.mc_measure ),
+    mc_setpoint( acrc_src.mc_setpoint )
 {
 }
 

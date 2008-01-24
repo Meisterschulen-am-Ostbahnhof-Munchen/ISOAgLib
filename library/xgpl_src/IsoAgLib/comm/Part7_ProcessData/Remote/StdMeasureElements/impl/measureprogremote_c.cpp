@@ -116,28 +116,28 @@ void MeasureProgRemote_c::init( ProcDataBase_c *const apc_processData )
 
 /**
   assignment of MeasureProgRemote_c objects
-  @param arcc_src source MeasureProgRemote_c instance
+  @param acrc_src source MeasureProgRemote_c instance
   @return reference to the source instance for commands like "prog1 = prog2 = prog3 ...;
 */
-const MeasureProgRemote_c& MeasureProgRemote_c::operator=(const MeasureProgRemote_c& arcc_src){
+const MeasureProgRemote_c& MeasureProgRemote_c::operator=(const MeasureProgRemote_c& acrc_src){
   // call base class operator
-  MeasureProgBase_c::operator=(arcc_src);
+  MeasureProgBase_c::operator=(acrc_src);
 
-  mb_receiveForeignMeasurement = arcc_src.mb_receiveForeignMeasurement;
+  mb_receiveForeignMeasurement = acrc_src.mb_receiveForeignMeasurement;
 
   // return reference to source
-  return arcc_src;
+  return acrc_src;
 }
 
 /**
   copy constructor for MeasureProgRemote
-  @param arcc_src source MeasureProgRemote_c instance
+  @param acrc_src source MeasureProgRemote_c instance
 */
-MeasureProgRemote_c::MeasureProgRemote_c(const MeasureProgRemote_c& arcc_src)
-  : MeasureProgBase_c(arcc_src){
+MeasureProgRemote_c::MeasureProgRemote_c(const MeasureProgRemote_c& acrc_src)
+  : MeasureProgBase_c(acrc_src){
 
   // copy element vars
-  mb_receiveForeignMeasurement = arcc_src.mb_receiveForeignMeasurement;
+  mb_receiveForeignMeasurement = acrc_src.mb_receiveForeignMeasurement;
 }
 
 /** default destructor which has nothing to do */

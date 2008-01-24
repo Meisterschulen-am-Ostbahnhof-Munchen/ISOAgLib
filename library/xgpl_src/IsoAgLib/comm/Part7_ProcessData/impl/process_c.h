@@ -213,22 +213,22 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver);
+  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
 
   /**
     checks if a suitable ProcDataRemoteBase_c item exist
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameSender isoName of the sender (used for check against ownerISOName())
-    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+    @param acrc_isoNameSender isoName of the sender (used for check against ownerISOName())
+    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                            const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver);
+                            const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
 
   /**
     search for suitable ProcDataLocalBase_c item; create on if not found AND if wanted
@@ -240,10 +240,10 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataLocalBase_c instance
   */
-  ProcDataLocalBase_c& procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver);
+  ProcDataLocalBase_c& procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
 
   /**
     search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
@@ -255,13 +255,13 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return reference to searched/created ProcDataRemoteBase_c instance
     @exception badAlloc
   */
  ProcDataRemoteBase_c& procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                                       const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver);
+                                       const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
 
 
   /**
@@ -270,10 +270,10 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoName isoName code of searched local Process Data instance
+    @param acrc_isoName isoName code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName);
+  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoName);
 
   /**
     delivers count of remote process data entries with similar ident
@@ -281,12 +281,12 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arcc_isoName isoName code of searched remote Process Data instance
+    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+    @param acrc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element,
-                             const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoName);
+                             const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoName);
 
   /**
     performs periodically actions
@@ -332,16 +332,16 @@ public:
     delete FilterBox_c for receive from remote isoName if needed
     (important to delete old Filter Boxes after deletion of
     of remote device from monitor list or after re-adressclaim with different SA)
-    @param arcc_isoName ISOName code of remote owner who sent the message
+    @param acrc_isoName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box deleted
   */
-  bool deleteRemoteFilter(const IsoName_c& arcc_isoName);
+  bool deleteRemoteFilter(const IsoName_c& acrc_isoName);
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-   * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+   * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*arcc_isoItem*/);
+  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /**
     process TC status messages:
@@ -390,20 +390,20 @@ private: // Private methods
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameReceiver isoName code of created local Process Data instance
+    @param acrc_isoNameReceiver isoName code of created local Process Data instance
   */
-  bool updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver);
+  bool updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
 
   /**
     update the cache with search for according ProcDataRemoteBase_c item
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
   */
   bool updateRemoteCache(uint16_t aui16_DDI, uint16_t aui16_element,
-                         const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver);
+                         const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
 
   /**
    * check if any remote process data needs a new receive filter
@@ -413,28 +413,28 @@ private: // Private methods
 
   /**
     insert FilterBox_c for receive from remote isoName if needed
-    @param arcc_isoName ISOName code of remote owner who sent the message
+    @param acrc_isoName ISOName code of remote owner who sent the message
     @return true -> member exist and Filter Box created
   */
-  bool createRemoteFilter(const IsoName_c& arcc_isoName);
+  bool createRemoteFilter(const IsoName_c& acrc_isoName);
 
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
-  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);
+  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);
 
   /** checks if a DDI can be added to a group and if yes then add it! */
-  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
+  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
   /** adds a proprietary DDI to a group */
-  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &arcc_isoName);
+  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &acrc_isoName);
 
   /** checks if several DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
+  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
   /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
-  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
+  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
   /** checks if proprietary DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& arcc_isoName);
+  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
 private: // Private attributes
   /**

@@ -158,14 +158,14 @@ void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
 
 /**
   assginment from another object
-  @param arcc_src source SetpointLocal_c instance
+  @param acrc_src source SetpointLocal_c instance
   @return reference to source for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& arcc_src ){
+const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& acrc_src ){
   // first call base assignment operator
-  SetpointBase_c::operator=(arcc_src);
+  SetpointBase_c::operator=(acrc_src);
 
-  assignFromSource( arcc_src );
+  assignFromSource( acrc_src );
 
   // return reference
   return *this;
@@ -173,23 +173,23 @@ const SetpointLocal_c& SetpointLocal_c::operator=( const SetpointLocal_c& arcc_s
 
 /**
   copy constructor for SetpointLocal
-  @param arcc_src source SetpointLocal_c instance
+  @param acrc_src source SetpointLocal_c instance
 */
-SetpointLocal_c::SetpointLocal_c( const SetpointLocal_c& arcc_src )
-  : SetpointBase_c( arcc_src){
-  assignFromSource( arcc_src );
+SetpointLocal_c::SetpointLocal_c( const SetpointLocal_c& acrc_src )
+  : SetpointBase_c( acrc_src){
+  assignFromSource( acrc_src );
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arcc_src )
+void SetpointLocal_c::assignFromSource( const SetpointLocal_c& acrc_src )
 {
   // now copy element vars
-  mi32_setpointMaxAllowed = arcc_src.mi32_setpointMaxAllowed;
-  mi32_setpointMinAllowed = arcc_src.mi32_setpointMinAllowed;
-  mb_staticMaster = arcc_src.mb_staticMaster;
-  mvec_register = arcc_src.mvec_register;
+  mi32_setpointMaxAllowed = acrc_src.mi32_setpointMaxAllowed;
+  mi32_setpointMinAllowed = acrc_src.mi32_setpointMinAllowed;
+  mb_staticMaster = acrc_src.mb_staticMaster;
+  mvec_register = acrc_src.mvec_register;
 
 
-  if (mvec_register.size() < arcc_src.mvec_register.size())
+  if (mvec_register.size() < acrc_src.mvec_register.size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -206,9 +206,9 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arcc_src )
 
   // mpc_registerCache is a pointer, which must be copied relative to mvec_register.begin()
   // the distance operator needs a const_iterator
-  Vec_SetpointRegister::const_iterator pc_iter = arcc_src.mpc_registerCache;
+  Vec_SetpointRegister::const_iterator pc_iter = acrc_src.mpc_registerCache;
   mpc_registerCache = mvec_register.begin();
-  STL_NAMESPACE::advance( mpc_registerCache, STL_NAMESPACE::distance( arcc_src.mvec_register.begin(), pc_iter));
+  STL_NAMESPACE::advance( mpc_registerCache, STL_NAMESPACE::distance( acrc_src.mvec_register.begin(), pc_iter));
 
   // copy master element vars
   for (mpc_master = mvec_register.begin(); mpc_master != mvec_register.end();mpc_master++)
@@ -216,7 +216,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& arcc_src )
     if (mpc_master->master()) break;
   }
 
-  mb_allowedDeltaPercent = arcc_src.mb_allowedDeltaPercent;
+  mb_allowedDeltaPercent = acrc_src.mb_allowedDeltaPercent;
 }
 
 /** default destructor which has nothing to do */

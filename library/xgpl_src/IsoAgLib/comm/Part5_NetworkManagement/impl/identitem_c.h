@@ -266,40 +266,40 @@ public: // methods
   bool timeEvent( void );
 
   /** check for equality with another item
-      @param arc_src compared IdentItem_c element
+      @param acrc_src compared IdentItem_c element
       @return true -> other item has same ISOName
     */
-  bool operator==(IdentItem_c& arc_src) const {return (mc_isoName == arc_src.mc_isoName); }
+  bool operator==(IdentItem_c& acrc_src) const {return (mc_isoName == acrc_src.mc_isoName); }
 
   /** check for equality with given ISOName
-      @param arcc_isoName compared ISOName
+      @param acrc_isoName compared ISOName
       @return true -> item has same ISOName
     */
-  bool operator==(const IsoName_c& arcc_isoName) const {return (mc_isoName == arcc_isoName); }
+  bool operator==(const IsoName_c& acrc_isoName) const {return (mc_isoName == acrc_isoName); }
 
   /** check for difference to another item
-      @param arc_src compared IdentItem_c element
+      @param acrc_src compared IdentItem_c element
       @return true -> other item has different ISOName
     */
-  bool operator!=(IdentItem_c& arc_src) const {return (mc_isoName != arc_src.mc_isoName); }
+  bool operator!=(IdentItem_c& acrc_src) const {return (mc_isoName != acrc_src.mc_isoName); }
 
   /** check for difference to given ISOName
-      @param arcc_isoName compared ISOName
+      @param acrc_isoName compared ISOName
       @return true -> other item has different ISOName
     */
-  bool operator!=(const IsoName_c& arcc_isoName) const {return (mc_isoName != arcc_isoName); }
+  bool operator!=(const IsoName_c& acrc_isoName) const {return (mc_isoName != acrc_isoName); }
 
   /** check if this item has lower ISOName than another one
-      @param arc_src compared IdentItem_c element
+      @param acrc_src compared IdentItem_c element
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(IdentItem_c& arc_src) const {return (mc_isoName < arc_src.mc_isoName); }
+  bool operator<(IdentItem_c& acrc_src) const {return (mc_isoName < acrc_src.mc_isoName); }
 
   /** check if this item has lower ISOName than given ISOName
-      @param arcc_isoName compared ISOName
+      @param acrc_isoName compared ISOName
       @return true -> this item has lower ISOName than compared one
     */
-  bool operator<(const IsoName_c& arcc_isoName) const {return (mc_isoName < arcc_isoName); }
+  bool operator<(const IsoName_c& acrc_isoName) const {return (mc_isoName < acrc_isoName); }
 
   /** check if given number is equal to member number of this item
       @param aui8_nr compared number
@@ -364,17 +364,17 @@ private: // methods
       ONLY copy pointers to the wanted instance!!!
       ==> the copy constructor is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      @param arcc_src source
+      @param acrc_src source
     */
-  IdentItem_c(const IdentItem_c& arcc_src) : BaseItem_c(arcc_src) {}
+  IdentItem_c(const IdentItem_c& acrc_src) : BaseItem_c(acrc_src) {}
 
   /** HIDDEN! assignment for IdentItem_c
       NEVER assign a IdentItem_c to another instance!!!!
       ==> the asignment is defined as private, so that compiler
           detects this fault, and shows you this WARNING!!
-      <!--@param arcc_src source-->
+      <!--@param acrc_src source-->
     */
-  IdentItem_c& operator=(const IdentItem_c& /* arcc_src */){return *this; }
+  IdentItem_c& operator=(const IdentItem_c& /* acrc_src */){return *this; }
 
 
 private: // attributes

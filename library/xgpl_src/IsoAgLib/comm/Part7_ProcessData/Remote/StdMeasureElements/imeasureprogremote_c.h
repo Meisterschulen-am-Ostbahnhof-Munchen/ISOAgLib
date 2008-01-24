@@ -271,9 +271,9 @@ public:
   void setType(Proc_c::type_t ren_type) {MeasureProgRemote_c::setType(ren_type);};
   /**
     set the c_isoName code for this measureProg
-    @param arcc_isoName ISOName for exact specification of partner system
+    @param acrc_isoName ISOName for exact specification of partner system
   */
-  void setISOName(const iIsoName_c& arcc_isoName) {MeasureProgRemote_c::setISOName(arcc_isoName);};
+  void setISOName(const iIsoName_c& acrc_isoName) {MeasureProgRemote_c::setISOName(acrc_isoName);};
  private:
   friend class iProcDataRemote_c;
   friend class iProcDataRemoteSimpleMeasure_c;

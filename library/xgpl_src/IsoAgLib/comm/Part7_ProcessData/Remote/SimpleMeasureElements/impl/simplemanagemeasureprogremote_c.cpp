@@ -107,16 +107,16 @@ void SimpleManageMeasureProgRemote_c::init( ProcDataBase_c *const apc_processDat
   mi32_masterVal = 0;
 }
 /** copy constructor */
-SimpleManageMeasureProgRemote_c::SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& arcc_src )
-: ProcessElementBase_c( arcc_src ),
-  mi32_masterVal( arcc_src.mi32_masterVal )
+SimpleManageMeasureProgRemote_c::SimpleManageMeasureProgRemote_c( const SimpleManageMeasureProgRemote_c& acrc_src )
+: ProcessElementBase_c( acrc_src ),
+  mi32_masterVal( acrc_src.mi32_masterVal )
 {
 }
 /** assignment operator */
-const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator=( const SimpleManageMeasureProgRemote_c& arcc_src )
+const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator=( const SimpleManageMeasureProgRemote_c& acrc_src )
 {
-  ProcessElementBase_c::operator=( arc_src );
-  mi32_masterVal = arc_src.mi32_masterVal;
+  ProcessElementBase_c::operator=( acrc_src );
+  mi32_masterVal = acrc_src.mi32_masterVal;
   return *this;
 }
 

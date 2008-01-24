@@ -75,8 +75,8 @@ public:
 
   /**
     send an ISO target multipacket message with active retrieve of data-parts to send
-    @param arcc_isoNameSender dynamic member no of sender
-    @param arcc_isoNameReceiver dynamic member no of receiver
+    @param acrc_isoNameSender dynamic member no of sender
+    @param acrc_isoNameReceiver dynamic member no of receiver
     @param apc_mss allow active build of data stream parts for upload by deriving data source class
                   from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
                   retrieve of data to send. This is especially important for ISO_Terminal,
@@ -87,13 +87,13 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iIsoName_c& arcc_isoNameSender, const iIsoName_c& arcc_isoNameReceiver, iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-  { return MultiSend_c::sendIsoTarget (arcc_isoNameSender, arcc_isoNameReceiver, apc_mss, ai32_pgn, rpen_sendSuccessNotify);}
+  bool sendIsoTarget (const iIsoName_c& acrc_isoNameSender, const iIsoName_c& acrc_isoNameReceiver, iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+  { return MultiSend_c::sendIsoTarget (acrc_isoNameSender, acrc_isoNameReceiver, apc_mss, ai32_pgn, rpen_sendSuccessNotify);}
 
   /**
     send a ISO target multipacket message
-    @param arcc_isoNameSender dynamic member no of sender
-    @param arcc_isoNameReceiver dynamic member no of receiver
+    @param acrc_isoNameSender dynamic member no of sender
+    @param acrc_isoNameReceiver dynamic member no of receiver
     @param rhpb_data HUGE_MEM pointer to the data
     @param ai32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
@@ -101,26 +101,26 @@ public:
             is written by MultiSend_c
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoTarget (const iIsoName_c& arcc_isoNameSender, const iIsoName_c& arcc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoTarget (arcc_isoNameSender, arcc_isoNameReceiver, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify ); }
+  bool sendIsoTarget (const iIsoName_c& acrc_isoNameSender, const iIsoName_c& acrc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoTarget (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify ); }
 
   /**
     send a ISO broadcast multipacket message
-    @param arcc_isoNameSender dynamic member no of sender
+    @param acrc_isoNameSender dynamic member no of sender
     @param rhpb_data HUGE_MEM pointer to the data
     @param ai32_dataSize size of the complete mask
     @param ai32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast (const iIsoName_c& arcc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoBroadcast (arcc_isoNameSender, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify); }
+  bool sendIsoBroadcast (const iIsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoBroadcast (acrc_isoNameSender, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify); }
 
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return MultiSend_c::isMultiSendRunning(); }
 
   /** user function for explicit abort of any running matching stream. */
-  void abortSend (const iIsoName_c& arcc_isoNameSender, const iIsoName_c& arcc_isoNameReceiver)
-    { MultiSend_c::abortSend (arcc_isoNameSender, arcc_isoNameReceiver); }
+  void abortSend (const iIsoName_c& acrc_isoNameSender, const iIsoName_c& acrc_isoNameReceiver)
+    { MultiSend_c::abortSend (acrc_isoNameSender, acrc_isoNameReceiver); }
 
 
 private:

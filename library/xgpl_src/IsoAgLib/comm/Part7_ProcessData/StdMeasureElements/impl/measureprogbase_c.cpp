@@ -107,11 +107,11 @@ namespace __IsoAgLib {
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
     @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param ai32_val optional individual measure val for this program instance (can differ from master measure value)
-    @param arcc_isoName optional ISOName of partner member for this measure program
+    @param acrc_isoName optional ISOName of partner member for this measure program
   */
 void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   int32_t ai32_val,
-  const IsoName_c& arcc_isoName)
+  const IsoName_c& acrc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -132,7 +132,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
   // store the parameter init vals
-  mc_isoName = arcc_isoName;
+  mc_isoName = acrc_isoName;
   mi32_val = ai32_val;
   mb_active = false;
 
@@ -146,45 +146,45 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
 
 
 /** assignment of MeasureProgBase_c objects
-    @param arcc_src source MeasureProgBase_c instance
+    @param acrc_src source MeasureProgBase_c instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& arcc_src){
+const MeasureProgBase_c& MeasureProgBase_c::operator=(const MeasureProgBase_c& acrc_src){
   // call base class operator
-  ProcessElementBase_c::operator=(arcc_src);
+  ProcessElementBase_c::operator=(acrc_src);
 
-  assignFromSource( arcc_src );
+  assignFromSource( acrc_src );
 
   // return reference to source
-  return arcc_src;
+  return acrc_src;
 }
 
 
 /** copy constructor
-    @param arcc_src source MeasureProgBase_c instance
+    @param acrc_src source MeasureProgBase_c instance
   */
-MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& arcc_src)
- : ProcessElementBase_c(arcc_src)  {
-  assignFromSource( arcc_src );
+MeasureProgBase_c::MeasureProgBase_c(const MeasureProgBase_c& acrc_src)
+ : ProcessElementBase_c(acrc_src)  {
+  assignFromSource( acrc_src );
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& arcc_src )
+void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
 { // copy element vars
-  mc_isoName = arcc_src.mc_isoName;
-  men_accumProp =  arcc_src.men_accumProp;
-  men_doSend = arcc_src.men_doSend;
-  mb_active = arcc_src.mb_active;
-  mi32_accel = arcc_src.mi32_accel;
-  mi32_delta = arcc_src.mi32_delta;
-  mi32_lastTime = arcc_src.mi32_lastTime;
-  mi32_max = arcc_src.mi32_max;
-  mi32_min = arcc_src.mi32_min;
-  mi32_val = arcc_src.mi32_val;
-  mvec_measureSubprog = arcc_src.mvec_measureSubprog;
+  mc_isoName = acrc_src.mc_isoName;
+  men_accumProp =  acrc_src.men_accumProp;
+  men_doSend = acrc_src.men_doSend;
+  mb_active = acrc_src.mb_active;
+  mi32_accel = acrc_src.mi32_accel;
+  mi32_delta = acrc_src.mi32_delta;
+  mi32_lastTime = acrc_src.mi32_lastTime;
+  mi32_max = acrc_src.mi32_max;
+  mi32_min = acrc_src.mi32_min;
+  mi32_val = acrc_src.mi32_val;
+  mvec_measureSubprog = acrc_src.mvec_measureSubprog;
 
-  if (mvec_measureSubprog.size() < arcc_src.mvec_measureSubprog.size())
+  if (mvec_measureSubprog.size() < acrc_src.mvec_measureSubprog.size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -404,12 +404,12 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
 /** initialise the measure prog instance, to set this instance to a well defined starting condition
     @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
     @param af_val optional individual measure val for this program instance (can differ from master measure value)
-    @param arcc_isoName optional ISOName of partner member for this measure program
+    @param acrc_isoName optional ISOName of partner member for this measure program
   */
 void MeasureProgBase_c::init(
   ProcDataBase_c *const apc_processData,
   float af_val,
-  const IsoName_c& arcc_isoName)
+  const IsoName_c& acrc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
   #ifdef DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
@@ -428,7 +428,7 @@ void MeasureProgBase_c::init(
   // set the pointers in the baseClass ProcessElementBase
   set(apc_processData);
   // store the parameter init vals
-  mc_isoName = arcc_isoName;
+  mc_isoName = acrc_isoName;
   f_val = af_val;
   mb_active = false;
 

@@ -146,15 +146,15 @@ public:
   iIsoName_c(const uint8_t* apb_src = NULL) : IsoName_c(apb_src) {}
 
   /** copy constructor for ISOName
-    @param arcc_src source IsoName_c instance
+    @param acrc_src source IsoName_c instance
   */
-  iIsoName_c(const iIsoName_c& arcc_src) : IsoName_c( arcc_src ) {}
+  iIsoName_c(const iIsoName_c& acrc_src) : IsoName_c( acrc_src ) {}
 
   /** assign constructor for ISOName
-    @param arcc_src source IsoName_c object
+    @param acrc_src source IsoName_c object
   */
-  const iIsoName_c& operator=(const iIsoName_c& arcc_src)
-    { return IsoName_c::operator=( arcc_src ).toConstIisoName_c();}
+  const iIsoName_c& operator=(const iIsoName_c& acrc_src)
+    { return IsoName_c::operator=( acrc_src ).toConstIisoName_c();}
 
   /** compare two iIsoName_c values with operator< */
   bool operator<( const iIsoName_c& rc_right ) const

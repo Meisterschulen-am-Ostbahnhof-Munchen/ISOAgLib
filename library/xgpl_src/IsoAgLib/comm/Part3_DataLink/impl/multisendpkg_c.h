@@ -129,7 +129,7 @@ public:
 
   /**
     set the 7 uint8_t data part of transfer message
-    @param apb_source source data pointer
+    @param rc_vecSource source data pointer
     @param ai32_pos uint8_t position in data string to start
     @param ab_partSize optional amount of bytes of data stream for actual pkg (default 7)
    */

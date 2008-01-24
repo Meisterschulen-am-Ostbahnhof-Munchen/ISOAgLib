@@ -138,7 +138,7 @@ static const uint8_t scui8_tpPriority=6;
 
 
 MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_client,
-                                                          const IsoName_c& arcc_isoNameClient,
+                                                          const IsoName_c& acrc_isoNameClient,
                                                           uint32_t aui32_pgn,
                                                           uint32_t aui32_pgnMask,
                                                           bool ab_alsoBroadcast,
@@ -149,7 +149,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
                                                           SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                                                         )
   : SINGLETON_PARENT_CONSTRUCTOR mpc_client(&arc_client)
-  , mc_isoName (arcc_isoNameClient)
+  , mc_isoName (acrc_isoNameClient)
   , mui32_pgn(aui32_pgn)
   , mui32_pgnMask(aui32_pgnMask)
   , mb_alsoBroadcast (ab_alsoBroadcast)
@@ -158,8 +158,8 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
   , mb_isFastPacket (ab_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
   #endif
 {
-  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName(arcc_isoNameClient, true)) // it needs to have claimed an address
-    mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName(arcc_isoNameClient).nr();
+  if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName(acrc_isoNameClient, true)) // it needs to have claimed an address
+    mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName(acrc_isoNameClient).nr();
   else //    shouldn't occur...
   {
     mui8_cachedClientAddress = 0xFE;
@@ -180,23 +180,23 @@ MultiReceive_c::~MultiReceive_c()
 
 
 void
-MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& arcc_streamIdent, uint8_t aui8_multiReceiveErrorCode)
+MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& acrc_streamIdent, uint8_t aui8_multiReceiveErrorCode)
 {
-  if (arcc_streamIdent.getDa() == 0xFF)
+  if (acrc_streamIdent.getDa() == 0xFF)
   { // BAM
     for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin(); i_list_clients != mlist_clients.end(); i_list_clients++)
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.mb_alsoBroadcast) {
-        curClientWrapper.mpc_client->notificationOnMultiReceiveError (arcc_streamIdent, aui8_multiReceiveErrorCode, false);
+        curClientWrapper.mpc_client->notificationOnMultiReceiveError (acrc_streamIdent, aui8_multiReceiveErrorCode, false);
       }
     }
   }
   else
   { // really destin specific
-    if (getClient(arcc_streamIdent))
+    if (getClient(acrc_streamIdent))
     {
-      getClient(arcc_streamIdent)->notificationOnMultiReceiveError (arcc_streamIdent, aui8_multiReceiveErrorCode, false);
+      getClient(acrc_streamIdent)->notificationOnMultiReceiveError (acrc_streamIdent, aui8_multiReceiveErrorCode, false);
     }
     else
     {
@@ -205,7 +205,7 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& arcc_str
       { // // inform all clients that want Broadcast-TP-Messages
         MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
         if (curClientWrapper.mb_alsoGlobalErrors) {
-          curClientWrapper.mpc_client->notificationOnMultiReceiveError (arcc_streamIdent, aui8_multiReceiveErrorCode, true);
+          curClientWrapper.mpc_client->notificationOnMultiReceiveError (acrc_streamIdent, aui8_multiReceiveErrorCode, true);
         }
       }
     }
@@ -622,7 +622,7 @@ MultiReceive_c::processMsg()
 
 // Operation: registerClient
 void
-MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arcc_isoName,
+MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
                                uint32_t aui32_pgn, uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast, bool ab_alsoGlobalErrors
                                #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -634,7 +634,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arcc_
   // Already in list?
   while (list_clients_i != mlist_clients.end()) {
     MultiReceiveClientWrapper_s iterMRCW = *list_clients_i;
-    if ((iterMRCW.mpc_client == (&arc_client)) && (iterMRCW.mc_isoName == arcc_isoName) && (iterMRCW.mui32_pgn == aui32_pgn)
+    if ((iterMRCW.mpc_client == (&arc_client)) && (iterMRCW.mc_isoName == acrc_isoName) && (iterMRCW.mui32_pgn == aui32_pgn)
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       && (iterMRCW.mb_isFastPacket == ab_isFastPacket)
     #endif
@@ -643,7 +643,7 @@ MultiReceive_c::registerClient(CanCustomer_c& arc_client, const IsoName_c& arcc_
     list_clients_i++;
   }
   // Not already in list, so insert!
-  mlist_clients.push_back (MultiReceiveClientWrapper_s (arc_client, arcc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
+  mlist_clients.push_back (MultiReceiveClientWrapper_s (arc_client, acrc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
                                                        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                                                        , ab_isFastPacket
                                                        #endif
@@ -711,7 +711,7 @@ MultiReceive_c::deregisterClient (CanCustomer_c& arc_client)
 
 // Operation: deregisterClient
 void
-MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arcc_isoName,
+MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
                                  uint32_t aui32_pgn, uint32_t aui32_pgnMask)
 {
   // first of all remove all streams that are for this client with this filter/mask/isoname tuple
@@ -729,7 +729,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
     if (i_list_clients != mlist_clients.end())
     {
       if ( (i_list_clients->mpc_client == &arc_client)
-        && (i_list_clients->mc_isoName == arcc_isoName)
+        && (i_list_clients->mc_isoName == acrc_isoName)
         && (i_list_clients->mui32_pgn == aui32_pgn)
         && (i_list_clients->mui32_pgnMask == aui32_pgnMask)
          )
@@ -745,7 +745,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
   for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator pc_iter = mlist_clients.begin(); pc_iter != mlist_clients.end(); )
   {
     if ( (pc_iter->mpc_client == &arc_client)
-      && (pc_iter->mc_isoName == arcc_isoName)
+      && (pc_iter->mc_isoName == acrc_isoName)
       && (pc_iter->mui32_pgn == aui32_pgn)
       && (pc_iter->mui32_pgnMask == aui32_pgnMask)
        )
@@ -769,9 +769,9 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& arc
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:
 //! ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
-//! @param at_stramType
+//! @param at_streamType
 //! @param ac_streamIdent
-//! @param uint32_msgSize
+//! @param aui32_msgSize
 Stream_c*
 MultiReceive_c::createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent, uint32_t aui32_msgSize)
 { // ~X2C
@@ -1408,31 +1408,31 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
 
 /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
  * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
- * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
+MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
     case AddToMonitorList:
-      if (arcc_isoItem.itemState (IState_c::Local))
+      if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
     case RemoveFromMonitorList:
-      if (arcc_isoItem.itemState (IState_c::Local))
+      if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &arcc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }
@@ -1445,12 +1445,12 @@ MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, Iso
   if ((at_action == AddToMonitorList) || (at_action == ChangedAddress) || (at_action == LostAddress) || (at_action == ReclaimedAddress))
   {
     /// If we're LostAddress, then we automatically have 0xFE now as SA...
-    const uint8_t cui8_nr = arcc_isoItem.nr();
+    const uint8_t cui8_nr = acrc_isoItem.nr();
     for (STL_NAMESPACE::list<MultiReceiveClientWrapper_s>::iterator i_list_clients = mlist_clients.begin();
         i_list_clients != mlist_clients.end();
         i_list_clients++)
     {
-      if (i_list_clients->mc_isoName == arcc_isoItem.isoName())
+      if (i_list_clients->mc_isoName == acrc_isoItem.isoName())
       { // yes, it's that ISOName that A) (locally) lost its SA before or B) (remotely) just changed it.
         // note: we can receive (E)TPs for remote nodes, too. Needed for sniffing the WS-slave stuff!
         // conclusion: just update it, regardless if it "lost (SA == 0xFF)" its SA before or not...
@@ -1463,8 +1463,8 @@ MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, Iso
     { // Adapt the SA also for kept streams - the application should only use the isoname anyway!
       const IsoAgLib::ReceiveStreamIdentifier_c& rc_rsi = i_list_streams->getIdent();
     // re-vitalize the Addresses, so that following packets using this address will get processed again...
-      if (rc_rsi.getDaIsoName() == arcc_isoItem.isoName().toConstIisoName_c()) rc_rsi.setDa (cui8_nr);
-      if (rc_rsi.getSaIsoName() == arcc_isoItem.isoName().toConstIisoName_c()) rc_rsi.setSa (cui8_nr);
+      if (rc_rsi.getDaIsoName() == acrc_isoItem.isoName().toConstIisoName_c()) rc_rsi.setDa (cui8_nr);
+      if (rc_rsi.getSaIsoName() == acrc_isoItem.isoName().toConstIisoName_c()) rc_rsi.setSa (cui8_nr);
     }
   }
 }

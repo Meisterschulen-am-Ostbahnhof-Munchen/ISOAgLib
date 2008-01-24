@@ -112,13 +112,13 @@ namespace IsoAgLib {
 */
 class ReceiveStreamIdentifier_c {
 public:
-  ReceiveStreamIdentifier_c (uint32_t aui32_pgn, uint8_t aui8_da, const iIsoName_c& arcc_daIsoName,
-                                                 uint8_t aui8_sa, const iIsoName_c& arcc_saIsoName)
+  ReceiveStreamIdentifier_c (uint32_t aui32_pgn, uint8_t aui8_da, const iIsoName_c& acrc_daIsoName,
+                                                 uint8_t aui8_sa, const iIsoName_c& acrc_saIsoName)
                           : ui32_pgn (aui32_pgn)
                           , ui8_da (aui8_da)
                           , ui8_sa (aui8_sa)
-                          , c_daIsoName (arcc_daIsoName)
-                          , c_saIsoName (arcc_saIsoName) {}
+                          , c_daIsoName (acrc_daIsoName)
+                          , c_saIsoName (acrc_saIsoName) {}
 
   ReceiveStreamIdentifier_c (const ReceiveStreamIdentifier_c& ac_rsi)
                           : ui32_pgn (ac_rsi.ui32_pgn)

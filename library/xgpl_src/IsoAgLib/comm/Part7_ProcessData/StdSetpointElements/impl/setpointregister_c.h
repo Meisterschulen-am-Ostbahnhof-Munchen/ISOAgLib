@@ -114,7 +114,7 @@ class SetpointRegister_c {
 public:
   /**
     constructor which can set all element variables (all parameters are optional)
-    @param arcc_isoName device key of commander of this setpoint register set
+    @param acrc_isoName device key of commander of this setpoint register set
     @param ai32_exact exact setpoint value
     @param ai32_min minimum setpoint value
     @param ai32_max maximum setpoint value
@@ -123,13 +123,13 @@ public:
     @param ab_master true -> this setpoint register instance represents the actual master setpoint
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  SetpointRegister_c(const IsoName_c& arcc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
+  SetpointRegister_c(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
       int32_t ai32_min = NO_VAL_32S, int32_t ai32_max = NO_VAL_32S, int32_t ai32_default = NO_VAL_32S,
       bool ab_handled = false, bool ab_master = false, bool ab_valid = true)
-      {  init(arcc_isoName, ai32_exact, ai32_min, ai32_max, ai32_default, ab_handled, ab_master, ab_valid);}
+      {  init(acrc_isoName, ai32_exact, ai32_min, ai32_max, ai32_default, ab_handled, ab_master, ab_valid);}
   /**
     initialise this SetpointRegister_c to a well defined starting condition
-    @param arcc_isoName device key of commander of this setpoint register set
+    @param acrc_isoName device key of commander of this setpoint register set
     @param ai32_exact exact setpoint value
     @param ai32_min minimum setpoint value
     @param ai32_max maximum setpoint value
@@ -138,31 +138,31 @@ public:
     @param ab_master true -> this setpoint register instance represents the actual master setpoint
     @param ab_valid true -> this setpoint register instance is accepted as valid
   */
-  void init(const IsoName_c& arcc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
+  void init(const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified(), int32_t ai32_exact = NO_VAL_32S,
       int32_t ai32_min = NO_VAL_32S, int32_t ai32_max = NO_VAL_32S, int32_t ai32_default = NO_VAL_32S,
       bool ab_handled = false, bool ab_master = false, bool ab_valid = true);
 
   /**
     operator= for SetpointRegister_c class
-    @param arcc_src source SetpointRegister_c instance
+    @param acrc_src source SetpointRegister_c instance
     @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointRegister_c& operator=(const SetpointRegister_c& arcc_src);
+  const SetpointRegister_c& operator=(const SetpointRegister_c& acrc_src);
   /**
     copy constructor for SetpointRegister_c class
-    @param arcc_src source SetpointRegister_c instance
+    @param acrc_src source SetpointRegister_c instance
   */
-  SetpointRegister_c(const SetpointRegister_c& arcc_src);
+  SetpointRegister_c(const SetpointRegister_c& acrc_src);
 
   /** default destructor which has nothing to do */
   ~SetpointRegister_c();
 
   /**
     compare two Setpoint Register items by value
-    @param arcc_src compared instance
+    @param acrc_src compared instance
     @return true -> both setpoint sets are equal
   */
-  bool operator==(const SetpointRegister_c& arcc_src)const;
+  bool operator==(const SetpointRegister_c& acrc_src)const;
 
   /* ************************************ */
   /* ***reading member variable access*** */
@@ -369,7 +369,7 @@ public:
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointRegister_c& arcc_src );
+  void assignFromSource( const SetpointRegister_c& acrc_src );
 private: // Private attributes
 #ifdef USE_FLOAT_DATA_TYPE
   union {

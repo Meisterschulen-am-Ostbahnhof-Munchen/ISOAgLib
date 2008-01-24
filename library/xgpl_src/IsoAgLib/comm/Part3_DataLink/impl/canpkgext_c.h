@@ -150,10 +150,10 @@ class CanPkgExt_c : public CanPkg_c
     @see __IsoAgLib::FilterBox_c::operator>>
     @see CanPkgExt_c::operator=
     @see CanPkgExt_c::getData
-    @param arcc_right reference to the source CanPkg_c on the right
+    @param acrc_right reference to the source CanPkg_c on the right
     @return reference to the source CanPkg_c to enable assign chains like
         "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CanPkg_c& operator=(const CanPkg_c& arcc_right);
+  virtual const CanPkg_c& operator=(const CanPkg_c& acrc_right);
   */
 
   /**
@@ -426,9 +426,9 @@ class CanPkgExt_c : public CanPkg_c
   void setMonitorItemForSA( IsoItem_c* apc_monitorItem );
 
   /** set the isoName for resolve SA
-      @param arcc_isoName        needed isoName
+      @param acrc_isoName        needed isoName
     */
-  void setISONameForSA( const IsoName_c& arcc_isoName );
+  void setISONameForSA( const IsoName_c& acrc_isoName );
 
   /** set the monitoritem for resolve SA
       @param apc_monitorItem  needed monitoritem
@@ -436,9 +436,9 @@ class CanPkgExt_c : public CanPkg_c
   void setMonitorItemForDA( IsoItem_c* apc_monitorItem );
 
   /** set the isoName for resolve SA
-      @param arcc_isoName        needed isoName
+      @param acrc_isoName        needed isoName
     */
-  void setISONameForDA( const IsoName_c& arcc_isoName );
+  void setISONameForDA( const IsoName_c& acrc_isoName );
 
   uint8_t checkMonitorItemISOName( const AddressResolveResults_c& arc_addressResolveResults ) const;
 
@@ -501,7 +501,7 @@ private:
   MessageState_t setAddress(AddressResolveResults_c& arc_addressResolveResults, Scope scope);
 
   /** resolve a given monitoritem and get address if possible
-      @param  addressResolveResults  address to resolve
+      @param arc_addressResolveResults  address to resolve
       @return true -> monitoritem could be resolved
               false -> nothing more to be done
     */

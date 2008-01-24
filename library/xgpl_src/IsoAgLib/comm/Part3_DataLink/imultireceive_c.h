@@ -84,27 +84,27 @@ public:
     { MultiReceive_c::close(); }
 
   //  Operation: (de)registerClient
-  void registerClient   (IsoAgLib::iCanCustomer_c& arc_client, const iIsoName_c& arcc_isoName,
+  void registerClient   (IsoAgLib::iCanCustomer_c& arc_client, const iIsoName_c& acrc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
                          bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , bool ab_isFastPacket=false
                          #endif
                          )
-    { MultiReceive_c::registerClient (arc_client, arcc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
+    { MultiReceive_c::registerClient (arc_client, acrc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , ab_isFastPacket
                          #endif
                          ); }
 
- void registerClient   (IsoAgLib::iSchedulerTask_c& arc_client, const iIsoName_c& arcc_isoName,
+ void registerClient   (IsoAgLib::iSchedulerTask_c& arc_client, const iIsoName_c& acrc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
                          bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , bool ab_isFastPacket=false
                          #endif
                          )
-    { MultiReceive_c::registerClient (arc_client, arcc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
+    { MultiReceive_c::registerClient (arc_client, acrc_isoName, aui32_pgn, aui32_pgnMask, ab_alsoBroadcast, ab_alsoGlobalErrors
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                          , ab_isFastPacket
                          #endif

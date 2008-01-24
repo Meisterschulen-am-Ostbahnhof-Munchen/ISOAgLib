@@ -351,14 +351,14 @@ class MyProcessDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c {
     // react on new received setpoint for local process data
     // (remote system which wants to control the local system dependent on the setpoint
     // sent a new setpoint value)
-    // arcc_src general event source class, which provides conversion functions to get needed event source class
+    // acrc_src general event source class, which provides conversion functions to get needed event source class
     // ri32_val new value, which caused the event (for immediate access)
     // rc_callerIsoName IsoAgLib::iIsoName of calling device - i.e. which sent new setpoint
     // return true -> handler class reacted on change event
-    virtual bool processSetpointSet( EventSource_c arcc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerIsoName, bool rb_changed );
+    virtual bool processSetpointSet( EventSource_c acrc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerIsoName, bool rb_changed );
 };
 // implement the handler function, which is called on each received setpoint
-bool MyProcessDataHandler_c::processSetpointSet( EventSource_c arcc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerIsoName, bool rb_changed ) {
+bool MyProcessDataHandler_c::processSetpointSet( EventSource_c acrc_src, int32_t ri32_val, const IsoAgLib::iIsoName_c& rc_callerIsoName, bool rb_changed ) {
 { // %e.g. check for device type of commanding ECU
   if ( rc_callerIsoName.getDevClass() == 0x1 ) {
     // reaction on setpoints sent by device type 1

@@ -101,19 +101,19 @@ namespace __IsoAgLib {
       @param aui16_element device element number
 
       common parameter
-      @param arcc_isoName optional ISOName code of this instance
+      @param acrc_isoName optional ISOName code of this instance
       @param apc_commanderISOName pointer to updated ISOName variable of commander
       @param apc_processDataChangeHandler optional pointer to handler class of application
       @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
 ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDdi_s* ps_elementDDI,
-                                    uint16_t aui16_element, const IsoName_c& arcc_isoName,
+                                    uint16_t aui16_element, const IsoName_c& acrc_isoName,
                                     const IsoName_c* apc_commanderISOName,
                                     IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                     int ai_singletonVecKey)
 
   : ProcDataRemoteBase_c( ps_elementDDI, aui16_element,
-                          arcc_isoName, apc_commanderISOName,
+                          acrc_isoName, apc_commanderISOName,
                           apc_processDataChangeHandler, ai_singletonVecKey)
   , mc_setpoint(this)
   , mc_measure(this)
@@ -127,46 +127,46 @@ ProcDataRemote_c::ProcDataRemote_c( const IsoAgLib::ElementDdi_s* ps_elementDDI,
       @param aui16_element device element number
 
       common parameter
-      @param arcc_isoName optional ISOName code of this instance
+      @param acrc_isoName optional ISOName code of this instance
       @param apc_commanderISOName pointer to updated ISOName variable of commander
       @param apc_processDataChangeHandler optional pointer to handler class of application
       @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
 void ProcDataRemote_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                            const IsoName_c& arcc_isoName, const IsoName_c* apc_commanderISOName,
+                            const IsoName_c& acrc_isoName, const IsoName_c* apc_commanderISOName,
                             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                             int ai_singletonVecKey)
 {
   ProcDataRemoteBase_c::init( ps_elementDDI, aui16_element,
-                              arcc_isoName, apc_commanderISOName,
+                              acrc_isoName, apc_commanderISOName,
                               apc_processDataChangeHandler, ai_singletonVecKey);
   mc_setpoint.init( this );
   mc_measure.init( this );
 }
 /**
   assignment operator for this object
-  @param arcc_src source instance
+  @param acrc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& arcc_src){
+const ProcDataRemote_c& ProcDataRemote_c::operator=(const ProcDataRemote_c& acrc_src){
   // call the assignment operator for the base class
-  ProcDataRemoteBase_c::operator=(arcc_src);
+  ProcDataRemoteBase_c::operator=(acrc_src);
 
   // now copy the element var
-  mc_setpoint = arcc_src.mc_setpoint;
-  mc_measure = arcc_src.mc_measure;
+  mc_setpoint = acrc_src.mc_setpoint;
+  mc_measure = acrc_src.mc_measure;
   // return reference to source
-  return arcc_src;
+  return acrc_src;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param arcc_src source instance
+  @param acrc_src source instance
 */
-ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& arcc_src)
-  : ProcDataRemoteBase_c(arcc_src),
-    mc_setpoint(arcc_src.mc_setpoint),
-    mc_measure(arcc_src.mc_measure)
+ProcDataRemote_c::ProcDataRemote_c(const ProcDataRemote_c& acrc_src)
+  : ProcDataRemoteBase_c(acrc_src),
+    mc_setpoint(acrc_src.mc_setpoint),
+    mc_measure(acrc_src.mc_measure)
 {
 }
 

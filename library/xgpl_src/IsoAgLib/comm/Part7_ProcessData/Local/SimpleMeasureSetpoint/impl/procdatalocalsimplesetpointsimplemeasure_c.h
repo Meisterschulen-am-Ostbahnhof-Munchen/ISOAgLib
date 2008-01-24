@@ -146,7 +146,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param arcc_isoName optional ISOName code of Process-Data
+    @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -170,7 +170,7 @@ public:
   */
   ProcDataLocalSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                              uint16_t aui16_element = 0xFFFF,
-                                             const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
+                                             const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
                                              const IsoName_c *apc_externalOverridingIsoName = NULL,
                                              bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -190,7 +190,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param arcc_isoName optional ISOName code of Process-Data
+    @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -214,7 +214,7 @@ public:
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t aui16_element,
-            const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -225,9 +225,9 @@ public:
       );
 
   /** copy constructor */
-  ProcDataLocalSimpleSetpointSimpleMeasure_c( const ProcDataLocalSimpleSetpointSimpleMeasure_c& arc_src );
+  ProcDataLocalSimpleSetpointSimpleMeasure_c( const ProcDataLocalSimpleSetpointSimpleMeasure_c& acrc_src );
   /** assignment operator */
-  const ProcDataLocalSimpleSetpointSimpleMeasure_c& operator=( const ProcDataLocalSimpleSetpointSimpleMeasure_c& arc_src );
+  const ProcDataLocalSimpleSetpointSimpleMeasure_c& operator=( const ProcDataLocalSimpleSetpointSimpleMeasure_c& acrc_src );
   /** default destructor which has nothing to do */
   ~ProcDataLocalSimpleSetpointSimpleMeasure_c();
 

@@ -132,7 +132,7 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element
 
-  @param arcc_isoName optional ISOName code of Process-Data
+  @param acrc_isoName optional ISOName code of Process-Data
   @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
            -# for process data like distance, time, area
@@ -155,7 +155,7 @@ namespace __IsoAgLib {
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                                  const IsoName_c& arcc_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                                  const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
                                   bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                   uint16_t aui16_eepromAdr,
@@ -164,7 +164,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
                   int ai_singletonVecKey
                   )
     : ProcDataLocalBase_c( ps_elementDDI, aui16_element,
-                          arcc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
+                          acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                           aui16_eepromAdr,
 #endif
@@ -185,7 +185,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element
 
-  @param arcc_isoName optional ISOName code of Process-Data
+  @param acrc_isoName optional ISOName code of Process-Data
   @param apc_externalOverridingIsoName pointer to updated ISOName variable
   @param ab_cumulativeValue
           -# for process data like distance, time, area
@@ -208,7 +208,7 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                            const IsoName_c& arcc_isoName, const IsoName_c *apc_externalOverridingIsoName,
+                            const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
                             bool ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                            uint16_t aui16_eepromAdr,
@@ -218,7 +218,7 @@ void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_
                            )
 {
   ProcDataLocalBase_c::init( ps_elementDDI, aui16_element,
-                            arcc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
+                            acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif

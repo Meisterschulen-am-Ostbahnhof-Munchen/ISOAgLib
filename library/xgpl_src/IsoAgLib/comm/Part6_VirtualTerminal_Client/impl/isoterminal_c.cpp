@@ -415,13 +415,13 @@ IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem
 
 /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
  * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
- * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
+IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   // we only care for the VTs
-  if (arcc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
+  if (acrc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
 
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
 
@@ -433,7 +433,7 @@ IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoI
         { // check if newly added VtServerInstance is already in our list
           if (lit_vtServerInst->getIsoItem())
           {
-            if (arcc_isoItem.isoName() == lit_vtServerInst->getIsoItem()->isoName())
+            if (acrc_isoItem.isoName() == lit_vtServerInst->getIsoItem()->isoName())
             { // the VtServerInstance is already known and in our list, so update the source address in case it has changed now
               return;
             }
@@ -442,7 +442,7 @@ IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoI
 
         // VtServerInstance not yet in list, so add it ...
         /// @todo It should enough if we store the IsoItem*, we don't need both the IsoItem AND IsoName...
-        ml_vtServerInst.push_back (VtServerInstance_c (arcc_isoItem, arcc_isoItem.isoName(), *this SINGLETON_VEC_KEY_WITH_COMMA));
+        ml_vtServerInst.push_back (VtServerInstance_c (acrc_isoItem, acrc_isoItem.isoName(), *this SINGLETON_VEC_KEY_WITH_COMMA));
         VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
 
         // ... and notify all vtClientServerComm instances
@@ -458,7 +458,7 @@ IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoI
       { // check if lost VtServerInstance is in our list
         if (lit_vtServerInst->getIsoItem())
         {
-          if (arcc_isoItem.isoName() == lit_vtServerInst->getIsoItem()->isoName())
+          if (acrc_isoItem.isoName() == lit_vtServerInst->getIsoItem()->isoName())
           { // the VtServerInstance is already known and in our list, so it could be deleted
             // notify all clients on early loss of that VtServerInstance
             for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)

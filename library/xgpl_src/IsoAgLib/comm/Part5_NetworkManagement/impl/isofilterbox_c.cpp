@@ -107,12 +107,12 @@ IsoFilter_s::~IsoFilter_s() {}
 
 
 bool
-IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& arcc_isoFilter) const
+IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& acrc_isoFilter) const
 {
-  return ((mc_identMask   == arcc_isoFilter.mc_identMask)
-       && (mc_identFilter == arcc_isoFilter.mc_identFilter)
-       && (mc_isoNameSa   == arcc_isoFilter.mc_isoNameSa)
-       && (mc_isoNameDa   == arcc_isoFilter.mc_isoNameDa));
+  return ((mc_identMask   == acrc_isoFilter.mc_identMask)
+       && (mc_identFilter == acrc_isoFilter.mc_identFilter)
+       && (mc_isoNameSa   == acrc_isoFilter.mc_isoNameSa)
+       && (mc_isoNameDa   == acrc_isoFilter.mc_isoNameDa));
 }
 
 

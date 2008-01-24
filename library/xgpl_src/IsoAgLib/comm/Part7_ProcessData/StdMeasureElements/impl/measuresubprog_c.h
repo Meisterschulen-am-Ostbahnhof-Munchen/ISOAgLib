@@ -126,15 +126,15 @@ public:
 #endif
   /**
     operator= for Subprogs
-    @param arcc_src source instance
+    @param acrc_src source instance
     @return reference to source instance for commands like "subp1 = subp2 = subp3;"
   */
-  const MeasureSubprog_c& operator=(const MeasureSubprog_c& arcc_src);
+  const MeasureSubprog_c& operator=(const MeasureSubprog_c& acrc_src);
   /**
     copy constructor for Subprogs
-    @param arcc_src source instance
+    @param acrc_src source instance
   */
-   MeasureSubprog_c(const MeasureSubprog_c& arcc_src);
+   MeasureSubprog_c(const MeasureSubprog_c& acrc_src);
 
   /** default destructor which has nothing to do */
   ~MeasureSubprog_c();
@@ -218,40 +218,40 @@ public:
 
   /**
     compare two Subprogs with ==
-    @param arcc_right compared MeasureSubprog_c instance
+    @param acrc_right compared MeasureSubprog_c instance
     @return true -> this instance is equal to the other
   */
-  bool operator==(const MeasureSubprog_c& arcc_right)const;
+  bool operator==(const MeasureSubprog_c& acrc_right)const;
   /**
     compare two Subprogs with !=
-    @param arcc_right compared MeasureSubprog_c instance
+    @param acrc_right compared MeasureSubprog_c instance
     @return true -> this instance is different to the other
   */
-  bool operator!=(const MeasureSubprog_c& arcc_right)const;
+  bool operator!=(const MeasureSubprog_c& acrc_right)const;
   /**
     compare two Subprogs with <
-    @param arcc_right compared MeasureSubprog_c instance
+    @param acrc_right compared MeasureSubprog_c instance
     @return true -> this instance is < than the other
   */
-  bool operator<(const MeasureSubprog_c& arcc_right)const;
+  bool operator<(const MeasureSubprog_c& acrc_right)const;
   /**
     compare two Subprogs with <=
-    @param arcc_right compared MeasureSubprog_c instance
+    @param acrc_right compared MeasureSubprog_c instance
     @return true -> this instance is <= than the other
   */
-  bool operator<=(const MeasureSubprog_c& arcc_right)const;
+  bool operator<=(const MeasureSubprog_c& acrc_right)const;
   /**
     compare two Subprogs with >
-    @param arcc_right compared MeasureSubprog_c instance
+    @param acrc_right compared MeasureSubprog_c instance
     @return true -> this instance is > than the other
   */
-  bool operator>(const MeasureSubprog_c& arcc_right)const;
+  bool operator>(const MeasureSubprog_c& acrc_right)const;
   /**
     compare two Subprogs with >=
-    @param arcc_right compared MeasureSubprog_c instance
+    @param acrc_right compared MeasureSubprog_c instance
     @return true -> this instance is >= than the other
   */
-  bool operator>=(const MeasureSubprog_c& arcc_right)const;
+  bool operator>=(const MeasureSubprog_c& acrc_right)const;
 
   /**
     compare two Subprogs with ==

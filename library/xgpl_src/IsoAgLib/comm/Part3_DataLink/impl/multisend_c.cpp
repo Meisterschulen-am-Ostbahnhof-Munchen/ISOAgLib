@@ -290,12 +290,12 @@ SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
   this init() function immediately sends out the first package (RTS or FpFirstFrame
   */
 void
-MultiSend_c::SendStream_c::init (const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
+MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   mui32_pgn = aui32_pgn;
   if ((mui32_pgn & 0x0FF00) < 0x0F000) mui32_pgn &= 0x3FF00;
-  mc_isoNameSender = arcc_isoNameSender;     // copy the 8byte IsoName
-  mc_isoNameReceiver = arcc_isoNameReceiver; // copy the 8byte IsoName
+  mc_isoNameSender = acrc_isoNameSender;     // copy the 8byte IsoName
+  mc_isoNameReceiver = acrc_isoNameReceiver; // copy the 8byte IsoName
   mhpbui8_data = rhpb_data;
   mui32_dataSize = aui32_dataSize;   // initialise data for begin
   mpc_mss = apc_mss;
@@ -429,11 +429,11 @@ void MultiSend_c::close()
   @return an "in-progress" stream or NULL if none active for this sa/da-key
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::getSendStream(const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
+MultiSend_c::getSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
   for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); pc_iter++)
   {
-    if (pc_iter->matchSaDa(arcc_isoNameSender, arcc_isoNameReceiver))
+    if (pc_iter->matchSaDa(acrc_isoNameSender, acrc_isoNameReceiver))
       return &*pc_iter;
   }
   return NULL;
@@ -447,9 +447,9 @@ MultiSend_c::getSendStream(const IsoName_c& arcc_isoNameSender, const IsoName_c&
   @return reference to added SendStream ==> HAS TO BE INITIALIZED, because it may be a copy of the first (to avoid stack creation of new object)
 */
 MultiSend_c::SendStream_c*
-MultiSend_c::addSendStream(const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
+MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
-  SendStream_c* const pc_foundStream = getSendStream(arcc_isoNameSender, arcc_isoNameReceiver);
+  SendStream_c* const pc_foundStream = getSendStream(acrc_isoNameSender, acrc_isoNameReceiver);
   if (pc_foundStream)
   {
     if (!pc_foundStream->isFinished())
@@ -482,8 +482,8 @@ MultiSend_c::addSendStream(const IsoName_c& arcc_isoNameSender, const IsoName_c&
 
 /**
   internal function to send a ISO target multipacket message
-  @param arcc_isoNameSender dynamic member no of sender
-  @param arcc_isoNameReceiver dynamic member no of receiver
+  @param acrc_isoNameSender dynamic member no of sender
+  @param acrc_isoNameReceiver dynamic member no of receiver
   @param rhpb_data HUGE_MEM pointer to the data
   @param ai32_dataSize size of the complete mask
   @param ai32_pgn PGN to use for the upload
@@ -498,11 +498,11 @@ MultiSend_c::addSendStream(const IsoName_c& arcc_isoNameSender, const IsoName_c&
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIntern (const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
+MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   /// first check if new transfer can be started
   /// - is the sender correct?
-  if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (arcc_isoNameSender)) return false;
+  if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (acrc_isoNameSender)) return false;
 
   SendStream_c* pc_newSendStream;
   /// - is the receiver correct?
@@ -511,19 +511,19 @@ MultiSend_c::sendIntern (const IsoName_c& arcc_isoNameSender, const IsoName_c& a
     // Force destination to be "IsoNameUnspecified"
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (arcc_isoNameSender, IsoName_c::IsoNameUnspecified());
+    pc_newSendStream = addSendStream (acrc_isoNameSender, IsoName_c::IsoNameUnspecified());
   }
   else
   { // destination specific - so the receiver must be registered!
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (arcc_isoNameReceiver)) return false;
+    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (acrc_isoNameReceiver)) return false;
     /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
     /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (arcc_isoNameSender, arcc_isoNameReceiver);
+    pc_newSendStream = addSendStream (acrc_isoNameSender, acrc_isoNameReceiver);
   }
 
   if (pc_newSendStream)
   {
-    pc_newSendStream->init (arcc_isoNameSender, arcc_isoNameReceiver, rhpb_data, ai32_dataSize, rpen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
+    pc_newSendStream->init (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, ai32_dataSize, rpen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
     // let this SendStream get sorted in now...
     calcAndSetNextTriggerTime();
     return true;
@@ -980,27 +980,27 @@ MultiSend_c::SendStream_c::abortSend()
 
 /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
  * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
- * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-MultiSend_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
+MultiSend_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
     case AddToMonitorList:
-      if (arcc_isoItem.itemState (IState_c::Local))
+      if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
     case RemoveFromMonitorList:
-      if (arcc_isoItem.itemState (IState_c::Local))
+      if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &arcc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }
@@ -1072,9 +1072,9 @@ MultiSend_c::SendStream_c::prepareSendMsg(uint8_t &ui8_nettoDataCnt)
 
 /** user function for explicit abort of any running matching stream. */
 void
-MultiSend_c::abortSend (const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
+MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
-  SendStream_c* pc_sendStream = getSendStream (arcc_isoNameSender, arcc_isoNameReceiver);
+  SendStream_c* pc_sendStream = getSendStream (acrc_isoNameSender, acrc_isoNameReceiver);
   if (pc_sendStream) pc_sendStream->abortSend();
   /// let timeEvent do the erasing from the list.
   /// reason: if someone starts a new send directly after aborting the current,

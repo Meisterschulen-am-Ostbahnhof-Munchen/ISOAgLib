@@ -134,28 +134,28 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
 #endif
 /**
   operator= for Subprogs
-  @param arcc_src source instance
+  @param acrc_src source instance
   @return reference to source instance for commands like "subp1 = subp2 = subp3;"
 */
-const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& arcc_src){
-  mb_started = arcc_src.mb_started;
-  men_type = arcc_src.men_type;
-  men_doSend = arcc_src.men_doSend;
-  mi32_increment = arcc_src.mi32_increment;
-  mi32_lastVal = arcc_src.mi32_lastVal;
-  return arcc_src;
+const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& acrc_src){
+  mb_started = acrc_src.mb_started;
+  men_type = acrc_src.men_type;
+  men_doSend = acrc_src.men_doSend;
+  mi32_increment = acrc_src.mi32_increment;
+  mi32_lastVal = acrc_src.mi32_lastVal;
+  return acrc_src;
 }
 
 /**
   copy constructor for Subprogs
-  @param arcc_src source instance
+  @param acrc_src source instance
 */
-MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& arcc_src){
-  mb_started = arcc_src.mb_started;
-  men_type = arcc_src.men_type;
-  men_doSend = arcc_src.men_doSend;
-  mi32_increment = arcc_src.mi32_increment;
-  mi32_lastVal = arcc_src.mi32_lastVal;
+MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src){
+  mb_started = acrc_src.mb_started;
+  men_type = acrc_src.men_type;
+  men_doSend = acrc_src.men_doSend;
+  mi32_increment = acrc_src.mi32_increment;
+  mi32_lastVal = acrc_src.mi32_lastVal;
 }
 
 /** default destructor which has nothing to do */
@@ -285,53 +285,53 @@ int32_t MeasureSubprog_c::calcCompVal()const{
 
 /**
   compare two Subprogs with ==
-  @param arcc_right compared MeasureSubprog_c instance
+  @param acrc_right compared MeasureSubprog_c instance
   @return true -> this instance is equal to the other
 */
-bool MeasureSubprog_c::operator==(const MeasureSubprog_c& arcc_right)const{
-  return (calcCompVal() == arcc_right.calcCompVal());
+bool MeasureSubprog_c::operator==(const MeasureSubprog_c& acrc_right)const{
+  return (calcCompVal() == acrc_right.calcCompVal());
 }
 
 /**
   compare two Subprogs with !=
-  @param arcc_right compared MeasureSubprog_c instance
+  @param acrc_right compared MeasureSubprog_c instance
   @return true -> this instance is different to the other
 */
-bool MeasureSubprog_c::operator!=(const MeasureSubprog_c& arcc_right)const{
-  return (calcCompVal() != arcc_right.calcCompVal());
+bool MeasureSubprog_c::operator!=(const MeasureSubprog_c& acrc_right)const{
+  return (calcCompVal() != acrc_right.calcCompVal());
 }
 
 /**
   compare two Subprogs with <
-  @param arcc_right compared MeasureSubprog_c instance
+  @param acrc_right compared MeasureSubprog_c instance
   @return true -> this instance is < than the other
 */
-bool MeasureSubprog_c::operator<(const MeasureSubprog_c& arcc_right)const{
-  return (calcCompVal() < arcc_right.calcCompVal());
+bool MeasureSubprog_c::operator<(const MeasureSubprog_c& acrc_right)const{
+  return (calcCompVal() < acrc_right.calcCompVal());
 }
 /**
   compare two Subprogs with <=
-  @param arcc_right compared MeasureSubprog_c instance
+  @param acrc_right compared MeasureSubprog_c instance
   @return true -> this instance is <= than the other
 */
-bool MeasureSubprog_c::operator<=(const MeasureSubprog_c& arcc_right)const{
-  return (calcCompVal() <= arcc_right.calcCompVal());
+bool MeasureSubprog_c::operator<=(const MeasureSubprog_c& acrc_right)const{
+  return (calcCompVal() <= acrc_right.calcCompVal());
 }
 /**
   compare two Subprogs with >
-  @param arcc_right compared MeasureSubprog_c instance
+  @param acrc_right compared MeasureSubprog_c instance
   @return true -> this instance is > than the other
 */
-bool MeasureSubprog_c::operator>(const MeasureSubprog_c& arcc_right)const{
-  return (calcCompVal() > arcc_right.calcCompVal());
+bool MeasureSubprog_c::operator>(const MeasureSubprog_c& acrc_right)const{
+  return (calcCompVal() > acrc_right.calcCompVal());
 }
 /**
   compare two Subprogs with >=
-  @param arcc_right compared MeasureSubprog_c instance
+  @param acrc_right compared MeasureSubprog_c instance
   @return true -> this instance is >= than the other
 */
-bool MeasureSubprog_c::operator>=(const MeasureSubprog_c& arcc_right)const{
-  return (calcCompVal() >= arcc_right.calcCompVal());
+bool MeasureSubprog_c::operator>=(const MeasureSubprog_c& acrc_right)const{
+  return (calcCompVal() >= acrc_right.calcCompVal());
 }
 
 /**

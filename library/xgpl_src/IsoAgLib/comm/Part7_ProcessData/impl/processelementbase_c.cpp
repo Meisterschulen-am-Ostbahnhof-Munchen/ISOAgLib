@@ -115,23 +115,23 @@ ProcessElementBase_c::ProcessElementBase_c(
 }
 /**
   copy constructor
-  @param arcc_src source ProcessElementBase_c instance
+  @param acrc_src source ProcessElementBase_c instance
 */
-ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& arcc_src)
-  : ClientBase(arcc_src), mpc_processData(arcc_src.mpc_processData)
+ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& acrc_src)
+  : ClientBase(acrc_src), mpc_processData(acrc_src.mpc_processData)
 {}
 
 /**
   assignment operator for ProcessElementBase
-  @param arcc_src source ProcessElementBase_c instance
+  @param acrc_src source ProcessElementBase_c instance
 */
-const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& arcc_src){
-  setSingletonKey(arcc_src.getSingletonVecKey());
+const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& acrc_src){
+  setSingletonKey(acrc_src.getSingletonVecKey());
   // copy element vars
-  mpc_processData = arcc_src.mpc_processData;
+  mpc_processData = acrc_src.mpc_processData;
 
   // return the source reference
-  return arcc_src;
+  return acrc_src;
 }
 
 /** default destructor which has nothing to do */
@@ -153,15 +153,15 @@ void ProcessElementBase_c::set(ProcDataBase_c& arc_processData )
 
 /**
   deliver the pointer to the containing ProcessData item
-  @param apc_processData optional pointer to containing ProcessData instance
+  @param acpc_processData optional pointer to containing ProcessData instance
 */
-void ProcessElementBase_c::set(ProcDataBase_c *const apc_processData)
+void ProcessElementBase_c::set(ProcDataBase_c *const acpc_processData)
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
-  if ( apc_processData != NULL )
+  if ( acpc_processData != NULL )
     ClientBase::setSingletonKey(apc_processData->getSingletonVecKey());
   #endif
-  mpc_processData = apc_processData;
+  mpc_processData = acpc_processData;
 };
 
 

@@ -88,9 +88,9 @@ public:
 
    /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
      <!-- @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-      @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)-->
+      @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)-->
      */
-   virtual void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*arcc_isoItem*/) {}
+   virtual void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/) {}
 };
 
 }

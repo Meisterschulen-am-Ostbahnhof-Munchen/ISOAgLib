@@ -169,15 +169,15 @@ public:
   void init( ProcDataBase_c *const apc_processData );
   /**
     assginment from another object
-    @param arcc_src source SetpointLocal_c instance
+    @param acrc_src source SetpointLocal_c instance
     @return reference to source for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointLocal_c& operator=( const SetpointLocal_c& arcc_src );
+  const SetpointLocal_c& operator=( const SetpointLocal_c& acrc_src );
   /**
     copy constructor for SetpointLocal
-    @param arcc_src source SetpointLocal_c instance
+    @param acrc_src source SetpointLocal_c instance
   */
-   SetpointLocal_c( const SetpointLocal_c& arcc_src );
+   SetpointLocal_c( const SetpointLocal_c& acrc_src );
   /** default destructor which has nothing to do */
   ~SetpointLocal_c();
 
@@ -371,7 +371,7 @@ public:
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointLocal_c& arcc_src );
+  void assignFromSource( const SetpointLocal_c& acrc_src );
   /**
     process a setpoint request for local process data
   */

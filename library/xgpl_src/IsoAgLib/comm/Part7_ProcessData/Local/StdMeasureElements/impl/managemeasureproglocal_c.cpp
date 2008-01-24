@@ -157,24 +157,24 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const apc_processData )
   mpc_progCache = vec_prog().begin();
 }
 /** copy constructor */
-ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arcc_src )
-: ProcessElementBase_c( arcc_src )
+ManageMeasureProgLocal_c::ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src )
+: ProcessElementBase_c( acrc_src )
 {
-  assignFromSource( arcc_src );
+  assignFromSource( acrc_src );
 }
 /** assignment operator */
-const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& arcc_src )
+const ManageMeasureProgLocal_c& ManageMeasureProgLocal_c::operator=( const ManageMeasureProgLocal_c& acrc_src )
 {
-  ProcessElementBase_c::operator=( arcc_src );
-  assignFromSource( arcc_src );
+  ProcessElementBase_c::operator=( acrc_src );
+  assignFromSource( acrc_src );
   return *this;
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& arcc_src )
+void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c& acrc_src )
 { // copy dynamic array
-  mvecc_prog = arcc_src.mvecc_prog;
+  mvecc_prog = acrc_src.mvecc_prog;
   // now initialise the elements
-  if (vec_prog().size() < arcc_src.constVecProg().size())
+  if (vec_prog().size() < acrc_src.constVecProg().size())
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
@@ -212,10 +212,10 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)
   {
-    pc_iter->set( arcc_src.processData() );
+    pc_iter->set( acrc_src.processData() );
     // if the actual initialised item is the same as the cached item from
     // source set the cache of the copy (this instance)
-    if (*pc_iter == *arcc_src.mpc_progCache) mpc_progCache = pc_iter;
+    if (*pc_iter == *acrc_src.mpc_progCache) mpc_progCache = pc_iter;
   }
 }
 
@@ -421,12 +421,12 @@ void ManageMeasureProgLocal_c::processProg(){
   possible errors:
       * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-  @param arcc_isoName DEVCLASS code of searched measure program
+  @param acrc_isoName DEVCLASS code of searched measure program
   @param ab_doCreate true -> create suitable measure program if not found
 */
-MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& arcc_isoName, bool ab_doCreate){
+MeasureProgLocal_c& ManageMeasureProgLocal_c::prog(const IsoName_c& acrc_isoName, bool ab_doCreate){
   // update the prog cache
-  if (!updateProgCache(arcc_isoName, ab_doCreate) && (!ab_doCreate))
+  if (!updateProgCache(acrc_isoName, ab_doCreate) && (!ab_doCreate))
   { // not found and no creation wanted
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
@@ -473,9 +473,9 @@ void ManageMeasureProgLocal_c::setGlobalVal( float af_val )
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-  @param arcc_isoName commanding ISOName
+  @param acrc_isoName commanding ISOName
 */
-void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& arcc_isoName)
+void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
 {
   const uint8_t b_oldSize = vec_prog().size();
 
@@ -539,7 +539,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& arcc_isoName)
   #endif
 
   // set type and isoName for item
-  mpc_progCache->setISOName(arcc_isoName);
+  mpc_progCache->setISOName(acrc_isoName);
 
   mpc_progCache->setActive(true);
 }
@@ -550,11 +550,11 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& arcc_isoName)
   possible errors:
       * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-  @param arcc_isoName commanding ISOName
+  @param acrc_isoName commanding ISOName
   @param ab_createIfNotFound true -> create new item if not found
   @return true -> instance found
 */
-bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& arcc_isoName, bool ab_createIfNotFound)
+bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& acrc_isoName, bool ab_createIfNotFound)
 {
   bool b_result = false;
   // insert first default element, if list is empty
@@ -563,7 +563,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& arcc_isoName, bo
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   // update only if old cache isn't valid
   if ( (!vec_prog().empty())
-    && (mpc_progCache->isoName() == arcc_isoName) )
+    && (mpc_progCache->isoName() == acrc_isoName) )
   { // old is valid -> return true
     b_result =  true;
   }
@@ -572,7 +572,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& arcc_isoName, bo
     // target process msg
     for (pc_iter = vec_prog().begin(); pc_iter != vec_prog().end(); pc_iter++)
     { // check if isoName and type fit
-      if ( pc_iter->isoName() == arcc_isoName )
+      if ( pc_iter->isoName() == acrc_isoName )
       {
         b_result = true;
         mpc_progCache = pc_iter;
@@ -589,7 +589,7 @@ bool ManageMeasureProgLocal_c::updateProgCache(const IsoName_c& arcc_isoName, bo
       }
       else
       { // no suitable item was found -> create suitable one
-        insertMeasureprog(arcc_isoName);
+        insertMeasureprog(acrc_isoName);
       } // do create if not found
     }// no suitable found
   }

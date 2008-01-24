@@ -105,7 +105,7 @@ namespace __IsoAgLib {
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element device element number
 
-  @param arcc_isoName optional ISOName code of this instance
+  @param acrc_isoName optional ISOName code of this instance
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
@@ -113,12 +113,12 @@ namespace __IsoAgLib {
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
             const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t aui16_element,
-            const IsoName_c& arcc_isoName,
+            const IsoName_c& acrc_isoName,
             const IsoName_c* apc_commanderISOName,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
             int ai_singletonVecKey)
   : ProcDataRemoteBase_c(ps_elementDDI, aui16_element,
-                         arcc_isoName, apc_commanderISOName,
+                         acrc_isoName, apc_commanderISOName,
                          apc_processDataChangeHandler, ai_singletonVecKey)
 {
   mi32_masterVal = 0;
@@ -131,52 +131,52 @@ ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpoin
                        (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
   @param aui16_element device element number
 
-  @param arcc_isoName optional ISOName code of this instance
+  @param acrc_isoName optional ISOName code of this instance
   @param apc_commanderISOName pointer to updated ISOName variable of commander
   @param apc_processDataChangeHandler optional pointer to handler class of application
   @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                                                               const IsoName_c& arcc_isoName,
+                                                               const IsoName_c& acrc_isoName,
                                                                const IsoName_c* apc_commanderISOName,
                                                                IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                                                int ai_singletonVecKey)
 {
   ProcDataRemoteBase_c::init(ps_elementDDI, aui16_element,
-                             arcc_isoName, apc_commanderISOName,
+                             acrc_isoName, apc_commanderISOName,
                              apc_processDataChangeHandler, ai_singletonVecKey);
   mi32_masterVal = 0;
 }
 
 /**
   assignment operator for this object
-  @param arcc_src source instance
+  @param acrc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
 const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c&
   ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::operator=(
-    const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src)
+    const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& acrc_src)
 {
-  ProcDataRemoteBase_c::operator=( arcc_src );
-  assignFromSource( arcc_src );
+  ProcDataRemoteBase_c::operator=( acrc_src );
+  assignFromSource( acrc_src );
   return *this;
 }
 
 /**
   copy constructor for IsoAgLibProcDataRemote
-  @param arcc_src source instance
+  @param acrc_src source instance
 */
 ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c(
-  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src)
-  : ProcDataRemoteBase_c( arcc_src )
+  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& acrc_src)
+  : ProcDataRemoteBase_c( acrc_src )
 {
-  assignFromSource( arcc_src );
+  assignFromSource( acrc_src );
 }
 /** base function for assignment of element vars for copy constructor and operator= */
 void ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c::assignFromSource(
-  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& arcc_src )
+  const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& acrc_src )
 {
-  mi32_masterVal = arcc_src.mi32_masterVal;
+  mi32_masterVal = acrc_src.mi32_masterVal;
 }
 
 /** default destructor which has nothing to do */

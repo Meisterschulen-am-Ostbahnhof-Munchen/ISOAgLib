@@ -417,27 +417,27 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+  @param acrc_isoNameReceiver isoName code of searched local Process Data instance
   @return true -> suitable instance found
 */
-bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver)
+bool Process_c::existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver)
 {
-  return updateLocalCache( aui16_DDI, aui16_element, arcc_isoNameReceiver);
+  return updateLocalCache( aui16_DDI, aui16_element, acrc_isoNameReceiver);
 }
 
 /**
-  checks if a suitable arcc_isoName item exist
+  checks if a suitable acrc_isoName item exist
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+  @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+  @param acrc_isoNameReceiver isoName code of searched local Process Data instance
   @return true -> suitable instance found
 */
 bool Process_c::existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                                     const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
+                                     const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
- return updateRemoteCache( aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoNameReceiver);
+ return updateRemoteCache( aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoNameReceiver);
 }
 
 /**
@@ -450,12 +450,12 @@ bool Process_c::existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+  @param acrc_isoNameReceiver isoName code of searched local Process Data instance
   @return reference to searched/created ProcDataLocal_c instance
 */
-ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver)
+ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver)
 {
-  bool b_found = updateLocalCache( aui16_DDI, aui16_element, arcc_isoNameReceiver);
+  bool b_found = updateLocalCache( aui16_DDI, aui16_element, acrc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
@@ -464,7 +464,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui1
 }
 
 /**
-  search for suitable arcc_isoName item; create on if not found AND if wanted
+  search for suitable acrc_isoName item; create on if not found AND if wanted
 
   possible errors:
       * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
@@ -473,15 +473,15 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui1
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
-  @return reference to searched/created arcc_isoName instance
+  @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+  @param acrc_isoNameReceiver isoName code of searched local Process Data instance
+  @return reference to searched/created acrc_isoName instance
   @exception badAlloc
 */
-arcc_isoName& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                                                 const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
+acrc_isoName& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
+                                                 const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
-  bool b_found = updateRemoteCache(aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoNameReceiver);
+  bool b_found = updateRemoteCache(aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoNameReceiver);
   if (!b_found)
   { // not found and no creation wanted -> error
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
@@ -496,10 +496,10 @@ arcc_isoName& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t aui16_elem
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoName isoName code of searched local Process Data instance
+  @param acrc_isoName isoName code of searched local Process Data instance
   @return count of similar local process data entries
 */
-uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoName)
+uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoName)
 {
   uint8_t ui8_cnt=0;
 
@@ -508,7 +508,7 @@ uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element,
        pc_iter++ )
   { // search for all local items which match the searched identity
     // don't check sender devClass => 0xFF
-    if ((*pc_iter)->matchISO (IsoName_c::IsoNameUnspecified(), arcc_isoName, aui16_DDI, aui16_element))
+    if ((*pc_iter)->matchISO (IsoName_c::IsoNameUnspecified(), acrc_isoName, aui16_DDI, aui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -521,12 +521,12 @@ uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element,
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameSender isoName of the sender (used for check against ownerisoName())
-  @param arcc_isoName isoName code of searched remote Process Data instance
+  @param acrc_isoNameSender isoName of the sender (used for check against ownerisoName())
+  @param acrc_isoName isoName code of searched remote Process Data instance
   @return count of similar remote process data entries
 */
 uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element,
-                                      const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoName)
+                                      const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoName)
 {
   uint8_t ui8_cnt=0;
 
@@ -534,7 +534,7 @@ uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element
        ( pc_iter != c_arrClientC2.end() );
        pc_iter++ )
   { // search for all local items which match the searched identity
-    if ((*pc_iter)->matchISO(arcc_isoNameSender, arcc_isoName, aui16_DDI, aui16_element))
+    if ((*pc_iter)->matchISO(acrc_isoNameSender, acrc_isoName, aui16_DDI, aui16_element))
       ui8_cnt++;
   }
   return ui8_cnt;
@@ -546,9 +546,9 @@ uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameReceiver isoName code of created local Process Data instance
+  @param acrc_isoNameReceiver isoName code of created local Process Data instance
 */
-bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& arcc_isoNameReceiver)
+bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver)
 {
   bool b_foundLazy = false;
 
@@ -557,7 +557,7 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
     if ( pc_searchCacheC1 != c_arrClientC1.end() )
     {
       // don't check sender devClass => 0xFF
-      if ((*pc_searchCacheC1)->matchISO (IsoName_c::IsoNameUnspecified(), arcc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
+      if ((*pc_searchCacheC1)->matchISO (IsoName_c::IsoNameUnspecified(), acrc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
@@ -568,7 +568,7 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
       bool b_matched = false;
 
       // don't check sender devClass => 0xFF
-      if ((*pc_iter)->matchISO(IsoName_c::IsoNameUnspecified(), arcc_isoNameReceiver, aui16_DDI, aui16_element))
+      if ((*pc_iter)->matchISO(IsoName_c::IsoNameUnspecified(), acrc_isoNameReceiver, aui16_DDI, aui16_element))
         b_matched = true;
 
       if (b_matched)
@@ -585,22 +585,22 @@ bool Process_c::updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, co
 
 
 /**
-  update the cache with search for according arcc_isoName item
+  update the cache with search for according acrc_isoName item
   ISO parameter
   @param aui16_DDI
   @param aui16_element
-  @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-  @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+  @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+  @param acrc_isoNameReceiver isoName code of searched local Process Data instance
 */
 bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
-                                   const IsoName_c& arcc_isoNameSender, const IsoName_c& arcc_isoNameReceiver)
+                                   const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
   bool b_foundLazy = false;
   if (!c_arrClientC2.empty())
   {
     if ( pc_searchCacheC2 != c_arrClientC2.end() )
     {
-      if ((*pc_searchCacheC2)->matchISO(arcc_isoNameSender, arcc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
+      if ((*pc_searchCacheC2)->matchISO(acrc_isoNameSender, acrc_isoNameReceiver, aui16_DDI, aui16_element)) return true;
     }
     //old cache doesn't match any more -> search new
     for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
@@ -609,7 +609,7 @@ bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
     { // check for lazy match with INSTANCE == 0xFF (==joker)
       bool b_matched = false;
 
-      if ((*pc_iter)->matchISO(arcc_isoNameSender, arcc_isoNameReceiver, aui16_DDI, aui16_element))
+      if ((*pc_iter)->matchISO(acrc_isoNameSender, acrc_isoNameReceiver, aui16_DDI, aui16_element))
         b_matched = true;
 
       if (b_matched)
@@ -623,23 +623,23 @@ bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
 }
 
 
-arcc_isoName* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& refen_valueGroup, bool& rb_isSetpoint)
+acrc_isoName* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& refen_valueGroup, bool& rb_isSetpoint)
 {
-  arcc_isoName* pc_remoteProcessData = NULL;
+  acrc_isoName* pc_remoteProcessData = NULL;
 
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->check4GroupMatchExisting(aui16_DDI, aui_deviceElement, arcc_isoName))
-    { // DDI/elementNr already contained in arcc_isoName
+    if ((*pc_iter)->check4GroupMatchExisting(aui16_DDI, aui_deviceElement, acrc_isoName))
+    { // DDI/elementNr already contained in acrc_isoName
       (*pc_iter)->getDDIType(aui16_DDI, refen_valueGroup, rb_isSetpoint);
       return *pc_iter;
     }
   }
 
   // try to find a matching group
-  pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, arcc_isoName);
+  pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, acrc_isoName);
   if (pc_remoteProcessData)
   {
     bool mb_isSetpoint;
@@ -655,9 +655,9 @@ arcc_isoName* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t au
   return NULL;
 }
 
-bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName)
+bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName)
 {
-  arcc_isoName* pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, arcc_isoName);
+  acrc_isoName* pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, acrc_isoName);
 
   if (NULL == pc_remoteProcessData) return false;
 
@@ -665,9 +665,9 @@ bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_de
 }
 
 
-bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &arcc_isoName)
+bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &acrc_isoName)
 {
-  arcc_isoName* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(aui_deviceElement, arcc_isoName);
+  acrc_isoName* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(aui_deviceElement, acrc_isoName);
 
   if (NULL == pc_remoteProcessData) return false;
 
@@ -675,39 +675,39 @@ bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceE
 }
 
 
-arcc_isoName* Process_c::check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName)
+acrc_isoName* Process_c::check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->check4GroupMatch(aui16_DDI, aui_deviceElement, arcc_isoName))
+    if ((*pc_iter)->check4GroupMatch(aui16_DDI, aui_deviceElement, acrc_isoName))
       return *pc_iter;
   }// for
 
   return NULL;
 }
 
-bool Process_c::check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& arcc_isoName)
+bool Process_c::check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->check4GroupMatchExisting(aui16_DDI, aui_deviceElement, arcc_isoName))
+    if ((*pc_iter)->check4GroupMatchExisting(aui16_DDI, aui_deviceElement, acrc_isoName))
       return TRUE;
   }// for
 
   return FALSE;
 }
 
-arcc_isoName* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c &arcc_isoName)
+acrc_isoName* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c &acrc_isoName)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->checkProprietary4GroupMatch(aui_deviceElement, arcc_isoName))
+    if ((*pc_iter)->checkProprietary4GroupMatch(aui_deviceElement, acrc_isoName))
       return *pc_iter;
   }// for
 
@@ -718,21 +718,21 @@ arcc_isoName* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_deviceEleme
   delete IsoFilterBox_c for receive from remote isoName if needed
   (important to delete old Filter Boxes after deletion of
   remote device from monitor list)
-  @param arcc_isoName isoName code of remote owner who sent the message
+  @param acrc_isoName isoName code of remote owner who sent the message
   @return true -> member exists and IsoFilterBox deleted
 */
-bool Process_c::deleteRemoteFilter(IsoName_c const& arcc_isoName)
+bool Process_c::deleteRemoteFilter(IsoName_c const& acrc_isoName)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
         ( pc_iter != c_arrClientC2.end() );
         pc_iter++ )
   {
-    if ((*pc_iter)->isoName() == arcc_isoName)
+    if ((*pc_iter)->isoName() == acrc_isoName)
     { // remote proc data has given onwerisoName
       // -> delete according FilterBox (after check if corresponding FilterBox_c exists)
-      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent)))
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent)))
       { // corresponding FilterBox_c exist -> delete it
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent));
         // and let the caller know of the positive deletion!
         return true;
       } else
@@ -744,14 +744,14 @@ bool Process_c::deleteRemoteFilter(IsoName_c const& arcc_isoName)
 
 /**
   insert FilterBox_c for receive from remote isoName if needed
-  @param arcc_isoName isoName code of remote owner who sent the message
+  @param acrc_isoName isoName code of remote owner who sent the message
   @return true -> member exist and Filter Box created
  */
-bool Process_c::createRemoteFilter(IsoName_c const& arcc_isoName)
+bool Process_c::createRemoteFilter(IsoName_c const& acrc_isoName)
 {
-  if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent)))
+  if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (*this, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent)))
   { // no suitable FilterBox_c exist -> create it
-    getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &arcc_isoName, 8, Ident_c::ExtendedIdent), true);
+    getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent), true);
     return true;
   }
 
@@ -790,17 +790,17 @@ bool Process_c::checkCreateRemoteReceiveFilter()
 
 /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
  * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
- * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+ * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& arcc_isoItem)
+Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
     case AddToMonitorList:
-      if (arcc_isoItem.itemState (IState_c::Local))
+      if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent), true);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent), true);
       }
       else
       { // remote IsoItem_c has finished adr claim
@@ -809,10 +809,10 @@ Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_
       break;
 
     case RemoveFromMonitorList:
-      if (arcc_isoItem.itemState (IState_c::Local))
+      if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &arcc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent));
       }
       else
       { // remote IsoItem_c
@@ -820,7 +820,7 @@ Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_
             can be explicitly stopped, to avoid ongoing send tries to undefined destination.
             As soon as this is done, the removal of receive filters should be de-activated.
         */
-        deleteRemoteFilter(arcc_isoItem.isoName());
+        deleteRemoteFilter(acrc_isoItem.isoName());
       }
       break;
 
@@ -833,7 +833,7 @@ Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_
 /** register pointer to a new remote process data instance
   * this function is called within construction of new remote process data instance
   */
-bool Process_c::registerRemoteProcessData( arcc_isoName* pc_remoteClient)
+bool Process_c::registerRemoteProcessData( acrc_isoName* pc_remoteClient)
 {
   const bool cb_result = registerC2( pc_remoteClient );
   mb_needCallOfCheckCreateRemoteReceiveFilter = true;
@@ -845,7 +845,7 @@ bool Process_c::registerRemoteProcessData( arcc_isoName* pc_remoteClient)
 /** unregister pointer to a already registered remote process data instance
   * this function is called within destruction of remote process data instance
   */
-void Process_c::unregisterRemoteProcessData( arcc_isoName* pc_remoteClient)
+void Process_c::unregisterRemoteProcessData( acrc_isoName* pc_remoteClient)
 {
   // check if the remote owner isoName is used for any other remote proc
   const IsoName_c& c_toBeDeletedOwnerisoName = pc_remoteClient->isoName();

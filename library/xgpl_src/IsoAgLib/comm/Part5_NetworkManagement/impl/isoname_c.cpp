@@ -154,20 +154,20 @@ IsoName_c::IsoName_c(bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devCl
 }
 
 /** copy constructor for ISOName
-  @param arcc_src source IsoName_c instance
+  @param acrc_src source IsoName_c instance
 */
-IsoName_c::IsoName_c(const IsoName_c& arcc_src)
-: mu_data( arcc_src.mu_data )
+IsoName_c::IsoName_c(const IsoName_c& acrc_src)
+: mu_data( acrc_src.mu_data )
 { // simply copy data string
 }
 
 /** assign constructor for ISOName
-  @param arcc_src source IsoName_c object
+  @param acrc_src source IsoName_c object
 */
-const IsoName_c& IsoName_c::operator=(const IsoName_c& arcc_src)
+const IsoName_c& IsoName_c::operator=(const IsoName_c& acrc_src)
 { // simply copy data string
-  mu_data = arcc_src.mu_data;
-  return arcc_src;
+  mu_data = acrc_src.mu_data;
+  return acrc_src;
 }
 
 /** default destructor */
@@ -463,14 +463,14 @@ int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) con
   @return true if equal, false if one non-inst field differs!
 */
 bool
-IsoName_c::isEqualRegardingNonInstFields (const IsoName_c& arcc_isoName) const
+IsoName_c::isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const
 {
-  return ( (devClass()  == arcc_isoName.devClass() )
-        && (indGroup()  == arcc_isoName.indGroup() )
-        && (func()      == arcc_isoName.func()     )
-        && (serNo()     == arcc_isoName.serNo()    )
-        && (selfConf()  == arcc_isoName.selfConf() )
-        && (manufCode() == arcc_isoName.manufCode())
+  return ( (devClass()  == acrc_isoName.devClass() )
+        && (indGroup()  == acrc_isoName.indGroup() )
+        && (func()      == acrc_isoName.func()     )
+        && (serNo()     == acrc_isoName.serNo()    )
+        && (selfConf()  == acrc_isoName.selfConf() )
+        && (manufCode() == acrc_isoName.manufCode())
          );
 }
 

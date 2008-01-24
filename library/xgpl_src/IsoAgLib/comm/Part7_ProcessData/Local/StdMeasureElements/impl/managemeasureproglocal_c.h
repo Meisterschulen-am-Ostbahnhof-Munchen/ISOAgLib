@@ -140,10 +140,10 @@ private:
   void init( ProcDataBase_c *const apc_processData = NULL );
 
   /** copy constructor */
-  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& arcc_src );
+  ManageMeasureProgLocal_c( const ManageMeasureProgLocal_c& acrc_src );
 
   /** assignment operator */
-  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& arcc_src );
+  const ManageMeasureProgLocal_c& operator=( const ManageMeasureProgLocal_c& acrc_src );
 
   /**
     perform periodic actions
@@ -159,11 +159,11 @@ private:
 
   /**
     check if specific measureprog exist
-    @param arcc_isoName DEVCLASS code of searched measure program
+    @param acrc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(const IsoName_c& arcc_isoName)
-      {return updateProgCache(arcc_isoName, false);}
+  bool existProg(const IsoName_c& acrc_isoName)
+      {return updateProgCache(acrc_isoName, false);}
 
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
@@ -172,10 +172,10 @@ private:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-    @param arcc_isoName DEVCLASS code of searched measure program
+    @param acrc_isoName DEVCLASS code of searched measure program
     @param ab_doCreated true -> create suitable measure program if not found
   */
-  MeasureProgLocal_c& prog(const IsoName_c& arcc_isoName, bool ab_doCreate);
+  MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate);
 
   /** initialise value for all registered Measure Progs */
   void initGlobalVal( int32_t ai32_val );
@@ -229,20 +229,20 @@ private:
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-    @param arcc_isoName commanding ISOName
+    @param acrc_isoName commanding ISOName
   */
-  void insertMeasureprog(const IsoName_c& arcc_isoName);
+  void insertMeasureprog(const IsoName_c& acrc_isoName);
   /**
     update the programm cache, create an programm item, if wanted
 
     possible errors:
         * Err_c::badAlloc not enough memory to insert new MeasureProgLocal
 
-    @param arcc_isoName commanding ISOName
+    @param acrc_isoName commanding ISOName
     @param ab_createIfNotFound true -> create new item if not found
     @return true -> instance found
   */
-  bool updateProgCache(const IsoName_c& arcc_isoName, bool ab_createIfNotFound);
+  bool updateProgCache(const IsoName_c& acrc_isoName, bool ab_createIfNotFound);
  protected:
   /** container of objects for managing jobs of local measure programs */
   Vec_MeasureProgLocal mvecc_prog;
@@ -250,7 +250,7 @@ private:
   Vec_MeasureProgLocalIterator mpc_progCache;
  private:
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ManageMeasureProgLocal_c& arcc_src );
+  void assignFromSource( const ManageMeasureProgLocal_c& acrc_src );
   /** create first default measure prog, if no measure prog in list */
   void checkInitList( void );
 

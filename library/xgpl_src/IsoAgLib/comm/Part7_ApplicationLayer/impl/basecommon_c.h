@@ -197,7 +197,7 @@ namespace __IsoAgLib
     void setUpdateTime(int32_t updateTime) {mi32_lastMsgReceived = updateTime;}
 
     /** check if a received message should be parsed */
-    bool checkParseReceived(const IsoName_c& arcc_currentSender) const;
+    bool checkParseReceived(const IsoName_c& acrc_currentSender) const;
 
     /** return if you currently are in implement mode or tractor mode*/
     bool checkMode(IsoAgLib::IdentMode_t at_identMode) const {return (mt_identMode == at_identMode);}

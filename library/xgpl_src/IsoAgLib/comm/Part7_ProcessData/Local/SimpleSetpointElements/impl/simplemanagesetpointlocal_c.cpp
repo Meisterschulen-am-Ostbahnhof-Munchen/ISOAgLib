@@ -138,19 +138,19 @@ void SimpleManageSetpointLocal_c::init( ProcDataBase_c *const apc_processData )
   #endif
 }
 /** copy constructor */
-SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& arcc_src )
-: ProcessElementBase_c( arcc_src )
+SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& acrc_src )
+: ProcessElementBase_c( acrc_src )
 {
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    mi32_setpointMasterVal = arcc_src.mi32_setpointMasterVal;
+    mi32_setpointMasterVal = acrc_src.mi32_setpointMasterVal;
   #endif
 }
 /** assignment operator */
-const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const SimpleManageSetpointLocal_c& arcc_src )
+const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const SimpleManageSetpointLocal_c& acrc_src )
 {
-  ProcessElementBase_c::operator=( arcc_src );
+  ProcessElementBase_c::operator=( acrc_src );
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    mi32_setpointMasterVal = arcc_src.mi32_setpointMasterVal;
+    mi32_setpointMasterVal = acrc_src.mi32_setpointMasterVal;
   #endif
 
   return *this;

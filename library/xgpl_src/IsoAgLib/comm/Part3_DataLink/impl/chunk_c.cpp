@@ -96,10 +96,10 @@ namespace __IsoAgLib {
 
 
 // Copy constructor
-Chunk_c::Chunk_c( const Chunk_c& arcc_src )
+Chunk_c::Chunk_c( const Chunk_c& acrc_src )
 {
-  marr_data.reserve (arcc_src.marr_data.capacity());
-  STL_NAMESPACE::copy(arcc_src.marr_data.begin(), arcc_src.marr_data.end(), marr_data.begin());
+  marr_data.reserve (acrc_src.marr_data.capacity());
+  STL_NAMESPACE::copy(acrc_src.marr_data.begin(), acrc_src.marr_data.end(), marr_data.begin());
 }
 
 

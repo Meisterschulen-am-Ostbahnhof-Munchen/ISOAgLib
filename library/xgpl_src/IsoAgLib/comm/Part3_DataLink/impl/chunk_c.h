@@ -117,7 +117,7 @@ public:
 
 
   // Copy constructor
-  Chunk_c( const Chunk_c& arcc_src );
+  Chunk_c( const Chunk_c& acrc_src );
 
   //  Operation: init
   bool init();

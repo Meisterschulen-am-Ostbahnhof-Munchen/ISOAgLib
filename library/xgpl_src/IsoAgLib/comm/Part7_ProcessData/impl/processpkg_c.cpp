@@ -569,14 +569,14 @@ IsoItem_c& ProcessPkg_c::memberSend() const
 /**
   some LBS+ terminals wants process data interaction for syncronisation of
   terminal mask with ISOName of terminal even for local process data
-  @param arcc_isoName ISOName of terminal, for which the ISOName of data is converted
-  @param arcc_useProcISOName ISOName for process data (optional, default to terminal isoName)
+  @param acrc_isoName ISOName of terminal, for which the ISOName of data is converted
+  @param acrc_useProcISOName ISOName for process data (optional, default to terminal isoName)
 */
-void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& arcc_isoName, const IsoName_c& arcc_useProcISOName)
+void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& acrc_isoName, const IsoName_c& acrc_useProcISOName)
 {
-  mc_specialTermISOName = arcc_isoName;
-  if (arcc_useProcISOName.isSpecified())mc_specialTermUseProcISOName = arcc_useProcISOName;
-  else mc_specialTermUseProcISOName = arcc_isoName;
+  mc_specialTermISOName = acrc_isoName;
+  if (acrc_useProcISOName.isSpecified())mc_specialTermUseProcISOName = acrc_useProcISOName;
+  else mc_specialTermUseProcISOName = acrc_isoName;
 }
 
 /**

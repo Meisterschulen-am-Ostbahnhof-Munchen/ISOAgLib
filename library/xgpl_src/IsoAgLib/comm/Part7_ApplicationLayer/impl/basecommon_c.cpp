@@ -206,11 +206,11 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
 }
 
 /** check if a received message should be parsed */
-bool BaseCommon_c::checkParseReceived(const IsoName_c& arcc_currentSender) const
+bool BaseCommon_c::checkParseReceived(const IsoName_c& acrc_currentSender) const
 {
   return ( checkMode(IsoAgLib::IdentModeImplement) // I'm not the sender
             && ( // one of the following conditions must be true
-                   (mc_selectedDataSourceISOName == arcc_currentSender  ) // actual sender equivalent to last
+                   (mc_selectedDataSourceISOName == acrc_currentSender  ) // actual sender equivalent to last
                 || (mc_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
                )
           )?true:false;

@@ -151,23 +151,23 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameReceiver isoName of searched local Process Data instance
+    @param acrc_isoNameReceiver isoName of searched local Process Data instance
     @return true -> suitable instance found
   */
-  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& arcc_isoNameReceiver)
-  { return Process_c::existProcDataLocal(aui16_DDI, aui16_element, arcc_isoNameReceiver);}
+  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& acrc_isoNameReceiver)
+  { return Process_c::existProcDataLocal(aui16_DDI, aui16_element, acrc_isoNameReceiver);}
   /**
     checks if a suitable iProcessDataRemote_c item exist
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arcc_isoNameReceiver isoName code of searched local Process Data instance
+    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
     @return true -> suitable instance found
   */
   bool existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                            const iIsoName_c& arcc_isoNameSender, const iIsoName_c& arcc_isoNameReceiver)
-  { return Process_c::existProcDataRemote( aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoNameReceiver);}
+                            const iIsoName_c& acrc_isoNameSender, const iIsoName_c& acrc_isoNameReceiver)
+  { return Process_c::existProcDataRemote( aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoNameReceiver);}
 
   /**
     delivers count of local process data entries with similar ident
@@ -175,11 +175,11 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoName isoName code of searched local Process Data instance
+    @param acrc_isoName isoName code of searched local Process Data instance
     @return count of similar local process data entries
   */
-  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& arcc_isoName)
-  {return Process_c::procDataLocalCnt(aui16_DDI, aui16_element, arcc_isoName);}
+  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& acrc_isoName)
+  {return Process_c::procDataLocalCnt(aui16_DDI, aui16_element, acrc_isoName);}
 
   /**
     delivers count of remote process data entries with similar ident
@@ -187,53 +187,53 @@ public:
     ISO parameter
     @param aui16_DDI
     @param aui16_element
-    @param arcc_isoNameSender isoName of the sender (used for check against isoName())
-    @param arcc_isoName isoName code of searched remote Process Data instance
+    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
+    @param acrc_isoName isoName code of searched remote Process Data instance
     @return count of similar remote process data entries
   */
   uint8_t procDataRemoteCnt( uint16_t aui16_DDI,
                              uint16_t aui16_element,
-                             const iIsoName_c& arcc_isoNameSender,
-                             const iIsoName_c& arcc_isoName)
-  { return Process_c::procDataRemoteCnt( aui16_DDI, aui16_element, arcc_isoNameSender, arcc_isoName); }
+                             const iIsoName_c& acrc_isoNameSender,
+                             const iIsoName_c& acrc_isoName)
+  { return Process_c::procDataRemoteCnt( aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoName); }
 
   // addDDI2ExistingProcData only possible for remote process data project (iProcDataRemote_c has to be defined)
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
 #ifdef USE_PROC_REMOTE_STD
-  iProcDataRemote_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
-  { return static_cast<iProcDataRemote_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, arcc_isoName, ren_valueGroup, rb_isSetpoint));};
+  iProcDataRemote_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
+  { return static_cast<iProcDataRemote_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, acrc_isoName, ren_valueGroup, rb_isSetpoint));};
 #endif
 
 #ifdef USE_PROC_REMOTE_SIMPLE_MEASURE
-  iProcDataRemoteSimpleMeasure_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
-  { return static_cast<iProcDataRemoteSimpleMeasure_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, arcc_isoName, ren_valueGroup, rb_isSetpoint));};
+  iProcDataRemoteSimpleMeasure_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
+  { return static_cast<iProcDataRemoteSimpleMeasure_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, acrc_isoName, ren_valueGroup, rb_isSetpoint));};
 #endif
 
 #ifdef USE_PROC_REMOTE_SIMPLE_SETPOINT
-  iProcDataRemoteSimpleSetpoint_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
-  { return static_cast<iProcDataRemoteSimpleSetpoint_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, arcc_isoName, ren_valueGroup, rb_isSetpoint));};
+  iProcDataRemoteSimpleSetpoint_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
+  { return static_cast<iProcDataRemoteSimpleSetpoint_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, acrc_isoName, ren_valueGroup, rb_isSetpoint));};
 #endif
 
 #ifdef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT
-  iProcDataRemoteSimpleMeasureSetpoint_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
-  { return static_cast<iProcDataRemoteSimpleMeasureSetpoint_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, arcc_isoName, ren_valueGroup, rb_isSetpoint));};
+  iProcDataRemoteSimpleMeasureSetpoint_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
+  { return static_cast<iProcDataRemoteSimpleMeasureSetpoint_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, acrc_isoName, ren_valueGroup, rb_isSetpoint));};
 #endif
 
 #ifdef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED
-  iProcDataRemoteSimpleMeasureSetpointCombined_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
-  { return static_cast<iProcDataRemoteSimpleMeasureSetpointCombined_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, arcc_isoName, ren_valueGroup, rb_isSetpoint));};
+  iProcDataRemoteSimpleMeasureSetpointCombined_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool rb_isSetpoint)
+  { return static_cast<iProcDataRemoteSimpleMeasureSetpointCombined_c*>(Process_c::addDDI2ExistingProcData(aui16_DDI, aui_deviceElement, acrc_isoName, ren_valueGroup, rb_isSetpoint));};
 #endif
 
   /** checks if a DDI can be added to a group and if yes then add it! */
-  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName)
-  { return Process_c::checkAndAddMatchingDDI2Group(aui16_DDI, aui_deviceElement, arcc_isoName);}
+  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName)
+  { return Process_c::checkAndAddMatchingDDI2Group(aui16_DDI, aui_deviceElement, acrc_isoName);}
 
   /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
-  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& arcc_isoName)
-  { return Process_c::check4DDIExisting(aui16_DDI, aui_deviceElement, arcc_isoName);}
+  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const iIsoName_c& acrc_isoName)
+  { return Process_c::check4DDIExisting(aui16_DDI, aui_deviceElement, acrc_isoName);}
 
-  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool b_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const iIsoName_c& arcc_isoName)
-  { return Process_c::addProprietaryDDI2Group(aui16_DDI, aui_deviceElement, b_isSetpoint, ddiType, arcc_isoName);}
+  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool b_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const iIsoName_c& acrc_isoName)
+  { return Process_c::addProprietaryDDI2Group(aui16_DDI, aui_deviceElement, b_isSetpoint, ddiType, acrc_isoName);}
 
   void registerWsmTaskMsgHandler(__IsoAgLib::ProcessWsmTaskMsgHandler_c* apc_processWsmTaskMsgHandler)
   { Process_c::registerWsmTaskMsgHandler(apc_processWsmTaskMsgHandler); }

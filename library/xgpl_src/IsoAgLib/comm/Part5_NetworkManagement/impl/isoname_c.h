@@ -130,7 +130,7 @@ public:
   IsoName_c(const uint8_t* apb_src = NULL);
 
   /** constructor which can read in initial data from uint8_t string
-    @param apb_src 64bit input data string
+    @param apu_src 64bit input data string
   */
   IsoName_c(const Flexible8ByteString_c* apu_src);
 
@@ -150,14 +150,14 @@ public:
   IsoName_c(bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
         uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0);
   /** copy constructor for ISOName
-    @param arcc_src source IsoName_c instance
+    @param acrc_src source IsoName_c instance
   */
-  IsoName_c(const IsoName_c& arcc_src);
+  IsoName_c(const IsoName_c& acrc_src);
 
   /** assign constructor for ISOName
-    @param arcc_src source IsoName_c object
+    @param acrc_src source IsoName_c object
   */
-  const IsoName_c& operator=(const IsoName_c& arcc_src);
+  const IsoName_c& operator=(const IsoName_c& acrc_src);
 
   /** default destructor */
   ~IsoName_c();
@@ -301,7 +301,7 @@ public:
   void setFuncInst(uint8_t ab_funcInst);
 
   /** set ECU instance code
-    @param ab_funcInst instance number of ECU with same function, device class and function instance
+    @param ab_ecuInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
   void setEcuInst(uint8_t ab_ecuInst);
@@ -326,7 +326,7 @@ public:
   /** Check if all Non-Instance fields of both ISONames match
     @return true if equal, false if one non-inst field differs!
   */
-  bool isEqualRegardingNonInstFields (const IsoName_c& arcc_isoName) const;
+  bool isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const;
 
   /** compare two IsoName_c values with operator== */
   bool operator==( const IsoName_c& rc_right ) const
@@ -337,8 +337,8 @@ public:
     { return (higherPriThanPar( rc_right.outputUnion() ) != 0)?true:false;}
 
   /** compare IsoName_c value and Flexible8ByteString_c with operator!= */
-  bool operator!=( const Flexible8ByteString_c& arcc_right ) const
-    { return (higherPriThanPar( &arcc_right ) != 0)?true:false;}
+  bool operator!=( const Flexible8ByteString_c& acrc_right ) const
+    { return (higherPriThanPar( &acrc_right ) != 0)?true:false;}
 
   /** compare two IsoName_c values with operator< */
   bool operator<( const IsoName_c& rc_right ) const

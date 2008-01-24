@@ -113,13 +113,13 @@ public:
   //!  Compare retriger time of this item by operator<= with parameter
   //!  @return true -> this item should be triggered first (retrigger times can ba equal)
   //! Parameter:
-  //! @param arcc_rightSide: Reference to the right side for the lower-comparison
-  inline bool operator<=(const SchedulerEntry_c& arcc_rightSide) const;
+  //! @param acrc_rightSide: Reference to the right side for the lower-comparison
+  inline bool operator<=(const SchedulerEntry_c& acrc_rightSide) const;
 
   //  Operation: operator==
   //! Parameter:
-  //! @param arcc_rightSide: Reference to the compared instance
-  inline bool operator==(const SchedulerEntry_c& arcc_rightSide) const;
+  //! @param acrc_rightSide: Reference to the compared instance
+  inline bool operator==(const SchedulerEntry_c& acrc_rightSide) const;
 
   //  Operation: isTask
   //!  this function compares the stored task object pointer to a given pointer.
@@ -153,16 +153,16 @@ public:
   //  Operation: operator=
   //!  Assign pointer to task from source item to this item.
   //! Parameter:
-  //! @param arcc_rightSide: Reference to the right side for the lower-comparison
-  inline SchedulerEntry_c& operator=(const SchedulerEntry_c& arcc_rightSide);
+  //! @param acrc_rightSide: Reference to the right side for the lower-comparison
+  inline SchedulerEntry_c& operator=(const SchedulerEntry_c& acrc_rightSide);
 
   //  Operation: operator<
   //!  Compare retriger time of this item by operator< with parameter
   //!  @return true -> this item must be triggered first  //! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
   //!                              default value -1 == unrestricted time for execution.
   //! Parameter:
-  //! @param arcc_rightSide: Reference to the right side for the lower-comparison
-  inline bool operator<(const SchedulerEntry_c& arcc_rightSide) const;
+  //! @param acrc_rightSide: Reference to the right side for the lower-comparison
+  inline bool operator<(const SchedulerEntry_c& acrc_rightSide) const;
 
   //  Operation: getTaskName
   inline const char* getTaskName() const;
@@ -244,21 +244,21 @@ SchedulerEntry_c::SchedulerEntry_c(Scheduler_Task_c* apc_entry)
 //!  Compare retriger time of this item by operator<= with parameter
 //!  @return true -> this item should be triggered first (retrigger times can ba equal)
 //! Parameter:
-//! @param arcc_rightSide: Reference to the right side for the lower-comparison
+//! @param acrc_rightSide: Reference to the right side for the lower-comparison
 inline
 bool
-SchedulerEntry_c::operator<=(const SchedulerEntry_c& arcc_rightSide) const
+SchedulerEntry_c::operator<=(const SchedulerEntry_c& acrc_rightSide) const
 {
-  return ( mpc_taskInstance->getNextTriggerTime() <= arcc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() <= acrc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 //! Parameter:
-//! @param arcc_rightSide: Reference to the compared instance
+//! @param acrc_rightSide: Reference to the compared instance
 inline
 bool
-SchedulerEntry_c::operator==(const SchedulerEntry_c& arcc_rightSide) const
+SchedulerEntry_c::operator==(const SchedulerEntry_c& acrc_rightSide) const
 {
-  return ( mpc_taskInstance->getNextTriggerTime() == arcc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() == acrc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 
@@ -298,23 +298,23 @@ SchedulerEntry_c::getExecTime() const
 
 //!  Assign pointer to task from source item to this item.
 //! Parameter:
-//! @param arcc_rightSide: Reference to the right side for the lower-comparison
+//! @param acrc_rightSide: Reference to the right side for the lower-comparison
 inline
 SchedulerEntry_c&
-SchedulerEntry_c::operator=(const SchedulerEntry_c& arcc_rightSide)
+SchedulerEntry_c::operator=(const SchedulerEntry_c& acrc_rightSide)
 {
-  mpc_taskInstance = arcc_rightSide.mpc_taskInstance;
+  mpc_taskInstance = acrc_rightSide.mpc_taskInstance;
   return *this;
 }
 
 //! Compare retriger time of this item by operator< with parameter
 //! @return true -> this item must be triggered first
-//! @param arcc_rightSide Reference to the right side for the lower-comparison
+//! @param acrc_rightSide Reference to the right side for the lower-comparison
 inline
 bool
-SchedulerEntry_c::operator<(const SchedulerEntry_c& arcc_rightSide) const
+SchedulerEntry_c::operator<(const SchedulerEntry_c& acrc_rightSide) const
 {
-  return ( mpc_taskInstance->getNextTriggerTime() < arcc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() < acrc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
 }
 
 //!  Return ClassName for Scheduler_c

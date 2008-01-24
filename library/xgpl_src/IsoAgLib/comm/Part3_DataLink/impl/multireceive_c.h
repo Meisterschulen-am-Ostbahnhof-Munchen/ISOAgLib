@@ -134,7 +134,7 @@ namespace __IsoAgLib {
 class MultiReceiveClientWrapper_s : public ClientBase {
   public:
   MultiReceiveClientWrapper_s( CanCustomer_c& apc_client,
-                               const IsoName_c& arcc_isoNameClient,
+                               const IsoName_c& acrc_isoNameClient,
                                uint32_t aui32_pgn,
                                uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast,
@@ -176,7 +176,7 @@ public:
   bool processMsg();
 
   //  Operation: (de)registerClient
-  void registerClient   (CanCustomer_c& arc_client, const IsoName_c& arcc_isoName,
+  void registerClient   (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
                          bool mb_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
                          #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -185,7 +185,7 @@ public:
                          );
 
   void deregisterClient (CanCustomer_c& apc_client);
-  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& arcc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
+  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
 
   //  Operation: createStream
   //! 
@@ -205,9 +205,9 @@ public:
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-   * @param arcc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
+   * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*arcc_isoItem*/);
+  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream(IsoAgLib::iStream_c* apc_keptStream);

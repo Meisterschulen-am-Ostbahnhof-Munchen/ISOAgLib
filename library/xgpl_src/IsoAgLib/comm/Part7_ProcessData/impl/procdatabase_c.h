@@ -137,20 +137,20 @@ public:
                          (array is terminated by ElementDdi_s.mui16_element == 0xFFFF)
     @param aui16_element device element number
     common parameters:
-    @param arcc_isoName optional ISOName code of Process-Data
+    @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
-                 const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
+                 const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
                  const IsoName_c *apc_externalOverridingIsoName = NULL,
                  IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                  int ai_singletonVecKey = 0)
 
-    : ProcIdent_c( aps_elementDDI, aui16_element, arcc_isoName, apc_externalOverridingIsoName, ai_singletonVecKey)
+    : ProcIdent_c( aps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ai_singletonVecKey)
     {
-      init( aps_elementDDI, aui16_element, arcc_isoName, apc_externalOverridingIsoName,
+      init( aps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName,
             apc_processDataChangeHandler, ai_singletonVecKey );
     }
 
@@ -161,27 +161,27 @@ public:
                          (array is terminated by ElementDdi_s.mui16_element == 0xFFFF)
     @param mui16_element  device element number
     common parameters:
-    @param arcc_isoName optional ISOName code of Process-Data
+    @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
     */
   void init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-            const IsoName_c& arcc_isoName = IsoName_c::IsoNameInitialProcessData(),
+            const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_singletonVecKey = 0);
 
   /** assignment operator for this base object
-    @param arcc_src source instance
+    @param acrc_src source instance
     @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
   */
-  const ProcDataBase_c& operator=(const ProcDataBase_c& arcc_src);
+  const ProcDataBase_c& operator=(const ProcDataBase_c& acrc_src);
 
   /** copy constructor for ProcDataBase_c
-    @param arcc_src source instance
+    @param acrc_src source instance
   */
-  ProcDataBase_c(const ProcDataBase_c& arcc_src);
+  ProcDataBase_c(const ProcDataBase_c& acrc_src);
 
   /** default destructor which has nothing to do */
   virtual ~ProcDataBase_c();
@@ -304,7 +304,7 @@ protected: // Protected methods
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const ProcDataBase_c& arcc_src );
+  void assignFromSource( const ProcDataBase_c& acrc_src );
 
   /** process a measure prog message
     -> fully dependent on children type local/remote

@@ -131,28 +131,28 @@ StreamChunk_c::immediateInitAfterConstruction()
 
 
 
-StreamChunk_c::StreamChunk_c( const StreamChunk_c& arcc_src )
-  : Stream_c( arcc_src ),
-    mlist_chunks( arcc_src.mlist_chunks ),
-    mui32_writeCnt ( arcc_src.mui32_writeCnt ),
-    mui32_parsedCnt( arcc_src.mui32_parsedCnt )
+StreamChunk_c::StreamChunk_c( const StreamChunk_c& acrc_src )
+  : Stream_c( acrc_src ),
+    mlist_chunks( acrc_src.mlist_chunks ),
+    mui32_writeCnt ( acrc_src.mui32_writeCnt ),
+    mui32_parsedCnt( acrc_src.mui32_parsedCnt )
 {
-  copyIterator (arcc_src.mlist_chunks, arcc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
-  copyIterator (arcc_src.mlist_chunks, arcc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
+  copyIterator (acrc_src.mlist_chunks, acrc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
+  copyIterator (acrc_src.mlist_chunks, acrc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
 }
 
 
 
-const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& arcc_src )
+const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& acrc_src )
 {
-  Stream_c::operator=( arcc_src );
+  Stream_c::operator=( acrc_src );
 
-  mlist_chunks = arcc_src.mlist_chunks;
-  copyIterator (arcc_src.mlist_chunks, arcc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
-  copyIterator (arcc_src.mlist_chunks, arcc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
-  mui32_writeCnt  = arcc_src.mui32_writeCnt;
-  mui32_parsedCnt = arcc_src.mui32_parsedCnt;
-  return arcc_src;
+  mlist_chunks = acrc_src.mlist_chunks;
+  copyIterator (acrc_src.mlist_chunks, acrc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
+  copyIterator (acrc_src.mlist_chunks, acrc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
+  mui32_writeCnt  = acrc_src.mui32_writeCnt;
+  mui32_parsedCnt = acrc_src.mui32_parsedCnt;
+  return acrc_src;
 }
 
 

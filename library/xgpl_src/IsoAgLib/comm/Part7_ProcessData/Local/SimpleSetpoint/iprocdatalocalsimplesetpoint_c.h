@@ -124,7 +124,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param arcc_isoName optional ISOName code of Process-Data
+    @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -147,7 +147,7 @@ public:
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataLocalSimpleSetpoint_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
-                                 const iIsoName_c& arcc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+                                 const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                                  const iIsoName_c *apc_externalOverridingIsoName = NULL,
                                  bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -155,7 +155,7 @@ public:
 #endif
                                  ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                                  int ai_singletonVecKey = 0
-  ) : ProcDataLocalSimpleSetpoint_c(ps_elementDDI, aui16_element, arcc_isoName,
+  ) : ProcDataLocalSimpleSetpoint_c(ps_elementDDI, aui16_element, acrc_isoName,
                                     apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                     aui16_eepromAdr,
@@ -173,7 +173,7 @@ public:
     @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
-    @param arcc_isoName optional ISOName code of Process-Data
+    @param acrc_isoName optional ISOName code of Process-Data
     @param apc_externalOverridingIsoName pointer to updated ISOName variable
     @param ab_cumulativeValue
              -# for process data like distance, time, area
@@ -196,7 +196,7 @@ public:
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-            const iIsoName_c& arcc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
+            const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
             const iIsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
 #ifdef USE_EEPROM_IO
@@ -206,7 +206,7 @@ public:
             int ai_singletonVecKey = 0
             )
   {ProcDataLocalSimpleSetpoint_c::init(ps_elementDDI, aui16_element,
-                                       arcc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
+                                       acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                        aui16_eepromAdr,
 #endif
@@ -417,11 +417,11 @@ public:
 
    /**
     check if specific measureprog exist
-    @param arcc_isoName DEVCLASS code of searched measure program
+    @param acrc_isoName DEVCLASS code of searched measure program
     @return true -> found item
   */
-  bool existProg(const iIsoName_c& arcc_isoName)
-      {return ProcDataLocalSimpleSetpoint_c::existProg(arcc_isoName);}
+  bool existProg(const iIsoName_c& acrc_isoName)
+      {return ProcDataLocalSimpleSetpoint_c::existProg(acrc_isoName);}
 
   /**
     search for suiting measureprog, if not found AND if ab_doCreate == true
@@ -430,11 +430,11 @@ public:
     possible errors:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
-    @param arcc_isoName DEVCLASS code of searched measure program
+    @param acrc_isoName DEVCLASS code of searched measure program
     @param ab_doCreate true -> create suitable measure program if not found
   */
-  iMeasureProgLocal_c& prog(const iIsoName_c& arcc_isoName, bool ab_doCreate)
-    { return static_cast<iMeasureProgLocal_c&>(ProcDataLocalSimpleSetpoint_c::prog(arcc_isoName, ab_doCreate));}
+  iMeasureProgLocal_c& prog(const iIsoName_c& acrc_isoName, bool ab_doCreate)
+    { return static_cast<iMeasureProgLocal_c&>(ProcDataLocalSimpleSetpoint_c::prog(acrc_isoName, ab_doCreate));}
 
   /** deliver reference to setpoint */
   iSimpleManageSetpointLocal_c& setpoint( void )

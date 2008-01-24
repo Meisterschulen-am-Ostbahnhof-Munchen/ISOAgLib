@@ -119,15 +119,15 @@ public:
   void init( ProcDataBase_c *const apc_processData );
   /**
     assginment from another object
-    @param arcc_src source SetpointRemote_c instance
+    @param acrc_src source SetpointRemote_c instance
     @return reference to source for cmd like "setp1 = setp2 = setp3;"
   */
-  const SetpointRemote_c& operator=(const SetpointRemote_c& arcc_src);
+  const SetpointRemote_c& operator=(const SetpointRemote_c& acrc_src);
   /**
     copy constructor for SetpointRemote
-    @param arcc_src source SetpointRemote_c instance
+    @param acrc_src source SetpointRemote_c instance
   */
-   SetpointRemote_c(const SetpointRemote_c& arcc_src);
+   SetpointRemote_c(const SetpointRemote_c& acrc_src);
   /** default destructor which has nothing to do */
   ~SetpointRemote_c();
   /**
@@ -282,7 +282,7 @@ public:
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SetpointRemote_c& arcc_src );
+  void assignFromSource( const SetpointRemote_c& acrc_src );
   /** process a setpoint request for remote process data */
   virtual void processRequest() const;
   /** process a setpoint set for remote process data */

@@ -119,9 +119,9 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
   */
   void init( ProcDataBase_c *const apc_processData = NULL );
   /** copy constructor */
-  SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& arc_src );
+  SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& acrc_src );
   /** assignment operator */
-  const SimpleManageSetpointRemote_c& operator=( const SimpleManageSetpointRemote_c& arc_src );
+  const SimpleManageSetpointRemote_c& operator=( const SimpleManageSetpointRemote_c& acrc_src );
 
 
   /**
@@ -155,7 +155,7 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
   /** processing of a setpoint message */
   void processSetpoint();
   /** base function for assignment of element vars for copy constructor and operator= */
-  void assignFromSource( const SimpleManageSetpointRemote_c& arc_src );
+  void assignFromSource( const SimpleManageSetpointRemote_c& acrc_src );
 
   #ifdef USE_FLOAT_DATA_TYPE
   /** define simple setpoint master value */

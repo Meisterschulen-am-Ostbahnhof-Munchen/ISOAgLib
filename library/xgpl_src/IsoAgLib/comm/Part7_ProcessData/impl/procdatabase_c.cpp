@@ -131,18 +131,18 @@ namespace __IsoAgLib {
    @param aui16_element  device element number
 
    common parameters:
-   @param arcc_isoName optional ISOName code of Process-Data
+   @param acrc_isoName optional ISOName code of Process-Data
    @param apc_externalOverridingIsoName pointer to updated ISOName variable
    @param apc_processDataChangeHandler optional pointer to handler class of application
    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
 */
   void ProcDataBase_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
-                             const IsoName_c& arcc_isoName,
+                             const IsoName_c& acrc_isoName,
                              const IsoName_c *apc_externalOverridingIsoName,
                              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                              int ai_singletonVecKey)
   {
-    ProcIdent_c::init( ps_elementDDI, aui16_element, arcc_isoName, apc_externalOverridingIsoName);
+    ProcIdent_c::init( ps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName);
 
     setSingletonKey(ai_singletonVecKey);
     men_procValType = i32_val;
@@ -152,14 +152,14 @@ namespace __IsoAgLib {
 
 /**
   assignment operator for this base object
-  @param arcc_src source instance
+  @param acrc_src source instance
   @return reference to source instance for cmd like "prog1 = prog2 = prog3;"
 */
-const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& arcc_src)
+const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& acrc_src)
 { // call base class operator
-  ProcIdent_c::operator=(arcc_src);
+  ProcIdent_c::operator=(acrc_src);
 
-  assignFromSource(arcc_src);
+  assignFromSource(acrc_src);
 
   // return source reference
   return *this;
@@ -168,20 +168,20 @@ const ProcDataBase_c& ProcDataBase_c::operator=(const ProcDataBase_c& arcc_src)
 
 /**
   copy constructor for ProcDataBase_c
-  @param arcc_src source instance
+  @param acrc_src source instance
 */
-ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& arcc_src)
-   : ProcIdent_c(arcc_src)
+ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& acrc_src)
+   : ProcIdent_c(acrc_src)
 {
-  assignFromSource(arcc_src);
+  assignFromSource(acrc_src);
 }
 
 
 /** base function for assignment of element vars for copy constructor and operator= */
-void ProcDataBase_c::assignFromSource( const ProcDataBase_c& arcc_src )
+void ProcDataBase_c::assignFromSource( const ProcDataBase_c& acrc_src )
 { // copy element vars
-  men_procValType = arcc_src.men_procValType;
-  mpc_processDataChangeHandler = arcc_src.mpc_processDataChangeHandler;
+  men_procValType = acrc_src.men_procValType;
+  mpc_processDataChangeHandler = acrc_src.mpc_processDataChangeHandler;
 }
 
 

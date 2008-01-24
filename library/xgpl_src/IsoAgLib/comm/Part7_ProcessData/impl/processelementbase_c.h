@@ -117,27 +117,27 @@ public:
   ProcessElementBase_c( ProcDataBase_c &arc_processData );
   /**
     copy constructor
-    @param arcc_src source ProcessElementBase_c instance
+    @param acrc_src source ProcessElementBase_c instance
   */
-   ProcessElementBase_c(const ProcessElementBase_c& arcc_src);
+   ProcessElementBase_c(const ProcessElementBase_c& acrc_src);
   /**
     assignment operator for ProcessElementBase
-    @param arcc_src source ProcessElementBase_c instance
+    @param acrc_src source ProcessElementBase_c instance
   */
-  const ProcessElementBase_c& operator=(const ProcessElementBase_c& arcc_src);
+  const ProcessElementBase_c& operator=(const ProcessElementBase_c& acrc_src);
   /** default destructor which has nothing to do */
   ~ProcessElementBase_c();
   
   /**
     set the pointer to Scheduler_c and ProcessData by references to the object instances
-    @param rc_processData optional reference to containing ProcessData instance
+    @param arc_processData optional reference to containing ProcessData instance
   */
-  void set(ProcDataBase_c& rc_processData );
+  void set(ProcDataBase_c& arc_processData );
   /**
     set the pointer to Scheduler_c and ProcessData by pointer to the object instances
-    @param apc_processData optional pointer to containing ProcessData instance
+    @param acpc_processData optional pointer to containing ProcessData instance
   */
-  void set(ProcDataBase_c *const apc_processData );
+  void set(ProcDataBase_c *const acpc_processData );
   
   /**
     deliver a reference to the containing ProcessData item

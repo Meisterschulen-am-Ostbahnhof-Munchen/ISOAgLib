@@ -90,7 +90,7 @@
 namespace __IsoAgLib {
 /**
   initialise this SetpointRegister_c to a well defined starting condition
-  @param arcc_isoName device key of commander of this setpoint register set
+  @param acrc_isoName device key of commander of this setpoint register set
   @param ai32_exact exact setpoint value
   @param ai32_min minimum setpoint value
   @param ai32_max maximum setpoint value
@@ -99,7 +99,7 @@ namespace __IsoAgLib {
   @param ab_master true -> this setpoint register instance represents the actual master setpoint
   @param ab_valid true -> this setpoint register instance is accepted as valid
 */
-void SetpointRegister_c::init(const IsoName_c& arcc_isoName, int32_t ai32_exact, int32_t ai32_min, int32_t ai32_max, int32_t ai32_default,
+void SetpointRegister_c::init(const IsoName_c& acrc_isoName, int32_t ai32_exact, int32_t ai32_min, int32_t ai32_max, int32_t ai32_default,
         bool ab_handled, bool ab_master, bool ab_valid)
 { // direct value set to avoid special functions of equivalent set functions
   setExact(ai32_exact);
@@ -107,7 +107,7 @@ void SetpointRegister_c::init(const IsoName_c& arcc_isoName, int32_t ai32_exact,
   setMax(ai32_max);
   setDefault(ai32_default);
 
-  setISOName(arcc_isoName);
+  setISOName(acrc_isoName);
   setHandled(ab_handled, 0);
   setMaster(ab_master);
   setValid(ab_valid);
@@ -115,34 +115,34 @@ void SetpointRegister_c::init(const IsoName_c& arcc_isoName, int32_t ai32_exact,
 
 /**
   operator= for SetpointRegister_c class
-  @param arcc_src source SetpointRegister_c instance
+  @param acrc_src source SetpointRegister_c instance
   @return reference to source instance for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& arcc_src){
-  assignFromSource(arcc_src);
+const SetpointRegister_c& SetpointRegister_c::operator=(const SetpointRegister_c& acrc_src){
+  assignFromSource(acrc_src);
   return *this;
 }
 
 /**
   copy constructor for SetpointRegister_c class
-  @param arcc_src source SetpointRegister_c instance
+  @param acrc_src source SetpointRegister_c instance
 */
-SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& arcc_src){
-  assignFromSource(arcc_src);
+SetpointRegister_c::SetpointRegister_c(const SetpointRegister_c& acrc_src){
+  assignFromSource(acrc_src);
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointRegister_c::assignFromSource( const SetpointRegister_c& arcc_src )
+void SetpointRegister_c::assignFromSource( const SetpointRegister_c& acrc_src )
 { // direct value set to avoid special functions of equivalent set functions
-  mi32_exactOrMin = arcc_src.mi32_exactOrMin;
-  mi32_max = arcc_src.mi32_max;
-  mi32_default = arcc_src.mi32_default;
-  data.en_definedSetpoints = arcc_src.data.en_definedSetpoints;
+  mi32_exactOrMin = acrc_src.mi32_exactOrMin;
+  mi32_max = acrc_src.mi32_max;
+  mi32_default = acrc_src.mi32_default;
+  data.en_definedSetpoints = acrc_src.data.en_definedSetpoints;
 
 
-  setISOName(arcc_src.isoName());
-  setHandled(arcc_src.handled(), arcc_src.mi32_lastHandledTime);
-  setMaster(arcc_src.master());
-  setValid(arcc_src.valid());
+  setISOName(acrc_src.isoName());
+  setHandled(acrc_src.handled(), acrc_src.mi32_lastHandledTime);
+  setMaster(acrc_src.master());
+  setValid(acrc_src.valid());
 }
 
 /** default destructor which has nothing to do */
@@ -151,15 +151,15 @@ SetpointRegister_c::~SetpointRegister_c(){
 
 /**
   compare two Setpoint Register items by value
-  @param arcc_src compared instance
+  @param acrc_src compared instance
   @return true -> both setpoint sets are equal
 */
-bool SetpointRegister_c::operator==(const SetpointRegister_c& arcc_src)const{
-  return ((mi32_exactOrMin == arcc_src.mi32_exactOrMin)
-        && (mi32_max == arcc_src.mi32_max)
-        && (mi32_default == arcc_src.mi32_default)
-        && (data.en_definedSetpoints == arcc_src.data.en_definedSetpoints)
-        && (isoName() == arcc_src.isoName()))
+bool SetpointRegister_c::operator==(const SetpointRegister_c& acrc_src)const{
+  return ((mi32_exactOrMin == acrc_src.mi32_exactOrMin)
+        && (mi32_max == acrc_src.mi32_max)
+        && (mi32_default == acrc_src.mi32_default)
+        && (data.en_definedSetpoints == acrc_src.data.en_definedSetpoints)
+        && (isoName() == acrc_src.isoName()))
         ? true:false;
 }
 

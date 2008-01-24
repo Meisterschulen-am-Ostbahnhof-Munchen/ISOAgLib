@@ -119,14 +119,14 @@ void SetpointRemote_c::init( ProcDataBase_c *const apc_processData )
 
 /**
   assginment from another object
-  @param arcc_src source SetpointRemote_c instance
+  @param acrc_src source SetpointRemote_c instance
   @return reference to source for cmd like "setp1 = setp2 = setp3;"
 */
-const SetpointRemote_c& SetpointRemote_c::operator=( const SetpointRemote_c& arcc_src ){
+const SetpointRemote_c& SetpointRemote_c::operator=( const SetpointRemote_c& acrc_src ){
   //first call base function
-  SetpointBase_c::operator=( arcc_src );
+  SetpointBase_c::operator=( acrc_src );
 
-  assignFromSource( arcc_src );
+  assignFromSource( acrc_src );
 
   // return reference to source
   return *this;
@@ -134,20 +134,20 @@ const SetpointRemote_c& SetpointRemote_c::operator=( const SetpointRemote_c& arc
 
 /**
   copy constructor for SetpointRemote
-  @param arcc_src source SetpointRemote_c instance
+  @param acrc_src source SetpointRemote_c instance
 */
-SetpointRemote_c::SetpointRemote_c( const SetpointRemote_c& arcc_src)
-  : SetpointBase_c( arcc_src){
-  assignFromSource( arcc_src );
+SetpointRemote_c::SetpointRemote_c( const SetpointRemote_c& acrc_src)
+  : SetpointBase_c( acrc_src){
+  assignFromSource( acrc_src );
 }
 /** base function for assignment of element vars for copy constructor and operator= */
-void SetpointRemote_c::assignFromSource( const SetpointRemote_c& arcc_src )
+void SetpointRemote_c::assignFromSource( const SetpointRemote_c& acrc_src )
 { // now copy the elements
-  mc_answeredMaster = arcc_src.mc_answeredMaster;
-  mc_answeredMe = arcc_src.mc_answeredMe;
-  mc_commanded = arcc_src.mc_commanded;
-  mi32_answeredTime = arcc_src.mi32_answeredTime;
-  mi32_commandedTime = arcc_src.mi32_commandedTime;
+  mc_answeredMaster = acrc_src.mc_answeredMaster;
+  mc_answeredMe = acrc_src.mc_answeredMe;
+  mc_commanded = acrc_src.mc_commanded;
+  mi32_answeredTime = acrc_src.mi32_answeredTime;
+  mi32_commandedTime = acrc_src.mi32_commandedTime;
 }
 
 /** default destructor which has nothing to do */
