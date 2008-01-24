@@ -111,7 +111,7 @@ public:
 
   StreamChunk_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait=false);
 
-  StreamChunk_c( const StreamChunk_c& arc_src );
+  StreamChunk_c( const StreamChunk_c& arcc_src );
 
   //! Important!! Call this after Construction!
   void immediateInitAfterConstruction();
@@ -119,7 +119,7 @@ public:
   //! Destructor: deletes the list
   virtual ~StreamChunk_c();
 
-  const StreamChunk_c& operator=( const StreamChunk_c& arc_src );
+  const StreamChunk_c& operator=( const StreamChunk_c& arcc_src );
 
 
   //  Operation: insert
