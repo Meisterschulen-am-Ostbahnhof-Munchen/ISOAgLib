@@ -260,7 +260,7 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAME
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
   {
-    rc_target.push_back( pui8_src[ind] );
+    acrc_target.push_back( pui8_src[ind] );
   }
 #else
   const unsigned int BitSize = sizeof(T) * 8;
