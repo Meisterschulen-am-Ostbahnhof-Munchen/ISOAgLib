@@ -72,6 +72,9 @@ public:
 
   bool isVtActive() { return VtClientServerCommunication_c::isVtActive(); }
 
+  bool sendCommandDeleteObjectPool()
+  {return VtClientServerCommunication_c::sendCommandDeleteObjectPool();}
+
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
     { return VtClientServerCommunication_c::sendCommandUpdateObjectPool (rppc_vtObjects, aui16_numObjects); }
 

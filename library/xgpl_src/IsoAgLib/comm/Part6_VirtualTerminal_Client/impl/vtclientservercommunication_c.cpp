@@ -1160,6 +1160,11 @@ VtClientServerCommunication_c::processMsg()
     case 0xA3: // Command: "Command", parameter "Control Audio Device Response"
     case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
     case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
+
+#ifdef DEBUG
+      if (0xB2 == mc_data.getUint8Data (0))
+        std::cout << "Received response for 'Delete Object Pool' message!" << std::endl;
+#endif
       MACRO_setStateDependantOnError (2)
       break;
 

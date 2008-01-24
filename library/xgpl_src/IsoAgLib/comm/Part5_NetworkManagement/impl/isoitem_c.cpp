@@ -517,7 +517,7 @@ bool IsoItem_c::sendSaClaim()
   if ( ! itemState(IState_c::ClaimedAddress) ) return false; ///< send no answer, if not yet ready claimed
   if ( ! itemState(IState_c::Local) ) return false;
   // now this ISOItem should/can send a SA claim
-  #ifdef DEBUG
+  #ifdef DEBUG_ADDRESS_CLAIM
   INTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
