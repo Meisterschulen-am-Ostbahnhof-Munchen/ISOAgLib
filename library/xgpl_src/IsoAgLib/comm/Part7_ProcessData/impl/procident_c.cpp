@@ -119,9 +119,9 @@ namespace __IsoAgLib {
 /**
   constructor which can optional set all member values
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ddi == 0xFFFF)
-    @param mui16_element device element number
+    @param aui16_element device element number
 
     common parameter
     @param acrc_isoName optional ISOName code of Process-Data
@@ -150,9 +150,9 @@ ProcIdent_c::ProcIdent_c( const ProcIdent_c& acrc_src )
 /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ddi == 0xFFFF)
-    @param mui16_element device element number
+    @param aui16_element device element number
 
     common parameter
     @param acrc_isoName ISOName code of Process-Data
@@ -478,14 +478,14 @@ bool ProcIdent_c::hasDDIType (uint16_t aui16_DDI, ProcessCmd_c::ValueGroup_t t_d
 
 
 
-void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDdi_s* ps_elementDDI)
+void ProcIdent_c::setElementDDI(const IsoAgLib::ElementDdi_s* aps_elementDDI)
 {
   mlist_elementDDI.clear();
   // check if pointer to strcut (array) is set (constructor call with NULL possible!)
-  if (ps_elementDDI) {
+  if (aps_elementDDI) {
     // in last struct element == 0xFFFF
-    while (ps_elementDDI->ui16_DDI != 0xFFFF)
-      mlist_elementDDI.push_back(*ps_elementDDI++);
+    while (aps_elementDDI->ui16_DDI != 0xFFFF)
+      mlist_elementDDI.push_back(*aps_elementDDI++);
   }
 }
 

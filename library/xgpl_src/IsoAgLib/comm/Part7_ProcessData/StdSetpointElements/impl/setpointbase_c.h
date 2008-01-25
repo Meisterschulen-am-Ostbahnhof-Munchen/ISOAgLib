@@ -130,7 +130,7 @@ public:
     was inserted in a list completely
     @param apc_data pointer to containing ProcessData instance
   */
-  void init( ProcDataBase_c* pc_data = 0 );
+  void init( ProcDataBase_c* apc_data = 0 );
   /**
     perform periodic actions
     @return true -> all planned executions performed

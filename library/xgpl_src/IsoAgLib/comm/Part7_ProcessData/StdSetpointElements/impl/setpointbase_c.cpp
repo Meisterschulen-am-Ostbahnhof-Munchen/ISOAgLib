@@ -138,11 +138,11 @@ SetpointBase_c::~SetpointBase_c(){
 /**
   init this item after the containing object item
   was inserted in a list completely
-  @param pc_data pointer to containing ProcessData instance
+  @param apc_data pointer to containing ProcessData instance
 */
-void SetpointBase_c::init( ProcDataBase_c* pc_data )
+void SetpointBase_c::init( ProcDataBase_c* apc_data )
 {
-  set( pc_data );
+  set( apc_data );
 }
 
 /**
@@ -174,11 +174,11 @@ void SetpointBase_c::processMsg(){
       * dependant error in ProcDataBase_c commander of this setpoint isn't found in Monitor List
       * dependant error in CanIo_c on CAN send problems
   @param acrc_src reference to SetpointRegister_c with registered setpoints
-  @param b_override true -> override registered setpoint with ai32_overrideVal
+  @param ab_override true -> override registered setpoint with ai32_overrideVal
   @param ai32_overrideVal value which can override registered setpoint on ab_override == true
 */
 void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& acrc_src,
-                                       bool b_override, int32_t ai32_overrideVal) const
+                                       bool ab_override, int32_t ai32_overrideVal) const
 {
   int32_t i32_value;
   bool b_isCmd = false;
@@ -191,22 +191,22 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& acrc_src,
   if (acrc_src.existExact())
   { // exact setpoint exist
     en_valueGroup = ProcessCmd_c::exactValue;
-    i32_value = (b_override) ? ai32_overrideVal : acrc_src.exact();
+    i32_value = (ab_override) ? ai32_overrideVal : acrc_src.exact();
   }
   else if (acrc_src.existMin())
   { // min setpoint exist
     en_valueGroup = ProcessCmd_c::minValue;
-    i32_value = (b_override) ? ai32_overrideVal : acrc_src.min();
+    i32_value = (ab_override) ? ai32_overrideVal : acrc_src.min();
   }
   else if (acrc_src.existMax())
   { // max setpoint exist
      en_valueGroup = ProcessCmd_c::maxValue;
-     i32_value = (b_override) ? ai32_overrideVal : acrc_src.max();
+     i32_value = (ab_override) ? ai32_overrideVal : acrc_src.max();
   }
   else if (acrc_src.existDefault())
   { // default setpoint exist
      en_valueGroup = ProcessCmd_c::defaultValue;
-     i32_value = (b_override) ? ai32_overrideVal : acrc_src.getDefault();
+     i32_value = (ab_override) ? ai32_overrideVal : acrc_src.getDefault();
   }
 
   if (en_valueGroup != ProcessCmd_c::noValue)

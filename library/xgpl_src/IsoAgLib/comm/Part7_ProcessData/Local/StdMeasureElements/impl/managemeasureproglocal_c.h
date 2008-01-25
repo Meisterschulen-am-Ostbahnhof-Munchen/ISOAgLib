@@ -173,7 +173,7 @@ private:
         * Err_c::elNonexistent wanted measureprog doesn't exist and ab_doCreate == false
 
     @param acrc_isoName DEVCLASS code of searched measure program
-    @param ab_doCreated true -> create suitable measure program if not found
+    @param ab_doCreat true -> create suitable measure program if not found
   */
   MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate);
 

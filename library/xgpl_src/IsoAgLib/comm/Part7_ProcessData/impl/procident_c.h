@@ -111,9 +111,9 @@ public:
   /**
     constructor which can optional set all member values
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ddi == 0xFFFF, default: NULL)
-    @param mui16_element device element number (default: 0xFFFF)
+    @param aui16_element device element number (default: 0xFFFF)
 
     common parameter
     @param acrc_isoName optional ISOName code of Process-Data
@@ -121,8 +121,8 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c(
-              const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
-              uint16_t mui16_element = 0xFFFF,
+              const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL,
+              uint16_t aui16_element = 0xFFFF,
               const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
               const IsoName_c *apc_externalOverridingIsoName = NULL,
               int ai_singletonVecKey = 0);
@@ -133,9 +133,9 @@ public:
   /**
     initialisation which can set this process data instance to a defined intial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ddi == 0xFFFF)
-    @param mui16_element device element number
+    @param aui16_element device element number
 
     common parameter
     @param acrc_isoName ISOName code of Process-Data
@@ -143,8 +143,8 @@ public:
             as corresponding device is registered as having claimed address in monitor table list)
   */
   void init(
-            const IsoAgLib::ElementDdi_s* ps_elementDDI,
-            uint16_t mui16_element,
+            const IsoAgLib::ElementDdi_s* aps_elementDDI,
+            uint16_t aui16_element,
             const IsoName_c& acrc_isoName,
             const IsoName_c *apc_externalOverridingIsoName = NULL);
 
@@ -241,9 +241,9 @@ public:
 
   /**
     set DDI, value group and setpoint/measure type of process msg
-    @param ps_elementDDI
+    @param aps_elementDDI
   */
-  void setElementDDI(const IsoAgLib::ElementDdi_s* ps_elementDDI);
+  void setElementDDI(const IsoAgLib::ElementDdi_s* aps_elementDDI);
 
   /**
     set DDI, value group and setpoint/measure type of process msg (used in assignFromSource)

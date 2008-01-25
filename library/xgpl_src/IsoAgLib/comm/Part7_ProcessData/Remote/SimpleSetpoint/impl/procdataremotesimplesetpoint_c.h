@@ -150,7 +150,7 @@ public:
   /**
     constructor which can set all element vars
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param acrc_isoName optional ISOName code of this instance
@@ -158,7 +158,7 @@ public:
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  ProcDataRemoteSimpleSetpoint_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
+  ProcDataRemoteSimpleSetpoint_c(const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL,
                                  uint16_t aui16_element = 0xFFFF,
                                  const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
                                  const IsoName_c* apc_commanderISOName = NULL,
@@ -168,16 +168,15 @@ public:
   /**
     initialise this ProcDataRemoteSimpleSetpoint_c instance to a well defined initial state
     ISO parameter
-    @param ps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
+    @param aps_elementDDI optional pointer to array of structure IsoAgLib::ElementDdi_s which contains DDI, element, isSetpoint and ValueGroup
                          (array is terminated by ElementDdi_s.ui16_element == 0xFFFF)
 
     @param acrc_isoName optional ISOName code of this instance
-    @param aui8_zaehlnum optional ZAEHLNUM code of this instance
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
     @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
+  void init(const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
             const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c* apc_commanderISOName = NULL,
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,

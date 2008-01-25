@@ -344,7 +344,7 @@ public:
     (if parameter and send type are different,
      a conversion by assignment is performed; %e.g. int32_t val 3
      can be sent as float 3.0)
-    @param ai32_val new data value for message
+    @param af_val new data value for message
     @param ren_procValType data type for message string (default float_val)
   */
   void setData(float af_val, proc_valType_t ren_procValType = float_val);
@@ -375,9 +375,9 @@ public:
     some LBS+ terminals wants process data interaction for syncronisation of
     terminal mask with ISOName of terminal even for local process data
     @param acrc_isoName ISOName of terminal, for which the ISOName of data is converted
-    @param aui8_useProcISOName ISOName for process data (optional, default to terminal isoName)
+    @param acrc_useProcISOName ISOName for process data (optional, default to terminal isoName)
   */
-  void useTermISONameForLocalProc(const IsoName_c& acrc_isoName, const IsoName_c& ac_useProcISOName = IsoName_c::IsoNameUnspecified());
+  void useTermISONameForLocalProc(const IsoName_c& acrc_isoName, const IsoName_c& acrc_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
   ProcessCmd_c mc_processCmd;
