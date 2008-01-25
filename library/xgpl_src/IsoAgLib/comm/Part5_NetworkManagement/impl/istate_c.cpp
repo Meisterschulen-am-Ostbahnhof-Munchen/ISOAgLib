@@ -102,12 +102,12 @@ __IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey
 
 /**
   constructor of IState_c which can set the state to given initial value
-  @param ren_itemState optional wanted state information (default \<empty\> value)
+  @param aui8_itemState optional wanted state information (default \<empty\> value)
 */
-__IsoAgLib::IState_c::IState_c(uint8_t ab_state, int ai_singletonVecKey )
+__IsoAgLib::IState_c::IState_c(uint8_t aui8_state, int ai_singletonVecKey )
 	: ClientBase( ai_singletonVecKey )
 {
-  en_itemState = itemState_t(ab_state);
+  en_itemState = itemState_t(aui8_state);
 }
 
 /**
@@ -185,9 +185,9 @@ __IsoAgLib::IStateExt_c::IStateExt_c(itemState_t ren_itemState, int ai_singleton
 
 /**
   constructor of IState_c which can set the state to given initial value
-  @param ren_itemState optional wanted state information (default \<empty\> value)
+  @param aui8_itemState optional wanted state information (default \<empty\> value)
 */
-__IsoAgLib::IStateExt_c::IStateExt_c(uint8_t ab_state, int ai_singletonVecKey) : __IsoAgLib::IState_c(ab_state, ai_singletonVecKey)
+__IsoAgLib::IStateExt_c::IStateExt_c(uint8_t aui8_itemState, int ai_singletonVecKey) : __IsoAgLib::IState_c(aui8_itemState, ai_singletonVecKey)
 {
   counter.b_addressClaimCnt = counter.b_causedConflictCnt = counter.b_affectedConflictCnt = 0;
   mi16_lastCausedConflictTime = mi16_lastAffectedConflictTime = 0;

@@ -157,9 +157,8 @@ public:
   inline SchedulerEntry_c& operator=(const SchedulerEntry_c& acrc_rightSide);
 
   //  Operation: operator<
-  //!  Compare retriger time of this item by operator< with parameter
-  //!  @return true -> this item must be triggered first  //! @param ai32_demandedExecEnd: available execution time. timeEvent() MUST be finished before the time, to avoid scheduling problems.
-  //!                              default value -1 == unrestricted time for execution.
+  //! Compare retriger time of this item by operator< with parameter
+  //! @return true -> this item must be triggered first  
   //! Parameter:
   //! @param acrc_rightSide: Reference to the right side for the lower-comparison
   inline bool operator<(const SchedulerEntry_c& acrc_rightSide) const;

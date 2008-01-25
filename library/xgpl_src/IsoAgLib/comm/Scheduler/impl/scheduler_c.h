@@ -213,29 +213,29 @@ public:
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
-  bool registerClient( Scheduler_Task_c* pc_client);
+  bool registerClient( Scheduler_Task_c* apc_client);
   size_t cntClient() const { return mt_clientCnt;}
   /** unregister pointer to a already registered client
     * this function is called within destruction of new client instance
     */
-  void unregisterClient( Scheduler_Task_c* pc_client);
+  void unregisterClient( Scheduler_Task_c* apc_client);
 
   //!  Calculate Delta from TimePeriod of a Client
   //!  Scheduler_c set (NOW + TimePeriod) as New Retrigger for Client
   //!  and sort Task to the right Position in the TaskQueue
-  //! @param p_client -> Client in Scheduler_c TaskQueue
-  //! @param ai16_newTimePeriod -> New Period will set for the Client by Scheduler_c
-  bool changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , uint16_t aui16_newTimePeriod );
+  //! @param apc_client -> Client in Scheduler_c TaskQueue
+  //! @param aui16_newTimePeriod -> New Period will set for the Client by Scheduler_c
+  bool changeTimePeriodAndResortTask(Scheduler_Task_c * apc_client  , uint16_t aui16_newTimePeriod );
 
 
   //!  Uses Delta from TimePeriod of a Client
   //!  to put a Task to the right Position in the TaskQueue
   //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
-  //! @param p_client -> Client in Scheduler_c TaskQueue
+  //! @param apc_client -> Client in Scheduler_c TaskQueue
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
   //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
+  bool  changeRetriggerTimeAndResort(Scheduler_Task_c * apc_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
   //!  Uses Delta from TimePeriod of a Client
   //!  to put a Task to the right Position in the TaskQueue
@@ -243,7 +243,7 @@ public:
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
   //! @param ac_client -> Client in Scheduler_c TaskQueue
   //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-  //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  //! @param ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
   bool  changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
 

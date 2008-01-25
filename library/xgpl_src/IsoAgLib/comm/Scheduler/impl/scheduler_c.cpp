@@ -303,12 +303,12 @@ void Scheduler_c::registerAccessFlt( void )
 /** register pointer to a new client
   * this function is called within construction of new client instance
   */
-bool Scheduler_c::registerClient( Scheduler_Task_c* pc_client)
+bool Scheduler_c::registerClient( Scheduler_Task_c* apc_client)
 {
   // first check whether this client is already registered
   for ( STL_NAMESPACE::list<SchedulerEntry_c>::const_iterator iter = mc_taskQueue.begin(); iter != mc_taskQueue.end(); iter++ )
   {
-    if (iter->isTask( pc_client ) ) return false;
+    if (iter->isTask( apc_client ) ) return false;
   }
 
   /// add 2ms to startTime of new Client to avoid crossing timestamps
@@ -316,21 +316,21 @@ bool Scheduler_c::registerClient( Scheduler_Task_c* pc_client)
   if ( si32_taskStartTime == 0 ) si32_taskStartTime = System_c::getTime() + 50;
   else
   {
-    if ( ! mc_taskQueue.empty() ) si32_taskStartTime -= pc_client->getForcedMinExecTime();
+    if ( ! mc_taskQueue.empty() ) si32_taskStartTime -= apc_client->getForcedMinExecTime();
     else si32_taskStartTime -= 2;
   }
   //For Client that registers at later timepoint
   if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
   #ifdef DEBUG_SCHEDULER
-  INTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  pc_client->getTaskName() <<  INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  apc_client->getTaskName() <<  INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
 
-  pc_client->startTaskTiming(si32_taskStartTime);
+  apc_client->startTaskTiming(si32_taskStartTime);
   /// put client in taskQueue
   const uint16_t ui16_oldSize = cntClient();
-  mc_taskQueue.push_front( SchedulerEntry_c( pc_client ) );
+  mc_taskQueue.push_front( SchedulerEntry_c( apc_client ) );
   // check whether the task list grew as awaited
   setCntClient(mc_taskQueue.size() );
   if ( cntClient() <= ui16_oldSize ) return false;
@@ -346,14 +346,14 @@ bool Scheduler_c::registerClient( Scheduler_Task_c* pc_client)
 /** unregister pointer to a already registered client
   * this function is called within destruction of new client instance
   */
-void Scheduler_c::unregisterClient( Scheduler_Task_c* pc_client)
+void Scheduler_c::unregisterClient( Scheduler_Task_c* apc_client)
 {
   // delete from Queue if not empty
   if(!mc_taskQueue.empty()){
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
     for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end();){
 
-      if(itc_task->isTask(pc_client)){
+      if(itc_task->isTask(apc_client)){
         #if defined(DEBUG_SCHEDULER) || DEBUG_TASKS_QUEUE
         INTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
         << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -877,12 +877,12 @@ void Scheduler_c::printTaskList()
 /// Calculate Delta from TimePeriod of a Client
 /// Scheduler_c set (NOW + delta of TimePeriod) as New Retrigger for Client
 /// and sort Task to the right Position in the TaskQueue
-/// @param pc_client -> Client in Scheduler_c TaskQueue
+/// @param apc_client -> Client in Scheduler_c TaskQueue
 /// @param aui16_newTimePeriod -> New Period will set for the Client by Scheduler_c
-bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , uint16_t aui16_newTimePeriod ){
+bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * apc_client  , uint16_t aui16_newTimePeriod ){
 
 /** the task involved in the operation is being executing now , the operation cannot be performed */
-  if(isTaskExecuted(pc_client))
+  if(isTaskExecuted(apc_client))
   {
    #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeTimePeriodAndResortTask" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -894,15 +894,15 @@ bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , 
 
 
   //Now calculate Delta and nextTriggerTime for Client
-  int16_t i_deltaTime = aui16_newTimePeriod - pc_client->getTimePeriod()  ;
-  int32_t i32_newTriggerTime = pc_client->getNextTriggerTime() + i_deltaTime;
+  int16_t i_deltaTime = aui16_newTimePeriod - apc_client->getTimePeriod()  ;
+  int32_t i32_newTriggerTime = apc_client->getNextTriggerTime() + i_deltaTime;
   #ifdef DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) aui16_newTimePeriod
-    << " Old TimePeriod: "<<  pc_client->getTimePeriod() <<" Name"
-    << pc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
+    << " Old TimePeriod: "<<  apc_client->getTimePeriod() <<" Name"
+    << apc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   ///Now lets do the resort  and update new TimePeriod in client
-  return changeRetriggerTimeAndResort(pc_client,i32_newTriggerTime ,aui16_newTimePeriod);
+  return changeRetriggerTimeAndResort(apc_client,i32_newTriggerTime ,aui16_newTimePeriod);
 
 }
 
@@ -913,9 +913,9 @@ bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * pc_client  , 
 //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
 //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
 //! @param ac_client -> Client in Scheduler_c TaskQueue
-//! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-//! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
+//! @param ai32_newRetriggerTime -> New ai32_nextRetriggerTime set for Client by Scheduler_c
+//! @param ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t ai32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
 
   /** the task involved in the operation is being executing now , the operation cannot be performed */
@@ -937,25 +937,25 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , in
     for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end(); itc_task++)
     {
       if (*itc_task == ac_client)
-        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ai16_newTimePeriod);
+        return changeRetriggerTimeAndResort(itc_task, ai32_newRetriggerTime, ai16_newTimePeriod);
     }
     // not found
     return false;
   }
 }
 
-/// Uses Delta from i32_nextRetriggerTime of a Client
+/// Uses Delta from ai32_nextRetriggerTime of a Client
 /// to put a Task to the right Position in the TaskQueue
 /// ATTENTION parameter nextRetriggerTime will be exactly used from Scheduler_c
 /// for call of timevent.-> so add e.g. an TimePeriod for an later call
-/// @param pc_client -> Client in Scheduler_c TaskQueue
-/// @param i32_newRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+/// @param apc_client -> Client in Scheduler_c TaskQueue
+/// @param ai32_newRetriggerTime -> New ai32_nextRetriggerTime set for Client by Scheduler_c
 /// @param ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client, int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
+bool Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * apc_client, int32_t ai32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
 
   /** the task involved in the operation is being executing now , the operation cannot be performed */
-  if(isTaskExecuted(pc_client))
+  if(isTaskExecuted(apc_client))
   {
     #ifdef DEBUG
     INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeRetriggerTimeAndResort" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -972,22 +972,22 @@ bool Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * pc_client, int
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task;
     for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end(); itc_task++)
     {
-      if(itc_task->isTask(pc_client))
-        return changeRetriggerTimeAndResort(itc_task, i32_newRetriggerTime, ai16_newTimePeriod);
+      if(itc_task->isTask(apc_client))
+        return changeRetriggerTimeAndResort(itc_task, ai32_newRetriggerTime, ai16_newTimePeriod);
     }
     // not found
     return false;
   }
 }
 
-/// Uses Delta from i32_nextRetriggerTime of a Client
+/// Uses Delta from ai32_nextRetriggerTime of a Client
 /// to put a Task to the right Position in the TaskQueue
 /// ATTENTION parameter nextRetriggerTime will be exactly used from Scheduler_c
 /// for call of timevent.-> so add e.g. an TimePeriod for an later call
 /// @param itc_task -> iterator to the task that should be changed
-/// @param i32_newRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+/// @param ai32_newRetriggerTime -> New ai32_nextRetriggerTime set for Client by Scheduler_c
 /// @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
-bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod)
+bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t ai32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
 
 
@@ -1000,7 +1000,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
   << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
-  int32_t i32_deltaRetrigger = i32_newRetriggerTime - itc_task->getNextTriggerTime();
+  int32_t i32_deltaRetrigger = ai32_newRetriggerTime - itc_task->getNextTriggerTime();
 
   //set New TimePeriod
   if(ai16_newTimePeriod > -1 ) itc_task->setTimePeriod(ai16_newTimePeriod);
@@ -1012,7 +1012,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     INTERNAL_DEBUG_DEVICE << "task should be called LATER for ms: " << i32_deltaRetrigger
       << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    itc_task->changeNextTriggerTime( i32_newRetriggerTime );
+    itc_task->changeNextTriggerTime( ai32_newRetriggerTime );
     //remove to LATER Position
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_greater = itc_task;
     ++itc_greater;
@@ -1064,10 +1064,10 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     ///set new NextTriggerTime to now to avoid delay of following tasks
-    if((i32_newRetriggerTime < System_c::getTime())   ) i32_newRetriggerTime = System_c::getTime();
+    if((ai32_newRetriggerTime < System_c::getTime())   ) ai32_newRetriggerTime = System_c::getTime();
 
     ///set new NextTriggerTime
-    itc_task->changeNextTriggerTime( i32_newRetriggerTime );
+    itc_task->changeNextTriggerTime( ai32_newRetriggerTime );
     //remove to EARLIER Position
     if ( itc_task == mc_taskQueue.begin() )
     {

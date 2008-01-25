@@ -175,7 +175,7 @@ public:
   /** removes n PGN for the client from the list
       @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
       @param cui8_pgnCount: number of PGNs to be removed from the list
-      @param pcui32_pgnToUnRegister: array of PGNs to be removed */
+      @param pcui32_pgnToUnregister: array of PGNs to be removed */
   void unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_t cui8_pgnCount, const uint32_t *pcui32_pgnToUnregister);
 
   /** before adding any further PGN - RequestPGNHandler, check if not already existing
