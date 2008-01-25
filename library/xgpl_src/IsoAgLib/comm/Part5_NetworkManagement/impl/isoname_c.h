@@ -318,7 +318,7 @@ public:
 
   /** check if this NAME has higher prio
     than the given NAME 8-uint8_t string
-    @param apb_compare
+    @param apu_compare
     @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
   */
   int8_t higherPriThanPar(const Flexible8ByteString_c* apu_compare) const;

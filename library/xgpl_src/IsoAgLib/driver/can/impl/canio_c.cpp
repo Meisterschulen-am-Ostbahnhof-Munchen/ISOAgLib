@@ -486,46 +486,46 @@ void CanIo_c::sendCanClearbuf(Ident_c::identType_t /*ren_identType*/)
 /** test if a FilterBox_c definition already exist
   (version expecial for standard ident, chosen at compile time)
   @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-  @param at_mask individual mask for this filter box
+  @param aui16_mask individual mask for this filter box
   @param at_filter individual filter
   @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
   @param apc_iter optional pointer Iterator to result FilterBox
   @return true -> same FilterBox_c already exist
 */
 bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
-                          uint16_t at_mask, uint16_t at_filter,
+                          uint16_t aui16_mask, uint16_t at_filter,
                           Ident_c::identType_t ren_identType, ArrFilterBox::iterator* apc_iter)
 
 {
   // check if filter/t_mask are already inserted
   // return false if this setting isnt unique
   Ident_c c_compFilter = Ident_c(at_filter, ren_identType);
-  Ident_c c_compMask = Ident_c(at_mask, ren_identType);
+  Ident_c c_compMask = Ident_c(aui16_mask, ren_identType);
   c_compFilter.set(at_filter, ren_identType);
-  c_compMask.set(at_mask, ren_identType);
+  c_compMask.set(aui16_mask, ren_identType);
 
   return existFilter(ar_customer, c_compMask, c_compFilter, apc_iter);
 }
 /** test if a FilterBox_c definition already exist
   (version expecial for extended ident, chosen at compile time)
   @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-  @param at_mask individual mask for this filter box
-  @param at_filter individual filter
+  @param aui32_mask individual mask for this filter box
+  @param aui32_filter individual filter
   @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
   @param apc_iter optional pointer Iterator to result FilterBox
   @return true -> same FilterBox_c already exist
 */
 bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
-                          uint32_t at_mask, uint32_t at_filter,
+                          uint32_t aui32_mask, uint32_t aui32_filter,
                           Ident_c::identType_t ren_identType, ArrFilterBox::iterator* apc_iter)
 
 {
   // check if filter/t_mask are already inserted
   // return false if this setting isnt unique
-  Ident_c c_compFilter = Ident_c(at_filter, ren_identType);
-  Ident_c c_compMask = Ident_c(at_mask, ren_identType);
-  c_compFilter.set(at_filter, ren_identType);
-  c_compMask.set(at_mask, ren_identType);
+  Ident_c c_compFilter = Ident_c(aui32_filter, ren_identType);
+  Ident_c c_compMask = Ident_c(aui32_mask, ren_identType);
+  c_compFilter.set(aui32_filter, ren_identType);
+  c_compMask.set(aui32_mask, ren_identType);
 
   return existFilter(ar_customer, c_compMask, c_compFilter, apc_iter);
 }

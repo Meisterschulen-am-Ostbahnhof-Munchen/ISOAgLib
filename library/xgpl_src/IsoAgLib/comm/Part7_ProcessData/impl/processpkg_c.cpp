@@ -389,7 +389,7 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_pr
   (if parameter and send type are different,
    a conversion by assignment is performed; %e.g. int32_t val 3
    can be sent as float 3.0)
-  @param ai32_val new data value for message
+  @param af_val new data value for message
   @param ren_procValType data type for message string (default float_val)
 */
 void ProcessPkg_c::setData(float af_val, proc_valType_t ren_procValType)

@@ -147,10 +147,10 @@ namespace __HAL
       !!! use symbolic input channels only !!!
       !!! analog input: set jumper corresponding to channel in position 1-2 !!!     
 
-      @param ab_channelNumber input channel number
+      @param bInputNumber input channel number
       @return ON, OFF or HAL_RANGE_ERR
    */
-   int16_t get_digin_onoff(uint8_t ab_channelNumber);
+   int16_t get_digin_onoff(uint8_t bInputNumber);
 
    /**
       deliver debounced state of symbolic digital input channels
@@ -163,10 +163,10 @@ namespace __HAL
       !!! use symbolic input channels only !!!
       !!! analog input: set jumper corresponding to channel in position 1-2 !!!     
 
-      @param ab_channelNumber input channel number
+      @param bInputNumber input channel number
       @return ON, OFF or HAL_RANGE_ERR
    */
-   int16_t get_digin_onoff_static(uint8_t ab_channelNumber);
+   int16_t get_digin_onoff_static(uint8_t bInutNumber);
 
    /*@}*/
 } 

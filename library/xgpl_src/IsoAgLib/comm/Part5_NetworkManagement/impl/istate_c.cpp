@@ -102,7 +102,7 @@ __IsoAgLib::IState_c::IState_c(itemState_t ren_itemState, int ai_singletonVecKey
 
 /**
   constructor of IState_c which can set the state to given initial value
-  @param aui8_itemState optional wanted state information (default \<empty\> value)
+  @param aui8_state optional wanted state information (default \<empty\> value)
 */
 __IsoAgLib::IState_c::IState_c(uint8_t aui8_state, int ai_singletonVecKey )
 	: ClientBase( ai_singletonVecKey )

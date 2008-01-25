@@ -99,15 +99,15 @@ namespace __HAL {
     ADC value at pwm output
     for call of __HAL:: functions (differences mostly caused
     by multiplexers)
-    @param ab_channel number from interval [0..maxNo]
+    @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmoutAdcCheckNr(uint8_t ab_channel)
+  inline uint8_t getPwmoutAdcCheckNr(uint8_t channel)
     {
-    if (ab_channel < 4) return (43 - (ab_channel * 2));
-    else if (ab_channel == 4) return 44;
-    else if (ab_channel < 8) return ((47+5) - ab_channel);
-    else return ((93+8) - ab_channel);
+    if (channel < 4) return (43 - (channel * 2));
+    else if (channel == 4) return 44;
+    else if (channel < 8) return ((47+5) - channel);
+    else return ((93+8) - channel);
     };
   /**
     deliver channel number for checking/requesting of
@@ -115,8 +115,8 @@ namespace __HAL {
     @param channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
-  inline uint8_t getPwmCurrentCheckNr(uint8_t ab_channel)
-    {return (42 - (2 * ab_channel));};
+  inline uint8_t getPwmCurrentCheckNr(uint8_t channel)
+    {return (42 - (2 * channel));};
 }
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -133,23 +133,23 @@ namespace HAL
 
   /**
     define the frequency of the pwm signal
-    @param bOutputChannel PWM output channel [0..11] ([0..15] with babyboard)
+    @param bOutput PWM output channel [0..11] ([0..15] with babyboard)
         (4 sets for ESX equivalent freq for channels [4..11])
     @param dwFrequency PWM frequency in mHz [5x10^3..4,29x10^9]
     @return error state (C_NO_ERR == o.k.; C_RANGE == wrong channel OR frequency)
   */
-  inline int16_t setPwmFreq(uint8_t bOutputChannel, uint32_t dwFrequency)
+  inline int16_t setPwmFreq(uint8_t bOutput, uint32_t dwFrequency)
   // ESX BIOS lets PWM channels 0 to 3 configure individual PWM FREQ
   // rest of PWM channels [4..11] use common PWM freq
-    {if (bOutputChannel < 4) return __HAL::set_pwm_freq(bOutputChannel, dwFrequency);
+    {if (bOutput < 4) return __HAL::set_pwm_freq(bOutput, dwFrequency);
     #ifndef _INIT_BABYBOARD_
     else return __HAL::set_pwm_freq(4, dwFrequency);};
     #else
-    else if (bOutputChannel < 12) return __HAL::set_pwm_freq(4, dwFrequency);
+    else if (bOutput < 12) return __HAL::set_pwm_freq(4, dwFrequency);
     // the BA_set_pwm_freq function counts the babyboard PWM channels beginning with 0
     // --> 12 channels on core ESX --> use offset 12
     // the babyboard PWM Freq is given directly in Hz (and not mHz as for standard core PWMs)
-    else return __HAL::BA_set_pwm_freq(POSITION_1, (bOutputChannel-12), dwFrequency/100);}
+    else return __HAL::BA_set_pwm_freq(POSITION_1, (bOutput-12), dwFrequency/100);}
     #endif
 
 

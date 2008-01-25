@@ -126,9 +126,9 @@ public:
 
   /**
     constructor of IState_c which can set the state to given initial value
-    @param ab_state optional wanted state information (default \<empty\> value)
+    @param aui8_state optional wanted state information (default \<empty\> value)
   */
-  IState_c(uint8_t ab_state, int ai_singletonVecKey = 0);
+  IState_c(uint8_t aui8_state, int ai_singletonVecKey = 0);
 
   /**
     copy constructor for IState_c
@@ -206,9 +206,9 @@ public:
 
   /**
     constructor of IState_c which can set the state to given initial value
-    @param ab_state optional wanted state information (default \<empty\> value)
+    @param aui8_state optional wanted state information (default \<empty\> value)
   */
-  IStateExt_c(uint8_t ab_state, int ai_singletonVecKey = 0);
+  IStateExt_c(uint8_t aui8_state, int ai_singletonVecKey = 0);
 
   /**
     copy constructor for IState_c

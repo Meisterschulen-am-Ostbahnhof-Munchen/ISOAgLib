@@ -233,18 +233,18 @@ public:
   //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
   //! @param apc_client -> Client in Scheduler_c TaskQueue
-  //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
-  //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(Scheduler_Task_c * apc_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
+  //! @param i32_newRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+  //! @param ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
+  bool changeRetriggerTimeAndResort(Scheduler_Task_c * apc_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
   //!  Uses Delta from TimePeriod of a Client
   //!  to put a Task to the right Position in the TaskQueue
   //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
   //! @param ac_client -> Client in Scheduler_c TaskQueue
-  //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+  //! @param i32_newRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
   //! @param ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
+  bool  changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
 
   /** The function checks whether the input Scheduler_task_c is in the timeEvent,
@@ -295,9 +295,9 @@ private: //Private methods
   //!  ATTENTION parameter nextRetriggerTime will exactly used from Scheduler_c
   //!  for call of timevent.-> so add e.g. an TimePeriod for an later call
   //! @param itc_task -> iterator to the task that should be changed
-  //! @param i32_nextRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
+  //! @param i32_newRetriggerTime -> New i32_nextRetriggerTime set for Client by Scheduler_c
   //! @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
-  bool  changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1);
+  bool  changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t i32_newRetriggerTime, int16_t ai16_newTimePeriod = -1);
 
   void setCntClient( size_t at_newSize ) { mt_clientCnt = at_newSize;}
 
