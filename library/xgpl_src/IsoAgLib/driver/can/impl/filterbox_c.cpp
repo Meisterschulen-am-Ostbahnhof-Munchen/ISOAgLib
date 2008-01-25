@@ -300,9 +300,6 @@ void FilterBox_c::closeHAL()
   @param acrc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
   @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
-
-
-  @param ren_E select if FilterBox_c is used for standard 11bit or extended 29bit ident
 */
 void FilterBox_c::set (const Ident_c& acrc_mask,
                        const Ident_c& acrc_filter,

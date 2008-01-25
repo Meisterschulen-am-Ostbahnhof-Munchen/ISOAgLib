@@ -186,7 +186,7 @@ private:
     ONLY copy pointers to the wanted instance!!!
     ==> the copy constructor is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param acrc_src source
+    <!--@param acrc_src source-->
   */
   DigitalI_c(const DigitalI_c& /*acrc_src*/) : SensorBase_c(0) {};
   /**
@@ -194,7 +194,7 @@ private:
     NEVER assign a DigitalI_c to another instance!!!!
     ==> the asignment is defined as private, so that compiler
         detects this fault, and shows you this WARNING!!
-    @param acrc_src source
+    <!--@param acrc_src source-->
   */
   DigitalI_c& operator=(const DigitalI_c& /*acrc_src*/){return *this;};
   /** true if the digit input should be gathered static */

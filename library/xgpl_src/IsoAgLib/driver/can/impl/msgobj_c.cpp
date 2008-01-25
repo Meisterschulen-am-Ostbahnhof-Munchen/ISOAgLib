@@ -118,29 +118,29 @@ MsgObj_c::MsgObj_c()
 /** copy constructor for this class, which gets data from another MsgObj_c instance
   @param acrc_src source MsgObj_c instance which should be cloned by this instance
 */
-MsgObj_c::MsgObj_c(const MsgObj_c& src)
+MsgObj_c::MsgObj_c(const MsgObj_c& acrc_src)
 { // set all member variables to the corresponding value from the source instance
-  mc_filter = src.mc_filter;
-  setMsgObjNr(src.msgObjNr());
+  mc_filter = acrc_src.mc_filter;
+  setMsgObjNr(acrc_src.msgObjNr());
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  setCanSingletonKey(src.mi_canSingletonVecKey);
+  setCanSingletonKey(acrc_src.mi_canSingletonVecKey);
 #endif
 
 
-  setBusNumber(src.busNumber());
-  // if constructor for src is later closed, the correlated CAN msg object would
+  setBusNumber(acrc_src.busNumber());
+  // if constructor for acrc_src is later closed, the correlated CAN msg object would
   // be closed too -> the state of this instance would be undefined / wrong
   // -> set state of this object to Not-Open
   setIsOpen(false);
 
   // copy the registered pointers to FilterBox_c instances
   #if 0
-  setCntFilterBox(src.cnt_filterBox());
-  for (int16_t i = 0; i < cnt_filterBox(); i++) arrPfilterBox[i] = src.arrPfilterBox[i];
+  setCntFilterBox(acrc_src.cnt_filterBox());
+  for (int16_t i = 0; i < cnt_filterBox(); i++) arrPfilterBox[i] = acrc_src.arrPfilterBox[i];
   #else
   clearArrFbIdx();
-  marr_filterBoxIndex = src.marr_filterBoxIndex;
+  marr_filterBoxIndex = acrc_src.marr_filterBoxIndex;
   #endif
 }
 

@@ -212,7 +212,7 @@ public:
 
   /**
     set send buffer size
-    @param aui16_sndBuf sending buffer size
+    @param aui16_bufferSize sending buffer size
 
     possible errors:
         * Err_c::badAlloc not enough memory for allocating the buffer
@@ -230,7 +230,7 @@ public:
   void clearSndBuffer()const{HAL::clearRs232TxBuffer(RS232_CHANNEL_PARAM_SINGLE);};
   /**
     set receive buffer size
-    @param aui16_recBuf receiving buffer size
+    @param aui16_bufferSize receiving buffer size
 
     possible errors:
         * Err_c::badAlloc not enough memory for allocating the buffer

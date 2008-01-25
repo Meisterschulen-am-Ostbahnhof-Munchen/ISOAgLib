@@ -200,17 +200,17 @@ class CanIo_c : public SingletonCanIo_c {
           * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
           * Err_c::busy on already used sending Msg-Obj
 
-      @param aui8_busNumber       optional number of the CAN bus
-      @param aui16_bitrate        optional bitrate (default by define in isoaglib_config.h)
-      @param Ident_c::identType_t optional length of the ident (S (11bit), E (29bit), B
-                                  (send both standard and extended ident msg)
-                                  (default by define in isoaglib_config.h)
-      @param aui8_minObjNr        optional minimum number for hardware CAN
-                                  message object (important for sharing CAN controller with
-                                  other tasks) (default by define in isoaglib_config.h)
-      @param aui8_maxObjNr        optional maximum number for hardware CAN
-                                  message object (default by define in isoaglib_config.h)
-      @return                     true -> correct initialisation without errors
+      @param aui8_busNumber optional number of the CAN bus
+      @param aui16_bitrate  optional bitrate (default by define in isoaglib_config.h)
+      @param ren_identType  optional length of the ident (S (11bit), E (29bit), B
+                            (send both standard and extended ident msg)
+                            (default by define in isoaglib_config.h)
+      @param aui8_minObjNr  optional minimum number for hardware CAN
+                            message object (important for sharing CAN controller with
+                            other tasks) (default by define in isoaglib_config.h)
+      @param aui8_maxObjNr  optional maximum number for hardware CAN
+                            message object (default by define in isoaglib_config.h)
+      @return               true -> correct initialisation without errors
       @see    HAL::init_can
       @see    HAL::tCanObjConfig
       @see    HAL::configCanObj
@@ -299,8 +299,8 @@ class CanIo_c : public SingletonCanIo_c {
   /** test if a FilterBox_c definition already exist
     (version expecial for standard ident, chosen at compile time)
     @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-    @param aui32_mask individual mask for this filter box
-    @param aui32_filter individual filter
+    @param aui16_mask individual mask for this filter box
+    @param aui16_filter individual filter
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @param apc_iter optional pointer Iterator to result FilterBox
@@ -398,10 +398,10 @@ class CanIo_c : public SingletonCanIo_c {
   /** verify given BUS number and MsgObj number, if they are correct
     (mostly used by MsgObj_c to verify itself)
     @param aui8_busNr number of the BUS
-    @param aui8_msgobjNr number of the MsgObj
+    @param aui8_objNr number of the MsgObj
     @return true -> values are correct
   */
-  bool verifyBusMsgobjNr(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
+  bool verifyBusMsgobjNr(uint8_t aui8_busNr, uint8_t aui8_objNr);
 
 /** helper function to search all FilterBoxes for matching
     instance which maps to received CAN messages

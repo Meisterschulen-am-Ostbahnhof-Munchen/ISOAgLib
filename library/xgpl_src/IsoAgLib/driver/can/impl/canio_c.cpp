@@ -623,8 +623,8 @@ FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_cus
   @see __IsoAgLib::CANCustomer
   @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs filtered
       messages (-> on received msg call ar_customer.processMsg())
-  @param at_mask individual mask for this filter box
-  @param at_filter individual filter
+  @param aui32_mask individual mask for this filter box
+  @param aui32_filter individual filter
   @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
 
       CAN hardware MsgObj after creating this filter
@@ -633,7 +633,7 @@ FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_cus
   @exception badAlloc
 */
 FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c & ar_customer,
-                                  uint32_t at_mask, uint32_t at_filter,
+                                  uint32_t aui32_mask, uint32_t aui32_filter,
                                   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
                                   bool ab_reconfigImmediate,
                                   #else
@@ -644,8 +644,8 @@ FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c & ar_customer,
                                   int8_t ai8_dlcForce)
 
 {
-  Ident_c c_newMask = Ident_c(at_mask, at_identType);
-  Ident_c c_newFilter = Ident_c(at_filter, at_identType);
+  Ident_c c_newMask = Ident_c(aui32_mask, at_identType);
+  Ident_c c_newFilter = Ident_c(aui32_filter, at_identType);
 
 #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION)
 INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_ENDL;

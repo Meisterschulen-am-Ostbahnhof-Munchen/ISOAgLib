@@ -303,14 +303,14 @@ namespace __HAL
       !!! use symbolic input channels only !!!
       !!! analog input: set jumper corresponding to channel in position 1-2 !!!     
 
-      @param ab_channelNumber input channel number
+      @param bInputNumber input channel number
       @return ON, OFF or HAL_RANGE_ERR
    */
-   int16_t get_digin_onoff(uint8_t ab_channelNumber)
+   int16_t get_digin_onoff(uint8_t bInputNumber)
    {
-      if (ab_channelNumber > 39) return HAL_RANGE_ERR;
+      if (bInputNumber > 39) return HAL_RANGE_ERR;
       
-      return AMSBIOS::io_getDigin(ab_channelNumber);
+      return AMSBIOS::io_getDigin(bInputNumber);
    }
 
    /**
@@ -324,14 +324,14 @@ namespace __HAL
       !!! use symbolic input channels only !!!
       !!! analog input: set jumper corresponding to channel in position 1-2 !!!     
 
-      @param ab_channelNumber input channel number
+      @param bInputNumber input channel number
       @return ON, OFF or HAL_RANGE_ERR
    */
-   int16_t get_digin_onoff_static(uint8_t ab_channelNumber)
+   int16_t get_digin_onoff_static(uint8_t bInputNumber)
    {
-      if (ab_channelNumber > 39) return HAL_RANGE_ERR;
+      if (bInputNumber > 39) return HAL_RANGE_ERR;
 
-      return AMSBIOS::io_getDiginStatic(ab_channelNumber);
+      return AMSBIOS::io_getDiginStatic(bInputNumber);
    }
 
    /*@}*/
