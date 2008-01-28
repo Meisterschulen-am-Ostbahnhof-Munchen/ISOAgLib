@@ -152,7 +152,7 @@ public:
     ProcDataBase_c &acrc_processData,
     int32_t ai32_val = 0,
     const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified()) : ProcessElementBase_c(acrc_processData),
-      mvec_measureSubprog() {init(&acrc_processData, ai32_val, acrc_isoName);}               acrc_
+      mvec_measureSubprog() {init(&acrc_processData, ai32_val, acrc_isoName);}
 
   /**
     initialise the measure prog instance, to set this instance to a well defined starting condition

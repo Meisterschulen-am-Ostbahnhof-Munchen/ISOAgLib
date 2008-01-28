@@ -478,7 +478,7 @@ ProcDataLocalBase_c& Process_c::procDataLocal( uint16_t aui16_DDI, uint16_t aui1
   @return reference to searched/created acrc_isoName instance
   @exception badAlloc
 */
-acrc_isoName& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
+ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
                                                  const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
   bool b_found = updateRemoteCache(aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoNameReceiver);
@@ -623,9 +623,9 @@ bool Process_c::updateRemoteCache( uint16_t aui16_DDI, uint16_t aui16_element,
 }
 
 
-acrc_isoName* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& refen_valueGroup, bool& rb_isSetpoint)
+ProcDataRemoteBase_c* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& refen_valueGroup, bool& rb_isSetpoint)
 {
-  acrc_isoName* pc_remoteProcessData = NULL;
+  ProcDataRemoteBase_c* pc_remoteProcessData = NULL;
 
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
@@ -657,7 +657,7 @@ acrc_isoName* Process_c::addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t au
 
 bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName)
 {
-  acrc_isoName* pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, acrc_isoName);
+  ProcDataRemoteBase_c* pc_remoteProcessData = check4DDIGroupMatch(aui16_DDI, aui_deviceElement, acrc_isoName);
 
   if (NULL == pc_remoteProcessData) return false;
 
@@ -667,7 +667,7 @@ bool Process_c::checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_de
 
 bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &acrc_isoName)
 {
-  acrc_isoName* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(aui_deviceElement, acrc_isoName);
+  ProcDataRemoteBase_c* pc_remoteProcessData = check4ProprietaryDDIGroupMatch(aui_deviceElement, acrc_isoName);
 
   if (NULL == pc_remoteProcessData) return false;
 
@@ -675,7 +675,7 @@ bool Process_c::addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceE
 }
 
 
-acrc_isoName* Process_c::check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName)
+ProcDataRemoteBase_c* Process_c::check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
@@ -701,7 +701,7 @@ bool Process_c::check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement
   return FALSE;
 }
 
-acrc_isoName* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c &acrc_isoName)
+ProcDataRemoteBase_c* Process_c::check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c &acrc_isoName)
 {
   for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin(); //list of remote process data
         ( pc_iter != c_arrClientC2.end() );
@@ -775,7 +775,7 @@ bool Process_c::checkCreateRemoteReceiveFilter()
   {
     pc_actisoName = &((*pc_iter)->isoName());
 
-    if ( (*pc_actisoName).isSpecified()
+    if ( pc_actisoName->isSpecified()
       && ( ( NULL == pc_lastFilterisoName ) || (*pc_actisoName != *pc_lastFilterisoName) )
        )
     { // last FilterBox_c call with other isoName
@@ -833,7 +833,7 @@ Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_
 /** register pointer to a new remote process data instance
   * this function is called within construction of new remote process data instance
   */
-bool Process_c::registerRemoteProcessData( acrc_isoName* pc_remoteClient)
+bool Process_c::registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   const bool cb_result = registerC2( pc_remoteClient );
   mb_needCallOfCheckCreateRemoteReceiveFilter = true;
@@ -845,7 +845,7 @@ bool Process_c::registerRemoteProcessData( acrc_isoName* pc_remoteClient)
 /** unregister pointer to a already registered remote process data instance
   * this function is called within destruction of remote process data instance
   */
-void Process_c::unregisterRemoteProcessData( acrc_isoName* pc_remoteClient)
+void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient)
 {
   // check if the remote owner isoName is used for any other remote proc
   const IsoName_c& c_toBeDeletedOwnerisoName = pc_remoteClient->isoName();
