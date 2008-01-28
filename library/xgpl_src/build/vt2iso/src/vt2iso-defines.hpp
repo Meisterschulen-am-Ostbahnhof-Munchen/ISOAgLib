@@ -406,7 +406,7 @@ extern char stringOptionsTable [maxStringOptionsTable] [stringLength+1];
 #define maxInputNumberOptionsTable 4
 extern char inputNumberOptionsTable [maxInputNumberOptionsTable] [stringLength+1];
 
-#define maxOutputNumberOptionsTable 3
+#define maxOutputNumberOptionsTable 4
 extern char outputNumberOptionsTable [maxOutputNumberOptionsTable] [stringLength+1];
 
 #define maxLineSuppressionTable 4

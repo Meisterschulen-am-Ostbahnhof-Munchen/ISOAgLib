@@ -3529,7 +3529,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "0");
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
                    colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
-                   inputobjectoptiontoi (attrString [attrOptions]), attrString [attrVariable_reference], attrString [attrValue],
+                   inputnumberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], attrString [attrValue],
                    attrString [attrMin_value], attrString [attrMax_value]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
           { // contains already a number type specifier

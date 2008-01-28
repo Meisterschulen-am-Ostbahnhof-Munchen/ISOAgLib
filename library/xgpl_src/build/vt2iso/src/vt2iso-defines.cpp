@@ -465,7 +465,8 @@ char inputNumberOptionsTable [maxInputNumberOptionsTable] [stringLength+1] = {
 char outputNumberOptionsTable [maxOutputNumberOptionsTable] [stringLength+1] = {
   "transparent",
   "leadingzeros",
-  "blankzero"
+  "blankzero",
+  "truncate"
 };
 
 char lineSuppressionTable [maxLineSuppressionTable] [stringLength+1] = {
