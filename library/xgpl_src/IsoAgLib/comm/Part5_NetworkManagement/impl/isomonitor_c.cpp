@@ -1256,7 +1256,7 @@ bool IsoMonitor_c::processMsg()
         }
       }
       else
-      { // We have an item with this IsoName
+      { // We already have an item with this IsoName
         if (pc_itemSameISOName->itemState(IState_c::Local))
         { // We have a local item with this IsoName
           /// WE GOT A PROBLEM! SOMEONE IS SENDING WITH OUR ISONAME!
@@ -1264,7 +1264,22 @@ bool IsoMonitor_c::processMsg()
           // for now, we shut down our own Ident...
           if (pc_itemSameISOName->getIdentItem())
           { // as it should be! as it's local!
-            pc_itemSameISOName->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+            if ( (pc_itemSameISOName->itemState(IState_c::PreAddressClaim)              )
+              && (pc_itemSameISOName->getIdentItem()->itemState(IState_c::AddressClaim) ) )
+            { // special state:
+              // A) the IdentItem_c started already the SA-Claim phase
+              // BUT
+              // B) the IsoItem_c has not yet sent any SA-Claim
+              // ===>> thus we can restart the SA-Claim phase of IdentItem_c with removal of IsoItem_c and setting
+              //       item state of IdentItem_c back to PreAddressClaim
+              pc_itemSameISOName->getIdentItem()->restartWithPreAddressClaim();
+            }
+            else
+            { // the IsoItem_c of the local ident has already sent a first SA-Claim, so that no clean restart is allowed
+              pc_itemSameISOName->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
+            }
+            // now create a new node for the remote SA claim
+            insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
           }
         }
         else

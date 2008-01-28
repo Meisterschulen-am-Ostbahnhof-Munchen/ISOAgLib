@@ -371,6 +371,22 @@ void IdentItem_c::init(
 
 
 
+/** restart SA claim procedure.
+    When ISONAME conflict gets detected between creation of corresponding IsoItem_c and sending of SA-Claim,
+    a complete restart of IdentItem_c life cycle beginning with PreAddressClaim.
+  */
+void IdentItem_c::restartWithPreAddressClaim( void )
+{
+  if (mpc_isoItem != NULL)
+  { // item is online
+    // ->delete item from memberList
+    getIsoMonitorInstance4Comm().deleteIsoMemberISOName (isoName());
+    mpc_isoItem = NULL;
+  }
+  setItemState( IState_c::PreAddressClaim );
+}
+
+
 /** Go Offline by:
   * + reset IdentItem::IState_c to IState_c::Off / OffUnable 
   * + remove pointed IsoItem_c node and the respective pointer

@@ -239,6 +239,12 @@ public: // methods
     */
   IsoName_c& modifyableIsoName() { return mc_isoName; }
 
+  /** restart SA claim procedure.
+      When ISONAME conflict gets detected between creation of corresponding IsoItem_c and sending of SA-Claim,
+      a complete restart of IdentItem_c life cycle beginning with PreAddressClaim.
+    */
+  void restartWithPreAddressClaim( void );
+
   /** Go Offline by:
     * + reset IdentItem::IState_c to IState_c::Off / OffUnable
     * + remove pointed IsoItem_c node and the respective pointer
