@@ -83,6 +83,7 @@ private:
   friend class iSystemMgmt_c;
   friend class iIsoMonitor_c;
   friend class iCanPkgExt_c;
+  friend class IsoItem_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
 
 public:

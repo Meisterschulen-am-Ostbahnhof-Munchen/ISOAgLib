@@ -82,10 +82,13 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "isoitem_c.h"
+// necessary for convert operators
+#include "../iisoitem_c.h"
 #include "isosystempkg_c.h"
 #include "isomonitor_c.h"
 #include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+
 
 #if defined(DEBUG)
   #ifdef SYSTEM_PC
@@ -110,6 +113,7 @@ IsoItem_c::IsoItem_c()
   , mi8_slavesToClaimAddress (0) // idle around
   , mi32_timeLastCompletedAnnounceStarted (-1)
   , mi32_timeCurrentAnnounceStarted (-1)
+  , mi32_timeAnnounceForRemoteItem (-1)
   , mb_repeatAnnounce (false)
   #endif
   , mui8_nr(0xFE)
@@ -533,7 +537,6 @@ bool IsoItem_c::sendSaClaim()
 }
 
 
-
 /** calculate random wait time between 0 and 153msec. from NAME and time
   @return wait offset in msec. [0..153]
 */
@@ -611,6 +614,8 @@ IsoItem_c::setMaster (uint8_t aui8_slaveCount)
     // in case an entry is IsoNameUnspecified, it's definition has not yet arrived...
     mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (aui8_slaveCount, IsoName_c::IsoNameUnspecified());
   }
+
+  mi32_timeAnnounceForRemoteItem = getIsoMonitorInstance4Comm().data().time();
 }
 
 
@@ -705,5 +710,16 @@ IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
 }
 #endif
 
+/** convert function - avoids lots of explicit static_casts */
+IsoAgLib::iIsoItem_c& IsoItem_c::toIisoItem_c()
+{
+  return static_cast<IsoAgLib::iIsoItem_c&>(*this);
+}
+
+/** convert function - avoids lots of explicit static_casts */
+const IsoAgLib::iIsoItem_c& IsoItem_c::toConstIisoItem_c() const
+{
+  return static_cast<const IsoAgLib::iIsoItem_c&>(*this);
+}
 
 } // end of namespace __IsoAgLib

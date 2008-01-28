@@ -92,6 +92,10 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h>
 
+namespace IsoAgLib {
+  class iIsoItem_c;
+}
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** item class for ISO 11783 members monitor list to manage
@@ -257,6 +261,8 @@ public:
   */
   const IsoName_c& isoName() const {return mc_isoName;}
 
+  IsoName_c& nonConstIsoName() {return mc_isoName;}
+
   /** deliver name
     @return pointer to the name uint8_t string (7byte)
   */
@@ -400,7 +406,15 @@ public:
       BE CAREFUL: you should know what you are doing!!!
     */
   void removeMasterState() { if( isMaster() ) { delete mpvec_slaveIsoNames; mpvec_slaveIsoNames = NULL; } }
+
+  int32_t announceTimeStamp() { return mi32_timeCurrentAnnounceStarted; }
 #endif
+
+  /** convert function */
+  IsoAgLib::iIsoItem_c& toIisoItem_c();
+
+  /** convert function */
+  const IsoAgLib::iIsoItem_c& toConstIisoItem_c() const;
 
 protected: // methods
 
@@ -432,6 +446,8 @@ private: // members
 
   int32_t mi32_timeLastCompletedAnnounceStarted;
   int32_t mi32_timeCurrentAnnounceStarted;
+
+  int32_t mi32_timeAnnounceForRemoteItem;
 
   bool mb_repeatAnnounce;
 #endif
