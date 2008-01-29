@@ -83,6 +83,7 @@ struct localSettings_s;
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
+  class iStream_c;
 /**
   @brief This class is needed to handle Terminal KeyCodes (SoftKey or Button) and Numeric Value Changes and also
   gives you the possibility to perform some action right after successfull objectpool uploading.
@@ -291,6 +292,12 @@ public:
   uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname) { return doEventProprietaryCommand(acr_isoname); };
 
   /**
+  Gets called after recognizing an incoming VT proprietary message.
+   */
+  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname, uint8_t aui8_commandByte, IsoAgLib::iStream_c& arc_stream)
+  { return doEventProprietaryCommand(acr_isoname, aui8_commandByte, arc_stream); };
+
+  /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
   virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
@@ -342,6 +349,10 @@ private:
      VT proprietary message.
    */
   virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/) { return 0; }
+  /**
+    hook function that gets called after recognizing an incoming VT proprietary message.
+   */
+  virtual uint8_t doEventProprietaryCommand(iIsoName_c const &/*acr_isoname*/, uint8_t /*aui8_commandByte*/, IsoAgLib::iStream_c& /*arc_stream*/)  { return 0; };
 
 protected:
   iVtObject_c*HUGE_MEM** iVtObjects;

@@ -361,7 +361,8 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 {
   if (arc_stream.getStreamInvalid()) return false;
 
-  switch ( arc_stream.getFirstByte() )
+  uint8_t ui8_streamFirstByte = arc_stream.getFirstByte();
+  switch ( ui8_streamFirstByte )
   {
     case 0x8:
       if (ab_isFirstChunk)  // check for command input string value H.18
@@ -381,8 +382,11 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
       }
       mc_streamer.mrc_pool.eventStringValue (mui16_inputStringId, mui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
       break;
-
     default:
+      if ( ui8_streamFirstByte >= 0x60 && ui8_streamFirstByte <= 0x7F && ab_isLastChunk)
+      { // a proprietary stream message has been completely received -> process it
+        mc_streamer.mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c(), ui8_streamFirstByte, arc_stream );
+      }
       break;
   }
 
