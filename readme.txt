@@ -157,7 +157,7 @@ But this tool would only help to start the virtual mask definition with XML, as 
 -->
 
 
-\section UsingProjects Customer Examples
+\section UsingProjects Known Users
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
 ( or a work based on it - see GPL §3) with some information on the used library, it would be quite kind to
 inform additionally the authors of your project, so that each using project can be listed here.
@@ -183,19 +183,19 @@ The following table contains a few commercial products which use \isoaglib:
         At the Agritechnica 2005 a running ISO Terminal was presented.<br>
         After the Agritechnica 2005, the Task Controller Server (11783-10) and GPS Cinverter were integrated into the system. Which made operating data logging and transferring GPS information from RS232 to the ISOBUS in NMEA 2000 format possible.
         This is the next step of operating data logging; now the farmer has the possibility to synchronize his field recorder with relevant GPS data.</i></td></tr>
-<tr><td valign="top" align="center"><a href="http://www.fritzmeier.de"><i>Fritzmeier Umwelttechnik GmbH</i></a></td>
-    <td valign="top"><i><ul><li>Control system of the MiniVegN</li></ul></i></td>
-    <td><i>Within this project the \isoaglib was the base for the development of a control system between MiniVegN, tractor and fertilize spreader. 
-        The laser of the MiniVegN tests the nitrogen content of the plant and sends the information to the spreader. The spreader has to spread out the right amount of fertilizer. 
-        With the \isoaglib the MiniVegN is compatible to the standard ISO 11783.</i></td></tr>
 <tr><td valign="top" align="center"><a href="http://www.zunhammer.de"><i>Zunhammer GmbH</i></a></td>
     <td valign="top"><i><ul><li>User Interface</li><li>ISO control system</li></ul></i></td>
     <td><i>"The challenge was to bring Zunhammer liquid manure spreader to ISO compatibility within four weeks.
         The control of the spreader had to be done by ISO terminal.
         The open source library \isoaglib was the right instrument and together with the Zunhammer development team we managed to build a running prototype punctual to the Agritechnica 2005.
-        The time frame of four weeks was achived."</i>
-</td></tr>
+        The time frame of four weeks was achived."</i></td></tr>
 </table>
+
+Other known users are:
+- <a href="http://www.dickey-john.com">DICKEY-john</a> for the tractor ECU and their Mini Terminal (not fully ISOBUS compliant)
+- <a href="http://www.beeline.ag/">Beeline Technologies</a>
+- Leica
+- <a href="http://www.dygron.com.au/">Dygron Technologies (Ben Murray)</a>
 
 
 The \isoaglib will be actively maintained by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
@@ -232,7 +232,7 @@ AZH GmbH,-->
 <a href="http://www.benqmobile.com">BenQ Mobile GmbH & Co OHG</a>,
 <a href="http://www.emag.de/">EMAG GmbH</a>,
 <a href="http://www.fiducia.de/">FIDUCIA IT AG</a>,
-<a href="http://www.fritzmeier.de/">FRITZMEIER Systems GmbH & Co.</a>,
+<!--<a href="http://www.fritzmeier.de/">FRITZMEIER Systems GmbH & Co.</a>,-->
 <a href="http://www.infineon.com/">Infineon Technologies AG</a>,
 <a href="http://www.mtu.de">MTU Aero Engines</a>,
 <a href="http://www.kvb.de/">Kassenärztliche Vereinigung Bayerns</a>,<!--<a href="http://www.oce.de">Océ Printing Systems GmbH</a>, Panasonic Automotive Systems Europe GmbH,-->
