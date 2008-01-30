@@ -690,7 +690,7 @@ vt2iso_c::splitFunction (bool ab_onlyClose=false)
   {
     sprintf (partFileName, "%s-function%d.cpp", xmlFileGlobal, splitFunctionPart);
     partFile_split_function = fopen (partFileName, "wt");
-    
+
     fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", xmlFileGlobal);
     fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", xmlFileGlobal);
@@ -797,7 +797,7 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
   strcat (partFileName, "-defines.inc");
   partFile_defines = fopen (partFileName,"wt");
   if (partFile_defines == NULL) clean_exit ("Couldn't create -defines.inc.");
-  
+
   partFile_obj_selection = fopen ("IsoTerminalObjectSelection.inc","wt");
   if (partFile_obj_selection == NULL) clean_exit ("Couldn't create IsoTerminalObjectSelection.inc.");
 
@@ -1544,7 +1544,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             strcpy (opAdditionallyRequiredObjects, attr_value);
             is_opAdditionallyRequiredObjects = true;
             continue;
-          }	  
+          }
           if (strncmp (attr_name, "sk_width", stringLength) == 0) {
             if (is_skWidth) {
               std::cout << "\n\nYOU MUSTN'T SPECIFY THE sk_width= TAG IN <objectpool> MORE THAN ONCE! STOPPING PARSER! bye.\n\n";
@@ -2506,7 +2506,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrOffTime_duration);
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA3, %d, %d,%d, %d,%d, %d,%d", atoi(attrString [attrNumber_of_repetitions]), MACRO_16bitToLE(atoi(attrString [attrFrequency])), MACRO_16bitToLE(atoi(attrString [attrOnTime_duration])), MACRO_16bitToLE(atoi(attrString [attrOffTime_duration])));
+                  sprintf(commandMessage, "0xA3, %d, %d, %d, %d,%d, %d, %d", atoi(attrString [attrNumber_of_repetitions]), MACRO_16bitToLE(atoi(attrString [attrFrequency])), MACRO_16bitToLE(atoi(attrString [attrOnTime_duration])), MACRO_16bitToLE(atoi(attrString [attrOffTime_duration])));
                   objChildCommands++;
                 }
                 break;
@@ -2698,7 +2698,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA8, %d, %d, 0x00, %li, %li, %li, %li", MACRO_16bitToLE((unsigned int)ret), MACRO_32bitToLE(retNewValue));
+                  sprintf(commandMessage, "0xA8, %d, %d, 0xFF, %li, %li, %li, %li", MACRO_16bitToLE((unsigned int)ret), MACRO_32bitToLE(retNewValue));
                   objChildCommands++;
                 }
                 break;
@@ -2747,7 +2747,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   //sprintf (attrString [attrValue], "%s", tempString2);
-                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE((unsigned int)retBytesInString), tempString2);
+                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d, %s", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE((unsigned int)retBytesInString), tempString2);
 
                   objChildCommands++;
                 }
@@ -2783,7 +2783,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA9, %d,%d, %d,%d, %d,%d, %d", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
+                  sprintf(commandMessage, "0xA9, %d, %d, %d, %d, %d, %d, %d", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE(atoi(attrString [attrNew_width])), MACRO_16bitToLE(atoi(attrString [attrNew_height])), atoi(attrString [attrLine_direction]));
 
                   objChildCommands++;
                 }
@@ -4290,7 +4290,7 @@ vt2iso_c::generateIncludeDefines()
   for (int i=0; i<39; i++) // parse only standard vt objects
   {
     char* objectName=otCompTable[i];
-    if (arrb_objTypes[i] || strstr(additionally_required_objects, objectName) ) 
+    if (arrb_objTypes[i] || strstr(additionally_required_objects, objectName) )
     {
       fprintf (partFile_obj_selection, "#ifndef USE_VTOBJECT_%s\n", objectName);
       fprintf (partFile_obj_selection, "\t#define USE_VTOBJECT_%s\n", objectName);
@@ -4778,8 +4778,8 @@ int main(int argC, char* argV[])
   } // loop all files
 
   pc_vt2iso->skRelatedFileOutput();
-  
-  pc_vt2iso->generateIncludeDefines();  
+
+  pc_vt2iso->generateIncludeDefines();
 
   if (errorOccurred)
     pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n\n");
