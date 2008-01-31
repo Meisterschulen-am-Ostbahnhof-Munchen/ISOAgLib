@@ -3082,6 +3082,37 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   objChildCommands++;
                 }
                 break;
+
+              case ctExecuteMacro:
+                if(child->hasAttributes())
+                {
+                  // parse through all attributes
+                  pAttributes = patched_getAttributes(child);
+                  int nSize = pAttributes->getLength();
+
+                  cleanAttribute(attrObjectID);
+
+                  for(int i=0;i<nSize;++i)
+                  {
+                    DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+                    utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+                    utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+                    setAttributeValue(attrObjectID);
+                  }
+                  signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  //signed int retHideShow = booltoi(attrString[attrHideShow]);
+                  if ( ret == -1 )
+                  {
+                    std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
+                    return false;
+                  }
+
+                  // Need check for all attributes being present for this command -bac
+                  sprintf(commandMessage, "0xBE, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", (unsigned char)ret);
+                  objChildCommands++;
+                }
+                break;
             }
 
             if (firstElement)
