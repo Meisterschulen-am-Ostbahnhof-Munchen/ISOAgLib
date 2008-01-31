@@ -115,28 +115,36 @@ This IDE has some important features:
 <a href="http://www.tasking.com/">TASKING</a> provides cross compilers for different target platforms that can be used 
 for \isoaglib appliations.
 
+\subsubsection CompTasking70 Version 7.56
 The TASKING compiler of version >= 7.56 is handling C++ in a sufficient manner and provides a conformant STL.
-However the 8.0 version consumes too much memory with the default settings for the STLport library
-(try one of the newer versions, as TASKING introduced some compiler switches to avoid code bloat by STLport - 
-just ask TASKING for the 7.56 STL version, if the ROM overhead is still too big; 
-the overhead was caused by the change from and adapted SGI STL to the STLport system; 
-while SGI STL uses templates only, the STLport defines several STL functions as functions which can be compiled to a 
-linkeable library; this approach is fine, as long as the target linker is able to select just the needed functions from 
-the STLport libraries; at least TASKING Compiler version 8.0 included a lot too much object code into the firmware, 
-so that the overhead was not acceptible).
+The used STL is based on the common SGI STL.
+This compiler is the preferred version for <a href="http://www.sensor-technik.de/">STW</a> ECUs,
+as only this version has been used for the quality certification for TUEV.
 
-To reduce this memory overhead it is highly recommended not to include the STLport <tt>IOSTREAMS</tt> part.
-Therefore a few defines have to be set for the compiling process. Those are:
+\subsubsection CompTasking8x Version 8.x
+The TASKING compilers as of 8.0 were switched from SGI STL version to the newer version from STLport.
+This supports creation of several compiled libraries for parts of STL, so that no more all STL elements are
+managed as pure template (header based) code.
+But the integration into 8.x series of STLport by TASKING is irritating. Please make sure that you <b>deactivate any
+setting that would trigger linking of STLport libraries in <i>Project|Project Options|C++ Compiler|Libraries</i></b>. This should result
+in the project files in the following settings:
+- <tt> -nostl </tt> for <i>Do not link the STLport library</i>
+- <tt> -nostlo </tt> for <i>Do not link the STLport extension library</i>
+
+As soon as you have deactivated any linking of STLport libraries, you have to set the following <b>#defines</b> in your project file,
+to get correct results with usage of any STL container like std::vector:
 - <tt>_STLP_USE_NO_IOSTREAMS</tt>
 - <tt>_STLP_NO_NEW_IOSTREAMS</tt>
 - <tt>_STLP_NO_OWN_IOSTREAMS</tt>
 - <tt>_STLP_HAS_NO_NEW_IOSTREAMS</tt>
 
-<b>Please note:</b>
-- STW recommends to stick with the 7.56 version futher on (because of TÜV certification)
-- if you do not rely on TÜV certification it is safe to use the 8.x version (with the above settings)
-- it is not recommended to use the latest version of the TASKING VX-Toolchain, because it uses a <i>completely different 
-  project file format</i> which has not yet been tested properly with \isoaglib.
+<b>Background:</b>
+Even the simple version of TASKING STLport library contains code for <i>iostream</i>, <i>locales</i> and <i>money format</i> (and much more).
+Sadly the linker is not able to remove this dead code, so that the firmware gets bloated by about 136 kByte.
+Surprisingly the RAM usage gets a little lower (about 10kByte), when the linking of the minimal STLport libary is activated.
+
+But this could be also caused by the special test program.
+
 
 <!--The following table shows a report with the data of RAM/ROM requests from the tutorial 3_0
 with different compilation options.
@@ -151,6 +159,23 @@ with different compilation options.
 <tr><td>                       </td> <td>test3</td> <td>59237</td> <td>543541</td> </tr>
 </table>
 -->
+
+You might find some more optimization hints at <a href="http://www.altium.com/TASKING/support/c166-classic/AN019-15_v8.PDF">Optimization Hints for your Application
+TASKING C166/ST10 Tools</a>.
+
+\subsubsection CompTaskingVX Version VX-Toolchain
+We were not able to run our tests with TASKING VX-Toolchain and our STW ECUs, as TASKING switched their
+library format to <b>ELF</b>. Thus the VX-Toolchain linker is no more able to link the libraries from the classic toolchain.
+
+We were told by the support department of TASKING, that the STLport options would have been renamed, so that a user can easier detect
+that the base STLport library contains <i>iostream</i> and the like.
+
+
+<b>Please note:</b>
+- STW recommends to stick with the 7.56 version futher on (because of TÜV certification)
+- if you do not rely on TÜV certification it is safe to use the 8.x version (with the above settings)
+- it is not recommended to use the latest version of the TASKING VX-Toolchain, because it uses a <i>completely different 
+  project file format</i> which has not yet been tested properly with \isoaglib.
 
 \isoaglib also provides some project files for the tutorials which can be used by the TASKING compiler.
 
