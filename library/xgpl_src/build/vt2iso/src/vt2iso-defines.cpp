@@ -337,11 +337,9 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   "command_control_audio_device",
   "command_set_audio_volume",
   "command_change_child_location",
-  "command_change_child_position",
   "command_change_size",
   "command_change_background_color",
   "command_change_numeric_value",
-  "command_change_string_value",
   "command_change_end_point",
   "command_change_font_attributes",
   "command_change_line_attributes",
@@ -350,7 +348,20 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   "command_change_soft_key_mask",
   "command_change_attribute",
   "command_change_priority",
-  "command_change_list_item"
+  "command_change_list_item",
+  " ",
+  "command_change_string_value",    // @todo soon
+  "command_change_child_position",  // @todo soon
+  "command_set_object_label",       // @todo soon
+  "command_change_polygon_point",   // @todo soon
+  "command_change_polygon_scale",   // @todo soon
+  "command_graphics_context",       // @todo soon
+  " ",
+  " ",
+  " ",
+  " ",
+  "command_lock_unlock_mask",       // @todo soon
+  "command_execute_macro"
 };
 
 char colorTable [16] [stringLength+1] = {
