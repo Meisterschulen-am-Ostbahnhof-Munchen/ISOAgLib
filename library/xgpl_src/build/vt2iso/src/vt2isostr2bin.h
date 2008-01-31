@@ -1,4 +1,3 @@
-
 /***************************************************************************
                           vt2iso-defines.hpp
                              -------------------
@@ -123,7 +122,17 @@
 #define notvalidMacroCommand     (18)
 #define ctChangeStringValue      (19)
 #define ctChangeChildPosition    (20)
-#define maxCommands              (21) // +++ MAX +++
+#define ctSetObjectLabel         (21)
+#define ctChangePolygonPoint     (22)
+#define ctChangePolygonScale     (23)
+#define ctGraphicsContext        (24)
+#define notvalidMacroCommand2    (25)
+#define notvalidMacroCommand3    (26)
+#define notvalidMacroCommand4    (27)
+#define notvalidMacroCommand5    (28)
+#define ctLockUnlockMask         (29)
+#define ctExecuteMacro           (30)
+#define maxCommands              (32) // +++ MAX +++
 
 
 // Object May Be

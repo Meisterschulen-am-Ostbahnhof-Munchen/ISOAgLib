@@ -262,6 +262,16 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
     " ",                                // 178 "command_delete_object_pool" // is not valid for a macro
     "command_change_string_value",      // 179
     "command_change_child_position",    // 180
+    "command_set_object_label",         // 181
+    "command_change_polygon_point",     // 182
+    "command_change_polygon_scale",     // 183
+    "command_graphics_context",         // 184
+    " ",                                // 185 "command_get_attribute_value" // not allowed in macro
+    " ",                                // 186 "command_select_colour_map" // not allowed in macro
+    " ",                                // 187 (reserved)
+    " ",                                // 188 (reserved)
+    "command_lock_unlock_mask",         // 189
+    "command_execute_macro"             // 190
 };
 
 
