@@ -3101,7 +3101,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     setAttributeValue(attrObjectID);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
-                  //signed int retHideShow = booltoi(attrString[attrHideShow]);
                   if ( ret == -1 )
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
