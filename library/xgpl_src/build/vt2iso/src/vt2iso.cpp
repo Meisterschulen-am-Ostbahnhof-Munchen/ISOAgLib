@@ -185,7 +185,7 @@ void DOMCountErrorHandler::resetErrors()
 // ---------------------------------------------------------------------------
 static void usage()
 {
-  std::cout << "\nvt2iso BUILD DATE: 03-Aug-2007\n\n"
+  std::cout << "\nvt2iso BUILD DATE: 31-Jan-2008\n\n"
     "Usage:\n"
     " vt2iso [options] <XML file>\n\n"
     "This program invokes the DOMBuilder, builds the DOM tree,\n"
