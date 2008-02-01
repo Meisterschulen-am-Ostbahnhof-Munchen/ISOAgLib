@@ -106,17 +106,17 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {
-  /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombGraphicsContext | ombContainer | ombObjectpointer,
+  /* "workingset", */     ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext | ombContainer | ombObjectpointer,
   /* "datamask", */       ombMacro | ombOutputfield | ombInputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombButton | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "alarmmask", */      ombMacro | ombOutputfield | ombOutputgraphic | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "container", */      0, // same as the object that included the container
   /* "softkeymask", */    ombMacro | ombKey | ombObjectpointer,
-  /* "key", */            ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
-  /* "button", */         ombMacro | ombOutputfield | ombOutputshape | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
+  /* "key", */            ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
+  /* "button", */         ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombContainer | ombObjectpointer | ombGraphicsContext,
   /* "inputboolean", */   ombMacro | 0,
   /* "inputstring", */    ombMacro | 0,
   /* "inputnumber", */    ombMacro | 0,
-  /* "inputlist", */      ombMacro | ombContainer | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext,
+  /* "inputlist", */      ombMacro | ombContainer | ombOutputfield | ombOutputshape | ombOutputgraphic | ombPicturegraphic | ombGraphicsContext | ombObjectpointer,
   /* "outputstring", */   ombMacro | 0,
   /* "outputnumber", */   ombMacro | 0,
   /* "line", */           ombMacro | 0,
@@ -143,7 +143,7 @@ uint64_t omcTypeTable [maxObjectTypesToCompare] = {
                           0,
                           0,
   /* "graphicscontext" */ 0,
-  /* "outputlist" */      ombMacro | ombOutputfield  | ombOutputshape | ombOutputgraphic | ombInputfield | ombPicturegraphic | ombGraphicsContext,
+  /* "outputlist" */      ombMacro | ombOutputfield | ombOutputshape | ombOutputgraphic | ombInputfield | ombPicturegraphic | ombGraphicsContext | ombObjectpointer,
                           0,
                           0,
                           0,

@@ -209,7 +209,7 @@ public:
 
   void getKeyCode();
 
-  void init (const char* xmlFile, std::basic_string<char>* dictionary = NULL, bool ab_externalize=false);
+  void init (const char* xmlFile, std::basic_string<char>* dictionary, bool ab_externalize, bool ab_disableContainmentRules);
 
   bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
 
@@ -331,6 +331,7 @@ private:
 
   bool b_hasUnknownAttributes;
   bool b_hasMoreThan6SoftKeys;
+  bool b_disableContainmentRules;
 
 
 #ifdef USE_SPECIAL_PARSING_PROP

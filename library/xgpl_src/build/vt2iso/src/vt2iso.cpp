@@ -701,9 +701,10 @@ vt2iso_c::splitFunction (bool ab_onlyClose=false)
 }
 
 void
-vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool ab_externalize)
+vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool ab_externalize, bool ab_disableContainmentRules)
 {
   b_externalize = ab_externalize;
+  b_disableContainmentRules = ab_disableContainmentRules;
 
   firstLineFileE = true;
   ui_languages=0;
@@ -1587,7 +1588,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   }
   else
   {
-    if ( objType < maxObjectTypes && ( ( (uint64_t(1)<<objType) & ombType) == 0 ) )
+    if ( objType < maxObjectTypes && ( !b_disableContainmentRules && ( ( (uint64_t(1)<<objType) & ombType) == 0 )) )
     {
       // ERROR: Unallowed <TAG> here?!
       std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << " 'objType: "
@@ -4558,6 +4559,7 @@ int main(int argC, char* argV[])
 
   bool generatePalette = false;
   bool externalize = false;
+  bool b_disableContainmentRules = false;
 
   memset(localeStr, 0, sizeof localeStr);
 
@@ -4630,6 +4632,10 @@ int main(int argC, char* argV[])
     {
       dictionary = &argV[argInd][6];
     }
+    else if (!strcmp(argV[argInd], "-d"))
+    {
+      b_disableContainmentRules = true;
+    }
     else
     {
       std::cerr << "Unknown option '" << argV[argInd] << "', ignoring it\n" << std::endl;
@@ -4673,7 +4679,7 @@ int main(int argC, char* argV[])
     exit (-1);
   }
 
-  pc_vt2iso->init (c_fileName.c_str(), &dictionary, externalize);
+  pc_vt2iso->init (c_fileName.c_str(), &dictionary, externalize, b_disableContainmentRules);
 
   for (indexXmlFile = 0; indexXmlFile < pc_vt2iso->getAmountXmlFiles(); indexXmlFile++)
   { // loop all xmlFiles!
