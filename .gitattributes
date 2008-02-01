@@ -2723,6 +2723,9 @@ examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/config_6_0_VtThreads.h -tex
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/config_6_0_VtThreadsEsxu.h -text
 examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/version.h -text
 examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTask/7_0_SchedulerTask.cpp -text
+examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTask/TutPrjDesc7_0_SchedulerTask.txt -text
+examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTask/config_7_0_SchedulerTask.h -text
+examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTask/version.h -text
 examples/src/Tutorials/7_SchedulerTask/7_1_SchedulerTask/7_1_SchedulerTask.cpp -text
 examples/src/Tutorials/7_SchedulerTask/7_2_SchedulerTask/7_2_SchedulerTask.cpp -text
 /index.html -text
