@@ -2747,7 +2747,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   //sprintf (attrString [attrValue], "%s", tempString2);
-                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d, %s", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE((unsigned int)retBytesInString), tempString2);
+                  sprintf(commandMessage, "0xB3, %d, %d, %d, %d%s", MACRO_16bitToLE((unsigned int)ret), MACRO_16bitToLE((unsigned int)retBytesInString), tempString2);
 
                   objChildCommands++;
                 }
