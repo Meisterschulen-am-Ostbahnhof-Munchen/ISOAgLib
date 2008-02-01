@@ -430,17 +430,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr,
     arrHalCan[aui8_busNr][(aui8_msgobjNr)].ui8_cinterfLastSendBufCnt = 0xFF;
     pt_config->bMsgType = RX;
 
-    pt_config->wNumberMsgs = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
-    const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
-    for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
-    {
-      if ( highLoadCheckList[ind] == pt_config->dwId )
-      {
-
-        pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
-        break;
-      }
-    }
+    pt_config->wNumberMsgs = 1; ///< @todo: can_server has to be adapted if wNumberMsgs is set to 0 for receiving
   }
   else
   { // send

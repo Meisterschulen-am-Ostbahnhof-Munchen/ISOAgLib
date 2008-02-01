@@ -72,6 +72,7 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
+#define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN 1
 
 namespace __HAL {
 extern "C" {
@@ -549,15 +550,6 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
     pt_config->bMsgType = RX;
     //BW, 4/18/06, no use for A2 //pt_config->pfIrqFunction = IsoAgLibCanHandler;
     pt_config->wNumberMsgs = CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN;
-    const uint32_t highLoadCheckList[] = CONFIG_CAN_HIGH_LOAD_IDENT_LIST ;
-    for ( uint8_t ind = 0; ind < CONFIG_CAN_HIGH_LOAD_IDENT_CNT; ind++ )
-    {
-      if ( highLoadCheckList[ind] == pt_config->dwId )
-      {
-        pt_config->wNumberMsgs = CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN;
-        break;
-      }
-    }
   }
   else
   { // send

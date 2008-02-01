@@ -160,30 +160,6 @@
   #define CONFIG_CAN_SEND_BUFFER_SIZE 20
 #endif
 
-#ifndef CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN
-  /// set default buffer size for CAN receive
-  #define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN 15
-#endif
-
-#ifndef CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN
-  /// high load of some CAN idents need larger buffers
-  #define CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN 25
-#endif
-
-#ifndef CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD
-  /// set increment for automatic buffer increase after overload ( 0 == no increase )
-  #define CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD 5
-#endif
-
-#ifndef CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-  /// define list of CAN filters where large buffers are needed due to high load
-  #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0xc70000, 0xc80000, 0xcb0000, 0xeb0000, 0xec0000  }
-  /// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-  #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 5
-  /// define mask for compare with ident
-  #define CONFIG_CAN_HIGH_LOAD_IDENT_MASK 0xff0000
-#endif
-
 
 /** configure the MULTI-PACKET parameters (TP/ETP/FP/Chunks)
     for RECEPTION, i.e. MultiReceive-related classes
