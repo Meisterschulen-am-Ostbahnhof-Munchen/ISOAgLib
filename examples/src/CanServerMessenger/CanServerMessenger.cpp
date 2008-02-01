@@ -1,5 +1,97 @@
-/*
+/**
+ * \example CanServerMessenger.cpp
  * CanServerMessenger - based on IsoAgLib and "rte_can" (c) Manfred Guenzl
+ * <H1>Howto compile this example</H1>
+ * <ol>
+ * <li>Call the script update_makefile.sh with the spec file
+ *     conf_CanServerMessenger from the directory where the spec file
+ *     and the script are located (default: IsoAgLib/compiler_projects/procejtGeneration/)<br>
+ *     <tt>#> ./update_makefile.sh conf_CanServerMessenger</tt>
+ * <li><b>Only Linux:</b><ul>
+ *     <li>move to the CanServerMessenger subdirectory of the kdevelop_make directory and run make
+ *     <li><tt>#> make</tt><br>
+ *     <li>GNU make will then use the fresh created Makefile to create the executable CanServerMessenger in this directory
+ *     </ul>
+ * <li><b>Other Development Environments:</b><ul>
+ *     <li>import the file list in filelist-CanServerMessenger.txt into the IDE of your choice
+ *     <li>set <tt>-DPRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger</tt> as global project parameter
+ *     <li>add target specific headers, sources or libraries to the project
+ *     <li>let your IDE build the project
+ *   </ul>
+ * </ol>
+ *
+ * <H1>Needed Project Specification</H1>
+ * The project specification, which is needed as input for
+ * the generation script update_makefile.sh is described in
+ * \ref PrjSpecCanServerMessenger__pc_linux__simulating__simulating .
+ *
+ * The adapted project specifications for different setups:
+ * <ul>
+ * <li>Configuration Setups for Linux on PC:
+ * <ul>
+ *    <li> \ref PrjSpecCanServerMessenger__pc_linux__rte__rte
+ *    <li> \ref PrjSpecCanServerMessenger__pc_linux__rte__simulating
+ *    <li> \ref PrjSpecCanServerMessenger__pc_linux__rte__sys
+ *    <li> \ref PrjSpecCanServerMessenger__pc_linux__simulating__rte
+ *    <li> \ref PrjSpecCanServerMessenger__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpecCanServerMessenger__pc_linux__simulating__sys
+ *  </ul>
+ * <li>Configuration Setups for Win32 on PC:
+ * <ul>
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__vector_canlib__simulating
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__vector_canlib__sys
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__simulating__sys
+ *  </ul>
+ * <li>Configuration Setupts for some embedded targets:
+ * <ul>
+ *    <li> \ref PrjSpecCanServerMessenger__esx__sys__sys
+ *    <li> \ref PrjSpecCanServerMessenger__imi__sys__sys
+ *    <li> \ref PrjSpecCanServerMessenger__pm167__sys__sys
+ *  </ul>
+ * </ul>
+ *
+ * <H1>Resulting Project File List</H1>
+ * See \ref FileListsCanServerMessenger__pc_linux__simulating__simulating for needed files
+ * ( filelist-CanServerMessenger-doxygen_import.txt ),
+ *  with \ref SrcListCanServerMessenger__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListCanServerMessenger__pc_linux__simulating__simulating containing the needed headers.
+ *
+ * The resulting file lists for different setups:
+ * <ul>
+ * <li>Configuration Setups for Linux on PC:
+ * <ul>
+ *    <li> \ref FileListsCanServerMessenger__pc_linux__rte__rte
+ *    <li> \ref FileListsCanServerMessenger__pc_linux__rte__simulating
+ *    <li> \ref FileListsCanServerMessenger__pc_linux__rte__sys
+ *    <li> \ref FileListsCanServerMessenger__pc_linux__simulating__rte
+ *    <li> \ref FileListsCanServerMessenger__pc_linux__simulating__simulating
+ *    <li> \ref FileListsCanServerMessenger__pc_linux__simulating__sys
+ *  </ul>
+ * <li>Configuration Setups for Win32 on PC:
+ * <ul>
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__vector_canlib__simulating
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__vector_xl_drv_lib__simulating
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__vector_canlib__sys
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__simulating__simulating
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__simulating__sys
+ *  </ul>
+ * <li>Configuration Setupts for some embedded targets:
+ * <ul>
+ *    <li> \ref FileListsCanServerMessenger__esx__sys__sys
+ *    <li> \ref FileListsCanServerMessenger__imi__sys__sys
+ *    <li> \ref FileListsCanServerMessenger__pm167__sys__sys
+ *  </ul>
+ * </ul>
+ *
+ * <H1>Resulting Project Configuration Header</H1>
+ * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
+ * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
+ * config_CanServerMessenger ( see also at \ref PrjConfigCanServerMessenger ).
+ *                                                                         */
  */
 
 /* include headers for the needed drivers */

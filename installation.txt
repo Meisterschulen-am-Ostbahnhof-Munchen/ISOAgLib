@@ -112,7 +112,7 @@ This IDE has some important features:
 
 
 \subsection CompTasking TASKING for Embedded Targets
-<a href="http://www.tasking.com/">TASKING</a> provides cross compilers for different target platforms that can be used 
+<a href="http://www.tasking.com/">TASKING</a> provides cross compilers for different target platforms that can be used
 for \isoaglib appliations.
 
 \subsubsection CompTasking70 Version 7.56
@@ -174,7 +174,7 @@ that the base STLport library contains <i>iostream</i> and the like.
 <b>Please note:</b>
 - STW recommends to stick with the 7.56 version futher on (because of TÜV certification)
 - if you do not rely on TÜV certification it is safe to use the 8.x version (with the above settings)
-- it is not recommended to use the latest version of the TASKING VX-Toolchain, because it uses a <i>completely different 
+- it is not recommended to use the latest version of the TASKING VX-Toolchain, because it uses a <i>completely different
   project file format</i> which has not yet been tested properly with \isoaglib.
 
 \isoaglib also provides some project files for the tutorials which can be used by the TASKING compiler.
@@ -184,13 +184,11 @@ The \isoaglib stores some information in dynamic lists, so that you need some he
 Please start with a great <tt>HEAPSIZE</tt> setting in the linker/locator specification (see </tt>HEAPSIZE</tt> control in <tt>ILO</tt> file), and
 check the RS232 output, when you compile the project with the <tt>\#define DEBUG_HEAP_USEAGE</tt>.
 
-\subsubsection TaskingCanRs232Buffer Allocate enough buffer for CAN receive buffer queues and RS232 buffer
+\subsubsection TaskingCanRs232Buffer Allocate enough buffer for RS232 buffer
 Some OS/BIOS which are designed like <a href="http://www.sensor-technik.de">STW BIOS</a> have a special setting to
-allocate enough memory for the internal managed buffers for RS232 and CAN. The amount of items which are reserved by
-\isoaglib in <tt>isoaglib_config.h</tt>: <tt>\#define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN</tt> and <tt>CONFIG_RS232_DEFAULT_SND_PUF_SIZE</tt> (this can be overridden by
+allocate enough memory for the internal managed buffers for RS232. The amount of items which are reserved by
+\isoaglib in <tt>isoaglib_config.h</tt>: <tt>CONFIG_RS232_DEFAULT_SND_PUF_SIZE</tt> (this can be overridden by
 configuration call with <tt>iRS232IO_c::setSndPufferSize</tt> and <tt>iRS232IO_c::setRecPufferSize</tt>).<br>
-- Again - set the value (in case of <a href="http://www.sensor-technik.de">STW BIOS</a> set variable <tt>BUFFER_SIZE</tt> in file <tt>Xos20go.asm</tt>) to MAX or other great enough value for a start.
-- Then compile your project with <tt>DEBUG_CAN_BUFFER_FILLING</tt> (activate it in the feature setup file of your project)
 - Check the RS232 output for fill grade of CAN buffers (the MAX amount of buffered CAN messages per BUS is printed)
 - Calculate the needed memory for RS232 (corresponds to <tt>CONFIG_RS232_DEFAULT_SND_PUF_SIZE</tt> or the overridden value) and CAN (corresponds to the MAX output from step above)
 - Adapt the buffer size value (leave some additional space)
@@ -236,8 +234,8 @@ To build the CAN server applications the following projects are already provided
 -# <tt>can_server.[dev|vcproj]</tt> (no access to a physical CAN bus, only for host internal communication)
 -# <tt>can_server_pcan.[dev|vcproj]</tt> (support for Peak CAN card)
 -# <tt>can_server_sontheim.[dev|vcproj]</tt> (support for Sontheim CAN card)
--# <tt>can_server_vector.[dev|vcproj]</tt> (support for Vector Informatik CAN card, CANLIB) 
--# <tt>can_server_vector_xl.[dev|vcproj]</tt> (support for Vector Informatik CAN card, XL Driver Library) 
+-# <tt>can_server_vector.[dev|vcproj]</tt> (support for Vector Informatik CAN card, CANLIB)
+-# <tt>can_server_vector_xl.[dev|vcproj]</tt> (support for Vector Informatik CAN card, XL Driver Library)
 
 These projects consist of:
 -# Source file <tt>can_server_sock.cpp</tt> (main CAN server logic)
@@ -294,7 +292,7 @@ send a running adaptation back to the project.
 -->
 
 \subsection ScriptOptions Command Line Options for update_makefile.sh
-The script <tt>update_makefile.sh</tt> provides several command line options which enables 
+The script <tt>update_makefile.sh</tt> provides several command line options which enables
 individual overwriting of target specific project settings. Thus you can use a project config
 file, which reflects for example a <tt>pc_linux</tt> platform, to get a project file for <tt>pc_win32</tt>
 (Dev-C++ and Visual Studio VC6 DSP project file).
@@ -557,7 +555,7 @@ to install STLport as described in \ref Vc6StlPort. Please specify the path to S
 The setup file can be derived from the following example
 (see compiler_projects/conf_0_0_AddressClaimIso):
 
-<a id="anchor4hiddendiv" href="#" onClick="javascript:toggledisplay('hiddendiv'); return false" 
+<a id="anchor4hiddendiv" href="#" onClick="javascript:toggledisplay('hiddendiv'); return false"
 title="View/hide content of conf_0_0_AddressClaimIso ...">View/hide content of <tt>conf_0_0_AddressClaimIso</tt> ...</a>
 <div id="hiddendiv">
 \code

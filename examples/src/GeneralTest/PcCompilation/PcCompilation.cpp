@@ -51,7 +51,8 @@
 
 /* *********************************************************************** */
 /** \example  PcCompilation.cpp
- *       */
+ * Test program that utilizes all parts of IsoAgLib.
+ */
 /* *************************************************************************/
 
 /** the define PRJ_USE_AUTOGEN_CONFIG is used by xgpl_src/Application_Config/isoaglib_config.h

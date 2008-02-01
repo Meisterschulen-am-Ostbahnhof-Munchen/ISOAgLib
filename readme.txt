@@ -1,4 +1,4 @@
-/*! \mainpage 
+/*! \mainpage
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
@@ -60,7 +60,10 @@ To learn more about \isoaglib you can check the navigation menu for further topi
 <!--\subsection NewsForNextIncrementalRelease Planned changes for 2.1.1 release-->
 
 \subsection NewsForBigRelease New for 2.1 release
-  - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after addition or deletion of FilterBox_c instances and message processing in order as received
+  - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after
+    addition or deletion of FilterBox_c instances and message processing in order as received.
+    The amount of dedicated memory for BIOS specific CAN queues can be reduced, as the message queue for received message is now maintained
+    by IsoAgLib (as normal memory - not in HEAP).
   - PC can_server port vor Windows available (socket communication which can also be used under Linux)
   - fixed Working-Set-Master announce (TC client/server communication)
   - Network Management rewritten (better handling of source address change and conflict)
@@ -73,6 +76,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
     - subdirectories naming follows the ISO standard (e.g. "Part7_ProcessData")
     - svn checkout of separate parts possible (e.g. only library sources and managed BIOS files without examples)
   - more user friendly layout and structure of html documentation pages
+  - automatic exclusion of unneeded VT-Client modules from compilation based on mask contents - More details at \ref VtClientRomReduction
 
 For previous changes see the \ref PageOldNews or view the complete \ref PageChanges.
 
@@ -80,13 +84,7 @@ For previous changes see the \ref PageOldNews or view the complete \ref PageChan
 \section MainFeatures Main Features
 The \isoaglib provides the following features to facilitate the development of ISO 11783 applications (see \ref InfGeneralInformation for more information):
 - A <strong>complete Open Source toolchain for ISO 11783 development</strong>
-- <strong>Process Data Communication</strong>: Projects which use features like Process Data Communication based
-  on \isoaglib will probably have fewer compatibility problems than other projects. 
-  This gets more important the more implements, sensors, task controllers, core control units 
-  (e.g. expert systems) and other devices are integrated.  The result is increasingly complex interaction networks
-  with all sorts of dependencies. Here \isoaglib can provide common patterns for the management of such interactions.
-  This list can help to identify well supported device combinations.
-- <strong>A Virtual Terminal implementation</strong>: The \isoaglib Virtual Terminal design has the following goals:
+- <strong>A Virtual Terminal Client implementation</strong>: The \isoaglib Virtual Terminal design has the following goals:
   - Enable creation of one single mask pool, that fits all terminal configurations
   - Provide attributes for project specification of runtime adaptations
   - Allow for flexible addition of further attributes. This is useful where automatic layout control must be optimized for some terminal properties (e.g. the number of softkeys)
@@ -101,11 +99,26 @@ The \isoaglib provides the following features to facilitate the development of I
     is available)
   - process completion using an automatic upload of the adapted pool.
   - Active pools can be controled with simple access functions, and some simple handler functions are available for reaction on user input.
+- <strong>TC-Client Device Description by XML notation</strong>:
+  Device descriptions of task controller client applications can be
+  designed in XML format (e.g.: device descriptions for sprayers with
+  booms and bins). After converting from XML into C++ headers, the device
+  description can be included into the application project. IsoAgLib
+  handles the device description upload to the task controller.
+  See for more details at \ref XMLProcSpec .
+- <strong>Process Data Communication</strong>: Projects which use features like Process Data Communication based
+  on \isoaglib will probably have fewer compatibility problems than other projects.
+  This gets more important the more implements, sensors, task controllers, core control units
+  (e.g. expert systems) and other devices are integrated.  The result is increasingly complex interaction networks
+  with all sorts of dependencies. Here \isoaglib can provide common patterns for the management of such interactions.
+  This list can help to identify well supported device combinations.
 - <strong>Multitasking</strong>: Perform all tasks which can be automated in the background to simplify
   application development and avoid different interpretations of low level communication (like message formatting).
+- <strong>Central CAN FIFO</strong>: Strict filtering of recieved CAN messages, so that only the requested messages are stored in one central FIFO. This enables the check for any received message with one function call.
+- <strong>Explicit Time Management<strong>: The central timer function IsoAgLib::iScheduler_c::timeEvent informs the application explicitly about the next needed call, so that application can adapt its own timing.
 - A <strong>flexible and capable data implementation</strong> as the backbone for all documenting and control interactions (e.g. trigger dependent measurement value sends, MIN / MAX setpoint intervals, enable N --&gt; 1 relation between user and provider of process data)
 - Use of a <strong>Hardware Adaption Layer</strong> to minimize target adaptation to a small set of files.
-  The majority of \isoaglib source code can be used without any changes for different platforms 
+  The majority of \isoaglib source code can be used without any changes for different platforms
 - <strong>Project specific feature selection</strong>
 - Source code maintenance and extension with enforced <strong>strict modular design</strong>
 - Design orientated to the requirements of networks with more then two devices
@@ -225,7 +238,7 @@ The \isoaglib was initially created by <a href="mailto:Achim.Spangler_at_osb-ag:
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
 already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin (all in Germany; <b>state November 2007</b>).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
-Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are: 
+Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
 <a href="http://www.agcocorp.com/">AGCO GmbH</a>/<a href="http://www.fendt.com/">Fendt</a>,<!-->AL.systems GmbH,-->
 <a href="http://www.aoa-gauting.de/">Apparatebau Gauting GmbH</a>,<!--<a href="http://www.machines.averydennison.com/">Avery Dennison Deutschland GmbH</a>,
 AZH GmbH,-->
@@ -280,7 +293,7 @@ The following areas are examples for such extensions:
 - Thanks to the <strong>research group of Prof. H. Auernhammer</strong> and to <a href="mailto:m.wodok_at_osb-ag:de">Martin Wodok</a>, who developed LBS_Terminal.
 - \anchor InitialFundingDfg <strong>Thanks to DFG funded research group IKB Duernast</strong><br>
   The initial creation of the \isoaglib was enabled by the research project
-  <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and 
+  <b>&quot;IKB D&uuml;rnast&quot;</b> which is leaded by <b>Prof. Auernhammer</b> at the <a href="http://www.tec.wzw.tum.de/pflanztech/englisch/index.html">Department of Bio Resources and
   Land Use Technology - Crop Production Engineering</a>.
 - \anchor InitialSupport <strong>Thanks to development by Sensortechnik Wiedemann (STW)</strong><br>
   The development phase with some compiler issues was supported by the experts of the <b>ESX</b> engineering team at <a href="http://www.sensor-technik.de">Sensortechnik Wiedemann (STW)</a>.
@@ -293,7 +306,7 @@ The following areas are examples for such extensions:
 - \anchor FirstWin32Users <strong>Thanks to eager and patient initial developers with Win32</strong><br>
   As the \isoaglib is mainly developed on LINUX, all Win32 specific adaptations
   including driver mappings and project file generation for Win32 IDEs weren't optimal until
-  first users like <b>Brad Cox</b> started to try \isoaglib in combination with <i>Microsoft Visual Studio C++</i> . 
+  first users like <b>Brad Cox</b> started to try \isoaglib in combination with <i>Microsoft Visual Studio C++</i> .
   As a result, \isoaglib:
   - provides now an automatic project file generation for Microsoft Visual Studio VC++ version 6.0 (DSP file),
     with the requirement of installation of STLport, if version 7.0 and above isn't used

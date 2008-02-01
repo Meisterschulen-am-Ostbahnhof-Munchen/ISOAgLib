@@ -7,7 +7,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><td>The following parts are described on the respective pages:
 <ol type="I">
     <li> Developer Information Page
-        <ul><li> \ref WhereToStart 
+        <ul><li> \ref WhereToStart
 	        <ul><li> \ref StartToLearn </li>
 	        <li> \ref DocOverview </li>
 	        <li> \ref GettingHelp </li>
@@ -292,19 +292,15 @@ They have an internal memory buffer that holds the CAN and RS232 buffers. Its si
 <tt>BUFFER_SIZE</tt> in the file <tt>Xos20go.asm</tt>.
 The amount of needed internal buffer memory for CAN communication is controlled by the following conditions:
   - amount of CAN channels
-  - amount of CAN messages which shall be buffered per CAN controller Message Object<br>
-    (this is defined by <tt>CONFIG_CAN_SEND_BUFFER_SIZE</tt>, <tt>CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN</tt> and <tt>CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN</tt> in the file <tt>isoaglib_config.h</tt> and can be overridden
+  - amount of CAN messages which shall be buffered for <b>sending</b> per CAN controller Message Object<br>
+    (this is defined by <tt>CONFIG_CAN_SEND_BUFFER_SIZE</tt> in the file <tt>isoaglib_config.h</tt> and can be overridden
       in the project specific config header which is created and updated by <tt>update_makefile.sh</tt>;
-      default setting 20 items for send and 15 and 25 items for normal and high load receive;
-      therefore 408 Bytes per buffer with 20 items)
-This results in approximate <b>6 KByte</b> per CAN channel with the default values (max 15 MsgObj with each 20 items in buffer).<br>
+      default setting 20 items for send; therefore 408 Bytes per buffer with 20 items)
 The amount of needed internal buffer memory for RS232 handling depends on the used send and receive buffer. The
 default size can be controlled by the settings <tt>CONFIG_RS232_DEFAULT_SND_PUF_SIZE</tt> and <tt>CONFIG_RS232_DEFAULT_REC_PUF_SIZE</tt> in <tt>isoaglib_config.h</tt> and can be overridden
 in the project specific config header which is created and updated by update_makefile.sh;
 These values can be overridden during runtime by interface functions of iRS232IO_c .
 Here a 100 char RS232 buffer needs 108 Bytes of the internal STW memory pool.
-<br>
-Thus you should set the BIOS/OS internal buffer to approximate <b>7 KByte</b> for one CAN channel and 100 char RS232 send/receive buffer.
 
 \subsection LocalizedRAM Normal RAM
 The greatest part of the \isoaglib components is created as static variables in RAM,
@@ -348,6 +344,45 @@ for integration.
 <tr><td>0_0_AddressClaimIso</td>     <td>89</td>                                                             <td>--</td></tr>
 <tr><td>3_0_VirtualTerminalIso</td>  <td>180</td>                                                            <td> 3</td></tr>
 </table>
+
+\subsection VtClientRomReduction Reduction of VT-Client code dependent on mask contents
+An XML-pool usually does not use every existing vt-object.
+Since each vtObject, that is compiled and linked unnecessarily, increases the
+size of the resulting object code and thus lowers the perfomance, vt2iso is
+now able to parse the XML files and look which XML-tags are used, and creates
+a new file "IsoTerminalObjectSelection.inc" that contains all necessary
+defines for the project. Since this is done automatically, the user normally
+does not have to bother about it.
+
+In some rare cases, additional defines are needed even if they are not
+existing in any XML file. For that case, a new optional attribute in the
+<objectpool> tag has to be used:
+
+<objectpool ... additionally_required_objects="outputlist+outputstring" />
+
+This way, vt2iso puts additional #defines for outputlist and outputstring in
+the IsoTerminalObjectSelection.inc independent of the XML file itself.
+
+To use this inc-file, its location has to be put in the conf-file. The section
+can look like this:
+
+PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"
+
+or
+
+PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition/FirstPool"
+PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition/SecondPool"
+
+Up to four pools are supported for one client. If no update_makefile is used,
+the following line should be added to the config_MyProject - file:
+
+#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1
+        #define PRJ_ISO_TERMINAL_OBJECT_SELECTION1 MaskDefinition
+#endif
+
+In both cases, the folder is a relative destination from the source directory.
+IMPORTANT: If this information is missing in the config file, the object code
+will keep all moduls included, like in IsoAgLib revisions before 2.1.0.
 
 
 */
