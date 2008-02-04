@@ -384,7 +384,7 @@ the following line should be added to the <tt>config_MyProject</tt> - file:
 \endcode
 In both cases, the folder is a relative destination from the source directory. <br>
 <b>IMPORTANT:</b> If this information misses in the config file, the object code 
-will keep at all moduls included, like in IsoAgLib 2.0.
+will keep at all moduls included, like in IsoAgLib revisions before 2.1.0.
 
 
 The following list shows those objects that will always be created:
