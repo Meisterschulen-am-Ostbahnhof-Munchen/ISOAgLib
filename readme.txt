@@ -116,7 +116,7 @@ The \isoaglib provides the following features to facilitate the development of I
 - <strong>Multitasking</strong>: Perform all tasks which can be automated in the background to simplify
   application development and avoid different interpretations of low level communication (like message formatting).
 - <strong>Central CAN FIFO</strong>: Strict filtering of recieved CAN messages, so that only the requested messages are stored in one central FIFO. This enables the check for any received message with one function call.
-- <strong>Explicit Time Management<strong>: The central timer function IsoAgLib::iScheduler_c::timeEvent informs the application explicitly about the next needed call, so that application can adapt its own timing.
+- <strong>Explicit Time Management</strong>: The central timer function IsoAgLib::iScheduler_c::timeEvent informs the application explicitly about the next needed call, so that application can adapt its own timing.
 - A <strong>flexible and capable data implementation</strong> as the backbone for all documenting and control interactions (e.g. trigger dependent measurement value sends, MIN / MAX setpoint intervals, enable N --&gt; 1 relation between user and provider of process data)
 - Use of a <strong>Hardware Adaption Layer</strong> to minimize target adaptation to a small set of files.
   The majority of \isoaglib source code can be used without any changes for different platforms

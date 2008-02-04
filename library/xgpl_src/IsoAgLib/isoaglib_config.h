@@ -160,7 +160,6 @@
   #define CONFIG_CAN_SEND_BUFFER_SIZE 20
 #endif
 
-
 /** configure the MULTI-PACKET parameters (TP/ETP/FP/Chunks)
     for RECEPTION, i.e. MultiReceive-related classes
 */
