@@ -545,7 +545,7 @@ FILE_PATTERNS          = *.c \
                          *.cpp \
                          *.h \
                          *.hpp \
-                         *.txt \
+                         *.txt 
                          # *.html \
                          # *.dox
 

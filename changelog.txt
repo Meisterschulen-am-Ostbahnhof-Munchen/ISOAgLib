@@ -19,6 +19,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
     </li>
     <li> Changelog </li>
     <li> \ref PageTodo "Main TODO Items Page"</li>
+    <li> \ref PageAdditionalInfo </li>
 </ol>
 </td></tr>
 </table>
