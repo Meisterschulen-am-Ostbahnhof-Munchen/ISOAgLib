@@ -1298,7 +1298,7 @@ create_makefile()
   # go to project dir - below config dir
   DEV_PRJ_DIR="$1/$PROJECT"
   cd $DEV_PRJ_DIR
-  mkdir -p "objects_library" "objects_app"
+  mkdir -p "objects_library" "objects_app" "objects_testrunner" "objects_utest"
   MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
   MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
 
