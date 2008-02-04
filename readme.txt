@@ -60,7 +60,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
 <!--\subsection NewsForNextIncrementalRelease Planned changes for 2.1.1 release-->
 
 \subsection NewsForBigRelease New for 2.1 release
-  - Now only necessary vtObjects are compiled and linked. That automatically leeds to a reduced object code size and therefore can increase performace (further information can be found \ref CompilingOnlyNeccessaryVtObjects "here").
+  - Now only necessary vtObjects are compiled and linked. This automatically leeds to a reduced object code size and therefore can increase performace (further information can be found \ref CompilingOnlyNeccessaryVtObjects "here").
   - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after
     addition or deletion of FilterBox_c instances and message processing in order as received.
     The amount of dedicated memory for BIOS specific CAN queues can be reduced, as the message queue for received message is now maintained
