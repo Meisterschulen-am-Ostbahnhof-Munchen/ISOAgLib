@@ -2,13 +2,9 @@
   This page contains the needed project specification and the resulting project file lists
   and configuration header contents to build the project.
 
-
-
-
-
- @section PrjSpec6_0_VtThreads__c2c__sys__sys List of configuration settings for 6_0_VtThreads with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ 
- Use the file conf_6_0_VtThreads in this directory as input file for ./update_makefile.sh to create the project generation files.
+\section PrjSpec6_0_VtThreads__c2c__sys__sys List of configuration settings for 6_0_VtThreads with CAN Driver sys and RS232 Driver sys
+ This is only a copy with doxygen ready comment blocks from the original file in <tt>IsoAgLib/compiler_projeckdevelop_make/</tt>
+ Use the file <tt>conf_6_0_VtThreads</tt> in this directory as input file for <tt>./update_makefile.sh<tt> to create the project generation files.
 \code
 # Filename: conf_6_0_VtThreads
 # Configuration setting for tutorial example 6_0_VtThreads
@@ -529,7 +525,7 @@ USE_WIN32_ADDITIONAL_LIBS="c:\Dev-Cpp\lib\libwinmm.a c:\Dev-Cpp\lib\libws2_32.a"
 \endcode
 
 
- @section PrjSpec6_0_VtThreads__esx__sys__sys List of configuration settings for 6_0_VtThreads with CAN Driver sys and RS232 Driver sys
+@section PrjSpec6_0_VtThreads__esx__sys__sys List of configuration settings for 6_0_VtThreads with CAN Driver sys and RS232 Driver sys
  This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ 
  Use the file conf_6_0_VtThreads in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
@@ -1052,8 +1048,8 @@ USE_WIN32_ADDITIONAL_LIBS="c:\Dev-Cpp\lib\libwinmm.a c:\Dev-Cpp\lib\libws2_32.a"
 \endcode
 
 
- @section PrjSpec6_0_VtThreads__imi__sys__sys List of configuration settings for 6_0_VtThreads with CAN Driver sys and RS232 Driver sys
- This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ 
+@section PrjSpec6_0_VtThreads__imi__sys__sys List of configuration settings for 6_0_VtThreads with CAN Driver sys and RS232 Driver sys
+ This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/
  Use the file conf_6_0_VtThreads in this directory as input file for ./update_makefile.sh to create the project generation files.
 \code
 # Filename: conf_6_0_VtThreads

@@ -117,32 +117,24 @@
  * \ref PrjSpec6_0_VtThreads__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
- * <ul>
- * <li>Configuration Setups for Linux on PC:
- * <ul>
- *    <li> \ref PrjSpec6_0_VtThreads__pc_linux__rte__rte
- *    <li> \ref PrjSpec6_0_VtThreads__pc_linux__rte__simulating
- *    <li> \ref PrjSpec6_0_VtThreads__pc_linux__rte__sys
- *    <li> \ref PrjSpec6_0_VtThreads__pc_linux__simulating__rte
- *    <li> \ref PrjSpec6_0_VtThreads__pc_linux__simulating__simulating
- *    <li> \ref PrjSpec6_0_VtThreads__pc_linux__simulating__sys
- *  </ul>
- * <li>Configuration Setups for Win32 on PC:
- * <ul>
- *    <li> \ref PrjSpec6_0_VtThreads__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpec6_0_VtThreads__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpec6_0_VtThreads__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpec6_0_VtThreads__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref PrjSpec6_0_VtThreads__pc_win32__simulating__simulating
- *    <li> \ref PrjSpec6_0_VtThreads__pc_win32__simulating__sys
- *  </ul>
- * <li>Configuration Setupts for some embedded targets:
- * <ul>
- *    <li> \ref PrjSpec6_0_VtThreads__esx__sys__sys
- *    <li> \ref PrjSpec6_0_VtThreads__imi__sys__sys
- *    <li> \ref PrjSpec6_0_VtThreads__pm167__sys__sys
- *  </ul>
- * </ul>
+ * - Configuration Setups for Linux on PC:
+ *   - \ref PrjSpec6_0_VtThreads__pc_linux__rte__rte
+ *   - \ref PrjSpec6_0_VtThreads__pc_linux__rte__simulating
+ *   - \ref PrjSpec6_0_VtThreads__pc_linux__rte__sys
+ *   - \ref PrjSpec6_0_VtThreads__pc_linux__simulating__rte
+ *   - \ref PrjSpec6_0_VtThreads__pc_linux__simulating__simulating
+ *   - \ref PrjSpec6_0_VtThreads__pc_linux__simulating__sys
+ * - Configuration Setups for Win32 on PC:
+ *   - \ref PrjSpec6_0_VtThreads__pc_win32__vector_canlib__simulating
+ *   - \ref PrjSpec6_0_VtThreads__pc_win32__vector_xl_drv_lib__simulating
+ *   - \ref PrjSpec6_0_VtThreads__pc_win32__vector_canlib__sys
+ *   - \ref PrjSpec6_0_VtThreads__pc_win32__vector_xl_drv_lib__sys
+ *   - \ref PrjSpec6_0_VtThreads__pc_win32__simulating__simulating
+ *   - \ref PrjSpec6_0_VtThreads__pc_win32__simulating__sys
+ * - Configuration Setupts for some embedded targets:
+ *   - \ref PrjSpec6_0_VtThreads__esx__sys__sys
+ *   - \ref PrjSpec6_0_VtThreads__imi__sys__sys
+ *   - \ref PrjSpec6_0_VtThreads__pm167__sys__sys
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating for needed files
@@ -151,32 +143,24 @@
  *  and with \ref HdrList6_0_VtThreads__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
- * <ul>
- * <li>Configuration Setups for Linux on PC:
- * <ul>
- *    <li> \ref FileLists6_0_VtThreads__pc_linux__rte__rte
- *    <li> \ref FileLists6_0_VtThreads__pc_linux__rte__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_linux__rte__sys
- *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__rte
- *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__sys
- *  </ul>
- * <li>Configuration Setups for Win32 on PC:
- * <ul>
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__vector_canlib__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__vector_canlib__sys
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__vector_xl_drv_lib__sys
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__simulating__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__simulating__sys
- *  </ul>
- * <li>Configuration Setupts for some embedded targets:
- * <ul>
- *    <li> \ref FileLists6_0_VtThreads__esx__sys__sys
- *    <li> \ref FileLists6_0_VtThreads__imi__sys__sys
- *    <li> \ref FileLists6_0_VtThreads__pm167__sys__sys
- *  </ul>
- * </ul>
+ * - Configuration Setups for Linux on PC:
+ *    - \ref FileLists6_0_VtThreads__pc_linux__rte__rte
+ *    - \ref FileLists6_0_VtThreads__pc_linux__rte__simulating
+ *    - \ref FileLists6_0_VtThreads__pc_linux__rte__sys
+ *    - \ref FileLists6_0_VtThreads__pc_linux__simulating__rte
+ *    - \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating
+ *    - \ref FileLists6_0_VtThreads__pc_linux__simulating__sys
+ * - Configuration Setups for Win32 on PC:
+ *    - \ref FileLists6_0_VtThreads__pc_win32__vector_canlib__simulating
+ *    - \ref FileLists6_0_VtThreads__pc_win32__vector_xl_drv_lib__simulating
+ *    - \ref FileLists6_0_VtThreads__pc_win32__vector_canlib__sys
+ *    - \ref FileLists6_0_VtThreads__pc_win32__vector_xl_drv_lib__sys
+ *    - \ref FileLists6_0_VtThreads__pc_win32__simulating__simulating
+ *    - \ref FileLists6_0_VtThreads__pc_win32__simulating__sys
+ * - Configuration Setupts for some embedded targets:
+ *    - \ref FileLists6_0_VtThreads__esx__sys__sys
+ *    - \ref FileLists6_0_VtThreads__imi__sys__sys
+ *    - \ref FileLists6_0_VtThreads__pm167__sys__sys
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
