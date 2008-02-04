@@ -1,0 +1,68 @@
+/*! \page PageAdditionalInfo Additional Information
+
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
+
+<table class="infobox" border="0">
+<tr><th>Section Overview</th></tr>
+<tr><td>The following parts are described on the respective pages:
+<ol type="I">
+    <li>\ref PageDeveloperInfo "Developer Information Page"
+        <ul><li> \ref WhereToStart 
+    <ul><li> \ref StartToLearn
+        <li> \ref DocOverview </li>
+        <li> \ref GettingHelp </li>
+    </ul>
+    </li>
+        <li> \ref MemoryUsage </li>
+        </ul>
+    </li>
+    <li> \ref PageChanges "Changelog" </li>
+    <li> \ref PageTodo "Main TODO Items Page"</li>
+    <li> Additional Information </li>
+</ol>
+</td></tr>
+</table>
+<div style="clear:left"></div>
+
+This page contains additional information on some topics that needed to be included but would bloat the specific parts of the documentation.
+
+\section CompilingOnlyNeccessaryVtObjects Compiling only necessary vtObjects (new in version 2.1) 
+An XML-pool usually does not use every existing vt-object.
+Since each vtObject, that is compiled and linked unnecessarily, increases the 
+size of the resulting object code and thus lowers the perfomance, vt2iso is 
+now able to parse the XML files and look which XML-tags are used, and creates 
+a new file "IsoTerminalObjectSelection.inc" that contains all necessary 
+defines for the project. Since this is done automatically, the user normally 
+does not have to bother about it.
+
+In some rare cases, additional defines are needed even if they are not 
+existing in any XML file. For that case, a new optional attribute in the 
+<tt><objectpool></tt> tag has to be used:
+
+</tt><objectpool ... additionally_required_objects="outputlist+outputstring" /></tt>
+
+This way, vt2iso puts additional \#defines for outputlist and outputstring in 
+the IsoTerminalObjectSelection.inc independent of the XML file itself.
+
+To use this inc-file, its location has to be put in the conf-file. The section 
+can look like this:
+
+<tt>PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"</tt>
+
+or 
+
+<tt>PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition/FirstPool"<br>
+PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition/SecondPool"</tt>
+
+Up to four pools are supported for one client. If no update_makefile is used, 
+the following line should be added to the <tt>config_MyProject</tt> - file:
+
+\code
+#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1 
+    #define PRJ_ISO_TERMINAL_OBJECT_SELECTION1 MaskDefinition 
+#endif
+\endcode
+In both cases, the folder is a relative destination from the source directory. <br>
+<b>IMPORTANT:</b> If this information misses in the config file, the object code 
+will keep at all moduls included, like in IsoAgLib 2.0.
+*/

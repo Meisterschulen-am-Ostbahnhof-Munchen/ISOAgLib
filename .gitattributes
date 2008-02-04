@@ -69,6 +69,7 @@ doc/html/Images/tum_logo.gif -text
 doc/html/csshover.htc -text
 doc/index.html -text
 doc/stylesheet.css -text
+doc/txt/additionalInfo.txt -text
 doc/txt/applications.txt -text
 doc/txt/developer-info.txt -text
 doc/txt/disc-further.txt -text

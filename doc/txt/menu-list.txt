@@ -33,6 +33,7 @@
         <li> \ref MemoryUsage</li>
         <li> \ref PageTodo </li>
         <li> \ref PageChanges "Changelog"</li>
+        <li> \ref PageAdditionalInfo </li>
         </ul>
     </li>
     <li class="folder"> \ref PageTechInfo
