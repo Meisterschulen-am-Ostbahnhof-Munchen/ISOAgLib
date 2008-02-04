@@ -65,4 +65,43 @@ the following line should be added to the <tt>config_MyProject</tt> - file:
 In both cases, the folder is a relative destination from the source directory. <br>
 <b>IMPORTANT:</b> If this information misses in the config file, the object code 
 will keep at all moduls included, like in IsoAgLib 2.0.
+
+
+The following list shows those objects that will always be created:
+- button
+- datamask
+- fontattributes
+- graphicscontext
+- macro
+- fillattributes
+- inputattributes
+- lineattributes
+- picturegraphic
+- softkeymask
+- workingset
+
+Those objects are created on demand:
+- alarmmask
+- archedbargraph
+- auxiliaryfunction
+- auxiliaryinput
+- container
+- ellipse
+- inputboolean
+- inputlist
+- inputnumber
+- inputstring
+- key
+- line
+- linearbargraph
+- meter
+- numbervariable
+- objectpointer
+- outputnumber
+- outputstring
+- outputlist
+- polygon
+- rectangle
+- stringvariable
+
 */
