@@ -73,19 +73,33 @@ struct canMsgA1_s {
 #define CAN_MAGIC_NUMBER        'z'
 #define MYSEQ_START             0x80
 
+#define CAN_ERR_ARBITLOST    0x1000    // arbitration lost 
+
 using namespace __HAL;
 
 // kernel 2.6 needs type for third argument and not sizeof()
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
 #define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, sizeof(struct canMsgA1_s))
 #define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, sizeof(struct canMsgA1_s))
+#define CAN_GET_STATUS  _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 3, sizeof(canStatus))
 #else
 #define CAN_WRITE_MSG   _IOW(CAN_MAGIC_NUMBER, MYSEQ_START + 1, struct canMsgA1_s)
 #define CAN_READ_MSG    _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 2, struct canMsgA1_s)
+#define CAN_GET_STATUS  _IOR(CAN_MAGIC_NUMBER, MYSEQ_START + 3, struct canStatus)
 #endif
 
 
+
+
+typedef struct
+{
+    int errorFlag;    // cleared in driver after access
+    int lastError;    // is cleared in driver after access
+} canStatus;
+
+
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
+static canStatus s_stat;
 
 bool isBusOpen(uint8_t ui8_bus)
 {
@@ -170,6 +184,9 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 //          0 on error
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
+  static uint32_t ui32_calls = 0;
+  int i_ioctlRet = 0;
+
   canMsgA1_s msg;
   msg.id = ps_canMsg->ui32_id;
   msg.msg_type = ( ps_canMsg->i32_msgType ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
@@ -179,28 +196,51 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   for( int i=0; i<msg.len; i++ )
     msg.data[i] = ps_canMsg->ui8_data[i];
 
-  int ret = 0;
+  if (ui32_calls % 20 == 0)
+  {
+    if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_GET_STATUS, &s_stat) == 0)
+    {
+      if (s_stat.errorFlag & CAN_ERR_ARBITLOST)
+      {
+        return 1;
+      }
+    }
+  }
+
+  ui32_calls++;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-    ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+    i_ioctlRet = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
 #ifdef DEBUG_IOCTL
-    if (ret < 0) {
+    if (i_ioctlRet < 0) {
       perror("ca_TransmitCanCard_1 ioctl");
 
       // try to read
       canMsgA1_s msg;
-      ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_READ_MSG, &msg);
+      i_ioctlRet = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_READ_MSG, &msg);
       printf("id 0x%x msg_type 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.id, msg.msg_type, msg.len, msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6], msg.data[7], msg.time);
 
-      if (ret < 0) {
+      if (i_ioctlRet < 0) {
         perror("ioctl read after write");
       }
     }
 #endif
+
+#if 0
+    if (i_ioctlRet < 0)
+    {
+      printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
+      close(pc_serverData->marri16_can_device[ui8_bus]);
+      canBusIsOpen[ui8_bus] = false;
+      openBusOnCard(ui8_bus, 250, pc_serverData);
+      ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+      printf("can_server: send message again on bus %d\n", ui8_bus);
+    }
+#endif
   }
 
-  if (ret < 0)
+  if (i_ioctlRet < 0)
     return 0;
   else
     return 1;
