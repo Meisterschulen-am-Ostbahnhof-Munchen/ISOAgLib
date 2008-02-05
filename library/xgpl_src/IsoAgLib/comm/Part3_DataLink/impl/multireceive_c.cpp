@@ -160,10 +160,11 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
 {
   if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName(acrc_isoNameClient, true)) // it needs to have claimed an address
     mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName(acrc_isoNameClient).nr();
-  else //    shouldn't occur...
+  else
   {
     mui8_cachedClientAddress = 0xFE;
-    getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
+    if (!mb_alsoBroadcast) //should really not happen ;-)
+      getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
   }
 }
 
