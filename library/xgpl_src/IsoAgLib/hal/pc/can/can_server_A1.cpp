@@ -74,6 +74,7 @@ struct canMsgA1_s {
 #define MYSEQ_START             0x80
 
 #define CAN_ERR_ARBITLOST    0x1000    // arbitration lost 
+#define CAN_ERR_PASSIVE      0x0008    // error passive limit reached
 
 using namespace __HAL;
 
@@ -179,12 +180,25 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 /// @todo ON REQUEST: not implemented for right now on A1! - possible due to HW/Driver restrictions
 }
 
+bool doStatusCheck(uint8_t ui8_bus, server_c* pc_serverData)
+{
+  if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_GET_STATUS, &s_stat) == 0)
+  {
+    if (s_stat.errorFlag & CAN_ERR_PASSIVE)
+    {
+      printf("CAN_ERR_PASSIVE detected, do not send message\n");
+      return false;
+    }
+    return true;
+  }
+  return false;
+}
+
 // PURPOSE: To send a msg on the specified CAN BUS
 // RETURNS: non-zero if msg was sent ok
 //          0 on error
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
-  static uint32_t ui32_calls = 0;
   int i_ioctlRet = 0;
 
   canMsgA1_s msg;
@@ -196,21 +210,21 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   for( int i=0; i<msg.len; i++ )
     msg.data[i] = ps_canMsg->ui8_data[i];
 
+  static uint32_t ui32_calls = 0;
   if (ui32_calls % 20 == 0)
   {
-    if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_GET_STATUS, &s_stat) == 0)
-    {
-      if (s_stat.errorFlag & CAN_ERR_ARBITLOST)
-      {
-        return 1;
-      }
-    }
+    if (!doStatusCheck(ui8_bus, pc_serverData))
+      return 1; // skip sendig of message, because an error was detected
   }
 
   ui32_calls++;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
     i_ioctlRet = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+
+    if (i_ioctlRet < 0) {
+      perror("ioctl read after write");
+    }
 
 #ifdef DEBUG_IOCTL
     if (i_ioctlRet < 0) {
@@ -227,23 +241,23 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     }
 #endif
 
-#if 0
     if (i_ioctlRet < 0)
     {
+      ui32_calls = 0; // reset counter => before next send doStatusCheck() is called
+
+#if 0
       printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
       close(pc_serverData->marri16_can_device[ui8_bus]);
       canBusIsOpen[ui8_bus] = false;
       openBusOnCard(ui8_bus, 250, pc_serverData);
       ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
       printf("can_server: send message again on bus %d\n", ui8_bus);
-    }
 #endif
+    }
   }
 
-  if (i_ioctlRet < 0)
-    return 0;
-  else
-    return 1;
+  return 1; // do not return an error to IsoAgLib
+
 }
 
 uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
