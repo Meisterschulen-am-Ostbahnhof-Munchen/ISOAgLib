@@ -74,6 +74,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
   - Central CAN FIFO, so that the BIOS/OS doesn't need to provide individual FIFOs for each receive MsgObj
   - bug fix: use rc_isoTerminal.data().time() instead of HAL::getTime() in VtServerInstance
   - bug fix: VtServerInstance uses getLastProcessedCanPkgTime() now for detecting dropp offs
+  - Get-functions can now be enabled in config files when needed (see \ref EnableGetterFunctions)
 
 \subsection Change_N 2.0 (changes on maintained version)
   - rewritten and enhanced TimePosGps_c

@@ -424,4 +424,8 @@ Those objects are created on demand:
 - rectangle
 - stringvariable
 
+\subsection EnableGetterFunctions Enabling Get-Functions in Config Files
+Getter functions for retrieving attributes at Iso_Terminal interface now have to be enabled in the config file only if needed. <br>
+It is recommended to store attributes at client side to get a smaller binary and less traffic. This feature can be enabled with <tt>USE_ISO_TERMINAL_ATTRIBUTES 1</tt>
+
 */
