@@ -65,7 +65,7 @@ bool itogeneraloption(uint8_t ui8_options, std::string& c_outputText, uint8_t ui
 }
 
 
-unsigned int
+int
 colortoi (char* text_color)
 {
   int l;
@@ -74,7 +74,16 @@ colortoi (char* text_color)
       return l;
     }
   }
-  return atoi (text_color);
+
+  int i_colIndex = atoi (text_color);
+  if ((i_colIndex >=0) && (i_colIndex < 256)) {
+    if (i_colIndex != 0 || text_color[0] == '0') {
+      return i_colIndex;
+    }
+  }
+
+  std::cout << "INVALID COLOR '" << text_color << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
 bool itocolor(unsigned int ui_index, string& c_outputText)
@@ -85,15 +94,15 @@ bool itocolor(unsigned int ui_index, string& c_outputText)
 
   }
   else
- {
+  {
     char c_tmp_buf[stringLength];
     sprintf(c_tmp_buf,"%d",ui_index);
     c_outputText = c_tmp_buf;
- }
+  }
   return true;
 }
 
-unsigned int
+int
 masktypetoi (char* masktype)
 {
   int l;
@@ -102,19 +111,37 @@ masktypetoi (char* masktype)
       return l;
     }
   }
-  return atoi (masktype);
+
+  int i_maskType = atoi (masktype);
+  if ((i_maskType >=0) && (i_maskType < 3)) {
+    if (i_maskType != 0 || masktype[0] == '0') {
+      return i_maskType;
+    }
+  }
+
+  std::cout << "INVALID MASK TYPE '" << masktype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
-unsigned int
+int
 colordepthtoi (char* text_colordepth)
 {
   int l;
-  for (l=0; l<2; l++) {
+  for (l=0; l<3; l++) {
     if (text_colordepth [0] == colorDepthTable [l]) {
       return l;
     }
   }
-  return 2;
+
+  int i_colDepth = atoi (text_colordepth);
+  if ((i_colDepth >=0) && (i_colDepth < 3)) {
+    if (i_colDepth != 0 || text_colordepth[0] == '0') {
+      return i_colDepth;
+    }
+  }
+
+  std::cout << "INVALID COLOR DEPTH'" << text_colordepth << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
 bool itocolordepth(uint8_t ui8_options, std::string& c_outputText)

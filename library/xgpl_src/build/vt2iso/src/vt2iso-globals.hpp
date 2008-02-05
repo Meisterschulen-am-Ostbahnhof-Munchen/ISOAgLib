@@ -76,9 +76,9 @@ extern bool itolineart(int i_lineart, std::string& c_outputText);
 extern bool itocolordepth(uint8_t ui8_options, std::string& c_outputText);
 
 
-extern unsigned int colortoi (char* text_color);
-extern unsigned int masktypetoi (char* masktype);
-extern unsigned int colordepthtoi (char* text_colordepth);
+extern int colortoi (char* text_color);
+extern int masktypetoi (char* masktype);
+extern int colordepthtoi (char* text_colordepth);
 extern signed int fonttypetoi (char* text_fonttype);
 extern signed int booltoi (char *text_bool);
 extern signed int fontsizetoi (char *text_fontsize);
