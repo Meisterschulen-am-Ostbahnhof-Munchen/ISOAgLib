@@ -100,7 +100,6 @@ typedef struct
 
 
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
-static canStatus s_stat;
 
 bool isBusOpen(uint8_t ui8_bus)
 {
@@ -182,11 +181,12 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 
 bool doStatusCheck(uint8_t ui8_bus, server_c* pc_serverData)
 {
+  static canStatus s_stat;
   if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_GET_STATUS, &s_stat) == 0)
   {
     if (s_stat.errorFlag & CAN_ERR_PASSIVE)
     {
-      printf("CAN_ERR_PASSIVE detected, do not send message\n");
+      printf("CAN_ERR_PASSIVE detected, do not send message (error flags: 0x%x)\n", s_stat.errorFlag);
       return false;
     }
     return true;
@@ -223,26 +223,8 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     i_ioctlRet = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
     if (i_ioctlRet < 0) {
-      perror("ioctl read after write");
-    }
+      perror("ioctl error during write");
 
-#ifdef DEBUG_IOCTL
-    if (i_ioctlRet < 0) {
-      perror("ca_TransmitCanCard_1 ioctl");
-
-      // try to read
-      canMsgA1_s msg;
-      i_ioctlRet = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_READ_MSG, &msg);
-      printf("id 0x%x msg_type 0x%x len 0x%x data 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x time 0x%x\n", msg.id, msg.msg_type, msg.len, msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4], msg.data[5], msg.data[6], msg.data[7], msg.time);
-
-      if (i_ioctlRet < 0) {
-        perror("ioctl read after write");
-      }
-    }
-#endif
-
-    if (i_ioctlRet < 0)
-    {
       ui32_calls = 0; // reset counter => before next send doStatusCheck() is called
 
 #if 0
