@@ -313,7 +313,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     ( "simulating"|"sys"|"msq_server"|"socket_server", "msq_server" only for Linux)
   --pc-can-device-for-server=CAN_DEVICE_FOR_SERVER
                                     use this device for building the can_server
-                                    ( "pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" ).
+                                    ( "no_can"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl" ).
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
                                     ("simulating"|"sys"|"rte").
   --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
