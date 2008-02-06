@@ -226,7 +226,7 @@ The \isoaglib provides now also for Win32 the CAN server application with the fo
 
 The necessary configuration options for the \isoaglib applications are (e.g. conf_0_0_AddressClaimIso):
 - <tt>USE_CAN_DRIVER="socket_server"</tt>
-- <tt>USE_CAN_DEVICE_FOR_SERVER="pc"</tt>
+- <tt>USE_CAN_DEVICE_FOR_SERVER="no_card"</tt>
 
 Create your Dev-C++ or VC6 project with the <tt>update_makefile.sh</tt> script and build the project.
 
@@ -362,6 +362,7 @@ The project can be identified by:
 	- <tt>PROJECT</tt> project name, which is used for the project file and project directory
 	- <tt>PROJECT_AUTHOR</tt> author name, which is inserted into project file (where this value is defined)
 	- <tt>PROJECT_AUTHOR_EMAIL</tt> author email address, which is also inserted into project file (where this value is defined)
+    - <tt>PRJ_INCLUDE_PATH</tt> use additional files that are needed for the projects ( parameter is found after the Applications Sources section)
 
 \subsubsection ConfApplicationFiles Selection of Application Sources
 
@@ -395,6 +396,8 @@ The following basic settings can be specified independent from hardware and feat
 \subsubsection ConfBasicHwSetup Basic Hardware Setup
 The basic hardware setup of your target (including CAN hardware/driver) can be defined in this group.
 	- <tt>USE_TARGET_SYSTEM</tt> type of target system from list <tt>{ "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167" }</tt> or other coming supported HALs
+    - <tt>PRJ_DO_NOT_START_RELAIS_ON_STARTUP</tt> prevent \isoaglib switching the system relais to ON on startup
+    - <tt>PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL</tt> select enhanced CAN processing
 	- <tt>USE_LITTLE_ENDIAN_CPU</tt> enables several optimizations of number conversions, when a little endian CPU is used. Switch this flag to <tt>off</tt> when you use a big endian CPU.
     - <tt>USE_CAN_DRIVER</tt> CAN driver to use from list <tt>{ "simulating"|"sys"|"msq_server"|"socket_server" }</tt>,
         - where type "simulating" uses file based CAN simulation on each PC system target,
@@ -402,9 +405,9 @@ The basic hardware setup of your target (including CAN hardware/driver) can be d
         - "socket_server": use sockets for communicating to the CAN server (target "pc_linux" and "pc_win32")
         - The other embedded targets allow only the system specific CAN driver - identified by "sys"
         - update_makefile.sh automatically selects the "sys" CAN driver, if no PC target is selected
-    - <tt>USE_CAN_DEVICE_FOR_SERVER</tt> CAN device used by CAN server application <tt>{ "pc"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl }</tt>,
-        - for target "pc_win32" only "pc" is allowed, because the CAN server application has it's own, CAN card specific project files (see ScriptIntegrateWin32Can)
-        - for target "pc_linux" the allowed values are <tt>{ "pc"|"pcan"|"A1"|"rte" }</tt>. The resulting Makefile will build the \isoaglib application and also the CAN card specific CAN server application.
+    - <tt>USE_CAN_DEVICE_FOR_SERVER</tt> CAN device used by CAN server application <tt>{ "no_card"|"pcan"|"A1"|"rte"|"sontheim"|"vector_canlib"|"vector_xl }</tt>,
+        - for target "pc_win32" only "no_card" is allowed, because the CAN server application has it's own, CAN card specific project files (see ScriptIntegrateWin32Can)
+        - for target "pc_linux" the allowed values are <tt>{ "no_card"|"pcan"|"A1"|"rte" }</tt>. The resulting Makefile will build the \isoaglib application and also the CAN card specific CAN server application.
 	- <tt>USE_RS232_DRIVER</tt> RS232 driver to use from list <tt>{ "simulating"|"sys"|"rte" }</tt>
         - where type "simulating" uses file based RS232 simulation on each PC system target,
         - "sys" uses the native RS232 of every target
@@ -422,7 +425,8 @@ The basic hardware setup of your target (including CAN hardware/driver) can be d
 Setup of most important communication features:
 	- <tt>PRJ_ISO11783</tt> selection of ISO 11783 protocol in the project
 	- <tt>PRJ_ISO_TERMINAL</tt> selection of ISO 11783 Virtual Terminal support (only available if PRJ_ISO11783 is activated)
-	- <tt>PRJ_BASE</tt> gather base data like tractor speed, distance, ISO GPS, PTO RPM from BUS and make them available independent of receive time
+    - <tt>PRJ_MULTIPACKET</tt> will be set automatically by depending features like PRJ_ISO_TERMINAL
+    - <tt>PRJ_BASE</tt> gather base data like tractor speed, distance, ISO GPS, PTO RPM from BUS and make them available independent of receive time
 	- <tt>PRJ_MULTIPACKET_STREAM_CHUNK</tt> allows to specify the preferred way of receiving multi message data streams. If chunk (default) mode is active,
 	     the application can perform a parsing on-the-fly of each received burst. This allows to reduce the RAM useage for large
 			 data streams. But in case all data are parsed just after complete receive of all data bye, the <b>linear</b> receive mode
@@ -652,6 +656,14 @@ ISO_AG_LIB_PATH="../.."
 #            but avoids slow memory allocation in too small units )
 # OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
 
+# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
+# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
+# the object pool and thus need not to be included in the client application.
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION3="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION4="MaskDefinition"
+
 # ###############################################################
 # Basic Hardware Setup
 # ###############################################################
@@ -682,8 +694,8 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=pc|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
-PRJ_CAN_DEVICE_FOR_SERVER="pc"
+# USE_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
+USE_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
 # targets other than pc_linux or pc_win32 can only use "sys"
@@ -699,15 +711,15 @@ CAN_BUS_CNT=1
 CAN_INSTANCE_CNT=1
 
 if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-# if more than one CAN BUS is defined, the selected
-# protocol(s) can be executed as independent instances
-# at more than one channel
-# ( if more than one CAN instance is used, but
-#   only one channel is used for protocol, than
-#   the index 0 - i.e. the first item is used for protocol )
+    # if more than one CAN BUS is defined, the selected
+  # protocol(s) can be executed as independent instances
+  # at more than one channel
+  # ( if more than one CAN instance is used, but
+  #   only one channel is used for protocol, than
+  #   the index 0 - i.e. the first item is used for protocol )
   PRT_INSTANCE_CNT=1
 else
-# default is to run only one protocol instance
+    # default is to run only one protocol instance
   PRT_INSTANCE_CNT=1
 fi
 
@@ -945,7 +957,7 @@ PRJ_RS232_OVER_CAN=1
 
 
 # ###############################################################
-# Build System Configuration for Cross Compilers ( like TASKING EDE )
+# Build System Configuration for Cross Compilers ( like Tasking EDE )
 # ###############################################################
 
 # #############################################
@@ -959,7 +971,7 @@ PRJ_RS232_OVER_CAN=1
 # in this directories for UNIX/LINUX )
 # These settings are at the moment only used for project
 # generation of
-# + TASKING EDE
+# + Tasking EDE
 #
 # But this could be extended to other compilers.
 # These config settings allow to create project files
@@ -1052,6 +1064,9 @@ PRJ_RS232_OVER_CAN=1
 #   if the XL driver is selected --> DONT'T set the XL_ here again
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+
+# additional libs when using Dev-Cpp
+USE_WIN32_ADDITIONAL_LIBS="c:\Dev-Cpp\lib\libwinmm.a c:\Dev-Cpp\lib\libws2_32.a"
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
