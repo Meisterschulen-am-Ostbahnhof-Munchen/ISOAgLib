@@ -7,6 +7,7 @@ admin/log/doxylog_categorizer.pl -text
 admin/testscripts/compileSelectedTutorials.sh -text
 admin/testscripts/compileTutorials.sh -text
 bin/proc2iso -text
+bin/update_makefile.sh -text
 bin/vt2iso -text
 /contact_and_support.txt -text
 doc/Doxyfile -text
@@ -2412,6 +2413,7 @@ examples/compiler_projects/kdevelop_make/PcCompilationSysNotEnHalMultipleInst/fi
 examples/compiler_projects/kdevelop_make/PcCompilationSysNotEnHalMultipleInst/filelist__PcCompilationSysNotEnHalMultipleInst.utest.modsut.txt -text
 examples/compiler_projects/kdevelop_make/PcCompilationSysNotEnHalMultipleInst/filelist__PcCompilationSysNotEnHalMultipleInst.utest.runner.txt -text
 examples/compiler_projects/kdevelop_make/PcCompilationSysNotEnHalMultipleInst/filelist__PcCompilationSysNotEnHalMultipleInst.utest.txt -text
+examples/compiler_projects/update_makefile.sh -text
 examples/src/AutoDataCollector/TutPrjDescAutoDataCollector.txt -text
 examples/src/AutoDataCollector/config_AutoDataCollector.h -text
 examples/src/AutoDataCollector/version.h -text
