@@ -149,7 +149,11 @@
 #else
   #define USABLE_SLIST list
 #endif
+#else
+  #define USABLE_SLIST list
 #endif
+#else
+  #define USABLE_SLIST list
 #endif
 #endif
 
