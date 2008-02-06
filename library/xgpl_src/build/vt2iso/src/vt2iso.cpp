@@ -1216,7 +1216,7 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
   // generate all lower depth-bitmaps...
   if (colordepthtoi (attrString [attrFormat]) == -1)
     return false;
-  for (unsigned int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
+  for (int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
     if (fixNr == -1) { // noFix
       // It's allowed to leave out 16-color bitmaps as there's a fallback to 2-color bitmap!!
       if ((actDepth == 1) && ((!attrIsGiven[attrFile1] && !attrIsGiven[attrFile]) || (attrIsGiven [attrFile1] && (strlen (attrString [attrFile1]) == 0)))) continue;
@@ -1457,8 +1457,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   unsigned int deXactualWidth=0; //init for happy compiler
   unsigned int deXactualHeight=0; //init for happy compiler
   unsigned int deXwidth=0; //init for happy compiler
-  unsigned int deXcolorDepth=0; //init for happy compiler
-  unsigned int deXtransCol=0; //init for happy compiler
+  int deXcolorDepth=0; //init for happy compiler
+  int deXtransCol=0; //init for happy compiler
   unsigned int stdRawBitmapBytes [3];
 
 #define maxFixedBitmaps 1000
@@ -1991,7 +1991,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
             c_Bitmap.resetLengths();
             if (!checkForFileOrFile148 ("fixedbitmap"))
-              return false; 
+              return false;
 
             fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
             if (!openDecodePrintOut (ac_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr)) return false;
@@ -3675,13 +3675,21 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "0");
 
           signed int retEnabled = booltoi (attrString [attrEnabled]);
+          signed int retOptions = inputobjectoptiontoi (attrString [attrOptions]);
           if (retEnabled == -1)
           {
             std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
+          if (retOptions == -1)
+          {
+            std::cout << "Error in itoinputobjectoptions() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+
+          uint8_t ui8_options = retEnabled | retOptions;
           fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], attrString [attrVariable_reference],
-                   attrString [attrValue], (unsigned int)retEnabled);
+                   attrString [attrValue], ui8_options);
           break;
         }
 
