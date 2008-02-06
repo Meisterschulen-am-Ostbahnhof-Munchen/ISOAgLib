@@ -911,6 +911,10 @@ vt2iso_c::defaultAttributes (unsigned int a_objType)
     sprintf (attrString [attrHorizontal_justification], "left");
     attrIsGiven [attrHorizontal_justification] = true;
   }
+  if (!attrIsGiven [attrVertical_justification]) {
+    sprintf( attrString [attrVertical_justification], "top");
+    attrIsGiven [attrVertical_justification] = true;
+  }
   if (!attrIsGiven [attrFont_style]) {
     sprintf (attrString [attrFont_style], "normal"); // anything that doesn't match anything from the fontstyleTable
     attrIsGiven [attrFont_style] = true;
@@ -3561,15 +3565,26 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             sprintf (attrString [attrValue], "%s", tempString);
           }
           signed int retEnabled = booltoi(attrString [attrEnabled]);
-          signed int retJustification = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if (retEnabled == -1 || retJustification == -1)
+          signed int retHorJustification = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if (retHorJustification == -1 || retHorJustification == -1)
           {
-            if (retEnabled == -1)
+            if (retHorJustification == -1)
               std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             else
               std::cout << "Error in horizontaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
+          signed int retVertJustification = verticaljustificationtoi (attrString [attrVertical_justification]);
+          if (retVertJustification == -1 || retVertJustification == -1)
+          {
+            if (retVertJustification == -1)
+              std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            else
+              std::cout << "Error in verticaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+          signed int retJustification = retHorJustification;
+          retJustification |= retVertJustification << 2;
           if ( (!attrIsGiven [attrInput_attributes]) || (strcmp( attrString[attrInput_attributes], "65535")==0) )
           {
             sprintf (attrString [attrInput_attributes], "NULL");
@@ -3615,8 +3630,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           signed int retInputOption = inputobjectoptiontoi (attrString [attrInputObjectOptions]);
           signed int retFormat = formattoi (attrString [attrFormat]);
-          signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retInputOption == -1) || (retFormat == -1) || (retJust == -1))
+          signed int retHorJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if ((retInputOption == -1) || (retFormat == -1) || (retHorJust == -1))
           {
             if (retInputOption == -1)
               std::cout << "Error in inputobjectoptiontoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
@@ -3624,10 +3639,25 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (retFormat == -1)
               std::cout << "Error in formattoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
 
-            if (retJust == -1)
+            if (retHorJust == -1)
               std::cout << "Error in horizontaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
+          signed int retVertJust = verticaljustificationtoi (attrString [attrVertical_justification]);
+          if ((retInputOption == -1) || (retFormat == -1) || (retVertJust == -1))
+          {
+            if (retInputOption == -1)
+              std::cout << "Error in inputobjectoptiontoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+
+            if (retFormat == -1)
+              std::cout << "Error in formattoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+
+            if (retVertJust == -1)
+              std::cout << "Error in verticaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+          signed int retJust = retHorJust;
+          retJust |= retVertJust << 2;
 
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
                    (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retInputOption);
@@ -3706,12 +3736,20 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
             sprintf (attrString [attrValue], "%s", tempString);
           }
-          signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if (retJust == -1)
+          signed int retHorJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if (retHorJust == -1)
           {
             std::cout << "Error in horizontaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
+          signed int retVertJust = verticaljustificationtoi (attrString [attrVertical_justification]);
+          if (retVertJust == -1)
+          {
+            std::cout << "Error in verticaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+          signed int retJust = retHorJust;
+          retJust |= retVertJust << 2;
           if (colortoi (attrString [attrBackground_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight],
@@ -3747,16 +3785,28 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             fprintf (partFile_attributes, ", %sL", attrString [attrOffset]);
           }
           signed int retFormat = formattoi (attrString [attrFormat]);
-          signed int retJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
-          if ((retFormat == -1) || (retJust == -1))
+          signed int retHorJust = horizontaljustificationtoi (attrString [attrHorizontal_justification]);
+          if ((retFormat == -1) || (retHorJust == -1))
           {
             if (retFormat == -1)
               std::cout << "Error in formattoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
 
-            if (retJust == -1)
+            if (retHorJust == -1)
               std::cout << "Error in horizontaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
+          signed int retVertJust = verticaljustificationtoi (attrString [attrVertical_justification]);
+          if ((retFormat == -1) || (retVertJust == -1))
+          {
+            if (retFormat == -1)
+              std::cout << "Error in formattoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+
+            if (retVertJust == -1)
+              std::cout << "Error in verticaljustificationtoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
+            return false;
+          }
+          signed int retJust = retHorJust;
+          retJust |= retVertJust << 2;
           fprintf (partFile_attributes, ", %s, %s, %d, %d", attrString [attrScale], attrString [attrNumber_of_decimals],
                    (unsigned int)retFormat, (unsigned int)retJust);
           break;

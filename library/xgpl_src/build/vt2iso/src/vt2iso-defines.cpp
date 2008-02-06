@@ -326,7 +326,9 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "viewport_zoom",
   "cursor_x",
   "cursor_y",
-  "inputobject_options"
+  "inputobject_options",
+// new attributes (VT revision 3)
+  "vertical_justification"
 };
 
 // Table of possible Macro Commands
@@ -458,6 +460,12 @@ char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLengt
   "left",
   "middle",
   "right"
+};
+
+char verticalJustificationTable [maxVerticalJustificationTable] [stringLength+1] = {
+  "top",
+  "middle",
+  "bottom"
 };
 
 char stringOptionsTable [maxStringOptionsTable] [stringLength+1] = {

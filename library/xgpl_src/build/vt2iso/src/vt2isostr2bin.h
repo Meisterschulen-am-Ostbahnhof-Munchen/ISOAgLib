@@ -292,7 +292,9 @@
 #define attrInKey (103)
 #define attrInButton (104)
 
-#define maxAttributeNames (105)
+#define attrVertical_justification (105)
+
+#define maxAttributeNames (106)
 
 
 // const uint16_t ui16_arrStartUidRange[] = 
@@ -373,6 +375,9 @@ extern char formatTable [maxFormatTable] [stringLength+1];
 #define maxHorizontalJustificationTable 3
 extern char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLength+1];
 
+#define maxVerticalJustificationTable 3
+extern char verticalJustificationTable [maxVerticalJustificationTable] [stringLength+1];
+
 #define maxOptionsTable 2
 extern char optionsTable [maxOptionsTable] [stringLength+1];
 
@@ -440,6 +445,8 @@ unsigned int fontsizetoi (char *text_fontsize);
 unsigned int formattoi (char *text_format);
 
 unsigned int horizontaljustificationtoi (char *text_horiz);
+
+unsigned int verticaljustificationtoi (char *text_vert);
 
 unsigned int optionstoi (char *text_options);
 

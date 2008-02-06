@@ -282,6 +282,19 @@ horizontaljustificationtoi (char *text_horiz)
   return -1;
 }
 
+signed int
+verticaljustificationtoi (char *text_vert)
+{
+  int l;
+  for (l=0; l<maxVerticalJustificationTable; l++) {
+    if (strncmp (text_vert, verticalJustificationTable [l], stringLength) == 0) {
+      return l;
+    }
+  }
+  std::cout << "INVALID VERTICALJUSTIFICATION '" << text_vert << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
+}
+
 bool itohorizontaljustification(unsigned int ui_index, string& c_outputText)
 {
   if(ui_index < maxHorizontalJustificationTable )

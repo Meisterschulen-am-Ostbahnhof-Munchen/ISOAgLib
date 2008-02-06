@@ -367,7 +367,9 @@ typedef struct {
 // attribute for inputnumber/list only!
 #define attrInputObjectOptions (113)
 
-#define maxAttributeNames (114)
+#define attrVertical_justification (114)
+
+#define maxAttributeNames (115)
 
 //! Number of regular object plus gap plus number of internal objects.
 #define maxObjectTypesToCompare (maxObjectTypes+18+6)
@@ -410,6 +412,9 @@ extern char formatTable [maxFormatTable] [stringLength+1];
 
 #define maxHorizontalJustificationTable 3
 extern char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLength+1];
+
+#define maxVerticalJustificationTable 3
+extern char verticalJustificationTable [maxVerticalJustificationTable] [stringLength+1];
 
 #define maxStringOptionsTable 3
 extern char stringOptionsTable [maxStringOptionsTable] [stringLength+1];

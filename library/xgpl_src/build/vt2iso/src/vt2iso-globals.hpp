@@ -84,6 +84,7 @@ extern signed int booltoi (char *text_bool);
 extern signed int fontsizetoi (char *text_fontsize);
 extern signed int formattoi (char *text_format);
 extern signed int horizontaljustificationtoi (char *text_horiz);
+extern signed int verticaljustificationtoi (char *text_vert);
 extern unsigned int stringoptionstoi (char *text_options);
 extern unsigned int inputnumberoptionstoi (char *text_options);
 extern unsigned int numberoptionstoi (char *text_options);

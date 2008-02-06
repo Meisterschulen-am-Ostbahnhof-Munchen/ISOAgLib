@@ -235,7 +235,9 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
     "code",
     "language",
     "in_key",
-    "in_button"
+    "in_button",
+// new attributes (VT revision 3)
+    "vertical_justification"
 };
 
 // Table of possible Macro Commands
@@ -370,6 +372,12 @@ char horizontalJustificationTable [maxHorizontalJustificationTable] [stringLengt
     "left",
     "middle",
     "right"
+};
+
+char verticalJustificationTable [maxVerticalJustificationTable] [stringLength+1] = {
+    "top",
+    "middle",
+    "bottom"
 };
 
 char optionsTable [maxOptionsTable] [stringLength+1] = {
@@ -623,6 +631,18 @@ unsigned int horizontaljustificationtoi (char *text_horiz)
   return 0; // to make compiler happy
 }
 
+unsigned int verticaljustificationtoi (char *text_vert)
+{
+  int l;
+  for (l=0; l<maxVerticalJustificationTable; l++) {
+    if (strncmp (text_vert, verticalJustificationTable [l], stringLength) == 0) {
+      return l;
+    }
+  }
+  std::cout << "INVALID VERTICALJUSTIFICATION '" << text_vert << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  clean_exit ();
+  return 0; // to make compiler happy
+}
 
 unsigned int optionstoi (char *text_options)
 {
