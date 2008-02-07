@@ -354,7 +354,7 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
       rc_multiSendPkg.setUint8Data (3, static_cast<uint8_t>((mui32_dataSize + 6) / 7));    // Byte 4
       rc_multiSendPkg.setUint8Data (4, static_cast<uint8_t>(0xFF));                       // Byte 5
       mui8_burstPkgYetToSend = (mui32_dataSize + 6) / 7;
-      switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
+      switchToState (AwaitCts, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
     }
 #if 0
 /// Disabled as long as getILibErrInstance().registerError() makes problems on the ESX
@@ -366,6 +366,10 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
   }
   sendPacket();
   *mpen_sendSuccessNotify = Running;
+  if (en_msgType == IsoTPbroadcast)
+  { // now we can switch the state to SendData
+    switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
+  }
 }
 
 
