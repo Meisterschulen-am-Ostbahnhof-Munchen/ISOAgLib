@@ -366,7 +366,7 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
   }
   sendPacket();
   *mpen_sendSuccessNotify = Running;
-  if (en_msgType == IsoTPbroadcast)
+  if (men_msgType == IsoTPbroadcast)
   { // now we can switch the state to SendData
     switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
   }
