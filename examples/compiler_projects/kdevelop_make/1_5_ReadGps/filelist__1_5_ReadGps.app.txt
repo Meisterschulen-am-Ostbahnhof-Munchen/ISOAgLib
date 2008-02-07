@@ -1,1 +1,0 @@
-../../../../examples/src/Tutorials/1_ApplicationLayer/1_5_ReadGps/1_5_ReadGps.cpp

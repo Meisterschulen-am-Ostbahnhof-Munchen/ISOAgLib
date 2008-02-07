@@ -12,9 +12,9 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_PM167
-#define SYSTEM_PM167
-#endif // SYSTEM_PM167
+#ifndef SYSTEM_PC
+#define SYSTEM_PC
+#endif // SYSTEM_PC
 #define PRJ_USE_AUTOGEN_CONFIG config_6_0_VtThreads.h
 #ifndef USE_MUTUAL_EXCLUSION
 #define USE_MUTUAL_EXCLUSION
@@ -42,6 +42,12 @@
 // #define USE_PCAN_LIB
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+  #define SYSTEM_WITH_ENHANCED_CAN_HAL
+
+#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
@@ -91,24 +97,6 @@
 
 /// set buffer size for CAN send
 // #define CONFIG_CAN_SEND_BUFFER_SIZE 20
-
-/// set default buffer size for CAN receive
-// #define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN 15
-
-/// high load of some CAN idents need larger buffers
-// #define CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN 25
-
-/// set increment for automatic buffer increase after overload ( 0 == no increase )
-// #define CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD 5
-
-/// define list of CAN filters where large buffers are needed due to high load
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0xc70000, 0xc80000, 0xcb0000, 0xeb0000, 0xec0000  }
-
-/// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 5
-
-/// define mask for compare with ident
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_MASK 0xff0000
 
 /// Multiply this SizeInPackets by 7 to get the size of ONE CHUNK (ONLY OF INTEREST IF STREAM IS CHUNKED)
 // #define CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS 16

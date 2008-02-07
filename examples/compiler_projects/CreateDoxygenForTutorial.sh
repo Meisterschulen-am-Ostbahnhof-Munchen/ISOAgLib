@@ -6,8 +6,10 @@ alias echo=$(which echo)
 DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
-EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+#EXAMPLE_LIST=`ls conf_7* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+EXAMPLE_LIST='conf_AutoDataCollector'
 TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
+#TARGET_LIST="pc_linux:pc_win32"
 CAN_LIST="simulating:sys:socket_server:msq_server"
 RS232_LIST="simulating:sys:rte"
 DEVICE_LIST="no_card:pcan:A1:rte:sontheim:vector_canlib:vector_xl"
@@ -23,8 +25,14 @@ for conf_example in $EXAMPLE_LIST ; do
 		conf_5*) EXAMPLE_DIR="5_CanFeatures" ;;
 		conf_6*) EXAMPLE_DIR="6_ParallelMutex" ;;
 		conf_7*) EXAMPLE_DIR="7_SchedulerTask" ;;
+		conf_PcCompilation) DOXYGEN_EXPORT_DIR="../src/GeneralTest";EXAMPLE_DIR=".";;
+		conf_PcCompilationMultipleInst) DOXYGEN_EXPORT_DIR="../src/GeneralTest";EXAMPLE_DIR=".";;
+		conf_PcCompilationSysNotEnHal) DOXYGEN_EXPORT_DIR="../src/GeneralTest";EXAMPLE_DIR=".";;
+		conf_PcCompilationSysNotEnHalMultipleInst) DOXYGEN_EXPORT_DIR="../src/GeneralTest";EXAMPLE_DIR=".";;
 		conf_Tractor*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="Tractor" ;;
-		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="CanServerMessenger" ;;
+		conf_AutoDataCollector*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="." ;;
+		conf_Imi*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="." ;;
+		conf_CanServerMessenger*) DOXYGEN_EXPORT_DIR="../../examples/src";EXAMPLE_DIR="." ;;
 		*) EXAMPLE_DIR="." ;;
   esac
   EXAMPLE=`echo $conf_example | sed -e 's/conf_//g'`
@@ -35,47 +43,41 @@ for conf_example in $EXAMPLE_LIST ; do
       for can_device in $DEVICE_LIST ; do
         for rs232_drv in $RS232_LIST ; do
           if test $target = "pc_win32" ; then
-            if test $can_drv != "socket_server" -a $can_drv != "simulating" ; then
-              continue
-            fi
-            if test $can_device != "no_card" ; then
-              continue
-            fi
-          elif test $target = "pc_linux" ; then
-            if test $can_drv != "msq_server" -a $can_drv != "simulating" ; then
-              continue;
-            fi
-            if test $can_device = "sontheim" -o $can_device = 'vector_canlib' -o $can_device = 'vector_xl' ; then
-              continue
-            fi
+						# no support for sys, and msq_server CAN device
+						if test $can_drv = "sys" -o $can_drv = "msq_server" ; then
+							continue
+						fi
+						# no processing of combinations with simulating and any device name other than no_card
             if test $can_drv = "simulating" -a $can_device != "no_card" ; then
               continue
             fi
-          else
-            if test $can_device != "no_card" ; then
-              continue;
+						# forbid some can devices for socket_server
+						if test $can_drv = "socket_server" ; then
+							if test $can_device = "pcan" -o $can_device = "A1" -o $can_device = "rte"  ; then
+								continue
+							fi
+						fi
+          elif test $target = "pc_linux" ; then
+						# no support for sys, and not use socket_server (socket can server is supported in LINUX but not preferred) CAN device
+						if test $can_drv = "sys" -o $can_drv = "socket_server" ; then
+							continue
+						fi
+						# no processing of combinations with simulating and any device name other than no_card
+            if test $can_drv = "simulating" -a $can_device != "no_card" ; then
+              continue
+            fi
+						# forbid some can devices for msq_server
+						if test $can_drv = "msq_server" ; then
+							if test $can_device = "sontheim" -o $can_device = "vector_canlib" -o $can_device = "vector_xl" ; then
+								continue
+							fi
+						fi
+          else # embedded non-PC targets
+            if test $can_device != "sys" ; then
+              continue
             fi
           fi
 
-          if [ $can_drv = "sys" ] ; then
-            if    [ $target = "pc_linux" ] ; then
-              can_drv="msq_server"
-            elif [ $target = "pc_win32" ] ; then
-              continue
-            fi
-          fi
-  
-          if [ $can_drv = "msq_server" ] ; then
-            if    [ $target != "pc_linux" ] ; then
-              continue
-            fi
-          fi
-          if [ $can_drv = "socket_server" ] ; then
-            if    test $target != "pc_linux" -a $target != "pc_win32" ; then
-              continue
-            fi
-          fi
-  
           if test $rs232_drv = "rte" -a $target != "pc_linux" ; then
             continue
           fi
@@ -90,6 +92,12 @@ for conf_example in $EXAMPLE_LIST ; do
             ;;
           esac
            echo "target= $target candriver= $can_drv can_device= $can_device rs232= $rs232_drv $conf_example"
+					 if [ -d $DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE ] ; then
+					 	echo "Directory $DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE for individual project configuration exists"
+					 else
+					 	echo "FAILURE!!!! - Missing Directory $DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE"
+						exit -1
+					 fi
 #            echo "./update_makefile.sh --target-system=$target --pc-can-driver=$can_drv --pc-can-device-for-server=$can_device --pc-rs232-driver=$rs232_drv --doxygen-export-directory=$DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE $conf_example"
              echo "./update_makefile.sh --target-system=$target --pc-can-driver=$can_drv --pc-can-device-for-server=$can_device --pc-rs232-driver=$rs232_drv --doxygen-export-directory=$DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE $conf_example" | sh
         done

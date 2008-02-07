@@ -103,7 +103,7 @@ PRJ_DEFINES="USE_MUTUAL_EXCLUSION"
 # Basic Hardware Setup
 # ###############################################################
 
-# select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
+# select watned type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "esxu" | "pm167" | "mitron167"
 USE_TARGET_SYSTEM="pc_linux"
 
 # specify integer number memory representation type: LITTLE or BIG ENDIAN
@@ -399,7 +399,7 @@ PRJ_EEPROM=1
 
 # #############################################
 # Configuration options typical for embedded project
-# ( these are used for target systems like "esx",
+# ( these are used for target systems like "esx", "esxu"
 #   "imi", "pm167" )
 # where the system libraries aren't placed in standard
 # directories ( UNIX/LINUX has standard directories

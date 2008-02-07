@@ -1,1 +1,0 @@
-../../../../examples/src/Tutorials/2_ProcessData/2_1_LocalReadDataSimpleMeasureIso/2_1_LocalReadDataSimpleMeasureIso.cpp

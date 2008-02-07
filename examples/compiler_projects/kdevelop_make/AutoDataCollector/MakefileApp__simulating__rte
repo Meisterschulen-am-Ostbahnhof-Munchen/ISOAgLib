@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = AutoDataCollector
 ISOAGLIB_INSTALL_PATH = /usr/local
-APP_INC = -I../../../../examples 
+APP_INC = -I../../../../examples/src/AutoDataCollector/ 
 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
@@ -21,42 +21,12 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP = ../../../../examples/src/AutoDataCollector/autodatacollector.cpp  \
-		../../../../examples/src/AutoDataCollector/getyflexmanager_c.cpp  \
-		../../../../examples/src/AutoDataCollector/specificrecordconfig_c.cpp  \
-		../../../../examples/src/AutoDataCollector/defaultrecordconfig_c.cpp  \
-		../../../../examples/src/AutoDataCollector/procdatamanager_c.cpp  \
-		../../../../examples/src/AutoDataCollector/gpsmanager_c.cpp  \
-		../../../../examples/src/Tractor/TractorConsole/TractorConsole.cpp  \
-		../../../../examples/src/Tractor/TractorInternalCan/TractorInternalCan.cpp  \
-		../../../../examples/src/Tutorials/4_SupplementaryDriver/4_1_Sensor/4_1_Sensor.cpp  \
-		../../../../examples/src/Tutorials/4_SupplementaryDriver/4_2_Pwm/4_2_Pwm.cpp  \
-		../../../../examples/src/Tutorials/4_SupplementaryDriver/4_0_Eeprom/4_0_Eeprom.cpp  \
-		../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/1_4_WriteFlexibleIso.cpp  \
-		../../../../examples/src/Tutorials/1_ApplicationLayer/1_5_ReadGps/1_5_ReadGps.cpp  \
-		../../../../examples/src/Tutorials/1_ApplicationLayer/1_0_ReadIso/1_0_ReadIso.cpp  \
-		../../../../examples/src/Tutorials/1_ApplicationLayer/1_2_WriteIso/1_2_WriteIso.cpp  \
-		../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads/6_0_VtThreads.cpp  \
-		../../../../examples/src/Tutorials/5_CanFeatures/5_0_InternalCan/5_0_InternalCan.cpp  \
-		../../../../examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn/5_1_ProprietaryPgn.cpp  \
-		../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/3_3_VirtualTerminalPhase3.cpp  \
-		../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso.cpp  \
-		../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  \
-		../../../../examples/src/Tutorials/0_NetworkManagement/0_3_LookupIso/0_3_LookupIso.cpp  \
-		../../../../examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso/0_0_AddressClaimIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_3_LocalReadDataSimpleMeasureSetpointIso/2_3_LocalReadDataSimpleMeasureSetpointIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_9_RemoteWriteSetpointStdIso/2_9_RemoteWriteSetpointStdIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_2_LocalReadDataSimpleSetpointIso/2_2_LocalReadDataSimpleSetpointIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_10_RemoteWriteSetpointSimpleSetpointIso/2_10_RemoteWriteSetpointSimpleSetpointIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_1_LocalReadDataSimpleMeasureIso/2_1_LocalReadDataSimpleMeasureIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_0_LocalReadDataStdIso/2_0_LocalReadDataStdIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_4_LocalWriteSetpointStdIso/2_4_LocalWriteSetpointStdIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_5_LocalWriteSetpointSimpleMeasureIso/2_5_LocalWriteSetpointSimpleMeasureIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/2_6_LocalWriteSetpointSimpleSetpointIso.cpp  \
-		../../../../examples/src/Tutorials/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/2_8_RemoteReadDataSimpleMeasureIso.cpp  \
-		../../../../examples/src/GeneralTest/PcCompilation/PcCompilation.cpp  \
-		../../../../examples/src/CanServerMessenger/CanServerMessenger.cpp  
+SOURCES_APP = ../../../../examples/src/AutoDataCollector//procdatamanager_c.cpp  \
+		../../../../examples/src/AutoDataCollector//defaultrecordconfig_c.cpp  \
+		../../../../examples/src/AutoDataCollector//gpsmanager_c.cpp  \
+		../../../../examples/src/AutoDataCollector//getyflexmanager_c.cpp  \
+		../../../../examples/src/AutoDataCollector//specificrecordconfig_c.cpp  \
+		../../../../examples/src/AutoDataCollector//autodatacollector.cpp  
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt

@@ -1,1 +1,0 @@
-../../../../examples/src/Tutorials/2_ProcessData/2_7_RemoteReadDataStdIso/2_7_RemoteReadDataStdIso.cpp

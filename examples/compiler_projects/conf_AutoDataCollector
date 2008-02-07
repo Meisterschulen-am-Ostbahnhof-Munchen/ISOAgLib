@@ -21,7 +21,7 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ( in relation to the root of the IsoAgLib
 #    - ONLY RELATIVE PATH )
 # seperate files by whitespace
-REL_APP_PATH="examples"
+REL_APP_PATH="examples/src/AutoDataCollector/"
 # define the name of the app
 # ( if this variable is not set, then
 #   all files of the selected directories are used )

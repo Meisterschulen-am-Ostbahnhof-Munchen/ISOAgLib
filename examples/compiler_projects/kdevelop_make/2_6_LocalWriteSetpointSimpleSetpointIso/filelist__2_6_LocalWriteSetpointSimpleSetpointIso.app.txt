@@ -1,1 +1,0 @@
-../../../../examples/src/Tutorials/2_ProcessData/2_6_LocalWriteSetpointSimpleSetpointIso/2_6_LocalWriteSetpointSimpleSetpointIso.cpp

@@ -106,19 +106,19 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpecTractorConsole__pc_linux__rte__rte
- *    <li> \ref PrjSpecTractorConsole__pc_linux__rte__simulating
- *    <li> \ref PrjSpecTractorConsole__pc_linux__rte__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__msq_server_rte__rte
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__msq_server_rte__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_linux__msq_server_rte__sys
  *    <li> \ref PrjSpecTractorConsole__pc_linux__simulating__rte
  *    <li> \ref PrjSpecTractorConsole__pc_linux__simulating__simulating
  *    <li> \ref PrjSpecTractorConsole__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpecTractorConsole__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref PrjSpecTractorConsole__pc_win32__can_server_sock_vector_xl_drv_lib__sys
  *    <li> \ref PrjSpecTractorConsole__pc_win32__simulating__simulating
  *    <li> \ref PrjSpecTractorConsole__pc_win32__simulating__sys
  *  </ul>
@@ -140,19 +140,19 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileListsTractorConsole__pc_linux__rte__rte
- *    <li> \ref FileListsTractorConsole__pc_linux__rte__simulating
- *    <li> \ref FileListsTractorConsole__pc_linux__rte__sys
+ *    <li> \ref FileListsTractorConsole__pc_linux__msq_server_rte__rte
+ *    <li> \ref FileListsTractorConsole__pc_linux__msq_server_rte__simulating
+ *    <li> \ref FileListsTractorConsole__pc_linux__msq_server_rte__sys
  *    <li> \ref FileListsTractorConsole__pc_linux__simulating__rte
  *    <li> \ref FileListsTractorConsole__pc_linux__simulating__simulating
  *    <li> \ref FileListsTractorConsole__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileListsTractorConsole__pc_win32__vector_canlib__simulating
- *    <li> \ref FileListsTractorConsole__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileListsTractorConsole__pc_win32__vector_canlib__sys
- *    <li> \ref FileListsTractorConsole__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileListsTractorConsole__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref FileListsTractorConsole__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileListsTractorConsole__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref FileListsTractorConsole__pc_win32__can_server_sock_vector_xl_drv_lib__sys
  *    <li> \ref FileListsTractorConsole__pc_win32__simulating__simulating
  *    <li> \ref FileListsTractorConsole__pc_win32__simulating__sys
  *  </ul>

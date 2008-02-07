@@ -40,12 +40,9 @@
 #ifndef DEBUG_CAN_BUFFER_FILLING
 #define DEBUG_CAN_BUFFER_FILLING
 #endif // DEBUG_CAN_BUFFER_FILLING
-#ifndef HIGH_LOAD_FIFO_CAN
-#define HIGH_LOAD_FIFO_CAN
-#endif // HIGH_LOAD_FIFO_CAN
-#ifndef READ_WAITING
-#define READ_WAITING
-#endif // READ_WAITING
+#ifndef CONFIG_CAN_FIFO_READ_WAITING
+#define CONFIG_CAN_FIFO_READ_WAITING
+#endif // CONFIG_CAN_FIFO_READ_WAITING
 #ifndef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 #define DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 #endif // DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
@@ -165,24 +162,6 @@
 
 /// set buffer size for CAN send
 // #define CONFIG_CAN_SEND_BUFFER_SIZE 20
-
-/// set default buffer size for CAN receive
-// #define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN 15
-
-/// high load of some CAN idents need larger buffers
-// #define CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN 25
-
-/// set increment for automatic buffer increase after overload ( 0 == no increase )
-// #define CONFIG_CAN_BUF_INCREASE_ON_OVERLOAD 5
-
-/// define list of CAN filters where large buffers are needed due to high load
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_LIST { 0xc70000, 0xc80000, 0xcb0000, 0xeb0000, 0xec0000  }
-
-/// define amount of list entries in CONFIG_CAN_HIGH_LOAD_IDENT_LIST
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_CNT 5
-
-/// define mask for compare with ident
-// #define CONFIG_CAN_HIGH_LOAD_IDENT_MASK 0xff0000
 
 /// Multiply this SizeInPackets by 7 to get the size of ONE CHUNK (ONLY OF INTEREST IF STREAM IS CHUNKED)
 // #define CONFIG_MULTI_RECEIVE_CHUNK_SIZE_IN_PACKETS 16

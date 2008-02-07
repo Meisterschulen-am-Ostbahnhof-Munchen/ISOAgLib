@@ -6,7 +6,7 @@
 ####### Project specific variables
 TARGET = Imi
 ISOAGLIB_INSTALL_PATH = /usr/local
-APP_INC = -I../../../../examples 
+APP_INC = -I../../../../examples/src/Imi 
 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk

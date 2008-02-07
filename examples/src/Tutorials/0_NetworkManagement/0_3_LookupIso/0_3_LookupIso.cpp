@@ -119,19 +119,32 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__rte__rte
- *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__rte__simulating
- *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__rte__sys
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_no_card__rte
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_rte__rte
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_A1__rte
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_pcan__rte
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_no_card__simulating
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_rte__simulating
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_A1__simulating
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_pcan__simulating
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_no_card__sys
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_rte__sys
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_A1__sys
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_linux__msq_server_pcan__sys
  *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__simulating__rte
  *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__simulating__simulating
  *    <li> \ref PrjSpec0_3_LookupIso__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__vector_canlib__simulating
- *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__vector_canlib__sys
- *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_no_card__simulating
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_sontheim__simulating
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_no_card__sys
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_sontheim__sys
+ *		<li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
  *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__simulating__simulating
  *    <li> \ref PrjSpec0_3_LookupIso__pc_win32__simulating__sys
  *  </ul>
@@ -153,19 +166,32 @@
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileLists0_3_LookupIso__pc_linux__rte__rte
- *    <li> \ref FileLists0_3_LookupIso__pc_linux__rte__simulating
- *    <li> \ref FileLists0_3_LookupIso__pc_linux__rte__sys
+ *    <li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_no_card__rte
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_rte__rte
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_A1__rte
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_pcan__rte
+ *    <li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_no_card__simulating
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_rte__simulating
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_A1__simulating
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_pcan__simulating
+ *    <li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_no_card__sys
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_rte__sys
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_A1__sys
+ *		<li> \ref FileLists0_3_LookupIso__pc_linux__msq_server_pcan__sys
  *    <li> \ref FileLists0_3_LookupIso__pc_linux__simulating__rte
  *    <li> \ref FileLists0_3_LookupIso__pc_linux__simulating__simulating
  *    <li> \ref FileLists0_3_LookupIso__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileLists0_3_LookupIso__pc_win32__vector_canlib__simulating
- *    <li> \ref FileLists0_3_LookupIso__pc_win32__vector_xl_drv_lib__simulating
- *    <li> \ref FileLists0_3_LookupIso__pc_win32__vector_canlib__sys
- *    <li> \ref FileLists0_3_LookupIso__pc_win32__vector_xl_drv_lib__sys
+ *    <li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_no_card__simulating
+ *		<li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_sontheim__simulating
+ *		<li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_no_card__sys
+ *		<li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_sontheim__sys
+ *		<li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref FileLists0_3_LookupIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
  *    <li> \ref FileLists0_3_LookupIso__pc_win32__simulating__simulating
  *    <li> \ref FileLists0_3_LookupIso__pc_win32__simulating__sys
  *  </ul>
