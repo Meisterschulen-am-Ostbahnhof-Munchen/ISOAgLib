@@ -65,6 +65,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
     The amount of dedicated memory for BIOS specific CAN queues can be reduced, as the message queue for received message is now maintained
     by IsoAgLib (as normal memory - not in HEAP).
   - PC can_server port vor Windows available (socket communication which can also be used under Linux)
+  - cleanup of all Windows CAN driver connection modules based on common can_server and small device specific connector modules
   - fixed Working-Set-Master announce (TC client/server communication)
   - Network Management rewritten (better handling of source address change and conflict)
   - improved IsoAgLib scheduler
@@ -77,6 +78,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
     - svn checkout of separate parts possible (e.g. only library sources and managed BIOS files without examples)
   - more user friendly layout and structure of html documentation pages
   - automatic exclusion of unneeded VT-Client modules from compilation based on mask contents - More details at \ref VtClientRomReduction
+	- remove any multiple inheritance, so that compilers like IAR, which support only single inheritance can process IsoAgLib - this should also simplify resolving of virtual functions, as only one inheritance path of vtables has to be analyzed
 
 For previous changes see the \ref PageOldNews or view the complete \ref PageChanges.
 
