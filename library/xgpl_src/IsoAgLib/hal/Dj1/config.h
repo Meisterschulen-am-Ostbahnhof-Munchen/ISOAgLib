@@ -67,6 +67,8 @@
 
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO
+/* we know that this cpu is little endian */
+#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 
 /** define size of int */
 #define SIZEOF_INT 2
@@ -79,7 +81,10 @@
   */
 #define USE_HUGE_MEM
 
-#define MAX_EEPROM_SEGMENT_SIZE 32
+/** define suitable  keyword for near memory type */
+#define NEAR_MEM      _near
+#define USE_NEAR_MEM  _near
+#define MAX_EEPROM_SEGMENT_SIZE 64
 
 /** define max number of write try-cycle to EEPROM
     ( one cycle: write value, re-read, compare )

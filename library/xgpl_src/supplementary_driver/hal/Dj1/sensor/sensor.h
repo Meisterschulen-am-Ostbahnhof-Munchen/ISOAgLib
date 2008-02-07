@@ -53,7 +53,7 @@
 
 /* ************************************************************ */
 /** \file
- * 
+ *
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -99,7 +99,7 @@ namespace __HAL
   extern "C"
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
   }
 }
 
@@ -371,12 +371,12 @@ namespace HAL
   */
   inline int16_t getDiginOnoff ( uint8_t ab_channelNumber )
   {
-    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetState ( ab_channelNumber );
-    if ( Value == __HAL::BIOS_DIG_ACTIVE )
+    int16_t Value = __HAL::DjBios_DigGetState ( ab_channelNumber );
+    if ( Value == __HAL::BIOS_DIG_HIGH )
     {
       return ( ON );
     } /* end if() */
-    else if ( Value == __HAL::BIOS_DIG_INACTIVE )
+    if ( Value == __HAL::BIOS_DIG_LOW )
     {
       return ( OFF );
     } /* end if() */
@@ -395,12 +395,12 @@ namespace HAL
   */
   inline int16_t getDiginOnoffStatic ( uint8_t ab_channelNumber )
   {
-    __HAL::enum_DigActive Value = __HAL::DjBios_DigGetStateDebounce ( ab_channelNumber );
-    if ( Value == __HAL::BIOS_DIG_ACTIVE )
+    int16_t Value = __HAL::DjBios_DigGetStateDebounce ( ab_channelNumber );
+    if ( Value == __HAL::BIOS_DIG_HIGH )
     {
       return ( ON );
     } /* end if() */
-    else if ( Value == __HAL::BIOS_DIG_INACTIVE )
+    if ( Value == __HAL::BIOS_DIG_LOW )
     {
       return ( OFF );
     } /* end if() */

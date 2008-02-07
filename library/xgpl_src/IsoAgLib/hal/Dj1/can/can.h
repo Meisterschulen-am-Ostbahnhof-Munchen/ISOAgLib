@@ -78,7 +78,7 @@ namespace __HAL
   extern "C"
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
   }
 }
 
@@ -191,19 +191,14 @@ namespace HAL
 
   inline bool can_stateMsgobjSendproblem ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-   return (  
-              (  
-                (__HAL::DjBios_CanGetTxDelay( 
-                /*  Can_TxObjElapseTime(*/aui8_busNr/*, aui8_msgobjNr*/) > CONFIG_CAN_MAX_SEND_WAIT_TIME) 
-                &&  
-                (__HAL::DjBios_CanObjBufCount(aui8_busNr, aui8_msgobjNr) > 0 )  
+   return (
+              (
+                (__HAL::DjBios_CanGetTxDelay(aui8_busNr) > CONFIG_CAN_MAX_SEND_WAIT_TIME) &&
+                (__HAL::DjBios_CanObjBufCount(aui8_busNr, aui8_msgobjNr) > 0 )
               )?  true : false
-              
+
            );
-
-
-
-  }
+  };
 
 
   /**
@@ -257,8 +252,7 @@ namespace HAL
   */
   inline bool can_stateMsgobjLocked ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-//    return __HAL::can_stateMsgobjLocked( aui8_busNr, aui8_msgobjNr );
-    return ( false );
+    return ( __HAL::DjBios_CanIsObjLocked ( aui8_busNr, aui8_msgobjNr ) ? true : false );
   };
 
 
@@ -383,8 +377,7 @@ namespace HAL
     */
   inline int16_t can_configMsgobjLock ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock = true )
   {
-//    return __HAL::can_configMsgobjLock( aui8_busNr, aui8_msgobjNr, ab_doLock);
-    return ( HAL_NO_ERR );
+    return ( __HAL:: Can_ObjectLock(aui8_busNr, aui8_msgobjNr, ab_doLock) );
   };
 
 

@@ -72,12 +72,12 @@
 #include "../typedef.h"
 #include "../errcodes.h"
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
   }
 }
 
@@ -240,7 +240,7 @@ namespace HAL
                        int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit)
   {
     return __HAL::iInitEEEditor(bBus, iObjNrReceiveCan, iObjNrTransmitCan,
-                                       dwReceiveCanId, bUseExtendedCAN, 
+                                       dwReceiveCanId, bUseExtendedCAN,
                                        iNumberMsgsReceive, iNumberMsgsTransmit);
   };
 
@@ -345,9 +345,9 @@ namespace HAL
 #include "../typedef.h"
 #include "../errcodes.h"
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_DjBios1/DjBios1.h>
@@ -513,7 +513,7 @@ namespace HAL
                        int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit)
   {
     return __HAL::iInitEEEditor(bBus, iObjNrReceiveCan, iObjNrTransmitCan,
-                                       dwReceiveCanId, bUseExtendedCAN, 
+                                       dwReceiveCanId, bUseExtendedCAN,
                                        iNumberMsgsReceive, iNumberMsgsTransmit);
   };
 

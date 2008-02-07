@@ -83,7 +83,7 @@ namespace __HAL
   extern "C"
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
 
    }
 }
@@ -165,7 +165,7 @@ namespace HAL
   */
   inline void wdTriggern ( void )
   {
-    __HAL::DjBios_SysKickTheDog();
+    __HAL::DjBios_TaskWDSysService();
   };
 
 
@@ -237,7 +237,7 @@ namespace HAL
       {
         /* only 6 characters truncate down to a 16-bit value */
         uint16_t SmSerNum = (uint16_t)SerNum;
-        if ( sprintf( (char*)snrDat, "%u", SmSerNum ) <= 0 )
+        if ( CNAMESPACE::sprintf( (char*)snrDat, "%u", SmSerNum ) <= 0 )
         {
           /* sprintf() error */
           retval = HAL_UNKNOWN_ERR;

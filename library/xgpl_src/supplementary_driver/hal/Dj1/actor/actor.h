@@ -1,5 +1,5 @@
 /***************************************************************************
-              sensor.h - definition of Hardware Abstraction 
+              sensor.h - definition of Hardware Abstraction
                          Layer of output functions for Dj Hardware
                  -------------------
     begin    : 26 Jul 2006
@@ -83,12 +83,12 @@
 #define DIGITAL_OUTPUT_MAX 1
 
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
+    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
   }
 
 }
@@ -125,8 +125,8 @@ namespace HAL
       @return max possible PWM value
   */
   inline uint16_t getMaxPwmDigout ( uint8_t aui8_channel )
-  { 
-//jtm      __HAL::tOutput tOutputstatus; 
+  {
+//jtm      __HAL::tOutput tOutputstatus;
 //jtm      __HAL::get_digout_status (aui8_channel, &tOutputstatus );
 //jtm      return tOutputstatus.wMaxOutput;
     return ( __HAL::DjBios_OutGetMaxTimerCount ( aui8_channel ) );
@@ -147,8 +147,8 @@ namespace HAL
 //    return ( HAL_NO_ERR );
   };
 
-  
-  /** 
+
+  /**
     deliver the actual current of the digital output
       @param aui8_channel channel to check
       @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
@@ -159,7 +159,7 @@ namespace HAL
   };
 
 
-  /** 
+  /**
     deliver the state of a digital output
       This function evaluates the current where possible, otherwise it evaluates
       the measured voltage at the output. The latter interpretation can go wrong
@@ -173,7 +173,7 @@ namespace HAL
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
   */
 //jtm    int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
-  inline int16_t getDigoutDiagnose ( uint8_t aui8_channel, 
+  inline int16_t getDigoutDiagnose ( uint8_t aui8_channel,
                          uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
   {
     switch ( __HAL::DjBios_OutGetStatus(aui8_channel) )
@@ -183,7 +183,7 @@ namespace HAL
       {
         return ( HAL_NO_ERR );
       }
-      
+
       case __HAL::BIOS_OUT_SHORT:
       {
         return ( HAL_DIGOUT_SHORTCUT );
@@ -198,7 +198,7 @@ namespace HAL
       {
         return ( HAL_DIGOUT_OVERTEMP );
       }
-      
+
     } /* end switch() */
 //    return ( HAL_NO_ERR );
   };
@@ -219,7 +219,7 @@ namespace HAL
 
 #endif /* _HAL_DJ1_ACTOR_H_ */
 /***************************************************************************
-              sensor.h - definition of Hardware Abstraction 
+              sensor.h - definition of Hardware Abstraction
                          Layer of output functions for Dj Hardware
                  -------------------
     begin    : 26 Jul 2006
@@ -303,9 +303,9 @@ namespace HAL
 #define DIGITAL_OUTPUT_MAX 1
 
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
     #include <commercial_BIOS/bios_DjBios1/DjBios1.h>
@@ -345,8 +345,8 @@ namespace HAL
       @return max possible PWM value
   */
   inline uint16_t getMaxPwmDigout ( uint8_t aui8_channel )
-  { 
-//jtm      __HAL::tOutput tOutputstatus; 
+  {
+//jtm      __HAL::tOutput tOutputstatus;
 //jtm      __HAL::get_digout_status (aui8_channel, &tOutputstatus );
 //jtm      return tOutputstatus.wMaxOutput;
     return ( __HAL::DjBios_OutGetMaxTimerCount ( aui8_channel ) );
@@ -367,8 +367,8 @@ namespace HAL
 //    return ( HAL_NO_ERR );
   };
 
-  
-  /** 
+
+  /**
     deliver the actual current of the digital output
       @param aui8_channel channel to check
       @return current in [mA] ( if specified channel doesn't support current measurement, -1 is returned )
@@ -379,7 +379,7 @@ namespace HAL
   };
 
 
-  /** 
+  /**
     deliver the state of a digital output
       This function evaluates the current where possible, otherwise it evaluates
       the measured voltage at the output. The latter interpretation can go wrong
@@ -393,7 +393,7 @@ namespace HAL
               HAL_DIGOUT_UNDERVOLT, HAL_DIGOUT_OVERVOLT
   */
 //jtm    int16_t getDigoutDiagnose(uint8_t aui8_channel, uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent);
-  inline int16_t getDigoutDiagnose ( uint8_t aui8_channel, 
+  inline int16_t getDigoutDiagnose ( uint8_t aui8_channel,
                          uint16_t aui16_minCurrent, uint16_t aui16_maxCurrent)
   {
     switch ( __HAL::DjBios_OutGetStatus(aui8_channel) )
@@ -403,7 +403,7 @@ namespace HAL
       {
         return ( HAL_NO_ERR );
       }
-      
+
       case __HAL::BIOS_OUT_SHORT:
       {
         return ( HAL_DIGOUT_SHORTCUT );
@@ -418,7 +418,7 @@ namespace HAL
       {
         return ( HAL_DIGOUT_OVERTEMP );
       }
-      
+
     } /* end switch() */
 //    return ( HAL_NO_ERR );
   };

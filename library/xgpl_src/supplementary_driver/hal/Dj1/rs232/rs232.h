@@ -53,7 +53,7 @@
 
 /* ************************************************************ */
 /** \file
- * 
+ *
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -76,13 +76,13 @@
 #include <IsoAgLib/hal/Dj1/typedef.h>
 #include <IsoAgLib/hal/Dj1/errcodes.h>
 
-namespace __HAL 
+namespace __HAL
 {
-  extern "C" 
+  extern "C"
   {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBiosMVT.h>
-    
+    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
+
   }
 }
 
@@ -111,7 +111,7 @@ namespace HAL
     @param bitSoftwarehandshake true -> use xon/xoff software handshake
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
-  inline int16_t init_rs232 ( uint16_t wBaudrate, uint8_t bMode, uint8_t bStoppbits, 
+  inline int16_t init_rs232 ( uint16_t wBaudrate, uint8_t bMode, uint8_t bStoppbits,
                               bool bitSoftwarehandshake, uint8_t aui8_channel )
   {
     return ( (__HAL::DjBios_UartOpen(aui8_channel, wBaudrate, __HAL::BIOS_UART_8N) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
@@ -123,7 +123,7 @@ namespace HAL
   inline int16_t close_rs232 ( uint8_t aui8_channel )
   {
     return ( (__HAL::DjBios_UartClose(aui8_channel) == __HAL::BIOS_UART_NO_ERR) ? HAL_NO_ERR : HAL_CONFIG_ERR);
-//    __HAL::config_rs232_rx_obj(aui8_channel,0,NULL); 
+//    __HAL::config_rs232_rx_obj(aui8_channel,0,NULL);
 //    return __HAL::config_rs232_tx_obj(aui8_channel,0,NULL,NULL);
   };
 
@@ -156,7 +156,7 @@ namespace HAL
     @return send buffer data byte
   */
   inline int16_t getRs232TxBufCount ( uint8_t aui8_channel )
-  { 
+  {
     return ( __HAL::DjBios_UartTxBufCount(aui8_channel) );
 //    return __HAL::get_rs232_tx_buf_count(aui8_channel);
   };

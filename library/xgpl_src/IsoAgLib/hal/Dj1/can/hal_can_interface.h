@@ -184,6 +184,18 @@ namespace __HAL
 
 
   /**
+    lock a MsgObj to avoid further placement of messages into buffer.
+    @param rui8_busNr number of the BUS to config
+    @param rui8_msgobjNr number of the MsgObj to config
+    @param rb_doLock true==lock(default); false==unlock
+    @return HAL_NO_ERR == no error;
+            HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+            HAL_RANGE_ERR == wrong BUS or MsgObj number
+  */
+  extern int16_t Can_ObjectLock ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
+
+
+  /**
     close a MsgObj
     @param aui8_busNr number of the BUS to config
     @param aui8_msgobjNr number of the MsgObj to config
