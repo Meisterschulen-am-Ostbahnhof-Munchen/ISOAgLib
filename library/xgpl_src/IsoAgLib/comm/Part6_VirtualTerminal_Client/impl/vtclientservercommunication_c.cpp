@@ -1167,7 +1167,7 @@ VtClientServerCommunication_c::processMsg()
 
 #ifdef DEBUG
       if (0xB2 == mc_data.getUint8Data (0))
-        std::cout << "Received response for 'Delete Object Pool' message!" << std::endl;
+        INTERNAL_DEBUG_DEVICE << "Received response for 'Delete Object Pool' message!" << std::endl;
 #endif
       MACRO_setStateDependantOnError (2)
       break;
