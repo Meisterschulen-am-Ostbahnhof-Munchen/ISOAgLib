@@ -328,9 +328,7 @@ DevPropertyHandler_c::processMsg()
         if (data().getUint8Data(1) == 0)
         {
           men_uploadStep = UploadWaitForOPActivateResponse;
-          mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
-                          procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *mpc_data;
+          sendPoolActivatieMsg();
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           #ifdef DEBUG
@@ -575,7 +573,19 @@ DevPropertyHandler_c::timeEvent( void )
         }
 
         // we received structure and localization label, checks were successful, so no pool uploading necessary
-        if (men_uploadState == StateIdle) break;
+        if (men_uploadState == StateIdle)
+        { // send activation message and switch to last state in pool upload process
+          men_uploadState = StateUploadPool;
+          men_uploadStep = UploadWaitForOPActivateResponse;
+          sendPoolActivatieMsg();
+          mui32_uploadTimestamp = HAL::getTime();
+          mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+          #ifdef DEBUG
+            INTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
+          #endif
+
+          break;
+        }
 
         if (mb_receivedStructureLabel)
         {
@@ -1183,6 +1193,14 @@ uint8_t
 DevPropertyHandler_c::getFirstByte ()
 {
   return mpc_devPoolForUpload->p_DevicePool[0];
+}
+
+void
+DevPropertyHandler_c::sendPoolActivatieMsg()
+{
+  mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
+                           procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+  getCanInstance4Comm() << *mpc_data;
 }
 
 };

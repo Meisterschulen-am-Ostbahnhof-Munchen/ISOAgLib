@@ -170,6 +170,9 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     void setTcSourceAddress(uint8_t rtcSourceAddress) { mui8_tcSourceAddress = rtcSourceAddress;};
 
   private:
+
+    void sendPoolActivatieMsg();
+
     uint16_t ui16_currentSendPosition;
     uint16_t ui16_storedSendPosition;
     /** enum type for defining all message types for possible changes in ISO definitions ;) */
