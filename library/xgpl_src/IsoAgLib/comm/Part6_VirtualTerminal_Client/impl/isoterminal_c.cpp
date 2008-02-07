@@ -87,6 +87,14 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 // #include "vttypes.h"
 
+#ifdef DEBUG
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+#endif
+
 namespace __IsoAgLib {
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique IsoTerminal_c singleton instance
