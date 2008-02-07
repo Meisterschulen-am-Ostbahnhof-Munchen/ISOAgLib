@@ -139,7 +139,7 @@
 /** define whether to use SLIST or LIST
  * on win32 systems we'll use the native stl list
  * comparison */
-#ifndef USABLE_LIST
+#ifndef USABLE_SLIST
 #ifndef WIN32
 #ifndef DO_USE_SLIST
 #if defined (__GNUC__) || defined(__TSW_CPP__)
