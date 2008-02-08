@@ -194,8 +194,8 @@
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/driver/can/iident_c.h>
-#include <IsoAgLib/util/icanpkgext_c.h>
-#include <IsoAgLib/util/icancustomer_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
+#include <IsoAgLib/driver/can/icancustomer_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 /* include the central interface header for the communication layer part
