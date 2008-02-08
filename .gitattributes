@@ -2333,7 +2333,6 @@ examples/src/Imi/version.h -text
 examples/src/Tractor/TractorConsole/TractorConsole.cpp -text
 examples/src/Tractor/TractorConsole/TutPrjDescTractorConsole.txt -text
 examples/src/Tractor/TractorConsole/config_TractorConsole.h -text
-examples/src/Tractor/TractorConsole/config_tractorconsole.h -text
 examples/src/Tractor/TractorConsole/version.h -text
 examples/src/Tractor/TractorInternalCan/TutPrjDescTractorInternalCan.txt -text
 examples/src/Tractor/TractorInternalCan/config_TractorInternalCan.h -text
