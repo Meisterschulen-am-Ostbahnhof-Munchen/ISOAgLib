@@ -2336,7 +2336,6 @@ examples/src/Tractor/TractorConsole/config_TractorConsole.h -text
 examples/src/Tractor/TractorConsole/version.h -text
 examples/src/Tractor/TractorInternalCan/TutPrjDescTractorInternalCan.txt -text
 examples/src/Tractor/TractorInternalCan/config_TractorInternalCan.h -text
-examples/src/Tractor/TractorInternalCan/config_tractorinternalcan.h -text
 examples/src/Tractor/TractorInternalCan/version.h -text
 examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso/TutPrjDesc0_0_AddressClaimIso.txt -text
 examples/src/Tutorials/0_NetworkManagement/0_0_AddressClaimIso/config_0_0_AddressClaimIso.h -text
