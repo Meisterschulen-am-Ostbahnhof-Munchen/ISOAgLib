@@ -407,7 +407,7 @@ public:
     */
   void removeMasterState() { if( isMaster() ) { delete mpvec_slaveIsoNames; mpvec_slaveIsoNames = NULL; } }
 
-  int32_t announceTimeStamp() { return mi32_timeCurrentAnnounceStarted; }
+  int32_t announceTimeStamp() { return mi32_timeAnnounceForRemoteItem; }
 #endif
 
   /** convert function */
