@@ -136,11 +136,11 @@
  *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__simulating__simulating
  *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__simulating__sys
  *  </ul>
@@ -183,11 +183,11 @@
  *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__simulating__simulating
  *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__simulating__sys
  *  </ul>

@@ -104,46 +104,46 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpec7_0_SchedulerTask__pc_linux__simulating__simulating .
+ * \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_no_card__rte
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_rte__rte
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_A1__rte
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_pcan__rte
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_no_card__simulating
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_rte__simulating
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_A1__simulating
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_pcan__simulating
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_no_card__sys
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_rte__sys
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_A1__sys
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_linux__msq_server_pcan__sys
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_linux__simulating__rte
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_linux__simulating__simulating
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_linux__simulating__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_no_card__rte
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_rte__rte
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_A1__rte
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_pcan__rte
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_no_card__simulating
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_rte__simulating
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_A1__simulating
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_pcan__simulating
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_no_card__sys
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_rte__sys
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_A1__sys
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__msq_server_pcan__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_no_card__simulating
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_sontheim__simulating
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_no_card__sys
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_sontheim__sys
- *		<li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__sys
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_win32__simulating__simulating
- *    <li> \ref PrjSpec7_0_SchedulerTask__pc_win32__simulating__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_no_card__simulating
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_sontheim__simulating
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_xl__simulating
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_no_card__sys
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_sontheim__sys
+ *		<li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_xl__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpec7_0_SchedulerTask__esx__sys__sys
- *    <li> \ref PrjSpec7_0_SchedulerTask__imi__sys__sys
- *    <li> \ref PrjSpec7_0_SchedulerTask__pm167__sys__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__esx__sys__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__imi__sys__sys
+ *    <li> \ref PrjSpec7_0_SchedulerTaskNoCan__pm167__sys__sys
  *  </ul>
  * </ul>
  *
@@ -178,11 +178,11 @@
  *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__simulating__simulating
  *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__simulating__sys
  *  </ul>
