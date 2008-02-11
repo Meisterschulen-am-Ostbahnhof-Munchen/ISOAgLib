@@ -208,6 +208,8 @@ public:
   /** deliver GPS Course Over Ground [1x10E-4rad] */
   uint16_t getGpsCourseRad10Minus4(void) const { return TimePosGps_c::getGpsCourseRad10Minus4(); }
 
+  /** deliver GPS receive qualitiy */
+  IsoAgLib::IsoGnssMethod_t getGnssMode(void) const { return TimePosGps_c::getGnssMode();}
 
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   /** get the GPS UTC hour value
@@ -232,9 +234,6 @@ public:
 
   /** deliver GPS altitude - [cm] */
   int32_t getGpsAltitudeCm(void) const { return TimePosGps_c::getGpsAltitudeCm();}
-
-  /** deliver GPS receive qualitiy */
-  IsoAgLib::IsoGnssMethod_t getGnssMode(void) const { return TimePosGps_c::getGnssMode();}
 
   /** simply check for some sort of Differential signal */
   bool hasDifferentialPosition() const{ return TimePosGps_c::hasDifferentialPosition();}
