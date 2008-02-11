@@ -6,6 +6,7 @@ admin/includeTaggedFile.pl -text
 admin/log/doxylog_categorizer.pl -text
 admin/testscripts/compileSelectedTutorials.sh -text
 admin/testscripts/compileTutorials.sh -text
+bin/can_server.exe -text
 bin/proc2iso -text
 bin/update_makefile.sh -text
 bin/vt2iso -text
