@@ -111,7 +111,7 @@ IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [] = {
  &iVtObjectUnnamed1
 };
 
-IsoAgLib::iVtObject_c** all_iVtObjectLists [] = {
+IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [] = {
   all_iVtObjects,
   all_iVtObjects0,
   all_iVtObjects1,

@@ -2411,6 +2411,7 @@ examples/src/Tutorials/2_ProcessData/2_8_RemoteReadDataSimpleMeasureIso/version.
 examples/src/Tutorials/2_ProcessData/2_9_RemoteWriteSetpointStdIso/TutPrjDesc2_9_RemoteWriteSetpointStdIso.txt -text
 examples/src/Tutorials/2_ProcessData/2_9_RemoteWriteSetpointStdIso/config_2_9_RemoteWriteSetpointStdIso.h -text
 examples/src/Tutorials/2_ProcessData/2_9_RemoteWriteSetpointStdIso/version.h -text
+examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/IsoTerminalObjectSelection.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/bitmaps/standard/simpleBitmap.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/bitmaps/vario/simpleBitmap240.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-attributes.inc -text
