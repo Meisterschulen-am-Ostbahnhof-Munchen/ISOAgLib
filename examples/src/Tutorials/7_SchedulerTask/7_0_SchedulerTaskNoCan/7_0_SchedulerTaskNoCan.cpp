@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          7_0_SchedulerTask.cpp - tutorial for pure ISO address claim
+                          7_0_SchedulerTaskNoCan.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 7_0_SchedulerTask.cpp
+/** \example 7_0_SchedulerTaskNoCan.cpp
  * This tutorial shall demonstrate the use of ISO<i><sub>AgLib</sub></i> to handle
  * a periodically activity inside a iSchedulerTask_c.
  * When a task which triggers periodically activity is needed, it should be derived from the interface Class
@@ -85,17 +85,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_7_0_SchedulerTask from the directory where the spec file
+ *     conf_7_0_SchedulerTaskNoCan from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_7_0_SchedulerTask</i>
+ *     <i>#> update_makefile.sh conf_7_0_SchedulerTaskNoCan</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd 7_0_SchedulerTask</i> to go to the subdirectory 7_0_SchedulerTask
+ *     <li><i>#>cd 7_0_SchedulerTask</i> to go to the subdirectory 7_0_SchedulerTaskNoCan
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable 7_0_SchedulerTask in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable 7_0_SchedulerTaskNoCan in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-7_0_SchedulerTask.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_7_0_SchedulerTask</i> as global project parameter
+ *     <li>import the file list in filelist__7_0_SchedulerTaskNoCan.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_7_0_SchedulerTaskNoCan</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -148,56 +148,56 @@
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileLists7_0_SchedulerTask__pc_linux__simulating__simulating for needed files
- * ( filelist-7_0_SchedulerTask-doxygen_import.txt ),
- *  with \ref SrcList7_0_SchedulerTask__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrList7_0_SchedulerTask__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__simulating__simulating for needed files
+ * ( filelist__7_0_SchedulerTaskNoCan.txt ),
+ *  with \ref SrcList7_0_SchedulerTaskNoCan__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrList7_0_SchedulerTaskNoCan__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_no_card__rte
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_rte__rte
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_A1__rte
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_pcan__rte
- *    <li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_no_card__simulating
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_rte__simulating
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_A1__simulating
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_pcan__simulating
- *    <li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_no_card__sys
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_rte__sys
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_A1__sys
- *		<li> \ref FileLists7_0_SchedulerTask__pc_linux__msq_server_pcan__sys
- *    <li> \ref FileLists7_0_SchedulerTask__pc_linux__simulating__rte
- *    <li> \ref FileLists7_0_SchedulerTask__pc_linux__simulating__simulating
- *    <li> \ref FileLists7_0_SchedulerTask__pc_linux__simulating__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_no_card__rte
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_rte__rte
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_A1__rte
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_pcan__rte
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_no_card__simulating
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_rte__simulating
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_A1__simulating
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_pcan__simulating
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_no_card__sys
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_rte__sys
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_A1__sys
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__msq_server_pcan__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__simulating__rte
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__simulating__simulating
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_no_card__simulating
- *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_sontheim__simulating
- *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl__simulating
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_no_card__sys
- *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_sontheim__sys
- *		<li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__can_server_sock_vector_xl__sys
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__simulating__simulating
- *    <li> \ref FileLists7_0_SchedulerTask__pc_win32__simulating__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_no_card__simulating
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_sontheim__simulating
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_xl__simulating
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_no_card__sys
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_sontheim__sys
+ *		<li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__can_server_sock_vector_xl__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__simulating__simulating
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileLists7_0_SchedulerTask__esx__sys__sys
- *    <li> \ref FileLists7_0_SchedulerTask__imi__sys__sys
- *    <li> \ref FileLists7_0_SchedulerTask__pm167__sys__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__esx__sys__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__imi__sys__sys
+ *    <li> \ref FileLists7_0_SchedulerTaskNoCan__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_7_0_SchedulerTask ( see also at \ref PrjConfig7_0_SchedulerTask ).
+ * config_7_0_SchedulerTaskNoCan ( see also at \ref PrjConfig7_0_SchedulerTaskNoCan ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -207,14 +207,14 @@
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_7_0_SchedulerTask.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_7_0_SchedulerTaskNoCan.h
 #endif
 
 // include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>

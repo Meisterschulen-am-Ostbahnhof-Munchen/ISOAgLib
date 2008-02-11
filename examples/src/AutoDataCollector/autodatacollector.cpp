@@ -103,17 +103,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_autodatacollector from the directory where the spec file
+ *     conf_AutoDataCollector from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_autodatacollector</i>
+ *     <i>#> update_makefile.sh conf_AutoDataCollector</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd autodatacollector</i> to go to the subdirectory autodatacollector
+ *     <li><i>#>cd AutoDataCollector</i> to go to the subdirectory AutoDataCollector
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable autodatacollector in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable AutoDataCollector in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-autodatacollector.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_autodatacollector</i> as global project parameter
+ *     <li>import the file list in filelist__AutoDataCollector.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_AutoDataCollector</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -122,74 +122,74 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpecautodatacollector__pc_linux__simulating__simulating .
+ * \ref PrjSpecAutoDataCollector__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpecautodatacollector__pc_linux__msq_server_rte__rte
- *    <li> \ref PrjSpecautodatacollector__pc_linux__msq_server_rte__simulating
- *    <li> \ref PrjSpecautodatacollector__pc_linux__msq_server_rte__sys
- *    <li> \ref PrjSpecautodatacollector__pc_linux__simulating__rte
- *    <li> \ref PrjSpecautodatacollector__pc_linux__simulating__simulating
- *    <li> \ref PrjSpecautodatacollector__pc_linux__simulating__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pc_linux__msq_server_rte__rte
+ *    <li> \ref PrjSpecAutoDataCollector__pc_linux__msq_server_rte__simulating
+ *    <li> \ref PrjSpecAutoDataCollector__pc_linux__msq_server_rte__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pc_linux__simulating__rte
+ *    <li> \ref PrjSpecAutoDataCollector__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpecAutoDataCollector__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpecautodatacollector__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpecautodatacollector__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
- *    <li> \ref PrjSpecautodatacollector__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpecautodatacollector__pc_win32__can_server_sock_vector_xl_drv_lib__sys
- *    <li> \ref PrjSpecautodatacollector__pc_win32__simulating__simulating
- *    <li> \ref PrjSpecautodatacollector__pc_win32__simulating__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_xl__simulating
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_xl__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__simulating__simulating
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpecautodatacollector__esx__sys__sys
- *    <li> \ref PrjSpecautodatacollector__imi__sys__sys
- *    <li> \ref PrjSpecautodatacollector__pm167__sys__sys
+ *    <li> \ref PrjSpecAutoDataCollector__esx__sys__sys
+ *    <li> \ref PrjSpecAutoDataCollector__imi__sys__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileListsautodatacollector__pc_linux__simulating__simulating for needed files
- * ( filelist-autodatacollector-doxygen_import.txt ),
- *  with \ref SrcListautodatacollector__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrListautodatacollector__pc_linux__simulating__simulating containing the needed headers.
+ * See \ref FileListsAutoDataCollector__pc_linux__simulating__simulating for needed files
+ * ( filelist__AutoDataCollector.txt ),
+ *  with \ref SrcListAutoDataCollector__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrListAutoDataCollector__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileListsautodatacollector__pc_linux__msq_server_rte__rte
- *    <li> \ref FileListsautodatacollector__pc_linux__msq_server_rte__simulating
- *    <li> \ref FileListsautodatacollector__pc_linux__msq_server_rte__sys
- *    <li> \ref FileListsautodatacollector__pc_linux__simulating__rte
- *    <li> \ref FileListsautodatacollector__pc_linux__simulating__simulating
- *    <li> \ref FileListsautodatacollector__pc_linux__simulating__sys
+ *    <li> \ref FileListsAutoDataCollector__pc_linux__msq_server_rte__rte
+ *    <li> \ref FileListsAutoDataCollector__pc_linux__msq_server_rte__simulating
+ *    <li> \ref FileListsAutoDataCollector__pc_linux__msq_server_rte__sys
+ *    <li> \ref FileListsAutoDataCollector__pc_linux__simulating__rte
+ *    <li> \ref FileListsAutoDataCollector__pc_linux__simulating__simulating
+ *    <li> \ref FileListsAutoDataCollector__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileListsautodatacollector__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileListsautodatacollector__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
- *    <li> \ref FileListsautodatacollector__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileListsautodatacollector__pc_win32__can_server_sock_vector_xl_drv_lib__sys
- *    <li> \ref FileListsautodatacollector__pc_win32__simulating__simulating
- *    <li> \ref FileListsautodatacollector__pc_win32__simulating__sys
+ *    <li> \ref FileListsAutoDataCollector__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref FileListsAutoDataCollector__pc_win32__can_server_sock_vector_xl__simulating
+ *    <li> \ref FileListsAutoDataCollector__pc_win32__can_server_sock_vector_canlib__sys
+ *    <li> \ref FileListsAutoDataCollector__pc_win32__can_server_sock_vector_xl__sys
+ *    <li> \ref FileListsAutoDataCollector__pc_win32__simulating__simulating
+ *    <li> \ref FileListsAutoDataCollector__pc_win32__simulating__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileListsautodatacollector__esx__sys__sys
- *    <li> \ref FileListsautodatacollector__imi__sys__sys
- *    <li> \ref FileListsautodatacollector__pm167__sys__sys
+ *    <li> \ref FileListsAutoDataCollector__esx__sys__sys
+ *    <li> \ref FileListsAutoDataCollector__imi__sys__sys
+ *    <li> \ref FileListsAutoDataCollector__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_autodatacollector ( see also at \ref PrjConfigautodatacollector ).
+ * config_AutoDataCollector ( see also at \ref PrjConfigAutoDataCollector ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -199,7 +199,7 @@
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_autodatacollector.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_AutoDataCollector.h
 #endif
 
 #include <list>

@@ -130,9 +130,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__simulating__simulating
  *    <li> \ref PrjSpec3_3_VirtualTerminalPhase3__pc_win32__simulating__sys
  *  </ul>
@@ -164,9 +164,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__simulating__simulating
  *    <li> \ref FileLists3_3_VirtualTerminalPhase3__pc_win32__simulating__sys
  *  </ul>

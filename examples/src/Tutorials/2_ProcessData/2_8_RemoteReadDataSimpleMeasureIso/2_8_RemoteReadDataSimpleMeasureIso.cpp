@@ -105,7 +105,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable 2_8_RemoteReadDataSimpleMeasureIso in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-2_8_RemoteReadDataSimpleMeasureIso.txt into the IDE of your choice
+ *     <li>import the file list in filelist__2_8_RemoteReadDataSimpleMeasureIso.txt into the IDE of your choice
  *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_2_8_RemoteReadDataSimpleMeasureIso</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -142,11 +142,11 @@
  *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__simulating
  *    <li> \ref PrjSpec2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__sys
  *  </ul>
@@ -160,7 +160,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__simulating for needed files
- * ( filelist-2_8_RemoteReadDataSimpleMeasureIso-doxygen_import.txt ),
+ * ( filelist__2_8_RemoteReadDataSimpleMeasureIso.txt ),
  *  with \ref SrcList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrList2_8_RemoteReadDataSimpleMeasureIso__pc_linux__simulating__simulating containing the needed headers.
  *
@@ -189,11 +189,11 @@
  *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__simulating
  *    <li> \ref FileLists2_8_RemoteReadDataSimpleMeasureIso__pc_win32__simulating__sys
  *  </ul>

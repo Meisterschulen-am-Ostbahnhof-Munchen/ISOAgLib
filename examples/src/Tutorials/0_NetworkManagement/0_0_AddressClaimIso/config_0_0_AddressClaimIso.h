@@ -76,6 +76,9 @@
 /// select reaction on powerdown detection - can be manually overridden in project config file
 // #define CONFIG_DEFAULT_POWERDOWN_STRATEGY IsoAgLib::PowerdownByExplcitCall
 
+/// define consolidation time for CAN_EN loss detection - can be manually overridden in project config file
+// #define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC 1000
+
 /// set buffer size for CAN send
 // #define CONFIG_CAN_SEND_BUFFER_SIZE 20
 
@@ -184,6 +187,3 @@
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
-
-/// define consolidation time for CAN_EN loss detection - can be manually overridden in project config file
-#define CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC 4711

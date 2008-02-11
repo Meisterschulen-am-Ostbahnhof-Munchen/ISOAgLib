@@ -96,7 +96,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable 3_0_VirtualTerminalIso in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-3_0_VirtualTerminalIso.txt into the IDE of your choice
+ *     <li>import the file list in filelist__3_0_VirtualTerminalIso.txt into the IDE of your choice
  *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_3_0_VirtualTerminalIso</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -133,11 +133,11 @@
  *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__simulating__simulating
  *    <li> \ref PrjSpec3_0_VirtualTerminalIso__pc_win32__simulating__sys
  *  </ul>
@@ -151,7 +151,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileLists3_0_VirtualTerminalIso__pc_linux__simulating__simulating for needed files
- * ( filelist-3_0_VirtualTerminalIso-doxygen_import.txt ),
+ * ( filelist__3_0_VirtualTerminalIso.txt ),
  *  with \ref SrcList3_0_VirtualTerminalIso__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrList3_0_VirtualTerminalIso__pc_linux__simulating__simulating containing the needed headers.
  *
@@ -180,11 +180,11 @@
  *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__simulating__simulating
  *    <li> \ref FileLists3_0_VirtualTerminalIso__pc_win32__simulating__sys
  *  </ul>

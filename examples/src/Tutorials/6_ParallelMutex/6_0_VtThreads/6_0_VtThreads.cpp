@@ -104,7 +104,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable 6_0_VtThreads in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-6_0_VtThreads.txt into the IDE of your choice
+ *     <li>import the file list in filelist__6_0_VtThreads.txt into the IDE of your choice
  *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -137,11 +137,11 @@
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__simulating
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_xl__simulating
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__sys
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_xl__sys
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__simulating__simulating
  *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__simulating__sys
  * - Configuration Setupts for some embedded targets:
@@ -151,7 +151,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating for needed files
- * ( filelist-6_0_VtThreads-doxygen_import.txt ),
+ * ( filelist__6_0_VtThreads.txt ),
  *  with \ref SrcList6_0_VtThreads__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrList6_0_VtThreads__pc_linux__simulating__simulating containing the needed headers.
  *
@@ -165,28 +165,28 @@
  *		<li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_rte__simulating
  *		<li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_A1__simulating
  *		<li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_pcan__simulating
- *    - \ref FileLists6_0_VtThreads__pc_linux__msq_server_no_card__sys
+ *    <li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_no_card__sys
  *		<li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_rte__sys
  *		<li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_A1__sys
  *		<li> \ref FileLists6_0_VtThreads__pc_linux__msq_server_pcan__sys
- *    - \ref FileLists6_0_VtThreads__pc_linux__simulating__rte
- *    - \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating
- *    - \ref FileLists6_0_VtThreads__pc_linux__simulating__sys
+ *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__rte
+ *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating
+ *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__sys
  * - Configuration Setups for Win32 on PC:
  *    - \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_no_card__simulating
- *		<li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_sontheim__simulating
- *		<li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__simulating
- *    - \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
- *    - \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_no_card__sys
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_sontheim__simulating
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__simulating
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_xl__simulating
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__sys
- *    - \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_xl_drv_lib__sys
- *    - \ref FileLists6_0_VtThreads__pc_win32__simulating__simulating
- *    - \ref FileLists6_0_VtThreads__pc_win32__simulating__sys
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_xl__sys
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__simulating__simulating
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__simulating__sys
  * - Configuration Setupts for some embedded targets:
- *    - \ref FileLists6_0_VtThreads__esx__sys__sys
- *    - \ref FileLists6_0_VtThreads__imi__sys__sys
- *    - \ref FileLists6_0_VtThreads__pm167__sys__sys
+ *    <li> \ref FileLists6_0_VtThreads__esx__sys__sys
+ *    <li> \ref FileLists6_0_VtThreads__imi__sys__sys
+ *    <li> \ref FileLists6_0_VtThreads__pm167__sys__sys
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h

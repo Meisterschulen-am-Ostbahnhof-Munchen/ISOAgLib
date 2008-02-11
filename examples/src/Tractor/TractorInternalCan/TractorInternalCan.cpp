@@ -90,7 +90,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable TractorInternalCan in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-TractorInternalCan.txt into the IDE of your choice
+ *     <li>import the file list in filelist__TractorInternalCan.txt into the IDE of your choice
  *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_TractorInternalCan</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -116,9 +116,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *    <li> \ref PrjSpecTractorInternalCan__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpecTractorInternalCan__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpecTractorInternalCan__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpecTractorInternalCan__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpecTractorInternalCan__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpecTractorInternalCan__pc_win32__simulating__simulating
  *    <li> \ref PrjSpecTractorInternalCan__pc_win32__simulating__sys
  *  </ul>
@@ -132,7 +132,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileListsTractorInternalCan__pc_linux__simulating__simulating for needed files
- * ( filelist-TractorInternalCan-doxygen_import.txt ),
+ * ( filelist__TractorInternalCan.txt ),
  *  with \ref SrcListTractorInternalCan__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrListTractorInternalCan__pc_linux__simulating__simulating containing the needed headers.
  *
@@ -150,9 +150,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *    <li> \ref FileListsTractorInternalCan__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileListsTractorInternalCan__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileListsTractorInternalCan__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileListsTractorInternalCan__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileListsTractorInternalCan__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileListsTractorInternalCan__pc_win32__simulating__simulating
  *    <li> \ref FileListsTractorInternalCan__pc_win32__simulating__sys
  *  </ul>

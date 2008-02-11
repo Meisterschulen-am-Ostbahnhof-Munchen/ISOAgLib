@@ -99,7 +99,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable 7_2_SchedulerTask in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-7_2_SchedulerTask.txt into the IDE of your choice
+ *     <li>import the file list in filelist__7_2_SchedulerTask.txt into the IDE of your choice
  *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_7_2_SchedulerTask</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -154,7 +154,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileLists7_2_SchedulerTask__pc_linux__simulating__simulating for needed files
- * ( filelist-7_2_SchedulerTask-doxygen_import.txt ),
+ * ( filelist__7_2_SchedulerTask.txt ),
  *  with \ref SrcList7_2_SchedulerTask__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrList7_2_SchedulerTask__pc_linux__simulating__simulating containing the needed headers.
  *

@@ -100,7 +100,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable 1_4_WriteFlexibleIso in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-1_4_WriteFlexibleIso.txt into the IDE of your choice
+ *     <li>import the file list in filelist__1_4_WriteFlexibleIso.txt into the IDE of your choice
  *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_1_4_WriteFlexibleIso</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -137,11 +137,11 @@
  *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__simulating__simulating
  *    <li> \ref PrjSpec1_4_WriteFlexibleIso__pc_win32__simulating__sys
  *  </ul>
@@ -155,7 +155,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileLists1_4_WriteFlexibleIso__pc_linux__simulating__simulating for needed files
- * ( filelist-1_4_WriteFlexibleIso-doxygen_import.txt ),
+ * ( filelist__1_4_WriteFlexibleIso.txt ),
  *  with \ref SrcList1_4_WriteFlexibleIso__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrList1_4_WriteFlexibleIso__pc_linux__simulating__simulating containing the needed headers.
  *
@@ -184,11 +184,11 @@
  *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_no_card__simulating
  *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_sontheim__simulating
  *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_no_card__sys
  *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_sontheim__sys
  *		<li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__simulating__simulating
  *    <li> \ref FileLists1_4_WriteFlexibleIso__pc_win32__simulating__sys
  *  </ul>

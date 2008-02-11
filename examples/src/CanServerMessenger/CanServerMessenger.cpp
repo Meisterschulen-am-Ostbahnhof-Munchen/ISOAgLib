@@ -13,7 +13,7 @@
  *     <li>GNU make will then use the fresh created Makefile to create the executable CanServerMessenger in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist-CanServerMessenger.txt into the IDE of your choice
+ *     <li>import the file list in filelist__CanServerMessenger.txt into the IDE of your choice
  *     <li>set <tt>-DPRJ_USE_AUTOGEN_CONFIG=config_CanServerMessenger</tt> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
@@ -39,9 +39,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *    <li> \ref PrjSpecCanServerMessenger__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpecCanServerMessenger__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref PrjSpecCanServerMessenger__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpecCanServerMessenger__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref PrjSpecCanServerMessenger__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref PrjSpecCanServerMessenger__pc_win32__simulating__simulating
  *    <li> \ref PrjSpecCanServerMessenger__pc_win32__simulating__sys
  *  </ul>
@@ -55,7 +55,7 @@
  *
  * <H1>Resulting Project File List</H1>
  * See \ref FileListsCanServerMessenger__pc_linux__simulating__simulating for needed files
- * ( filelist-CanServerMessenger-doxygen_import.txt ),
+ * ( filelist__CanServerMessenger.txt ),
  *  with \ref SrcListCanServerMessenger__pc_linux__simulating__simulating containing the needed sources
  *  and with \ref HdrListCanServerMessenger__pc_linux__simulating__simulating containing the needed headers.
  *
@@ -73,9 +73,9 @@
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
  *    <li> \ref FileListsCanServerMessenger__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileListsCanServerMessenger__pc_win32__can_server_sock_vector_xl_drv_lib__simulating
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__can_server_sock_vector_xl__simulating
  *    <li> \ref FileListsCanServerMessenger__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileListsCanServerMessenger__pc_win32__can_server_sock_vector_xl_drv_lib__sys
+ *    <li> \ref FileListsCanServerMessenger__pc_win32__can_server_sock_vector_xl__sys
  *    <li> \ref FileListsCanServerMessenger__pc_win32__simulating__simulating
  *    <li> \ref FileListsCanServerMessenger__pc_win32__simulating__sys
  *  </ul>
