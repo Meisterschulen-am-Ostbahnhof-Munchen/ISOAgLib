@@ -306,7 +306,8 @@ void handleRemoteApplicationRate( uint32_t aui32_applicationRate )
 
 const uint8_t cui8_indexWorkState = 0;
 const uint8_t cui8_indexApplicationRate = 1;
-IsoAgLib::iProcDataRemote_c arr_procData[2];
+const uint8_t cui8_indexDefaultDataLogging = 2;
+IsoAgLib::iProcDataRemote_c arr_procData[3];
 
 class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 {
@@ -414,11 +415,6 @@ int main()
   // if ISOName conflicts forces change of device class instance, the
   // IsoAgLib can change the c_myISOName val through the pointer to c_myISOName
   //  ISO:
-#if 0
-  IsoAgLib::iIdentItem_c c_myIdent(c_myISOName,
-    b_selfConf, ui8_indGroup, b_func, ui16_manufCode,
-    ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst);
-#endif
   IsoAgLib::iIdentItem_c c_myIdent(ui8_indGroup, c_myISOName.devClass(), c_myISOName.devClassInst(),
     b_func, ui16_manufCode, ui32_serNo, b_wantedSa, 0xFFFF, b_funcInst, b_ecuInst, b_selfConf );
 
@@ -443,8 +439,15 @@ int main()
     {0xFFFF, false, ProcessCmd_c::noValue}
   };
 
+  const ElementDdi_s s_defaultDataLoggingElementDDI[] =
+  {
+    // DDI 0xDFFF,
+    {0xDFFF, true, ProcessCmd_c::exactValue},
+    // termination entry
+    {0xFFFF, false, ProcessCmd_c::noValue}
+  };
+
 #ifdef USE_PROC_HANDLER
-  // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   arr_procData[cui8_indexWorkState].init(
                                          s_workStateElementDDI,
                                          0, // device element number
@@ -454,7 +457,6 @@ int main()
   #endif
                                          &c_myMeasurementHandler);
 
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   arr_procData[cui8_indexApplicationRate].init(
                                                s_applicationRateElementDDI,
                                                0, // device element number
@@ -464,8 +466,16 @@ int main()
   #endif
                                                &c_myMeasurementHandler);
 
+  arr_procData[cui8_indexDefaultDataLogging].init(
+                                               s_defaultDataLoggingElementDDI,
+                                               0, // device element number
+                                               c_remoteDeviceType, &c_myISOName,
+  #ifdef USE_EEPROM_IO
+                                               0xFFFF,
+  #endif
+                                               &c_myMeasurementHandler);
+
 #else
-  // workstate of MiniVegN (LIS=0, DEVCLASS=2, WERT=1, INST=0)
   IsoAgLib::iProcDataRemote_c c_workState(
                                          s_workStateElementDDI,
                                          0,
@@ -475,7 +485,6 @@ int main()
   #endif
                                          );
 
-  // WERT == 5 -> device specific material flow information (mostly 5/0 -> distributed/harvested amount per area )
   IsoAgLib::iProcDataRemote_c c_applicationRate(
                                                 s_applicationRateElementDDI,
                                                 0,
@@ -484,6 +493,16 @@ int main()
                                                 ,0xFFFF
   #endif
                                                 );
+
+  IsoAgLib::iProcDataRemote_c c_applicationRateElementDDI(
+                                                s_applicationRateElementDDI,
+                                                0,
+                                                c_remoteDeviceType, &c_myISOName
+  #ifdef USE_EEPROM_IO
+                                                ,0xFFFF
+  #endif
+                                                );
+
 
   int32_t i32_lastWorkStateReceive = 0;
   int32_t i32_lastApplicationRateReceive = 0;
@@ -654,6 +673,18 @@ int main()
       {
         arr_procData[cui8_indexWorkState].prog().stop();
         LOG_INFO << "\r\nstopping measurement for DDI 141" << "\r\n";
+      }
+
+      if (ui16_cnt == 1500)
+      {
+        arr_procData[cui8_indexDefaultDataLogging].prog().val(true);
+        LOG_INFO << "\r\nstart default data loggin" << "\r\n";
+      }
+
+      if (ui16_cnt == 1600)
+      {
+        arr_procData[cui8_indexDefaultDataLogging].prog().resetVal(0);
+        LOG_INFO << "\r\nstopping default data logging" << "\r\n";
       }
 
 #endif

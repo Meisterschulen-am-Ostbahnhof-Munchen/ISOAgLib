@@ -269,6 +269,14 @@
   #include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 #endif
 
+#if defined(WIN32) || defined(SYSTEM_PC)
+  #define LOG_INFO STL_NAMESPACE::cout
+  #include <iostream>
+#else
+  #define LOG_INFO getIrs232Instance()
+#endif
+#include <iostream>
+
 #ifdef SYSTEM_PC
   #ifdef WIN32
     #include <windows.h>
@@ -333,7 +341,8 @@ uint8_t getCurrentApplicationRate( void )
 
 const uint8_t cui8_indexWorkState = 0;
 const uint8_t cui8_indexApplicationRate = 1;
-IsoAgLib::iProcDataLocal_c arr_procData[2];
+const uint8_t cui8_indexDefaultDataLogging = 2;
+IsoAgLib::iProcDataLocal_c arr_procData[3];
 
 class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
 {
@@ -351,7 +360,19 @@ class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
                                     int32_t ai32_val,
                                     const IsoAgLib::iIsoName_c& ac_setpointSender,
                                     bool ab_change);
+
+
+    //! This handler function is called if a remote process data instances sends a request value command for DDI 0xDFFF (default data logging DDI)
+    //! can be used to start measurement programms in local process data instances
+    //! Parameter:
+    //! @param ac_src: encapsulated pointer to triggered process data variable
+    //! @param ai32_val: data value in the request value command
+    //! @param ac_callerIsoName: iso name of the sender
+    virtual bool processDefaultLoggingStart(IsoAgLib::EventSource_c ac_src,
+                                            int32_t ai32_val,
+                                            const IsoAgLib::iIsoName_c& ac_callerIsoName);
 };
+
 
 bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c ac_src, int32_t ai32_val, const IsoAgLib::iIsoName_c& ac_setpointSender, bool ab_change)
 {
@@ -400,6 +421,17 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c ac_src, int
   return true;
 }
 
+
+bool MyProcDataHandler_c::processDefaultLoggingStart(IsoAgLib::EventSource_c /* ac_src */, int32_t /* ai32_val */, const IsoAgLib::iIsoName_c& /* ac_callerIsoName */)
+{
+  if (arr_procData[cui8_indexApplicationRate].startDataLogging(IsoAgLib::Proc_c::TimeProp, 1000))
+    LOG_INFO << "starting measurement application rate success!" <<  "\r\n";
+  else
+    LOG_INFO << "starting measurement application rate failure!" <<  "\r\n";
+  return true;
+}
+
+
 // create one class instance for the handler
 MyProcDataHandler_c c_mySetpointHandler;
 #endif
@@ -446,6 +478,14 @@ int main()
                                                0xFFFF,
   #endif
                                                &c_mySetpointHandler);
+  arr_procData[cui8_indexDefaultDataLogging].init(
+                                                  s_defaultLoggingElementDDI,
+                                                  0,
+                                                  c_myIdent.isoName(), &(c_myIdent.isoName()), false /*ab_cumulativeValue */,
+  #ifdef USE_EEPROM_IO
+                                                  0xFFFF,
+  #endif
+                                                  &c_mySetpointHandler);
 #endif
 
   /** IMPORTANT:
