@@ -240,7 +240,7 @@ The \isoaglib was initially created by <a href="mailto:Achim.Spangler_at_osb-ag:
 working for the company <b><a href="http://www.osb-ag.de">OSB AG</a></b>. This company started business at the beginning of 2003, and has
 already more than 160 engineers working in the five locations Munich, Stuttgart, Krefeld, Hamburg, Frankfurt, Köln and Berlin (all in Germany; <b>state November 2007</b>).<br>
 The main business focus is project support at the customer location in software, electronic and mechanical engineering.<br>
-Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:
+Some of the <b><a href="http://www.osb-ag.de">OSB AG</a></b> customers are:<br>
 <a href="http://www.agcocorp.com/">AGCO GmbH</a>/<a href="http://www.fendt.com/">Fendt</a>,<!-->AL.systems GmbH,-->
 <a href="http://www.aoa-gauting.de/">Apparatebau Gauting GmbH</a>,<!--<a href="http://www.machines.averydennison.com/">Avery Dennison Deutschland GmbH</a>,
 AZH GmbH,-->
