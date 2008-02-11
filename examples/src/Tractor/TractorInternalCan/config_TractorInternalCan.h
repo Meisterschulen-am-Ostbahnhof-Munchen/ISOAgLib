@@ -12,9 +12,9 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_PC
-#define SYSTEM_PC
-#endif // SYSTEM_PC
+#ifndef SYSTEM_PM167
+#define SYSTEM_PM167
+#endif // SYSTEM_PM167
 #define PRJ_USE_AUTOGEN_CONFIG config_TractorInternalCan.h
 
 
@@ -39,12 +39,6 @@
 // #define USE_PCAN_LIB
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-  #define SYSTEM_WITH_ENHANCED_CAN_HAL
-
-#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
 #ifndef USE_TRACTOR_GENERAL 
 	#define USE_TRACTOR_GENERAL 

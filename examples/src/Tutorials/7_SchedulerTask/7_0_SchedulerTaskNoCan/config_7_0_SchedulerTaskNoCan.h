@@ -12,9 +12,9 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_ESX
-#define SYSTEM_ESX
-#endif // SYSTEM_ESX
+#ifndef SYSTEM_PM167
+#define SYSTEM_PM167
+#endif // SYSTEM_PM167
 #define PRJ_USE_AUTOGEN_CONFIG config_7_0_SchedulerTaskNoCan.h
 
 

@@ -12,9 +12,9 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_PC
-#define SYSTEM_PC
-#endif // SYSTEM_PC
+#ifndef SYSTEM_PM167
+#define SYSTEM_PM167
+#endif // SYSTEM_PM167
 #define PRJ_USE_AUTOGEN_CONFIG config_3_3_VirtualTerminalPhase3.h
 
 
@@ -39,12 +39,6 @@
 // #define USE_PCAN_LIB
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-  #define SYSTEM_WITH_ENHANCED_CAN_HAL
-
-#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions
