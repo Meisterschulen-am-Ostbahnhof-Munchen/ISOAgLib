@@ -1,4 +1,4 @@
-/** \page LgplSrcOverview License Parts Structural Overview
+/** \page LgplSrcOverview GPL License Parts Structural Overview
 The core components of the \isoaglib which are licensed under the conditions of the LGPL license of the
  <a href="http://www.fsf.org">Free Software Foundation</a> are placed in the directory
  <tt>xgpl_src</tt> . Please note that the license requires each user to provide

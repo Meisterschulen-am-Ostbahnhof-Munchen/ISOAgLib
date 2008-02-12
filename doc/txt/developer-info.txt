@@ -86,24 +86,24 @@ understand some parts after having read the provided documentation.
 \subsection DocOverview Documentation Overview Pages
 Information on the communication services or the hardware abstraction layer can be found on the specific detail and overview pages below:
 
-- \ref LgplSrcOverview "GPL licensed parts overview"
+- \ref LgplSrcOverview
 
 - Communication Services
-    - \ref CommOverPage "Communication Services overview"
-    - \ref SchedulerPage "Central Scheduler"
-    - \ref NetworkMgmtPage "Network Management (i.e. monitor lists)"
-    - \ref AppLayerPage "Base Data handling"
-    - \ref ProcDataPage "Process Data handling"
-    - \ref DataLinkPage "Data Stream Messages with multi packets"
-    - \ref XMLspec "Interaction with ISO 11783 Virtual Terminal"
+    - \ref CommOverPage
+    - \ref SchedulerPage
+    - \ref NetworkMgmtPage (i.e. monitor lists)
+    - \ref AppLayerPage
+    - \ref ProcDataPage
+    - \ref DataLinkPage
+    - \ref XMLspec
+    - \ref DefaultDataLogging
 
 - Hardware Abstraction Layer
     - \ref MainHalPage "HAL for main parts"
     - \ref SuppHalPage "HAL for supplementary parts"
 
 \subsection GettingHelp Getting Help
-Please send any questions that you can not solve yourself (using the
-available documentation) to the
+Please send any questions that you can not solve yourself (using the available documentation) to the
 <a href="http://linux90.idvnet.de/pipermail/isoaglib/">email list of \isoaglib </a>.
 The maintainers of the library who subscribe to the list can try to help you out.
 Please <a href="http://linux90.idvnet.de/cgi-bin/mailman/listinfo/isoaglib">subscribe to the email list</a>

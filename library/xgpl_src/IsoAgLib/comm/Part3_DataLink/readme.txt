@@ -1,5 +1,6 @@
 /*!
-\page DataLinkPage Send of data streams of more than 8 Data Byte with Multi-Message Protocol
+\page DataLinkPage Data Stream Messages with multi packets
+
 The ISO 11783 protocol uses the protocol extension to send data streams (units)
 of more than 8 Data Bytes, which don't fit into one CAN packet.
 This is especially important for the interaction with graphical user interfaces - terminals.

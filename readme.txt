@@ -125,6 +125,7 @@ The \isoaglib provides the following features to facilitate the development of I
 - <strong>Project specific feature selection</strong>
 - Source code maintenance and extension with enforced <strong>strict modular design</strong>
 - Design orientated to the requirements of networks with more then two devices
+- IsoAgLib also supports the \ref DefaultDataLogging of the task controller specification.
 
 <!--Brad Cox developed a tool for his company, that is able to convert the project files of the WTK mask generator to the XML definition. Please contact Achim Spangler if you are interested in this tool for your own use, as Brad Cox indicated already, that he might be willing to provide this undest some conditions.
 But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to control the automatic runtime adaptation of the single core mask pool to the different terminal properties (e.g. font size dependent spacing).

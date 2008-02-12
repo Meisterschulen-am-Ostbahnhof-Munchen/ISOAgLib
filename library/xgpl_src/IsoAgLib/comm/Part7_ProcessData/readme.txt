@@ -1,4 +1,4 @@
-/*! \page ProcDataPage Process Data Management
+/*! \page ProcDataPage Process Data handling
 The \isoaglib provides a very capable management of Process Data as standard mechanism
 (IsoAgLib::iProcDataLocal_c and IsoAgLib::iProcDataRemote_c).
 But as this might cause a big overhead for some applications, which for example only want to
@@ -375,5 +375,42 @@ IsoAgLib::iProcDataLocalSimpleSetpoint_c c_myFertilizerAmount;
 // init process data with pointer to handler, which shall be called upon setpoint receive
 c_myFertilizerAmount.init( 0, 0, myIsoName, &myIsoName, false, 0x123A, &c_setpointHandler );
 \endcode
+
+\subsection DefaultDataLoggingExample Example for default data logging
+A Process Data Variable called RequestDefaultProcessData (<tt>DDI = 0xDFFF</tt>) can be used to start and stop 
+default data logging (see section 6.6.2 in the task controller specification). 
+The implements have to send the values for their default measurement method.
+
+The default data logging is started by a request value command and stopped by a set value command with value 0. To get the request value command on <tt>DDI 0xDFFF</tt> a callback can be implemented.
+In processDefaultLoggingStart() the appropriate measurement programms can be started via startDataLogging().
+
+Extract from the 2.4 tutorial:
+\code
+class MyProcDataHandler_c : public IsoAgLib::ProcessDataChangeHandler_c
+{
+    //! This handler function is called if a remote process data instances sends a request value command for DDI 0xDFFF (default data logging DDI)
+    //! can be used to start measurement programms in local process data instances
+    //! Parameter:
+    //! @param ac_src: encapsulated pointer to triggered process data variable
+    //! @param ai32_val: data value in the request value command
+    //! @param ac_callerIsoName: iso name of the sender
+    bool processDefaultLoggingStart(IsoAgLib::EventSource_c ac_src,
+                                    int32_t ai32_val,
+                                    const IsoAgLib::iIsoName_c& ac_callerIsoName);
+};
+
+bool MyProcDataHandler_c::processDefaultLoggingStart(IsoAgLib::EventSource_c /* ac_src */, int32_t /* ai32_val */, const IsoAgLib::iIsoName_c& /* ac_callerIsoName */)
+{
+  if (arr_procData[cui8_indexApplicationRate].startDataLogging(IsoAgLib::Proc_c::TimeProp, 1000))
+    LOG_INFO << "starting measurement application rate success!" << "\r\n";
+  else
+    LOG_INFO << "starting measurement application rate failure!" << "\r\n";
+  return true;
+}
+\endcode
+
+See the 2.7 tutorial for the sending of the request/set value commands.
+
+See also \ref DefaultDataLogging. 
 
 */

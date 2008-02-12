@@ -272,4 +272,16 @@ Value ranges are defined in section \ref XMLReference "Reference for correct att
 <tr><td> false/no </td></tr>
 </table>
 
+
+\section DefaultDataLogging Default data logging
+IsoAgLib supports the default data logging mechanism, described in section 6.6.2 in the task controller specification. 
+To enable default data logging in your application add the following deviceprocessdata to your device description XML file:
+\code
+<deviceprocessdata designator="default logging" ddi="0xDFFF" properties="defaultset" trigger_methods="timeinterval" 
+                   proc_program_name="defaultLogging" cumulative_value="false">
+    <deviceprocessdatacombination ddi="0xDFFF" command_type="exact" is_setpoint="false" />
+</deviceprocessdata>
+\endcode
+
+See also \ref DefaultDataLoggingExample.
 */
