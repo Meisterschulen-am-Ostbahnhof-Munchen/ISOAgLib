@@ -350,6 +350,8 @@ void init (const char* xmlFile)
   char FileName[200];
 #if defined(WIN32)
   char *tempFileName = strrchr(partFileName, '\\');
+  if (!tempFileName)
+    tempFileName = partFileName;
   // delete leading backslash
   if (strchr (tempFileName, '\\') == tempFileName)
     tempFileName = tempFileName+1;
@@ -1766,13 +1768,18 @@ int main(int argC, char* argV[])
       strcpy (xsdLocation, argV[0]);
       std::cout << xsdLocation << std::endl;
       // now trim exe filename
-      for (int i=strlen(xsdLocation)-1; i >= 0; i--)
+      int i;
+      for (i=strlen(xsdLocation)-1; i >= 0; i--)
       {
 #ifdef WIN32
         if (xsdLocation[i] == '\\') { xsdLocation[i+1]=0x00; break; }
 #else
         if (xsdLocation[i] == '/') { xsdLocation[i+1]=0x00; break; }
 #endif
+      }
+      if (! (i >= 0))
+      { // loop ran through
+           xsdLocation[0] = 0x00;
       }
       strcat (xsdLocation, "proc2iso.xsd");
     }
@@ -1785,6 +1792,7 @@ int main(int argC, char* argV[])
     }
 
     std::string tmp_loc;
+
     if (schemaPath == NULL)
       tmp_loc = c_directory;
     else
