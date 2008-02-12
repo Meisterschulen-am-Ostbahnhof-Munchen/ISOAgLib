@@ -12,9 +12,9 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_PC
-#define SYSTEM_PC
-#endif // SYSTEM_PC
+#ifndef SYSTEM_PM167
+#define SYSTEM_PM167
+#endif // SYSTEM_PM167
 #define PRJ_USE_AUTOGEN_CONFIG config_2_9_RemoteWriteSetpointStdIso.h
 
 

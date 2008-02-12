@@ -1,5 +1,5 @@
 # KDevelop Custom Project File List
-../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_simulating.cpp
+../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp

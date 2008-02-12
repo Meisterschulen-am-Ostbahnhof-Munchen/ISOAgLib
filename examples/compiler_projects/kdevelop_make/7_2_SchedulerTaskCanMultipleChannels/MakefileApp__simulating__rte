@@ -21,7 +21,7 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP = 
+SOURCES_APP = ../../../../examples/src/Tutorials/7_SchedulerTask/7_2_SchedulerTaskCanMultipleChannels/7_2_SchedulerTaskCanMultipleChannels.cpp  
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt

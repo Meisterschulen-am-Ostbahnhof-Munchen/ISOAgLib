@@ -209,6 +209,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\..\examples\src\Tutorials\7_SchedulerTask\7_1_SchedulerTaskCanSingleChannel\7_1_SchedulerTaskCanSingleChannel.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=C:\Development\XL
 # End Source File
 

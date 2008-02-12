@@ -209,6 +209,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\..\examples\src\Tutorials\7_SchedulerTask\7_2_SchedulerTaskCanMultipleChannels\7_2_SchedulerTaskCanMultipleChannels.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=C:\Development\CANLIB\dll\vcandm32.lib
 # End Source File
 

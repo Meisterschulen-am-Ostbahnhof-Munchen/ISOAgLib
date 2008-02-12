@@ -149,6 +149,7 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\msgobj_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
+..\..\..\..\examples\src\Tutorials\7_SchedulerTask\7_0_SchedulerTaskNoCan\7_0_SchedulerTaskNoCan.cpp
 ..\..\..\..\library\xgpl_src\supplementary_driver\hal\c2c\rs232\rs232.h
 ..\..\..\..\library\xgpl_src\supplementary_driver\hal\rs232.h
 ..\..\..\..\library\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h

@@ -196,6 +196,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.cpp
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
 # End Source File
 
+# Begin Source File
+SOURCE=..\..\..\..\examples\src\Tutorials\7_SchedulerTask\7_2_SchedulerTaskCanMultipleChannels\7_2_SchedulerTaskCanMultipleChannels.cpp
+# End Source File
+
 # End Group
 
 # Begin Group "Header-Dateien"

@@ -28,6 +28,7 @@
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_1_SchedulerTaskCanSingleChannel/7_1_SchedulerTaskCanSingleChannel.cpp
 ../../../../library/xgpl_src/supplementary_driver/hal/rs232.h
 ../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/rs232.h
 ../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/rs232_target_extensions.h

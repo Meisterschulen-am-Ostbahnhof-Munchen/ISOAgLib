@@ -133,7 +133,7 @@ USE_CAN_DRIVER="sys"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -643,7 +643,7 @@ USE_CAN_DRIVER="sys"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -1153,7 +1153,7 @@ USE_CAN_DRIVER="sys"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -1663,7 +1663,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -2173,7 +2173,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -2683,7 +2683,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -3193,7 +3193,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -3703,7 +3703,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -4213,7 +4213,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -4723,7 +4723,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -5233,7 +5233,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -5743,7 +5743,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -6253,7 +6253,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -6763,7 +6763,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -7273,7 +7273,7 @@ USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -7783,7 +7783,7 @@ USE_CAN_DRIVER="simulating"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -8293,7 +8293,7 @@ USE_CAN_DRIVER="simulating"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -8803,7 +8803,7 @@ USE_CAN_DRIVER="simulating"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -9313,7 +9313,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -9823,7 +9823,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -10333,7 +10333,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -10843,7 +10843,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -11353,7 +11353,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -11863,7 +11863,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -12373,7 +12373,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -12883,7 +12883,7 @@ USE_CAN_DRIVER="socket_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -13393,7 +13393,7 @@ USE_CAN_DRIVER="simulating"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -13903,7 +13903,7 @@ USE_CAN_DRIVER="simulating"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -14413,7 +14413,7 @@ USE_CAN_DRIVER="sys"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: pc)
+# PRJ_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
 PRJ_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
@@ -15033,6 +15033,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15141,6 +15142,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15249,6 +15251,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15357,6 +15360,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15465,6 +15469,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15573,6 +15578,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15681,6 +15687,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15789,6 +15796,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -15897,6 +15905,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16005,6 +16014,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16113,6 +16123,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16221,6 +16232,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16329,6 +16341,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16437,6 +16450,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16545,6 +16559,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16655,6 +16670,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16769,6 +16785,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16883,6 +16900,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -16994,6 +17012,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17101,6 +17120,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17211,6 +17231,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17325,6 +17346,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17439,6 +17461,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17553,6 +17576,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17667,6 +17691,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17781,6 +17806,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -17895,6 +17921,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -18009,6 +18036,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 
@@ -18121,6 +18149,7 @@ PRJ_RS232=1
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp
 \endcode
 
 

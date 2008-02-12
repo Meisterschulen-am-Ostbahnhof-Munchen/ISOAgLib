@@ -53,7 +53,7 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  
 
-SOURCES_APP = 
+SOURCES_APP = ../../../../examples/src/Tutorials/7_SchedulerTask/7_0_SchedulerTaskNoCan/7_0_SchedulerTaskNoCan.cpp  
 
 HEADERS_UTEST = 
 
