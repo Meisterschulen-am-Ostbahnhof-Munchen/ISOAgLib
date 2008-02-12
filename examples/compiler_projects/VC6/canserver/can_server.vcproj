@@ -4,6 +4,7 @@
 	Version="8,00"
 	Name="canserver"
 	ProjectGUID="{B78E1032-1BB1-4B9D-9CB4-F457E31E95E3}"
+	RootNamespace="canserver"
 	>
 	<Platforms>
 		<Platform
@@ -44,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\..\IsoAgLib,..\..\..\IsoAgLib\xgpl_src,..\..\..\src_helper,..\..\..\src_helper_applications\src_layoutmanager,..\..\..\src_helper_applications\src_layoutmanager_base"
+				AdditionalIncludeDirectories="..\..\..\..\library\xgpl_src;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include;C:\Development\pthread"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -69,11 +70,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadvc2.lib ws2_32.lib"
 				OutputFile=".\Release/can_server.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="C:\STLport\lib"
+				AdditionalLibraryDirectories="C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib;;C:\Development\pthread;C:\STLport\lib"
 				ProgramDatabaseFile=".\Release/can_server.pdb"
 				SubSystem="1"
 				TargetMachine="1"
@@ -135,7 +136,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Development\pthread;..\..\..\..\library\xgpl_src;&quot;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;"
+				AdditionalIncludeDirectories="..\..\..\..\library\xgpl_src;;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include;C:\Development\pthread"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -161,12 +162,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalOptions="pthreadvc2.lib ws2_32.lib"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadvc2.lib ws2_32.lib"
 				OutputFile=".\Debug/can_server.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;;C:\Development\pthread;C:\STLport\lib"
+				AdditionalLibraryDirectories=";C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib;C:\STLport\lib;C:\Development\pthread"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile=".\Debug/can_server.pdb"
 				SubSystem="1"
