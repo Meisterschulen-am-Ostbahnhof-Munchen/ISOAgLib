@@ -500,7 +500,9 @@ examples/compiler_projects/Dev-C++/TractorInternalCan/TractorInternalCan__simula
 examples/compiler_projects/Dev-C++/TractorInternalCan/TractorInternalCan__simulating__sys.dev -text
 examples/compiler_projects/Dev-C++/TractorInternalCan/filelist__TractorInternalCan.txt -text
 examples/compiler_projects/Dev-C++/canserver/can_server.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server.exe -text
 examples/compiler_projects/Dev-C++/canserver/can_server_pcan.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe -text
 examples/compiler_projects/Dev-C++/canserver/can_server_sontheim.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.dev -text
