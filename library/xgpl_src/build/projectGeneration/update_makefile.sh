@@ -160,7 +160,7 @@ check_set_correct_variables()
         echo "ERROR! No library found within ISO_AG_LIB ($ISO_AG_LIB_PATH) - maybe your directory is not updated?"
     fi
   fi
-  
+
   if [ "A$PRJ_SEND_DEBUG" = "A" ] ; then
     PRJ_SEND_DEBUG=0
   fi
@@ -796,7 +796,7 @@ create_filelist( )
   if [ "$DRIVER_FEATURES" != "" ] ; then
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $DRIVER_FEATURES"
   fi
-    
+
   echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
   echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   # find application files
@@ -1761,7 +1761,7 @@ ENDOFHEADERA
   fi
 
    if [ -n "$USE_WIN32_ADDITIONAL_LIBS" ] ; then
-      for ADDITIONAL_LIB in $USE_WIN32_ADDITIONAL_LIBS ; do 
+      for ADDITIONAL_LIB in $USE_WIN32_ADDITIONAL_LIBS ; do
           LIB_FILE_LINE=$LIB_FILE_LINE$ADDITIONAL_LIB"_@@_"
       done
    fi
@@ -2226,9 +2226,12 @@ perform_everything()
   else
     create_EdePrj $GENERATE_FILES_ROOT_DIR $2
   fi
-	
+
 	# cleanup temporary files
-	rm -f $GENERATE_FILES_ROOT_DIR/$PROJECT/directories__*.txt $GENERATE_FILES_ROOT_DIR/$PROJECT/filelist__*.txt
+	rm -f $GENERATE_FILES_ROOT_DIR/$PROJECT/directories__*.txt
+	find $GENERATE_FILES_ROOT_DIR/$PROJECT -name "filelist__*.[alu]*.txt" -exec rm {} \;
+	find $GENERATE_FILES_ROOT_DIR/$PROJECT -name "filelist__*-doc.txt" -exec rm {} \;
+#$GENERATE_FILES_ROOT_DIR/$PROJECT/filelist__*.txt
 
   # jump to initial directory on start of script
   cd $3
@@ -2689,7 +2692,7 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
   echo " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >> $CONFIG_SPEC_DOXYGEN_READY
   echo " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
   echo "\code" >> $CONFIG_SPEC_DOXYGEN_READY
-  sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $SCRIPT_DIR/$CONF_FILE > /tmp/$CONF_BASE
+  sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
   cat /tmp/$CONF_BASE >> $CONFIG_SPEC_DOXYGEN_READY
   echo "\endcode" >> $CONFIG_SPEC_DOXYGEN_READY
   rm -f /tmp/$CONF_BASE
