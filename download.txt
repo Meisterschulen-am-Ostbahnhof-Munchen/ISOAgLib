@@ -22,7 +22,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </table>
 
 <div style="clear:left"></div>
-
+Please notice: all necessary installation steps of the \isoaglib are described on the \ref PageInstallation "Installation page".
 \section HowtoDownload Downloading the Needed Archives
 
 As the \isoaglib provides several functions which are supplementary

@@ -13,7 +13,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <div style="clear:left"></div>
 
-\section FurtherDevelopment Further Development
+\section FurtherDevelopment Applications and Further Development of ISOAgLib
 The ISO<i><sub>AgLib</sub></i> is published as Open Source according to the GPL license ( with exceptions ). Therefore everybody has the right
 to use, to analyse and to change the source code, as long as the changes to the ISO<i><sub>AgLib</sub></i> itself are provided
 to the public with the same license conditions. Thus the ISO<i><sub>AgLib</sub></i> could be used by a lot of manufacturers
@@ -22,7 +22,7 @@ ISO 11783 for its machines. The author <a href="mailto:Achim.Spangler@gmx:de">Ac
 <a href="http://www.osb-ag.de/">OSB AG</a> can arrange service contracts to provide extensions and other service for the ISO<i><sub>AgLib</sub></i>.
 \image html Diagramme/IsoAgLib-further_develop.png
 
-\section FurtherExamples Examples
+\section FurtherExamples Technical Examples
 \image html Diagramme/IsoAgLib-imi.png
 The ISO<i><sub>AgLib</sub></i> is used at the experimental station D&uuml;rnast to document the work of all tractor dependent work
 including simple soil cultivation implements. Small computing devices, which are called "Implement Indicator" (IMI) were

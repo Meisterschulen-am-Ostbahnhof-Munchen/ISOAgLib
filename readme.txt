@@ -21,6 +21,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
         <li> \ref UsingProjects </li>
         <li> \ref Maintainers "Maintainers" </li>
         <li> \ref Authors </li>
+        <li> \ref Acknowledgements </li>
     </ul>
 </td></tr>
 </table>

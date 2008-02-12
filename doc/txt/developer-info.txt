@@ -6,19 +6,18 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described on the respective pages:
 <ol type="I">
-    <li> Developer Information Page
+    <li> Developer Information
         <ul><li> \ref WhereToStart
-	        <ul><li> \ref StartToLearn </li>
-	        <li> \ref DocOverview </li>
-	        <li> \ref GettingHelp </li>
-	    </ul></li>
+            <ul><li> \ref StartToLearn </li>
+            <li> \ref DocOverview </li>
+            <li> \ref GettingHelp </li>
+        </ul></li>
         <li> \ref InfRequirements </li>
         <li> \ref MemoryUsage </li>
         </ul>
     </li>
     <li> \ref PageChanges "Changelog" </li>
-    <li> \ref PageTodo </li>
-    <!--<li> \ref PageAdditionalInfo </li>-->
+    <li> \ref PageTodo </li><!--<li> \ref PageAdditionalInfo </li>-->
 </ol>
 </td></tr>
 </table>

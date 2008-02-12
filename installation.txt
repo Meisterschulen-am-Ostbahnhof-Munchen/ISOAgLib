@@ -6,7 +6,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><th>Section Overview</th></tr>
 <tr><td>The following parts are described on the respective pages:
 <ol type="I">
-<li> \ref PageDownload "Download"
+<li> \ref PageDownload
     <ul><li>\ref HowtoDownload
     </li><li>\ref HowtoAccessRepository
     </li></ul>
@@ -194,7 +194,7 @@ configuration call with <tt>iRS232IO_c::setSndPufferSize</tt> and <tt>iRS232IO_c
 - Adapt the buffer size value (leave some additional space)
 
 
-\section HowtoCreateProjectFiles Creating Project Files with update_makefile.sh
+\section HowtoCreateProjectFiles Project File Creation with update_makefile.sh
 
 Caused by the huge amount of optional features in the \isoaglib, the manual
 selection of needed project files can get quite complicated.

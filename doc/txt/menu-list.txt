@@ -4,9 +4,9 @@
         <li> \ref LatestNews </li>
         <li> \ref MainFeatures </li>
         <li> \ref UsingProjects </li>
-        <li> \ref Maintainers "Maintainers" </li>
+        <li> \ref Maintainers </li>
+        <li> \ref Authors</li>
         <li> \ref Acknowledgements </li>
-	    <li> \ref Authors</li>
         </ul>
     </li>
     <li> \ref applications "Applications" </li>
@@ -20,36 +20,30 @@
             <li> \ref HowtoCreateProjectFiles "Project File Creation" </li>
             <li> \ref InstallIsoToolVt2Iso "Installing vt2iso" </li>
             </ul></li>
-        </ul>
-    </li>
+        </ul></li>
     <li class="folder"> \ref PageDeveloperInfo
         <ul><li class="folder"> \ref WhereToStart 
             <ul><li> \ref StartToLearn </li>
                 <li> \ref DocOverview </li>
                 <li> \ref GettingHelp </li>
-            </ul>
-            </li>
+            </ul></li>
         <li> \ref InfRequirements </li>
         <li> \ref MemoryUsage</li>
+        <li> \ref PageChanges "Changelog"</li><!--<li> \ref PageAdditionalInfo </li>-->
         <li> \ref PageTodo </li>
-        <li> \ref PageChanges "Changelog"</li>
-        <!--<li> \ref PageAdditionalInfo </li>-->
-        </ul>
-    </li>
+        </ul></li>
     <li class="folder"> \ref PageTechInfo
         <ul>
         <li> \ref InfGeneralInformation </li>
         <li> \ref StructuralOverview </li>
         <li> \ref InfAgentNetwork </li>
         <li> \ref InfServiceNetwork </li>
-        </ul>
-    </li>
+        </ul></li>
     <li class="folder"> \ref PageFurtherInformation
         <ul>
         <li> \ref ToolsUsed </li>
         <li> \ref FurtherReading </li>
-        </ul>
-    </li>
+        </ul></li>
     <li> \ref PageLicensing </li>
     <li class="folder"> \ref PageContactAndSupport
         <ul>
@@ -57,9 +51,6 @@
         <li> \ref Mailing-Lists </li>
         <li> \ref Contributing "Contributing to IsoAgLib" </li>
         <li> \ref GeneralSupportInformation </li>
-        </ul>
-    </li>
+        </ul></li>
     <li> \ref PageSitemap "Sitemap" </li>
 </ul>
-
-
