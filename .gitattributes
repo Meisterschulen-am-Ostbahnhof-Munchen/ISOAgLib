@@ -3011,6 +3011,7 @@ library/xgpl_src/build/proc2iso/Makefile.incl -text
 library/xgpl_src/build/proc2iso/Makefile.win -text
 library/xgpl_src/build/proc2iso/Proc2Iso.dev -text
 library/xgpl_src/build/proc2iso/Proc2Iso.exe -text
+library/xgpl_src/build/proc2iso/bin/Proc2Iso.exe -text
 library/xgpl_src/build/proc2iso/bin/proc2iso.xsd -text
 library/xgpl_src/build/proc2iso/config.guess -text
 library/xgpl_src/build/proc2iso/config.h.in -text
