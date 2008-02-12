@@ -3046,8 +3046,9 @@ library/xgpl_src/build/vt2iso/Makefile.paintlib -text
 library/xgpl_src/build/vt2iso/Release/FreeImage.dll -text
 library/xgpl_src/build/vt2iso/Release/xerces-c_2_5_0D.dll -text
 library/xgpl_src/build/vt2iso/Vt2Iso.dev -text
-library/xgpl_src/build/vt2iso/Vt2Iso.exe -text
+library/xgpl_src/build/vt2iso/bin/Vt2Iso.exe -text
 library/xgpl_src/build/vt2iso/bin/vt2iso.xsd -text
+library/xgpl_src/build/vt2iso/bin/xerces-c_2_5_0.dll -text
 library/xgpl_src/build/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 library/xgpl_src/build/vt2iso/src/specialparsingbase_c.h -text
 library/xgpl_src/build/vt2iso/src/specialparsingbaseproptag_c.h -text
@@ -3062,7 +3063,6 @@ library/xgpl_src/build/vt2iso/version.incl -text
 library/xgpl_src/build/vt2iso/vt2iso.kdevelop -text
 library/xgpl_src/build/vt2iso/vt2iso.kdevelop.filelist -text
 library/xgpl_src/build/vt2iso/vt2iso.vcproj -text
-library/xgpl_src/build/vt2iso/xerces-c_2_5_0.dll -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/actor/actor.h -text
