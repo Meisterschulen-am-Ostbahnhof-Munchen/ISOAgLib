@@ -656,7 +656,7 @@ create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock*'"
   elif [ $USE_CAN_DRIVER = "sys" ] ; then
     if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-      echo 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
+      echo 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.'
       echo 'Thus the project files will be generated without enhanced CAN processing'
       PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
     fi
@@ -1745,19 +1745,21 @@ ENDOFHEADERA
     LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/CANLIB/dll"
     LIB_FILE_LINE="-lvcand32_@@_"
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
-    DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
+    DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
   elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_xl" ] ; then
     INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/XL Driver Library/bin\""
     LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/XL Driver Library/bin"
     LIB_FILE_LINE="-lvxlapi_@@_"
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
-    DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE=XL_'"$USE_WIN32_CAN_HW_TYPE"'_@@_'
+    DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE=XL_'"$USE_WIN32_CAN_HW_TYPE"'_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
   elif  [ $USE_CAN_DRIVER = "sontheim" -o $USE_CAN_DEVICE_FOR_SERVER = "sontheim" ] ; then
     INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;\"$USE_WIN32_HEADER_DIRECTORY/Sontheim\";\"$USE_WIN32_HEADER_DIRECTORY/Sontheim/Capitest\""
     LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY/Sontheim;$USE_WIN32_LIB_DIRECTORY/Sontheim/Capitest"
     LIB_FILE_LINE="-lvcanapi_@@_"
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_'
-    DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_'
+    DEFINE_LINE="$DEFINE_LINE"'_@@_-DUSE_CAN_CARD_TYPE='"$USE_WIN32_CAN_HW_TYPE"'_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
+  elif  [ $USE_CAN_DRIVER = "socket_server" ] ; then
+    DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_-D_CAN_DRIVER_SOCKET_@@_-D_SYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
   fi
 
    if [ -n "$USE_WIN32_ADDITIONAL_LIBS" ] ; then
@@ -2023,31 +2025,33 @@ create_VCPrj()
 
   PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#/#=_=_#g'`
 
+# echo "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
+
   if  [ $USE_CAN_DRIVER = "vector_canlib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_canlib" ] ; then
           USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_CANLIB=_=_dll"'"'
-          USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
-          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'"'
+          USE_DEFINES="$USE_DEFINES"' /D ''"'"$USE_WIN32_CAN_HW_TYPE"'" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"$USE_WIN32_CAN_HW_TYPE"'" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
           LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll"
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_vcandm32.lib" >> $DspPrjFilelist
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_CANLIB=_=_dll=_=_VCanD.h" >> $DspPrjFilelist
   elif  [ $USE_CAN_DRIVER = "vector_xl_drv_lib" -o $USE_CAN_DEVICE_FOR_SERVER = "vector_xl" ] ; then
           USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"'"'
-          USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+          USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
           LIB_DIR_LINE="$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin"
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.lib" >> $DspPrjFilelist
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_XL Driver Library=_=_bin=_=_vxlapi.h" >> $DspPrjFilelist
   elif  [ $USE_CAN_DRIVER = "sontheim" -o $USE_CAN_DEVICE_FOR_SERVER = "sontheim" ] ; then
           USE_INCLUDE_PATHS='/I "'"$USE_STLPORT_HEADER_DIRECTORY"'" /I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim"'" /I "'"$USE_WIN32_HEADER_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
-          USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
-          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'"'
+          USE_DEFINES="$USE_DEFINES"' /D ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d ''"'"XL_$USE_WIN32_CAN_HW_TYPE"'" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
           LIB_DIR_LINE=' /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim"'" /libpath:"'"$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=_Capitest"'"'
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=CANAPI.H" >> $DspPrjFilelist
           echo "$USE_WIN32_LIB_DIRECTORY_WIN=_=_Sontheim=_=Capitest=_=CANAPI.H" >> $DspPrjFilelist
   elif  [ $USE_CAN_DRIVER = "socket_server" ] ; then
           USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'"'
-          USE_DEFINES="$USE_DEFINES"' /D "'CAN_DRIVER_SOCKET'"'
-          USE_d_DEFINES="$USE_d_DEFINES"' /d "'CAN_DRIVER_SOCKET'"'
+          USE_DEFINES="$USE_DEFINES"' /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+          USE_d_DEFINES="$USE_d_DEFINES"' /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
     fi
 
   for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
@@ -2410,11 +2414,15 @@ case "$USE_CAN_DRIVER" in
   simulating)
     case "$USE_TARGET_SYSTEM" in
       pc_linux | pc_win32)
+				# enhanced CAN HAL is not yet supported for simulating CAN HAL
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
       *)
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
         USE_CAN_DRIVER="sys"
         PARAMETER_CAN_DRIVER="sys"
+				# enhanced CAN HAL is not yet supported for the known embedded targets
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
     esac
   ;;
@@ -2434,6 +2442,8 @@ case "$USE_CAN_DRIVER" in
   rte)
     case "$USE_TARGET_SYSTEM" in
       pc_linux)
+				# enhanced CAN HAL IS supported for rte - as can_server backend
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       pc_win32)
         echo "RTE CAN driver can only used for target pc_linux" 1>&2
@@ -2444,12 +2454,16 @@ case "$USE_CAN_DRIVER" in
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
         USE_CAN_DRIVER="sys"
         PARAMETER_CAN_DRIVER="sys"
+				# enhanced CAN HAL is not yet supported for the known embedded targets
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
     esac
   ;;
   msq_server)
     case "$USE_TARGET_SYSTEM" in
       pc_linux)
+				# enhanced CAN HAL IS supported for the Linux can_server
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       pc_win32)
         echo "Server Client CAN driver can only used for target pc_linux" 1>&2
@@ -2460,6 +2474,8 @@ case "$USE_CAN_DRIVER" in
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
         USE_CAN_DRIVER="sys"
         PARAMETER_CAN_DRIVER="sys"
+				# enhanced CAN HAL is not yet supported for the known embedded targets
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
     esac
     # make sure, that USE_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
@@ -2476,6 +2492,8 @@ case "$USE_CAN_DRIVER" in
     CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
   ;;
   socket_server)
+		# enhanced CAN HAL IS supported for the socket based can_server
+		PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
     if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
       case $PRJ_DEFINES in
         *SYSTEM_A1*)
@@ -2496,15 +2514,17 @@ case "$USE_CAN_DRIVER" in
         exit 1
       ;;
       pc_win32)
+				# enhanced CAN HAL IS supported for the socket based can_server
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       *)
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
         USE_CAN_DRIVER="sys"
         PARAMETER_CAN_DRIVER="sys"
+				# enhanced CAN HAL is not yet supported for the known embedded targets
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
     esac
-    # enhanced CAN HAL is not yet supported for vector_canlib
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
   ;;
   vector_xl_drv_lib)
     case "$USE_TARGET_SYSTEM" in
@@ -2514,15 +2534,17 @@ case "$USE_CAN_DRIVER" in
         exit 1
       ;;
       pc_win32)
+				# enhanced CAN HAL IS supported for the socket based can_server
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       *)
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
         USE_CAN_DRIVER="sys"
         PARAMETER_CAN_DRIVER="sys"
+				# enhanced CAN HAL is not yet supported for the known embedded targets
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
     esac
-    # enhanced CAN HAL is not yet supported for vector_xl_drv_lib
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
   ;;
   sontheim)
     case "$USE_TARGET_SYSTEM" in
@@ -2533,15 +2555,17 @@ case "$USE_CAN_DRIVER" in
       ;;
       pc_win32)
         echo "The contents of the Sontheim CAN API ZIP file should be extracted in directory $USE_WIN32_HEADER_DIRECTORY/Sontheim so that CANAPI.DLL is in that directory!"
+				# enhanced CAN HAL IS supported for the socket based can_server
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       *)
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
         USE_CAN_DRIVER="sys"
         PARAMETER_CAN_DRIVER="sys"
+				# enhanced CAN HAL is not yet supported for the known embedded targets
+				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
       ;;
     esac
-    # enhanced CAN HAL is not yet supported for sontheim
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
   ;;
   *)
     echo "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
@@ -2554,6 +2578,7 @@ case "$USE_CAN_DEVICE_FOR_SERVER" in
   rte)
     case "$USE_TARGET_SYSTEM" in
       pc_linux)
+		    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       pc_win32)
         echo "RTE CAN driver can only used for target pc_linux" 1>&2
@@ -2570,10 +2595,9 @@ case "$USE_CAN_DEVICE_FOR_SERVER" in
         exit 1
       ;;
       pc_win32)
+		    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
     esac
-    # enhanced CAN HAL is not yet supported for vector_canlib
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
   ;;
   vector_xl)
     case "$USE_TARGET_SYSTEM" in
@@ -2583,10 +2607,9 @@ case "$USE_CAN_DEVICE_FOR_SERVER" in
         exit 1
       ;;
       pc_win32)
+		    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
     esac
-    # enhanced CAN HAL is not yet supported for vector_xl_drv_lib
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
   ;;
   sontheim)
     case "$USE_TARGET_SYSTEM" in
@@ -2597,10 +2620,9 @@ case "$USE_CAN_DEVICE_FOR_SERVER" in
       ;;
       pc_win32)
         echo "The contents of the Sontheim CAN API ZIP file should be extracted in directory $USE_WIN32_HEADER_DIRECTORY/Sontheim so that CANAPI.DLL is in that directory!"
+		    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
     esac
-    # enhanced CAN HAL is not yet supported for sontheim
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
   ;;
 esac
 
