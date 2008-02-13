@@ -574,7 +574,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
         DEBUG_PRINT1 ("Client registering with startTimeClock_t from his REGISTER message as %d\n", p_writeBuf->s_startTimeClock.t_clock);
         initClientTime(*iter_client, p_writeBuf->s_startTimeClock.t_clock );
 
-        DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", s_tmpClient.t_startTimeClock);
+        DEBUG_PRINT1("client start up time (absolute value in clocks): %d\n", p_writeBuf->s_startTimeClock.t_clock);
 
         if (!i32_error)
         { // no error
