@@ -7,6 +7,7 @@ The following packages need to be added to your Dev-Cpp installation (just use
 Dev-Cpp's built-in package manager):
 - Xerces-C++ v2.5.0.122 (xerces-c_2_5_0-mingw.DevPak)
 - FreeImage 3.10.0 (FreeImage.DevPak)
+NOTE: DO NOT SET "-O3" AS C++ COMPILER SWITCH OR VT2ISO WILL CRASH!
 
 MS Visual Studio (>= Express 2005)
 ==================================
