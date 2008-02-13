@@ -13,8 +13,23 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 </li>
 <li> Installation
     <ul><li>\ref HowtoSetupCompilerTools
+        <ul><li>\ref CompKdevelop3 </li>
+            <li>\ref CompDevVc6 </li>
+            <li>\ref CompDevCpp </li>
+            <li>\ref CompTasking </li>
+        </ul>
     </li><li>\ref HowtoCreateProjectFiles
+         <ul><li>\ref UseMSYS</li>
+             <li>\ref ScriptIntegrateWin32Can</li>
+             <li>\ref ScriptOptions</li>
+             <li>\ref FeatureSetupFile</li>
+         </ul>
     </li><li>\ref InstallIsoToolVt2Iso
+         <ul><li>\ref InstallFreeImage</li>
+             <li>\ref InstallXerces</li>
+             <li>\ref CompileVt2Iso</li>
+             <li>\ref UseVt2Iso</li>
+         </ul>
     </li></ul>
 </li>
 </ol>
@@ -41,10 +56,11 @@ There are some basic kdevelop3 projects in <tt>compiler_projects/kdevelop_tmake/
 The project files, which can be created by a helper tool of the \isoaglib, can be compiled very easily
 with standard GNUmake.
 
-\subsection CompDevVc6 Microsoft Visual Studio 6
+\subsection CompDevVc6 Microsoft Visual Studio 6 and later
 The automatic project file generating script can write DSP project files, which can be directly used to create an executeable .exe
 program with <i>Vector-Informatik CAN card</i> support (or other CAN cards). As newer versions of VC++ can also import DSP project files,
-no special support is provided here.<br>
+no special support is provided here. However, several project files for Visual Studio 2005 have been created as well.<br>
+Remark: Be sure that <tt>windows.h</tt> from the Microsoft PlatformSKD is included in your include path. It is needed for compilation of several tutorial examples.
 
 \subsubsection Vc6StlPort Installation of STLport - Open Source ANSI C++ compatible STL
 The current \isoaglib version doesn't require the <a href="http://stlport.sourceforge.net/">STLport library</a> anymore.
@@ -97,18 +113,17 @@ This IDE has some important features:
 - project file format is a clean ASCII file, so that the project generation script can
     directly create a running project for Dev-C++
 
-
 \subsubsection InstallDevCpp Installation of Dev-C++
--# Please download at least the version 4.9.9.0 from http://www.bloodshed.net/dev/devcpp.html
+-# Please download at least the version (4.9.9.2 with GCC 3.4.3) from http://www.bloodshed.net/dev/devcpp.html
 -# Check for updates with Dev-C++ menu entry (TOOLS->CHECK FOR UPDATES)
--# Select the mirror "PlanetMirror.com" from the list (at least the german version has a dead
-	default mirror entry in the list) in the dialog window "WebUpdate"
--# Click on button "Check for updates" in the dialog window "WebUpdate"
--# Select at least the following packages for download (as they are needed for <b>vt2iso</b>)
-	- FreeImage.DevPak
-	- ImageLib.DevPak
-	- <tt>xerces-c_2_5_0-mingw.DevPak</tt> (see special download instructions in \ref Win32Xerces)
-	- (optionally further documentation or utility packages)
+    -# Select the mirror "PlanetMirror.com" from the list (at least the german version has a dead
+	   default mirror entry in the list) in the dialog window "WebUpdate"
+    -# Click on button "Check for updates" in the dialog window "WebUpdate"
+    -# Select at least the following packages for download (as they are needed for <b>vt2iso</b>)
+	   - FreeImage.DevPak
+	   - ImageLib.DevPak
+	   - <tt>xerces-c_2_5_0-mingw.DevPak</tt> (see special download instructions in \ref Win32Xerces)
+	   - (optionally install further documentation or utility packages)
 
 
 \subsection CompTasking TASKING for Embedded Targets
@@ -198,13 +213,16 @@ configuration call with <tt>iRS232IO_c::setSndPufferSize</tt> and <tt>iRS232IO_c
 
 Caused by the huge amount of optional features in the \isoaglib, the manual
 selection of needed project files can get quite complicated.
-The script <tt>compiler_projects/projectGeneration/update_makefile.sh</tt> can create project files and
+The script <tt>examples/compiler_projects/update_makefile.sh</tt> can create project files and
 project specific configuration headers for all projects. The feature setup is feed to this script
 by configuration files with a very simple syntax. Please have a look at the comments inside the several
-<tt>conf_*</tt> files in the directory <tt>compiler_projects/projectGeneration/</tt> .
+<tt>conf_*</tt> files in the above mentioned directory.
+
 Call the script like this:
-- <tt>cd compiler_projects/projectGeneration</tt>
-- <tt>update_makefile.sh conf_0_0_AddressClaimIso</tt>
+- <tt>cd examples/compiler_projects/</tt>
+- <tt>./update_makefile.sh conf_0_0_AddressClaimIso</tt>
+
+Further command line switches of <tt>update_makefile.sh</tt> are described \ref ScriptOptions "below".
 
 
 \subsection UseMSYS Running script on Win32 using MSYS
@@ -230,7 +248,18 @@ The necessary configuration options for the \isoaglib applications are (e.g. con
 
 Create your Dev-C++ or VC6 project with the <tt>update_makefile.sh</tt> script and build the project.
 
-To build the CAN server applications the following projects are already provided:
+Precompiled CAN server binaries for Windows already exist in the following directories:
+- Visual-Studio:
+    - <tt>examples/compiler_projects/VC6/canserver/Release/can_server.exe</tt>
+    - <tt>examples/compiler_projects/VC6/canserver/Release/can_server_pcan.exe</tt>
+- Dev-C++:<br> 
+    - <tt>examples/compiler_projects/Dev-C++/canserver/can_server.exe</tt>
+    - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe</tt>
+
+To use <tt>can_server_pcan.exe</tt> (support for PEAK CAN card), you need <tt>pcan_usb.dll</tt> from http://www.peak-system.com/files/usb.zip.
+
+\subsubsection CanServerInstallation CAN Server Build and Installation
+If you wish to rebuild the CAN server applications you can use the following projects:
 -# <tt>can_server.[dev|vcproj]</tt> (no access to a physical CAN bus, only for host internal communication)
 -# <tt>can_server_pcan.[dev|vcproj]</tt> (support for Peak CAN card)
 -# <tt>can_server_sontheim.[dev|vcproj]</tt> (support for Sontheim CAN card)
@@ -249,16 +278,26 @@ This strategy can be mapped to other CAN cards as well. Please contact the
 <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> for help on adaptation and please
 send a running adaptation back to the project.
 
-\subsubsection CanServerInstallation CanServerInstallation
 For building the CAN server application the following files are required:<br>
-<ul><li>pthread: <tt>pthread.h, pthreadVC2.dll, pthreadVC2.lib, sched.h, semaphore.h</tt></li>
-    <li>PCAN: <tt>Pcan_usb.h, Pcan_usb.lib</tt></li>
-    <li>Vector-Informatik (XL Driver Library): <tt>vxlapi.dll, vxlapi.h, vxlapi.lib</tt></li>
-    <li>Vector-Informatik (CANLIB): <tt>vcand32.dll, vcand32.lib, VCanD.h</tt></li>
-</ul>
+- <b>Pthreads</b>: (version 2.8.0 files can be downloaded from http://sources.redhat.com/pthreads-win32/)
+    - <tt>pthread.h</tt>
+    - <tt>libpthreadVC2.dll</tt>
+    - <tt>libpthreadVC2.lib</tt>
+    - <tt>sched.h</tt>
+    - <tt>semaphore.h</tt>
+- <b>PCAN</b>: (<a href="http://www.peak-system.com/files/usb.zip">usb.zip</a>)
+    - <tt>Pcan_usb.h</tt>
+    - <tt>Pcan_usb.lib</tt>
+- Vector-Informatik (XL Driver Library): 
+    - <tt>vxlapi.dll</tt>
+    - <tt>vxlapi.h</tt>
+    - <tt>vxlapi.lib</tt>
+- <b>Vector-Informatik (CANLIB)</b>:
+    - <tt>vcand32.dll</tt>
+    - <tt>vcand32.lib</tt>
+    - <tt>VCanD.h</tt>
 
-Install the .dll of the used CAN driver library into the DLL-Search-Path of your system (or into the directory of your resulting EXE).
-
+You also have to install the .dll of the used CAN driver library into the DLL-Search-Path of your system (or into the directory of your resulting EXE).
 
 <b>Some additional notes:</b><br>
 It seemed that the driver DLLs for Vector-Informatik CAN cards don't interact with Dev-C++ built EXE programs. Please use the VC6 projects when building the CAN server application with Vector-Informatik support.
@@ -1132,12 +1171,9 @@ the corresponding headers in /usr/include/xercesc/ (or /usr/local/include/xerces
 
 
 \subsection CompileVt2Iso Compiling vt2iso
-
 \subsubsection CompileVt2IsoLinux Compiling vt2iso on Linux
 -# <tt>cd build_utils/vt2iso</tt>
 -# <tt>make</tt>
-
-
 \subsubsection CompileVt2IsoWin32 Compiling VT2Iso on Win32 with Dev-C++
 <ol>
 <li>Install first Dev-C++ with the library packages FreeImage and ImageLib
