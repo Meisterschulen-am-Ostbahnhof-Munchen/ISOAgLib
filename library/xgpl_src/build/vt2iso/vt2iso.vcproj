@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="vt2iso"
 	ProjectGUID="{EC5C72F0-6E7E-4A83-B367-8CEA05A00556}"
 	RootNamespace="vt2iso"
@@ -17,7 +17,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
+			OutputDirectory=".\_build\$(ConfigurationName)"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/F4096"
 				Optimization="0"
-				AdditionalIncludeDirectories="src;otherlibs;otherlibs\freeimage\Source"
+				AdditionalIncludeDirectories="&quot;C:\programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;;&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -65,15 +65,17 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				AdditionalOptions="/VERBOSE:LIB"
-				AdditionalDependencies="User32.lib Gdi32.lib Ws2_32.lib lib\xerces\xerces-c_2D.lib lib\freeimage\freeimage.lib Advapi32.lib $(NOINHERIT)"
+				AdditionalDependencies="User32.lib Gdi32.lib Ws2_32.lib xerces-c_2.lib freeimage.lib Advapi32.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\vt2iso.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;c:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\lib&quot;;&quot;..\libs\xerces-c_2_5_0\lib&quot;;..\libs\freeimage"
 				IgnoreDefaultLibraryNames=""
 				GenerateDebugInformation="true"
 				AssemblyDebug="1"
 				ProgramDatabaseFile=".\Debug\vt2iso.pdb"
 				ImportLibrary=""
+				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -98,17 +100,16 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy lib\xerces\xerces*.dll .\Debug&#x0D;&#x0A;copy lib\FreeImage\FreeImage.dll .\Debug&#x0D;&#x0A;"
+				CommandLine="copy ..\libs\xerces-c_2_5_0\bin\xerces-c_2_5_0.dll .\_build\Debug&#x0D;&#x0A;copy ..\libs\freeImage\freeimage.dll .\_build\Debug"
 			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
+			OutputDirectory=".\_build\$(ConfigurationName)"
 			IntermediateDirectory=".\Release"
 			ConfigurationType="1"
-			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
 			CharacterSet="2"
-			ManagedExtensions="4"
+			ManagedExtensions="0"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -127,8 +128,8 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
-				AdditionalIncludeDirectories=".\otherlibs\;\build_utils\vt2iso\otherlibs;.\otherlibs\freeimage\Source"
+				Optimization="3"
+				AdditionalIncludeDirectories="&quot;C:\programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;;&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB"
 				MinimalRebuild="false"
 				RuntimeLibrary="2"
@@ -147,12 +148,15 @@
 			<Tool
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
-				AdditionalDependencies="lib\paintlib\paintlib.lib User32.lib Gdi32.lib Ws2_32.lib lib\xerces\xerces-c_2D.lib lib\freeimage\freeimage.lib Advapi32.lib $(NOINHERIT)"
+				AdditionalDependencies="User32.lib Gdi32.lib Ws2_32.lib Xerces-c_2.lib freeimage.lib Advapi32.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)\vt2iso.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
+				AdditionalLibraryDirectories="&quot;c:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\lib&quot;;&quot;..\libs\xerces-c_2_5_0\lib&quot;;..\libs\freeimage"
 				GenerateDebugInformation="false"
 				ProgramDatabaseFile=".\Release\vt2iso.pdb"
+				TargetMachine="1"
+				CLRThreadAttribute="2"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -177,7 +181,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy lib\xerces\xerces*.dll .\Release&#x0D;&#x0A;copy lib\FreeImage\FreeImage.dll .\Release&#x0D;&#x0A;"
+				CommandLine="rem copy .\_build\Release\$(TargetFileName) .\bin\$(TargetFileName)&#x0D;&#x0A;copy ..\libs\xerces-c_2_5_0\bin\xerces-c_2_5_0.dll .\_build\Release&#x0D;&#x0A;copy ..\libs\freeImage\freeimage.dll .\_build\Release"
 			/>
 		</Configuration>
 	</Configurations>
