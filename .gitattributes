@@ -506,6 +506,7 @@ examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe -text
 examples/compiler_projects/Dev-C++/canserver/can_server_sontheim.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.exe -text
 examples/compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_c2c.pjt -text
 examples/compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_esx.pjt -text
 examples/compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_imi.pjt -text
