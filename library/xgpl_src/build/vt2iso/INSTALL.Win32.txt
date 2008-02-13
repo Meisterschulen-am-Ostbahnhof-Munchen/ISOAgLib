@@ -1,0 +1,22 @@
+To properly compile vt2iso within Windows you will need to fulfill the following
+requirements (depending on the used platform):
+
+Dev-Cpp
+=======
+The following packages need to be added to your Dev-Cpp installation (just use
+Dev-Cpp's built-in package manager):
+- Xerces-C++ v2.5.0 (xerces-c_2_5_0-mingw.DevPak)
+- FreeImage 3.10.0 (FreeImage.DevPak)
+
+MS Visual Studio (>= Express 2005)
+==================================
+Get the following projects and extract them properly(!) to "../libs/":
+- Xerces-C++ v2.5.0.0 
+  http://archive.apache.org/dist/xml/xerces-c/Xerces-C_2_5_0/xerces-c_2_5_0-windows_nt-msvc_60.zip
+
+- FreeImage 3.10.0
+  http://downloads.sourceforge.net/freeimage/FreeImage3100Win32.zip
+
+
+
+

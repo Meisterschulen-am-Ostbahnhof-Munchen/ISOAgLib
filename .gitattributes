@@ -3050,6 +3050,7 @@ library/xgpl_src/build/projectGeneration/qmake_stub.pro -text
 library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp eol=crlf
 library/xgpl_src/build/vt2iso-3-0_VirtualTerminalIso.bat -text
 library/xgpl_src/build/vt2iso/Doxyfile -text
+library/xgpl_src/build/vt2iso/INSTALL.Win32.txt -text
 library/xgpl_src/build/vt2iso/Makefile.incl -text
 library/xgpl_src/build/vt2iso/Makefile.paintlib -text
 library/xgpl_src/build/vt2iso/Release/FreeImage.dll -text
@@ -3071,6 +3072,7 @@ library/xgpl_src/build/vt2iso/src/vt2isostr2bin.h -text
 library/xgpl_src/build/vt2iso/version.incl -text
 library/xgpl_src/build/vt2iso/vt2iso.kdevelop -text
 library/xgpl_src/build/vt2iso/vt2iso.kdevelop.filelist -text
+library/xgpl_src/build/vt2iso/vt2iso.suo -text
 library/xgpl_src/build/vt2iso/vt2iso.vcproj -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
