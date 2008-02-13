@@ -18,6 +18,9 @@ Get the following projects and extract them properly(!) to "../libs/":
 - FreeImage 3.10.0
   http://downloads.sourceforge.net/freeimage/FreeImage3100Win32.zip
 
+- Microsoft Platform SDK (Windows® Server 2003 R2 Platform SDK Full Download)
+  http://www.microsoft.com/downloads/details.aspx?FamilyId=484269E2-3B89-47E3-8EB7-1F2BE6D7123A&displaylang=en
+  
 
 ATTENTION:
 The xerces-c_2_5_0.dll that was included with the Dev-Cpp package is NOT the
