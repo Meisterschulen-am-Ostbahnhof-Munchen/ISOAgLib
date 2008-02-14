@@ -5,13 +5,13 @@ UnitCount=6
 Type=1
 Ver=1
 ObjFiles=
-Includes=C:\Programme\Dev-Cpp\xerces-c_2_5_0\include;C:\Projekte_Subversion\IsoAgLib\library\xgpl_src
-Libs=C:\Programme\Dev-Cpp\xerces-c_2_5_0\lib
+Includes=C:\Development\Dev-Cpp\xerces-c_2_5_0\include;C:\Projekte_Subversion\IsoAgLib\library\xgpl_src
+Libs=C:\Development\Dev-Cpp\xerces-c_2_5_0\lib
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=-DUSE_FREE_IMAGE_LIB_@@_-DXERCES_TMPLSINC_@@_-D__GNUWIN32__ _@@_-fexpensive-optimizations _@@_-O3_@@_-DNDEBUG_@@_-DPLATFORM_WIN32_@@_-D_CRTDBG_MAP_ALLOC _@@_-DPROJ_XMLPARSER _@@_-DPROJ_XMLUTIL _@@_-DPROJ_PARSERS _@@_-DPROJ_SAX4C _@@_-DPROJ_SAX2 _@@_-DPROJ_DOM _@@_-DPROJ_VALIDATORS_@@_-DXML_SINGLEDLL _@@_-DWIN32 _@@_-D_WINDOWS _@@_-DXML_USE_WIN32_TRANSCODER _@@_-DXML_USE_WIN32_MSGLOADER _@@_-DXML_USE_NETACCESSOR_WINSOCK_@@_-fpermissive_@@_-w_@@_-DSYSTEM_PC_@@_-DMASK_TYPE=uint32_t_@@_-DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN_@@_
-CppCompiler=-DUSE_FREE_IMAGE_LIB_@@_-DXERCES_TMPLSINC_@@_-D__GNUWIN32__ _@@_-fexpensive-optimizations _@@_-O3_@@_-DNDEBUG_@@_-DPLATFORM_WIN32_@@_-D_CRTDBG_MAP_ALLOC _@@_-DPROJ_XMLPARSER _@@_-DPROJ_XMLUTIL _@@_-DPROJ_PARSERS _@@_-DPROJ_SAX4C _@@_-DPROJ_SAX2 _@@_-DPROJ_DOM _@@_-DPROJ_VALIDATORS_@@_-DXML_SINGLEDLL _@@_-DWIN32 _@@_-D_WINDOWS _@@_-DXML_USE_WIN32_TRANSCODER _@@_-DXML_USE_WIN32_MSGLOADER _@@_-DXML_USE_NETACCESSOR_WINSOCK_@@_-fpermissive_@@_-w_@@_-DSYSTEM_PC_@@_-DMASK_TYPE=uint32_t_@@_-DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN_@@_
+Compiler=-DUSE_FREE_IMAGE_LIB_@@_-DXERCES_TMPLSINC_@@_-D__GNUWIN32__ _@@_-fexpensive-optimizations _@@_-DNDEBUG_@@_-DPLATFORM_WIN32_@@_-D_CRTDBG_MAP_ALLOC _@@_-DPROJ_XMLPARSER _@@_-DPROJ_XMLUTIL _@@_-DPROJ_PARSERS _@@_-DPROJ_SAX4C _@@_-DPROJ_SAX2 _@@_-DPROJ_DOM _@@_-DPROJ_VALIDATORS_@@_-DXML_SINGLEDLL _@@_-DWIN32 _@@_-D_WINDOWS _@@_-DXML_USE_WIN32_TRANSCODER _@@_-DXML_USE_WIN32_MSGLOADER _@@_-DXML_USE_NETACCESSOR_WINSOCK_@@_-fpermissive_@@_-w_@@_-DSYSTEM_PC_@@_-DMASK_TYPE=uint32_t_@@_-DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN_@@_
+CppCompiler=-DUSE_FREE_IMAGE_LIB_@@_-DXERCES_TMPLSINC_@@_-D__GNUWIN32__ _@@_-fexpensive-optimizations _@@_-DNDEBUG_@@_-DPLATFORM_WIN32_@@_-D_CRTDBG_MAP_ALLOC _@@_-DPROJ_XMLPARSER _@@_-DPROJ_XMLUTIL _@@_-DPROJ_PARSERS _@@_-DPROJ_SAX4C _@@_-DPROJ_SAX2 _@@_-DPROJ_DOM _@@_-DPROJ_VALIDATORS_@@_-DXML_SINGLEDLL _@@_-DWIN32 _@@_-D_WINDOWS _@@_-DXML_USE_WIN32_TRANSCODER _@@_-DXML_USE_WIN32_MSGLOADER _@@_-DXML_USE_NETACCESSOR_WINSOCK_@@_-fpermissive_@@_-w_@@_-DSYSTEM_PC_@@_-DMASK_TYPE=uint32_t_@@_-DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN_@@_
 Linker=-lfreeimage_@@_-lkernel32_@@_-luser32_@@_-lxerces-c_2_@@_-Wl_@@_--enable-runtime-pseudo-reloc_@@_
 IsCpp=1
 Icon=

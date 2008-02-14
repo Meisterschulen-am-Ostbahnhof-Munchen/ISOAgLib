@@ -7,12 +7,12 @@ WINDRES = windres.exe
 RES  = 
 OBJ  = src/proc2iso.o ../../IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.o ../../IsoAgLib/util/impl/util_funcs.o ../../IsoAgLib/util/iliberr_c.o $(RES)
 LINKOBJ  = src/proc2iso.o ../../IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.o ../../IsoAgLib/util/impl/util_funcs.o ../../IsoAgLib/util/iliberr_c.o $(RES)
-LIBS =  -L"lib" -L"C:/Programme/Dev-Cpp/xerces-c_2_5_0/lib" -lfreeimage -lkernel32 -luser32 -lxerces-c_2 -Wl --enable-runtime-pseudo-reloc  
-INCS =  -I"include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/IsoAgLib/library/xgpl_src" 
-CXXINCS =  -I"lib/gcc/mingw32/3.4.2/include"  -I"include/c++/3.4.2/backward"  -I"include/c++/3.4.2/mingw32"  -I"include/c++/3.4.2"  -I"include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/IsoAgLib/library/xgpl_src" 
+LIBS =  -L"lib" -L"C:/Development/Dev-Cpp/xerces-c_2_5_0/lib" -lfreeimage -lkernel32 -luser32 -lxerces-c_2 -Wl --enable-runtime-pseudo-reloc  
+INCS =  -I"include"  -I"C:/Development/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/IsoAgLib/library/xgpl_src" 
+CXXINCS =  -I"lib/gcc/mingw32/3.4.2/include"  -I"include/c++/3.4.2/backward"  -I"include/c++/3.4.2/mingw32"  -I"include/c++/3.4.2"  -I"include"  -I"C:/Development/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/IsoAgLib/library/xgpl_src" 
 BIN  = bin/Proc2Iso.exe
-CXXFLAGS = $(CXXINCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC -DMASK_TYPE=uint32_t -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN  
-CFLAGS = $(INCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC -DMASK_TYPE=uint32_t -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN  
+CXXFLAGS = $(CXXINCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC -DMASK_TYPE=uint32_t -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN  
+CFLAGS = $(INCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC -DMASK_TYPE=uint32_t -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN  
 RM = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
