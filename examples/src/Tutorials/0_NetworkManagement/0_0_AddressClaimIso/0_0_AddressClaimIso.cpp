@@ -124,16 +124,8 @@
  *	</ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_no_card__simulating
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_sontheim__simulating
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_vector_canlib__simulating
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_vector_xl__simulating
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_no_card__sys
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_sontheim__sys
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_vector_canlib__sys
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock_vector_xl__sys
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__simulating__sys
+ *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock__simulating
+ *		<li> \ref PrjSpec0_0_AddressClaimIso__pc_win32__can_server_sock__sys
  * 	</ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
@@ -171,16 +163,8 @@
  *	</ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_no_card__simulating
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_sontheim__simulating
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_vector_canlib__simulating
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_vector_xl__simulating
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_no_card__sys
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_sontheim__sys
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_vector_canlib__sys
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock_vector_xl__sys
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__simulating__simulating
- *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__simulating__sys
+ *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock__simulating
+ *		<li> \ref FileLists0_0_AddressClaimIso__pc_win32__can_server_sock__sys
  * 	</ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>

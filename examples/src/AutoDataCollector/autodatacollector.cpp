@@ -137,12 +137,8 @@
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_xl__simulating
- *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock_vector_xl__sys
- *    <li> \ref PrjSpecAutoDataCollector__pc_win32__simulating__simulating
- *    <li> \ref PrjSpecAutoDataCollector__pc_win32__simulating__sys
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock__simulating
+ *    <li> \ref PrjSpecAutoDataCollector__pc_win32__can_server_sock__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>

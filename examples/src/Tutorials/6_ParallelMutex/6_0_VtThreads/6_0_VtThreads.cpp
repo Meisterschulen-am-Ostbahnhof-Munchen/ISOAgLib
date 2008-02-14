@@ -134,16 +134,8 @@
  *		<li> \ref PrjSpec6_0_VtThreads__pc_linux__simulating__simulating
  *		<li> \ref PrjSpec6_0_VtThreads__pc_linux__simulating__sys
  * - Configuration Setups for Win32 on PC:
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_no_card__simulating
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_sontheim__simulating
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__simulating
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_xl__simulating
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_no_card__sys
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_sontheim__sys
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__sys
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock_vector_xl__sys
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__simulating__simulating
- *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__simulating__sys
+ *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock__simulating
+ *		<li> \ref PrjSpec6_0_VtThreads__pc_win32__can_server_sock__sys
  * - Configuration Setupts for some embedded targets:
  *		<li> \ref PrjSpec6_0_VtThreads__esx__sys__sys
  *		<li> \ref PrjSpec6_0_VtThreads__imi__sys__sys
@@ -173,16 +165,8 @@
  *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__simulating
  *    <li> \ref FileLists6_0_VtThreads__pc_linux__simulating__sys
  * - Configuration Setups for Win32 on PC:
- *    - \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_no_card__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_sontheim__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_xl__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_no_card__sys
- *		<li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_sontheim__sys
- *		<li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_canlib__sys
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock_vector_xl__sys
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__simulating__simulating
- *    <li> \ref FileLists6_0_VtThreads__pc_win32__simulating__sys
+ *    - \ref FileLists6_0_VtThreads__pc_win32__can_server_sock__simulating
+ *    <li> \ref FileLists6_0_VtThreads__pc_win32__can_server_sock__sys
  * - Configuration Setupts for some embedded targets:
  *    <li> \ref FileLists6_0_VtThreads__esx__sys__sys
  *    <li> \ref FileLists6_0_VtThreads__imi__sys__sys
