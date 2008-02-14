@@ -249,14 +249,16 @@ The necessary configuration options for the \isoaglib applications are (e.g. con
 Create your Dev-C++ or VC6 project with the <tt>update_makefile.sh</tt> script and build the project.
 
 Precompiled CAN server binaries for Windows already exist in the following directories:
-- Visual-Studio:
-    - <tt>examples/compiler_projects/VC6/canserver/Release/can_server.exe</tt>
-    - <tt>examples/compiler_projects/VC6/canserver/Release/can_server_pcan.exe</tt>
 - Dev-C++:<br> 
-    - <tt>examples/compiler_projects/Dev-C++/canserver/can_server.exe</tt>
-    - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe</tt>
+  - <tt>examples/compiler_projects/Dev-C++/canserver/can_server.exe</tt>
+  - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe</tt>
+  - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.exe</tt>
+- Visual-Studio:
+  - <tt>examples/compiler_projects/VC6/canserver/Release/can_server.exe</tt>
+  - <tt>examples/compiler_projects/VC6/canserver/Release/can_server_pcan.exe</tt>
 
 To use <tt>can_server_pcan.exe</tt> (support for PEAK CAN card), you need <tt>pcan_usb.dll</tt> from http://www.peak-system.com/files/usb.zip.
+The <tt>can_server_vector_xl.exe</tt> will require drivers that are available on the Vector driver CD.
 
 \subsubsection CanServerInstallation CAN Server Build and Installation
 If you wish to rebuild the CAN server applications you can use the following projects:
@@ -288,7 +290,7 @@ For building the CAN server application the following files are required:<br>
 - <b>PCAN</b>: (<a href="http://www.peak-system.com/files/usb.zip">usb.zip</a>)
     - <tt>Pcan_usb.h</tt>
     - <tt>Pcan_usb.lib</tt>
-- Vector-Informatik (XL Driver Library): 
+- <b>Vector-Informatik (XL Driver Library)</b>:
     - <tt>vxlapi.dll</tt>
     - <tt>vxlapi.h</tt>
     - <tt>vxlapi.lib</tt>
@@ -1201,7 +1203,7 @@ and extract it properly(!) to <tt>vt2iso\\..\\libs\\</tt>
 -# Be sure that the MS Platform SDK is installed
 -# Modify include and or library paths to match your system's settings if needed
 -# Open vt2ios.vcproj and create a debug or release build.
--# The dll files will be copied to the <tt>_build\\debug</tt> or <tt>_build\\release</tt> directory if installed correctly
+-# The dll files will be copied to the <tt>vt2iso\\bin_vc</tt> directory if installed correctly
 
 <b>Remark for Win32 users:</b> special installation and usage instructions can be found in <tt>INSTALL.Win32.txt</tt> in the <tt>vt2iso</tt> directory.
 

@@ -158,6 +158,18 @@ similar levels of capability:
        a deviation between them can still be detected)
 <br>Also take a look at the \ref ProcDataRemotePage.
 
+
+\section ProcDataExampleRef Where to start
+- A good starting point for process data communication is tutorial example 2.4 and 2.7
+  (see <a class="el" href="examples.html"> tutorial examples page</a>).<br>
+  2.4 is the local side, that means this applications is the "owner" of the process data while 2.7 is the remote side, that means, 
+  this applications starts measurment programms, receives the measurement data and sends the setpoint commands 
+  (plays the role of a task controller).
+- See \ref XMLProcSpec for specification for ISO ProcessData XML files.
+- Additional questions regarding XML process data are answered in the \ref ProcDataFAQ.
+- Win32 users should read <tt>INSTALL.Win32.txt</tt> for setup and usage instructions.
+
+
 \section ProcDataDirectoryStructureGrp Distribution of Classes and their corresponding files
 The different variants of local and remote Process Data are based on some helper classes. The helper classes
 are structured corresponding to the feature set levels described in the overview on types of Process Data.
@@ -408,9 +420,9 @@ bool MyProcDataHandler_c::processDefaultLoggingStart(IsoAgLib::EventSource_c /* 
   return true;
 }
 \endcode
-
 See the 2.7 tutorial for the sending of the request/set value commands.
 
 See also \ref DefaultDataLogging. 
+
 
 */

@@ -585,3 +585,10 @@ a#anchor4hiddendiv:hover {
 TABLE { border-collapse:collapse; border: 1px dotted silver; }
 /*TABLE TR { border:0; }*/
 TABLE TH { border-bottom: 1px solid gray; }
+
+
+div.question { 
+  border:1px solid silver;
+  background-color:#f0f8ff;
+  font-style:italic;  
+}

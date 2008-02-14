@@ -1,0 +1,67 @@
+/*! \page ProcDataFAQ Process Data Handling FAQ
+
+
+<div class="question">
+Q: What is the best source of documentation to determine how to use all these features?
+</div>
+see \ref XMLProcSpec for specification for ISO ProcessData XML files.
+
+
+<div class="question">Q: Is there a way to change the Device Description at run time and have it uploaded again?
+   How is a language change handled? How is a units change handled?
+   What if device elements need to be added or removed at run-time due to a change in user configuration?
+</div>
+In the XML device description the device_designator has the attribute localization_label (e.g. localization_label="en50015A56FF"). You can create one device description for each language.<br>
+When the language is changed, the corresponding pool is used (I didn't look yet too much into the details).<br>
+When adding new device elements during runtime, should be handled like the VT does the object handling (partial pool update). This is not yet supported, but there have been already some discussions on this.
+
+<div class="question">
+Q: Does this interface support measurement starts from the Task controller?
+</div>
+yes, the 2.4 example acts like as "simple TC", at least in repect to the process data communication.
+
+
+<div class="question">
+Q: How is the default measurements defined for each data element? 
+   I see that there is a parameter to indicate that it is in the default list, but how does it know how to send it (On change at
+   what threshold, time based at what periodic rate)?
+</div>
+IsoAgLib supports the default data logging mechanism (see 6.6.2 in the TC standard) on the client side.
+steps:
+-# Add this DPD to your XML
+\code
+     <deviceprocessdata designator="default logging" ddi="0xDFFF" properties="defaultset" trigger_methods="timeinterval" proc_program_name="defaultLogging" cumulative_value="false">
+       <deviceprocessdatacombination ddi="0xDFFF" command_type="exact" is_setpoint="false" />
+     </deviceprocessdata>
+\endcode
+-# Derive a new class MyProcDataHandler_c from IsoAgLib::ProcessDataChangeHandler_c and implement
+\code
+bool MyProcDataHandler_c::processDefaultLoggingStart( IsoAgLib::EventSource_c rc_src, int32_t ri32_val, const IsoAgLib::iDevKey_c& rc_callerDevKey )
+{
+   if (c_dryYield.startDataLogging(IsoAgLib::Proc_c::TimeProp, 1000))
+     printf("starting measurement c_dryYield success!\n");
+   else
+     printf("starting measurement c_dryYield failure!\n");
+   return TRUE;
+}
+\endcode
+Here you can decide how this process data instance (e.g. c_dryYield) should react on default data logging start request (time proportional measurement, etc.)<br>
+This callback method is called when a request value command for DDI 0xDFFF is received (start default data logging)
+-# send a request value command to start default logging from the TC
+-# stop the default data logging by issuing a SetValue of "0" for this DDI 0xDFFF (stopping is done inside the IsoAgLib, no callback needed)
+
+
+<div class="question">
+Q: In the examples, what is Local vs. Remote?  What is Read vs. Write?
+   What is StdIso vs. SimpleMeasure vs. SimpleSetpoint vs. SimpleMeasureSetpoint?
+</div>
+The "simple" variations have less features and are intended for situation where you have not enough memory or other system resources.
+
+
+<div class="question">
+Q: Is the Task Controller Client portion of IsoAgLib being used in products?
+</div>
+yes, for example David Knopp and Mike Schmidt use it for their ECUs (applicators, sprayers, ...)
+
+
+*/
