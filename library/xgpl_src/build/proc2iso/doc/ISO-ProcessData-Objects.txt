@@ -1,10 +1,42 @@
-/** @page XMLProcSpec Specification for ISO ProcessData XML files (device description)
+/** @page XMLProcSpec Specification for ISO ProcessData XML files (device description for proc2iso)
 \section XMLGeneralNotes General notes
-<ul>
-  <li>This version of proc2iso is designed to work with TCs. It parses a device description given in XML format and generates a C++-bytestream for
-      the upload to the TC and a C++-header file <br>
-      with the necessary declarations for the correct constructors (see tutorials 2_0 to 2_6).
-</ul>
+The <i>proc2iso</i> tool is designed to work with terminal clients. 
+It parses a device description given in XML format and generates a C++-bytestream for the upload to the TC and a C++-header file
+with the necessary declarations for the correct constructors (see tutorials 2_0 to 2_6).<br>
+Installation instructions for <i>proc2iso</i> are given in the <tt>INSTALL</tt> and <tt>INSTALL.Win32.txt</tt> files in 
+<tt>library/xgpl_src/build/proc2iso</tt>.
+
+\section proc2isoUsage proc2iso Usage
+Beneath the device descriprion .xml file a xml schema has to be passed to <i>proc2iso</i> in order to 
+work properly (using -s=xxx.xsd switch).
+Win32 users can call proc2iso.cmd directly from the the directory where the device description .xml file
+resides, as the script will automatically call <tt>proc2iso.exe</tt> like this:<br>
+<tt>proc2iso.exe -s=[path to proc2iso.exe]proc2iso.xsd [device description].xml</tt>.
+
+\code
+proc2iso BUILD DATE: 14-Feb-2008
+
+Usage:
+ proc2iso [options] <XML file>
+
+This program invokes the DOMBuilder, builds the DOM tree,
+and then converts the tree to ISO Process Data cpp-files.
+
+Input files are all files starting with <XML file>,
+sorted by alphabetical order.
+This has been done to give the possibility to split
+large XML files into several ones.
+
+Options:
+ -v=xxx     Validation scheme [always | never | auto]. Defaults to auto
+ -n         Enable namespace processing. Defaults to off.
+ -f         Enable full schema constraint checking. Defaults to off.
+ -s=xxx.xsd       Enable scheme processing with XML scheme xxx.xsd either from the path relative to the directory of the device description
+       OR the absolute pathname starting with '/' (Linux) or '\' (Win).
+       Defaults to off.       Using an XML scheme will also set the necessary options for namespace, validation scheme and full schema constraint checking
+ -locale=ll_CC  specify the locale. Defaults to en_US.
+ -?         Show this help.
+\endcode
 
 \section XMLUsage Usage in your own project
 - First, include the necessary header in your main-file
