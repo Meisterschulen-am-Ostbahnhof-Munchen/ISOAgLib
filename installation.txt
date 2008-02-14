@@ -60,7 +60,7 @@ with standard GNUmake.
 The automatic project file generating script can write DSP project files, which can be directly used to create an executeable .exe
 program with <i>Vector-Informatik CAN card</i> support (or other CAN cards). As newer versions of VC++ can also import DSP project files,
 no special support is provided here. However, several project files for Visual Studio 2005 have been created as well.<br>
-Remark: Be sure that <tt>windows.h</tt> from the Microsoft PlatformSKD is included in your include path. It is needed for compilation of several tutorial examples.
+Remark: Be sure that <tt>windows.h</tt> from the Microsoft PlatformSKD is included in your include path. It is needed for compilation of several tutorial examples. You can download the Windows Server 2003 R2 Platform SDK <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=484269E2-3B89-47E3-8EB7-1F2BE6D7123A&displaylang=en">here</a>.
 
 \subsubsection Vc6StlPort Installation of STLport - Open Source ANSI C++ compatible STL
 The current \isoaglib version doesn't require the <a href="http://stlport.sourceforge.net/">STLport library</a> anymore.
@@ -1120,7 +1120,6 @@ USE_WIN32_ADDITIONAL_LIBS="c:\Dev-Cpp\lib\libwinmm.a c:\Dev-Cpp\lib\libws2_32.a"
 </div>
 
 \section InstallIsoToolVt2Iso Installing vt2iso - Tool for Creation of ISO 11783 Virtual Terminal Masks
-
 The \isoaglib provides a complete Open Source Tool Chain for ISO 11783 virtual terminals.
 <b>First of all, you don't have to build vt2iso, as an EXE file is also part of the downloaded archive.</b><br>
 But if you like to test some changes, or simply want to rebuild from the current repository version, you need to perform
@@ -1129,6 +1128,8 @@ the following build process.<br>
 A very important part is the tool <tt>vt2iso</tt> which parses the XML mask definition files and creates
 ROMable constant declarations for all used virtual terminal objects, which can be easily uploaded to the terminal
 (see at the corresponding tutorial for more information on this).
+
+<b>Remark for Win32 users:</b> special installation and usage instructions can be found in <tt>INSTALL.Win32.txt</tt> in the <tt>vt2iso</tt> directory.
 
 \subsection InstallFreeImage Install Image Manipulation Library Free Image
 The <tt>vt2iso</tt> can read almost all types of bitmaps to get the compileable variable array representation
@@ -1139,7 +1140,8 @@ if needed) so that the needed conversion to the chosen color depth can be perfor
 Vt2iso uses an automatic calculation of a threshold to get the highest contrast in the picture (optimum 50:50 relation between
 black and white).<br>
 \subsubsection FreeImageLinux Installation of Free Image Library on Linux
-For Linux users <tt>libfreeimage.a</tt> is included in the repository so that further compilation is not required anymore.
+For Linux users <tt>libfreeimage.a</tt> is included in the repository so that further compilation is not required anymore
+(<tt>vt2iso/../libs/freeimage</tt>).
 <!--The FreeImage library can be best compiled from source for Linux (simple to compile with make based on
 provided Makefile).
 Please make sure that the library and include files are installed to system directories (need root user to install)
@@ -1147,15 +1149,16 @@ or adapt the Makefiles on your own (no support by author for this config).
 The FreeImage library may also be available as a ready made binary distribution.-->
 
 \subsubsection FreeImageWin32 Installation of Free Image Library on Win32
-On Win32 Platform the Dev-C++ IDE provides a very simple download as extension package from within the program. Thus you have no
-installation afford with any make or manual install (see \ref InstallDevCpp).
-In case you still want to use Visual Studio, then please look at the manuals on the project webpage.
+On Win32 Platform the Dev-C++ IDE provides a very simple download as extension package from within the program. 
+Thus you have no installation afford with any make or manual install (see \ref InstallDevCpp).
+In case you still want to use Visual Studio, you can use the prvided project file <tt>vt2iso.vcproj</tt> together
+with the files from the repository (<tt>vt2iso/../libs/freeimage</tt>). Be sure that you have the MS Platform SDK
+installed (see CompDevVc6).
 
 (Remark: As this program is only running on development PC, the compiler needn't be able to generate
   code for embedded platforms -> TASKING not needed for this on Win32)
 
 \subsection InstallXerces Install XML Parser Library Xerces of the Apache Foundation
-
 The parsing of the XML files is performed by the Xerces library from apache, which can be downloaded from
 http://xml.apache.org/xerces-c/index.html .
 
@@ -1165,26 +1168,43 @@ distribution specific package manager. Select at least a Xerces-C package which 
 the corresponding headers in /usr/include/xercesc/ (or /usr/local/include/xercesc/).
 
 \subsubsection Win32Xerces Installation of Xerces-C on Windows
--# Download the Dev-C++ prepared binary of Xerces-C from http://devpaks.org/show.php?devpak=41
--# Call the packagemanager for Dev-C++ (menu TOOLS->PACKAGE MANAGER) and select
+- <b>Dev-C++</b>
+  - Download the Dev-C++ prepared binary of Xerces-C from http://devpaks.org/show.php?devpak=41
+  - Call the packagemanager for Dev-C++ (menu TOOLS->PACKAGE MANAGER) and select
     the downloaded archive xerces-c_2_5_0-mingw.DevPak for install
+- <b>Visual Studio</b><br> 
+  Download Xerces-C++ v2.5.0.0 from <a href="http://archive.apache.org/dist/xml/xerces-c/Xerces-C_2_5_0/xerces-c_2_5_0-windows_nt-msvc_60.zip">here</a>
+and extract it properly(!) to <tt>vt2iso\\..\\libs\\</tt>
+- <b>Attention!</b><br>The xerces-c_2_5_0.dll that was included with the Dev-Cpp package is NOT the
+  same as the one you can download from apache.org!! Therefore you can get an inproper procedurecall 
+  messages when starting vt2iso using the wrong dll! So be sure to always use the correct dll.
 
 
 \subsection CompileVt2Iso Compiling vt2iso
 \subsubsection CompileVt2IsoLinux Compiling vt2iso on Linux
 -# <tt>cd build_utils/vt2iso</tt>
 -# <tt>make</tt>
-\subsubsection CompileVt2IsoWin32 Compiling VT2Iso on Win32 with Dev-C++
-<ol>
-<li>Install first Dev-C++ with the library packages FreeImage and ImageLib
-<li>Install Xerces-C (see above)
-<li>Open the Dev-C++ project file build_utils/vt2iso/Vt2Iso.dev
-<li>Start project compile
-<li>Copy the dll's xerces-c_2_5_0.dll and FreeImage.dll to a place where Vt2Iso.exe
-    can find them if you execute the EXE (e.g. same directory as EXE or system directory)
-    or extend the PATH. As <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> is very seldom using Win32 development tools,
-    I ask you to check other resources on how to manage dll placement.
-</ol>
+
+\subsubsection CompileVt2IsoWin32 Compiling VT2Iso on Win32
+
+- Dev-C++:
+-# Install first Dev-C++ with the library packages FreeImage and ImageLib
+-# Install Xerces-C (see above)
+-# Open the Dev-C++ project file build_utils/vt2iso/Vt2Iso.dev
+-# Start project compile
+-# Copy the dll's xerces-c_2_5_0.dll and FreeImage.dll to a place where Vt2Iso.exe
+   can find them if you execute the EXE (e.g. same directory as EXE or system directory)
+   or extend the PATH. As <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> is very seldom using Win32 development tools,
+   he asks you to check other resources on how to manage dll placement.<br>
+- Visual Studio (2005):
+-# Be sure that the libraries and includes for freeimage and xerces are in the proper locations
+-# Be sure that the MS Platform SDK is installed
+-# Modify include and or library paths to match your system's settings if needed
+-# Open vt2ios.vcproj and create a debug or release build.
+-# The dll files will be copied to the <tt>_build\\debug</tt> or <tt>_build\\release</tt> directory if installed correctly
+
+<b>Remark for Win32 users:</b> special installation and usage instructions can be found in <tt>INSTALL.Win32.txt</tt> in the <tt>vt2iso</tt> directory.
+
 
 \subsection UseVt2Iso Creating mask definitions with vt2iso
 You can find the description of the XML syntax which is used by vt2iso at \ref XMLspec .<br>
