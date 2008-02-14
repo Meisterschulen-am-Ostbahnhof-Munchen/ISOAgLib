@@ -6,6 +6,7 @@
 <li> ...supports VTs that don't scale picture-graphics (only some old ones out that don't) in order to let the designer add pre-scaled-bitmaps. This is also helpful if you want to supply "better-then-VT-scaled" versions for some VTs.
 <li> ...supports multi-language objectpools. Changing language is support by IsoAgLib's VT-Client and will automatically make use of multi-language pools.
 </ul>
+Installation instructions for vt2iso can be found on the \ref InstallIsoToolVt2Iso "installation page".
 
 \section XMLUsage Usage in your own project
 First of all, it is very helpful to have a look to the <b> Tutorial 3.0</b>. Other than that, read on here or take a look at the section \ref GettingHelp "Getting Help".
