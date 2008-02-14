@@ -8,11 +8,10 @@ DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 #EXAMPLE_LIST='conf_AutoDataCollector'
-TARGET_LIST="pc_win32:pc_linux:esx:c2c:imi:pm167"
-#TARGET_LIST="esx"
+TARGET_LIST="esx:c2c:imi:pm167:pc_win32:pc_linux"
 CAN_LIST="simulating:sys:socket_server:msq_server"
 RS232_LIST="simulating:sys:rte"
-DEVICE_LIST="no_card:pcan:A1:rte:sontheim:vector_canlib:vector_xl"
+DEVICE_LIST="pcan:A1:rte:no_card"
 for conf_example in $EXAMPLE_LIST ; do
   echo "Processing... ". $conf_example
   EXAMPLE_DIR=""
@@ -43,20 +42,14 @@ for conf_example in $EXAMPLE_LIST ; do
       for can_device in $DEVICE_LIST ; do
         for rs232_drv in $RS232_LIST ; do
           if test $target = "pc_win32" ; then
-						# no support for sys, and msq_server CAN device
-						if test $can_drv = "sys" -o $can_drv = "msq_server" ; then
+						# for WIN32: create projects only for socket_server
+						if test $can_drv != "socket_server" ; then
 							continue
 						fi
-						# no processing of combinations with simulating and any device name other than no_card
-            if test $can_drv = "simulating" -a $can_device != "no_card" ; then
-              continue
-            fi
-						# forbid some can devices for socket_server
-						if test $can_drv = "socket_server" ; then
-							if test $can_device = "pcan" -o $can_device = "A1" -o $can_device = "rte"  ; then
-								continue
-							fi
-						fi
+						# for WIN32 only no_card (extra project files for other CAN devices)
+                  if test $can_device != "no_card" ; then
+                      continue
+                  fi
           elif test $target = "pc_linux" ; then
 						# no support for sys, and not use socket_server (socket can server is supported in LINUX but not preferred) CAN device
 						if test $can_drv = "sys" -o $can_drv = "socket_server" ; then
@@ -66,12 +59,6 @@ for conf_example in $EXAMPLE_LIST ; do
             if test $can_drv = "simulating" -a $can_device != "no_card" ; then
               continue
             fi
-						# forbid some can devices for msq_server
-						if test $can_drv = "msq_server" ; then
-							if test $can_device = "sontheim" -o $can_device = "vector_canlib" -o $can_device = "vector_xl" ; then
-								continue
-							fi
-						fi
           else # embedded non-PC targets
             if test $can_drv != "sys" ; then
               continue
@@ -91,7 +78,7 @@ for conf_example in $EXAMPLE_LIST ; do
             fi
             ;;
           esac
-           echo "target= $target candriver= $can_drv can_device= $can_device rs232= $rs232_drv $conf_example"
+           echo "target=$target candriver=$can_drv can_device=$can_device rs232=$rs232_drv $conf_example"
 					 if [ -d $DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE ] ; then
 					 	echo "Directory $DOXYGEN_EXPORT_DIR/$EXAMPLE_DIR/$EXAMPLE for individual project configuration exists"
 					 else
