@@ -3007,6 +3007,7 @@ library/xgpl_src/build/libs/freeimage/FreeImage.dll -text
 library/xgpl_src/build/libs/freeimage/FreeImage.lib -text
 library/xgpl_src/build/libs/freeimage/freeimage_gcc.def -text
 library/xgpl_src/build/libs/freeimage/libfreeimage.a -text
+library/xgpl_src/build/libs/freeimage/libfreeimage_mingw.a -text
 library/xgpl_src/build/libs/freeimage/license-fi.txt -text
 library/xgpl_src/build/libs/freeimage/license-gpl.txt -text
 library/xgpl_src/build/libs/xerces-c_2_5_0/README.txt -text
