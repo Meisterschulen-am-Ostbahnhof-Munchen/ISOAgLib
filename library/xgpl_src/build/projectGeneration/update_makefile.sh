@@ -2437,7 +2437,12 @@ case "$USE_CAN_DRIVER" in
           ;;
       esac
     fi
+
     CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
+    if test $USE_TARGET_SYSTEM = "pc_win32" ; then
+        # for WIN32 only "no_card" will be used => skip this extension 
+        CAN_SERVER_FILENAME=can_server_sock
+    fi  
   ;;
   *)
     echo "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
