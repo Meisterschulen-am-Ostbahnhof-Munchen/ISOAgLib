@@ -2217,6 +2217,7 @@ library/xgpl_src/build/proc2iso/AUTHORS -text
 library/xgpl_src/build/proc2iso/COPYING -text
 library/xgpl_src/build/proc2iso/ChangeLog -text
 library/xgpl_src/build/proc2iso/INSTALL -text
+library/xgpl_src/build/proc2iso/INSTALL.Win32.txt -text
 library/xgpl_src/build/proc2iso/Makefile -text
 library/xgpl_src/build/proc2iso/Makefile.incl -text
 library/xgpl_src/build/proc2iso/Makefile.win -text
