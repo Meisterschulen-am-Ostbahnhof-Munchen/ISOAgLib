@@ -1,1 +1,1 @@
-Makefile__msq_server_no_card__simulating
+Makefile__msq_server_no_card__rte
