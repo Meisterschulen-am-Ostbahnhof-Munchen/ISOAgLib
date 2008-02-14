@@ -727,15 +727,20 @@ USE_TARGET_SYSTEM="pc_linux"
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection: "simulating"|"sys"|"msq_server"|"socket_server" (deprecated "rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim")
+# select wanted type of CAN driver connection: "simulating"|"sys"|"msq_server"|"socket_server"
 # targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_win32" can use the driver "socket_server"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"
-# only target "pc_linux" can us the driver "rte"|"msq_server"|"socket_server"
+# target "pc_win32" can't use "msq_server" (Linux message queue version of the can_server)
 USE_CAN_DRIVER="msq_server"
 
 # the can server ("msq_server"|"socket_server") is available for different can cards,
 # where all of them use some common files and just one individual file.
-# USE_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte|sontheim|vector_canlib|vector_xl (default: no_card)
+# target "pc_linux": a multi target Makefile is created which builds the application
+#                    and also the can_server with support for the selected CAN device (no_card|pcan|A1|rte)
+# target "pc_win32": extra project files exist for the can_server (socket version)
+#                    with support for different CAN devices
+#                    (see the folder "canserver" in compiler_projects/Dev-C++ and compiler_projects/VC6)
+#                    therefore for "pc_win32" only USE_CAN_DEVICE_FOR_SERVER="no_card" should be used
+# USE_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte (default: no_card)
 USE_CAN_DEVICE_FOR_SERVER="no_card"
 
 # select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
