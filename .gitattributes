@@ -3000,7 +3000,6 @@ library/xgpl_src/IsoAgLib/hal/pc/can/can_server_vector_xl.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_sontheim_canlpt.cpp -text
 library/xgpl_src/IsoAgLib/util/compiler_adaptation.h -text
 library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
