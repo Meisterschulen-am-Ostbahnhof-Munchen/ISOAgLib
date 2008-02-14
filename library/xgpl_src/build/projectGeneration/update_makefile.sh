@@ -2440,8 +2440,10 @@ case "$USE_CAN_DRIVER" in
 
     CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
     if test $USE_TARGET_SYSTEM = "pc_win32" ; then
-        # for WIN32 only "no_card" will be used => skip this extension 
-        CAN_SERVER_FILENAME=can_server_sock
+        if test $USE_CAN_DEVICE_FOR_SERVER = "no_card" ; then 
+          # skip extension "no_card"
+          CAN_SERVER_FILENAME=can_server_sock
+        fi
     fi  
   ;;
   *)
