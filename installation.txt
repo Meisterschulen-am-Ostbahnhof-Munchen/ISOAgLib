@@ -60,7 +60,7 @@ with standard GNUmake.
 The automatic project file generating script can write DSP project files, which can be directly used to create an executeable .exe
 program with <i>Vector-Informatik CAN card</i> support (or other CAN cards). As newer versions of VC++ can also import DSP project files,
 no special support is provided here. However, several project files for Visual Studio 2005 have been created as well.<br>
-Remark: Be sure that <tt>windows.h</tt> from the Microsoft PlatformSKD is included in your include path. It is needed for compilation of several tutorial examples. You can download the Windows Server 2003 R2 Platform SDK <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=484269E2-3B89-47E3-8EB7-1F2BE6D7123A&displaylang=en">here</a>.
+Remark: If your Visual Studio doesn't come with a <tt>windows.h</tt> you can grab it from the Microsoft PlatformSKD and add it to your include paths. It is needed for compilation of several tutorial examples. You can download the Windows Server 2003 R2 Platform SDK <a href="http://www.microsoft.com/downloads/details.aspx?FamilyId=484269E2-3B89-47E3-8EB7-1F2BE6D7123A&displaylang=en">here</a>.
 
 \subsubsection Vc6StlPort Installation of STLport - Open Source ANSI C++ compatible STL
 The current \isoaglib version doesn't require the <a href="http://stlport.sourceforge.net/">STLport library</a> anymore.
@@ -278,7 +278,12 @@ These projects consist of:
 -# Source file <tt>can_server_sock.cpp</tt> (main CAN server logic)
 -# Source file { <tt>can_server_no_card.cpp | can_server_peak.cpp | can_server_sontheim.cpp | can_server_vector.cpp | can_server_vector_xl.cpp</tt> } (CAN card specific logic)
 
-and the necessary pathes for CAN card specfic header files and libraries for compiling and linking. Please adapt the include pathes for header and libraries to your own settings (e.g.: <tt>C:\\Development\\pthread, C:\\Development\\PCAN, C:\\Development\\CANLIB, C:\\Development\\pthread, C:\\Development\\pthread\\pthreadVC2.lib,</tt> ...)
+The necessary pathes for CAN card specfic header files and libraries for compiling and linking. Please adapt the include pathes for header and libraries to your own settings. The default paths are:
+- <tt>C:\\Development\\pthread</tt>
+- <tt>C:\\Development\\PCAN</tt>
+- <tt>C:\\Development\\CANLIB\\dll</tt>
+- <tt>C:\\Development\\XL_Driver_Library\\bin</tt>
+- ...
 
 The project files are located in the directory <tt>IsoAgLib/examples/compiler_projects/Dev-C++/canserver</tt> and <tt>IsoAgLib/examples/compiler_projects/VC8/canserver</tt>.
 
@@ -286,7 +291,7 @@ This strategy can be mapped to other CAN cards as well. Please contact the
 <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> for help on adaptation and please
 send a running adaptation back to the project.
 
-For building the CAN server application the following files are required:<br>
+For building the CAN server application the following files are required in the above specified directories:<br>
 - <b>Pthreads</b>: 
     Pthreads is a POSIX standard for threads and is used for efficent thread managment in the CAN server application.
     (version 2.8.0 files can be downloaded from http://sources.redhat.com/pthreads-win32/)
@@ -298,11 +303,11 @@ For building the CAN server application the following files are required:<br>
 - <b>PCAN</b>: (<a href="http://www.peak-system.com/files/usb.zip">usb.zip</a>)
     - <tt>Pcan_usb.h</tt>
     - <tt>Pcan_usb.lib</tt>
-- <b>Vector-Informatik (XL Driver Library)</b>:
+- <b>Vector-Informatik (XL_Driver_Library directory on driver cd)</b>:
     - <tt>vxlapi.dll</tt>
     - <tt>vxlapi.h</tt>
     - <tt>vxlapi.lib</tt>
-- <b>Vector-Informatik (CANLIB)</b>:
+- <b>Vector-Informatik (CANLIB directory on driver cd)</b>:
     - <tt>vcand32.dll</tt>
     - <tt>vcand32.lib</tt>
     - <tt>VCanD.h</tt>
@@ -1167,7 +1172,7 @@ On Win32 Platform the Dev-C++ IDE provides a very simple download as extension p
 Thus you have no installation afford with any make or manual install (see \ref InstallDevCpp).
 In case you still want to use Visual Studio, you can use the prvided project file <tt>vt2iso.vcproj</tt> together
 with the files from the repository (<tt>vt2iso/../libs/freeimage</tt>). Be sure that you have the MS Platform SDK
-installed (see CompDevVc6).
+installed if needed (see CompDevVc6).
 
 (Remark: As this program is only running on development PC, the compiler needn't be able to generate
   code for embedded platforms -> TASKING not needed for this on Win32)
@@ -1212,7 +1217,7 @@ and extract it properly(!) to <tt>vt2iso\\..\\libs\\</tt>
    he asks you to check other resources on how to manage dll placement.<br>
 - Visual Studio (2005):
 -# Be sure that the libraries and includes for freeimage and xerces are in the proper locations
--# Be sure that the MS Platform SDK is installed
+-# Be sure that windows.h is installed (get MS Platform SDK if needed)
 -# Modify include and or library paths to match your system's settings if needed
 -# Open vt2ios.vcproj and create a debug or release build.
 -# The dll files will be copied to the <tt>vt2iso\\bin_vc</tt> directory if installed correctly
