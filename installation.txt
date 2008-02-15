@@ -202,10 +202,10 @@ check the RS232 output, when you compile the project with the <tt>\#define DEBUG
 \subsubsection TaskingCanRs232Buffer Allocate enough buffer for RS232 buffer
 Some OS/BIOS which are designed like <a href="http://www.sensor-technik.de">STW BIOS</a> have a special setting to
 allocate enough memory for the internal managed buffers for RS232. The amount of items which are reserved by
-\isoaglib in <tt>isoaglib_config.h</tt>: <tt>CONFIG_RS232_DEFAULT_SND_PUF_SIZE</tt> (this can be overridden by
-configuration call with <tt>iRS232IO_c::setSndPufferSize</tt> and <tt>iRS232IO_c::setRecPufferSize</tt>).<br>
+\isoaglib in <tt>isoaglib_config.h</tt>: <tt>CONFIG_RS232_DEFAULT_SND_BUF_SIZE</tt> (this can be overridden by
+configuration call with <tt>iRS232IO_c::setSndBufferSize</tt> and <tt>iRS232IO_c::setRecBufferSize</tt>).<br>
 - Check the RS232 output for fill grade of CAN buffers (the MAX amount of buffered CAN messages per BUS is printed)
-- Calculate the needed memory for RS232 (corresponds to <tt>CONFIG_RS232_DEFAULT_SND_PUF_SIZE</tt> or the overridden value) and CAN (corresponds to the MAX output from step above)
+- Calculate the needed memory for RS232 (corresponds to <tt>CONFIG_RS232_DEFAULT_SND_BUF_SIZE</tt> or the overridden value) and CAN (corresponds to the MAX output from step above)
 - Adapt the buffer size value (leave some additional space)
 
 
@@ -264,6 +264,7 @@ Precompiled CAN server binaries for Windows already exist in the following direc
 
 To use <tt>can_server_pcan.exe</tt> (support for PEAK CAN card), you need <tt>pcan_usb.dll</tt> from http://www.peak-system.com/files/usb.zip.
 The <tt>can_server_vector_xl.exe</tt> will require drivers that are available on the Vector driver CD.
+<br>To run the Visual Studio 2005 binaries you will need the VC8 runtime components that are available in the <a href="http://www.microsoft.com/Downloads/details.aspx?FamilyID=32bc1bee-a3f9-4c13-9c99-220b62a191ee&displaylang=en">Microsoft Visual C++ 2005 Redistributable Package</a> (2.5MB).
 
 \subsubsection CanServerInstallation CAN Server Build and Installation
 If you wish to rebuild the CAN server applications you can use the following projects:
@@ -290,8 +291,8 @@ For building the CAN server application the following files are required:<br>
     Pthreads is a POSIX standard for threads and is used for efficent thread managment in the CAN server application.
     (version 2.8.0 files can be downloaded from http://sources.redhat.com/pthreads-win32/)
     - <tt>pthread.h</tt>
-    - <tt>libpthreadVC2.dll</tt>
-    - <tt>libpthreadVC2.lib</tt>
+    - <tt>pthreadVC2.dll</tt>
+    - <tt>pthreadVC2.lib</tt>
     - <tt>sched.h</tt>
     - <tt>semaphore.h</tt>
 - <b>PCAN</b>: (<a href="http://www.peak-system.com/files/usb.zip">usb.zip</a>)
@@ -309,13 +310,11 @@ For building the CAN server application the following files are required:<br>
 You also have to install the .dll of the used CAN driver library into the DLL-Search-Path of your system (or into the directory of your resulting EXE).
 
 <b>Some additional notes:</b><br>
-It seemed that the driver DLLs for Vector-Informatik CAN cards don't interact with Dev-C++ built EXE programs. Please use the VC8 projects when building the CAN server application with Vector-Informatik support.
-
 The CAN server application for Vector Informatik and Sontheim cards can be configured for a specific hardware type (list <tt>{ HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI }</tt> - the XL driver places the <tt>XL_</tt> string in front of the card type name, so that both CANLIB and XL can be used with the same conf_* type names). As a special option the CAN server can use all real hardware channels it finds, so that your EXE can be flexibly used for different CAN card types of Vector-Informatik. You can use this option, if you select <tt>HWTYPE_AUTO</tt> as hardware type. In case only the Vector-Informatik Virtual Channel is found, then these typically two channels are used instead. Please add the define <tt>-DUSE_CAN_CARD_TYPE=HWTYPE_...</tt> or <tt>-DUSE_CAN_CARD_TYPE=XL_HWTYPE_...</tt> to your project.<br>
 The Sontheim CAN card driver should be used also with the automatic CAN card type detection. This is realized by testing the API init for
 a list of supported CAN card types. As soon as the API is successfully initialized for one CAN card type, that type is used.<br>
 
-More information on the CAN server application can be found \ref CanServerApp "here"
+More information on the CAN server application can be found on the \ref CanServerApp page.
 <!--The IsoAgLib provides at the moment an integration with the CAN drivers from Vector Informatik and Sontheim.
 Both Vector Informatik driver types <b>CANLIB</b> and <tt>XL Driver Library</tt> are supported by the source modules
 <tt>target_extension_can_w32_vector_canlib.cpp</tt> and <tt>target_extension_can_w32_vector_xl_drv_lib.cpp</tt>.
