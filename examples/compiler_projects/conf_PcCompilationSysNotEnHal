@@ -421,12 +421,12 @@ PRJ_ACTOR=1
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the libraries of the embedded BIOS / OS
 # ( please seperate entries by whitespace )
-# USE_EMBED_LIB_DIRECTORY="commercial_BIOS/bios_esx"
+# USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
 
 # specify the path ( relative to IsoAgLib root or absolute )
 # to the headers of the embedded BIOS / OS
 # ( please seperate entries by whitespace )
-# USE_EMBED_HEADER_DIRECTORY="commercial_BIOS/bios_esx"
+# USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
 
 # specify the needed library files
 # ( please seperate entries by whitespace )

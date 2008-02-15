@@ -69,8 +69,8 @@ PARAMETER_CAN_DEVICE_FOR_SERVER="UseConfigFile"
 PARAMETER_RS232_DRIVER="UseConfigFile"
 
 
-USE_EMBED_LIB_DIRECTORY="commercial_BIOS/bios_esx"
-USE_EMBED_HEADER_DIRECTORY="commercial_BIOS/bios_esx"
+USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
+USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
 USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
 USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
 USE_EMBED_ILO="Xos20lcs.ilo"
@@ -2440,11 +2440,11 @@ case "$USE_CAN_DRIVER" in
 
     CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
     if test $USE_TARGET_SYSTEM = "pc_win32" ; then
-        if test $USE_CAN_DEVICE_FOR_SERVER = "no_card" ; then 
+        if test $USE_CAN_DEVICE_FOR_SERVER = "no_card" ; then
           # skip extension "no_card"
           CAN_SERVER_FILENAME=can_server_sock
         fi
-    fi  
+    fi
   ;;
   *)
     echo "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
