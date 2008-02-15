@@ -253,9 +253,10 @@ Precompiled CAN server binaries for Windows already exist in the following direc
   - <tt>examples/compiler_projects/Dev-C++/canserver/can_server.exe</tt>
   - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe</tt>
   - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.exe</tt>
-- Visual-Studio:
-  - <tt>examples/compiler_projects/VC6/canserver/Release/can_server.exe</tt>
-  - <tt>examples/compiler_projects/VC6/canserver/Release/can_server_pcan.exe</tt>
+- Visual-Studio (2005):
+  - <tt>examples/compiler_projects/VC8/canserver/Release/can_server.exe</tt>
+  - <tt>examples/compiler_projects/VC8/canserver/Release/can_server_pcan.exe</tt>
+  - <tt>examples/compiler_projects/VC8/canserver/Release/can_server_vector_xl.exe</tt>
 
 To use <tt>can_server_pcan.exe</tt> (support for PEAK CAN card), you need <tt>pcan_usb.dll</tt> from http://www.peak-system.com/files/usb.zip.
 The <tt>can_server_vector_xl.exe</tt> will require drivers that are available on the Vector driver CD.
@@ -274,7 +275,7 @@ These projects consist of:
 
 and the necessary pathes for CAN card specfic header files and libraries for compiling and linking. Please adapt the include pathes for header and libraries to your own settings (e.g.: <tt>C:\\Development\\pthread, C:\\Development\\PCAN, C:\\Development\\CANLIB, C:\\Development\\pthread, C:\\Development\\pthread\\pthreadVC2.lib,</tt> ...)
 
-The project files are located in the directory <tt>IsoAgLib/examples/compiler_projects/Dev-C++/canserver</tt> and <tt>IsoAgLib/examples/compiler_projects/VC6/canserver</tt>.
+The project files are located in the directory <tt>IsoAgLib/examples/compiler_projects/Dev-C++/canserver</tt> and <tt>IsoAgLib/examples/compiler_projects/VC8/canserver</tt>.
 
 This strategy can be mapped to other CAN cards as well. Please contact the
 <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> for help on adaptation and please
@@ -302,7 +303,7 @@ For building the CAN server application the following files are required:<br>
 You also have to install the .dll of the used CAN driver library into the DLL-Search-Path of your system (or into the directory of your resulting EXE).
 
 <b>Some additional notes:</b><br>
-It seemed that the driver DLLs for Vector-Informatik CAN cards don't interact with Dev-C++ built EXE programs. Please use the VC6 projects when building the CAN server application with Vector-Informatik support.
+It seemed that the driver DLLs for Vector-Informatik CAN cards don't interact with Dev-C++ built EXE programs. Please use the VC8 projects when building the CAN server application with Vector-Informatik support.
 
 The CAN server application for Vector Informatik and Sontheim cards can be configured for a specific hardware type (list <tt>{ HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI }</tt> - the XL driver places the <tt>XL_</tt> string in front of the card type name, so that both CANLIB and XL can be used with the same conf_* type names). As a special option the CAN server can use all real hardware channels it finds, so that your EXE can be flexibly used for different CAN card types of Vector-Informatik. You can use this option, if you select <tt>HWTYPE_AUTO</tt> as hardware type. In case only the Vector-Informatik Virtual Channel is found, then these typically two channels are used instead. Please add the define <tt>-DUSE_CAN_CARD_TYPE=HWTYPE_...</tt> or <tt>-DUSE_CAN_CARD_TYPE=XL_HWTYPE_...</tt> to your project.<br>
 The Sontheim CAN card driver should be used also with the automatic CAN card type detection. This is realized by testing the API init for
