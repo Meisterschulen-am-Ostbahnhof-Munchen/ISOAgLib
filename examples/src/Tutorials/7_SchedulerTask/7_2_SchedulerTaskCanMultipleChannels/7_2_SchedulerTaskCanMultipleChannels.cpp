@@ -109,84 +109,84 @@
  * <H1>Needed Project Specification</H1>
  * The project specification, which is needed as input for
  * the generation script update_makefile.sh is described in
- * \ref PrjSpec7_2_SchedulerTask__pc_linux__simulating__simulating .
+ * \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__simulating .
  *
  * The adapted project specifications for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_no_card__rte
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_rte__rte
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_A1__rte
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_pcan__rte
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_no_card__simulating
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_rte__simulating
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_A1__simulating
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_pcan__simulating
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_no_card__sys
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_rte__sys
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_A1__sys
- *		<li> \ref PrjSpec7_2_SchedulerTask__pc_linux__msq_server_pcan__sys
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_linux__simulating__rte
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_linux__simulating__simulating
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_linux__simulating__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_no_card__rte
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_rte__rte
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_A1__rte
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_pcan__rte
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_no_card__simulating
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_rte__simulating
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_A1__simulating
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_pcan__simulating
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_no_card__sys
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_rte__sys
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_A1__sys
+ *		<li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_pcan__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__rte
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__simulating
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock__simulating
- *    <li> \ref PrjSpec7_2_SchedulerTask__pc_win32__can_server_sock__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_win32__can_server_sock__simulating
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pc_win32__can_server_sock__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref PrjSpec7_2_SchedulerTask__esx__sys__sys
- *    <li> \ref PrjSpec7_2_SchedulerTask__imi__sys__sys
- *    <li> \ref PrjSpec7_2_SchedulerTask__pm167__sys__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__esx__sys__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__imi__sys__sys
+ *    <li> \ref PrjSpec7_2_SchedulerTaskCanMultipleChannels__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project File List</H1>
- * See \ref FileLists7_2_SchedulerTask__pc_linux__simulating__simulating for needed files
+ * See \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__simulating for needed files
  * ( filelist__7_2_SchedulerTask.txt ),
- *  with \ref SrcList7_2_SchedulerTask__pc_linux__simulating__simulating containing the needed sources
- *  and with \ref HdrList7_2_SchedulerTask__pc_linux__simulating__simulating containing the needed headers.
+ *  with \ref SrcList7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__simulating containing the needed sources
+ *  and with \ref HdrList7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__simulating containing the needed headers.
  *
  * The resulting file lists for different setups:
  * <ul>
  * <li>Configuration Setups for Linux on PC:
  * <ul>
- *    <li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_no_card__rte
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_rte__rte
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_A1__rte
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_pcan__rte
- *    <li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_no_card__simulating
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_rte__simulating
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_A1__simulating
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_pcan__simulating
- *    <li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_no_card__sys
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_rte__sys
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_A1__sys
- *		<li> \ref FileLists7_2_SchedulerTask__pc_linux__msq_server_pcan__sys
- *    <li> \ref FileLists7_2_SchedulerTask__pc_linux__simulating__rte
- *    <li> \ref FileLists7_2_SchedulerTask__pc_linux__simulating__simulating
- *    <li> \ref FileLists7_2_SchedulerTask__pc_linux__simulating__sys
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_no_card__rte
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_rte__rte
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_A1__rte
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_pcan__rte
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_no_card__simulating
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_rte__simulating
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_A1__simulating
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_pcan__simulating
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_no_card__sys
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_rte__sys
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_A1__sys
+ *		<li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__msq_server_pcan__sys
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__rte
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__simulating
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_linux__simulating__sys
  *  </ul>
  * <li>Configuration Setups for Win32 on PC:
  * <ul>
- *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock__simulating
- *    <li> \ref FileLists7_2_SchedulerTask__pc_win32__can_server_sock__sys
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_win32__can_server_sock__simulating
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pc_win32__can_server_sock__sys
  *  </ul>
  * <li>Configuration Setupts for some embedded targets:
  * <ul>
- *    <li> \ref FileLists7_2_SchedulerTask__esx__sys__sys
- *    <li> \ref FileLists7_2_SchedulerTask__imi__sys__sys
- *    <li> \ref FileLists7_2_SchedulerTask__pm167__sys__sys
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__esx__sys__sys
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__imi__sys__sys
+ *    <li> \ref FileLists7_2_SchedulerTaskCanMultipleChannels__pm167__sys__sys
  *  </ul>
  * </ul>
  *
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_7_2_SchedulerTask ( see also at \ref PrjConfig7_2_SchedulerTask ).
+ * config_7_2_SchedulerTask ( see also at \ref PrjConfig7_2_SchedulerTaskCanMultipleChannels ).
  *                                                                         */
 /* *************************************************************************/
 
