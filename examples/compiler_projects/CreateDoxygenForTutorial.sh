@@ -6,7 +6,7 @@ alias echo=$(which echo)
 DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
-EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
+EXAMPLE_LIST=`ls conf_2_11* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 #EXAMPLE_LIST='conf_AutoDataCollector'
 TARGET_LIST="esx:c2c:imi:pm167:pc_win32:pc_linux"
 CAN_LIST="simulating:sys:socket_server:msq_server"
