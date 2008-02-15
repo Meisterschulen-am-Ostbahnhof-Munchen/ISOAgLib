@@ -291,6 +291,8 @@ public:
   // logging
   bool     mb_logMode;
   FILE*    mf_canOutput[cui32_maxCanBusCnt];
+  // monitor
+  bool     mb_monitorMode;
   // replay
   bool     mb_inputFileMode;
   FILE*    mf_canInput;

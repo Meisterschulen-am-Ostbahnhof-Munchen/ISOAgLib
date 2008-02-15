@@ -93,7 +93,7 @@ using namespace __HAL;
 
 
 __HAL::server_c::server_c()
-  : mb_logMode(FALSE), mb_inputFileMode(FALSE), mi16_reducedLoadOnIsoBus(-1)
+  : mb_logMode(FALSE), mb_monitorMode(FALSE), mb_inputFileMode(FALSE), mi16_reducedLoadOnIsoBus(-1)
 {
   memset(mf_canOutput, 0, sizeof(mf_canOutput));
   memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
@@ -272,8 +272,9 @@ int32_t getClientTime( client_c& ref_receiveClient )
 
 
 void usage() {
-  printf("usage: can_server [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>]n\n");
+  printf("usage: can_server [--log <log_file_name_base>] [--monitor] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>]n\n");
   printf("  --log                      log can traffic into <log_file_name_base>_<bus_id>\n");
+  printf("  --monitor                  display can traffic in console\n");
   printf("  --file-input               read can data from file <log_file_name>\n");
   printf("  --high-prio-minimum        if 0: start normally without priority-handling (default - used if param not given!).\n");
   printf("                             if >0: only clients with activated high-priority-send-mode can send messages if\n");
@@ -407,7 +408,7 @@ void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
   if (f_handle) {
     /* split of fprintf 64bit-value is needed for windows! */
     fprintf(f_handle, "%Ld ", ui64_timeStamp10);
-    fprintf(f_handle, "%d %d %d %d %d %-8x  ",
+    fprintf(f_handle, "%-2d %-2d %-2d %-2d %-2d %-8x  ",
         ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
         (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
 	for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
@@ -417,6 +418,27 @@ void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
   }
 };
 
+
+void monitorCanMsg (transferBuf_s *ps_transferBuf)
+{
+#if WIN32
+  clock_t t_sendTimestamp = timeGetTime();
+  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp;
+#else
+  clock_t t_sendTimestamp = times(NULL);
+  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
+#endif
+
+  /* split of fprintf 64bit-value is needed for windows! */
+  printf("%Ld ", ui64_timeStamp10);
+  printf("%-2d %-2d %-2d %-2d %-2d %-8x  ",
+         ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
+         (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
+  for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
+     printf(" %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
+  printf("\n");
+  fflush(0);
+};
 
 
 void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_delete)
@@ -877,6 +899,10 @@ void readWrite(server_c* pc_serverData)
               {
                 dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
               }
+              if (pc_serverData->mb_monitorMode)
+              {
+                monitorCanMsg (&s_transferBuf);
+              }
             }
             break; // handle only first found bus
           }
@@ -899,6 +925,10 @@ void readWrite(server_c* pc_serverData)
           if (pc_serverData->mb_logMode)
           {
             dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
+          }
+          if (pc_serverData->mb_monitorMode)
+          {
+            monitorCanMsg (&s_transferBuf);
           }
         }
         break; // handle only first found bus
@@ -966,6 +996,10 @@ void readWrite(server_c* pc_serverData)
           if (pc_serverData->mb_logMode)
           {
             dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
+          }
+          if (pc_serverData->mb_monitorMode)
+          {
+            monitorCanMsg (&s_transferBuf);
           }
         }
       }
@@ -1046,6 +1080,7 @@ int main(int argc, char *argv[])
   pthread_t threadCollectClient;
   int i_collectClientThreadHandle;
   server_c c_serverData;
+  bool b_cmdError;
 
   if (argc > 1 && strcmp(argv[1], "--help") == 0) {
     usage();
@@ -1053,18 +1088,32 @@ int main(int argc, char *argv[])
   }
 
   for (int i=1; i<argc; i=i+2) {
-    if (i==argc-1) {
-      printf("error: option needs second parameter\n");
-      exit(1);
+    if (strcmp(argv[i], "--monitor") == 0) {
+      c_serverData.mb_monitorMode=true;
+      i--; // no second paramter => decrease count
     }
-    if (strcmp(argv[i], "--log") == 0) {
+    if (strcmp(argv[i], "--log") == 0)
+    {
+      if (i+1>=argc)
+      {
+        printf("error: option needs second parameter\n");
+        exit(1);
+      }
       c_serverData.mstr_logFileBase = argv[i+1];
       c_serverData.mb_logMode=true;
     }
     if (strcmp(argv[i], "--high-prio-minimum") == 0) {
+      if (i+1>=argc) {
+        printf("error: option needs second parameter\n");
+        exit(1);
+      }
       si_highPrioModeIfMin = atoi (argv[i+1]); // 0 for no prio mode!
     }
     if (strcmp(argv[i], "--reduced-load-iso-bus-no") == 0) {
+      if (i+1>=argc) {
+        printf("error: option needs second parameter\n");
+        exit(1);
+      }
       c_serverData.mi16_reducedLoadOnIsoBus = atoi (argv[i+1]);
       printf("reduced bus load on ISO bus no. %d\n", c_serverData.mi16_reducedLoadOnIsoBus); fflush(0);
     }
