@@ -51,7 +51,6 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
-#define DEBUG
 
 #ifdef WIN32
   #include <windows.h>
@@ -65,7 +64,6 @@
 
 #define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
-
 
 using namespace __HAL;
 
@@ -120,10 +118,10 @@ bool resetCard(void)
 // PURPOSE: To initialize the specified CAN BUS to begin sending/receiving msgs
 bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
-  printf("init can bus %d\n", ui8_bus);
+  DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
   if( !canBusIsOpen[ui8_bus] ) {
-    printf("Opening CAN BUS channel=%d\n", ui8_bus);
+    DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
 #if WIN32
     DWORD rc;
@@ -152,7 +150,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 #else
     pc_serverData->marri16_can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
     if (pc_serverData->marri16_can_device[ui8_bus] == -1) {
-      printf("Could not open CAN bus %d\n",ui8_bus);
+      DEBUG_PRINT1("Could not open CAN bus %d\n",ui8_bus);
       return false;
     }
 #endif
@@ -168,14 +166,14 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     TPCANInit init;
 
     // init wBitrate
-    printf("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
+    DEBUG_PRINT1("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
     ratix.dwBitRate = wBitrate * 1000;
     ratix.wBTR0BTR1 = 0;
     if ((ioctl(pc_serverData->marri16_can_device[ui8_bus], PCAN_BTR0BTR1, &ratix)) < 0)
       return false;
 
     // init CanMsgType (if extended Can Msg of not)
-    printf("Init CAN Driver with PCAN_INIT wBitrate =%x\n",ratix.wBTR0BTR1);
+    DEBUG_PRINT1("Init CAN Driver with PCAN_INIT wBitrate =%x\n",ratix.wBTR0BTR1);
     //default value = extended
     init.wBTR0BTR1    = ratix.wBTR0BTR1;
     init.ucCANMsgType = MSGTYPE_EXTENDED;  // 11 or 29 bits
@@ -195,7 +193,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
 void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
-  printf("close can bus %d\n", ui8_bus);
+  DEBUG_PRINT1("close can bus %d\n", ui8_bus);
   //canBusIsOpen[ui8_bus] = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
@@ -218,7 +216,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
         if ((ioctl(pc_serverData->marri16_can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
 #endif
         pc_serverData->marri_pendingMsgs[ui8_bus] = extstat.nPendingWrites;
-        printf ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[ui8_bus]);
+        DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[ui8_bus]);
       }
     }
   }
@@ -230,7 +228,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
     if ((ioctl(pc_serverData->marri16_can_device[i8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
 #endif
     pc_serverData->marri_pendingMsgs[i8_bus] = extstat.nPendingWrites;
-    printf ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[i8_bus]);
+    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[i8_bus]);
   }
 #endif
 }
