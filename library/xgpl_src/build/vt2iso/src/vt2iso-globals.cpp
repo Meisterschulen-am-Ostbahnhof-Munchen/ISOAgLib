@@ -717,7 +717,7 @@ auxfunctiontypetoi(char *text_auxFunctionType)
 {
   int l, retval=0;
   for (l=0; l<maxAuxFunctionTypes; l++) {
-    if (strstr (text_auxFunctionType, auxFunctionTypeTable [l]) != 0) {
+    if (strcmp (text_auxFunctionType, auxFunctionTypeTable [l]) == 0) {
       retval = l;
       break;
     }
