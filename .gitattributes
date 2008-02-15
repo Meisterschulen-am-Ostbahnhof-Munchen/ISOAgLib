@@ -488,11 +488,7 @@ examples/compiler_projects/VC6/canserver/Release/can_server.exe -text
 examples/compiler_projects/VC6/canserver/Release/can_server_pcan.exe -text
 examples/compiler_projects/VC6/canserver/Release/can_server_vector.exe -text
 examples/compiler_projects/VC6/canserver/Release/can_server_vector_xl.exe -text
-examples/compiler_projects/VC6/canserver/can_server.vcproj -text
-examples/compiler_projects/VC6/canserver/can_server_pcan.vcproj -text
-examples/compiler_projects/VC6/canserver/can_server_sontheim.vcproj -text
-examples/compiler_projects/VC6/canserver/can_server_vector.vcproj -text
-examples/compiler_projects/VC6/canserver/can_server_vector_xl.vcproj -text
+examples/compiler_projects/VC6/canserver/info.txt -text
 examples/compiler_projects/conf_0_0_AddressClaimIso -text
 examples/compiler_projects/conf_0_3_LookupIso -text
 examples/compiler_projects/conf_1_0_ReadIso -text
