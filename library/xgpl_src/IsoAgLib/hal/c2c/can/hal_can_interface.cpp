@@ -464,7 +464,7 @@ int16_t can_configGlobalClose(uint8_t aui8_busNr)
  */
 bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
 {
-  const int32_t ci32_endWait = __IsoAgLib::System_c::getTime() + aui16_timeoutInterval;
+  const int32_t ci32_endWait = HAL::getTime() + aui16_timeoutInterval;
   int32_t i32_waitSlice = aui16_timeoutInterval;
 
   // if greater than MAX_SLEEP_SLICE msec -> divide so that about 10 slices are realized
@@ -485,7 +485,7 @@ bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
      }
 
     delay_us( i32_waitSlice * 1000 );
-    if ( __IsoAgLib::System_c::getTime() >= ci32_endWait ) return false;
+    if ( HAL::getTime() >= ci32_endWait ) return false;
   }
 }
 
