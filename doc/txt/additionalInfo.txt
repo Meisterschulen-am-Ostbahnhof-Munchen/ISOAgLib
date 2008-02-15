@@ -1,6 +1,6 @@
 /*! \page PageAdditionalInfo Additional Information
 
-<!--INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
+INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 <table class="infobox" border="0">
 <tr><th>Section Overview</th></tr>
@@ -8,7 +8,7 @@
 <ol type="I">
     <li>\ref PageDeveloperInfo "Developer Information Page"
         <ul><li> \ref WhereToStart 
-    <ul><li> \ref StartToLearn
+    <ul><li> \ref StartToLearn </li>
         <li> \ref DocOverview </li>
         <li> \ref GettingHelp </li>
     </ul>
@@ -24,7 +24,33 @@
 </table>
 <div style="clear:left"></div>
 
-This page contains additional information on some topics that needed to be included but would bloat the specific parts of the documentation.
+<!--This page contains additional information on some topics that needed to be included but would bloat the specific parts of the documentation.-->
 
--->
+\section CanServerApp CAN Server
+The CAN server application can be used for ...
+
+Installation and creation of the can_server application is described on the \ref ScriptIntegrateWin32Can "installation page".
+
+General features:
+- uses socket interface (Windows and Linux) and message queues (Linux only) with common CAN device extensions (PEAK can card, A1, Sontheim, ...)
+- ...
+- ...
+
+\subsection CanServerUsage CAN Server Usage
+To see all available command line switches of <tt>can_server</tt>/<tt>can_server.exe</tt>, run it with <tt>--help</tt> as parameter:
+\code
+usage: can_server [--log <log_file_name_base>] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>] 
+                  [--reduced-load-iso-bus-no <bus_number>
+
+  --log                      log can traffic into <log_file_name_base>_<bus_id>
+  --file-input               read can data from file <log_file_name>
+  --high-prio-minimum        if 0: start normally without priority-handling (default - used if param not given!).
+                             if >0: only clients with activated high-priority-send-mode can send messages if
+                                    can-controller has equal or more than <num_pending_writes> in its queue.
+  --reduced-load-iso-bus-no  avoid unnecessary CAN bus load due to
+                             messages with local destination addresses
+  --nice-can-read            set a nice value for can read thread to reduce slowing down effect on other applications
+                             due to heavy OS task switches, 0 < value < 20 for reducing the priority
+\endcode
+
 */

@@ -312,6 +312,7 @@ The CAN server application for Vector Informatik and Sontheim cards can be confi
 The Sontheim CAN card driver should be used also with the automatic CAN card type detection. This is realized by testing the API init for
 a list of supported CAN card types. As soon as the API is successfully initialized for one CAN card type, that type is used.<br>
 
+More information on the CAN server application can be found \ref CanServerApp "here"
 <!--The IsoAgLib provides at the moment an integration with the CAN drivers from Vector Informatik and Sontheim.
 Both Vector Informatik driver types <b>CANLIB</b> and <tt>XL Driver Library</tt> are supported by the source modules
 <tt>target_extension_can_w32_vector_canlib.cpp</tt> and <tt>target_extension_can_w32_vector_xl_drv_lib.cpp</tt>.
