@@ -66,7 +66,7 @@
 
 
 /** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
-#ifdef SYSTEM_MCC
+#if defined(SYSTEM_A5) || defined(SYSTEM_MCC)
   #define FLOAT_WORD_ORDER BYTE_HI_LO
 #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   #define FLOAT_WORD_ORDER WORD_LO_HI
