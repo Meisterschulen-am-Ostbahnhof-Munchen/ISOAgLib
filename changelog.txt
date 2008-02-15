@@ -27,6 +27,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section Changes Changes
 
 \subsection Change_O 2.0 to 2.1
+  - can_server: monitor mode added (to monitor can traffic in console)
   - Process Data: send activate device description pool command to TC after successfull structure/localization label negotiation
   - Network Management regarding SA-changes and SA-conflicts and IState rewritten, also SaClaimHandler
   - interface iSchedulerTask_c for IsoAgLib scheduler added
