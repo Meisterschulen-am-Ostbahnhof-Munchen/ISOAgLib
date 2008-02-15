@@ -789,8 +789,8 @@ create_filelist( )
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $DRIVER_FEATURES"
   fi
 
-  echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+  echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -a -not -path '*/xgpl_src/build/*' -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -a -not -path '*/xgpl_src/build/*' -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
   # find application files
   FIRST_LOOP="YES"
   APP_SRC_PART=""
