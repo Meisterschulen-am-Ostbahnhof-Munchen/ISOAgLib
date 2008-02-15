@@ -90,7 +90,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "../../../impl/processelementbase_c.h"
-#include "../../StdMeasureElements/impl/measureproglocal_c.h"
+#include "measureproglocal_c.h"
 
 #ifdef DO_USE_SLIST
   #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
