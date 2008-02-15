@@ -393,7 +393,7 @@ int main()
       b_funcInst = 0,
       b_ecuInst = 0;
   uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
+  uint32_t ui32_serNo = 28;
 
   // start address claim of the local member "IMI"
   // if ISOName conflicts forces change of device class instance, the
