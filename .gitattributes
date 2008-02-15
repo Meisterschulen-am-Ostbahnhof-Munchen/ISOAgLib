@@ -2400,6 +2400,8 @@ library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
 library/xgpl_src/build/libs/freeimage/FreeImage.dll -text
 library/xgpl_src/build/libs/freeimage/FreeImage.lib -text
+library/xgpl_src/build/libs/freeimage/FreeImage_devcpp.h -text
+library/xgpl_src/build/libs/freeimage/README.Dev-Cpp.txt -text
 library/xgpl_src/build/libs/freeimage/freeimage_gcc.def -text
 library/xgpl_src/build/libs/freeimage/libfreeimage.a -text
 library/xgpl_src/build/libs/freeimage/libfreeimage_mingw.a -text
