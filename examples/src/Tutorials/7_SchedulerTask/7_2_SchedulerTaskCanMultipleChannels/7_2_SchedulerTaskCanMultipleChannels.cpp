@@ -1,5 +1,5 @@
 /* *************************************************************************
-                          7_2_SchedulerTask.cpp - tutorial for pure ISO address claim
+7_2_SchedulerTaskCanMultipleChannels.cpp - tutorial for pure ISO address claim
                              -------------------
     begin                : Sun Jul 18 17:00:00 CEST 2004
 
@@ -50,7 +50,7 @@
  ***************************************************************************/
 
 /* *********************************************************************** */
-/** \example 7_2_SchedulerTask.cpp
+/** \example 7_2_SchedulerTaskCanMultipleChannels.cpp
 * This tutorial shall demonstrate the use of ISO<i><sub>AgLib</sub></i> to handle
  * a periodically activity inside a iSchedulerTask_c.
  * When a task which triggers periodically activity is needed, it should be derived from the interface Class
@@ -90,17 +90,17 @@
  * <H1>Howto compile this example</H1>
  * <ol>
  * <li>Call the script update_makefile.sh with the spec file
- *     conf_7_2_SchedulerTask from the directory where the spec file
+ *     conf_7_2_SchedulerTaskCanMultipleChannels from the directory where the spec file
  *     and the script are located<br>
- *     <i>#> update_makefile.sh conf_7_2_SchedulerTask</i>
+ *     <i>#> update_makefile.sh conf_7_2_SchedulerTaskCanMultipleChannels</i>
  * <li><b>Only Linux:</b><ul>
- *     <li><i>#>cd 7_2_SchedulerTask</i> to go to the subdirectory 7_2_SchedulerTask
+ *     <li><i>#>cd 7_2_SchedulerTaskCanMultipleChannels</i> to go to the subdirectory 7_2_SchedulerTaskCanMultipleChannels
  *     <li><i>#> make</i><br>
- *     <li>GNU make will then use the fresh created Makefile to create the executable 7_2_SchedulerTask in this directory
+ *     <li>GNU make will then use the fresh created Makefile to create the executable 7_2_SchedulerTaskCanMultipleChannels in this directory
  *     </ul>
  * <li><b>Other Development Environments:</b><ul>
- *     <li>import the file list in filelist__7_2_SchedulerTask.txt into the IDE of your choice
- *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_7_2_SchedulerTask</i> as global project parameter
+ *     <li>import the file list in filelist__7_2_SchedulerTaskCanMultipleChannels.txt into the IDE of your choice
+ *     <li>set <i>-DPRJ_USE_AUTOGEN_CONFIG=config_7_2_SchedulerTaskCanMultipleChannels</i> as global project parameter
  *     <li>add target specific headers, sources or libraries to the project
  *     <li>let your IDE build the project
  *   </ul>
@@ -186,7 +186,7 @@
  * <H1>Resulting Project Configuration Header</H1>
  * This header is automatically included by xgpl_src/IsoAgLib/isoaglib_config.h
  * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
- * config_7_2_SchedulerTask ( see also at \ref PrjConfig7_2_SchedulerTaskCanMultipleChannels ).
+ * config_7_2_SchedulerTaskCanMultipleChannels ( see also at \ref PrjConfig7_2_SchedulerTaskCanMultipleChannels ).
  *                                                                         */
 /* *************************************************************************/
 
@@ -196,14 +196,14 @@
     project, so that each source file is compiled with this setting
   */
 #ifndef PRJ_USE_AUTOGEN_CONFIG
-  #define PRJ_USE_AUTOGEN_CONFIG config_7_2_SchedulerTask.h
+  #define PRJ_USE_AUTOGEN_CONFIG config_7_2_SchedulerTaskCanMultipleChannels.h
 #endif
 
 // include the central interface header for the hardware adaptation layer part
 // of the "IsoAgLib"
 
 /* include some needed util headers */
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
