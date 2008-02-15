@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<objectpool dimension='200' std_bitmap_path='bitmaps/standard' fix_bitmap_path='bitmaps/vario' sk_width='60' sk_height='32'>
+
+
+<!-- Working Set -->
+  <workingset name='imiIsoMaskupload' background_colour='white' selectable='yes' active_mask='MainMask'>
+    <outputstring name='os1' pos_x='0' pos_y='0' width='60' height='8'
+      background_colour='white' font_attributes='FontAttributesSKM6x8'
+      options='autowrap' value='IsoAgLib' />
+    <outputstring name='os2' pos_x='0' pos_y='8' width='60' height='16'
+      background_colour='white' font_attributes='FontAttributesSKM6x8'
+      options='autowrap' value='Tutorial 2.11' />
+
+    <language code="en" />
+    <language code="de" />
+    <language code="it" />
+  </workingset>
+
+
+  <datamask id='1101' name='MainMask' background_colour='white'>
+      <outputstring name='os3' value="Data Mask" pos_x='4' pos_y='14' width='100' height='20' background_colour='white' font_attributes='FontAttributesNormal12x16' />
+  </datamask>
+
+
+  <fontattributes name='FontAttributesNormal12x16' font_colour='black' font_size='12x16' font_type="latin1" />
+  <fontattributes name='FontAttributesSKM6x8' font_colour='black' font_size='6x8' font_type="latin1" />
+
+</objectpool>

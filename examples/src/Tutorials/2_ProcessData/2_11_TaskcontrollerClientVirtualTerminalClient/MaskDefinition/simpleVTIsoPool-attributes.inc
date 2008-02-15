@@ -1,0 +1,10 @@
+const IsoAgLib::repeat_vtLanguage_s ivtObjectimiIsoMaskupload_aLanguage [] = {{'e', 'n'}, {'d', 'e'}, {'i', 't'}};
+const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObjectimiIsoMaskupload_aObject_x_y_font_row_col [] = {{&iVtObjectos1, 0, 0, NULL ,0, 0}, {&iVtObjectos2, 0, 8, NULL ,0, 0}};
+const IsoAgLib::iVtObject_c::iVtObjectWorkingSet_s iVtObjectimiIsoMaskupload_sROM = {65534, 1, 1, &iVtObjectMainMask, 2,iVtObjectimiIsoMaskupload_aObject_x_y_font_row_col, 0,NULL, 3,ivtObjectimiIsoMaskupload_aLanguage};
+const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectos1_sROM = {65533, 60, 8, 1, &iVtObjectFontAttributesSKM6x8, 2, NULL, 0, 8, "IsoAgLib", 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectos2_sROM = {65532, 60, 16, 1, &iVtObjectFontAttributesSKM6x8, 2, NULL, 0, 13, "Tutorial 2.11", 0,NULL};
+const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObjectMainMask_aObject_x_y_font_row_col [] = {{&iVtObjectos3, 4, 14, NULL ,0, 0}};
+const IsoAgLib::iVtObject_c::iVtObjectDataMask_s iVtObjectMainMask_sROM = {1101, 1, NULL, 1,iVtObjectMainMask_aObject_x_y_font_row_col, 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectOutputString_s iVtObjectos3_sROM = {65531, 100, 20, 1, &iVtObjectFontAttributesNormal12x16, 0, NULL, 0, 9, "Data Mask", 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectFontAttributes_s iVtObjectFontAttributesNormal12x16_sROM = {65530, 0, 3, 0, 0, 0,NULL};
+const IsoAgLib::iVtObject_c::iVtObjectFontAttributes_s iVtObjectFontAttributesSKM6x8_sROM = {65529, 0, 0, 0, 0, 0,NULL};
