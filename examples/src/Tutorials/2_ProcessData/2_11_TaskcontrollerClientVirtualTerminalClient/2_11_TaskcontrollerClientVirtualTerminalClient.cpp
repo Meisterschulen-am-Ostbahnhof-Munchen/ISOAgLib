@@ -227,10 +227,12 @@
 #if defined(WIN32) || defined(SYSTEM_PC)
   #define LOG_INFO STL_NAMESPACE::cout
   #include <iostream>
-#else
+#elif defined(DEBUG)
   #define LOG_INFO getIrs232Instance()
+  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
-#include <iostream>
+
+
 
 #ifdef SYSTEM_PC
   #ifdef WIN32
@@ -361,7 +363,9 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c ac_src, int
     return false; // indicate that this information is not again handled - just ignored
   }
 
-  STL_NAMESPACE::cout << "processSetpointSet called for DDI " << ac_src.makeIProcDataLocal()->getDDIfromCANPkg() << STL_NAMESPACE::endl;
+  #if defined(DEBUG) || defined(SYSTEM_PC)
+  LOG_INFO << "processSetpointSet called for DDI " << ac_src.makeIProcDataLocal()->getDDIfromCANPkg() << EXTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
 
   // use helper function to get automatically casted pointer to used process data type
   uint16_t ui16_index = ac_src.makeIProcDataLocal() - arr_procData;
@@ -404,10 +408,12 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c ac_src, int
 
 bool MyProcDataHandler_c::processDefaultLoggingStart(IsoAgLib::EventSource_c /* ac_src */, int32_t /* ai32_val */, const IsoAgLib::iIsoName_c& /* ac_callerIsoName */)
 {
+  #if defined(DEBUG) || defined(SYSTEM_PC)
   if (arr_procData[cui8_indexApplicationRate].startDataLogging(IsoAgLib::Proc_c::TimeProp, 1000))
-    LOG_INFO << "starting measurement application rate success!" <<  "\r\n";
+    LOG_INFO << "starting measurement application rate success!" <<  EXTERNAL_DEBUG_DEVICE_ENDL;
   else
-    LOG_INFO << "starting measurement application rate failure!" <<  "\r\n";
+    LOG_INFO << "starting measurement application rate failure!" <<  EXTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
   return true;
 }
 

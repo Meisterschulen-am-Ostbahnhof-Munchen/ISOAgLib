@@ -84,7 +84,7 @@
  * if the \#define PRJ_USE_AUTOGEN_CONFIG is set to
  * config_CanServerMessenger ( see also at \ref PrjConfigCanServerMessenger ).
  *                                                                         */
- */
+
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
