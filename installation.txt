@@ -254,9 +254,12 @@ Precompiled CAN server binaries for Windows already exist in the following direc
   - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe</tt>
   - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.exe</tt>
 - Visual-Studio (2005):
-  - <tt>examples/compiler_projects/VC8/canserver/Release/can_server.exe</tt>
-  - <tt>examples/compiler_projects/VC8/canserver/Release/can_server_pcan.exe</tt>
-  - <tt>examples/compiler_projects/VC8/canserver/Release/can_server_vector_xl.exe</tt>
+  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server.exe</tt>
+  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_d.exe</tt> (debug version)
+  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_pcan.exe</tt>
+  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_pcan_d.exe</tt> (debug version)
+  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_vector_xl.exe</tt>
+  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_vector_xl_d.exe</tt> (debug version)
 
 To use <tt>can_server_pcan.exe</tt> (support for PEAK CAN card), you need <tt>pcan_usb.dll</tt> from http://www.peak-system.com/files/usb.zip.
 The <tt>can_server_vector_xl.exe</tt> will require drivers that are available on the Vector driver CD.
