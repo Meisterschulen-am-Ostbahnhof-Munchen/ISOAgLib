@@ -250,16 +250,17 @@ Create your Dev-C++ or VC6 project with the <tt>update_makefile.sh</tt> script a
 
 Precompiled CAN server binaries for Windows already exist in the following directories:
 - Dev-C++:<br> 
-  - <tt>examples/compiler_projects/Dev-C++/canserver/can_server.exe</tt>
-  - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_pcan.exe</tt>
-  - <tt>examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.exe</tt>
+  - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server.exe</tt>
+  - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server_pcan.exe</tt>
+  - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server_sontheim.exe</tt>
+  - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server_vector.exe</tt>
+  - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server_vector_xl.exe</tt>
 - Visual-Studio (2005):
-  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server.exe</tt>
-  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_d.exe</tt> (debug version)
-  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_pcan.exe</tt>
-  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_pcan_d.exe</tt> (debug version)
-  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_vector_xl.exe</tt>
-  - <tt>examples/compiler_projects/VC8/canserver/bin/can_server_vector_xl_d.exe</tt> (debug version)
+  - <tt>examples\\compiler_projects\\VC8\\canserver\\bin\\can_server.exe</tt>
+  - <tt>examples\\compiler_projects\\VC8\\canserver\\bin\\can_server_pcan.exe</tt>
+  - <tt>examples\\compiler_projects\\VC8\\canserver\\bin\\can_server_sontheim.exe</tt>
+  - <tt>examples\\compiler_projects\\VC8\\canserver\\bin\\can_server_vector.exe</tt>
+  - <tt>examples\\compiler_projects\\VC8\\canserver\\bin\\can_server_vector_xl.exe</tt>
 
 To use <tt>can_server_pcan.exe</tt> (support for PEAK CAN card), you need <tt>pcan_usb.dll</tt> from http://www.peak-system.com/files/usb.zip.
 The <tt>can_server_vector_xl.exe</tt> will require drivers that are available on the Vector driver CD.
@@ -285,7 +286,9 @@ This strategy can be mapped to other CAN cards as well. Please contact the
 send a running adaptation back to the project.
 
 For building the CAN server application the following files are required:<br>
-- <b>Pthreads</b>: (version 2.8.0 files can be downloaded from http://sources.redhat.com/pthreads-win32/)
+- <b>Pthreads</b>: 
+    Pthreads is a POSIX standard for threads and is used for efficent thread managment in the CAN server application.
+    (version 2.8.0 files can be downloaded from http://sources.redhat.com/pthreads-win32/)
     - <tt>pthread.h</tt>
     - <tt>libpthreadVC2.dll</tt>
     - <tt>libpthreadVC2.lib</tt>
