@@ -1,0 +1,520 @@
+# Filename: conf_2_11_TaskcontrollerClientVirtualTerminalClient
+# Configuration setting for tutorial example 2_11_TaskcontrollerClientVirtualTerminalClient
+# in the tutorial group 2_ProcessData
+
+# ###############################################################
+# Project Identification
+# ###############################################################
+
+# define project name - used for directory with makefile
+PROJECT=2_11_TaskcontrollerClientVirtualTerminalClient
+
+# define the project author
+# - used for IDE project file types, where the author is stored in the project file
+PROJECT_AUTHOR="My Name"
+PROJECT_AUTHOR_EMAIL=MyEmail@Location
+
+# ###############################################################
+# Selection of Application Sources
+# ###############################################################
+
+# define the path where the aplication can be found
+# ( in relation to the root of the IsoAgLib
+#    - ONLY RELATIVE PATH )
+# seperate directories by whitespace
+REL_APP_PATH="examples/src/Tutorials/2_ProcessData/2_11_TaskcontrollerClientVirtualTerminalClient"
+# define the name of the app
+# ( if this variable is not set, then
+#   all files of the selected directories are used )
+# seperate files by whitespace
+APP_SRC_FILE="2_11_TaskcontrollerClientVirtualTerminalClient.cpp"
+# define the file extensions to include for the
+# application source file search ( default: *.c *.cc *.cpp *.h *.hpp )
+# APP_SEARCH_SRC_CONDITION="*.cc *.c *.cpp"
+# APP_SEARCH_HDR_CONDITION="*.h *.hpp"
+# define pathes ( jokers like "*" are allowed ) which shall be
+# excluded from application file search
+# ( example:
+#    - exclude path Fii somewhere in deep dir: ".../Fii/..."
+#    - exclude file Foo.cpp as part of directory Fii: ".../Fii/Foo.c"
+#      ( includes occurences of Foo.cpp in other directories!! )
+#  )
+# APP_PATH_EXLCUDE=""
+# define filenames which shall be excluded in all directories
+# ( jokers like "*" are allowed - example "test*.cpp" )
+# APP_SRC_EXCLUDE=""
+
+# the directories of REL_APP_PATH are already integrated into the compiler list of
+# header include search paths. But a project might need some additional paths.
+# seperate directories by whitespace
+# PRJ_INCLUDE_PATH=""
+
+# ###############################################################
+# Selection of Basic Project Settings
+# ###############################################################
+
+# define relative path to the main directory if the IsoAgLib
+# - i.e. where both xgpl_src and IsoAgLibExamples are located
+# - use relative path as seen from the work directory where the
+#   update_makefile.sh script is called and the conf_xy file is placed
+#   ( you have only to change it, if you make a copy of the compiler_projects
+#     subdirectory for your own project, so that the path from there is no more
+#     "../.." )
+ISO_AG_LIB_PATH="../.."
+
+# optionally set individual DEFINES - seperated by whitespace
+# ( e.g. DEBUG to activate some debug messages )
+# Some debugging defines:
+# - DEBUG for different internal IsoAgLib information
+# - DEBUG_CAN_BUFFER_FILLING for RS232 output of MAX amount of buffered CAN messages
+#   ( important to decide on amount of items in the BIOS/OS CAN receive buffer )
+# - DEBUG_HEAP_USEAGE for RS232 output of amount of bytes which are needed of one
+#   item in the different types of dynamic lists: MsgObj_c , FilterBox_c , IsoItem_c  ,
+#   MeasureSubprog_c , SetpointRegister ;
+#   additionally print calculated amount of HEAP memory which is used by the several types of
+#   dynamic lists ( output on each list change )
+# PRJ_DEFINES=""
+
+# select if Debug messages within the IsoAgLib shall be sent via RS232
+# ( if this is activated, the PRJ_RS232 setting is activated -> integrate
+#   the IsoAgLib RS232 driver extension to your project )
+# PRJ_SEND_DEBUG=1
+
+# select if the project shall use the float data type
+# default is FALSE as far as possible
+# ( this has an impact on process data, RS232 output,
+#   GPS decode )
+USE_FLOAT_DATA_TYPE=1
+
+# select if HEAP usage should reduce size in favour of speed
+# ( default: maximize speed, which costs about 10KByte more HEAPSIZE,
+#            but avoids slow memory allocation in too small units )
+# OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
+
+# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
+# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
+# the object pool and thus need not to be included in the client application.
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION3="MaskDefinition"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION4="MaskDefinition"
+
+# ###############################################################
+# Basic Hardware Setup
+# ###############################################################
+
+# select wanted type of target system: "pc_linux" | "pc_win32" | "esx" | "imi" | "pm167" | "mitron167"
+USE_TARGET_SYSTEM="pc_linux"
+
+# specify integer number memory representation type: LITTLE or BIG ENDIAN
+# default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1
+# typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
+# USE_LITTLE_ENDIAN_CPU=1
+
+# IsoAgLib switches by default the system relais to ON on startup
+# this can be avoided by setting PRJ_DO_NOT_START_RELAIS_ON_STARTUP to 1
+# PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
+
+# select enhanced CAN processing which is only available for some
+# CAN architectures, wher the OS/BIOS does already provide selective
+# receive with individual <filters, mask> combinations
+# default: off
+PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
+
+# select wanted type of CAN driver connection: "simulating"|"sys"|"msq_server"|"socket_server"
+# targets other than pc_linux or pc_win32 can only use "sys"
+# target "pc_win32" can't use "msq_server" (Linux message queue version of the can_server)
+USE_CAN_DRIVER="msq_server"
+
+# the can server ("msq_server"|"socket_server") is available for different can cards,
+# where all of them use some common files and just one individual file.
+# target "pc_linux": a multi target Makefile is created which builds the application
+#                    and also the can_server with support for the selected CAN device (no_card|pcan|A1|rte)
+# target "pc_win32": extra project files exist for the can_server (socket version)
+#                    with support for different CAN devices
+#                    (see the folder "canserver" in compiler_projects/Dev-C++ and compiler_projects/VC6)
+#                    therefore for "pc_win32" only USE_CAN_DEVICE_FOR_SERVER="no_card" should be used
+# USE_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte (default: no_card)
+USE_CAN_DEVICE_FOR_SERVER="no_card"
+
+# select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
+# targets other than pc_linux or pc_win32 can only use "sys"
+# only target "pc_linux" can us the driver "rte"
+USE_RS232_DRIVER="simulating"
+
+# define the amount of available CAN BUSes at the ECU
+# ( default 1 )
+CAN_BUS_CNT=1
+
+# define the amount of CAN instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+CAN_INSTANCE_CNT=1
+
+if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
+	# if more than one CAN BUS is defined, the selected
+  # protocol(s) can be executed as independent instances
+  # at more than one channel
+  # ( if more than one CAN instance is used, but
+  #   only one channel is used for protocol, than
+  #   the index 0 - i.e. the first item is used for protocol )
+  PRT_INSTANCE_CNT=1
+else
+	# default is to run only one protocol instance
+  PRT_INSTANCE_CNT=1
+fi
+
+# define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+RS232_INSTANCE_CNT=1
+
+# ###############################################################
+# Core Communication Setup
+# ###############################################################
+
+# set value of feature to 1 if wanted
+# unset or set to 0 if not wanted
+PRJ_ISO11783=1
+PRJ_ISO_TERMINAL=1
+
+# if you Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
+# note: this is done automatically if other features
+# require it (e.g. PRJ_ISO_TERMINAL=1 will implicitly set PRJ_MULTIPACKET=1)
+# PRJ_MULTIPACKET=1
+
+# select stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
+
+# all BASE data are selected
+# if only special BASE data should be used select one or more of the following parts
+# PRJ_BASE=0
+
+# only incorporate parts from BASE that provide tractor hitch and RPM information
+# PRJ_TRACTOR_GENERAL=0
+
+# only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
+# the following project setting includes only measurement of tractor data.
+# i.e. NO SETTING OF COMMANDS
+# PRJ_TRACTOR_MOVE=0
+
+# additionally integrate sending of tractor move commands
+# PRJ_TRACTOR_MOVE_SETPOINT=0
+
+
+# only incorporate parts from BASE that provide tractor PTO information
+# this part includes tractor pto set point data which is not available in the
+# free ISOAgLib edition. If you are interested in this feature please contact OSB AG
+# the following project setting includes only measurement of tractor data.
+# i.e. NO SETTING OF COMMANDS
+# PRJ_TRACTOR_PTO=0
+
+# additionally integrate sending of tractor PTO commands
+# PRJ_TRACTOR_PTO_SETPOINT=0
+
+# only incorporate parts from BASE that provide tractor lighting information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
+# PRJ_TRACTOR_LIGHT=0
+
+# only incorporate parts from BASE that provide tractor auxiliary valve information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
+# PRJ_TRACTOR_AUX=0
+
+# only incorporate parts from BASE that provide time and GPS information
+# PRJ_TIME_GPS=0
+
+# only incorporate parts from BASE that provide tractor guidance information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
+# PRJ_TRACTOR_GUIDANCE=0
+
+# only incorporate parts from BASE that provide tractor certification information
+# this part is only defined for ISO 11783
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
+# PRJ_TRACTOR_CERTIFICATION=0
+
+# decide if the functionality of the graphical context is necessary for the client
+# USE_ISO_TERMINAL_GRAPHICCONTEXT=1
+
+# if Iso_Terminal should offer the attributes via getter functions, this feature can be enabled.
+# thus it is recommended to store attributes at client side (smaller binary + less traffic)
+# USE_ISO_TERMINAL_GETATTRIBUTES=1
+
+# ###############################################################
+# Process Data Communication Setup
+# ###############################################################
+
+# activate globally the use of process data
+PRJ_PROCESS=1
+
+# decide if local process data are wanted
+PROC_LOCAL=1
+
+# select the feature set of the wanted local process data
+
+# select standard local process data iProcDataLocal_c with
+# measure programs and enhanced management of received setpoints
+PROC_LOCAL_STD=1
+
+# select iProcDataLocalSimpleMeasure_c for
+# local process data without measure programs to reduce
+# HEAP useage ( all measurement programs are stored on HEAP, as
+# amount of active programs depend on remote ECUs )
+# PROC_LOCAL_SIMPLE_MEASURE=0
+
+# select iProcDataLocalSimpleSetpoint_c for
+# local process data without selective reaction on received setpoints
+# ( simply store received setpoints and automatically ACK the receive of
+#   a setpoint )
+# PROC_LOCAL_SIMPLE_SETPOINT=0
+
+# select iProcDataLocalSimpleSetpointSimpleMeasure_c for
+# local process data with smallest resource needs - and most
+# restricted feature set
+# PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=0
+
+# decide if remote process data are wanted
+# PROC_REMOTE=0
+
+# select the feature set of the wanted remote process data
+
+# select iProcDataRemote_c for remote process data which can
+# use measure programs to request periodic measurement value update
+# and which provides setpoint management which can detect current master
+# setpoint ( setpoint which is ACKed by commanded device ) and the self
+# requested value ( information if own setpoint is ACKed and if own
+# requested setpoint interval is currently maintained by remote device
+# - this can happen if intersection between ACKed setpoint request and
+# own setpoint request is _not_ empty, so that commanded implement can
+# satisfy both )
+# PROC_REMOTE_STD=0
+
+# select iProcDataRemoteSimpleMeasure_c if capable setpoint management
+# is needed, but simple one shot measurement value request is enough
+# ( reduce HEAP useage, as the potential parallel active increments are
+#   stored in dynamic lists at HEAP )
+# PROC_REMOTE_SIMPLE_MEASURE=0
+
+# select iProcDataRemoteSimpleSetpoint_c if measurement programs are needed,
+# but no or only simple setpoint control is wanted
+# ( reduce memory useage, as no management data is needed for detection
+#   of active setpoint in relation to own setpoint wish )
+# PROC_REMOTE_SIMPLE_SETPOINT=0
+
+# select iProcDataRemoteSimpleSetpointSimpleMeasure_c if only
+# one shot measurement value requests and no setpoint handling is needed
+# ( in relation to iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
+#   the single setpoint and the single measurement value can represent
+#   different values )
+# PROC_REMOTE_SIMPLE_MEASURE_SETPOINT=0
+
+# select iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for
+# a very simple approach on remote process data.
+# This is only useful if no distinguishing between setpoint and measurement
+# value is needed
+# PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
+
+# ###############################################################
+# Special CAN features
+# ###############################################################
+
+# Decide to activate an interface for handling of proprietary PGN messages
+# as defined by ISO 11783
+# PRJ_PROPRIETARY_PGN_INTERFACE=0
+
+
+# ###############################################################
+# Optional Driver Selection
+# ###############################################################
+
+# select if the EEPROM driver shall be used, to read/write EEPROM
+# data from within the IsoAgLib. This is important for local
+# process data, as IsoAgLib can store intermediate values in EEPROM
+# so that the value can be re-read on each system startup
+# ( important for cumulative values like distance, when the
+#   application has only to calculate the distance increments of the
+#   current working session, and the IsoAgLib provides the cumulated
+#   value on BUS;
+#   it's also important to store the current SA on ISO 11783 address claim
+#   --> try to reuse SA os last working session on next system start.
+#       the application has only to specify to EEPROM address to handle the SA;
+#       IsoAgLib takes then care of storing and reloading the SA )
+# PRJ_EEPROM=0
+
+# select if the datastreams from HAL for file input and output shall be used
+# PRJ_DATASTREAMS=0
+
+# select iRS232IO_c for RS232 output which can be used like the
+# standard C++ iostreams
+# PRJ_RS232=0
+
+# select special RS232 virtual driver HAL for RS232_over_CAN
+# activating this implicitly activates PRJ_RS232 with this special
+# HAL driver
+# PRJ_RS232_OVER_CAN=0
+
+# select iDigitalO_c ( one instance/variable of this class per channel )
+# for digital On/Off input
+# ( provides automatic range check which uses diagnose function of HAL
+#  - BIOS/OS - to check if current is in allowed interval );
+# use iActorO_c for global access to all active iDigitalO_c instances
+# PRJ_SENSOR_DIGITAL=0
+
+# select iAnalogI_c for analog ( current or voltage ) sensor input.
+# or iAnalogIRangeCheck_c with enhanced automatic range check
+# PRJ_SENSOR_ANALOG=0
+
+# select iCounterI_c for counter input.
+# the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
+# function, as a IsoAgLib specific event counting for very low
+# event repetition rates is provided - the BIOS version is only
+# designed for typical RPM values
+# PRJ_SENSOR_COUNTER=0
+
+# select if the digital output driver shall be integrated into the project.
+# you can then use the HAL of IsoAgLib to realize a mostly hardware independend
+# access on PWM output. This is completely independent from communication tasks,
+# but was created during research and is actively used by OSB AG for its own
+# projects
+# PRJ_ACTOR=0
+
+# ###############################################################
+# Build System Configuration for LINUX
+# ###############################################################
+
+# The libraries (headers and library files) can be
+# installed with "make install_library" to a global system
+# directory, so that applications can be compiled with
+# refering to a general system path like "/usr/local/include"
+# and "/usr/local/lib".
+# ISOAGLIB_INSTALL_PATH="/usr/local/"
+
+
+# ###############################################################
+# Build System Configuration for Cross Compilers ( like Tasking EDE )
+# ###############################################################
+
+# #############################################
+# Configuration options typical for embedded project
+# ( these are used for target systems like "esx",
+#   "imi", "pm167" )
+# where the system libraries aren't placed in standard
+# directories ( UNIX/LINUX has standard directories
+# /usr/include, /usr/local/include, /usr/lib
+# and /usr/local/lib -> IsoAgLib awaits the libraries
+# in this directories for UNIX/LINUX )
+# These settings are at the moment only used for project
+# generation of
+# + Tasking EDE
+#
+# But this could be extended to other compilers.
+# These config settings allow to create project files
+# which can be used to generate runnable HEX out of the
+# box from automatic generation
+# #############################################
+
+# SETTINGS FOR EMBEDDED PROJECTS WITHIN CROSS COMPILER
+# specify the path to the embedded compiler
+# USE_EMBED_COMPILER_DIR="c:/programme/tasking/7.56/c166"
+
+# specify the path ( relative to IsoAgLib root or absolute )
+# to the libraries of the embedded BIOS / OS
+# ( please seperate entries by whitespace )
+# USE_EMBED_LIB_DIRECTORY="commercial_BIOS/bios_esx"
+
+# specify the path ( relative to IsoAgLib root or absolute )
+# to the headers of the embedded BIOS / OS
+# ( please seperate entries by whitespace )
+# USE_EMBED_HEADER_DIRECTORY="commercial_BIOS/bios_esx"
+
+# specify the needed library files
+# ( please seperate entries by whitespace )
+# USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
+
+# specify special source files from the BIOS/OS
+# which must be inserted into the sources list
+# ( e.g. startup files which could be delivered as
+#   asm file and must be compiled during runtime,
+#   as the BIOS/OS allows there some individual adaptation )
+# ( please seperate entries by whitespace )
+# USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
+
+# specify the needed linker / locater control file
+# USE_EMBED_ILO="Xos20lcs.ilo"
+
+# ###############################################################
+# Build System Configuration for Win32 ( like Visual C++ and Dev-C++ )
+# ###############################################################
+
+# specify path to headers of STLport - default corresponds to \ref Vc6StlPort
+# USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
+
+# specify path to STLport libraries in case you selected the option to use the STLport
+# version of IOSTREAMS ( and not the native version as advised by the doc at \ref Vc6StlPort )
+# let empty if native IOSTREAMS library is used
+# USE_STLPORT_LIBRARY_DIRECTORY=""
+
+# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
+# ( esp. Vector Informatik )
+# specify the path ( relative to IsoAgLib root or absolute )
+# to the WIN32 CAN libraries
+# IMPORTANT: Set the path to the directory where you installed
+# the CAN driver library during its SETUP.EXE process
+# As the individual library file sets are at fixed places
+# within a CAN driver installation, the IsoAgLib will
+# select the library files automatically
+# ==>> this path can be used without changes, if several
+#      driver version like "CANLIB" and "XL Driver Library"
+#      are installed in parallel
+#      ( all IsoAgLib parts will access the individual
+#        headers and libraries with the addition of the
+#        default directory name from the SETUP.EXE
+#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
+#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
+# USE_WIN32_LIB_DIRECTORY="C:/Development"
+
+# specify the path ( relative to IsoAgLib root or absolute )
+# to the WIN32 CAN headers
+# IMPORTANT: Set the path to the directory where you installed
+# the CAN driver library during its SETUP.EXE process
+# ==>> this path can be used without changes, if several
+#      driver version like "CANLIB" and "XL Driver Library"
+#      are installed in parallel
+#      ( all IsoAgLib parts will access the individual
+#        headers and libraries with the addition of the
+#        default directory name from the SETUP.EXE
+#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
+#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
+# ( please seperate entries by whitespace )
+# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+
+# specify the wanted Hardware Type of the CAN card
+# ( esp. Vector Informatik CAN drivers can be used for several
+#   CAN cards of their product line )
+# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
+#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
+# ( refer their documentaion to find more types )
+# ( IsoAgLib places automatically "XL_" before the card define,
+#   if the XL driver is selected --> DONT'T set the XL_ here again
+#   ==> this allows simpler switch between different CAN driver libs )
+# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+
+# additional libs when using Dev-Cpp
+USE_WIN32_ADDITIONAL_LIBS="c:\Dev-Cpp\lib\libwinmm.a c:\Dev-Cpp\lib\libws2_32.a"
+
+# ###############################################################
+# Build System Configuration for gcc based cross compilers and the like
+# ###############################################################
+
+# typical development systems have a host compiler version of gcc
+# in the application execution path as "gcc".
+# the appropriate cross-compiler gcc is often placed in a separate directory
+# with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
+# PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+

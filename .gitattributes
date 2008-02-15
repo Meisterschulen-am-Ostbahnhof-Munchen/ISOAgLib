@@ -513,6 +513,7 @@ examples/compiler_projects/conf_1_4_WriteFlexibleIso -text
 examples/compiler_projects/conf_1_5_ReadGps -text
 examples/compiler_projects/conf_2_0_LocalReadDataStdIso -text
 examples/compiler_projects/conf_2_10_RemoteWriteSetpointSimpleSetpointIso -text
+examples/compiler_projects/conf_2_11_TaskcontrollerClientVirtualTerminalClient -text
 examples/compiler_projects/conf_2_1_LocalReadDataSimpleMeasureIso -text
 examples/compiler_projects/conf_2_2_LocalReadDataSimpleSetpointIso -text
 examples/compiler_projects/conf_2_3_LocalReadDataSimpleMeasureSetpointIso -text
