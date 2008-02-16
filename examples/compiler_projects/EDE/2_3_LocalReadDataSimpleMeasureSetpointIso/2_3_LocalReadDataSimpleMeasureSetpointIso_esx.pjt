@@ -274,7 +274,7 @@ Libraries=c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\bf\Projekte\IsoAgLib\examples\compiler_projects\EDE\\2_3_LocalReadDataSimpleMeasureSetpointIso
+ProjectDir=\home\doxygen\IsoAgLib\examples\compiler_projects\EDE\\2_3_LocalReadDataSimpleMeasureSetpointIso
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b

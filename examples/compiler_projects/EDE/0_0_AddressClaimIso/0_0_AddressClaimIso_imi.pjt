@@ -217,22 +217,22 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\canio_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\icancustomer_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\icanpkg_c.h
-..\..\..\..\library\commercial_BIOS\bios_esx/Xos20go.asm
-..\..\..\..\library\commercial_BIOS\bios_esx/Xos20err.c
-..\..\..\..\library\commercial_BIOS\bios_esx/xos20esx.h
-..\..\..\..\library\commercial_BIOS\bios_esx/XOS20EEC.H
-..\..\..\..\library\commercial_BIOS\bios_esx/XOS20EEC.OBJ
+..\..\..\..\library\commercial_BIOS\bios_imi/Xos20go.asm
+..\..\..\..\library\commercial_BIOS\bios_imi/Xos20err.c
+..\..\..\..\library\commercial_BIOS\bios_imi/xos20esx.h
+..\..\..\..\library\commercial_BIOS\bios_imi/XOS20EEC.H
+..\..\..\..\library\commercial_BIOS\bios_imi/XOS20EEC.OBJ
 
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\0_NetworkManagement\0_0_AddressClaimIso;..\..\..\..;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_esx
-Libraries=c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_esx
+Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\0_NetworkManagement\0_0_AddressClaimIso;..\..\..\..;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_imi
+Libraries=c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_imi
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\bf\Projekte\IsoAgLib\examples\compiler_projects\EDE\\0_0_AddressClaimIso
+ProjectDir=\home\doxygen\IsoAgLib\examples\compiler_projects\EDE\\0_0_AddressClaimIso
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
@@ -281,11 +281,11 @@ AsmGenAsmlineinfo=1
 OutIHex=1
 OutIHexType=OutIHexType32
 OutIHexAdditionalOpt="-r -O -P"
-LocMyIlo=..\..\..\..\library\commercial_BIOS\bios_esx\Xos20lcs.ilo
+LocMyIlo=..\..\..\..\library\commercial_BIOS\bios_imi\Xos20lcs.ilo
 LocSmartlink=1
 LnkLocTrapFPLib=0
 LnkLocSupprWarn=118
-LnkLocAddOptions= -Wo ..\..\..\..\library\commercial_BIOS\bios_esx\C756\Xos20l.lib -Wo ..\..\..\..\library\commercial_BIOS\bios_esx\Module\Xma20l.lib
+LnkLocAddOptions= -Wo ..\..\..\..\library\commercial_BIOS\bios_imi\C756\Xos20l.lib -Wo ..\..\..\..\library\commercial_BIOS\bios_imi\Module\Xma20l.lib
 OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDefine,COptim,COptimAliasTypeChk,AsmGenDebug,AsmGenAsmlineinfo,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
 
 
