@@ -58,7 +58,16 @@ To learn more about \isoaglib you can check the navigation menu for further topi
 
 \section LatestNews Latest News
 
-<!--\subsection NewsForNextIncrementalRelease Planned changes for 2.1.1 release-->
+\subsection NewsForNextIncrementalRelease New for 2.1.1 release
+  - overall enhancement of documentation (e.g. Tasking Compiler)
+  - remove obsolete #defines like CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN
+  - add documentation on usage of TC-Client (proc2iso, Device Description)
+  - add documentation about firmware size reduction with selective inclusion of VT-Client features - based on used pool definition
+  - replace symlinks to update_makefile.sh with short shell scripts, which call update_makefile.sh directly, so that this works also in Win32 with MSYS
+  - fix Broadcasted Transport Protocol PGN
+  - cleanup documentation of tutorial examples
+  - add Win32 EXE files for CAN server, vt2iso and proc2iso
+  - add new tutorial 2_11_TaskcontrollerClientVirtualTerminalClient which presents ECU with parallel support of TC-Client and VT-Client
 
 \subsection NewsForBigRelease New for 2.1 release
   - CAN HAL has its own central message FIFO implementation, to get better load balancing, more efficient processing and easier reconfiguration after
