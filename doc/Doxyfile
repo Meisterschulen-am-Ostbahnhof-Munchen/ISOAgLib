@@ -1,4 +1,4 @@
-# Doxyfile 1.5.4
+# Doxyfile 1.5.5
 
 # This file describes the settings to be used by the documentation system
 # doxygen (www.doxygen.org) for a project
@@ -14,13 +14,12 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 
-# This tag specifies the encoding used for all characters in the config file that 
-# follow. The default is UTF-8 which is also the encoding used for all text before 
-# the first occurrence of this tag. Doxygen uses libiconv (or the iconv built into 
-# libc) for the transcoding. See http://www.gnu.org/software/libiconv for the list of 
-# possible encodings.
+# This tag specifies the encoding used for all characters in the config file 
+# that follow. The default is UTF-8 which is also the encoding used for all 
+# text before the first occurrence of this tag. Doxygen uses libiconv (or the 
+# iconv built into libc) for the transcoding. See 
+# http://www.gnu.org/software/libiconv for the list of possible encodings.
 
-#DOXYFILE_ENCODING      = ISO-8859-15
 DOXYFILE_ENCODING      = UTF-8
 
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
@@ -55,10 +54,11 @@ CREATE_SUBDIRS         = YES
 # information to generate all constant output in the proper language. 
 # The default language is English, other supported languages are: 
 # Afrikaans, Arabic, Brazilian, Catalan, Chinese, Chinese-Traditional, 
-# Croatian, Czech, Danish, Dutch, Finnish, French, German, Greek, Hungarian, 
-# Italian, Japanese, Japanese-en (Japanese with English messages), Korean, 
-# Korean-en, Lithuanian, Norwegian, Polish, Portuguese, Romanian, Russian, 
-# Serbian, Slovak, Slovene, Spanish, Swedish, and Ukrainian.
+# Croatian, Czech, Danish, Dutch, Farsi, Finnish, French, German, Greek, 
+# Hungarian, Italian, Japanese, Japanese-en (Japanese with English messages), 
+# Korean, Korean-en, Lithuanian, Norwegian, Macedonian, Persian, Polish, 
+# Portuguese, Romanian, Russian, Serbian, Slovak, Slovene, Spanish, Swedish, 
+# and Ukrainian.
 
 OUTPUT_LANGUAGE        = English
 
@@ -186,7 +186,7 @@ TAB_SIZE               = 2
 # will result in a user-defined paragraph with heading "Side Effects:". 
 # You can put \n's in the value part of an alias to insert newlines.
 
-ALIASES                = isoaglib="ISO<i><sub>AgLib</sub></i>"
+ALIASES                = "isoaglib=ISO<i><sub>AgLib</sub></i>"
 
 # Set the OPTIMIZE_OUTPUT_FOR_C tag to YES if your project consists of C 
 # sources only. Doxygen will then generate output that is more tailored for C. 
@@ -196,14 +196,26 @@ ALIASES                = isoaglib="ISO<i><sub>AgLib</sub></i>"
 OPTIMIZE_OUTPUT_FOR_C  = NO
 
 # Set the OPTIMIZE_OUTPUT_JAVA tag to YES if your project consists of Java 
-# sources only. Doxygen will then generate output that is more tailored for Java. 
-# For instance, namespaces will be presented as packages, qualified scopes 
-# will look different, etc.
+# sources only. Doxygen will then generate output that is more tailored for 
+# Java. For instance, namespaces will be presented as packages, qualified 
+# scopes will look different, etc.
 
 OPTIMIZE_OUTPUT_JAVA   = NO
 
-# If you use STL classes (i.e. std::string, std::vector, etc.) but do not want to 
-# include (a tag file for) the STL sources as input, then you should 
+# Set the OPTIMIZE_FOR_FORTRAN tag to YES if your project consists of Fortran 
+# sources only. Doxygen will then generate output that is more tailored for 
+# Fortran.
+
+OPTIMIZE_FOR_FORTRAN   = NO
+
+# Set the OPTIMIZE_OUTPUT_VHDL tag to YES if your project consists of VHDL 
+# sources. Doxygen will then generate output that is tailored for 
+# VHDL.
+
+OPTIMIZE_OUTPUT_VHDL   = NO
+
+# If you use STL classes (i.e. std::string, std::vector, etc.) but do not want 
+# to include (a tag file for) the STL sources as input, then you should 
 # set this tag to YES in order to let doxygen match functions declarations and 
 # definitions whose arguments contain STL classes (e.g. func(std::string); v.s. 
 # func(std::string) {}). This also make the inheritance and collaboration 
@@ -237,13 +249,13 @@ DISTRIBUTE_GROUP_DOC   = NO
 
 SUBGROUPING            = YES
 
-# When TYPEDEF_HIDES_STRUCT is enabled, a typedef of a struct (or union) is 
-# documented as struct with the name of the typedef. So 
+# When TYPEDEF_HIDES_STRUCT is enabled, a typedef of a struct, union, or enum 
+# is documented as struct, union, or enum with the name of the typedef. So 
 # typedef struct TypeS {} TypeT, will appear in the documentation as a struct 
 # with name TypeT. When disabled the typedef will appear as a member of a file, 
 # namespace, or class. And the struct will be named TypeS. This can typically 
-# be useful for C code where the coding convention is that all structs are 
-# typedef'ed and only the typedef is referenced never the struct's name.
+# be useful for C code in case the coding convention dictates that all compound 
+# types are typedef'ed and only the typedef is referenced, never the tag name.
 
 TYPEDEF_HIDES_STRUCT   = NO
 
@@ -281,10 +293,11 @@ EXTRACT_LOCAL_CLASSES  = YES
 
 EXTRACT_LOCAL_METHODS  = NO
 
-# If this flag is set to YES, the members of anonymous namespaces will be extracted 
-# and appear in the documentation as a namespace called 'anonymous_namespace{file}', 
-# where file will be replaced with the base name of the file that contains the anonymous 
-# namespace. By default anonymous namespace are hidden.
+# If this flag is set to YES, the members of anonymous namespaces will be 
+# extracted and appear in the documentation as a namespace called 
+# 'anonymous_namespace{file}', where file will be replaced with the base 
+# name of the file that contains the anonymous namespace. By default 
+# anonymous namespace are hidden.
 
 EXTRACT_ANON_NSPACES   = YES
 
@@ -363,6 +376,12 @@ SORT_MEMBER_DOCS       = YES
 
 SORT_BRIEF_DOCS        = NO
 
+# If the SORT_GROUP_NAMES tag is set to YES then doxygen will sort the 
+# hierarchy of group names into alphabetical order. If set to NO (the default) 
+# the group names will appear in their defined order.
+
+SORT_GROUP_NAMES       = NO
+
 # If the SORT_BY_SCOPE_NAME tag is set to YES, the class list will be 
 # sorted by fully-qualified names, including namespaces. If set to 
 # NO (the default), the class list will be sorted only by class name, 
@@ -425,8 +444,8 @@ SHOW_USED_FILES        = YES
 SHOW_DIRECTORIES       = YES
 
 # The FILE_VERSION_FILTER tag can be used to specify a program or script that 
-# doxygen should invoke to get the current version for each file (typically from the 
-# version control system). Doxygen will invoke the program by executing (via 
+# doxygen should invoke to get the current version for each file (typically from 
+# the version control system). Doxygen will invoke the program by executing (via 
 # popen()) the command <command> <input-file>, where <command> is the value of 
 # the FILE_VERSION_FILTER tag, and <input-file> is the name of an input file 
 # provided by doxygen. Whatever the program writes to standard output 
@@ -496,36 +515,12 @@ WARN_LOGFILE           = admin/log/doxywarnings.txt
 
 INPUT                  = .
 
-#examples \
-#                         xgpl_src \
-#                         readme.txt \
-#                         build_utils \
-#                         changelog.txt \
-#                         where-to-start.txt \
-#                         main-features.txt \
-#                         structural-overview.txt \
-#                         license-conditions.txt \
-#                         memory-usage.txt \
-#                         todo.txt \
-#                         using-projects.txt \
-#                         support.txt \
-#                         maintainers.txt \
-#                         howto-download.txt \
-#                         getting-installed.txt \
-#                         information.txt \
-#                         outlook.txt \
-#                         gpl-with-exception.txt \
-#                         disc-further.txt \
-#                         sitemap.txt \
-#                         oldNews.txt \
-#                         README_LICENSED_PARTS.txt
+# This tag can be used to specify the character encoding of the source files 
+# that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 
+# also the default input encoding. Doxygen uses libiconv (or the iconv built 
+# into libc) for the transcoding. See http://www.gnu.org/software/libiconv for 
+# the list of possible encodings.
 
-# This tag can be used to specify the character encoding of the source files that 
-# doxygen parses. Internally doxygen uses the UTF-8 encoding, which is also the default 
-# input encoding. Doxygen uses libiconv (or the iconv built into libc) for the transcoding. 
-# See http://www.gnu.org/software/libiconv for the list of possible encodings.
-
-#INPUT_ENCODING         = UTF-8
 INPUT_ENCODING         = ISO-8859-15
 
 # If the value of the INPUT tag contains directories, you can use the 
@@ -533,21 +528,14 @@ INPUT_ENCODING         = ISO-8859-15
 # and *.h) to filter out the source-files in the directories. If left 
 # blank the following patterns are tested: 
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx 
-# *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py
-
-## temporaer absichtlich zuwenig, um schneller zu generieren:
-#FILE_PATTERNS          = *.txt \
-#                         *.html \
-#                         *.dox
+# *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm *.py *.f90
 
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cpp \
                          *.h \
                          *.hpp \
-                         *.txt 
-                         # *.html \
-                         # *.dox
+                         *.txt
 
 # The RECURSIVE tag can be used to turn specify whether or not subdirectories 
 # should be searched for input files as well. Possible values are YES and NO. 
@@ -573,7 +561,6 @@ EXCLUDE                = library/xgpl_src/hal/pc \
                          library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_w32_vector_xl_drv_lib.cpp \
                          library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_rte.cpp
 
-
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 
 # from the input.
@@ -589,9 +576,10 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = */.svn/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names 
-# (namespaces, classes, functions, etc.) that should be excluded from the output. 
-# The symbol name can be a fully qualified name, a word, or if the wildcard * is used, 
-# a substring. Examples: ANamespace, AClass, AClass::ANamespace, ANamespace::*Test
+# (namespaces, classes, functions, etc.) that should be excluded from the 
+# output. The symbol name can be a fully qualified name, a word, or if the 
+# wildcard * is used, a substring. Examples: ANamespace, AClass, 
+# AClass::ANamespace, ANamespace::*Test
 
 EXCLUDE_SYMBOLS        = 
 
@@ -660,9 +648,7 @@ FILTER_SOURCE_FILES    = NO
 # If the SOURCE_BROWSER tag is set to YES then a list of source files will 
 # be generated. Documented entities will be cross-referenced with these sources. 
 # Note: To get rid of all source code in the generated output, make sure also 
-# VERBATIM_HEADERS is set to NO. If you have enabled CALL_GRAPH or CALLER_GRAPH 
-# then you must also enable this option. If you don't then doxygen will produce 
-# a warning and turn it on anyway
+# VERBATIM_HEADERS is set to NO.
 
 SOURCE_BROWSER         = YES
 
@@ -783,10 +769,35 @@ HTML_ALIGN_MEMBERS     = YES
 
 # If the GENERATE_HTMLHELP tag is set to YES, additional index files 
 # will be generated that can be used as input for tools like the 
-# Microsoft HTML help workshop to generate a compressed HTML help file (.chm) 
+# Microsoft HTML help workshop to generate a compiled HTML help file (.chm) 
 # of the generated HTML documentation.
 
 GENERATE_HTMLHELP      = NO
+
+# If the GENERATE_DOCSET tag is set to YES, additional index files 
+# will be generated that can be used as input for Apple's Xcode 3 
+# integrated development environment, introduced with OSX 10.5 (Leopard). 
+# To create a documentation set, doxygen will generate a Makefile in the 
+# HTML output directory. Running make will produce the docset in that 
+# directory and running "make install" will install the docset in 
+# ~/Library/Developer/Shared/Documentation/DocSets so that Xcode will find 
+# it at startup.
+
+GENERATE_DOCSET        = NO
+
+# When GENERATE_DOCSET tag is set to YES, this tag determines the name of the 
+# feed. A documentation feed provides an umbrella under which multiple 
+# documentation sets from a single provider (such as a company or product suite) 
+# can be grouped.
+
+DOCSET_FEEDNAME        = "Doxygen generated docs"
+
+# When GENERATE_DOCSET tag is set to YES, this tag specifies a string that 
+# should uniquely identify the documentation set bundle. This should be a 
+# reverse domain-name style string, e.g. com.mycompany.MyDocSet. Doxygen 
+# will append .docset to the name.
+
+DOCSET_BUNDLE_ID       = org.doxygen.Project
 
 # If the HTML_DYNAMIC_SECTIONS tag is set to YES then the generated HTML 
 # documentation will contain sections that can be hidden and shown after the 
@@ -1243,10 +1254,11 @@ PERL_PATH              = /usr/bin/perl
 CLASS_DIAGRAMS         = YES
 
 # You can define message sequence charts within doxygen comments using the \msc 
-# command. Doxygen will then run the mscgen tool (see http://www.mcternan.me.uk/mscgen/) to 
-# produce the chart and insert it in the documentation. The MSCGEN_PATH tag allows you to 
-# specify the directory where the mscgen tool resides. If left empty the tool is assumed to 
-# be found in the default search path.
+# command. Doxygen will then run the mscgen tool (see 
+# http://www.mcternan.me.uk/mscgen/) to produce the chart and insert it in the 
+# documentation. The MSCGEN_PATH tag allows you to specify the directory where 
+# the mscgen tool resides. If left empty the tool is assumed to be found in the 
+# default search path.
 
 MSCGEN_PATH            = /usr/local/bin/mscgen
 
@@ -1307,19 +1319,19 @@ INCLUDE_GRAPH          = YES
 
 INCLUDED_BY_GRAPH      = YES
 
-# If the CALL_GRAPH, SOURCE_BROWSER and HAVE_DOT tags are set to YES then doxygen will 
-# generate a call dependency graph for every global function or class method. 
-# Note that enabling this option will significantly increase the time of a run. 
-# So in most cases it will be better to enable call graphs for selected 
-# functions only using the \callgraph command.
+# If the CALL_GRAPH and HAVE_DOT options are set to YES then 
+# doxygen will generate a call dependency graph for every global function 
+# or class method. Note that enabling this option will significantly increase 
+# the time of a run. So in most cases it will be better to enable call graphs 
+# for selected functions only using the \callgraph command.
 
 CALL_GRAPH             = YES
 
-# If the CALLER_GRAPH, SOURCE_BROWSER and HAVE_DOT tags are set to YES then doxygen will 
-# generate a caller dependency graph for every global function or class method. 
-# Note that enabling this option will significantly increase the time of a run. 
-# So in most cases it will be better to enable caller graphs for selected 
-# functions only using the \callergraph command.
+# If the CALLER_GRAPH and HAVE_DOT tags are set to YES then 
+# doxygen will generate a caller dependency graph for every global function 
+# or class method. Note that enabling this option will significantly increase 
+# the time of a run. So in most cases it will be better to enable caller 
+# graphs for selected functions only using the \callergraph command.
 
 CALLER_GRAPH           = YES
 
@@ -1355,9 +1367,9 @@ DOTFILE_DIRS           =
 # The MAX_DOT_GRAPH_MAX_NODES tag can be used to set the maximum number of 
 # nodes that will be shown in the graph. If the number of nodes in a graph 
 # becomes larger than this value, doxygen will truncate the graph, which is 
-# visualized by representing a node as a red box. Note that doxygen if the number 
-# of direct children of the root node in a graph is already larger than 
-# MAX_DOT_GRAPH_NOTES then the graph will not be shown at all. Also note 
+# visualized by representing a node as a red box. Note that doxygen if the 
+# number of direct children of the root node in a graph is already larger than 
+# DOT_GRAPH_MAX_NODES then the graph will not be shown at all. Also note 
 # that the size of a graph can be further restricted by MAX_DOT_GRAPH_DEPTH.
 
 DOT_GRAPH_MAX_NODES    = 50
@@ -1373,10 +1385,10 @@ DOT_GRAPH_MAX_NODES    = 50
 MAX_DOT_GRAPH_DEPTH    = 0
 
 # Set the DOT_TRANSPARENT tag to YES to generate images with a transparent 
-# background. This is disabled by default, which results in a white background. 
-# Warning: Depending on the platform used, enabling this option may lead to 
-# badly anti-aliased labels on the edges of a graph (i.e. they become hard to 
-# read).
+# background. This is enabled by default, which results in a transparent 
+# background. Warning: Depending on the platform used, enabling this option 
+# may lead to badly anti-aliased labels on the edges of a graph (i.e. they 
+# become hard to read).
 
 DOT_TRANSPARENT        = NO
 
