@@ -120,9 +120,12 @@ This IDE has some important features:
 	   default mirror entry in the list) in the dialog window "WebUpdate"
     -# Click on button "Check for updates" in the dialog window "WebUpdate"
     -# Select at least the following packages for download (as they are needed for <b>vt2iso</b>)
-	   - FreeImage.DevPak
-	   - ImageLib.DevPak
+	   - FreeImage.DevPak (available from http://www.isoaglib.org/StaticContent/Dev-C++/FreeImage.DevPak)
+	   - ImageLib.DevPak  (available from http://www.isoaglib.org/StaticContent/Dev-C++/ImageLib.DevPak)
 	   - <tt>xerces-c_2_5_0-mingw.DevPak</tt> (see special download instructions in \ref Win32Xerces)
+     - Sockets (available from standard Dev-C++ sources or http://www.isoaglib.org/StaticContent/Dev-C++/Sockets-2.2.6.-1Nap.DevPak)
+     - Pthreads (available from standard Dev-C++ sources or http://www.isoaglib.org/StaticContent/Dev-C++/pthreads_w32-2.8.0-1aj.DevPak)
+     - w32api (available from standard Dev-C++ sources or http://www.isoaglib.org/StaticContent/Dev-C++/w32api-3.11-1spec.DevPak)
 	   - (optionally install further documentation or utility packages)
 
 
@@ -249,7 +252,7 @@ The necessary configuration options for the \isoaglib applications are (e.g. con
 Create your Dev-C++ or VC6 project with the <tt>update_makefile.sh</tt> script and build the project.
 
 Precompiled CAN server binaries for Windows already exist in the following directories:
-- Dev-C++:<br> 
+- Dev-C++:<br>
   - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server.exe</tt>
   - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server_pcan.exe</tt>
   - <tt>examples\\compiler_projects\\Dev-C++\\canserver\\bin\\can_server_sontheim.exe</tt>
@@ -292,7 +295,7 @@ This strategy can be mapped to other CAN cards as well. Please contact the
 send a running adaptation back to the project.
 
 For building the CAN server application the following files are required in the above specified directories:<br>
-- <b>Pthreads</b>: 
+- <b>Pthreads</b>:
     Pthreads is a POSIX standard for threads and is used for efficent thread managment in the CAN server application.
     (version 2.8.0 files can be downloaded from http://sources.redhat.com/pthreads-win32/)
     - <tt>pthread.h</tt>
@@ -709,8 +712,8 @@ ISO_AG_LIB_PATH="../.."
 #            but avoids slow memory allocation in too small units )
 # OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
 
-# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
-# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
+# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc"
+# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of
 # the object pool and thus need not to be included in the client application.
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
@@ -1168,7 +1171,7 @@ or adapt the Makefiles on your own (no support by author for this config).
 The FreeImage library may also be available as a ready made binary distribution.-->
 
 \subsubsection FreeImageWin32 Installation of Free Image Library on Win32
-On Win32 Platform the Dev-C++ IDE provides a very simple download as extension package from within the program. 
+On Win32 Platform the Dev-C++ IDE provides a very simple download as extension package from within the program.
 Thus you have no installation afford with any make or manual install (see \ref InstallDevCpp).
 In case you still want to use Visual Studio, you can use the prvided project file <tt>vt2iso.vcproj</tt> together
 with the files from the repository (<tt>vt2iso/../libs/freeimage</tt>). Be sure that you have the MS Platform SDK
@@ -1191,11 +1194,11 @@ the corresponding headers in /usr/include/xercesc/ (or /usr/local/include/xerces
   - Download the Dev-C++ prepared binary of Xerces-C from http://devpaks.org/show.php?devpak=41
   - Call the packagemanager for Dev-C++ (menu TOOLS->PACKAGE MANAGER) and select
     the downloaded archive xerces-c_2_5_0-mingw.DevPak for install
-- <b>Visual Studio</b><br> 
+- <b>Visual Studio</b><br>
   Download Xerces-C++ v2.5.0.0 from <a href="http://archive.apache.org/dist/xml/xerces-c/Xerces-C_2_5_0/xerces-c_2_5_0-windows_nt-msvc_60.zip">here</a>
 and extract it properly(!) to <tt>vt2iso\\..\\libs\\</tt>
 - <b>Attention!</b><br>The xerces-c_2_5_0.dll that was included with the Dev-Cpp package is NOT the
-  same as the one you can download from apache.org!! Therefore you can get an inproper procedurecall 
+  same as the one you can download from apache.org!! Therefore you can get an inproper procedurecall
   messages when starting vt2iso using the wrong dll! So be sure to always use the correct dll.
 
 
