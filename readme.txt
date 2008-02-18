@@ -60,7 +60,7 @@ To learn more about \isoaglib you can check the navigation menu for further topi
 
 \subsection NewsForNextIncrementalRelease New for 2.1.1 release
   - overall enhancement of documentation (e.g. Tasking Compiler)
-  - remove obsolete #defines like CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN
+  - remove obsolete \#defines like CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN
   - add documentation on usage of TC-Client (proc2iso, Device Description)
   - add documentation about firmware size reduction with selective inclusion of VT-Client features - based on used pool definition
   - replace symlinks to update_makefile.sh with short shell scripts, which call update_makefile.sh directly, so that this works also in Win32 with MSYS

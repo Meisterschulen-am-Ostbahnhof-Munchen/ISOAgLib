@@ -29,7 +29,8 @@
             </ul></li>
         <li> \ref InfRequirements </li>
         <li> \ref MemoryUsage</li>
-        <li> \ref PageChanges "Changelog"</li><!--<li> \ref PageAdditionalInfo </li>-->
+        <li> \ref PageAdditionalInfo </li>
+        <li> \ref PageChanges "Changelog"</li>
         <li> \ref PageTodo </li>
         </ul></li>
     <li class="folder"> \ref PageTechInfo

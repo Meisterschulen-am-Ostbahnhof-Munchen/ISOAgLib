@@ -114,13 +114,15 @@ This IDE has some important features:
     directly create a running project for Dev-C++
 
 \subsubsection InstallDevCpp Installation of Dev-C++
+As all project files were created for Dev-C++ installed to <tt>C:\\Development\\Dev-C++</tt> it is recommended to use this
+directory as your default installation path as well.
 -# Please download at least the version (4.9.9.2 with GCC 3.4.3) from http://www.bloodshed.net/dev/devcpp.html
 -# Check for updates with Dev-C++ menu entry (TOOLS->CHECK FOR UPDATES)
     -# Select the mirror "PlanetMirror.com" from the list (at least the german version has a dead
 	   default mirror entry in the list) in the dialog window "WebUpdate"
     -# Click on button "Check for updates" in the dialog window "WebUpdate"
     -# Select at least the following packages for download (as they are needed for <b>vt2iso</b>)
-	   - FreeImage.DevPak (available from http://www.isoaglib.org/StaticContent/Dev-C++/FreeImage.DevPak)
+	   - FreeImage.DevPak (available from http://www.isoaglib.org/StaticContent/Dev-C++/FreeImage.DevPak and from <tt>libraries/xgpl_src/build/libs/freeimage</tt>)
 	   - ImageLib.DevPak  (available from http://www.isoaglib.org/StaticContent/Dev-C++/ImageLib.DevPak)
 	   - <tt>xerces-c_2_5_0-mingw.DevPak</tt> (see special download instructions in \ref Win32Xerces)
      - Sockets (available from standard Dev-C++ sources or http://www.isoaglib.org/StaticContent/Dev-C++/Sockets-2.2.6.-1Nap.DevPak)
@@ -129,6 +131,7 @@ This IDE has some important features:
 	   - (optionally install further documentation or utility packages)
 
 
+<br>
 \subsection CompTasking TASKING for Embedded Targets
 <a href="http://www.tasking.com/">TASKING</a> provides cross compilers for different target platforms that can be used
 for \isoaglib appliations.
@@ -306,11 +309,11 @@ For building the CAN server application the following files are required in the 
 - <b>PCAN</b>: (<a href="http://www.peak-system.com/files/usb.zip">usb.zip</a>)
     - <tt>Pcan_usb.h</tt>
     - <tt>Pcan_usb.lib</tt>
-- <b>Vector-Informatik (XL_Driver_Library directory on driver cd)</b>:
+- <b>Vector-Informatik</b> (XL_Driver_Library directory on driver cd):
     - <tt>vxlapi.dll</tt>
     - <tt>vxlapi.h</tt>
     - <tt>vxlapi.lib</tt>
-- <b>Vector-Informatik (CANLIB directory on driver cd)</b>:
+- <b>Vector-Informatik</b> (CANLIB directory on driver cd):
     - <tt>vcand32.dll</tt>
     - <tt>vcand32.lib</tt>
     - <tt>VCanD.h</tt>

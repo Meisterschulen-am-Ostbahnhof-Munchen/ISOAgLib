@@ -16,9 +16,9 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
         <li> \ref MemoryUsage </li>
         </ul>
     </li>
+    <li> Additional Information </li>
     <li> \ref PageChanges "Changelog" </li>
     <li> \ref PageTodo "Main TODO Items Page"</li>
-    <li> Additional Information </li>
 </ol>
 </td></tr>
 </table>
