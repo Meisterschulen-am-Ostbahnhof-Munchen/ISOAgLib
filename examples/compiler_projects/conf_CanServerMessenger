@@ -497,7 +497,7 @@ PRJ_RS232=1
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
 # additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="c:\Dev-Cpp\lib\libwinmm.a c:\Dev-Cpp\lib\libws2_32.a"
+USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
