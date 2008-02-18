@@ -2536,8 +2536,6 @@ library/xgpl_src/build/vt2iso/Doxyfile -text
 library/xgpl_src/build/vt2iso/INSTALL.Win32.txt -text
 library/xgpl_src/build/vt2iso/Makefile.incl -text
 library/xgpl_src/build/vt2iso/Makefile.paintlib -text
-library/xgpl_src/build/vt2iso/Release/FreeImage.dll -text
-library/xgpl_src/build/vt2iso/Release/xerces-c_2_5_0D.dll -text
 library/xgpl_src/build/vt2iso/Vt2Iso.dev -text
 library/xgpl_src/build/vt2iso/bin/Vt2Iso.exe -text
 library/xgpl_src/build/vt2iso/bin/vt2iso.xsd -text
