@@ -46,7 +46,7 @@
 
 
 
-extern bool itocolor(unsigned int ui_index, std::string& c_outputText);
+extern bool itocolour(unsigned int ui_index, std::string& c_outputText);
 extern bool itofontsize(unsigned int ui_index, std::string& c_outputText);
 extern bool itofonttype(unsigned int ui_index, std::string& c_outputText);
 extern bool itoformat(unsigned int ui_index, std::string& c_outputText);
@@ -73,12 +73,12 @@ extern bool itobuttonoptions(uint8_t ui8_options, std::string& c_outputText);
 extern bool itolinesuppression(uint8_t ui8_options, std::string& c_outputText);
 extern bool itofontstyle(uint8_t ui8_options, std::string& c_outputText);
 extern bool itolineart(int i_lineart, std::string& c_outputText);
-extern bool itocolordepth(uint8_t ui8_options, std::string& c_outputText);
+extern bool itocolourdepth(uint8_t ui8_options, std::string& c_outputText);
 
 
-extern int colortoi (char* text_color);
+extern int colourtoi (char* text_colour);
 extern int masktypetoi (char* masktype);
-extern int colordepthtoi (char* text_colordepth);
+extern int colourdepthtoi (char* text_colourdepth);
 extern signed int fonttypetoi (char* text_fonttype);
 extern signed int booltoi (char *text_bool);
 extern signed int fontsizetoi (char *text_fontsize);

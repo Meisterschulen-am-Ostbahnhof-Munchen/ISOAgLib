@@ -66,31 +66,31 @@ bool itogeneraloption(uint8_t ui8_options, std::string& c_outputText, uint8_t ui
 
 
 int
-colortoi (char* text_color)
+colourtoi (char* text_colour)
 {
   int l;
-  for (l=0; l<maxColorTable; l++) {
-    if (strncmp (text_color, colorTable [l], stringLength) == 0) {
+  for (l=0; l<maxColourTable; l++) {
+    if (strncmp (text_colour, colourTable [l], stringLength) == 0) {
       return l;
     }
   }
 
-  int i_colIndex = atoi (text_color);
+  int i_colIndex = atoi (text_colour);
   if ((i_colIndex >=0) && (i_colIndex < 256)) {
-    if (i_colIndex != 0 || text_color[0] == '0') {
+    if (i_colIndex != 0 || text_colour[0] == '0') {
       return i_colIndex;
     }
   }
 
-  std::cout << "INVALID COLOR '" << text_color << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  std::cout << "INVALID Colour '" << text_colour << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1;
 }
 
-bool itocolor(unsigned int ui_index, string& c_outputText)
+bool itocolour(unsigned int ui_index, string& c_outputText)
 {
-  if(ui_index < maxColorTable )
+  if(ui_index < maxColourTable )
   {
-   c_outputText = colorTable[ui_index];
+   c_outputText = colourTable[ui_index];
 
   }
   else
@@ -124,27 +124,27 @@ masktypetoi (char* masktype)
 }
 
 int
-colordepthtoi (char* text_colordepth)
+colourdepthtoi (char* text_colourdepth)
 {
   int l;
   for (l=0; l<3; l++) {
-    if (text_colordepth [0] == colorDepthTable [l]) {
+    if (text_colourdepth [0] == colourDepthTable [l]) {
       return l;
     }
   }
 
-  int i_colDepth = atoi (text_colordepth);
+  int i_colDepth = atoi (text_colourdepth);
   if ((i_colDepth >=0) && (i_colDepth < 3)) {
-    if (i_colDepth != 0 || text_colordepth[0] == '0') {
+    if (i_colDepth != 0 || text_colourdepth[0] == '0') {
       return i_colDepth;
     }
   }
 
-  std::cout << "INVALID COLOR DEPTH'" << text_colordepth << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  std::cout << "INVALID Colour DEPTH'" << text_colourdepth << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1;
 }
 
-bool itocolordepth(uint8_t ui8_options, std::string& c_outputText)
+bool itocolourdepth(uint8_t ui8_options, std::string& c_outputText)
 {
   c_outputText.clear();
   switch (ui8_options) {

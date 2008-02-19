@@ -348,11 +348,11 @@ extern char attrNameTable [maxAttributeNames] [stringLength+1];
 #define maxCommandsToCompare (maxCommands)
 extern char ctCommandTable [maxCommandsToCompare] [stringLength+1];
 
-extern char colorTable [16] [stringLength+1];
+extern char colourTable [16] [stringLength+1];
 
 extern char masktypeTable [3] [stringLength+1];
 
-extern char colorDepthTable [3];
+extern char colourDepthTable [3];
 
 #define maxFontsizeTable 15
 extern char fontsizeTable [maxFontsizeTable] [stringLength+1];
@@ -432,9 +432,9 @@ unsigned int commandIsType (char*);
 
 void utf16convert (char* source, char* destin, int count);
 
-unsigned int colortoi (char* text_color);
+unsigned int colourtoi (char* text_colour);
 
-unsigned int colordepthtoi (char* text_colordepth);
+unsigned int colourdepthtoi (char* text_colourdepth);
 
 unsigned int fonttypetoi (char* text_fonttype);
 
@@ -497,14 +497,14 @@ unsigned int auxfunctiontypetoi(char *text_auxFunctionType);
 
 
 // Da es eine unterschiedliche Angabe von Eigenschaften vorkommen kann
-/// < rectangle color='green' color='12'  // muss man unterscheiden zw String-Zahl und String-Wort
+/// < rectangle colour='green' colour='12'  // muss man unterscheiden zw String-Zahl und String-Wort
 
 unsigned int getacoustsignfromstring (char *text_acousticsignal);
 unsigned int getarchbargraphoptfromstring (char *text_options);
 unsigned int getauxfunctypefromstring(char *text_auxFuncType);
 unsigned int getboolfromstring (char *text_boolstr);
-unsigned int getcolordepthfromstring (char* text_colordepth);
-unsigned int getcolorfromstring (char *text_backgrndcol);
+unsigned int getcolourdepthfromstring (char* text_colourdepth);
+unsigned int getcolourfromstring (char *text_backgrndcol);
 unsigned int getellipsetypefromstring (char *text_ellipsetype);
 unsigned int geteventfromstring (char *text_eventName);
 unsigned int getformatfromstring (char *text_formatstr);

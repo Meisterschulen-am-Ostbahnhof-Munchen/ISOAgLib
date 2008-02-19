@@ -39,7 +39,7 @@
 #include "vt2iso-defines.hpp"
 #include <iostream>
 
-BGR_s vtColorTable[256]=
+BGR_s vtColourTable[256]=
 { /// ATTENTION: This is stored "Blue-Green-Red" !!!
   {0x00,0x00,0x00},//0
   {0xFF,0xFF,0xff},//1
@@ -335,13 +335,13 @@ unsigned int Vt2IsoImageBase_c::get1BitPixel( unsigned int aui_x, unsigned int a
   return ( int( ( getR( aui_x, aui_y ) + getG( aui_x, aui_y ) + getB( aui_x, aui_y ) ) / 3 ) >= i_currentThreshold )?1U:0U;
 }
 
-/** get the ISO virtual table indexed bitmap value for 4Bit ( 16color ) target bitmap */
+/** get the ISO virtual table indexed bitmap value for 4Bit ( 16colour ) target bitmap */
 unsigned int Vt2IsoImageBase_c::get4BitPixel( unsigned int aui_x, unsigned int aui_y )
 {
   return rgbtopalette16 ( getR( aui_x, aui_y ), getG( aui_x, aui_y ), getB( aui_x, aui_y ) );
 }
 
-/** get the ISO virtual table indexed bitmap value for 8Bit ( 256color ) target bitmap */
+/** get the ISO virtual table indexed bitmap value for 8Bit ( 256colour ) target bitmap */
 unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int aui_y )
 {
   int idx = getPaletteIndex (aui_x, aui_y);
@@ -357,8 +357,8 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int a
              + ( componenttoindex6 ( getB( aui_x, aui_y ) )    );
     // 16..231 possible - mapped to this area!
     switch (idx)
-    { // now try to map down those colors that exactly match to the range 0..15!
-      // because those colours will be used in the 16-color version, too. This makes it easier for the transparency color then!
+    { // now try to map down those colours that exactly match to the range 0..15!
+      // because those colours will be used in the 16-colour version, too. This makes it easier for the transparency colour then!
       case  16: idx = 0; break;
       case 231: idx = 1; break;
       case  34: idx = 2; break;
@@ -379,7 +379,7 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int a
     return idx;
   }
   else if (idx == -2)
-  { // we were palettized, but the color table didn't match!
+  { // we were palettized, but the colour table didn't match!
     exit (1);
   }
   else return 0; // make compiler happy!
@@ -458,7 +458,7 @@ unsigned int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsi
 unsigned int Vt2IsoImageBase_c::indexfromtable (unsigned int red, unsigned int green, unsigned int blue)
 {
   for (int i=0; i<16; i++) {
-    if ((color16table [i] [0] == red) && (color16table [i] [1] == green) && (color16table [i] [2] == blue))
+    if ((colour16table [i] [0] == red) && (colour16table [i] [1] == green) && (colour16table [i] [2] == blue))
       return i;
   }
   return 0; // shouldn't happen!!

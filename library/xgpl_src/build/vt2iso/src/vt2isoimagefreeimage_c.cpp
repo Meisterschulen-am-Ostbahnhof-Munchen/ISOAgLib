@@ -55,7 +55,7 @@ typedef struct tagBGR {
   fiuint8_t rgbRed;
 } BGR_s;
 
-extern BGR_s vtColorTable[256];
+extern BGR_s vtColourTable[256];
 
 bool Vt2IsoImageFreeImage_c::b_FreeImageLibInited = false;
 
@@ -146,15 +146,15 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
 
  if (FreeImage_GetBPP(bitmap) <= 8)
  {
-   mi_colorMismatch = -1; // default: no color mismatches...
+   mi_colourMismatch = -1; // default: no colour mismatches...
 
    for (int i=0; i<(16+216); i++)
-   { // check all colors if the bitmap uses the ISO-palette
-     if ( (vtColorTable[i].rgbRed != FreeImage_GetPalette (bitmap)[i].rgbRed)
-       || (vtColorTable[i].rgbGreen != FreeImage_GetPalette (bitmap)[i].rgbGreen)
-       || (vtColorTable[i].rgbBlue != FreeImage_GetPalette (bitmap)[i].rgbBlue) )
+   { // check all colours if the bitmap uses the ISO-palette
+     if ( (vtColourTable[i].rgbRed != FreeImage_GetPalette (bitmap)[i].rgbRed)
+       || (vtColourTable[i].rgbGreen != FreeImage_GetPalette (bitmap)[i].rgbGreen)
+       || (vtColourTable[i].rgbBlue != FreeImage_GetPalette (bitmap)[i].rgbBlue) )
      {
-       mi_colorMismatch = i;
+       mi_colourMismatch = i;
        break;
      }
    }
@@ -175,16 +175,16 @@ int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int aui_x, unsigned int au
   if (mb_palettized)
   {
     // do this check here, because in case we only use 4bit bitmap, we don't have to care for the palette matching...
-    if (mi_colorMismatch >= 0)
+    if (mi_colourMismatch >= 0)
     {
-      std::cerr << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. See (first) mismatching color #"<<mi_colorMismatch<<" below. Please use the ISO11783-Part 6 (VT)-Palette for bitmaps you have saved palettized and use in 8bit-mode. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
+      std::cerr << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. See (first) mismatching colour #"<<mi_colourMismatch<<" below. Please use the ISO11783-Part 6 (VT)-Palette for bitmaps you have saved palettized and use in 8bit-mode. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
       std::cerr << "HAS TO BE | you had" << std::hex << std::setfill('0');
       for (int i=0; i<(16+216); i++)
       {
         if ((i % 8) == 0) std::cerr << std::endl;
         else std::cerr << "     ";
-        std::cerr << std::setw(2) << fiuint16_t(vtColorTable[i].rgbRed) << std::setw(2) << fiuint16_t(vtColorTable[i].rgbGreen) << std::setw(2) << fiuint16_t(vtColorTable[i].rgbBlue);
-        if (i == mi_colorMismatch) std::cerr << "*|*"; else std::cerr << " | ";
+        std::cerr << std::setw(2) << fiuint16_t(vtColourTable[i].rgbRed) << std::setw(2) << fiuint16_t(vtColourTable[i].rgbGreen) << std::setw(2) << fiuint16_t(vtColourTable[i].rgbBlue);
+        if (i == mi_colourMismatch) std::cerr << "*|*"; else std::cerr << " | ";
         std::cerr << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
       }
       std::cerr << std::endl;
@@ -225,10 +225,10 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_
  if ( ( aui_x >= ui_width ) || ( aui_y >= ui_height ) ) return 0;
 
  if (mb_palettized)
- { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
+ { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's colour
    fiuint8_t idx;
    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
-   return vtColorTable[idx].rgbRed;
+   return vtColourTable[idx].rgbRed;
  }
  else
  {
@@ -237,7 +237,7 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
   //    -> change direction back to usual with ( ui_height - aui_y ) )
-  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
+  FreeImage_GetPixelColour(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbRed;
   #else
   checkUpdateScanline( aui_y );
@@ -250,10 +250,10 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_
 unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_y )
 {
  if (mb_palettized)
- { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
+ { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's colour
    fiuint8_t idx;
    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
-   return vtColorTable[idx].rgbGreen;
+   return vtColourTable[idx].rgbGreen;
  }
  else
  {
@@ -263,7 +263,7 @@ unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
   //    -> change direction back to usual with ( ui_height - aui_y ) )
-  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
+  FreeImage_GetPixelColour(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbGreen;
   #else
   checkUpdateScanline( aui_y );
@@ -276,10 +276,10 @@ unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_
 unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_y )
 {
  if (mb_palettized)
- { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's color
+ { // we can't raw-access the bitmap buffer with RGB, we need to get the RGB via the palette-index's colour
    fiuint8_t idx;
    FreeImage_GetPixelIndex (bitmap, aui_x, (ui_height - 1) - aui_y, &idx);
-   return vtColorTable[idx].rgbBlue;
+   return vtColourTable[idx].rgbBlue;
  }
  else
  {
@@ -289,7 +289,7 @@ unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
   //    -> change direction back to usual with ( ui_height - aui_y ) )
-  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
+  FreeImage_GetPixelColour(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbBlue;
   #else
   checkUpdateScanline( aui_y );

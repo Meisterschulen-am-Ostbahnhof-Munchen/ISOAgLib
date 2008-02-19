@@ -340,7 +340,7 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   "command_set_audio_volume",
   "command_change_child_location",
   "command_change_size",
-  "command_change_background_color",
+  "command_change_background_colour",
   "command_change_numeric_value",
   "command_change_end_point",
   "command_change_font_attributes",
@@ -366,7 +366,7 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   "command_execute_macro"
 };
 
-char colorTable [16] [stringLength+1] = {
+char colourTable [16] [stringLength+1] = {
   "black",
   "white",
   "green",
@@ -391,7 +391,7 @@ char masktypeTable [3] [stringLength+1] = {
   "alarm"
 };
 
-char colorDepthTable [3] = {'1', '4', '8'};
+char colourDepthTable [3] = {'1', '4', '8'};
 
 char fontsizeTable [maxFontsizeTable] [stringLength+1] = {
   "6x8",

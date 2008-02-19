@@ -45,7 +45,7 @@
 // ---------------------------------------------------------------------------
 //  Abstract base class for image access
 // ---------------------------------------------------------------------------
-	static const unsigned int color16table [16] [3] = {
+	static const unsigned int colour16table [16] [3] = {
 	{0x00,0x00,0x00},
 	{0xFF,0xFF,0xFF},
 	{0x00,0x99,0x00},
@@ -89,9 +89,9 @@ class Vt2IsoImageBase_c
 		( calculate the optimal bitmap threshold if not yet defined )
 	 */
 	unsigned int get1BitPixel( unsigned int aui_x, unsigned int aui_y );
-	/** get the ISO virtual table indexed bitmap value for 4Bit ( 16color ) target bitmap */
+	/** get the ISO virtual table indexed bitmap value for 4Bit ( 16colour ) target bitmap */
 	unsigned int get4BitPixel( unsigned int aui_x, unsigned int aui_y );
-	/** get the ISO virtual table indexed bitmap value for 8Bit ( 256color ) target bitmap */
+	/** get the ISO virtual table indexed bitmap value for 8Bit ( 256colour ) target bitmap */
 	unsigned int get8BitPixel( unsigned int aui_x, unsigned int aui_y );
 
 	/** write the Bitmap to the given buffer and return amount of written Bytes */

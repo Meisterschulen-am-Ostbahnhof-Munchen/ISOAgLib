@@ -86,7 +86,7 @@
 
 using namespace std;
 
-extern BGR_s vtColorTable[256];
+extern BGR_s vtColourTable[256];
 
 /**** CHOOSE YOU IMAGE_PROCESSOR *****/
 /** set it here or in the makefile! **/
@@ -1047,7 +1047,7 @@ vt2iso_c::checkForFileOrFile148 (char *tag)
   char errMsg[1024+1]; errMsg[0] = 0x00;
   if (!attrIsGiven [attrFile])
   {
-    switch (colordepthtoi (attrString [attrFormat]))
+    switch (colourdepthtoi (attrString [attrFormat]))
     {
       case 0: if (!(attrIsGiven [attrFile0]))
         sprintf (errMsg, "YOU NEED TO SPECIFY THE file= OR THE file0= ATTRIBUTE FOR THE <%s> OBJECT! STOPPING PARSER! bye.\n\n", tag);
@@ -1214,11 +1214,11 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
   }
 
   // generate all lower depth-bitmaps...
-  if (colordepthtoi (attrString [attrFormat]) == -1)
+  if (colourdepthtoi (attrString [attrFormat]) == -1)
     return false;
-  for (int actDepth=0; actDepth <= colordepthtoi (attrString [attrFormat]); actDepth++) {
+  for (int actDepth=0; actDepth <= colourdepthtoi (attrString [attrFormat]); actDepth++) {
     if (fixNr == -1) { // noFix
-      // It's allowed to leave out 16-color bitmaps as there's a fallback to 2-color bitmap!!
+      // It's allowed to leave out 16-colour bitmaps as there's a fallback to 2-colour bitmap!!
       if ((actDepth == 1) && ((!attrIsGiven[attrFile1] && !attrIsGiven[attrFile]) || (attrIsGiven [attrFile1] && (strlen (attrString [attrFile1]) == 0)))) continue;
     } else {
       if (attrIsGiven [attrFile0+actDepth] && (strlen (attrString [attrFile0+actDepth]) == 0)) continue;
@@ -1241,7 +1241,7 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
 
     // Decode bitmap to buffer!
     switch (actDepth) {
-      case 0: // 1 bit colour (monochrome) = 2 colors (black/white)
+      case 0: // 1 bit colour (monochrome) = 2 colours (black/white)
         c_Bitmap.write1BitBitmap( picBuffer );
         break;
         case 1: // 4 bit colour = 16 colours
@@ -1304,7 +1304,7 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
     } else {
       //// +++ NORMAL UNCOMPRESSED OUTPUT +++
       if (actDepth == 1) { // nur der lesbarkeit halber!!
-        fprintf (partFile_attributes, " /* 16-Color Raw-Bitmap Data */ (%d << 4) | %d", picBuffer [0] >> 4, picBuffer [0] & 0xF);
+        fprintf (partFile_attributes, " /* 16-Colour Raw-Bitmap Data */ (%d << 4) | %d", picBuffer [0] >> 4, picBuffer [0] & 0xF);
         for (unsigned int i=1; i<c_Bitmap.objRawBitmapBytes [actDepth]; i++) {
           fprintf (partFile_attributes, ", (%d << 4) | %d", picBuffer [i] >> 4, picBuffer [i] & 0xF);
         }
@@ -1457,7 +1457,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   unsigned int deXactualWidth=0; //init for happy compiler
   unsigned int deXactualHeight=0; //init for happy compiler
   unsigned int deXwidth=0; //init for happy compiler
-  int deXcolorDepth=0; //init for happy compiler
+  int deXcolourDepth=0; //init for happy compiler
   int deXtransCol=0; //init for happy compiler
   unsigned int stdRawBitmapBytes [3];
 
@@ -1968,10 +1968,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
         deXwidth = atoi (attrString [attrWidth]);
-        deXcolorDepth = colordepthtoi (attrString [attrFormat]);
-        if (deXcolorDepth == -1)
+        deXcolourDepth = colourdepthtoi (attrString [attrFormat]);
+        if (deXcolourDepth == -1)
           return false;
-        deXtransCol = colortoi (attrString [attrTransparency_colour]);
+        deXtransCol = colourtoi (attrString [attrTransparency_colour]);
         if (deXtransCol == -1)
           return false;
 
@@ -1997,7 +1997,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             if (!openDecodePrintOut (ac_workDir, fix_bitmap_path, fixBitmapOptions[fixNr], fixNr)) return false;
 
             // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
-            //fiXtransCol [fixNr] = colortoi (attrString [attrTransparency_colour]);
+            //fiXtransCol [fixNr] = colourtoi (attrString [attrTransparency_colour]);
             fiXactualWidth [fixNr] = c_Bitmap.getWidth();
             fiXactualHeight [fixNr] = c_Bitmap.getHeight();
             for (int i=0; i<3; i++) fixRawBitmapBytes [fixNr] [i] = c_Bitmap.objRawBitmapBytes [i];
@@ -2682,9 +2682,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
-                  if (colortoi (attrString [attrNew_background_colour]) == -1)
+                  if (colourtoi (attrString [attrNew_background_colour]) == -1)
                     return false;
-                  sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrNew_background_colour]));
+                  sprintf(commandMessage, "0xA7, %d, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), colourtoi(attrString [attrNew_background_colour]));
                   objChildCommands++;
                 }
                 break;
@@ -2846,9 +2846,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   }
 
                   // Need check for all attributes being present for this command -bac
-                  if (colortoi (attrString [attrFont_colour]) == -1)
+                  if (colourtoi (attrString [attrFont_colour]) == -1)
                     return false;
-                  sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrFont_colour]), (unsigned int)retFontSize, atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
+                  sprintf(commandMessage, "0xAA, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colourtoi(attrString [attrFont_colour]), (unsigned int)retFontSize, atoi(attrString [attrFont_type]), fontstyletoi(attrString [attrFont_style]));
 
                   objChildCommands++;
                 }
@@ -2884,9 +2884,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
-                  if (colortoi (attrString [attrLine_colour]) == -1)
+                  if (colourtoi (attrString [attrLine_colour]) == -1)
                     return false;
-                  sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colortoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
+                  sprintf(commandMessage, "0xAB, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), colourtoi(attrString [attrLine_colour]), atoi(attrString [attrLine_width]), MACRO_16bitToLE(linearttoi(attrString [attrLine_art])));
 
                   objChildCommands++;
                 }
@@ -2923,9 +2923,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     return false;
                   }
                   // Need check for all attributes being present for this command -bac
-                  if (colortoi (attrString [attrFill_colour]) == -1)
+                  if (colourtoi (attrString [attrFill_colour]) == -1)
                     return false;
-                  sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), filltypetoi(attrString [attrFill_type]), colortoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
+                  sprintf(commandMessage, "0xAC, %d, %d, %d, %d, %d, %d, 0xFF", MACRO_16bitToLE((unsigned int)ret), filltypetoi(attrString [attrFill_type]), colourtoi(attrString [attrFill_colour]), MACRO_16bitToLE(atoi(attrString [attrFill_pattern])));
 
                   objChildCommands++;
                 }
@@ -3406,13 +3406,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE active_mask= ATTRIBUTE FOR THE <workingset> OBJECT (if selectable='yes'!)! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
 
           if (retSelectable == 0)
-            fprintf (partFile_attributes, ", %d, %d, NULL",         colortoi (attrString [attrBackground_colour]), retSelectable);
+            fprintf (partFile_attributes, ", %d, %d, NULL",         colourtoi (attrString [attrBackground_colour]), retSelectable);
           else
-            fprintf (partFile_attributes, ", %d, %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), retSelectable, attrString [attrActive_mask]);
+            fprintf (partFile_attributes, ", %d, %d, &iVtObject%s", colourtoi (attrString [attrBackground_colour]), retSelectable, attrString [attrActive_mask]);
 
           if (!vt2iso_c::sb_WSFound)
           {
@@ -3423,12 +3423,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
 
         case otDatamask:
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0)  || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
-            fprintf (partFile_attributes, ", %d, NULL", colortoi (attrString [attrBackground_colour]));
+            fprintf (partFile_attributes, ", %d, NULL", colourtoi (attrString [attrBackground_colour]));
           else
-            fprintf (partFile_attributes, ", %d, &iVtObject%s", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask]);
+            fprintf (partFile_attributes, ", %d, &iVtObject%s", colourtoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask]);
           break;
 
         case otAlarmmask:
@@ -3444,12 +3444,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
 
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
           if ( (strcmp ("NULL", attrString [attrSoft_key_mask]) == 0) || (strcmp("65535",  attrString [attrSoft_key_mask]) == 0))
-            fprintf (partFile_attributes, ", %d, NULL, %d, %d", colortoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
+            fprintf (partFile_attributes, ", %d, NULL, %d, %d", colourtoi (attrString [attrBackground_colour]), atoi (attrString [attrPriority]), atoi (attrString [attrAcoustic_signal]));
           else
-            fprintf (partFile_attributes, ", %d, &iVtObject%s, %d, %d", colortoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], (unsigned int)retPrio, (unsigned int)retSignal);
+            fprintf (partFile_attributes, ", %d, &iVtObject%s, %d, %d", colourtoi (attrString [attrBackground_colour]), attrString [attrSoft_key_mask], (unsigned int)retPrio, (unsigned int)retSignal);
           break;
         }
 
@@ -3471,9 +3471,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
 
         case otSoftkeymask:
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d", colortoi (attrString [attrBackground_colour]));
+          fprintf (partFile_attributes, ", %d", colourtoi (attrString [attrBackground_colour]));
           if (objChildObjects > 6)
           {
             std::cout << "THE <softkeymask> OBJECT '" << objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!\n\n";
@@ -3483,9 +3483,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         case otKey:
           if (!attrIsGiven [attrKey_code]) getKeyCode ();
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %s", colortoi (attrString [attrBackground_colour]), attrString [attrKey_code]);
+          fprintf (partFile_attributes, ", %d, %s", colourtoi (attrString [attrBackground_colour]), attrString [attrKey_code]);
           fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otButton
           break;
 
@@ -3496,11 +3496,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
-          if (colortoi (attrString [attrBorder_colour]) == -1)
+          if (colourtoi (attrString [attrBorder_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), colortoi (attrString [attrBorder_colour]), attrString [attrKey_code], buttonoptiontoi (attrString [attrOptions]));
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", attrString [attrWidth], attrString [attrHeight], colourtoi (attrString [attrBackground_colour]), colourtoi (attrString [attrBorder_colour]), attrString [attrKey_code], buttonoptiontoi (attrString [attrOptions]));
           fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName, atoi (attrString [attrKey_code])); // like in otKey
           break;
 
@@ -3520,9 +3520,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colortoi (attrString [attrBackground_colour]), attrString [attrWidth], getObjNameWithPoolIdent (attrString [attrForeground_colour]).c_str(), attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
+          fprintf (partFile_attributes, ", %d, %s, &iVtObject%s, %s, %s, %d", colourtoi (attrString [attrBackground_colour]), attrString [attrWidth], getObjNameWithPoolIdent (attrString [attrForeground_colour]).c_str(), attrString [attrVariable_reference], attrString [attrValue], (unsigned int)retEnabled);
           break;
         }
 
@@ -3589,13 +3589,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             sprintf (attrString [attrInput_attributes], "NULL");
 
-            if (colortoi (attrString [attrBackground_colour]) == -1)
+            if (colourtoi (attrString [attrBackground_colour]) == -1)
                 return false;
-            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(), getObjNameWithPoolIdent (attrString [attrInput_attributes]).c_str(), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colourtoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(), getObjNameWithPoolIdent (attrString [attrInput_attributes]).c_str(), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
           else
           {
-            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(), getObjNameWithPoolIdent (attrString [attrInput_attributes]).c_str(), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
+            fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, &iVtObject%s, %d, %s, %d, %s, %s, %d", attrString [attrWidth], attrString [attrHeight], colourtoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(), getObjNameWithPoolIdent (attrString [attrInput_attributes]).c_str(), stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], (unsigned int)retJustification, attrString [attrLength], attrString [attrValue], (unsigned int)retEnabled );
           }
 
           break;
@@ -3613,10 +3613,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL, %sUL, %sUL", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
+                   colourtoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
                    inputnumberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference], attrString [attrValue],
                    attrString [attrMin_value], attrString [attrMax_value]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
@@ -3758,10 +3758,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int retJust = retHorJust;
           retJust |= retVertJust << 2;
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %d, %s, %s", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
+                   colourtoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
                    stringoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    (unsigned int)retJust, attrString [attrLength], attrString [attrValue]);
       //    printf ("%s --- %d\n", attrString [attrOptions], optionstoi (attrString [attrOptions]));
@@ -3778,10 +3778,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (!attrIsGiven [attrValue])
             sprintf (attrString [attrValue], "0");
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, &iVtObject%s, %d, %s, %sUL", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
+                   colourtoi (attrString [attrBackground_colour]), getObjNameWithPoolIdent (attrString [attrFont_attributes]).c_str(),
                    numberoptionstoi (attrString [attrOptions]), attrString [attrVariable_reference],
                    attrString [attrValue]);
           if ( strchr( attrString [attrOffset], 'L' ) != NULL )
@@ -3918,15 +3918,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrOptions])
             sprintf(attrString[attrOptions], "0");
 
-          if (colortoi (attrString [attrNeedle_colour]) == -1)
+          if (colourtoi (attrString [attrNeedle_colour]) == -1)
             return false;
-          if (colortoi (attrString [attrBorder_colour]) == -1)
+          if (colourtoi (attrString [attrBorder_colour]) == -1)
             return false;
-          if (colortoi (attrString [attrArc_and_tick_colour]) == -1)
+          if (colourtoi (attrString [attrArc_and_tick_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth],
-                   colortoi(attrString[attrNeedle_colour]), colortoi (attrString [attrBorder_colour]),
-                   colortoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]),
+                   colourtoi(attrString[attrNeedle_colour]), colourtoi (attrString [attrBorder_colour]),
+                   colourtoi (attrString [attrArc_and_tick_colour]), meteroptionstoi (attrString [attrOptions]),
                    attrString [attrNumber_of_ticks], attrString[attrStart_angle], attrString[attrEnd_angle], attrString [attrMin_value],
                    attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue]);
           break;
@@ -3944,12 +3944,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrTarget_value])
             sprintf (attrString [attrTarget_value], "0");
 
-          if (colortoi (attrString [attrColour]) == -1)
+          if (colourtoi (attrString [attrColour]) == -1)
             return false;
-          if (colortoi (attrString [attrTarget_line_colour]) == -1)
+          if (colourtoi (attrString [attrTarget_line_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth], attrString [attrHeight],
-                   colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]),
+                   colourtoi (attrString [attrColour]), colourtoi (attrString [attrTarget_line_colour]),
                    linearbargraphoptionstoi (attrString [attrOptions]), attrString [attrNumber_of_ticks], attrString [attrMin_value],
                    attrString [attrMax_value], attrString [attrVariable_reference], attrString [attrValue],
                    attrString [attrTarget_value_variable_reference], attrString [attrTarget_value]);
@@ -3975,12 +3975,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrOptions])
             sprintf (attrString [attrOptions], "0");
 
-          if (colortoi (attrString [attrColour]) == -1)
+          if (colourtoi (attrString [attrColour]) == -1)
             return false;
-          if (colortoi (attrString [attrTarget_line_colour]) == -1)
+          if (colourtoi (attrString [attrTarget_line_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", attrString [attrWidth],
-                   attrString [attrHeight], colortoi (attrString [attrColour]), colortoi (attrString [attrTarget_line_colour]),
+                   attrString [attrHeight], colourtoi (attrString [attrColour]), colourtoi (attrString [attrTarget_line_colour]),
                    archedbargraphoptionstoi (attrString [attrOptions]), attrString[attrStart_angle], attrString[attrEnd_angle],
                    attrString[attrBar_graph_width], attrString [attrMin_value], attrString [attrMax_value],
                    attrString [attrVariable_reference], attrString [attrValue],
@@ -3989,7 +3989,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         case otPicturegraphic:
           // check moved above!
-          fprintf (partFile_attributes, ", %d, %d,%d, %d, %d, %d", deXwidth, deXactualWidth, deXactualHeight, deXcolorDepth,
+          fprintf (partFile_attributes, ", %d, %d,%d, %d, %d, %d", deXwidth, deXactualWidth, deXactualHeight, deXcolourDepth,
                    objBitmapOptions, deXtransCol);
           break;
 
@@ -4059,9 +4059,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
 
-          if (colortoi (attrString [attrFont_colour]) == -1)
+          if (colourtoi (attrString [attrFont_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %d, %d, %d", colortoi (attrString [attrFont_colour]), (unsigned int)retFontSize,
+          fprintf (partFile_attributes, ", %d, %d, %d, %d", colourtoi (attrString [attrFont_colour]), (unsigned int)retFontSize,
                    (unsigned int)ret, fontstyletoi (attrString [attrFont_style]));
           break;
         }
@@ -4072,9 +4072,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          if (colortoi (attrString [attrLine_colour]) == -1)
+          if (colourtoi (attrString [attrLine_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %s, 0x%x", colortoi (attrString [attrLine_colour]), attrString [attrLine_width],
+          fprintf (partFile_attributes, ", %d, %s, 0x%x", colourtoi (attrString [attrLine_colour]), attrString [attrLine_width],
                    linearttoi (attrString [attrLine_art]));
           break;
 
@@ -4087,17 +4087,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!attrIsGiven [attrFill_type])
             sprintf (attrString [attrFill_type], "0");
 
-          if (colortoi (attrString [attrFill_colour]) == -1)
+          if (colourtoi (attrString [attrFill_colour]) == -1)
             return false;
           if(!attrIsGiven [attrFill_pattern] || (strcmp (attrString[attrFill_pattern], "65535") == 0))
           {
             sprintf (attrString[attrFill_pattern], "NULL");
-            fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colortoi (attrString [attrFill_colour]),
+            fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (attrString[attrFill_type]), colourtoi (attrString [attrFill_colour]),
                      getObjNameWithPoolIdent (attrString [attrFill_pattern]).c_str());
           }
           else
             fprintf (partFile_attributes, ",%d, %d, &iVtObject%s", filltypetoi (attrString[attrFill_type]),
-                     colortoi (attrString[attrFill_colour]), getObjNameWithPoolIdent (attrString [attrFill_pattern]).c_str());
+                     colourtoi (attrString[attrFill_colour]), getObjNameWithPoolIdent (attrString [attrFill_pattern]).c_str());
           break;
 
         case otInputattributes:
@@ -4154,9 +4154,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %d", colortoi (attrString [attrBackground_colour]),
+          fprintf (partFile_attributes, ", %d, %d", colourtoi (attrString [attrBackground_colour]),
                    auxfunctiontypetoi(attrString [attrFunction_type]));
           break;
 
@@ -4166,9 +4166,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT '" << objName << "'! STOPPING PARSER! bye.\n\n";
             return false;
           }
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %d, %s", colortoi (attrString [attrBackground_colour]),
+          fprintf (partFile_attributes, ", %d, %d, %s", colourtoi (attrString [attrBackground_colour]),
                    auxfunctiontypetoi(attrString [attrFunction_type]), attrString[attrInput_id]);
           break;
 
@@ -4204,9 +4204,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
 
-          if (colortoi (attrString [attrForeground_colour]) == -1)
+          if (colourtoi (attrString [attrForeground_colour]) == -1)
             return false;
-          if (colortoi (attrString [attrBackground_colour]) == -1)
+          if (colourtoi (attrString [attrBackground_colour]) == -1)
             return false;
           fprintf (partFile_attributes, ", %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d",
                    atoi (attrString [attrViewportWidth]), atoi (attrString [attrViewportHeight]),
@@ -4214,8 +4214,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                    atoi (attrString [attrCanvasWidth]),   atoi (attrString [attrCanvasHeight]),
                    atoi (attrString [attrViewportZoom]),
                    atoi (attrString [attrCursorX]),       atoi (attrString [attrCursorY]),
-                   colortoi (attrString [attrForeground_colour]),
-                   colortoi (attrString [attrBackground_colour]));
+                   colourtoi (attrString [attrForeground_colour]),
+                   colourtoi (attrString [attrBackground_colour]));
 
           if (!attrIsGiven [attrFont_attributes])
             fprintf (partFile_attributes, ", NULL");
@@ -4232,16 +4232,16 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           else
             fprintf (partFile_attributes, ", &iVtObject%s", getObjNameWithPoolIdent (attrString [attrFill_attributes]).c_str());
 
-          if (colordepthtoi (attrString [attrFormat]) == -1)
+          if (colourdepthtoi (attrString [attrFormat]) == -1)
             return false;
-          fprintf (partFile_attributes, ", %d, %d", colordepthtoi (attrString [attrFormat]), gcoptionstoi (attrString [attrOptions]));
+          fprintf (partFile_attributes, ", %d, %d", colourdepthtoi (attrString [attrFormat]), gcoptionstoi (attrString [attrOptions]));
 
           if (!attrIsGiven [attrTransparency_colour])
             fprintf (partFile_attributes, ", 0");
           else {
-            if (colortoi (attrString [attrTransparency_colour]) == -1)
+            if (colourtoi (attrString [attrTransparency_colour]) == -1)
               return false;
-            fprintf (partFile_attributes, ", %d", colortoi (attrString [attrTransparency_colour]));
+            fprintf (partFile_attributes, ", %d", colourtoi (attrString [attrTransparency_colour]));
           }
 
           break;
@@ -4270,7 +4270,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       {
         for (unsigned int actDepth=0; actDepth <= 2; actDepth++)
         {
-          if ( (actDepth > deXcolorDepth) || (stdRawBitmapBytes [actDepth] == 0))
+          if ( (actDepth > deXcolourDepth) || (stdRawBitmapBytes [actDepth] == 0))
             fprintf (partFile_attributes, ", 0,NULL");
           else
             fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName, actDepth);
@@ -4783,13 +4783,13 @@ int main(int argC, char* argV[])
   {
     std::cout << "Generating ISO11783-6(VT)-Palette to 'iso11783vt-palette.act'..." << std::endl;
     FILE* paletteFile = fopen ("iso11783vt-palette.act", "wt");
-    RGB_s vtColorTableRGB [256];
+    RGB_s vtColourTableRGB [256];
     for (int i=0; i<256; i++) {
-      vtColorTableRGB[i].rgbRed  = vtColorTable[i].bgrRed;
-      vtColorTableRGB[i].rgbGreen= vtColorTable[i].bgrGreen;
-      vtColorTableRGB[i].rgbBlue = vtColorTable[i].bgrBlue;
+      vtColourTableRGB[i].rgbRed  = vtColourTable[i].bgrRed;
+      vtColourTableRGB[i].rgbGreen= vtColourTable[i].bgrGreen;
+      vtColourTableRGB[i].rgbBlue = vtColourTable[i].bgrBlue;
     }
-    fwrite (vtColorTableRGB, sizeof(RGB_s), 256, paletteFile);
+    fwrite (vtColourTableRGB, sizeof(RGB_s), 256, paletteFile);
     fclose (paletteFile);
   }
 

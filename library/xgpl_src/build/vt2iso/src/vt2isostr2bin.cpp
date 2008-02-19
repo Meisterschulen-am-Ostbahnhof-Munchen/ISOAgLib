@@ -250,7 +250,7 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
     "command_set_audio_volume",         // 164
     "command_change_child_location",    // 165
     "command_change_size",              // 166
-    "command_change_background_color",  // 167
+    "command_change_background_colour",  // 167
     "command_change_numeric_value",     // 168
     "command_change_end_point",         // 169
     "command_change_font_attributes",   // 170
@@ -279,7 +279,7 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
 
 
 
-char colorTable [16] [stringLength+1] = {
+char colourTable [16] [stringLength+1] = {
     "black",
     "white",
     "green",
@@ -298,7 +298,7 @@ char colorTable [16] [stringLength+1] = {
     "navy"
 };
 
-char colorDepthTable [3] = {'1', '4', '8'};
+char colourDepthTable [3] = {'1', '4', '8'};
 
 
 char fontsizeTable [maxFontsizeTable] [stringLength+1] = {
@@ -530,22 +530,22 @@ unsigned int commandIsType (char* lookup_name)
   return 0xFFFF;
 }
 
-unsigned int colortoi (char* text_color)
+unsigned int colourtoi (char* text_colour)
 {
   int l;
   for (l=0; l<16; l++) {
-    if (strncmp (text_color, colorTable [l], stringLength) == 0) {
+    if (strncmp (text_colour, colourTable [l], stringLength) == 0) {
       return l;
     }
   }
-  return atoi (text_color);
+  return atoi (text_colour);
 }
 
-unsigned int colordepthtoi (char* text_colordepth)
+unsigned int colourdepthtoi (char* text_colourdepth)
 {
   int l;
   for (l=0; l<2; l++) {
-    if (text_colordepth [0] == colorDepthTable [l]) {
+    if (text_colourdepth [0] == colourDepthTable [l]) {
       return l;
     }
   }
@@ -926,27 +926,27 @@ unsigned int getboolfromstring (char *text_boolstr)
   return ui_res;
 }
 
-unsigned int getcolordepthfromstring (char* text_colordepth)
+unsigned int getcolourdepthfromstring (char* text_colourdepth)
 {
   unsigned int ui_res=0;
-  if (strlen(text_colordepth) > 1) {
-    if (isalpha(text_colordepth[1]))
-        ui_res = (unsigned int) colordepthtoi(text_colordepth);
+  if (strlen(text_colourdepth) > 1) {
+    if (isalpha(text_colourdepth[1]))
+        ui_res = (unsigned int) colourdepthtoi(text_colourdepth);
   }
   else {
-    if ( isdigit(text_colordepth[0]) )
-        ui_res = atoi(text_colordepth);
+    if ( isdigit(text_colourdepth[0]) )
+        ui_res = atoi(text_colourdepth);
     else ui_res = 2;
   }
   return ui_res;
 }
 
 
-unsigned int getcolorfromstring (char *text_backgrndcol)
+unsigned int getcolourfromstring (char *text_backgrndcol)
 {
   unsigned int ui_res = 0;
         if (isalpha(text_backgrndcol[0]))
-          ui_res = colortoi(text_backgrndcol);
+          ui_res = colourtoi(text_backgrndcol);
         else if (isdigit(text_backgrndcol[0]))
           ui_res = atoi(text_backgrndcol);
         else ui_res = 1;
