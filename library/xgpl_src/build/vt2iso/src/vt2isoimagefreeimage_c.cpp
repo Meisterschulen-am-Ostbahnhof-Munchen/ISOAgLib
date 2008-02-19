@@ -237,7 +237,7 @@ unsigned int Vt2IsoImageFreeImage_c::getR( unsigned int aui_x, unsigned int aui_
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
   //    -> change direction back to usual with ( ui_height - aui_y ) )
-  FreeImage_GetPixelColour(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
+  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbRed;
   #else
   checkUpdateScanline( aui_y );
@@ -263,7 +263,7 @@ unsigned int Vt2IsoImageFreeImage_c::getG( unsigned int aui_x, unsigned int aui_
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
   //    -> change direction back to usual with ( ui_height - aui_y ) )
-  FreeImage_GetPixelColour(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
+  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbGreen;
   #else
   checkUpdateScanline( aui_y );
@@ -289,7 +289,7 @@ unsigned int Vt2IsoImageFreeImage_c::getB( unsigned int aui_x, unsigned int aui_
   // ( FreeImage library documentation states, that first scanline in memory is
   //   bottommost -> i.e. upsidedown in relation to other modellings
   //    -> change direction back to usual with ( ui_height - aui_y ) )
-  FreeImage_GetPixelColour(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
+  FreeImage_GetPixelColor(bitmap, aui_x, ( (ui_height - 1) - aui_y ), &temp_pixel);
   return temp_pixel.rgbBlue;
   #else
   checkUpdateScanline( aui_y );
