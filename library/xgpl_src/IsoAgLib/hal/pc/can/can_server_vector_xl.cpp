@@ -264,11 +264,10 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     }
     canBusIsOpen[ui8_bus] = true;
-
-    return true;
   }
-  else
-    return true; // already initialized and files are already open
+  
+  // either fresh init without error or the bus was already initialized
+  return true; // already initialized and files are already open
 
   error:
       printf("ERROR: %s!\n", xlGetErrorString(xlStatus));

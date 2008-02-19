@@ -263,8 +263,9 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
     canBusIsOpen[ui8_bus] = true;
   }
-  else
-    return true; // already initialized and files are already open
+  
+  // either fresh init without error or the bus was already initialized
+  return true; // already initialized and files are already open
 
   error:
     printf("ERROR: %s!\n", ncdGetErrorString(vErr));
@@ -327,7 +328,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   // msg from CANcardX buffer
   // this functions retrurns not only received messages
   // ACK for SENT messages is also returned!!!
-  if( ( gpEvent->tag != V_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
+  if( vErr || ( gpEvent->tag != V_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
   { // don't further process this message as it is NO received message
     return 0;
   }
