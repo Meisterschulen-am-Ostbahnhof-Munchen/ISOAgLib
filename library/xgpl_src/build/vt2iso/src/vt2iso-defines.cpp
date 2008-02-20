@@ -328,7 +328,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "cursor_y",
   "inputobject_options",
 // new attributes (VT revision 3)
-  "vertical_justification"
+  "vertical_justification",
+  "activate_for_editing"
 };
 
 // Table of possible Macro Commands

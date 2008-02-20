@@ -368,8 +368,9 @@ typedef struct {
 #define attrInputObjectOptions (113)
 
 #define attrVertical_justification (114)
+#define attrActivate_for_editing (115)
 
-#define maxAttributeNames (115)
+#define maxAttributeNames (116)
 
 //! Number of regular object plus gap plus number of internal objects.
 #define maxObjectTypesToCompare (maxObjectTypes+18+6)

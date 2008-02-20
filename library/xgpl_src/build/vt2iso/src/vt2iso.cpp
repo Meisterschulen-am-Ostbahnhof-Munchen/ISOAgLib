@@ -915,6 +915,10 @@ vt2iso_c::defaultAttributes (unsigned int a_objType)
     sprintf( attrString [attrVertical_justification], "top");
     attrIsGiven [attrVertical_justification] = true;
   }
+  if (!attrIsGiven [attrActivate_for_editing]) {
+    sprintf( attrString [attrActivate_for_editing], "false");
+    attrIsGiven [attrActivate_for_editing] = true;
+  }
   if (!attrIsGiven [attrFont_style]) {
     sprintf (attrString [attrFont_style], "normal"); // anything that doesn't match anything from the fontstyleTable
     attrIsGiven [attrFont_style] = true;
@@ -2476,6 +2480,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
+                  cleanAttribute(attrActivate_for_editing);
 
                   for(int i=0;i<nSize;++i)
                   {
@@ -2484,15 +2489,28 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                     utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
 
                     setAttributeValue(attrObjectID);
+                    setAttributeValue(attrActivate_for_editing);
                   }
                   signed long int ret = idOrName_toi(attrString [attrObjectID], /*macro?*/false);
+                  signed int retActiveForEditing = booltoi (attrString [attrActivate_for_editing]);
                   if (ret == -1)
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
                     return false;
                   }
+                  if ( retActiveForEditing == -1 )
+                  {
+                    std::cout << "Error in booltoi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
+                    return false;
+                  }
+                  unsigned int isActive = 0xFF;
+                  if (retActiveForEditing == 1)
+                  {
+                    // true -> select with Activation
+                    isActive = 0;
+                  }
                   // Need check for all attributes being present for this command -bac
-                  sprintf(commandMessage, "0xA2, %d, %d, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret));
+                  sprintf(commandMessage, "0xA2, %d, %d, 0x%x, 0xFF, 0xFF, 0xFF, 0xFF", MACRO_16bitToLE((unsigned int)ret), isActive);
                   objChildCommands++;
                 }
                 break;
