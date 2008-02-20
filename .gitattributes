@@ -202,13 +202,13 @@ examples/compiler_projects/Dev-C++/TractorInternalCan/filelist__TractorInternalC
 examples/compiler_projects/Dev-C++/canserver/bin/can_server.exe -text
 examples/compiler_projects/Dev-C++/canserver/bin/can_server_pcan.exe -text
 examples/compiler_projects/Dev-C++/canserver/bin/can_server_sontheim.exe -text
-examples/compiler_projects/Dev-C++/canserver/bin/can_server_vector.exe -text
 examples/compiler_projects/Dev-C++/canserver/bin/can_server_vector_xl.exe -text
 examples/compiler_projects/Dev-C++/canserver/can_server.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_pcan.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_sontheim.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.dev -text
+examples/compiler_projects/Dev-C++/canserver/lib/vcand32_devcpp.lib -text
 examples/compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_c2c.pjt -text
 examples/compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_esx.pjt -text
 examples/compiler_projects/EDE/0_0_AddressClaimIso/0_0_AddressClaimIso_imi.pjt -text
