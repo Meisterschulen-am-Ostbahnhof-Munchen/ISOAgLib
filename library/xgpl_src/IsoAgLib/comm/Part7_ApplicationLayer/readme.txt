@@ -41,6 +41,63 @@ classes:
   - activation state of 100 n/min feature of front and rear PTO
   - activation state of economy mode in front and rear PTO
 
+classes available in the ext section:
+- TracAux_c:<br>
+  handles the controls of the following:
+  - flow through the extended/retract port of auxiliary valve of a tractor
+  - measured state of the fail save mode of auxiliary valve
+  - auxiliary valve state
+  - measured flow through the extend/retract port auxiliary valve of a tractor
+  - nominal pressure at the extend/retract/return port of auxiliary valve of a tractor
+  - fail save mode of auxiliary valve
+  - limit status of auxiliary valve
+
+- TracCert_c:<br>
+  handles certification data information:
+  - reference number assigned by certification lab
+  - manufacture code of the laboratory that performed the certification test
+  - year of the test protocol to which the certification test was performed
+  - revision of the certification test performed
+  - body for the certification laboratory
+  - type of certification test performed
+
+- TracGuidance_c<br>
+  handles the machine steering system:
+  - estimate of the curvature of the current turn
+  - request to the automatic guidance system to change curvature command status
+  - indication if manual steering is in correct position for guidance to function
+  - indication that it is free from faults that would preclude guidance system operation
+  - state of lockout switch that allows operators to disable automatic steering system functions
+
+- TracGuidanceCommand_c<br>
+  handles guidance command data information:
+  - desired course curvature over ground that a machine's steering system is required to achieve
+  - whether the guidance system is attempting to control steering with this command
+  - currently selected curvature commander
+
+- TracLight_c:
+  - tractor lighting
+  - set lighting command in tractor mode
+  - set a response on a lighting command in implement mode
+  - get the number of responses from implements to a command from the tractor
+  - get the status of a light of a special implement
+  - get command which the tractor send
+  - find out if a particular implement has responded to a command from the tractor
+
+- TracMoveSetPoint_c<br>
+  handles the following base data informations:
+  - commanded set point value of the machine speed as measured by the selected source
+  - communicated maximum allowed speed to the tractor
+  - commanded direction of the machine
+
+- TracPTOSetPoint_c
+  handles the following base data informations:
+  - position of the front/rear three-point hitch
+  - rotational speed of front/rear power take-off (PTO) output shaft
+  - front/rear power take-off (PTO)
+  - mode of the front/rear power take-off (PTO)
+  - economy mode of front/rear power take-off (PTO)
+
 Some exemplary data requests are presented below.
 All information can be read independent from the send time on the
 BUS. Thus the application can access the values when it needs the information,
