@@ -100,8 +100,6 @@ HINSTANCE hCAPIDLL;
 // CAN Globals
 int AllCanChannelCount = 0;
 int apiversion;
-int transmitdata[15];
-int receivedata[15];
 int DLL_loaded = false;
 
 // IO address for LPT and ISA ( PCI and PCMCIA use automatic adr )
@@ -549,7 +547,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   if (!b_dataReceived)
     return 0;
 
-  ps_canMsg->ui32_id = receivedata[1];
+  ps_canMsg->ui32_id = pi_receivedata[1];
 
   if (ps_canMsg->ui32_id >= 0x7FFFFFFF)
   {
@@ -557,12 +555,12 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
     return 0;
   }
 
-  ps_canMsg->i32_len = ( receivedata[2] & 0xF );
+  ps_canMsg->i32_len = ( pi_receivedata[2] & 0xF );
   if ( ps_canMsg->i32_len > 8 )
     ps_canMsg->i32_len = 8;
 
   // detect channel
-  switch ( receivedata[0] )
+  switch ( pi_receivedata[0] )
   {
     case 0x7001: // $7001 = CAN 1 standard data received
       ps_canMsg->i32_msgType = 0;
@@ -587,7 +585,8 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
       break;
   }
 
-  memcpy( ps_canMsg->ui8_data, &(receivedata[3]), ps_canMsg->i32_len );
+  for (uint8_t ui8_cnt = 0; ui8_cnt < ps_canMsg->i32_len; ui8_cnt++)
+	ps_canMsg->ui8_data[ui8_cnt] = pi_receivedata[3 + ui8_cnt];
 
   return ps_canMsg->i32_len;
 
