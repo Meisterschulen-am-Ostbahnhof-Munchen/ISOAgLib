@@ -73,13 +73,8 @@ public:
   /**
   Receive pointer to byte array, create LanguageLabel, replace old one in Map or create a new one
   */
-#ifdef USE_AGCO_DEVPROPERTYHANDLER
-  bool registerDevicePool (const IsoAgLib::iIdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool ab_setToDefault)
-    { return DevPropertyHandler_c::registerDevicePool (apc_wsMasterIdentItem, apc_devicePoolByteArray, aui32_bytestreamLength, ab_setToDefault); }
-#else
   bool registerDevicePool (const IsoAgLib::iIdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool ab_setToDefault)
     { return DevPropertyHandler_c::registerDevicePool (static_cast<const __IsoAgLib::IdentItem_c*>(apc_wsMasterIdentItem), apc_devicePoolByteArray, aui32_bytestreamLength, ab_setToDefault); }
-#endif
 
   bool sendCommandChangeDesignator(uint16_t apui16_objectID, const char* apc_newString, uint8_t stringLength)
     { return DevPropertyHandler_c::sendCommandChangeDesignator(apui16_objectID, apc_newString, stringLength); }

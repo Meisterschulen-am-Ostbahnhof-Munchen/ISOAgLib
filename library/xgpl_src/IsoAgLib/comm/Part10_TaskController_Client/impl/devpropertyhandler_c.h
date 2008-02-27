@@ -1,7 +1,3 @@
-#ifdef USE_AGCO_DEVPROPERTYHANDLER
-#include <GTA/DevicePool/devpropertyhandler_c.h>
-#else
-
 /***************************************************************************
                             devpropertyhandler_c.h
                              -------------------
@@ -294,5 +290,4 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 };
 
 }
-#endif
 #endif
