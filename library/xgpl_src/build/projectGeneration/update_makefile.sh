@@ -249,9 +249,13 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   if [ "A$PRJ_ISO11783" = "A" ] ; then
     PRJ_ISO11783=0
     PRJ_ISO_TERMINAL=0
+    PRJ_ISO_FILESERVER_CLIENT=0
   fi
   if [ "A$PRJ_ISO_TERMINAL" = "A" ] ; then
     PRJ_ISO_TERMINAL=0
+  fi
+  if [ "A$PRJ_ISO_FILESERVER_CLIENT" = "A" ] ; then
+    PRJ_ISO_FILESERVER_CLIENT=0
   fi
   if [ "A$PRJ_ISO_TERMINAL_SERVER" = "A" ] ; then
     PRJ_ISO_TERMINAL_SERVER=0
@@ -264,6 +268,12 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
     echo "Warning overwrite setting of PRJ_ISO_TERMINAL == $PRJ_ISO_TERMINAL as ISO11783 is not activated"
     echo "Set PRJ_ISO11783 to 1 if you want ISO 11783 virtual terminal"
     PRJ_ISO_TERMINAL=0
+  fi
+
+  if test $PRJ_ISO11783 -lt 1 -a $PRJ_ISO_FILESERVER_CLIENT -gt 0 ; then
+    echo "Warning overwrite setting of PRJ_ISO_FILESERVER_CLIENT == $PRJ_ISO_FILESERVER_CLIENT as ISO11783 is not activated"
+    echo "Set PRJ_ISO11783 to 1 if you want ISO 11783 fileserver"
+    PRJ_ISO_FILESERVER_CLIENT=0
   fi
 
   if [ "A$PRJ_RS232_OVER_CAN" = "A" ] ; then
@@ -593,6 +603,16 @@ create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o -path '*/ProprietaryCan/*'"
   fi
 
+  if [ $PRJ_ISO_FILESERVER_CLIENT -gt 0 ]  ; then
+    if [ $PRJ_ISO11783 -gt 0 ] ; then
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part13_FileServer_Client/*'"
+    fi
+  fi
+
+  if [ $PRJ_ISO_FILESERVER_CLIENT -gt 0 ]  ; then
+    PRJ_MULTIPACKET=1
+  fi
+
   if [ $PRJ_ISO_TERMINAL_SERVER -gt 0 ] ; then
     PRJ_MULTIPACKET=1
   fi
@@ -634,6 +654,12 @@ create_filelist( )
       else
         COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamlinear_c.*'"
       fi
+    fi
+  fi
+
+  if [ $PRJ_ISO_FILESERVER_CLIENT -gt 0 ]  ; then
+    if [ $PRJ_ISO11783 -gt 0 ] ; then
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part13_FileServer_Client/*'"
     fi
   fi
 

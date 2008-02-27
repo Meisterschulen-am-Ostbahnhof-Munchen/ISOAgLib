@@ -253,6 +253,7 @@ public:
   SINGLETON_PAR_BASE_DEF(IdentItem_c)
 
 private:
+  friend class iFsManager_c;
   friend class iIsoTerminal_c;
   friend class iVtClientServerCommunication_c;
   friend class iDevPropertyHandler_c;

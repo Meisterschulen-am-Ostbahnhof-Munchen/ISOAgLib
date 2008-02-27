@@ -1,0 +1,52 @@
+#ifndef IFSMANAGER_C_H
+#define IFSMANAGER_C_H
+
+//base class
+#include "impl/fsmanager_c.h"
+
+//IsoAgLib includes
+#include "ifsclient_c.h"
+
+// Begin Namespace IsoAgLib
+namespace IsoAgLib {
+
+class iFsManager_c : private __IsoAgLib::FsManager_c
+{
+  public :
+    /**
+      * Registered a client to the fsmanager and returnes the clients fsclientservercommunication used for interaction with a
+      * fileserver.
+      */
+    iFsClientServerCommunication_c *initFsClient(iIdentItem_c &rc_identItem, iFsClient_c &rc_fsClient, std::vector<iFsWhitelist_c *> v_fsWhitelist)
+    {
+      return __IsoAgLib::FsManager_c::initFsClient(static_cast<__IsoAgLib::IdentItem_c&>(rc_identItem), (rc_fsClient), v_fsWhitelist)->toInterfacePointer();
+    }
+
+  private:
+    /** allow getIFsManagerInstance() access to shielded base class.
+      *  otherwise __IsoAgLib::getfsManagerInstance() wouldn't be accepted by compiler
+      */
+    #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
+      friend iFsManager_c& getIFsManagerInstance (uint8_t rui8_instance);
+    #else
+      friend iFsManager_c& getIFsManagerInstance (void);
+    #endif
+};
+
+#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
+  /** C-style function, to get access to the unique fsManagerInstance_c singleton instance
+    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+    */
+  inline iFsManager_c& getIFsManagerInstance (uint8_t rui8_instance = 0)
+  { return static_cast<iFsManager_c&>(__IsoAgLib::getFsManagerInstance(rui8_instance)); }
+#else
+  /** C-style function, to get access to the unique fsManagerInstance_c singleton instance */
+  inline iFsManager_c& getIFsManagerInstance (void)
+  { return static_cast<iFsManager_c&>(__IsoAgLib::getFsManagerInstance()); }
+#endif
+
+//End namespace
+}
+
+
+#endif

@@ -179,10 +179,11 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
+# PRJ_ISO_FILESERVER_CLIENT=0
 
 # if you Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
 # note: this is done automatically if other features
-# require it (e.g. PRJ_ISO_TERMINAL=1 will implicitly set PRJ_MULTIPACKET=1)
+# require it (e.g. PRJ_ISO_TERMINAL=1 or PRJ_ISO_FILESERVER_CLIENT=1 will implicitly set PRJ_MULTIPACKET=1)
 # PRJ_MULTIPACKET=1
 
 # select stream receive strategy:

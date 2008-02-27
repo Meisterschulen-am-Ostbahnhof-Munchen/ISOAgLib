@@ -176,6 +176,7 @@ RS232_INSTANCE_CNT=1
 # unset or set to 0 if not wanted
 PRJ_ISO11783=1
 PRJ_ISO_TERMINAL=1
+# PRJ_ISO_FILESERVER_CLIENT=0
 
 # select stream receive strategy:
 # chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
