@@ -159,7 +159,7 @@ void ProcessElementBase_c::set(ProcDataBase_c *const acpc_processData)
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   if ( acpc_processData != NULL )
-    ClientBase::setSingletonKey(apc_processData->getSingletonVecKey());
+    ClientBase::setSingletonKey(acpc_processData->getSingletonVecKey());
   #endif
   mpc_processData = acpc_processData;
 };
