@@ -347,6 +347,7 @@ template<class T> class Singleton
     */
   static T& instance( void )
   {
+    static T* mspc_instance = (T*)0;
     if ( mspc_instance > (T*)1 )
     { // is already complete initialized -> this is THE MOST OFTEN CASE
       return *mspc_instance;
@@ -390,7 +391,6 @@ template<class T> class Singleton
   static T& instance( int riIndex ) { return instance();};
  protected:
   int getSingletonVecKey() const { return 0;};
-  static T* mspc_instance;
 };
 /** BaseSingleton class for classes which need only ONE instance per project.
     This version of Singleton can be derived from another class.
@@ -406,6 +406,7 @@ template<class T, class B> class SingletonDerived : public B
     */
   static T& instance( void )
   {
+    static T* mspc_instance = (T*)0;
     if ( mspc_instance > (T*)1 )
     { // is already complete initialized -> this is THE MOST OFTEN CASE
       return *mspc_instance;
@@ -449,12 +450,8 @@ template<class T, class B> class SingletonDerived : public B
   static T& instance( int riIndex ) { return instance();};
  protected:
   int getSingletonVecKey() const { return 0;};
-  static T* mspc_instance;
 };
 
-// define pointer instance
-template<class T> T* Singleton<T>::mspc_instance = (T*)0;
-template<class T, class B> T* SingletonDerived<T,B>::mspc_instance = (T*)0;
 
 /** scalable variant of base Singleton, which can manage a predefined amount of instances with global access
   */
@@ -468,6 +465,7 @@ template<class T, int SIZE> class SingletonVec
     */
   static T& instance( int riIndex = 0 )
   {
+    static T * mspc_instance[SIZE] = {(T*)0};
     if ( mspc_instance[0] > (T*)1 )
     { // is already complete initialized -> this is THE MOST OFTEN CASE
       return *mspc_instance[riIndex];
@@ -510,7 +508,6 @@ template<class T, int SIZE> class SingletonVec
   };
  protected:
   int getSingletonVecKey() const { return singletonVecKey;};
-  static T * mspc_instance[SIZE];
  private:
   int singletonVecKey;
 };
@@ -530,6 +527,7 @@ template<class T, class B, int SIZE> class SingletonDerivedVec : public B
     */
   static T& instance( int riIndex = 0 )
   {
+    static T * mspc_instance[SIZE] = {(T*)0};
     if ( mspc_instance[0] > (T*)1 )
     { // is already complete initialized -> this is THE MOST OFTEN CASE
       return *mspc_instance[riIndex];
@@ -572,14 +570,9 @@ template<class T, class B, int SIZE> class SingletonDerivedVec : public B
   };
  protected:
   int getSingletonVecKey() const { return singletonVecKey;};
-  static T * mspc_instance[SIZE];
  private:
   int singletonVecKey;
 };
-
-// define pointer instance
-template<class T, int SIZE> T * SingletonVec<T,SIZE>::mspc_instance[SIZE] = {(T*)0};
-template<class T, class B, int SIZE> T * SingletonDerivedVec<T,B,SIZE>::mspc_instance[SIZE] = {(T*)0};
 
 
 /* ***************** define several variants of template for Singleton base class, which *******************
