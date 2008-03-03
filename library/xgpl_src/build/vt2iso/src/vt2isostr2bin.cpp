@@ -226,7 +226,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
     "new_active_mask_object_id",
     "mask_type",
     "mask_object_id",
-    "new_softkey_mask_object_id",
+    "new_soft_key_mask_object_id",
     "attribute_id",
     "new_priority",
     "list_index",
@@ -237,7 +237,9 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
     "in_key",
     "in_button",
 // new attributes (VT revision 3)
-    "vertical_justification"
+    "vertical_justification",
+    "lock_unlock",
+    "lock_timeout"
 };
 
 // Table of possible Macro Commands

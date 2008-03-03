@@ -250,7 +250,6 @@
 #define attrBlock_font (65)
 #define attrBlock_row (66)
 #define attrBlock_col (67)
-
 #define attrNumber_of_items (68)
 #define attrNumber_of_points (69)
 #define attrRle (70)
@@ -281,7 +280,7 @@
 #define attrNew_active_mask (92)
 #define attrMask_type (93)
 #define attrMaskID (94)
-#define attrNew_softkey_mask (95)
+#define attrNew_soft_key_mask (95)
 #define attrAttributeID (96)
 #define attrNew_priority (97)
 #define attrList_index (98)
@@ -293,8 +292,10 @@
 #define attrInButton (104)
 
 #define attrVertical_justification (105)
+#define attrLockUnlock (106)
+#define attrLockTimeout (107)
 
-#define maxAttributeNames (106)
+#define maxAttributeNames (108)
 
 
 // const uint16_t ui16_arrStartUidRange[] = 
@@ -363,10 +364,10 @@ extern char fontstyleTable [maxFontstyleTable] [stringLength+1];
 #define maxFonttypeTable 9
 extern char fonttypeTable [maxFonttypeTable] [stringLength+1];
 
-#define maxTruthTable 5
+#define maxTruthTable 7
 extern char truthTable [maxTruthTable] [stringLength+1];
 
-#define maxFalseTable 5
+#define maxFalseTable 7
 extern char falseTable [maxFalseTable] [stringLength+1];
 
 #define maxFormatTable 2
