@@ -333,7 +333,7 @@ typedef struct {
 #define attrNew_active_mask (91)
 #define attrMask_type (92)
 #define attrMaskID (93)
-#define attrNew_softkey_mask (94)
+#define attrNew_soft_key_mask (94)
 #define attrAttributeID (95)
 #define attrNew_priority (96)
 #define attrList_index (97)
@@ -369,8 +369,12 @@ typedef struct {
 
 #define attrVertical_justification (114)
 #define attrActivate_for_editing (115)
+#define attrLockUnlock (116)
+#define attrLockTimeout (117)
 
-#define maxAttributeNames (116)
+#define maxAttributeNames (118)
+
+
 
 //! Number of regular object plus gap plus number of internal objects.
 #define maxObjectTypesToCompare (maxObjectTypes+18+6)
@@ -402,10 +406,10 @@ extern char fontstyleTable [maxFontstyleTable] [stringLength+1];
 #define maxFonttypeTable 9
 extern char fonttypeTable [maxFonttypeTable] [stringLength+1];
 
-#define maxTruthTable 6
+#define maxTruthTable 7
 extern char truthTable [maxTruthTable] [stringLength+1];
 
-#define maxFalseTable 6
+#define maxFalseTable 7
 extern char falseTable [maxFalseTable] [stringLength+1];
 
 #define maxFormatTable 2

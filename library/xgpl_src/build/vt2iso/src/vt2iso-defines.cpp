@@ -307,7 +307,7 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "new_active_mask_object_id",
   "mask_type",
   "mask_object_id",
-  "new_softkey_mask_object_id",
+  "new_soft_key_mask_object_id",
   "attribute_id",
   "new_priority",
   "list_index",
@@ -329,7 +329,9 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "inputobject_options",
 // new attributes (VT revision 3)
   "vertical_justification",
-  "activate_for_editing"
+  "activate_for_editing",
+  "lock_unlock",
+  "lock_timeout"
 };
 
 // Table of possible Macro Commands
@@ -353,8 +355,8 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   "command_change_priority",
   "command_change_list_item",
   " ",
-  "command_change_string_value",    // @todo soon
-  "command_change_child_position",  // @todo soon
+  "command_change_string_value",
+  "command_change_child_position",
   "command_set_object_label",       // @todo soon
   "command_change_polygon_point",   // @todo soon
   "command_change_polygon_scale",   // @todo soon
@@ -440,7 +442,8 @@ char truthTable [maxTruthTable] [stringLength+1] = {
   "on",
   "show",
   "enable",
-  "1"
+  "1",
+  "unlocked"
 };
 
 char falseTable [maxFalseTable] [stringLength+1] = {
@@ -449,7 +452,8 @@ char falseTable [maxFalseTable] [stringLength+1] = {
   "off",
   "hide",
   "disable",
-  "0"
+  "0",
+  "locked"
 };
 
 char formatTable [maxFormatTable] [stringLength+1] = {

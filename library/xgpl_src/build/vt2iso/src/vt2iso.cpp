@@ -2918,7 +2918,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   int nSize = pAttributes->getLength();
 
                   cleanAttribute(attrObjectID);
-                  cleanAttribute(attrFill_colour);
                   cleanAttribute(attrFill_type);
                   cleanAttribute(attrFill_colour);
                   cleanAttribute(attrFill_pattern);
@@ -2991,7 +2990,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
                   cleanAttribute(attrMask_type);
                   cleanAttribute(attrMaskID);
-                  cleanAttribute(attrNew_softkey_mask);
+                  cleanAttribute(attrNew_soft_key_mask);
 
                   for(int i=0;i<nSize;++i)
                   {
@@ -3001,10 +3000,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
                     setAttributeValue(attrMask_type);
                     setAttributeValue(attrMaskID);
-                    setAttributeValue(attrNew_softkey_mask);
+                    setAttributeValue(attrNew_soft_key_mask);
                   }
                   signed long int retMaskID = idOrName_toi(attrString [attrMaskID], /*macro?*/false);
-                  signed long int retNewSKM = idOrName_toi(attrString [attrNew_softkey_mask], /*macro?*/false);
+                  signed long int retNewSKM = idOrName_toi(attrString [attrNew_soft_key_mask], /*macro?*/false);
                   if ((retMaskID == -1) || (retNewSKM == -1))
                   {
                     std::cout << "Error in idOrName_toi() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
