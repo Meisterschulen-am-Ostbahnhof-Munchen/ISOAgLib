@@ -1,17 +1,23 @@
-/***************************************************************************
-    system_target_extensions.cpp - AMS5 specific extensions for
-                                   the HAL for central system
-    -------------------
-    date                 : 18.06.2007
-    copyright            : (c) 2007 GESAS GmbH
-    email                : stefan.klueh@gesas:de
-    type                 : Module
- ***************************************************************************/
+// ---------------------------------------------------------------------------------------------
+/** \file      system_target_extensions.cpp
+    \brief     AMS5 specific extensions for the HAL for central system
+    \version   1.01
+    \date      24.07.2007
+    \author    Stefan Klueh (stefan.klueh@gesas:de)
+    \author    copyright (c) 2007 GESAS GmbH
+*/
+// ---------------------------------------------------------------------------------------------
+/*   History: 
+              18.06.2007 V1.00  - first release
+
+              20.02.2008 V1.01  - revision of NMI interrupt handler
+
+*/
 
 #include "system_target_extensions.h"
 #include <../commercial_BIOS/bios_ams5/ams_bios.h>
 
-namespace __HAL
+namespace __HAL /** \brief Sublayer of HAL */
 {
    static uint16_t  SerialNumber = 1234;
 
@@ -93,12 +99,10 @@ namespace __HAL
       return ((int32_t)SerialNumber);
    };
 
-   
    uint32_t getSerialNr(void)
    {
      return((int32_t)SerialNumber);   
    }
-   
    /**
       software output enable/disable
       @param bitState true  -> outputs enable
@@ -116,12 +120,40 @@ extern "C"
 {
    /**
       NMI interrupt handler
+
+      Interrupt caused by power down detection
    */
    __interrupt void __NMI_handler(void)
    {
-      while(1)
+      uint16_t waitTime;
+   
+      // wait about 1ms
+      waitTime = 1500;
+      while (waitTime)
       {
+         waitTime--;
          AMSBIOS::sys_resetWDT();
+      }
+   
+      if (AMSBIOS::sys_isPowerDown())
+      {
+         // power supply is below 8V  (NMI-Input == 0)
+         // wait about 1ms
+         waitTime = 1500;
+         while (waitTime)
+         {
+            waitTime--;
+            AMSBIOS::sys_resetWDT();
+         }
+
+         // check again
+         if (AMSBIOS::sys_isPowerDown())
+         {
+            // power supply is still below 8V  (NMI-Input == 0)
+            // wait for WDT-Reset
+           AMSBIOS::io_setOutput(doX9_1, 1) ;
+           while (1);
+         }      
       }
    }
 }
