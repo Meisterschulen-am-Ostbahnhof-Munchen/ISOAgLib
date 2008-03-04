@@ -12,17 +12,30 @@
    #include <stdint.h>
 
    /* --- GLOBAL DEFINES CONSTANTS --- */
+#ifndef USER_WATCHDOG
    #define USER_WATCHDOG           0      /* Define for User-Watchdog */
+#endif
+#ifndef DATA_CHANGED
    #define DATA_CHANGED            1      /* Returnvalue from config_wd */
-
+#endif
+#ifndef FALSE
    #define FALSE             0
+#endif
+#ifndef TRUE
    #define TRUE              1
+#endif
+#ifndef HIGH
    #define HIGH              1
+#endif
+#ifndef LOW
    #define LOW               0
-
+#endif
+#ifndef ON
    #define ON                1
+#endif
+#ifndef OFF
    #define OFF               0
-
+#endif
 
     typedef struct
    {
@@ -198,7 +211,7 @@
   * canSlotMBox_t * ptCanMsgObj = Address of the register */
 //  typedef void *(*tIRQ_FUNCTION)(uint8_t,uint8_t,canSlotMBox_t volatile*,uint8_t);
   typedef void (*tIRQ_FUNCTION)(uint8_t,uint8_t,canSlotMBox_t volatile*,uint8_t);
-  // typedef tCanMsgReg huge*(*tIRQ_FUNCTION)(byte,byte,tCanMsgReg huge*); 
+  // typedef tCanMsgReg huge*(*tIRQ_FUNCTION)(byte,byte,tCanMsgReg huge*);
 
    /** CAN Config-Objekt */
    typedef struct
