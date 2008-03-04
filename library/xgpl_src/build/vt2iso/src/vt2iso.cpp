@@ -364,6 +364,7 @@ vt2iso_c::clean_exit (char* error_message)
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventStringValueAbort();");
     fprintf (partFile_handler_direct, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
+    fprintf (partFile_handler_direct, "\n  virtual void eventVtSelectInputObject ();");
     fprintf (partFile_handler_direct, "\n  //virtual void eventPrepareForLanguageChange (int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
     fprintf (partFile_handler_direct, "\n  virtual void eventEnterSafeState ();");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");

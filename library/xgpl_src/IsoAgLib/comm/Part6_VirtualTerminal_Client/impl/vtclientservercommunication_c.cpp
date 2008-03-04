@@ -1044,7 +1044,11 @@ VtClientServerCommunication_c::processMsg()
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
       mc_streamer.mrc_pool.eventPointingEvent (mc_data.getUint8Data (1) | (mc_data.getUint8Data (2) << 8) /* X position in pixels */,
                                               mc_data.getUint8Data (3) | (mc_data.getUint8Data (4) << 8) /* Y position in pixels */);
+
+    case 0x03: // Command: "VT Select Input Object"
+      mc_streamer.mrc_pool.eventVtSelectInputObject();
       break;
+
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
         /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
         if (mc_data.getUint8Data (3) != 0x0)

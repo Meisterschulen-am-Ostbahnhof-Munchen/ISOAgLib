@@ -216,6 +216,11 @@ public:
   virtual void eventStringValueAbort() {}
 
   /**
+      the client received message vt select input object
+    */
+  virtual void eventVtSelectInputObject() { }
+
+  /**
     hook function that gets called immediately after the
     "End Of Object Pool Response" Message was received.
     @param ab_wasLanguageUpdate TRUE if the object pool was updated while it was already active/being displayed.
