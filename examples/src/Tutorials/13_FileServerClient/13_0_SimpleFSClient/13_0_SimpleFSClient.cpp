@@ -323,26 +323,31 @@ int main()
     }
     if ((time(NULL) - now) == 21 && befehl == 17)
     {
-      c_tut60sfsc->getFileDateTime((uint8_t *)"\\\\SDCARD\\BERND.TXT");
+      c_tut60sfsc->getFileAttributes((uint8_t *)"\\\\SDCARD\\BERND.TXT");
       befehl++;
     }
     if ((time(NULL) - now) == 22 && befehl == 18)
+    {
+      c_tut60sfsc->getFileDateTime((uint8_t *)"\\\\SDCARD\\BERND.TXT");
+      befehl++;
+    }
+    if ((time(NULL) - now) == 23 && befehl == 19)
     {
       c_tut60sfsc->initializeVolume((uint8_t *)"\\\\SDCARD", 12345, true, true);
       befehl++;
     }
 
-    if ((time(NULL) - now) == 23 && befehl == 19)
+    if ((time(NULL) - now) == 24 && befehl == 20)
     {
       c_tut60sfsc->openFile((uint8_t *)"\\\\SDCARD\\bernd.txt", false, false, true, true, false, false);
       befehl++;
     }
-    if ((time(NULL) - now) == 24 && befehl == 20)
+    if ((time(NULL) - now) == 25 && befehl == 21)
     {
       c_tut60sfsc->readFile(0, 15, true);
       befehl++;
     }
-    if ((time(NULL) - now) == 25 && befehl == 21)
+    if ((time(NULL) - now) == 26 && befehl == 22)
     {
       c_tut60sfsc->closeFile(0);
       befehl++;
