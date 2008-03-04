@@ -804,7 +804,7 @@ VtClientServerCommunication_c::timeEvent(void)
       { // successfully sent...
         if (men_uploadCommandState == UploadCommandWithoutResponse)
         { // no response is awaited, so we finished sending
-          finishUploadCommand();
+          finishUploadCommand(true);
           break; // and done!
         }
 
@@ -824,7 +824,7 @@ VtClientServerCommunication_c::timeEvent(void)
           }
           else
           { // No more retries, simply finish this job and go Idle!
-            finishUploadCommand(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
+            finishUploadCommand(true); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
           }
         }
         break;
@@ -1393,7 +1393,7 @@ VtClientServerCommunication_c::processMsg()
             INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) mui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
           }
 #endif
-          finishUploadCommand(); // finish command no matter if "okay" or "error"...
+          finishUploadCommand(false); // finish command no matter if "okay" or "error"...
         }
       }
       else
@@ -2511,7 +2511,7 @@ VtClientServerCommunication_c::startUploadCommand()
 
 
 void
-VtClientServerCommunication_c::finishUploadCommand()
+VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent)
 {
   men_uploadType = UploadIdle;
 
@@ -2540,7 +2540,20 @@ VtClientServerCommunication_c::finishUploadCommand()
     // trigger fast reschedule if more messages are waiting
     if ( ( getUploadBufferSize() > 0 ) && ( getIsoTerminalInstance4Comm().getTimePeriod() != 4 ) )
     { // there is a command waiting
-      getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+      if (ab_TEMPORARYSOLUTION_fromTimeEvent)
+      { // from timeEvent we can just call
+        // IsoTerminal's setTimePeriod() is protected, so we need a wrapper for it.
+        // this is all just a bad hack and should really be TEMPORARY
+        // @todo Make a mechanismn where all vtCSCs are asked for the state and the
+        // IsoTerminal calculates the appropriate period from
+        // - timeEvent
+        // - processMsg
+        getIsoTerminalInstance4Comm().TEMPORARYSOLUTION_setTimePeriod (4);
+      }
+      else
+      { // from processMsg or elsewhere we call
+        getSchedulerInstance().changeTimePeriodAndResortTask(&(getIsoTerminalInstance4Comm()), 4);
+      }
     }
   }
 #ifdef DEBUG

@@ -502,7 +502,7 @@ private:
   /** send "End of Object Pool" message */
   void indicateObjectPoolCompletion();
   bool startUploadCommand();
-  void finishUploadCommand();
+  void finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent);
   /** sets state to "OPCannotUpload"... */
   void vtOutOfMemory();
   void setObjectPoolUploadingLanguage();
