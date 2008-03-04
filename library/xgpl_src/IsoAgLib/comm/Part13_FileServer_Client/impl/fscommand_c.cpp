@@ -792,7 +792,7 @@ iFsCommandErrors FsCommand_c::closeFile(uint8_t ui8_inFileHandle)
   pui8_sendBuffer[0] = 0x24;
   pui8_sendBuffer[1] = ui8_tan;
   pui8_sendBuffer[2] = ui8_fileHandle;
-  pui8_sendBuffer[3] = ui16_count;
+  pui8_sendBuffer[3] = 0xFF;
   pui8_sendBuffer[4] = 0xFF;
   pui8_sendBuffer[5] = 0xFF;
   pui8_sendBuffer[6] = 0xFF;
