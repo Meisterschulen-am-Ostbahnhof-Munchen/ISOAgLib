@@ -216,9 +216,12 @@ public:
   virtual void eventStringValueAbort() {}
 
   /**
-      the client received message vt select input object
+    *  the client received message vt select input object
+    *  @param uint16_t aui16_objectId The object ID of the selected object
+    *  @param uint8_t aui8_hasFocus byte 4 of the message, 0 means the object lost focus, 1 means the object received focus
+    *  @param uint8_t aui8_selected byte 5 of the message, 0 means the object is not open/selected for input, 1  means the object is open/selected for input
     */
-  virtual void eventVtSelectInputObject() { }
+  virtual void eventVtSelectInputObject(uint16_t aui16_objectId, uint8_t aui8_hasFocus, uint8_t aui8_selected) { }
 
   /**
     hook function that gets called immediately after the

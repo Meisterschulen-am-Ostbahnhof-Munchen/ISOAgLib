@@ -1046,7 +1046,9 @@ VtClientServerCommunication_c::processMsg()
                                               mc_data.getUint8Data (3) | (mc_data.getUint8Data (4) << 8) /* Y position in pixels */);
 
     case 0x03: // Command: "VT Select Input Object"
-      mc_streamer.mrc_pool.eventVtSelectInputObject();
+      mc_streamer.mrc_pool.eventVtSelectInputObject(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
+						mc_data.getUint8Data (3),
+						mc_data.getUint8Data (4));
       break;
 
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
