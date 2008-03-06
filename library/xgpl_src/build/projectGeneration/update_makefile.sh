@@ -1335,7 +1335,7 @@ create_makefile()
   echo "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >> $MakefileNameLong
   echo "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
   echo -n "APP_INC = " >> $MakefileNameLong
-  KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library/xgpl_src;"
+  KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
     echo -n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >> $MakefileNameLong
     KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
@@ -1607,7 +1607,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   echo "TARGET = $PROJECT" >> $MakefileNameLong
   echo "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
   echo -n "APP_INC = " >> $MakefileNameLong
-  KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library/xgpl_src;"
+  KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
     echo -n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >> $MakefileNameLong
     KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
@@ -1744,7 +1744,7 @@ create_DevCCPrj() {
 ENDOFHEADERA
 
   DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
-  INCLUDE_DIR_LINE="../$ISO_AG_LIB_INSIDE;$ISO_AG_LIB_INSIDE/library/xgpl_src"
+  INCLUDE_DIR_LINE="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src"
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
     INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH"
   done
@@ -2058,7 +2058,7 @@ create_VCPrj()
 # echo "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
 
   if  [ $USE_CAN_DRIVER = "socket_server" ] ; then
-      USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'"'
+      USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN=_=_library"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'"'
       USE_DEFINES="$USE_DEFINES"' /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
       USE_d_DEFINES="$USE_d_DEFINES"' /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
   fi
