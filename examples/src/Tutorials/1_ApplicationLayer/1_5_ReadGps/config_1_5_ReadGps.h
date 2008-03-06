@@ -12,9 +12,6 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_PC
-#define SYSTEM_PC
-#endif // SYSTEM_PC
 #define PRJ_USE_AUTOGEN_CONFIG config_1_5_ReadGps.h
 
 
@@ -39,12 +36,6 @@
 // #define USE_PCAN_LIB
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-  #define SYSTEM_WITH_ENHANCED_CAN_HAL
-
-#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
 #ifndef USE_TIME_GPS 
 	#define USE_TIME_GPS 

@@ -240,8 +240,8 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tractor\TractorInternalCan;..\..\..\..;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_imi
-Libraries=c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_imi
+Includes=c:\c166\include.cpp;c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tractor\TractorInternalCan;..\..\..\..\library;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_imi
+Libraries=c:\c166\lib;c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_imi
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol

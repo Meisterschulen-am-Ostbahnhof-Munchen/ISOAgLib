@@ -12,9 +12,6 @@
 #include "version.h"
 
 
-#ifndef SYSTEM_PC
-#define SYSTEM_PC
-#endif // SYSTEM_PC
 #define PRJ_USE_AUTOGEN_CONFIG config_PcCompilationSysNotEnHalMultipleInst.h
 #ifndef DEBUG
 #define DEBUG
@@ -68,12 +65,6 @@
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 
 #define USE_RS232_OVER_CAN
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-
-  #define SYSTEM_WITH_ENHANCED_CAN_HAL
-
-#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
 #ifndef USE_BASE 
 	#define USE_BASE 

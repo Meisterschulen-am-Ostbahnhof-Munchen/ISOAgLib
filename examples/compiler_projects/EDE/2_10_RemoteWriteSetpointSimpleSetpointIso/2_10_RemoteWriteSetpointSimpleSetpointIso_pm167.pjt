@@ -261,8 +261,8 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\2_ProcessData\2_10_RemoteWriteSetpointSimpleSetpointIso;..\..\..\..;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_pm167
-Libraries=c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_pm167
+Includes=c:\c166\include.cpp;c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\2_ProcessData\2_10_RemoteWriteSetpointSimpleSetpointIso;..\..\..\..\library;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_pm167
+Libraries=c:\c166\lib;c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_pm167
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
