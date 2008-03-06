@@ -71,9 +71,9 @@ PARAMETER_RS232_DRIVER="UseConfigFile"
 
 USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
 USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
-USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
-USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
-USE_EMBED_ILO="Xos20lcs.ilo"
+#USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
+#USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
+#USE_EMBED_ILO="Xos20lcs.ilo"
 USE_EMBED_COMPILER_DIR="c:/programme/tasking/c166"
 
 USE_WIN32_LIB_DIRECTORY="C:/Development"
@@ -1067,9 +1067,6 @@ create_autogen_project_config()
   echo    "#include \"version.h\""  >> $CONFIG_NAME
 
   echo -e "$ENDLINE" >> $CONFIG_NAME
-  echo    "#ifndef "$USE_SYSTEM_DEFINE     >> $CONFIG_NAME
-  echo    "#define "$USE_SYSTEM_DEFINE     >> $CONFIG_NAME
-  echo    "#endif // "$USE_SYSTEM_DEFINE     >> $CONFIG_NAME
   echo    "#define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_NAME
   for SinglePrjDefine in $PRJ_DEFINES ; do
     echo "#ifndef $SinglePrjDefine" >> $CONFIG_NAME
@@ -1119,12 +1116,6 @@ create_autogen_project_config()
 
   if [ $USE_VT_UNICODE_SUPPORT -gt 0 ] ; then
     echo -e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >> $CONFIG_NAME
-  fi
-
-  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-    echo -e "#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
-    echo -e "  #define SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
-    echo -e "#endif // SYSTEM_WITH_ENHANCED_CAN_HAL$ENDLINE" >> $CONFIG_NAME
   fi
 
 
@@ -1637,6 +1628,9 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   for SinglePrjDefine in $PRJ_DEFINES ; do
     echo -n " -D$SinglePrjDefine" >> $MakefileNameLong
   done
+  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+    echo -n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >> $MakefileNameLong
+  fi
 
   echo -e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
   if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
@@ -1749,11 +1743,11 @@ create_DevCCPrj() {
   ObjFiles=
 ENDOFHEADERA
 
-  DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_-DCAN_DRIVER_SOCKET_@@_'
+  DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
   INCLUDE_DIR_LINE="../$ISO_AG_LIB_INSIDE;$ISO_AG_LIB_INSIDE/library/xgpl_src"
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-  INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH"
-    done
+  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+    INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH"
+  done
 
   LIB_DIR_LINE=""
   LIB_FILE_LINE=""
@@ -1788,6 +1782,9 @@ ENDOFHEADERA
   for SinglePrjDefine in $PRJ_DEFINES ; do
     DEFINE_LINE="$DEFINE_LINE"'-D'"$SinglePrjDefine"'_@@_'
   done
+  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+		DEFINE_LINE="$DEFINE_LINE"'-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
+  fi
 
   echo "Compiler=$DEFINE_LINE" >> $PROJECT_FILE_NAME
   echo "CppCompiler=$DEFINE_LINE" >> $PROJECT_FILE_NAME
@@ -1882,6 +1879,39 @@ create_EdePrj()
     esac
   fi
 
+	if [ "M$USE_EMBED_LIBS" = "M" ] ; then
+    # no setting in the config file -> derive based on target
+		case "$USE_TARGET_SYSTEM" in
+			c2c) USE_EMBED_LIBS="c2c10l.lib" ;;
+			Dj1) USE_EMBED_LIBS="djbiosmvt.lib" ;;
+			esx) USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib" ;;
+			esxu) USE_EMBED_LIBS="Mos10l.lib" ;;
+			imi) USE_EMBED_LIBS="adis10l.lib" ;;
+			pm167) USE_EMBED_LIBS="mios1s.lib" ;;
+		esac
+  fi
+	if [ "M$USE_EMBED_BIOS_SRC" = "M" ] ; then
+    # no setting in the config file -> derive based on target
+		case "$USE_TARGET_SYSTEM" in
+			c2c) USE_EMBED_BIOS_SRC="c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h" ;;
+			Dj1) USE_EMBED_BIOS_SRC="DjBiosMVT.h" ;;
+			esx) USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ" ;;
+			esxu) USE_EMBED_BIOS_SRC="MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H" ;;
+			imi) USE_EMBED_BIOS_SRC="adis10go_cs.asm adis10.h Xos20eec.h XOS20EEC.OBJ" ;;
+			pm167) USE_EMBED_BIOS_SRC="mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h" ;;
+		esac
+  fi
+	if [ "M$USE_EMBED_ILO" = "M" ] ; then
+    # no setting in the config file -> derive based on target
+		case "$USE_TARGET_SYSTEM" in
+			c2c) USE_EMBED_ILO="c2c10osy.ilo" ;;
+			Dj1) USE_EMBED_ILO="MiniVT.ilo" ;;
+			esx) USE_EMBED_ILO="Xos20lcs.ilo" ;;
+			esxu) USE_EMBED_ILO="MOS10L.ILO" ;;
+			imi) USE_EMBED_ILO="adis10s_cs.ilo" ;;
+			pm167) USE_EMBED_ILO="mx1_0s.ilo" ;;
+		esac
+  fi
 
 
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
@@ -2048,6 +2078,10 @@ create_VCPrj()
     USE_DEFINES="$USE_DEFINES"' /D '"$SinglePrjDefine"
     USE_d_DEFINES="$USE_d_DEFINES"' /D '"$SinglePrjDefine"
   done
+  if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+    USE_DEFINES="$USE_DEFINES"' /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+    USE_d_DEFINES="$USE_d_DEFINES"' /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+  fi
 
   for EACH_REL_APP_PATH in $REL_APP_PATH ; do
     EACH_REL_APP_PATH_KURZ=`echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
@@ -2425,9 +2459,10 @@ case "$USE_CAN_DRIVER" in
 				PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
       ;;
       pc_win32)
-        echo "Server Client CAN driver can only used for target pc_linux" 1>&2
-        usage
-        exit 1
+        echo "Server Client CAN driver can only used for target pc_linux. Overridden with socket_server" 1>&2
+				USE_CAN_DRIVER="socket_server"
+        USE_CAN_DEVICE_FOR_SERVER="no_card"
+				CAN_SERVER_FILENAME="can_server_sock"
       ;;
       *)
         echo "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
@@ -2448,7 +2483,9 @@ case "$USE_CAN_DRIVER" in
           ;;
       esac
     fi
-    CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
+    if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
+      CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
+    fi
   ;;
   socket_server)
 		# enhanced CAN HAL IS supported for the socket based can_server
