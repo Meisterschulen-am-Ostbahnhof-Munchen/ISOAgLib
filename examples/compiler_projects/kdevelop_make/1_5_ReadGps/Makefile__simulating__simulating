@@ -166,7 +166,7 @@ CXXFLAGS = -pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshad
 
 LEXFLAGS =
 YACCFLAGS= -d
-INCPATH  = -I. -I$(ISOAGLIB_PATH)/library/xgpl_src $(APP_INC) $(BIOS_INC)
+INCPATH  = -I. -I$(ISOAGLIB_PATH)/library -I$(ISOAGLIB_PATH)/library/xgpl_src $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
 LFLAGS   =
 LIBS     = $(BIOS_LIB) $(SUBLIBS)

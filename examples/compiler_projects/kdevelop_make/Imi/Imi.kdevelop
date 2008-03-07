@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../../library/xgpl_src; ../../../../examples/src/Imi;</includePaths>
+      <includePaths>.;../../../../library;../../../../library/xgpl_src; ../../../../examples/src/Imi;</includePaths>
     </codecompletion>
     <references/>
     <qt>

@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../../library/xgpl_src; ../../../../examples/src/CanServerMessenger/;</includePaths>
+      <includePaths>.;../../../../library;../../../../library/xgpl_src; ../../../../examples/src/CanServerMessenger/;</includePaths>
     </codecompletion>
     <references/>
     <qt>

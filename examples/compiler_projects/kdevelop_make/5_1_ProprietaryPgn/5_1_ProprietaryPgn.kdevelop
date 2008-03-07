@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn;</includePaths>
+      <includePaths>.;../../../../library;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/5_CanFeatures/5_1_ProprietaryPgn;</includePaths>
     </codecompletion>
     <references/>
     <qt>

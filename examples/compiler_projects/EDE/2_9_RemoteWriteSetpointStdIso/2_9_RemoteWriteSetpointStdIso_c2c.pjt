@@ -170,7 +170,6 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\supplementary_driver\driver\rs232\impl\rs232io_c.h
 ..\..\..\..\library\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\iliberr_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singletonok.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton_container.h
@@ -266,8 +265,8 @@ EditSetPath=''
 
 [Directories]
 Executables=c:\programme\tasking\c166\bin
-Includes=c:\c166\include.cpp;c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\2_ProcessData\2_9_RemoteWriteSetpointStdIso;..\..\..\..\library;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_c2c
-Libraries=c:\c166\lib;c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_c2c
+Includes=C:\C166\include.cpp;c:\programme\tasking\c166\include.cpp;..\..\..\..\examples\src\Tutorials\2_ProcessData\2_9_RemoteWriteSetpointStdIso;..\..\..\../library;..\..\..\../library/xgpl_src;..\..\..\..\library\commercial_BIOS\bios_c2c
+Libraries=C:\C166\lib;c:\programme\tasking\c166\lib;..\..\..\..\library\commercial_BIOS\bios_c2c
 
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol

@@ -12,7 +12,7 @@ APP_INC = -I../../../../examples/src/Tutorials/7_SchedulerTask/7_2_SchedulerTask
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_7_2_SchedulerTaskCanMultipleChannels.h -DALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL -DPROCESS_INVALID_PACKETS
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_7_2_SchedulerTaskCanMultipleChannels.h -DALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL -DPROCESS_INVALID_PACKETS -DSYSTEM_WITH_ENHANCED_CAN_HAL
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 

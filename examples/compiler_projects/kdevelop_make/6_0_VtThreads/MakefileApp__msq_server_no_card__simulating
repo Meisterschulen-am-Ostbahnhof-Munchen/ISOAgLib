@@ -12,7 +12,7 @@ APP_INC = -I../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h -DUSE_MUTUAL_EXCLUSION
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h -DUSE_MUTUAL_EXCLUSION -DSYSTEM_WITH_ENHANCED_CAN_HAL
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 

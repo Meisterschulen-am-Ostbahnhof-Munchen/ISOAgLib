@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3;</includePaths>
+      <includePaths>.;../../../../library;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3;</includePaths>
     </codecompletion>
     <references/>
     <qt>

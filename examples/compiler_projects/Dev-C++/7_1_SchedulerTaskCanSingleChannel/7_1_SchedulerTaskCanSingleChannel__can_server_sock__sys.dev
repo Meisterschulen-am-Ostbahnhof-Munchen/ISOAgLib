@@ -5,14 +5,14 @@ UnitCount=94
   Type=1
   Ver=1
   ObjFiles=
-Includes=../../../../..;../../../../library/xgpl_src;../../../../examples/src/Tutorials/7_SchedulerTask/7_1_SchedulerTaskCanSingleChannel
+Includes=../../../../library;../../../../library/xgpl_src;../../../../examples/src/Tutorials/7_SchedulerTask/7_1_SchedulerTaskCanSingleChannel
 Libs=
-Linker=
+Linker=-lwinmm_@@_-lws2_32_@@_
   PrivateResource=
   ResourceIncludes=
   MakeIncludes=
-Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_7_1_SchedulerTaskCanSingleChannel.h_@@_-DCAN_DRIVER_SOCKET_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_-D_CAN_DRIVER_SOCKET_@@_-D_SYSTEM_WITH_ENHANCED_CAN_HAL_@@_
-CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_7_1_SchedulerTaskCanSingleChannel.h_@@_-DCAN_DRIVER_SOCKET_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_-D_CAN_DRIVER_SOCKET_@@_-D_SYSTEM_WITH_ENHANCED_CAN_HAL_@@_
+Compiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_7_1_SchedulerTaskCanSingleChannel.h_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_-D_CAN_DRIVER_SOCKET_@@_-D_SYSTEM_WITH_ENHANCED_CAN_HAL_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_
+CppCompiler=-DSYSTEM_PC_@@_-DPRJ_USE_AUTOGEN_CONFIG=config_7_1_SchedulerTaskCanSingleChannel.h_@@_-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_-D_CAN_DRIVER_SOCKET_@@_-D_SYSTEM_WITH_ENHANCED_CAN_HAL_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_
   IsCpp=1
   Icon=
   ExeOutput=

@@ -8,7 +8,8 @@ DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 #EXAMPLE_LIST='conf_AutoDataCollector'
-TARGET_LIST="esx:c2c:imi:pm167:pc_win32:pc_linux"
+TARGET_LIST="esx:esxu:c2c:imi:pm167:pc_win32:pc_linux"
+#TARGET_LIST="esxu:c2c"
 CAN_LIST="simulating:sys:socket_server:msq_server"
 RS232_LIST="simulating:sys:rte"
 DEVICE_LIST="pcan:A1:rte:no_card"
@@ -17,6 +18,7 @@ for conf_example in $EXAMPLE_LIST ; do
   EXAMPLE_DIR=""
   case "$conf_example" in
     conf_0*) EXAMPLE_DIR="0_NetworkManagement" ;;
+    conf_13*) EXAMPLE_DIR="13_FileServerClient" ;;
     conf_1*) EXAMPLE_DIR="1_ApplicationLayer" ;;
     conf_2*) EXAMPLE_DIR="2_ProcessData" ;;
     conf_3*) EXAMPLE_DIR="3_VirtualTerminal_Client" ;;

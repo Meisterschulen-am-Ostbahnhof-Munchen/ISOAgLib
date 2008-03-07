@@ -41,9 +41,9 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "..\..\..\.." /I "..\..\..\..\library\xgpl_src" /I "..\..\..\..\examples\src\Tutorials\6_ParallelMutex\6_0_VtThreads" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /YX /FD /TP /c
-# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION
-# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION
+# ADD CPP /nologo /W3 /GX /O2 /I "..\..\..\..\library" /I "..\..\..\..\library\xgpl_src" /I "..\..\..\..\examples\src\Tutorials\6_ParallelMutex\6_0_VtThreads" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /YX /FD /TP /c
+# ADD BASE RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /D "SYSTEM_WITH_ENHANCED_CAN_HAL"
+# ADD RSC /l 0x407 /d "NDEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /D "SYSTEM_WITH_ENHANCED_CAN_HAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
@@ -65,9 +65,9 @@ LINK32=link.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /GZ  /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\..\..\.." /I "..\..\..\..\library\xgpl_src" /I "..\..\..\..\examples\src\Tutorials\6_ParallelMutex\6_0_VtThreads" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /YX /FD /TP /GZ /c
-# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION
-# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "..\..\..\..\library" /I "..\..\..\..\library\xgpl_src" /I "..\..\..\..\examples\src\Tutorials\6_ParallelMutex\6_0_VtThreads" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC" /D "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /YX /FD /TP /GZ /c
+# ADD BASE RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /D "SYSTEM_WITH_ENHANCED_CAN_HAL"
+# ADD RSC /l 0x407 /d "_DEBUG" /d "SYSTEM_PC_VC" /d "PRJ_USE_AUTOGEN_CONFIG=config_6_0_VtThreads.h" /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D USE_MUTUAL_EXCLUSION /D "SYSTEM_WITH_ENHANCED_CAN_HAL"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo

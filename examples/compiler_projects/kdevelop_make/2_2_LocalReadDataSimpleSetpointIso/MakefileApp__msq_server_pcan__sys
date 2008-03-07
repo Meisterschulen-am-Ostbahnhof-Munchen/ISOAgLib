@@ -12,7 +12,7 @@ APP_INC = -I../../../../examples/src/Tutorials/2_ProcessData/2_2_LocalReadDataSi
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_2_LocalReadDataSimpleSetpointIso.h
+PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_2_2_LocalReadDataSimpleSetpointIso.h -DSYSTEM_WITH_ENHANCED_CAN_HAL
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 

@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads;</includePaths>
+      <includePaths>.;../../../../library;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/6_ParallelMutex/6_0_VtThreads;</includePaths>
     </codecompletion>
     <references/>
     <qt>

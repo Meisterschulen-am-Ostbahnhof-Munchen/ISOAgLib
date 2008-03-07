@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/4_SupplementaryDriver//4_0_Eeprom;</includePaths>
+      <includePaths>.;../../../../library;../../../../library/xgpl_src; ../../../../examples/src/Tutorials/4_SupplementaryDriver//4_0_Eeprom;</includePaths>
     </codecompletion>
     <references/>
     <qt>
