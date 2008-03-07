@@ -555,7 +555,7 @@ bool MeasureProgBase_c::processMsg(){
 
   // Not sure why this has problems, but it does. So, don't run it with ISO_TASK_CONTROLLER! -bac
   // check if PD==0 -> SET increment message
-  if (!c_pkg.mc_processCmd.checkIsRequest())
+  if ((!c_pkg.mc_processCmd.checkIsRequest()) && (Proc_c::defaultDataLoggingDDI != c_pkg.DDI()) )
   { // mark that msg already edited
     b_edited = true;
 
