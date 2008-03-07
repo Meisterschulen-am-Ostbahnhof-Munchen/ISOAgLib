@@ -301,14 +301,14 @@ template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE:
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
   {
-    rc_target[aui16_bytePos]= pui8_src[ind];
+    rc_target[ aui16_bytePos ]= pui8_src[ind];
     aui16_bytePos++;
   }
 #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
   {
-    rc_target[aui16_bytePos] = (at_src >> ind) & 0xFF;
+    rc_target[ aui16_bytePos ] = (at_src >> ind) & 0xFF;
     aui16_bytePos++;
   }
 #endif
