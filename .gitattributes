@@ -2057,6 +2057,9 @@ examples/src/Tutorials/13_FileServerClient/13_0_SimpleFSClient/13_0_SimpleFSClie
 examples/src/Tutorials/13_FileServerClient/13_0_SimpleFSClient/TutPrjDesc13_0_SimpleFSClient.txt -text
 examples/src/Tutorials/13_FileServerClient/13_0_SimpleFSClient/config_13_0_SimpleFSClient.h -text
 examples/src/Tutorials/13_FileServerClient/13_0_SimpleFSClient/version.h -text
+examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/devicedescription/DeviceDescription.xml -text
+examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/devicedescription/DeviceDescription.xml-bytestream.inc -text
+examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/devicedescription/DeviceDescription.xml-func.h -text
 examples/src/Tutorials/1_ApplicationLayer/1_0_ReadIso/1_0_ReadIso.cpp -text
 examples/src/Tutorials/1_ApplicationLayer/1_0_ReadIso/TutPrjDesc1_0_ReadIso.txt -text
 examples/src/Tutorials/1_ApplicationLayer/1_0_ReadIso/config_1_0_ReadIso.h -text
