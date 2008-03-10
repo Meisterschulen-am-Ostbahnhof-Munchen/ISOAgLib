@@ -16,7 +16,9 @@ void MyFsClient_c::connect (iIdentItem_c& c_myIdent)
     static std::vector<iFsWhitelist_c *> v_fsWhitelist;
     static std::vector<struct iFsDirectory *> v_volumes;
 
+    #if defined(DEBUG) && defined(SYSTEM_PC)
     fprintf (stderr, "MyFsClient_c::connect: entered\n");
+	#endif
 
     tmpwlst.b_requestRemoveableMedium = true;
     tmpwlst.i32_requestedManufacturer = -1;

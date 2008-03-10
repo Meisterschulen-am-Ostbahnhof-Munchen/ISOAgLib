@@ -902,7 +902,9 @@ int main(int, char *argv[])
 	if (fs.b_connected && fs.b_fsOnline && !fs.b_pending_response) {
 	    switch (fs.fs_step) {
 	    case 0:
+        #if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: opening config file\n", argv[0]);
+		#endif
 		fs.b_pending_response = true;
 		status = fs.mp_fscom->openFile (
 		    (uint8_t *)"\\\\INTERNAL\\PROFILE",
@@ -913,25 +915,33 @@ int main(int, char *argv[])
 		    false,	/* write */
 		    false	/* dir */
 		);
+        #if defined(DEBUG) && defined(SYSTEM_PC)
 		if (status != 0)
 		    fprintf (stderr, "%s: open failed: %d\n", argv[0], status);
+		#endif
 		fs.fs_step++;
 	    	break;
 	    case 1:
 		if (fs.handle == 255) {
+	        #if defined(DEBUG) && defined(SYSTEM_PC)
 		    fprintf (stderr, "%s: no file server found.  Using default configuration\n", argv[0]);
+			#endif
 		    fs.fs_step = -1;
 		}
 		else {
+	        #if defined(DEBUG) && defined(SYSTEM_PC)
 		    fprintf (stderr, "%s: reading config file with handle %d\n", argv[0], fs.handle);
+			#endif
 		    fs.b_pending_response = true;
 		    //fs.mp_fscom->readFile (fs.handle, sizeof (fs.received_data), true);
-		    fs.mp_fscom->readFile (fs.handle, 16 * 1024, true);
+		    fs.mp_fscom->readFile (fs.handle, 15 * 1024, true);
 		    fs.fs_step++;
 		}
 	    	break;
 	    case 2:
+	    #if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: closing config file with handle %d\n", argv[0], fs.handle);
+		#endif
 		drivername = fs.confvar ("driver");
 		if (drivername != NULL) {
 		    // iVtObjectIDISdriver
@@ -942,14 +952,18 @@ int main(int, char *argv[])
 		fs.fs_step++;
 	    	break;
 	    case 3:
+     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: config file processed\n", argv[0]);
+		#endif
 		/* ready for another step */
 		fs.fs_step = -1;	/* done for now */
 	    	break;
 	    case -1:
 	    	break;
 	    default:
+        #if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: attach to fileserver failed\n", argv[0]);
+		#endif
 		fs.fs_step = -1;
 	    	break;
 	    }

@@ -40,42 +40,54 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 
     bool notifyOnFileServerOffline (iFsServerInstance_c &/*rc_fsServerInstance*/) {
         b_fsOnline = false;
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "bool notifyOnFileServerOffline(iFsServerInstance_c &/*rc_fsServerInstance*/)"
 	    << std::endl;
+		#endif
 
         return true;
     }
 
     void finishedConnectingToFileserver (iFsServerInstance_c &rc_fileServer) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::finishedConnectingToFileserver"
 	    << std::endl;
+		#endif
 
 	if (mp_fscom == NULL) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
 	    fprintf (stderr, "MyFsClient: iFsClientServerCommunication_c pointer NULL\n");
-	    abort();
+		#endif
+	    CNAMESPACE::abort();
 	    b_connected = false;
 	}
 	else {
 	    mp_fscom->requestFsConnection(rc_fileServer);
 	    b_connected = true;
+        #if defined(DEBUG) && defined(SYSTEM_PC)
 	    fprintf (stderr, "finishedConnectionToFileserver: b_fsOnline %s\n",  b_fsOnline? "true" : "false");
+		#endif
 	}
     }
 
     void fileserverReady() {
         b_fsOnline = true;
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout << "6_0::fileserverReady" << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void fileserverError(iFsError ui8_errorCode) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::fileserverError, error code: "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -89,6 +101,7 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	uint8_t ui8_maxNumberOpenFiles,
 	bool b_fsMultiVolumes
     ) { 
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::getFileServerPropertiesResponse version number: "
 	    << (uint16_t)ui8_versionNumber
@@ -97,15 +110,18 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	    << " supports multivolumes: "
 	    << b_fsMultiVolumes
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void changeCurrentDirectoryResponse(iFsError ui8_errorCode) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::changeCurrentDirectoryResponse error code: "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -121,10 +137,12 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	bool /*b_hidden*/,
 	bool /*b_readOnly*/
     ) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::openFileResponse error code: "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
       
         handle = ui8_fileHandle;
 
@@ -132,10 +150,12 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
     }
 
     void seekFileResponse(iFsError ui8_errorCode, uint32_t /*ui32_position*/) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::seekFileResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -145,7 +165,9 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	uint16_t ui16_dataLength,
 	uint8_t *pui8_data
     ) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         fprintf (stderr, "6_0::readFileResponse: status %d length: %d\n", ui8_errorCode, ui16_dataLength);
+		#endif
 
         //std::cout << "6_0::readFileResponse " << std::hex << (uint16_t)ui8_errorCode << " length: " << ui16_dataLength << std::endl;
 
@@ -157,10 +179,12 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 
         received_data[received_data_len] = 0;
 
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         for (int i = 0; i < ui16_dataLength; i++)
 	    std::cout << pui8_data[i];
 
         std::cout << std::dec << std::endl;
+		#endif
 
         b_pending_response = false;
         b_async_read_complete = true;
@@ -170,46 +194,56 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
         iFsError ui8_errorCode,
 	std::vector<struct iFsDirectory *> /*v_directories*/
     ) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::readDirectoryResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void writeFileResponse(iFsError ui8_errorCode, uint16_t /*ui16_dataWritten*/) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::writeFileResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void closeFileResponse(iFsError ui8_errorCode) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::closeFileResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void moveFileResponse(iFsError ui8_errorCode) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::moveFileResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void deleteFileResponse(iFsError ui8_errorCode) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::deleteFileResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -224,19 +258,23 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	bool /*b_hidden*/,
 	bool /*b_readOnly*/
     ) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::getFileAttributesResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
 
     void setFileAttributesResponse(iFsError ui8_errorCode) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::setFileAttributesResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -250,6 +288,7 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	uint8_t ui8_fileMinute,
 	uint8_t ui8_fileSecond
     ) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::getFileDateTimeResponse "
 	    << (uint16_t)ui8_errorCode
@@ -266,6 +305,7 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	    << ":"
 	    << (uint16_t)ui8_fileSecond
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -280,10 +320,12 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 	bool /*b_hidden*/,
 	bool /*b_readOnly*/
     ) {
+        #if defined(DEBUG) && defined(SYSTEM_PC)
         std::cout
 	    << "6_0::initializeVolumeResponse "
 	    << (uint16_t)ui8_errorCode
 	    << std::endl;
+		#endif
 
         b_pending_response = false;
     }
@@ -301,7 +343,7 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
     int fs_step;
     bool b_fsOnline;
     uint8_t handle;
-    uint8_t received_data [1024 * 64];
+    uint8_t received_data [15 * 1024];
     int received_data_len;
     iFsClientServerCommunication_c *mp_fscom;
 };
