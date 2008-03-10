@@ -219,7 +219,7 @@ bool FsCommand_c::processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, b
         decodeGetCurrentDirectoryResponse();
         rc_csCom.getCurrentDirectoryResponse(iFsError(ui8_errorCode), pui8_currentDirectory);
         i32_offset = 0;
-        delete pui_receiveBuffer;
+        delete[] pui_receiveBuffer;
         en_lastCommand = en_noCommand;
         return true;
       //read file response
@@ -240,7 +240,7 @@ bool FsCommand_c::processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, b
             rc_csCom.readDirectoryResponse(iFsError(ui8_errorCode), v_dirData);
           }
         }
-        delete pui_receiveBuffer;
+        delete[] pui_receiveBuffer;
         i32_offset = 0;
         return true;
       default:
@@ -1170,6 +1170,7 @@ FsCommand_c::FsCommand_c(FsClientServerCommunication_c &rc_inCsCom, FsServerInst
   i32_lastAliveSent = -1;
   b_receivedResponse = true;
   i8_fsVersion = rc_filerserver.getStandardVersion();
+  i32_offset = 0;
 
   registerPacketFilter();
 }
