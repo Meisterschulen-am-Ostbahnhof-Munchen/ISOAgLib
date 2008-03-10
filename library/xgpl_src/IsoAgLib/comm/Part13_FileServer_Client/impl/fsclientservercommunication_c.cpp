@@ -80,6 +80,9 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+#include <cstring>
+#include <cstdio>
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include "fsclientservercommunication_c.h"
 
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
@@ -96,7 +99,7 @@
 
 #include "../ifsstructs.h"
 
-#include <iostream>
+//#include <iostream>
 #include <vector>
 
 #define ERR_REQUEST_IN_PROGRESS 1
@@ -287,7 +290,7 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
     {
       if (!ui8_errorCode)
       {
-        uint16_t ui16_length = strlen((char *)piu8_newCurrentDirectory);
+        uint16_t ui16_length = CNAMESPACE::strlen((char *)piu8_newCurrentDirectory);
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
 
@@ -306,7 +309,7 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
     {
       if (!ui8_errorCode)
       {
-        uint16_t ui16_length = strlen((char *)piu8_newCurrentDirectory);
+        uint16_t ui16_length = CNAMESPACE::strlen((char *)piu8_newCurrentDirectory);
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
 

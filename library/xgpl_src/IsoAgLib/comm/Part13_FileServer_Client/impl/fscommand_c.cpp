@@ -80,7 +80,7 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
-#include <string.h>
+#include <cstring>
 
 #include "fscommand_c.h"
 #include "fsclientservercommunication_c.h"
@@ -532,7 +532,6 @@ bool FsCommand_c::processMsg()
 #endif
       return false;
   }
-  return false;
 }
 
 //sends request
@@ -611,7 +610,7 @@ iFsCommandErrors FsCommand_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
 {
   en_lastCommand = en_changeCurrentDirectory;
 
-  uint16_t ui16_length = strlen((const char*)pui8_newDirectory);
+  uint16_t ui16_length = CNAMESPACE::strlen((const char*)pui8_newDirectory);
   uint8_t ui8_bufferPosition = 0;
   pui8_fileName = new uint8_t[ui16_length + 1];
   pui8_fileName[ui16_length] = 0;
@@ -643,7 +642,7 @@ iFsCommandErrors FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExcl
   if (en_lastCommand == en_noCommand)
     en_lastCommand = en_openFile;
 
-  uint16_t ui16_length = strlen((const char*)pui8_inFileName);
+  uint16_t ui16_length = CNAMESPACE::strlen((const char*)pui8_inFileName);
   pui8_fileName = new uint8_t[ui16_length + 1];
   pui8_fileName[ui16_length] = 0;
   uint8_t ui8_bufferPosition = 0;
@@ -824,8 +823,8 @@ iFsCommandErrors FsCommand_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_d
 
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_fileHandleMode;
 
-  uint16_t ui16_srcLength = strlen((const char *)pui8_sourceName);
-  uint16_t ui16_destLength = strlen((const char *)pui8_destName);
+  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
+  uint16_t ui16_destLength = CNAMESPACE::strlen((const char *)pui8_destName);
 
   pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength;
   if (i8_fsVersion == 1)
@@ -867,7 +866,7 @@ iFsCommandErrors FsCommand_c::deleteFile(uint8_t *pui8_sourceName, bool b_recurs
 
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_fileHandleMode;
 
-  uint16_t ui16_srcLength = strlen((const char *)pui8_sourceName);
+  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
   if (i8_fsVersion == 0)
   {
@@ -898,7 +897,7 @@ iFsCommandErrors FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
   pui8_sendBuffer[0] = 0x32;
   pui8_sendBuffer[1] = ui8_tan;
 
-  uint16_t ui16_srcLength = strlen((const char *)pui8_sourceName);
+  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
   pui8_sendBuffer[2] = ui16_srcLength;
   pui8_sendBuffer[3] = ui16_srcLength >> 0x08;
@@ -925,7 +924,7 @@ iFsCommandErrors FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_
 
   pui8_sendBuffer[2] = 0xF0 | ui8_hiddenAtt << 2 | ui8_readOnlyAtt;
 
-  uint16_t ui16_srcLength = strlen((const char *)pui8_sourceName);
+  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
   pui8_sendBuffer[3] = ui16_srcLength;
   pui8_sendBuffer[4] = ui16_srcLength >> 0x08;
@@ -948,7 +947,7 @@ iFsCommandErrors FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
   pui8_sendBuffer[0] = 0x34;
   pui8_sendBuffer[1] = ui8_tan;
 
-  uint16_t ui16_srcLength = strlen((const char *)pui8_sourceName);
+  uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
   pui8_sendBuffer[2] = ui16_srcLength;
   pui8_sendBuffer[3] = ui16_srcLength >> 0x08;
@@ -1087,7 +1086,7 @@ void FsCommand_c::decodeSeekFileResponse()
   ui8_tan++;
   ui8_errorCode = data().getUint8Data(2);
 
-  ui32_possition = data().getUint8Data(4) | (data().getUint8Data(5) << 0x08) | (data().getUint8Data(6) << 0x10) | (data().getUint8Data(7) << 0x18);
+  ui32_possition = static_cast<uint32_t>(data().getUint8Data(4)) | (static_cast<uint32_t>(data().getUint8Data(5)) << 0x08) | (static_cast<uint32_t>(data().getUint8Data(6)) << 0x10) | (static_cast<uint32_t>(data().getUint8Data(7)) << 0x18);
 }
 
 void FsCommand_c::decodeReadFileResponse()
@@ -1148,7 +1147,7 @@ void FsCommand_c::decodeReadDirectoryResponse()
     i32_offset += 2;
     ps_tmpDir->ui16_time = pui_receiveBuffer[i32_offset] | (pui_receiveBuffer[i32_offset + 1] << 0x08);
     i32_offset += 2;
-    ps_tmpDir->ui32_size = pui_receiveBuffer[i32_offset] | (pui_receiveBuffer[i32_offset + 1] << 0x08) | (pui_receiveBuffer[i32_offset + 1] << 0x10) | (pui_receiveBuffer[i32_offset + 1] << 0x18);
+    ps_tmpDir->ui32_size = static_cast<uint32_t>(pui_receiveBuffer[i32_offset]) | (static_cast<uint32_t>(pui_receiveBuffer[i32_offset + 1]) << 0x08) | (static_cast<uint32_t>(pui_receiveBuffer[i32_offset + 1]) << 0x10) | (static_cast<uint32_t>(pui_receiveBuffer[i32_offset + 1]) << 0x18);
     i32_offset += 4;
 
     v_dirData.push_back(ps_tmpDir);
