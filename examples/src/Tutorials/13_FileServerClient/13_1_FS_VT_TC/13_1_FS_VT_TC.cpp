@@ -253,8 +253,6 @@
  ** File Server Client
  **/
 
-static char *drivername = NULL;
-
 MyFsClient_c fs;
 
 
@@ -563,6 +561,8 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (
   }
   else
   {
+    char *drivername;
+
     // this is done so the initial state is up again if VT lost and reconnected!
     iVtObjectColLabel.setValueRef ("Color:");
     iVtObjectColOS.setVariableReference (colTable [color], true);
@@ -576,8 +576,9 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (
 	EXTERNAL_DEBUG_DEVICE << "-->eventObjectPoolUploadedSuccessfully: INITIAL UPLOAD TO Index "<<int(ai8_languageIndex)<<". User tried to select ["<<uint8_t(aui16_languageCode>>8)<<uint8_t(aui16_languageCode&0xFF)<<"] <--" << EXTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
+    drivername = fs.confvar ("driver");
     if (drivername != NULL)
-	iVtObjectdriver.setValueCopy (drivername, true);
+	iVtObjectISdriver.setValueCopy (drivername, true);
   }
 }
 
@@ -615,6 +616,9 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (
       case iVtObjectIDISdriver:
       {
         iVtObjectOSresonible.setValueCopy (c_buffer.c_str());
+        //iVtObjectdriver.setValueCopy (c_buffer.c_str());
+	fs.confvar ("driver", (char *)c_buffer.c_str());
+	fs.fs_step = 10;
       } break;
       default:
         break;
@@ -900,7 +904,12 @@ int main(int, char *argv[])
 
 	/* TODO: this fsm should be in the fsclient */
 	if (fs.b_connected && fs.b_fsOnline && !fs.b_pending_response) {
+	    char *drivername;
+
 	    switch (fs.fs_step) {
+	    	/*
+		 * read the profile
+		 */
 	    case 0:
         #if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: opening config file\n", argv[0]);
@@ -915,11 +924,14 @@ int main(int, char *argv[])
 		    false,	/* write */
 		    false	/* dir */
 		);
+		if (status != 0) {
         #if defined(DEBUG) && defined(SYSTEM_PC)
-		if (status != 0)
-		    fprintf (stderr, "%s: open failed: %d\n", argv[0], status);
-		#endif
-		fs.fs_step++;
+		    fprintf (stderr, "%s: open failed: %d.  Using default configuration\n", argv[0], status);
+	#endif
+		    fs.fs_step = -1;
+		}
+		else
+		    fs.fs_step++;
 	    	break;
 	    case 1:
 		if (fs.handle == 255) {
@@ -941,11 +953,12 @@ int main(int, char *argv[])
 	    case 2:
 	    #if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: closing config file with handle %d\n", argv[0], fs.handle);
-		#endif
+	    #endif
+		fs.load_conftbl ();
 		drivername = fs.confvar ("driver");
 		if (drivername != NULL) {
 		    // iVtObjectIDISdriver
-		    iVtObjectdriver.setValueCopy (drivername);
+		    iVtObjectISdriver.setValueCopy (drivername);
 		}
 		fs.b_pending_response = true;
 		fs.mp_fscom->closeFile (fs.handle);
@@ -955,6 +968,58 @@ int main(int, char *argv[])
      	#if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: config file processed\n", argv[0]);
 		#endif
+		/* ready for another step */
+		fs.fs_step = -1;	/* done for now */
+	    	break;
+	    	/*
+		 * write the profile
+		 */
+	    case 10:
+		fprintf (stderr, "%s: opening config file for output\n", argv[0]);
+		fs.b_pending_response = true;
+		status = fs.mp_fscom->openFile (
+		    (uint8_t *)"\\\\INTERNAL\\PROFILE",
+		    false,	/* excl */
+		    false,	/* append */
+		    true,	/* create */
+		    false,	/* read */
+		    true,	/* write */
+		    false	/* dir */
+		);
+		if (status != 0) {
+		    fprintf (stderr, "%s: open (write) failed: %d\n", argv[0], status);
+		    fs.fs_step = -1;
+		}
+		else
+		    fs.fs_step++;
+	    	break;
+	    case 11:
+		if (fs.handle == 255) {
+		    fprintf (stderr, "%s: file open (write) failed.  Profile not updated\n", argv[0]);
+		    fs.fs_step = -1;
+		}
+		else {
+		    char *tbl;
+
+		    fprintf (stderr, "%s: writing config file with handle %d\n", argv[0], fs.handle);
+		    fs.b_pending_response = true;
+		    tbl = fs.save_conftbl ();
+		    /*
+		     * note that readFile() and writeFile() are not
+		     * symmetrical.
+		     */
+		    fs.mp_fscom->writeFile (fs.handle, strlen (tbl), (uint8_t *)tbl);
+		    fs.fs_step++;
+		}
+	    	break;
+	    case 12:
+		fprintf (stderr, "%s: closing config file with handle %d\n", argv[0], fs.handle);
+		fs.b_pending_response = true;
+		fs.mp_fscom->closeFile (fs.handle);
+		fs.fs_step++;
+	    	break;
+	    case 13:
+		fprintf (stderr, "%s: config file processed\n", argv[0]);
 		/* ready for another step */
 		fs.fs_step = -1;	/* done for now */
 	    	break;

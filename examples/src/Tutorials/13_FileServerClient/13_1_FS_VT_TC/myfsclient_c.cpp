@@ -39,12 +39,47 @@ void MyFsClient_c::connect (iIdentItem_c& c_myIdent)
 }
 
 
-char *MyFsClient_c::confvar (char *varname)
+char *MyFsClient_c::confvar (const char *varname)
 {
-    if (received_data_len > 0)
-    	return (char *)received_data;
+    if (conftbl != NULL)
+    	return conftbl;	/* currently the only thing there */
 
     return NULL;
 }
+
+
+void MyFsClient_c::confvar (const char *varname, char *value)
+{
+    int len = strlen (value);
+
+    if (strlen (conftbl) >= len)
+    	strcpy (conftbl, value);	/* ignore shrink */
+    else {
+	char *tbl;
+
+    	tbl = (char *)realloc (conftbl, len);
+	if (tbl == NULL)
+	    fprintf (stderr, "confvar: no space: variable lost\n");
+	else {
+	    conftbl = tbl;
+	    strcpy (conftbl, value);
+	}
+    }
+}
+
+
+void MyFsClient_c::load_conftbl ()
+{
+    /*
+     * The initial profile read has completed.  Store it in the
+     * configuration tbl.
+     */
+    if (conftbl != NULL)
+        free (conftbl);
+
+    conftbl = strdup ((const char *)received_data);
+}
+
+
 
 
