@@ -569,6 +569,7 @@ examples/compiler_projects/VC8/canserver/can_server_vector_xl.vcproj -text
 examples/compiler_projects/conf_0_0_AddressClaimIso -text
 examples/compiler_projects/conf_0_3_LookupIso -text
 examples/compiler_projects/conf_13_0_SimpleFSClient -text
+examples/compiler_projects/conf_13_1_FS_VT_TC -text
 examples/compiler_projects/conf_1_0_ReadIso -text
 examples/compiler_projects/conf_1_2_WriteIso -text
 examples/compiler_projects/conf_1_4_WriteFlexibleIso -text
