@@ -777,12 +777,14 @@ bool MyProcDataHandler_c::processSetpointSet(IsoAgLib::EventSource_c ac_src, int
 
 bool MyProcDataHandler_c::processDefaultLoggingStart(IsoAgLib::EventSource_c /* ac_src */, int32_t /* ai32_val */, const IsoAgLib::iIsoName_c& /* ac_callerIsoName */)
 {
-  #if defined(DEBUG)
+#if defined(DEBUG)
   if (arr_procData[cui8_indexApplicationRate].startDataLogging(IsoAgLib::Proc_c::TimeProp, 1000))
     LOG_INFO << "starting measurement application rate success!" <<  EXTERNAL_DEBUG_DEVICE_ENDL;
   else
     LOG_INFO << "starting measurement application rate failure!" <<  EXTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+#else
+arr_procData[cui8_indexApplicationRate].startDataLogging(IsoAgLib::Proc_c::TimeProp, 1000);
+#endif
   return true;
 }
 
