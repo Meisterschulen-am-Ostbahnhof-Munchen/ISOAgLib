@@ -578,7 +578,10 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (
 
     drivername = fs.confvar ("driver");
     if (drivername != NULL)
-	iVtObjectISdriver.setValueCopy (drivername, true);
+    {
+	     iVtObjectISdriver.setValueCopy (drivername, true);
+       iVtObjectOSresonible.setValueCopy (drivername, true);
+    }
   }
 }
 
@@ -957,8 +960,9 @@ int main(int, char *argv[])
 		fs.load_conftbl ();
 		drivername = fs.confvar ("driver");
 		if (drivername != NULL) {
-		    // iVtObjectIDISdriver
-		    iVtObjectISdriver.setValueCopy (drivername);
+		  // iVtObjectIDISdriver
+      iVtObjectISdriver.setValueCopy (drivername);
+      iVtObjectOSresonible.setValueCopy (drivername);
 		}
 		fs.b_pending_response = true;
 		fs.mp_fscom->closeFile (fs.handle);
