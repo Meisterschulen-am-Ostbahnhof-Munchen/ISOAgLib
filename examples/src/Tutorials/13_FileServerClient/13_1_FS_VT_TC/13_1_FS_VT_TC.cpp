@@ -561,7 +561,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (
   }
   else
   {
-    char *drivername;
+    const char *drivername;
 
     // this is done so the initial state is up again if VT lost and reconnected!
     iVtObjectColLabel.setValueRef ("Color:");
@@ -907,7 +907,7 @@ int main(int, char *argv[])
 
 	/* TODO: this fsm should be in the fsclient */
 	if (fs.b_connected && fs.b_fsOnline && !fs.b_pending_response) {
-	    char *drivername;
+	    const char *drivername;
 
 	    switch (fs.fs_step) {
 	    	/*
@@ -979,7 +979,9 @@ int main(int, char *argv[])
 		 * write the profile
 		 */
 	    case 10:
+     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: opening config file for output\n", argv[0]);
+		#endif
 		fs.b_pending_response = true;
 		status = fs.mp_fscom->openFile (
 		    (uint8_t *)"\\\\INTERNAL\\PROFILE",
@@ -991,7 +993,9 @@ int main(int, char *argv[])
 		    false	/* dir */
 		);
 		if (status != 0) {
+	     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		    fprintf (stderr, "%s: open (write) failed: %d\n", argv[0], status);
+			#endif
 		    fs.fs_step = -1;
 		}
 		else
@@ -999,31 +1003,39 @@ int main(int, char *argv[])
 	    	break;
 	    case 11:
 		if (fs.handle == 255) {
+	     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		    fprintf (stderr, "%s: file open (write) failed.  Profile not updated\n", argv[0]);
+			#endif
 		    fs.fs_step = -1;
 		}
 		else {
-		    char *tbl;
+		    const char *tbl;
 
+	     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		    fprintf (stderr, "%s: writing config file with handle %d\n", argv[0], fs.handle);
+			#endif
 		    fs.b_pending_response = true;
 		    tbl = fs.save_conftbl ();
 		    /*
 		     * note that readFile() and writeFile() are not
 		     * symmetrical.
 		     */
-		    fs.mp_fscom->writeFile (fs.handle, strlen (tbl), (uint8_t *)tbl);
+		    fs.mp_fscom->writeFile (fs.handle, CNAMESPACE::strlen (tbl), (uint8_t *)tbl);
 		    fs.fs_step++;
 		}
 	    	break;
 	    case 12:
+     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: closing config file with handle %d\n", argv[0], fs.handle);
+		#endif
 		fs.b_pending_response = true;
 		fs.mp_fscom->closeFile (fs.handle);
 		fs.fs_step++;
 	    	break;
 	    case 13:
+     	#if defined(DEBUG) && defined(SYSTEM_PC)
 		fprintf (stderr, "%s: config file processed\n", argv[0]);
+		#endif
 		/* ready for another step */
 		fs.fs_step = -1;	/* done for now */
 	    	break;

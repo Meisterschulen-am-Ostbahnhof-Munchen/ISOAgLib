@@ -9,6 +9,7 @@
 #include <IsoAgLib/comm/Part13_FileServer_Client/ifsmanager_c.h>
 #include <IsoAgLib/comm/Part13_FileServer_Client/ifsclient_c.h>
 
+#include <string>
 
 #if 0
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
@@ -31,7 +32,7 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
 {
   public:
     MyFsClient_c ():
-	conftbl (NULL),
+	c_conftbl (""),
     	b_connected (false),
 	b_pending_response (false),
 	b_async_read_complete (true),
@@ -332,16 +333,16 @@ class MyFsClient_c : public IsoAgLib::iFsClient_c
     }
 
     void connect (iIdentItem_c& c_myIdent);
-    char *confvar (const char *varname);
+    const char *confvar (const char *varname);
     void confvar (const char *varname, char *value);
     void load_conftbl ();
-    char *save_conftbl () { return conftbl; };
+    const char *save_conftbl () { return c_conftbl.c_str(); };
 
     /// FileServer access response functions END
 
 
 
-    char *conftbl;
+    std::string c_conftbl;
     bool b_connected;
     bool b_pending_response;
     bool b_async_read_complete;
