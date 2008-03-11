@@ -232,6 +232,7 @@ examples/compiler_projects/EDE/13_0_SimpleFSClient/13_0_SimpleFSClient_pm167.pjt
 examples/compiler_projects/EDE/13_0_SimpleFSClient/filelist__13_0_SimpleFSClient.txt -text
 examples/compiler_projects/EDE/13_1_FS_VT_TC/13_1_FS_VT_TC_c2c.pjt -text
 examples/compiler_projects/EDE/13_1_FS_VT_TC/13_1_FS_VT_TC_esx.pjt -text
+examples/compiler_projects/EDE/13_1_FS_VT_TC/13_1_FS_VT_TC_esxu.pjt -text
 examples/compiler_projects/EDE/13_1_FS_VT_TC/config_header__13_1_FS_VT_TC-doc.txt -text
 examples/compiler_projects/EDE/13_1_FS_VT_TC/filelist__13_1_FS_VT_TC.txt -text
 examples/compiler_projects/EDE/1_0_ReadIso/1_0_ReadIso_c2c.pjt -text
