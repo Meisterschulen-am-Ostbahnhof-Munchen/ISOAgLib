@@ -360,7 +360,16 @@ bool FsCommand_c::processMsg()
         b_receivedResponse = true;
         ui8_requestAttempts = 0;
         ui8_tan++;
-        readFile(ui8_fileHandle, ui32_possition, true);
+	if (ui32_possition == 0) {
+#ifdef DEBUG
+	    std::cerr
+	        << "exploratory seek failed: using read length of 16\n"
+		<< std::endl;
+#endif
+	    readFile(ui8_fileHandle, 16, true);
+	}
+	else
+	    readFile(ui8_fileHandle, ui32_possition, true);
         return true;
       }
 
@@ -968,7 +977,8 @@ iFsCommandErrors FsCommand_c::initializeVolume(uint8_t */*pui8_pathName*/, uint3
 //TODO implement this one...
 
 #ifdef DEBUG
-  std::cout << "initializeVolume pathname: " << pui8_pathName << " space: " << ui32_space << " attributes: " << b_createVolumeUsingSpace << b_createNewVolume << std::endl;
+  //std::cout << "initializeVolume pathname: " << pui8_pathName << " space: " << ui32_space << " attributes: " << b_createVolumeUsingSpace << b_createNewVolume << std::endl;
+  std::cout << "initializeVolume pathname: NOT IMPLEMENTED" << std::endl;
 #endif
   return fsCommandNoError;
 }
