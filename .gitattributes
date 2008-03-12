@@ -2616,6 +2616,7 @@ library/xgpl_src/IsoAgLib/hal/pc/can/can_server_pcan.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_rte.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sontheim.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sontheim_mt_api.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_vector_canlib.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_vector_xl.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
