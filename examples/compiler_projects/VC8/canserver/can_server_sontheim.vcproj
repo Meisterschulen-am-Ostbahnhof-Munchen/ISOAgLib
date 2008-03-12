@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="canserver"
 	ProjectGUID="{B78E1032-1BB1-4B9D-9CB4-F457E31E95E3}"
 	>
@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="C:\Development\pthread;..\..\..\..\library\xgpl_src;&quot;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;"
+				AdditionalIncludeDirectories="C:\Programme\Sontheim\MT_Api\Header;C:\Development\pthread;..\..\..\..\library\xgpl_src;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -69,11 +69,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadvc2.lib ws2_32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadvc2.lib ws2_32.lib SIECA132.lib"
 				OutputFile="$(OutDir)\can_server_sontheim.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;;C:\Development\pthread;C:\STLport\lib"
+				AdditionalLibraryDirectories="C:\Programme\Sontheim\MT_Api\Library;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib;C:\Development\pthread;C:\STLport\lib"
 				ProgramDatabaseFile="~build\$(ConfigurationName)\can_server_sontheim.pdb"
 				SubSystem="1"
 				TargetMachine="1"
@@ -135,7 +135,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="C:\Development\pthread;..\..\..\..\library\xgpl_src;&quot;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;"
+				AdditionalIncludeDirectories="C:\Programme\Sontheim\MT_Api\Header;C:\Development\pthread;..\..\..\..\library\xgpl_src;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -161,11 +161,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadvc2.lib ws2_32.lib"
+				AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadvc2.lib ws2_32.lib SIECA132.lib"
 				OutputFile="$(OutDir)\can_server_sontheim_d.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
-				AdditionalLibraryDirectories="&quot;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib&quot;;C:\Development\pthread;C:\STLport\lib"
+				AdditionalLibraryDirectories="C:\Programme\Sontheim\MT_Api\Library;C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib;C:\Development\pthread;C:\STLport\lib"
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="~build\$(ConfigurationName)\can_server_sontheim.pdb"
 				SubSystem="1"
@@ -211,7 +211,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_sontheim.cpp"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_sontheim_mt_api.cpp"
 				>
 			</File>
 		</Filter>
