@@ -205,10 +205,12 @@ examples/compiler_projects/Dev-C++/TractorInternalCan/filelist__TractorInternalC
 examples/compiler_projects/Dev-C++/canserver/bin/can_server.exe -text
 examples/compiler_projects/Dev-C++/canserver/bin/can_server_pcan.exe -text
 examples/compiler_projects/Dev-C++/canserver/bin/can_server_sontheim.exe -text
+examples/compiler_projects/Dev-C++/canserver/bin/can_server_sontheim_mt_api.exe -text
 examples/compiler_projects/Dev-C++/canserver/bin/can_server_vector_xl.exe -text
 examples/compiler_projects/Dev-C++/canserver/can_server.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_pcan.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_sontheim.dev -text
+examples/compiler_projects/Dev-C++/canserver/can_server_sontheim_mt_api.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector.dev -text
 examples/compiler_projects/Dev-C++/canserver/can_server_vector_xl.dev -text
 examples/compiler_projects/Dev-C++/canserver/lib/vcand32_devcpp.lib -text
@@ -567,6 +569,8 @@ examples/compiler_projects/VC8/canserver/can_server_pcan.sln -text
 examples/compiler_projects/VC8/canserver/can_server_pcan.vcproj -text
 examples/compiler_projects/VC8/canserver/can_server_sontheim.sln -text
 examples/compiler_projects/VC8/canserver/can_server_sontheim.vcproj -text
+examples/compiler_projects/VC8/canserver/can_server_sontheim_mt_api.sln -text
+examples/compiler_projects/VC8/canserver/can_server_sontheim_mt_api.vcproj -text
 examples/compiler_projects/VC8/canserver/can_server_vector.sln -text
 examples/compiler_projects/VC8/canserver/can_server_vector.vcproj -text
 examples/compiler_projects/VC8/canserver/can_server_vector_xl.sln -text
