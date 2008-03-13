@@ -397,6 +397,108 @@ public:
     const repeat_event_iVtObjectMacro_s* macrosToFollow;
   } iVtObjectPolygon_s;
 
+  typedef struct iVtObjectInputNumberMgr_s {
+    uint16_t ID;
+    uint16_t length;
+    uint16_t checksum;
+    uint16_t width;
+    uint16_t height;
+    uint16_t ok_BID;
+    uint16_t esc_BID;
+    uint16_t output_display_OID;
+    uint16_t latest_val_display_OID;
+    uint16_t error_display_OID;
+    uint16_t input_OID;
+    uint8_t src_addr_ws;
+    bool hidden;
+    uint8_t backgroundColour;
+    iVtObjectLineAttributes_c* lineAttributes;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_s* objectsToFollow;
+    uint8_t numberOfMacrosToFollow;
+    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+  } iVtObjectInputNumberMgr_s;
+
+  typedef struct iVtObjectInputStringMgr_s {
+    uint16_t ID;
+    uint16_t length;
+    uint16_t checksum;
+    uint16_t width;
+    uint16_t height;
+    uint16_t ok_BID;
+    uint16_t esc_BID;
+    uint16_t output_display_OID;
+    uint16_t latest_val_display_OID;
+    uint16_t error_display_OID;
+    uint16_t input_OID;
+    uint8_t src_addr_ws;
+    bool hidden;
+    uint8_t backgroundColour;
+    iVtObjectLineAttributes_c* lineAttributes;
+    uint16_t kb_layouts;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_s* objectsToFollow;
+    uint8_t numberOfMacrosToFollow;
+    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+  } iVtObjectInputStringMgr_s;
+
+  typedef struct iVtObjectInputListMgr_s {
+    uint16_t ID;
+    uint16_t length;
+    uint16_t checksum;
+    uint16_t width;
+    uint16_t height;
+    uint16_t ok_BID;
+    uint16_t esc_BID;
+    uint16_t output_display_OID;
+    uint16_t input_OID;
+    uint8_t src_addr_ws;
+    bool hidden;
+    uint8_t backgroundColour;
+    iVtObjectLineAttributes_c* outerLineAttributes;
+    iVtObjectLineAttributes_c* lineAttributes;
+    uint16_t anchorX;
+    uint16_t anchorY;
+    uint8_t anchorAlign;
+    uint16_t minWidth;
+    uint16_t maxWidth;
+    uint16_t minHeight;
+    uint16_t maxHeight;
+    uint8_t itemPlacement;
+    uint8_t itemsPerRow;
+    uint8_t itemsPerCol;
+    uint8_t vertScrollBarWidth;
+    uint8_t horzScrollBarWidth;
+    uint8_t vertScrollBarDesign;
+    uint8_t horzScrollBarDesign;
+    uint8_t WheelNavigation;
+    uint16_t vertScrollBarBackground;
+    uint16_t horzScrollBarBackground;
+    uint16_t vertScrollBarOID;
+    uint16_t horzScrollBarOID;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_s* objectsToFollow;
+    uint8_t numberOfMacrosToFollow;
+    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+  } iVtObjectInputListMgr_s;
+
+  typedef struct iVtObjectDialogButton_s {
+    uint16_t ID;
+    uint16_t length;
+    uint16_t checksum;
+    uint16_t width;
+    uint16_t height;
+    uint8_t backgroundColour;
+    uint8_t borderColour;
+    uint8_t keyCode;
+    uint8_t options;
+    uint32_t keyType;
+    uint8_t numberOfObjectsToFollow;
+    const repeat_iVtObject_s* objectsToFollow;
+    uint8_t numberOfMacrosToFollow;
+    const repeat_event_iVtObjectMacro_s* macrosToFollow;
+  } iVtObjectDialogButton_s;
+
   typedef struct iVtObjectRectangle_s {
     uint16_t ID;
     iVtObjectLineAttributes_c* lineAttributes;
