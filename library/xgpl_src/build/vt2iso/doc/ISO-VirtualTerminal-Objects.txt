@@ -455,8 +455,8 @@ The following table shows which objects may be included into which other.
 </td></tr><tr><td>    inputattributes</td><td> Macro
 </td></tr><tr><td>    objectpointer  </td><td> none
 </td></tr><tr><td>    macro          </td><td> none
-</td></tr><tr><td>    auxfunction    </td><td> Outputfield | Outputshape | Picturegraphic, // really NONE
-</td></tr><tr><td>    auxinput       </td><td> Outputfield | Outputshape | Picturegraphic, // really NONE
+</td></tr><tr><td>    auxiliaryfunction </td><td> Outputfield | Outputshape | Picturegraphic, // really NONE
+</td></tr><tr><td>    auxiliaryinput </td><td> Outputfield | Outputshape | Picturegraphic, // really NONE
 </td></tr><tr><td>    objectpool     </td><td> all
 </td></tr><tr><td>    include_object </td><td> none
 </td></tr><tr><td>    include_macro  </td><td> none
