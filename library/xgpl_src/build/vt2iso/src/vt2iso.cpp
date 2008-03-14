@@ -864,9 +864,9 @@ vt2iso_c::init (const char* xmlFile, std::basic_string<char>* dictionary, bool a
       partFile_variables,
       partFile_variables_extern,
       partFile_attributes,
+      partFile_attributes_extern,
       partFile_functions,
-      partFile_defines
-                                                            );
+      partFile_defines);
 #else
   pc_specialParsingPropTag = NULL;
 #endif

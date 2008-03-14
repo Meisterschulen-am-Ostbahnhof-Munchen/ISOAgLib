@@ -91,7 +91,7 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
  reset();
  i_curScanLineY = -1;
 
- std::cout << "Opening " << filename;
+ std::cout << "Opening " << filename << std::endl;
  FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 
  // check the file signature and deduce its format
