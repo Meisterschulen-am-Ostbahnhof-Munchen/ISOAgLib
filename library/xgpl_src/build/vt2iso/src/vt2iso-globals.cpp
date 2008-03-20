@@ -44,7 +44,7 @@ using namespace std;
 
 bool itogeneraloption(uint8_t ui8_options, std::string& c_outputText, uint8_t ui8_numEntries, char* pchar_table )
 {
-  uint16_t pos,idx;
+  uint16_t pos;
   bool b_addPlus = false;
   c_outputText.clear();
 

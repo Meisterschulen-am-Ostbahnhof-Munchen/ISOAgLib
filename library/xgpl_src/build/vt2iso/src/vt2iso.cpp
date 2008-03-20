@@ -4149,7 +4149,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otObjectpointer:
-          if ( (!attrIsGiven [attrValue]) || (strcmp( attrString[attrValue], "65535")==0) )
+          if ( (!attrIsGiven [attrValue]) || (strcmp( attrString[attrValue], "65535")==0) || (strcmp (attrString[attrValue], "") == 0) )
           {
             sprintf (attrString [attrValue], "NULL");
             attrIsGiven [attrValue] = true;
@@ -4675,7 +4675,7 @@ vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName)
 std::string
 vt2iso_c::getObjNameWithPoolIdent (char* pcch_objName)
 {
-  if (!pcch_objName || (strcmp (pcch_objName, "") == 0))
+  if (!pcch_objName || (strcmp (pcch_objName, "") == 0) || (strcmp( pcch_objName, "65535")==0) )
     pcch_objName = "NULL";
 
   std::string objName = std::string (pcch_objName);
