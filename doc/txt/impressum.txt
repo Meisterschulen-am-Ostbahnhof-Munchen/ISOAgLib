@@ -7,14 +7,15 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 \section Impressum Impressum
 <p>
 OSB AG<br>
-Klenzestrasse 38<br>
-D-80469 M&uuml;nchen<br>
-Fon: +49(0) 89/23 88 57-50<br>
-Fax: +49(0) 89/23 88 57-40<br>
+Schwanthalerstr. 69<br>
+D-80336 M&uuml;nchen<br>
+Fon: +49(0) 89/23 88 57-500<br>
+Fax: +49(0) 89/23 88 57-400<br>
 E-Mail: <a href="mailto:info@osb-ag.de">info@osb-ag.de</a><br>
 Internet: www.osb-ag.de<br>
+Vorstandsvorsitzender: Denis Sisic<br>
+Vorstand: Frank Oestmann, Manfred Buffa, Hasan Kurum, Renee B&ouml;ttcher<br>
 Vors. des Aufsichtsrates: Robert Strassmeir<br>
-Vorstand: Denis Sisic, Frank Oestmann, Manfred Buffa, Hasan Kurum<br>
 Handelsregister: Amtsgericht M&uuml;nchen HRB 147 160<br>
 Umsatzsteuer-Identifikationsnummer gem&auml;&szlig; § 27a Umsatzsteuergesetz: DE227364777<br>
 Steuernummer 802/28155<br>
