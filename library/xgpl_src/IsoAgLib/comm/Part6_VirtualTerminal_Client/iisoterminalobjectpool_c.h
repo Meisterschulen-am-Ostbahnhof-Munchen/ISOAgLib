@@ -302,7 +302,6 @@ public:
     uint16_t visible_mask_oid,
     uint16_t visible_skm_oid
   ) {
-    fprintf (stderr, "iisoterminalobjectpool: display_status %d, visible_mask_oid %d, visible_skm_oid %d\n", display_status, visible_mask_oid, visible_skm_oid);
   }
 
   /**
