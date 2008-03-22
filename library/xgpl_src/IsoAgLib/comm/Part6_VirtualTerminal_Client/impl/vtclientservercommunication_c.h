@@ -507,13 +507,12 @@ private:
   void vtOutOfMemory();
   void setObjectPoolUploadingLanguage();
 
-  /** set display state of vt client
-    @param b_isVtStatusMsg true: set display state from VT Status Msg
-                           false: set display state from Display Activation Msg
-    @param ui8_saOrDisplayState if b_isVtStatusMsg == true, it is the sa of the wsm
-                                if b_isVtStatusMsg == false, it is the display state of the Display Activation Msg
-    */
-  void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
+  /** set visibility state of vt client */
+  void setVtVisibility (
+      enum IsoAgLib::iIsoTerminalObjectPool_c::display_status ui8_visible,
+      uint16_t visible_mask_oid,
+      uint16_t visible_skm_oid
+    );
 
   /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
   SINGLETON_PAR_DOT_DEF(mc_data)
@@ -573,6 +572,7 @@ private: // attributes
   IsoTerminalPkg_c mc_data;
 
   vtClientDisplayState_t men_displayState;
+  enum IsoAgLib::iIsoTerminalObjectPool_c::display_status men_standbyVisibility;
 
   #ifdef USE_LIST_FOR_FIFO
   // queueing with list: queue::push <-> list::push_back; queue::front<->list::front; queue::pop<->list::pop_front
