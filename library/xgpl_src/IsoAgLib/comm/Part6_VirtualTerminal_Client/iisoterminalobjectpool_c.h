@@ -298,9 +298,9 @@ public:
     Display Activation Msg or Vt Status Msg with display state change.
    */
   void eventDisplayActivation (
-    enum display_status display_status,
-    uint16_t visible_mask_oid,
-    uint16_t visible_skm_oid
+    enum display_status /* display_status */,
+    uint16_t /* visible_mask_oid */,
+    uint16_t /* visible_skm_oid */
   ) {
   }
 
