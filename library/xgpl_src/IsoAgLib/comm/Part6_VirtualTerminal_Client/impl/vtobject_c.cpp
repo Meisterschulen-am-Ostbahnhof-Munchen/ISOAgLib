@@ -132,8 +132,15 @@ vtObject_c::setAttribute(uint8_t attrID, uint32_t newValue, bool b_enableReplace
 void
 vtObject_c::setAttributeFloat(uint8_t attrID, float newValue, bool b_enableReplaceOfCmd)
 {
+#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   uint32_t ui32_convertedFloat;
   floatVar2LittleEndianStream (&newValue, &ui32_convertedFloat);
+#else
+  uint8_t ui8_convertedFloat[4];
+  floatVar2LittleEndianStream (&newValue, &ui8_convertedFloat);
+  uint32_t ui32_convertedFloat = __IsoAgLib::convertLittleEndianStringUi32(ui8_convertedFloat);
+#endif
+
   setAttribute (attrID, ui32_convertedFloat, b_enableReplaceOfCmd);
 }
 
