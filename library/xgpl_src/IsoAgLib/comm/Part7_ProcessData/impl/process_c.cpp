@@ -176,6 +176,9 @@ void Process_c::close( void ) {
     setAlreadyClosed();
     // unregister from Scheduler_c
     getSchedulerInstance4Comm().unregisterClient( this );
+
+    // unregister ISO monitor list changes
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
   }
 };
 

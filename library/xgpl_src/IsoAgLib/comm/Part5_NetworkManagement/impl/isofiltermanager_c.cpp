@@ -91,7 +91,7 @@ namespace __IsoAgLib {
 /** default destructor which has nothing to do */
 IsoFilterManager_c::~IsoFilterManager_c ()
 {
-//  close();
+  close();
 }
 
 
@@ -125,6 +125,13 @@ bool IsoFilterManager_c::timeEvent( void )
 /** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
 void IsoFilterManager_c::close( void )
 {
+  if ( ! checkAlreadyClosed() ) {
+    // avoid another call
+    setAlreadyClosed();
+
+      // unregister ISO monitor list changes
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
+  }
 }
 
 
@@ -141,6 +148,8 @@ IsoFilterManager_c::init()
   if (!mb_alreadyInitialized)
   { // avoid double initialization. for now now close needed, only init once! ==> see Scheduler_c::startupSystem()
     mb_alreadyInitialized = true;
+    // clear state of b_alreadyClosed, so that close() is called one time
+    clearAlreadyClosed();
     // register to get IsoMonitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
   }
@@ -210,7 +219,7 @@ void
 IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
 #ifdef DEBUG_NETWORK_MANAGEMENT
-  INTERNAL_DEBUG_DEVICE << "[DNN] IsoFilterManager_c: React on IsoItem (" << 
+  INTERNAL_DEBUG_DEVICE << "[DNN] IsoFilterManager_c: React on IsoItem (" <<
     #ifdef SYSTEM_PC
         "0x" << STL_NAMESPACE::hex
     #endif //SYSTEM_PC
