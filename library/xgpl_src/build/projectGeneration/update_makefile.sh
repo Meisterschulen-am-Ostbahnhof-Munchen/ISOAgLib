@@ -815,9 +815,21 @@ create_filelist( )
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $DRIVER_FEATURES"
   fi
 
-  echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -a -not -path '*/xgpl_src/build/*' -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
-  echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT -a -not -path '*/xgpl_src/build/*' -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+  EXCLUDE_PATH_PART="-a -not -path '*/xgpl_src/build/*'"
+  if [ "A" != "A$APP_PATH_EXCLUDE"  ] ; then
+    EXCLUDE_PATH_PART="-and -not \( -path '*/xgpl_src/build/*'"
+    for itemPathExclude in $APP_PATH_EXCLUDE ; do
+      EXCLUDE_PATH_PART="$EXCLUDE_PATH_PART -or -path \"$itemPathExclude\""
+    done
+    EXCLUDE_PATH_PART="$EXCLUDE_PATH_PART \)"
+  fi
+
+  echo "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE" >> .exec.tmp
+  echo "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR" >> .exec.tmp
+
+  ##############################
   # find application files
+  ##############################
   FIRST_LOOP="YES"
   APP_SRC_PART=""
   if [ "A$APP_SRC_FILE" != "A" ] ; then
