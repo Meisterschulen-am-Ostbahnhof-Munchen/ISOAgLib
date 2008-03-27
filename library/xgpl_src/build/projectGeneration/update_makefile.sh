@@ -1750,10 +1750,10 @@ ENDOFHEADERA
   done
 
   LIB_DIR_LINE=""
-  LIB_FILE_LINE=""
+  LIB_FILE_LINE="-lwinmm_@@_-lws2_32_@@_"
 
   if  [ $USE_CAN_DRIVER = "socket_server" ] ; then
-    DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32__ -W -DWIN32 -D_CONSOLE -D_MBCS_@@_-D_Windows_@@_-D_CAN_DRIVER_SOCKET_@@_-D_SYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
+    DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32___@@_-W_@@_-DWIN32_@@_-D_CONSOLE_@@_-D_MBCS_@@_-D_Windows_@@_-DCAN_DRIVER_SOCKET_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
   fi
 
    if [ -n "$USE_WIN32_ADDITIONAL_LIBS" ] ; then
