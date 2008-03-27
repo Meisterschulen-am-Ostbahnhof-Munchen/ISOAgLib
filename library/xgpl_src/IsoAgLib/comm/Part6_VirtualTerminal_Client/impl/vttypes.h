@@ -204,11 +204,11 @@ typedef uint16_t objRange_t;
       } \
     } \
 
-#define MACRO_getBlockfont  \
+#define MACRO_getBlockfont(index)  \
     int32_t xBlock, yBlock; \
-    if (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont != NULL) { \
-      xBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].col * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
-      yBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].row * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
+    if (MACRO_vtObjectTypeA->objectsToFollow [index].vtObjectBlockFont != NULL) { \
+      xBlock = MACRO_vtObjectTypeA->objectsToFollow [index].col * (MACRO_vtObjectTypeA->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
+      yBlock = MACRO_vtObjectTypeA->objectsToFollow [index].row * (MACRO_vtObjectTypeA->objectsToFollow [index].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \
     } else { \
       xBlock = 0; \
       yBlock = 0; \
@@ -236,7 +236,7 @@ typedef uint16_t objRange_t;
       /* write out an object_X_Y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
-      MACRO_getBlockfont  \
+      MACRO_getBlockfont(nrObjectXY)  \
       if ((s_properties.flags & FLAG_ORIGIN_SKM) || p_parentButtonObject) { \
         destMemory [curBytes+2] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) & 0xFF; \
         destMemory [curBytes+3] = ((((MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].x)*factorM)/factorD)+xBlock) >> 8; \
@@ -259,7 +259,7 @@ typedef uint16_t objRange_t;
     int16_t centerX = (vtButtonWidth -  ((opButtonWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtButtonHeight - ((opButtonHeight*factorM)/factorD)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
-      MACRO_getBlockfont  \
+      MACRO_getBlockfont(nrObjectXY)  \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
@@ -278,7 +278,7 @@ typedef uint16_t objRange_t;
     int16_t centerX = (vtSoftKeyWidth -  ((opSoftKeyWidth *factorM)/factorD)) >>1; \
     int16_t centerY = (vtSoftKeyHeight - ((opSoftKeyHeight*factorM)/factorD)) >>1; \
     while ((sourceOffset >= (bytesBefore)) && (sourceOffset < ((bytesBefore)+6U*MACRO_vtObjectTypeA->numberOfObjectsToFollow)) && ((curBytes+6) <= maxBytes)) { \
-      MACRO_getBlockfont  \
+      MACRO_getBlockfont(nrObjectXY)  \
       /* write out an objectX_y pair */ \
       destMemory [curBytes]   = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() & 0xFF; \
       destMemory [curBytes+1] = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObject->getID() >> 8; \
@@ -346,6 +346,20 @@ typedef uint16_t objRange_t;
 
 #define MACRO_getStructOffset(structPointer,structElement) \
   ((uint16_t) ((uint8_t*)(&structPointer->structElement) - ((uint8_t*)structPointer)))
+
+#define MACRO_streamUi16(msg, value)  \
+  (msg)[0] = value & 0xFF;  \
+  (msg)[1] = value >> 8;
+
+#define MACRO_streamId(msg, ds) \
+  if (ds == NULL) { \
+    (msg)[0] = 0xFF;  \
+    (msg)[1] = 0xFF; \
+  } \
+  else {  \
+    (msg)[0] = ds->getID() & 0xFF;  \
+    (msg)[1] = ds->getID() >> 8;  \
+  }
 
 #endif // VTTYPES_H
 

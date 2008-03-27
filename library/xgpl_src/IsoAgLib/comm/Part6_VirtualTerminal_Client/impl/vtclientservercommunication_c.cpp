@@ -1074,7 +1074,6 @@ VtClientServerCommunication_c::processMsg()
       }
       break;
     case 0x09:  // Command: "Command", parameter "Display Activation"
-
     {
       uint8_t arrui8_canData[8];
       uint8_t ui8_dataLen = mc_data.getLen();
