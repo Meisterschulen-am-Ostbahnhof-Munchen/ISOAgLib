@@ -289,7 +289,8 @@ void SetpointRemote_c::requestExact() const
                                                            ProcessCmd_c::exactValue,
                                                            ProcessCmd_c::requestValue);
 
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
+// Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
 }
 /**
   request remote master setpoint - MIN
@@ -301,7 +302,8 @@ void SetpointRemote_c::requestMin() const
                                                            ProcessCmd_c::minValue,
                                                            ProcessCmd_c::requestValue);
 
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
+// Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
 }
 /**
   request remote master setpoint - MAX
@@ -313,7 +315,8 @@ void SetpointRemote_c::requestMax() const
                                                            ProcessCmd_c::maxValue,
                                                            ProcessCmd_c::requestValue);
 
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
+// Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
 }
 /**
   request remote master setpoint - DEFAULT
@@ -324,7 +327,9 @@ void SetpointRemote_c::requestDefault() const
   getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
                                                            ProcessCmd_c::defaultValue,
                                                            ProcessCmd_c::requestValue);
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), 0);
+
+// Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
+  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
 }
 
 /**
