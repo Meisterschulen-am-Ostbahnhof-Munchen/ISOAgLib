@@ -173,7 +173,11 @@ public:
 
   bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
 
-  bool processChildElements(unsigned int& r_objChildPoints, DOMNode *r_n);
+  bool processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n);
+
+  bool processMacroElements(unsigned int& r_objMacros, DOMNode *r_n);
+
+  bool processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded);
 
   void clean_exit(char* error_message = NULL);
 
@@ -217,6 +221,9 @@ public:
 
   signed long int idOrName_toi (char* apc_string, bool ab_isMacro);
 
+  void defaultAttributes (unsigned int a_objType);
+
+
 private:
   signed int strlenUnescaped (const char* pcc_string);
 
@@ -225,8 +232,6 @@ private:
   signed long int getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
 
   signed long int setID (const char* objName, unsigned int wishID);
-
-  void defaultAttributes (unsigned int a_objType);
 
   void convertIdReferencesToNameReferences();
 

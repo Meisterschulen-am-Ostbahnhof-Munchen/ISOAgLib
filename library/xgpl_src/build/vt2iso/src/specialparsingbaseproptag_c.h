@@ -83,7 +83,7 @@ class SpecialParsingBasePropTag_c
     * @param aui_objectType object type of pNode
     * @param rpcch_objName pointer to object name character string
   */
-  virtual bool parseUnknownTag (DOMNode* ap_Node, unsigned int aui_objectType, char* rpcch_objName) = 0;
+  virtual bool parseUnknownTag (DOMNode* ap_Node, unsigned int aui_objectType, char* rpcch_objName, vt2iso_c* pc_vt2iso) = 0;
 
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return ui8_objType; }

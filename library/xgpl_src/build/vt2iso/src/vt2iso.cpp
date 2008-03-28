@@ -1448,14 +1448,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   char *node_name = XMLString::transcode(n->getNodeName());
 
   // all possible values of the objects
-  signed long int objChildID=0;
-  unsigned int objChildX=0;
-  unsigned int objChildY=0;
-  bool is_objChildID=false; //init for happy compiler
-  bool is_objChildX=false; //init for happy compiler
-  bool is_objChildY=false; //init for happy compiler
-  unsigned int objBlockRow=0; //init for happy compiler
-  unsigned int objBlockCol=0; //init for happy compiler
   unsigned int commandType=0; //init for happy compiler
   unsigned int objChildObjects=0; //init for happy compiler
 
@@ -1486,7 +1478,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   char objChildName [stringLength+1]; bool is_objChildName=false; //init for happy compiler
   char tempString [stringLength+1]; tempString [stringLength+1-1] = 0x00;
   char tempString2 [stringLength+1]; tempString2 [stringLength+1-1] = 0x00;
-  char objBlockFont [stringLength+1];
   char recursePass [stringLength+1];
   const char* rpcc_inKey=NULL;
   const char* rpcc_inButton=NULL;
@@ -1659,7 +1650,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
     {
-      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName))
+      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName, this))
         return false;
     }
 
@@ -2038,345 +2029,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       if (objHasArrayObjectXY || objHasArrayObject)
       {
         // Process all Child-Elements
-        bool firstElement = true;
-        objChildObjects = 0;
-        for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-        {   // if NOT Macro insert as normal object!
-          if (  (child->getNodeType() == DOMNode::ELEMENT_NODE) &&
-                 !((0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro])) ||
-                 (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro])) ||
-                 (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage]))
-                  )
-             )
-          {
-            autoDetectLanguage (child);
-
-            bool b_foundLanguageAttribute=false; // default: none found in this element!
-
-            if ( (strlen (spc_autoLanguage) > 0) &&
-                  (  (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otOutputstring])) ||
-                  (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otStringvariable]))  )
-               )
-            { // use default language
-              b_foundLanguageAttribute = true;
-              strcpy (attr_value, spc_autoLanguage);
-            }
-
-            if (child->hasAttributes())
-            { // see where there may be a LANGUAGE= attribute
-              pAttributes = patched_getAttributes(child);
-              int nSize = pAttributes->getLength();
-              for (int i=0; i<nSize; ++i) {
-                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                utf16convert ((char *)pAttributeNode->getValue(), attr_value2, 1024);
-
-                if (strncmp (attr_name, "language", stringLength) == 0)
-                {
-                  strcpy (attr_value, attr_value2);
-                  b_foundLanguageAttribute = true;
-                  break;
-                }
-              }
-            }
-
-            static char duplicateForLanguagesChild[(136*2)+1]; // max for all languages
-            char* dupLangNextChild=NULL;
-            bool b_dupModeChild=false;
-
-            /// Duplicate Loop here also!!!!!
-            if (b_foundLanguageAttribute && (strlen (attr_value) > 0) && (strlen (attr_value) != 2))
-            { // "*" or multiple languages, so we need to loop!
-              if (strcmp (attr_value, "*") == 0)
-              { // build all languages we have defined in the working set
-                duplicateForLanguagesChild [0] = 0x00;
-                for (unsigned int ui=0; ui<ui_languages; ui++)
-                {
-                  strcat (duplicateForLanguagesChild, arrs_language [ui].code);
-                }
-              }
-              else
-              {
-                strcpy (duplicateForLanguagesChild, attr_value);
-              }
-              b_dupModeChild=true;
-              dupLangNextChild=duplicateForLanguagesChild;
-            }
-
-            do // language duplication loop!
-            {
-              if (b_dupModeChild)
-              { // "fake-copy" next language to "attrString [attrLanguage]"
-                if (*dupLangNextChild == '+') dupLangNextChild++; // skip "+"s!
-                attr_value[0] = *dupLangNextChild++;
-                attr_value[1] = *dupLangNextChild++;
-                attr_value[2] = 0x00;
-                if (*dupLangNextChild == '+') dupLangNextChild++; // skip "+"s!
-              }
-
-              // Check if it's an ALTERNATIVE language or NO language at all, then DO NOT add this as child!
-              unsigned int childLang=0;
-              bool b_addAsChild=true;
-
-              if (b_foundLanguageAttribute && (strlen (attr_value) > 0))
-              {
-                if (ui_languages > 0)
-                {
-                  for (unsigned int curChildLang=0; curChildLang<ui_languages; curChildLang++)
-                  {
-                    if (strncmp (attr_value, arrs_language[curChildLang].code, stringLength) == 0)
-                    {
-                      childLang = curChildLang;
-                    }
-                  }
-                  if (strncmp (attr_value, arrs_language[0].code, stringLength) != 0)
-                  {
-                    b_addAsChild = false;
-                  }
-                }
-              }
-
-              if (b_addAsChild)
-              {
-                char objNameWithoutPoolIdent[stringLength+1];
-                // get NAME and POS_X and POS_Y attributes out of child
-                if(child->hasAttributes()) {
-                  // parse through all attributes
-                  pAttributes = patched_getAttributes(child);
-                  int nSize = pAttributes->getLength();
-
-                  is_objChildName = false; objChildName [stringLength+1-1] = 0x00;
-                  is_objChildID = false;
-                  is_objChildX = false;
-                  is_objChildY = false;
-
-                  strcpy (objBlockFont, "NULL");
-                  objBlockRow = 0;
-                  objBlockCol = 0;
-
-                  for (int i=0; i<nSize; ++i)
-                  {
-                    DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                    utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                    utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-                    // Get NAME and POS_X and POS_Y directly
-                    if (strncmp (attr_name, "name", stringLength) == 0) {
-                      strncpy (objNameWithoutPoolIdent, attr_value, stringLength);
-                      sprintf (objChildName, "%s%s", pcch_poolIdent, attr_value);
-                      is_objChildName = true;
-                      continue;
-                    }
-                    if (strncmp (attr_name, "id", stringLength) == 0) {
-                      objChildID = atoi (attr_value);
-                      is_objChildID = true;
-                      continue;
-                    }
-                    if (strncmp (attr_name, "pos_x", stringLength) == 0) {
-                      objChildX = atoi (attr_value);
-                      is_objChildX = true;
-                      continue;
-                    }
-                    if (strncmp (attr_name, "pos_y", stringLength) == 0) {
-                      objChildY = atoi (attr_value);
-                      is_objChildY = true;
-                      continue;
-                    }
-                    if (strncmp (attr_name, "block_font", stringLength) == 0) {
-                      sprintf (objBlockFont, "&iVtObject%s", pcch_poolIdent);
-                      strncat (objBlockFont, attr_value, stringLength-9);
-                      continue;
-                    }
-                    if (strncmp (attr_name, "block_row", stringLength) == 0) {
-                      objBlockRow = atoi (attr_value);
-                      continue;
-                    }
-                    if (strncmp (attr_name, "block_col", stringLength) == 0) {
-                      objBlockCol = atoi (attr_value);
-                      continue;
-                    }
-                  }
-                }
-
-                if (is_objChildName == false)
-                {
-                  // create auto-named NAME attribute
-                  sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
-                  ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
-                  // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
-                  sprintf (objChildName,  "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
-                  objNextUnnamedName++;
-                  is_objChildName = true;
-                }
-
-                // give him an ID, although not necessary now...
-                objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
-
-                if (objChildID == -1)
-                {
-                  std::cout << "Error in getID() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
-                  return false;
-                }
-
-                if (firstElement) {
-                  if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
-                  else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
-                } else {
-                  fprintf (partFile_attributes, ", ");
-                }
-                if (xyNeeded) {
-                  if (!(is_objChildX && is_objChildY)) {
-                    std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> " << objChildName << "! STOPPING PARSER! bye.\n\n";
-                    return false;
-                  }
-                  fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
-                } else {
-                  // Added this if statement to account for InputList/OutputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
-                  // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
-                  if (is_objChildID && (objChildID == 65535))
-                  {
-                    fprintf (partFile_attributes, "{NULL}");
-                  }
-                  else
-                  {
-                    fprintf (partFile_attributes, "{&iVtObject%s}", objChildName);
-                  }
-                }
-                objChildObjects++;
-                firstElement = false;
-              }
-              else
-              { // !b_addAsChild ==> so manually write the "setOriginXXX" call !!
-                /// Add implicit Button/Key includement
-                if (rpcc_inButton)
-                {
-                  fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName, childLang, rpcc_inButton);
-                }
-                if (rpcc_inKey)
-                {
-                  fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName, childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
-                }
-              }
-            } while (b_dupModeChild && (*dupLangNextChild != 0x00));
-            /// END Language Dup Loop
-          }
-        }
-        // all child-elements processed, now:
-        // special treatment for inputlist/outputlist with NULL objects
-        if (((objType == otInputlist) || (objType == otOutputlist)) && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
-        {
-          //only some items are NULL objects which were not counted in objChildObjects
-          if (objChildObjects>0)
-          {
-            for (uint16_t ui_leftChildObjects = objChildObjects; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
-            {
-              if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
-              fprintf (partFile_attributes, "{NULL}");
-            }
-            objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
-          }
-          else {
-            // no child-element at all in the inputlist/outputlist (all items as NULL objects)
-            // fill the reference-list with {NULL}-elements --> so they could be replaced during runtime with NOT NULL objects
-            if (objChildObjects == 0 && atoi(attrString [attrNumber_of_items]) > 0)
-            {
-              // objChildObjects has to be set to number_of_items otherwise
-              // it is set to 0 in the attributes of the inputlist/output
-              objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
-              // create for all number_of_items a no-item placeholder
-              fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
-              for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
-              {
-                fprintf (partFile_attributes, "{NULL}");
-                if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
-              }
-              fprintf (partFile_attributes, "};\n");
-            }
-          }
-        }
-        if (firstElement == false)
-          fprintf (partFile_attributes, "};\n");
+        if (!processChildElements (objChildObjects, n, xyNeeded))
+          return false;
       }
 
       // ### Print out EVENT_MACRO array
       if (objHasArrayEventMacro)
-      {
-        // Process all Child-Elements
-        bool firstElement = true;
-        objChildMacros = 0;
-        for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
-        {
-          if ( (child->getNodeType() == DOMNode::ELEMENT_NODE)
-                && ( (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro]))
-                || (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro]))))
-          {
-            // get 'event=' and 'name=' out of child
-            if(child->hasAttributes()) {
-              // parse through all attributes
-              pAttributes = patched_getAttributes(child);
-              int nSize = pAttributes->getLength();
-
-              attrString [attrEvent] [stringLength+1-1] = 0x00; attrIsGiven [attrEvent] = false;
-              objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
-              is_objChildID = false;
-
-              for(int i=0;i<nSize;++i) {
-                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
-                utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
-
-                if (strncmp (attr_name, "event", stringLength) == 0) {
-                  strncpy (attrString [attrEvent], attr_value, stringLength);
-                  attrIsGiven [attrEvent] = true;
-                }
-                if (strncmp (attr_name, "name", stringLength) == 0) {
-                  sprintf (objChildName, "%s%s", pcch_poolIdent, attr_value);
-                  is_objChildName = true;
-                }
-                if (strncmp (attr_name, "id", stringLength) == 0) {
-                  objChildID = atoi (attr_value);
-                  is_objChildID = true;
-                }
-              }
-            }
-            if (is_objChildName == false)
-            {
-              // create auto-named NAME attribute
-              sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
-              ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
-              // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
-              sprintf (objChildName, "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
-              objNextUnnamedName++;
-              is_objChildName = true;
-            }
-            // give him an ID, although not necessary now...
-            objChildID = getID (objChildName, true, is_objChildID, objChildID);
-
-            if (objChildID == -1)
-            {
-              std::cout << "Error in getID()  from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
-              return false;
-            }
-
-            if (firstElement) {
-              // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
-              // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
-              fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
-            } else {
-              fprintf (partFile_attributes, ", ");
-            }
-            if (!(attrIsGiven [attrEvent])) {
-              std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-              return false;
-            }
-            //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-            fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventtoi(attrString [attrEvent]), objChildName);
-            objChildMacros++;
-            firstElement = false;
-          }
-        }
-        if (firstElement == false)
-          fprintf (partFile_attributes, "};\n");
+      { // Process all macro-Elements
+        if (!processMacroElements (objChildMacros, n))
+          return false;
       }
 
       //****************************************************************************************************************************************
@@ -3184,7 +2845,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       // ### Print out point array for a Polygon Object
       if (objHasArrayPoints)
       {
-        if ( !processChildElements(objChildPoints, n) )
+        if ( !processPointElements(objChildPoints, n) )
           return false;
       }
       //*************************************************************************************************************************************************************
@@ -4361,7 +4022,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 }
 
 
-bool vt2iso_c::processChildElements(unsigned int& r_objChildPoints, DOMNode *r_n)
+bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n)
 { // Process all Child-Elements
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
@@ -4433,6 +4094,396 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildPoints, DOMNode *r_n
     sprintf (attrString [attrNumber_of_points], "%i", r_objChildPoints);
     if (!attrIsGiven [attrNumber_of_points])
       attrIsGiven [attrNumber_of_points] = true;
+  }
+  if (firstElement == false)
+    fprintf (partFile_attributes, "};\n");
+
+  return true;
+}
+
+
+bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n)
+{
+  DOMNode *child;
+  DOMNamedNodeMap *pAttributes;
+  char *node_name = XMLString::transcode(r_n->getNodeName());
+
+  char objChildName [stringLength+1];
+  bool is_objChildName=false;
+  bool is_objChildID=false;
+  signed long int objChildID=0;
+
+  bool firstElement = true;
+  r_objMacros = 0;
+
+  for (child = r_n->getFirstChild(); child != 0; child=child->getNextSibling())
+  {
+    if ( (child->getNodeType() == DOMNode::ELEMENT_NODE)
+          && ( (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro]))
+          || (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro]))))
+    {
+            // get 'event=' and 'name=' out of child
+      if(child->hasAttributes())
+      {
+        // parse through all attributes
+        pAttributes = patched_getAttributes(child);
+        int nSize = pAttributes->getLength();
+
+        attrString [attrEvent] [stringLength+1-1] = 0x00; attrIsGiven [attrEvent] = false;
+        objChildName [stringLength+1-1] = 0x00; is_objChildName = false;
+        is_objChildID = false;
+
+        for(int i=0;i<nSize;++i)
+        {
+          DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+          utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+          if (strncmp (attr_name, "event", stringLength) == 0)
+          {
+            strncpy (attrString [attrEvent], attr_value, stringLength);
+            attrIsGiven [attrEvent] = true;
+          }
+          if (strncmp (attr_name, "name", stringLength) == 0)
+          {
+            sprintf (objChildName, "%s%s", pcch_poolIdent, attr_value);
+            is_objChildName = true;
+          }
+          if (strncmp (attr_name, "id", stringLength) == 0)
+          {
+            objChildID = atoi (attr_value);
+            is_objChildID = true;
+          }
+        }
+      }
+      if (is_objChildName == false)
+      {
+              // create auto-named NAME attribute
+        sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
+        ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+              // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
+        sprintf (objChildName, "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
+        objNextUnnamedName++;
+        is_objChildName = true;
+      }
+      // give him an ID, although not necessary now...
+      objChildID = getID (objChildName, true, is_objChildID, objChildID);
+
+      if (objChildID == -1)
+      {
+        std::cout << "Error in getID()  from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
+        return false;
+      }
+
+      if (firstElement) {
+              // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
+              // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
+        fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
+      } else {
+        fprintf (partFile_attributes, ", ");
+      }
+      if (!(attrIsGiven [attrEvent])) {
+        std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
+        return false;
+      }
+            //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+      fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventtoi(attrString [attrEvent]), objChildName);
+      r_objMacros++;
+      firstElement = false;
+    }
+  }
+  if (firstElement == false)
+    fprintf (partFile_attributes, "};\n");
+
+  return true;
+}
+
+
+bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded)
+{
+  DOMNode *child;
+  DOMNamedNodeMap *pAttributes;
+  char *node_name = XMLString::transcode(r_n->getNodeName());
+
+  char objChildName [stringLength+1];
+  bool is_objChildName=false;
+  bool is_objChildID=false;
+  signed long int objChildID=0;
+  unsigned int objChildX=0;
+  unsigned int objChildY=0;
+  bool is_objChildX=false;
+  bool is_objChildY=false;
+  unsigned int objBlockRow=0;
+  unsigned int objBlockCol=0;
+  char objBlockFont [stringLength+1];
+  const char* rpcc_inButton=NULL;
+  const char* rpcc_inKey=NULL;
+  unsigned int objChildObjects=0; //init for happy compiler
+
+  bool firstElement = true;
+  r_objChildren = 0;
+  for (child = r_n->getFirstChild(); child != 0; child=child->getNextSibling())
+  {   // if NOT Macro insert as normal object!
+    if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) &&
+          !((0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otMacro])) ||
+          (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otIncludemacro])) ||
+          (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otLanguage]))
+           )
+       )
+    {
+      autoDetectLanguage (child);
+
+      bool b_foundLanguageAttribute=false; // default: none found in this element!
+      if ( (strlen (spc_autoLanguage) > 0) &&
+            (  (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otOutputstring])) ||
+            (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otStringvariable]))  )
+         )
+      { // use default language
+        b_foundLanguageAttribute = true;
+        strcpy (attr_value, spc_autoLanguage);
+      }
+
+      if (child->hasAttributes())
+      { // see where there may be a LANGUAGE= attribute
+        pAttributes = patched_getAttributes(child);
+        int nSize = pAttributes->getLength();
+        for (int i=0; i<nSize; ++i) {
+          DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+          utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+          utf16convert ((char *)pAttributeNode->getValue(), attr_value2, 1024);
+
+          if (strncmp (attr_name, "language", stringLength) == 0)
+          {
+            strcpy (attr_value, attr_value2);
+            b_foundLanguageAttribute = true;
+            break;
+          }
+        }
+      }
+
+      static char duplicateForLanguagesChild[(136*2)+1]; // max for all languages
+      char* dupLangNextChild=NULL;
+      bool b_dupModeChild=false;
+
+      /// Duplicate Loop here also!!!!!
+      if (b_foundLanguageAttribute && (strlen (attr_value) > 0) && (strlen (attr_value) != 2))
+      { // "*" or multiple languages, so we need to loop!
+        if (strcmp (attr_value, "*") == 0)
+        { // build all languages we have defined in the working set
+          duplicateForLanguagesChild [0] = 0x00;
+          for (unsigned int ui=0; ui<ui_languages; ui++)
+          {
+            strcat (duplicateForLanguagesChild, arrs_language [ui].code);
+          }
+        }
+        else
+        {
+          strcpy (duplicateForLanguagesChild, attr_value);
+        }
+        b_dupModeChild=true;
+        dupLangNextChild=duplicateForLanguagesChild;
+      }
+
+      do // language duplication loop!
+      {
+        if (b_dupModeChild)
+        { // "fake-copy" next language to "attrString [attrLanguage]"
+          if (*dupLangNextChild == '+') dupLangNextChild++; // skip "+"s!
+          attr_value[0] = *dupLangNextChild++;
+          attr_value[1] = *dupLangNextChild++;
+          attr_value[2] = 0x00;
+          if (*dupLangNextChild == '+') dupLangNextChild++; // skip "+"s!
+        }
+
+        // Check if it's an ALTERNATIVE language or NO language at all, then DO NOT add this as child!
+        unsigned int childLang=0;
+        bool b_addAsChild=true;
+
+        if (b_foundLanguageAttribute && (strlen (attr_value) > 0))
+        {
+          if (ui_languages > 0)
+          {
+            for (unsigned int curChildLang=0; curChildLang<ui_languages; curChildLang++)
+            {
+              if (strncmp (attr_value, arrs_language[curChildLang].code, stringLength) == 0)
+              {
+                childLang = curChildLang;
+              }
+            }
+            if (strncmp (attr_value, arrs_language[0].code, stringLength) != 0)
+            {
+              b_addAsChild = false;
+            }
+          }
+        }
+
+        if (b_addAsChild)
+        {
+          char objNameWithoutPoolIdent[stringLength+1];
+          // get NAME and POS_X and POS_Y attributes out of child
+          if(child->hasAttributes())
+          { // parse through all attributes
+            pAttributes = patched_getAttributes(child);
+            int nSize = pAttributes->getLength();
+
+            is_objChildName = false; objChildName [stringLength+1-1] = 0x00;
+            is_objChildID = false;
+            is_objChildX = false;
+            is_objChildY = false;
+
+            strcpy (objBlockFont, "NULL");
+            objBlockRow = 0;
+            objBlockCol = 0;
+
+            for (int i=0; i<nSize; ++i)
+            {
+              DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+              utf16convert ((char *)pAttributeNode->getName(), attr_name, 1024);
+              utf16convert ((char *)pAttributeNode->getValue(), attr_value, 1024);
+
+              // Get NAME and POS_X and POS_Y directly
+              if (strncmp (attr_name, "name", stringLength) == 0)
+              {
+                strncpy (objNameWithoutPoolIdent, attr_value, stringLength);
+                sprintf (objChildName, "%s%s", pcch_poolIdent, attr_value);
+                is_objChildName = true;
+                continue;
+              }
+              if (strncmp (attr_name, "id", stringLength) == 0)
+              {
+                objChildID = atoi (attr_value);
+                is_objChildID = true;
+                continue;
+              }
+              if (strncmp (attr_name, "pos_x", stringLength) == 0)
+              {
+                objChildX = atoi (attr_value);
+                is_objChildX = true;
+                continue;
+              }
+              if (strncmp (attr_name, "pos_y", stringLength) == 0)
+              {
+                objChildY = atoi (attr_value);
+                is_objChildY = true;
+                continue;
+              }
+              if (strncmp (attr_name, "block_font", stringLength) == 0)
+              {
+                sprintf (objBlockFont, "&iVtObject%s", pcch_poolIdent);
+                strncat (objBlockFont, attr_value, stringLength-9);
+                continue;
+              }
+              if (strncmp (attr_name, "block_row", stringLength) == 0)
+              {
+                objBlockRow = atoi (attr_value);
+                continue;
+              }
+              if (strncmp (attr_name, "block_col", stringLength) == 0)
+              {
+                objBlockCol = atoi (attr_value);
+                continue;
+              }
+            }
+          }
+
+          if (is_objChildName == false)
+          { // create auto-named NAME attribute
+            sprintf (objChildName, "Unnamed%d", objNextUnnamedName);
+            ((DOMElement *)child)->setAttribute (X("name"), X(objChildName));
+            // add pool_ident to the name for getting an ID -> if child gets processed, its name gets the pool_ident added
+            sprintf (objChildName,  "%sUnnamed%d", pcch_poolIdent, objNextUnnamedName);
+            objNextUnnamedName++;
+            is_objChildName = true;
+          }
+
+          // give him an ID, although not necessary now...
+          objChildID = getID (objChildName, false /* assumption: not a macro here */, is_objChildID, objChildID);
+
+          if (objChildID == -1)
+          {
+            std::cout << "Error in getID() from object <" << node_name << "> '" << objName << "'! STOP PARSER! bye.\n\n";
+            return false;
+          }
+
+          if (firstElement)
+          {
+            if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
+            else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+          }
+          else
+          {
+            fprintf (partFile_attributes, ", ");
+          }
+          if (xyNeeded)
+          {
+            if (!(is_objChildX && is_objChildY))
+            {
+              std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> " << objChildName << "! STOPPING PARSER! bye.\n\n";
+              return false;
+            }
+            fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
+          }
+          else
+          { // Added this if statement to account for InputList/OutputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
+            // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
+            if (is_objChildID && (objChildID == 65535))
+            {
+              fprintf (partFile_attributes, "{NULL}");
+            }
+            else
+            {
+              fprintf (partFile_attributes, "{&iVtObject%s}", objChildName);
+            }
+          }
+          r_objChildren++;
+          firstElement = false;
+        }
+        else
+        { // !b_addAsChild ==> so manually write the "setOriginXXX" call !!
+          /// Add implicit Button/Key includement
+          if (rpcc_inButton)
+          {
+            fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName, childLang, rpcc_inButton);
+          }
+          if (rpcc_inKey)
+          {
+            fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName, childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
+          }
+        }
+      } while (b_dupModeChild && (*dupLangNextChild != 0x00));
+      /// END Language Dup Loop
+    }
+  }
+  // all child-elements processed, now:
+  // special treatment for inputlist/outputlist with NULL objects
+  if (((objType == otInputlist) || (objType == otOutputlist)) && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
+  { //only some items are NULL objects which were not counted in objChildObjects
+    if (objChildObjects>0)
+    {
+      for (uint16_t ui_leftChildObjects = objChildObjects; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
+      {
+        if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
+        fprintf (partFile_attributes, "{NULL}");
+      }
+      objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
+    }
+    else
+    { // no child-element at all in the inputlist/outputlist (all items as NULL objects)
+      // fill the reference-list with {NULL}-elements --> so they could be replaced during runtime with NOT NULL objects
+      if (objChildObjects == 0 && atoi(attrString [attrNumber_of_items]) > 0)
+      { // objChildObjects has to be set to number_of_items otherwise
+        // it is set to 0 in the attributes of the inputlist/output
+        objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
+        // create for all number_of_items a no-item placeholder
+        fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+        for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
+        {
+          fprintf (partFile_attributes, "{NULL}");
+          if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
+        }
+        fprintf (partFile_attributes, "};\n");
+      }
+    }
   }
   if (firstElement == false)
     fprintf (partFile_attributes, "};\n");
