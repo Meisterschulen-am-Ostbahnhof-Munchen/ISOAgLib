@@ -786,3 +786,10 @@ bool itobuttonoptions(uint8_t ui8_options, string& c_outputText)
 {
   return itogeneraloption(ui8_options, c_outputText, maxButtonOptions, &buttonOptionsTable[0][0]);
 }
+
+bool itomacrocommand(uint8_t ui8_command, string& c_outputText)
+{
+  return itogeneraloption(ui8_command, c_outputText, maxCommandsToCompare, &ctCommandTable[0][0]);
+}
+
+
