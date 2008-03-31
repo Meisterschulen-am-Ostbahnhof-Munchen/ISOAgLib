@@ -4218,9 +4218,8 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
   char objBlockFont [stringLength+1];
   const char* rpcc_inButton=NULL;
   const char* rpcc_inKey=NULL;
-  unsigned int objChildObjects=0; //init for happy compiler
-
   bool firstElement = true;
+
   r_objChildren = 0;
   for (child = r_n->getFirstChild(); child != 0; child=child->getNextSibling())
   {   // if NOT Macro insert as normal object!
@@ -4456,24 +4455,24 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
   }
   // all child-elements processed, now:
   // special treatment for inputlist/outputlist with NULL objects
-  if (((objType == otInputlist) || (objType == otOutputlist)) && objChildObjects < (uint16_t)atoi(attrString [attrNumber_of_items]))
+  if (((objType == otInputlist) || (objType == otOutputlist)) && r_objChildren < (uint16_t)atoi(attrString [attrNumber_of_items]))
   { //only some items are NULL objects which were not counted in objChildObjects
-    if (objChildObjects>0)
+    if (r_objChildren>0)
     {
-      for (uint16_t ui_leftChildObjects = objChildObjects; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
+      for (uint16_t ui_leftChildObjects = r_objChildren; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
       {
         if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
         fprintf (partFile_attributes, "{NULL}");
       }
-      objChildObjects=(uint16_t)atoi(attrString [attrNumber_of_items]);
+      r_objChildren=(uint16_t)atoi(attrString [attrNumber_of_items]);
     }
     else
     { // no child-element at all in the inputlist/outputlist (all items as NULL objects)
       // fill the reference-list with {NULL}-elements --> so they could be replaced during runtime with NOT NULL objects
-      if (objChildObjects == 0 && atoi(attrString [attrNumber_of_items]) > 0)
+      if (r_objChildren == 0 && atoi(attrString [attrNumber_of_items]) > 0)
       { // objChildObjects has to be set to number_of_items otherwise
         // it is set to 0 in the attributes of the inputlist/output
-        objChildObjects = (uint16_t)atoi(attrString [attrNumber_of_items]);
+        r_objChildren = (uint16_t)atoi(attrString [attrNumber_of_items]);
         // create for all number_of_items a no-item placeholder
         fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
         for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
