@@ -622,7 +622,7 @@ char buttonOptionsTable [maxButtonOptions] [stringLength+1] = {
 };
 
 char inputobjectOptionsTable [maxInputObjectOptionsTable] [stringLength+1] = {
-  "enable",
+  "enabled",
   "live_editing"
 };
 
