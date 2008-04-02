@@ -1792,6 +1792,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     bool objHasArrayPoints = false;
+    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
+    {
+      objHasArrayPoints = pc_specialParsingPropTag->objHasArrayPoints (objType);
+    }
     switch (objType)
     {
       case otPolygon:
