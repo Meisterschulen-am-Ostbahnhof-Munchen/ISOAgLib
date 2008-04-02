@@ -1491,7 +1491,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
   if (!n)
   {
-    printf ("processElement(): DOMNode is invalid! STOP PARSER! bye.\n\n");
+    printf ("processElement(): DOMNode is ! STOP PARSER! bye.\n\n");
     return false;
   }
 
@@ -1605,6 +1605,19 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       std::cout << "\n\n";
       return false;
     }
+//     else if ( objType >= maxObjectTypes && ( !b_disableContainmentRules && ( ( (uint64_t(1)<<objType) & ombType) == 0 )) )
+//     {
+//       // ERROR: Unallowed <TAG> here?!
+//       std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << " 'objType: "
+//                 << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
+//       for (int j=0; j<maxObjectTypesToCompare; j++) {
+//         if ((uint64_t(1)<<j) & ombType) {
+//           std::cout << " <" << otAdditionalCompTable [j] << ">  ";
+//         }
+//       }
+//       std::cout << "\n\n";
+//       return false;
+//     }
 
     /// if USE_SPECIAL_PARSING is defined, check here if found tag is valid at this position
     bool b_unknownTag = false;
@@ -4026,7 +4039,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 }
 
 
-bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n)
+bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n, bool ab_outputEnabled)
 { // Process all Child-Elements
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
@@ -4070,10 +4083,12 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
         }
       }
 
-      if (firstElement) {
-        fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
-      } else {
-        fprintf (partFile_attributes, ", ");
+      if (ab_outputEnabled) {
+        if (firstElement) {
+            fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName);
+        } else {
+          fprintf (partFile_attributes, ", ");
+        }
       }
       if (!(attrIsGiven [attrPos_x])) {
         std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...>  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
@@ -4083,7 +4098,10 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
         std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...>  from object <" << node_name << "> '" << objName << "'! STOPPING PARSER! bye.\n\n";
         return false;
       }
-      fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
+
+      if (ab_outputEnabled)
+        fprintf (partFile_attributes, "{%d, %d}", atoi(attrString [attrPos_x]), atoi(attrString [attrPos_y]));
+
       r_objChildPoints++;
       firstElement = false;
     }
@@ -4099,14 +4117,14 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
     if (!attrIsGiven [attrNumber_of_points])
       attrIsGiven [attrNumber_of_points] = true;
   }
-  if (firstElement == false)
+  if (ab_outputEnabled && firstElement == false)
     fprintf (partFile_attributes, "};\n");
 
   return true;
 }
 
 
-bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n)
+bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, bool ab_outputEnabled)
 {
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
@@ -4179,31 +4197,35 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n)
         return false;
       }
 
-      if (firstElement) {
-              // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
-              // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
-        fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
-      } else {
-        fprintf (partFile_attributes, ", ");
+      if (ab_outputEnabled) {
+        if (firstElement) {
+                // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
+                // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
+          fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName);
+        } else {
+          fprintf (partFile_attributes, ", ");
+        }
       }
       if (!(attrIsGiven [attrEvent])) {
         std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
         return false;
       }
             //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-      fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventtoi(attrString [attrEvent]), objChildName);
+      if (ab_outputEnabled)
+        fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventtoi(attrString [attrEvent]), objChildName);
+
       r_objMacros++;
       firstElement = false;
     }
   }
-  if (firstElement == false)
+  if (ab_outputEnabled && firstElement == false)
     fprintf (partFile_attributes, "};\n");
 
   return true;
 }
 
 
-bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded)
+bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded, bool ab_outputEnabled)
 {
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
@@ -4408,14 +4430,17 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
             return false;
           }
 
-          if (firstElement)
+          if (ab_outputEnabled)
           {
-            if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
-            else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
-          }
-          else
-          {
-            fprintf (partFile_attributes, ", ");
+            if (firstElement)
+            {
+              if (xyNeeded) fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName);
+              else          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+            }
+            else
+            {
+              fprintf (partFile_attributes, ", ");
+            }
           }
           if (xyNeeded)
           {
@@ -4424,18 +4449,23 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
               std::cout << "\n\npos_x AND pos_y ATTRIBUTES NEEDED IN CHILD-OBJECT OF <"<< node_name <<"> " << objChildName << "! STOPPING PARSER! bye.\n\n";
               return false;
             }
-            fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
+
+            if (ab_outputEnabled)
+              fprintf (partFile_attributes, "{&iVtObject%s, %d, %d, %s ,%d, %d}", objChildName, objChildX, objChildY, objBlockFont, objBlockRow, objBlockCol);
           }
           else
           { // Added this if statement to account for InputList/OutputList objects who might have NULL Object IDs in their list of objects. (Which is legal per the standard!)
             // Instead of inserting a faulty object name, just insert NULL into the array. -BAC 07-Jan-2005
-            if (is_objChildID && (objChildID == 65535))
+            if (ab_outputEnabled)
             {
-              fprintf (partFile_attributes, "{NULL}");
-            }
-            else
-            {
-              fprintf (partFile_attributes, "{&iVtObject%s}", objChildName);
+              if (is_objChildID && (objChildID == 65535))
+              {
+                fprintf (partFile_attributes, "{NULL}");
+              }
+              else
+              {
+                fprintf (partFile_attributes, "{&iVtObject%s}", objChildName);
+              }
             }
           }
           r_objChildren++;
@@ -4444,13 +4474,16 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
         else
         { // !b_addAsChild ==> so manually write the "setOriginXXX" call !!
           /// Add implicit Button/Key includement
-          if (rpcc_inButton)
+          if (ab_outputEnabled)
           {
-            fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName, childLang, rpcc_inButton);
-          }
-          if (rpcc_inKey)
-          {
-            fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName, childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
+            if (rpcc_inButton)
+            {
+              fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName, childLang, rpcc_inButton);
+            }
+            if (rpcc_inKey)
+            {
+              fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName, childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
+            }
           }
         }
       } while (b_dupModeChild && (*dupLangNextChild != 0x00));
@@ -4463,10 +4496,12 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
   { //only some items are NULL objects which were not counted in objChildObjects
     if (r_objChildren>0)
     {
-      for (uint16_t ui_leftChildObjects = r_objChildren; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
-      {
-        if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
-        fprintf (partFile_attributes, "{NULL}");
+      if (ab_outputEnabled) {
+        for (uint16_t ui_leftChildObjects = r_objChildren; ui_leftChildObjects<(uint16_t)atoi(attrString [attrNumber_of_items]); ui_leftChildObjects++)
+        {
+          if (ui_leftChildObjects < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
+            fprintf (partFile_attributes, "{NULL}");
+        }
       }
       r_objChildren=(uint16_t)atoi(attrString [attrNumber_of_items]);
     }
@@ -4478,17 +4513,19 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
         // it is set to 0 in the attributes of the inputlist/output
         r_objChildren = (uint16_t)atoi(attrString [attrNumber_of_items]);
         // create for all number_of_items a no-item placeholder
-        fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
-        for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
-        {
-          fprintf (partFile_attributes, "{NULL}");
-          if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
+        if (ab_outputEnabled) {
+          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName);
+          for (int i_emptyChildObj=1; i_emptyChildObj <= atoi(attrString [attrNumber_of_items]); i_emptyChildObj++)
+          {
+            fprintf (partFile_attributes, "{NULL}");
+            if (i_emptyChildObj < atoi(attrString [attrNumber_of_items])) fprintf (partFile_attributes, ", ");
+          }
+          fprintf (partFile_attributes, "};\n");
         }
-        fprintf (partFile_attributes, "};\n");
       }
     }
   }
-  if (firstElement == false)
+  if (ab_outputEnabled && firstElement == false)
     fprintf (partFile_attributes, "};\n");
 
   return true;

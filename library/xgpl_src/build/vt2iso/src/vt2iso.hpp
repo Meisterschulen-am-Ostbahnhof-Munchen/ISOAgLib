@@ -173,11 +173,11 @@ public:
 
   bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
 
-  bool processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n);
+  bool processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n, bool ab_outputEnabled = true);
 
-  bool processMacroElements(unsigned int& r_objMacros, DOMNode *r_n);
+  bool processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, bool ab_outputEnabled = true);
 
-  bool processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded);
+  bool processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded, bool ab_outputEnabled = true);
 
   void clean_exit(char* error_message = NULL);
 
