@@ -248,7 +248,8 @@ StreamChunk_c::getNextNotParsed()
   if (mui32_parsedCnt >= mui32_writeCnt) return 0xff;
 
   // 1) get Chunk-Value
-  chunkVal = mpc_iterParsedChunk->getData( chunkCnt++ );
+  // don't care for special 0xFFFF (meaning read-after-end-of-chunk), because we check the length for ourself before
+  chunkVal = (uint8_t) mpc_iterParsedChunk->getData( chunkCnt++ );
   mui32_parsedCnt++;
 
   // 2) if current parsed-Chunk has been completely parsed
@@ -294,7 +295,8 @@ StreamChunk_c::getNotParsed (uint32_t ui32_notParsedRelativeOffset)
     } while (chunkCntReq >= chunkLen);
   }
 
-  return pc_iterTmpChunk->getData( chunkCntReq );
+  // don't care for special 0xFFFF (meaning read-after-end-of-chunk), because we check the length for ourself before
+  return (uint8_t) pc_iterTmpChunk->getData( chunkCntReq );
 }
 
 
