@@ -1722,6 +1722,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     bool objHasArrayObject = false;
+    if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
+    {
+      objHasArrayObject = pc_specialParsingPropTag->objHasArrayObject (objType);
+    }
     switch (objType)
     {
       case otSoftkeymask:
@@ -3932,22 +3936,22 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       if (objHasArrayObject)
       {
         if (objChildObjects == 0)
-          fprintf (partFile_attributes, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0, NULL");
         else
-          fprintf (partFile_attributes, ", %d,iVtObject%s_aObject", objChildObjects, objName);
+          fprintf (partFile_attributes, ", %d, iVtObject%s_aObject", objChildObjects, objName);
       }
 
       if (objHasArrayObjectXY)
       {
         if (objChildObjects == 0)
-          fprintf (partFile_attributes, ", 0,NULL");
+          fprintf (partFile_attributes, ", 0, NULL");
         else
-          fprintf (partFile_attributes, ", %d,iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
+          fprintf (partFile_attributes, ", %d, iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName);
       }
 
       if (objType == otPicturegraphic)
       {
-        for (unsigned int actDepth=0; actDepth <= 2; actDepth++)
+        for (int actDepth=0; actDepth <= 2; actDepth++)
         {
           if ( (actDepth > deXcolourDepth) || (stdRawBitmapBytes [actDepth] == 0))
             fprintf (partFile_attributes, ", 0,NULL");
