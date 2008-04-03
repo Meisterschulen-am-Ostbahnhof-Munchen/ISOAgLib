@@ -1443,9 +1443,17 @@ vt2iso_c::autoDetectLanguage (DOMNode *n)
 bool
 vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKey, const char* rpcc_inButton*/)
 {
+#if defined ( DEBUG )
+  fprintf(stderr, "\nprocessElement(n = ..., ombType = %lld (0x%LX))\n", ombType, ombType);
+#endif
+
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
   char *node_name = XMLString::transcode(n->getNodeName());
+
+#if defined ( DEBUG )
+  fprintf(stderr, "  node_name = \"%s\"\n", node_name);
+#endif
 
   // all possible values of the objects
   unsigned int commandType=0; //init for happy compiler
@@ -1592,12 +1600,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   }
   else
   {
+#if defined ( DEBUG )
+  fprintf(stderr, "  objType = %d\n", objType);
+  fprintf(stderr, "  maxObjectTypes = %d\n", maxObjectTypes);
+#endif
+
     if ( objType < maxObjectTypes && ( !b_disableContainmentRules && ( ( (uint64_t(1)<<objType) & ombType) == 0 )) )
     {
       // ERROR: Unallowed <TAG> here?!
-      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << " 'objType: "
-                << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
-      for (int j=0; j<maxObjectTypesToCompare; j++) {
+      std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << "' objType: "
+                << objType << " ombType: " << std::dec << ombType << " (0x" << std::hex << ombType << std::dec << ")\nPOSSIBLE TAGS HERE WOULD BE: ";
+      for (int j=0; j<maxObjectTypes; j++) {
         if ((uint64_t(1)<<j) & ombType) {
           std::cout << " <" << otCompTable [j] << ">  ";
         }
@@ -1605,19 +1618,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       std::cout << "\n\n";
       return false;
     }
-//     else if ( objType >= maxObjectTypes && ( !b_disableContainmentRules && ( ( (uint64_t(1)<<objType) & ombType) == 0 )) )
-//     {
-//       // ERROR: Unallowed <TAG> here?!
-//       std::cout << "\n\nENCOUNTERED WRONG TAG AT THIS POSITION!\nENCOUNTERED: <" << node_name << "> '" << getAttributeValue (n, "name") << " 'objType: "
-//                 << objType << " ombType: " << ombType << "\nPOSSIBLE TAGS HERE WOULD BE: ";
-//       for (int j=0; j<maxObjectTypesToCompare; j++) {
-//         if ((uint64_t(1)<<j) & ombType) {
-//           std::cout << " <" << otAdditionalCompTable [j] << ">  ";
-//         }
-//       }
-//       std::cout << "\n\n";
-//       return false;
-//     }
 
     /// if USE_SPECIAL_PARSING is defined, check here if found tag is valid at this position
     bool b_unknownTag = false;
@@ -1625,7 +1625,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     {
       b_unknownTag = true;
     }
-
     if (!b_unknownTag && pc_specialParsingPropTag && ((objType >= maxObjectTypes) && !pc_specialParsingPropTag->checkTag (n, objType, ombType)))
     {
       std::cout << "Unknown tag for enhanced parsing modules! STOP PARSER! bye.\n\n";
@@ -4024,16 +4023,29 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
   // Add all Child-Elements recursively
   uint64_t omcType = omcTypeTable [objType];
-  if (objType == otContainer) omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
+
+#if defined ( DEBUG )
+  fprintf(stderr, "  omcType = %lld (0x%LX)\n", omcType, omcType);
+#endif
+
+  if (objType == otContainer)
+  {
+    omcType = ombType; // Object May Contain what the Object Is - Simple rule. more simple than the graphic in the spec. ;)
+  }
   else if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
   {
     pc_specialParsingPropTag->setOmcType(omcType, &ombType, objType);
+#if defined ( DEBUG )
+  fprintf(stderr, "  reset omcType to %lld (0x%LX)\n", omcType, omcType);
+#endif
   }
-
   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
     {
+#if defined ( DEBUG )
+  fprintf(stderr, "  call 'processElement' for child ...\n");
+#endif
       if (!processElement (child, omcType/*, rpcc_inKey, rpcc_inButton*/))
         return false;
     }
