@@ -112,6 +112,10 @@ class SpecialParsingBasePropTag_c
 
   virtual bool objHasArrayObjectXY (uint16_t objType) const =0;
 
+  virtual bool objHasArrayObject (uint16_t objType) const =0;
+
+  virtual bool objHasArrayPoints (uint16_t objType) const =0;
+
   virtual ~SpecialParsingBasePropTag_c() {}
 
   SpecialParsingBasePropTag_c(): ui8_objType(0xFF) {}
