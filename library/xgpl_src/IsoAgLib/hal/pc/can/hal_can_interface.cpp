@@ -611,7 +611,7 @@ int32_t can_useNextMsgobjNumber(uint8_t aui8_busNr, uint32_t &refMsgobjNr, uint3
 
     refui32_msgId = pt_receive->dwId;
 
-(pt_receive->bXtd == true )? (refb_msgtype = __IsoAgLib::Ident_c::ExtendedIdent) : (refb_msgtype = __IsoAgLib::Ident_c::StandardIdent);
+    refb_msgtype = (pt_receive->bXtd == 1) ? (__IsoAgLib::Ident_c::ExtendedIdent) : (__IsoAgLib::Ident_c::StandardIdent);
 
 // __IsoAgLib::Ident_c::getCanIdenType(pt_receive->bXtd,refb_msgtype);
     i32_rcvTime = i32_cinterfLastSuccReceive[aui8_busNr];

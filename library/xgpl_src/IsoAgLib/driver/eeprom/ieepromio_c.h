@@ -124,31 +124,29 @@ public:
 
   /**
     check if write position is at end of EEPROM
-    (parameter specifies needed length for operation
-    -> false means that enough space is there for length bytes of data)
+    (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
     possible errors:
-        * Err_c::range if ab_setState == true and actual write position is nearer to end of EEPROM than aui8_length byte
+        * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
 
-    @param aui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only write mark position tested)
-    @return false -> write marker is more than aui8_length uint8_t ahead end of EEPROM
+    @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current write mark position tested)
+    @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
-  bool eofp(uint8_t aui8_length = 0, bool ab_setState = false)
-   {return EepromIo_c::eofp(aui8_length, ab_setState);};
+  bool eofp(uint16_t aui16_lookahead = 0, bool ab_setState = false)
+   {return EepromIo_c::eofp(aui16_lookahead, ab_setState);};
 
   /**
     check if read position is at end of EEPROM
-    (parameter specifies needed length for operation
-    -> false means that enough space is there for length bytes of data)
+    (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
     possible errors:
-        * Err_c::range if ab_setState == true and actual read position is nearer to end of EEPROM than aui8_length byte
+        * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
 
-    @param aui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only read mark position tested)
-    @return false -> read marker is more than aui8_length uint8_t ahead end of EEPROM
+    @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current read mark position tested)
+    @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
   */
-  bool eofg(uint8_t aui8_length = 0, bool ab_setState = false)
-    {return EepromIo_c::eofg(aui8_length, ab_setState);};
+  bool eofg(uint16_t aui16_lookahead = 0, bool ab_setState = false)
+    {return EepromIo_c::eofg(aui16_lookahead, ab_setState);};
 
   /* *************************************** */
   /* *** EEPROM data operation functions *** */

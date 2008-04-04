@@ -174,19 +174,18 @@ bool EepromIo_c::setg(uint16_t aui16_adress)
 
 /**
   check if write position is at end of EEPROM
-  (parameter specifies needed length for operation
-  -> false means that enough space is there for length bytes of data)
+  (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
   possible errors:
-      * range if ab_setState == true and actual write position is nearer to end of EEPROM than aui8_length byte
+      * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
 
-  @param aui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only write mark position tested)
-  @return false -> write marker is more than aui8_length uint8_t ahead end of EEPROM
+  @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current write mark position tested)
+  @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
 */
-bool EepromIo_c::eofp(uint8_t aui8_length, bool ab_setState)
-{ // compare (write position + length of wanted data) with size of EEPROM memory
-  if ((mui16_wPosition + aui8_length) >= eepromSize())
-  { // actual or end position of write access exceeds EEPROM memory
+bool EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
+{ // compare (write position + lookahead) with size of EEPROM memory
+  if ((mui16_wPosition + aui16_lookahead) >= eepromSize())
+  { // position of write access + lookahead exceeds EEPROM memory
     if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
     return true;  // means: End of EEPROM memory is reached
   }
@@ -198,19 +197,18 @@ bool EepromIo_c::eofp(uint8_t aui8_length, bool ab_setState)
 
 /**
   check if read position is at end of EEPROM
-  (parameter specifies needed length for operation
-  -> false means that enough space is there for length bytes of data)
+  (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
   possible errors:
-      * range if ab_setState == true and actual read position is nearer to end of EEPROM than aui8_length byte
+      * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
 
-  @param aui8_length optional size of uint8_t, which must fit into EEPROM from actual position on (default 0 -> only read mark position tested)
-  @return false -> read marker is more than aui8_length uint8_t ahead end of EEPROM
+  @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current read mark position tested)
+  @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
 */
-bool EepromIo_c::eofg(uint8_t aui8_length, bool ab_setState)
-{ // compare (read position + length of wanted data) with size of EEPROM memory
-  if ((mui16_rPosition + aui8_length) >= eepromSize())
-  { // actual or end position of read access exceeds EEPROM memory
+bool EepromIo_c::eofg(uint16_t aui16_lookahead, bool ab_setState)
+{ // compare (read position + lookahead) with size of EEPROM memory
+  if ((mui16_rPosition + aui16_lookahead) >= eepromSize())
+  { // position of read access + lookahead exceeds EEPROM memory
     if (ab_setState) getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Eeprom );
     return true; // means: End of EEPROM memory is reached
   }
@@ -242,11 +240,13 @@ bool EepromIo_c::eofg(uint8_t aui8_length, bool ab_setState)
 */
 EepromIo_c& EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t aui16_number)
 { // check if enough space for string is after actual write position
-  // second parameter true -> set Err_c::range if end is reached
-  if (!eofp(aui16_number, true))
-  { // use private write function to read in correct number of bytes into data string
-    write (mui16_wPosition, aui16_number, apb_string);
-    mui16_wPosition += (aui16_number); //inkrement position
+  if (aui16_number > 0)
+  { // second parameter true -> set Err_c::range if end is reached
+    if (!eofp(aui16_number-1, true))
+    { // use private write function to read in correct number of bytes into data string
+      write (mui16_wPosition, aui16_number, apb_string);
+      mui16_wPosition += (aui16_number); //increment position
+    }
   }
   return *this;
 };
@@ -261,8 +261,13 @@ EepromIo_c& EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t au
 */
 bool EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
 { // check if enough space for string is after actual read position
+  if (aui16_number == 0)
+  { // someone wants to read 0 bytes. Well, that's fine, just do nothing and return with success
+    return true;
+  }
+
   // second parameter true -> set Err_c::range if end is reached
-  if (!eofg(aui16_number), true)
+  if (!eofg(aui16_number-1), true)
   { // enough space in EEPROM from actual position on
     // call BIOS function to check that EEPROM is ready
     setState4BiosReturn(wait_eepromReady());
@@ -279,7 +284,7 @@ bool EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
     else return false;
   }
   else
-  { // report that read access had no success because of rane error
+  { // report that read access had no success because of range error
     return false;
   }
 }
@@ -513,7 +518,7 @@ EepromIo_c& operator<<(EepromIo_c& rc_stream, const IsoName_c& rc_data )
 EepromIo_c& operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data )
 {
   uint8_t tempName[8];
-  rc_stream.readIntern(tempName, sizeof(8));
+  rc_stream.readIntern(tempName, 8);
   rc_data.inputString( tempName );
   return rc_stream;
 }
