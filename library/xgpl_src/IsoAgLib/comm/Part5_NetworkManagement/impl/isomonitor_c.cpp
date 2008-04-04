@@ -361,6 +361,8 @@ bool IsoMonitor_c::timeEvent( void )
             << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           pc_iter = mvec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
+          // immediately reset cache, because it may have gotten invalid due to the erase!!
+          mpc_isoMemberCache = mvec_isoMember.begin();
         }
         else
         { // give it another chance
@@ -951,6 +953,8 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
   { // set correct state
     // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
     mvec_isoMember.erase(mpc_isoMemberCache);
+    // immediately reset cache, because it may have gotten invalid due to the erase!!
+    mpc_isoMemberCache = mvec_isoMember.begin();
     #ifdef DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
 
@@ -962,7 +966,6 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
       << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    mpc_isoMemberCache = mvec_isoMember.begin();
     return true;
   }
   else
@@ -1504,6 +1507,7 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
   else
   { // switch from normal operation to diagnostic mode
     Vec_ISOIterator pc_iter = mvec_isoMember.begin();
+    bool b_updateCacheIterator = false;
     while ( pc_iter != mvec_isoMember.end() )
     {
       if ( ( pc_iter->isoName() == mc_serviceTool ) || ( pc_iter->itemState(IState_c::Local) ) )
@@ -1513,10 +1517,13 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
       }
       else
       { // remove the item from the monitor list
-        mvec_isoMember.erase( pc_iter );
-        // reset iterator to begin
-        pc_iter = mvec_isoMember.begin();
+        pc_iter = mvec_isoMember.erase( pc_iter );
+        b_updateCacheIterator = true;
       }
+    }
+    if (b_updateCacheIterator)
+    { // due to erasing an element, the cache may get invalid, so we better reset it here!
+      mpc_isoMemberCache = mvec_isoMember.begin();
     }
   }
 }
