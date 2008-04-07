@@ -288,21 +288,11 @@ public:
                                       uint16_t /*cui16_inputValueTransitions*/,
                                       uint8_t  /*cui8_inputValueDigital*/) {}
 
-  enum display_status {
-    ds_wsm_hidden = 0,
-    ds_wsm_inactive = 1,
-  };
-
   /**
     hook function that gets called immediately after recognizing an incoming
     Display Activation Msg or Vt Status Msg with display state change.
    */
-  void eventDisplayActivation (
-    enum display_status /* display_status */,
-    uint16_t /* visible_mask_oid */,
-    uint16_t /* visible_skm_oid */
-  ) {
-  }
+  virtual void eventDisplayActivation() {}
 
   /**
      Gets called after recognizing an incoming VT proprietary message.

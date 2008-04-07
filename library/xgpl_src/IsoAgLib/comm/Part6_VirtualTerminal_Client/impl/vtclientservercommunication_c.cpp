@@ -120,7 +120,6 @@
   #endif
 #endif
 
-//#include "../iisoterminalobjectpool_c.h"
 
 #ifdef DEBUG_HEAP_USEAGE
   static uint16_t sui16_lastPrintedBufferCapacity = 0;
@@ -932,7 +931,7 @@ VtClientServerCommunication_c::notifyOnVtStatusMessage()
   mc_streamer.mrc_pool.eventVtStatusMsg();
 
   // set client display state appropriately
-  men_displayState = static_cast<vtClientDisplayState_t>(getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
+  setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
 }
 
 
@@ -1074,6 +1073,7 @@ VtClientServerCommunication_c::processMsg()
       }
       break;
     case 0x09:  // Command: "Command", parameter "Display Activation"
+
     {
       uint8_t arrui8_canData[8];
       uint8_t ui8_dataLen = mc_data.getLen();
@@ -1081,9 +1081,9 @@ VtClientServerCommunication_c::processMsg()
       // cache the Data Bytes HERE
       mc_data.getDataToString(arrui8_canData);
 
-#define EXTRACT_PAIR(ptr) ((ptr)[0] + ((ptr)[1] << 8))
 
-      setVtVisibility (static_cast<enum IsoAgLib::iIsoTerminalObjectPool_c::display_status>(mc_data.getUint8Data (1)), EXTRACT_PAIR (&arrui8_canData[2]), EXTRACT_PAIR (&arrui8_canData[4]));
+      setVtDisplayState (false, mc_data.getUint8Data (1));
+
 
       // replace PGN, DA, SA , Data and send back as answer
       mc_data.setDataFromString(arrui8_canData,ui8_dataLen);
@@ -2581,25 +2581,50 @@ VtClientServerCommunication_c::vtOutOfMemory()
 
 /** set display state of vt client */
 void
-VtClientServerCommunication_c::setVtVisibility (
-    enum IsoAgLib::iIsoTerminalObjectPool_c::display_status ui8_visibility,
-    uint16_t visible_mask_oid,
-    uint16_t visible_skm_oid
-)
+VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState)
 {
-  if (men_objectPoolState != OPUploadedSuccessfully)
-    return;
+  if (men_objectPoolState != OPUploadedSuccessfully) return;
+  // as we don't properly seem to reset "men_objectPoolState" at doStop(), we'll for now add the extra
+  // isAddress-Claimed-check here for safety:
+  if (!getIdentItem().isClaimedAddress()) return;
 
-  /*
-   * as we don't properly seem to reset "men_objectPoolState" at doStop(), we'll for now add the extra
-   * isAddress-Claimed-check here for safety:
-   */
-  if (!getIdentItem().isClaimedAddress())
-    return;
+  vtClientDisplayState_t newDisplayState;
+  if (b_isVtStatusMsg) // state change triggered from VT Status Msg
+  {
+    if (ui8_saOrDisplayState == getIdentItem().getIsoItem()->nr())
+      newDisplayState = VtClientDisplayStateActive;
+    else
+    {
+      if (getVtDisplayState() == VtClientDisplayStateActive)
+        // only cause state change if currently displayed is active
+        newDisplayState = VtClientDisplayStateInactive;
+      else
+        newDisplayState = getVtDisplayState();
+    }
+  }
+  else // state change triggered from Display Activation Msg
+  {
+    if (ui8_saOrDisplayState) // display client but no input focus
+    {
+      if (getVtDisplayState() == VtClientDisplayStateHidden)
+        newDisplayState = VtClientDisplayStateInactive;
+      else
+        newDisplayState = getVtDisplayState(); // if already in state inactive or active, nothing to do
+    }
+    else // client is no longer displayed
+    {
+      if (getVtDisplayState() == VtClientDisplayStateInactive)
+        newDisplayState = VtClientDisplayStateHidden;
+      else
+        newDisplayState = getVtDisplayState(); // if already in state hidden or active, nothing to do
+    }
+  }
 
-  men_standbyVisibility = ui8_visibility;
-
-  mc_streamer.mrc_pool.eventDisplayActivation (men_standbyVisibility, visible_mask_oid, visible_skm_oid);
+  if (newDisplayState != getVtDisplayState())
+  {
+    men_displayState = newDisplayState;
+    mc_streamer.mrc_pool.eventDisplayActivation();
+  }
 }
 
 
