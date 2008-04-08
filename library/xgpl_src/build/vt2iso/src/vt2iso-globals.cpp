@@ -714,9 +714,9 @@ eventtoi (char *text_eventName)
 
 bool itoevent(unsigned int ui_index, string& c_outputText)
 {
-  if(ui_index < maxEventTable )
-  {
-    c_outputText = eventTable[ui_index];
+  if(ui_index < maxEventTable && (ui_index > 0) )
+  { // event index starts from 1!
+    c_outputText = eventTable[ui_index-1];
     return true;
   }
   return false;
