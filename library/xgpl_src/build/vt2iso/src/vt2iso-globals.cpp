@@ -712,6 +712,16 @@ eventtoi (char *text_eventName)
   return retval;
 }
 
+bool itoevent(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxEventTable )
+  {
+    c_outputText = eventTable[ui_index];
+    return true;
+  }
+  return false;
+}
+
 unsigned int
 auxfunctiontypetoi(char *text_auxFunctionType)
 {
