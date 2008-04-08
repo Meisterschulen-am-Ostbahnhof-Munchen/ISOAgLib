@@ -972,15 +972,17 @@ int16_t CanIo_c::processMsg(){
 #endif
 
 
-  int32_t i32_fbIdx;
-  uint32_t i32_ident;
+  int32_t i32_fbIdx = 0;
+  uint32_t i32_ident = 0;
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-uint32_t ui32_msgNbr;
+uint32_t ui32_msgNbr = 0;
 #endif
 
-  Ident_c::identType_t identType;
+  Ident_c::identType_t identType(Ident_c::StandardIdent);
   int32_t i32_retVal = HAL_NO_ERR;
-  bool b_processed,to_be_processed,b_forceProcessAll= false;
+  bool b_processed = false;
+  bool to_be_processed = false;
+  bool b_forceProcessAll= false;
 
 
   while(i32_retVal != HAL_UNKNOWN_ERR ) // something has been received from CAN
@@ -993,7 +995,7 @@ uint32_t ui32_msgNbr;
       i32_retVal = HAL::iFifoReadFbIdx(mui8_busNumber, i32_fbIdx, mi32_lastProcessedCanPkgTime, i32_ident,identType);
 
     #else
-      uint8_t ui8_identType;
+      uint8_t ui8_identType = 0;
       i32_retVal = HAL::can_useNextMsgobjNumber(mui8_busNumber, ui32_msgNbr, i32_ident, ui8_identType, mi32_lastProcessedCanPkgTime);
       identType = static_cast<Ident_c::identType_t>(ui8_identType);
       i32_fbIdx = ui32_msgNbr-minReceiveObjNr();
@@ -2080,7 +2082,40 @@ bool CanIo_c::setBitrate(uint16_t aui16_newSpeed, bool ab_force)
   * NEVER define instance of CanIo_c within application
   * (set mui8_busNumber to 0xFF so that init() detects first call after constructor)
   */
-CanIo_c::CanIo_c( void ) : m_arrFilterBox() {}
+CanIo_c::CanIo_c( void ) :
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    marr_msgObj(),
+    mc_tempObj(),
+    mc_lastMsgObj(),
+    mt_msgObjCnt(),
+    mi32_minChangedFilterBox(0),
+  #endif
+    m_arrFilterBox(),
+    mt_filterBoxCnt(0),
+    mc_tempFilterBox(),
+    mi32_maxSendDelay(0),
+    mi32_canErrStart(0),
+    mi32_canErrEnd(0),
+    mi32_lastCanCheck(0),
+    mi32_lastProcessedCanPkgTime(0),
+    mui16_bitrate(0),
+    mi32_endLastReconfigTime(0),
+    mc_maskStd(),
+    mc_maskExt(),
+    mc_maskLastmsg(),
+    men_identType(Ident_c::StandardIdent),
+    mui8_busNumber(0),
+    mui8_minmsgObjLimit(0),
+    mui8_minReceiveObjNr(0),
+  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    mui8_maxMsgObjLimit(0),
+  #endif
+    mui8_processedMsgCnt(0),
+    mb_runningCanProcess(false)
+  #if ((defined( USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+    ,mb_canChannelCouldSendIso(false)
+  #endif
+{}
 
 
 /** perform bas init for CAN with set of speed and init of send object(s)

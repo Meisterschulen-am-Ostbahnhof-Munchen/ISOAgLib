@@ -94,6 +94,7 @@ int16_t can_startDriver()
 {
 
   transferBuf_s s_transferBuf;
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 
   DEBUG_PRINT("can_startDriver called\n");
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -164,6 +165,7 @@ int16_t can_stopDriver()
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )
 {
   transferBuf_s s_transferBuf;
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 
   DEBUG_PRINT2("init_can, bus %d, bitrate %d\n", bBusNumber, wBitrate);
 
@@ -203,6 +205,7 @@ int16_t changeGlobalMask( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobM
 int16_t closeCan ( uint8_t bBusNumber )
 {
   transferBuf_s s_transferBuf;
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 
   DEBUG_PRINT1("closeCan, bus %d\n", bBusNumber);
 
@@ -242,6 +245,7 @@ int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptCon
   DEBUG_PRINT2("configCanObj, bus %d, obj %d\n", bBusNumber, bMsgObj);
 
   transferBuf_s s_transferBuf;
+  memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) || ( bMsgObj > cui8_maxCanObj-1 ) ) return HAL_RANGE_ERR;
