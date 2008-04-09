@@ -188,13 +188,13 @@ vtObjectPictureGraphic_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRang
     MACRO_scaleLocalVars;
     MACRO_scaleSKLocalVars;
 
-    uint8_t ui8_graphicType;
+    uint8_t ui8_graphicType = 0;
 
-    const HUGE_MEM uint8_t* rawData;
-    uint32_t numberOfBytesInRawData;
-    uint16_t actualWidth;
-    uint16_t actualHeight;
-    uint8_t options;
+    const HUGE_MEM uint8_t* rawData = NULL;
+    uint32_t numberOfBytesInRawData = 0;
+    uint16_t actualWidth = 0;
+    uint16_t actualHeight = 0;
+    uint8_t options = 0;
 
     MACRO_calculateRequestedSize
 
@@ -265,7 +265,7 @@ vtObjectPictureGraphic_c::fitTerminal() const
   MACRO_scaleLocalVars;
   MACRO_scaleSKLocalVars;
 
-  uint32_t numberOfBytesInRawData;
+  uint32_t numberOfBytesInRawData = 0;
   uint8_t ui8_graphicType;
 
   MACRO_calculateRequestedSize

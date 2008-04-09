@@ -180,7 +180,7 @@ void SetpointBase_c::processMsg(){
 void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& acrc_src,
                                        bool ab_override, int32_t ai32_overrideVal) const
 {
-  int32_t i32_value;
+  int32_t i32_value = 0;
   bool b_isCmd = false;
   ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue;
 

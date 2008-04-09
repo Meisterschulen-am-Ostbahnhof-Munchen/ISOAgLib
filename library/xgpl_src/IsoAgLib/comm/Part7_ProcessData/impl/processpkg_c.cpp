@@ -190,7 +190,7 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   @return data value of message
 */
 int32_t ProcessPkg_c::dataLong()const{
-  int32_t i32_result;
+  int32_t i32_result = 0;
   switch (valType())
   {
     case i32_val:
@@ -218,7 +218,7 @@ int32_t ProcessPkg_c::dataLong()const{
   @return data value of message
 */
 uint32_t ProcessPkg_c::dataUlong()const{
-  uint32_t ulResult;
+  uint32_t ulResult = 0;
   switch (valType())
   {
     case i32_val:
