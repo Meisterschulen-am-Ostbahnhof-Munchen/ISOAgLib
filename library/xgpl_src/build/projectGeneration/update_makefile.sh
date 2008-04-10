@@ -1581,6 +1581,10 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
        sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
        mv $MakefileNameLong.1 $MakefileNameLong
        ;;
+       *SYSTEM_A5*)
+       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
+       mv $MakefileNameLong.1 $MakefileNameLong
+       ;;
    esac
 
   # add can_server creation to target "all"
