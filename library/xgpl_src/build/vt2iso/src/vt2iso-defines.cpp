@@ -284,8 +284,11 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "number_of_points",
   "rle",
   "number_of_bytes",
+//
   "function_type",
   "input_id",
+//
+//
   "object_id",
   "hide_show",
   "enable_disable",
@@ -317,6 +320,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "language",
   "in_key",
   "in_button",
+//
+//
   "viewport_width",
   "viewport_height",
   "viewport_x",
@@ -326,12 +331,28 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "viewport_zoom",
   "cursor_x",
   "cursor_y",
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
   "inputobject_options",
 // new attributes (VT revision 3)
   "vertical_justification",
   "activate_for_editing",
   "lock_unlock",
-  "lock_timeout"
+  "lock_timeout",
+  "live_editing",
+  "abs_path", //proprietary
+  "abs_path1", //proprietary
+  "abs_path4", //proprietary
+  "abs_path8" //proprietary
 };
 
 // Table of possible Macro Commands

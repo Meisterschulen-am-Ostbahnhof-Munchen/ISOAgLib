@@ -302,7 +302,7 @@ typedef struct {
 #define attrBlock_font (64)
 #define attrBlock_row (65)
 #define attrBlock_col (66)
-
+//
 #define attrNumber_of_items (67)
 #define attrNumber_of_points (68)
 #define attrRle (69)
@@ -310,7 +310,7 @@ typedef struct {
 //addtional Aux Function/Input Attributes
 #define attrFunction_type (71)
 #define attrInput_id (72)
-
+//
 // Command Attributes:
 #define attrObjectID  (73)
 #define attrHideShow  (74)
@@ -343,7 +343,7 @@ typedef struct {
 #define attrLanguage (101)
 #define attrInKey (102)
 #define attrInButton (103)
-
+//
 // Attributes for graphics context
 #define attrViewportWidth (104)
 #define attrViewportHeight (105)
@@ -363,16 +363,21 @@ typedef struct {
 //#define attrFormat (25)
 //#define attrOptions (17)
 //#define attrTransparency_colour (43)
-
+//
 // attribute for inputnumber/list only!
 #define attrInputObjectOptions (113)
-
+//
 #define attrVertical_justification (114)
 #define attrActivate_for_editing (115)
 #define attrLockUnlock (116)
 #define attrLockTimeout (117)
+#define attrLiveEditing (118)
+#define attrAbsolutePath (119)
+#define attrAbsolutePath1 (120)
+#define attrAbsolutePath4 (121)
+#define attrAbsolutePath8 (122)
 
-#define maxAttributeNames (118)
+#define maxAttributeNames (123)
 
 
 
