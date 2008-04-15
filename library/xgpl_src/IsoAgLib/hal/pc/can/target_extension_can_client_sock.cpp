@@ -235,10 +235,12 @@ int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
 int16_t can_startDriver()
 {
   DEBUG_PRINT("can_startDriver called\n");
+#ifdef DEBUG
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
 #else
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
+#endif
 #endif
 
 #ifdef WIN32

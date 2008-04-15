@@ -97,10 +97,12 @@ int16_t can_startDriver()
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 
   DEBUG_PRINT("can_startDriver called\n");
+#ifdef DEBUG
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
 #else
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
+#endif
 #endif
 
   int16_t i16_rc = createMsqs(msqDataClient);

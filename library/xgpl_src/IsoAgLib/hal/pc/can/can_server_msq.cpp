@@ -1317,10 +1317,12 @@ int main(int argc, char *argv[])
   server_c c_serverData;
   int i_canReadNiceValue = 0;
 
+#ifdef DEBUG
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
 #else
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
+#endif
 #endif
 
   if (argc > 1 && strcmp(argv[1], "--help") == 0) {
