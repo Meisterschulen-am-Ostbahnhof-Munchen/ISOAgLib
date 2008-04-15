@@ -143,6 +143,18 @@ clock_t getStartUpTime()
 #endif
   return st_startup4Times;
 }
+#else // WIN32
+  #if defined( _MSC_VER )
+  // VC++ with native Win32 API provides very accurate
+  // msec timer - use that
+  int32_t getStartupTime()
+  { // returns time in msec
+    static int32_t st_startup4Times = timeGetTime();
+    return st_startup4Times;
+  }
+  #endif
+  // MinGW doesn't need getStartupTime() AS IT SEEMS RIGHT NOW.
+  // @todo needs to be compiled under MinGW and tested!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 
 
@@ -221,7 +233,7 @@ int16_t configWatchdog()
   // msec timer - use that
   int32_t getTime()
   { // returns time in msec
-    return timeGetTime();
+    return timeGetTime() - getStartupTime();
   }
   #else
   // MinGW has neither simple access to timeGetTime()

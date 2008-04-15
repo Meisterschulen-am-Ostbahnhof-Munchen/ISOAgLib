@@ -182,7 +182,7 @@ int32_t getStartUpTime()
   // msec timer - use that
   int32_t getTime()
   { // returns time in msec
-    return timeGetTime();
+    return timeGetTime() - getStartUpTime();
   }
 #else
   // MinGW has neither simple access to timeGetTime()
