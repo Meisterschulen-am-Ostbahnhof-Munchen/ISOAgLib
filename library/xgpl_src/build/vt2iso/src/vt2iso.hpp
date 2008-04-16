@@ -131,21 +131,13 @@ private :
     char*   fLocalForm;
 };
 
-#ifdef WIN32
-std::ostream& operator<<(std::ostream& target, const StrX& toDump)
-#else
 inline std::ostream& operator<<(std::ostream& target, const StrX& toDump)
-#endif
 {
     target << toDump.localForm();
     return target;
 }
 
-#ifdef WIN32
-bool DOMCountErrorHandler::getSawErrors() const
-#else
 inline bool DOMCountErrorHandler::getSawErrors() const
-#endif
 {
     return fSawErrors;
 }
