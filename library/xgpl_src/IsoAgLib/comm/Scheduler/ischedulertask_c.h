@@ -124,6 +124,27 @@ public:
     { return __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort( this, i32_nextRetriggerTime, ai16_newTimePeriod );}
 
 
+  /** register pointer to a new client
+    * this function is called within construction of new client instance
+  */
+  bool registerClient( iSchedulerTask_c* apc_client)
+    { return __IsoAgLib::getSchedulerInstance4Comm().registerClient(apc_client); }
+
+  /** unregister pointer to a already registered client
+    * this function is called within destruction of new client instance
+  */
+  void unregisterClient( iSchedulerTask_c* apc_client)
+    {  return __IsoAgLib::getSchedulerInstance4Comm().unregisterClient(apc_client); }
+
+  /** clear mb_alreadyClosed so that close() can be called one time */
+  void clearAlreadyClosed( void ) { Scheduler_Task_c::clearAlreadyClosed(); }
+
+  /** set mb_alreadyClosed so that close() can't be called another time */
+  void setAlreadyClosed( void ) { Scheduler_Task_c::setAlreadyClosed(); }
+
+  /** check mb_alreadyClosed to decide if close() can be called */
+  bool checkAlreadyClosed( void ) const { return Scheduler_Task_c::checkAlreadyClosed(); }
+
    //  Operation: startTaskTiming
   //!  this function is called at the end of system init, to set the trigger times to a suitable and realizable
   //!  start state, so that the scheduler can find
