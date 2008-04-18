@@ -123,19 +123,6 @@ public:
   bool  changeRetriggerTime(int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1)
     { return __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort( this, i32_nextRetriggerTime, ai16_newTimePeriod );}
 
-
-  /** register pointer to a new client
-    * this function is called within construction of new client instance
-  */
-  bool registerClient( iSchedulerTask_c* apc_client)
-    { return __IsoAgLib::getSchedulerInstance4Comm().registerClient(apc_client); }
-
-  /** unregister pointer to a already registered client
-    * this function is called within destruction of new client instance
-  */
-  void unregisterClient( iSchedulerTask_c* apc_client)
-    {  return __IsoAgLib::getSchedulerInstance4Comm().unregisterClient(apc_client); }
-
   /** clear mb_alreadyClosed so that close() can be called one time */
   void clearAlreadyClosed( void ) { Scheduler_Task_c::clearAlreadyClosed(); }
 
@@ -243,6 +230,7 @@ public:
   friend class iCanIo_c;
   friend class iIsoFilter_s;
   friend class iMultiReceive_c;
+  friend class iScheduler_c;
 
 };
 

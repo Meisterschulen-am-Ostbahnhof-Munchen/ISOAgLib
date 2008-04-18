@@ -57,6 +57,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/scheduler_c.h"
+#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
+
 
 /// Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -165,6 +167,19 @@ public:
     */
   void forceExecStop( void ) {Scheduler_c::forceExecStop();}
 
+  /** register pointer to a new client
+    * this function is called within construction of new client instance
+  */
+  bool registerClient( iSchedulerTask_c* apc_client)
+    { return Scheduler_c::registerClient(apc_client); }
+
+  /** unregister pointer to a already registered client
+    * this function is called within destruction of new client instance
+  */
+  void unregisterClient( iSchedulerTask_c* apc_client)
+    {  return Scheduler_c::unregisterClient(apc_client); }
+
+
  private:
   /** allow getISchedulerInstance() access to shielded base class.
       otherwise __IsoAgLib::getSchedulerInstance() wouldn't be accepted by compiler
@@ -174,6 +189,7 @@ public:
   #else
   friend iScheduler_c& getISchedulerInstance( void );
   #endif
+
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
