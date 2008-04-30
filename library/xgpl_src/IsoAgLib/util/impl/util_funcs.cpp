@@ -1572,8 +1572,8 @@ void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicod
   }
   else
   {
-    rrefstr_string.push_back (uint8_t (0xE0 | ((aui16_unicode >>12)       ))); // 110kjihg - no need to AND, because it's < 0x800 !
-    rrefstr_string.push_back (uint8_t (0x80 | ((aui16_unicode >> 6) & 0x3F))); // 10fedcba
+    rrefstr_string.push_back (uint8_t (0xE0 | ((aui16_unicode >>12)       ))); // 1110ponm - no need to AND, because it's < 0x10000 !
+    rrefstr_string.push_back (uint8_t (0x80 | ((aui16_unicode >> 6) & 0x3F))); // 10lkjihg
     rrefstr_string.push_back (uint8_t (0x80 | ((aui16_unicode     ) & 0x3F))); // 10fedcba
   }
 }
