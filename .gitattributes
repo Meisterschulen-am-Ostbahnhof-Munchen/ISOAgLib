@@ -2219,6 +2219,7 @@ examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/TutPrjDes
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/config_3_0_VirtualTerminalIso.h -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/version.h -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/3_2_VirtualTerminalMultiIso.cpp -text
+examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/IsoTerminalObjectSelection.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/bitmaps/standard/simpleBitmap.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/bitmaps/vario/simpleBitmap240.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/simpleVTIsoPool-attributes.inc -text
@@ -2243,6 +2244,7 @@ examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/Mask
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/simpleVTIsoPool_derived-cpp.h -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/simpleVTIsoPool_derived-h.h -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition1/simpleVTIsoPool_direct.h -text
+examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition2/IsoTerminalObjectSelection.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition2/bitmaps/standard/simpleBitmap.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition2/bitmaps/vario/simpleBitmap240.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/MaskDefinition2/simpleVTIsoPool2-attributes.inc -text
@@ -2268,6 +2270,7 @@ examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/Mask
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/TutPrjDesc3_2_VirtualTerminalMultiIso.txt -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/config_3_2_VirtualTerminalMultiIso.h -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_2_VirtualTerminalMultiIso/version.h -text
+examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/IsoTerminalObjectSelection.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/bitmaps/standard/simpleBitmap.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/bitmaps/vario/simpleBitmap240.bmp -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_3_VirtualTerminalPhase3/MaskDefinition/simpleVTIsoPool-attributes-extern.inc -text
