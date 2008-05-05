@@ -1009,5 +1009,19 @@ int32_t convertIstreamI32( StreamInput_c& rc_stream );
   void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicode);
 #endif
 
+class VtFontScaling {
+
+public:
+  static uint8_t getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension, int32_t ai32_opDimension, uint16_t aui16_vtSupportedFonts,
+                               bool ab_buttonParent, bool ab_inSkm,
+                               uint16_t aui16_opButtonWidth, uint16_t aui16_opButtonHeight,
+                               uint16_t aui16_opSoftKeyWidth, uint16_t aui16_opSoftKeyHeight, uint16_t aui16_vtSoftKeyWidth, uint16_t aui16_vtSoftKeyHeight);
+private:
+  static uint8_t marr_font2PixelDimensionTableW[15];
+  static uint8_t marr_font2PixelDimensionTableH[15];
+
+};
+
+
 } // end of namespace __IsoAgLib
 #endif

@@ -1582,5 +1582,109 @@ void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicod
 #endif
 
 
+// Operation : calcScaledFontDimension
+uint8_t
+VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension, int32_t ai32_opDimension, uint16_t aui16_vtSupportedFonts,
+                             bool ab_buttonParent, bool ab_inSkm,
+                             uint16_t aui16_opButtonWidth, uint16_t aui16_opButtonHeight,
+                             uint16_t aui16_opSoftKeyWidth, uint16_t aui16_opSoftKeyHeight, uint16_t aui16_vtSoftKeyWidth, uint16_t aui16_vtSoftKeyHeight)
+{
+
+  uint8_t ui8_fontSizeScaled = aui8_originalSize;
+  if (ui8_fontSizeScaled > (15-1)) ui8_fontSizeScaled = (15-1);
+
+  int32_t i32_vtButtonWidth, i32_vtButtonHeight;
+  int32_t i32_factorM = 0, i32_factorD = 1; /* zaehler, nenner */
+  // if it is inside button => first priority
+  if (ab_buttonParent)
+  {
+    if (ai32_opDimension && (aui16_opButtonWidth > 8) && (aui16_opButtonHeight > 8))
+    {
+      i32_vtButtonWidth  = (aui16_opButtonWidth * ai32_vtDimension) / ai32_opDimension - 8;
+      i32_vtButtonHeight = (aui16_opButtonHeight * ai32_vtDimension) / ai32_opDimension - 8;
+      const int32_t ci_factorX = ((i32_vtButtonWidth << 20) / (aui16_opButtonWidth-8));
+      const int32_t ci_factorY = ((i32_vtButtonHeight << 20) / (aui16_opButtonHeight-8));
+      if (ci_factorX < ci_factorY) {
+        i32_factorM = i32_vtButtonWidth;
+        i32_factorD = aui16_opButtonWidth;
+      } else {
+        i32_factorM = i32_vtButtonHeight;
+        i32_factorD = aui16_opButtonHeight;
+      }
+    }
+    else
+      ab_buttonParent = false; // forget about it
+  }
+  // if it is inside SKM => second priority
+  else if (ab_inSkm)
+  {
+    if (aui16_opSoftKeyWidth && aui16_opSoftKeyHeight)
+    {
+      const int32_t ci_factorX = (aui16_vtSoftKeyWidth  << 20) / aui16_opSoftKeyWidth;
+      const int32_t ci_factorY = (aui16_vtSoftKeyHeight << 20) / aui16_opSoftKeyHeight;
+      if (ci_factorX < ci_factorY)
+      {
+        i32_factorM = aui16_vtSoftKeyWidth;
+        i32_factorD = aui16_opSoftKeyWidth;
+      }
+      else
+      {
+        i32_factorM = aui16_vtSoftKeyHeight;
+        i32_factorD = aui16_opSoftKeyHeight;
+      }
+    }
+    else
+      ab_inSkm = false; // forget about it
+  }
+
+  uint32_t ui32_width, ui32_height;
+  uint8_t ui8_wIndex=0, ui8_hIndex=0;
+  if (ab_buttonParent || ab_inSkm) {
+    ui32_width = (((uint32_t) i32_factorM * (marr_font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/i32_factorD); // (8 bit shifted fixed floating)
+    ui32_height= (((uint32_t) i32_factorM * (marr_font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/i32_factorD); // (8 bit shifted fixed floating)
+  } else {
+    ui32_width = (((uint32_t) ai32_vtDimension * (marr_font2PixelDimensionTableW [ui8_fontSizeScaled]) <<10)/ai32_opDimension); // (8 bit shifted fixed floating)
+    ui32_height= (((uint32_t) ai32_vtDimension * (marr_font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/ai32_opDimension); // (8 bit shifted fixed floating)
+  }
+
+  /** @todo DISCUSSION maybe keep aspect ratio?? Make it a user-flag on registerIsoObjectPool? Or put it into the objects itself?? */
+  // now get the lower possible size...
+  int i, j;
+  for (i=14; i>=0; i--) {
+    if (((uint32_t (marr_font2PixelDimensionTableW [i])) << 10) <= ui32_width) {
+      ui8_wIndex = i;
+      break;
+    }
+  }
+  for (j=14; j>=0; j--) {
+    if (((uint32_t (marr_font2PixelDimensionTableH [j])) << 10) <= ui32_height) {
+      ui8_hIndex = j;
+      break;
+    }
+  }
+  if ((i < 0) || (j < 0))
+  { // too small font, smaller than 6x8... ==> take 6x8
+    ui8_fontSizeScaled = 0;
+  }
+  else
+  { // match indices together... take the lowest one, that'll do!
+    if (ui8_wIndex < ui8_hIndex)
+      ui8_fontSizeScaled = ui8_wIndex;
+    else
+      ui8_fontSizeScaled = ui8_hIndex;
+  }
+
+  /// Always check if the font is available!
+  while (!(aui16_vtSupportedFonts & (1 << ui8_fontSizeScaled))) {
+    ui8_fontSizeScaled--; // try a smaller font, but "6x8" should be there in any way, 'cause we set it in processMsg!!
+    if (!ui8_fontSizeScaled)
+      break;
+  }
+
+  return ui8_fontSizeScaled;
+}
+
+uint8_t VtFontScaling::marr_font2PixelDimensionTableW [15] = {6,  8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128};
+uint8_t VtFontScaling::marr_font2PixelDimensionTableH [15] = {8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128,192};
 
 } // end of namespace __IsoAgLib
