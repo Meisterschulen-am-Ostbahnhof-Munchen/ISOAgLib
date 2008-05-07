@@ -259,8 +259,8 @@ CanIo_c::singletonInit()
     mi32_endLastReconfigTime = 0;
     mi32_lastProcessedCanPkgTime = 0;
     mui8_processedMsgCnt = 0;
-    mc_maskStd.set(~0, Ident_c::StandardIdent);
-    mc_maskExt.set(~0, Ident_c::ExtendedIdent);
+    mc_maskStd.set(0x7FF, Ident_c::StandardIdent);
+    mc_maskExt.set(0x1FFFFFFF, Ident_c::ExtendedIdent);
     mc_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
 
     // check if some FilterBox_c instances were already created, so that
