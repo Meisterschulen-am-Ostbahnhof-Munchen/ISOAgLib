@@ -305,6 +305,16 @@ bool itohorizontaljustification(unsigned int ui_index, string& c_outputText)
   return false;
 }
 
+bool itoverticaljustification(unsigned int ui_index, string& c_outputText)
+{
+  if(ui_index < maxVerticalJustificationTable )
+  {
+    c_outputText = verticalJustificationTable[ui_index];
+    return true;
+  }
+  return false;
+}
+
 
 unsigned int
 stringoptionstoi (char *text_options)

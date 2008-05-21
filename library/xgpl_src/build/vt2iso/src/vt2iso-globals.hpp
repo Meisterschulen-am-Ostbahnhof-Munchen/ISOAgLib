@@ -51,6 +51,7 @@ extern bool itofontsize(unsigned int ui_index, std::string& c_outputText);
 extern bool itofonttype(unsigned int ui_index, std::string& c_outputText);
 extern bool itoformat(unsigned int ui_index, std::string& c_outputText);
 extern bool itohorizontaljustification(unsigned int ui_index, std::string& c_outputText);
+extern bool itoverticaljustification(unsigned int ui_index, std::string& c_outputText);
 extern bool itopolygontype(unsigned int ui_index, std::string& c_outputText);
 extern bool itoellipsetype(unsigned int ui_index, std::string& c_outputText);
 extern bool itoacousticsignal(unsigned int ui_index, std::string& c_outputText);
