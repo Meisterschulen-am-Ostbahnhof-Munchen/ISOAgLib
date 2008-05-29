@@ -44,6 +44,13 @@ APP_SRC_FILE="TractorConsole.cpp"
 # ( jokers like "*" are allowed - example "test*.cpp" )
 # APP_SRC_EXCLUDE=""
 
+# the directories of REL_APP_PATH are already integrated into the compiler list of
+# header include search paths. But a project might need some additional paths.
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
+# PRJ_INCLUDE_PATH=""
+
 # ###############################################################
 # Selection of Basic Project Settings
 # ###############################################################
@@ -86,8 +93,8 @@ ISO_AG_LIB_PATH="../.."
 #            but avoids slow memory allocation in too small units )
 # OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
 
-# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
-# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
+# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc"
+# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of
 # the object pool and thus need not to be included in the client application.
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition"
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
@@ -111,7 +118,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -172,8 +179,6 @@ RS232_INSTANCE_CNT=1
 PRJ_ISO11783=1
 # PRJ_ISO_TERMINAL=0
 # PRJ_ISO_FILESERVER_CLIENT=0
-# PRJ_DIN9684=0
-# PRJ_DIN_TERMINAL=0
 
 # if you Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
 # note: this is done automatically if other features
@@ -192,16 +197,27 @@ PRJ_ISO11783=1
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
-# only incorporate parts from BASE that provide tractor hitch and DIN9684-engine RPM information
+# only incorporate parts from BASE that provide tractor hitch and RPM information
 PRJ_TRACTOR_GENERAL=1
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
+# the following project setting includes only measurement of tractor data.
+# i.e. NO SETTING OF COMMANDS
 PRJ_TRACTOR_MOVE=1
+
+# additionally integrate sending of tractor move commands
+# PRJ_TRACTOR_MOVE_SETPOINT=0
+
 
 # only incorporate parts from BASE that provide tractor PTO information
 # this part includes tractor pto set point data which is not available in the
 # free ISOAgLib edition. If you are interested in this feature please contact OSB AG
+# the following project setting includes only measurement of tractor data.
+# i.e. NO SETTING OF COMMANDS
 PRJ_TRACTOR_PTO=1
+
+# additionally integrate sending of tractor PTO commands
+# PRJ_TRACTOR_PTO_SETPOINT=0
 
 # only incorporate parts from BASE that provide tractor lighting information
 # this part is only defined for ISO 11783
@@ -239,12 +255,6 @@ PRJ_TIME_GPS=1
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
-
-# for DIN 9684 the process data system can be used
-# to decode GPS information from Fieldstar or LBS+ extension
-# ( if this and DIN9684 is activated, but PRJ_PROCESS is not
-#   then the value of PRJ_PROCESS is overwritten with 1 to activate it )
-# PRJ_FIELDSTAR_GPS=0
 
 # decide if local process data are wanted
 # PROC_LOCAL=0
@@ -389,7 +399,6 @@ PRJ_RS232=1
 # ISOAGLIB_INSTALL_PATH="/usr/local/"
 
 
-
 # ###############################################################
 # Build System Configuration for Cross Compilers ( like Tasking EDE )
 # ###############################################################
@@ -454,51 +463,43 @@ PRJ_RS232=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
 
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp) (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
+
+# ###############################################################
+# Build System Configuration for gcc based cross compilers and the like
+# ###############################################################
+
+# typical development systems have a host compiler version of gcc
+# in the application execution path as "gcc".
+# the appropriate cross-compiler gcc is often placed in a separate directory
+# with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
+# PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""

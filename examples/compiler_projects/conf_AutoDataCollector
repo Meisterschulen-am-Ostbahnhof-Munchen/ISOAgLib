@@ -97,7 +97,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -485,6 +485,15 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 

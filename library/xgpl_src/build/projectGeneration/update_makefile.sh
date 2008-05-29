@@ -76,10 +76,6 @@ USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
 #USE_EMBED_ILO="Xos20lcs.ilo"
 USE_EMBED_COMPILER_DIR="c:/programme/tasking/c166"
 
-USE_WIN32_LIB_DIRECTORY="C:/Development"
-USE_WIN32_HEADER_DIRECTORY="C:/Development"
-USE_WIN32_CAN_HW_TYPE="HWTYPE_VIRTUAL"
-
 USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
@@ -1356,7 +1352,23 @@ create_makefile()
     echo -n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >> $MakefileNameLong
     KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$SingleInclPath;"
   done
+  for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
+    echo -n " -I$SingleInclPath" >> $MakefileNameLong
+    KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $SingleInclPath;"
+  done
   echo "" >> $MakefileNameLong
+  echo -n "LIBPATH = " >> $MakefileNameLong
+  for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
+    echo -n " -L$SingleLibPath" >> $MakefileNameLong
+  done
+  echo "" >> $MakefileNameLong
+
+  echo -n "EXTERNAL_LIBS = " >> $MakefileNameLong
+  for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
+    echo -n " $SingleLibItem" >> $MakefileNameLong
+  done
+  echo "" >> $MakefileNameLong
+
   echo -e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
   echo    "-include versions.mk" >> $MakefileNameLong
 
@@ -1600,6 +1612,12 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $MakefileNameLong.1 > $MakefileNameLong
   rm -f $MakefileNameLong.1
 
+	# replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
+	while [ `grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong` -gt 0 ] ; do
+		sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $MakefileNameLong.1
+		mv $MakefileNameLong.1 $MakefileNameLong
+	done
+
   # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
   rm -f "Makefile"
   ln -s $MakefileNameLong "Makefile"
@@ -1631,6 +1649,21 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   for SingleInclPath in $PRJ_INCLUDE_PATH ; do
     echo -n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >> $MakefileNameLong
     KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $ISO_AG_LIB_INSIDE/$SingleInclPath;"
+  done
+  for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
+    echo -n " -I$SingleInclPath" >> $MakefileNameLong
+    KDEVELOP_INCLUDE_PATH="$KDEVELOP_INCLUDE_PATH $SingleInclPath;"
+  done
+  echo "" >> $MakefileNameLong
+  echo -n "LIBPATH = " >> $MakefileNameLong
+  for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
+    echo -n " -L$SingleLibPath" >> $MakefileNameLong
+  done
+  echo "" >> $MakefileNameLong
+
+  echo -n "EXTERNAL_LIBS = " >> $MakefileNameLong
+  for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
+    echo -n " $SingleLibItem" >> $MakefileNameLong
   done
   echo "" >> $MakefileNameLong
 
@@ -1692,6 +1725,12 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   fi
   rm -f $MakefileNameLong.1
 
+	# replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
+	while [ `grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong` -gt 0 ] ; do
+		sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $MakefileNameLong.1
+		mv $MakefileNameLong.1 $MakefileNameLong
+	done
+
   # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
   rm -f "MakefileApp"
   ln -s $MakefileNameLong "MakefileApp"
@@ -1709,7 +1748,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   CMDLINE=`echo "sed -e 's#REPLACE_INCLUDE#$KDEVELOP_INCLUDE_PATH#g' $PROJECT.kdevelop.1 > $PROJECT.kdevelop"`
   echo $CMDLINE | sh
 # mv $PROJECT.kdevelop.1 $PROJECT.kdevelop
-  rm $PROJECT.kdevelop.1
+  rm -f $PROJECT.kdevelop.1
 
   echo "# KDevelop Custom Project File List" > $PROJECT.kdevelop.filelist
   cat filelist__$PROJECT.txt >> $PROJECT.kdevelop.filelist
@@ -1732,7 +1771,7 @@ create_DevCCPrj() {
   mkdir -p $DEV_PRJ_DIR/objects
   cd $DEV_PRJ_DIR
   # remove some file lists, which are not used for Dev-C++
-  rm $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
+  rm -f $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
 
   # org test
   PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dev"
@@ -1759,29 +1798,51 @@ create_DevCCPrj() {
   ObjFiles=
 ENDOFHEADERA
 
+  ISO_AG_LIB_PATH_WIN=`echo "$ISO_AG_LIB_INSIDE" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
   DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
-  INCLUDE_DIR_LINE="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src"
-  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-    INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH"
-  done
+  INCLUDE_DIR_LINE="$ISO_AG_LIB_PATH_WIN=_=_library;$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"
 
   LIB_DIR_LINE=""
   LIB_FILE_LINE="-lwinmm_@@_-lws2_32_@@_"
+
+
+	USE_WIN32_EXTERNAL_INCLUDE_PATH=`echo "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+	USE_WIN32_EXTERNAL_LIBRARY_PATH=`echo "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+	USE_DEVCPP_EXTERNAL_LIBRARIES=`echo "$USE_DEVCPP_EXTERNAL_LIBRARIES" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+	REL_APP_PATH_WIN=`echo "$REL_APP_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+	PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+  for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
+    INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_PATH_WIN=_=_$EACH_REL_APP_PATH"
+  done
+  for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
+    INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$ISO_AG_LIB_PATH_WIN=_=_$SingleInclPath"
+  done
+  for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
+    INCLUDE_DIR_LINE="$INCLUDE_DIR_LINE;$SingleInclPath"
+  done
+  for SingleLibItem in $USE_DEVCPP_EXTERNAL_LIBRARIES ; do
+    LIB_FILE_LINE="$LIB_FILE_LINE""$SingleLibItem"'_@@_'
+  done
+  for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH ; do
+		if [ "M$LIB_DIR_LINE" != "M" ] ; then
+  	  LIB_DIR_LINE="$LIB_DIR_LINE;$SingleLibPath"
+		else
+	    LIB_DIR_LINE="$SingleLibPath"
+		fi
+  done
+
 
   if  [ $USE_CAN_DRIVER = "socket_server" ] ; then
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32___@@_-W_@@_-DWIN32_@@_-D_CONSOLE_@@_-D_MBCS_@@_-D_Windows_@@_-DCAN_DRIVER_SOCKET_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
   fi
 
-   if [ -n "$USE_WIN32_ADDITIONAL_LIBS" ] ; then
-      for ADDITIONAL_LIB in $USE_WIN32_ADDITIONAL_LIBS ; do
-          LIB_FILE_LINE=$LIB_FILE_LINE$ADDITIONAL_LIB"_@@_"
-      done
-   fi
-
   echo -n "Includes=$INCLUDE_DIR_LINE" >> $PROJECT_FILE_NAME
-  for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-    echo -n ";$SingleInclPath" >> $PROJECT_FILE_NAME
-  done
   echo "" >> $PROJECT_FILE_NAME
 
   echo "Libs=$LIB_DIR_LINE" >> $PROJECT_FILE_NAME
@@ -1804,6 +1865,15 @@ ENDOFHEADERA
 
   echo "Compiler=$DEFINE_LINE" >> $PROJECT_FILE_NAME
   echo "CppCompiler=$DEFINE_LINE" >> $PROJECT_FILE_NAME
+
+	while [ `grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $PROJECT_FILE_NAME` -gt 0 ] ; do
+		sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+		mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
+	done
+
+  sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+	mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
+
 
   cat <<-ENDOFHEADERB >> $PROJECT_FILE_NAME
   IsCpp=1
@@ -1965,31 +2035,26 @@ create_EdePrj()
   USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
 
   # avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
-  ISO_AG_LIB_PATH_WIN=`echo "$ISO_AG_LIB_INSIDE" | sed -e 's#/#=_=_#g'`
-  USE_EMBED_LIB_DIRECTORY=`echo "$USE_EMBED_LIB_DIRECTORY" | sed -e 's#/#=_=_#g'`
-  USE_EMBED_HEADER_DIRECTORY=`echo "$USE_EMBED_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
-  USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's#/#=_=_#g'`
-  USE_EMBED_ILO=`echo "$USE_EMBED_ILO" | sed -e 's#/#=_=_#g'`
-  USE_APP_PATH=`echo "$USE_APP_PATH" | sed -e 's#/#=_=_#g'`
-  DEV_PRJ_DIR_WIN=`echo "$DEV_PRJ_DIR" | sed -e 's#/#=_=_#g'`
-  USE_DEFINES=`echo "$USE_DEFINES" | sed -e 's#/#=_=_#g'`
-  USE_EMBED_COMPILER_DIR=`echo "$USE_EMBED_COMPILER_DIR" | sed -e 's#/#=_=_#g'`
+  ISO_AG_LIB_PATH_WIN=`echo "$ISO_AG_LIB_INSIDE" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_EMBED_LIB_DIRECTORY=`echo "$USE_EMBED_LIB_DIRECTORY" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_EMBED_HEADER_DIRECTORY=`echo "$USE_EMBED_HEADER_DIRECTORY" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_TARGET_LIB_LINE=`echo "$USE_TARGET_LIB_LINE" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_EMBED_ILO=`echo "$USE_EMBED_ILO" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_APP_PATH=`echo "$USE_APP_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  DEV_PRJ_DIR_WIN=`echo "$DEV_PRJ_DIR" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_DEFINES=`echo "$USE_DEFINES" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+  USE_EMBED_COMPILER_DIR=`echo "$USE_EMBED_COMPILER_DIR" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
 
   # remove some file lists, which are not used for Dev-C++
-  rm "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
+  rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
 
   # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
   cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-  CMDLINE=`echo "sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' $EdePrjFilelist > $EdePrjFilelist.1"`
-  echo $CMDLINE | sh
-  CMDLINE=`echo "sed -e 's#/#=_=_#g' $EdePrjFilelist.1 > $EdePrjFilelist"`
-  echo $CMDLINE | sh
-  CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist > $EdePrjFilelist.1"`
-  echo $CMDLINE | sh
-  CMDLINE=`echo "sed -e 's#=_=_[0-9a-zA-Z_+\-]+=_=_\.\.##g'  $EdePrjFilelist.1 > $EdePrjFilelist"`
-  echo $CMDLINE | sh
+	sed -e 's|\\\\|=_=_|g' -e 's|/|=_=_|g' $EdePrjFilelist > $EdePrjFilelist.1
+
+	mv $EdePrjFilelist.1 $EdePrjFilelist
   cat $EdePrjFilelist >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   rm -f $EdePrjFilelist.1
 
@@ -2009,6 +2074,15 @@ create_EdePrj()
   sed -e "s#INSERT_APP_PATH#$USE_APP_PATH#g" -e "s#INSERT_PRJ_PATH#$DEV_PRJ_DIR_WIN#g" -e "s#INSERT_DEFINES#$USE_DEFINES#g" -e "s#INSERT_EMBED_COMPILER_DIR#$USE_EMBED_COMPILER_DIR#g" $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
 
   rm -f $PROJECT_FILE_NAME.1
+
+	while [ `grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $PROJECT_FILE_NAME` -gt 0 ] ; do
+		sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+		mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
+	done
+	while [ `grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $EdePrjFilelist` -gt 0 ] ; do
+		sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $EdePrjFilelist > $EdePrjFilelist.1
+		mv $EdePrjFilelist.1 $EdePrjFilelist
+	done
 
   sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
   sed -e 's#=_=_#\\#g'  $EdePrjFilelist > $EdePrjFilelist.1
@@ -2050,7 +2124,7 @@ create_VCPrj()
   CONFIG_HDR_NAME="config_""$PROJECT.h"
 
   # remove some file lists, which are not used for Dev-C++
-  rm "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
+  rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
   USE_DEFINES=`echo " /D "'"'"$USE_SYSTEM_DEFINE"'"' " /D "'"'"PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"'"' | sed -e 's/SYSTEM_PC/SYSTEM_PC_VC/g'`
   USE_d_DEFINES=`echo $USE_DEFINES | sed -e 's#/D#/d#g'`
@@ -2059,17 +2133,19 @@ create_VCPrj()
   LIB_DIR_LINE=""
   LIB_FILE_LINE=""
 
-  ISO_AG_LIB_PATH_WIN=`echo "$ISO_AG_LIB_INSIDE" | sed -e 's#/#=_=_#g'`
-  USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#\\\#_=_=#g'`
-  USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
+  ISO_AG_LIB_PATH_WIN=`echo "$ISO_AG_LIB_INSIDE" | sed -e 's#\\\#_=_=#g' -e 's#/#=_=_#g'`
 
-  USE_WIN32_HEADER_DIRECTORY_WIN=`echo "$USE_WIN32_HEADER_DIRECTORY" | sed -e 's#/#=_=_#g'`
-  USE_WIN32_HEADER_DIRECTORY_WIN=`echo "$USE_WIN32_HEADER_DIRECTORY_WIN" | sed -e 's#\\\#=_=_#g'`
+  USE_STLPORT_HEADER_DIRECTORY=`echo "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#\\\#_=_=#g' -e 's#/#=_=_#g'`
 
-  USE_WIN32_LIB_DIRECTORY_WIN=`echo "$USE_WIN32_LIB_DIRECTORY" | sed -e 's#/#=_=_#g'`
-  USE_WIN32_LIB_DIRECTORY_WIN=`echo "$USE_WIN32_LIB_DIRECTORY_WIN" | sed -e 's#\\\#=_=_#g'`
+	USE_WIN32_EXTERNAL_INCLUDE_PATH=`echo "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
 
-  PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#/#=_=_#g'`
+	USE_WIN32_EXTERNAL_LIBRARY_PATH=`echo "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+	USE_MSVC_EXTERNAL_LIBRARIES=`echo "$USE_MSVC_EXTERNAL_LIBRARIES" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+	REL_APP_PATH_WIN=`echo "$REL_APP_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
+
+  PRJ_INCLUDE_PATH_WIN=`echo "$PRJ_INCLUDE_PATH" | sed -e 's#\\\#=_=_#g' -e 's#/#=_=_#g'`
 
 # echo "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
 
@@ -2079,8 +2155,22 @@ create_VCPrj()
       USE_d_DEFINES="$USE_d_DEFINES"' /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
   fi
 
+  for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
+    USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$ISO_AG_LIB_PATH_WIN=_=_$EACH_REL_APP_PATH"'"'
+  done
+
   for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
+    USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$ISO_AG_LIB_PATH_WIN=_=_$SingleInclPath"'"'
+  done
+
+  for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
     USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$SingleInclPath"'"'
+  done
+  for SingleLibItem in $USE_MSVC_EXTERNAL_LIBRARIES ; do
+    LIB_DIR_LINE="$LIB_DIR_LINE"' '"$SingleLibItem"
+  done
+  for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH ; do
+    LIB_DIR_LINE="$LIB_DIR_LINE"' /libpath:"'"$SingleLibPath"'"'
   done
 
 
@@ -2099,11 +2189,6 @@ create_VCPrj()
     USE_d_DEFINES="$USE_d_DEFINES"' /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
   fi
 
-  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-    EACH_REL_APP_PATH_KURZ=`echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
-    EACH_REL_APP_PATH_WIN=`echo "$EACH_REL_APP_PATH_KURZ" | sed -e 's#/#=_=_#g'`
-    USE_INCLUDE_PATHS="$USE_INCLUDE_PATHS"' /I "'"$EACH_REL_APP_PATH_WIN"'"'
-  done
 
 
   cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
@@ -2127,11 +2212,13 @@ create_VCPrj()
   CMDLINE=`echo "sed -e 's#INSERT_STLPORT_LIB_PATH#$USE_STLPORT_LIB_DIRECTORY#g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME"`
   echo $CMDLINE | sh
 
-
+	while [ `grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $DEV_PRJ_DIR/$PROJECT_FILE_NAME` -gt 0 ] ; do
+		sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+		mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+	done
 
   sed -e 's#=_=_#\\#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-#  rm -f $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-  mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+	mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 
   SOURCES=`grep -E "\.cc|\.cpp|\.c|\.lib" $DspPrjFilelist`
@@ -2184,7 +2271,7 @@ ENDOFHEADERB
   cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
   cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 | gawk '{ sub("$", "\r"); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.2
   mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.2 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-  rm $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+  rm -f $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
   cd $DEV_PRJ_DIR
   # org test
 }
