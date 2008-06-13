@@ -188,7 +188,8 @@ int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int aui_x, unsigned int au
         std::cerr << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
       }
       std::cerr << std::endl;
-      return -2;
+	  b_isInvalidPalette = true;
+      return -1;
     }
 
     fiuint8_t idx;

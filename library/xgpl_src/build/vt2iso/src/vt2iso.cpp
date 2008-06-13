@@ -1262,6 +1262,11 @@ vt2iso_c::openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned 
       std::cout << "===> Bitmap with size 0. Terminating!\n\n";
       return false;
     }
+    if (c_Bitmap.objRawBitmapBytes [actDepth] < 0)
+    {
+      std::cout << "===> Bitmap palette did not match. Terminating!\n\n";
+      exit(1);
+    }
 
     // Is RLE wanted/sensible? ("rle[actDepth]" set?)
     if (options & (uint64_t(1)<<(2+actDepth))) {

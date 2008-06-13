@@ -302,7 +302,7 @@ BGR_s vtColourTable[256]=
 
 /** constructor which can directly open the corresponding file */
 Vt2IsoImageBase_c::Vt2IsoImageBase_c( void )
-  : i_currentThreshold( -1 ), ui_width( 0 ), ui_height( 0 )
+: i_currentThreshold( -1 ), ui_width( 0 ), ui_height( 0 ), b_isInvalidPalette(false)
 {
 }
 
@@ -350,8 +350,8 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int a
     // 0..255 possible - directly taken out of the bitmap!
     return idx;
   }
-  else if (idx == -1)
-  { // we're NOT palettized, calculate a palette index!
+  else 
+  {	// we're NOT palettized, calculate a palette index!
     idx = 16 + ( componenttoindex6 ( getR( aui_x, aui_y ) )*36 )
              + ( componenttoindex6 ( getG( aui_x, aui_y ) )*6  )
              + ( componenttoindex6 ( getB( aui_x, aui_y ) )    );
@@ -378,11 +378,7 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int a
     }
     return idx;
   }
-  else if (idx == -2)
-  { // we were palettized, but the colour table didn't match!
-    exit (1);
-  }
-  else return 0; // make compiler happy!
+  return 0; // Only for compiler satisfaction.
 }
 
 /** write the Bitmap to the given buffer and return amount of written Bytes */
@@ -438,8 +434,9 @@ unsigned int Vt2IsoImageBase_c::write4BitBitmap( unsigned char* pui_bitmap, unsi
 }
 
 /** write the Bitmap to the given buffer and return amount of written Bytes */
-unsigned int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize )
+int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize )
 {
+  b_isInvalidPalette = false;
   objRawBitmapBytes [2] = 0;
   for ( unsigned int ui_y=0; ui_y< getHeight(); ui_y++) {
     for ( unsigned int ui_x=0; ui_x < getWidth(); ui_x++) {
@@ -451,6 +448,9 @@ unsigned int Vt2IsoImageBase_c::write8BitBitmap( unsigned char* pui_bitmap, unsi
       objRawBitmapBytes [2]++;
     }
   } // iterate loop
+  if( b_isInvalidPalette )
+	return -1;
+
   return objRawBitmapBytes [2];
 }
 
