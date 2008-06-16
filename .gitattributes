@@ -2689,6 +2689,9 @@ library/xgpl_src/build/vt2iso/Vt2Iso.dev -text
 library/xgpl_src/build/vt2iso/bin/Vt2Iso.exe -text
 library/xgpl_src/build/vt2iso/bin/vt2iso.xsd -text
 library/xgpl_src/build/vt2iso/bin/xerces-c_2_5_0.dll -text
+library/xgpl_src/build/vt2iso/bin_vc/FreeImage.dll -text
+library/xgpl_src/build/vt2iso/bin_vc/vt2iso.exe -text
+library/xgpl_src/build/vt2iso/bin_vc/xerces-c_2_5_0.dll -text
 library/xgpl_src/build/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 library/xgpl_src/build/vt2iso/src/specialparsingbase_c.h -text
 library/xgpl_src/build/vt2iso/src/specialparsingbaseproptag_c.h -text
