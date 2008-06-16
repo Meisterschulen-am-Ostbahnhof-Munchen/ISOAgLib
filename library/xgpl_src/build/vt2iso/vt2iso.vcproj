@@ -21,6 +21,7 @@
 			IntermediateDirectory=".\~build\$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC71.vsprops"
+			UseOfMFC="0"
 			CharacterSet="2"
 			ManagedExtensions="4"
 			>
@@ -108,6 +109,7 @@
 			OutputDirectory=".\bin_vc\"
 			IntermediateDirectory=".\~build\$(ConfigurationName)"
 			ConfigurationType="1"
+			UseOfMFC="1"
 			CharacterSet="2"
 			ManagedExtensions="0"
 			>
@@ -132,7 +134,7 @@
 				AdditionalIncludeDirectories="&quot;C:\programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;;&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1"
 				MinimalRebuild="false"
-				RuntimeLibrary="2"
+				RuntimeLibrary="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
