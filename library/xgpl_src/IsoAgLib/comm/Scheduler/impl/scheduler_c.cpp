@@ -498,23 +498,25 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   else i32_endCanProcessing = HAL::getTime() + i32_endCanProcessing;
   Scheduler_Task_c::setDemandedExecEnd( ( i32_endCanProcessing < ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
+  /// @todo Removing the below extra-CAN-processing is subject to be done..
   // check if all tasks are called
   if ( i32_idleTime > 0 )
   { // as we are in time, call CanIo_c::processMsg() if last CanIo_c::timeEvent
     System_c::triggerWd();
     // was used to process received messages
     // ==> allows to cope wiht high BUS loads
-#ifndef SYSTEM_A2	////For OPUS A2 system, avoid processMsg again to improve scheduler speed
     if ( getAvailableExecTime() != 0 )
     { // simply call processMsg and don't update statistic
       getCanInstance4Comm().processMsg();
     }
-#endif
     #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-    if ( getAvailableExecTime() != 0 )
-    { // simply call processMsg and don't update statistic
-      // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
-      getCanInstance( 1 ).processMsg();
+    for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
+    {
+      if ( getAvailableExecTime() != 0 )
+      { // simply call processMsg and don't update statistic
+        // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
+        getCanInstance( ind ).processMsg();
+      }
     }
     #endif
 
