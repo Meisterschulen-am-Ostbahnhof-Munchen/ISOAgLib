@@ -89,6 +89,7 @@
 class StreamInput_c;
 #endif
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
+#include <cstring>
 #include <vector>
 #ifdef USE_VT_UNICODE_SUPPORT
 #include <string>
@@ -195,7 +196,7 @@ uint16_t sizeVectorTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_capacity );
 template<class T> void convertLittleEndianString( const uint8_t* apui8_src, T& r_result )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  STL_NAMESPACE::memcpy( &r_result, apui8_src, sizeof(T) );
+  CNAMESPACE::memcpy( &r_result, apui8_src, sizeof(T) );
   #else
   for ( int ind = sizeof(T)-1; ind >= 0; ind-- )
   {
@@ -224,7 +225,7 @@ float convertLittleEndianStringFloat( const uint8_t* apui8_src );
 template<class T> void numberRef2LittleEndianString( const T& acrc_src, uint8_t* pui8_target )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  STL_NAMESPACE::memcpy( pui8_target, &acrc_src, sizeof(T) );
+  CNAMESPACE::memcpy( pui8_target, &acrc_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
@@ -238,7 +239,7 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, uint8_t*
 template<class T> void number2LittleEndianString( const T at_src, uint8_t* pui8_target )
 {
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  STL_NAMESPACE::memcpy( pui8_target, &at_src, sizeof(T) );
+  CNAMESPACE::memcpy( pui8_target, &at_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
   for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
@@ -364,19 +365,11 @@ class Flexible4ByteString_c {
   Flexible4ByteString_c( const uint8_t* apui8_srcStream = NULL );
   /** set this object from a optionally odd addressed string */
   void setDataFromString( const uint8_t* apui8_srcStream, uint8_t aui8_len = 4 )
-  #ifndef SYSTEM_A2
   { if (apui8_srcStream != NULL ) CNAMESPACE::memcpy(uint8, apui8_srcStream, aui8_len );};
-  #else
-  { if (apui8_srcStream != NULL ) memcpy(uint8, apui8_srcStream, aui8_len );};
- #endif
 
   /** copy contents of this object to a optionally odd addressed string */
   void getDataToString( uint8_t* pui8_targetStream, uint8_t aui8_len = 4 ) const
-  #ifndef SYSTEM_A2
-    { if (pui8_targetStream != NULL ) CNAMESPACE::memcpy( pui8_targetStream, uint8, aui8_len );};
-  #else
-    { if (pui8_targetStream != NULL ) memcpy( pui8_targetStream, uint8, aui8_len );};
-  #endif
+  { if (pui8_targetStream != NULL ) CNAMESPACE::memcpy( pui8_targetStream, uint8, aui8_len );};
 
   /** set this object from a optionally odd addressed string */
   void setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len = 4 );
@@ -614,19 +607,12 @@ class Flexible8ByteString_c {
   Flexible8ByteString_c( const uint8_t* apui8_srcStream = NULL );
   /** set this object from a optionally odd addressed string */
   void setDataFromString( const uint8_t* apui8_srcStream, uint8_t aui8_len = 8 )
-  #ifndef SYSTEM_A2
   { if (apui8_srcStream != NULL ) CNAMESPACE::memcpy(uint8, apui8_srcStream, aui8_len );};
-  #else
-  { if (apui8_srcStream != NULL ) memcpy(uint8, apui8_srcStream, aui8_len );};
-  #endif
 
   /** copy contents of this object to a optionally odd addressed string */
   void getDataToString( uint8_t* pui8_srcStream, uint8_t aui8_len = 8 ) const
-  #ifndef SYSTEM_A2
   { if (pui8_srcStream != NULL ) CNAMESPACE::memcpy( pui8_srcStream, uint8, aui8_len );};
-  #else
-  { if (pui8_srcStream != NULL ) memcpy( pui8_srcStream, uint8, aui8_len );};
-  #endif
+
   /** set this object from a optionally odd addressed string */
   void setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len = 8 );
   /** copy contents of this object to a optionally odd addressed string */

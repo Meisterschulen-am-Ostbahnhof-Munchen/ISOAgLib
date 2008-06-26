@@ -105,27 +105,27 @@ int16_t iInitEEEditor(  uint8_t bBus,
     case 'l':
       sscanf(pcVal, "%d", &lVal);
       printf("EEprom Editor Long %d and Addresse %d\n", lVal, wAddress);
-      eepromWrite(wAddress, 4, (uint8_t*)&lVal);
+      eepromWrite(wAddress, 4, (const uint8_t*)&lVal);
       break;
     case 'i':
       sscanf(pcVal, "%hd", &iVal);
       printf("EEprom Editor Int16 %hd and Addresse %d\n", iVal, wAddress);
-      eepromWrite(wAddress, 2, (uint8_t*)&iVal);
+      eepromWrite(wAddress, 2, (const uint8_t*)&iVal);
       break;
     case 'c':
       sscanf(pcVal, "%hd", &iVal);
       cVal = iVal;
       printf("EEprom Editor int8_t %c and Addresse %d\n", cVal, wAddress);
-      eepromWrite(wAddress, 1, (uint8_t*)&cVal);
+      eepromWrite(wAddress, 1, (const uint8_t*)&cVal);
       break;
     case 'f':
       sscanf(pcVal, "%f", &fVal);
       printf("EEprom Editor Float %f and Addresse %d\n", fVal, wAddress);
-      eepromWrite(wAddress, 4, (uint8_t*)&fVal);
+      eepromWrite(wAddress, 4, (const uint8_t*)&fVal);
       break;
     case 's':
       printf("EEprom Editor Text %s and Addresse %d\n", pcVal, wAddress);
-      eepromWrite(wAddress, wLen, (uint8_t*)pcVal);
+      eepromWrite(wAddress, wLen, (const uint8_t*)pcVal);
       break;
   }
  }

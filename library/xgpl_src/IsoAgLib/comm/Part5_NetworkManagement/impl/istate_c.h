@@ -172,7 +172,7 @@ public:
     deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
-  const itemState_t itemState() const
+  itemState_t itemState() const
     {return en_itemState;}
 
   /**

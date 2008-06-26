@@ -121,7 +121,7 @@ namespace HAL
     @param pbData pointer to uint8_t string which should be written into EEPROM
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData)
+  inline int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData)
     {return __HAL::eepromWrite(wAddress, wNumber, pbData);};
 
   /**

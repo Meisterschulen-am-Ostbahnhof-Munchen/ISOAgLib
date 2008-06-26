@@ -155,7 +155,7 @@ public:
   /** deliver the state information
     @return state information of type itemState_t (with state informations coded by OR in enum)
   */
-  const itemState_t itemState() const {return IsoItem_c::itemState();}
+  itemState_t itemState() const {return IsoItem_c::itemState();}
 
   /** set the state of a local memberItem and send optional the new state, if
     Item::off, Item::standby or Item::active was set

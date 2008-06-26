@@ -473,7 +473,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
   if(i16_rc > 0 && FD_ISSET(msqDataClient.i32_pipeHandle, &rfds) > 0)
   {  // clear pipe (is done also in can server before next write)
     for (i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16); i16_rc == 16 ;
-         i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16) );
+         i16_rc = read(msqDataClient.i32_pipeHandle, &ui8_buf, 16) ) {}
   }
 
   return cb_result;

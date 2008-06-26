@@ -344,7 +344,7 @@ bool EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8
         { // old data is different -> write new data
           if (writeInit())
           { // call BIOS function
-            setState4BiosReturn(HAL::eepromWrite(ui16_actualStart, ui16_actualSize, (uint8_t*)pb_data));
+            setState4BiosReturn(HAL::eepromWrite(ui16_actualStart, ui16_actualSize, pb_data));
           }
         }
         else

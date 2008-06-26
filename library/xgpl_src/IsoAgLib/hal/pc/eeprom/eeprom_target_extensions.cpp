@@ -143,7 +143,7 @@ int16_t openDatFileAndSeek(long al_position)
 }
 
 /* write one or more bytes into the eeprom*/
-int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,uint8_t *pbData){
+int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData){
   int16_t i = 0;
   short sTemp;
   int8_t c_temp;

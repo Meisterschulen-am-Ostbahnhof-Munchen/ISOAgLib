@@ -357,7 +357,7 @@ template<class T> class Singleton
       // inits with setting the poitner to 1 -> later tasks perform busy waiting
       if ( mspc_instance == (T*)1 )
       { // perform busy waiting till first task is ready with init
-        while ( mspc_instance == (T*)1 );
+        while ( mspc_instance == (T*)1 ) {}
         // as soon as the pointer is != 1 the init is ready
         return *mspc_instance;
       }
@@ -381,7 +381,7 @@ template<class T> class Singleton
     else
     { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
       // we'll get a definitive endless loop here - fine to debug ;-)
-      while ( mspc_instance == (T*)1 );
+      while ( mspc_instance == (T*)1 ) {}
     }
     return *mspc_instance;
   };
@@ -416,7 +416,7 @@ template<class T, class B> class SingletonDerived : public B
       // inits with setting the poitner to 1 -> later tasks perform busy waiting
       if ( mspc_instance == (T*)1 )
       { // perform busy waiting till first task is ready with init
-        while ( mspc_instance == (T*)1 );
+        while ( mspc_instance == (T*)1 ) {}
         // as soon as the pointer is != 1 the init is ready
         return *mspc_instance;
       }
@@ -440,7 +440,7 @@ template<class T, class B> class SingletonDerived : public B
     else
     { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
       // we'll get a definitive endless loop here - fine to debug ;-)
-      while ( mspc_instance == (T*)1 );
+      while ( mspc_instance == (T*)1 ) {}
     }
     return *mspc_instance;
   };
@@ -475,7 +475,7 @@ template<class T, int SIZE> class SingletonVec
       // inits with setting the poitner to 1 -> later tasks perform busy waiting
       if ( mspc_instance[0] == (T*)1 )
       { // perform busy waiting till first task is ready with init
-        while ( mspc_instance[0] == (T*)1 );
+        while ( mspc_instance[0] == (T*)1 ) {}
         // as soon as the pointer is != 1 the init is ready
         return *mspc_instance[riIndex];
       }
@@ -502,7 +502,7 @@ template<class T, int SIZE> class SingletonVec
     else
     { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
       // we'll get a definitive endless loop here - fine to debug ;-)
-      while ( mspc_instance[0] == (T*)1 );
+      while ( mspc_instance[0] == (T*)1 ) {}
     }
     return *mspc_instance[riIndex];
   };
@@ -537,7 +537,7 @@ template<class T, class B, int SIZE> class SingletonDerivedVec : public B
       // inits with setting the poitner to 1 -> later tasks perform busy waiting
       if ( mspc_instance[0] == (T*)1 )
       { // perform busy waiting till first task is ready with init
-        while ( mspc_instance[0] == (T*)1 );
+        while ( mspc_instance[0] == (T*)1 ) {}
         // as soon as the pointer is != 1 the init is ready
         return *mspc_instance[riIndex];
       }
@@ -564,7 +564,7 @@ template<class T, class B, int SIZE> class SingletonDerivedVec : public B
     else
     { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
       // we'll get a definitive endless loop here - fine to debug ;-)
-      while ( mspc_instance[0] == (T*)1 );
+      while ( mspc_instance[0] == (T*)1 ) {}
     }
     return *mspc_instance[riIndex];
   };
