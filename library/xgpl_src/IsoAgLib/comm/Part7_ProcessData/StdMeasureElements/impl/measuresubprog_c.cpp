@@ -150,7 +150,9 @@ const MeasureSubprog_c& MeasureSubprog_c::operator=(const MeasureSubprog_c& acrc
   copy constructor for Subprogs
   @param acrc_src source instance
 */
-MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src){
+MeasureSubprog_c::MeasureSubprog_c(const MeasureSubprog_c& acrc_src)
+: ClientBase(acrc_src)
+{
   mb_started = acrc_src.mb_started;
   men_type = acrc_src.men_type;
   men_doSend = acrc_src.men_doSend;

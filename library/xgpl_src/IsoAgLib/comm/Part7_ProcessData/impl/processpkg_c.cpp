@@ -149,14 +149,14 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
   if (mc_processCmd.getCommand() == ProcessCmd_c::setValue &&
       mc_processCmd.checkIsSetpoint())
   { // setpoint value -> special commands are possible for exact, min, max, default setpopints
-      if ((ren_checkCmd & setpointReleaseCmd != 0)
+      if (((ren_checkCmd & setpointReleaseCmd) != 0)
        &&(ci32_test == static_cast<int32_t>(SETPOINT_RELEASE_COMMAND)))
       {
         b_result = true;
       }
       else
       {
-        if ((ren_checkCmd & setpointErrCmd != 0)
+        if (((ren_checkCmd & setpointErrCmd) != 0)
          && (ci32_test == static_cast<int32_t>(SETPOINT_ERROR_COMMAND))) b_result = true;
       }
   }
@@ -165,14 +165,14 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
       !mc_processCmd.checkIsSetpoint())
   { // measure value: conversion if: actual, min, max, integ, med
     // check for command values
-    if ((ren_checkCmd & noVal_32s != 0)
+    if (((ren_checkCmd & noVal_32s) != 0)
       &&(ci32_test == static_cast<int32_t>(NO_VAL_32S)))
     {
       b_result = true;
     }
     else
     {
-      if ((ren_checkCmd & errVal_32s != 0)
+      if (((ren_checkCmd & errVal_32s) != 0)
       && (ci32_test == static_cast<int32_t>(ERROR_VAL_32S))) b_result = true;
     }
   }

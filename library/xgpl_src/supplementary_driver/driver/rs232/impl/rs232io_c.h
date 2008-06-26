@@ -175,9 +175,9 @@ public:
 
 
   /**
-    checks whether the the BIOS RS232 is correctly initialized
+    checks whether the BIOS RS232 is correctly initialized
   */
-  const bool isInitialized () const 
+  bool isInitialized () const 
   {return 
   (ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 
  #if defined(USE_RS232_CHANNEL) 

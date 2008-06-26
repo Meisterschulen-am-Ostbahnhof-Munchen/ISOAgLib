@@ -343,7 +343,6 @@ bool IsoItem_c::timeEvent( void )
 {
   CanIo_c& c_can = getCanInstance4Comm();
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
 
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
 
@@ -416,6 +415,7 @@ bool IsoItem_c::timeEvent( void )
       else
       { // <0 or >0
         bool b_sendOutWsMessage=true;
+        IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
         if ( mi8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
           mi8_slavesToClaimAddress = mpvec_slaveIsoNames->size();
