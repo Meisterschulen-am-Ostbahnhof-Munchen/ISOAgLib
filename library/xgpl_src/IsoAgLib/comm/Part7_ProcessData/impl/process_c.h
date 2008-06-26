@@ -100,8 +100,10 @@
 #include "../Remote/impl/procdataremotebase_c.h"
 #include "processpkg_c.h"
 #include "../processdatachangehandler_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h>
+#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
+  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
+#endif
 
 #ifdef DO_USE_SLIST
   #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
