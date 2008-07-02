@@ -135,7 +135,7 @@ public:
   TargetFileStreamInput_c() : fileDescr(NULL), b_eofReached(false), ui16_bytesInBuffer(0), ui16_currentReadIndexInBuffer(0)
   {}
 
-  ~TargetFileStreamInput_c() { close(); }
+  virtual ~TargetFileStreamInput_c() { close(); }
 
 private:
 
