@@ -638,7 +638,7 @@ create_filelist( )
   fi
   if [ $PRJ_DATASTREAMS -lt 1 ] ; then
     if test $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
-        COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.cpp'"
+        COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.*'"
     fi
   fi
   if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
@@ -797,7 +797,7 @@ create_filelist( )
   fi
   rm -f .exec.tmp
 
-  FIND_TEMP_PATH="-path '*/Scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/impl/can*' "
+  FIND_TEMP_PATH="-path '*/Scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $COMM_PROC_FEATURES"

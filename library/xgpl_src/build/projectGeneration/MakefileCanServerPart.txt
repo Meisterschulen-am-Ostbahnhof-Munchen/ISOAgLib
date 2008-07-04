@@ -13,3 +13,8 @@ include $(DEPS_SERVER)
 
 can_server: $(OBJECTS_SERVER)
 	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS) $(LIBS_CAN_SERVER)
+
+clean_can_server:
+	rm can_server $(OBJECTS_SERVER) $(DEPS_SERVER)
+
+
