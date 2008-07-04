@@ -437,22 +437,22 @@ public:
 
 
 #ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
-  bool sendCommandSetGraphicsCursor (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandSetGraphicsCursor (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetForegroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetBackgroundColour (IsoAgLib::iVtObject_c* apc_object, uint8_t newValue, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetGCLineAttributes (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectLineAttributes_c* const newLineAttributes, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetGCFillAttributes (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFillAttributes_c* const newFillAttributes, bool b_enableReplaceOfCmd=true);
   bool sendCommandSetGCFontAttributes (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectFontAttributes_c* const newFontAttributes, bool b_enableReplaceOfCmd=true);
-  bool sendCommandEraseRectangle (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandEraseRectangle (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
   bool sendCommandDrawPoint (IsoAgLib::iVtObject_c* apc_object, bool  b_enableReplaceOfCmd=true);
-  bool sendCommandDrawLine (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawRectangle (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawClosedEllipse (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd=true);
-  bool sendCommandDrawPolygon (IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const apc_data, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawLine (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawRectangle (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawClosedEllipse (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
+  bool sendCommandDrawPolygon (IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const int16_t* api16_x, const int16_t* api16_y, bool b_enableReplaceOfCmd=true);
   bool sendCommandDrawText (IsoAgLib::iVtObject_c* apc_object, uint8_t ui8_textType, uint8_t ui8_numOfCharacters, const char *apc_newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandPanViewport (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd=true);
+  bool sendCommandPanViewport (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd=true);
   bool sendCommandZoomViewport (IsoAgLib::iVtObject_c* apc_object, int8_t newValue, bool b_enableReplaceOfCmd=true);
-  bool sendCommandPanAndZoomViewport (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, int8_t newValue, bool b_enableReplaceOfCmd=true);
+  bool sendCommandPanAndZoomViewport (IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, int8_t newValue, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeViewportSize (IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b_enableReplaceOfCmd=true);
   bool sendCommandDrawVtObject (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObject_c* const pc_VtObject, bool b_enableReplaceOfCmd=true);
   bool sendCommandCopyCanvas2PictureGraphic (IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtObjectPictureGraphic_c* const pc_VtObjectPictureGraphic, bool b_enableReplaceOfCmd=true);

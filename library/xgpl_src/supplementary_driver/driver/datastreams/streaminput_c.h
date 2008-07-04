@@ -89,7 +89,6 @@
 #ifndef STREAMINPUT_C_H
 #define STREAMINPUT_C_H
 
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivttypes.h>
 #include <IsoAgLib/util/convert.h>
 
 /** Abstract base class for a streaming input source.
@@ -133,12 +132,6 @@ public:
   StreamInput_c& operator>>(int16_t& i16_data) {
     uint16_t ui16; *this >> ui16;
     i16_data = convert_n::castI( ui16 ); return *this;
-  }
-
-  //! Stream input of point coordinates
-  StreamInput_c& operator>>( IsoAgLib::iVtPoint_c& c_point ) {
-    int16_t x,y; *this >> x >> y;
-    c_point = IsoAgLib::iVtPoint_c(x,y); return *this;
   }
 
 #if defined(_BASIC_STRING_H) || defined(__BASTRING__)

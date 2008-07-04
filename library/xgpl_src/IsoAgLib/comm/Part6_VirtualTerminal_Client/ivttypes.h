@@ -190,62 +190,6 @@ typedef struct vtState_s {
   uint8_t  functionBusy;
 } vtState_s;
 
-/** Pair of coordinates representing a point location at the VT. */
-class iVtPoint_c {
-  public:
-    iVtPoint_c( void ) : x(0), y(0) {}
-    iVtPoint_c( int16_t ai16_x, int16_t ai16_y ) : x(ai16_x), y(ai16_y) {}
-    int16_t getX( void ) const { return x; }
-    int16_t getY( void ) const { return y; }
-    void setX( int16_t i_x ) { x = i_x; }
-    void setY( int16_t i_y ) { y = i_y; }
-
-    //! Add another points coordinates to this point.
-    iVtPoint_c& operator+=( const iVtPoint_c& a ) { x += a.x; y += a.y; return *this; }
-    //! Subtract another points coordinates from this point.
-    iVtPoint_c& operator-=( const iVtPoint_c& a ) { x -= a.x; y -= a.y; return *this; }
-    //! Scale points coordinates by integer factor.
-    iVtPoint_c& operator*=( int a ) { x *= a; y *= a; return *this; }
-    //! Divide points coordinates by integer divisor.
-    iVtPoint_c& operator/=( int a ) { x /= a; y /= a; return *this; }
-    //! Absolute value of this points coordinates.
-    iVtPoint_c abs( void ) const { return iVtPoint_c( abs(x), abs(y) ); }
-    //! Equal operator used for external binary operator==
-    bool equal(const iVtPoint_c& p) const { return ((x == p.x) && (y == p.y)); }
-
-    //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
-    int16_t& setX( void ) { return x; }
-    //! Don't use: This is just a workaround for problems using the VT server MACRO_processChangeAttributeAID
-    int16_t& setY( void ) { return y; }
-  protected:
-    int16_t x;
-    int16_t y;
-  private:
-    //! Due to problems using the tasking compiler let's add our own abs().
-    static int16_t abs( int16_t i ) { return CNAMESPACE::abs(i); }
-};
-
-inline bool operator==(const iVtPoint_c& a, const iVtPoint_c& b) { return a.equal(b); }
-inline iVtPoint_c operator+( const iVtPoint_c& a, const iVtPoint_c& b ) {
-  iVtPoint_c r(a); return r += b;
-}
-inline iVtPoint_c operator-( const iVtPoint_c& a, const iVtPoint_c& b ) {
-  iVtPoint_c r(a); return r -= b;
-}
-inline iVtPoint_c operator*( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r *= b; }
-inline iVtPoint_c operator/( const iVtPoint_c& a, int b ) { iVtPoint_c r(a); return r /= b; }
-inline iVtPoint_c abs( const iVtPoint_c& a ) { return a.abs(); }
-/*
-inline iVtPoint_c 
-min_point( const iVtPoint_c& a, 
-	const iVtPoint_c& b ) {
-  return iVtPoint_c( CNAMESPACE::min(a.getX(),b.getX()), CNAMESPACE::min(a.getY(),b.getY()) );
-}
-inline iVtPoint_c max_point( const iVtPoint_c& a, const iVtPoint_c& b ) {
-  return iVtPoint_c( CNAMESPACE::max(a.getX(),b.getX()), CNAMESPACE::max(a.getY(),b.getY()) );
-}
-*/
-
 } // namespace IsoAgLib
 
 #endif // IVTTYPES_H

@@ -167,18 +167,18 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
 vtObjectGraphicsContext_c::vtObjectGraphicsContext_c() {}
 
 void
-vtObjectGraphicsContext_c::setGraphicsCursor( const IsoAgLib::iVtPoint_c& ac_point,
+vtObjectGraphicsContext_c::setGraphicsCursor( int16_t ai16_x, int16_t ai16_y,
                                               bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandSetGraphicsCursor(
-              this, ac_point, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
 void
@@ -247,18 +247,18 @@ vtObjectGraphicsContext_c::setFontAttributes( const IsoAgLib::iVtObjectFontAttri
 }
 
 void
-vtObjectGraphicsContext_c::eraseRectangle( const IsoAgLib::iVtPoint_c& ac_point,
+vtObjectGraphicsContext_c::eraseRectangle( int16_t ai16_x, int16_t ai16_y,
                                            bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandEraseRectangle(
-              this, ac_point, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
 void
@@ -271,63 +271,64 @@ vtObjectGraphicsContext_c::drawPoint( bool /*b_updateObject*/, bool b_enableRepl
 }
 
 void
-vtObjectGraphicsContext_c::drawLine( const IsoAgLib::iVtPoint_c& ac_point,
+vtObjectGraphicsContext_c::drawLine( int16_t ai16_x, int16_t ai16_y,
                                      bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawLine(
-              this, ac_point, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
 void
-vtObjectGraphicsContext_c::drawRectangle( const IsoAgLib::iVtPoint_c& ac_point,
+vtObjectGraphicsContext_c::drawRectangle( int16_t ai16_x, int16_t ai16_y,
                                           bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawRectangle(
-              this, ac_point, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
 void
-vtObjectGraphicsContext_c::drawClosedEllipse( const IsoAgLib::iVtPoint_c& ac_point,
+vtObjectGraphicsContext_c::drawClosedEllipse( int16_t ai16_x, int16_t ai16_y,
                                               bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawClosedEllipse(
-              this, ac_point, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
+//! You need to supply valid pointers for api16_x/api16_y - no checks are done in here...
 void
-vtObjectGraphicsContext_c::drawPolygon( uint16_t cnt, const IsoAgLib::iVtPoint_c* const ac_point,
+vtObjectGraphicsContext_c::drawPolygon( uint16_t cnt, const int16_t* api16_x, const int16_t* api16_y,
                                         bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point[cnt-1].getX() );
+      sizeof(iVtObjectGraphicsContext_s), api16_x[cnt-1] );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), cursorY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point[cnt-1].getY() );
+      sizeof(iVtObjectGraphicsContext_s), api16_y[cnt-1] );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandDrawPolygon(
-              this, cnt, ac_point, b_enableReplaceOfCmd);
+              this, cnt, api16_x, api16_y, b_enableReplaceOfCmd);
 }
 
 void
@@ -353,18 +354,18 @@ vtObjectGraphicsContext_c::drawText( uint8_t type, uint8_t cnt, const char* apc_
 }
 
 void
-vtObjectGraphicsContext_c::panViewport( const IsoAgLib::iVtPoint_c& ac_point,
+vtObjectGraphicsContext_c::panViewport( int16_t ai16_x, int16_t ai16_y,
                                         bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanViewport(
-              this, ac_point, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, b_enableReplaceOfCmd);
 }
 
 void
@@ -384,7 +385,7 @@ vtObjectGraphicsContext_c::zoomViewport( int8_t newValue,
 }
 
 void
-vtObjectGraphicsContext_c::panAndZoomViewport( const IsoAgLib::iVtPoint_c& ac_point, int8_t newValue,
+vtObjectGraphicsContext_c::panAndZoomViewport( int16_t ai16_x, int16_t ai16_y, int8_t newValue,
                                                bool b_updateObject, bool b_enableReplaceOfCmd)
 {
   // Check precondition as defined in ISO
@@ -392,15 +393,15 @@ vtObjectGraphicsContext_c::panAndZoomViewport( const IsoAgLib::iVtPoint_c& ac_po
 
   if (b_updateObject) {
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportX),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getX() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_x );
     saveSignedValue16 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportY),
-      sizeof(iVtObjectGraphicsContext_s), ac_point.getY() );
+      sizeof(iVtObjectGraphicsContext_s), ai16_y );
     saveSignedValue8 (MACRO_getStructOffset(get_vtObjectGraphicsContext_a(), viewportZoom),
       sizeof(iVtObjectGraphicsContext_s), newValue);
   }
 
   getIsoTerminalInstance4Comm().getClientByID(s_properties.clientId).sendCommandPanAndZoomViewport(
-              this, ac_point, newValue, b_enableReplaceOfCmd);
+              this, ai16_x, ai16_y, newValue, b_enableReplaceOfCmd);
 }
 
 void

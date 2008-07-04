@@ -1332,6 +1332,10 @@ VtClientServerCommunication_c::processMsg()
         }
         finalizeUploading();
       }
+      else
+      { // in case StoreVersion was triggered by the Application in normal operation
+        MACRO_setStateDependantOnError (6)
+      }
       break;
     case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse))
@@ -1692,10 +1696,10 @@ VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t aui16_o
 //! @return Flag if successful
 bool
 VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( ac_point.getX() );
-  uint16_t y=convert_n::castUI( ac_point.getY() );
+  uint16_t x=convert_n::castUI( ai16_x );
+  uint16_t y=convert_n::castUI( ai16_y );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setGraphicsCursorCmdID,
@@ -1760,10 +1764,10 @@ VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
 
 bool
 VtClientServerCommunication_c::sendCommandEraseRectangle(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( ac_point.getX() );
-  uint16_t y=convert_n::castUI( ac_point.getY() );
+  uint16_t x=convert_n::castUI( ai16_x );
+  uint16_t y=convert_n::castUI( ai16_y );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_eraseRectangleCmdID,
@@ -1784,10 +1788,10 @@ VtClientServerCommunication_c::sendCommandDrawPoint(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawLine(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( ac_point.getX() );
-  uint16_t y=convert_n::castUI( ac_point.getY() );
+  uint16_t x=convert_n::castUI( ai16_x );
+  uint16_t y=convert_n::castUI( ai16_y );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawLineCmdID,
@@ -1797,10 +1801,10 @@ VtClientServerCommunication_c::sendCommandDrawLine(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawRectangle(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( ac_point.getX() );
-  uint16_t y=convert_n::castUI( ac_point.getY() );
+  uint16_t x=convert_n::castUI( ai16_x );
+  uint16_t y=convert_n::castUI( ai16_y );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawRectangleCmdID,
@@ -1810,10 +1814,10 @@ VtClientServerCommunication_c::sendCommandDrawRectangle(
 
 bool
 VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
-  uint16_t x=convert_n::castUI( ac_point.getX() );
-  uint16_t y=convert_n::castUI( ac_point.getY() );
+  uint16_t x=convert_n::castUI( ai16_x );
+  uint16_t y=convert_n::castUI( ai16_y );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawClosedEllipseCmdID,
@@ -1821,20 +1825,21 @@ VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
+/// @todo Better struct for array of x/y pairs!
 bool
 VtClientServerCommunication_c::sendCommandDrawPolygon(
-  IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const IsoAgLib::iVtPoint_c* const apc_data, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const int16_t* api16_x, const int16_t* api16_y, bool b_enableReplaceOfCmd)
 {
   // Prevent from derefernzing NULL pointer.
-  if (0 == apc_data) { ui16_numOfPoints = 0; }
+  if ((0 == api16_x) || (0 == api16_y)) { ui16_numOfPoints = 0; }
 
   // Check if valid polgon (at least one point)
   if (0 == ui16_numOfPoints) { return false; }
 
   // Trivial case (like draw line) without TP.
   if (ui16_numOfPoints == 1) {
-    uint16_t x = convert_n::castUI( apc_data->getX() );
-    uint16_t y = convert_n::castUI( apc_data->getY() );
+    uint16_t x = convert_n::castUI( *api16_x );
+    uint16_t y = convert_n::castUI( *api16_y );
     return sendCommand( vtObjectGraphicsContext_c::e_commandID,
                         apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         vtObjectGraphicsContext_c::e_drawPolygonCmdID,
@@ -1856,10 +1861,10 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
         ui16_currentPoint < ui16_numOfPoints;
         ui16_currentPoint++ )
   {
-    uint16_t x = convert_n::castUI( apc_data[ui16_currentPoint].getX() );
+    uint16_t x = convert_n::castUI( api16_x[ui16_currentPoint] );
     pui8_buffer[ui16_index]   = x & 0xFF;
     pui8_buffer[ui16_index+1] = x >> 8;
-    uint16_t y = convert_n::castUI( apc_data[ui16_currentPoint].getY() );
+    uint16_t y = convert_n::castUI( api16_y[ui16_currentPoint] );
     pui8_buffer[ui16_index+2] = y & 0xFF;
     pui8_buffer[ui16_index+3] = y >> 8;
     ui16_index+=4;
@@ -1905,10 +1910,10 @@ VtClientServerCommunication_c::sendCommandDrawText(
 
 bool
 VtClientServerCommunication_c::sendCommandPanViewport(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, bool b_enableReplaceOfCmd)
 {
-  uint16_t x = convert_n::castUI( ac_point.getX() );
-  uint16_t y = convert_n::castUI( ac_point.getY() );
+  uint16_t x = convert_n::castUI( ai16_x );
+  uint16_t y = convert_n::castUI( ai16_y );
   return sendCommand (vtObjectGraphicsContext_c::e_commandID,
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_panViewportCmdID,
@@ -1930,10 +1935,10 @@ VtClientServerCommunication_c::sendCommandZoomViewport(
 
 bool
 VtClientServerCommunication_c::sendCommandPanAndZoomViewport(
-  IsoAgLib::iVtObject_c* apc_object, const IsoAgLib::iVtPoint_c& ac_point, int8_t newValue, bool b_enableReplaceOfCmd)
+  IsoAgLib::iVtObject_c* apc_object, int16_t ai16_x, int16_t ai16_y, int8_t newValue, bool b_enableReplaceOfCmd)
 {
-  uint16_t x = convert_n::castUI( ac_point.getX() );
-  uint16_t y = convert_n::castUI( ac_point.getY() );
+  uint16_t x = convert_n::castUI( ai16_x );
+  uint16_t y = convert_n::castUI( ai16_y );
   uint8_t zoom = convert_n::castUI( newValue );
   uint8_t pui8_buffer[9];
   pui8_buffer[0] = vtObjectGraphicsContext_c::e_commandID;
