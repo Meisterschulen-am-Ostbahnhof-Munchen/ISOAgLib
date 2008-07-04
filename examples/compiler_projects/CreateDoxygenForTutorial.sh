@@ -11,7 +11,7 @@ EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 TARGET_LIST="esx:esxu:c2c:imi:pm167:pc_win32:pc_linux"
 #TARGET_LIST="esxu:c2c"
 CAN_LIST="simulating:sys:socket_server:msq_server"
-RS232_LIST="simulating:sys:rte"
+RS232_LIST="simulating:rte:sys"
 DEVICE_LIST="pcan:A1:rte:no_card"
 for conf_example in $EXAMPLE_LIST ; do
   echo "Processing... ". $conf_example
