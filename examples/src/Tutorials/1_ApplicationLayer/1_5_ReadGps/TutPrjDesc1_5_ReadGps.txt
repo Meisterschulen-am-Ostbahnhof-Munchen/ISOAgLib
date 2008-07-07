@@ -58,7 +58,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -128,7 +130,7 @@ USE_TARGET_SYSTEM="c2c"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -475,53 +477,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -532,6 +499,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -587,7 +563,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -657,7 +635,7 @@ USE_TARGET_SYSTEM="esx"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -1004,53 +982,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -1061,6 +1004,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -1116,7 +1068,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -1186,7 +1140,7 @@ USE_TARGET_SYSTEM="esxu"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -1533,53 +1487,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -1590,6 +1509,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -1645,7 +1573,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -1715,7 +1645,7 @@ USE_TARGET_SYSTEM="imi"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -2062,53 +1992,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -2119,6 +2014,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -2174,7 +2078,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -2244,7 +2150,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -2591,53 +2497,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -2648,6 +2519,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -2703,7 +2583,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -2773,7 +2655,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -3120,53 +3002,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -3177,6 +3024,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -3232,7 +3088,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -3302,7 +3160,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -3649,53 +3507,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -3706,6 +3529,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -3761,7 +3593,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -3831,7 +3665,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -4178,53 +4012,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -4235,6 +4034,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -4290,7 +4098,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -4360,7 +4170,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -4707,53 +4517,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -4764,6 +4539,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -4819,7 +4603,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -4889,7 +4675,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -5236,53 +5022,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -5293,6 +5044,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -5348,7 +5108,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -5418,7 +5180,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -5765,53 +5527,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -5822,6 +5549,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -5877,7 +5613,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -5947,7 +5685,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -6294,53 +6032,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -6351,6 +6054,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -6406,7 +6118,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -6476,7 +6190,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -6823,53 +6537,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -6880,6 +6559,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -6935,7 +6623,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -7005,7 +6695,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -7352,53 +7042,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -7409,6 +7064,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -7464,7 +7128,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -7534,7 +7200,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -7881,53 +7547,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -7938,6 +7569,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -7993,7 +7633,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -8063,7 +7705,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -8410,53 +8052,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -8467,6 +8074,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -8522,7 +8138,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -8592,7 +8210,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -8939,53 +8557,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -8996,6 +8579,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -9051,7 +8643,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -9121,7 +8715,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -9468,53 +9062,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -9525,6 +9084,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -9580,7 +9148,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -9650,7 +9220,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -9997,53 +9567,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -10054,6 +9589,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -10109,7 +9653,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -10179,7 +9725,7 @@ USE_TARGET_SYSTEM="pc_win32"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -10526,53 +10072,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -10583,6 +10094,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -10638,7 +10158,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -10708,7 +10230,7 @@ USE_TARGET_SYSTEM="pc_win32"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -11055,53 +10577,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -11112,6 +10599,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -11167,7 +10663,9 @@ APP_SRC_FILE="1_5_ReadGps.cpp"
 
 # the directories of REL_APP_PATH are already integrated into the compiler list of
 # header include search paths. But a project might need some additional paths.
-# seperate directories by whitespace
+# seperate directories by whitespace. This path is relative to the IsoAgLib path.
+# absolute include paths to external directories should be defined in config variables
+# like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY
 # PRJ_INCLUDE_PATH=""
 
 # ###############################################################
@@ -11237,7 +10735,7 @@ USE_TARGET_SYSTEM="pm167"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -11584,53 +11082,18 @@ PRJ_TIME_GPS=1
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
 
-# SETTINGS FOR WIN32 PROJECTS WITH WIN32 CAN CARD
-# ( esp. Vector Informatik )
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN libraries
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# As the individual library file sets are at fixed places
-# within a CAN driver installation, the IsoAgLib will
-# select the library files automatically
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# USE_WIN32_LIB_DIRECTORY="C:/Development"
 
-# specify the path ( relative to IsoAgLib root or absolute )
-# to the WIN32 CAN headers
-# IMPORTANT: Set the path to the directory where you installed
-# the CAN driver library during its SETUP.EXE process
-# ==>> this path can be used without changes, if several
-#      driver version like "CANLIB" and "XL Driver Library"
-#      are installed in parallel
-#      ( all IsoAgLib parts will access the individual
-#        headers and libraries with the addition of the
-#        default directory name from the SETUP.EXE
-#        e.g. "<USE_WIN32_LIB_DIRECTORY>/CANLIB"
-#          or "<USE_WIN32_LIB_DIRECTORY>/XL Driver Library" )
-# ( please seperate entries by whitespace )
-# USE_WIN32_HEADER_DIRECTORY="C:/Development"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
 
-# specify the wanted Hardware Type of the CAN card
-# ( esp. Vector Informatik CAN drivers can be used for several
-#   CAN cards of their product line )
-# Examples: HWTYPE_AUTO|HWTYPE_VIRTUAL|HWTYPE_CANCARDX|HWTYPE_CANAC2|HWTYPE_CANAC2PCI
-#           HWTYPE_CANCARDXL|HWTYPE_CANCARD2
-# ( refer their documentaion to find more types )
-# ( IsoAgLib places automatically "XL_" before the card define,
-#   if the XL driver is selected --> DONT'T set the XL_ here again
-#   ==> this allows simpler switch between different CAN driver libs )
-# USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
@@ -11641,6 +11104,15 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 # the appropriate cross-compiler gcc is often placed in a separate directory
 # with a special prefix. This can be specified by PRJ_COMPILER_BINARY_PRE
 # PRJ_COMPILER_BINARY_PRE="/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-"
+
+# include directory for external libraries in Linux (or general: Makefile based builds)
+# USE_LINUX_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using Linux (or general: Makefile based builds
+# USE_LINUX_EXTERNAL_LIBRARIES=""
 \endcode
 
 
@@ -11652,7 +11124,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_1_5_ReadGps.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file conf_1_5_ReadGps in the directory /home/spangler/Projekte/IsoAgLib/examples/compiler_projects/kdevelop_make/ as input file for ../../library/xgpl_src/build/projectGeneration/update_makefile.sh to create the project generation files.
+ Use the file conf_1_5_ReadGps in the directory /home/wodokm/Projects/IsoAgLib/IsoAgLib-HEAD-clean/examples/compiler_projects/kdevelop_make/ as input file for ../../library/xgpl_src/build/projectGeneration/update_makefile.sh to create the project generation files.
 \code
 // File: config_1_5_ReadGps.h
 // IMPORTANT: Never change the first block of this header manually!!!
@@ -11903,6 +11375,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__c2c__sys__sys List of Headers for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -11927,6 +11400,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12031,6 +11505,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__esx__sys__sys List of Headers for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12055,6 +11530,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12159,6 +11635,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__esxu__sys__sys List of Headers for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12183,6 +11660,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12287,6 +11765,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__imi__sys__sys List of Headers for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12311,6 +11790,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12414,6 +11894,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_A1__rte List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver rte
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12438,6 +11919,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12540,6 +12022,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_A1__simulating List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver simulating
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12564,6 +12047,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12666,6 +12150,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_A1__sys List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12690,6 +12175,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12792,6 +12278,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_no_card__rte List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver rte
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12816,6 +12303,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -12918,6 +12406,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_no_card__simulating List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver simulating
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -12942,6 +12431,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13044,6 +12534,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_no_card__sys List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13068,6 +12559,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13170,6 +12662,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_pcan__rte List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver rte
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13194,6 +12687,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13296,6 +12790,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_pcan__simulating List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver simulating
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13320,6 +12815,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13422,6 +12918,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_pcan__sys List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13446,6 +12943,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13548,6 +13046,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_rte__rte List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver rte
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13572,6 +13071,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13674,6 +13174,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_rte__simulating List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver simulating
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13698,6 +13199,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13800,6 +13302,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__msq_server_rte__sys List of Headers for 1_5_ReadGps with CAN Driver msq_server and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13824,6 +13327,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -13928,6 +13432,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__simulating__rte List of Headers for 1_5_ReadGps with CAN Driver simulating and RS232 Driver rte
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -13955,6 +13460,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -14060,6 +13566,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__simulating__simulating List of Headers for 1_5_ReadGps with CAN Driver simulating and RS232 Driver simulating
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -14087,6 +13594,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -14192,6 +13700,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_linux__simulating__sys List of Headers for 1_5_ReadGps with CAN Driver simulating and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -14219,6 +13728,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -14321,6 +13831,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_win32__can_server_sock__simulating List of Headers for 1_5_ReadGps with CAN Driver socket_server and RS232 Driver simulating
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -14345,6 +13856,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -14446,6 +13958,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pc_win32__can_server_sock__sys List of Headers for 1_5_ReadGps with CAN Driver socket_server and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -14470,6 +13983,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
@@ -14573,6 +14087,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  @section HdrList1_5_ReadGps__pm167__sys__sys List of Headers for 1_5_ReadGps with CAN Driver sys and RS232 Driver sys
 \code
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -14597,6 +14112,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/pm167/errcodes.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h

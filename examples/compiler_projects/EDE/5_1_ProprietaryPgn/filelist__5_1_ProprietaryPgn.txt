@@ -71,6 +71,7 @@
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\igenericdata_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\iproprietarymessageclient_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\iproprietarymessagehandler_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\icanpkgext_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\istream_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultireceive_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultisendstreamer_c.h

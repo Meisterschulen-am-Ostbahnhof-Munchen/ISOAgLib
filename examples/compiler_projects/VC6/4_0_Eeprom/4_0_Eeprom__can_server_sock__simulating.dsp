@@ -358,6 +358,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\typedef.h
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\icanpkgext_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\canpkgext_c.h
 # End Source File
 

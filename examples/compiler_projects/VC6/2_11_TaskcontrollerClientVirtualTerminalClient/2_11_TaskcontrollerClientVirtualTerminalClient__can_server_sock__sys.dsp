@@ -454,6 +454,10 @@ SOURCE=..\..\..\..\library\xgpl_src\supplementary_driver\driver\datastreams\stre
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\..\library\xgpl_src\supplementary_driver\driver\datastreams\volatilememory_c.h
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\util\iliberr_c.h
 # End Source File
 
@@ -547,6 +551,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\isoaglib_config.h
 
 # Begin Source File
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\typedef.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\icanpkgext_c.h
 # End Source File
 
 # Begin Source File

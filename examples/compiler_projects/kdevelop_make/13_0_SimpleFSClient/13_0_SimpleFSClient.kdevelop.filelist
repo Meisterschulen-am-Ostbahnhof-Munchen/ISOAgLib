@@ -70,6 +70,7 @@
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h

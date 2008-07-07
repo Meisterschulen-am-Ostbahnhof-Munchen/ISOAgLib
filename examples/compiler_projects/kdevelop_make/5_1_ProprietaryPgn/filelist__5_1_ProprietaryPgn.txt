@@ -1,4 +1,4 @@
-../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_rte.cpp
+../../../../library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_linux_sys.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/rs232/impl/rs232io_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
@@ -72,6 +72,7 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/igenericdata_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessageclient_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessagehandler_c.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h

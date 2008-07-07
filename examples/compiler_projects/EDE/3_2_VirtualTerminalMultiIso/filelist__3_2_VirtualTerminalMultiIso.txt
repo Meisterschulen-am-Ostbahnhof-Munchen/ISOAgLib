@@ -77,6 +77,7 @@
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\ident_c.cpp
 ..\..\..\..\examples\src\Tutorials\3_VirtualTerminal_Client\3_2_VirtualTerminalMultiIso\3_2_VirtualTerminalMultiIso.cpp
 ..\..\..\..\library\xgpl_src\supplementary_driver\driver\datastreams\streaminput_c.h
+..\..\..\..\library\xgpl_src\supplementary_driver\driver\datastreams\volatilememory_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\iliberr_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton.h
@@ -106,6 +107,7 @@
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\igenericdata_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\iproprietarymessageclient_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\iproprietarymessagehandler_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\icanpkgext_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\istream_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultireceive_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultisendstreamer_c.h

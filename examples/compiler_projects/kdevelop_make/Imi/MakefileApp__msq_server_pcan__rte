@@ -7,6 +7,8 @@
 TARGET = Imi
 ISOAGLIB_INSTALL_PATH = /usr/local
 APP_INC = -I../../../../examples/src/Imi 
+LIBPATH = 
+EXTERNAL_LIBS = 
 
 ####### Include a version definition file into the Makefile context - when this file exists
 -include versions.mk
@@ -36,8 +38,8 @@ LEXFLAGS =
 YACCFLAGS= -d
 INCPATH  = -I. -I$(ISOAGLIB_INSTALL_PATH)/include $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
-LFLAGS   = -pthread
-LIBS     = $(BIOS_LIB) $(SUBLIBS)
+LFLAGS   = -pthread $(LIBPATH)
+LIBS     = $(BIOS_LIB) $(SUBLIBS) $(EXTERNAL_LIBS)
 AR       = ar cqs
 RANLIB   =
 TAR      = tar -cf

@@ -324,6 +324,7 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\igenericdata_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\iproprietarymessageclient_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\ext\ProprietaryCan\iproprietarymessagehandler_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\icanpkgext_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\istream_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultireceive_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultisendstreamer_c.h
@@ -541,7 +542,7 @@ Libraries=C:\C166\lib;c:\programme\tasking\c166\lib;..\..\..\..\library\commerci
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\spangler\Projekte\IsoAgLib\examples\compiler_projects\EDE\\PcCompilationMultipleInst
+ProjectDir=\home\wodokm\Projects\IsoAgLib\IsoAgLib-HEAD-clean\examples\compiler_projects\EDE\\PcCompilationMultipleInst
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b

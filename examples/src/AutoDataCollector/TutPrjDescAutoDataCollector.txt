@@ -109,7 +109,7 @@ USE_TARGET_SYSTEM="c2c"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -497,8 +497,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -606,7 +615,7 @@ USE_TARGET_SYSTEM="esx"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -994,8 +1003,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -1103,7 +1121,7 @@ USE_TARGET_SYSTEM="esxu"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -1491,8 +1509,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -1600,7 +1627,7 @@ USE_TARGET_SYSTEM="imi"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -1988,8 +2015,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -2097,7 +2133,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -2485,8 +2521,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -2594,7 +2639,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -2982,8 +3027,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -3091,7 +3145,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -3479,8 +3533,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -3588,7 +3651,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -3976,8 +4039,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -4085,7 +4157,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -4473,8 +4545,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -4582,7 +4663,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -4970,8 +5051,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -5079,7 +5169,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -5467,8 +5557,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -5576,7 +5675,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -5964,8 +6063,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -6073,7 +6181,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -6461,8 +6569,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -6570,7 +6687,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -6958,8 +7075,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -7067,7 +7193,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -7455,8 +7581,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -7564,7 +7699,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -7952,8 +8087,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -8061,7 +8205,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -8449,8 +8593,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -8558,7 +8711,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -8946,8 +9099,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -9055,7 +9217,7 @@ USE_TARGET_SYSTEM="pc_linux"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -9443,8 +9605,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -9552,7 +9723,7 @@ USE_TARGET_SYSTEM="pc_win32"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -9940,8 +10111,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -10049,7 +10229,7 @@ USE_TARGET_SYSTEM="pc_win32"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -10437,8 +10617,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -10546,7 +10735,7 @@ USE_TARGET_SYSTEM="pm167"
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
 # select enhanced CAN processing which is only available for some
-# CAN architectures, wher the OS/BIOS does already provide selective
+# CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
@@ -10934,8 +11123,17 @@ PRJ_RS232=1
 #   ==> this allows simpler switch between different CAN driver libs )
 # USE_WIN32_CAN_HW_TYPE="HWTYPE_AUTO"
 
-# additional libs when using Dev-Cpp
-USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
+# include directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_INCLUDE_PATH=""
+
+# library directory for external libraries in windows (MSVC and Dev-Cpp)
+# USE_WIN32_EXTERNAL_LIBRARY_PATH=""
+
+# additional libs when using MSVC (notation of library files differs between MSVC and Dev-Cpp)
+# USE_MSVC_EXTERNAL_LIBRARIES=""
+
+# additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
+# USE_DEVCPP_EXTERNAL_LIBRARIES=""
 
 \endcode
 
@@ -10948,7 +11146,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
  This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
  project define #define PRJ_USE_AUTOGEN_CONFIG config_AutoDataCollector.h ( Important: place the directory of the application source files in the include search path )
 
- Use the file conf_AutoDataCollector in the directory /home/spangler/Projekte/IsoAgLib/examples/compiler_projects/kdevelop_make/ as input file for ../../library/xgpl_src/build/projectGeneration/update_makefile.sh to create the project generation files.
+ Use the file conf_AutoDataCollector in the directory /home/wodokm/Projects/IsoAgLib/IsoAgLib-HEAD-clean/examples/compiler_projects/kdevelop_make/ as input file for ../../library/xgpl_src/build/projectGeneration/update_makefile.sh to create the project generation files.
 \code
 // File: config_AutoDataCollector.h
 // IMPORTANT: Never change the first block of this header manually!!!
@@ -11241,6 +11439,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -11409,6 +11608,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -11577,6 +11777,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -11745,6 +11946,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -11920,6 +12122,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -12094,6 +12297,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -12268,6 +12472,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -12442,6 +12647,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -12616,6 +12822,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -12790,6 +12997,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -12964,6 +13172,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -13138,6 +13347,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -13312,6 +13522,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -13486,6 +13697,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -13660,6 +13872,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -13834,6 +14047,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -14013,6 +14227,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -14193,6 +14408,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -14373,6 +14589,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -14547,6 +14764,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -14720,6 +14938,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
@@ -14887,6 +15106,7 @@ USE_WIN32_ADDITIONAL_LIBS="-lwinmm -lws2_32"
 ../../../../library/xgpl_src/IsoAgLib/hal/pm167/errcodes.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h

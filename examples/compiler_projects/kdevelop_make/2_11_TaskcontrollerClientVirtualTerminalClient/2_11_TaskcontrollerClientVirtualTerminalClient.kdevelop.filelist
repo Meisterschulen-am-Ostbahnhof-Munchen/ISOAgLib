@@ -91,6 +91,7 @@
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
 ../../../../examples/src/Tutorials/2_ProcessData/2_11_TaskcontrollerClientVirtualTerminalClient/2_11_TaskcontrollerClientVirtualTerminalClient.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
+../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
@@ -115,6 +116,7 @@
 ../../../../library/xgpl_src/IsoAgLib/hal/can.h
 ../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h
 ../../../../library/xgpl_src/IsoAgLib/typedef.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h
