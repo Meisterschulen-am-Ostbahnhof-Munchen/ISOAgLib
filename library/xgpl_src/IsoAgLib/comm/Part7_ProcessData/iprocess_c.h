@@ -61,7 +61,9 @@
 /* *************************************** */
 #include "impl/process_c.h"
 #include "proc_c.h"
-#include <IsoAgLib/comm/Part10_TaskController_Client/idevpropertyhandler_c.h>
+#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
+  #include <IsoAgLib/comm/Part10_TaskController_Client/idevpropertyhandler_c.h>
+#endif
 #ifdef USE_PROC_REMOTE_STD
   #include "Remote/Std/iprocdataremote_c.h"
 #endif
