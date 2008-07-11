@@ -2709,6 +2709,8 @@ library/xgpl_src/build/vt2iso/vt2iso.sln -text
 library/xgpl_src/build/vt2iso/vt2iso.vcproj -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
+library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.cpp -text
+library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/actor/actor.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/sensor/sensor.h -text
