@@ -554,6 +554,8 @@ examples/compiler_projects/VC6/TractorConsole/TractorConsole__can_server_sock__s
 examples/compiler_projects/VC6/TractorInternalCan/TractorInternalCan__can_server_sock__simulating.dsp -text
 examples/compiler_projects/VC6/TractorInternalCan/TractorInternalCan__can_server_sock__sys.dsp -text
 examples/compiler_projects/VC6/canserver/info.txt -text
+examples/compiler_projects/VC8/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.sln -text
+examples/compiler_projects/VC8/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.vcproj -text
 examples/compiler_projects/VC8/CanServerMessenger/CanServerMessenger__can_server_sock__simulating.vcproj -text
 examples/compiler_projects/VC8/CanServerMessenger/CanServerMessenger__can_server_sock__sys.vcproj -text
 examples/compiler_projects/VC8/CanServerMessenger/bin/CanServerMessenger__can_server_sock__simulating.exe -text
