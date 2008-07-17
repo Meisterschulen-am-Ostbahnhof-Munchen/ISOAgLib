@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3_0_VirtualTerminalIso_wce", "3_0_VirtualTerminalIso_wce.vcproj", "{675A0D07-0729-4699-AA2B-7BDDEE43EF81}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Lauer EPCLX (x86) = Debug|Lauer EPCLX (x86)
+		Release|Lauer EPCLX (x86) = Release|Lauer EPCLX (x86)
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{675A0D07-0729-4699-AA2B-7BDDEE43EF81}.Debug|Lauer EPCLX (x86).ActiveCfg = Debug|Lauer EPCLX (x86)
+		{675A0D07-0729-4699-AA2B-7BDDEE43EF81}.Debug|Lauer EPCLX (x86).Build.0 = Debug|Lauer EPCLX (x86)
+		{675A0D07-0729-4699-AA2B-7BDDEE43EF81}.Debug|Lauer EPCLX (x86).Deploy.0 = Debug|Lauer EPCLX (x86)
+		{675A0D07-0729-4699-AA2B-7BDDEE43EF81}.Release|Lauer EPCLX (x86).ActiveCfg = Release|Lauer EPCLX (x86)
+		{675A0D07-0729-4699-AA2B-7BDDEE43EF81}.Release|Lauer EPCLX (x86).Build.0 = Release|Lauer EPCLX (x86)
+		{675A0D07-0729-4699-AA2B-7BDDEE43EF81}.Release|Lauer EPCLX (x86).Deploy.0 = Release|Lauer EPCLX (x86)
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
