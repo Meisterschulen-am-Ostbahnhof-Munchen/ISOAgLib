@@ -341,7 +341,8 @@ public:
   void notifyOnVtStatusMessage();
 
   /** function that handles incoming VT ESC */
-  void notifyOnVtESC() { mc_streamer.mrc_pool.eventVtESC(); }
+  /// @todo SOON does not seem to be used
+  void notifyOnVtESC() { mc_streamer.mrc_pool.eventVtESC(0xFFFF); }
 
   void notifyOnAuxInputStatus();
 
@@ -472,6 +473,7 @@ public:
   {
     return sendCommandHideShow(apc_object->getID(), b_hideOrShow, b_enableReplaceOfCmd);
   }
+  bool sendCommandEsc (bool b_enableReplaceOfCmd=true);
 
   bool queueOrReplace (SendUpload_c& ar_sendUpload, bool b_enableReplaceOfCmd=true);
   void dumpQueue();

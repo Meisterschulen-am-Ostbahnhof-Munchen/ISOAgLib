@@ -1054,9 +1054,10 @@ VtClientServerCommunication_c::processMsg()
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
         /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
         if (mc_data.getUint8Data (3) != 0x0)
-        {
-          mc_streamer.mrc_pool.eventVtESC();
-        }
+          mc_streamer.mrc_pool.eventVtESC(0xFFFF);
+        else
+          mc_streamer.mrc_pool.eventVtESC(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8));
+
         break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
       mc_streamer.mrc_pool.eventNumericValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
@@ -2036,6 +2037,13 @@ VtClientServerCommunication_c::sendCommandHideShow (uint16_t aui16_objectUid, ui
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       b_hideOrShow,
                       0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
+VtClientServerCommunication_c::sendCommandEsc (bool b_enableReplaceOfCmd)
+{
+  return sendCommand (146 /* Command: Command --- Parameter: ESC */,
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
 bool

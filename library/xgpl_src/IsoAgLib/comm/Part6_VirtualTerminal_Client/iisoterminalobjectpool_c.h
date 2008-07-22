@@ -277,7 +277,7 @@ public:
     hook function that gets called immediately after recognizing an incoming
     VT ESC.
    */
-  virtual void eventVtESC() {}
+  virtual void eventVtESC(uint16_t /*aui16_ObjectId*/) {}
 
   /**
     hook function that gets called immediately after recognizing an incoming

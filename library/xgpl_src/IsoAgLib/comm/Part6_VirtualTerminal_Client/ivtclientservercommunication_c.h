@@ -102,6 +102,8 @@ public:
     {return VtClientServerCommunication_c::sendCommandChangeLineAttributes(aui16_objectUid, newLineColour, newLineWidth, newLineArt, b_enableReplaceOfCmd);}
   bool sendCommandHideShow (uint16_t aui16_objectUid, uint8_t b_hideOrShow, bool b_enableReplaceOfCmd=true)
     {return VtClientServerCommunication_c::sendCommandHideShow(aui16_objectUid, b_hideOrShow, b_enableReplaceOfCmd);}
+  bool sendCommandEsc (bool b_enableReplaceOfCmd=true)
+    {return VtClientServerCommunication_c::sendCommandEsc(b_enableReplaceOfCmd);}
 
   uint8_t getClientId() const
     { return VtClientServerCommunication_c::getClientId(); }
