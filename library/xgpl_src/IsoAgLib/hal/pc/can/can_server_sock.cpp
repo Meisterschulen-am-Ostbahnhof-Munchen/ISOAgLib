@@ -954,8 +954,10 @@ void readWrite(server_c* pc_serverData)
 #endif
         if (bytesRecv == 0 || bytesRecv == -1)
         {
+          #ifdef WIN32
           if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
             printf("The attempted operation is not supported for the type of object referenced.\n");
+          #endif
           printf( "connection closed.\n");
           releaseClient(pc_serverData, iter_client);
           break;
@@ -979,8 +981,10 @@ void readWrite(server_c* pc_serverData)
 
         if (bytesRecv == 0 || bytesRecv == -1)
         {
+          #ifdef WIN32
           if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
             printf("The attempted operation is not supported for the type of object referenced.\n");
+          #endif
           printf( "connection closed.\n");
           releaseClient(pc_serverData, iter_client);
           break;
