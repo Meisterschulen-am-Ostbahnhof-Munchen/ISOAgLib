@@ -203,7 +203,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisend_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
@@ -559,7 +559,7 @@ int main()
   { // shouldln't happen normally!
     #if defined(DEBUG) && defined(SYSTEM_PC)
     EXTERNAL_DEBUG_DEVICE << "Could not registerIsoObjectPool()." << EXTERNAL_DEBUG_DEVICE_ENDL;
-    abort();
+    MACRO_ISOAGLIB_ABORT();
     #else
     return 1; // Return from main() with error indicated
     #endif
@@ -599,3 +599,4 @@ int main()
     if ( i32_idleTimeSpread > 0 ) IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
   }
 }
+
