@@ -89,6 +89,9 @@
 #ifndef STREAMINPUT_C_H
 #define STREAMINPUT_C_H
 
+#ifdef PREPARE_VTGB
+  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivttypes.h>
+#endif
 #include <IsoAgLib/util/convert.h>
 
 /** Abstract base class for a streaming input source.
