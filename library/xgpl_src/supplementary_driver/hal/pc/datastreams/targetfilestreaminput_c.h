@@ -115,10 +115,10 @@ class TargetFileStreamInput_c // :public STL_NAMESPACE::ifstream
 public:
 
 	//! open a input stream
-	bool open( STL_NAMESPACE::string& filename, FileMode_t at_mode )
+	bool open( STD_TSTRING& filename, FileMode_t at_mode )
 		{ return open( filename.c_str(), at_mode );};
 	//! open a input stream
-	bool open( const char* filename, FileMode_t at_mode );
+	bool open( const TCHAR* filename, FileMode_t at_mode );
 	//! close a input stream
 	void close();
 

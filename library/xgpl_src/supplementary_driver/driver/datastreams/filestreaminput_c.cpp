@@ -99,7 +99,7 @@
 
 //  Operation: open
 bool
-FileStreamInput_c::open (STL_NAMESPACE::string& filename, FileMode_t at_mode)
+FileStreamInput_c::open ( STD_TSTRING& filename, FileMode_t at_mode )
 {
   bool b_result = c_targetHandle.open( filename, at_mode );
   if (b_result) str_openedFile = filename;
@@ -110,7 +110,7 @@ FileStreamInput_c::open (STL_NAMESPACE::string& filename, FileMode_t at_mode)
 
 //  Operation: open
 bool
-FileStreamInput_c::open (const char* filename, FileMode_t at_mode)
+FileStreamInput_c::open( const TCHAR* filename, FileMode_t at_mode )
 {
   bool b_result = c_targetHandle.open( filename, at_mode);
   if (b_result) str_openedFile = filename;
@@ -126,9 +126,13 @@ FileStreamInput_c::close(bool b_deleteFile)
   c_targetHandle.close();
   if (b_deleteFile) {
     #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Removing file " << str_openedFile.c_str() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+	  INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    return (remove (str_openedFile.c_str()) == 0);
+    #if defined(WIN32) || defined(WINCE)
+      return DeleteFile( str_openedFile.c_str() );
+    #else
+      return (remove( str_openedFile.c_str() ) == 0);
+    #endif
   }
   return true; // success
 };

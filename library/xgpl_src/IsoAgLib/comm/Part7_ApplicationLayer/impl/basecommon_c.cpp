@@ -98,7 +98,6 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -181,7 +180,7 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
                             << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #if defined(DEBUG) && defined(SYSTEM_PC)
-      abort();
+      MACRO_ISOAGLIB_ABORT();
     #endif
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
     return false;

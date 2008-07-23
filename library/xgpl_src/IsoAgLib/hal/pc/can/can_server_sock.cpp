@@ -57,20 +57,22 @@
 #include <cstdio>
 #include <cctype>
 
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <list>
 #include <string>
 
-#include <sys/types.h>
+#define DEF_USE_SERVER_SPECIFIC_HEADER
+#include "can_server.h"
 
 #ifdef WIN32
-  #include <winsock2.h>
-  #include <ws2tcpip.h>
-  #include <stdio.h>
+  #ifndef WINCE
+    #include <ws2tcpip.h>
+  #endif
 #else
+  #include <fcntl.h>
+  #include <sys/types.h>
   #include <sys/socket.h>
   #include <sys/un.h>
   #include <netinet/in.h>
@@ -82,12 +84,13 @@
   #include <linux/version.h>
 #endif
 
-#include <sys/stat.h>
+#ifndef WINCE
+  #include <sys/stat.h>
+#endif
+
 #include <time.h>
 #include <errno.h>
 
-#define DEF_USE_SERVER_SPECIFIC_HEADER
-#include "can_server.h"
 
 using namespace __HAL;
 
@@ -339,12 +342,12 @@ SOCKET_TYPE establish(unsigned short portnum)
 
   if ((listenSocket= socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0) /* create socket */
   {
-    perror("socket");
+    MACRO_ISOAGLIB_PERROR("socket");
     return(-1);
   }
 
   if (bind(listenSocket, (struct sockaddr *)&sa, ui32_len) < 0) {
-    perror("bind");
+    MACRO_ISOAGLIB_PERROR("bind");
     printf("\nmaybe socket is in TIME_WAIT state, check this with the netstat command\n");
     printf("=> please wait one minute (or stop all clients before stopping the can_server)\n\n");
     close(listenSocket);
@@ -530,7 +533,7 @@ static void enqueue_msg(transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, 
 #endif
              ) < 0)
           {
-            perror("send");
+            MACRO_ISOAGLIB_PERROR("send");
           }
 
           // don't check following objects if message is already enqueued for this client
@@ -562,7 +565,7 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
 #endif
           ) < 0)
   {
-    perror("send");
+    MACRO_ISOAGLIB_PERROR("send");
   }
 }
 
@@ -639,7 +642,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
             (file_name, 255, "%s_%hx", pc_serverData->mstr_logFileBase.c_str(), p_writeBuf->s_init.ui8_bus);
 
             if ((pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
-              perror("fopen");
+              MACRO_ISOAGLIB_PERROR("fopen");
               exit(1);
             }
           }
@@ -654,7 +657,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
             printf("can't initialize CAN\n");
             printf("CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n");
             i32_error = HAL_CONFIG_ERR;
-            abort();
+            MACRO_ISOAGLIB_ABORT();
           }
         }
 
@@ -944,16 +947,15 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_commandSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
-#ifdef WIN32
-                             0
+#ifdef WIN32 // WINCE!
+        int bytesRecv = select( 0, &rfds, NULL, NULL, 0 );
 #else
-                             MSG_DONTWAIT
+        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),MSG_DONTWAIT|MSG_PEEK);
 #endif
-                             | MSG_PEEK);
-
         if (bytesRecv == 0 || bytesRecv == -1)
         {
+          if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
+            printf("The attempted operation is not supported for the type of object referenced.\n");
           printf( "connection closed.\n");
           releaseClient(pc_serverData, iter_client);
           break;
@@ -969,16 +971,16 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_dataSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
-#ifdef WIN32
-                             0
+#ifdef WIN32 //WINCE
+        int bytesRecv = select( 0, &rfds, NULL, NULL, 0 );
 #else
-                             MSG_DONTWAIT
+		int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK );
 #endif
-                             | MSG_PEEK);
 
         if (bytesRecv == 0 || bytesRecv == -1)
         {
+          if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
+            printf("The attempted operation is not supported for the type of object referenced.\n");
           printf( "connection closed.\n");
           releaseClient(pc_serverData, iter_client);
           break;
@@ -1023,13 +1025,13 @@ static void* collectClient(void* ptr) {
   server_c* pc_serverData = static_cast<server_c*>(ptr);
 
   if ((base_commandSocket = establish(COMMAND_TRANSFER_PORT)) < 0) {
-    perror("establish");
+    MACRO_ISOAGLIB_PERROR("establish");
     exit(1);
   }
   printf("command socket for port %d established\n", COMMAND_TRANSFER_PORT);
 
   if ((base_dataSocket = establish(DATA_TRANSFER_PORT)) < 0) {
-    perror("establish");
+    MACRO_ISOAGLIB_PERROR("establish");
     exit(1);
   }
   printf("data socket for port %d established\n", DATA_TRANSFER_PORT);
@@ -1038,7 +1040,7 @@ static void* collectClient(void* ptr) {
 
 #ifdef WIN32
     if ((new_socket=get_connection(base_commandSocket)) == INVALID_SOCKET) {
-      perror("socket connect failed");
+      MACRO_ISOAGLIB_PERROR("socket connect failed");
       exit(1);
     }
 #else
@@ -1052,7 +1054,7 @@ static void* collectClient(void* ptr) {
 
 #ifdef WIN32
     if ((new_socket=get_connection(base_dataSocket)) == INVALID_SOCKET) {
-      perror("socket connect failed");
+      MACRO_ISOAGLIB_PERROR("socket connect failed");
       exit(1);
     }
 #else
@@ -1080,7 +1082,6 @@ int main(int argc, char *argv[])
   pthread_t threadCollectClient;
   int i_collectClientThreadHandle;
   server_c c_serverData;
-  bool b_cmdError;
 
   if (argc > 1 && strcmp(argv[1], "--help") == 0) {
     usage();
@@ -1119,6 +1120,7 @@ int main(int argc, char *argv[])
     }
   }
 
+  // some time init
   getTime();
 
   const uint32_t apiversion = initCardApi();
@@ -1153,3 +1155,33 @@ int main(int argc, char *argv[])
 
 }
 
+#if defined(WINCE) || (defined(WIN32) && defined(UNICODE))
+// CE is unicode, so we need to convert the commandline...
+// However, it will be only called when using "mainWCRTStartup" as entry point
+// (using "mainCRTStartup" atm).
+int _tmain( int argc, _TCHAR* argv[] )
+{
+	char** argv_char = new char*[argc];
+
+	// convert command line	
+	for( int i = 0; i < argc; i++ )
+	{
+		size_t arglen = wcslen(argv[i]);	
+		char* arg = new char[arglen+1];
+		WideCharToMultiByte( CP_ACP, 0, argv[i], arglen, arg, arglen, NULL, NULL );
+		argv_char[i] = arg;
+	}
+
+	// call main
+	int ret = main( argc, argv_char );
+
+	// cleanup
+	for( int i = 0; i < argc; i++ )
+	{
+		delete[] argv_char[i];
+	}
+	delete[] argv_char;
+
+	return ret;
+}
+#endif

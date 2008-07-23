@@ -105,11 +105,11 @@ public:
 
   //  Operation: open
   //! open an output stream
-  bool open (STL_NAMESPACE::string& filename, FileMode_t at_mode);
+  bool open (STD_TSTRING& filename, FileMode_t at_mode);
 
   //  Operation: open
   //! open an output stream
-  bool open (const char* filename, FileMode_t at_mode);
+  bool open (const TCHAR* filename, FileMode_t at_mode);
 
   //  Operation: close
   //! close an output stream
@@ -134,7 +134,7 @@ public:
 private:
   TargetFileStreamOutput_c c_targetHandle;
 
-  STL_NAMESPACE::string str_openedFile;
+  STD_TSTRING str_openedFile;
 }; // ~X2C
 
 #endif // -X2C

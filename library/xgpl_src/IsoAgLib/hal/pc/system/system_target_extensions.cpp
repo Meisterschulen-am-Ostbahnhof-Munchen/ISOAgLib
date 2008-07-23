@@ -70,11 +70,13 @@
 #include <string.h>
 #include <time.h>
 #ifndef PC_OS_Linux
-  #include <conio.h>
+  #ifndef WINCE
+    #include <conio.h>
+  #endif
 #else
   #include <unistd.h>
+  #include <fcntl.h>
 #endif
-#include <fcntl.h>
 #include <iostream>
 
 #ifdef WIN32
@@ -129,7 +131,7 @@ clock_t getStartUpTime()
         << "\n\nSO PLEASE add\n#define msecPerClock " << (1000 / sysconf(_SC_CLK_TCK))
         << "\nto your project configuration header or Makefile, so that a matching binary is built. This program is aborted now, as none of any time calculations will match with this problem.\n\n"
         << INTERNAL_DEBUG_DEVICE_ENDL;
-    abort();
+    MACRO_ISOAGLIB_ABORT();
   }
   static clock_t st_startup4Times = times(NULL);
 #else
@@ -410,8 +412,12 @@ int16_t KeyGetByte(uint8_t *p)
     // fcntl( 0,
     return read(0, p, sizeof *p) == sizeof *p;
   #else
-    if (!_kbhit()) return 0;
-    *p = _getch();
+    #ifdef WINCE
+      return 0;  //@TODO ON REQUEST: add key handling for WINCE
+    #else
+      if (!_kbhit()) return 0;
+      *p = _getch();
+    #endif
     return 1;
   #endif
 }

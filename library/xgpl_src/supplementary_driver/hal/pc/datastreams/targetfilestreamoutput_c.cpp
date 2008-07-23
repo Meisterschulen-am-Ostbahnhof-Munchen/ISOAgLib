@@ -89,7 +89,7 @@
 using namespace std;
 
 //! open a output stream
-bool TargetFileStreamOutput_c::open( const char* filename, FileMode_t at_mode )
+bool TargetFileStreamOutput_c::open( const TCHAR* filename, FileMode_t at_mode )
 {
 #if __GNUC__ < 3
 	if ( ( at_mode & StreamIn ) != 0 ) return false;
@@ -140,7 +140,7 @@ TargetFileStreamOutput_c& TargetFileStreamOutput_c::operator<<(uint8_t ui8_data)
 //! close a output stream
 //! Parameter:
 //! @param pathname if pathname != NULL => sync file and path
-void TargetFileStreamOutput_c::close(const char* pathname)
+void TargetFileStreamOutput_c::close(const TCHAR* pathname)
 {
   if (pathname)
   {

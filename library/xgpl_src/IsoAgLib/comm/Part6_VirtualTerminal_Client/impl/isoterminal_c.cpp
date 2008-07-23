@@ -219,7 +219,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
     #if defined (DEBUG)
     INTERNAL_DEBUG_DEVICE << "IdentItem is not Master!" << INTERNAL_DEBUG_DEVICE_ENDL;
     #if defined (SYSTEM_PC)
-    abort();
+    MACRO_ISOAGLIB_ABORT();
     #endif
     #endif
     return NULL;
@@ -249,7 +249,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
     #if defined (DEBUG)
     INTERNAL_DEBUG_DEVICE << "Wrong version label (too long!)" << INTERNAL_DEBUG_DEVICE_ENDL;
     #if defined (SYSTEM_PC)
-    abort();
+    MACRO_ISOAGLIB_ABORT();
     #endif
     #endif
     delete pc_vtCSC;

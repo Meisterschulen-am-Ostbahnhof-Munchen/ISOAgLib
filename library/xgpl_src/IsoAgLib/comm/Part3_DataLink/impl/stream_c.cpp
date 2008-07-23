@@ -217,7 +217,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
     else /* ----------------------- */ awaitNextStep (AwaitData, (getIdent().getDa() == 0xFF) ? msci32_timeOutT1 /* BAM */
                                                                                               : msci32_timeOutT2 /* dest-adr. */);
     // how many pkgs are missing at all? is it more than wished?
-    mui8_pkgRemainingInBurst = MACRO_minimum( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
+	mui8_pkgRemainingInBurst = std::min<uint32_t>( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
   }
 
   // increase mui32_burstCurrent, the expected Burst is a next new one (of course)...

@@ -137,7 +137,7 @@ protected:
     {
       INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly. Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
       #ifdef SYSTEM_PC
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
     }
     #endif

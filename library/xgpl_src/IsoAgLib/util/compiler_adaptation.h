@@ -4,7 +4,8 @@
                                                  (needed as workaround for buggy compilers)
                              -------------------
     begin                : Fri Apr 11 2003
-    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
+    modified             : 22.07.2008 16:54:47  (f.muecke@osb-ag:de)
+    copyright            : (C) 1999 - 2008 Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
@@ -51,7 +52,7 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-
+#include "compiler_adaptation_unicode.h" // defines TCHAR etc.
 
 /* ******************************************** */
 /* * as some compilers can't manage long symbol */
@@ -158,3 +159,86 @@
 #else
   #define MALLOC_TEMPLATE(PAR) STL_NAMESPACE::__malloc_alloc_template<0>
 #endif
+
+
+//==============================================================================
+// WINCE
+// The following section covers Windows CE specific definitions and global
+// macros! 
+//==============================================================================
+#ifdef _WIN32_WCE
+  #ifndef WINCE
+    #define WINCE
+  #endif
+  #ifndef WIN32
+    #define WIN32
+  #endif
+#endif
+
+// Windows CE does not support standard abort()!
+#if defined(WINCE)
+  #define MACRO_ISOAGLIB_ABORT() TerminateProcess(GetCurrentProcess(), 0)
+  #define MACRO_ISOAGLIB_PERROR(x) printf("error: %s\n",x)
+#else 
+  #define MACRO_ISOAGLIB_ABORT() abort()
+  #define MACRO_ISOAGLIB_PERROR(x) perror(x)  
+#endif
+
+#ifdef WINCE
+  #include <winsock2.h>  // needs to be included BEFORE windows.h
+  #include <windows.h>
+
+  // sys/stat.h
+  // define structure for returning status information
+  #ifndef _STAT_DEFINED
+  #define _STAT_DEFINED
+  struct stat
+  {
+	//_dev_t st_dev;		// ID of device containing file
+	//_ino_t st_ino;		// file serial number 
+	//unsigned short st_mode; // mode of file (see below)
+	//short st_nlink;		// number of links to the file
+	//short st_uid;			// user ID of file
+	//short st_gid;			// group ID of file
+	//_dev_t st_rdev;		// device ID (if file is character or block special)
+	unsigned long st_size;	// file size in bytes (if file is a regular file)
+	//time_t st_atime;		// time of last access
+	//time_t st_mtime;		// time of last data modification
+	//time_t st_ctime;		// time of last status change
+  // -- unused: --
+  //	blksize_t st_blksize; 	// a filesystem-specific preferred I/O block size for
+							// this object.  In some filesystem types, this may
+							// vary from file to file
+  //	blkcnt_t st_blocks;		// number of blocks allocated for this object
+  };
+
+  static __inline int stat( const char* _fileName, struct stat* _stat )
+  {
+	WIN32_FIND_DATAA wfd;
+	_stat->st_size = wfd.nFileSizeLow;
+	HANDLE h = FindFirstFileA( _fileName, &wfd );
+	if ( h != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(h);
+		return 0; // success!
+	}
+	//TODO: set errno
+	return -1;	// failure!
+  }
+
+  static __inline int stat( const wchar_t* _fileName, struct stat* _stat )
+  {
+	WIN32_FIND_DATAW wfd;
+	HANDLE h = FindFirstFileW( _fileName, &wfd );
+	if ( h != INVALID_HANDLE_VALUE)
+	{
+		_stat->st_size = wfd.nFileSizeLow;
+		CloseHandle(h);
+		return 0; // success!
+	}
+	_stat->st_size = 0;
+	//TODO: set errno
+	return -1;	// failure!
+  }
+#endif // _STAT_DEFINED
+#endif	//WINCE

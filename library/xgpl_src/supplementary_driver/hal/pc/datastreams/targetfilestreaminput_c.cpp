@@ -101,7 +101,7 @@
 using namespace std;
 
 //! open a input stream
-bool TargetFileStreamInput_c::open( const char* filename, FileMode_t at_mode )
+bool TargetFileStreamInput_c::open( const TCHAR* filename, FileMode_t at_mode )
 {
 #ifndef USE_BUFFERED_READ
 

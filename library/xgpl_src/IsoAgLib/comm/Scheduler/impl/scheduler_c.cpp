@@ -1160,7 +1160,7 @@ void Scheduler_c::TraceAndAbort(){
         << "Please call the method setTimePeriod instead " << INTERNAL_DEBUG_DEVICE_ENDL;
 
         #ifdef SYSTEM_PC
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
 
    }

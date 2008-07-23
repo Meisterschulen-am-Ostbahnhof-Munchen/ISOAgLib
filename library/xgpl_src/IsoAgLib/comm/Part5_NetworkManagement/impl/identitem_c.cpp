@@ -98,7 +98,6 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
-
 namespace __IsoAgLib {
 
 /** A) default constructor:  will not do anything, create a not-yet-initialized identity. use "init" afterwards!
@@ -185,7 +184,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
     #if defined(DEBUG) && defined(SYSTEM_PC)
     INTERNAL_DEBUG_DEVICE << "ERROR: Double initialization of IdentItem_c detected!!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-    abort();
+    MACRO_ISOAGLIB_ABORT();
     #else
     return;
     #endif
@@ -268,7 +267,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
     #if defined(DEBUG) && defined(SYSTEM_PC)
     INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c() construction but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-    abort();
+    MACRO_ISOAGLIB_ABORT();
     #else
     b_useParameters = true; // fallback because we can't read out the eeprom!
     #endif
@@ -594,7 +593,7 @@ bool IdentItem_c::timeEventActive( void )
         getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
         #if defined(DEBUG) && defined(SYSTEM_PC)
         INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
         #endif
       }
@@ -634,7 +633,7 @@ bool IdentItem_c::timeEventActive( void )
         mpc_isoItem = &rc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
         #if defined(SYSTEM_PC) && defined(DEBUG)
         INTERNAL_DEBUG_DEVICE << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << INTERNAL_DEBUG_DEVICE_ENDL;
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       else

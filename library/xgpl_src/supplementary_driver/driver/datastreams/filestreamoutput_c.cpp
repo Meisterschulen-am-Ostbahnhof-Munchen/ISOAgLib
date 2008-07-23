@@ -100,7 +100,7 @@
 
 //  Operation: open
 bool
-FileStreamOutput_c::open (STL_NAMESPACE::string& filename, FileMode_t at_mode)
+FileStreamOutput_c::open (STD_TSTRING& filename, FileMode_t at_mode)
 {
   bool b_result = c_targetHandle.open( filename, at_mode );
   if (b_result) str_openedFile = filename;
@@ -111,7 +111,7 @@ FileStreamOutput_c::open (STL_NAMESPACE::string& filename, FileMode_t at_mode)
 
 //  Operation: open
 bool
-FileStreamOutput_c::open (const char* filename, FileMode_t at_mode)
+FileStreamOutput_c::open (const TCHAR* filename, FileMode_t at_mode)
 {
   bool b_result = c_targetHandle.open( filename, at_mode);
   if (b_result) str_openedFile = filename;
@@ -126,11 +126,11 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
 {
   if (b_sync)
   { // get path name from file name
-    const STL_NAMESPACE::string::size_type size = str_openedFile.rfind('/');
-    STL_NAMESPACE::string str_path; 
-    if (STL_NAMESPACE::string::npos == size)
+    const STD_TSTRING::size_type size = str_openedFile.rfind('/');
+	STD_TSTRING str_path; 
+    if (STD_TSTRING::npos == size)
       // no path in file name
-      str_path = ".";
+      str_path = TEXT(".");
     else
       str_path = str_openedFile.substr(0, size);
 
@@ -142,9 +142,15 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
   
   if (b_deleteFile) {
     #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "Removing file " << str_openedFile.c_str() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
+#if (defined(WIN32) && defined(UNICODE)) || defined(WINCE)
+    WCHAR tmpFileName[MAX_PATH];
+    mb2wc( (LPSTR)str_openedFile.c_str(), tmpFileName, MAX_PATH );
+    return DeleteFileW( tmpFileName );
+#else
     return (remove (str_openedFile.c_str()) == 0);
+#endif
   }
   return true; // success
 };

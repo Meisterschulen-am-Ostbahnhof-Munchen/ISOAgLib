@@ -95,7 +95,6 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-
 namespace __IsoAgLib {
 
 
@@ -422,7 +421,7 @@ int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) con
       << " as this function makes never sense when called with NULL!!"
       << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_FLUSH;
-    abort();
+    MACRO_ISOAGLIB_ABORT();
   }
 #endif
 

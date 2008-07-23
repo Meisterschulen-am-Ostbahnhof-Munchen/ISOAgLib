@@ -67,17 +67,17 @@
 #define ON                1
 #define OFF               0
 
-#ifndef SYSTEM_PC_VC
-#include <stdint.h>
+#if !defined(SYSTEM_PC_VC) && !defined(WINCE)
+  #include <stdint.h>
 #else
-typedef unsigned char uint8_t;
-typedef signed char int8_t;
-typedef unsigned short uint16_t;
-typedef short int16_t;
-typedef unsigned int uint32_t;
-typedef int int32_t;
-typedef unsigned long long int uint64_t;
-typedef long int long int64_t;
+  typedef unsigned char uint8_t;
+  typedef signed char int8_t;
+  typedef unsigned short uint16_t;
+  typedef short int16_t;
+  typedef unsigned int uint32_t;
+  typedef int int32_t;
+  typedef unsigned long long int uint64_t;
+  typedef long int long int64_t;
 #endif
 
 typedef uint8_t boolean;

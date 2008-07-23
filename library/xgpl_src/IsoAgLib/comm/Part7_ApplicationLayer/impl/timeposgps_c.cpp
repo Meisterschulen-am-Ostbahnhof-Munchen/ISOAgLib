@@ -458,7 +458,7 @@ namespace __IsoAgLib {
                                   with tractor mode." << "\n";
       #endif
       #if defined(DEBUG) && defined(SYSTEM_PC)
-        abort();
+        MACRO_ISOAGLIB_ABORT();
       #endif
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
       return false;

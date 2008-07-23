@@ -64,14 +64,10 @@
 #include <list>
 #include <string>
 #include <time.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 
 #ifdef DEF_USE_SERVER_SPECIFIC_HEADER
   #include <pthread.h>
-#endif
-
-#include <sys/types.h>
-#ifndef WIN32
- #include <sys/time.h>
 #endif
 
 #include "can_target_extensions.h"
@@ -80,12 +76,16 @@
 // => no loopback network configuration necessary
 //#define USE_UNIX_SOCKET
 
-#ifndef WIN32
+#ifdef WIN32
+  // Note: winsock2.h is included in compiler_adaptations.h for WinCE.
+  //       Winsock definitions are made in windows.h for other win32 systems
+  #include <windows.h>
+#else
+  #include <sys/time.h>
+  #include <sys/types.h>
   #include <sys/time.h>
   #include <sys/socket.h>
   #include <unistd.h>
-#else
-  #include <Windows.h>
 #endif
 
 #ifdef USE_UNIX_SOCKET
@@ -98,7 +98,6 @@
 #ifdef CAN_DRIVER_SOCKET
   #define CAN_SERVER_HOST "127.0.0.1"
 #endif
-
 
 #ifdef WIN32
   typedef SOCKET SOCKET_TYPE;

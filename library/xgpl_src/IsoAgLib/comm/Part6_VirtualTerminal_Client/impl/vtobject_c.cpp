@@ -82,10 +82,10 @@
 #include "vtobject_c.h"
 #include "../ivtobject_c.h"
 
-
 #include "isoterminal_c.h"
 #include "vtclientservercommunication_c.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
+
 
 namespace IsoAgLib {
   // implement here a normal constructor and functions, as the compiler dislikes inlining of that simple
@@ -105,7 +105,7 @@ namespace IsoAgLib {
     {
       INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly for getID(). Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
-      abort();
+      MACRO_ISOAGLIB_ABORT();
     #endif
   }
   #endif

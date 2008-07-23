@@ -52,10 +52,6 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-#ifdef WIN32
-  #include <windows.h>
-#endif
-
 #define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
 

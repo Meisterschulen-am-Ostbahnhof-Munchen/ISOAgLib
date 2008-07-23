@@ -203,7 +203,7 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
     } else {
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << INTERNAL_DEBUG_DEVICE_ENDL;
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
     }
 
@@ -270,7 +270,7 @@ void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
     } else {
       #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << INTERNAL_DEBUG_DEVICE_ENDL;
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
     }
 
@@ -979,7 +979,7 @@ void Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
 #if defined(SYSTEM_PC) && defined(DEBUG)
     fprintf( stderr,
             "ERROR!! Flexible8ByteString_c::setFloatData has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-    abort();
+    MACRO_ISOAGLIB_ABORT();
 #endif
   }
 }
@@ -1006,7 +1006,7 @@ void Flexible4ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
       break;
   };
@@ -1034,7 +1034,7 @@ void Flexible4ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
       break;
   };
@@ -1061,7 +1061,7 @@ uint16_t Flexible4ByteString_c::getUint16Data(uint8_t aui8_pos) const
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
       break;
   };
@@ -1090,7 +1090,7 @@ int16_t Flexible4ByteString_c::getInt16Data(uint8_t aui8_pos) const
       #if defined(SYSTEM_PC) && defined(DEBUG)
       fprintf( stderr,
         "ERROR!! Flexible4ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      abort();
+      MACRO_ISOAGLIB_ABORT();
       #endif
       break;
   };
@@ -1124,7 +1124,7 @@ void Flexible8ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1156,7 +1156,7 @@ void Flexible8ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1187,7 +1187,7 @@ uint16_t Flexible8ByteString_c::getUint16Data(uint8_t aui8_pos) const
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1221,7 +1221,7 @@ int16_t Flexible8ByteString_c::getInt16Data(uint8_t aui8_pos) const
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1257,7 +1257,7 @@ float Flexible8ByteString_c::getFloatData(uint8_t aui8_pos) const
 #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
                  "ERROR!! Flexible8ByteString_c::getFloatData has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
 #endif
       }
       break;
@@ -1290,7 +1290,7 @@ void Flexible8ByteString_c::setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setUint32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1320,7 +1320,7 @@ void Flexible8ByteString_c::setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::setInt32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1349,7 +1349,7 @@ uint32_t Flexible8ByteString_c::getUint32Data(uint8_t aui8_pos) const
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getUint32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;
@@ -1381,7 +1381,7 @@ int32_t Flexible8ByteString_c::getInt32Data(uint8_t aui8_pos) const
         #if defined(SYSTEM_PC) && defined(DEBUG)
         fprintf( stderr,
           "ERROR!! Flexible8ByteString_c::getInt32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        abort();
+        MACRO_ISOAGLIB_ABORT();
         #endif
       }
       break;

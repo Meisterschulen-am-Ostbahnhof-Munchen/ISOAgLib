@@ -65,7 +65,6 @@
 
 
 #ifdef WIN32
-  #include <Windows.h>
   #include <stdio.h>
 #else
   #include <sys/socket.h>
@@ -77,12 +76,13 @@
   #include <linux/version.h>
 #endif
 
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <signal.h>
-
+#ifndef WIN32
+  #include <fcntl.h>
+  #include <signal.h>
+#endif
 #include <list>
 
 #include "can_server.h"
@@ -200,14 +200,14 @@ int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
 #endif
                      ) ) == -1)
   {
-    perror("send");
+    MACRO_ISOAGLIB_PERROR("send");
     return HAL_UNKNOWN_ERR;
   }
 
   // wait for ACK
   if ((i16_rc = read_data(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s))) == -1)
   {
-    perror("read_data");
+    MACRO_ISOAGLIB_PERROR("read_data");
     return HAL_UNKNOWN_ERR;
   }
 
@@ -266,7 +266,7 @@ int16_t can_startDriver()
   int iMode = 1;
 
   // set data socket to nonblocking, because we need MSG_PEEK, but there is no MSG_DONTWAIT in WIN32
-  ioctlsocket(i32_dataSocket, FIONBIO, (u_long FAR*) &iMode);
+  ioctlsocket(i32_dataSocket, FIONBIO, (unsigned long FAR*) &iMode);
 #endif
 
   s_transferBuf.ui16_command = COMMAND_REGISTER;
@@ -534,13 +534,15 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   transferBuf_s s_transferBuf;
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
-                     0
+  #ifdef WINCE
+    return 0; //@TODO SOON: verify conditional return value for Windows CE
+  #else
+    if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK)) > 0)
+  #endif
 #else
-                     MSG_DONTWAIT
+  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK)) > 0)
 #endif
-                     | MSG_PEEK)) > 0)
   {
     if (((bMsgObj == s_transferBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_transferBuf.s_data.ui8_bus))
     {
@@ -587,13 +589,15 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
-                     0
+  #ifdef WINCE
+    if( TRUE ) //@TODO SOON WINCE: get number of bytes waiting in socket stream
+  #else
+    if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK)) > 0)
+  #endif
 #else
-                     MSG_DONTWAIT
+  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK)) > 0)                     
 #endif
-                     | MSG_PEEK)) > 0)
   {
     if ( ((bMsgObj == s_transferBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_transferBuf.s_data.ui8_bus))
     {
@@ -669,7 +673,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 #endif
      )) == -1)
   {
-    perror("send");
+    MACRO_ISOAGLIB_PERROR("send");
     return HAL_UNKNOWN_ERR;
   }
 
@@ -717,7 +721,7 @@ int32_t getMaxSendDelay(uint8_t /* aui8_busNr */)
     }
   }
 
-  perror("msgsnd");
+  MACRO_ISOAGLIB_PERROR("msgsnd");
 #endif
   return 0; // we don't have no error code, we can just return some error-maxDelay instead
 }
