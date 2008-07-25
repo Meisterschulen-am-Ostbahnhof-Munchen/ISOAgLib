@@ -78,8 +78,10 @@
 
 #ifdef WIN32
   // Note: winsock2.h is included in compiler_adaptations.h for WinCE.
-  //       Winsock definitions are made in windows.h for other win32 systems
-  #include <windows.h>
+  #ifndef WINCE
+    #include <winsock2.h> //needed for canserver
+    #include <windows.h>  //also needed!
+  #endif
 #else
   #include <sys/time.h>
   #include <sys/types.h>

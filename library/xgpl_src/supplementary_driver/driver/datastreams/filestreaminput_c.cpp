@@ -128,7 +128,7 @@ FileStreamInput_c::close(bool b_deleteFile)
     #ifdef DEBUG
 	  INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    #if defined(WIN32) || defined(WINCE)
+    #if defined(WINCE) //use this only for CE!
       return DeleteFile( str_openedFile.c_str() );
     #else
       return (remove( str_openedFile.c_str() ) == 0);

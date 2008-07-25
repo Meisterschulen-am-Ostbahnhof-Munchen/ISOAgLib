@@ -10,43 +10,52 @@
 #ifndef __UNICODE_HELPER_H__
 #define __UNICODE_HELPER_H__
 
-#ifdef WIN32
-#	include <windows.h>
-#endif
-
-//
-// basic types
-//
-#define CHAR char
-#define WCHAR wchar_t  // (unsigned short)
-#if !defined(_UNICODE) && !defined(UNICODE)
-#	define TCHAR CHAR    // ASCII
+#if defined(WIN32)
+#	include <tchar.h>
 #else
-#	define TCHAR WCHAR   // Unicode
-#endif
 
+
+//
+// define basic types
+//
+#	if !defined(CHAR)
+#		define CHAR char
+#	endif
+#	if !defined(WCHAR) && !defined(WIN32)
+#		define WCHAR wchar_t  // (unsigned short)
+#	endif
+#	if !defined(_TCHAR_DEFINED)
+#		define _TCHAR_DEFINED
+#		if !defined(_UNICODE) && !defined(UNICODE)
+#			define TCHAR char    	// ASCII
+#		else
+#			define TCHAR wchar_t	// Unicode
+#		endif
+#	endif
+
+#endif // WIN32
 
 //
 // text macro(s)
 //
-#if !defined(__T)
-#	if !defined(_UNICODE) && !defined(UNICODE)
-#		define __T(s) s       // ASCII
-#	else
-#		define __T(s) L##s    // Unicode
+#	ifdef WIN32
+#		pragma warning(disable:4005)
 #	endif
-#endif
+#	if !defined(TEXT)
+#		if !defined(_UNICODE) && !defined(UNICODE)
+#			define TEXT(s) s		// ASCII
+#		else
+#			define TEXT(s) L##s		// Unicode
+#		endif
+#	endif
 
-#if !defined(TEXT)
-#	define TEXT(s) __T(s)
-#endif
-
+	
 #if !defined(_UNICODE) && !defined(UNICODE)
 #	define STD_TSTRING	std::string
 #else
 #	define STD_TSTRING	std::wstring
 #endif
-
+	
 //
 // define string functions for (non) unicode handling
 //
@@ -70,26 +79,30 @@
 #endif
 
 
-#ifdef WIN32
-// strSize must include space for terminating zero
-inline bool wc2mb( LPWSTR lpwStr, LPSTR lpStr, size_t strSize, int cp = CP_ACP )
-{
-	size_t size = wcslen( lpwStr );
-	if( strSize <= size )
-		return false;
-	WideCharToMultiByte( cp, 0, lpwStr, -1, lpStr, size, NULL, NULL );
-	return true;
-}
+#if defined(WIN32) && defined(UNICODE)
+#	include <windows.h>
+#	if defined(__WXMSW__)
+#		undef Yield		// only a 16-bit compatibility function
+#	endif
+	// strSize must include space for terminating zero
+	inline bool wc2mb( LPWSTR lpwStr, LPSTR lpStr, size_t strSize, int cp = CP_ACP )
+	{
+		size_t size = wcslen( lpwStr );
+		if( strSize <= size )
+			return false;
+		WideCharToMultiByte( cp, 0, lpwStr, -1, lpStr, size, NULL, NULL );
+		return true;
+	}
 
-// wstrSize must include space for terminating zero
-inline bool mb2wc( LPSTR lpStr, LPWSTR lpwStr, size_t wstrSize, int cp = CP_ACP )
-{
-	size_t size = strlen( lpStr );
-	if( wstrSize <= size )
-		return false;
-	MultiByteToWideChar( cp, 0, lpStr, -1, lpwStr, size );
-	return true;
-}
-#endif
+	// wstrSize must include space for terminating zero
+	inline bool mb2wc( LPSTR lpStr, LPWSTR lpwStr, size_t wstrSize, int cp = CP_ACP )
+	{
+		size_t size = strlen( lpStr );
+		if( wstrSize <= size )
+			return false;
+		MultiByteToWideChar( cp, 0, lpStr, -1, lpwStr, size );
+		return true;
+	}
+#endif // WIN32 && UNICODE
 
 #endif	//__UNICODE_HELPER_H__
