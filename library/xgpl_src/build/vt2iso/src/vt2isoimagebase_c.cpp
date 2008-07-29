@@ -302,7 +302,10 @@ BGR_s vtColourTable[256]=
 
 /** constructor which can directly open the corresponding file */
 Vt2IsoImageBase_c::Vt2IsoImageBase_c( void )
-: i_currentThreshold( -1 ), ui_width( 0 ), ui_height( 0 ), b_isInvalidPalette(false)
+  : b_isInvalidPalette(false)
+  , i_currentThreshold( -1 )
+  , ui_width( 0 )
+  , ui_height( 0 )
 {
 }
 

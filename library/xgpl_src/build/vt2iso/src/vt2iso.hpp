@@ -169,6 +169,7 @@ public:
   int getLength();
   int getIntValue();
   char getCharacterAtPos(int index);
+  void setCharacterAtPos(int index, char character);
   void pushBack(char ch);
   bool isNull();
   std::string getObjectReference();

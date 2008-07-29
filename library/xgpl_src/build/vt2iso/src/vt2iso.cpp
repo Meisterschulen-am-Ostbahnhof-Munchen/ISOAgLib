@@ -349,6 +349,11 @@ char OneAttribute_c::getCharacterAtPos(int index)
   return attrString[index];
 }
 
+void OneAttribute_c::setCharacterAtPos(int index, char character)
+{
+  attrString[index] = character;
+}
+
 void OneAttribute_c::pushBack(char ch)
 {
   attrString.push_back(ch);
@@ -1837,7 +1842,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
     {
-      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName.c_str(), this))
+      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName, this))
         return false;
     }
 
