@@ -83,7 +83,7 @@ class SpecialParsingBasePropTag_c
     * @param aui_objectType object type of pNode
     * @param rpcch_objName pointer to object name character string
   */
-  virtual bool parseUnknownTag (DOMNode* ap_Node, unsigned int aui_objectType, char* rpcch_objName, vt2iso_c* pc_vt2iso) = 0;
+  virtual bool parseUnknownTag (DOMNode* ap_Node, unsigned int aui_objectType, const char* rpcch_objName, vt2iso_c* pc_vt2iso) = 0;
 
   /// returns the object type from a given DOMNode if type is known and sets it
   virtual uint16_t getObjType (const char* node_name) { return ui8_objType; }
@@ -98,10 +98,10 @@ class SpecialParsingBasePropTag_c
   virtual void setObjID (uint16_t aui16_objID) = 0;
 
   /** that functions creates all necessary files and prints out all collected data */
-  virtual void outputCollectedData2Files(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames]) {}
+  virtual void outputCollectedData2Files(const OneAttribute_c[maxAttributeNames]) {}
 
   /** that functions writes to already existing files and prints out a record during runtime of vt2iso */
-  virtual bool outputData2FilesPiecewise(const char attrString[maxAttributeNames] [stringLength+1], const bool attrIsGiven[maxAttributeNames], vt2iso_c* pc_vt2iso) {return true;}
+  virtual bool outputData2FilesPiecewise(const OneAttribute_c[maxAttributeNames], vt2iso_c* pc_vt2iso) {return true;}
 
   /// returns if the current parsing module contains proprietary object types which can be handled like basic object types
   virtual bool checkForProprietaryOrBasicObjTypes() = 0;

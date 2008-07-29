@@ -40,8 +40,15 @@
 #ifndef VT2ISODEFINES_H
 #define VT2ISODEFINES_H
 
+#include <string>
+
 #ifndef SYSTEM_PC_VC
 #include <stdint.h>
+#include <xercesc/parsers/AbstractDOMParser.hpp>
+
+
+
+
 #else
   typedef unsigned char uint8_t;
   typedef signed char int8_t;
@@ -55,13 +62,15 @@
 
 #include <cstdio>
 
-typedef struct tagBGR {
+typedef struct tagBGR
+{
   uint8_t bgrBlue;
   uint8_t bgrGreen;
   uint8_t bgrRed;
 } BGR_s;
 
-typedef struct tagRGB {
+typedef struct tagRGB
+{
   uint8_t rgbRed;
   uint8_t rgbGreen;
   uint8_t rgbBlue;
@@ -376,8 +385,9 @@ typedef struct {
 #define attrAbsolutePath1 (120)
 #define attrAbsolutePath4 (121)
 #define attrAbsolutePath8 (122)
+#define attrAutoSetLength (123)
 
-#define maxAttributeNames (123)
+#define maxAttributeNames (124)
 
 
 
@@ -485,7 +495,8 @@ extern char buttonOptionsTable [maxButtonOptions] [stringLength+1];
 extern char inputobjectOptionsTable [maxInputObjectOptionsTable] [stringLength+1];
 
 
-void utf16convert (char* source, char* destin, int count);
+void utf16convert (const char* source, std::string &destin);
+
 
 unsigned int objectIsType (char* lookup_name);
 

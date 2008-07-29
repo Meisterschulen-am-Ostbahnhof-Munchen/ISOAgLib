@@ -39,6 +39,7 @@
  ***************************************************************************/
 #include "vt2iso-defines.hpp"
 #include <cstring>
+#include <stdio.h>
 
 //! Number of regular object plus gap plus number of internal objects.
 char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
@@ -352,7 +353,8 @@ char attrNameTable [maxAttributeNames] [stringLength+1] = {
   "abs_path", //proprietary
   "abs_path1", //proprietary
   "abs_path4", //proprietary
-  "abs_path8" //proprietary
+  "abs_path8", //proprietary
+  "auto_set_length" //proprietary
 };
 
 // Table of possible Macro Commands
@@ -647,20 +649,35 @@ char inputobjectOptionsTable [maxInputObjectOptionsTable] [stringLength+1] = {
   "live_editing"
 };
 
-void utf16convert (char* source, char* destin, int count)
+int utf16_strlen(const char* source)
 {
-  int index=-1;
-  do
-  {
-    index++;
-    destin [index] = source [(index*2)];
-  } while (destin [index] != 0x00);
+  int len=0;
+  const uint16_t* wideSource = (const uint16_t*) source;
+  while (*wideSource++ != 0) len++;
+  return len;
 }
+
+void utf16convert (const char* source, std::string &destin)
+{
+  int const len = utf16_strlen(source);
+  destin.clear();
+  destin.reserve(len);
+  int index=0;
+  while (index < len)
+  {
+    //destin << source [index*2];
+    destin.push_back(source [index*2]);
+    index++;
+  }
+}
+
 
 unsigned int objectIsType (char* lookup_name)
 {
-  for (int i=0; i<maxObjectTypesToCompare; i++) {
-    if (0 == strncmp (lookup_name, otCompTable [i], stringLength)) {
+  for (int i=0; i<maxObjectTypesToCompare; i++)
+  {
+    if (0 == strncmp (lookup_name, otCompTable [i], stringLength))
+    {
       return i;
     }
   }

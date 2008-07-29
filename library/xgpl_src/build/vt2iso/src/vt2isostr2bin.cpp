@@ -532,7 +532,7 @@ unsigned int commandIsType (char* lookup_name)
   return 0xFFFF;
 }
 
-unsigned int colourtoi (char* text_colour)
+unsigned int colourtoi (const char* text_colour)
 {
   int l;
   for (l=0; l<16; l++) {
@@ -543,7 +543,7 @@ unsigned int colourtoi (char* text_colour)
   return atoi (text_colour);
 }
 
-unsigned int colourdepthtoi (char* text_colourdepth)
+unsigned int colourdepthtoi (const char* text_colourdepth)
 {
   int l;
   for (l=0; l<2; l++) {
@@ -554,7 +554,7 @@ unsigned int colourdepthtoi (char* text_colourdepth)
   return 2;
 }
 
-unsigned int fonttypetoi (char* text_fonttype)
+unsigned int fonttypetoi (const char* text_fonttype)
 {
   int l;
   if (text_fonttype && isdigit(*text_fonttype))
@@ -576,16 +576,20 @@ unsigned int fonttypetoi (char* text_fonttype)
 }
 
 
-unsigned int booltoi (char *text_bool)
+unsigned int booltoi (const char *text_bool)
 {
   int l;
-  for (l=0; l<maxTruthTable; l++) {
-    if (strncmp (text_bool, truthTable [l], stringLength) == 0) {
+  for (l=0; l<maxTruthTable; l++)
+  {
+    if (strncmp (text_bool, truthTable [l], stringLength) == 0)
+    {
       return true;
     }
   }
-  for (l=0; l<maxFalseTable; l++) {
-    if (strncmp (text_bool, falseTable [l], stringLength) == 0) {
+  for (l=0; l<maxFalseTable; l++)
+  {
+    if (strncmp (text_bool, falseTable [l], stringLength) == 0)
+    {
       return false;
     }
   }
@@ -594,11 +598,13 @@ unsigned int booltoi (char *text_bool)
   return 0; // to make compiler happy
 }
 
-unsigned int fontsizetoi (char *text_fontsize)
+unsigned int fontsizetoi (const char *text_fontsize)
 {
   int l;
-  for (l=0; l<maxFontsizeTable; l++) {
-    if (strncmp (text_fontsize, fontsizeTable [l], stringLength) == 0) {
+  for (l=0; l<maxFontsizeTable; l++)
+  {
+    if (strncmp (text_fontsize, fontsizeTable [l], stringLength) == 0)
+    {
       return l;
     }
   }
@@ -607,11 +613,13 @@ unsigned int fontsizetoi (char *text_fontsize)
   return 0; // to make compiler happy
 }
 
-unsigned int formattoi (char *text_format)
+unsigned int formattoi (const char *text_format)
 {
   int l;
-  for (l=0; l<maxFormatTable; l++) {
-    if (strncmp (text_format, formatTable [l], stringLength) == 0) {
+  for (l=0; l<maxFormatTable; l++)
+  {
+    if (strncmp (text_format, formatTable [l], stringLength) == 0)
+    {
       return l;
     }
   }
@@ -620,11 +628,12 @@ unsigned int formattoi (char *text_format)
   return 0; // to make compiler happy
 }
 
-unsigned int horizontaljustificationtoi (char *text_horiz)
+unsigned int horizontaljustificationtoi (const char *text_horiz)
 {
   int l;
   for (l=0; l<maxHorizontalJustificationTable; l++) {
-    if (strncmp (text_horiz, horizontalJustificationTable [l], stringLength) == 0) {
+    if (strncmp (text_horiz, horizontalJustificationTable [l], stringLength) == 0)
+    {
       return l;
     }
   }
@@ -633,11 +642,13 @@ unsigned int horizontaljustificationtoi (char *text_horiz)
   return 0; // to make compiler happy
 }
 
-unsigned int verticaljustificationtoi (char *text_vert)
+unsigned int verticaljustificationtoi (const char *text_vert)
 {
   int l;
-  for (l=0; l<maxVerticalJustificationTable; l++) {
-    if (strncmp (text_vert, verticalJustificationTable [l], stringLength) == 0) {
+  for (l=0; l<maxVerticalJustificationTable; l++)
+  {
+    if (strncmp (text_vert, verticalJustificationTable [l], stringLength) == 0)
+    {
       return l;
     }
   }
@@ -646,62 +657,72 @@ unsigned int verticaljustificationtoi (char *text_vert)
   return 0; // to make compiler happy
 }
 
-unsigned int optionstoi (char *text_options)
+unsigned int optionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxOptionsTable; l++) {
-    if (strstr (text_options, optionsTable [l]) != 0) {
+  for (l=0; l<maxOptionsTable; l++)
+  {
+    if (strstr (text_options, optionsTable [l]) != 0)
+    {
       retval += (uint64_t(1)<<l);
     }
   }
   return retval;
 }
 
-unsigned int outputnumberoptionstoi (char *text_options)
+unsigned int outputnumberoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxOutputNumberOptionsTable; l++) {
-    if (strstr (text_options, outputNumberOptionsTable [l]) != 0) {
+  for (l=0; l<maxOutputNumberOptionsTable; l++)
+  {
+    if (strstr (text_options, outputNumberOptionsTable [l]) != 0)
+    {
       retval += (uint64_t(1)<<l);
     }
   }
   return retval;
 }
 
-unsigned int picturegraphicoptionstoi (char *text_options)
+unsigned int picturegraphicoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxPictureGraphicOptionsTable; l++) {
-    if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0) {
+  for (l=0; l<maxPictureGraphicOptionsTable; l++)
+  {
+    if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0)
+    {
       retval += (uint64_t(1)<<l);
     }
   }
   return retval;
 }
 
-unsigned int picturegraphicrletoi (char *text_options)
+unsigned int picturegraphicrletoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxPictureGraphicRleTable; l++) {
-    if (strstr (text_options, pictureGraphicRleTable [l]) != 0) {
+  for (l=0; l<maxPictureGraphicRleTable; l++)
+  {
+    if (strstr (text_options, pictureGraphicRleTable [l]) != 0)
+    {
       retval += (uint64_t(1)<<l);
     }
   }
   return retval;
 }
 
-unsigned int meteroptionstoi (char *text_options)
+unsigned int meteroptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxMeterOptionsTable; l++) {
-    if (strstr (text_options, meterOptionsTable [l]) != 0) {
+  for (l=0; l<maxMeterOptionsTable; l++)
+  {
+    if (strstr (text_options, meterOptionsTable [l]) != 0)
+    {
       retval += (uint64_t(1)<<l);
     }
   }
   return retval;
 }
 
-unsigned int linearbargraphoptionstoi (char *text_options)
+unsigned int linearbargraphoptionstoi (const char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxLinearBarGraphOptionsTable; l++) {
@@ -712,7 +733,7 @@ unsigned int linearbargraphoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int archedbargraphoptionstoi (char *text_options)
+unsigned int archedbargraphoptionstoi (const char *text_options)
 {
   int l, retval=0;
   for (l=0; l<maxArchedBarGraphOptionsTable; l++) {
@@ -723,7 +744,7 @@ unsigned int archedbargraphoptionstoi (char *text_options)
   return retval;
 }
 
-unsigned int prioritytoi (char *text_priority)
+unsigned int prioritytoi (const char *text_priority)
 {
   int l;
   for (l=0; l<maxPriorityAcousticSignalTable-1; l++) {
@@ -736,7 +757,7 @@ unsigned int prioritytoi (char *text_priority)
   return 0; // to make compiler happy
 }
 
-unsigned int acousticsignaltoi (char *text_acousticsignal)
+unsigned int acousticsignaltoi (const char *text_acousticsignal)
 {
   int l;
   for (l=0; l<maxPriorityAcousticSignalTable; l++) {
@@ -750,7 +771,7 @@ unsigned int acousticsignaltoi (char *text_acousticsignal)
 }
 
 
-unsigned int fontstyletoi (char *text_fontstyle)
+unsigned int fontstyletoi (const char *text_fontstyle)
 {
   int l, retval=0;
   for (l=0; l<maxFontstyleTable; l++) {
@@ -773,7 +794,7 @@ unsigned int fontstyletoi (char *text_fontstyle)
   return retval;
 }
 
-unsigned int linedirectiontoi (char *text_linedirection)
+unsigned int linedirectiontoi (const char *text_linedirection)
 {
   int retval=0;
   if (strstr (text_linedirection, "bottomlefttotopright") != NULL) {
@@ -782,13 +803,15 @@ unsigned int linedirectiontoi (char *text_linedirection)
   return retval;
 }
 
-unsigned int linearttoi (char *text_lineart)
+unsigned int linearttoi (const char *text_lineart)
 {
   int retval=0;
   char thischar;
-  while ((thischar = *text_lineart) != 0x00) {
+  while ((thischar = *text_lineart) != 0x00)
+  {
     retval <<= 1;
-    if (thischar == '1') {
+    if (thischar == '1')
+    {
       retval |= 0x0001;
     }
     text_lineart++;
@@ -797,7 +820,7 @@ unsigned int linearttoi (char *text_lineart)
 }
 
 
-unsigned int linesuppressiontoi (char *text_linesuppression)
+unsigned int linesuppressiontoi (const char *text_linesuppression)
 {
   int l, retval=0;
   for (l=0; l<maxLineSuppressionTable; l++) {
@@ -809,11 +832,13 @@ unsigned int linesuppressiontoi (char *text_linesuppression)
 }
 
 
-unsigned int ellipsetypetoi (char *text_ellipsetype)
+unsigned int ellipsetypetoi (const char *text_ellipsetype)
 {
   int l, retval=0;
-  for (l=0; l<maxEllipseTypeTable; l++) {
-    if (strcmp(text_ellipsetype, ellipseTypeTable [l]) == 0) {
+  for (l=0; l<maxEllipseTypeTable; l++)
+  {
+    if (strcmp(text_ellipsetype, ellipseTypeTable [l]) == 0)
+    {
       retval = l;
       break;
     }
@@ -821,7 +846,7 @@ unsigned int ellipsetypetoi (char *text_ellipsetype)
   return retval;
 }
 
-unsigned int polygontypetoi (char *text_polygontype)
+unsigned int polygontypetoi (const char *text_polygontype)
 {
   int l, retval=0;
   for (l=0; l<maxPolygonTypeTable; l++) {
@@ -833,7 +858,7 @@ unsigned int polygontypetoi (char *text_polygontype)
   return retval;
 }
 
-unsigned int validationtypetoi (char *text_validationtype)
+unsigned int validationtypetoi (const char *text_validationtype)
 {
   int retval=0;
   if (strstr (text_validationtype, "invalid") != 0) {
@@ -843,7 +868,7 @@ unsigned int validationtypetoi (char *text_validationtype)
 }
 
 
-unsigned int filltypetoi (char *text_filltype)
+unsigned int filltypetoi (const char *text_filltype)
 {
   int l, retval=0;
   for (l=0; l<maxFillTypeTable; l++) {
@@ -855,7 +880,7 @@ unsigned int filltypetoi (char *text_filltype)
   return retval;
 }
 
-unsigned int eventToi (char *text_eventName)
+unsigned int eventToi (const char *text_eventName)
 {
   int l, retval=0;
   for (l=0; l<maxEventTable; l++) {
@@ -867,7 +892,7 @@ unsigned int eventToi (char *text_eventName)
   return retval;
 }
 
-unsigned int auxfunctiontypetoi(char *text_auxFunctionType)
+unsigned int auxfunctiontypetoi(const char *text_auxFunctionType)
 {
   int l, retval=0;
   for (l=0; l<maxAuxFunctionTypes; l++) {
@@ -903,7 +928,6 @@ unsigned int getarchbargraphoptfromstring (char *text_options)
     else ui_res = 0;
   return ui_res;
 }
-
 
 unsigned int getauxfunctypefromstring(char *text_auxFuncType)
 {
@@ -943,7 +967,6 @@ unsigned int getcolourdepthfromstring (char* text_colourdepth)
   return ui_res;
 }
 
-
 unsigned int getcolourfromstring (char *text_backgrndcol)
 {
   unsigned int ui_res = 0;
@@ -970,7 +993,6 @@ unsigned int  getellipsetypefromstring (char *text_ellipsetype)
     else ui_res = 0;
   return ui_res;
 }
-
 
 unsigned int geteventfromstring (char *text_eventName)
 {

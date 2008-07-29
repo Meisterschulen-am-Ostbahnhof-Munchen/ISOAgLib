@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/F4096"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
+				AdditionalIncludeDirectories="C:\Development\boost\boost_1_35_0;&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -131,7 +131,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="&quot;C:\programme\Microsoft Platform SDK for Windows Server 2003 R2\Include&quot;;&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
+				AdditionalIncludeDirectories="C:\Development\boost\boost_1_35_0;&quot;..\libs\xerces-c_2_5_0\include&quot;;..\libs\freeimage;src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"

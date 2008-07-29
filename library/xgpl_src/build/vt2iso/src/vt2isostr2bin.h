@@ -433,59 +433,59 @@ unsigned int commandIsType (char*);
 
 void utf16convert (char* source, char* destin, int count);
 
-unsigned int colourtoi (char* text_colour);
+unsigned int colourtoi (const char* text_colour);
 
-unsigned int colourdepthtoi (char* text_colourdepth);
+unsigned int colourdepthtoi (const char* text_colourdepth);
 
-unsigned int fonttypetoi (char* text_fonttype);
+unsigned int fonttypetoi (const char* text_fonttype);
 
-unsigned int booltoi (char *text_bool);
+unsigned int booltoi (const char *text_bool);
 
-unsigned int fontsizetoi (char *text_fontsize);
+unsigned int fontsizetoi (const char *text_fontsize);
 
-unsigned int formattoi (char *text_format);
+unsigned int formattoi (const char *text_format);
 
-unsigned int horizontaljustificationtoi (char *text_horiz);
+unsigned int horizontaljustificationtoi (const char *text_horiz);
 
-unsigned int verticaljustificationtoi (char *text_vert);
+unsigned int verticaljustificationtoi (const char *text_vert);
 
-unsigned int optionstoi (char *text_options);
+unsigned int optionstoi (const char *text_options);
 
-unsigned int outputnumberoptionstoi (char *text_options);
+unsigned int outputnumberoptionstoi (const char *text_options);
 
-unsigned int picturegraphicoptionstoi (char *text_options);
+unsigned int picturegraphicoptionstoi (const char *text_options);
 
-unsigned int picturegraphicrletoi (char *text_options);
+unsigned int picturegraphicrletoi (const char *text_options);
 
-unsigned int meteroptionstoi (char *text_options);
+unsigned int meteroptionstoi (const char *text_options);
 
-unsigned int linearbargraphoptionstoi (char *text_options);
+unsigned int linearbargraphoptionstoi (const char *text_options);
 
-unsigned int archedbargraphoptionstoi (char *text_options);
+unsigned int archedbargraphoptionstoi (const char *text_options);
 
-unsigned int prioritytoi (char *text_priority);
+unsigned int prioritytoi (const char *text_priority);
 
-unsigned int acousticsignaltoi (char *text_acousticsignal);
+unsigned int acousticsignaltoi (const char *text_acousticsignal);
 
-unsigned int fontstyletoi (char *text_fontstyle);
+unsigned int fontstyletoi (const char *text_fontstyle);
 
-unsigned int linedirectiontoi (char *text_linedirection);
+unsigned int linedirectiontoi (const char *text_linedirection);
 
-unsigned int linearttoi (char *text_lineart);
+unsigned int linearttoi (const char *text_lineart);
 
-unsigned int linesuppressiontoi (char *text_linesuppression);
+unsigned int linesuppressiontoi (const char *text_linesuppression);
 
-unsigned int ellipsetypetoi (char *text_ellipsetype);
+unsigned int ellipsetypetoi (const char *text_ellipsetype);
 
-unsigned int polygontypetoi (char *text_polygontype);
+unsigned int polygontypetoi (const char *text_polygontype);
 
-unsigned int validationtypetoi (char *text_validationtype);
+unsigned int validationtypetoi (const char *text_validationtype);
 
-unsigned int filltypetoi (char *text_filltype);
+unsigned int filltypetoi (const char *text_filltype);
 
-unsigned int eventToi (char *text_eventName);
+unsigned int eventToi (const char *text_eventName);
 
-unsigned int auxfunctiontypetoi(char *text_auxFunctionType);
+unsigned int auxfunctiontypetoi(const char *text_auxFunctionType);
 
 
 ///### Extension for GUI Editor BEGIN-### #############################################

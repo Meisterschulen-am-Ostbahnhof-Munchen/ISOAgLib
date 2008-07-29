@@ -48,9 +48,11 @@
 #include <set>
 #include <vector>
 #include <map>
+#include <list>
 
 #include "vt2iso-defines.hpp"
 #include "vt2iso-globals.hpp"
+
 
 XERCES_CPP_NAMESPACE_USE
 
@@ -156,12 +158,44 @@ inline bool DOMCountErrorHandler::getSawErrors() const
   class SpecialParsingBase_c;
 #endif
 
+class OneAttribute_c
+{
+public:
+  void clear();
+  void set (const std::string& newString);
+  const std::string& get();
+  void setIfNotGiven (const std::string& newString);
+  bool isGiven();
+  int getLength();
+  int getIntValue();
+  char getCharacterAtPos(int index);
+  void pushBack(char ch);
+  bool isNull();
+  std::string getObjectReference();
+  std::string getObjectReferencePrefixed (const std::string& arstr_prefix);
+
+private:
+  std::string attrString;
+  bool attrIsGiven;
+};
+
+
 class vt2iso_c
 {
 public:
-  vt2iso_c (char* poolIdent);
+  vt2iso_c (const std::string &poolIdent);
 
   ~vt2iso_c();
+
+  struct Path_s
+  {
+    Path_s() : b_relativePath(false) {}
+    std::string str_pathName;
+    bool b_relativePath;
+  };
+
+  bool setCommandElement(unsigned int& commandType, DOMNode  *child,  /*DOMNamedNodeMap *pAttributes,*/ DOMNode *n, unsigned int& objChildCommands, std::string &commandMessage);
+
 
   bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
 
@@ -171,7 +205,7 @@ public:
 
   bool processChildElements(unsigned int& r_objChildren, DOMNode *r_n, bool xyNeeded, bool ab_outputEnabled = true);
 
-  void clean_exit(char* error_message = NULL);
+  void clean_exit(const char* error_message = NULL);
 
   bool getIsOPDimension() const { return is_opDimension; }
   bool getIsOPAdditionallyRequiredObjects() const { return is_opAdditionallyRequiredObjects; }
@@ -187,7 +221,7 @@ public:
   unsigned int getSKWidth() const { return skWidth; }
   unsigned int getSKHeight() const { return skHeight; }
 
-  const char* getOPAdditionallyRequiredObjects() const { return opAdditionallyRequiredObjects; }
+  const std::string& getOPAdditionallyRequiredObjects() const { return opAdditionallyRequiredObjects; }
 
   void setOPDimension (unsigned int OPDimension) { opDimension = OPDimension; }
   void setSKWidth (unsigned int SKWidth) { skWidth = SKWidth; }
@@ -197,29 +231,31 @@ public:
 
   void generateIncludeDefines();
 
-  int getAmountXmlFiles() const {return amountXmlFiles;}
+  int getAmountXmlFiles() const {return vec_xmlFiles.size();}
 
-  const char* getXmlFile (int index) { return xmlFiles[index]; }
+  // don't keep this reference too long, xmlFiles may get changed.
+  const std::string& getXmlFile (int index) { return vec_xmlFiles[index].str_pathName; }
+  bool getXmlFileRelativePath (int index) { return vec_xmlFiles[index].b_relativePath; }
 
   const char* getAttributeValue (DOMNode* pc_node, const char* attributeName);
 
   void getKeyCode();
 
-  void init (const char* xmlFile, std::basic_string<char>* dictionary, bool ab_externalize, bool ab_disableContainmentRules);
+  void init (const std::string& xmlFile, std::basic_string<char>* dictionary, bool ab_externalize, bool ab_disableContainmentRules);
 
-  bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName);
+  bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName, const std::string& r_localeStr);
 
   void convertIdReferenceToNameReference (int ai_attrType);
 
-  signed long int idOrName_toi (char* apc_string, bool ab_isMacro);
+  signed long int idOrName_toi (const char* apc_string, bool ab_isMacro);
 
   void defaultAttributes (unsigned int a_objType);
 
 
 private:
-  signed int strlenUnescaped (const char* pcc_string);
+  signed int strlenUnescaped (const std::string& pcc_string);
 
-  bool copyWithQuoteAndLength (char *dest, const char *src, unsigned int len);
+  bool copyWithQuoteAndLength (std::string &dest, const std::string& src, unsigned int len);
 
   signed long int getID (const char* objName, bool b_isMacro, bool b_wishingID, unsigned int wishID);
 
@@ -232,21 +268,24 @@ private:
   void setAttributeValue (int attrID);
   void cleanAttribute (int attrID);
 
-  bool checkForFileOrFile148 (char *tag);
+  bool checkForFileOrFile148 (const char *tag);
 
   DOMNamedNodeMap* patched_getAttributes (DOMNode *n);
 
   bool getAttributesFromNode (DOMNode *n, bool treatSpecial);
 
-  bool openDecodePrintOut (const char* workDir, char* _bitmap_path, unsigned int &options, int fixNr=-1);
+  bool openDecodePrintOut (const char* workDir, const std::list<Path_s>& rcl_bitmapPath, unsigned int &options, int fixNr=-1);
 
   bool checkForAllowedExecution() const;
 
-  std::string getObjNameWithPoolIdent (char* pcch_objName);
+  std::string getObjectReferencePrefixed (int ai_attributeIndex) { return arrc_attributes [ai_attributeIndex].getObjectReferencePrefixed (mstr_poolIdent); }
+
 
   void autoDetectLanguage (DOMNode *n);
 
   void splitFunction (bool ab_onlyClose);
+
+  bool processProjectFile(std::basic_string<char>* pch_fileName, const std::string& r_localeStr);
 
 private:
   bool firstLineFileE;
@@ -267,19 +306,18 @@ private:
 
   unsigned int ui_languages;
 
-  char xmlFileGlobal [1024+1];
-  char std_bitmap_path [1024+1];
-  char fix_bitmap_path [1024+1];
-  char spc_autoLanguage[1024+1];
-
+//  char xmlFileGlobal [1024+1];
+  std::string xmlFileGlobal;
+  std::string spc_autoLanguage;
   std::string proName;
   std::basic_string<char> c_project;
 
-  int amountXmlFiles;
+  bool mb_projectFile;
   std::basic_string<char> c_directory;
   const char* ac_workDir;
-  char xmlFiles [256] [1024+1];
-  const char* pcch_poolIdent;
+  std::vector<Path_s> vec_xmlFiles;
+//string array
+  std::string mstr_poolIdent;
 
   char objNameTable [(stringLength+1)*DEF_MAX_OBJECTS];
   unsigned int objIDTable [DEF_MAX_OBJECTS];
@@ -291,7 +329,7 @@ private:
   unsigned int opDimension;
   unsigned int skWidth;
   unsigned int skHeight;
-  char opAdditionallyRequiredObjects[1024+1];
+  std::string opAdditionallyRequiredObjects;
   bool is_opDimension;
   bool is_opAdditionallyRequiredObjects;
   bool is_skWidth;
@@ -299,8 +337,8 @@ private:
 
   bool b_externalize;
 
-  char attrString [maxAttributeNames] [stringLength+1];
-  bool attrIsGiven [maxAttributeNames];
+  OneAttribute_c arrc_attributes [maxAttributeNames];
+  void clearAndSetElements (DOMNode *child, const std::vector <int> &avec);
 
   typedef std::map<uint16_t, std::string> ObjListEntry;
 
@@ -313,12 +351,12 @@ private:
   // Assuming an 8 bit per pixel bitmap.
   unsigned char picBuffer [480*480];
 
-  char attr_name [1024+1];
-  char attr_value [1024+1];
-  char attr_value2 [1024+1];
-  char filename [1024+1];
+  std::string attr_name;
+  std::string attr_value;
+  std::string attr_value2;
+  std::string filename;
 
-  char objName [stringLength+1];
+  std::string objName;
   bool is_objName;
   unsigned int objID;
   bool is_objID;
@@ -330,6 +368,8 @@ private:
   bool b_hasMoreThan6SoftKeys;
   bool b_disableContainmentRules;
 
+  // used in processElement(...)
+  char* m_nodeName;
 
 #ifdef USE_SPECIAL_PARSING_PROP
   SpecialParsingUsePropTag_c* pc_specialParsingPropTag;
@@ -342,6 +382,9 @@ private:
 #else
   SpecialParsingBase_c* pc_specialParsing;
 #endif
+
+  std::list<Path_s> l_stdBitmapPath;
+  std::list<Path_s> l_fixedBitmapPath;
 };
 
 #endif // VT2ISO_H
