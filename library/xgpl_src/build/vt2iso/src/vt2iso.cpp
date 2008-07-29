@@ -1616,9 +1616,10 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
     }
   }
   ((DOMElement *)n)->setAttribute (X("language"), X(newLanguageValue.c_str()));
+#ifdef DEBUG_LANGUAGE_AUTO_DETECT
   if (newLanguageValue[0] != 0x00)
     std::cout << "AUTO-DETECT-LANGUAGE: FOUND: ["<<newLanguageValue <<"] for "<<searchName<<"."<<std::endl;
-
+#endif
 }
 
 
