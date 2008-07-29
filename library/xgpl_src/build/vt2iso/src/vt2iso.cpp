@@ -3773,7 +3773,7 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
             { // good, valid case. nothing to do - continue
               // => just include the &iVtObjectNAME statement, no id needed.
             }
-            else if ((!is_objChildName) && (is_objChildID && (objChildID == 65535)))
+            else if ((!is_objChildName || (is_objChildName && (objChildName == "NULL"))) && (is_objChildID && (objChildID == 65535)))
             { // good, valid case. nothing to do - continue
               // => just include a NULL statement, no name needed.
             }
