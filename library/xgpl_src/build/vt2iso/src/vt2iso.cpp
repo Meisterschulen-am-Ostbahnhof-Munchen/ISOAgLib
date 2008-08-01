@@ -3409,8 +3409,6 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
         int nSize = pAttributes->getLength();
         arrc_attributes [attrPos_x].clear();
         arrc_attributes [attrPos_y].clear();
-
-        objChildName [stringLength+1-1] = 0x00; 
         is_objChildName = false;
         for(int i=0;i<nSize;++i)
         {
