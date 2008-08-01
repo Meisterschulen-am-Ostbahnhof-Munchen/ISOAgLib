@@ -4012,6 +4012,8 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileNam
   std::basic_string<char> c_unwantedType7 = ".cpp";
   std::basic_string<char> c_unwantedType8 = ".bak";
 
+  std::basic_string<char> c_originalFileName = *pch_fileName;
+
   // see if the user gave a known extension...
   for (int i=0; i<(int (sizeof (c_expectedType) / sizeof (std::basic_string<char>))); ++i)
   {
@@ -4035,7 +4037,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileNam
   if (c_directory == "") c_directory = "./";
 #endif
 
-  c_project = pch_fileName->substr( lastDirPos+1 );
+  c_project = c_originalFileName.substr( lastDirPos+1 );
 
   std::basic_string<char> c_directoryCompareItem;
   std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
@@ -4045,6 +4047,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileNam
 
 
   size_t lastDotPosition = c_project.find_last_of( '.' );
+
   // do we have a dot?
   if (lastDotPosition != string::npos)
   {
@@ -4062,7 +4065,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileNam
 
   if (mb_projectFile)
   { /// *** PROJECT-FILE MODE ***
-    if (!processProjectFile(pch_fileName, r_localeStr))
+    if (!processProjectFile(&c_project, r_localeStr))
       return false;
   }
   else
