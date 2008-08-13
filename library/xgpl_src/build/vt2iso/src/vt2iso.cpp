@@ -1082,6 +1082,7 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   arrc_attributes[attrTarget_value_variable_reference].setIfNotGiven("NULL");
   arrc_attributes[attrEnabled].setIfNotGiven("yes");
   arrc_attributes[attrScale].setIfNotGiven("1");
+  arrc_attributes[attrRle].setIfNotGiven("auto");
 
   if (a_objType == otButton)
   {
