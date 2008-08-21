@@ -42,7 +42,6 @@
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationLS.hpp>
 #include <xercesc/dom/DOMImplementationRegistry.hpp>
-#include <xercesc/dom/DOMBuilder.hpp>
 // #include <xercesc/dom/DOMException.hpp>
 // #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
@@ -56,9 +55,11 @@
 #include <fstream>
 #include <sys/stat.h>
 
+#include <stdio.h>
+#include <ctype.h>
+
 #ifdef WIN32
  #include <windows.h>
- #include <stdio.h>
  #include <ostream>
 #else
  #include <dirent.h>
@@ -215,11 +216,13 @@ static void usage()
 {
   std::cout << "\nvt2iso BUILD DATE: " << __DATE__ << "\n\n"
     "Usage:\n"
-    " vt2iso [options] <XML file>\n\n"
+    " vt2iso [options] <XML file>\n"
+    " vt2iso [options] <VTP file>\n\n"
     "This program invokes the DOMBuilder, builds the DOM tree,\n"
     "and then converts the tree to ISO Virtual Terminal cpp-files.\n\n"
-    "Input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
+    "In Legacy-Mode input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
     "This has been done to give the possibility to split \nlarge XML files into several ones.\n\n"
+    "In Project-File-Mode input files are processed in the order\ngiven in the project-file.\n\n"
     "Features:\n"
     " - auto_language=\"..\" attribute\n"
     " - support for auto-detecting language=\"..\" attribute if the value is given in the .values.xx.txt files.\n\n"
@@ -230,7 +233,8 @@ static void usage()
     " -f     Enable full schema constraint checking. Defaults to off.\n"
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -p     Output ISO11783-VT Palette to act-file.\n"
-    " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n";
+    " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
+    " -m     More informative output. (verbose-mode)\n";
 
 #ifdef USE_SPECIAL_PARSING
     std::cout <<
@@ -419,20 +423,20 @@ void vt2iso_c::clean_exit (const char* error_message)
   else if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash != NULL ) )
   { // only UNIX style slash found
 //    strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
-    xmlFileWithoutPath = pc_lastDirectorySlash;
+    xmlFileWithoutPath = pc_lastDirectorySlash+1;
   }
   else if ( ( pc_lastDirectoryBackslash != NULL ) && ( pc_lastDirectorySlash == NULL ) )
   { // only WIN32 style Backslash found
 //    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
-    xmlFileWithoutPath = pc_lastDirectoryBackslash;
+    xmlFileWithoutPath = pc_lastDirectoryBackslash+1;
   }
   else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash )
   { // last backslash is behind last slash - cas of mixed directory seperators
-    xmlFileWithoutPath = pc_lastDirectoryBackslash;
+    xmlFileWithoutPath = pc_lastDirectoryBackslash+1;
   }
   else
   { // last slash is behind last backslash - cas of mixed directory seperators
-    xmlFileWithoutPath = pc_lastDirectorySlash;
+    xmlFileWithoutPath = pc_lastDirectorySlash+1;
   }
 
   // close all streams to files at the end of this function because someone may want
@@ -523,7 +527,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_list, "\n};\n");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
     fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
-             proName.c_str(), proName.c_str(), mstr_poolIdent.c_str(), objCount - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
+             proName.c_str(), proName.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFile_list);
   }
@@ -752,16 +756,14 @@ signed long int vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wis
   {
     return wishID;
   }
+
+  std::string str_objName = std::string (objName);
+  std::map<std::string, uint16_t>::iterator iter = map_objNameIdTable.find (str_objName);
   // first check if ID is there already
-  for (unsigned int i=0; i<objCount; i++)
+  if (iter != map_objNameIdTable.end())
   {
-    //std::cout << "comparing  in GET_ID ojbName " << objName << " with objNameTable " << &objNameTable [i*(stringLength+1)] << "\n";
-    if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
-    {
-      foundID = objIDTable [i];
-      isThere = true;
-      break;
-    }
+    foundID = iter->second;
+    isThere = true;
   }
 
   if (isThere)
@@ -781,10 +783,10 @@ signed long int vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wis
     if (b_wishingID)
     {
       // first check if ID is there already
-      for (unsigned int i=0; i<objCount; i++)
+      for (std::map<std::string, uint16_t>::iterator iter=map_objNameIdTable.begin(); iter != map_objNameIdTable.end(); ++iter)
       {
         // std::cout << "comparing " << wishID << " with " << objIDTable [i] << "\n";
-        if (objIDTable [i] == wishID)
+        if (iter->second == wishID)
         {
           if (pc_specialParsing)
             std::cout << "DOUBLE USE OF RESOURCE NAME '" << pc_specialParsing->getResourceName (wishID) << "' WITH ID '"<< (uint16_t)wishID << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
@@ -797,32 +799,32 @@ signed long int vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wis
       foundID = wishID;
     }
     else if ( checkForAllowedExecution() )
-    {
-      /// only auto-decrement if the current object has a basic or proprietary object type
+    { /// only auto-decrement if the current object has a basic or proprietary object type
       if (b_isMacro)
       {
-        foundID = objNextMacroAutoID;
-        objNextMacroAutoID--;
+        foundID = getFreeId (objNextMacroAutoID);
       }
       else
       {
-        foundID = objNextAutoID;
-        objNextAutoID--;
+        foundID = getFreeId (objNextAutoID);
       }
     }
 
     /// only insert object if it is basic or proprietary
     if ( checkForAllowedExecution() )
-    {
-      // insert new name-id pair now!
-      objIDTable [objCount] = foundID;
-      strncpy (&objNameTable [objCount*(stringLength+1)], objName, stringLength); // so we have 0-termination in every case, as our strings are 128+1 bytes!
-      //printf("newly added: objName: %s, objCount: %i\n", objName, objCount);
-      objCount++;
+    { // insert new name-id pair now!
+      map_objNameIdTable.insert (pair<std::string, uint16_t>(str_objName, foundID));
     }
   }
 
   return (foundID);
+}
+
+unsigned int vt2iso_c::getFreeId (unsigned int& aui_objNextId)
+{
+  while (mbitset_objIdUsed.test (aui_objNextId))
+    --aui_objNextId;
+  return (aui_objNextId--);
 }
 
 signed long int vt2iso_c::setID (const char* objName, unsigned int wishID)
@@ -837,16 +839,13 @@ signed long int vt2iso_c::setID (const char* objName, unsigned int wishID)
   }
 
   // first check if object is there already
-  for (unsigned int i=0; i<objCount; i++)
+  std::string str_objName = std::string (objName);
+  std::map<std::string, uint16_t>::iterator iter=map_objNameIdTable.find (str_objName);
   {
-    //std::cout << "comparing in SET_ID" << objName << " with " << &objNameTable [i*(stringLength+1)] << "\n";
-    if (strncmp (objName, &objNameTable [i*(stringLength+1)], stringLength) == 0)
-    {
-      if (objIDTable [i] != wishID) // only set ID if different from wishID
-        objIDTable [i] = wishID;
+    if (iter->second != wishID) // only set ID if different from wishID
+      iter->second = wishID;
 
-      return (wishID);
-    }
+    return (wishID);
   }
 
   return getID (objName, false, true, wishID);
@@ -905,8 +904,19 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
   }
 }
 
-void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary, bool ab_externalize, bool ab_disableContainmentRules)
+void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose)
 {
+  parser = ap_parser;
+  smb_verbose = ab_verbose;
+
+  xmlFileGlobal = xmlFile;
+  if (!prepareFileNameAndDirectory (xmlFileGlobal)) // will cut off the file-extension
+  {
+    clean_exit("Error occurred. Terminating.\n");
+    /* @todo maybe better cleanup. return false? or alike... */
+    exit (-1);
+  }
+
   b_externalize = ab_externalize;
   b_disableContainmentRules = ab_disableContainmentRules;
 
@@ -921,15 +931,10 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
   partFile_list = NULL;
   partFile_handler_direct = NULL;
   partFile_handler_derived = NULL;
-  xmlFileGlobal = xmlFile;
 
   std::string attr_name;
   std::string partFileName;
 
-  for (int i=0; i<((stringLength+1)*1000); i++)
-  {
-    objNameTable [i] = 0x00;
-  }
   for (int i=0; i<=DEF_iso639entries; i++)
   {
     arrb_objTypes[i] = false;
@@ -937,31 +942,31 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
 // partFile_variables = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
 // fclose (partFile_variables);
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-variables.inc";
   partFile_variables = fopen (partFileName.c_str(),"wt");
   if (partFile_variables == NULL)
     clean_exit ("Couldn't create -variables.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-variables-extern.inc";
   partFile_variables_extern = fopen (partFileName.c_str(),"wt");
   if (partFile_variables_extern == NULL)
     clean_exit ("Couldn't create -variables-extern.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-attributes.inc";
   partFile_attributes = fopen (partFileName.c_str(),"wt");
   if (partFile_attributes == NULL)
     clean_exit ("Couldn't create -attributes.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-attributes-extern.inc";
   partFile_attributes_extern = fopen (partFileName.c_str(),"wt");
   if (partFile_attributes_extern == NULL)
     clean_exit ("Couldn't create -attributes_extern.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-functions.inc";
   partFile_functions = fopen (partFileName.c_str(),"wt");
   if (partFile_functions == NULL)
@@ -976,13 +981,13 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
   }
   fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-functions-origin.inc";
   partFile_functions_origin = fopen (partFileName.c_str(),"wt");
   if (partFile_functions_origin == NULL)
     clean_exit ("Couldn't create -functions-origin.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-defines.inc";
   partFile_defines = fopen (partFileName.c_str(),"wt");
   if (partFile_defines == NULL)
@@ -992,7 +997,7 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
   if (partFile_obj_selection == NULL)
     clean_exit ("Couldn't create IsoTerminalObjectSelection.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-list.inc";
   partFile_list = fopen (partFileName.c_str(),"wt");
   if (partFile_list == NULL)
@@ -1000,7 +1005,7 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
 
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
   partFile_handler_direct = fopen (partFileName.c_str(),"rb");
@@ -1015,7 +1020,7 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
   if (partFile_handler_direct == NULL)
     clean_exit ("Couldn't create -handler_direct.inc.");
 
-  partFileName = xmlFile;
+  partFileName = xmlFileGlobal;
   partFileName += "-handler-derived.inc";
   partFile_handler_derived = fopen (partFileName.c_str(),"wt");
   if (partFile_handler_derived == NULL)
@@ -1025,14 +1030,14 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
 
   if (b_externalize)
   {
-    partFileName = xmlFile;
+    partFileName = xmlFileGlobal;
     partFileName += "-variables.cpp";
     partFileTmp = fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
 
-    partFileName = xmlFile;
+    partFileName = xmlFileGlobal;
     partFileName += "-attributes.cpp";
     partFileTmp = fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
@@ -1041,7 +1046,7 @@ void vt2iso_c::init (const string& xmlFile, std::basic_string<char>* dictionary,
     fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
 
-    partFileName = xmlFile;
+    partFileName = xmlFileGlobal;
     partFileName += "-list.cpp";
     partFileTmp = fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
@@ -1142,11 +1147,11 @@ void vt2iso_c::convertIdReferenceToNameReference(int ai_attrType)
     { // ID is given, so lookup the name for it!
       int uid = arrc_attributes[ai_attrType].getIntValue();
       // first check if ID has an associated name
-      for (unsigned int i=0; i < objCount; i++)
+      for (std::map<std::string, uint16_t>::iterator iter=map_objNameIdTable.begin(); iter != map_objNameIdTable.end(); ++iter)
       {
-        if (int(objIDTable[i]) == uid)
+        if (int(iter->second) == uid)
         {
-          arrc_attributes [ai_attrType].set (std::string (&objNameTable [i*(stringLength+1)]));
+          arrc_attributes [ai_attrType].set (iter->first);
         }
       }
     }
@@ -1348,9 +1353,8 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
   return true;
 }
 
-bool vt2iso_c::openDecodePrintOut (const char* workDir, const std::list<Path_s>& rcl_stdBitmapPath, unsigned int &options, int fixNr)
+bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, unsigned int &options, int fixNr)
 {
-  //std::cout << "Bitmappath: " << _bitmap_path << std::endl;
   if (arrc_attributes [attrRle].isGiven())
   {
     // set rle stuff
@@ -1387,7 +1391,7 @@ bool vt2iso_c::openDecodePrintOut (const char* workDir, const std::list<Path_s>&
     std::list<Path_s>::const_iterator iter = rcl_stdBitmapPath.begin();
     for (; iter != rcl_stdBitmapPath.end(); ++iter)
     {
-      std::string str_tmpWorkDir = workDir;
+      std::string str_tmpWorkDir = c_directory;
       if (!iter->b_relativePath)
         str_tmpWorkDir.clear();
 
@@ -1421,9 +1425,10 @@ bool vt2iso_c::openDecodePrintOut (const char* workDir, const std::list<Path_s>&
     }
 
     // Open Bitmap
-    std::cout << std::endl; // Opening text is printed out by openBitmap
     if ( c_Bitmap.openBitmap( filename.c_str() ) )
-      std::cout << "Loaded successfully! ";
+    {
+      if (smb_verbose) std::cout << "Loaded successfully! ";
+    }
     else
     {
       std::cout << "Loading failed!\n";
@@ -1467,9 +1472,10 @@ bool vt2iso_c::openDecodePrintOut (const char* workDir, const std::list<Path_s>&
       // If RLE-size is larger than uncompressed size, clear the RLE1/4/8 flag!
       if (rleBytes >= c_Bitmap.objRawBitmapBytes [actDepth]) {
         options &= -1-(uint64_t(1)<<(2+actDepth));
-        std::cout << objName << "' actDepth012='" << actDepth
-            << "' has RLE size of " << rleBytes << " but uncompressed size of "
-            << c_Bitmap.objRawBitmapBytes [actDepth] << ". Turning RLE off!"<<std::endl;
+        if (smb_verbose)
+          std::cout << objName << "' actDepth012='" << actDepth
+              << "' has RLE size of " << rleBytes << " but uncompressed size of "
+              << c_Bitmap.objRawBitmapBytes [actDepth] << ". Turning RLE off!"<<std::endl;
       }
     }
 
@@ -1490,11 +1496,12 @@ bool vt2iso_c::openDecodePrintOut (const char* workDir, const std::list<Path_s>&
         rleBytes += 2;
         PixelCount += cnt;
       }
-      std::cout << objName << "' actDepth012='" << actDepth
-          << "' has RLE size of " << rleBytes << " but uncompressed size of "
-          << c_Bitmap.objRawBitmapBytes [actDepth]
-          << "#Pixels: " << PixelCount << ", Width: " << c_Bitmap.getWidth() << ", Height: "
-          << c_Bitmap.getHeight() << std::endl;
+      if (smb_verbose)
+        std::cout << objName << "' actDepth012='" << actDepth
+            << "' has RLE size of " << rleBytes << " but uncompressed size of "
+            << c_Bitmap.objRawBitmapBytes [actDepth]
+            << "#Pixels: " << PixelCount << ", Width: " << c_Bitmap.getWidth() << ", Height: "
+            << c_Bitmap.getHeight() << std::endl;
       c_Bitmap.objRawBitmapBytes [actDepth] = rleBytes;
       if (rleBytes > 65000) b_largeObject = true; // normally 65535-restAttributesSize would be enough, but don't care, go save!
     } else {
@@ -1636,34 +1643,45 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 bool
 vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKey, const char* rpcc_inButton*/)
 {
+  if (!n)
+  {
+    printf ("processElement(): 'DOMNode == NULL'. STOPPING PARSER! bye.\n\n");
+    return false;
+  }
+
   // first set some member variables for all the helper functions
   m_nodeName = XMLString::transcode(n->getNodeName());
 
-#if defined ( DEBUG )
-  fprintf(stderr, "\nprocessElement(n = ..., ombType = %lld (0x%LX))\n", ombType, ombType);
-#endif
-#if defined ( DEBUG )
-  fprintf(stderr, "  node_name = \"%s\"\n", m_nodeName);
-#endif
-
   #define maxFixedBitmaps 1000
-
-  if (!n)
-  {
-    printf ("processElement(): DOMNode is ! STOP PARSER! bye.\n\n");
-    return false;
-  }
 
   is_objName = false;
   is_objID = false;
 
-  // get own ObjectType
-  objType = objectIsType (m_nodeName); // returns 0..34
+  objType = objectIsType (m_nodeName); // returns 0..(maxObjectTypes-1)
+  int commandType = commandIsType (m_nodeName); // returns 0..(maxCommandsToCompare-1)
 
-  // get own Command Type
-  DOMNode *child;
+  // only parse WorkingSet (and objectpool) when in "mb_parseOnlyWorkingSet"
+  if (mb_projectFile)
+  {
+    if (mb_parseOnlyWorkingSet)
+    {
+      if ((objType != otObjectpool) && (objType != otWorkingset))
+       return true;
+    }
+    else
+    { // !mb_parseOnlyWorkingSet
+      if (objType == otWorkingset)
+        return true; // has already been parsed!
+    }
+  }
+
+  if (isVerbose())
+  {
+    fprintf(stderr, " processElement (%s, ombType = (0x%LX))\n", m_nodeName, ombType);
+  }
+
   /// if USE_SPECIAL_PARSING is defined the objType will also be tested if it is a valid additional object type
-  if ( ( pc_specialParsing || pc_specialParsingPropTag) && (objType == 0xFFFF) && (commandIsType (m_nodeName) == 0xFFFF))
+  if ( ( pc_specialParsing || pc_specialParsingPropTag) && (objType == 0xFFFF) && (commandType == 0xFFFF))
   {
     if ( pc_specialParsing )
       objType = pc_specialParsing->getObjType(m_nodeName);
@@ -1673,11 +1691,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   }
 
   // ERROR: Wrong <TAG>
-  if (objType == 0xFFFF && commandIsType (m_nodeName) == 0xFFFF)
+  if ((objType == 0xFFFF) && (commandIsType (m_nodeName) == 0xFFFF))
   {
     std::cout << "\n\nUNKNOWN TAG <"<< m_nodeName <<"> ENCOUNTERED! STOPPING PARSER! bye.\n\n";
     return false;
   }
+
+
+  /// NOW GO AND DO SOMETHING FOR THIS ELEMENT
+  DOMNode *child;
   DOMNamedNodeMap *pAttributes;
   if (objType >= otObjectpool)
   {
@@ -1779,7 +1801,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
   }
   else
-  {
+  { /// Standard ISO Object
 #if defined ( DEBUG )
   fprintf(stderr, "  objType = %d\n", objType);
   fprintf(stderr, "  maxObjectTypes = %d\n", maxObjectTypes);
@@ -1818,7 +1840,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     { // first object has to be WorkingSet
       if (objType != otWorkingset)
       {
-        std::cout << "\n\nFIRST ELEMENT HAS TO BE <workingset>! Stopping parser. Please put your workingset-object at the top in your <objectpool>!\n\n ";
+        std::cout << "\n\nFIRST ELEMENT HAS TO BE <workingset>! Stopping PARSER. Please put your workingset-object at the top in your <objectpool>!\n\n ";
         return false;
       }
       sb_firstObject = false; // check is only valid for first element!
@@ -1876,18 +1898,21 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         switch (objType)
         {
           case otDatamask:
+            /// @todo why is for otDataMask also "arrc_attributes[attrSoft_key_mask]" being used?
           case otAlarmmask:
             /// attribute for reference to softkeymask
             if (!pc_specialParsing->parseKnownTag(n, objType, objName.c_str(), &objID, &is_objID, arrc_attributes[attrSoft_key_mask].get().c_str()))
               return false;
             break;
           default:
+            /// @todo why is default "variable reference"?
             /// attribute for variable reference
             if (!pc_specialParsing->parseKnownTag(n, objType, objName.c_str(), &objID, &is_objID, "NULL", arrc_attributes[attrVariable_reference].get().c_str()))
               return false;
             break;
         }
       }
+      /// @todo warum hängt das id von resource setzen von hasUnknAttrs ab???
       if (b_hasUnknownAttributes)
       // set object ID here to ensure that the resource ID is used as object ID
         setID (objName.c_str(), objID);
@@ -2169,7 +2194,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if (!checkForFileOrFile148 ("picturegraphic"))
           return false;
         objBitmapOptions = picturegraphicoptionstoi (arrc_attributes [attrOptions].get().c_str());
-        if (!openDecodePrintOut (ac_workDir, l_stdBitmapPath, objBitmapOptions))
+        if (!openDecodePrintOut (l_stdBitmapPath, objBitmapOptions))
           return false;
 
         // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
@@ -2208,7 +2233,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               return false;
 
             fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
-            if (!openDecodePrintOut (ac_workDir, l_fixedBitmapPath, fixBitmapOptions[fixNr], fixNr)) return false;
+            if (!openDecodePrintOut (l_fixedBitmapPath, fixBitmapOptions[fixNr], fixNr)) return false;
 
             // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
             //fiXtransCol [fixNr] = colourtoi ( arrc_attributes [attrTransparency_colour]);
@@ -2258,7 +2283,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
 
       // ### Print out EVENT_MACRO array
-
       unsigned int objChildMacros(0);
       if (objHasArrayEventMacro)
       { // Process all macro-Elements
@@ -2266,9 +2290,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           return false;
       }
 
-      //****************************************************************************************************************************************
-      // This section added by Brad Cox Sep 30, 2004 to parse out commands from macros and to parse out point arrays from polygon objects.
-      // New XML tags have been introduced included 20 for each macro-usable command and one called <point> for the points of a polygon object
       // ### Print out MACRO_COMMAND array
       unsigned int objChildCommands(0);
       if (objHasArrayMacroCommand)
@@ -2295,13 +2316,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             {
               fprintf (partFile_attributes, ", ");
             }
-            // We need something like this, but up above for each command type in order to deal with the varying attributes for each command. . . -bac
-            /*if (!(attrIsGiven [attrEvent]))
-            {
-            std::cout << "\n\nevent ATTRIBUTE NEEDED IN <macro ...> ! STOPPING PARSER! bye.\n\n";
-            return false;
-          }*/
-            //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
             fprintf (partFile_attributes, "%s", commandMessage.c_str());
             firstElement = false;
           }
@@ -2318,8 +2332,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if ( !processPointElements(objChildPoints, n) )
           return false;
       }
-      //*************************************************************************************************************************************************************
-      //******************** End of code added by Brad Cox **********************************************************************************************************
 
       // ###################################################
       // ### Print out definition, values and init-calls ###
@@ -2444,7 +2456,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             /// Do we have conflicting 'value='s now? Just put out a warning!
             if (arrc_attributes [attrValue].isGiven())
-              std::cout <<"\n\nOverriding value & length from ["<< objName <<"]!!" << std::endl;
+              std::cout <<"Overriding value & length from ["<< objName <<"]!!" << std::endl;
 
             // anyway, override attrValue and clear length (so it gets auto-calculated below!)
             arrc_attributes [attrValue].set( pc_foundValue );
@@ -3353,9 +3365,17 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
 
     } while (b_dupMode && (*dupLangNext != 0x00));
-  } // end of "normal" element processing
+  }
+  /// End of "normal" element processing
 
-  // Add all Child-Elements recursively
+
+  /// Add all Child-Elements recursively, if possible
+  if (objType == 0xFFFF)
+  { // can't access omcTypeTable, I'm not an "object" and can't have objects as my children..
+    return true;
+  } // so: not possible!
+
+  // possible: check which objects are allowed as child...
   uint64_t omcType = omcTypeTable [objType];
 
 #if defined ( DEBUG )
@@ -3373,6 +3393,15 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   fprintf(stderr, "  reset omcType to %lld (0x%LX)\n", omcType, omcType);
 #endif
   }
+
+  bool b_backupParseOnlyWorkingSet = mb_parseOnlyWorkingSet;
+
+  if (objType == otWorkingset)
+  { // do always process all children of the workingset!
+    // so disable "mb_parseOnlyWorkingSet" for these children!
+    mb_parseOnlyWorkingSet = false;
+  }
+
   for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
@@ -3384,6 +3413,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         return false;
     }
   }
+
+  mb_parseOnlyWorkingSet = b_backupParseOnlyWorkingSet;
 
   return true;
 }
@@ -3533,14 +3564,6 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
         objChildName = str(format("%sUnnamed%d") % mstr_poolIdent % objNextUnnamedName);
         objNextUnnamedName++;
         is_objChildName = true;
-      }
-      // give him an ID, although not necessary now...
-      objChildID = getID (objChildName.c_str(), true, is_objChildID, objChildID);
-
-      if (objChildID == -1)
-      {
-        std::cout << "Error in getID()  from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye.\n\n";
-        return false;
       }
 
       if (ab_outputEnabled)
@@ -3919,17 +3942,20 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
   return true;
 }
 
+bool vt2iso_c::smb_verbose = false;
+
 vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   : firstLineFileE(true)
   , partFile_split_function( NULL )
   , ui_languages(0)
   , mb_projectFile (false) // default to no project file
   , mstr_poolIdent(arstr_poolIdent)
+  , mbitset_objIdUsed()
+  , map_objNameIdTable()
   , objNextAutoID(65534)
   , objNextMacroAutoID(255)
   , kcNextAutoID(254) // for safety, 255 should also be okay though...
   , objNextUnnamedName(1)
-  , objCount(0)
   , opDimension(0)
   , skWidth(0)
   , skHeight(0)
@@ -3937,8 +3963,12 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , is_opAdditionallyRequiredObjects(false)
   , is_skWidth(false)
   , is_skHeight(false)
+  , b_externalize(false)
+  , mb_parseOnlyWorkingSet(false)
   , b_hasUnknownAttributes(false)
   , b_hasMoreThan6SoftKeys(false)
+  , errorOccurred(false)
+  , parser(NULL)
 {}
 
 vt2iso_c::~vt2iso_c()
@@ -3996,61 +4026,28 @@ const char* vt2iso_c::getAttributeValue (DOMNode* pc_node, const char* attribute
   return "";
 }
 
-bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName, const std::string& r_localeStr)
+bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
 {
   int lastDirPos;
 
-  std::basic_string<char> c_expectedType[] = {".xml", ".XML", ".vtp", ".VTP"};
+  std::string str_fileName = astr_fileName;
 
-  std::basic_string<char> c_unwantedType = ".inc";
-  std::basic_string<char> c_unwantedType2 = ".h";
-  std::basic_string<char> c_unwantedType3 = ".inc-template";
-  std::basic_string<char> c_unwantedType4 = ".iop";
-  std::basic_string<char> c_unwantedType5 = ".txt";
-  std::basic_string<char> c_unwantedType6 = ".csv";
-  std::basic_string<char> c_unwantedType7 = ".cpp";
-  std::basic_string<char> c_unwantedType8 = ".bak";
+  std::string c_expectedType[] = {".xml", ".XML", ".vtp", ".VTP"};
 
-  std::basic_string<char> c_originalFileName = *pch_fileName;
+  std::string c_unwantedType = ".inc";
+  std::string c_unwantedType2 = ".h";
+  std::string c_unwantedType3 = ".inc-template";
+  std::string c_unwantedType4 = ".iop";
+  std::string c_unwantedType5 = ".txt";
+  std::string c_unwantedType6 = ".csv";
+  std::string c_unwantedType7 = ".cpp";
+  std::string c_unwantedType8 = ".bak";
 
-  // see if the user gave a known extension...
-  for (int i=0; i<(int (sizeof (c_expectedType) / sizeof (std::basic_string<char>))); ++i)
-  {
-    const int ci_extensionLength = c_expectedType[i].size();
-    if (int (pch_fileName->length()) > ci_extensionLength)
-    {
-      if (pch_fileName->substr( pch_fileName->length()-ci_extensionLength ) == c_expectedType[i])
-      { // strip off extension
-        pch_fileName->erase (pch_fileName->length()-ci_extensionLength, ci_extensionLength);
-        break;
-      }
-    }
-  }
-#ifdef WIN32
-  lastDirPos = pch_fileName->find_last_of( "\\" );
-  c_directory = pch_fileName->substr( 0, lastDirPos+1 );
-  if (c_directory == "") c_directory = ".\\";
-#else
-  lastDirPos = pch_fileName->find_last_of( "/" );
-  c_directory = pch_fileName->substr( 0, lastDirPos+1 );
-  if (c_directory == "") c_directory = "./";
-#endif
-
-  c_project = c_originalFileName.substr( lastDirPos+1 );
-
-  std::basic_string<char> c_directoryCompareItem;
-  std::cerr << "--> Directory: " << c_directory << std::endl << "--> File:      " << c_project << std::endl;
-
-  // finished preparations on directory -> needed in processElement(...)
-  ac_workDir = c_directory.c_str();
-
-
-  size_t lastDotPosition = c_project.find_last_of( '.' );
-
-  // do we have a dot?
+  /// Are we running in project-file mode?
+  size_t lastDotPosition = str_fileName.find_last_of( '.' ); // do we have a dot?
   if (lastDotPosition != string::npos)
   {
-    string str_extension = c_project.substr (lastDotPosition, string::npos);
+    string str_extension = str_fileName.substr (lastDotPosition, string::npos);
     for (std::string::iterator it=str_extension.begin(); it != str_extension.end(); ++it)
     {
       *it = tolower (*it);
@@ -4062,13 +4059,51 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileNam
     }
   }
 
+  std::string str_projectName = str_fileName;
+
+  /// Extract Dir/File Name
+#ifdef WIN32
+  lastDirPos = str_fileName.find_last_of( "\\" );
+  c_directory = str_fileName.substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = ".\\";
+#else
+  lastDirPos = str_fileName.find_last_of( "/" );
+  c_directory = str_fileName.substr( 0, lastDirPos+1 );
+  if (c_directory == "") c_directory = "./";
+#endif
+
+  str_fileName = str_fileName.substr( lastDirPos+1 );
+  c_project = str_fileName;
+
+  /// see if the user gave a known extension and strip that off
+  for (int i=0; i<(int (sizeof (c_expectedType) / sizeof (std::string))); ++i)
+  {
+    const int ci_extensionLength = c_expectedType[i].size();
+    if (int (c_project.length()) > ci_extensionLength)
+    {
+      if (c_project.substr( c_project.length()-ci_extensionLength ) == c_expectedType[i])
+      { // strip off extension
+        c_project.erase (c_project.length()-ci_extensionLength, ci_extensionLength);
+        break;
+      }
+    }
+  }
+
+  std::cout << "--> Directory: " << c_directory << std::endl << "--> Project:   " << c_project << std::endl;
+
+  // finished preparations on directory -> needed in processElement(...)
+  std::string c_directoryCompareItem;
+
+  // set proName, either from project-file or from c_project.
   if (mb_projectFile)
   { /// *** PROJECT-FILE MODE ***
-    if (!processProjectFile(&c_project, r_localeStr))
+    std::cout << "Running in Project-File Mode"<<std::endl;
+    if (!processProjectFile (astr_fileName))
       return false;
   }
   else
   { /// LEGACY MODE
+    std::cout << "Running in Legacy Mode"<<std::endl;
     proName = c_project;
   #ifdef WIN32
     HANDLE hList;
@@ -4174,27 +4209,55 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::basic_string<char>* pch_fileNam
   #endif
   }
 
-  /// BURKHARD - for now let sorting stay in there - until all files are read into one big DOM and the <workingset> element is moved to the front
-
-  Path_s s_tmpPath;
-  // now sort this list
-  bool stillSorting;
-  uint16_t ui16t_xmlFileCnt = vec_xmlFiles.size();
-  do {
-    stillSorting=false;
-    for (int a=1; a < ui16t_xmlFileCnt; a++)
+  // cut extension off to be generated files...
+  for (int i=0; i<(int (sizeof (c_expectedType) / sizeof (std::string))); ++i)
+  {
+    const int ci_extensionLength = c_expectedType[i].size();
+    if (int (astr_fileName.length()) > ci_extensionLength)
     {
-      if (vec_xmlFiles[a-1].str_pathName.compare(vec_xmlFiles[a].str_pathName) > 0)
-      {
-        s_tmpPath = vec_xmlFiles[a];
-        vec_xmlFiles[a] = vec_xmlFiles[a-1];
-        vec_xmlFiles[a-1] = s_tmpPath;
-        stillSorting=true;
+      if (astr_fileName.substr( astr_fileName.length()-ci_extensionLength ) == c_expectedType[i])
+      { // strip off extension
+        astr_fileName.erase (astr_fileName.length()-ci_extensionLength, ci_extensionLength);
+        break;
       }
     }
-  } while (stillSorting);
+  }
 
-  std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+  // adapt proName (remove Space and other non-C++-identifier-chars
+  for (std::string::iterator iter=proName.begin(); iter != proName.end(); ++iter)
+  {
+    if (!isalnum(*iter))
+    { // replace non-alphanumeric character by underscore character
+      *iter = '_';
+    }
+  }
+
+  uint16_t ui16t_xmlFileCnt = vec_xmlFiles.size();
+  if (mb_projectFile)
+  { // no sorting needed!
+    std::cout << std::endl << "--> Given Filelist:" << std::endl;
+  }
+  else
+  { // sorting needed in legacy mode
+    Path_s s_tmpPath;
+    // now sort this list
+    bool stillSorting;
+    do {
+      stillSorting=false;
+      for (int a=1; a < ui16t_xmlFileCnt; a++)
+      {
+        if (vec_xmlFiles[a-1].str_pathName.compare(vec_xmlFiles[a].str_pathName) > 0)
+        {
+          s_tmpPath = vec_xmlFiles[a];
+          vec_xmlFiles[a] = vec_xmlFiles[a-1];
+          vec_xmlFiles[a-1] = s_tmpPath;
+          stillSorting=true;
+        }
+      }
+    } while (stillSorting);
+
+    std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+  }
   for (int dex=0; dex < ui16t_xmlFileCnt; dex++) std::cout << vec_xmlFiles[dex].str_pathName << "\n";
   std::cout << "\n";
 
@@ -4601,12 +4664,11 @@ int main(int argC, char* argV[])
   bool doNamespaces       = false;
   bool doSchema           = false;
   bool schemaFullChecking = false;
-  bool errorOccurred      = false;
-  std::basic_string<char> dictionary = "";
-  int  indexXmlFile;
+  std::string dictionary = "";
 
   bool generatePalette = false;
   bool externalize = false;
+  bool verbose = false;
   bool b_disableContainmentRules = false;
   std::string poolIdentStr;
   std::string localeStr;
@@ -4670,6 +4732,11 @@ int main(int argC, char* argV[])
     {
       externalize = true;
     }
+    else if (!strcmp(argV[argInd], "-m")
+              ||  !strcmp(argV[argInd], "-M"))
+    {
+      verbose = true;
+    }
     else if (!strncmp(argV[argInd], "-i=", 3)
               ||  !strncmp(argV[argInd], "-I=", 3))
     {
@@ -4710,93 +4777,113 @@ int main(int argC, char* argV[])
   //
   if (argInd != argC - 1) { usage(); return 1; }
 
-  // get file list with matching files!
-  std::basic_string<char> c_fileName( argV [argInd] );
-
-  // Do INITIALIZATION STUFF
-#ifdef USE_SPECIAL_PARSING
-  vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
-#else
-  vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
-#endif
-
-  if (!pc_vt2iso->prepareFileNameAndDirectory (&c_fileName, localeStr))
+  // Initialize the XML4C system
+  try
   {
-    pc_vt2iso->clean_exit("Error occurred. Terminating.\n");
-    delete pc_vt2iso;
-    exit (-1);
+    if (localeStr.length())
+    {
+      XMLPlatformUtils::Initialize(localeStr.c_str());
+    }
+    else
+    {
+      XMLPlatformUtils::Initialize("de_DE");
+    }
   }
 
-  pc_vt2iso->init (c_fileName.c_str(), &dictionary, externalize, b_disableContainmentRules);
+  catch (const XMLException& toCatch)
+  {
+    std::cerr << "Error during initialization! :\n"
+        << StrX(toCatch.getMessage()) << std::endl;
+    return 1;
+  }
 
-  uint16_t u16_xmlFileCnt = pc_vt2iso->getAmountXmlFiles();
-  for (indexXmlFile = 0; indexXmlFile < u16_xmlFileCnt; indexXmlFile++)
-  { // loop all xmlFiles!
-    // Initialize the XML4C system
-    try
-    {
-      if (localeStr.length())
-      {
-        XMLPlatformUtils::Initialize(localeStr.c_str());
-      }
-      else
-      {
-        XMLPlatformUtils::Initialize("de_DE");
-      }
-    }
+  // get file list with matching files!
+  std::string c_fileName( argV [argInd] );
 
-    catch (const XMLException& toCatch)
-    {
-      std::cerr << "Error during initialization! :\n"
-          << StrX(toCatch.getMessage()) << std::endl;
-      return 1;
-    }
-    // Instantiate the DOM parser.
-    static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
-    DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
-    DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
+  // Do INITIALIZATION STUFF
+  vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
 
-    parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
-    parser->setFeature(XMLUni::fgXercesSchema, doSchema);
-    parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
+  // Instantiate the DOM parser.
+  static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
+  DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
+  DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
 
-    if (valScheme == AbstractDOMParser::Val_Auto)        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
-    else if (valScheme == AbstractDOMParser::Val_Never)  parser->setFeature(XMLUni::fgDOMValidation, false);
-    else if (valScheme == AbstractDOMParser::Val_Always) parser->setFeature(XMLUni::fgDOMValidation, true);
+  parser->setFeature(XMLUni::fgDOMNamespaces, doNamespaces);
+  parser->setFeature(XMLUni::fgXercesSchema, doSchema);
+  parser->setFeature(XMLUni::fgXercesSchemaFullChecking, schemaFullChecking);
+
+  if (valScheme == AbstractDOMParser::Val_Auto)        parser->setFeature(XMLUni::fgDOMValidateIfSchema, true);
+  else if (valScheme == AbstractDOMParser::Val_Never)  parser->setFeature(XMLUni::fgDOMValidation, false);
+  else if (valScheme == AbstractDOMParser::Val_Always) parser->setFeature(XMLUni::fgDOMValidation, true);
 
     // enable datatype normalization - default is off
-    parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
+  parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
-    /** @todo SOON: Get path of vt2iso and add it to "vt2iso.xsd" */
-    std::string xsdLocation;
-    xsdLocation = argV[0];
-    // now trim exe filename
-    std::string::size_type separatorPos = xsdLocation.find_last_of ("/\\");
-    if (separatorPos != std::string::npos)
-      xsdLocation = xsdLocation.substr (0, separatorPos+1);
-    xsdLocation += "vt2iso.xsd";
-    XMLCh* propertyValue = XMLString::transcode(xsdLocation.c_str());
-    parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
+  std::string xsdLocation (argV[0]);
+  std::string::size_type separatorPos = xsdLocation.find_last_of ("/\\");
+  if (separatorPos != std::string::npos)
+    xsdLocation = xsdLocation.substr (0, separatorPos+1);
+  xsdLocation += "vt2iso.xsd";
+  XMLCh* propertyValue = XMLString::transcode(xsdLocation.c_str());
+  parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
 
     // And create our error handler and install it
-    DOMCountErrorHandler errorHandler;
-    parser->setErrorHandler(&errorHandler);
+  parser->setErrorHandler(pc_vt2iso);
 
-    //
-    //  Get the starting time and kick off the parse of the indicated
-    //  file. Catch any exceptions that might propogate out of it.
-    //
-    std::ifstream fin;
+  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose);
+  pc_vt2iso->parse();
 
-    const std::string xmlFile = pc_vt2iso->getXmlFile(indexXmlFile);
+  //  Delete the parser itself.  Must be done prior to calling Terminate, below.
+  parser->release();
+  // And call the termination method
+  XMLPlatformUtils::Terminate();
 
-    //reset error count first
-    errorHandler.resetErrors();
+  delete pc_vt2iso;
+  return 0; /// everything well done
+}
 
+
+void vt2iso_c::parse()
+{
+  std::cout << "** Pass 1 **"<<std::endl;
+  if (!doAllFiles (actionMarkIds)) return;
+
+  std::cout << "** Pass 2 **"<<std::endl;
+  if (mb_projectFile)
+  {
+    setParseModeWorkingSet (true); // only parse for the workingset-object!
+    if (!doAllFiles (actionProcessElement)) return;
+
+    std::cout << "** Pass 3 **"<<std::endl;
+    setParseModeWorkingSet (false); // parse all objects other than workingset!
+  }
+  if (!doAllFiles (actionProcessElement)) return;
+
+  skRelatedFileOutput();
+
+  generateIncludeDefines();
+
+  clean_exit ((errorOccurred) ? "XML-Parsing error occurred. Terminating.\n\n"
+                              : "All conversion done successfully.\n\n");
+}
+
+
+bool vt2iso_c::doAllFiles (action_en aen_action)
+{
+  int  indexXmlFile;
+  uint16_t u16_xmlFileCnt = getAmountXmlFiles();
+  for (indexXmlFile = 0; indexXmlFile < u16_xmlFileCnt; indexXmlFile++)
+  { // loop all xmlFiles!
     XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
 
+    resetErrors();
+
+    const std::string xmlFile = getXmlFile(indexXmlFile);
+
+    std::cout << "Processing file " << xmlFile << std::endl;
+
     try
-    {   // reset document pool
+    { // reset document pool
       parser->resetDocumentPool();
       doc = parser->parseURI(xmlFile.c_str());
     }
@@ -4829,7 +4916,7 @@ int main(int argC, char* argV[])
 
     //  Extract the DOM tree, get the list of all the elements and report the
     //  length as the count of elements.
-    if (errorHandler.getSawErrors() || errorOccurred)
+    if (getSawErrors() || errorOccurred)
     {
       std::cout << "\nErrors occurred, no output available\n" << std::endl;
       errorOccurred = true;
@@ -4839,43 +4926,103 @@ int main(int argC, char* argV[])
       if (doc)
       {
         // ### main routine starts right here!!! ###
-        bool b_returnRootElement = pc_vt2iso->processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
-
-        if (!pc_vt2iso->getIsOPDimension())
+        switch (aen_action)
         {
-          std::cout << "\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n";
-          pc_vt2iso->clean_exit();
-          delete pc_vt2iso;
-          exit (-1);
-        }
-        if (!b_returnRootElement)
-        { /// ANY ERROR OCCURED DURING THE PARSING PROCESS
-          pc_vt2iso->clean_exit();
-          delete pc_vt2iso;
-          exit (-1);
-        }
+          case actionProcessElement:
+          {
+            bool b_returnRootElement = processElement ((DOMNode*)doc->getDocumentElement(), (uint64_t(1)<<otObjectpool) /*, NULL, NULL*/); // must all be included in an objectpool tag !
+
+            if (!getIsOPDimension())
+            {
+              clean_exit("\n\nYOU NEED TO SPECIFY THE dimension= TAG IN <objectpool> ! STOPPING PARSER! bye.\n\n");
+              return false;
+            }
+            if (!b_returnRootElement)
+            {
+              clean_exit("ANY ERROR OCCURED DURING THE PARSING PROCESS\n\n");
+              return false;
+            }
+          } break;
+
+          case actionMarkIds:
+            markIds ((DOMNode*)doc->getDocumentElement());
+            break;
+
+          default:
+            break;
+        } // switch
       }
     }
-
-    //  Delete the parser itself.  Must be done prior to calling Terminate, below.
-    parser->release();
-
-    // And call the termination method
-    XMLPlatformUtils::Terminate();
-
   } // loop all files
+  return true;
+}
 
-  pc_vt2iso->skRelatedFileOutput();
 
-  pc_vt2iso->generateIncludeDefines();
+//! This function will recursively scan all elements (of that xml-file).
+//! and fill the bitset "mbitset_objIdUsed" with "1" at the given "uid"
+//! when the "id=12345" attribute is set in the current n.
+//! Will then process all children nodes recursively.
+void vt2iso_c::markIds (DOMNode *n)
+{
+  if (!n)
+  {
+    printf ("markIds(): 'DOMNode == NULL'. STOPPING PARSER! bye.\n\n");
+    return;
+  }
 
-  if (errorOccurred)
-    pc_vt2iso->clean_exit ("XML-Parsing error occurred. Terminating.\n\n");
-  else
-    pc_vt2iso->clean_exit ("All conversion done successfully.\n\n");
+  std::string local_attrName; 
+  std::string local_attrValue;
+  DOMNode *child;
+  DOMNamedNodeMap *pAttributes = n->getAttributes();
 
-  delete pc_vt2iso;
-  return 0; /// everything well done
+  if (n->hasAttributes())
+  { // parse through all attributes
+    int nSize = pAttributes->getLength();
+    int id=-1;
+    std::string name;
+    for (int i=0;i<nSize;++i)
+    {
+      DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+      utf16convert (pAttributeNode->getName(), local_attrName);
+      utf16convert (pAttributeNode->getValue(), local_attrValue);
+      if (local_attrName.compare("id") == 0)
+      {
+        id = atoi (local_attrValue.c_str());
+        if ((id < 0) || (id > 65535))
+        {
+          clean_exit ("Invalid ID given. It's out of the allowed 16bit-range! STOPPING PARSER! BYE...");
+          exit (-1);
+        }
+        mbitset_objIdUsed.set (id, 1);
+#ifdef DEBUG
+        std::cout << "Setting Uid" << id << " to true!"<<std::endl;
+#endif
+      }
+      if (local_attrName.compare("name") == 0)
+      {
+        name = local_attrValue;
+      }
+    }
+    // now check if a pair with name/id was found
+    if ((name.length() > 0) && (id >= 0))
+    { // save it in the table, so we can solve forward-references
+      // (which is actually not needed for "normal" forward-references
+      // but forward-references in macro-commands!)
+      map_objNameIdTable.insert (std::pair<std::string, uint16_t>(name, uint16_t(id)));
+    }
+  }
+
+  for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
+  {
+    if (child->getNodeType() == DOMNode::ELEMENT_NODE)
+    {
+#if defined ( DEBUG )
+      fprintf(stderr, "  call 'markIds' for child ...\n");
+#endif
+      markIds (child);
+    }
+  }
+
 }
 
 
@@ -4904,56 +5051,19 @@ vt2iso_c::clearAndSetElements (DOMNode *child, const std::vector <int> &avec)
 
 
 bool
-vt2iso_c::processProjectFile(std::basic_string<char>* pch_fileName, const std::string& r_localeStr)
+vt2iso_c::processProjectFile(const std::string& pch_fileName)
 {
-  FILE* prjFile = fopen(pch_fileName->c_str(),"r");
+  FILE* prjFile = fopen(pch_fileName.c_str(),"r");
   if (!prjFile)
   {
-    std::cerr <<  "Couldn't open the project file '" << *pch_fileName << "'." << std::endl;
+    std::cerr <<  "Couldn't open the project file '" << pch_fileName << "'." << std::endl;
     return false;
   }
+  fclose (prjFile);
 
+  const std::string xmlFile = pch_fileName;
 
-  try
-  {
-    if (r_localeStr.length())
-    {
-      XMLPlatformUtils::Initialize(r_localeStr.c_str());
-    }
-    else
-    {
-      XMLPlatformUtils::Initialize("de_DE");
-    }
-  }
-
-  catch (const XMLException& toCatch)
-  {
-    std::cerr << "Error during initialization! :\n"
-        << StrX(toCatch.getMessage()) << std::endl;
-    return false;
-  }
-  // Instantiate the DOM parser.
-  static const XMLCh gLS[] = { chLatin_L, chLatin_S, chNull };
-  DOMImplementation *impl = DOMImplementationRegistry::getDOMImplementation(gLS);
-  DOMBuilder  *parser = ((DOMImplementationLS*)impl)->createDOMBuilder(DOMImplementationLS::MODE_SYNCHRONOUS, 0);
-
-  // enable datatype normalization - default is off
-  parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
-
-  // And create our error handler and install it
-  DOMCountErrorHandler errorHandler;
-  parser->setErrorHandler(&errorHandler);
-
-  //
-  //  Get the starting time and kick off the parse of the indicated
-  //  file. Catch any exceptions that might propogate out of it.
-  //
-  std::ifstream fin;
-
-  const std::string xmlFile = *pch_fileName;
-
-  //reset error count first
-  errorHandler.resetErrors();
+  resetErrors();
 
   XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
 
@@ -4993,7 +5103,7 @@ vt2iso_c::processProjectFile(std::basic_string<char>* pch_fileName, const std::s
 
   //  Extract the DOM tree, get the list of all the elements and report the
   //  length as the count of elements.
-  if (errorHandler.getSawErrors() || errorOccurred)
+  if (getSawErrors() || errorOccurred)
   {
     std::cout << "\nErrors occurred, no output available\n" << std::endl;
     errorOccurred = true;
@@ -5035,7 +5145,6 @@ vt2iso_c::processProjectFile(std::basic_string<char>* pch_fileName, const std::s
                     s_bitmapPath.b_relativePath = true;
                 }
               }
-
               if (!s_bitmapPath.str_pathName.empty())
                 l_stdBitmapPath.push_back(s_bitmapPath);
             }
@@ -5068,7 +5177,13 @@ vt2iso_c::processProjectFile(std::basic_string<char>* pch_fileName, const std::s
                 }
               }
               if (!s_path.str_pathName.empty())
+              {
+                if (s_path.b_relativePath)
+                { // add the path to the project-file, because it's relative to that directory!
+                  s_path.str_pathName.insert (0, c_directory);
+                }
                 vec_xmlFiles.push_back(s_path);
+              }
             }
           }
         }
@@ -5134,12 +5249,6 @@ vt2iso_c::processProjectFile(std::basic_string<char>* pch_fileName, const std::s
     // auto_language=
     strcpy (spc_autoLanguage, );
 #endif
-
-  //  Delete the parser itself.  Must be done prior to calling Terminate, below.
-  parser->release();
-
-  // And call the termination method
-  XMLPlatformUtils::Terminate();
 
   return !errorOccurred;
 }

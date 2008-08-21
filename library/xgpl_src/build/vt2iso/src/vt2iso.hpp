@@ -43,12 +43,14 @@
 #define DEF_MAX_OBJECTS (10000)
 
 #include <xercesc/dom/DOMErrorHandler.hpp>
+#include <xercesc/dom/DOMBuilder.hpp>
 #include <xercesc/util/XMLString.hpp>
 #include <iostream>
 #include <set>
 #include <vector>
 #include <map>
 #include <list>
+#include <bitset>
 
 #include "vt2iso-defines.hpp"
 #include "vt2iso-globals.hpp"
@@ -181,7 +183,7 @@ private:
 };
 
 
-class vt2iso_c
+class vt2iso_c : public DOMCountErrorHandler
 {
 public:
   vt2iso_c (const std::string &poolIdent);
@@ -195,8 +197,15 @@ public:
     bool b_relativePath;
   };
 
+  enum action_en
+  {
+    actionMarkIds,
+    actionProcessElement
+  };
+
   bool setCommandElement(unsigned int& commandType, DOMNode  *child,  /*DOMNamedNodeMap *pAttributes,*/ DOMNode *n, unsigned int& objChildCommands, std::string &commandMessage);
 
+  void markIds (DOMNode *n);
 
   bool processElement (DOMNode *n, uint64_t ombType/* const char* rpcc_inKey, const char* rpcc_inButton, */);
 
@@ -242,9 +251,11 @@ public:
 
   void getKeyCode();
 
-  void init (const std::string& xmlFile, std::basic_string<char>* dictionary, bool ab_externalize, bool ab_disableContainmentRules);
+  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose);
 
-  bool prepareFileNameAndDirectory (std::basic_string<char>* pch_fileName, const std::string& r_localeStr);
+  void parse();
+
+  bool prepareFileNameAndDirectory (std::string& astr_fileName);
 
   void convertIdReferenceToNameReference (int ai_attrType);
 
@@ -252,6 +263,8 @@ public:
 
   void defaultAttributes (unsigned int a_objType);
 
+  void setParseModeWorkingSet (bool ab_parseOnlyWorkingSet) { mb_parseOnlyWorkingSet = ab_parseOnlyWorkingSet; }
+  bool isParseModeWorkingSet() { return mb_parseOnlyWorkingSet;}
 
 private:
   signed int strlenUnescaped (const std::string& pcc_string);
@@ -275,18 +288,25 @@ private:
 
   bool getAttributesFromNode (DOMNode *n, bool treatSpecial);
 
-  bool openDecodePrintOut (const char* workDir, const std::list<Path_s>& rcl_bitmapPath, unsigned int &options, int fixNr=-1);
+  bool openDecodePrintOut (const std::list<Path_s>& rcl_bitmapPath, unsigned int &options, int fixNr=-1);
 
   bool checkForAllowedExecution() const;
 
   std::string getObjectReferencePrefixed (int ai_attributeIndex) { return arrc_attributes [ai_attributeIndex].getObjectReferencePrefixed (mstr_poolIdent); }
 
-
   void autoDetectLanguage (DOMNode *n);
 
   void splitFunction (bool ab_onlyClose);
 
-  bool processProjectFile(std::basic_string<char>* pch_fileName, const std::string& r_localeStr);
+  bool processProjectFile(const std::string& pch_fileName);
+
+  unsigned int getFreeId (unsigned int& aui_objNextId);
+
+  bool doAllFiles (action_en aen_action);
+
+public:
+  static bool isVerbose() { return smb_verbose; }
+  static bool smb_verbose;
 
 private:
   bool firstLineFileE;
@@ -311,22 +331,23 @@ private:
   std::string xmlFileGlobal;
   std::string spc_autoLanguage;
   std::string proName;
-  std::basic_string<char> c_project;
+  std::string c_project;
 
   bool mb_projectFile;
-  std::basic_string<char> c_directory;
+  std::string c_directory;
   const char* ac_workDir;
   std::vector<Path_s> vec_xmlFiles;
 //string array
   std::string mstr_poolIdent;
 
-  char objNameTable [(stringLength+1)*DEF_MAX_OBJECTS];
-  unsigned int objIDTable [DEF_MAX_OBJECTS];
+  std::bitset<65536> mbitset_objIdUsed;
+
+  std::map<std::string, uint16_t> map_objNameIdTable;
+
   unsigned int objNextAutoID;
   unsigned int objNextMacroAutoID;
   unsigned int kcNextAutoID;
   unsigned int objNextUnnamedName;
-  unsigned int objCount;
   unsigned int opDimension;
   unsigned int skWidth;
   unsigned int skHeight;
@@ -337,6 +358,7 @@ private:
   bool is_skHeight;
 
   bool b_externalize;
+  bool mb_parseOnlyWorkingSet;
 
   OneAttribute_c arrc_attributes [maxAttributeNames];
   void clearAndSetElements (DOMNode *child, const std::vector <int> &avec);
@@ -368,10 +390,12 @@ private:
   bool b_hasUnknownAttributes;
   bool b_hasMoreThan6SoftKeys;
   bool b_disableContainmentRules;
+  bool errorOccurred;
 
   // used in processElement(...)
   char* m_nodeName;
 
+  DOMBuilder* parser;
 #ifdef USE_SPECIAL_PARSING_PROP
   SpecialParsingUsePropTag_c* pc_specialParsingPropTag;
 #else

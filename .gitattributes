@@ -2708,8 +2708,6 @@ library/xgpl_src/build/vt2iso/src/vt2iso-defines.hpp -text
 library/xgpl_src/build/vt2iso/src/vt2iso-globals.cpp -text
 library/xgpl_src/build/vt2iso/src/vt2iso-globals.hpp -text
 library/xgpl_src/build/vt2iso/src/vt2iso.hpp -text
-library/xgpl_src/build/vt2iso/src/vt2isostr2bin.cpp -text
-library/xgpl_src/build/vt2iso/src/vt2isostr2bin.h -text
 library/xgpl_src/build/vt2iso/version.incl -text
 library/xgpl_src/build/vt2iso/vt2iso.kdevelop -text
 library/xgpl_src/build/vt2iso/vt2iso.kdevelop.filelist -text

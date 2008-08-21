@@ -35,9 +35,12 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
+
 #include "vt2isoimagebase_c.h"
 #include "vt2iso-defines.hpp"
 #include <iostream>
+#include <vt2iso.hpp>
+
 
 BGR_s vtColourTable[256]=
 { /// ATTENTION: This is stored "Blue-Green-Red" !!!
@@ -500,7 +503,7 @@ void Vt2IsoImageBase_c::getOptimalBwThreshold( void )
   thresholdLoopAllBlack = 0,
   optimalThreshold = 0;
   unsigned int roundedWidth = ( ( getWidth() + 7U ) & ( 0xFFFFFFFFU - 7U ) );
-  
+
   for (unsigned int threshold = 32; threshold <= 224; threshold += 16 ) {
   thresholdLoopAllWhite = 0;
   thresholdLoopAllBlack = 0;
@@ -533,20 +536,22 @@ void Vt2IsoImageBase_c::getOptimalBwThreshold( void )
   }
   }
   // now decide about optimal threshold -> use 128 if optimum is not BETTER
-  if ( ( thresholdOptimalAllWhite + thresholdOptimalAllBlack ) < ( threshold128AllWhite + threshold128AllBlack ) ) {
-  // optimal threshold is really better
-    std::cout << "Found Optimal Threshold: " << optimalThreshold << " which has only " << thresholdOptimalAllWhite << " all white and "
-      << thresholdOptimalAllBlack << " all black entries" << std::endl;
-  i_currentThreshold = optimalThreshold;
+  if ( ( thresholdOptimalAllWhite + thresholdOptimalAllBlack ) < ( threshold128AllWhite + threshold128AllBlack ) )
+  { // optimal threshold is really better
+    if (vt2iso_c::isVerbose())
+      std::cout << "Found Optimal Threshold: " << optimalThreshold << " which has only " << thresholdOptimalAllWhite << " all white and "
+                << thresholdOptimalAllBlack << " all black entries" << std::endl;
+    i_currentThreshold = optimalThreshold;
   }
   else {
-  // no better threshold than standard 128 found
-  std::cout << "Default 128 Threshold is optimal as it has only " << threshold128AllWhite << " all white and "
-      << threshold128AllBlack << " all black entries\n"
-      << "Optimal Threshold has " << thresholdOptimalAllWhite << " allWhite and " << thresholdOptimalAllBlack
-      << " all black"
-      << std::endl;
-  i_currentThreshold = 128;
+    if (vt2iso_c::isVerbose())
+      // no better threshold than standard 128 found
+      std::cout << "Default 128 Threshold is optimal as it has only " << threshold128AllWhite << " all white and "
+                << threshold128AllBlack << " all black entries\n"
+                << "Optimal Threshold has " << thresholdOptimalAllWhite << " allWhite and " << thresholdOptimalAllBlack
+                << " all black"
+                << std::endl;
+    i_currentThreshold = 128;
   }
 }
 
