@@ -45,7 +45,9 @@
 #include "vt2isoimagefreeimage_c.h"
 #include <iostream>
 #include <iomanip>
-#include <vt2iso.hpp>
+
+#include "vt2iso-defines.hpp"
+#include "vt2iso-globals.hpp"
 
 
 typedef unsigned char fiuint8_t;

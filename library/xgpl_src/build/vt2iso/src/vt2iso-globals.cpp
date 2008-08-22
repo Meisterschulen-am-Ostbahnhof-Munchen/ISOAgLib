@@ -706,14 +706,20 @@ bool itofilltype(unsigned int ui_index, string& c_outputText)
 
 unsigned int eventtoi (const char *text_eventName)
 {
-  int l, retval=0;
+  int l;
   for (l=0; l<maxEventTable; l++) {
     if (strstr (text_eventName, eventTable [l]) != 0) {
-      retval = l + 1;
-      break;
+      return (l + 1);
     }
   }
-  return retval;
+
+  int i_eventIndex = atoi (text_eventName);
+  if ( ((i_eventIndex >0) && (i_eventIndex <= 26))
+       || ((i_eventIndex >= 240) && (i_eventIndex <= 254))
+     )
+    return i_eventIndex;
+
+  return 0; // should not happen
 }
 
 bool itoevent(unsigned int ui_index, string& c_outputText)

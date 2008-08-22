@@ -3585,6 +3585,13 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
         return false;
       }
             //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
+      
+      if (!eventtoi(arrc_attributes [attrEvent].get().c_str()))
+      {
+        std::cout << "\n\nevent: invalid attribute value ! STOPPING PARSER! bye.\n\n";
+        return false;
+      }
+
       if (ab_outputEnabled)
         fprintf (partFile_attributes, "{%d, &iVtObject%s}", eventtoi(arrc_attributes [attrEvent].get().c_str()), objChildName.c_str());
 
