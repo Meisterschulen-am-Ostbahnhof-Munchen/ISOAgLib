@@ -626,23 +626,22 @@ IsoItem_c::addSlave (IsoName_c const& rcc_slaveName)
   /// @todo SOON We currently IGNORE any subsequent working-set announces! If the list is full, it stays full and no nothing is overwritten or alike...
   if (mpvec_slaveIsoNames)
   {
-    STL_NAMESPACE::vector<IsoName_c>::iterator iter = mpvec_slaveIsoNames->begin();
-    STL_NAMESPACE::vector<IsoName_c>::iterator end = mpvec_slaveIsoNames->end();
-    while (iter != end)
+    const STL_NAMESPACE::vector<IsoName_c>::iterator end = mpvec_slaveIsoNames->end();
+    for (STL_NAMESPACE::vector<IsoName_c>::iterator iter = mpvec_slaveIsoNames->begin();
+         iter != end;
+         ++iter)
     {
-      if ((*iter).isSpecified())
-      { // skip if this slave entry is already set.
-        continue;
-      }
-      else
+      if (iter->isUnspecified())
       { // found a free slave-entry!
         (*iter) = rcc_slaveName;
         // added the slave, so exit function successfully.
-        return;
+        return; // don't run into possible error-handling below.
       }
+      // else: skip as this slave entry is already set/specified.
     }
   }
-  //else someone sent a WORKING_SET_SLAVE_PGN seemingly without sending a WORKING_SET_MASTER_PGN message first..
+  // else: someone sent a WORKING_SET_SLAVE_PGN seemingly without sending a WORKING_SET_MASTER_PGN message first..
+  // possible error handling for that case here.
 }
 
 
