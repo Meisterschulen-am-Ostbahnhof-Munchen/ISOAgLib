@@ -730,7 +730,6 @@ bool itoevent(unsigned int ui_index, string& c_outputText)
     c_outputText = eventTable[ui_index-1];
     return true;
   }
-
   if ((ui_index >= 240) && (ui_index <= 254))
   {
     std::ostringstream oss (std::stringstream::out);
@@ -738,7 +737,6 @@ bool itoevent(unsigned int ui_index, string& c_outputText)
     c_outputText = oss.str();
     return true;
   }
-
   return false;
 }
 
