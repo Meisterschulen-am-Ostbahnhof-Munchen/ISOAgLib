@@ -39,7 +39,6 @@
 #include "vt2isoimagebase_c.h"
 #include "vt2iso-defines.hpp"
 #include <iostream>
-#include <vt2iso.hpp>
 
 
 BGR_s vtColourTable[256]=
@@ -309,6 +308,7 @@ Vt2IsoImageBase_c::Vt2IsoImageBase_c( void )
   , i_currentThreshold( -1 )
   , ui_width( 0 )
   , ui_height( 0 )
+  , mp_ostream( NULL )
 {
 }
 
@@ -538,19 +538,19 @@ void Vt2IsoImageBase_c::getOptimalBwThreshold( void )
   // now decide about optimal threshold -> use 128 if optimum is not BETTER
   if ( ( thresholdOptimalAllWhite + thresholdOptimalAllBlack ) < ( threshold128AllWhite + threshold128AllBlack ) )
   { // optimal threshold is really better
-    if (vt2iso_c::isVerbose())
-      std::cout << "Found Optimal Threshold: " << optimalThreshold << " which has only " << thresholdOptimalAllWhite << " all white and "
-                << thresholdOptimalAllBlack << " all black entries" << std::endl;
+    if (isOstream())
+      getOstream() << "Found Optimal Threshold: " << optimalThreshold << " which has only " << thresholdOptimalAllWhite << " all white and "
+                   << thresholdOptimalAllBlack << " all black entries" << std::endl;
     i_currentThreshold = optimalThreshold;
   }
   else {
-    if (vt2iso_c::isVerbose())
+    if (isOstream())
       // no better threshold than standard 128 found
-      std::cout << "Default 128 Threshold is optimal as it has only " << threshold128AllWhite << " all white and "
-                << threshold128AllBlack << " all black entries\n"
-                << "Optimal Threshold has " << thresholdOptimalAllWhite << " allWhite and " << thresholdOptimalAllBlack
-                << " all black"
-                << std::endl;
+      getOstream() << "Default 128 Threshold is optimal as it has only " << threshold128AllWhite << " all white and "
+                   << threshold128AllBlack << " all black entries\n"
+                   << "Optimal Threshold has " << thresholdOptimalAllWhite << " allWhite and " << thresholdOptimalAllBlack
+                   << " all black"
+                   << std::endl;
     i_currentThreshold = 128;
   }
 }

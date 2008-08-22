@@ -37,6 +37,7 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
+
 #ifndef VT2ISO_H
 #define VT2ISO_H
 
@@ -305,8 +306,7 @@ private:
   bool doAllFiles (action_en aen_action);
 
 public:
-  static bool isVerbose() { return smb_verbose; }
-  static bool smb_verbose;
+  bool isVerbose() { return mb_verbose; }
 
 private:
   bool firstLineFileE;
@@ -359,6 +359,7 @@ private:
 
   bool b_externalize;
   bool mb_parseOnlyWorkingSet;
+  bool mb_verbose;
 
   OneAttribute_c arrc_attributes [maxAttributeNames];
   void clearAndSetElements (DOMNode *child, const std::vector <int> &avec);

@@ -73,8 +73,8 @@ Vt2IsoImageFreeImage_c::Vt2IsoImageFreeImage_c( const char* filename )
 
 void Vt2IsoImageFreeImage_c::printLicenseText()
 {
-  std::cout << "This software uses the FreeImage open source image library. See http://freeimage.sourceforge.net for details." << std::endl
-            << "FreeImage is used under the (GNU GPL or FIPL), version (license version). " << std::endl;
+  if (isOstream()) getOstream() << "This software uses the FreeImage open source image library. See http://freeimage.sourceforge.net for details." << std::endl
+                                << "FreeImage is used under the (GNU GPL or FIPL), version (license version). " << std::endl;
 }
 
 /** open the given bitmap file and guarantee
@@ -87,8 +87,8 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
  reset();
  i_curScanLineY = -1;
 
- if (vt2iso_c::isVerbose())
-   std::cout << std::endl << "Opening " << filename << std::endl;
+ if (isOstream())
+   getOstream() << std::endl << "Opening " << filename << std::endl;
  FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 
  // check the file signature and deduce its format
@@ -98,7 +98,7 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
   // no signature ?
   // try to guess the file format from the file extension
   fif = FreeImage_GetFIFFromFilename(filename);
-  std::cerr << "Dateityp nicht bekannt" << std::endl;
+  if (isOstream()) getOstream() << "Dateityp nicht bekannt" << std::endl;
  }
  // check that the plugin has reading capabilities ...
  if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -107,24 +107,24 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
  }
  else
  { // hardcore - try with BMP
-  std::cerr << "Try with BMP" << std::endl;
+  if (isOstream()) getOstream() << "Try with BMP" << std::endl;
   bitmap = FreeImage_Load(FIF_BMP, filename, 0);
   if ( bitmap == NULL )
   { // next hardcoretry with png
-    std::cerr << "Try with PNG" << std::endl;
+    if (isOstream()) getOstream() << "Try with PNG" << std::endl;
     bitmap = FreeImage_Load(FIF_PNG, filename, 0);
   }
   if ( bitmap == NULL )
   { // next hardcoretry with jpg
-    std::cerr << "Try with JPEG" << std::endl;
+    if (isOstream()) getOstream() << "Try with JPEG" << std::endl;
     bitmap = FreeImage_Load(FIF_JPEG, filename, 0);
   }
   if ( bitmap == NULL )
   {
-   std::cerr << "Fehler beim Laden" << std::endl;
-   return false;
+    if (isOstream()) getOstream() << "Fehler beim Laden" << std::endl;
+    return false;
   }
-  else std::cerr << "Erfolgreich mit BMP geladen" << std::endl;
+  else if (isOstream()) getOstream() << "Erfolgreich mit BMP geladen" << std::endl;
  }
 
  if (FreeImage_GetBPP(bitmap) > 8)
@@ -156,14 +156,12 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
      }
    }
    mb_palettized = true;
-   if (vt2iso_c::isVerbose())
-     std::cout << " palettized (depth="<<FreeImage_GetBPP(bitmap)<<"). ";
+   if (isOstream()) getOstream() << " palettized (depth="<<FreeImage_GetBPP(bitmap)<<"). ";
    return true;
  }
  else
  {
-   if (vt2iso_c::isVerbose())
-     std::cout << " as RGB (depth="<<FreeImage_GetBPP(bitmap)<<"). ";
+   if (isOstream()) getOstream() << " as RGB (depth="<<FreeImage_GetBPP(bitmap)<<"). ";
    return true;
  }
 }
@@ -176,17 +174,17 @@ int Vt2IsoImageFreeImage_c::getPaletteIndex (unsigned int aui_x, unsigned int au
     // do this check here, because in case we only use 4bit bitmap, we don't have to care for the palette matching...
     if (mi_colourMismatch >= 0)
     {
-      std::cerr << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. See (first) mismatching colour #"<<mi_colourMismatch<<" below. Please use the ISO11783-Part 6 (VT)-Palette for bitmaps you have saved palettized and use in 8bit-mode. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
-      std::cerr << "HAS TO BE | you had" << std::hex << std::setfill('0');
+      if (isOstream()) getOstream() << "*** COULDN'T LOAD BITMAP: WRONG PALETTE. See (first) mismatching colour #"<<mi_colourMismatch<<" below. Please use the ISO11783-Part 6 (VT)-Palette for bitmaps you have saved palettized and use in 8bit-mode. Use 'vt2iso -p' to generate an .act file and resample your bitmap to use this palette! ***" << std::endl;
+      if (isOstream()) getOstream() << "HAS TO BE | you had" << std::hex << std::setfill('0');
       for (int i=0; i<(16+216); i++)
       {
-        if ((i % 8) == 0) std::cerr << std::endl;
-        else std::cerr << "     ";
-        std::cerr << std::setw(2) << fiuint16_t(vtColourTable[i].bgrRed) << std::setw(2) << fiuint16_t(vtColourTable[i].bgrGreen) << std::setw(2) << fiuint16_t(vtColourTable[i].bgrBlue);
-        if (i == mi_colourMismatch) std::cerr << "*|*"; else std::cerr << " | ";
-        std::cerr << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
+        if ((i % 8) == 0) { if (isOstream()) getOstream() << std::endl; }
+        else { if (isOstream()) getOstream() << "     "; }
+        if (isOstream()) getOstream() << std::setw(2) << fiuint16_t(vtColourTable[i].bgrRed) << std::setw(2) << fiuint16_t(vtColourTable[i].bgrGreen) << std::setw(2) << fiuint16_t(vtColourTable[i].bgrBlue);
+        if (i == mi_colourMismatch) { if (isOstream()) getOstream() << "*|*"; } else { if (isOstream()) getOstream() << " | "; }
+        if (isOstream()) getOstream() << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbRed) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbGreen) << std::setw(2) << fiuint16_t(FreeImage_GetPalette (bitmap)[i].rgbBlue);
       }
-      std::cerr << std::endl;
+      if (isOstream()) getOstream() << std::endl;
       b_isInvalidPalette = true;
       return -1;
     }

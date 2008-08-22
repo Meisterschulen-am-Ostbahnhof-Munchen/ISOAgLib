@@ -38,14 +38,10 @@
 #ifndef VT2ISOIMAGEBASE_C_H
 #define VT2ISOIMAGEBASE_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
+#include <ostream>
 
-// ---------------------------------------------------------------------------
-//  Abstract base class for image access
-// ---------------------------------------------------------------------------
-	static const unsigned int colour16table [16] [3] = {
+
+static const unsigned int colour16table [16] [3] = {
 	{0x00,0x00,0x00},
 	{0xFF,0xFF,0xFF},
 	{0x00,0x99,0x00},
@@ -63,6 +59,10 @@
 	{0xFF,0xFF,0x00},
 	{0x00,0x00,0x99}};
 
+
+// ---------------------------------------------------------------------------
+//  Abstract base class for image access
+// ---------------------------------------------------------------------------
 class Vt2IsoImageBase_c
 {
  public:
@@ -70,7 +70,14 @@ class Vt2IsoImageBase_c
 	Vt2IsoImageBase_c( void );
 	
 	void printLicenseText() {}
-	
+
+  // enable informative output via the given ostream.
+  // if NULL is passed, output is suppressed.
+  // construction time default is "disabled".
+  void setOstream(std::ostream& ap_ostream) { mp_ostream = &ap_ostream; }
+  // disable informative output
+  void resetOstream() { mp_ostream = NULL; }
+
   virtual ~Vt2IsoImageBase_c() {} // Prevent from warning
 	void reset( void );
 	void resetLengths( void );
@@ -139,6 +146,13 @@ class Vt2IsoImageBase_c
 	unsigned int ui_width;
 	/** height of bitmap */
 	unsigned int ui_height;
+
+  bool isOstream() { return (mp_ostream != NULL); }
+  // only use getOstream() if checked with isOstream().
+  std::ostream& getOstream() { return *mp_ostream; }
+
+private:
+  std::ostream* mp_ostream;
 };
 
 #endif
