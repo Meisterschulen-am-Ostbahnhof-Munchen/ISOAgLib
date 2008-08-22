@@ -444,7 +444,7 @@ void TracMove_c::singletonInit()
       case IsoAgLib::GpsBasedSpeed:
         mt_speedSource = IsoAgLib::GpsBasedSpeed;
         mt_selectedSpeedSource = IsoAgLib::IsoNavigationBasedSpeed;
-        mi32_selectedSpeed = c_timeposgps.getGpsSpeedCmSec();
+        mi32_selectedSpeed = c_timeposgps.getGpsSpeedCmSec()*10; // Selected Speed is in mm/s
         break;
       #endif
       case IsoAgLib::GroundBasedSpeed:
