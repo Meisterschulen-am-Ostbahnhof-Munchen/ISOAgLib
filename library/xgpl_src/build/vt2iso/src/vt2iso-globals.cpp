@@ -38,6 +38,7 @@
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
 #include "vt2iso-globals.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -729,6 +730,15 @@ bool itoevent(unsigned int ui_index, string& c_outputText)
     c_outputText = eventTable[ui_index-1];
     return true;
   }
+
+  if ((ui_index >= 240) && (ui_index <= 254))
+  {
+    std::ostringstream oss (std::stringstream::out);
+    oss << ui_index;
+    c_outputText = oss.str();
+    return true;
+  }
+
   return false;
 }
 
