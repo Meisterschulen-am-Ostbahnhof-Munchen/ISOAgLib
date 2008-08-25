@@ -157,7 +157,7 @@ bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at
 		setPowerdownStrategy( at_strategy );
 		/** start Relais either for not defined CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
 				- update_makefile.sh creates CONFIG_DO_NOT_START_RELAIS_ON_STARTUP */
-#ifndef(CONFIG_DO_NOT_START_RELAIS_ON_STARTUP)
+#ifndef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
     // set Relais to ON
     HAL::setRelais(ON);
 #endif
