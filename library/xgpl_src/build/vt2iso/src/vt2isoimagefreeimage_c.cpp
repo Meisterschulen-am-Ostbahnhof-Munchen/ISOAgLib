@@ -100,7 +100,7 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
   // no signature ?
   // try to guess the file format from the file extension
   fif = FreeImage_GetFIFFromFilename(filename);
-  if (isOstream()) getOstream() << "Dateityp nicht bekannt" << std::endl;
+  if (isOstream()) getOstream() << "File type not recognized" << std::endl;
  }
  // check that the plugin has reading capabilities ...
  if((fif != FIF_UNKNOWN) && FreeImage_FIFSupportsReading(fif)) {
@@ -121,13 +121,13 @@ bool Vt2IsoImageFreeImage_c::openBitmap( const char* filename )
     if (isOstream()) getOstream() << "Try with JPEG" << std::endl;
     bitmap = FreeImage_Load(FIF_JPEG, filename, 0);
   }
-  if ( bitmap == NULL )
-  {
-    if (isOstream()) getOstream() << "Fehler beim Laden" << std::endl;
-    return false;
-  }
-  else if (isOstream()) getOstream() << "Erfolgreich mit BMP geladen" << std::endl;
  }
+ if ( bitmap == NULL )
+ {
+    if (isOstream()) getOstream() << "Error loading bitmap file" << std::endl;
+    return false;
+ }
+ else if (isOstream()) getOstream() << "Bitmap successfully loaded" << std::endl;
 
  if (FreeImage_GetBPP(bitmap) > 8)
  { // convert to 32-Bit standard bitmap ONLY if NOT palettized!
