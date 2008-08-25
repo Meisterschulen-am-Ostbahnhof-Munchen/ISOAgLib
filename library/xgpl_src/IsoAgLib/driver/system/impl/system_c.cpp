@@ -155,7 +155,9 @@ bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at
     HAL::startTaskTimer();
     // configure POWER HOLD after loss of CAN_EN
 		setPowerdownStrategy( at_strategy );
-#ifdef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
+		/** start Relais either for not defined CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
+				- update_makefile.sh creates CONFIG_DO_NOT_START_RELAIS_ON_STARTUP */
+#ifndef(CONFIG_DO_NOT_START_RELAIS_ON_STARTUP)
     // set Relais to ON
     HAL::setRelais(ON);
 #endif
