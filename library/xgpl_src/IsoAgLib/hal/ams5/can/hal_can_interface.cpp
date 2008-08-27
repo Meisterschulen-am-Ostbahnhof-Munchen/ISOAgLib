@@ -20,7 +20,7 @@
 #include <stddef.h>
 
 //#define CONFIG_CAN_MAX_SEND_WAIT_TIME 1000l
-//#define CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING 1000l
+#define CONFIG_CAN_MIN_TIME_AFTER_BUS_PROBLEM_FOR_BUS_OK 3000
 
 
 /* ************************************* */
@@ -226,8 +226,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
       this is the case if neither succesfull sent nor received msg
       is detcted AND CAN controller is in WARN or OFF state
       (the time since last succ. send/rec and the time of WARN/OFF
-      can be defined with CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
-      in the application specific config file isoaglib_config
+      can be defined with CONFIG_CAN_MIN_TIME_AFTER_BUS_PROBLEM_FOR_BUS_OK
       -> should not be to short to avoid false alarm)
       @param aui8_busNr number of the BUS to check (default 0)
       @return true == CAN BUS is in blocked state, else normal operation
@@ -251,15 +250,15 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
          b_busBlocked = false;
 
       // check if no Error-Passive State was active for defined time
-      if ((i32_now-gt_cinterfaceBusErrorState.lastErrPas)>CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
+      if ((i32_now-gt_cinterfaceBusErrorState.lastErrPas)>CONFIG_CAN_MIN_TIME_AFTER_BUS_PROBLEM_FOR_BUS_OK)
          b_busBlocked = false;
 
       // check if no Bus-Off State was active for defined time
-      if ((i32_now-gt_cinterfaceBusErrorState.lastBusOff)>CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
+      if ((i32_now-gt_cinterfaceBusErrorState.lastBusOff)>CONFIG_CAN_MIN_TIME_AFTER_BUS_PROBLEM_FOR_BUS_OK)
          b_busBlocked = false;
 
       // check if no Bit1-Error happened for defined time
-      if ((i32_now-gt_cinterfaceBusErrorState.lastBit1Err)>CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING)
+      if ((i32_now-gt_cinterfaceBusErrorState.lastBit1Err)>CONFIG_CAN_MIN_TIME_AFTER_BUS_PROBLEM_FOR_BUS_OK)
          b_busBlocked = false;
 
       return b_busBlocked;

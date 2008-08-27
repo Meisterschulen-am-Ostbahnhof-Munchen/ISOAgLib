@@ -263,16 +263,6 @@
  * All defines of this block can be overridden by project specific config file.
  */
 /*@{*/
-#ifndef CONFIG_RS232_DEFAULT_BAUDRATE
-  /// define default RS232 baudrate - can be manually overridden in project config file
-  #define CONFIG_RS232_DEFAULT_BAUDRATE 19200
-#endif
-
-#ifndef CONFIG_RS232_DEFAULT_DATA_MODE
-  /// define default RS232 bit encoding - can be manually overridden in project config file
-  #define CONFIG_RS232_DEFAULT_DATA_MODE RS232IO_c::_8_N_1
-#endif
-
 #ifndef CONFIG_RS232_DEFAULT_XON_XOFF
   /// define default RS232 XON-XOFF usage - can be manually overridden in project config file
   #define CONFIG_RS232_DEFAULT_XON_XOFF false
@@ -303,35 +293,6 @@
 #endif
 /*@}*/
 
-
-/* ******************************************************** */
-/**
- * \name Basic config of Hdd access
- * These settings are used for initialisation on first RS232 based HDD access ( pattern of singletons ).
- * All defines of this block can be overridden by project specific config file.
- */
-/*@{*/
-#ifndef CONFIG_HDD_READ_PUFFER_SIZE
-  /// define size of buffer for Hdd read access - can be manually overridden in project config file
-  #define CONFIG_HDD_READ_PUFFER_SIZE 100
-#endif
-
-#ifndef CONFIG_HDD_READ_BLOCK_SIZE
-  /// define minimum size of data to read as one bock from Hdd - can be manually overridden in project config file
-  #define CONFIG_HDD_READ_BLOCK_SIZE 20
-#endif
-
-#ifndef CONFIG_HDD_MAX_TOKEN_LEN
-  /// define longest token which is used to translate printed numbers to number variables - can be manually overridden in project config file
-  #define CONFIG_HDD_MAX_TOKEN_LEN 10
-#endif
-
-#ifndef CONFIG_HDD_DEFAULT_DATA_MODE
-  /// define value coding for RS232 connected DOS Drive - can be manually overridden in project config file
-  #define CONFIG_HDD_DEFAULT_DATA_MODE RS232IO_c::_8_N_1
-#endif
-
-/*@}*/
 
 /* ******************************************************** */
 /**
@@ -383,11 +344,6 @@
   #define CONFIG_CAN_DEFAULT_BUS_NUMBER 0xFF
 #endif
 
-#ifndef CONFIG_CAN_DEFAULT_SEND_OBJ
-  /// define default MsgObj_c number to use for CAN send
-  #define CONFIG_CAN_DEFAULT_SEND_OBJ 0
-#endif
-
 #ifndef CONFIG_CAN_DEFAULT_MIN_OBJ_NR
   /// define default min number for CAN Msg-Obj used for IsoAgLib
   #define CONFIG_CAN_DEFAULT_MIN_OBJ_NR 0
@@ -410,16 +366,6 @@
  * to fallback speed.
  */
 /*@{*/
-#ifndef CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
-  /// max time intervall of CAN err before switching back from 250 to 125 kbit/s in [msec.]
-  #define CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING 3000
-#endif
-
-#ifndef CONFIG_CAN_FALLBACK_BITRATE
-  /// define bitrate to use after fallbcack /ref CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
-  #define CONFIG_CAN_FALLBACK_BITRATE 125
-#endif
-
 /** define max wait time between call of sendCan to
     successfull send of the msg,
     longer wait time is regarded of evidence for BUS OFF
@@ -427,14 +373,6 @@
 #ifndef CONFIG_CAN_MAX_SEND_WAIT_TIME
   /// BUS OFF if CAN send lasts longer then defined
   #define CONFIG_CAN_MAX_SEND_WAIT_TIME 200
-#endif
-
-/** define max normal CAN idle time (e.g. no msg received)
-    -> used to detect general CAN problem
-*/
-#ifndef CONFIG_CAN_MAX_CAN_IDLE
-  /// BUS problem, if no message received in this time
-  #define CONFIG_CAN_MAX_CAN_IDLE 3000
 #endif
 
 /** define interval for detection of incoming message loss.
@@ -485,16 +423,6 @@
   #define CONFIG_EEPROM_USE_CAN_REC_IDENT 0x700
 #endif
 
-#ifndef CONFIG_EEPROM_USE_CAN_REC_OBJ
-  /** set CAN Msg obejct for receiving EEEditor msg */
-  #define CONFIG_EEPROM_USE_CAN_REC_OBJ   13
-#endif
-
-#ifndef CONFIG_EEPROM_USE_CAN_SEND_OBJ
-  /** set CAN Msg obejct for sending EEEditor msg */
-  #define CONFIG_EEPROM_USE_CAN_SEND_OBJ  14
-#endif
-
 #ifndef CONFIG_EEPROM_USE_CAN_BUS
   /** set CAN BUS number for CAN EEPROM Editor */
   #define CONFIG_EEPROM_USE_CAN_BUS       0
@@ -503,11 +431,6 @@
 #ifndef CONFIG_EEPROM_USE_CAN_BUFFER_SIZE
   /** set CAN buffer size for receive and send */
   #define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
-#endif
-
-#ifndef CONFIG_EEPROM_USE_CAN_EXT_IDENT
-  /** to use standard ident (11bit) ->0, 29bit -> 1 */
-  #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 #endif
 /*@}*/
 
@@ -833,18 +756,6 @@
 // e.g. #include <MaskDefinition/IsoTerminalObjectSelection.inc>
 #endif
 
-/** default values for global masks
-    only use first 3 bits (PRI)
-    for CAN 2.0A 11bit
-*/
-#define DEFAULT_CAN_GLOB_MASK 0x0700
-/** default values for global masks
-    only use first 3 bits (PRI)
-    for CAN 2.0B 29bit
-*/
-#define DEFAULT_CAN_MASK_LASTMSG 0x00000000
-/*@}*/
-
 
 /* ******************************************************** */
 /**
@@ -1109,10 +1020,10 @@
     #ifndef UNICODE
       #define EXTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
       #define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
-	#else
+    #else
       #define EXTERNAL_DEBUG_DEVICE STL_NAMESPACE::wcout
       #define EXTERNAL_DEBUG_DEVICE_NEWLINE L"\r\n"
-	#endif
+    #endif
     #define EXTERNAL_DEBUG_DEVICE_ENDL STL_NAMESPACE::endl
     #define EXTERNAL_DEBUG_FLUSH fflush(0);
   #else
@@ -1120,7 +1031,7 @@
     #ifndef UNICODE
       #define EXTERNAL_DEBUG_DEVICE_ENDL "\r\n"
       #define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
-	#else
+    #else
       #define EXTERNAL_DEBUG_DEVICE_ENDL L"\r\n"
       #define EXTERNAL_DEBUG_DEVICE_NEWLINE L"\r\n"
     #endif
@@ -1207,5 +1118,6 @@
   #define HAL_PC_RTE_DEFAULT_SERVER "rte4"
 #endif
 /*@}*/
+
 
 #endif
