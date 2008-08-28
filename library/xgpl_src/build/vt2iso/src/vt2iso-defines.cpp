@@ -103,7 +103,8 @@ char otCompTable [maxObjectTypesToCompare] [stringLength+1] = {
   "include_macro",
   "point",
   "language",
-  "fixedbitmap"
+  "fixedbitmap",
+  "invalid_reference"
 };
 
 uint64_t omcTypeTable [maxObjectTypesToCompare] = {

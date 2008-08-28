@@ -137,7 +137,7 @@ typedef struct {
 #define otPoint                   (58) // for Polygon Object
 #define otLanguage                (59) // for Working Set Object
 #define otFixedBitmap             (60) // for Picture Graphic Object "hack"
-
+#define otInvalidReference        (61) // 
 
 // Command Types (for Macros)
 #define ctHideShowObject         (0)
@@ -242,6 +242,7 @@ typedef struct {
 #define ombPoint             (uint64_t(1)<<58) // for Polygon Object
 #define ombLanguage          (uint64_t(1)<<59) // for Working Set Object
 #define ombFixedBitmap       (uint64_t(1)<<60) // for Picture Graphic Object "hack"
+#define ombInvalidReference  (uint64_t(1)<<61)
 
 // Attributes
 #define attrBackground_colour (0)
