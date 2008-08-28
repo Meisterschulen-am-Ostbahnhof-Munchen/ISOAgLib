@@ -258,6 +258,7 @@ private:
   friend class iVtClientServerCommunication_c;
   friend class iDevPropertyHandler_c;
   friend class __IsoAgLib::IsoTerminal_c;
+  friend class iProprietaryMessageClient_c;
 };
 
 }// End Namespace IsoAgLib

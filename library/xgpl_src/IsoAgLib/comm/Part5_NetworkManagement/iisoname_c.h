@@ -333,8 +333,10 @@ private:
   friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
   friend class iIsoFilter_s;
-  friend class __IsoAgLib::ProprietaryMessageHandler_c;
+  friend class iProprietaryMessageHandler_c;
+  friend class iProprietaryMessageClient_c;
   friend class __IsoAgLib::TimePosGps_c;
+  friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */
