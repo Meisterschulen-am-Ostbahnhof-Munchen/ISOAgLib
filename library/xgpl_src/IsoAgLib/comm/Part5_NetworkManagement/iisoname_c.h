@@ -70,6 +70,7 @@
 namespace __IsoAgLib
 { // forward declarations
   class ProprietaryMessageHandler_c;
+  class ProprietaryMessageClient_c;
   class TimePosGps_c;
 }
 
@@ -78,6 +79,8 @@ namespace IsoAgLib {
 
 // forward declarations
 class iEepromIo_c;
+class iProprietaryMessageHandler_c;
+class iProprietaryMessageClient_c;
 
 /** handle the 64bit ISO11783 NAME field
   with input/output from/to 8byte string
@@ -336,7 +339,8 @@ private:
   friend class iProprietaryMessageHandler_c;
   friend class iProprietaryMessageClient_c;
   friend class __IsoAgLib::TimePosGps_c;
-  friend class __IsoAgLib::ProprietaryMessageHandler_c;
+  friend class __IsoAgLib::ProprietaryMessageClient_c;
+  friend class __IsoAgLib::TimePosGps_c;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

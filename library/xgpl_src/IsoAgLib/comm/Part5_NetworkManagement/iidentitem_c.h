@@ -65,6 +65,8 @@
 namespace __IsoAgLib {
   class IsoTerminal_c;
   class DevPropertyHandler_c;
+  class ProprietaryMessageHandler_c;
+  class ProprietaryMessageClient_c;
 }
 
 // Begin Namespace IsoAgLib
@@ -72,6 +74,8 @@ namespace IsoAgLib {
 // predeclare iIsoTerminal_c, as this class is allowed to access private ( hidden )
 // elements of this class exclusively ( see friend declaration at end of this file )
 class iIsoTerminal_c;
+class iProprietaryMessageHandler_c;
+class iProprietaryMessageClient_c;
 
 /**
   class for identity/ies which are managed by the actual ECU;
@@ -258,7 +262,10 @@ private:
   friend class iVtClientServerCommunication_c;
   friend class iDevPropertyHandler_c;
   friend class __IsoAgLib::IsoTerminal_c;
+  friend class iProprietaryMessageHandler_c;
   friend class iProprietaryMessageClient_c;
+  friend class __IsoAgLib::ProprietaryMessageHandler_c;
+  friend class __IsoAgLib::ProprietaryMessageClient_c;
 };
 
 }// End Namespace IsoAgLib
