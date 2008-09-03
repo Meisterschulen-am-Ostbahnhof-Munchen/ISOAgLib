@@ -338,8 +338,8 @@ private:
   friend class iIsoFilter_s;
   friend class iProprietaryMessageHandler_c;
   friend class iProprietaryMessageClient_c;
-  friend class __IsoAgLib::TimePosGps_c;
   friend class __IsoAgLib::ProprietaryMessageClient_c;
+  friend class __IsoAgLib::ProprietaryMessageHandler_c;
   friend class __IsoAgLib::TimePosGps_c;
 };
 
