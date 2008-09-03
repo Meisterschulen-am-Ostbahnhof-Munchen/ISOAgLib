@@ -1212,9 +1212,9 @@ bool vt2iso_c::checkForFileOrFile148 (const char *tag)
       case -1:
         return false;
     }
-    if (errMsg.length() == 0)
+    if (errMsg.length() > 0)
     {
-      std::cerr <<  errMsg;
+      std::cerr << errMsg;
       return false;
     }
   }
