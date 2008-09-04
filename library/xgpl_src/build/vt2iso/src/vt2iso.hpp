@@ -308,6 +308,8 @@ private:
 public:
   bool isVerbose() { return mb_verbose; }
 
+  static FILE& save_fopen (const std::string& arcstr_fileName, const char* apcc_mode);
+
 private:
   bool firstLineFileE;
 

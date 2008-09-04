@@ -401,6 +401,16 @@ std::string OneAttribute_c::getObjectReferencePrefixed (const std::string& arstr
 
 
 
+FILE& vt2iso_c::save_fopen (const std::string& arcstr_fileName, const char* apcc_mode)
+{
+  FILE* handle = fopen (arcstr_fileName.c_str(), apcc_mode);
+  if (handle) return *handle;
+
+  std::cerr << "Couldn't open '" << arcstr_fileName << "' (with mode '"<<apcc_mode<<"'). Terminating." << std::endl;
+  exit (-1);
+}
+
+
 bool vt2iso_c::sb_WSFound = false;
 
 void vt2iso_c::clean_exit (const char* error_message)
@@ -602,9 +612,8 @@ void vt2iso_c::clean_exit (const char* error_message)
     extension.clear();
 
   // Write Direct includes
-  partFileName = xmlFileGlobal;
-  partFileName+="_direct.h";
-  partFile_direct = fopen (partFileName.c_str(),"wt");
+  partFileName = xmlFileGlobal + "_direct.h";
+  partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath.c_str());
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
@@ -626,9 +635,8 @@ void vt2iso_c::clean_exit (const char* error_message)
 
 
   // Write Derived Includes (-cpp)
-  partFileName = xmlFileGlobal;
-  partFileName += "_derived-cpp.h";
-  partFile_direct = fopen (partFileName.c_str(),"wt");
+  partFileName = xmlFileGlobal + "_derived-cpp.h";
+  partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath.c_str());
   fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath.c_str(), extension.c_str());
@@ -647,9 +655,8 @@ void vt2iso_c::clean_exit (const char* error_message)
 
 
   // Write Derived Includes (-h)
-  partFileName = xmlFileGlobal;
-  partFileName += "_derived-h.h";
-  partFile_direct = fopen (partFileName.c_str(),"wt");
+  partFileName = xmlFileGlobal + "_derived-h.h";
+  partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
   fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath.c_str());
@@ -890,7 +897,7 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
   if (!ab_onlyClose)
   {
     partFileName = str(format("%s-function%d.cpp") % xmlFileGlobal % splitFunctionPart);
-    partFile_split_function = fopen (partFileName.c_str(), "wt");
+    partFile_split_function = &save_fopen (partFileName.c_str(), "wt");
 
     fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", xmlFileGlobal.c_str());
@@ -942,35 +949,20 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 // partFile_variables = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
 // fclose (partFile_variables);
-  partFileName = xmlFileGlobal;
-  partFileName += "-variables.inc";
-  partFile_variables = fopen (partFileName.c_str(),"wt");
-  if (partFile_variables == NULL)
-    clean_exit ("Couldn't create -variables.inc.");
+  partFileName = xmlFileGlobal + "-variables.inc";
+  partFile_variables = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-variables-extern.inc";
-  partFile_variables_extern = fopen (partFileName.c_str(),"wt");
-  if (partFile_variables_extern == NULL)
-    clean_exit ("Couldn't create -variables-extern.inc.");
+  partFileName = xmlFileGlobal + "-variables-extern.inc";
+  partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-attributes.inc";
-  partFile_attributes = fopen (partFileName.c_str(),"wt");
-  if (partFile_attributes == NULL)
-    clean_exit ("Couldn't create -attributes.inc.");
+  partFileName = xmlFileGlobal + "-attributes.inc";
+  partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-attributes-extern.inc";
-  partFile_attributes_extern = fopen (partFileName.c_str(),"wt");
-  if (partFile_attributes_extern == NULL)
-    clean_exit ("Couldn't create -attributes_extern.inc.");
+  partFileName = xmlFileGlobal + "-attributes-extern.inc";
+  partFile_attributes_extern = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-functions.inc";
-  partFile_functions = fopen (partFileName.c_str(),"wt");
-  if (partFile_functions == NULL)
-    clean_exit ("Couldn't create -functions.inc.");
+  partFileName = xmlFileGlobal + "-functions.inc";
+  partFile_functions = &save_fopen (partFileName.c_str(),"wt");
 
   if (b_externalize)
   {
@@ -981,34 +973,22 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   }
   fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
-  partFileName = xmlFileGlobal;
-  partFileName += "-functions-origin.inc";
-  partFile_functions_origin = fopen (partFileName.c_str(),"wt");
-  if (partFile_functions_origin == NULL)
-    clean_exit ("Couldn't create -functions-origin.inc.");
+  partFileName = xmlFileGlobal + "-functions-origin.inc";
+  partFile_functions_origin = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-defines.inc";
-  partFile_defines = fopen (partFileName.c_str(),"wt");
-  if (partFile_defines == NULL)
-    clean_exit ("Couldn't create -defines.inc.");
+  partFileName = xmlFileGlobal + "-defines.inc";
+  partFile_defines = &save_fopen (partFileName.c_str(),"wt");
 
-  partFile_obj_selection = fopen ("IsoTerminalObjectSelection.inc","wt");
-  if (partFile_obj_selection == NULL)
-    clean_exit ("Couldn't create IsoTerminalObjectSelection.inc.");
+  partFile_obj_selection = &save_fopen ("IsoTerminalObjectSelection.inc","wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-list.inc";
-  partFile_list = fopen (partFileName.c_str(),"wt");
-  if (partFile_list == NULL)
-    clean_exit ("Couldn't create -list.inc.");
+  partFileName = xmlFileGlobal + "-list.inc";
+  partFile_list = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-handler-direct.inc";
+  partFileName = xmlFileGlobal + "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
-  partFile_handler_direct = fopen (partFileName.c_str(),"rb");
+  partFile_handler_direct = fopen (partFileName.c_str(),"rb"); // intentionally NO save_fopen!!
   if (partFile_handler_direct) 
   {
    // could open file, so it exists --> don't overwrite - create "-template" then
@@ -1016,39 +996,31 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
     partFileName += "-template";
   }
   // else: file couldn't be opened, so create it, simply write to it...
-  partFile_handler_direct = fopen (partFileName.c_str(),"wt");
-  if (partFile_handler_direct == NULL)
-    clean_exit ("Couldn't create -handler_direct.inc.");
+  partFile_handler_direct = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal;
-  partFileName += "-handler-derived.inc";
-  partFile_handler_derived = fopen (partFileName.c_str(),"wt");
-  if (partFile_handler_derived == NULL)
-    clean_exit ("Couldn't create -handler_derived.inc.");
+  partFileName = xmlFileGlobal + "-handler-derived.inc";
+  partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
 
   FILE* partFileTmp;
 
   if (b_externalize)
   {
-    partFileName = xmlFileGlobal;
-    partFileName += "-variables.cpp";
-    partFileTmp = fopen (partFileName.c_str(), "wt");
+    partFileName = xmlFileGlobal + "-variables.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
 
-    partFileName = xmlFileGlobal;
-    partFileName += "-attributes.cpp";
-    partFileTmp = fopen (partFileName.c_str(), "wt");
+    partFileName = xmlFileGlobal + "-attributes.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", xmlFile.c_str());
     fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", xmlFile.c_str());
     fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
 
-    partFileName = xmlFileGlobal;
-    partFileName += "-list.cpp";
-    partFileTmp = fopen (partFileName.c_str(), "wt");
+    partFileName = xmlFileGlobal + "-list.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-list.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
@@ -2132,7 +2104,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             /// Also add this language to the intern language-table!
             std::string langFileName;
             langFileName = str(format("%s-list%02d.inc") % xmlFileGlobal % ui_languages);
-            arrs_language [ui_languages].partFile = fopen (langFileName.c_str(), "wt");
+            arrs_language [ui_languages].partFile = &save_fopen (langFileName.c_str(), "wt");
             langFileName = str(format("IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s%d [] = {") % mstr_poolIdent % ui_languages);
             fputs (langFileName.c_str(), arrs_language [ui_languages].partFile);
             arrs_language [ui_languages].code[0] = languageCode[0];
@@ -4458,7 +4430,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       strLength = arrc_attributes [attrNew_value].getLength();
       for(int i = 0; i < strLength; i++)
       {
-        tempString2+= str(format(", %d") % arrc_attributes [attrNew_value].getCharacterAtPos(i));
+        tempString2+= str(format(", %d") % ((unsigned int)arrc_attributes [attrNew_value].getCharacterAtPos(i)));
       }
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       signed long int retBytesInString = arrc_attributes [attrBytes_in_string].getIntValue();
@@ -4766,7 +4738,7 @@ int main(int argC, char* argV[])
   if (generatePalette)
   {
     std::cout << "Generating ISO11783-6(VT)-Palette to 'iso11783vt-palette.act'..." << std::endl;
-    FILE* paletteFile = fopen ("iso11783vt-palette.act", "wt");
+    FILE* paletteFile = &vt2iso_c::save_fopen ("iso11783vt-palette.act", "wt");
     RGB_s vtColourTableRGB [256];
     for (int i=0; i<256; i++)
     {
@@ -5060,12 +5032,7 @@ vt2iso_c::clearAndSetElements (DOMNode *child, const std::vector <int> &avec)
 bool
 vt2iso_c::processProjectFile(const std::string& pch_fileName)
 {
-  FILE* prjFile = fopen(pch_fileName.c_str(),"r");
-  if (!prjFile)
-  {
-    std::cerr <<  "Couldn't open the project file '" << pch_fileName << "'." << std::endl;
-    return false;
-  }
+  FILE* prjFile = &save_fopen(pch_fileName.c_str(),"r");
   fclose (prjFile);
 
   const std::string xmlFile = pch_fileName;
