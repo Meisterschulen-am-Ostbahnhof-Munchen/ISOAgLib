@@ -57,7 +57,6 @@
 #include <ctype.h>
 
 #ifdef WIN32
-  #include <windows.h>
   #include <dos.h>
 
 extern "C" {

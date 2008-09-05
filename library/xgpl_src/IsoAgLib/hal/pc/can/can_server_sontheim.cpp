@@ -64,10 +64,6 @@ typedef int HINSTANCE;
 
 #define USE_THREAD
 
-#ifdef WIN32
-#include <windows.h>
-#endif
-
 #include <stdio.h>
 #ifdef WIN32
 #include <conio.h>

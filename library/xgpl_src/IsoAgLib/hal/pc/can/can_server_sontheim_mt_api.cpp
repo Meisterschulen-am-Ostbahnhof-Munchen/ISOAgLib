@@ -62,9 +62,6 @@ typedef int HINSTANCE;
 #include <ctype.h>
 #include <IsoAgLib/hal/system.h>
 
-
-
-#include <windows.h>
 #include <stdio.h>
 #include <conio.h>
 #include <time.h>
