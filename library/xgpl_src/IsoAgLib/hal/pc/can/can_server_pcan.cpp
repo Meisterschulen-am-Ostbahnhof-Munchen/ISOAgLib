@@ -280,7 +280,9 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     if (ret < 0)
     {
       perror("sendToBus ioctl");
-      return 0;
+      // return success to IsoAgLib, because can_server_msq returns otherwise HAL_OVERFLOW_ERR to upper layer
+      // but can_server should continue to work even when the CAN device does not work correctly
+      return 1;
     }
 
     updatePendingMsgs(pc_serverData, ui8_bus);
