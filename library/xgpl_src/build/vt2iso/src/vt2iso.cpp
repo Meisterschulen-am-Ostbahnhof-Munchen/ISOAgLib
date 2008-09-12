@@ -231,11 +231,12 @@ static void usage()
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -p     Output ISO11783-VT Palette to act-file.\n"
     " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
-    " -m     More informative output. (verbose-mode)"<<std::endl;
+    " -m     More informative output. (verbose-mode)\n"
+    " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char)\n"
+    " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"<<std::endl;
 
 #ifdef USE_SPECIAL_PARSING
     std::cout <<
-    " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char\n"
     " -dict=xxx Specify the relative path to the resource dictionary"<<std::endl;
 #endif
   std::cout << " -?    Show this help."<<std::endl<<std::endl<< std::endl;
@@ -612,7 +613,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     extension.clear();
 
   // Write Direct includes
-  partFileName = xmlFileGlobal + "_direct.h";
+  partFileName = mstr_outDirAndProjectPrefix + "_direct.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath.c_str());
@@ -635,7 +636,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
 
   // Write Derived Includes (-cpp)
-  partFileName = xmlFileGlobal + "_derived-cpp.h";
+  partFileName = mstr_outDirAndProjectPrefix + "_derived-cpp.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath.c_str());
@@ -655,7 +656,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
 
   // Write Derived Includes (-h)
-  partFileName = xmlFileGlobal + "_derived-h.h";
+  partFileName = mstr_outDirAndProjectPrefix + "_derived-h.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
@@ -896,7 +897,7 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
   }
   if (!ab_onlyClose)
   {
-    partFileName = str(format("%s-function%d.cpp") % xmlFileGlobal % splitFunctionPart);
+    partFileName = str(format("%s-function%d.cpp") % mstr_outDirAndProjectPrefix % splitFunctionPart);
     partFile_split_function = &save_fopen (partFileName.c_str(), "wt");
 
     fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
@@ -908,7 +909,7 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
   }
 }
 
-void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose)
+void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
@@ -923,6 +924,26 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
     /* @todo maybe better cleanup. return false? or alike... */
     exit (-1);
   }
+
+  const size_t csize_outDir = arcstr_outDir.length();
+  if (csize_outDir > 0)
+  {
+    mstr_outDirAndProjectPrefix =  arcstr_outDir;
+    if ( (arcstr_outDir[csize_outDir-1] != '\\') &&
+         (arcstr_outDir[csize_outDir-1] != '/') )
+    { // append (back)slash
+      mstr_outDirAndProjectPrefix.append (
+#ifdef WIN32
+                            "\\"
+#else
+                            "/"
+#endif
+                           );
+    }
+    mstr_outDirAndProjectPrefix.append (c_project);
+  }
+  else
+    mstr_outDirAndProjectPrefix = xmlFileGlobal;
 
   b_externalize = ab_externalize;
   b_disableContainmentRules = ab_disableContainmentRules;
@@ -946,22 +967,30 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   {
     arrb_objTypes[i] = false;
   }
+
+
+  /// Let's go....
+  std::cout
+      << "--> Project's Dir: " << c_directory << std::endl
+      << "--> Project-Name:  " << c_project << std::endl
+      << "--> Output Files:  " << mstr_outDirAndProjectPrefix << "..." << std::endl;
+
 // partFile_variables = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
 // fclose (partFile_variables);
-  partFileName = xmlFileGlobal + "-variables.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-variables.inc";
   partFile_variables = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-variables-extern.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-variables-extern.inc";
   partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-attributes.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-attributes.inc";
   partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-attributes-extern.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-attributes-extern.inc";
   partFile_attributes_extern = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-functions.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-functions.inc";
   partFile_functions = &save_fopen (partFileName.c_str(),"wt");
 
   if (b_externalize)
@@ -973,20 +1002,21 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   }
   fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
-  partFileName = xmlFileGlobal + "-functions-origin.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-functions-origin.inc";
   partFile_functions_origin = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-defines.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-defines.inc";
   partFile_defines = &save_fopen (partFileName.c_str(),"wt");
 
-  partFile_obj_selection = &save_fopen ("IsoTerminalObjectSelection.inc","wt");
+  partFileName = mstr_outDirAndProjectPrefix + "-objectselection.inc";
+  partFile_obj_selection = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-list.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-list.inc";
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
 
-  partFileName = xmlFileGlobal + "-handler-direct.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
   partFile_handler_direct = fopen (partFileName.c_str(),"rb"); // intentionally NO save_fopen!!
   if (partFile_handler_direct) 
@@ -998,20 +1028,20 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   // else: file couldn't be opened, so create it, simply write to it...
   partFile_handler_direct = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = xmlFileGlobal + "-handler-derived.inc";
+  partFileName = mstr_outDirAndProjectPrefix + "-handler-derived.inc";
   partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
 
   FILE* partFileTmp;
 
   if (b_externalize)
   {
-    partFileName = xmlFileGlobal + "-variables.cpp";
+    partFileName = mstr_outDirAndProjectPrefix + "-variables.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
 
-    partFileName = xmlFileGlobal + "-attributes.cpp";
+    partFileName = mstr_outDirAndProjectPrefix + "-attributes.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", xmlFile.c_str());
@@ -1019,7 +1049,7 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
     fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", xmlFile.c_str());
     fclose (partFileTmp);
 
-    partFileName = xmlFileGlobal + "-list.cpp";
+    partFileName = mstr_outDirAndProjectPrefix + "-list.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
     fprintf (partFileTmp, "#include \"%s-list.inc\"\n", xmlFile.c_str());
@@ -1381,7 +1411,6 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
         else
           filename = str_tmpWorkDir + iter->str_pathName + "/" + arrc_attributes [attrFile].get();
       }
-
       if (stat(filename.c_str(), &s_stat) == 0)
         break;
     }
@@ -1747,6 +1776,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             Path_s s_bitmapPath;
             s_bitmapPath.str_pathName = attr_value;
+            s_bitmapPath.b_relativePath = true;
             l_stdBitmapPath.push_back(s_bitmapPath);
             continue;
           }
@@ -1754,6 +1784,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             Path_s s_bitmapPath;
             s_bitmapPath.str_pathName = attr_value;
+            s_bitmapPath.b_relativePath = true;
             l_fixedBitmapPath.push_back(s_bitmapPath);
             continue;
           }
@@ -2103,7 +2134,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
             /// Also add this language to the intern language-table!
             std::string langFileName;
-            langFileName = str(format("%s-list%02d.inc") % xmlFileGlobal % ui_languages);
+            langFileName = str(format("%s-list%02d.inc") % mstr_outDirAndProjectPrefix % ui_languages);
             arrs_language [ui_languages].partFile = &save_fopen (langFileName.c_str(), "wt");
             langFileName = str(format("IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s%d [] = {") % mstr_poolIdent % ui_languages);
             fputs (langFileName.c_str(), arrs_language [ui_languages].partFile);
@@ -2406,7 +2437,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   return false;
                 }
                 /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
-                if (pc_id.compare(objName) == 0)
+                if ((mstr_poolIdent+pc_id).compare(objName) == 0)
                 { // set value and break
                   //std::cout << "found language value for [" << objName << "]."<<std::endl;
                   b_foundValue = true;
@@ -4067,8 +4098,6 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
     }
   }
 
-  std::cout << "--> Directory: " << c_directory << std::endl << "--> Project:   " << c_project << std::endl;
-
   // finished preparations on directory -> needed in processElement(...)
   std::string c_directoryCompareItem;
 
@@ -4651,6 +4680,7 @@ int main(int argC, char* argV[])
   bool b_disableContainmentRules = false;
   std::string poolIdentStr;
   std::string localeStr;
+  std::string str_outDir;
   int argInd;
   for (argInd = 1; argInd < argC; argInd++)
   {
@@ -4682,17 +4712,17 @@ int main(int argC, char* argV[])
       }
     }
     else if (!strcmp(argV[argInd], "-n")
-              ||  !strcmp(argV[argInd], "-N"))
+         ||  !strcmp(argV[argInd], "-N"))
     {
       doNamespaces = true;
     }
     else if (!strcmp(argV[argInd], "-s")
-              ||  !strcmp(argV[argInd], "-S"))
+         ||  !strcmp(argV[argInd], "-S"))
     {
       doSchema = true;
     }
     else if (!strcmp(argV[argInd], "-f")
-              ||  !strcmp(argV[argInd], "-F"))
+         ||  !strcmp(argV[argInd], "-F"))
     {
       schemaFullChecking = true;
     }
@@ -4702,24 +4732,29 @@ int main(int argC, char* argV[])
       localeStr.assign (&argV[argInd][8]);
     }
     else if (!strcmp(argV[argInd], "-p")
-              ||  !strcmp(argV[argInd], "-P"))
+         ||  !strcmp(argV[argInd], "-P"))
     {
       generatePalette = true;
     }
     else if (!strcmp(argV[argInd], "-e")
-              ||  !strcmp(argV[argInd], "-E"))
+         ||  !strcmp(argV[argInd], "-E"))
     {
       externalize = true;
     }
     else if (!strcmp(argV[argInd], "-m")
-              ||  !strcmp(argV[argInd], "-M"))
+         ||  !strcmp(argV[argInd], "-M"))
     {
       verbose = true;
     }
     else if (!strncmp(argV[argInd], "-i=", 3)
-              ||  !strncmp(argV[argInd], "-I=", 3))
+         ||  !strncmp(argV[argInd], "-I=", 3))
     {
       poolIdentStr.assign (&argV[argInd][3]);
+    }
+    else if (!strncmp(argV[argInd], "-o=", 3)
+         ||  !strncmp(argV[argInd], "-O=", 3))
+    {
+      str_outDir.assign (&argV[argInd][3]);
     }
     else if (!strncmp(argV[argInd], "-dict=", 6))
     {
@@ -4809,7 +4844,7 @@ int main(int argC, char* argV[])
     // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose);
+  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir);
   pc_vt2iso->parse();
 
   //  Delete the parser itself.  Must be done prior to calling Terminate, below.
@@ -4976,10 +5011,12 @@ void vt2iso_c::markIds (DOMNode *n)
 #ifdef DEBUG
         std::cout << "Setting Uid" << id << " to true!"<<std::endl;
 #endif
+        continue;
       }
       if (local_attrName.compare("name") == 0)
       {
-        name = local_attrValue;
+        name = str(format("%s%s") % mstr_poolIdent % local_attrValue);
+        continue;
       }
     }
     // now check if a pair with name/id was found

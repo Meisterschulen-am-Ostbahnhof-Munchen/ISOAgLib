@@ -11,6 +11,7 @@ public:
   /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */
   //virtual void eventStringValueAbort();
   virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode);
+  // virtual void eventVtSelectInputObject(uint16_t aui16_objectId, uint8_t aui8_hasFocus, uint8_t aui8_selected);
   //virtual void eventPrepareForLanguageChange (int8_t ai8_languageIndex, uint16_t aui16_languageCode);
   virtual void eventEnterSafeState ();
   /* Uncomment the following function if you want to use command-response handling! */
@@ -22,7 +23,7 @@ public:
   /* Uncomment the following function if you want to react on any incoming VT Status messages */
   //virtual void eventVtStatusMsg();
   /* Uncomment the following function if you want to react on any incoming VT ESC */
-  //virtual void eventVtESC();
+  //virtual void eventVtESC(uint16_t /*aui16_ObjectId*/);
   /* Uncomment the following function if you want to react on any incoming Auxiliary Input Status messages */
   //virtual void eventAuxFunctionValue (uint16_t mui16_functionUid, uint16_t cui16_inputValueAnalog, uint16_t cui16_inputValueTransitions, uint8_t cui8_inputValueDigital);
   /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */

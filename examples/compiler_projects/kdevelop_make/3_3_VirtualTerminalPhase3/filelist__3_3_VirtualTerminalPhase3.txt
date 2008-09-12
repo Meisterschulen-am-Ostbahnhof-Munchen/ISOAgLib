@@ -86,6 +86,7 @@
 ../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h
 ../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h
 ../../../../library/xgpl_src/IsoAgLib/util/config.h
+../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h
 ../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h
 ../../../../library/xgpl_src/IsoAgLib/util/convert.h
 ../../../../library/xgpl_src/IsoAgLib/hal/config.h

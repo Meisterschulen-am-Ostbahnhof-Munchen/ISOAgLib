@@ -409,59 +409,60 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
 
 	switch(pressChangeFill) {
 	  case 1:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
-            iVtObjectBigGC.drawRectangle( iVtPoint_c( 250, 250 ) );
+             iVtObjectBigGC.setGraphicsCursor( 5,5 );
+            iVtObjectBigGC.drawRectangle( 250, 250 );
 	    break;
 	  case 2:
 	    iVtObjectBigGC.zoomViewport( -1 );
 	    break;
 	  case 3:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
-            iVtObjectBigGC.eraseRectangle( iVtPoint_c( 250, 250 ) );
-            iVtObjectBigGC.drawLine( iVtPoint_c( 5, 5 ) );
+            iVtObjectBigGC.setGraphicsCursor( 5,5 );
+            iVtObjectBigGC.eraseRectangle( 250, 250 );
+            iVtObjectBigGC.drawLine( 5, 5 );
 
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 100,50 ) );
-            iVtObjectBigGC.drawClosedEllipse( iVtPoint_c( 130, 90 ) );
+            iVtObjectBigGC.setGraphicsCursor( 100,50 );
+            iVtObjectBigGC.drawClosedEllipse( 130, 90 );
 
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5, 250 ) );
-            iVtObjectBigGC.drawLine( iVtPoint_c( 250, 5 ) );
+            iVtObjectBigGC.setGraphicsCursor( 5, 250 );
+            iVtObjectBigGC.drawLine( 250, 5 );
 	    break;
 	  case 4:
-	    iVtObjectBigGC.panAndZoomViewport( iVtPoint_c( -50, -50 ), -2 );
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
+	    iVtObjectBigGC.panAndZoomViewport( -50, -50, -2 );
+            iVtObjectBigGC.setGraphicsCursor( 5,5 );
             {
+/** @todo Adapt to new parameter-format
               iVtPoint_c pc_point[4];
               pc_point[0] = iVtPoint_c( 45, 45 );
               pc_point[1] = iVtPoint_c( 45,  5 );
               pc_point[2] = iVtPoint_c(  5, 45 );
               pc_point[3] = iVtPoint_c(  5,  5 );
-              iVtObjectBigGC.drawPolygon( sizeof(pc_point)/sizeof(*pc_point), pc_point );
+              iVtObjectBigGC.drawPolygon( sizeof(pc_point)/sizeof(*pc_point), pc_point );*/
             }
 	    break;
 	  case 5:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 5,5 ) );
+            iVtObjectBigGC.setGraphicsCursor( 5,5 );
             iVtObjectBigGC.drawText( 1, strlen(text), text );
-            iVtObjectBigGC.drawLine( iVtPoint_c( 0, 64 ) );
+            iVtObjectBigGC.drawLine( 0, 64 );
             break;
 	  case 6:
-            iVtObjectBigGC.panAndZoomViewport( iVtPoint_c( 80, 80 ), -1 );
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 80,80 ) );
+            iVtObjectBigGC.panAndZoomViewport( 80, 80, -1 );
+            iVtObjectBigGC.setGraphicsCursor( 80,80 );
             iVtObjectBigGC.drawVtObject( &iVtObjectBigLogo );   // drawPictureGraphics
             break;
 	  case 7:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 100,100 ) );
+            iVtObjectBigGC.setGraphicsCursor( 100,100 );
             iVtObjectBigGC.drawVtObject( &iVtObjectBigGC );     // drawGraphicsContext
             break;
 	  case 8:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 120,120 ) );
+            iVtObjectBigGC.setGraphicsCursor( 120,120 );
             iVtObjectBigGC.drawVtObject( &iVtObjectdMeter );    // drawMeter
             break;
 	  case 9:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 140,140 ) );
+            iVtObjectBigGC.setGraphicsCursor( 140,140 );
             iVtObjectBigGC.drawVtObject( &iVtObjectUnnamed10 );    // drawOutputNumber
             break;
 	  case 10:
-            iVtObjectBigGC.setGraphicsCursor( iVtPoint_c( 160,160 ) );
+            iVtObjectBigGC.setGraphicsCursor( 160,160 );
             iVtObjectBigGC.drawVtObject( &iVtObjectLikeIt );    // drawOutputString
             break;
 	  case 11:

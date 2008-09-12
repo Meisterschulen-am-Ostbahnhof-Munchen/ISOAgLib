@@ -49,12 +49,6 @@
 #ifndef USE_VTOBJECT_polygon
 	#define USE_VTOBJECT_polygon
 #endif
-#ifndef USE_VTOBJECT_meter
-	#define USE_VTOBJECT_meter
-#endif
-#ifndef USE_VTOBJECT_linearbargraph
-	#define USE_VTOBJECT_linearbargraph
-#endif
 #ifndef USE_VTOBJECT_archedbargraph
 	#define USE_VTOBJECT_archedbargraph
 #endif
@@ -63,9 +57,6 @@
 #endif
 #ifndef USE_VTOBJECT_numbervariable
 	#define USE_VTOBJECT_numbervariable
-#endif
-#ifndef USE_VTOBJECT_stringvariable
-	#define USE_VTOBJECT_stringvariable
 #endif
 #ifndef USE_VTOBJECT_fontattributes
 	#define USE_VTOBJECT_fontattributes
@@ -78,7 +69,4 @@
 #endif
 #ifndef USE_VTOBJECT_objectpointer
 	#define USE_VTOBJECT_objectpointer
-#endif
-#ifndef USE_VTOBJECT_macro
-	#define USE_VTOBJECT_macro
 #endif

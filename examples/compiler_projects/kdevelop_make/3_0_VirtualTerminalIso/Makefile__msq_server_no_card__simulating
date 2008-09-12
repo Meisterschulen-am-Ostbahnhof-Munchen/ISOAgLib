@@ -117,6 +117,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h \
 		../../../../library/xgpl_src/IsoAgLib/util/config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h \
 		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
 		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \

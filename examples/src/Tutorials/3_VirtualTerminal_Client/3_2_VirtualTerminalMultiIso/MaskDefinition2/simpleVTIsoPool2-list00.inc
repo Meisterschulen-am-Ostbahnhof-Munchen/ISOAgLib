@@ -1,5 +1,5 @@
-IsoAgLib::iVtObject_c* all_iVtObjects0_2 [] = {
-  &iVtObjectOutStrLang,
-  &iVtObjectOutStrSoftKey,
-  &iVtObjectFontAttributes_2_Normal6x8LangDep
+IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects0 [] = {
+ &iVtObjectFontAttributes_2_Normal6x8LangDep,
+ &iVtObjectOutStrSoftKey,
+ &iVtObjectOutStrLang
 };

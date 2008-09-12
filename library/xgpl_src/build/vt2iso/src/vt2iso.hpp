@@ -252,7 +252,7 @@ public:
 
   void getKeyCode();
 
-  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose);
+  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir);
 
   void parse();
 
@@ -376,6 +376,9 @@ private:
 
   // Assuming an 8 bit per pixel bitmap.
   unsigned char picBuffer [480*480];
+
+  // if no outdir is given, use XML/VTP-path.
+  std::string mstr_outDirAndProjectPrefix;
 
   std::string attr_name;
   std::string attr_value;

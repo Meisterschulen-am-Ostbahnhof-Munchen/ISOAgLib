@@ -693,19 +693,19 @@
 #endif
 #if defined USE_ISO_TERMINAL
   #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1
-    #define _autogen_config_header1_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION1/IsoTerminalObjectSelection.inc>
+    #define _autogen_config_header1_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION1>
     #include _autogen_config_header1_
   #endif
   #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION2
-    #define _autogen_config_header2_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION2/IsoTerminalObjectSelection.inc>
+    #define _autogen_config_header2_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION2>
     #include _autogen_config_header2_
   #endif
   #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION3
-    #define _autogen_config_header3_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION3/IsoTerminalObjectSelection.inc>
+    #define _autogen_config_header3_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION3>
     #include _autogen_config_header3_
   #endif
   #if defined PRJ_ISO_TERMINAL_OBJECT_SELECTION4
-    #define _autogen_config_header4_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION4/IsoTerminalObjectSelection.inc>
+    #define _autogen_config_header4_ <PRJ_ISO_TERMINAL_OBJECT_SELECTION4>
     #include _autogen_config_header4_
   #endif
 
