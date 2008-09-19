@@ -55,8 +55,12 @@
 
 
 // socket specific defines
-#define COMMAND_TRANSFER_PORT 36798
-#define DATA_TRANSFER_PORT    36799
+#ifndef CAN_SERVER_CHANNEL
+	#define CAN_SERVER_CHANNEL 0
+#endif
+
+#define COMMAND_TRANSFER_PORT (36798 + (CAN_SERVER_CHANNEL)*2)
+#define DATA_TRANSFER_PORT    (36799 + (CAN_SERVER_CHANNEL)*2)
 
 
 #include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
