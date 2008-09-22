@@ -229,7 +229,7 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
   for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = mvec_customer.begin(); iter != mvec_customer.end(); iter++ )
   {
-    if ( (*iter).pc_customer->isProprietaryMessageOnStandardizedCan() )
+    if ( iter->pc_customer->isProprietaryMessageOnStandardizedCan() )
     { // at least one CanCustomer_c  uses a proprietary protocol at a normal ISOBUS CanIo_c instance
       mb_performIsobusResolve = false;
     }
