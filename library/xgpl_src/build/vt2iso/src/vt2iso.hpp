@@ -252,7 +252,7 @@ public:
 
   void getKeyCode();
 
-  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir);
+  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace);
 
   void parse();
 
@@ -379,6 +379,10 @@ private:
 
   // if no outdir is given, use XML/VTP-path.
   std::string mstr_outDirAndProjectPrefix;
+
+  std::string mstr_namespaceDeclarationBegin;       // namespace BLA {
+  std::string mstr_namespaceDeclarationEnd;         // }
+  std::string mstr_namespacePrefix;                 // BLA::
 
   std::string attr_name;
   std::string attr_value;

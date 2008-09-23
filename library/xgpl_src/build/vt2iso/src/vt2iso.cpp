@@ -233,6 +233,7 @@ static void usage()
     " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
     " -m     More informative output. (verbose-mode)\n"
     " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char)\n"
+    " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
     " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"<<std::endl;
 
 #ifdef USE_SPECIAL_PARSING
@@ -533,9 +534,10 @@ void vt2iso_c::clean_exit (const char* error_message)
       fprintf (partFile_list, "\n  all_iVtObjects%s%d,", mstr_poolIdent.c_str(), i);
     fprintf (partFile_list, "\n  NULL // indicate end of list");
     fprintf (partFile_list, "\n};\n");
+    fprintf (partFile_list, mstr_namespaceDeclarationEnd.c_str());
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
-             proName.c_str(), proName.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
+    fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
+             proName.c_str(), proName.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFile_list);
   }
@@ -552,6 +554,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     // write implementation of handler class constructor into list
     // as there the list must be known
     // -> the handler decleration can be included from everywhere
+    fputs (mstr_namespaceDeclarationEnd.c_str(), arrs_language [i].partFile);
     fclose (arrs_language [i].partFile);
   }
 
@@ -665,6 +668,11 @@ void vt2iso_c::clean_exit (const char* error_message)
   /// if USE_SPECIAL_PARSING is defined additional output is done
   if (pc_specialParsing)
     pc_specialParsing->outputCollectedData2Files();
+
+  fprintf (partFile_variables, mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_variables_extern, mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_attributes, mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_attributes_extern, mstr_namespaceDeclarationEnd.c_str());
 
   if (partFile_direct)           fclose (partFile_direct);
   if (partFile_variables_extern) fclose (partFile_variables_extern);
@@ -909,7 +917,7 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
   }
 }
 
-void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir)
+void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
@@ -944,6 +952,19 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   }
   else
     mstr_outDirAndProjectPrefix = xmlFileGlobal;
+
+  std::string str_namespace;
+  if (arcstr_namespace == ":projectname:")
+    str_namespace = c_project;
+  else
+    str_namespace = arcstr_namespace;
+
+  if (!str_namespace.empty())
+  {
+    mstr_namespacePrefix = str_namespace + std::string("::");
+    mstr_namespaceDeclarationBegin = std::string("namespace ") + str_namespace + "\n" + std::string("{\n");
+    mstr_namespaceDeclarationEnd = std::string("}\n");
+  }
 
   b_externalize = ab_externalize;
   b_disableContainmentRules = ab_disableContainmentRules;
@@ -980,15 +1001,19 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 // fclose (partFile_variables);
   partFileName = mstr_outDirAndProjectPrefix + "-variables.inc";
   partFile_variables = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_variables, mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_outDirAndProjectPrefix + "-variables-extern.inc";
   partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_variables_extern, mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_outDirAndProjectPrefix + "-attributes.inc";
   partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_attributes, mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_outDirAndProjectPrefix + "-attributes-extern.inc";
   partFile_attributes_extern = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_attributes_extern, mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_outDirAndProjectPrefix + "-functions.inc";
   partFile_functions = &save_fopen (partFileName.c_str(),"wt");
@@ -1013,7 +1038,7 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 
   partFileName = mstr_outDirAndProjectPrefix + "-list.inc";
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
-
+  fprintf (partFile_list, mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
 
   partFileName = mstr_outDirAndProjectPrefix + "-handler-direct.inc";
@@ -2136,7 +2161,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::string langFileName;
             langFileName = str(format("%s-list%02d.inc") % mstr_outDirAndProjectPrefix % ui_languages);
             arrs_language [ui_languages].partFile = &save_fopen (langFileName.c_str(), "wt");
-            langFileName = str(format("IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s%d [] = {") % mstr_poolIdent % ui_languages);
+            langFileName = str(format("%sIsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s%d [] = {") % mstr_namespaceDeclarationBegin % mstr_poolIdent % ui_languages);
             fputs (langFileName.c_str(), arrs_language [ui_languages].partFile);
             arrs_language [ui_languages].code[0] = languageCode[0];
             arrs_language [ui_languages].code[1] = languageCode[1];
@@ -2518,7 +2543,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
         else
         {
-          fprintf (partFile_functions,         "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", objName.c_str(), pc_postfix.c_str(), objName.c_str(), pc_postfix.c_str());
+          fprintf (partFile_functions,         "  %siVtObject%s%s.init (&%siVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", mstr_namespacePrefix.c_str(), objName.c_str(), pc_postfix.c_str(), mstr_namespacePrefix.c_str(), objName.c_str(), pc_postfix.c_str());
         }
         fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName.c_str(), pc_postfix.c_str(), objID);
       }
@@ -4681,6 +4706,7 @@ int main(int argC, char* argV[])
   std::string poolIdentStr;
   std::string localeStr;
   std::string str_outDir;
+  std::string str_namespace;
   int argInd;
   for (argInd = 1; argInd < argC; argInd++)
   {
@@ -4755,6 +4781,16 @@ int main(int argC, char* argV[])
          ||  !strncmp(argV[argInd], "-O=", 3))
     {
       str_outDir.assign (&argV[argInd][3]);
+    }
+    else if (!strncmp(argV[argInd], "-g=", 3)
+         ||  !strncmp(argV[argInd], "-G=", 3))
+    {
+      str_namespace.assign (&argV[argInd][3]);
+    }
+    else if (!strcmp(argV[argInd], "-g")
+         ||  !strcmp(argV[argInd], "-G"))
+    {
+      str_namespace.assign (":projectname:"); // special key for projectname-use!
     }
     else if (!strncmp(argV[argInd], "-dict=", 6))
     {
@@ -4844,7 +4880,7 @@ int main(int argC, char* argV[])
     // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir);
+  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace);
   pc_vt2iso->parse();
 
   //  Delete the parser itself.  Must be done prior to calling Terminate, below.
