@@ -79,7 +79,8 @@ public:
   //  Operation: get_vtObjectButton_a
   const iVtObjectButton_s& get_vtObjectButton_a();
 
-
+//  Operation: select
+  bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 
 
   /// Operation: setSize
