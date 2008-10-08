@@ -85,6 +85,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <assert.h>
 
 
 #if defined(DEBUG_CAN)
