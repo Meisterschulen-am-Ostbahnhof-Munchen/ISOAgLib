@@ -167,6 +167,16 @@ const CanPkg_c& CanPkgExt_c::operator=(const CanPkg_c& acrc_right)
 }
 */
 
+/**
+  set an uint8_t value at specified position in string
+  @param ai8_pos position [0..7]
+  @param aui8_val uint8_t value to set
+*/
+void CanPkgExt_c::setUint8Data( int8_t ai8_pos, uint8_t aui8_val)
+{
+  assert((ai8_pos >= 0) && (ai8_pos < 8));
+  msc_data.setUint8Data(ai8_pos, aui8_val);
+}
 
 /**
   abstract function to transform the string data into flag values

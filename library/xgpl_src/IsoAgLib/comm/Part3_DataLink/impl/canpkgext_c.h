@@ -165,11 +165,10 @@ class CanPkgExt_c : public CanPkg_c
 
   /**
     set an uint8_t value at specified position in string
-    @param aui8_pos position [0..7]
+    @param ai8_pos position [0..7]
     @param aui8_val uint8_t value to set
   */
-  void setUint8Data( uint8_t aui8_pos, uint8_t aui8_val)
-    { msc_data.setUint8Data(aui8_pos, aui8_val);}
+  void setUint8Data( int8_t ai8_pos, uint8_t aui8_val);
 
   /**
     set an uint16_t value at specified position in string
