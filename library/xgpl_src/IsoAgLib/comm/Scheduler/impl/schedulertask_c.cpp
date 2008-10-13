@@ -38,6 +38,7 @@ namespace __IsoAgLib {
 Scheduler_Task_c::Scheduler_Task_c()
 : mui16_earlierInterval(75) //default 3/4 of timeperiod
 , mui16_latestInterval(50)   //default 1/2 of timeperiod
+, mb_alreadyClosed(true)
 , mi_executionTimeHealth( 0 )
 , mi32_nextRetriggerTime( 0 )
 , mui32_callCnt( 0 )
