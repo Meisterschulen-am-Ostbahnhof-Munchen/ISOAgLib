@@ -93,6 +93,16 @@ namespace __HAL
 
 
    /**
+      check if a send MsgObj can't send msgs from buffer to the
+      BUS (detecetd by comparing the inactive time with
+      CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
+      @param rui8_busNr number of the BUS to check
+      @param rui8_msgobjNr number of the MsgObj to check
+      @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
+   */
+   bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
+   
+   /**
       test if buffer of a MsgObj is full (e.g. no more
       msg can be put into buffer (important for TX objects))
       @param aui8_busNr number of the BUS to check
@@ -123,6 +133,13 @@ namespace __HAL
    */
    int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
 
+   /**
+      check if MsgObj is currently locked
+      @param rui8_busNr number of the BUS to check
+      @param rui8_msgobjNr number of the MsgObj to check
+      @return true -> MsgObj is currently locked
+   */
+   bool can_stateMsgobjLocked(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
    /*@}*/
 
    /* ************************************************** */
@@ -243,7 +260,78 @@ namespace __HAL
               HAL_RANGE_ERR == wrong BUS or MsgObj number
    */
    int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr);
+   
+  /**
+      change the Ident_c of an already initialised MsgObj
+      (class __IsoAgLib::Ident_c has ident and type 11/29bit)
+      @param rui8_busNr number of the BUS to config
+      @param rui8_msgobjNr number of the MsgObj to config
+      @param rrefc_ident filter ident of this MsgObj
+      @return HAL_NO_ERR == no error;
+              HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+              HAL_RANGE_ERR == wrong BUS or MsgObj number
+   */   
+   int16_t can_configMsgobjChgid(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::Ident_c& rrefc_ident);
 
+   /**
+      transfer front element in buffer into the pointed CANPkg_c;
+      DON'T clear this item from buffer.
+      @see can_useMsgobjPopFront for explicit clear of this front item
+      functions:
+      * setIdent(Ident_c& rrefc_ident)
+        -> set ident rrefc_ident of received msg in CANPkg
+      * uint8_t setDataFromString(uint8_t* rpb_data, uint8_t rb_dlc)
+        -> set DLC in CANPkg_c from rb_dlc and insert data from uint8_t string rpb_data
+      @param rui8_busNr number of the BUS to config
+      @param rui8_msgobjNr number of the MsgObj to config
+      @param rpc_data pointer to CANPkg_c instance with data to send
+      @return HAL_NO_ERR == no error;
+              HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
+              HAL_NOACT_ERR == BUS OFF
+              HAL_OVERFLOW_ERR == send buffer overflowed
+              HAL_RANGE_ERR == wrong BUS or MsgObj number
+              HAL_WARN_ERR == BUS WARN or no received message
+   */
+   int16_t can_useMsgobjGet(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data);
+   
+/**
+      lock a MsgObj to avoid further placement of messages into buffer.
+      @param rui8_busNr number of the BUS to config
+      @param rui8_msgobjNr number of the MsgObj to config
+      @param rb_doLock true==lock(default); false==unlock
+      @return HAL_NO_ERR == no error;
+              HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+              HAL_RANGE_ERR == wrong BUS or MsgObj number
+     */
+   int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
+   
+   /**
+      get the ident of a received message to decide about the further
+      processing before the whole data string is retreived
+      @param rui8_busNr number of the BUS to config
+      @param rui8_msgobjNr number of the MsgObj to config
+      @param reflIdent reference to the var, where the ident should be inserted
+      @return error code
+              HAL_NO_ERR == No problem
+              HAL_CONFIG_ERR == BUS not initialised, MsgObj is no RX object
+              HAL_NOACT_ERR == BUS OFF
+              HAL_OVERFLOW_ERR == send buffer overflowed
+              HAL_RANGE_ERR == wrong BUS or MsgObj number
+              HAL_WARN_ERR == BUS WARN or no received message
+   */
+   int32_t can_useMsgobjReceivedIdent(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, int32_t &reflIdent);   
+   
+   /**
+      Either register the currenct front item of buffer as not relevant,
+      or just pop the front item, as it was processed.
+      This explicit pop is needed, as one CAN message shall be served to
+      several CANCustomer_c instances, as long as one of them indicates a
+      succesfull process of the received message.
+      @param rui8_busNr number of the BUS to config
+      @param rui8_msgobjNr number of the MsgObj to config
+   */
+   void can_useMsgobjPopFront(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
+   
 #ifdef USE_CAN_SEND_DELAY_MEASUREMENT
    int32_t can_getMaxSendDelay(uint8_t aui8_busNr);
 #endif

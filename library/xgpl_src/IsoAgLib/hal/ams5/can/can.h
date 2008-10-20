@@ -14,6 +14,9 @@
 
 #include "hal_can_interface.h"
 
+// debug wegen timing Fendt          
+//#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+//static char teststring[200];
 
 namespace HAL
 {
@@ -139,6 +142,9 @@ namespace HAL
    */
    inline int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
    {
+//      sprintf(teststring,"Return wert Freecnt: %i\r\n",__HAL::can_stateMsgobjFreecnt(aui8_busNr, aui8_msgobjNr));
+//      HAL::put_rs232String((uint8_t*)(teststring), 1);
+
       return __HAL::can_stateMsgobjFreecnt(aui8_busNr, aui8_msgobjNr);
    };
 
@@ -223,17 +229,10 @@ namespace HAL
               C_RANGE == wrong BUS or MsgObj number
    */
 
-//#ifdef BIOSTEST
-//   inline int16_t can_configMsgobjInit(uint8_t BusNr, uint8_t ObjNr, uint32_t Ident, uint8_t Type, uint8_t RxTx)
-//   {
-//      return __HAL::can_configMsgobjInit(BusNr, ObjNr, Ident, Type, RxTx);
-//   };
-//#else
    inline int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx)
    {
       return __HAL::can_configMsgobjInit(aui8_busNr, aui8_msgobjNr, arc_ident, ab_rxtx);
    };
-//#endif
 
    /**
       change the the send rate for one MsgObj by setting the minimum
@@ -286,22 +285,10 @@ namespace HAL
               C_OVERFLOW == send buffer overflowed
               C_RANGE == wrong BUS or MsgObj number
    */
-#ifdef BIOSTEST
-   /**
-      send a message via a MsgObj
-      for BIOS-Test only!
-   */
-   inline int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, canBuffer_pt *CanMsg_pp)
-   {
-      return __HAL::can_useMsgobjSend(aui8_busNr, aui8_msgobjNr, CanMsg_pp);
-   };
-#else
    inline int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
    {
       return __HAL::can_useMsgobjSend(aui8_busNr, aui8_msgobjNr, apc_data);
    };
-#endif
-
 
    /**
       clear th buffer of a MsgObj (e.g. to stop sending retries)
