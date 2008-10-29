@@ -297,12 +297,12 @@ public:
   /**
      Gets called after recognizing an incoming VT proprietary message.
    */
-  virtual uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname) { return doEventProprietaryCommand(acr_isoname); };
+  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname) { return doEventProprietaryCommand(acr_isoname); };
 
   /**
   Gets called after recognizing an incoming VT proprietary message.
    */
-  virtual uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname, uint8_t aui8_commandByte, IsoAgLib::iStream_c& arc_stream)
+  uint8_t eventProprietaryCommand(iIsoName_c const &acr_isoname, uint8_t aui8_commandByte, IsoAgLib::iStream_c& arc_stream)
   { return doEventProprietaryCommand(acr_isoname, aui8_commandByte, arc_stream); };
 
   /**
