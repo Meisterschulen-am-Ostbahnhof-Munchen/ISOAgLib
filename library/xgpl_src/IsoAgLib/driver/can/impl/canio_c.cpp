@@ -594,6 +594,7 @@ FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_cus
       case PROPRIETARY_A_PGN: /** multipacket supported, data len 0..1785 bytes*/
       case PROPRIETARY_A2_PGN: /** multipacket supported, data len 0..1785 bytes*/
       case SOFTWARE_IDENTIFICATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
+      case ECU_IDENTIFICATION_INFORMATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
       case PROPRIETARY_B_PGN: /** variable data len: see SAE J1939 71 */
         i8_dataLen = -1;
         break;
