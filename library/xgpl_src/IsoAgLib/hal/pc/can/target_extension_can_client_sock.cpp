@@ -104,8 +104,7 @@ int32_t getStartUpTime()
 
 int32_t getPipeHandleForCanRcvEvent()
 {
-  return 0;
-  //return msqDataClient.i32_pipeHandle;
+  return i32_dataSocket;
 }
 
 
