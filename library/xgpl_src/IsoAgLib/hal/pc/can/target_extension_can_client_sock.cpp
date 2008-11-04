@@ -507,15 +507,15 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 }
 
 
-int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t /* bMsgObj */)
+int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t aui8_msgObjNr)
 {
 
-  DEBUG_PRINT2("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, bMsgObj);
+  DEBUG_PRINT2("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, aui8_msgObjNr);
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
-  //  clearReadQueue(bBusNumber, bMsgObj, msqDataClient.i32_rdHandle, msqDataClient.i32_pid);
-  //clearWriteQueue(bBusNumber, bMsgObj, msqDataClient.i32_wrHandle, msqDataClient.i32_pid);
+  //  clearReadQueue(bBusNumber, aui8_msgObjNr, msqDataClient.i32_rdHandle, msqDataClient.i32_pid);
+  //clearWriteQueue(bBusNumber, aui8_msgObjNr, msqDataClient.i32_wrHandle, msqDataClient.i32_pid);
 
   return HAL_NO_ERR;
 }
