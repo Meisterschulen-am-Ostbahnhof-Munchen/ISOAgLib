@@ -1415,6 +1415,12 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     // find matching path path for file
     struct stat s_stat;
 
+#ifdef WIN32
+	std::string str_concat = "\\";
+#else
+	std::string str_concat = "/";
+#endif
+
     std::list<Path_s>::const_iterator iter = rcl_stdBitmapPath.begin();
     for (; iter != rcl_stdBitmapPath.end(); ++iter)
     {
@@ -1427,14 +1433,15 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
         if (arrc_attributes [attrAbsolutePath1+actDepth].isGiven() && arrc_attributes [attrAbsolutePath1+actDepth].get().compare("1") == 0)
           filename = arrc_attributes [attrFile0+actDepth].get(); // absolute path in picture graphic object
         else
-          filename = str_tmpWorkDir + iter->str_pathName + "/" + arrc_attributes [attrFile0+actDepth].get();
+
+          filename = str_tmpWorkDir + iter->str_pathName + str_concat + arrc_attributes [attrFile0+actDepth].get();
       }
       else /* use std file for all depth */
       {
         if (arrc_attributes [attrAbsolutePath].isGiven() && arrc_attributes [attrAbsolutePath].get().compare("1") == 0)
           filename = arrc_attributes [attrFile].get();  // absolute path in picture graphic object
         else
-          filename = str_tmpWorkDir + iter->str_pathName + "/" + arrc_attributes [attrFile].get();
+          filename = str_tmpWorkDir + iter->str_pathName + str_concat + arrc_attributes [attrFile].get();
       }
       if (stat(filename.c_str(), &s_stat) == 0)
         break;
