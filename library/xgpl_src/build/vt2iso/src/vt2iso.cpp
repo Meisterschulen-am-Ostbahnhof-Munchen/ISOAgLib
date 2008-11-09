@@ -1380,7 +1380,7 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
   return true;
 }
 
-bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, unsigned int &options, int fixNr)
+bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, unsigned int &options, int& ref_maxDepth, int fixNr)
 {
   if (arrc_attributes [attrRle].isGiven())
   {
@@ -1392,22 +1392,60 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     options |= rle<<2;
   }
 
-  // generate all lower depth-bitmaps...
-  if (colourdepthtoi (arrc_attributes [attrFormat].get().c_str()) == -1)
-    return false;
-  for (int actDepth=0; actDepth <= colourdepthtoi (arrc_attributes [attrFormat].get().c_str()); actDepth++)
+  std::string arr_file[3];
+  bool b_absPath[3] = {false, false, false};
+
+  // fill up missing fileX with default file
+  if (arrc_attributes[attrFile].isGiven())
   {
-    if (fixNr == -1)
-    { // noFix
-      // It's allowed to leave out 16-colour bitmaps as there's a fallback to 2-colour bitmap!!
-      if ((actDepth == 1) && ((!arrc_attributes[attrFile1].isGiven() && !arrc_attributes[attrFile].isGiven()) || (arrc_attributes [attrFile1].isGiven() && (arrc_attributes [attrFile1].getLength() == 0))))
-        continue;
-    }
-    else
+    if (!arrc_attributes[attrFormat].isGiven())
     {
-      if (arrc_attributes [attrFile0+actDepth].isGiven() && ( arrc_attributes [attrFile0+actDepth].getLength() == 0))
-        continue;
+      std::cerr << "Attribute \"file\" needs also attribute \"format\"" <<std::endl;
+      return false;
     }
+
+    int depthFromFormat = colourdepthtoi (arrc_attributes [attrFormat].get().c_str());
+    if ( (depthFromFormat < 0) || (depthFromFormat > 2))
+    {
+      std::cerr << "Invalid format " << arrc_attributes [attrFormat].get() << "!"<<std::endl;
+      return false;
+    }
+
+    for (int depth = 0; depth <= depthFromFormat; depth++)
+    {
+      arr_file[depth] = arrc_attributes[attrFile].get();
+      if (arrc_attributes [attrAbsolutePath].isGiven())
+        b_absPath[depth] = (arrc_attributes [attrAbsolutePath].get().compare("1") == 0) ? true : false;
+    }
+  }
+
+  for (int i=0; i<=2; i++)
+  {
+    if (arrc_attributes[attrFile0 + i].isGiven())
+    {
+      arr_file[i] = arrc_attributes[attrFile0 + i].get(); // arrc_attributes[attrFile0 + i] can be empty => empty arr_file[i] will not used for bitmap generation
+      if (arrc_attributes[attrAbsolutePath1 + i].isGiven())
+        b_absPath[i] = (arrc_attributes [attrAbsolutePath1 + i].get().compare("1") == 0) ? true : false;
+      else
+        b_absPath[i] = false; // no absPath attribute given => set to default relative path
+    }
+  }
+
+  if (arr_file[0].empty() && (fixNr == -1))
+  { // bitmap for depth 0 must be available (allowed for fixedbitmap)
+    std::cerr << "no bitmap for colour depth 0! This is only allowed for fixedbitmap"<<std::endl;
+    return false;
+  }
+
+  ref_maxDepth=0;
+  if (!arr_file[1].empty()) ref_maxDepth=1;
+  if (!arr_file[2].empty()) ref_maxDepth=2;
+
+  // generate all lower depth-bitmaps...
+  for (int actDepth=0; actDepth <= ref_maxDepth; actDepth++)
+  {
+    if (arr_file[actDepth].empty())
+      continue;
 
     if (fixNr == -1) fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", objName.c_str(), actDepth);
     else /* -fix- */ fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", objName.c_str(), actDepth, fixNr);
@@ -1428,33 +1466,20 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
       if (!iter->b_relativePath)
         str_tmpWorkDir.clear();
 
-      if (arrc_attributes [attrFile0+actDepth].isGiven())
-      {
-        if (arrc_attributes [attrAbsolutePath1+actDepth].isGiven() && arrc_attributes [attrAbsolutePath1+actDepth].get().compare("1") == 0)
-          filename = arrc_attributes [attrFile0+actDepth].get(); // absolute path in picture graphic object
-        else
+      if (b_absPath[actDepth])
+        filename = arr_file[actDepth]; // absolute path in picture graphic object
+      else
+        filename = str_tmpWorkDir + iter->str_pathName + str_concat + arr_file[actDepth];
 
-          filename = str_tmpWorkDir + iter->str_pathName + str_concat + arrc_attributes [attrFile0+actDepth].get();
-      }
-      else /* use std file for all depth */
-      {
-        if (arrc_attributes [attrAbsolutePath].isGiven() && arrc_attributes [attrAbsolutePath].get().compare("1") == 0)
-          filename = arrc_attributes [attrFile].get();  // absolute path in picture graphic object
-        else
-          filename = str_tmpWorkDir + iter->str_pathName + str_concat + arrc_attributes [attrFile].get();
-      }
       if (stat(filename.c_str(), &s_stat) == 0)
+        // bitmap in file system found
         break;
     }
 
     if (iter == rcl_stdBitmapPath.end())
-    {
-      if (actDepth == colourdepthtoi (arrc_attributes [attrFormat].get().c_str()))
-      {
-        std::cerr << "Loading of " << filename << " failed!"<<std::endl;
-        return false;
-      }
-      continue; // try next actDepth
+    { // bitmap not found in file system
+      std::cerr << "Loading of " << filename << " failed (not found in file system)!"<<std::endl;
+      return false;
     }
 
     // Open Bitmap
@@ -2217,26 +2242,28 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       unsigned int deXwidth=0;
       if (objType == otPicturegraphic)
       {
-        if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrFormat].isGiven() && arrc_attributes [attrTransparency_colour].isGiven()))
+        if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrTransparency_colour].isGiven()))
         {
-          std::cerr << "YOU NEED TO SPECIFY THE width= AND format= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT " << objName << "! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          std::cerr << "YOU NEED TO SPECIFY THE width= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT " << objName << "! STOPPING PARSER! bye."<<std::endl<<std::endl;
           return false;
         }
 
         ///////////////////////////////////////////////////////
         /// ### +BEGIN+ -- FIRST -- process "standard" bitmap
         c_Bitmap.resetLengths();
+
+#if 0
         if (!checkForFileOrFile148 ("picturegraphic"))
           return false;
+#endif
+
         objBitmapOptions = picturegraphicoptionstoi (arrc_attributes [attrOptions].get().c_str());
-        if (!openDecodePrintOut (l_stdBitmapPath, objBitmapOptions))
+        // set deXcolourDepth per reference, according to the found file and fileX attributes
+        if (!openDecodePrintOut (l_stdBitmapPath, objBitmapOptions, deXcolourDepth))
           return false;
 
         // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
         deXwidth = arrc_attributes [attrWidth].getIntValue();
-        deXcolourDepth = colourdepthtoi (arrc_attributes [attrFormat].get().c_str());
-        if (deXcolourDepth == -1)
-          return false;
 
         deXtransCol = colourtoi (arrc_attributes [attrTransparency_colour].get().c_str());
         if (deXtransCol == -1)
@@ -2268,7 +2295,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               return false;
 
             fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
-            if (!openDecodePrintOut (l_fixedBitmapPath, fixBitmapOptions[fixNr], fixNr)) return false;
+            int dummyMaxDepth;
+            if (!openDecodePrintOut (l_fixedBitmapPath, fixBitmapOptions[fixNr], dummyMaxDepth, fixNr)) return false;
 
             // copy values from c_Bitmap somewhere in a temp array that will be printed afterwards............
             //fiXtransCol [fixNr] = colourtoi ( arrc_attributes [attrTransparency_colour]);
@@ -3354,7 +3382,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       {
         for (int actDepth=0; actDepth <= 2; actDepth++)
         {
-          if ( (actDepth > deXcolourDepth) || (stdRawBitmapBytes [actDepth] == 0))
+          if ( (stdRawBitmapBytes [actDepth] == 0))
             fprintf (partFile_attributes, ", 0,NULL");
           else
             fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName.c_str(), actDepth);

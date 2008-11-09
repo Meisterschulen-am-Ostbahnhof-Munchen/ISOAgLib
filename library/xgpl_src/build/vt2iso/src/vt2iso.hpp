@@ -289,7 +289,7 @@ private:
 
   bool getAttributesFromNode (DOMNode *n, bool treatSpecial);
 
-  bool openDecodePrintOut (const std::list<Path_s>& rcl_bitmapPath, unsigned int &options, int fixNr=-1);
+  bool openDecodePrintOut (const std::list<Path_s>& rcl_bitmapPath, unsigned int &options, int& ref_maxDepth, int fixNr=-1);
 
   bool checkForAllowedExecution() const;
 
