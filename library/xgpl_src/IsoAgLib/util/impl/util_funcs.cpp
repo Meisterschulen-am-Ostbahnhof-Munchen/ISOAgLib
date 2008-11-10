@@ -413,12 +413,12 @@ uint16_t convertIstreamUi16( StreamInput_c& rc_stream )
   uint16_t ui16_temp;
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   uint8_t* const cpui8_writePointer = (uint8_t*)(&ui16_temp);
-  rc_stream >> pui8_writePointer[0];
-  rc_stream >> pui8_writePointer[1];
+  rc_stream >> cpui8_writePointer[0];
+  rc_stream >> cpui8_writePointer[1];
   #else // BIG_ENDIAN
   uint8_t* const cpui8_writePointer = (uint8_t*)(&ui16_temp);
-  rc_stream >> pui8_writePointer[1];
-  rc_stream >> pui8_writePointer[0];
+  rc_stream >> cpui8_writePointer[1];
+  rc_stream >> cpui8_writePointer[0];
   #endif
   return ui16_temp;
 };
