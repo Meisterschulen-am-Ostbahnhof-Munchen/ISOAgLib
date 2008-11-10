@@ -137,7 +137,7 @@ Scheduler_Task_c::timeEventPostUpdateStatistics()
 
   const int32_t ci32_now = System_c::getTime();
   mui16_approxExecTime = uint16_t(ci32_now - msi32_retriggerTime);
-  // update DBUG time values
+  // update DEBUG time values
   mui32_callCnt++;
   if ( mui32_callCnt != 0 )
   {
@@ -212,7 +212,7 @@ int32_t Scheduler_Task_c::msi32_retriggerTime= 0;
 //! this is needed cause of long initial tests (esp.
 //! single device power switch test with 5
 //! devices with 1 second per device)
-//! @param rint32_StartTaskTime individual time offset, to avoid concurring tasks (if starting at same time with same period, the scheduler has every round a time problem)
+//! @param rint32_StartTaskTime individual (absolute) time, to avoid concurring tasks (if starting at same time with same period, the scheduler has every round a time problem)
 void Scheduler_Task_c::startTaskTiming(int32_t rint32_StartTaskTime)
 {
   mi32_nextRetriggerTime = rint32_StartTaskTime;

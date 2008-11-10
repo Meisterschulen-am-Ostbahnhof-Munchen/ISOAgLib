@@ -403,86 +403,54 @@ uint16_t sizeVectorTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_capacity )
 }
 
 #ifdef USE_DATASTREAMS_IO
-/** convert receive multistream into an unsigned variable */
+/** convert receive multistream (encoded in Little Endian)
+ * into an unsigned 16-bit variable
+ * @pre rc_stream needs to hold at least 2 bytes
+ *      Attention: No checks are performed on the stream!
+ **/
 uint16_t convertIstreamUi16( StreamInput_c& rc_stream )
 {
   uint16_t ui16_temp;
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  uint8_t* pui8_writePointer = (uint8_t*)(&ui16_temp);
+  uint8_t* const cpui8_writePointer = (uint8_t*)(&ui16_temp);
   rc_stream >> pui8_writePointer[0];
   rc_stream >> pui8_writePointer[1];
-  #else
-  uint8_t ui8_temp;
-  rc_stream >> ui8_temp;
-  ui16_temp = ui8_temp;
-  rc_stream >> ui8_temp;
-  ui16_temp |= uint16_t(ui8_temp) << 8;
+  #else // BIG_ENDIAN
+  uint8_t* const cpui8_writePointer = (uint8_t*)(&ui16_temp);
+  rc_stream >> pui8_writePointer[1];
+  rc_stream >> pui8_writePointer[0];
   #endif
   return ui16_temp;
 };
-/** convert receive multistream into an unsigned variable */
-int16_t convertIstreamI16( StreamInput_c& rc_stream )
-{
-  int16_t i16_temp;
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  uint8_t* pui8_writePointer = (uint8_t*)(&i16_temp);
-  rc_stream >> pui8_writePointer[0];
-  rc_stream >> pui8_writePointer[1];
-#else
-  uint8_t ui8_temp;
-  rc_stream >> ui8_temp;
-  i16_temp = ui8_temp;
-  rc_stream >> ui8_temp;
-  i16_temp |= int16_t(ui8_temp) << 8;
-#endif
-  return i16_temp;
-};
-/** convert receive multistream into an unsigned variable */
+
+/** convert receive multistream (encoded in Little Endian)
+ * into an unsigned 32-bit variable
+ * @pre rc_stream needs to hold at least 4 bytes
+ *      Attention: No checks are performed on the stream!
+ */
 uint32_t convertIstreamUi32( StreamInput_c& rc_stream )
 {
   uint32_t ui32_temp;
   #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   uint8_t* pui8_writePointer = (uint8_t*)(&ui32_temp);
-  for ( unsigned int ind = 0; ( ( ind < 4 ) && ( !rc_stream.eof() ) ); ind++ )
+  for (uint8_t* pui8_writePointerEnd = pui8_writePointer+4;
+       pui8_writePointer < pui8_writePointerEnd;
+       ++pui8_writePointer)
   {
     rc_stream >> *pui8_writePointer;
-    pui8_writePointer++;
   }
-  #else
-  uint8_t ui8_temp;
-  rc_stream >> ui8_temp;
-  ui32_temp = uint32_t(ui8_temp);
-  for ( unsigned int ind = 1; ( ( ind < 4 ) && ( !rc_stream.eof() ) ); ind++ )
+  #else // BIG_ENDIAN
+  uint8_t* pui8_writePointerRLast = (uint8_t*)(&ui32_temp);
+  for (uint8_t* pui8_writePointer = pui8_writePointer+(4-1);
+       pui8_writePointer >= pui8_writePointerRLast;
+       --pui8_writePointer)
   {
-    rc_stream >> ui8_temp;
-    ui32_temp |= (uint32_t(ui8_temp) << (8*ind));
+    rc_stream >> *pui8_writePointer;
   }
   #endif
   return ui32_temp;
 };
-/** convert receive multistream into an unsigned variable */
-int32_t convertIstreamI32( StreamInput_c& rc_stream )
-{
-  int32_t i32_temp;
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  uint8_t* pui8_writePointer = (uint8_t*)(&i32_temp);
-  for ( unsigned int ind = 0; ( ( ind < 4 ) && ( !rc_stream.eof() ) ); ind++ )
-  {
-    rc_stream >> *pui8_writePointer;
-    pui8_writePointer++;
-  }
-#else
-  uint8_t ui8_temp;
-  rc_stream >> ui8_temp;
-  i32_temp = int32_t(ui8_temp);
-  for ( unsigned int ind = 1; ( ( ind < 4 ) && ( !rc_stream.eof() ) ); ind++ )
-  {
-    rc_stream >> ui8_temp;
-    i32_temp |= (int32_t(ui8_temp) << (8*ind));
-  }
-#endif
-  return i32_temp;
-};
+
 #endif
 
 

@@ -926,14 +926,20 @@ class Flexible8ByteString_c {
 
 
 #ifdef USE_DATASTREAMS_IO
-/** convert receive multistream into an unsigned variable */
+/** convert receive multistream (LE) into an unsigned 16-bit variable */
+/// @todo INLINE the convert-functions?
 uint16_t convertIstreamUi16( StreamInput_c& rc_stream );
-/** convert receive multistream into an unsigned variable */
-int16_t convertIstreamI16( StreamInput_c& rc_stream );
-/** convert receive multistream into an unsigned variable */
+/** convert receive multistream (LE) into a signed 16-bit variable */
+inline
+int16_t convertIstreamI16( StreamInput_c& rc_stream )
+{ return static_cast <int16_t>(convertIstreamUi16 (rc_stream); }
+
+/** convert receive multistream (LE) into an unsigned 32-bit variable */
 uint32_t convertIstreamUi32( StreamInput_c& rc_stream );
-/** convert receive multistream into an unsigned variable */
-int32_t convertIstreamI32( StreamInput_c& rc_stream );
+/** convert receive multistream (LE) into a signed 32-bit variable */
+inline
+int32_t convertIstreamI32( StreamInput_c& rc_stream )
+{ return static_cast <int32_t>(convertIstreamUi32 (rc_stream)); }
 #endif
 
 
