@@ -142,6 +142,13 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   men_type = Proc_c::DistProp;
 
   mi32_accel = mi32_delta = mi32_lastTime = mi32_max = mi32_min = 0;
+
+  // setting of isoName in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
+  // if start follows immedeately addSubprog, timeEvent is not called yet => do it here
+  // remote: virtual ProcDataRemote::commanderISOName() can give a value different to IsoName_c::IsoNameUnspecified
+  // local: virtual ProcDataLocal::commanderISOName() gives IsoName_c::IsoNameUnspecified
+  if (pprocessDataConst() && pprocessDataConst()->commanderISOName().isSpecified())
+    setISOName(pprocessDataConst()->commanderISOName());
 }
 
 
@@ -267,13 +274,6 @@ MeasureProgBase_c::~MeasureProgBase_c(){
     }
     #endif
   }
-
-  // setting of isoName in MeasureProg is normally done via ProcDataRemote_c::timeEvent( void )
-  // if start follows immedeately addSubprog timeEvent is not called yet => do it here
-  // remote: virtual ProcDataRemote::commanderISOName() can give a value different to IsoName_c::IsoNameUnspecified
-  // local: virtual ProcDataLocal::commanderISOName() gives IsoName_c::IsoNameUnspecified
-  if (pprocessDataConst() && pprocessDataConst()->commanderISOName().isSpecified())
-    setISOName(pprocessDataConst()->commanderISOName());
 
   return true;
 }
