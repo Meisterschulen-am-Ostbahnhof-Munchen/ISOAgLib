@@ -441,7 +441,7 @@ uint32_t convertIstreamUi32( StreamInput_c& rc_stream )
   }
   #else // BIG_ENDIAN
   uint8_t* pui8_writePointerRLast = (uint8_t*)(&ui32_temp);
-  for (uint8_t* pui8_writePointer = pui8_writePointer+(4-1);
+  for (uint8_t* pui8_writePointer = pui8_writePointerRLast+(4-1);
        pui8_writePointer >= pui8_writePointerRLast;
        --pui8_writePointer)
   {
