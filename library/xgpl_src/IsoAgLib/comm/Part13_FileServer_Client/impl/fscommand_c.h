@@ -89,7 +89,7 @@
 //Fileserver includes
 #include "fsserverinstance_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
-#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 

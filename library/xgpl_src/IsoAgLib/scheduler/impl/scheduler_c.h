@@ -89,9 +89,9 @@
 /* *************************************** */
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 
-#include <IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h>
+#include <IsoAgLib/scheduler/impl/schedulerentry_c.h>
 
 #include <list>
 

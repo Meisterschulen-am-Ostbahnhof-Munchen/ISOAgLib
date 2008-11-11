@@ -87,7 +87,7 @@
 
 #include "../ifsclient_c.h"
 
-#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
+#include <IsoAgLib/scheduler/ischedulertask_c.h>
 
 #include "fsserverinstance_c.h"
 #include "fscommand_c.h"

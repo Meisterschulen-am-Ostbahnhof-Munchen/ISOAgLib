@@ -84,7 +84,7 @@
 
 #include "msgobj_c.h"
 #include "canio_c.h"
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/hal/system.h>
 
 #if defined(DEBUG) || defined(DEBUG_CAN_BUFFER_FILLING)

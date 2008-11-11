@@ -93,7 +93,7 @@
 #include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
 #endif
 
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>

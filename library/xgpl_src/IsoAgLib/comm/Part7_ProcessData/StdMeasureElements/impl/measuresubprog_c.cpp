@@ -87,7 +87,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "measuresubprog_c.h"
-#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <cstdlib>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)

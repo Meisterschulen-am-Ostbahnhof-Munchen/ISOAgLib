@@ -61,7 +61,7 @@
 #include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
 #include <IsoAgLib/driver/can/icancustomer_c.h>
 #include <IsoAgLib/driver/can/icanpkg_c.h>
-#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
+#include <IsoAgLib/scheduler/ischedulertask_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

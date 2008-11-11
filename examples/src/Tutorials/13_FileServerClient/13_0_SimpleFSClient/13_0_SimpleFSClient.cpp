@@ -2,7 +2,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/driver/can/icanio_c.h>
-#include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
+#include <IsoAgLib/scheduler/ischeduler_c.h>
 
 //FileServerClient includes
 #include <IsoAgLib/comm/Part13_FileServer_Client/ifsclientservercommunication_c.h>

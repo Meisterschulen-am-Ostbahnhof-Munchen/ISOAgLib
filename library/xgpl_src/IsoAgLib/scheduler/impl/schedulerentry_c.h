@@ -89,7 +89,7 @@
 #define SYSTEMMANAGEMENT_SCHEDULERENTRY_C_H
 
 
-#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 
 
 /// Begin Namespace __IsoAgLib

@@ -92,7 +92,7 @@
 #include <IsoAgLib/typedef.h>
 
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 #include "fsserverinstance_c.h"

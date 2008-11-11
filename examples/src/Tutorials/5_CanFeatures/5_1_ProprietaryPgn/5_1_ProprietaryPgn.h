@@ -86,7 +86,7 @@
 #include <IsoAgLib/driver/can/icanio_c.h>
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
-#include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
+#include <IsoAgLib/scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisend_c.h>

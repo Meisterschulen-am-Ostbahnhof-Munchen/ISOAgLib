@@ -60,7 +60,7 @@
 /* *************************************** */
 #include "impl/multireceive_c.h"
 #include <IsoAgLib/driver/can/icancustomer_c.h>
-#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
+#include <IsoAgLib/scheduler/ischedulertask_c.h>
 
 
 // Begin Namespace IsoAgLib

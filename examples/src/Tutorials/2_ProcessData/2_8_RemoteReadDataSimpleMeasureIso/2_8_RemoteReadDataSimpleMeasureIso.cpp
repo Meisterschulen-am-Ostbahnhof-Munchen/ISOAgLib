@@ -219,7 +219,7 @@
 
 /* include the central interface header for the communication layer part
    of the "IsoAgLib" */
-#include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
+#include <IsoAgLib/scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>

@@ -57,7 +57,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/scheduler_c.h"
-#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
+#include <IsoAgLib/scheduler/ischedulertask_c.h>
 
 
 /// Begin Namespace IsoAgLib

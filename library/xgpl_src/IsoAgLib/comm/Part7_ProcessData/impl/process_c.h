@@ -95,7 +95,7 @@
 #include <IsoAgLib/typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
-#include <IsoAgLib/comm/Scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include "../Local/impl/procdatalocalbase_c.h"
 #include "../Remote/impl/procdataremotebase_c.h"
 #include "processpkg_c.h"

@@ -82,7 +82,7 @@
  ***************************************************************************/
 #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>

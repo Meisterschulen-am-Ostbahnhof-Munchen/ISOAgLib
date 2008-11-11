@@ -83,7 +83,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "baseitem_c.h"
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 
 namespace __IsoAgLib {
 

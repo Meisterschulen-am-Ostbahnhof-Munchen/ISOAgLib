@@ -112,7 +112,7 @@
 // include the central interface header for the communication layer part
 // of the "IsoAgLib"
 #include <IsoAgLib/util/iutil_funcs.h>
-#include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
+#include <IsoAgLib/scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>

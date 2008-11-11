@@ -86,7 +86,7 @@
 #include "../iisoitem_c.h"
 #include "isosystempkg_c.h"
 #include "isomonitor_c.h"
-#include <IsoAgLib/comm/Scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
 

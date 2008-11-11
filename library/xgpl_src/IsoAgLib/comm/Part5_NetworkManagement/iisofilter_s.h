@@ -58,7 +58,7 @@
 #include <IsoAgLib/driver/can/icancustomer_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
-#include <IsoAgLib/comm/Scheduler/ischedulertask_c.h>
+#include <IsoAgLib/scheduler/ischedulertask_c.h>
 
 namespace __IsoAgLib
 { // forward declarations
