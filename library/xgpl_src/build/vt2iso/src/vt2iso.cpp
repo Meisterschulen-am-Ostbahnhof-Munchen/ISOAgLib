@@ -305,6 +305,43 @@ template <class T> std::vector<T> make_vector ( const T& param1, const T& param2
   return vec;
 }
 
+template <class T> void processNestedNodesInProjectFile(DOMNode *child, T& r_container, const std::string& rstr_parentNode, const std::string& rstr_childNode, const std::string& rstr_pathAttribute)
+{
+  std::string local_attrName; 
+  std::string local_attrValue;
+
+  if (strcmp (XMLString::transcode(child->getNodeName()), rstr_parentNode.c_str()) == 0)
+  {
+    DOMNode *innerChild;
+    for (innerChild = child->getFirstChild(); innerChild != 0; innerChild=innerChild->getNextSibling())
+    {
+      if ((strcmp (XMLString::transcode(innerChild->getNodeName()), rstr_childNode.c_str()) == 0) && innerChild->hasAttributes())
+      {
+        vt2iso_c::Path_s s_filePath;
+
+        DOMNamedNodeMap *pAttributes = innerChild->getAttributes();
+        int nSize = pAttributes->getLength();
+        for (int i=0;i<nSize;++i)
+        {
+          DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+          utf16convert (pAttributeNode->getName(), local_attrName);
+          utf16convert (pAttributeNode->getValue(), local_attrValue);
+          if (local_attrName == rstr_pathAttribute)
+          {
+            s_filePath.str_pathName = local_attrValue;
+          }
+          if (local_attrName.compare("RelativePath") == 0)
+          {
+            if (local_attrValue.compare("1") == 0)
+              s_filePath.b_relativePath = true;
+          }
+        }
+        if (!s_filePath.str_pathName.empty())
+          r_container.push_back(s_filePath);
+      }
+    }
+  }
+}
 
 void OneAttribute_c::clear()
 {
@@ -2080,11 +2117,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     autoDetectLanguage (n);
     // ************* NEW: Language duplicates!! ************
+
     bool b_dupMode=false;
     if ((arrc_attributes [attrLanguage].isGiven()) && (arrc_attributes [attrLanguage].getLength() > 0) && (arrc_attributes [attrLanguage].getLength() != 2))
     { // "*" or multiple languages, so we need to loop!
       if ((arrc_attributes [attrLanguage].get().compare ("*")) == 0)
       { // build all languages we have defined in the working set
+        duplicateForLanguages.clear();
         for (unsigned int ui=0; ui<ui_languages; ui++)
           duplicateForLanguages += arrs_language [ui].code;
       }
@@ -2094,6 +2133,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
       b_dupMode=true;
     }
+
 
     const char* dupLangNext=duplicateForLanguages.c_str(); // if dup, then start with first one of course...
     do // language duplication loop!
@@ -2200,11 +2240,34 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             arrs_language [ui_languages].code[2] = 0x00;
             arrs_language [ui_languages].count = 0;
             arrs_language [ui_languages].firstLine = true;
+
             // Open and read complete languages-files
-            langFileName = str(format("%s.values.%s.txt") % xmlFileGlobal % arrs_language [ui_languages].code);
+            if (mb_projectFile)
+            {
+              if (l_dictionaryPath.size() > 1)
+              {
+                std::cerr << "More than one <dictionary> node in project file is not allowed!" <<std::endl;
+                return false;
+              }
+#ifdef WIN32
+              std::string str_concat = "\\";
+#else
+              std::string str_concat = "/";
+#endif
+              std::string str_tmpWorkDir = c_directory;
+              if (!l_dictionaryPath.front().b_relativePath)
+                str_tmpWorkDir.clear();
+
+              langFileName = str_tmpWorkDir + l_dictionaryPath.front().str_pathName + str_concat + arrs_language [ui_languages].code + ".vtl";
+            }
+            else
+              langFileName = str(format("%s.values.%s.txt") % xmlFileGlobal % arrs_language [ui_languages].code);
+
             FILE* tmpHandle = fopen (langFileName.c_str(), "rb");
             if (tmpHandle != NULL)
             {
+              std::cout << "    opening language file "<< langFileName << std::endl;
+
               fseek (tmpHandle, 0, SEEK_END);
               long length = ftell (tmpHandle);
               fseek (tmpHandle, 0, SEEK_SET);
@@ -2224,6 +2287,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             }
             else
             {
+              std::cout << "    language file "<< langFileName << " not found." << std::endl;
               arrs_language [ui_languages].valueBufferLen = 0; // we'll internally add an extra NULL-byte!
               arrs_language [ui_languages].valueBuffer = NULL;
             }
@@ -5200,76 +5264,12 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
         std::string local_attrName; 
         std::string local_attrValue;
 
-        if (strcmp (XMLString::transcode(child->getNodeName()), "Bitmaps") == 0)
-        {
-          DOMNode *innerChild;
-          for (innerChild = child->getFirstChild(); innerChild != 0; innerChild=innerChild->getNextSibling())
-          {
-            if ((strcmp (XMLString::transcode(innerChild->getNodeName()), "Bitmap") == 0) && innerChild->hasAttributes())
-            {
+        processNestedNodesInProjectFile(child, l_stdBitmapPath, std::string("Bitmaps"), std::string("Bitmap"), std::string("Path"));
 
-              Path_s s_bitmapPath;
+        // vec_xmlFiles needs some post processing, done after loop
+        processNestedNodesInProjectFile(child, vec_xmlFiles, std::string("Files"), std::string("File"), std::string("FilePath"));
 
-              DOMNamedNodeMap *pAttributes = innerChild->getAttributes();
-              int nSize = pAttributes->getLength();
-              for (int i=0;i<nSize;++i)
-              {
-                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                utf16convert (pAttributeNode->getName(), local_attrName);
-                utf16convert (pAttributeNode->getValue(), local_attrValue);
-                if (local_attrName.compare("Path") == 0)
-                {
-                  s_bitmapPath.str_pathName = local_attrValue;
-                }
-                if (local_attrName.compare("RelativePath") == 0)
-                {
-                  if (local_attrValue.compare("1") == 0)
-                    s_bitmapPath.b_relativePath = true;
-                }
-              }
-              if (!s_bitmapPath.str_pathName.empty())
-                l_stdBitmapPath.push_back(s_bitmapPath);
-            }
-          }
-        }
-
-        if (strcmp (XMLString::transcode(child->getNodeName()), "Files") == 0)
-        {
-          DOMNode *innerChild;
-          for (innerChild = child->getFirstChild(); innerChild != 0; innerChild=innerChild->getNextSibling())
-          {
-            if ((strcmp (XMLString::transcode(innerChild->getNodeName()), "File") == 0) && innerChild->hasAttributes())
-            {
-              DOMNamedNodeMap *pAttributes = innerChild->getAttributes();
-              int nSize = pAttributes->getLength();
-              Path_s s_path;
-              for (int i=0;i<nSize;++i)
-              {
-                DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
-                utf16convert (pAttributeNode->getName(), local_attrName);
-                utf16convert (pAttributeNode->getValue(), local_attrValue);
-                if (local_attrName.compare("FilePath") == 0)
-                {
-                  s_path.str_pathName = local_attrValue;
-                }
-                if (local_attrName.compare("RelativePath") == 0)
-                {
-                  if (local_attrValue.compare("1") == 0)
-                    s_path.b_relativePath = true;
-                }
-              }
-              if (!s_path.str_pathName.empty())
-              {
-                if (s_path.b_relativePath)
-                { // add the path to the project-file, because it's relative to that directory!
-                  s_path.str_pathName.insert (0, c_directory);
-                }
-                vec_xmlFiles.push_back(s_path);
-              }
-            }
-          }
-        }
-
+        processNestedNodesInProjectFile(child, l_dictionaryPath, std::string("Dictionaries"), std::string("Dictionary"), std::string("Path"));
 
         // following extractions: we are only interested in nodes with attributes and not in child nodes
         if (!child->hasAttributes())
@@ -5319,6 +5319,16 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
           }
         }
       }
+
+      // post processing for vec_xmlFiles
+      for ( std::vector<Path_s>::iterator iter = vec_xmlFiles.begin(); iter != vec_xmlFiles.end(); ++iter)
+      {
+        if (iter->b_relativePath)
+        { // add the path to the project-file, because it's relative to that directory!
+          iter->str_pathName.insert (0, c_directory);
+        }
+      }
+
     }
   }
 

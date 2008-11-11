@@ -420,6 +420,9 @@ private:
 
   std::list<Path_s> l_stdBitmapPath;
   std::list<Path_s> l_fixedBitmapPath;
+
+  std::list<Path_s> l_dictionaryPath;
+
 };
 
 #endif // VT2ISO_H
