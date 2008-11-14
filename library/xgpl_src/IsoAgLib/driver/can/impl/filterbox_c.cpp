@@ -402,8 +402,8 @@ bool FilterBox_c::processMsg()
       HAL::can_useMsgobjGet(mui8_busNumber, 0xFF, pc_target);
     #else
 
-      bool b_fifoRet = HAL::fifo_useMsgObjGet(mui8_busNumber, pc_target);
-      if(b_fifoRet != HAL_NO_ERR)
+      const int32_t ci32_fifoRet = HAL::fifo_useMsgObjGet(mui8_busNumber, pc_target);
+      if (ci32_fifoRet != HAL_NO_ERR)
       {
       #ifdef DEBUG
          INTERNAL_DEBUG_DEVICE
@@ -412,7 +412,7 @@ bool FilterBox_c::processMsg()
         IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
         return false;
       }
-  #ifdef DEBUG
+      #ifdef DEBUG
          INTERNAL_DEBUG_DEVICE
         << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
