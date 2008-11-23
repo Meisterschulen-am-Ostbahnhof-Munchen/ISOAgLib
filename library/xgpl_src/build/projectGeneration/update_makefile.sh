@@ -1307,6 +1307,7 @@ create_makefile()
   MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
 
   MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
+  MakefileFilelistAppHdr="$1/$PROJECT/$FILELIST_APP_HDR"
 
   MakefileFileListUTest="$1/$PROJECT/$FILELIST_UTEST_PURE"
   MakefileFileListUTestMock="$1/$PROJECT/$FILELIST_UTEST_MOCK_PURE"
@@ -1429,6 +1430,19 @@ create_makefile()
   done
   echo -e "\n" >> $MakefileNameLong
 
+  echo -n "HEADERS_APP = " >> $MakefileNameLong
+  FIRST_LOOP="YES"
+  for CcFile in `grep -E "\.h|\.hpp|\.hh" $MakefileFilelistAppHdr` ; do
+    if [ $FIRST_LOOP != "YES" ] ; then
+      echo -e -n '\\' >> $MakefileNameLong
+      echo -e -n "\n\t\t" >> $MakefileNameLong
+    else
+      FIRST_LOOP="NO"
+    fi
+    echo -e -n "$CcFile  " >> $MakefileNameLong
+  done
+  echo -e "\n" >> $MakefileNameLong
+
   echo -n "HEADERS_UTEST = " >> $MakefileNameLong
   FIRST_LOOP="YES"
   for CcFile in `grep -E "\.h" $MakefileFileListUTest` ; do
@@ -1489,6 +1503,10 @@ cat "$MakefileFilelistLibraryHdr" | grep -v "/impl/" | grep -v /hal/ | grep -v "
 # it's a good idea to get the several typedef.h headers to the install set
 grep typedef.h FileListInternal.txt >> FileListInterface.txt
 grep -E "driver/*/i*.h" FileListInternal.txt >> FileListInterface.txt
+
+# special exception to enable ISO-Request-PGN implementation in app scope
+grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
+
 
 cp -a FileListInterface.txt FileListInterfaceStart.txt
 cp -a FileListInterface.txt FileListInterface4Eval.txt
