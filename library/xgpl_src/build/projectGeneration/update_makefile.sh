@@ -2430,6 +2430,7 @@ for option in "$@"; do
       ;;
     --big-endian-cpu)
       PARAMETER_LITTLE_ENDIAN_CPU=0
+      USE_BIG_ENDIAN_CPU=1
       ;;
     --with-makefile-skeleton=*)
       RootDir=`pwd`
