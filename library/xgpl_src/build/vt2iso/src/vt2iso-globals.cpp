@@ -39,6 +39,7 @@
  ***************************************************************************/
 #include "vt2iso-globals.hpp"
 #include <sstream>
+#include <list>
 
 using namespace std;
 
@@ -63,6 +64,24 @@ bool itogeneraloption(uint8_t ui8_options, std::string& c_outputText, uint8_t ui
   if (!b_addPlus) c_outputText.append( "none" );
 
   return true;
+}
+
+void parseOptionsIntoList(const string& arc_option, list<string>& arl_tokens)
+{
+  arl_tokens.clear();
+  std::string str_argument(arc_option);
+  while (!str_argument.empty())
+  {
+    size_t found = str_argument.find_first_of('+');
+    if (str_argument.substr(0, found).compare("none") != 0)
+      // skip "none" options
+      arl_tokens.push_back(str_argument.substr(0, found));
+
+    if (string::npos == found)
+      break; // last item
+
+    str_argument = str_argument.substr(found + 1); // skip '+';
+  }
 }
 
 int colourtoi (const char* text_colour)
@@ -313,16 +332,30 @@ bool itoverticaljustification(unsigned int ui_index, string& c_outputText)
   return false;
 }
 
-unsigned int stringoptionstoi (const char *text_options)
+signed int stringoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxStringOptionsTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, stringOptionsTable [l]) != 0)
+    for (l=0; l<maxStringOptionsTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(stringOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxStringOptionsTable) // error
+    {
+      std::cout << "INVALID STRING OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -331,14 +364,27 @@ bool itostringoptions(uint8_t ui8_options, std::string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxStringOptionsTable, &stringOptionsTable[0][0]);
 }
 
-unsigned int inputnumberoptionstoi (const char *text_options)
+signed int inputnumberoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxInputNumberOptionsTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, inputNumberOptionsTable [l]) != 0)
+    for (l=0; l<maxInputNumberOptionsTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(inputNumberOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxInputNumberOptionsTable) // error
+    {
+      std::cout << "INVALID INPUT NUMBER OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
   return retval;
@@ -350,12 +396,27 @@ bool itoinputnumberoptions(uint8_t ui8_options, std::string& c_outputText)
 }
 
 
-unsigned int numberoptionstoi (const char *text_options)
+signed int numberoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxOutputNumberOptionsTable; l++) {
-    if (strstr (text_options, outputNumberOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxOutputNumberOptionsTable; l++)
+    {
+      if (iter->compare(outputNumberOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxOutputNumberOptionsTable) // error
+    {
+      std::cout << "INVALID OUTPUT NUMBER OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
   return retval;
@@ -366,16 +427,30 @@ bool itonumberoptions(uint8_t ui8_options, std::string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxOutputNumberOptionsTable, &outputNumberOptionsTable[0][0]);
 }
 
-unsigned int picturegraphicoptionstoi (const char *text_options)
+signed int picturegraphicoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxPictureGraphicOptionsTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, pictureGraphicOptionsTable [l]) != 0)
+    for (l=0; l<maxPictureGraphicOptionsTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(pictureGraphicOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxPictureGraphicOptionsTable) // error
+    {
+      std::cout << "INVALID PICTUREGRAPHIC OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -385,16 +460,30 @@ bool itopicturegraphicoptions(uint8_t ui8_options, std::string& c_outputText)
 }
 
 
-unsigned int picturegraphicrletoi (const char *text_options)
+signed int picturegraphicrletoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxPictureGraphicRleTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, pictureGraphicRleTable [l]) != 0)
+    for (l=0; l<maxPictureGraphicRleTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(pictureGraphicRleTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxPictureGraphicRleTable) // error
+    {
+      std::cout << "INVALID PICTUREGRAPHICRLE OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -404,14 +493,30 @@ bool itopicturegraphicrle(uint8_t ui8_options, std::string& c_outputText)
 }
 
 
-unsigned int meteroptionstoi (const char *text_options)
+signed int meteroptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxMeterOptionsTable; l++) {
-    if (strstr (text_options, meterOptionsTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxMeterOptionsTable; l++)
+    {
+      if (iter->compare(meterOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxMeterOptionsTable) // error
+    {
+      std::cout << "INVALID METER OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -421,16 +526,30 @@ bool itometeroptions(uint8_t ui8_options, string& c_outputText)
 }
 
 
-unsigned int linearbargraphoptionstoi (const char *text_options)
+signed int linearbargraphoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxLinearBarGraphOptionsTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, linearBarGraphOptionsTable [l]) != 0)
+    for (l=0; l<maxLinearBarGraphOptionsTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(linearBarGraphOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l ==maxLinearBarGraphOptionsTable) // error
+    {
+      std::cout << "INVALID LINEARBARGRAPH OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -439,16 +558,30 @@ bool itolinearbargraphoptions(uint8_t ui8_options, std::string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxLinearBarGraphOptionsTable, &linearBarGraphOptionsTable[0][0]);
 }
 
-unsigned int archedbargraphoptionstoi (const char *text_options)
+signed int archedbargraphoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxArchedBarGraphOptionsTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, archedBarGraphOptionsTable [l]) != 0)
+    for (l=0; l<maxArchedBarGraphOptionsTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(archedBarGraphOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxArchedBarGraphOptionsTable) // error
+    {
+      std::cout << "INVALID ARCHEDBARGRAPH OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -504,26 +637,31 @@ bool itoacousticsignal(unsigned int ui_index,string& c_outputText)
   return false;
 }
 
-unsigned int fontstyletoi (const char *text_fontstyle)
+signed int fontstyletoi (const char *text_fontstyle)
 {
   int l, retval=0;
-  for (l=0; l<maxFontstyleTable; l++) {
-    const char *pos=strstr (text_fontstyle, fontstyleTable [l]);
-    if (pos != NULL)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_fontstyle, l_tokens);
+
+  // first check if all values are correct:
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxFontstyleTable; l++)
     {
-      bool b_flashingInverted = false;
-      if (l==4)
-      { // "inverted" - only take if it's NOT flashing inverted!
-        if (pos >= text_fontstyle+strlen (fontstyleTable [5])-strlen (fontstyleTable [4]))
-        { // now check if the part left of it is "flashing" - in this case, do NOT consider this one as inverted!
-          if (strncmp (pos-(strlen (fontstyleTable [5])-strlen (fontstyleTable [4])), fontstyleTable [5], strlen (fontstyleTable [5])) == 0)
-            b_flashingInverted = true;
-        }
-      }
-      if (!b_flashingInverted)
+      if (iter->compare(fontstyleTable [l]) == 0)
+      {
         retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxFontstyleTable) // error
+    {
+      std::cout << "INVALID FONTSTYLE OPTION '" << text_fontstyle << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -532,13 +670,20 @@ bool itofontstyle(uint8_t ui8_options, std::string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxFontstyleTable, &fontstyleTable[0][0]);
 }
 
-unsigned int linedirectiontoi (const char *text_linedirection)
+signed int linedirectiontoi (const char *text_linedirection)
 {
-  int retval=0;
-  if (strstr (text_linedirection, "bottomlefttotopright") != NULL) {
-    retval = 1;
+  if (strcmp (text_linedirection, "bottomlefttotopright") == 0)
+    return 1;
+  if (strcmp (text_linedirection, "toplefttobottomright") == 0)
+    return 0;
+
+  if (strlen(text_linedirection))
+  {
+    std::cout << "INVALID LINEDIRECTION '" << text_linedirection << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+    return -1;
   }
-  return retval;
+
+  return 0;
 }
 
 bool itolineardirection(unsigned int ui_index, string& c_outputText)
@@ -560,15 +705,22 @@ bool itolineardirection(unsigned int ui_index, string& c_outputText)
 }
 
 
-unsigned int linearttoi (const char *text_lineart)
+signed int linearttoi (const char *text_lineart)
 {
   int retval=0;
   char thischar;
   while ((thischar = *text_lineart) != 0x00) {
     retval <<= 1;
-    if (thischar == '1') {
+    if (thischar == '1')
       retval |= 0x0001;
+    else if (thischar == '0')
+      ; // nothing to do
+    else
+    {
+      std::cout << "INVALID LINEART '" << text_lineart << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
+
     text_lineart++;
   }
   return retval;
@@ -587,14 +739,30 @@ bool itolineart(int i_lineart, std::string& c_outputText)
   return true;
 }
 
-unsigned int linesuppressiontoi (const char *text_linesuppression)
+signed int linesuppressiontoi (const char *text_linesuppression)
 {
   int l, retval=0;
-  for (l=0; l<maxLineSuppressionTable; l++) {
-    if (strstr (text_linesuppression, lineSuppressionTable [l]) != 0) {
-      retval += (uint64_t(1)<<l);
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_linesuppression, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
+  {
+    for (l=0; l<maxLineSuppressionTable; l++)
+    {
+      if (iter->compare(lineSuppressionTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxLineSuppressionTable) // error
+    {
+      std::cout << "INVALID LINESUPPRESSION '" << text_linesuppression << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -603,19 +771,19 @@ bool itolinesuppression(uint8_t ui8_options, std::string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxLineSuppressionTable, &lineSuppressionTable[0][0]);
 }
 
-unsigned int
+signed int
 ellipsetypetoi (const char *text_ellipsetype)
 {
-  int l, retval=0;
+  int l;
   for (l=0; l<maxEllipseTypeTable; l++)
   {
     if (strcmp(text_ellipsetype, ellipseTypeTable [l]) == 0)
     {
-      retval = l;
-      break;
+      return l;
     }
   }
-  return retval;
+  std::cout << "INVALID ELLIPSETYPE '" << text_ellipsetype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
 bool itoellipsetype(unsigned int ui_index, string& c_outputText)
@@ -628,18 +796,18 @@ bool itoellipsetype(unsigned int ui_index, string& c_outputText)
   return false;
 }
 
-unsigned int polygontypetoi (const char *text_polygontype)
+signed int polygontypetoi (const char *text_polygontype)
 {
-  int l, retval=0;
+  int l;
   for (l=0; l<maxPolygonTypeTable; l++)
   {
     if (strcmp (text_polygontype, polygonTypeTable [l]) == 0)
     {
-      retval = l;
-      break;
+      return l;
     }
   }
-  return retval;
+  std::cout << "INVALID POLYGONTYPE '" << text_polygontype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
 bool itopolygontype(unsigned int ui_index, string& c_outputText)
@@ -653,13 +821,19 @@ bool itopolygontype(unsigned int ui_index, string& c_outputText)
 }
 
 
-unsigned int validationtypetoi (const char *text_validationtype)
+signed int validationtypetoi (const char *text_validationtype)
 {
-  int retval=0;
-  if (strstr (text_validationtype, "invalid") != 0) {
-    retval = 1;
+  if (strcmp (text_validationtype, "valid_characters") == 0)
+    return 0;
+  if (strcmp (text_validationtype, "invalid_characters") == 0)
+    return 1;
+
+  if (strlen(text_validationtype))
+  {
+    std::cout << "INVALID VALIDATIONTYPE '" << text_validationtype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+    return -1;
   }
-  return retval;
+  return 0;
 }
 
 bool itovalidationtype(unsigned int ui_index, string& c_outputText)
@@ -681,18 +855,18 @@ bool itovalidationtype(unsigned int ui_index, string& c_outputText)
  return true;
 }
 
-unsigned int filltypetoi (const char *text_filltype)
+signed int filltypetoi (const char *text_filltype)
 {
-  int l, retval=0;
+  int l;
   for (l=0; l<maxFillTypeTable; l++)
   {
-    if (strstr (text_filltype, fillTypeTable [l]) != 0)
+    if (strcmp (text_filltype, fillTypeTable [l]) == 0)
     {
-      retval = l;
-      break;
+      return l;
     }
   }
-  return retval;
+  std::cout << "INVALID FILLTYPE '" << text_filltype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
 bool itofilltype(unsigned int ui_index, string& c_outputText)
@@ -705,11 +879,11 @@ bool itofilltype(unsigned int ui_index, string& c_outputText)
   return false;
 }
 
-unsigned int eventtoi (const char *text_eventName)
+signed int eventtoi (const char *text_eventName)
 {
   int l;
   for (l=0; l<maxEventTable; l++) {
-    if (strstr (text_eventName, eventTable [l]) != 0) {
+    if (strcmp (text_eventName, eventTable [l]) == 0) {
       return (l + 1);
     }
   }
@@ -720,7 +894,8 @@ unsigned int eventtoi (const char *text_eventName)
      )
     return i_eventIndex;
 
-  return 0; // should not happen
+  std::cout << "INVALID EVENT '" << text_eventName << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1; // should not happen
 }
 
 bool itoevent(unsigned int ui_index, string& c_outputText)
@@ -740,18 +915,18 @@ bool itoevent(unsigned int ui_index, string& c_outputText)
   return false;
 }
 
-unsigned int auxfunctiontypetoi(const char *text_auxFunctionType)
+signed int auxfunctiontypetoi(const char *text_auxFunctionType)
 {
-  int l, retval=0;
+  int l;
   for (l=0; l<maxAuxFunctionTypes; l++)
   {
     if (strcmp (text_auxFunctionType, auxFunctionTypeTable [l]) == 0)
     {
-      retval = l;
-      break;
+      return l;
     }
   }
-  return retval;
+  std::cout << "INVALID AUXFUNCTIONTYPE '" << text_auxFunctionType << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+  return -1;
 }
 
 bool itoauxfunctiontype(unsigned int ui_index, string& c_outputText)
@@ -765,16 +940,30 @@ bool itoauxfunctiontype(unsigned int ui_index, string& c_outputText)
 }
 
 
-unsigned int gcoptionstoi (const char *text_options)
+signed int gcoptionstoi (const char *text_options)
 {
   int l, retval=0;
-  for (l=0; l<maxGCOptions; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_options, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_options, GCOptionsTable [l]) != 0)
+    for (l=0; l<maxGCOptions; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(GCOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxGCOptions) // error
+    {
+      std::cout << "INVALID GRAPHICCONTEXT OPTION '" << text_options << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -783,16 +972,30 @@ bool itogcoptions(uint8_t ui8_options, string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxGCOptions, &GCOptionsTable[0][0]);
 }
 
-unsigned int inputobjectoptiontoi (const char *text_inputobjectoptions)
+signed int inputobjectoptiontoi (const char *text_inputobjectoptions)
 {
   int l, retval=0;
-  for (l=0; l<maxInputObjectOptionsTable; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_inputobjectoptions, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_inputobjectoptions, inputobjectOptionsTable [l]) != 0)
+    for (l=0; l<maxInputObjectOptionsTable; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(inputobjectOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxInputObjectOptionsTable) // error
+    {
+      std::cout << "INVALID INPUT OBJECT OPTION '" << text_inputobjectoptions << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 
@@ -801,16 +1004,30 @@ bool itoinputobjectoptions(uint8_t ui8_options, string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxInputObjectOptionsTable, &inputobjectOptionsTable[0][0]);
 }
 
-unsigned int buttonoptiontoi (const char *text_buttonoptions)
+signed int buttonoptiontoi (const char *text_buttonoptions)
 {
   int l, retval=0;
-  for (l=0; l<maxButtonOptions; l++)
+
+  std::list<std::string> l_tokens;
+  parseOptionsIntoList(text_buttonoptions, l_tokens);
+
+  for (std::list<std::string>::const_iterator iter = l_tokens.begin(); iter != l_tokens.end(); ++iter)
   {
-    if (strstr (text_buttonoptions, buttonOptionsTable [l]) != 0)
+    for (l=0; l<maxButtonOptions; l++)
     {
-      retval += (uint64_t(1)<<l);
+      if (iter->compare(buttonOptionsTable [l]) == 0)
+      {
+        retval += (uint64_t(1)<<l);
+        break;
+      }
+    }
+    if (l == maxButtonOptions) // error
+    {
+      std::cout << "INVALID BUTTON OPTION '" << text_buttonoptions << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+      return -1;
     }
   }
+
   return retval;
 }
 

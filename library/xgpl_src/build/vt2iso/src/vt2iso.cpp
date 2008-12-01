@@ -1421,6 +1421,9 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
 {
   if (arrc_attributes [attrRle].isGiven())
   {
+    if (picturegraphicrletoi (arrc_attributes [attrRle].get().c_str()) == -1)
+      return false;
+
     // set rle stuff
     unsigned int rle = picturegraphicrletoi (arrc_attributes [attrRle].get().c_str());
     // replace possible rle='auto' by 'rle1+rle4+rle8'
@@ -2321,6 +2324,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           return false;
 #endif
 
+        if (picturegraphicoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+          return false;
+
         objBitmapOptions = picturegraphicoptionstoi (arrc_attributes [attrOptions].get().c_str());
         // set deXcolourDepth per reference, according to the found file and fileX attributes
         if (!openDecodePrintOut (l_stdBitmapPath, objBitmapOptions, deXcolourDepth))
@@ -2785,7 +2791,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           if (colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()) == -1)
             return false;
-
+          if (buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str(), buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()));
           fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
           break;
@@ -2877,6 +2884,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           retJustification |= retVertJustification << 2;
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
+          if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+            return false;
 
           fprintf (partFile_attributes, ", %s, %s, %d, %s, %s, %d, %s, %d, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), getObjectReferencePrefixed (attrInput_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJustification, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled );
           break;
@@ -2894,6 +2903,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
+            return false;
+          if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
 
           fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL, %sUL, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str());
@@ -3034,6 +3045,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           retJust |= retVertJust << 2;
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
+          if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+            return false;
 
           fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %d, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJust, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str());
           break;
@@ -3049,6 +3062,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
+            return false;
+          if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str());
           if (arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // not found 
@@ -3093,6 +3108,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
 
+          if (linedirectiontoi (arrc_attributes [attrLine_direction].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %s, %s, %s, %d", getObjectReferencePrefixed(attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), linedirectiontoi (arrc_attributes [attrLine_direction].get().c_str()));
           break;
 
@@ -3104,6 +3121,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           arrc_attributes [attrLine_suppression].setIfNotGiven ("0");
 
+          if (linesuppressiontoi (arrc_attributes [attrLine_suppression].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %s, %s, %s, %d, %s", getObjectReferencePrefixed (attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), linesuppressiontoi (arrc_attributes [attrLine_suppression].get().c_str()), getObjectReferencePrefixed (attrFill_attributes).c_str());
           break;
 
@@ -3120,6 +3139,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           arrc_attributes [attrEllipse_type].setIfNotGiven("0");
 
+          if (ellipsetypetoi (arrc_attributes [attrEllipse_type].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %s, %s, %s, %d, %s, %s, %s", getObjectReferencePrefixed(attrLine_attributes).c_str(), arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), ellipsetypetoi (arrc_attributes [attrEllipse_type].get().c_str()), arrc_attributes [attrStart_angle].get().c_str(), arrc_attributes [attrEnd_angle].get().c_str(), getObjectReferencePrefixed (attrFill_attributes).c_str());
           break;
 
@@ -3131,6 +3152,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           arrc_attributes [attrPolygon_type].setIfNotGiven("0");
 
+          if (polygontypetoi (arrc_attributes [attrPolygon_type].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), getObjectReferencePrefixed (attrLine_attributes).c_str(), getObjectReferencePrefixed (attrFill_attributes).c_str(),
                    polygontypetoi (arrc_attributes [attrPolygon_type].get().c_str()));
           break;
@@ -3155,6 +3178,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           if (colourtoi ( arrc_attributes [attrArc_and_tick_colour].get().c_str()) == -1)
             return false;
+          if (meteroptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %s, %d, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", arrc_attributes [attrWidth].get().c_str(), colourtoi ( arrc_attributes [attrNeedle_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()),
                    colourtoi ( arrc_attributes [attrArc_and_tick_colour].get().c_str()), meteroptionstoi (arrc_attributes [attrOptions].get().c_str()),
                    arrc_attributes [attrNumber_of_ticks].get().c_str(), arrc_attributes [attrStart_angle].get().c_str(), arrc_attributes [attrEnd_angle].get().c_str(), arrc_attributes [attrMin_value].get().c_str(),
@@ -3173,6 +3198,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (colourtoi ( arrc_attributes [attrColour].get().c_str()) == -1)
            return false;
           if (colourtoi ( arrc_attributes [attrTarget_line_colour].get().c_str()) == -1)
+            return false;
+          if (linearbargraphoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(),
                    colourtoi ( arrc_attributes [attrColour].get().c_str()), colourtoi ( arrc_attributes [attrTarget_line_colour].get().c_str()), linearbargraphoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrNumber_of_ticks].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str(), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrTarget_value_variable_reference].get().c_str(), arrc_attributes [attrTarget_value].get().c_str());
@@ -3196,6 +3223,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (colourtoi ( arrc_attributes [attrColour].get().c_str()) == -1)
             return false;
           if (colourtoi ( arrc_attributes [attrTarget_line_colour].get().c_str()) == -1)
+            return false;
+          if (archedbargraphoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes , ", %s, %s, %d, %d, %d, %s, %s, %s, %s, %s, %s, %s, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrColour].get().c_str()), colourtoi ( arrc_attributes [attrTarget_line_colour].get().c_str()), archedbargraphoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrStart_angle].get().c_str(), arrc_attributes [attrEnd_angle].get().c_str(), arrc_attributes [attrBar_graph_width].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str(), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrTarget_value_variable_reference].get().c_str(), arrc_attributes [attrTarget_value].get().c_str());
           break;
@@ -3271,6 +3300,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (colourtoi ( arrc_attributes [attrFont_colour].get().c_str()) == -1)
             return false;
+          if (fontstyletoi (arrc_attributes [attrFont_style].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %d, %d, %d, %d", colourtoi ( arrc_attributes [attrFont_colour].get().c_str()), (unsigned int)retFontSize,
                    (unsigned int)ret, fontstyletoi (arrc_attributes [attrFont_style].get().c_str()));
           break;
@@ -3284,7 +3315,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (colourtoi ( arrc_attributes [attrLine_colour].get().c_str()) == -1)
             return false;
-
+          if (linearttoi (arrc_attributes [attrLine_art].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %d, %s, 0x%x", colourtoi ( arrc_attributes [attrLine_colour].get().c_str()), arrc_attributes [attrLine_width].get().c_str(), linearttoi (arrc_attributes [attrLine_art].get().c_str()));
           break;
 
@@ -3297,6 +3329,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           arrc_attributes [attrFill_type].setIfNotGiven ("0");
 
           if (colourtoi ( arrc_attributes [attrFill_colour].get().c_str()) == -1)
+            return false;
+          if (filltypetoi (arrc_attributes [attrFill_type].get().c_str()) == -1)
             return false;
 
           fprintf (partFile_attributes, ",%d, %d, %s", filltypetoi (arrc_attributes [attrFill_type].get().c_str()), colourtoi ( arrc_attributes [attrFill_colour].get().c_str()), getObjectReferencePrefixed (attrFill_pattern).c_str());
@@ -3330,6 +3364,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             tempString = str(format("\"%s\"") % arrc_attributes [attrValidation_string].get());
             arrc_attributes [attrValidation_string].set( tempString );
           }
+          if (validationtypetoi (arrc_attributes [attrValidation_type].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %d, %s, %s", validationtypetoi (arrc_attributes [attrValidation_type].get().c_str()), arrc_attributes [attrLength].get().c_str(),
                    arrc_attributes [attrValidation_string].get().c_str());
           break;
@@ -3350,6 +3386,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
+          if (auxfunctiontypetoi(arrc_attributes [attrFunction_type].get().c_str()) == -1)
+            return false;
           fprintf (partFile_attributes, ", %d, %d", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()),
                    auxfunctiontypetoi(arrc_attributes [attrFunction_type].get().c_str()));
           break;
@@ -3361,6 +3399,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
+            return false;
+          if (auxfunctiontypetoi (arrc_attributes [attrFunction_type].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %d, %d, %s", colourtoi (arrc_attributes [attrBackground_colour].get().c_str()), auxfunctiontypetoi (arrc_attributes [attrFunction_type].get().c_str()), arrc_attributes [attrInput_id].get().c_str());
           break;
@@ -3412,6 +3452,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           fprintf (partFile_attributes, ", %s", getObjectReferencePrefixed(attrFill_attributes).c_str());
 
           if (colourdepthtoi (arrc_attributes [attrFormat].get().c_str()) == -1)
+            return false;
+          if (gcoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %d, %d", colourdepthtoi (arrc_attributes [attrFormat].get().c_str()), gcoptionstoi (arrc_attributes [attrOptions].get().c_str()));
 
@@ -3713,6 +3755,8 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
       }
             //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
       
+      if (eventtoi(arrc_attributes [attrEvent].get().c_str()) == -1)
+        return false;
       if (!eventtoi(arrc_attributes [attrEvent].get().c_str()))
       {
         std::cout << "\n\nevent: invalid attribute value ! STOPPING PARSER! bye.\n\n";
@@ -4629,6 +4673,8 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       }
       if (colourtoi ( arrc_attributes [attrFont_colour].get().c_str()) == -1)
         return false;
+      if (fontstyletoi ( arrc_attributes [attrFont_style].get().c_str()) == -1)
+        return false;
       // Need check for all attributes being present for this command -bac
       commandMessage = str(format("0xAA, %d, %d, %d, %d, %d, %d, 0xFF") % MACRO_16bitToLE( (unsigned int)ret) % colourtoi (arrc_attributes [attrFont_colour].get().c_str()) % (unsigned int)retFontSize % arrc_attributes [attrFont_type].getIntValue() % fontstyletoi ( arrc_attributes [attrFont_style].get().c_str()));
     } break;
@@ -4646,6 +4692,8 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       }
       if (colourtoi ( arrc_attributes [attrLine_colour].get().c_str()) == -1)
         return false;
+      if (linearttoi(arrc_attributes [attrLine_art].get().c_str()) == -1)
+        return false;
       // Need check for all attributes being present for this command -bac
       commandMessage = str(format("0xAB, %d, %d, %d, %d, %d, %d, 0xFF") %  MACRO_16bitToLE ((unsigned int)ret) % colourtoi(arrc_attributes [attrLine_colour].get().c_str()) %  arrc_attributes [attrLine_width].getIntValue() % MACRO_16bitToLE (linearttoi(arrc_attributes [attrLine_art].get().c_str())));
     } break;
@@ -4662,6 +4710,8 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
         return false;
       }
       if (colourtoi ( arrc_attributes [attrFill_colour].get().c_str()) == -1)
+        return false;
+      if (filltypetoi (arrc_attributes [attrFill_type].get().c_str()) == -1)
         return false;
       // Need check for all attributes being present for this command -bac
       commandMessage = str(format("0xAC, %d, %d, %d, %d, %d, %d, 0xFF") %  MACRO_16bitToLE((unsigned int)ret) % filltypetoi (arrc_attributes [attrFill_type].get().c_str()) %  colourtoi (arrc_attributes [attrFill_colour].get().c_str()) % MACRO_16bitToLE (arrc_attributes [attrFill_pattern].getIntValue()));
