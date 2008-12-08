@@ -58,6 +58,7 @@
 #include <unistd.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
+#include <sys/stat.h>
 #include <cstdio>
 
 #include "can_target_extensions.h"
@@ -117,21 +118,29 @@ int16_t createMsqs(msqData_s& msqData)
 
   DEBUG_PRINT("createMsqs called\n");
   msqData.i32_pid = getpid();
+  bool b_useFallback = false;
+
+  struct stat s_stat;
+  if (stat(MSQ_KEY_PATH, &s_stat) != 0)
+  { // directory does not exist => create default directory
+    mkdir(MSQ_KEY_PATH_FALLBACK, 00755);
+    b_useFallback = true;
+  }
 
   /* Generate our IPC key value */
-  msgkey = ftok(MSQ_KEY_PATH , MSQ_COMMAND);
+  msgkey = ftok((b_useFallback ? MSQ_KEY_PATH_FALLBACK : MSQ_KEY_PATH), MSQ_COMMAND);
   if ((msqData.i32_cmdHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
     return HAL_UNKNOWN_ERR;
   
-  msgkey = ftok(MSQ_KEY_PATH , MSQ_COMMAND_ACK);
+  msgkey = ftok((b_useFallback ? MSQ_KEY_PATH_FALLBACK : MSQ_KEY_PATH), MSQ_COMMAND_ACK);
   if ((msqData.i32_cmdAckHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
     return HAL_UNKNOWN_ERR;
   
-  msgkey = ftok(MSQ_KEY_PATH , MSQ_CLIENT_READ);
+  msgkey = ftok((b_useFallback ? MSQ_KEY_PATH_FALLBACK : MSQ_KEY_PATH), MSQ_CLIENT_READ);
   if ((msqData.i32_rdHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
     return HAL_UNKNOWN_ERR;
   
-  msgkey = ftok(MSQ_KEY_PATH , MSQ_CLIENT_WRITE);
+  msgkey = ftok((b_useFallback ? MSQ_KEY_PATH_FALLBACK : MSQ_KEY_PATH), MSQ_CLIENT_WRITE);
   if ((msqData.i32_wrHandle = msgget(msgkey, IPC_CREAT | 0660 )) == -1)
     return HAL_UNKNOWN_ERR;
   

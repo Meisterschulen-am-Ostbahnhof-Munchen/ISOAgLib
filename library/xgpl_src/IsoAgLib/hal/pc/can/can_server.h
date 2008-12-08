@@ -50,7 +50,10 @@
 #define MSQ_CLIENT_READ  'o'
 #define MSQ_CLIENT_WRITE 'p'
 
-#define MSQ_KEY_PATH     "/root"
+#define MSQ_KEY_PATH           "/root"
+// this directory will be created if MSQ_KEY_PATH doesn't exist
+#define MSQ_KEY_PATH_FALLBACK  "/tmp/can_server_key_dir"
+
 #define PIPE_PATH        "/tmp/can_server_"
 
 
