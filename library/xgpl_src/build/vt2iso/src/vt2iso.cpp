@@ -1146,12 +1146,14 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   arrc_attributes[attrHorizontal_justification].setIfNotGiven("left");
   arrc_attributes[attrVertical_justification].setIfNotGiven("top");
   arrc_attributes[attrActivate_for_editing].setIfNotGiven("false");
-  arrc_attributes[attrFont_style].setIfNotGiven("normal");
+  arrc_attributes[attrFont_style].setIfNotGiven("none");
   arrc_attributes[attrVariable_reference].setIfNotGiven("NULL");
   arrc_attributes[attrTarget_value_variable_reference].setIfNotGiven("NULL");
   arrc_attributes[attrEnabled].setIfNotGiven("yes");
   arrc_attributes[attrScale].setIfNotGiven("1");
   arrc_attributes[attrRle].setIfNotGiven("auto");
+  arrc_attributes[attrLine_suppression].setIfNotGiven("none");
+  arrc_attributes[attrOptions].setIfNotGiven("none");
 
   if (a_objType == otButton)
   {
