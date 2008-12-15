@@ -861,6 +861,10 @@ MultiSend_c::SendStream_c::processMsg()
             mb_pkgSent = 0;
             sendPacket();
           }
+          else if (men_msgType == IsoTP)
+          { // give the requester what it he requested
+            mui8_sequenceNr = refcc_multiSendPkg.getUint8Data (2)-1;
+          }
           // update NextPacketNumberToSend!
           mui32_lastNextPacketNumberToSend = ui32_pkgCTSd;
 
