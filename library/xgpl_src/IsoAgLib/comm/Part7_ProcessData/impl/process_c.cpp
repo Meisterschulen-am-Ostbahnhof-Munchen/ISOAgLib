@@ -865,7 +865,7 @@ void Process_c::unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClie
   unregisterC2( pc_remoteClient );
 
   // set ptr to a defined position => avoid use of this pc_iter in deleteFilter() which is now postponed (timeEvent())
-  pc_searchCacheC2 = c_arrClientC2.end() - 1;
+  pc_searchCacheC2 = c_arrClientC2.begin();
 
   if ( !b_otherRemoteWithSameOwner )
   { // delete the remote filter that was created to receive messages from that owner
