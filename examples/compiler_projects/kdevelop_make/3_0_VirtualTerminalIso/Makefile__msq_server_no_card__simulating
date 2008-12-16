@@ -7,7 +7,7 @@
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../../..
 INSTALL_PATH = /usr/local
-APP_INC = -I../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso 
+APP_INC = -I../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso
 LIBPATH = 
 EXTERNAL_LIBS = 
 

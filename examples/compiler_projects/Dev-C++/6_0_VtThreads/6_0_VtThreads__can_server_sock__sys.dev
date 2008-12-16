@@ -208,7 +208,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit17]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -218,7 +218,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit18]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -228,7 +228,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit19]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -238,7 +238,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit20]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.cpp
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -1248,7 +1248,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit121]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischedulertask_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -1258,7 +1258,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit122]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulertask_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.h
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -1268,7 +1268,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit123]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/schedulerentry_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -1278,7 +1278,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit124]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/impl/scheduler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.h
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1
@@ -1288,7 +1288,7 @@ OverrideBuildCmd=0
 BuildCmd=
 
 [Unit125]
-FileName=../../../../library/xgpl_src/IsoAgLib/comm/Scheduler/ischeduler_c.h
+FileName=../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h
 CompileCpp=1
 Folder=6_0_VtThreads
 Compile=1

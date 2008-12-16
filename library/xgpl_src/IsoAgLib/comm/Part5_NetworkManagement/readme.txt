@@ -72,7 +72,7 @@ See \ref 0_0_AddressClaimIso.cpp.
 
 /* include the central interface header for the communication layer part
 of the "IsoAgLib" */
-#include <IsoAgLib/comm/Scheduler/ischeduler_c.h>
+#include <IsoAgLib/scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 #ifdef SYSTEM_PC
