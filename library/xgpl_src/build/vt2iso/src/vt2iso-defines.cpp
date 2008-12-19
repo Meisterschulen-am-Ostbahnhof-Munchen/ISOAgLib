@@ -499,7 +499,7 @@ char verticalJustificationTable [maxVerticalJustificationTable] [stringLength+1]
 char stringOptionsTable [maxStringOptionsTable] [stringLength+1] = {
   "transparent",
   "autowrap",
-  "wrap_on_hyphen"
+  "wraponhyphen"
 };
 
 char inputNumberOptionsTable [maxInputNumberOptionsTable] [stringLength+1] = {
@@ -539,13 +539,13 @@ char polygonTypeTable [maxPolygonTypeTable] [stringLength+1] = {
 
 
 char validationTypeTable [maxValidationTypeTable] [stringLength+1] = {
-  "valid_characters",
-  "invalid_characters"
+  "validcharacters",
+  "invalidcharacters"
 };
 
 
 char fillTypeTable [maxFillTypeTable] [stringLength+1] = {
-  "no_fill",
+  "nofill",
   "linecolour",
   "fillcolour",
   "pattern"
@@ -582,7 +582,7 @@ char meterOptionsTable[maxMeterOptionsTable] [stringLength+1] ={
 char archedBarGraphOptionsTable [maxArchedBarGraphOptionsTable] [stringLength+1] = {
   "border",
   "targetline",
-  "not_used",
+  "notused",
   "nofill",
   "clockwise",
 };
@@ -638,15 +638,15 @@ char GCOptionsTable [maxGCOptions] [stringLength+1] = {
 char buttonOptionsTable [maxButtonOptions] [stringLength+1] = {
   "latchable",
   "latched",
-  "suppress_border",
-  "transparent_background",
+  "suppressborder",
+  "transparentbackground",
   "disabled",
-  "no_border"
+  "noborder"
 };
 
 char inputobjectOptionsTable [maxInputObjectOptionsTable] [stringLength+1] = {
   "enabled",
-  "live_editing"
+  "liveediting"
 };
 
 int utf16_strlen(const char* source)
