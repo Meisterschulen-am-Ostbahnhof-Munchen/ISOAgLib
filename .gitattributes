@@ -2677,6 +2677,7 @@ library/xgpl_src/build/proc2iso/html/index.html -text
 library/xgpl_src/build/proc2iso/html/pages.html -text
 library/xgpl_src/build/proc2iso/proc2iso.kdevelop -text
 library/xgpl_src/build/proc2iso/proc2iso.kdevelop.filelist -text
+library/xgpl_src/build/proc2iso/proc2iso.vcproj -text
 library/xgpl_src/build/proc2iso/src/Makefile.am -text
 library/xgpl_src/build/proc2iso/src/Makefile.in -text
 library/xgpl_src/build/proc2iso/src/proc2iso-defines.hpp -text
