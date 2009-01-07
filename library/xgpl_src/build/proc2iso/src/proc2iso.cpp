@@ -1414,10 +1414,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         buf_length += 2;
 
         //property_value
-        buffer << uint16_t(vecstr_attrString[attrProperty_value][0]) << ", "
-               << uint16_t(vecstr_attrString[attrProperty_value][1]) << ", "
-               << uint16_t(vecstr_attrString[attrProperty_value][2]) << ", "
-               << uint16_t(vecstr_attrString[attrProperty_value][3]) << ", ";
+        uint32_t ui32_propValue = atoi (vecstr_attrString[attrProperty_value].c_str());
+        buffer << uint16_t(ui32_propValue & 0xFF)         << ", "
+               << uint16_t((ui32_propValue >> 8) & 0xFF)  << ", "
+               << uint16_t((ui32_propValue >> 16) & 0xFF) << ", "
+               << uint16_t((ui32_propValue >> 24) & 0xFF) << ", ";
         buf_length += 4;
 
         //length of designator
