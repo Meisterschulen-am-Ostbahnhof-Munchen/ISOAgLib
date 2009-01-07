@@ -133,7 +133,7 @@ static void usage()
 
 char proName[1024+1];
 
-void clean_exit (int return_value, char* error_message=NULL)
+void clean_exit (int return_value, const char* error_message=NULL)
 {
   char partFileName [1024+1]; partFileName [1024+1-1] = 0x00;
 
@@ -1395,6 +1395,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
       }
       case otDeviceProperty:
+      {
         if (!attrIsGiven[attrDdi] || !attrIsGiven[attrProperty_value])
         {
           clean_exit (-1, "YOU NEED TO SPECIFY THE ddi= AND property_value= ATTRIBUTES FOR THE <deviceproperty> OBJECT! STOPPING PARSER! bye.\n\n");
@@ -1444,7 +1445,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         if (p_buffer)
           *p_buffer << buffer.str().c_str();
         buffer.str("");
-        break;
+      } break;
 
       case otDeviceProcessDataCombination:
         break;
