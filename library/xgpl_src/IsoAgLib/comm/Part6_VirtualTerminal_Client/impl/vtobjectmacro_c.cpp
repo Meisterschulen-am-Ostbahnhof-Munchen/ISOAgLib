@@ -99,14 +99,16 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectMacro_s
     MACRO_streamLocalVars;
 
+    uint16_t numBytesToFollow = vtObjectMacro_a->commandsToFollow ? vtObjectMacro_a->numBytesToFollow : 0;
+
     if (sourceOffset == 0) { // dump out constant sized stuff
       destMemory [0] = vtObject_a->ID & 0xFF;
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 28; // Object Type = Macro
-//      if (vtObjectMacro_a->numBytesToFollow != NULL)
+//      if (numBytesToFollow != NULL)
 //      {
-        destMemory [3] = vtObjectMacro_a->numBytesToFollow & 0xFF;
-        destMemory [4] = vtObjectMacro_a->numBytesToFollow >> 8;
+        destMemory [3] = numBytesToFollow & 0xFF;
+        destMemory [4] = numBytesToFollow >> 8;
 //      }
 //      else
 //      {
@@ -117,7 +119,7 @@ vtObjectMacro_c::stream(uint8_t* destMemory,
       sourceOffset += 5;
     }
 
-    while ((sourceOffset >= 5U) && (sourceOffset < (5U+vtObjectMacro_a->numBytesToFollow)) && ((curBytes+1) <= maxBytes))
+    while ((sourceOffset >= 5U) && (sourceOffset < (5U+numBytesToFollow)) && ((curBytes+1) <= maxBytes))
     {
       destMemory [curBytes] = vtObjectMacro_a->commandsToFollow [sourceOffset-5];
       curBytes++;
@@ -134,7 +136,7 @@ uint32_t
 vtObjectMacro_c::fitTerminal() const
 {
   MACRO_localVars;
-  return 5+vtObjectMacro_a->numBytesToFollow;
+  return 5 + (vtObjectMacro_a->commandsToFollow ? vtObjectMacro_a->numBytesToFollow : 0);
 }
 
 } // end namespace __IsoAgLib

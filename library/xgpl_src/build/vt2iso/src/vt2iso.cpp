@@ -863,6 +863,9 @@ signed long int vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wis
     /// only insert object if it is basic or proprietary
     if ( checkForAllowedExecution() )
     { // insert new name-id pair now!
+#ifdef DEBUG
+      std::cout << "Inserting name-ID-pair (" << str_objName << ", " << foundID << ")" << std::endl;
+#endif
       map_objNameIdTable.insert (pair<std::string, uint16_t>(str_objName, foundID));
     }
   }
@@ -2014,7 +2017,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             break;
         }
       }
-      /// @todo warum hängt das id von resource setzen von hasUnknAttrs ab???
+      /// @todo warum hï¿½ngt das id von resource setzen von hasUnknAttrs ab???
       if (b_hasUnknownAttributes)
       // set object ID here to ensure that the resource ID is used as object ID
         setID (objName.c_str(), objID);
@@ -2429,36 +2432,38 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       unsigned int objChildCommands(0);
       if (objHasArrayMacroCommand)
       {
-        // Process all Child-Elements
-        bool firstElement = true;
+        int nBytes = StringToInt(arrc_attributes [attrNumber_of_bytes].get());
+        if (nBytes <= 0) {
+          std::cerr << "The macro's number of bytes to follow should be positive, but it isn't." << std::endl;
+          return false;
+        }
+        fprintf (partFile_attributes, "const uint8_t iVtObject%s_aMacro_Commands [%d] = {", objName.c_str(), nBytes);
 
+        // Process all Child-Elements
+        bool isStillMissingCommand = true;
         for (child = n->getFirstChild(); child != 0; child=child->getNextSibling())
         {
-          if (child->getNodeType() == DOMNode::ELEMENT_NODE)  // May need to adjust this to be sure the child is really a command element and not something else to enforce integrity
+          bool const isReallyCommandElement = child->getNodeType() == DOMNode::ELEMENT_NODE;
+          if (isReallyCommandElement)  // May need to adjust this to be sure the child is really a command element and not something else to enforce integrity
           {
             char *command_name = XMLString::transcode(child->getNodeName());
             unsigned int commandType = commandIsType (command_name);
             std::string commandMessage;
-            if(!(setCommandElement(commandType, child/*, pAttributes*/, n, objChildCommands, commandMessage)))
-            {
+            bool const isNotSet = !setCommandElement(commandType, child/*, pAttributes*/, n, objChildCommands, commandMessage);
+            if (isNotSet)
               return false;
-            }
-            if (firstElement)
-            {
-              fprintf (partFile_attributes, "const uint8_t iVtObject%s_aMacro_Commands [] = {", objName.c_str());
-            }
-            else
-            {
+            if (!isStillMissingCommand)
               fprintf (partFile_attributes, ", ");
-            }
             fprintf (partFile_attributes, "%s", commandMessage.c_str());
-            firstElement = false;
+            isStillMissingCommand = false;
           }
         }
-        if (firstElement == false)
-        {
-          fprintf (partFile_attributes, "};\n");
+        if (isStillMissingCommand) {
+          std::cerr << "The macro should have at least one command, but it hasn't." << std::endl;
+          return false;
         }
+
+        fprintf (partFile_attributes, "};\n");
       } // End of if (objHasArrayMacroCommand)
       unsigned int objChildPoints(0);
       // ### Print out point array for a Polygon Object
@@ -3527,10 +3532,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       }
       if (objHasArrayMacroCommand)
       {
-        if (objChildCommands == 0)
-          fprintf (partFile_attributes, ",NULL");
-        else
-          fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName.c_str());
+        fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName.c_str());
       }
       if ( checkForAllowedExecution() )
         fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
@@ -5207,10 +5209,14 @@ void vt2iso_c::markIds (DOMNode *n)
       }
     }
     // now check if a pair with name/id was found
-    if ((name.length() > 0) && (id >= 0))
+    bool const is_found = !name.empty() && 0 <= id && id != 65535;
+    if (is_found)
     { // save it in the table, so we can solve forward-references
       // (which is actually not needed for "normal" forward-references
       // but forward-references in macro-commands!)
+#ifdef DEBUG
+      std::cout << "Inserting name-ID-pair (" << name << ", " << id << ")" << std::endl;
+#endif
       map_objNameIdTable.insert (std::pair<std::string, uint16_t>(name, uint16_t(id)));
     }
   }
