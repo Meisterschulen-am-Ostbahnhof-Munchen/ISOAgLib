@@ -87,6 +87,8 @@
 #ifndef TRACGENERAL_C_H
 #define TRACGENERAL_C_H
 
+#include <map>
+
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 
@@ -100,16 +102,23 @@ namespace __IsoAgLib {
 #define REAR_HITCH_STATE_PGN_DISABLE_MASK              0x0004LU
 #define FRONT_HITCH_STATE_PGN_DISABLE_MASK             0x0008LU
 
-
-
 typedef struct
 {
+  /** last time of maintain power request [ms] */
+  int32_t i32_lastMaintainPowerRequest : 32;
+
+  /** state whether maintenance of ECU power was requested */
+  bool b_maintainEcuPower : 1;
+  /** state whether maintenance of actuator power was requested */
+  bool b_maintainActuatorPower : 1;
+
   /** indicates the transport state of an implement connected to a tractor or power unit */
   unsigned int inTransport: 2;
   /** indicates the state of an implement where it may be disconnected from a tractor or power unit */
   unsigned int inPark: 2;
   /** indicates that an implement is connected to a tractor or power unit and is ready for work */
   unsigned int inWork: 2;
+
 } indicatedStateImpl_t;
 
 class TracGeneral_c;
@@ -203,7 +212,7 @@ public: // Public methods
     * set the ISO key switch state of the tractor
     * @param at_val IsoActive -> key switch ON
     */
-  void setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val) { mt_keySwitch = at_val; }
+  void setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val);
 
   /** set the maximum power time of the tractor in [min]
     * @return maximum power time of the tractor in [min]
@@ -278,10 +287,14 @@ public: // Public methods
     * @return maximum power time of the tractor in [min]
     */
   uint8_t maxPowerTime() const { return mui8_maxPowerTime;}
+
   /** deliver last receive time of maintain power request
     * @return time in [ms] since system start -> comparable to system time
     */
-  int32_t lastMaintainPowerRequest() const { return mui32_lastMaintainPowerRequest;}
+  int32_t lastMaintainPowerRequest() const { return mi32_lastMaintainPowerRequest;}
+
+  /** check if timeout reached since last receive time of maintain power request */
+  bool timeOutMaintainPowerRequest() const;
 
   /** get present limit status of the front hitch position
       @return  limit status of front hitch position
@@ -372,6 +385,9 @@ private:
     */
   void sendMessage();
 
+  /** update map of maintain power data, update maintain power boolean */
+  void updateMaintainPowerRequest();
+
 private:
   // Private attributes
   /** engine speed */
@@ -426,7 +442,7 @@ private:
   IsoAgLib::IsoLimitFlag_t mt_rearHitchPosLimitStatus;
 
   /** last time of maintain power request [ms] */
-  uint32_t mui32_lastMaintainPowerRequest;
+  int32_t mi32_lastMaintainPowerRequest;
 
   /** state whether maintenance of ECU power was requested */
   bool mb_maintainEcuPower;
@@ -434,7 +450,10 @@ private:
   /** state whether maintenance of actuator power was requested */
   bool mb_maintainActuatorPower;
 
-  /** indicated state of an implement */
+  /** stores for each requesting implement (sourceAddress) a bit field with all indicated state*/
+  STL_NAMESPACE::map<uint8_t, indicatedStateImpl_t> mmap_indicatedState; // access mmap_data[sourceAdr].
+
+  /** bit field with indicated state for tractor*/
   indicatedStateImpl_t mt_implState;
 };
 

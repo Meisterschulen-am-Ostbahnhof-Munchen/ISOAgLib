@@ -176,6 +176,9 @@ namespace IsoAgLib {
   /** deliver last receive time of maintain power request */
   int32_t lastMaintainPowerRequest() const { return TracGeneral_c::lastMaintainPowerRequest();}
 
+  /** check if timeout reached since last receive time of maintain power request */
+  bool timeOutMaintainPowerRequest() const { return TracGeneral_c::timeOutMaintainPowerRequest();}
+
   /** check whether maintenance of ECU power was requested */
   bool maintainEcuPower() const { return TracGeneral_c::maintainEcuPower();}
 

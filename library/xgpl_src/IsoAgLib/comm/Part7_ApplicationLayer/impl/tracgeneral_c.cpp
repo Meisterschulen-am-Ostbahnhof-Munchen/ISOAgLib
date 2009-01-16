@@ -91,6 +91,8 @@
 #include "tracpto_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
+#define TIMEOUT_MAINTENANCE_PGN 2000
+
 using namespace std;
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
@@ -193,8 +195,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mt_keySwitch = IsoAgLib::IsoNotAvailable; // mark as not available
     mui8_maxPowerTime = mui8_frontLinkForce = mui8_rearLinkForce = NO_VAL_8;
     mui16_frontDraft = mui16_rearDraft = NO_VAL_16;
-    mui32_lastMaintainPowerRequest = 0;
+    mi32_lastMaintainPowerRequest = -1;
     mb_maintainEcuPower = mb_maintainActuatorPower = false;
+    mt_implState.i32_lastMaintainPowerRequest = -1;
+    mt_implState.b_maintainEcuPower = mt_implState.b_maintainActuatorPower = false;
     mt_implState.inPark =      IsoAgLib::IsoNotAvailablePark;
     mt_implState.inTransport = IsoAgLib::IsoNotTransported;
     mt_implState.inWork =      IsoAgLib::IsoDisconnect;
@@ -247,6 +251,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracGeneral_c::timeEventTracMode( )
   { ///Timeperiod of 100ms is set in ::config
     sendMessage();
+
+    updateMaintainPowerRequest();
 
     return true;
   }
@@ -312,22 +318,30 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         b_result = true;
         break;
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
+      {
+        indicatedStateImpl_t& rt_indicateData = mmap_indicatedState[data().isoSa()];
+
         if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
-          mb_maintainEcuPower = true;
+          rt_indicateData.b_maintainEcuPower = true;
         else
-          mb_maintainEcuPower = false;
+          rt_indicateData.b_maintainEcuPower = false;
         if ( ( (data().getUint8Data( 0 ) >> 4) & 3) == 1)
-          mb_maintainActuatorPower = true;
+          rt_indicateData.b_maintainActuatorPower = true;
         else
-          mb_maintainActuatorPower = false;
+          rt_indicateData.b_maintainActuatorPower = false;
 
-        mt_implState.inTransport = ( (data().getUint8Data( 1 ) >> 6) & 3 );
-        mt_implState.inPark =      ( (data().getUint8Data( 1 ) >> 4) & 3 );
-        mt_implState.inWork =      ( (data().getUint8Data( 1 ) >> 2) & 3 );
+        rt_indicateData.inTransport = ( (data().getUint8Data( 1 ) >> 6) & 3 );
+        rt_indicateData.inPark =      ( (data().getUint8Data( 1 ) >> 4) & 3 );
+        rt_indicateData.inWork =      ( (data().getUint8Data( 1 ) >> 2) & 3 );
 
-        mui32_lastMaintainPowerRequest = data().time();
+        rt_indicateData.i32_lastMaintainPowerRequest = data().time();
+        mi32_lastMaintainPowerRequest = data().time();
+
+        updateMaintainPowerRequest();
+
         b_result = true;
         break;
+      }
       // **********************************************************
       // Added by Martin Wodok for LANGUAGE_PGN:
       case LANGUAGE_PGN:
@@ -584,6 +598,67 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       return BaseCommon_c::sendPgnRequest(LANGUAGE_PGN);
     else
       return false;
+  }
+
+  /** clean map of maintain power data, set Maintain Power value */
+  void TracGeneral_c::updateMaintainPowerRequest()
+  {
+    mb_maintainEcuPower = false;
+    mb_maintainActuatorPower = false;
+
+    if (mmap_indicatedState.empty()) return;
+
+    int32_t i32_now = HAL::getTime();
+    for (STL_NAMESPACE::map<uint8_t, indicatedStateImpl_t>::iterator iter = mmap_indicatedState.begin();
+         iter != mmap_indicatedState.end();
+        )
+    {
+      if ((iter->second.i32_lastMaintainPowerRequest + TIMEOUT_MAINTENANCE_PGN) < i32_now)
+        mmap_indicatedState.erase(iter++);
+      else
+      {
+        mb_maintainEcuPower |= iter->second.b_maintainEcuPower;
+        mb_maintainActuatorPower |= iter->second.b_maintainActuatorPower;
+        ++iter;
+      }
+    }
+  }
+
+  /** check if timeout reached since last receive time of maintain power request */
+  bool
+  TracGeneral_c::timeOutMaintainPowerRequest() const
+  {
+    return (mmap_indicatedState.empty());
+  }
+
+  /**
+    * set the ISO key switch state of the tractor
+    * @pre valid IsoName_c instance should exist
+    * @param at_val IsoActive -> key switch ON
+    */
+  void TracGeneral_c::setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val)
+  {
+    if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName()))
+      return;
+
+    mt_keySwitch = at_val;
+
+    if (IsoAgLib::IsoActive != at_val)
+    {
+      // IsoInactive, IsoError and IsoNotAvailable
+      uint8_t ui8_nr = getIsoMonitorInstance4Comm().isoMemberISOName(*getISOName(), true).nr();
+      indicatedStateImpl_t& rt_indicateData = mmap_indicatedState[ui8_nr];
+      rt_indicateData.b_maintainEcuPower = true;
+      rt_indicateData.b_maintainActuatorPower = true;
+      rt_indicateData.i32_lastMaintainPowerRequest = mi32_lastMaintainPowerRequest = HAL::getTime();
+    }
+    else
+    {
+      // IsoActive
+      mmap_indicatedState.clear();
+    }
+
+    updateMaintainPowerRequest();
   }
 
 ///  Used for Debugging Tasks in Scheduler_c
