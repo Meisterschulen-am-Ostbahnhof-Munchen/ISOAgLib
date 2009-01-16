@@ -142,6 +142,58 @@ typedef enum {
   implInWork =      3,
 } IsoMaintainPower_t;
 
+/** different lighting types; implements and tractor*/
+typedef enum {
+// Byte 1
+  IsoFacilityPowerManagementKeySwitch =                       2,  // Byte 1, Bit6
+  IsoFacilityPowerManagementMaxTimeTractorPower =             3,  // Byte 1, Bit5
+  IsoFacilityPowerManagementMaintainPower =                   4,  // Byte 1, Bit4
+  IsoFacilitySpeedInformationWheelBasedSpeed =                5,  // Byte 1, Bit3
+  IsoFacilitySpeedInformationGroundBasedSpeed =               6,  // Byte 1, Bit2
+  IsoFacilitySpeedInformationEngineSpeed =                    7,  // Byte 1, Bit1
+// Byte 2
+  IsoFacilityHitchInformationRearPosition =                   8,  // Byte 2, Bit8
+  IsoFacilityHitchInformationRearInWork =                     9,  // Byte 2, Bit7
+  IsoFacilityPTOInformationRearShaftSpeed =                   10, // Byte 2, Bit6
+  IsoFacilityPTOInformationRearShaftEngagement =              11, // Byte 2, Bit5
+  IsoFacilityLightingMinimalSetAsExistingTrailerConnector =   12, // Byte 2, Bit4
+  IsoFacilityLanguageCommandStorageInTractorECU =             13, // Byte 2, Bit3
+// Byte 3
+  IsoFacilityTimeDate =                                       16, // Byte 3, Bit8
+  IsoFacilitySpeedAndDistanceGroundBasedDistance =            17, // Byte 3, Bit7
+  IsoFacilitySpeedAndDistanceGroundBasedDirection =           18, // Byte 3, Bit6
+  IsoFacilitySpeedAndDistanceWheelBasedDistance =             19, // Byte 3, Bit5
+  IsoFacilitySpeedAndDistanceWheelBasedDirection =            20, // Byte 3, Bit4
+  IsoFacilityAdditionalHitchParametersRearDraft =             21, // Byte 3, Bit3
+  IsoFacilityLightingFullImplementLightingMessageSet =        22, // Byte 3, Bit2
+  IsoFacilityEstimatedOrMeasuredAuxiliaryValveStatus =        23, // Byte 3, Bit1
+// Byte 4
+  IsoFacilityHitchCommandsRearHitchPosition =                 24, // Byte 4, Bit8
+  IsoFacilityPTOCommandsRearPTOSpeedCommand =                 25, // Byte 4, Bit7
+  IsoFacilityPTOCommandsRearPTOEngagementCommand =            26, // Byte 4, Bit6
+  IsoFacilityAuxiliaryValveCommands =                         27, // Byte 4, Bit5
+  IsoFacilityLimitRequestStatusReporting =                    28, // Byte 4, Bit4
+// Byte 5
+  IsoFacilityNavigationalSystemHighOutputPosition =           32, // Byte 5, Bit8
+  IsoFacilityNavigationalSystemPositionData =                 33, // Byte 5, Bit7
+  IsoFacilityNavigationalPseudoRangeNoiseStatistics =         34, // Byte 5, Bit6
+  IsoFacilityOperatorExternalLightControls =                  36, // Byte 5, Bit4
+  IsoFacilitySelectedMachineSpeed =                           37, // Byte 5, Bit3
+  IsoFacilitySelectedMachineSpeedControl =                    38, // Byte 5, Bit2
+  IsoFacilityDirectionControl =                               39, // Byte 5, Bit1
+// Byte 6
+  IsoFacilityHitchInformationFrontPosition =                  40, // Byte 6, Bit8
+  IsoFacilityHitchInformationFrontInWork =                    41, // Byte 6, Bit7
+  IsoFacilityPTOInformationFrontShaftSpeed =                  42, // Byte 6, Bit6
+  IsoFacilityPTOInformationFrontShaftEngagement =             43, // Byte 6, Bit5
+  IsoFacilityAdditionalHitchParametersFrontDraft =            44, // Byte 6, Bit4
+  IsoFacilityHitchCommandsFrontHitchPosition =                45, // Byte 6, Bit3
+  IsoFacilityPTOCommandsFrontPTOSpeedCommand =                46, // Byte 6, Bit2
+  IsoFacilityPTOCommandsFrontPTOEngagementCommand =           47, // Byte 6, Bit1
+// Byte 8
+  IsoFacilityReservedBitssetTo0 =                             63  // Byte 8, Bit1
+} IsoFacility_t;
+
 /** use an extended enum for the different states of ISO flags for auxiliary valve */
 typedef enum {
   IsoBlocked = 0,            ///< corresponding valve is closed
@@ -223,6 +275,20 @@ typedef enum {
   IsoNotCert = 0,  ///< certification test is not certified
   IsoCert = 1      ///< certification test performed
 } IsoCertTypeFlag_t;
+
+/** use an enum typedef for facilities type */
+typedef enum {
+  IsoFacilityNotAvailable = 0,  ///< facility is not available
+  IsoFacilityAvailable = 1      ///< facility is available
+} IsoFacilityFlag_t;
+
+/** use an enum typedef for TECU type */
+typedef enum {
+  IsoTecuClass1 = 0,              ///< TECU class 1
+  IsoTecuClass2 = 1,              ///< TECU class 2
+  IsoTecuClass3 = 2,              ///< TECU class 3
+  IsoTecuClassNotAvailable = 3,   ///< TECU class is not available
+} IsoTecuClassFlag_t;
 
 /** use an enum for the different revisions of the certification test*/
 typedef enum {

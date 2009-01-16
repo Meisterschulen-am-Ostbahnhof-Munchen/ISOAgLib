@@ -99,6 +99,9 @@
 #ifdef USE_TRACTOR_PTO
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h>
 #endif
+#ifdef USE_TRACTOR_FACILITIES
+#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.h>
+#endif
 #ifdef USE_TRACTOR_LIGHT
   #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/traclight_c.h>
 #endif
@@ -268,6 +271,9 @@ void Scheduler_c::startSystem()
 #endif
 #ifdef USE_TRACTOR_GENERAL
     getTracGeneralInstance4Comm().init();
+#endif
+#ifdef USE_TRACTOR_FACILITIES
+    getTracFacilitiesInstance4Comm().init();
 #endif
 #ifdef USE_TRACTOR_MOVE
     getTracMoveInstance4Comm().init();

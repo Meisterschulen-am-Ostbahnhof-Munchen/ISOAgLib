@@ -2533,6 +2533,8 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp -tex
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.cpp -text
@@ -2540,6 +2542,7 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracfacilities_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h -text

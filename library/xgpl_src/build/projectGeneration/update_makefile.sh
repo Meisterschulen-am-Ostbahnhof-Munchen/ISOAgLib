@@ -116,6 +116,7 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # + PRJ_TRACTOR_MOVE (only incorporate parts from BASE that provide tractor distance and speed information)
 # + PRJ_TRACTOR_PTO (only incorporate parts from BASE that provide tractor PTO information)
 # + PRJ_TRACTOR_LIGHT (only incorporate parts from BASE that provide tractor lighting information)
+# + PRJ_TRACTOR_FACILITIES (only incorporate parts from BASE that provide tractor facilities information)
 # + PRJ_TRACTOR_AUX (only incorporate parts from BASE that provide tractor auxiliary valve information)
 # + PRJ_TRACTOR_GUIDANCE (only incorporate parts from BASE that provide tractor guidance information)
 # + PRJ_TRACTOR_CERTIFICATION (only incorporate parts from BASE that provide tractor certification information)
@@ -291,6 +292,7 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
     PRJ_TRACTOR_PTO=1
     PRJ_TIME_GPS=1
     PRJ_TRACTOR_LIGHT=1
+    PRJ_TRACTOR_FACILITIES=1
     PRJ_TRACTOR_AUX=1
     PRJ_TRACTOR_GUIDANCE=1
     PRJ_TRACTOR_CERTIFICATION=1
@@ -318,6 +320,9 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
   fi
   if [ "A$PRJ_TRACTOR_LIGHT" = "A" ] ; then
     PRJ_TRACTOR_LIGHT=0
+  fi
+  if [ "A$PRJ_TRACTOR_FACILITIES" = "A" ] ; then
+    PRJ_TRACTOR_FACILITIES=0
   fi
   if [ "A$PRJ_TRACTOR_AUX" = "A" ] ; then
     PRJ_TRACTOR_AUX=0
@@ -552,7 +557,7 @@ create_filelist( )
 #      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -not -name '*trac*setpoint*' \) "
     fi
   fi
-  if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 -o $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_TRACTOR_CERTIFICATION -gt 0; then
+  if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_FACILITIES -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 -o $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_TRACTOR_CERTIFICATION -gt 0; then
     COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
   fi
   if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
@@ -572,6 +577,12 @@ create_filelist( )
     COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)"
   else
   PRJ_TRACTOR_LIGHT=0
+  fi
+  if test $PRJ_TRACTOR_FACILITIES -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+    # tracfacilities is only defined for ISO 11783
+    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)"
+  else
+  PRJ_TRACTOR_FACILITIES=0
   fi
   if test $PRJ_TRACTOR_AUX -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
     # tracaux is only defined for ISO 11783
@@ -1120,6 +1131,9 @@ create_autogen_project_config()
   fi
   if test $PRJ_TRACTOR_LIGHT -gt 0 ; then
     echo -e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >> $CONFIG_NAME
+  fi
+  if test $PRJ_TRACTOR_FACILITIES -gt 0 ; then
+    echo -e "#ifndef USE_TRACTOR_FACILITIES $ENDLINE\t#define USE_TRACTOR_FACILITIES $ENDLINE#endif" >> $CONFIG_NAME
   fi
   if test $PRJ_TRACTOR_AUX -gt 0 ; then
     echo -e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >> $CONFIG_NAME

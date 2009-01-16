@@ -315,6 +315,7 @@ private:
   friend class iTracPTO_c;
   friend class iTracPTOSetPoint_c;
   friend class iTracLight_c;
+  friend class iTracFacilities_c;
   friend class iTracAux_c;
   friend class iTracCert_c;
   friend class iTracGuidance_c;
