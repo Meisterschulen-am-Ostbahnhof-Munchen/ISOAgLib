@@ -71,7 +71,7 @@
 	y.spath + ..\..\xgpl_src\IsoAgLib\comm\Process\Remote\SimpleSetpointElements\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\comm\Process\Remote\StdSetpointElements\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\comm\Process\StdSetpointElements\impl
-	y.spath + ..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl
+	y.spath + ..\..\xgpl_src\IsoAgLib\scheduler\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\driver\can\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\driver\system\impl
 	y.spath + ..\..\xgpl_src\IsoAgLib\driver\eeprom\impl

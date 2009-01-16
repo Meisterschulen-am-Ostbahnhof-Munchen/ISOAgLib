@@ -149,19 +149,19 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\multirecei
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\ischedulertask_c.cpp
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulertask_c.cpp
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulerentry_c.cpp
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.cpp
 # End Source File
 
 # Begin Source File
@@ -570,23 +570,23 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultisend_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\ischedulertask_c.h
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulertask_c.h
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulerentry_c.h
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.h
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischeduler_c.h
 # End Source File
 
 # Begin Source File

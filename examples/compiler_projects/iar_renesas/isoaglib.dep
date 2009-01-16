@@ -36,7 +36,7 @@
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multireceive_c.cpp</file>
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisend_c.cpp</file>
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp</file>
-      <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp</file>
+      <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp</file>
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\util\impl\schedulerentry_c.cpp</file>
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\stream_c.cpp</file>
       <file>$TOOLKIT_DIR$\inc\dlib\functional</file>
@@ -80,7 +80,7 @@
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\util\impl\cancustomer_c.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\new</file>
       <file>$TOOLKIT_DIR$\inc\dlib\memory</file>
-      <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h</file>
+      <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.h</file>
       <file>$TOOLKIT_DIR$\inc\dlib\vector</file>
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\hal\pc\config.h</file>
       <file>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\SystemMgmt\impl\baseitem_c.h</file>

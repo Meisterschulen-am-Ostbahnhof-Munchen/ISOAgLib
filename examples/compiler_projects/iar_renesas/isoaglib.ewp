@@ -1722,7 +1722,7 @@
     <name>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Multipacket\impl\multisendpkg_c.cpp</name>
   </file>
   <file>
-    <name>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp</name>
+    <name>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp</name>
   </file>
   <file>
     <name>$PROJ_DIR$\..\..\xgpl_src\IsoAgLib\util\impl\schedulerentry_c.cpp</name>

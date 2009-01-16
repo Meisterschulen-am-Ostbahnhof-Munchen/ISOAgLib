@@ -450,7 +450,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\ischedulertask_c.cpp"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -670,7 +670,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.cpp"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -692,7 +692,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulerentry_c.cpp"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -714,7 +714,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulertask_c.cpp"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -979,11 +979,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\ischeduler_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischeduler_c.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\ischedulertask_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.h"
 				>
 			</File>
 			<File
@@ -1059,15 +1059,15 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\scheduler_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulerentry_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Scheduler\impl\schedulertask_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.h"
 				>
 			</File>
 			<File
