@@ -40,6 +40,8 @@
 #include "vt2iso-globals.hpp"
 #include <sstream>
 #include <list>
+#include <stdlib.h>
+
 
 using namespace std;
 
@@ -93,13 +95,16 @@ int colourtoi (const char* text_colour)
     }
   }
 
-  int i_colIndex = atoi (text_colour);
-  if ((i_colIndex >=0) && (i_colIndex < 256)) {
-    if (i_colIndex != 0 || text_colour[0] == '0') {
-      return i_colIndex;
+  char* p_checkChar = NULL;
+  int i_colIndex = strtol(text_colour, &p_checkChar, 10);
+  if (*p_checkChar == '\0')
+  {
+    if ((i_colIndex >=0) && (i_colIndex < 256)) {
+      if (i_colIndex != 0 || text_colour[0] == '0') {
+        return i_colIndex;
+      }
     }
   }
-
   std::cout << "INVALID Colour '" << text_colour << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1;
 }
@@ -129,10 +134,14 @@ int masktypetoi (const char* masktype)
     }
   }
 
-  int i_maskType = atoi (masktype);
-  if ((i_maskType >=0) && (i_maskType < 3)) {
-    if (i_maskType != 0 || masktype[0] == '0') {
-      return i_maskType;
+  char* p_checkChar = NULL;
+  int i_maskType = strtol(masktype, &p_checkChar, 10);
+  if (*p_checkChar == '\0')
+  {
+    if ((i_maskType >=0) && (i_maskType < 3)) {
+      if (i_maskType != 0 || masktype[0] == '0') {
+        return i_maskType;
+      }
     }
   }
 
@@ -149,10 +158,14 @@ int colourdepthtoi (const char* text_colourdepth)
     }
   }
 
-  int i_colDepth = atoi (text_colourdepth);
-  if ((i_colDepth >=0) && (i_colDepth < 3)) {
-    if (i_colDepth != 0 || text_colourdepth[0] == '0') {
-      return i_colDepth;
+  char* p_checkChar = NULL;
+  int i_colDepth = strtol(text_colourdepth, &p_checkChar, 10);
+  if (*p_checkChar == '\0')
+  {
+    if ((i_colDepth >=0) && (i_colDepth < 3)) {
+      if (i_colDepth != 0 || text_colourdepth[0] == '0') {
+        return i_colDepth;
+      }
     }
   }
 
@@ -176,19 +189,21 @@ bool itocolourdepth(uint8_t ui8_options, std::string& c_outputText)
 signed int fonttypetoi (const char* text_fonttype)
 {
   int l;
-  if (text_fonttype && isdigit(*text_fonttype))
-  {
-    if ((atoi(text_fonttype) == 0) || (atoi(text_fonttype) == 1) || (atoi(text_fonttype) == 2) || (atoi(text_fonttype) == 4) || (atoi(text_fonttype) == 5) || (atoi(text_fonttype) == 7) || (atoi(text_fonttype) == 255)) return atoi(text_fonttype);
-  }
-  else
-  {
-    for (l=0; l<maxFonttypeTable; l++) {
-      if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
-        if (l == maxFonttypeTable-1) return 0xFF;
-        return l;
-      }
+  for (l=0; l<maxFonttypeTable; l++) {
+    if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
+      if (l == maxFonttypeTable-1) return 0xFF;
+      return l;
     }
   }
+
+  char* p_checkChar = NULL;
+  int i_fontType = strtol(text_fonttype, &p_checkChar, 10);
+  if (*p_checkChar == '\0')
+  {
+    if (((i_fontType >= 0) && (i_fontType <= 5)) || (i_fontType == 7) || (i_fontType == 255))
+      return i_fontType;
+  }
+
   std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1;
 }
@@ -888,11 +903,15 @@ signed int eventtoi (const char *text_eventName)
     }
   }
 
-  int i_eventIndex = atoi (text_eventName);
-  if ( ((i_eventIndex >0) && (i_eventIndex <= 26))
-       || ((i_eventIndex >= 240) && (i_eventIndex <= 254))
-     )
-    return i_eventIndex;
+  char* p_checkChar = NULL;
+  int i_eventIndex = strtol(text_eventName, &p_checkChar, 10);
+  if (*p_checkChar == '\0')
+  {
+    if ( ((i_eventIndex >0) && (i_eventIndex <= 26))
+          || ((i_eventIndex >= 240) && (i_eventIndex <= 254))
+        )
+      return i_eventIndex;
+  }
 
   std::cout << "INVALID EVENT '" << text_eventName << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
   return -1; // should not happen
