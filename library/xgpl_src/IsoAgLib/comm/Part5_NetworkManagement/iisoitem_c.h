@@ -104,7 +104,7 @@ public:
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const {return IsoItem_c::selfConf();}
+  bool selfConf() const {return IsoItem_c::selfConf();}
 
   /** get industry group code
     @return industry group of device

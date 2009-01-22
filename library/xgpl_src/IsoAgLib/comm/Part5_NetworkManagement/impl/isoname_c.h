@@ -217,7 +217,7 @@ public:
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const;
+  bool selfConf() const;
 
   /** get industry group code
     @return industry group of device

@@ -234,9 +234,9 @@ IsoName_c::ecuType_t IsoName_c::getEcuType() const
 /** get self config mode
   @return self configuration adress state
 */
-uint8_t IsoName_c::selfConf() const
+bool IsoName_c::selfConf() const
 {
-  return ( mu_data[7] >> 7);
+  return ( mu_data[7] >> 7) != 0;
 }
 
 /** get industry group code

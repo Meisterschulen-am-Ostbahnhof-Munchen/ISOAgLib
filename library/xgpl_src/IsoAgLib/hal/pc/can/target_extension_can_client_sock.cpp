@@ -497,7 +497,7 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
       if (s_transferBuf.s_acknowledge.i32_dataContent != ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK)
         return false;
       else
-        return s_transferBuf.s_acknowledge.i32_data;
+        return s_transferBuf.s_acknowledge.i32_data != 0;
     }
     else
       return false;

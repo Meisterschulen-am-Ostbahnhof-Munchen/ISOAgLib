@@ -143,7 +143,7 @@ public:
   /** get self config mode
     @return self configuration adress state
   */
-  uint8_t selfConf() const {return mc_isoName. selfConf();}
+  bool selfConf() const {return mc_isoName. selfConf();}
 
   /** get industry group code
     @return industry group of device

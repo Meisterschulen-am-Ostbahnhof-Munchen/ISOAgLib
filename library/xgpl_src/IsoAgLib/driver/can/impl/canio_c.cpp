@@ -2267,7 +2267,7 @@ bool CanIo_c::stopSendRetryOnErr()
   bool b_result = false;
 
   bool b_bit1err = HAL::can_stateGlobalBit1err(mui8_busNumber);
-  bool minObjNr = minHALMsgObjNr();
+  uint8_t minObjNr = minHALMsgObjNr();
 
   if (b_bit1err )
   { // only send 1 has bit1 err -> clear msg obj
