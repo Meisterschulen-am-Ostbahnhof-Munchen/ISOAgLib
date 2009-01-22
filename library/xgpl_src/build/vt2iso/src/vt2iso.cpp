@@ -206,6 +206,16 @@ void DOMCountErrorHandler::resetErrors()
   Vt2IsoImagePaintlib_c c_Bitmap;
 #endif
 
+
+#ifdef WIN32
+  static const char scc_replaceThisSeparator = '/';
+  static const char scc_replaceWithSeparator = '\\';
+#else
+  static const char scc_replaceThisSeparator = '\\';
+  static const char scc_replaceWithSeparator = '/';
+#endif
+
+
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
 // ---------------------------------------------------------------------------
@@ -329,6 +339,11 @@ template <class T> void processNestedNodesInProjectFile(DOMNode *child, T& r_con
           if (local_attrName == rstr_pathAttribute)
           {
             s_filePath.str_pathName = local_attrValue;
+            // convert directory separators
+            (void) std::replace (s_filePath.str_pathName.begin(),
+                                 s_filePath.str_pathName.end(),
+                                 scc_replaceThisSeparator,
+                                 scc_replaceWithSeparator);
           }
           if (local_attrName.compare("RelativePath") == 0)
           {
@@ -1800,7 +1815,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     return false;
   }
 
-
   /// NOW GO AND DO SOMETHING FOR THIS ELEMENT
   DOMNode *child;
   DOMNamedNodeMap *pAttributes;
@@ -1879,6 +1893,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             Path_s s_bitmapPath;
             s_bitmapPath.str_pathName = attr_value;
             s_bitmapPath.b_relativePath = true;
+
+            // convert directory separators
+            (void) std::replace (s_bitmapPath.str_pathName.begin(),
+                                 s_bitmapPath.str_pathName.end(),
+                                 scc_replaceThisSeparator,
+                                 scc_replaceWithSeparator);
+
             l_stdBitmapPath.push_back(s_bitmapPath);
             continue;
           }
@@ -1887,6 +1908,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             Path_s s_bitmapPath;
             s_bitmapPath.str_pathName = attr_value;
             s_bitmapPath.b_relativePath = true;
+
+            // convert directory separators
+            (void) std::replace (s_bitmapPath.str_pathName.begin(),
+                                 s_bitmapPath.str_pathName.end(),
+                                 scc_replaceThisSeparator,
+                                 scc_replaceWithSeparator);
+
             l_fixedBitmapPath.push_back(s_bitmapPath);
             continue;
           }
