@@ -375,7 +375,7 @@ private:
   language_s arrs_language [DEF_iso639entries];
 
   // Assuming an 8 bit per pixel bitmap.
-  unsigned char picBuffer [480*480];
+  unsigned char picBuffer [1600*1200];
 
   // if no outdir is given, use XML/VTP-path.
   std::string mstr_outDirAndProjectPrefix;
