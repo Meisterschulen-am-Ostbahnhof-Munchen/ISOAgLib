@@ -1200,7 +1200,7 @@ bool IsoMonitor_c::processMsg()
       if ( existIsoMemberISOName( data().isoName()) )
       {
         pc_itemSameISOName = &(isoMemberISOName(data().isoName()));
-        if (pc_itemSameSa->itemState(IState_c::PreAddressClaim))
+        if (pc_itemSameISOName->itemState(IState_c::PreAddressClaim))
           // no need to check here for LostAddress, as it's only about the ISOName,
           // and that's correct in all other cases!
         { // this item is still in PreAddressClaim, so don't consider its
