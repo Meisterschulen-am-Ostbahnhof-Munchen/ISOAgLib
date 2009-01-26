@@ -126,12 +126,12 @@ __IsoAgLib::IState_c::IState_c(const __IsoAgLib::IState_c& acrc_src)
   set the state of an monitor list item and
   return the resulting state value
 
-  set state to Active, and reset Off and OffUnable on
+  set state to Active, and reset OffExplicitly and OffUnable on
   Active, PreAddressClaim, AddressClaim, ClaimedAddress;
 
   set: PreAddressClaim, AddressClaim and ClaimedAddress exclusive
 
-  set: Off, OffUnable, Active exclusive
+  set: OffExplicitly, OffUnable, Active exclusive
   @param ren_itemState state information
   @param ab_clearOld optional clear old value for complete new set (default no clear)
   @return resulting state information
@@ -139,10 +139,10 @@ __IsoAgLib::IState_c::IState_c(const __IsoAgLib::IState_c& acrc_src)
 __IsoAgLib::IState_c::itemState_t __IsoAgLib::IState_c::setItemState(itemState_t ren_itemState, bool ab_clearOld)
 {
   if (ab_clearOld) en_itemState = ren_itemState;
-  // set state to Active, and reset Off and OffUnable on
+  // set state to Active, and reset OffExplicitly and OffUnable on
   // Active, PreAddressClaim, AddressClaim, ClaimedAddress
   if ((ren_itemState & (Active|PreAddressClaim|AddressClaim|ClaimedAddress|AddressLost)) > 0)
-  { // one of these states set -> clear Off and OffUnable
+  { // one of these states set -> clear OffExplicitly and OffUnable
     clearItemState(itemState_t(OffExplicitly|OffUnable));
     // set PreAddressClaim, AddressClaim, ClaimedAddress and AddressLost exclusive
     if ((ren_itemState & (PreAddressClaim|AddressClaim|ClaimedAddress|AddressLost)) > 0)
@@ -154,10 +154,10 @@ __IsoAgLib::IState_c::itemState_t __IsoAgLib::IState_c::setItemState(itemState_t
     en_itemState = itemState_t(en_itemState | Active);
   }
 
-  // set: Off, Standby, Active exclusive
+  // set: OffExplicitly, OffUnable, Active exclusive
   if ((ren_itemState & (OffExplicitly|OffUnable)) > 0)
-  { // one of Off, OffUnable, Active (handled above)
-    // clear: Off, OffUnable, Active
+  { // one of OffExplicitly, OffUnable, Active (handled above)
+    // clear: OffExplicitly, OffUnable, Active
     clearItemState(itemState_t(OffExplicitly|OffUnable|Active));
   }
 

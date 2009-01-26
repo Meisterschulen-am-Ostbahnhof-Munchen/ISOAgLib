@@ -104,11 +104,9 @@ public:
   /** enum type for state of a monitor list item */
   enum itemState_t {
          IstateNull = 0x0,
-         // only one states of following Line possible
-         /** @todo SOON Check the structure 4/C/8 as these fields are no bitmasks, but are handled like in the setter
-          *        Seems for enums bits are taken, which could be changed to use grouped bits as integer/enum. */
-         OffExplicitly = 0x4, OffUnable = 0xC, Active = 0x8,
-         // only one states of following Line possible
+         // only one state of following Line possible
+         OffUnable = 0x2, OffExplicitly = 0x4, Active = 0x8,
+         // only one state of following Line possible
          PreAddressClaim = 0x10, AddressClaim = 0x20, ClaimedAddress = 0x40, AddressLost = 0x80,
          // states of following Line independent parallel possible
          CausedConflict = 0x200,
