@@ -1200,10 +1200,24 @@ bool IsoMonitor_c::processMsg()
       if ( existIsoMemberISOName( data().isoName()) )
       {
         pc_itemSameISOName = &(isoMemberISOName(data().isoName()));
+        if (pc_itemSameSa->itemState(IState_c::PreAddressClaim))
+          // no need to check here for LostAddress, as it's only about the ISOName,
+          // and that's correct in all other cases!
+        { // this item is still in PreAddressClaim, so don't consider its
+          // ISOName as final, it may be able to adapt it when switching to AddressClaim
+          // Note: Only LOCAL Items can be in state PreAddressClaim
+          pc_itemSameISOName = NULL;
+        }
       }
       if ( existIsoMemberNr(data().isoSa()) )
       {
         pc_itemSameSa = &(isoMemberNr(data().isoSa()));
+        if (pc_itemSameSa->itemState(IState_c::PreAddressClaim)
+         || pc_itemSameSa->itemState(IState_c::AddressLost) )
+        { // this item has no valid address, as it's not (anymore) active.
+          // so don't consider it as item with the same SA as the received one.
+          pc_itemSameSa = NULL;
+        }
       }
 
       /// Receiving REMOTE Address-Claim
