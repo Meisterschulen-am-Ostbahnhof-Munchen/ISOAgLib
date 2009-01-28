@@ -149,6 +149,16 @@ int masktypetoi (const char* masktype)
   return -1;
 }
 
+bool itomasktype(uint8_t ui8_index, std::string& c_outputText)
+{
+  if(ui8_index < 3 )
+  {
+    c_outputText = masktypeTable[ui8_index];
+    return true;
+  }
+  return false;
+}
+
 int colourdepthtoi (const char* text_colourdepth)
 {
   int l;

@@ -75,6 +75,7 @@ extern bool itobuttonoptions(uint8_t ui8_options, std::string& c_outputText);
 extern bool itolinesuppression(uint8_t ui8_options, std::string& c_outputText);
 extern bool itofontstyle(uint8_t ui8_options, std::string& c_outputText);
 extern bool itolineart(int i_lineart, std::string& c_outputText);
+extern bool itomasktype(uint8_t ui8_index, std::string& c_outputText);
 extern bool itocolourdepth(uint8_t ui8_options, std::string& c_outputText);
 extern bool itomacrocommand(uint8_t ui8_command, std::string& c_outputText);
 
