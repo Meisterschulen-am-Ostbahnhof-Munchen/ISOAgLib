@@ -27,6 +27,109 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 \section Changes Changes
 
+\subsection Change_P 2.1.1 to 2.1.2
+ vt2iso:
+ - More stable on wrong input
+ - Support for VT-Designer Project files.
+ - objectpointer value="" should not be parsed as 0 but NULL.
+ - High object-IDs can now be set directly without having ID-collisions with automatically-numbered objects.
+   (All given IDs are scanned in a first pass, so they are skipped in auto-numbering)
+ - You should now be able to call vt2iso also from an other directory than the one where there .vtp file resides.
+ - Console output is cleaned up. Use -m option for a verbose output now.
+ - Fixing crash (mostly under Windows) when <macro> objects were used.
+ - IsoTerminalObjectSelection.inc was renamed to <projectname>-objectselection.inc
+ - Option -o to generate the files to a different directory than the XML/VTP dir.
+ - Option -g added to allow output to be grouped into namespace BLA { [...] }
+ - Check all option attributes for exact match or return error
+ - remove "_" in following attribute values for better naming scheme:
+   wrap_on_hyphen, valid_characters, invalid_characters, no_fill, not_used,
+   suppress_border, transparent_background, no_border, live_editing
+ - Enhanced buffer for bitmaps for special use, now larger than the old buffer of 480x480 pixels.
+   (Even though larger bitmaps don't make much sense in "normal" clients)
+ - Now converting directory separators to native platform in given paths.
+
+ proc2iso:
+ - DPT in Bytestream was wrongly generated:
+   Property Value field was 4 bytes ASCII instead of 4 byte integer. (r3842)
+
+ Documentation:
+ - VT-Client XML-Description:
+   auxinput changed to auxiliaryinput.
+   auxfunction changed to auxiliaryfunction.
+
+ CAN-Server:
+ - (msq version): if directory "/root" is not useable for key generation (ftok),
+   a fallback directory is created and used ("/tmp/can_server_key_dir")
+
+ VT-Client:
+ - Added callback-handler for 'VT Select Input Object' (H.8) (r3627)
+ - Fix Big Endian issue with setting float values... (r3669)
+ - Fix for handling of StoreVersion response in case it was triggered by the application during normal operation.
+ - Add client command ESC (CommandID 146)
+ - change signature of iIsoTerminalObjectPool_c::eventVtESC() to now also receive objectId.
+ - Fix VT-Client Scheduler timing (r3626)
+
+ FS-Client:
+ - Added Support and Tutorial example
+
+ Other Fixes:
+ - Endless loop in IsoItem_c::addSlave. Thanks to Joel Morton.
+ - can_server_sontheim.cpp (r3613)
+ - #ifdef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP with correct #ifndef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP in system_c.cpp (r3777)
+ - (wrong value conversion) in TracMove_c: Selected Speed (mm/s) was wrongly set with GpsSpeed (cm/s). (missing x10). (r3773)
+ - IsoMonitor_c: Fixed crash that occured eventually when an IsoItem was removed (r3691)
+ - Project file generation for Dev-C++ (r3673)
+ - several uninitialized variables (gave warnings)
+ - Scheduler_c: Fix for >= 3 CAN-Instances (extra CAN-processing was only done for the 1st and 2nd CAN-Bus). (r3733)
+ - provide proper initialization for Scheduler_Task_c::mb_alreadyClosed in constructor. Suggested By: Joel Morton (r3801)
+ - MeasureProgBase_c: Fix that the correct SA is used in all commands which follow immediately init()
+   (and not only commands after addSubProg() is called) (r3825)
+ - Fix in FilterBox_c: bool was used for the return type of fifo_useMsgObjGet instead of int32_t. (r3828)
+ - Process_c: Crashed (at least) in Windows when unregisterRemoteProcessData set
+   the searchCacheIterator wrongly in case of an empty list. (r3838)
+ - MultiSend-Retry: Wrong Sequence-Nr. was used. It was not reset along with the re-sending of the last burst.
+ - Maintain-Power handling does now handle multiple power requests. (r3849)
+ - Changed incorrect type of minObjNr in stopSendRetryOnErr() from bool to uint8_t. (r3856)
+ - Corrected some #ifdef ISO_TERMINAL by #ifdef USE_WORKING_SET, because
+   WORKSING_SET support can be set without ISO_TERMINAL enabled (r3712)
+ - Changed incorrect type of minObjNr in stopSendRetryOnErr() from bool to uint8_t (r3856)
+ - API-change: changed return type of selfConf() to bool (r3856)
+ - HAL-CAN-Interface is again 100% compatible with release v2.1.1 now! (can-drivers can deliver 2 for ExtMsg again)
+ - Network Management: Startup problems which didn't let nodes come online at all. (r3861)
+ - Fixed proc2iso-xsd-Schema.
+ - IState_c: Fixed enumeration.
+ - PC CAN-HAL: receiving CAN-Pkts: Wrong check on returned error-code. (Had luckily no effect) (r3867)
+
+ Other Enhancements:
+ - CanServerMessenger enhanced with "usage"-output.
+ - WIN32: can_server server&client side: Changed getTime/getStartupTime to let the time
+   count from program-start with 0 (instead of returning some absolute time), just as in the linux-case. (r3699)
+ - Enhance LittleEndian input stream parsing in util_funcs. (r3821)
+ - Added (i)TracFacilities_c class to add support for Tractor Facilities.
+ - WinCE-Support built in.
+ - Extend update_makefile.sh to support following new conf_foo file variables (r3725)
+   # USE_WIN32_EXTERNAL_INCLUDE_PATH
+   # USE_WIN32_EXTERNAL_LIBRARY_PATH
+   # USE_MSVC_EXTERNAL_LIBRARIES
+   # USE_DEVCPP_EXTERNAL_LIBRARIES
+   # USE_LINUX_EXTERNAL_INCLUDE_PATH
+   # USE_LINUX_EXTERNAL_LIBRARY_PATH
+   # USE_LINUX_EXTERNAL_LIBRARIES
+ - Linux-Makefiles extended for some more uninstall/clean targets.
+ - Added to interface class iSchedulerTask_c: registerClient(), unregisterClient(),
+   clearAlreadyClosed(), setAlreadyClosed(), checkAlreadyClosed() (r3705)
+ - Improvement of update_makefile.sh on Tasking project file generation and more
+ - External references hooked to fix-revision numbers now, so checking out an older version is now consistent
+
+ Cleanup:
+ - Removed unused DEFINEs in isoaglib_config.h
+ - Removed companySpecific directory
+ - Moved "comm/Scheduler" to "scheduler"
+ - API-change: changed return type of selfConf() to bool (r3856)
+ - Avoiding many compiler warnings now. (If you still find some, please let us know!)
+ - Removed obsolete "bios_pc.testserver" directory.
+ - Removed links to commercial-bios "esx.small" and "bios.tum"
+
 \subsection Change_O 2.0 to 2.1
   - can_server: monitor mode added (to monitor can traffic in console)
   - Process Data: send activate device description pool command to TC after successfull structure/localization label negotiation
