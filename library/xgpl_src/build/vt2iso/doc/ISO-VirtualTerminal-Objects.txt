@@ -686,155 +686,208 @@ The following table lists the available VT commands, most of which can be includ
 
 <table border="1" cellspacing="3" cellpadding="3">
  <tr>
- <th>Messages</th><th>Attributes</th><th>Description</th></tr>
+ <th>Messages</th><th>Attributes</th><th>Attributes Description</th><th>Description</th></tr>
  <tr>
  <td>command_hide_show_object</td>
- <td>&apsobject_id&aps<br>
- &apshide_show&aps<p></td>
+ <td>object_id<br>
+ hide_show<p></td>
+ <td>affected object id<br>
+ hide or show object<p></td>
  <td>Used to hide or show a container object.</td>
  </tr>
  <tr>
  <td>command_enable_disable_object</td>
- <td>&apsobject_id&aps<br>
- &apsenable_disable&aps<p></td>
+ <td>object_id<br>
+ enable_disable<p></td>
+ <td>affected object id/name<br>
+ \ref XMLTruth "Truth"<p></td>
  <td>Used to enable or disable an input field object.</td>
  </tr>
  <tr>
  <td>command_select_input_object</td>
- <td>&apsobject_id&aps</td>
+ <td>object_id</td>
+ <td>affected object id/name</td>
  <td>Used to force the selection of an input field object.</td>
  </tr>
  <tr>
  <td>command_control_audio_device</td>
- <td>&apsobject_id&aps<br>
- &apsnumber_of_repetitions&aps<br>
- &apsfrequency&aps<br>
- &apson_time_duration&aps<br>
- &apsoff_time_duration&aps<p></td>
+ <td>object_id<br>
+ number_of_repetitions<br>
+ frequency<br>
+ on_time_duration<br>
+ off_time_duration<p></td>
+ <td>affected object id/name<br>
+ amount repetitions of on off cycle<br>
+ frequency of on off edges<br>
+ high edge duration (ms)<br>
+ low edge duration (ms)<p></td>
  <td>Used to control the audio on the VT.</td>
  </tr>
  <tr>
  <td>command_set_audio_volume</td>
- <td>&apspercentage&aps</td>
+ <td>percentage</td>
+ <td>percent of maximum volume (0..100)</td>
  <td>Used to control the audio on the VT.</td>
  </tr>
  <tr>
  <td>command_change_child_location</td>
- <td>&apsparent_object_id&aps<br>
- &apsobject_id&aps<br>
- &apsx_pos_change&aps<br>
- &apsy_pos_change&aps<p></td>
+ <td>parent_object_id<br>
+ object_id<br>
+ x_pos_change<br>
+ y_pos_change<p></td>
+ <td>affected parent object id/name<br>
+ affected object id/name<br>
+ new x location<br>
+ new y location<p></td>
  <td>Used for small position changes of an object.<br>
  Position attributes have an offset of -127.<br>
  (one packet)</td>
  </tr>
  <tr>
  <td>command_change_child_position</td>
- <td>&apsparent_object_id&aps<br>
- &apsobject_id&aps<br>
- &apsx_pos&aps<br>
- &apsy_pos&aps<p></td>
+ <td>parent_object_id<br>
+ object_id<br>
+ x_pos<br>
+ y_pos<p></td>
+ <td>affected parent object id<br>
+ affected object id/name<br>
+ new x position<br>
+ new y position<p></td>
  <td>Used for large position changes of an object.<br>
  (multi-packet)</td>
  </tr>
  <tr>
  <td>command_change_size</td>
- <td>&apsobject_id&aps<br>
- &apsnew_width&aps<br>
- &apsnew_height&aps<p></td>
- <td>Used to change the size of an object./td>
+ <td>object_id<br>
+ new_width<br>
+ new_height<p></td>
+ <td>affected object id/name<br>
+ objects new width<br>
+ objects new height<p></td>
+ <td>Used to change the size of an object.</td>
  </tr>
  <tr>
  <td>command_change_background_color</td>
- <td>&apsobject_id&aps<br>
- &apsnew_background_colour&aps<p></td>
+ <td>object_id<br>
+ new_background_colour<p></td>
+ <td>affected object id/name<br>
+ objects new background colour<p></td>
  <td>Used to change the background color of an object.</td>
  </tr>
  <tr>
  <td>command_change_numeric_value</td>
- <td>&apsobject_id&aps<br>
- &apsnew_value&aps<p></td>
+ <td>object_id<br>
+ new_value<p></td>
+ <td>affected object id/name<br>
+ new value to set as value attribute of object given<p></td>
  <td>Used to change the value attribute of an object.</td>
  </tr>
  <tr>
  <td>command_change_string_value</td>
- <td>&apsobject_id&aps<br>
- &apsbytes_in_string&aps<br>
- &apsnew_value&aps<p></td>
+ <td>object_id<br>
+ bytes_in_string<br>
+ new_value<p></td>
+ <td>affected object id/name<br>
+ new string length<br>
+ new string value (respect length)<p></td>
  <td>Used to change the string of an object.<br>
  (single or multi-packet, depends on length of new string)</td>
  </tr>
  <tr>
  <td>command_change_end_point</td>
- <td>&apsobject_id&aps<br>
- &apsnew_width&aps<br>
- &apsnew_height&aps<br>
- &apsline_direction&aps<p></td>
+ <td>object_id<br>
+ new_width<br>
+ new_height<br>
+ line_direction<p></td>
+ <td>affected object id/name<br>
+ new width of line<br>
+ new height of line<br>
+ line_direction<p></td>
  <td>Used to modify the end point of a line object.</td>
  </tr>
  <tr>
  <td>command_change_font_attributes</td>
- <td>&apsobject_id&aps<br>
- &apsfont_colour&aps<br>
- &apsfont_size&aps<br>
- &apsfont_type&aps<br>
- &apsfont_style&aps<p></td>
+ <td>object_id<br>
+ font_colour<br>
+ font_size<br>
+ font_type<br>
+ font_style<p></td>
+ <td>affected object id/name<br>
+ font colour to set<br>
+ font size to set<br>
+ font type to set<br>
+ font style to set<p></td>
  <td>Used to modify the font attributes of a font attributes object.</td>
  </tr>
  <tr>
  <td>command_change_line_attributes</td>
- <td>&apsobject_id&aps<br>
- &apsline_colour&aps<br>
- &apsline_width&aps<br>
- &apsline_art&aps<p></td>
+ <td>object_id<br>
+ line_colour<br>
+ line_width<br>
+ line_art<p></td>
+ <td>affected object id/name<br>
+ new line colour<br>
+ new line width<br>
+ new line art style<p></td>
  <td>Used to modify the line attributes of a line attributes object.</td>
  </tr>
  <tr>
  <td>command_change_fill_attributes</td>
- <td>&apsobject_id&aps<br>
- &apsfill_type&aps<br>
- &apsfill_colour&aps<br>
- &apsfill_pattern&aps<p></td>
+ <td>object_id<br>
+ fill_type<br>
+ fill_colour<br>
+ fill_pattern<p></td>
+ <td>affected object id/name<br>
+ new fill type<br>
+ new fill colour<br>
+ new fill pattern<p></td>
  <td>Used to modify the fill attributes of a fill attributes object.</td>
  </tr>
  <tr>
  <td>command_change_active_mask</td>
- <td>&apsworking_set_object_id&aps<br>
- &apsnew_active_mask_object_id&aps<p></td>
+ <td>working_set_object_id<br>
+ new_active_mask_object_id<p></td>
+ <td>affected working set<br>
+ id/name of mask that gets the active mask of new_active_mask_object_id<p></td>
  <td>Used to change the active mask to a new data or alarm mask.</td>
  </tr>
  <tr>
  <td>command_change_soft_key_mask</td>
- <td>&apsmask_type&aps<br>
- &apsmask_object_id&aps<br>
- &apsnew_softkey_mask_object_id&aps<p></td>
+ <td>mask_type<br>
+ mask_object_id<br>
+ new_softkey_mask_object_id<p></td>
+ <td>data or alarm mask<br>
+ affected mask id/name<br>
+ new associated mask id/name<p></td>
  <td>Used to change the active mask to a new data or alarm mask.</td>
  </tr>
  <tr>
  <td>command_change_attribute</td>
- <td>&apsobject_id&aps<br>
- &apsattribute_id&aps<br>
- &apsnew_value&aps<p></td>
+ <td>object_id<br>
+ attribute_id<br>
+ new_value<p></td>
+ <td>affected object id/name<br>
+ id of attribute to be changed<br>
+ new value to set attribute to<p></td>
  <td>Used to change any attribute with a AID, except strings.</td>
  </tr>
  <tr>
  <td>command_change_priority</td>
- <td>&apsobject_id&aps<br>
- &apsnew_priority&aps<p></td>
+ <td>object_id<br>
+ new_priority<p></td>
+ <td>affected alarm mask id/name<br>
+ priority to assign to alarmmask<p></td>
  <td>Used to change the priority of an alarm mask.</td>
  </tr>
  <tr>
  <td>command_change_list_item</td>
- <td>&apsobject_id&aps<br>
- &apslist_index&aps<br>
- &apsnew_object_id&aps<p></td>
+ <td>object_id<br>
+ list_index<br>
+ new_object_id<p></td>
+ <td>id/name of list object<br>
+ position in list to change<br>
+ object id to assign to position<p></td>
  <td>Used to change a list item in an input list object.</td>
- </tr>
- <tr>
- <td>command_delete_object_pool<br>
- <b>CANNOT BE USED IN A MACRO</b></td>
- <td></td>
- <td>Used to delete the object pool from volatile storage.</td>
  </tr>
 </table>
 
