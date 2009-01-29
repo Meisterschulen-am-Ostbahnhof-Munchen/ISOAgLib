@@ -1,4 +1,3 @@
-#define SINGLETON_C_DATA_DEF [+8]
 /***************************************************************************
                           basecommon_c.h  - base class for basa data types
                              -------------------
@@ -118,7 +117,7 @@ namespace __IsoAgLib
     BaseCommon_c() : mui16_suppressMask(0),
 		                 mt_identMode(IsoAgLib::IdentModeImplement),
                      mi32_lastMsgReceived(0),
-                     mpc_isoName(),
+                     mpc_isoName(NULL),
                      mc_selectedDataSourceISOName()
                    {}
     /** destructor */

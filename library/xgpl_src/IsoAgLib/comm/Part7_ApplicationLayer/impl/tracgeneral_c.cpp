@@ -390,8 +390,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   void TracGeneral_c::sendMessage()
   { //check for isoName and if address claim has yet occured, because this function can also bo called
     //independent from timeEvent() function
-    if ( getISOName() == NULL ) return;
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) return;
+    if ( (getISOName() == NULL) ||
+         (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
+      return;
 
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -501,6 +502,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK) != 0) return;
 
     if (  !mb_languageVtReceived
+       || ( getISOName() == NULL ) // shouldn't be NULL as we're in tractor-mode
        || ( getISOName()->isUnspecified()  )
        || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
        )
@@ -545,7 +547,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( (mui16_suppressMask & MAINTAIN_POWER_REQUEST_PGN_DISABLE_MASK) != 0) return;
     // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
     // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
-    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+    if ( (getISOName() == NULL) ||
+         (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
       return;
 
      uint8_t val1 = IsoAgLib::IsoInactive,
@@ -591,6 +594,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // then it sends the data
     getCanInstance4Comm() << data();
   }
+
   /** force a request for pgn for language information */
   bool TracGeneral_c::sendRequestUpdateLanguage()
   {
@@ -638,7 +642,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::setKeySwitch(IsoAgLib::IsoActiveFlag_t at_val)
   {
-    if ( !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName()))
+    if ( (getISOName() == NULL) ||
+         (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
       return;
 
     mt_keySwitch = at_val;

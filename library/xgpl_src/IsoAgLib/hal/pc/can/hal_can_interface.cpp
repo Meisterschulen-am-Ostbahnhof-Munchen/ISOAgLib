@@ -652,7 +652,9 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
   if (!b_cinterfBufferedReceivedMsg)
     i16_retVal = getCanMsg(aui8_busNr, aui8_msgobjNr, pt_receive);
 
-  if ((i16_retVal == HAL_NO_ERR) || (HAL_OVERFLOW_ERR) || (HAL_WARN_ERR))
+  if ( (i16_retVal == HAL_NO_ERR) ||
+       (i16_retVal == HAL_OVERFLOW_ERR) ||
+       (i16_retVal == HAL_WARN_ERR) )
   {
     b_cinterfBufferedReceivedMsg = true;
     if (pt_receive->tReceiveTime.l1ms == 0)
