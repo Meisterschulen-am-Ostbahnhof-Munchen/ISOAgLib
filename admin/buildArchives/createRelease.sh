@@ -1,7 +1,7 @@
 #!/bin/sh
 # create a release of IsoAgLib
 
-RELEASE_VERION="2.1.1"
+RELEASE_VERION="2.1.2"
 
 
 START=`pwd`

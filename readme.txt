@@ -58,6 +58,24 @@ To learn more about \isoaglib you can check the navigation menu for further topi
 
 \section LatestNews Latest News
 
+\subsection NewsForNextNextIncrementalRelease New for 2.1.2 release (Short excerpt)
+  - (For more detailed information, please advise \ref PageChanges)
+  - Several important(!) bugfixes (including crashes, possible startup-problems)
+  - Several cleanups (most important: moved "comm/Scheduler" to "scheduler")
+  - DeviceDescription-Bytestream fix in proc2iso, Property Value was corrupt.
+  - Added basic FDIS FileServer-Client support (not yet IS)
+  - Added support for Tractor Facilities.
+  - Added WinCE-Support.
+  - External references hooked to fix-revision numbers now.
+  - Support for VT-Design Project-files
+  - IsoTerminalObjectSelection.inc was renamed to <projectname>-objectselection.inc
+  - More options for vt2iso: -o (other output-dir) and -g (group into namespace)
+  - remove "_" in following attribute values for better naming scheme:
+    valid_characters, invalid_characters, no_fill, not_used, suppress_border, transparent_background, no_border
+  - can_server uses /tmp/can_server_key_dir if /root no accessable
+  - VT-Client: Fix Big Endian issue with setting float values, Add client command ESC, Fix VT-Client Scheduler timing, etc.
+  - Maintain-Power handling does now handle multiple power requests.
+
 \subsection NewsForNextIncrementalRelease New for 2.1.1 release
   - overall enhancement of documentation (e.g. Tasking Compiler)
   - remove obsolete \#defines like CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN
