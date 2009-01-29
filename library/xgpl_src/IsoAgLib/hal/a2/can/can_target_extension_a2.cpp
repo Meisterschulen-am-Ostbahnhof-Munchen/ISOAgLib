@@ -3,7 +3,7 @@
                                        for A2 terminal
                              -------------------
     begin                : Tue Oct 2 2001
-    copyright            : (C) 2001 - 2004 Dipl.-Inform. Achim Spangler
+    copyright            : (C) 2001 - 2009 Dipl.-Inform. Achim Spangler
              : This file was based on the corresponding file in
              : the ESX HAL and modified for A2 HAL.
              : These changes (C) 2006 - 2010 Brian Wei

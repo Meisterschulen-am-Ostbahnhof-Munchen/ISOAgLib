@@ -2,7 +2,7 @@
                           isofiltermanager_c.cpp - object for managing IsoFilters
                              -------------------
     begin                : Fri Oct 10 2006
-    copyright            : (C) 2006 - 2006 by Dipl.-Inf. Martin Wodok
+    copyright            : (C) 2006 - 2009 by Dipl.-Inf. Martin Wodok
     email                : m.wodok@osb-ag:de
     type                 : Source
  ***************************************************************************/
@@ -19,7 +19,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2000 - 2009 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *

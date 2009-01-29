@@ -3,7 +3,7 @@
                                                  data
                              -------------------
     begin                : Fri Feb 01 2005
-    copyright            : (C) 2000 - 2006 by Dipl.-Inform. Achim Spangler
+    copyright            : (C) 2000 - 2009 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
     $LastChangedDate: 2005-10-10 15:35:26 +0200 (Mo, 10 Okt 2005) $
@@ -22,7 +22,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2000 - 2009 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *

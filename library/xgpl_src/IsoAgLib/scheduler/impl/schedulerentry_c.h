@@ -6,7 +6,7 @@
                       schedulertask_c objects that are managed in Scheduler_c
                              -------------------
     begin                : Thu Jul 29 1999
-    copyright            : (C) 1999 - 2004 by Dipl.-Inform. Achim Spangler
+    copyright            : (C) 1999 - 2009 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
  ***************************************************************************/
 
@@ -22,7 +22,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *

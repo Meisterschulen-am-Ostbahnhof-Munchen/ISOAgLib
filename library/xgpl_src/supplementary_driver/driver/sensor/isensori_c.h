@@ -2,7 +2,7 @@
                           isensori_c.h  -  header for the sensor input management object
                              -------------------
     begin                : Fri Apr 07 2000
-    copyright            : (C) 2000 - 2004 by Dipl.-Inform. Achim Spangler
+    copyright            : (C) 2000 - 2009 by Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
     $LastChangedDate$

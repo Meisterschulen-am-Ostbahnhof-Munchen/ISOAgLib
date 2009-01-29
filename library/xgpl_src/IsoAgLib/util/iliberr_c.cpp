@@ -2,7 +2,7 @@
                           iliberr_c.cpp  - central object for error management
                              -------------------
     begin                : Thu Mar 16 2000
-    copyright            : (C) 2000 - 2006 by Dipl.-Inform. Achim Spangler/Dipl.-Inf. Martin Wodok
+    copyright            : (C) 2000 - 2009 by Dipl.-Inform. Achim Spangler/Dipl.-Inf. Martin Wodok
     email                : spangler@tec.agrar.tu-muenchen.de
     type                 : Source
  ***************************************************************************/
@@ -19,7 +19,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * This library is free software; you Can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *

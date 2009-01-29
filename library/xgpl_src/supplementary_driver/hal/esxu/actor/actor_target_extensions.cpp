@@ -2,7 +2,7 @@
                           actor_target_extensions.cpp - implement diagnose state
                              -------------------
     begin                : Thu Dec 16 2004
-    copyright            : (C) 2004 - 2004 Dipl.-Inform. Achim Spangler
+    copyright            : (C) 2004 - 2009 Dipl.-Inform. Achim Spangler
 						 : This file was based on the corresponding file in
 						 : the ESX HAL and modified for the ESXu HAL.
 						 : These changes (C) 2004 - 2005 Michael D. Schmidt
@@ -23,7 +23,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *

@@ -4,7 +4,7 @@
                                   for A2
                              -------------------
     begin                : Wed Mar 15 2000
-    copyright            : (C) 2000 - 2004 Dipl.-Inform. Achim Spangler
+    copyright            : (C) 2000 - 2009 Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
  ***************************************************************************/
@@ -21,7 +21,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
