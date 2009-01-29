@@ -444,8 +444,8 @@ The following table shows which objects may be included into which other.
 </td></tr><tr><td>    ellipse        </td><td> Macro
 </td></tr><tr><td>    polygon        </td><td> Macro | Point
 </td></tr><tr><td>    meter          </td><td> Macro
-</td></tr><tr><td>    linearbar      </td><td> Macro
-</td></tr><tr><td>    archedbar      </td><td> Macro
+</td></tr><tr><td>    linearbargraph </td><td> Macro
+</td></tr><tr><td>    archedbargraph </td><td> Macro
 </td></tr><tr><td>    picturegraphic </td><td> Macro | FixedBitmap
 </td></tr><tr><td>    numbervariable </td><td> none
 </td></tr><tr><td>    stringvariable </td><td> none
