@@ -1,10 +1,15 @@
 #define NDEBUG
 
+#ifdef WIN32
+#  define SYSTEM_PC_VC
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iomanip>
+#include "../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h"
 #include "../../../library/xgpl_src/IsoAgLib/isoaglib_config.h"
 
 using namespace std;

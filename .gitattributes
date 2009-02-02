@@ -7,6 +7,7 @@ admin/log/doxylog_categorizer.pl -text
 admin/testscripts/compileSelectedTutorials.sh -text
 admin/testscripts/compileTutorials.sh -text
 bin/can_server.exe -text
+bin/logalizer.exe -text
 bin/proc2iso -text
 bin/update_makefile.sh -text
 bin/vt2iso -text
@@ -2780,4 +2781,5 @@ tools/LICENSE -text
 tools/README -text
 tools/logalizer/Makefile -text
 tools/logalizer/README -text
+tools/logalizer/logalizer.vcproj -text
 tools/logalizer/src/logalizer.cpp -text
