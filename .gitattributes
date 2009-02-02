@@ -2776,3 +2776,8 @@ tests/addressclaim/test_E_ex.sh -text
 tests/addressclaim/test_F_ex.sh -text
 tests/addressclaim/test_G_1_ex.sh -text
 tests/addressclaim/test_G_2_ex.sh -text
+tools/LICENSE -text
+tools/README -text
+tools/logalizer/Makefile -text
+tools/logalizer/README -text
+tools/logalizer/src/logalizer.cpp -text
