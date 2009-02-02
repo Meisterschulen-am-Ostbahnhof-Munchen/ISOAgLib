@@ -43,7 +43,7 @@ SYMLINK  = ln -sf
 DEL_DIR  = rmdir
 MOVE     = mv -f
 CHK_DIR_EXISTS= test -d
-MKDIR    = mkdir -pf
+MKDIR    = mkdir -p
 
 ####### Output directory
 
@@ -75,7 +75,8 @@ prepare :
 
 all: prepare deps Makefile $(TARGET)
 $(TARGET):  $(OBJECTS_APP)
-	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS_APP) -static $(LIBS)
+	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS_APP) $(LIBS)
+	$(STRIP) $(TARGET)
 
 yaccclean:
 lexclean:
