@@ -389,7 +389,7 @@ private:
   std::string attr_value2;
   std::string filename;
 
-  std::string objName;
+  std::string m_objName;
   bool is_objName;
   unsigned int objID;
   bool is_objID;
@@ -400,7 +400,7 @@ private:
   bool b_hasUnknownAttributes;
   bool b_hasMoreThan6SoftKeys;
   bool b_disableContainmentRules;
-  bool errorOccurred;
+  bool m_errorOccurred;
 
   // used in processElement(...)
   char* m_nodeName;

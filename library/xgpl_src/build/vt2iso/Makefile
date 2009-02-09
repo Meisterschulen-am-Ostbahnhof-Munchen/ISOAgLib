@@ -1,3 +1,6 @@
+# This Makefile is based on the Apache Xerces-Makefile
+# find the original licensing information below here:
+
 # Generated automatically from Makefile.in by configure.
 #
 # The Apache Software License, Version 1.1
@@ -75,8 +78,8 @@ PLATFORM = LINUX
 COMPILER = g++
 GCC = yes
 GXX = yes
-CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
-CFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB
+CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith
+CFLAGS   =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DUSE_FREE_IMAGE_LIB -fno-builtin -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith
 LDFLAGS =
 THREADS = none
 EXTRA_LIBS =

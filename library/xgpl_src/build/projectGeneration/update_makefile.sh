@@ -548,62 +548,56 @@ create_filelist( )
 
   COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
   if [ $PRJ_BASE -gt 0 ] ; then
-    if [ $PRJ_ISO11783 -lt 1 ] ; then
-      # no trac light
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -not -name '*traclight*' -a -not -name '*trac*setpoint*' -a -not -name '*tracaux*' -a -not -name '*tracguidance*' -a -not -name '*traccert*' \)"
-    else
-# until the setpoint classes for PTO and Move are fully implemented, the setpoint classes are NOT integrated into project files
-      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part7_ApplicationLayer/*'"
-#      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -not -name '*trac*setpoint*' \) "
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/Part7_ApplicationLayer/*'"
+  else
+    if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_FACILITIES -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 -o $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_TRACTOR_CERTIFICATION -gt 0; then
+      COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
     fi
-  fi
-  if test $PRJ_TRACTOR_GENERAL -gt 0 -o $PRJ_TRACTOR_MOVE -gt 0 -o $PRJ_TRACTOR_FACILITIES -gt 0 -o $PRJ_TRACTOR_PTO -gt 0 -o $PRJ_TRACTOR_LIGHT -gt 0 -o $PRJ_TRACTOR_AUX -gt 0 -o $PRJ_TIME_GPS -gt 0 -o $PRJ_TRACTOR_GUIDANCE -gt 0 -o $PRJ_TRACTOR_CERTIFICATION -gt 0; then
-    COMM_FEATURES="$COMM_FEATURES -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
-  fi
-  if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)"
-  fi
-  if test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -gt 0 ; then
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)"
-  elif test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -lt 1 ; then
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)"
-  fi
-  if test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -gt 0 ; then
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)"
-  elif test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -lt 1 ; then
-      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)"
-  fi
-  if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)"
-  else
-  PRJ_TRACTOR_LIGHT=0
-  fi
-  if test $PRJ_TRACTOR_FACILITIES -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
-    # tracfacilities is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)"
-  else
-  PRJ_TRACTOR_FACILITIES=0
-  fi
-  if test $PRJ_TRACTOR_AUX -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
-    # tracaux is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)"
-  else
-  PRJ_TRACTOR_AUX=0
-  fi
-  if test $PRJ_TRACTOR_GUIDANCE -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
-    # tracguidance is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)"
-  else
-  PRJ_TRACTOR_GUIDANCE=0
-  fi
-  if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
-    # tracguidance is only defined for ISO 11783
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)"
-  else
-  PRJ_TRACTOR_CERTIFICATION=0
-  fi
-  if [ $PRJ_TIME_GPS -gt 0 ] ; then
-    COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)"
+    if [ $PRJ_TRACTOR_GENERAL -gt 0 ] ; then
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)"
+    fi
+    if test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -gt 0 ; then
+	COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)"
+    elif test $PRJ_TRACTOR_MOVE -gt 0 -a $PRJ_TRACTOR_MOVE_SETPOINT -lt 1 ; then
+	COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)"
+    fi
+    if test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -gt 0 ; then
+	COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)"
+    elif test $PRJ_TRACTOR_PTO -gt 0 -a $PRJ_TRACTOR_PTO_SETPOINT -lt 1 ; then
+	COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)"
+    fi
+    if test $PRJ_TRACTOR_LIGHT -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)"
+    else
+    PRJ_TRACTOR_LIGHT=0
+    fi
+    if test $PRJ_TRACTOR_FACILITIES -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+      # tracfacilities is only defined for ISO 11783
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)"
+    else
+    PRJ_TRACTOR_FACILITIES=0
+    fi
+    if test $PRJ_TRACTOR_AUX -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+      # tracaux is only defined for ISO 11783
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)"
+    else
+    PRJ_TRACTOR_AUX=0
+    fi
+    if test $PRJ_TRACTOR_GUIDANCE -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+      # tracguidance is only defined for ISO 11783
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)"
+    else
+    PRJ_TRACTOR_GUIDANCE=0
+    fi
+    if test $PRJ_TRACTOR_CERTIFICATION -gt 0 -a $PRJ_ISO11783 -gt 0 ; then
+      # tracguidance is only defined for ISO 11783
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)"
+    else
+    PRJ_TRACTOR_CERTIFICATION=0
+    fi
+    if [ $PRJ_TIME_GPS -gt 0 ] ; then
+      COMM_FEATURES="$COMM_FEATURES -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)"
+    fi
   fi
 
   if [ $PRJ_PROPRIETARY_PGN_INTERFACE -gt 0 ] ; then
@@ -652,15 +646,12 @@ create_filelist( )
         COMM_FEATURES="$COMM_FEATURES -o -path '*/driver/datastreams/volatilememory_c.*'"
     fi
   fi
-  if test $PRJ_MULTIPACKET -gt 0 -o $PROC_LOCAL -gt 0   ; then
-    PRJ_MULTIPACKET=1
-    if [ $PRJ_ISO11783 -gt 0 ] ; then
-      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'"
-      if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
-        COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'"
-      else
-        COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamlinear_c.*'"
-      fi
+  if [ $PRJ_ISO11783 -gt 0 ] ; then
+    COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'"
+    if [ $PRJ_MULTIPACKET_STREAM_CHUNK -gt 0 ] ; then
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'"
+    else
+      COMM_FEATURES="$COMM_FEATURES -o -path '*/Part3_DataLink/impl/streamlinear_c.*'"
     fi
   fi
 
@@ -691,7 +682,6 @@ create_filelist( )
       echo 'Thus the project files will be generated without enhanced CAN processing'
       PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
     fi
-    PLATFORM=`uname`
     if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
       DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
     elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
@@ -800,14 +790,9 @@ create_filelist( )
   rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_HDR"
 
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
-  # find central elements
-  if [ $PRJ_ISO11783 -lt 1 ] ; then
-  EXCLUDE_FROM_SYSTEM_MGMT="-a -not -path '*/ISO11783/*'" # OBSOLETE? Folder has been deleted.
-  else
-  EXCLUDE_FROM_SYSTEM_MGMT=""
-  fi
 
   FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
+
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
     FIND_TEMP_PATH="$FIND_TEMP_PATH -o $COMM_PROC_FEATURES"
@@ -1500,6 +1485,10 @@ create_makefile()
     echo -e -n "$CcFile  " >> $MakefileNameLong
   done
   echo -e "\n" >> $MakefileNameLong
+
+
+##### Library install header file gathering BEGIN
+
 rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
 
 cat "$MakefileFilelistLibraryHdr" | grep    "/impl/" > FileListInternal.txt
@@ -1563,6 +1552,8 @@ done
   echo -e "\n" >> $MakefileNameLong
 
 rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
+
+##### Library install header file gathering END
 
 
   # build special target for CAN server
@@ -2396,6 +2387,9 @@ Thus with these two DEFINE settings, the compiler can generate a clean running e
 Report bugs to <Achim.Spangler@osb-ag.de>.
 EOF
 }
+
+
+# main
 
 if [ $# -lt 1 ] ; then
   echo "ERROR! You must at least specify the configuration file for your project as parameter"

@@ -777,7 +777,7 @@ signed int vt2iso_c::strlenUnescaped (const std::string& pcc_string)
 
 bool vt2iso_c::copyWithQuoteAndLength (std::string &dest, const std::string& src, unsigned int len)
 {
-  dest = std::string ("\"");
+  dest = std::string ("const_cast<char*>(\"");
 
   signed int ret = strlenUnescaped(src);
   if (ret == -1)
@@ -805,6 +805,7 @@ bool vt2iso_c::copyWithQuoteAndLength (std::string &dest, const std::string& src
   }
   for (; i<len; i++) dest.push_back(' '); // fill with spaces if necessary
   dest.push_back ('\"');
+  dest.push_back (')');
   return true;
 }
 // ---------------------------------------------------------------------------
@@ -848,7 +849,7 @@ signed long int vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wis
     if (b_wishingID)
     {
       // first check if ID is there already
-      for (std::map<std::string, uint16_t>::iterator iter=map_objNameIdTable.begin(); iter != map_objNameIdTable.end(); ++iter)
+      for (iter=map_objNameIdTable.begin(); iter != map_objNameIdTable.end(); ++iter)
       {
         // std::cout << "comparing " << wishID << " with " << objIDTable [i] << ""<<std::endl;
         if (iter->second == wishID)
@@ -1036,7 +1037,6 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   partFile_handler_direct = NULL;
   partFile_handler_derived = NULL;
 
-  std::string attr_name;
   std::string partFileName;
 
   for (int i=0; i<=DEF_iso639entries; i++)
@@ -1366,7 +1366,7 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       { // get 'name=', 'id=' and all other possible attributes
         if (attr_name.compare("name") == 0)
         {
-          objName = str(format("%s%s") % mstr_poolIdent % attr_value);
+          m_objName = str(format("%s%s") % mstr_poolIdent % attr_value);
           is_objName = true;
           continue;
         }
@@ -1428,8 +1428,8 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
     // If no 'name=' given, add 'name=Unnamed%d' attribute
     if (is_objName == false)
     {
-      objName = str(format("%sUnnamed%d") % mstr_poolIdent % objNextUnnamedName);
-      ((DOMElement *)n)->setAttribute (X("name"), X(objName.c_str()));
+      m_objName = str(format("%sUnnamed%d") % mstr_poolIdent % objNextUnnamedName);
+      ((DOMElement *)n)->setAttribute (X("name"), X(m_objName.c_str()));
       objNextUnnamedName++;
       is_objName = true;
     }
@@ -1507,8 +1507,8 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     if (arr_file[actDepth].empty())
       continue;
 
-    if (fixNr == -1) fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", objName.c_str(), actDepth);
-    else /* -fix- */ fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", objName.c_str(), actDepth, fixNr);
+    if (fixNr == -1) fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%d [] = {", m_objName.c_str(), actDepth);
+    else /* -fix- */ fprintf (partFile_attributes, "const HUGE_MEM uint8_t iVtObject%s_aRawBitmap%dFixed%d [] = {", m_objName.c_str(), actDepth, fixNr);
 
     // find matching path path for file
     struct stat s_stat;
@@ -1591,7 +1591,7 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
       if (rleBytes >= c_Bitmap.objRawBitmapBytes [actDepth]) {
         options &= -1-(uint64_t(1)<<(2+actDepth));
         if (mb_verbose)
-          std::cout << objName << "' actDepth012='" << actDepth
+          std::cout << m_objName << "' actDepth012='" << actDepth
               << "' has RLE size of " << rleBytes << " but uncompressed size of "
               << c_Bitmap.objRawBitmapBytes [actDepth] << ". Turning RLE off!"<<std::endl;
       }
@@ -1615,7 +1615,7 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
         PixelCount += cnt;
       }
       if (mb_verbose)
-        std::cout << objName << "' actDepth012='" << actDepth
+        std::cout << m_objName << "' actDepth012='" << actDepth
             << "' has RLE size of " << rleBytes << " but uncompressed size of "
             << c_Bitmap.objRawBitmapBytes [actDepth]
             << "#Pixels: " << PixelCount << ", Width: " << c_Bitmap.getWidth() << ", Height: "
@@ -1928,8 +1928,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
     if (pc_specialParsing && (objType == otIncludeobject))
     {
-      objName = str(format("%s%s") % mstr_poolIdent % (getAttributeValue (n, "name")));
-      if (!pc_specialParsing->parseKnownTag(n, objType, objName.c_str(), &objID, &is_objID))
+      m_objName = str(format("%s%s") % mstr_poolIdent % (getAttributeValue (n, "name")));
+      if (!pc_specialParsing->parseKnownTag(n, objType, m_objName.c_str(), &objID, &is_objID))
         return false;
     }
   }
@@ -1987,11 +1987,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     defaultAttributes (objType);
 
     // get a new ID for this object if not yet done
-    signed long int checkObjID = getID (objName.c_str(), (objType == otMacro) ? true: false, is_objID, objID);
+    signed long int checkObjID = getID (m_objName.c_str(), (objType == otMacro) ? true: false, is_objID, objID);
 
     if (checkObjID == -1)
     {
-      std::cerr << "Error in getID() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye." << std::endl << std::endl;
+      std::cerr << "Error in getID() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye." << std::endl << std::endl;
       return false;
     }
     else
@@ -1999,7 +1999,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     if (pc_specialParsingPropTag && (objType >= maxObjectTypes))
     {
-      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, objName, this))
+      if (!pc_specialParsingPropTag->parseUnknownTag (n, objType, m_objName, this))
         return false;
     }
 
@@ -2014,7 +2014,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       /// first check if the wished id (attribute id="" is given) is a valid resource id
       if (is_objID && !pc_specialParsing->checkUseOfResourceID (objID))
       {
-        const char* pcch_tmpName = (is_objName) ? objName.c_str() : "unnamed object";
+        const char* pcch_tmpName = (is_objName) ? m_objName.c_str() : "unnamed object";
         std::cerr << "\n\nMISUSE OF RESOURCE ID '" << objID << "' AS WISH OBJECT ID IN OBJECT <" << m_nodeName << "> with name '"
             << pcch_tmpName << "' STOPPING PARSER! bye."<<std::endl<<std::endl;
         return false;
@@ -2034,13 +2034,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             /// @todo why is for otDataMask also "arrc_attributes[attrSoft_key_mask]" being used?
           case otAlarmmask:
             /// attribute for reference to softkeymask
-            if (!pc_specialParsing->parseKnownTag(n, objType, objName.c_str(), &objID, &is_objID, arrc_attributes[attrSoft_key_mask].get().c_str()))
+            if (!pc_specialParsing->parseKnownTag(n, objType, m_objName.c_str(), &objID, &is_objID, arrc_attributes[attrSoft_key_mask].get().c_str()))
               return false;
             break;
           default:
             /// @todo why is default "variable reference"?
             /// attribute for variable reference
-            if (!pc_specialParsing->parseKnownTag(n, objType, objName.c_str(), &objID, &is_objID, "NULL", arrc_attributes[attrVariable_reference].get().c_str()))
+            if (!pc_specialParsing->parseKnownTag(n, objType, m_objName.c_str(), &objID, &is_objID, "NULL", arrc_attributes[attrVariable_reference].get().c_str()))
               return false;
             break;
         }
@@ -2048,7 +2048,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       /// @todo warum h�ngt das id von resource setzen von hasUnknAttrs ab???
       if (b_hasUnknownAttributes)
       // set object ID here to ensure that the resource ID is used as object ID
-        setID (objName.c_str(), objID);
+        setID (m_objName.c_str(), objID);
     }
 
     // Completely parsed <tag ...> now, start writing out to the files!
@@ -2098,12 +2098,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     switch (objType)
     {
       case otKey:
-        recursePass = objName;
+        recursePass = m_objName;
         //rpcc_inKey = recursePass.c_str();
         objHasArrayObjectXY = true;
         break;
       case otButton:
-        recursePass = objName;
+        recursePass = m_objName;
         //rpcc_inButton = recursePass.c_str();
         objHasArrayObjectXY = true;
         break;
@@ -2231,7 +2231,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             }
             if (firstElement)
             {
-              fprintf (partFile_attributes, "const IsoAgLib::repeat_vtLanguage_s ivtObject%s_aLanguage [] = {", objName.c_str());
+              fprintf (partFile_attributes, "const IsoAgLib::repeat_vtLanguage_s ivtObject%s_aLanguage [] = {", m_objName.c_str());
             }
             else
             {
@@ -2261,7 +2261,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
             tempString = str(format("'%c', '%c'") % languageCode[0] % languageCode[1]);
 
-            fprintf (partFile_attributes, "{%s}", tempString.c_str());
+            fprintf (partFile_attributes, "{{%s}}", tempString.c_str());
             objChildLanguages++;
             firstElement = false;
 
@@ -2344,7 +2344,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       {
         if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrTransparency_colour].isGiven()))
         {
-          std::cerr << "YOU NEED TO SPECIFY THE width= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT " << objName << "! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          std::cerr << "YOU NEED TO SPECIFY THE width= AND transparency_colour= ATTRIBUTES FOR THE <picturegraphic> OBJECT " << m_objName << "! STOPPING PARSER! bye."<<std::endl<<std::endl;
           return false;
         }
 
@@ -2414,7 +2414,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if (fixNr > 0)
         {
           // 1st: Print out array here now...
-          fprintf (partFile_attributes, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", objName.c_str());
+          fprintf (partFile_attributes, "const IsoAgLib::repeat_rawData_rawBytes_actWidth_actHeight_formatoptions_s iVtObject%s_aFixedBitmaps [] = {", m_objName.c_str());
           bool firstEntry=true;
           for (unsigned int i=0; i<fixNr; i++)
           {
@@ -2425,7 +2425,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               {
                 if (!firstEntry) fprintf (partFile_attributes, ", ");
                 unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (uint64_t(1)<<(2+actDepth))) ? (uint64_t(1)<<2) : 0 );
-                fprintf (partFile_attributes, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", objName.c_str(), actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
+                fprintf (partFile_attributes, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", m_objName.c_str(), actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
 
                 firstEntry = false;
               }
@@ -2465,7 +2465,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           std::cerr << "The macro's number of bytes to follow should be positive, but it isn't." << std::endl;
           return false;
         }
-        fprintf (partFile_attributes, "const uint8_t iVtObject%s_aMacro_Commands [%d] = {", objName.c_str(), nBytes);
+        fprintf (partFile_attributes, "const uint8_t iVtObject%s_aMacro_Commands [%d] = {", m_objName.c_str(), nBytes);
 
         // Process all Child-Elements
         bool isStillMissingCommand = true;
@@ -2475,9 +2475,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (isReallyCommandElement)  // May need to adjust this to be sure the child is really a command element and not something else to enforce integrity
           {
             char *command_name = XMLString::transcode(child->getNodeName());
-            unsigned int commandType = commandIsType (command_name);
+            unsigned int commandTypeChild = commandIsType (command_name);
             std::string commandMessage;
-            bool const isNotSet = !setCommandElement(commandType, child/*, pAttributes*/, n, objChildCommands, commandMessage);
+            bool const isNotSet = !setCommandElement(commandTypeChild, child/*, pAttributes*/, n, objChildCommands, commandMessage);
             if (isNotSet)
               return false;
             if (!isStillMissingCommand)
@@ -2532,7 +2532,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
         if ( checkForAllowedExecution() )
         {
-          std::string str_objClassName = std::string("&iVtObject") + objName + pc_postfix;
+          std::string str_objClassName = std::string("&iVtObject") + m_objName + pc_postfix;
           // first check if found language was inserted before into the map
           std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (curLang);
 
@@ -2602,7 +2602,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                   return false;
                 }
                 /// BREAK HERE TO WATCH GOTTEN IN THE DIFFERENT CASES!
-                if ((mstr_poolIdent+pc_id).compare(objName) == 0)
+                if ((mstr_poolIdent+pc_id).compare(m_objName) == 0)
                 { // set value and break
                   //std::cout << "found language value for [" << objName << "]."<<std::endl;
                   b_foundValue = true;
@@ -2624,7 +2624,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             /// Do we have conflicting 'value='s now? Just put out a warning!
             if (arrc_attributes [attrValue].isGiven())
-              std::cout <<"Overriding value & length from ["<< objName <<"]!!" << std::endl;
+              std::cout <<"Overriding value & length from ["<< m_objName <<"]!!" << std::endl;
 
             // anyway, override attrValue and clear length (so it gets auto-calculated below!)
             arrc_attributes [attrValue].set( pc_foundValue );
@@ -2640,7 +2640,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           // standard map get the index -1 to differ between "real" language map and normal object map
           std::map<int32_t, ObjListEntry>::iterator mit_entry = map_objNameAndID.find (0xFFFFFFFF);
 
-          std::string str_objClassName = std::string("&iVtObject") + objName + pc_postfix;
+          std::string str_objClassName = std::string("&iVtObject") + m_objName + pc_postfix;
 
           if (mit_entry != map_objNameAndID.end())
           {
@@ -2662,46 +2662,46 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         bool b_outputOK = pc_specialParsingPropTag->outputData2FilesPiecewise ( arrc_attributes, this);
         if ( !b_outputOK )
         {
-          std::cerr << "Error in outputData2FilesPiecewise() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          std::cerr << "Error in outputData2FilesPiecewise() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
           return false;
         }
       }
       else if (objType < maxObjectTypes)
       {
-        fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName.c_str(), pc_postfix.c_str());
-        fprintf (partFile_variables_extern,  "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], objName.c_str(), pc_postfix.c_str());
-        fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], objName.c_str(), pc_postfix.c_str(), objID);
+        fprintf (partFile_variables, "IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
+        fprintf (partFile_variables_extern,  "extern IsoAgLib::iVtObject%s_c iVtObject%s%s;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
+        fprintf (partFile_attributes, "const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM = {%d", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str(), objID);
 
-        fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n", otClassnameTable [objType], objName.c_str(), pc_postfix.c_str());
+        fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
 
         if (b_externalize)
         {
           static int splitCount=0;
           if ((splitCount & 0x1FF) == 0) splitFunction();
           splitCount++;
-          fprintf (partFile_split_function,    "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", objName.c_str(), pc_postfix.c_str(), objName.c_str(), pc_postfix.c_str());
+          fprintf (partFile_split_function,    "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", m_objName.c_str(), pc_postfix.c_str(), m_objName.c_str(), pc_postfix.c_str());
         }
         else
         {
-          fprintf (partFile_functions,         "  %siVtObject%s%s.init (&%siVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", mstr_namespacePrefix.c_str(), objName.c_str(), pc_postfix.c_str(), mstr_namespacePrefix.c_str(), objName.c_str(), pc_postfix.c_str());
+          fprintf (partFile_functions,         "  %siVtObject%s%s.init (&%siVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str(), mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str());
         }
-        fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", objName.c_str(), pc_postfix.c_str(), objID);
+        fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", m_objName.c_str(), pc_postfix.c_str(), objID);
       }
 
       /// Add explicit Button/Key includement
       if (arrc_attributes [attrInButton].isGiven())
       {
-        fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginBTN (&iVtObject%s);\n", objName.c_str(), pc_postfix.c_str(), arrc_attributes [attrInButton].get().c_str());
+        fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginBTN (&iVtObject%s);\n", m_objName.c_str(), pc_postfix.c_str(), arrc_attributes [attrInButton].get().c_str());
       }
       if (arrc_attributes [attrInKey].isGiven())
       {
         signed int resultat = booltoi (arrc_attributes [attrInKey].get().c_str());
         if (resultat == -1)
         {
-          std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
           return false;
         }
-        fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", objName.c_str(), pc_postfix.c_str(), resultat ? "true":"false");
+        fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", m_objName.c_str(), pc_postfix.c_str(), resultat ? "true":"false");
       }
       /// @todo rewrite the below...
       if ((arrc_attributes [attrVariable_reference].get().compare("NULL") != 0) && (strncmp (arrc_attributes [attrVariable_reference].get().c_str(), "&iVtObject", strlen ("&iVtObject")) != 0))
@@ -2726,7 +2726,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retSelectable = booltoi ( arrc_attributes [attrSelectable].get().c_str());
           if (retSelectable == -1)
           {
-            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (!arrc_attributes [attrActive_mask].isGiven() && (retSelectable == 1))
@@ -2760,9 +2760,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if ((retPrio == -1) || (retSignal == -1))
           {
             if (retPrio == -1)
-              std::cerr << "Error in prioritytoi()  from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in prioritytoi()  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             else
-              std::cerr << "Error in acousticsignaltoi()  from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in acousticsignaltoi()  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
@@ -2777,13 +2777,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
-            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <container> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retHidden = booltoi ( arrc_attributes [attrHidden].get().c_str());
           if (retHidden == -1)
           {
-            std::cerr << "Error in booltoi()  from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "Error in booltoi()  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
@@ -2799,7 +2799,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (objChildObjects > 6)
           {
-            std::cout << "THE <softkeymask> OBJECT '" << objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!"<<std::endl<<std::endl;
+            std::cout << "THE <softkeymask> OBJECT '" << m_objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!"<<std::endl<<std::endl;
             b_hasMoreThan6SoftKeys = true;
           }
           break;
@@ -2811,7 +2811,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
 
           fprintf (partFile_attributes, ", %d, %s", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str());
-          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName.c_str(),  arrc_attributes [attrKey_code].getIntValue()); // like in otButton
+          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", m_objName.c_str(),  arrc_attributes [attrKey_code].getIntValue()); // like in otButton
           break;
 
         case otButton:
@@ -2819,7 +2819,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             getKeyCode ();
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
-            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <key> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
@@ -2829,14 +2829,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str(), buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()));
-          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
+          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", m_objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
           break;
 
         case otInputboolean:
         {
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrForeground_colour].isGiven()))
           {
-            std::cerr << "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "YOU NEED TO SPECIFY THE width= AND foreground_colour= ATTRIBUTES FOR THE <inputboolean> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -2844,7 +2844,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retEnabled = booltoi ( arrc_attributes [attrEnabled].get().c_str());
           if (retEnabled == -1)
           {
-            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
@@ -2860,7 +2860,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           { // no value given
             if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrLength].isGiven() && arrc_attributes [attrEnabled].isGiven()))
             {
-              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT '" << objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT '" << m_objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
           /// @todo SOON: MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
@@ -2877,7 +2877,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             signed int ret = strlenUnescaped (arrc_attributes [attrValue].get().c_str());
             if (ret == -1)
             {
-              std::cerr << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             //auto-calculate string length
@@ -2887,7 +2887,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             }
             if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrEnabled].isGiven()))
             {
-              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             if (!copyWithQuoteAndLength (tempString, arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrLength].getIntValue()))
@@ -2901,18 +2901,18 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (retHorJustification == -1 || retHorJustification == -1)
           {
             if (retHorJustification == -1)
-              std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             else
-              std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retVertJustification = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
           if (retVertJustification == -1 || retVertJustification == -1)
           {
             if (retVertJustification == -1)
-              std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             else
-              std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retJustification = retHorJustification;
@@ -2933,7 +2933,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND min_value= AND max_value= "
                       << "AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <inputnumber> OBJECT "
-                      << objName << "! STOPPING PARSER! bye."<<std::endl<<std::endl;
+                      << m_objName << "! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -2958,26 +2958,26 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if ((retInputOption == -1) || (retFormat == -1) || (retHorJust == -1))
           {
             if (retInputOption == -1)
-              std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye.<<std::endl<<std::endl";
+              std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye.<<std::endl<<std::endl";
 
             if (retFormat == -1)
-              std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
 
             if (retHorJust == -1)
-              std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retVertJust = verticaljustificationtoi (arrc_attributes  [attrVertical_justification].get().c_str());
           if ((retInputOption == -1) || (retFormat == -1) || (retVertJust == -1))
           {
             if (retInputOption == -1)
-              std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
 
             if (retFormat == -1)
-              std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
 
             if (retVertJust == -1)
-              std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retJust = retHorJust;
@@ -2991,7 +2991,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
-            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <inputlist> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -3000,12 +3000,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retOptions = inputobjectoptiontoi (arrc_attributes [attrOptions].get().c_str());
           if (retEnabled == -1)
           {
-            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (retOptions == -1)
           {
-            std::cerr << "Error in itoinputobjectoptions() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "Error in itoinputobjectoptions() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
@@ -3018,7 +3018,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
-            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <outputlist> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <outputlist> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -3034,7 +3034,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             // Variable Reference
             if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrLength].isGiven()))
             {
-              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT  from object '" << objName << "' WHEN VALUE IS SET BY REFERENCE! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT  from object '" << m_objName << "' WHEN VALUE IS SET BY REFERENCE! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             arrc_attributes [attrValue].set( "NULL" );
@@ -3047,7 +3047,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               signed int ret = strlenUnescaped (arrc_attributes [attrValue].get().c_str());
               if (ret == -1)
               {
-                std::cout << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+                std::cout << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
                 return false;
               }
               // Auto-calculate Length-field
@@ -3055,7 +3055,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             }
             if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrLength].isGiven()))
             {
-              std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             if (!copyWithQuoteAndLength (tempString, arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrLength].getIntValue()))
@@ -3067,13 +3067,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           signed int retHorJust = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
           if (retHorJust == -1)
           {
-            std::cout << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
           if (retVertJust == -1)
           {
-            std::cout << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retJust = retHorJust;
@@ -3092,7 +3092,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrOffset].isGiven() && arrc_attributes [attrScale].isGiven()
                 && arrc_attributes [attrNumber_of_decimals].isGiven() && arrc_attributes [attrFormat].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <outputnumber> OBJECT '" << objName << "''! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND offset= AND scale= AND number_of_decimals= AND format= ATTRIBUTES FOR THE <outputnumber> OBJECT '" << m_objName << "''! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -3114,20 +3114,20 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if ((retFormat == -1) || (retHorJust == -1))
           {
             if (retFormat == -1)
-              std::cout << "Error in formattoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
 
             if (retHorJust == -1)
-              std::cout << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
           if ((retFormat == -1) || (retVertJust == -1))
           {
             if (retFormat == -1)
-              std::cout << "Error in formattoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
 
             if (retVertJust == -1)
-              std::cout << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int retJust = retHorJust;
@@ -3139,7 +3139,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otLine:
           if (!(arrc_attributes [attrLine_attributes].isGiven() && arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= ATTRIBUTES FOR THE <line> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
@@ -3151,7 +3151,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otRectangle:
           if (!(arrc_attributes [attrLine_attributes].isGiven() && arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= ATTRIBUTES FOR THE <rectangle> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= ATTRIBUTES FOR THE <rectangle> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrLine_suppression].setIfNotGiven ("0");
@@ -3164,12 +3164,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otEllipse:
           if (!(arrc_attributes [attrLine_attributes].isGiven() && arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrStart_angle].isGiven() && arrc_attributes [attrEnd_angle].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT from object '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE line_attributes= AND width= AND height= AND start_angle= AND end_angle= ATTRIBUTES FOR THE <ellipse> OBJECT from object '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (arrc_attributes [attrStart_angle].getIntValue() > 180 || arrc_attributes [attrEnd_angle].getIntValue() > 180)
           {
-            std::cout << "start_angle= AND end_angle= FOR THE <ellipse> OBJECT '" << objName << "' NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "start_angle= AND end_angle= FOR THE <ellipse> OBJECT '" << m_objName << "' NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrEllipse_type].setIfNotGiven("0");
@@ -3182,7 +3182,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otPolygon:
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrLine_attributes].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND line_attributes= ATTRIBUTES FOR THE <polygon> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND line_attributes= ATTRIBUTES FOR THE <polygon> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrPolygon_type].setIfNotGiven("0");
@@ -3196,12 +3196,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otMeter:
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrNeedle_colour].isGiven() && arrc_attributes [attrBorder_colour].isGiven() && arrc_attributes [attrArc_and_tick_colour].isGiven() && arrc_attributes [attrNumber_of_ticks].isGiven() && arrc_attributes[attrStart_angle].isGiven() && arrc_attributes[attrEnd_angle].isGiven() && arrc_attributes [attrMin_value].isGiven() && arrc_attributes [attrMax_value].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND arc_and_tick_colour= AND number_of_ticks= AND start_angle= AND end_angle= AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE width= AND needle_colour= AND border_colour= AND arc_and_tick_colour= AND number_of_ticks= AND start_angle= AND end_angle= AND min_value= AND max_value= ATTRIBUTES FOR THE <meter> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (arrc_attributes [attrStart_angle].getIntValue() > 180 || arrc_attributes [attrEnd_angle].getIntValue() > 180)
           {
-            std::cout << "start_angle= AND end_angle= FOR THE <meter> OBJECT '" << objName << "' NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "start_angle= AND end_angle= FOR THE <meter> OBJECT '" << m_objName << "' NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -3224,7 +3224,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otLinearbargraph:
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrColour].isGiven() && arrc_attributes [attrTarget_line_colour].isGiven() && arrc_attributes [attrNumber_of_ticks].isGiven() && arrc_attributes [attrMin_value].isGiven() && arrc_attributes [attrMax_value].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND number_of_ticks= AND min_value= AND max_value= ATTRIBUTES FOR THE <linearbargraph> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND number_of_ticks= AND min_value= AND max_value= ATTRIBUTES FOR THE <linearbargraph> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -3243,12 +3243,12 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otArchedbargraph:
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrColour].isGiven() && arrc_attributes [attrTarget_line_colour].isGiven() && arrc_attributes [attrStart_angle].isGiven() && arrc_attributes [attrEnd_angle].isGiven() && arrc_attributes[attrBar_graph_width].isGiven() && arrc_attributes [attrMin_value].isGiven() && arrc_attributes [attrMax_value].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND colour= AND target_line_colour= AND start_angle= AND end_angle= AND bar_graph_width AND min_value= AND max_value= ATTRIBUTES FOR THE <archedbargraph> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (arrc_attributes [attrStart_angle].getIntValue() > 180 || arrc_attributes [attrEnd_angle].getIntValue() > 180)
           {
-            std::cout << "start_angle= AND end_angle= FOR THE <archedbargraph> OBJECT '" << objName << "' NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "start_angle= AND end_angle= FOR THE <archedbargraph> OBJECT '" << m_objName << "' NEED TO HAVE A VALUE LESS OR EQUAL TO 180! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
@@ -3281,7 +3281,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             if (!(arrc_attributes [attrLength].isGiven()))
             {
-              std::cout << "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT '" << objName << "' (as no value= is given)! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <stringvariable> OBJECT '" << m_objName << "' (as no value= is given)! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             arrc_attributes [attrValue].set("NULL");
@@ -3291,7 +3291,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             signed int ret = strlenUnescaped (arrc_attributes [attrValue].get().c_str());
             if (ret == -1)
             {
-              std::cout << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             //auto-calculate length
@@ -3311,14 +3311,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if (!arrc_attributes [attrFont_type].isGiven())
           {
-            std::cout << "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << objName << "'! \n \
+            std::cout << "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << m_objName << "'! \n \
                 VALID VALUES ARE latin1, latin2, latin4, latin5, latin7, latin9 or proprietary! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
           if (!(arrc_attributes [attrFont_colour].isGiven() && arrc_attributes [attrFont_size].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           signed int ret = fonttypetoi (arrc_attributes [attrFont_type].get().c_str());
@@ -3326,10 +3326,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if ((ret == -1) || (retFontSize == -1))
           {
             if (ret == -1)
-              std::cout << "Error in fonttypetoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in fonttypetoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
 
             if (retFontSize == -1)
-              std::cout << "Error in fontsizetoi() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in fontsizetoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
@@ -3345,7 +3345,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otLineattributes:
           if (!(arrc_attributes [attrLine_colour].isGiven() && arrc_attributes [attrLine_width].isGiven() && arrc_attributes [attrLine_art].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE line_colour= AND line_width= AND line_art= ATTRIBUTE FOR THE <lineattributes> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (colourtoi ( arrc_attributes [attrLine_colour].get().c_str()) == -1)
@@ -3358,7 +3358,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otFillattributes:
           if (!(arrc_attributes [attrFill_colour].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE fill_colour= ATTRIBUTE FOR THE <fillattributes> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           arrc_attributes [attrFill_type].setIfNotGiven ("0");
@@ -3378,7 +3378,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           {
             if (!(arrc_attributes [attrLength].isGiven()))
             {
-              std::cout << "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "YOU NEED TO SPECIFY THE length= ATTRIBUTE FOR THE <inputattribute> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             arrc_attributes [attrValidation_string].set ( "NULL" );
@@ -3388,7 +3388,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             signed int ret = strlenUnescaped (arrc_attributes [attrValidation_string].get().c_str());
             if (ret == -1)
             {
-              std::cout << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cout << "Error in strlenUnescaped() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
             // auto-calculate string-length
@@ -3416,7 +3416,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otAuxiliaryfunction:
           if (!(arrc_attributes [attrBackground_colour].isGiven() && arrc_attributes[attrFunction_type].isGiven()))
           {
-            std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= ATTRIBUTE FOR THE <auxiliaryfunction> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
@@ -3430,7 +3430,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otAuxiliaryinput:
           if (!(arrc_attributes [attrBackground_colour].isGiven() && arrc_attributes [attrFunction_type].isGiven() && arrc_attributes[attrInput_id].isGiven()) )
           {
-            std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE background_colour= and function_type= and input_id= ATTRIBUTE FOR THE <auxiliaryinput> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
@@ -3443,32 +3443,32 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         case otGraphicsContext:
           if (!arrc_attributes [attrViewportWidth].isGiven() || !arrc_attributes [attrViewportHeight].isGiven())
           {
-            std::cout << "YOU NEED TO SPECIFY THE viewport_width= and viewport_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE viewport_width= and viewport_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (!arrc_attributes [attrViewportX].isGiven() || !arrc_attributes [attrViewportY].isGiven())
           {
-            std::cout << "YOU NEED TO SPECIFY THE viewport_x= and viewport_y= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE viewport_x= and viewport_y= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (!arrc_attributes [attrCanvasWidth].isGiven() || !arrc_attributes [attrCanvasHeight].isGiven())
           {
-            std::cout << "YOU NEED TO SPECIFY THE canvas_width= and canvas_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE canvas_width= and canvas_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (!arrc_attributes [attrViewportZoom].isGiven())
           {
-            std::cout << "YOU NEED TO SPECIFY THE viewport_zoom= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE viewport_zoom= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (!arrc_attributes [attrForeground_colour].isGiven() || !arrc_attributes [attrBackground_colour].isGiven())
           {
-            std::cout << "YOU NEED TO SPECIFY THE foreground_colour= and background_colour= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE foreground_colour= and background_colour= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
           if (!arrc_attributes [attrFormat].isGiven() || !arrc_attributes [attrOptions].isGiven())
           {
-            std::cout << "YOU NEED TO SPECIFY THE format= and options= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            std::cout << "YOU NEED TO SPECIFY THE format= and options= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
@@ -3510,14 +3510,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if (objChildObjects == 0)
           fprintf (partFile_attributes, ", 0, NULL");
         else
-          fprintf (partFile_attributes, ", %d, iVtObject%s_aObject", objChildObjects, objName.c_str());
+          fprintf (partFile_attributes, ", %d, iVtObject%s_aObject", objChildObjects, m_objName.c_str());
       }
       if (objHasArrayObjectXY)
       {
         if (objChildObjects == 0)
           fprintf (partFile_attributes, ", 0, NULL");
         else
-          fprintf (partFile_attributes, ", %d, iVtObject%s_aObject_x_y_font_row_col", objChildObjects, objName.c_str());
+          fprintf (partFile_attributes, ", %d, iVtObject%s_aObject_x_y_font_row_col", objChildObjects, m_objName.c_str());
       }
       if (objType == otPicturegraphic)
       {
@@ -3526,19 +3526,19 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if ( (stdRawBitmapBytes [actDepth] == 0))
             fprintf (partFile_attributes, ", 0,NULL");
           else
-            fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], objName.c_str(), actDepth);
+            fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], m_objName.c_str(), actDepth);
         }
         if (fixNr == 0)
           fprintf (partFile_attributes, ", 0,NULL");
         else
-          fprintf (partFile_attributes, ", %d,iVtObject%s_aFixedBitmaps", fixNr, objName.c_str());
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aFixedBitmaps", fixNr, m_objName.c_str());
       }
       if (objHasArrayPoints)
       {
         if(objChildPoints == 0)
           fprintf (partFile_attributes, ", 0,NULL");
         else
-          fprintf (partFile_attributes, ", %d,iVtObject%s_aPoints", objChildPoints, objName.c_str());
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aPoints", objChildPoints, m_objName.c_str());
       }
       if (objHasArrayEventMacro)
       {
@@ -3548,7 +3548,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           // Changed this line to give the correct name to the Macro object to match the naming conventions of IsoAgLib V 1.1.0.
           // This coincides with a change made above to the name of the Macro struct. -bac 06-Jan-2005
           //fprintf (partFile_attributes, ", %d,iVtObject%s_aEvent_Macro", objChildMacros, objName);
-          fprintf (partFile_attributes, ", %d,iVtObject%s_aMacro_Object", objChildMacros, objName.c_str());
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aMacro_Object", objChildMacros, m_objName.c_str());
       }
 
       if (objHasArrayLanguagecode)
@@ -3556,11 +3556,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         if (objChildLanguages == 0)
           fprintf (partFile_attributes, ", 0,NULL");
         else
-          fprintf (partFile_attributes, ", %d,ivtObject%s_aLanguage", objChildLanguages, objName.c_str());
+          fprintf (partFile_attributes, ", %d,ivtObject%s_aLanguage", objChildLanguages, m_objName.c_str());
       }
       if (objHasArrayMacroCommand)
       {
-        fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", objName.c_str());
+        fprintf (partFile_attributes, ", iVtObject%s_aMacro_Commands", m_objName.c_str());
       }
       if ( checkForAllowedExecution() )
         fprintf (partFile_attributes, "};\n"); //s_ROM bla blub terminator...
@@ -3664,7 +3664,7 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
       {
         if (firstElement)
         {
-            fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", objName.c_str());
+            fprintf (partFile_attributes, "const IsoAgLib::repeat_x_y_s iVtObject%s_aPoints [] = {", m_objName.c_str());
         }
         else
         {
@@ -3673,12 +3673,12 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
       }
       if (!(arrc_attributes [attrPos_x].isGiven()))
       {
-        std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...>  from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...>  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if (!(arrc_attributes [attrPos_y].isGiven())) 
       {
-        std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...>  from object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...>  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
 
@@ -3691,7 +3691,7 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
   }
   if (r_objChildPoints < 3)
   {
-    std::cout << "\n\nYOU NEED TO SPECIFY AT LEAST 3 <point ...> elements for object <" << m_nodeName << "> '" << objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+    std::cout << "\n\nYOU NEED TO SPECIFY AT LEAST 3 <point ...> elements for object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
     return false;
   }
   else
@@ -3773,7 +3773,7 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
         {
                 // Changed the macro struct name in the following line to match what is in version 1.1.0 of IsoAgLib -bac 06-Jan-2005
                 // fprintf (partFile_attributes, "const IsoAgLib::repeat_Macro_iVtObject_s iVtObject%s_aMacro_Object [] = {", objName);
-          fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", objName.c_str());
+          fprintf (partFile_attributes, "const IsoAgLib::repeat_event_iVtObjectMacro_s iVtObject%s_aMacro_Object [] = {", m_objName.c_str());
         }
         else
         {
@@ -4002,7 +4002,7 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
               objChildID = getID (objChildName.c_str(), false /* assumption: not a macro here */, is_objChildID, objChildID);
               if (objChildID == -1)
               {
-                std::cout << "Error in getID() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+                std::cout << "Error in getID() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
                 return false;
               }
               // continue
@@ -4042,10 +4042,10 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
             {
               if (xyNeeded)
               {
-                fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", objName.c_str());
+                fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_x_y_iVtObjectFontAttributes_row_col_s iVtObject%s_aObject_x_y_font_row_col [] = {", m_objName.c_str());
               }
               else
-                fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName.c_str());
+                fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", m_objName.c_str());
             }
             else
             {
@@ -4134,7 +4134,7 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
         // create for all number_of_items a no-item placeholder
         if (ab_outputEnabled)
         {
-          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", objName.c_str());
+          fprintf (partFile_attributes, "const IsoAgLib::repeat_iVtObject_s iVtObject%s_aObject [] = {", m_objName.c_str());
           for (int i_emptyChildObj=1; i_emptyChildObj <= arrc_attributes [attrNumber_of_items].getIntValue(); i_emptyChildObj++)
           {
             fprintf (partFile_attributes, "{NULL}");
@@ -4176,7 +4176,7 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , mb_verbose (false)
   , b_hasUnknownAttributes(false)
   , b_hasMoreThan6SoftKeys(false)
-  , errorOccurred(false)
+  , m_errorOccurred(false)
   , parser(NULL)
 {}
 
@@ -4487,12 +4487,12 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed int retHideShow = booltoi(arrc_attributes [attrHideShow].get().c_str());
       if ( ret == -1 )
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if ( retHideShow == -1 )
       {
-        std::cout << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4508,12 +4508,12 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed int retDisEnable = booltoi(arrc_attributes [attrDisable_enable].get().c_str());
       if ( ret == -1 )
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if ( retDisEnable == -1 )
       {
-        std::cout << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4529,12 +4529,12 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed int retActiveForEditing = booltoi ( arrc_attributes [attrActivate_for_editing].get().c_str());
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if ( retActiveForEditing == -1 )
       {
-        std::cout << "Error in booltoi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       unsigned int isActive = 0xFF;
@@ -4575,7 +4575,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if ((ret == -1) || (retParent == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       commandMessage = str(format("0xA5, %d, %d, %d, %d, %d, %d, 0xFF") %  MACRO_16bitToLE ((unsigned int)retParent) % MACRO_16bitToLE ((unsigned int)ret) %  ( arrc_attributes [attrX_change].getIntValue() + 127) % ( arrc_attributes [attrY_change].getIntValue() + 127));
@@ -4590,7 +4590,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if ((ret == -1) || (retParent == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4605,7 +4605,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4620,7 +4620,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if (colourtoi ( arrc_attributes [attrNew_background_colour].get().c_str()) == -1)
@@ -4638,7 +4638,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retNewValue = idOrName_toi(arrc_attributes [attrNew_value].get().c_str(), /*macro?*/false); // "idOrName_toi" is okay here, because we could change an objectpointer to point to some other object!
       if ((retNewValue == -1) || (ret == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4665,7 +4665,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retBytesInString = arrc_attributes [attrBytes_in_string].getIntValue();
       if ((ret == -1) || (retBytesInString == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       commandMessage = str(format("0xB3, %d, %d, %d, %d%s") % MACRO_16bitToLE((unsigned int)ret) % MACRO_16bitToLE((unsigned int)retBytesInString) % tempString2);
@@ -4679,7 +4679,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4695,12 +4695,12 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retFontSize = fontsizetoi(arrc_attributes [attrFont_size].get().c_str());
       if ( ret == -1 )
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if ( retFontSize == -1 )
       {
-        std::cout << "Error in fontsizetoi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in fontsizetoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if (colourtoi ( arrc_attributes [attrFont_colour].get().c_str()) == -1)
@@ -4719,7 +4719,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if (colourtoi ( arrc_attributes [attrLine_colour].get().c_str()) == -1)
@@ -4738,7 +4738,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if (colourtoi ( arrc_attributes [attrFill_colour].get().c_str()) == -1)
@@ -4758,7 +4758,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retNewMask = idOrName_toi(arrc_attributes [attrNew_active_mask].get().c_str(), /*macro?*/false);
       if ((retWS_ID == -1) || (retNewMask == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4774,7 +4774,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retNewSKM = idOrName_toi(arrc_attributes [attrNew_soft_key_mask].get().c_str(), /*macro?*/false);
       if ((retMaskID == -1) || (retNewSKM == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4792,7 +4792,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retNewValue = idOrName_toi(arrc_attributes [attrNew_value].get().c_str(), /*macro?*/false);
       if ((ret == -1) || (retNewValue == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4808,12 +4808,12 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retPrio = prioritytoi( arrc_attributes [attrNew_priority].get().c_str());
       if (ret == -1)
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       if (retPrio == -1)
       {
-        std::cout << "Error in prioritytoi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in prioritytoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4829,7 +4829,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int retNewID = idOrName_toi(arrc_attributes [attrNew_objectID].get().c_str(), /*macro?*/false);
       if ((ret == -1) || (retNewID == -1))
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -4844,7 +4844,7 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
       signed long int ret = idOrName_toi(arrc_attributes [attrObjectID].get().c_str(), /*macro?*/false);
       if ( ret == -1 )
       {
-        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
+        std::cout << "Error in idOrName_toi() from object <" << m_nodeName << "> '" << m_objName << "'! STOP PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
       // Need check for all attributes being present for this command -bac
@@ -5094,7 +5094,7 @@ void vt2iso_c::parse()
 
   generateIncludeDefines();
 
-  clean_exit ((errorOccurred) ? "XML-Parsing error occurred. Terminating.\n\n"
+  clean_exit ((m_errorOccurred) ? "XML-Parsing error occurred. Terminating.\n\n"
                               : "All conversion done successfully.\n\n");
 }
 
@@ -5124,7 +5124,7 @@ bool vt2iso_c::doAllFiles (action_en aen_action)
       std::cerr << "\nError during parsing: '" << xmlFile << "'\n"
           << "Exception message is:  \n"
           << StrX(toCatch.getMessage()) << "\n" << std::endl;
-      errorOccurred = true;
+      m_errorOccurred = true;
     }
     catch (const DOMException& toCatch)
     {
@@ -5137,20 +5137,20 @@ bool vt2iso_c::doAllFiles (action_en aen_action)
       if (DOMImplementation::loadDOMExceptionMsg(toCatch.code, errText, maxChars))
         std::cerr << "Message is: " << StrX(errText) << std::endl;
 
-      errorOccurred = true;
+      m_errorOccurred = true;
     }
     catch (...)
     {
       std::cerr << "\nUnexpected exception during parsing: '" << xmlFile << "'"<<std::endl;
-      errorOccurred = true;
+      m_errorOccurred = true;
     }
 
     //  Extract the DOM tree, get the list of all the elements and report the
     //  length as the count of elements.
-    if (getSawErrors() || errorOccurred)
+    if (getSawErrors() || m_errorOccurred)
     {
       std::cout << "\nErrors occurred, no output available\n" << std::endl;
-      errorOccurred = true;
+      m_errorOccurred = true;
     }
     else
     {

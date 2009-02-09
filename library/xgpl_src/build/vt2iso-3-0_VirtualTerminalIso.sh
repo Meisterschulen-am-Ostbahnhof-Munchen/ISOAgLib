@@ -21,6 +21,6 @@ DIR=`dirname $0`
 ### 4. Now call vt2iso
 # PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso simpleVTIsoPool.xml"
 
-PAR="$CURDIR/$DIR/vt2iso/bin/vt2iso $CURDIR/$DIR/../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool"
+PAR="$CURDIR/$DIR/../../..//bin/vt2iso $CURDIR/$DIR/../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool"
 
 exec $PAR
