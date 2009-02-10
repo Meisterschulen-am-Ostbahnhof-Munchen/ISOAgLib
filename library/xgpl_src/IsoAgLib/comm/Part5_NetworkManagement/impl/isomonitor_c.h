@@ -229,7 +229,7 @@ public:
   */
   IsoItem_c& isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, uint8_t aui8_ind, bool ab_forceClaimedAddress = false);
 
-  /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
+  /** deliver the count of members in the Monitor-List with given DEVCLASS
     which optional (!!) match the condition of address claim state
     @param aui8_devClass searched DEVCLASS code
     @param ab_forceClaimedAddress true -> only members with claimed address are used
@@ -237,6 +237,16 @@ public:
     @return count of members in Monitor-List with DEVCLASS == aui8_devClass
   */
   uint8_t isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceClaimedAddress = false);
+
+  /** deliver the count of members in the Monitor-List with given FUNCTION
+    and device classe which optional (!!) match the condition of address claim state
+    @param aui8_function searched FUNCTION code
+    @param aui8_devClass searched DEVCLASS code
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
+          (optional, default false)
+    @return count of members in Monitor-List with FUNCTION == aui8_function and DEVCLASS == aui8_devClass
+  */
+  uint8_t isoMemberDevClassFuncCnt(uint8_t aui8_devClass, uint8_t aui8_function, bool ab_forceClaimedAddress);
 
   /** deliver one of the members with specific DEVCLASS
     which optional (!!) match the condition of address claim state

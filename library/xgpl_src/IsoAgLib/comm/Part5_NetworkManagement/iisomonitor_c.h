@@ -104,6 +104,18 @@ public:
   iIsoItem_c& isoMemberInd(uint8_t aui8_ind, bool ab_forceClaimedAddress = false)
   { return static_cast<iIsoItem_c&>(IsoMonitor_c::isoMemberInd( aui8_ind, ab_forceClaimedAddress )); }
 
+  /** deliver the count of members in the Monitor-List with given FUNCTION
+    and device classe which optional (!!) match the condition of address claim state
+    @param aui8_function searched FUNCTION code
+    @param aui8_devClass searched DEVCLASS code
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
+          (optional, default false)
+    @return count of members in Monitor-List with FUNCTION == aui8_function and DEVCLASS == aui8_devClass
+  */
+  uint8_t isoMemberDevClassFuncCnt(uint8_t aui8_devClass, uint8_t aui8_function, bool ab_forceClaimedAddress = false)
+  { return IsoMonitor_c::isoMemberDevClassFuncCnt( aui8_devClass, aui8_function, ab_forceClaimedAddress );}
+
+
   /** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
     which optional (!!) match the condition of address claim state
     @param aui8_devClass searched DEVCLASS code

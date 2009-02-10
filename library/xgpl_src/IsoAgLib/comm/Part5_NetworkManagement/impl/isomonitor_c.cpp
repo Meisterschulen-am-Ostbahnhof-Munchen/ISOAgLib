@@ -442,7 +442,31 @@ IsoItem_c& IsoMonitor_c::isoMemberEcuTypeInd (IsoName_c::ecuType_t a_ecuType, ui
   return *mpc_isoMemberCache;
 }
 
-/** deliver the count of members in the Monitor-List with given DEVCLASS (variable POS)
+  /** deliver the count of members in the Monitor-List with given FUNCTION
+    and device classe which optional (!!) match the condition of address claim state
+    @param aui8_function searched FUNCTION code
+    @param aui8_devClass searched DEVCLASS code
+    @param ab_forceClaimedAddress true -> only members with claimed address are used
+          (optional, default false)
+    @return count of members in Monitor-List with FUNCTION == aui8_function and DEVCLASS == aui8_devClass
+  */
+  uint8_t IsoMonitor_c::isoMemberDevClassFuncCnt(uint8_t aui8_devClass, uint8_t aui8_function, bool ab_forceClaimedAddress)
+{
+  uint8_t b_result = 0;
+  for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
+  {
+    if ( ( (pc_iter->isoName().func()) == aui8_function)
+      && ( ((pc_iter->isoName().devClass()) == aui8_devClass) )
+      && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
+    {
+      b_result++;
+      mpc_isoMemberCache = pc_iter; // set member cache to member  with searched devClass
+    }
+  }
+  return b_result;
+}
+
+/** deliver the count of members in the Monitor-List with given DEVCLASS
   which optional (!!) match the condition of address claim state
   @param aui8_devClass searched DEVCLASS code
   @param ab_forceClaimedAddress true -> only members with claimed address are used
@@ -454,7 +478,6 @@ uint8_t IsoMonitor_c::isoMemberDevClassCnt(uint8_t aui8_devClass, bool ab_forceC
   uint8_t b_result = 0;
   for (Vec_ISOIterator pc_iter = mvec_isoMember.begin() ; pc_iter != mvec_isoMember.end(); pc_iter++)
   {
-//    cerr << "Tested Member DevClass: " << int( pc_iter->isoName().devClass() ) << endl;
     if ( ( ((pc_iter->isoName().devClass()) == aui8_devClass) || (aui8_devClass == 0xFF))
       && (!ab_forceClaimedAddress || pc_iter->itemState(IState_c::ClaimedAddress)) )
     {
@@ -564,7 +587,7 @@ bool IsoMonitor_c::isoDevClass2ISONameClaimedAddress(IsoName_c &rc_isoName)
     return true;
   }
   else
-  { // no item with ISOName found -> adapt POS
+  { // no item with ISOName found -> adapt DevClassInd
     // search for member with claimed address with same DEVCLASS
     if (isoMemberDevClassCnt(rc_isoName.devClass(), true) > 0)
     { // member with wanted device class exists -> store the ISOName
