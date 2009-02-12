@@ -228,7 +228,7 @@ public:
   /** gives to iCanio_c the permission to look inside the container, useful for
    the casting between canCustomer_c and iSchedulerTask_c */
   friend class iCanIo_c;
-  friend class iIsoFilter_s;
+  friend struct iIsoFilter_s;
   friend class iMultiReceive_c;
   friend class iScheduler_c;
 

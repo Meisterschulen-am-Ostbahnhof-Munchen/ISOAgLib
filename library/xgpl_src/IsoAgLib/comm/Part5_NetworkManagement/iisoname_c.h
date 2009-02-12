@@ -336,7 +336,7 @@ private:
   friend class iMeasureProgRemote_c;
   friend iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data );
   friend iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data );
-  friend class iIsoFilter_s;
+  friend struct iIsoFilter_s;
   friend class iProprietaryMessageHandler_c;
   friend class iProprietaryMessageClient_c;
   friend class __IsoAgLib::ProprietaryMessageClient_c;
