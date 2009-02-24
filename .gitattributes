@@ -2753,6 +2753,9 @@ library/xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h -text
+library/xgpl_src/supplementary_driver/hal/pc/actor/actor_target_extensions_hal_simulator.cpp -text
+library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
+library/xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h -text
 /licensing.txt -text
