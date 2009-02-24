@@ -1059,9 +1059,6 @@
 #elif defined(SYSTEM_AMS5)
   /// set subdirectory name to "pc_mfc" for PC_MFC platform
   #define HAL_SUBDIR ams5
-#elif defined(SYSTEM_PC_MFC)
-  /// set subdirectory name to "pc_mfc" for PC_MFC platform
-  #define HAL_SUBDIR pc_mfc
 #elif defined(SYSTEM_ESX)
   /// set subdirectory name to "esx" for ESX platform
   #define HAL_SUBDIR esx

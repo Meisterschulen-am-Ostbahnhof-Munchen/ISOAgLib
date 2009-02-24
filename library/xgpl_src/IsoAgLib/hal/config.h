@@ -85,8 +85,6 @@
 // now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/config.h"
-#elif defined(SYSTEM_PC_MFC)
-	#include "pc_mfc/config.h"
 #elif defined(SYSTEM_ESX)
 	#include "esx/config.h"
 #elif defined(SYSTEM_A2)

@@ -82,8 +82,6 @@ typedef enum
 // now include dependent on used target the suitable header
 #if defined(SYSTEM_PC)
 	#include "pc/datastreams/datastreams.h"
-#elif defined(SYSTEM_PC_MFC)
-	#include "pc_mfc/datastreams/datastreams.h"
 #elif defined(SYSTEM_ESX)
 //	#include "esx/datastreams/datastreams.h"
 #elif defined(SYSTEM_A2)
