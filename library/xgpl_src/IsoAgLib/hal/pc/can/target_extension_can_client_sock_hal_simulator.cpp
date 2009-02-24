@@ -60,7 +60,7 @@
 #include <cstdio>
 #include <cctype>
 
-#include <IsoAgLib/hal/pc/HALSimulator/HALSimulator_c.h>
+#include <IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h>
 
 #ifdef WIN32
   #include <stdio.h>

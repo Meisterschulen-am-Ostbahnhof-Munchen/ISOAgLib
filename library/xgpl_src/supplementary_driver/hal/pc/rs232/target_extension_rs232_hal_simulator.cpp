@@ -62,7 +62,7 @@
 #include <windows.h>    /* for SioXXX() */
 #include <deque>
 
-#include <IsoAgLib/hal/pc/HALSimulator/HALSimulator_c.h>
+#include <IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h>
 
 namespace __HAL {
 HANDLE hCom[RS232_INSTANCE_CNT];
