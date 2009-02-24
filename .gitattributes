@@ -2629,6 +2629,10 @@ library/xgpl_src/IsoAgLib/hal/pc/can/can_server_vector_xl.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock_hal_simulator.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h -text
+library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp -text
