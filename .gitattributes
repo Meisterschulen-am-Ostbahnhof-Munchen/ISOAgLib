@@ -2629,10 +2629,6 @@ library/xgpl_src/IsoAgLib/hal/pc/can/can_server_vector_xl.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock_hal_simulator.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.cpp -text
-library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h -text
-library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h -text
 library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp -text
@@ -2751,9 +2747,6 @@ library/xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h -text
-library/xgpl_src/supplementary_driver/hal/pc/actor/actor_target_extensions_hal_simulator.cpp -text
-library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
-library/xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h -text
 /licensing.txt -text
