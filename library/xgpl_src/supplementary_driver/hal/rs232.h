@@ -75,8 +75,6 @@
 #else
 	#if defined(SYSTEM_PC)
 		#include "pc/rs232/rs232.h"
-	#elif defined(SYSTEM_PC_MFC)
-		#include "pc_mfc/rs232/rs232.h"
 	#elif defined(SYSTEM_ESX)
 		#include "esx/rs232/rs232.h"
 	#elif defined(SYSTEM_A2)
