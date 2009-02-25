@@ -151,7 +151,7 @@ vtObjectAlarmMask_c::setSoftKeyMask(IsoAgLib::iVtObjectSoftKeyMask_c* newSoftKey
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectAlarmMask_a(), softKeyMask), sizeof(iVtObjectAlarmMask_s), newSoftKeyMask);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, newSoftKeyMask->getID(), b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeSoftKeyMask (this, 2 /* "Type: Alarm Mask" */, (newSoftKeyMask == NULL) ? 0xFFFF : newSoftKeyMask->getID(), b_enableReplaceOfCmd);
 }
 
 /// No cmdReplacing here, as it's a relative command!!
