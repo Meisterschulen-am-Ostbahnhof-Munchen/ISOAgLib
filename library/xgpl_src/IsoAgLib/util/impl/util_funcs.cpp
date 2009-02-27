@@ -1555,7 +1555,7 @@ uint8_t
 VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension, int32_t ai32_opDimension, uint16_t aui16_vtSupportedFonts,
                              bool ab_buttonParent, bool ab_inSkm,
                              uint16_t aui16_opButtonWidth, uint16_t aui16_opButtonHeight,
-                             uint16_t aui16_opSoftKeyWidth, uint16_t aui16_opSoftKeyHeight, uint16_t aui16_vtSoftKeyWidth, uint16_t aui16_vtSoftKeyHeight)
+                             uint16_t aui16_opSoftKeyWidth, uint16_t aui16_opSoftKeyHeight, uint32_t aui32_vtSoftKeyWidth, uint32_t aui32_vtSoftKeyHeight)
 {
 
   uint8_t ui8_fontSizeScaled = aui8_originalSize;
@@ -1588,16 +1588,16 @@ VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension
   {
     if (aui16_opSoftKeyWidth && aui16_opSoftKeyHeight)
     {
-      const int32_t ci_factorX = (aui16_vtSoftKeyWidth  << 20) / aui16_opSoftKeyWidth;
-      const int32_t ci_factorY = (aui16_vtSoftKeyHeight << 20) / aui16_opSoftKeyHeight;
+      const int32_t ci_factorX = (aui32_vtSoftKeyWidth  << 20) / aui16_opSoftKeyWidth;
+      const int32_t ci_factorY = (aui32_vtSoftKeyHeight << 20) / aui16_opSoftKeyHeight;
       if (ci_factorX < ci_factorY)
       {
-        i32_factorM = aui16_vtSoftKeyWidth;
+        i32_factorM = aui32_vtSoftKeyWidth;
         i32_factorD = aui16_opSoftKeyWidth;
       }
       else
       {
-        i32_factorM = aui16_vtSoftKeyHeight;
+        i32_factorM = aui32_vtSoftKeyHeight;
         i32_factorD = aui16_opSoftKeyHeight;
       }
     }
