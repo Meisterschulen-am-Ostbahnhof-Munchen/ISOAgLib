@@ -252,7 +252,7 @@ public:
 
   void getKeyCode();
 
-  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace);
+  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace, bool ab_acceptUnknownAttributes, bool ab_silentMode);
 
   void parse();
 
@@ -304,6 +304,7 @@ private:
   unsigned int getFreeId (unsigned int& aui_objNextId);
 
   bool doAllFiles (action_en aen_action);
+
 
 public:
   bool isVerbose() { return mb_verbose; }
@@ -362,6 +363,9 @@ private:
   bool b_externalize;
   bool mb_parseOnlyWorkingSet;
   bool mb_verbose;
+  bool mb_acceptUnknownAttributes;
+  bool mb_silentMode;
+
 
   OneAttribute_c arrc_attributes [maxAttributeNames];
   void clearAndSetElements (DOMNode *child, const std::vector <int> &avec);

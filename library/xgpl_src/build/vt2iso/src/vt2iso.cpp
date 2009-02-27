@@ -244,7 +244,10 @@ static void usage()
     " -m     More informative output. (verbose-mode)\n"
     " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char)\n"
     " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
+    " -u     User defined attributes accepted\n"
+    " -l     Running in silent mode\n"
     " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"<<std::endl;
+
 
 #ifdef USE_SPECIAL_PARSING
     std::cout <<
@@ -317,7 +320,7 @@ template <class T> std::vector<T> make_vector ( const T& param1, const T& param2
 
 template <class T> void processNestedNodesInProjectFile(DOMNode *child, T& r_container, const std::string& rstr_parentNode, const std::string& rstr_childNode, const std::string& rstr_pathAttribute)
 {
-  std::string local_attrName; 
+  std::string local_attrName;
   std::string local_attrValue;
 
   if (strcmp (XMLString::transcode(child->getNodeName()), rstr_parentNode.c_str()) == 0)
@@ -520,7 +523,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
   if (partFile_defines)
   {
-    fprintf (partFile_defines, "\n#define vtKeyCodeACK 0\n");
+    fprintf (partFile_defines, "\nstatic const int vtKeyCodeACK = 0;\n");
     // OLD:  fprintf (partFile_defines, "\n#define vtObjectCount %d\n", objCount);
   }
 
@@ -725,6 +728,7 @@ void vt2iso_c::clean_exit (const char* error_message)
   fprintf (partFile_variables_extern, mstr_namespaceDeclarationEnd.c_str());
   fprintf (partFile_attributes, mstr_namespaceDeclarationEnd.c_str());
   fprintf (partFile_attributes_extern, mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_defines, mstr_namespaceDeclarationEnd.c_str());
 
   if (partFile_direct)           fclose (partFile_direct);
   if (partFile_variables_extern) fclose (partFile_variables_extern);
@@ -973,10 +977,13 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
   }
 }
 
-void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace)
+void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace, bool ab_acceptUnknownAttributes, bool ab_silentMode)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
+  mb_acceptUnknownAttributes = ab_acceptUnknownAttributes;
+  mb_silentMode = ab_silentMode;
+
   // pass verbose-level on to vt2isoimagebase_c
   if (!mb_verbose)
     c_Bitmap.resetOstream();
@@ -1046,10 +1053,12 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 
 
   /// Let's go....
-  std::cout
-      << "--> Project's Dir: " << c_directory << std::endl
-      << "--> Project-Name:  " << c_project << std::endl
-      << "--> Output Files:  " << mstr_outDirAndProjectPrefix << "..." << std::endl;
+  if(!mb_silentMode){
+    std::cout
+        << "--> Project's Dir: " << c_directory << std::endl
+        << "--> Project-Name:  " << c_project << std::endl
+        << "--> Output Files:  " << mstr_outDirAndProjectPrefix << "..." << std::endl;
+  }
 
 // partFile_variables = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
@@ -1087,6 +1096,7 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 
   partFileName = mstr_outDirAndProjectPrefix + "-defines.inc";
   partFile_defines = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_defines, mstr_namespaceDeclarationBegin.c_str());
 
   partFileName = mstr_outDirAndProjectPrefix + "-objectselection.inc";
   partFile_obj_selection = &save_fopen (partFileName.c_str(),"wt");
@@ -1099,7 +1109,7 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   partFileName = mstr_outDirAndProjectPrefix + "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
   partFile_handler_direct = fopen (partFileName.c_str(),"rb"); // intentionally NO save_fopen!!
-  if (partFile_handler_direct) 
+  if (partFile_handler_direct)
   {
    // could open file, so it exists --> don't overwrite - create "-template" then
     fclose (partFile_handler_direct);
@@ -1209,7 +1219,7 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   }
   if (a_objType != otGraphicsContext)
   {
-    arrc_attributes[attrBackground_colour].setIfNotGiven("white"); 
+    arrc_attributes[attrBackground_colour].setIfNotGiven("white");
   }
 
   if (a_objType == otInputnumber)
@@ -1279,7 +1289,7 @@ void vt2iso_c::setAttributeValue(int attrID)
 
 bool vt2iso_c::checkForFileOrFile148 (const char *tag)
 {
-  std::string errMsg; 
+  std::string errMsg;
   if (!arrc_attributes [attrFile].isGiven())
   {
     switch (colourdepthtoi (arrc_attributes [attrFormat].get().c_str()))
@@ -1307,7 +1317,7 @@ bool vt2iso_c::checkForFileOrFile148 (const char *tag)
 
 DOMNamedNodeMap* vt2iso_c::patched_getAttributes(DOMNode *n)
 {
-  std::string local_attrName; 
+  std::string local_attrName;
   std::string local_attrValue;
   DOMNamedNodeMap *pAttributes = n->getAttributes();
 
@@ -1417,9 +1427,19 @@ bool vt2iso_c::getAttributesFromNode(DOMNode *n, bool treatSpecial)
       }
       else if (l == maxAttributeNames)
       {
-        std::cerr << "\n\nUNKNOWN ATTRIBUTE " << attr_name << "=" << attr_value << " IN TAG <" << XMLString::transcode(n->getNodeName())
-                  << "> ENCOUNTERED! STOPPING PARSER! bye."<<std::endl<<std::endl;
-        return false;
+        if (mb_acceptUnknownAttributes)
+        {
+          if(!mb_silentMode){
+            std::cout << "\n\nIGNORING UNKNOWN ATTRIBUTE " << attr_name << "=" << attr_value << " IN TAG <" << XMLString::transcode(n->getNodeName())
+                      << std::endl;
+          }
+        }
+        else
+        {
+          std::cerr << "\n\nUNKNOWN ATTRIBUTE " << attr_name << "=" << attr_value << " IN TAG <" << XMLString::transcode(n->getNodeName())
+                    << "> ENCOUNTERED! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          return false;
+        }
       }
     }
   }
@@ -2220,7 +2240,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
                 if (attr_name.compare("code") == 0)
                 {
-                  arrc_attributes [attrCode].set( attr_value ); 
+                  arrc_attributes [attrCode].set( attr_value );
                 }
                 else
                 {
@@ -2685,7 +2705,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           fprintf (partFile_functions,         "  %siVtObject%s%s.init (&%siVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str(), mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str());
         }
-        fprintf (partFile_defines, "#define iVtObjectID%s%s %d\n", m_objName.c_str(), pc_postfix.c_str(), objID);
+        fprintf (partFile_defines, "static const int iVtObjectID%s%s = %d;\n", m_objName.c_str(), pc_postfix.c_str(), objID);
       }
 
       /// Add explicit Button/Key includement
@@ -2805,13 +2825,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otKey:
-          if (!arrc_attributes [attrKey_code].isGiven()) 
+          if (!arrc_attributes [attrKey_code].isGiven())
             getKeyCode ();
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
 
           fprintf (partFile_attributes, ", %d, %s", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str());
-          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", m_objName.c_str(),  arrc_attributes [attrKey_code].getIntValue()); // like in otButton
+          fprintf (partFile_defines, "static const int vtKeyCode%s = %d;\n", m_objName.c_str(),  arrc_attributes [attrKey_code].getIntValue()); // like in otButton
           break;
 
         case otButton:
@@ -2829,7 +2849,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str(), buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()));
-          fprintf (partFile_defines, "#define vtKeyCode%s %d\n", m_objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
+          fprintf (partFile_defines, "static const int vtKeyCode%s =  %d;\n", m_objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
           break;
 
         case otInputboolean:
@@ -3101,7 +3121,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str());
-          if (arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // not found 
+          if (arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // not found
           { // offset has already type indication -> don't add additional "L"
             fprintf (partFile_attributes, ", %s", arrc_attributes [attrOffset].get().c_str());
           }
@@ -3676,7 +3696,7 @@ bool vt2iso_c::processPointElements(unsigned int& r_objChildPoints, DOMNode *r_n
         std::cout << "\n\npos_x ATTRIBUTE NEEDED IN <point ...>  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
         return false;
       }
-      if (!(arrc_attributes [attrPos_y].isGiven())) 
+      if (!(arrc_attributes [attrPos_y].isGiven()))
       {
         std::cout << "\n\npos_y ATTRIBUTE NEEDED IN <point ...>  from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
         return false;
@@ -3786,7 +3806,7 @@ bool vt2iso_c::processMacroElements(unsigned int& r_objMacros, DOMNode *r_n, boo
         return false;
       }
             //fprintf (partFile_attributes, "{%d, &vtObject%s}", atoi (attrString [attrEvent]), objChildName);
-      
+
       if (eventtoi(arrc_attributes [attrEvent].get().c_str()) == -1)
         return false;
       if (!eventtoi(arrc_attributes [attrEvent].get().c_str()))
@@ -4174,6 +4194,8 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , b_externalize(false)
   , mb_parseOnlyWorkingSet(false)
   , mb_verbose (false)
+  , mb_acceptUnknownAttributes(false)
+  , mb_silentMode(false)
   , b_hasUnknownAttributes(false)
   , b_hasMoreThan6SoftKeys(false)
   , m_errorOccurred(false)
@@ -4196,9 +4218,9 @@ vt2iso_c::skRelatedFileOutput()
     std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
         << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!"<<std::endl<<std::endl;
   }
-  fprintf (partFile_defines, "#define vtObjectPoolDimension %d\n", getOPDimension());
-  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyWidth %d\n", getSKWidth());
-  fprintf (partFile_defines, "#define vtObjectPoolSoftKeyHeight %d\n", getSKHeight());
+  fprintf (partFile_defines, "static const int vtObjectPoolDimension = %d;\n", getOPDimension());
+  fprintf (partFile_defines, "static const int vtObjectPoolSoftKeyWidth = %d;\n", getSKWidth());
+  fprintf (partFile_defines, "static const int vtObjectPoolSoftKeyHeight = %d;\n", getSKHeight());
 }
 
 void vt2iso_c::generateIncludeDefines()
@@ -4304,13 +4326,17 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
   // set proName, either from project-file or from c_project.
   if (mb_projectFile)
   { /// *** PROJECT-FILE MODE ***
-    std::cout << "Running in Project-File Mode"<<std::endl;
+    if(!mb_silentMode){
+      std::cout << "Running in Project-File Mode"<<std::endl;
+    }
     if (!processProjectFile (astr_fileName))
       return false;
   }
   else
   { /// LEGACY MODE
-    std::cout << "Running in Legacy Mode"<<std::endl;
+    if(!mb_silentMode){
+      std::cout << "Running in Legacy Mode"<<std::endl;
+    }
     proName = c_project;
   #ifdef WIN32
     HANDLE hList;
@@ -4321,7 +4347,9 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
 
     // save current directory
     GetCurrentDirectory(255, szCurDir);
-    std::cout << "CurDir: " << szCurDir << std::endl;
+    if(!mb_silentMode){
+      std::cout << "CurDir: " << szCurDir << std::endl;
+    }
 
       // go to new working directory
     if (SetCurrentDirectory(c_directory.c_str()) == 0)
@@ -4442,7 +4470,9 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
   uint16_t ui16t_xmlFileCnt = vec_xmlFiles.size();
   if (mb_projectFile)
   { // no sorting needed!
-    std::cout << std::endl << "--> Given Filelist:" << std::endl;
+    if(!mb_silentMode){
+       std::cout << std::endl << "--> Given Filelist:" << std::endl;
+    }
   }
   else
   { // sorting needed in legacy mode
@@ -4463,10 +4493,14 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
       }
     } while (stillSorting);
 
-    std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+    if(!mb_silentMode){
+      std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
+    }
   }
-  for (int dex=0; dex < ui16t_xmlFileCnt; dex++) std::cout << vec_xmlFiles[dex].str_pathName << std::endl;
-  std::cout << std::endl;
+  if(!mb_silentMode){
+    for (int dex=0; dex < ui16t_xmlFileCnt; dex++) std::cout << vec_xmlFiles[dex].str_pathName << std::endl;
+    std::cout << std::endl;
+  }
 
   return true;
 }
@@ -4869,10 +4903,12 @@ vt2iso_c::setCommandElement(unsigned int& commandType, DOMNode *child, DOMNode *
 int main(int argC, char* argV[])
 {
   c_Bitmap.setOstream(std::cout);
-  c_Bitmap.printLicenseText();
 
   // Check command line and extract arguments.
-  if (argC < 2) { usage(); return 1; }
+  if (argC < 2) {
+    c_Bitmap.printLicenseText();
+    usage();
+    return 1; }
 
   AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
   bool doNamespaces       = false;
@@ -4883,6 +4919,8 @@ int main(int argC, char* argV[])
   bool generatePalette = false;
   bool externalize = false;
   bool verbose = false;
+  bool b_accept_unknown_attributes = false;
+  bool b_silentMode = false;
   bool b_disableContainmentRules = false;
   std::string poolIdentStr;
   std::string localeStr;
@@ -4951,7 +4989,9 @@ int main(int argC, char* argV[])
     else if (!strcmp(argV[argInd], "-m")
          ||  !strcmp(argV[argInd], "-M"))
     {
-      verbose = true;
+      // only set to verbose if not in silentMode!
+      if (!b_silentMode)
+        verbose = true;
     }
     else if (!strncmp(argV[argInd], "-i=", 3)
          ||  !strncmp(argV[argInd], "-I=", 3))
@@ -4981,10 +5021,22 @@ int main(int argC, char* argV[])
     {
       b_disableContainmentRules = true;
     }
+    else if(!strcmp(argV[argInd], "-u")){
+      b_accept_unknown_attributes = true;
+    }
+    else if(!strcmp(argV[argInd], "-l")){
+      //the silent mode disactivates the verbose mode
+      b_silentMode = true;
+      verbose = false;
+    }
     else
     {
       std::cerr << "Unknown option '" << argV[argInd] << "', ignoring it\n" << std::endl;
     }
+  }
+
+  if(!b_silentMode){
+    c_Bitmap.printLicenseText();
   }
 
   if (generatePalette)
@@ -5061,7 +5113,7 @@ int main(int argC, char* argV[])
     // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace);
+  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode);
   pc_vt2iso->parse();
 
   //  Delete the parser itself.  Must be done prior to calling Terminate, below.
@@ -5076,16 +5128,22 @@ int main(int argC, char* argV[])
 
 void vt2iso_c::parse()
 {
-  std::cout << "** Pass 1 **"<<std::endl;
+  if(!mb_silentMode){
+    std::cout << "** Pass 1 **"<<std::endl;
+  }
   if (!doAllFiles (actionMarkIds)) return;
 
-  std::cout << "** Pass 2 **"<<std::endl;
+  if(!mb_silentMode){
+    std::cout << "** Pass 2 **"<<std::endl;
+  }
   if (mb_projectFile)
   {
     setParseModeWorkingSet (true); // only parse for the workingset-object!
     if (!doAllFiles (actionProcessElement)) return;
 
-    std::cout << "** Pass 3 **"<<std::endl;
+    if(!mb_silentMode){
+      std::cout << "** Pass 3 **"<<std::endl;
+    }
     setParseModeWorkingSet (false); // parse all objects other than workingset!
   }
   if (!doAllFiles (actionProcessElement)) return;
@@ -5094,8 +5152,8 @@ void vt2iso_c::parse()
 
   generateIncludeDefines();
 
-  clean_exit ((m_errorOccurred) ? "XML-Parsing error occurred. Terminating.\n\n"
-                              : "All conversion done successfully.\n\n");
+  clean_exit ((m_errorOccurred) ? "vt2iso: XML-Parsing error occurred. Terminating.\n"
+                              : "vt2iso: All conversion done successfully.\n");
 }
 
 
@@ -5111,7 +5169,9 @@ bool vt2iso_c::doAllFiles (action_en aen_action)
 
     const std::string xmlFile = getXmlFile(indexXmlFile);
 
-    std::cout << "Processing file " << xmlFile << std::endl;
+    if(!mb_silentMode){
+       std::cout << "Processing file " << xmlFile << std::endl;
+    }
 
     try
     { // reset document pool
@@ -5201,7 +5261,7 @@ void vt2iso_c::markIds (DOMNode *n)
     return;
   }
 
-  std::string local_attrName; 
+  std::string local_attrName;
   std::string local_attrValue;
   DOMNode *child;
   DOMNamedNodeMap *pAttributes = n->getAttributes();
@@ -5347,7 +5407,7 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
       DOMNode *child;
       for (child = doc->getDocumentElement()->getFirstChild(); child != 0; child=child->getNextSibling())
       {
-        std::string local_attrName; 
+        std::string local_attrName;
         std::string local_attrValue;
 
         processNestedNodesInProjectFile(child, l_stdBitmapPath, std::string("Bitmaps"), std::string("Bitmap"), std::string("Path"));
