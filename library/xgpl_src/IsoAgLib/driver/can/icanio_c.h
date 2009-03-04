@@ -190,7 +190,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CanCustomer_c & ar_customer,
+  bool existFilter(const IsoAgLib::iCanCustomer_c & ar_customer,
     uint16_t aui32_mask, uint16_t aui32_filter,
     Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* apc_iter = NULL)
@@ -206,7 +206,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CanCustomer_c & ar_customer,
+  bool existFilter(const IsoAgLib::iCanCustomer_c & ar_customer,
       uint32_t aui32_mask, uint32_t aui32_filter,
       Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE,
       ArrFilterBox::iterator* apc_iter = NULL)
@@ -219,7 +219,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
     @param ac_compFilter individual filter
     @return true -> same FilterBox_c already exist
   */
-  bool existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
+  bool existFilter(const IsoAgLib::iCanCustomer_c & ar_customer,
       const Ident_c& ac_compMask, const Ident_c& ac_compFilter,
       ArrFilterBox::iterator* apc_iter = NULL)
   {return CanIo_c::existFilter(ar_customer, ac_compMask, ac_compFilter, apc_iter);};
@@ -364,7 +364,7 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
   {return CanIo_c::deleteFilter(static_cast<const CanCustomer_c &>(ar_customer), aui32_mask, aui32_filter, at_identType);};
 
 
-  bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer)
+  bool deleteAllFiltersForCustomer (const IsoAgLib::iCanCustomer_c& ar_customer)
   { return CanIo_c::deleteAllFiltersForCustomer (ar_customer); }
 
 
