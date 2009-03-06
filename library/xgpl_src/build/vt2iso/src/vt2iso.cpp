@@ -246,14 +246,15 @@ static void usage()
     " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
     " -u     User defined attributes accepted\n"
     " -l     Running in silent mode\n"
-    " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"<<std::endl;
-
+    " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"
+    " -a=pre Use the given Prefix instead of the Projectname as a prefix for the generated files.\n"
+    " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)"<<std::endl;
 
 #ifdef USE_SPECIAL_PARSING
     std::cout <<
     " -dict=xxx Specify the relative path to the resource dictionary"<<std::endl;
 #endif
-  std::cout << " -?    Show this help."<<std::endl<<std::endl<< std::endl;
+  std::cout << " -?    Show this help."<<std::endl<<std::endl;
 }
 
 template <class T> std::vector<T> make_vector ( const T& param1 )
@@ -475,40 +476,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   FILE* partFile_direct = NULL;
   std::string partFileName;
 
-  const char* pc_lastDirectoryBackslash, *pc_lastDirectorySlash;
-  std::string xmlFileWithoutPath;
-  pc_lastDirectoryBackslash = strrchr( xmlFileGlobal.c_str(), '\\' );
-  pc_lastDirectorySlash = strrchr( xmlFileGlobal.c_str(), '/' );
-
-  if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash == NULL ) )
-  { // no path found
-    xmlFileWithoutPath = xmlFileGlobal;
-  }
-  else if ( ( pc_lastDirectoryBackslash == NULL ) && ( pc_lastDirectorySlash != NULL ) )
-  { // only UNIX style slash found
-//    strncpy( xmlFileWithoutPath, (pc_lastDirectorySlash+1), 254 );
-    xmlFileWithoutPath = pc_lastDirectorySlash+1;
-  }
-  else if ( ( pc_lastDirectoryBackslash != NULL ) && ( pc_lastDirectorySlash == NULL ) )
-  { // only WIN32 style Backslash found
-//    strncpy( xmlFileWithoutPath, (pc_lastDirectoryBackslash+1), 254 );
-    xmlFileWithoutPath = pc_lastDirectoryBackslash+1;
-  }
-  else if ( pc_lastDirectoryBackslash > pc_lastDirectorySlash )
-  { // last backslash is behind last slash - cas of mixed directory seperators
-    xmlFileWithoutPath = pc_lastDirectoryBackslash+1;
-  }
-  else
-  { // last slash is behind last backslash - cas of mixed directory seperators
-    xmlFileWithoutPath = pc_lastDirectorySlash+1;
-  }
-
   // close all streams to files at the end of this function because someone may want
   // to write into these files in special parsing
 
   if (partFile_functions)
   {
-    fprintf (partFile_functions, "\n  #include \"%s-functions-origin.inc\"\n", xmlFileWithoutPath.c_str());
+    fprintf (partFile_functions, "\n  #include \"%s-functions-origin.inc\"\n", mstr_outFileName.c_str());
     fprintf (partFile_functions, "\n  b_initAllObjects = true;");
     fprintf (partFile_functions, "\n}\n");
   }
@@ -592,7 +565,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_list, mstr_namespaceDeclarationEnd.c_str());
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
     fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
-             proName.c_str(), proName.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
+             mstr_className.c_str(), mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFile_list);
   }
@@ -615,9 +588,9 @@ void vt2iso_c::clean_exit (const char* error_message)
 
   if (partFile_handler_direct)
   { // handler class direct
-    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", proName.c_str() );
-    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", proName.c_str() );
-    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName.c_str());
+    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_direct, "\npublic:");
     fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
@@ -645,7 +618,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", proName.c_str());
+    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", mstr_className.c_str());
     fprintf (partFile_handler_direct, "\n};\n");
     fprintf (partFile_handler_direct, "\n #endif\n" );
     fclose (partFile_handler_direct);
@@ -653,12 +626,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_handler_derived)
   { // handler class derived
   // NEW:
-    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", proName.c_str() );
-    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", proName.c_str() );
-    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", proName.c_str());
+    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", proName.c_str());
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n #endif\n" );
     fclose (partFile_handler_derived);
@@ -671,73 +644,97 @@ void vt2iso_c::clean_exit (const char* error_message)
     extension.clear();
 
   // Write Direct includes
-  partFileName = mstr_outDirAndProjectPrefix + "_direct.h";
+  partFileName = mstr_destinDirAndProjectPrefix + "_direct.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
-  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath.c_str());
+  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", xmlFileWithoutPath.c_str());
-  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath.c_str(), extension.c_str());
-  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", xmlFileWithoutPath.c_str(), extension.c_str());
+  fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
+  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   for (unsigned int i=0; i<ui_languages; i++)
   {
-    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath.c_str(), i);
+    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
   }
-  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath.c_str());
-  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", xmlFileWithoutPath.c_str());
+  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
 
   if (pc_specialParsing)
   {
-    pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath.c_str());
+    pc_specialParsing->addFileIncludes(partFile_direct, mstr_outFileName.c_str());
   }
   fclose (partFile_direct);
 
 
   // Write Derived Includes (-cpp)
-  partFileName = mstr_outDirAndProjectPrefix + "_derived-cpp.h";
+  partFileName = mstr_destinDirAndProjectPrefix + "_derived-cpp.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
-  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", xmlFileWithoutPath.c_str());
-  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", xmlFileWithoutPath.c_str(), extension.c_str());
-  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", xmlFileWithoutPath.c_str(), extension.c_str());
+  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
+  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   for (unsigned int i=0; i<ui_languages; i++)
   {
-    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", xmlFileWithoutPath.c_str(), i);
+    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
   }
-  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", xmlFileWithoutPath.c_str());
-  fprintf (partFile_direct, "#include \"%s-functions%s.inc\"\n", xmlFileWithoutPath.c_str(), extension.c_str());
+  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_direct, "#include \"%s-functions%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   if (pc_specialParsing)
   {
-    pc_specialParsing->addFileIncludes(partFile_direct, xmlFileWithoutPath.c_str());
+    pc_specialParsing->addFileIncludes(partFile_direct, mstr_outFileName.c_str());
   }
   fclose (partFile_direct);
 
 
   // Write Derived Includes (-h)
-  partFileName = mstr_outDirAndProjectPrefix + "_derived-h.h";
+  partFileName = mstr_destinDirAndProjectPrefix + "_derived-h.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
 
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", xmlFileWithoutPath.c_str());
+  fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", mstr_outFileName.c_str());
+
+  if (b_externalize)
+  {
+    FILE* partFileTmp;
+    partFileName = mstr_destinDirAndProjectPrefix + "-variables.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", mstr_outFileName.c_str());
+    fclose (partFileTmp);
+
+    partFileName = mstr_destinDirAndProjectPrefix + "-attributes.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", mstr_outFileName.c_str());
+    fclose (partFileTmp);
+
+    partFileName = mstr_destinDirAndProjectPrefix + "-list.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+    fclose (partFileTmp);
+  }
 
   /// if USE_SPECIAL_PARSING is defined additional output is done
   if (pc_specialParsing)
     pc_specialParsing->outputCollectedData2Files();
 
-  fprintf (partFile_variables, mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_variables_extern, mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_attributes, mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_variables,         mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_variables_extern,  mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_attributes,        mstr_namespaceDeclarationEnd.c_str());
   fprintf (partFile_attributes_extern, mstr_namespaceDeclarationEnd.c_str());
-  fprintf (partFile_defines, mstr_namespaceDeclarationEnd.c_str());
+  fprintf (partFile_defines,           mstr_namespaceDeclarationEnd.c_str());
 
-  if (partFile_direct)           fclose (partFile_direct);
-  if (partFile_variables_extern) fclose (partFile_variables_extern);
-  if (partFile_attributes)       fclose (partFile_attributes);
+  if (partFile_direct)            fclose (partFile_direct);
+  if (partFile_variables_extern)  fclose (partFile_variables_extern);
+  if (partFile_attributes)        fclose (partFile_attributes);
   if (partFile_attributes_extern) fclose (partFile_attributes_extern);
-  if (partFile_defines)          fclose (partFile_defines);
+  if (partFile_defines)           fclose (partFile_defines);
   if (partFile_obj_selection)     fclose (partFile_obj_selection);
-  if (partFile_functions)        fclose (partFile_functions);
-  if (partFile_functions_origin) fclose (partFile_functions_origin);
+  if (partFile_functions)         fclose (partFile_functions);
+  if (partFile_functions_origin)  fclose (partFile_functions_origin);
 
   splitFunction (true);
 
@@ -963,62 +960,59 @@ void vt2iso_c::splitFunction (bool ab_onlyClose=false)
     partFile_split_function = NULL;
     splitFunctionPart++;
   }
-  if (!ab_onlyClose)
-  {
-    partFileName = str(format("%s-function%d.cpp") % mstr_outDirAndProjectPrefix % splitFunctionPart);
-    partFile_split_function = &save_fopen (partFileName.c_str(), "wt");
 
-    fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-    fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", xmlFileGlobal.c_str());
-    fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", xmlFileGlobal.c_str());
-    fprintf (partFile_split_function, "void initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_DEF)\n", splitFunctionPart);
-    fprintf (partFile_split_function, "{\n");
-    fprintf (partFile_functions,      "  initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_USE);\n", splitFunctionPart);
-  }
+  if (ab_onlyClose)
+    return;
+
+  partFileName = str(format("%s-function%d.cpp") % mstr_destinDirAndProjectPrefix % splitFunctionPart);
+  partFile_split_function = &save_fopen (partFileName.c_str(), "wt");
+
+  fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+  fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_split_function, "void initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_DEF)\n", splitFunctionPart);
+  fprintf (partFile_split_function, "{\n");
+  fprintf (partFile_functions,      "  initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_USE);\n", splitFunctionPart);
 }
 
-void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace, bool ab_acceptUnknownAttributes, bool ab_silentMode)
+void vt2iso_c::init (
+  const string& arcstr_cmdlineName,
+  std::string* dictionary,
+  bool ab_externalize,
+  bool ab_disableContainmentRules,
+  DOMBuilder* ap_parser,
+  bool ab_verbose,
+  const std::string& arcstr_outDirName,
+  const std::string& arcstr_namespace,
+  bool ab_acceptUnknownAttributes,
+  bool ab_silentMode,
+  const std::string& arcstr_outFileName)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
   mb_acceptUnknownAttributes = ab_acceptUnknownAttributes;
   mb_silentMode = ab_silentMode;
+  mstr_outDirName = arcstr_outDirName; // overriding parameters!
+  mstr_outFileName = arcstr_outFileName; // overriding parameters!
 
   // pass verbose-level on to vt2isoimagebase_c
   if (!mb_verbose)
     c_Bitmap.resetOstream();
 
-  xmlFileGlobal = xmlFile;
-  if (!prepareFileNameAndDirectory (xmlFileGlobal)) // will cut off the file-extension
+  /// Are we running in project-file mode? (check extension for .VTP/.vtp)
+  mb_projectFile = isProjectFileMode(arcstr_cmdlineName);
+
+  /// Will set "mstr_sourceDirAndProjectPrefix"
+  if (!prepareFileNameAndDirectory (arcstr_cmdlineName)) // will cut off the file-extension
   {
     clean_exit("Error occurred. Terminating.\n");
     /* @todo maybe better cleanup. return false? or alike... */
     exit (-1);
   }
 
-  const size_t csize_outDir = arcstr_outDir.length();
-  if (csize_outDir > 0)
-  {
-    mstr_outDirAndProjectPrefix =  arcstr_outDir;
-    if ( (arcstr_outDir[csize_outDir-1] != '\\') &&
-         (arcstr_outDir[csize_outDir-1] != '/') )
-    { // append (back)slash
-      mstr_outDirAndProjectPrefix.append (
-#ifdef WIN32
-                            "\\"
-#else
-                            "/"
-#endif
-                           );
-    }
-    mstr_outDirAndProjectPrefix.append (c_project);
-  }
-  else
-    mstr_outDirAndProjectPrefix = xmlFileGlobal;
-
   std::string str_namespace;
   if (arcstr_namespace == ":projectname:")
-    str_namespace = c_project;
+    str_namespace = mstr_className;
   else
     str_namespace = arcstr_namespace;
 
@@ -1053,33 +1047,46 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 
 
   /// Let's go....
-  if(!mb_silentMode){
-    std::cout
-        << "--> Project's Dir: " << c_directory << std::endl
-        << "--> Project-Name:  " << c_project << std::endl
-        << "--> Output Files:  " << mstr_outDirAndProjectPrefix << "..." << std::endl;
+  if(!mb_silentMode)
+  {
+    std::cout << std::endl
+        << (mb_projectFile ? "Running in Project-File Mode"
+                           : "Running in Legacy Mode") << std::endl
+        << "--> Project's Dir: " << mstr_sourceDir << std::endl
+        << "--> Project-Name:  " << mstr_projectName << std::endl
+        << "--> Class-Name:    " << mstr_className << std::endl
+        << "--> Namespace:     " << ((mstr_namespacePrefix.empty()) ? std::string("[--NONE--]") : mstr_namespacePrefix) << std::endl
+        << "--> Output Files:  " << mstr_destinDirAndProjectPrefix << "[...]" << std::endl
+        << (mb_projectFile ? "--> Given Filelist:"
+                           : "--> Sorted Filelist:") << std::endl;
+
+    for (size_t dex=0; dex < vec_xmlFiles.size(); ++dex)
+      std::cout << "    - " << vec_xmlFiles[dex].str_pathName << std::endl;
+
+    std::cout << std::endl;
   }
+
 
 // partFile_variables = fopen ("picture.raw", "wb");
 // fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
 // fclose (partFile_variables);
-  partFileName = mstr_outDirAndProjectPrefix + "-variables.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-variables.inc";
   partFile_variables = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_variables, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_outDirAndProjectPrefix + "-variables-extern.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-variables-extern.inc";
   partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_variables_extern, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_outDirAndProjectPrefix + "-attributes.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-attributes.inc";
   partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_attributes, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_outDirAndProjectPrefix + "-attributes-extern.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-attributes-extern.inc";
   partFile_attributes_extern = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_attributes_extern, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_outDirAndProjectPrefix + "-functions.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-functions.inc";
   partFile_functions = &save_fopen (partFileName.c_str(),"wt");
 
   if (b_externalize)
@@ -1089,24 +1096,24 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
       fprintf (partFile_functions, "extern void initAllObjectsOnce%d (SINGLETON_VEC_KEY_PARAMETER_DEF);\n", i);
     }
   }
-  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", proName.c_str());
+  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", mstr_className.c_str());
   fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
-  partFileName = mstr_outDirAndProjectPrefix + "-functions-origin.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-functions-origin.inc";
   partFile_functions_origin = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = mstr_outDirAndProjectPrefix + "-defines.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-defines.inc";
   partFile_defines = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_defines, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_outDirAndProjectPrefix + "-objectselection.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-objectselection.inc";
   partFile_obj_selection = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = mstr_outDirAndProjectPrefix + "-list.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-list.inc";
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_list, mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
 
-  partFileName = mstr_outDirAndProjectPrefix + "-handler-direct.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
   partFile_handler_direct = fopen (partFileName.c_str(),"rb"); // intentionally NO save_fopen!!
   if (partFile_handler_direct)
@@ -1118,36 +1125,11 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
   // else: file couldn't be opened, so create it, simply write to it...
   partFile_handler_direct = &save_fopen (partFileName.c_str(),"wt");
 
-  partFileName = mstr_outDirAndProjectPrefix + "-handler-derived.inc";
+  partFileName = mstr_destinDirAndProjectPrefix + "-handler-derived.inc";
   partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
 
-  FILE* partFileTmp;
-
-  if (b_externalize)
-  {
-    partFileName = mstr_outDirAndProjectPrefix + "-variables.cpp";
-    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
-    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-    fprintf (partFileTmp, "#include \"%s-variables.inc\"\n", xmlFile.c_str());
-    fclose (partFileTmp);
-
-    partFileName = mstr_outDirAndProjectPrefix + "-attributes.cpp";
-    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
-    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-    fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", xmlFile.c_str());
-    fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", xmlFile.c_str());
-    fprintf (partFileTmp, "#include \"%s-attributes.inc\"\n", xmlFile.c_str());
-    fclose (partFileTmp);
-
-    partFileName = mstr_outDirAndProjectPrefix + "-list.cpp";
-    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
-    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-    fprintf (partFileTmp, "#include \"%s-list.inc\"\n", xmlFile.c_str());
-    fclose (partFileTmp);
-  }
-
 #ifdef USE_SPECIAL_PARSING_PROP
-  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (xmlFile,
+  pc_specialParsingPropTag = new SpecialParsingUsePropTag_c (arcstr_cmdlineName,
       partFile_variables,
       partFile_variables_extern,
       partFile_attributes,
@@ -1159,7 +1141,7 @@ void vt2iso_c::init (const string& xmlFile, std::string* dictionary, bool ab_ext
 #endif
 
 #ifdef USE_SPECIAL_PARSING
-  pc_specialParsing = new SpecialParsingUse_c (xmlFile, c_directory, dictionary, mstr_poolIdent.c_str());
+  pc_specialParsing = new SpecialParsingUse_c (arcstr_cmdlineName, mstr_sourceDir, dictionary, mstr_poolIdent.c_str());
 #else
   pc_specialParsing = NULL;
 #endif
@@ -1542,7 +1524,7 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     std::list<Path_s>::const_iterator iter = rcl_stdBitmapPath.begin();
     for (; iter != rcl_stdBitmapPath.end(); ++iter)
     {
-      std::string str_tmpWorkDir = c_directory;
+      std::string str_tmpWorkDir = mstr_sourceDir;
       if (!iter->b_relativePath)
         str_tmpWorkDir.clear();
 
@@ -2287,7 +2269,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
             /// Also add this language to the intern language-table!
             std::string langFileName;
-            langFileName = str(format("%s-list%02d.inc") % mstr_outDirAndProjectPrefix % ui_languages);
+            langFileName = str(format("%s-list%02d.inc") % mstr_destinDirAndProjectPrefix % ui_languages);
             arrs_language [ui_languages].partFile = &save_fopen (langFileName.c_str(), "wt");
             langFileName = str(format("%sIsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s%d [] = {") % mstr_namespaceDeclarationBegin % mstr_poolIdent % ui_languages);
             fputs (langFileName.c_str(), arrs_language [ui_languages].partFile);
@@ -2310,14 +2292,14 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 #else
               std::string str_concat = "/";
 #endif
-              std::string str_tmpWorkDir = c_directory;
+              std::string str_tmpWorkDir = mstr_sourceDir;
               if (!l_dictionaryPath.front().b_relativePath)
                 str_tmpWorkDir.clear();
 
               langFileName = str_tmpWorkDir + l_dictionaryPath.front().str_pathName + str_concat + arrs_language [ui_languages].code + ".vtl";
             }
             else
-              langFileName = str(format("%s.values.%s.txt") % xmlFileGlobal % arrs_language [ui_languages].code);
+              langFileName = str(format("%s.values.%s.txt") % mstr_sourceDirAndProjectPrefix % arrs_language [ui_languages].code);
 
             FILE* tmpHandle = fopen (langFileName.c_str(), "rb");
             if (tmpHandle != NULL)
@@ -4257,28 +4239,13 @@ const char* vt2iso_c::getAttributeValue (DOMNode* pc_node, const char* attribute
   return "";
 }
 
-bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
+
+bool vt2iso_c::isProjectFileMode (const std::string& astr_fileName)
 {
-  int lastDirPos;
-
-  std::string str_fileName = astr_fileName;
-
-  std::string c_expectedType[] = {".xml", ".XML", ".vtp", ".VTP"};
-
-  std::string c_unwantedType = ".inc";
-  std::string c_unwantedType2 = ".h";
-  std::string c_unwantedType3 = ".inc-template";
-  std::string c_unwantedType4 = ".iop";
-  std::string c_unwantedType5 = ".txt";
-  std::string c_unwantedType6 = ".csv";
-  std::string c_unwantedType7 = ".cpp";
-  std::string c_unwantedType8 = ".bak";
-
-  /// Are we running in project-file mode?
-  size_t lastDotPosition = str_fileName.find_last_of( '.' ); // do we have a dot?
+  size_t lastDotPosition = astr_fileName.find_last_of( '.' ); // do we have a dot?
   if (lastDotPosition != string::npos)
   {
-    string str_extension = str_fileName.substr (lastDotPosition, string::npos);
+    string str_extension = astr_fileName.substr (lastDotPosition, string::npos);
     for (std::string::iterator it=str_extension.begin(); it != str_extension.end(); ++it)
     {
       *it = tolower (*it);
@@ -4286,58 +4253,69 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
 
     if (str_extension == ".vtp")
     {
-      mb_projectFile = true;
+      return true;
     }
   }
+  return false;
+}
 
-  std::string str_projectName = str_fileName;
 
-  /// Extract Dir/File Name
-#ifdef WIN32
-  lastDirPos = str_fileName.find_last_of( "\\" );
-  c_directory = str_fileName.substr( 0, lastDirPos+1 );
-  if (c_directory == "") c_directory = ".\\";
-#else
-  lastDirPos = str_fileName.find_last_of( "/" );
-  c_directory = str_fileName.substr( 0, lastDirPos+1 );
-  if (c_directory == "") c_directory = "./";
-#endif
-
-  str_fileName = str_fileName.substr( lastDirPos+1 );
-  c_project = str_fileName;
-
-  /// see if the user gave a known extension and strip that off
+bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
+{
+  /// Cut extension off to be generated files...
+  mstr_sourceDirAndProjectPrefix = astr_fileName;
+  std::string c_expectedType[] = {".xml", ".XML", ".vtp", ".VTP"};
   for (int i=0; i<(int (sizeof (c_expectedType) / sizeof (std::string))); ++i)
   {
     const int ci_extensionLength = c_expectedType[i].size();
-    if (int (c_project.length()) > ci_extensionLength)
+    if (int (mstr_sourceDirAndProjectPrefix.length()) > ci_extensionLength)
     {
-      if (c_project.substr( c_project.length()-ci_extensionLength ) == c_expectedType[i])
+      if (mstr_sourceDirAndProjectPrefix.substr( mstr_sourceDirAndProjectPrefix.length()-ci_extensionLength ) == c_expectedType[i])
       { // strip off extension
-        c_project.erase (c_project.length()-ci_extensionLength, ci_extensionLength);
+        mstr_sourceDirAndProjectPrefix.erase (mstr_sourceDirAndProjectPrefix.length()-ci_extensionLength, ci_extensionLength);
         break;
       }
     }
   }
 
-  // finished preparations on directory -> needed in processElement(...)
-  std::string c_directoryCompareItem;
+  /// Extract Source Dir
+#ifdef WIN32
+  int lastDirPos = mstr_sourceDirAndProjectPrefix.find_last_of( "\\" );
+  mstr_sourceDir = mstr_sourceDirAndProjectPrefix.substr( 0, lastDirPos+1 );
+  if (mstr_sourceDir == "") mstr_sourceDir = ".\\";
+#else
+  int lastDirPos = mstr_sourceDirAndProjectPrefix.find_last_of( "/" );
+  mstr_sourceDir = mstr_sourceDirAndProjectPrefix.substr( 0, lastDirPos+1 );
+  if (mstr_sourceDir == "") mstr_sourceDir = "./";
+#endif
 
-  // set proName, either from project-file or from c_project.
+  /// Extract Project (File w/o .ext) Name as default for LEGACY MODE or PROJECT-MODE w/o Project="..."
+  std::string str_fileName = mstr_sourceDirAndProjectPrefix.substr( lastDirPos+1 );
+
+  // set "mstr_className", either from project-file or from mstr_projectName.
   if (mb_projectFile)
   { /// *** PROJECT-FILE MODE ***
-    if(!mb_silentMode){
-      std::cout << "Running in Project-File Mode"<<std::endl;
-    }
+    // will normally override "mstr_projectName" if given in VTP's Project="..."
     if (!processProjectFile (astr_fileName))
       return false;
+    // Check for Fallback ProjectName in case none given!
+    if (mstr_projectName.length() == 0)
+      mstr_projectName = str_fileName;
   }
   else
   { /// LEGACY MODE
-    if(!mb_silentMode){
-      std::cout << "Running in Legacy Mode"<<std::endl;
-    }
-    proName = c_project;
+    // Project-Name is the FileName in Legacy-mode!
+    mstr_projectName = str_fileName;
+
+    std::string c_unwantedType = ".inc";
+    std::string c_unwantedType2 = ".h";
+    std::string c_unwantedType3 = ".inc-template";
+    std::string c_unwantedType4 = ".iop";
+    std::string c_unwantedType5 = ".txt";
+    std::string c_unwantedType6 = ".csv";
+    std::string c_unwantedType7 = ".cpp";
+    std::string c_unwantedType8 = ".bak";
+
   #ifdef WIN32
     HANDLE hList;
     TCHAR  szDir[255];
@@ -4352,7 +4330,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
     }
 
       // go to new working directory
-    if (SetCurrentDirectory(c_directory.c_str()) == 0)
+    if (SetCurrentDirectory(mstr_sourceDir.c_str()) == 0)
     {
       std::cerr <<  "Couldn't open the directory."<< std::endl;
 
@@ -4373,7 +4351,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
       { // Check the object is a directory or not
         if (!(FileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
         { //if ((strcmp(FileData.cFileName, ".") != 0) && (strcmp(FileData.cFileName, "..") != 0))
-          c_directoryCompareItem = FileData.cFileName;
+          std::string c_directoryCompareItem (FileData.cFileName);
           if ( c_directoryCompareItem[0] == '.' ) continue;
           if (c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~') continue;
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType ) continue;
@@ -4385,9 +4363,9 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType7 ) continue;
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType8 ) continue;
 
-          if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+          if ( c_directoryCompareItem.find( mstr_projectName ) != std::string::npos ) {
             c_directoryCompareItem.insert(0, "\\" );
-            c_directoryCompareItem.insert(0, c_directory );
+            c_directoryCompareItem.insert(0, mstr_sourceDir );
             Path_s s_path;
             s_path.str_pathName = c_directoryCompareItem;
             s_path.b_relativePath = true;
@@ -4407,12 +4385,12 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
   #else
     // LINUX -> POSIX method for directory traversal
     DIR *dp;
-    dp = opendir (c_directory.c_str());
+    dp = opendir (mstr_sourceDir.c_str());
     if (dp != NULL)
     {
       dirent *ep;
       while ((ep = readdir (dp))) {
-        c_directoryCompareItem = ep->d_name;
+        std::string c_directoryCompareItem (ep->d_name);
         if ( c_directoryCompareItem[0] == '.' ) continue;
         if ( (c_directoryCompareItem.length() > 1  ) && ( c_directoryCompareItem [c_directoryCompareItem.length()-1] == '~')) continue;
         if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType  ) ) continue;
@@ -4424,9 +4402,9 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
         if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType7 ) ) continue;
         if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType8 ) ) continue;
 
-        if ( c_directoryCompareItem.find( c_project ) != std::string::npos ) {
+        if ( c_directoryCompareItem.find( mstr_projectName ) != std::string::npos ) {
           c_directoryCompareItem.insert(0, "/" );
-          c_directoryCompareItem.insert(0, c_directory );
+          c_directoryCompareItem.insert(0, mstr_sourceDir );
           Path_s s_path;
           s_path.str_pathName = c_directoryCompareItem;
           s_path.b_relativePath = true;
@@ -4438,28 +4416,15 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
     }
     else
     {
-      std::cerr <<  "Couldn't open the directory '" << c_directory.c_str() << "'." << std::endl;
+      std::cerr <<  "Couldn't open the directory '" << mstr_sourceDir.c_str() << "'." << std::endl;
       return false;
     }
   #endif
   }
 
-  // cut extension off to be generated files...
-  for (int i=0; i<(int (sizeof (c_expectedType) / sizeof (std::string))); ++i)
-  {
-    const int ci_extensionLength = c_expectedType[i].size();
-    if (int (astr_fileName.length()) > ci_extensionLength)
-    {
-      if (astr_fileName.substr( astr_fileName.length()-ci_extensionLength ) == c_expectedType[i])
-      { // strip off extension
-        astr_fileName.erase (astr_fileName.length()-ci_extensionLength, ci_extensionLength);
-        break;
-      }
-    }
-  }
-
-  // adapt proName (remove Space and other non-C++-identifier-chars
-  for (std::string::iterator iter=proName.begin(); iter != proName.end(); ++iter)
+  /// Generate ClassName from ProjectName" (remove Space and other non-C++-identifier-chars)
+  mstr_className = mstr_projectName;
+  for (std::string::iterator iter=mstr_className.begin(); iter != mstr_className.end(); ++iter)
   {
     if (!isalnum(*iter))
     { // replace non-alphanumeric character by underscore character
@@ -4468,13 +4433,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
   }
 
   uint16_t ui16t_xmlFileCnt = vec_xmlFiles.size();
-  if (mb_projectFile)
-  { // no sorting needed!
-    if(!mb_silentMode){
-       std::cout << std::endl << "--> Given Filelist:" << std::endl;
-    }
-  }
-  else
+  if (!mb_projectFile)
   { // sorting needed in legacy mode
     Path_s s_tmpPath;
     // now sort this list
@@ -4492,15 +4451,27 @@ bool vt2iso_c::prepareFileNameAndDirectory (std::string& astr_fileName)
         }
       }
     } while (stillSorting);
+  }
 
-    if(!mb_silentMode){
-      std::cout << std::endl << "--> Sorted Filelist:" << std::endl;
-    }
+  /// Override destination-directory with given outDir-parameter?
+  if (mstr_outDirName.length() > 0) mstr_destinDirAndProjectPrefix = mstr_outDirName;
+  else                              mstr_destinDirAndProjectPrefix = mstr_sourceDir;
+
+  if (mstr_destinDirAndProjectPrefix.length() == 0)
+    return false;
+
+  if (mstr_destinDirAndProjectPrefix[mstr_destinDirAndProjectPrefix.length()-1] == scc_replaceThisSeparator)
+  { // append (back)slash
+    mstr_destinDirAndProjectPrefix.push_back (scc_replaceWithSeparator);
   }
-  if(!mb_silentMode){
-    for (int dex=0; dex < ui16t_xmlFileCnt; dex++) std::cout << vec_xmlFiles[dex].str_pathName << std::endl;
-    std::cout << std::endl;
-  }
+
+  if (mstr_outFileName.length() == 0)
+    mstr_outFileName = mstr_projectName;
+  else if (mstr_outFileName == ":filename:")
+    mstr_outFileName = str_fileName;
+  // else: "mstr_outFileName" already fine.
+
+  mstr_destinDirAndProjectPrefix.append (mstr_outFileName);
 
   return true;
 }
@@ -4922,6 +4893,7 @@ int main(int argC, char* argV[])
   bool b_accept_unknown_attributes = false;
   bool b_silentMode = false;
   bool b_disableContainmentRules = false;
+  std::string str_outFileName;
   std::string poolIdentStr;
   std::string localeStr;
   std::string str_outDir;
@@ -5003,6 +4975,18 @@ int main(int argC, char* argV[])
     {
       str_outDir.assign (&argV[argInd][3]);
     }
+    else if (!strncmp(argV[argInd], "-a=", 3)
+         ||  !strncmp(argV[argInd], "-A=", 3))
+    {
+      str_outFileName.assign (&argV[argInd][3]);
+      if (str_outFileName.length() == 0)
+        str_outFileName.assign (":filename:");
+    }
+    else if (!strcmp(argV[argInd], "-a")
+         ||  !strcmp(argV[argInd], "-A"))
+    {
+      str_outFileName.assign (":filename:");
+    }
     else if (!strncmp(argV[argInd], "-g=", 3)
          ||  !strncmp(argV[argInd], "-G=", 3))
     {
@@ -5081,7 +5065,7 @@ int main(int argC, char* argV[])
   }
 
   // get file list with matching files!
-  std::string c_fileName( argV [argInd] );
+  std::string str_cmdlineName( argV [argInd] );
 
   // Do INITIALIZATION STUFF
   vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
@@ -5113,7 +5097,7 @@ int main(int argC, char* argV[])
     // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  pc_vt2iso->init (c_fileName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode);
+  pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName);
   pc_vt2iso->parse();
 
   //  Delete the parser itself.  Must be done prior to calling Terminate, below.
@@ -5128,22 +5112,25 @@ int main(int argC, char* argV[])
 
 void vt2iso_c::parse()
 {
-  if(!mb_silentMode){
-    std::cout << "** Pass 1 **"<<std::endl;
+  if (getAmountXmlFiles() == 0)
+  {
+    std::cout << "vt2iso: No input files. Terminating.\n" << std::endl;
+    return;
   }
+
+  if(!mb_silentMode) std::cout << "** Pass 1 **"<<std::endl;
+
   if (!doAllFiles (actionMarkIds)) return;
 
-  if(!mb_silentMode){
-    std::cout << "** Pass 2 **"<<std::endl;
-  }
+  if(!mb_silentMode) std::cout << "** Pass 2 **"<<std::endl;
+
   if (mb_projectFile)
   {
     setParseModeWorkingSet (true); // only parse for the workingset-object!
     if (!doAllFiles (actionProcessElement)) return;
 
-    if(!mb_silentMode){
-      std::cout << "** Pass 3 **"<<std::endl;
-    }
+    if(!mb_silentMode) std::cout << "** Pass 3 **"<<std::endl;
+
     setParseModeWorkingSet (false); // parse all objects other than workingset!
   }
   if (!doAllFiles (actionProcessElement)) return;
@@ -5153,7 +5140,7 @@ void vt2iso_c::parse()
   generateIncludeDefines();
 
   clean_exit ((m_errorOccurred) ? "vt2iso: XML-Parsing error occurred. Terminating.\n"
-                              : "vt2iso: All conversion done successfully.\n");
+                                : "vt2iso: All conversion done successfully.\n");
 }
 
 
@@ -5424,7 +5411,7 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
         DOMNamedNodeMap *pAttributes = child->getAttributes();
         int nSize = pAttributes->getLength();
 
-        /// read project-name into "proName"
+        /// read project-name into "mstr_className"
         if (strcmp (XMLString::transcode(child->getNodeName()), "Meta") == 0)
         {
           for (int i=0;i<nSize;++i)
@@ -5432,9 +5419,9 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
             DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
             utf16convert (pAttributeNode->getName(), local_attrName);
             utf16convert (pAttributeNode->getValue(), local_attrValue);
-            if (local_attrName.compare("ProjectName") == 0)
+            if ((local_attrName.compare("ProjectName") == 0) && (local_attrValue.length() > 0))
             {
-              proName = local_attrValue;
+              mstr_projectName = local_attrValue;
             }
           }
         }
@@ -5471,7 +5458,7 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
       {
         if (iter->b_relativePath)
         { // add the path to the project-file, because it's relative to that directory!
-          iter->str_pathName.insert (0, c_directory);
+          iter->str_pathName.insert (0, mstr_sourceDir);
         }
       }
 

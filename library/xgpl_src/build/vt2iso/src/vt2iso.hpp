@@ -252,11 +252,22 @@ public:
 
   void getKeyCode();
 
-  void init (const std::string& xmlFile, std::string* dictionary, bool ab_externalize, bool ab_disableContainmentRules, DOMBuilder* ap_parser, bool ab_verbose, const std::string& arcstr_outDir, const std::string& arcstr_namespace, bool ab_acceptUnknownAttributes, bool ab_silentMode);
+  void init (
+    const std::string& xmlFile,
+    std::string* dictionary,
+    bool ab_externalize,
+    bool ab_disableContainmentRules,
+    DOMBuilder* ap_parser,
+    bool ab_verbose,
+    const std::string& arcstr_outDir,
+    const std::string& arcstr_namespace,
+    bool ab_acceptUnknownAttributes,
+    bool ab_silentMode,
+    const std::string& str_outFileName);
 
   void parse();
 
-  bool prepareFileNameAndDirectory (std::string& astr_fileName);
+  bool prepareFileNameAndDirectory (const std::string& astr_fileName);
 
   void convertIdReferenceToNameReference (int ai_attrType);
 
@@ -305,6 +316,7 @@ private:
 
   bool doAllFiles (action_en aen_action);
 
+  bool isProjectFileMode (const std::string& astr_fileName);
 
 public:
   bool isVerbose() { return mb_verbose; }
@@ -330,17 +342,17 @@ private:
 
   unsigned int ui_languages;
 
-//  char xmlFileGlobal [1024+1];
-  std::string xmlFileGlobal;
+  std::string mstr_sourceDir;
+  std::string mstr_sourceDirAndProjectPrefix;
+  std::string mstr_destinDirAndProjectPrefix;
+  std::string mstr_outDirName; // overriding outdir as given by cmdline-parameter
+  std::string mstr_outFileName; // overriding filename as given by cmdline-parameter
+  std::string mstr_className;
+  std::string mstr_projectName;
   std::string spc_autoLanguage;
-  std::string proName;
-  std::string c_project;
 
   bool mb_projectFile;
-  std::string c_directory;
-  const char* ac_workDir;
   std::vector<Path_s> vec_xmlFiles;
-//string array
   std::string mstr_poolIdent;
 
   std::bitset<65536> mbitset_objIdUsed;
@@ -380,9 +392,6 @@ private:
 
   // Assuming an 8 bit per pixel bitmap.
   unsigned char picBuffer [1600*1200];
-
-  // if no outdir is given, use XML/VTP-path.
-  std::string mstr_outDirAndProjectPrefix;
 
   std::string mstr_namespaceDeclarationBegin;       // namespace BLA {
   std::string mstr_namespaceDeclarationEnd;         // }
