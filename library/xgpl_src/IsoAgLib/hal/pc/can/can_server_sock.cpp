@@ -947,10 +947,16 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_commandSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-#ifdef WIN32 // WINCE!
-        int bytesRecv = select( 0, &rfds, NULL, NULL, 0 );
+#ifdef WINCE
+        // @todo WINCE Windows CE has a bug with MSG_PEEK (bytes are actually read)
+        //int bytesRecv = select( 0, &rfds, NULL, NULL, 0 ); // this was a try for a workaround
+        #error "This place has to be done correctly for Windows CE"
 #else
-        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),MSG_DONTWAIT|MSG_PEEK);
+        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
+        #ifndef WIN32
+          MSG_DONTWAIT|
+        #endif
+          MSG_PEEK);
 #endif
         if (bytesRecv == 0 || bytesRecv == -1)
         {
@@ -973,10 +979,16 @@ void readWrite(server_c* pc_serverData)
       if (FD_ISSET(iter_client->i32_dataSocket, &rfds))
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
-#ifdef WIN32 //WINCE
-        int bytesRecv = select( 0, &rfds, NULL, NULL, 0 );
+#ifdef WINCE
+        // @todo WINCE Windows CE has a bug with MSG_PEEK (bytes are actually read)
+        //int bytesRecv = select( 0, &rfds, NULL, NULL, 0 ); // this was a try for a workaround
+        #error "This place has to be done correctly for Windows CE"
 #else
-		int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK );
+        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
+        #ifndef WIN32
+          MSG_DONTWAIT|
+        #endif
+          MSG_PEEK);
 #endif
 
         if (bytesRecv == 0 || bytesRecv == -1)
