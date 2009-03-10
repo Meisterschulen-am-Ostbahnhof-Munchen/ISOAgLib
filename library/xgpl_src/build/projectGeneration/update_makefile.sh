@@ -98,9 +98,9 @@ GENERATE_FILES_ROOT_DIR=`pwd`
 # if one of the following variables isn't set
 # the corresponding default values are used
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
-# + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server" -> select wanted driver connection for CAN
+# + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator" -> select wanted driver connection for CAN
 # + USE_CAN_DEVICE_FOR_SERVER="no_card"|"pcan"|"A1"|"rte" -> use this device for building the can_server
-# + USE_RS232_DRIVER="simulating"|"sys"|"rte" -> select wanted driver connection for RS232
+# + USE_RS232_DRIVER="simulating"|"sys"|"rte"|"hal_simulator" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
 # + PRT_INSTANCE_CNT ( specify amount of CAN channels to use for protocol; must be <= CAN_INSTANCE_CNT; default 1 )
@@ -673,22 +673,26 @@ create_filelist( )
       PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
     fi
   elif [ $USE_CAN_DRIVER = "msq_server" ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq.*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
   elif [ $USE_CAN_DRIVER = "socket_server" ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock*'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock.*'"
+  elif [ $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock_hal_simulator.*'"
   elif [ $USE_CAN_DRIVER = "sys" ] ; then
     if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
       echo 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.'
       echo 'Thus the project files will be generated without enhanced CAN processing'
       PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
     fi
-    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-      DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
-    elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
-      DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sys*'"
-    fi
+#-- Currently there's no direct access to Linux/Windows CAN. You have to use the can_server.
+#-- The following is only kept for informational reasons - the files do not exist with these names currently!
+#   if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
+#     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
+#   elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
+#     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sys*'"
+#   fi
   else
-    echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"'
+    echo 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
     echo 'Current Setting is $USE_CAN_DRIVER'
     exit 3
   fi
@@ -705,7 +709,7 @@ create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/datastreams/*' -o -path '*/hal/"$HAL_PATH"/datastreams/*' -o -path '*/hal/datastreams.h'"
   fi
   if [ $PRJ_ACTOR -gt 0 ] ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/*' -o -path '*/hal/actor.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/actor.h' -o -path '*/hal/"$HAL_PATH"/actor/actor_target_extensions.*' -o -path '*/hal/actor.h'"
   fi
   if [ $PRJ_SENSOR_DIGITAL -gt 0 ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*digitali_c.*'"
@@ -717,17 +721,21 @@ create_filelist( )
     DRIVER_FEATURES="$DRIVER_FEATURES -o -name '*counteri*'"
   fi
   if test $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ; then
-    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/sensor/*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
+    DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/sensor/sensor.h' -path '*/hal/"$HAL_PATH"/sensor/sensor_target_extensions.*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
   fi
   if [ $PRJ_RS232 -gt 0 ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/driver/rs232/*' -o -path '*/hal/rs232.h' -o -path '*/hal/"$HAL_PATH"/rs232/rs232.h'"
     if [ $PRJ_RS232_OVER_CAN -gt 0 ] ; then
       DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/virtualDrivers/rs232/*'"
     else
-      DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
+#-- The following line is wrong and never had any effect.
+#-- Just leaving in for informational reasons.
+#     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
       echo "RS232 driver: $USE_RS232_DRIVER"
       if [ $USE_RS232_DRIVER = "simulating" ] ; then
         DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
+      elif [ $USE_RS232_DRIVER = "hal_simulator" ] ; then
+        DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_hal_simulator*'"
       elif [ $USE_RS232_DRIVER = "rte" ] ; then
         DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
       elif [ $USE_RS232_DRIVER = "sys" ] ; then
@@ -739,7 +747,7 @@ create_filelist( )
   #     PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
   #     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
       else
-        echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"vector_canlib"|"vector_xl_drv_lib"|"sontheim"'
+        echo 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"hal_simulator"'
         echo 'Current Setting is $USE_RS232_DRIVER'
         exit 3
       fi
@@ -1368,7 +1376,7 @@ create_makefile()
   if [ $USE_CAN_DRIVER = "msq_server" ] ; then
     echo -n " -DCAN_DRIVER_MESSAGE_QUEUE" >> $MakefileNameLong
   fi
-  if [ $USE_CAN_DRIVER = "socket_server" ] ; then
+  if [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
     echo -n " -DCAN_DRIVER_SOCKET" >> $MakefileNameLong
   fi
 
@@ -1575,7 +1583,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
   fi
   # build special target for CAN server
-  if [ $USE_CAN_DRIVER = "socket_server" ] ; then
+  if [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
     mkdir -p objects_server
     echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
     echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \\" >> $MakefileNameLong
@@ -1602,7 +1610,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
    esac
 
   # add can_server creation to target "all"
-  if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" ] ; then
+  if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
     sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
     sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
   fi
@@ -1836,7 +1844,7 @@ ENDOFHEADERA
   done
 
 
-  if  [ $USE_CAN_DRIVER = "socket_server" ] ; then
+  if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
     DEFINE_LINE="$DEFINE_LINE"'-D__GNUWIN32___@@_-W_@@_-DWIN32_@@_-D_CONSOLE_@@_-D_MBCS_@@_-D_Windows_@@_-DCAN_DRIVER_SOCKET_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
   fi
 
@@ -2147,7 +2155,7 @@ create_VCPrj()
 
 # echo "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
 
-  if  [ $USE_CAN_DRIVER = "socket_server" ] ; then
+  if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
       USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN=_=_library"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'"'
       USE_DEFINES="$USE_DEFINES"' /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
       USE_d_DEFINES="$USE_d_DEFINES"' /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
@@ -2362,14 +2370,14 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
   --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
   --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                     target which is specified in the configuration file
-                                    ( "pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167" ).
+                                    ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167").
   --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"msq_server"|"socket_server".
+                                    ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator").
   --pc-can-device-for-server=CAN_DEVICE_FOR_SERVER
                                     use this device for building the can_server
-                                    ( "no_card"|"pcan"|"A1"|"rte" ).
+                                    ("no_card"|"pcan"|"A1"|"rte").
   --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
-                                    ( "simulating"|"sys"|"rte" ).
+                                    ("simulating"|"sys"|"rte"|"hal_simulator").
   --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
   --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
   --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
@@ -2384,7 +2392,7 @@ Please set additionally the SYSTEM_FOO for the wanted platform - $0 will output 
 run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
 
-Report bugs to <Achim.Spangler@osb-ag.de>.
+Report bugs to <m.wodok@osb-ag.de>.
 EOF
 }
 
@@ -2582,7 +2590,7 @@ case "$USE_CAN_DRIVER" in
       CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
     fi
   ;;
-  socket_server)
+  socket_server | socket_server_hal_simulator)
 		# enhanced CAN HAL IS supported for the socket based can_server
 		PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
     if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
