@@ -241,7 +241,7 @@ static void usage()
     " -locale=ll_CC  specify the locale. Defaults to en_US.\n"
     " -p     Output ISO11783-VT Palette to act-file.\n"
     " -e     Externalize. If you need to use the split-up version of the generated files, use this option.\n"
-    " -m     More informative output. (verbose-mode)\n"
+    " -m     More informative output (verbose mode). Will also print out warnings on overridden values with language-files.\n"
     " -i=xxx Specify a unique identfication which will be used as prefix for every object in the pool. (max. 8 char)\n"
     " -g=ns  Group the generated structures into the given namespace. if only -g is passed, the Project-Name will be used.\n"
     " -u     User defined attributes accepted\n"
@@ -2624,9 +2624,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (b_foundValue)
           {
-            /// Do we have conflicting 'value='s now? Just put out a warning!
+            /// Do we have conflicting 'value='s now? Just put out a warning (if in verbose-mode)!
             if (arrc_attributes [attrValue].isGiven())
-              std::cout <<"Overriding value & length from ["<< m_objName <<"]!!" << std::endl;
+              if (mb_verbose) std::cout <<"Overriding value & length from ["<< m_objName <<"]!!" << std::endl;
 
             // anyway, override attrValue and clear length (so it gets auto-calculated below!)
             arrc_attributes [attrValue].set( pc_foundValue );
