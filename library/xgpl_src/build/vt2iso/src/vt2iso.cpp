@@ -460,7 +460,7 @@ FILE& vt2iso_c::save_fopen (const std::string& arcstr_fileName, const char* apcc
   FILE* handle = fopen (arcstr_fileName.c_str(), apcc_mode);
   if (handle) return *handle;
 
-  std::cerr << "Couldn't open '" << arcstr_fileName << "' (with mode '"<<apcc_mode<<"'). Terminating." << std::endl;
+  std::cerr << "vt2iso: Couldn't open '" << arcstr_fileName << "' (with mode '"<<apcc_mode<<"'). Terminating." << std::endl;
   exit (-1);
 }
 
@@ -738,7 +738,8 @@ void vt2iso_c::clean_exit (const char* error_message)
     std::cout << error_message;
 
   if (b_hasMoreThan6SoftKeys)
-    std::cout
+    if (!mb_silentMode)
+      std::cout
         << "*** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING" << std::endl << std::endl
         << "Your objectpool uses softkeymasks with MORE THAN 6 softkeys. Be ware that this pool may fail to upload on some VTs!!" << std::endl << std::endl
         << "*** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING" << std::endl << std::endl;
@@ -2291,7 +2292,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             FILE* tmpHandle = fopen (langFileName.c_str(), "rb");
             if (tmpHandle != NULL)
             {
-              std::cout << "    opening language file "<< langFileName << std::endl;
+              if(!mb_silentMode)
+                std::cout << "    opening language file "<< langFileName << std::endl;
 
               fseek (tmpHandle, 0, SEEK_END);
               long length = ftell (tmpHandle);
@@ -2788,7 +2790,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           if (objChildObjects > 6)
           {
-            std::cout << "THE <softkeymask> OBJECT '" << m_objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!"<<std::endl<<std::endl;
+            if(!mb_silentMode)
+              std::cout << "THE <softkeymask> OBJECT '" << m_objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!"<<std::endl<<std::endl;
             b_hasMoreThan6SoftKeys = true;
           }
           break;
@@ -4184,8 +4187,9 @@ vt2iso_c::skRelatedFileOutput()
   if (!getIsSKHeight()) setSKHeight (32);
   if (!getIsSKWidth() || !getIsSKHeight())
   {
-    std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
-        << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!"<<std::endl<<std::endl;
+    if(!mb_silentMode)
+      std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
+                << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!"<<std::endl<<std::endl;
   }
   fprintf (partFile_defines, "static const int vtObjectPoolDimension = %d;\n", getOPDimension());
   fprintf (partFile_defines, "static const int vtObjectPoolSoftKeyWidth = %d;\n", getSKWidth());
@@ -4324,7 +4328,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
       // go to new working directory
     if (SetCurrentDirectory(mstr_sourceDir.c_str()) == 0)
     {
-      std::cerr <<  "Couldn't open the directory."<< std::endl;
+      std::cerr <<  "vt2iso: Couldn't open the directory."<< std::endl;
 
       CHAR szBuf[80];
       DWORD dw = GetLastError();
@@ -4369,7 +4373,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
     }
     else
     {
-      std::cerr <<  "Couldn't open the directory.";
+      std::cerr <<  "vt2iso: Couldn't open the directory.";
       return false;
     }
     SetCurrentDirectory(szCurDir);
@@ -4406,7 +4410,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
     }
     else
     {
-      std::cerr <<  "Couldn't open the directory '" << mstr_sourceDir.c_str() << "'." << std::endl;
+      std::cerr <<  "vt2iso: Couldn't open the directory '" << mstr_sourceDir.c_str() << "'." << std::endl;
       return false;
     }
   #endif
