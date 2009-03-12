@@ -56,11 +56,16 @@
 #include <ctype.h>
 
 #ifdef WIN32
- #include <windows.h>
- #include <ostream>
+  #include <windows.h>
+  #include <ostream>
+  static const char scc_dirSeparatorWrong = '/';
+  static const char scc_dirSeparatorCorrect = '\\';
 #else
- #include <dirent.h>
+  #include <dirent.h>
+  static const char scc_dirSeparatorWrong = '\\';
+  static const char scc_dirSeparatorCorrect = '/';
 #endif
+
 
 #ifdef USE_FREE_IMAGE_LIB
 #include "vt2isoimagefreeimage_c.h"
@@ -207,14 +212,6 @@ void DOMCountErrorHandler::resetErrors()
 #endif
 
 
-#ifdef WIN32
-  static const char scc_replaceThisSeparator = '/';
-  static const char scc_replaceWithSeparator = '\\';
-#else
-  static const char scc_replaceThisSeparator = '\\';
-  static const char scc_replaceWithSeparator = '/';
-#endif
-
 
 // ---------------------------------------------------------------------------
 //  void usage () --- Prints out usage text.
@@ -223,10 +220,9 @@ static void usage()
 {
   std::cout << "\nvt2iso BUILD DATE: " << __DATE__ <<std::endl<<std::endl<<
     "Usage:\n"
-    " vt2iso [options] <XML file>\n"
-    " vt2iso [options] <VTP file>"<<std::endl<<std::endl<<
-    "This program invokes the DOMBuilder, builds the DOM tree,\n"
-    "and then converts the tree to ISO Virtual Terminal cpp-files."<<std::endl<<std::endl<<
+    " vt2iso [options] <XML file> [options]\n"
+    " vt2iso [options] <VTP file> [options]"<<std::endl<<std::endl<<
+    "This program converts the input-files into ISOAgLib VT-Client Code-files."<<std::endl<<std::endl<<
     "In Legacy-Mode input files are all files starting with <XML file>,\nsorted by alphabetical order.\n"
     "This has been done to give the possibility to split \nlarge XML files into several ones."<<std::endl<<std::endl<<
     "In Project-File-Mode input files are processed in the order\ngiven in the project-file."<<std::endl<<std::endl<<
@@ -346,8 +342,8 @@ template <class T> void processNestedNodesInProjectFile(DOMNode *child, T& r_con
             // convert directory separators
             (void) std::replace (s_filePath.str_pathName.begin(),
                                  s_filePath.str_pathName.end(),
-                                 scc_replaceThisSeparator,
-                                 scc_replaceWithSeparator);
+                                 scc_dirSeparatorWrong,
+                                 scc_dirSeparatorCorrect);
           }
           if (local_attrName.compare("RelativePath") == 0)
           {
@@ -1002,8 +998,8 @@ void vt2iso_c::init (
   /// Are we running in project-file mode? (check extension for .VTP/.vtp)
   mb_projectFile = isProjectFileMode(arcstr_cmdlineName);
 
-  /// Will set "mstr_sourceDirAndProjectPrefix"
-  if (!prepareFileNameAndDirectory (arcstr_cmdlineName)) // will cut off the file-extension
+  // Will generate all needed (part)filenames/directories
+  if (!prepareFileNameAndDirectory (arcstr_cmdlineName)) 
   {
     clean_exit("Error occurred. Terminating.\n");
     /* @todo maybe better cleanup. return false? or alike... */
@@ -1515,12 +1511,7 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     // find matching path path for file
     struct stat s_stat;
 
-#ifdef WIN32
-	std::string str_concat = "\\";
-#else
-	std::string str_concat = "/";
-#endif
-
+    std::string str_concat = " "; str_concat[0] = scc_dirSeparatorCorrect;
     std::list<Path_s>::const_iterator iter = rcl_stdBitmapPath.begin();
     for (; iter != rcl_stdBitmapPath.end(); ++iter)
     {
@@ -1899,8 +1890,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             // convert directory separators
             (void) std::replace (s_bitmapPath.str_pathName.begin(),
                                  s_bitmapPath.str_pathName.end(),
-                                 scc_replaceThisSeparator,
-                                 scc_replaceWithSeparator);
+                                 scc_dirSeparatorWrong,
+                                 scc_dirSeparatorCorrect);
 
             l_stdBitmapPath.push_back(s_bitmapPath);
             continue;
@@ -1914,8 +1905,8 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             // convert directory separators
             (void) std::replace (s_bitmapPath.str_pathName.begin(),
                                  s_bitmapPath.str_pathName.end(),
-                                 scc_replaceThisSeparator,
-                                 scc_replaceWithSeparator);
+                                 scc_dirSeparatorWrong,
+                                 scc_dirSeparatorCorrect);
 
             l_fixedBitmapPath.push_back(s_bitmapPath);
             continue;
@@ -2287,11 +2278,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                 std::cerr << "More than one <dictionary> node in project file is not allowed!" <<std::endl;
                 return false;
               }
-#ifdef WIN32
-              std::string str_concat = "\\";
-#else
-              std::string str_concat = "/";
-#endif
+              std::string str_concat = " "; str_concat[0] = scc_dirSeparatorCorrect;
               std::string str_tmpWorkDir = mstr_sourceDir;
               if (!l_dictionaryPath.front().b_relativePath)
                 str_tmpWorkDir.clear();
@@ -4279,15 +4266,20 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
   }
 
   /// Extract Source Dir
-#ifdef WIN32
-  int lastDirPos = mstr_sourceDirAndProjectPrefix.find_last_of( "\\" );
-  mstr_sourceDir = mstr_sourceDirAndProjectPrefix.substr( 0, lastDirPos+1 );
-  if (mstr_sourceDir == "") mstr_sourceDir = ".\\";
-#else
-  int lastDirPos = mstr_sourceDirAndProjectPrefix.find_last_of( "/" );
-  mstr_sourceDir = mstr_sourceDirAndProjectPrefix.substr( 0, lastDirPos+1 );
-  if (mstr_sourceDir == "") mstr_sourceDir = "./";
-#endif
+  std::string str_separator = " "; str_separator[0] = scc_dirSeparatorCorrect;
+  int lastDirPos = mstr_sourceDirAndProjectPrefix.find_last_of( str_separator );
+  if (lastDirPos < 0)
+  { // no separator found - dir is the current dir!
+    mstr_sourceDir = "." + str_separator;
+  }
+  else if (lastDirPos == 0)
+  { // root directory
+    mstr_sourceDir = str_separator;
+  }
+  else
+  { // separator some-where. just extract
+    mstr_sourceDir = mstr_sourceDirAndProjectPrefix.substr( 0, lastDirPos ) + str_separator;
+  }
 
   /// Extract Project (File w/o .ext) Name as default for LEGACY MODE or PROJECT-MODE w/o Project="..."
   std::string str_fileName = mstr_sourceDirAndProjectPrefix.substr( lastDirPos+1 );
@@ -4364,7 +4356,6 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
           if ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4 ) == c_unwantedType8 ) continue;
 
           if ( c_directoryCompareItem.find( mstr_projectName ) != std::string::npos ) {
-            c_directoryCompareItem.insert(0, "\\" );
             c_directoryCompareItem.insert(0, mstr_sourceDir );
             Path_s s_path;
             s_path.str_pathName = c_directoryCompareItem;
@@ -4403,7 +4394,6 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
         if ( (c_directoryCompareItem.length() > 4  ) && ( c_directoryCompareItem.substr( c_directoryCompareItem.length()-4  ) == c_unwantedType8 ) ) continue;
 
         if ( c_directoryCompareItem.find( mstr_projectName ) != std::string::npos ) {
-          c_directoryCompareItem.insert(0, "/" );
           c_directoryCompareItem.insert(0, mstr_sourceDir );
           Path_s s_path;
           s_path.str_pathName = c_directoryCompareItem;
@@ -4460,9 +4450,9 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
   if (mstr_destinDirAndProjectPrefix.length() == 0)
     return false;
 
-  if (mstr_destinDirAndProjectPrefix[mstr_destinDirAndProjectPrefix.length()-1] == scc_replaceThisSeparator)
-  { // append (back)slash
-    mstr_destinDirAndProjectPrefix.push_back (scc_replaceWithSeparator);
+  if (mstr_destinDirAndProjectPrefix[mstr_destinDirAndProjectPrefix.length()-1] != scc_dirSeparatorCorrect)
+  { // No separator given, so append separator (i.e. (back)slash)
+    mstr_destinDirAndProjectPrefix.push_back (scc_dirSeparatorCorrect);
   }
 
   if (mstr_outFileName.length() == 0)
@@ -4879,7 +4869,8 @@ int main(int argC, char* argV[])
   if (argC < 2) {
     c_Bitmap.printLicenseText();
     usage();
-    return 1; }
+    return 1;
+  }
 
   AbstractDOMParser::ValSchemes valScheme = AbstractDOMParser::Val_Auto;
   bool doNamespaces       = false;
@@ -4898,12 +4889,25 @@ int main(int argC, char* argV[])
   std::string localeStr;
   std::string str_outDir;
   std::string str_namespace;
-  int argInd;
-  for (argInd = 1; argInd < argC; argInd++)
+  int filenameInd = -1; // defaults to: no filename specified.
+  for (int argInd = 1; argInd < argC; argInd++)
   {
-    // Break out on first parm not starting with a dash
+    // Check for option or filename
     if (argV[argInd][0] != '-')
-      break;
+    { // no option
+      if (filenameInd == -1)
+      { // no filename yet, so this is the filename!
+        filenameInd = argInd;
+      }
+      else
+      { // there was already a filename given! ==> double filename!
+        usage();
+        std::cerr << std::endl << "vt2iso: Error: Two filenames given. Refer to following usage for proper use! ***" << std::endl;
+        return 3;
+      }
+      // this is no option, so don't continue with the options check!
+      continue;
+    }
 
     // Watch for special case help request
     if (!strcmp(argV[argInd], "-?"))
@@ -5015,7 +5019,9 @@ int main(int argC, char* argV[])
     }
     else
     {
-      std::cerr << "Unknown option '" << argV[argInd] << "', ignoring it\n" << std::endl;
+      usage();
+      std::cerr << "vt2iso: Error: Unknown option '" << argV[argInd] << "'" << std::endl;
+      return 4;
     }
   }
 
@@ -5042,7 +5048,12 @@ int main(int argC, char* argV[])
   //  There should be only one parameter left, and that
   //  should be the file name.
   //
-  if (argInd != argC - 1) { usage(); return 1; }
+  if (filenameInd == -1)
+  {
+    usage();
+    std::cerr << "vt2iso: Error: No filename given." << std::endl;
+    return 1; 
+  }
 
   // Initialize the XML4C system
   try
@@ -5065,7 +5076,7 @@ int main(int argC, char* argV[])
   }
 
   // get file list with matching files!
-  std::string str_cmdlineName( argV [argInd] );
+  std::string str_cmdlineName( argV [filenameInd] );
 
   // Do INITIALIZATION STUFF
   vt2iso_c* pc_vt2iso = new vt2iso_c(poolIdentStr);
