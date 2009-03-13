@@ -477,6 +477,27 @@ void vt2iso_c::clean_exit (const char* error_message)
 
   if (partFile_functions)
   {
+    int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
+
+    fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", mstr_className.c_str());
+    fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
+    fprintf (partFile_functions, "  int i_objCount = %d;\n", map_objNameIdTable.size() - extraLanguageLists);
+    fprintf (partFile_functions, "  int i_listIndex = 0;\n");
+    fprintf (partFile_functions, "  IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM * pps_sROMs = %sall_sROMs;\n", mstr_namespacePrefix.c_str());
+    fprintf (partFile_functions, "  do \n");
+    fprintf (partFile_functions, "  {\n");
+    fprintf (partFile_functions, "    IsoAgLib::iVtObject_c* HUGE_MEM * pc_objList = %sall_iVtObjectLists [i_listIndex];\n", mstr_namespacePrefix.c_str());
+    fprintf (partFile_functions, "    while (i_objCount)\n");
+    fprintf (partFile_functions, "    {\n");
+    fprintf (partFile_functions, "      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs);\n");
+    fprintf (partFile_functions, "      ++pc_objList;\n");
+    fprintf (partFile_functions, "      ++pps_sROMs;\n");
+    fprintf (partFile_functions, "      --i_objCount;\n");
+    fprintf (partFile_functions, "    }\n");
+    fprintf (partFile_functions, "    i_objCount = %d;\n", extraLanguageLists);
+    fprintf (partFile_functions, "    ++i_listIndex;\n");
+    fprintf (partFile_functions, "  } while (%sall_iVtObjectLists[i_listIndex]);\n", mstr_namespacePrefix.c_str());
+
     fprintf (partFile_functions, "\n  #include \"%s-functions-origin.inc\"\n", mstr_outFileName.c_str());
     fprintf (partFile_functions, "\n  b_initAllObjects = true;");
     fprintf (partFile_functions, "\n}\n");
@@ -517,6 +538,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
         if (fileList) // first, print out the workingset object
           fprintf (fileList, "\n %s", mit_obj->second.c_str());
+          fprintf (partFile_listAttributes, "\n (IsoAgLib::iVtObject_c::iVtObject_s*)%s_sROM", mit_obj->second.c_str());
 
         // delete from the map
         mit_lang->second.erase (mit_obj);
@@ -533,12 +555,15 @@ void vt2iso_c::clean_exit (const char* error_message)
       if (*pb_firstLine)
       {
         *pb_firstLine = false;
+        fprintf (partFile_listAttributes, ",");
       }
       else
       {
         fprintf (fileList, ",");
+        fprintf (partFile_listAttributes, ",");
       }
       fprintf (fileList, "\n %s", mit_obj->second.c_str());
+      fprintf (partFile_listAttributes, "\n (IsoAgLib::iVtObject_c::iVtObject_s*)%s_sROM", mit_obj->second.c_str());
     }
   }
 
@@ -565,6 +590,14 @@ void vt2iso_c::clean_exit (const char* error_message)
 
     fclose(partFile_list);
   }
+
+  if (partFile_listAttributes)
+  { // -list_attributes.inc
+    fputs ("\n};\n", partFile_listAttributes); 
+    fprintf (partFile_listAttributes, mstr_namespaceDeclarationEnd.c_str());
+    fclose(partFile_listAttributes);
+  }
+
 //   if (partFile_list_extern);
 //     fclose(partFile_list_extern);
 
@@ -588,31 +621,51 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
     fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_direct, "\npublic:");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventPointingEvent (uint16_t aui16_xPosition, uint16_t aui16_yPosition);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  virtual void eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t aui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventStringValueAbort();");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
-    fprintf (partFile_handler_direct, "\n  // virtual void eventVtSelectInputObject(uint16_t aui16_objectId, uint8_t aui8_hasFocus, uint8_t aui8_selected);");
+    fprintf (partFile_handler_direct, "\n");
+    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on successful partil-pool-updates! */");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventPartialPoolUploadedSuccessfully();");
+    fprintf (partFile_handler_direct, "\n");
+    fprintf (partFile_handler_direct, "\n  //virtual void eventVtSelectInputObject(uint16_t aui16_objectId, uint8_t aui8_hasFocus, uint8_t aui8_selected);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  //virtual void eventPrepareForLanguageChange (int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  virtual void eventEnterSafeState ();");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventCommandResponse (uint8_t aui8_responseCommandError, const uint8_t apui8_responseDataBytes[8]);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
     fprintf (partFile_handler_direct, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventLanguagePgn (const localSettings_s& ars_localSettings);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventVtStatusMsg();");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT ESC */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventVtESC(uint16_t /*aui16_ObjectId*/);");
+    fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming Auxiliary Input Status messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAuxFunctionValue (uint16_t mui16_functionUid, uint16_t cui16_inputValueAnalog, uint16_t cui16_inputValueTransitions, uint8_t cui8_inputValueDigital);");
     fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
     fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
+    fprintf (partFile_handler_direct, "\n");
+    fprintf (partFile_handler_direct, "\n  /* This initialization-function is being automatically called by the vt2iso-generated VT-Client code. Do not call in the application! */");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
     fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", mstr_className.c_str());
     fprintf (partFile_handler_direct, "\n};\n");
@@ -653,6 +706,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
   }
   fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
 
   if (pc_specialParsing)
@@ -674,6 +728,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
   }
   fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include \"%s-functions%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   if (pc_specialParsing)
   {
@@ -1032,6 +1087,7 @@ void vt2iso_c::init (
   partFile_defines = NULL;
   partFile_obj_selection = NULL;
   partFile_list = NULL;
+  partFile_listAttributes = NULL;
   partFile_handler_direct = NULL;
   partFile_handler_derived = NULL;
 
@@ -1093,8 +1149,6 @@ void vt2iso_c::init (
       fprintf (partFile_functions, "extern void initAllObjectsOnce%d (SINGLETON_VEC_KEY_PARAMETER_DEF);\n", i);
     }
   }
-  fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", mstr_className.c_str());
-  fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
   partFileName = mstr_destinDirAndProjectPrefix + "-functions-origin.inc";
   partFile_functions_origin = &save_fopen (partFileName.c_str(),"wt");
 
@@ -1109,6 +1163,11 @@ void vt2iso_c::init (
   partFile_list = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_list, mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_list, "IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%s [] = {", mstr_poolIdent.c_str());
+
+  partFileName = mstr_destinDirAndProjectPrefix + "-list_attributes.inc";
+  partFile_listAttributes = &save_fopen (partFileName.c_str(),"wt");
+  fprintf (partFile_listAttributes, mstr_namespaceDeclarationBegin.c_str());
+  fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs%s [] = {", mstr_poolIdent.c_str());
 
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
@@ -2665,6 +2724,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
 
+        /// @todo Check what happens with the externalized version
         if (b_externalize)
         {
           static int splitCount=0;
@@ -2672,10 +2732,13 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           splitCount++;
           fprintf (partFile_split_function,    "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", m_objName.c_str(), pc_postfix.c_str(), m_objName.c_str(), pc_postfix.c_str());
         }
+#if 0
+/// This is now done with a generic loop. So this part is not generated line-by-line-anymore.
         else
         {
           fprintf (partFile_functions,         "  %siVtObject%s%s.init (&%siVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str(), mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str());
         }
+#endif
         fprintf (partFile_defines, "static const int iVtObjectID%s%s = %d;\n", m_objName.c_str(), pc_postfix.c_str(), objID);
       }
 
@@ -4403,7 +4466,7 @@ bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
           s_path.str_pathName = c_directoryCompareItem;
           s_path.b_relativePath = true;
           vec_xmlFiles.push_back(s_path);
-  //        std::cout << "found: " << ep->d_name << ""<<std::endl;
+     //     std::cout << "found: " << ep->d_name << ""<<std::endl;
         }
       }
       closedir(dp);

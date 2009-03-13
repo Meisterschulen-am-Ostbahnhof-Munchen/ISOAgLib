@@ -334,6 +334,7 @@ private:
   FILE *partFile_functions_origin;
   FILE *partFile_defines;
   FILE *partFile_list;
+  FILE *partFile_listAttributes;
 //  FILE *partFile_list_extern;
   FILE *partFile_handler_direct;
   FILE *partFile_handler_derived;

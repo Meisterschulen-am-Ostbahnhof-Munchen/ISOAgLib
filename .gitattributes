@@ -2213,6 +2213,7 @@ examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefin
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list00.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list01.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list02.inc -text
+examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-list_attributes.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-objectselection.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-variables-extern.inc -text
 examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/MaskDefinition/simpleVTIsoPool-variables.inc -text

@@ -2382,6 +2382,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 {
   if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { /// Was user-pool-update
+    mc_streamer.mrc_pool.eventPartialPoolUploadedSuccessfully();
   }
   else
   { /// Was complete initial pool or language pool update.

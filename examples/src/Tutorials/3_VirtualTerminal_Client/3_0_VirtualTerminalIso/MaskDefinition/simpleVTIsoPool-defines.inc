@@ -1,145 +1,145 @@
-#define iVtObjectIDimiIsoMaskupload 65534
-#define iVtObjectIDUnnamed1 65533
-#define iVtObjectIDUnnamed2 65532
-#define iVtObjectIDFontAttributesNormal6x8 65531
-#define iVtObjectIDFontAttributesNormal6x8LangDep 65530
-#define iVtObjectIDFontAttributesNormal6x8LangDep_1 65530
-#define iVtObjectIDFontAttributesNormal6x8LangDep_2 65530
-#define iVtObjectIDFontAttributesNormal8x12 65529
-#define iVtObjectIDFontAttributesNormal6x8R 65528
-#define iVtObjectIDFontAttributesNormal6x8B 65527
-#define iVtObjectIDFontAttributesNormal8x8 65526
-#define iVtObjectIDFontAttributesNormal12x16 65525
-#define iVtObjectIDFontAttributesNormal16x16 65524
-#define iVtObjectIDFontAttributesNormal16x24 65523
-#define iVtObjectIDFontAttributesNormal24x32 65522
-#define iVtObjectIDLineAttributesNormal 65521
-#define iVtObjectIDLineAttributesDotted 65520
-#define iVtObjectIDFontAttributesSKM6x8 65519
-#define iVtObjectIDFontAttributesSKM8x8 65518
-#define iVtObjectIDFontAttributesSKM12x16 65517
-#define iVtObjectIDLineAttributesSKM 65516
-#define iVtObjectIDFontAttributesNormal6x8_Button60x30 65515
-#define iVtObjectIDValSpeed 65514
-#define iVtObjectIDValAccel 65513
-#define iVtObjectIDValMiles 1234
-#define iVtObjectIDStrNone 65512
-#define iVtObjectIDStrNone_1 65512
-#define iVtObjectIDStrNone_2 65512
-#define iVtObjectIDStrRed 65511
-#define iVtObjectIDStrRed_1 65511
-#define iVtObjectIDStrRed_2 65511
-#define iVtObjectIDStrGreen 65510
-#define iVtObjectIDStrGreen_1 65510
-#define iVtObjectIDStrGreen_2 65510
-#define iVtObjectIDStrBlue 65509
-#define iVtObjectIDStrBlue_1 65509
-#define iVtObjectIDStrBlue_2 65509
-#define iVtObjectIDStrYellow 65508
-#define iVtObjectIDStrCyan 65507
-#define iVtObjectIDStrMagenta 65506
-#define iVtObjectIDStrBlack 65505
-#define iVtObjectIDStrWhite 65504
-#define iVtObjectIDLikeIt 65503
-#define iVtObjectIDLikeItNot 65502
-#define iVtObjectIDcontainerInAllMasks 65501
-#define iVtObjectIDUnnamed3 65500
-#define iVtObjectIDBigLogo 65499
-#define iVtObjectIDleine 65498
-#define iVtObjectIDKeyReset 65497
-#define vtKeyCodeKeyReset 254
-#define iVtObjectIDresetTextOS 65496
-#define iVtObjectIDresetTextOS_1 65496
-#define iVtObjectIDresetTextOS_2 65496
-#define iVtObjectIDInputMiles 65495
-#define iVtObjectIDMainMask 1101
-#define iVtObjectIDmask1contentscontainer 65494
-#define iVtObjectIDUnnamed4 65493
-#define iVtObjectIDspeedLabel 65492
-#define iVtObjectIDUnnamed5 65491
-#define iVtObjectIDUnnamed6 65490
-#define iVtObjectIDUnnamed7 65489
-#define iVtObjectIDUnnamed8 65488
-#define iVtObjectIDUnnamed9 65487
-#define iVtObjectIDColLabel 65486
-#define iVtObjectIDColOS 65485
-#define iVtObjectIDAccelArchedBarGraph 65484
-#define iVtObjectIDOpsFakeMileage 65483
-#define iVtObjectIDChangeAwayPointer 65482
-#define iVtObjectIDInputListTypFakeMiles 65481
-#define iVtObjectIDUnnamed12 65480
-#define iVtObjectIDUnnamed13 65479
-#define iVtObjectIDUnnamed14 65478
-#define iVtObjectIDUnnamed15 65477
-#define iVtObjectIDUnnamed10 65476
-#define iVtObjectIDUnnamed11 65475
-#define iVtObjectIDInputLikeage 65474
-#define iVtObjectIDLikeageOP 65473
-#define iVtObjectIDKeyMoreAccel 65472
-#define vtKeyCodeKeyMoreAccel 253
-#define iVtObjectIDUnnamed16 65471
-#define iVtObjectIDKeyLessAccel 65470
-#define vtKeyCodeKeyLessAccel 252
-#define iVtObjectIDUnnamed17 65469
-#define iVtObjectIDvtLang 65468
-#define iVtObjectIDOSlanguage 65467
-#define iVtObjectIDdriver 65466
-#define iVtObjectIDresonible 65465
-#define iVtObjectIDISdriver 65464
-#define iVtObjectIDOSresonible 65463
-#define iVtObjectIDsoftkeys1 65462
-#define iVtObjectIDKeyMove 65461
-#define vtKeyCodeKeyMove 251
-#define iVtObjectIDUnnamed18 65460
-#define iVtObjectIDKeyLogo 65459
-#define vtKeyCodeKeyLogo 250
-#define iVtObjectIDUnnamed19 65458
-#define iVtObjectIDKeyChangeLang 65457
-#define vtKeyCodeKeyChangeLang 249
-#define iVtObjectIDUnnamed20 65456
-#define iVtObjectIDKeyChangeCol 65455
-#define vtKeyCodeKeyChangeCol 248
-#define iVtObjectIDUnnamed21 65454
-#define iVtObjectIDUnnamed22 65453
-#define iVtObjectIDKeyTransCol 65452
-#define vtKeyCodeKeyTransCol 247
-#define iVtObjectIDUnnamed23 65451
-#define iVtObjectIDUnnamed24 65450
-#define iVtObjectIDKeyForbidden 65449
-#define vtKeyCodeKeyForbidden 246
-#define iVtObjectIDUnnamed25 65448
-#define iVtObjectIDKeyChangeFill 65447
-#define vtKeyCodeKeyChangeFill 245
-#define iVtObjectIDUnnamed26 65446
-#define iVtObjectIDKeyUpdatePool 65445
-#define vtKeyCodeKeyUpdatePool 244
-#define iVtObjectIDUnnamed27 65444
-#define iVtObjectIDKeyChangeLogoPosition 65443
-#define vtKeyCodeKeyChangeLogoPosition 243
-#define iVtObjectIDUnnamed28 65442
-#define iVtObjectIDLineAttributes_Normal 65441
-#define iVtObjectIDFillAttributes 65440
-#define iVtObjectIDdEllipse 65439
-#define iVtObjectIDdPolygon 65438
-#define iVtObjectIDdMeter 65437
-#define iVtObjectIDMacro_1 1
-#define iVtObjectIDMacro_2 2
-#define iVtObjectIDAnotherMask 65436
-#define iVtObjectIDUnnamed29 65435
-#define iVtObjectIDUnnamed30 65434
-#define iVtObjectIDUnnamed31 65433
-#define iVtObjectIDUnnamed32 65432
-#define iVtObjectIDUnnamed33 65431
-#define iVtObjectIDUnnamed34 65430
-#define iVtObjectIDUnnamed35 65429
-#define iVtObjectIDForbiddenAlarmMask 65428
-#define iVtObjectIDalarm1contentscontainer 65427
-#define iVtObjectIDUnnamed36 65426
-#define iVtObjectIDUnnamed37 65425
-#define iVtObjectIDUnnamed38 65424
-#define iVtObjectIDsoftkeysAlarm 65423
-#define vtObjectPoolDimension 200
-#define vtObjectPoolSoftKeyWidth 60
-#define vtObjectPoolSoftKeyHeight 32
+static const int iVtObjectIDimiIsoMaskupload = 65534;
+static const int iVtObjectIDUnnamed1 = 65533;
+static const int iVtObjectIDUnnamed2 = 65532;
+static const int iVtObjectIDFontAttributesNormal6x8 = 65531;
+static const int iVtObjectIDFontAttributesNormal6x8LangDep = 65530;
+static const int iVtObjectIDFontAttributesNormal6x8LangDep_1 = 65530;
+static const int iVtObjectIDFontAttributesNormal6x8LangDep_2 = 65530;
+static const int iVtObjectIDFontAttributesNormal8x12 = 65529;
+static const int iVtObjectIDFontAttributesNormal6x8R = 65528;
+static const int iVtObjectIDFontAttributesNormal6x8B = 65527;
+static const int iVtObjectIDFontAttributesNormal8x8 = 65526;
+static const int iVtObjectIDFontAttributesNormal12x16 = 65525;
+static const int iVtObjectIDFontAttributesNormal16x16 = 65524;
+static const int iVtObjectIDFontAttributesNormal16x24 = 65523;
+static const int iVtObjectIDFontAttributesNormal24x32 = 65522;
+static const int iVtObjectIDLineAttributesNormal = 65521;
+static const int iVtObjectIDLineAttributesDotted = 65520;
+static const int iVtObjectIDFontAttributesSKM6x8 = 65519;
+static const int iVtObjectIDFontAttributesSKM8x8 = 65518;
+static const int iVtObjectIDFontAttributesSKM12x16 = 65517;
+static const int iVtObjectIDLineAttributesSKM = 65516;
+static const int iVtObjectIDFontAttributesNormal6x8_Button60x30 = 65515;
+static const int iVtObjectIDValSpeed = 65514;
+static const int iVtObjectIDValAccel = 65513;
+static const int iVtObjectIDValMiles = 1234;
+static const int iVtObjectIDStrNone = 65512;
+static const int iVtObjectIDStrNone_1 = 65512;
+static const int iVtObjectIDStrNone_2 = 65512;
+static const int iVtObjectIDStrRed = 65511;
+static const int iVtObjectIDStrRed_1 = 65511;
+static const int iVtObjectIDStrRed_2 = 65511;
+static const int iVtObjectIDStrGreen = 65510;
+static const int iVtObjectIDStrGreen_1 = 65510;
+static const int iVtObjectIDStrGreen_2 = 65510;
+static const int iVtObjectIDStrBlue = 65509;
+static const int iVtObjectIDStrBlue_1 = 65509;
+static const int iVtObjectIDStrBlue_2 = 65509;
+static const int iVtObjectIDStrYellow = 65508;
+static const int iVtObjectIDStrCyan = 65507;
+static const int iVtObjectIDStrMagenta = 65506;
+static const int iVtObjectIDStrBlack = 65505;
+static const int iVtObjectIDStrWhite = 65504;
+static const int iVtObjectIDLikeIt = 65503;
+static const int iVtObjectIDLikeItNot = 65502;
+static const int iVtObjectIDcontainerInAllMasks = 65501;
+static const int iVtObjectIDUnnamed3 = 65500;
+static const int iVtObjectIDBigLogo = 65499;
+static const int iVtObjectIDleine = 65498;
+static const int iVtObjectIDKeyReset = 65497;
+static const int vtKeyCodeKeyReset = 254;
+static const int iVtObjectIDresetTextOS = 65496;
+static const int iVtObjectIDresetTextOS_1 = 65496;
+static const int iVtObjectIDresetTextOS_2 = 65496;
+static const int iVtObjectIDInputMiles = 65495;
+static const int iVtObjectIDMainMask = 1101;
+static const int iVtObjectIDmask1contentscontainer = 65494;
+static const int iVtObjectIDUnnamed4 = 65493;
+static const int iVtObjectIDspeedLabel = 65492;
+static const int iVtObjectIDUnnamed5 = 65491;
+static const int iVtObjectIDUnnamed6 = 65490;
+static const int iVtObjectIDUnnamed7 = 65489;
+static const int iVtObjectIDUnnamed8 = 65488;
+static const int iVtObjectIDUnnamed9 = 65487;
+static const int iVtObjectIDColLabel = 65486;
+static const int iVtObjectIDColOS = 65485;
+static const int iVtObjectIDAccelArchedBarGraph = 65484;
+static const int iVtObjectIDOpsFakeMileage = 65483;
+static const int iVtObjectIDChangeAwayPointer = 65482;
+static const int iVtObjectIDInputListTypFakeMiles = 65481;
+static const int iVtObjectIDUnnamed12 = 65480;
+static const int iVtObjectIDUnnamed13 = 65479;
+static const int iVtObjectIDUnnamed14 = 65478;
+static const int iVtObjectIDUnnamed15 = 65477;
+static const int iVtObjectIDUnnamed10 = 65476;
+static const int iVtObjectIDUnnamed11 = 65475;
+static const int iVtObjectIDInputLikeage = 65474;
+static const int iVtObjectIDLikeageOP = 65473;
+static const int iVtObjectIDKeyMoreAccel = 65472;
+static const int vtKeyCodeKeyMoreAccel =  253;
+static const int iVtObjectIDUnnamed16 = 65471;
+static const int iVtObjectIDKeyLessAccel = 65470;
+static const int vtKeyCodeKeyLessAccel =  252;
+static const int iVtObjectIDUnnamed17 = 65469;
+static const int iVtObjectIDvtLang = 65468;
+static const int iVtObjectIDOSlanguage = 65467;
+static const int iVtObjectIDdriver = 65466;
+static const int iVtObjectIDresonible = 65465;
+static const int iVtObjectIDISdriver = 65464;
+static const int iVtObjectIDOSresonible = 65463;
+static const int iVtObjectIDsoftkeys1 = 65462;
+static const int iVtObjectIDKeyMove = 65461;
+static const int vtKeyCodeKeyMove = 251;
+static const int iVtObjectIDUnnamed18 = 65460;
+static const int iVtObjectIDKeyLogo = 65459;
+static const int vtKeyCodeKeyLogo = 250;
+static const int iVtObjectIDUnnamed19 = 65458;
+static const int iVtObjectIDKeyChangeLang = 65457;
+static const int vtKeyCodeKeyChangeLang = 249;
+static const int iVtObjectIDUnnamed20 = 65456;
+static const int iVtObjectIDKeyChangeCol = 65455;
+static const int vtKeyCodeKeyChangeCol = 248;
+static const int iVtObjectIDUnnamed21 = 65454;
+static const int iVtObjectIDUnnamed22 = 65453;
+static const int iVtObjectIDKeyTransCol = 65452;
+static const int vtKeyCodeKeyTransCol = 247;
+static const int iVtObjectIDUnnamed23 = 65451;
+static const int iVtObjectIDUnnamed24 = 65450;
+static const int iVtObjectIDKeyForbidden = 65449;
+static const int vtKeyCodeKeyForbidden = 246;
+static const int iVtObjectIDUnnamed25 = 65448;
+static const int iVtObjectIDKeyChangeFill = 65447;
+static const int vtKeyCodeKeyChangeFill = 245;
+static const int iVtObjectIDUnnamed26 = 65446;
+static const int iVtObjectIDKeyUpdatePool = 65445;
+static const int vtKeyCodeKeyUpdatePool = 244;
+static const int iVtObjectIDUnnamed27 = 65444;
+static const int iVtObjectIDKeyChangeLogoPosition = 65443;
+static const int vtKeyCodeKeyChangeLogoPosition = 243;
+static const int iVtObjectIDUnnamed28 = 65442;
+static const int iVtObjectIDLineAttributes_Normal = 65441;
+static const int iVtObjectIDFillAttributes = 65440;
+static const int iVtObjectIDdEllipse = 65439;
+static const int iVtObjectIDdPolygon = 65438;
+static const int iVtObjectIDdMeter = 65437;
+static const int iVtObjectIDMacro_1 = 1;
+static const int iVtObjectIDMacro_2 = 2;
+static const int iVtObjectIDAnotherMask = 65436;
+static const int iVtObjectIDUnnamed29 = 65435;
+static const int iVtObjectIDUnnamed30 = 65434;
+static const int iVtObjectIDUnnamed31 = 65433;
+static const int iVtObjectIDUnnamed32 = 65432;
+static const int iVtObjectIDUnnamed33 = 65431;
+static const int iVtObjectIDUnnamed34 = 65430;
+static const int iVtObjectIDUnnamed35 = 65429;
+static const int iVtObjectIDForbiddenAlarmMask = 65428;
+static const int iVtObjectIDalarm1contentscontainer = 65427;
+static const int iVtObjectIDUnnamed36 = 65426;
+static const int iVtObjectIDUnnamed37 = 65425;
+static const int iVtObjectIDUnnamed38 = 65424;
+static const int iVtObjectIDsoftkeysAlarm = 65423;
+static const int vtObjectPoolDimension = 200;
+static const int vtObjectPoolSoftKeyWidth = 60;
+static const int vtObjectPoolSoftKeyHeight = 32;
 
-#define vtKeyCodeACK 0
+static const int vtKeyCodeACK = 0;

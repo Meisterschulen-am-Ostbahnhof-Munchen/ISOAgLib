@@ -225,7 +225,9 @@ public:
 
   /**
     hook function that gets called immediately after the
-    "End Of Object Pool Response" Message was received.
+    "End Of Object Pool Response"/"Load Version Response
+    Message was received for complete initial uploads
+    or automatical language update partial uploads.
     @param ab_wasLanguageUpdate TRUE if the object pool was updated while it was already active/being displayed.
                                 FALSE if the object pool was initially uploaded
     @param ai8_languageIndex -1 if a non-supported language was selected (and hence the default language (index 0) has been uploaded/updated)
@@ -234,6 +236,12 @@ public:
   */
   virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode)=0;
 
+  /**
+    hook function that gets called immediately after the
+    "End Of Object Pool Response" Message was received
+    for user-application triggered partial pool updates.
+  */
+  virtual void eventPartialPoolUploadedSuccessfully() {}
 
   /**
     This function is called right before a language update is being sent to the VT,

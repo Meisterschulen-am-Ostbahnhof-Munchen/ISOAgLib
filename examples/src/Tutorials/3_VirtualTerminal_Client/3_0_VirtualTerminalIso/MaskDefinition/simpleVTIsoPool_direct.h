@@ -7,4 +7,5 @@
 #include "simpleVTIsoPool-list01.inc"
 #include "simpleVTIsoPool-list02.inc"
 #include "simpleVTIsoPool-list.inc"
+#include "simpleVTIsoPool-list_attributes.inc"
 #include "simpleVTIsoPool-functions.inc"
