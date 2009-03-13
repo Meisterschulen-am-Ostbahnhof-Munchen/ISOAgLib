@@ -4,7 +4,8 @@
 class iObjectPool_simpleVTIsoPool_c : public IsoAgLib::iIsoTerminalObjectPool_c {
 public:
   void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);
-  iObjectPool_simpleVTIsoPool_c ();
+  iObjectPool_simpleVTIsoPool_c() : iIsoTerminalObjectPool_c (all_iVtObjectLists, 110, 6, 200, 60, 32) {}
+
 };
 
  #endif

@@ -584,9 +584,6 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_list, "\n  NULL // indicate end of list");
     fprintf (partFile_list, "\n};\n");
     fprintf (partFile_list, mstr_namespaceDeclarationEnd.c_str());
-    int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_list, "\niObjectPool_%s_c::iObjectPool_%s_c () : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {};\n",
-             mstr_className.c_str(), mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
 
     fclose(partFile_list);
   }
@@ -667,11 +664,19 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_direct, "\n");
     fprintf (partFile_handler_direct, "\n  /* This initialization-function is being automatically called by the vt2iso-generated VT-Client code. Do not call in the application! */");
     fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c ();", mstr_className.c_str());
+    int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
+    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
+             mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_direct, "\n};\n");
     fprintf (partFile_handler_direct, "\n #endif\n" );
     fclose (partFile_handler_direct);
   }
+
+
+
+
+
+
   if (partFile_handler_derived)
   { // handler class derived
   // NEW:
@@ -680,7 +685,9 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c ();", mstr_className.c_str());
+    int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
+    fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
+             mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_derived, "\n};\n");
     fprintf (partFile_handler_derived, "\n #endif\n" );
     fclose (partFile_handler_derived);
@@ -689,8 +696,6 @@ void vt2iso_c::clean_exit (const char* error_message)
   std::string extension;
   if (b_externalize)
     extension = "-extern";
-  else
-    extension.clear();
 
   // Write Direct includes
   partFileName = mstr_destinDirAndProjectPrefix + "_direct.h";
@@ -698,15 +703,28 @@ void vt2iso_c::clean_exit (const char* error_message)
 
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
-  for (unsigned int i=0; i<ui_languages; i++)
+  if (b_externalize)
   {
-    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
+    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo namespace!
+    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo namespace!
+    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects;\n");
+    for (unsigned int i=0; i<ui_languages; i++)
+    {
+      fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i;\n", i);
+    }
   }
-  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
+  else
+  {
+    for (unsigned int i=0; i<ui_languages; i++)
+    {
+      fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
+    }
+    fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
+  }
+  fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
 
   if (pc_specialParsing)
@@ -723,13 +741,27 @@ void vt2iso_c::clean_exit (const char* error_message)
   fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
   fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
-  for (unsigned int i=0; i<ui_languages; i++)
+  if (b_externalize)
   {
-    fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
+    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo namespace!
+    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo namespace!
+    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects\n");
+    for (unsigned int i=0; i<ui_languages; i++)
+    {
+      fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i\n", i);
+    }
   }
-  fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_direct, "#include \"%s-functions%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
+  else
+  {
+    for (unsigned int i=0; i<ui_languages; i++)
+    {
+      fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
+    }
+    fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
+  }
+  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
+
   if (pc_specialParsing)
   {
     pc_specialParsing->addFileIncludes(partFile_direct, mstr_outFileName.c_str());
@@ -764,7 +796,21 @@ void vt2iso_c::clean_exit (const char* error_message)
     partFileName = mstr_destinDirAndProjectPrefix + "-list.cpp";
     partFileTmp = &save_fopen (partFileName.c_str(), "wt");
     fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "#include \"%s-variables-extern.inc\"\n", mstr_outFileName.c_str());
+    for (unsigned int i=0; i<ui_languages; i++)
+    {
+      fprintf (partFileTmp, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
+    }
+    fprintf (partFileTmp, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
     fprintf (partFileTmp, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+    fclose (partFileTmp);
+
+    partFileName = mstr_destinDirAndProjectPrefix + "-list_attributes.cpp";
+    partFileTmp = &save_fopen (partFileName.c_str(), "wt");
+    fprintf (partFileTmp, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+    fprintf (partFileTmp, "#include \"%s-attributes-extern.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFileTmp, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
     fclose (partFileTmp);
   }
 
@@ -786,8 +832,6 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_obj_selection)     fclose (partFile_obj_selection);
   if (partFile_functions)         fclose (partFile_functions);
   if (partFile_functions_origin)  fclose (partFile_functions_origin);
-
-  splitFunction (true);
 
   if (error_message != NULL)
     std::cout << error_message;
@@ -995,37 +1039,13 @@ signed long int vt2iso_c::idOrName_toi(const char* apc_string, bool ab_isMacro)
     return getID (apc_string, ab_isMacro, false, 0);
 }
 
+
 void vt2iso_c::getKeyCode()
 {
   arrc_attributes [attrKey_code].set (str(format("%d") % kcNextAutoID));
   kcNextAutoID--;
 }
 
-void vt2iso_c::splitFunction (bool ab_onlyClose=false)
-{
-  static int splitFunctionPart = 0;
-  std::string partFileName;
-  if (partFile_split_function)
-  {
-    fprintf (partFile_split_function, "}\n");
-    fclose (partFile_split_function);
-    partFile_split_function = NULL;
-    splitFunctionPart++;
-  }
-
-  if (ab_onlyClose)
-    return;
-
-  partFileName = str(format("%s-function%d.cpp") % mstr_destinDirAndProjectPrefix % splitFunctionPart);
-  partFile_split_function = &save_fopen (partFileName.c_str(), "wt");
-
-  fprintf (partFile_split_function, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_split_function, "#include \"%s-variables-extern.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_split_function, "#include \"%s-variables-attributes.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_split_function, "void initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_DEF)\n", splitFunctionPart);
-  fprintf (partFile_split_function, "{\n");
-  fprintf (partFile_functions,      "  initAllObjectsOnce%d(SINGLETON_VEC_KEY_PARAMETER_USE);\n", splitFunctionPart);
-}
 
 void vt2iso_c::init (
   const string& arcstr_cmdlineName,
@@ -1142,13 +1162,6 @@ void vt2iso_c::init (
   partFileName = mstr_destinDirAndProjectPrefix + "-functions.inc";
   partFile_functions = &save_fopen (partFileName.c_str(),"wt");
 
-  if (b_externalize)
-  {
-    for (int i=0; i<20; i++)
-    {
-      fprintf (partFile_functions, "extern void initAllObjectsOnce%d (SINGLETON_VEC_KEY_PARAMETER_DEF);\n", i);
-    }
-  }
   partFileName = mstr_destinDirAndProjectPrefix + "-functions-origin.inc";
   partFile_functions_origin = &save_fopen (partFileName.c_str(),"wt");
 
@@ -2724,21 +2737,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
 
-        /// @todo Check what happens with the externalized version
-        if (b_externalize)
-        {
-          static int splitCount=0;
-          if ((splitCount & 0x1FF) == 0) splitFunction();
-          splitCount++;
-          fprintf (partFile_split_function,    "  iVtObject%s%s.init (&iVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", m_objName.c_str(), pc_postfix.c_str(), m_objName.c_str(), pc_postfix.c_str());
-        }
-#if 0
-/// This is now done with a generic loop. So this part is not generated line-by-line-anymore.
-        else
-        {
-          fprintf (partFile_functions,         "  %siVtObject%s%s.init (&%siVtObject%s%s_sROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n", mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str(), mstr_namespacePrefix.c_str(), m_objName.c_str(), pc_postfix.c_str());
-        }
-#endif
         fprintf (partFile_defines, "static const int iVtObjectID%s%s = %d;\n", m_objName.c_str(), pc_postfix.c_str(), objID);
       }
 

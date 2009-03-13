@@ -308,8 +308,6 @@ private:
 
   void autoDetectLanguage (DOMNode *n);
 
-  void splitFunction (bool ab_onlyClose);
-
   bool processProjectFile(const std::string& pch_fileName);
 
   unsigned int getFreeId (unsigned int& aui_objNextId);

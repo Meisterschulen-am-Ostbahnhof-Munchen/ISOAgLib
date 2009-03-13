@@ -29,7 +29,7 @@ public:
   /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */
   //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);
   void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);
-  iObjectPool_simpleVTIsoPool_c ();
+  iObjectPool_simpleVTIsoPool_c() : iIsoTerminalObjectPool_c (all_iVtObjectLists, 110, 6, 200, 60, 32) {}
 };
 
  #endif

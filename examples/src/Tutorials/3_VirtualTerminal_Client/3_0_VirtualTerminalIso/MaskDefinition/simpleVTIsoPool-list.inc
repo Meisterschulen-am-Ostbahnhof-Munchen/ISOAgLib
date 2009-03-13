@@ -118,5 +118,3 @@ IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [] = {
   all_iVtObjects2,
   NULL // indicate end of list
 };
-
-iObjectPool_simpleVTIsoPool_c::iObjectPool_simpleVTIsoPool_c () : iIsoTerminalObjectPool_c (all_iVtObjectLists, 110, 6, 200, 60, 32) {};
