@@ -513,7 +513,7 @@ void vt2iso_c::clean_exit (const char* error_message)
 
   if (partFile_defines)
   {
-    fprintf (partFile_defines, "\nstatic const int vtKeyCodeACK = 0;\n");
+    fprintf (partFile_defines, "\nstatic const unsigned int vtKeyCodeACK = 0;\n");
     // OLD:  fprintf (partFile_defines, "\n#define vtObjectCount %d\n", objCount);
   }
 
@@ -2737,7 +2737,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         fprintf (partFile_attributes_extern, "extern const IsoAgLib::iVtObject_c::iVtObject%s_s iVtObject%s%s_sROM;\n", otClassnameTable [objType], m_objName.c_str(), pc_postfix.c_str());
 
-        fprintf (partFile_defines, "static const int iVtObjectID%s%s = %d;\n", m_objName.c_str(), pc_postfix.c_str(), objID);
+        fprintf (partFile_defines, "static const unsigned int iVtObjectID%s%s = %d;\n", m_objName.c_str(), pc_postfix.c_str(), objID);
       }
 
       /// Add explicit Button/Key includement
@@ -2864,7 +2864,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
 
           fprintf (partFile_attributes, ", %d, %s", colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str());
-          fprintf (partFile_defines, "static const int vtKeyCode%s = %d;\n", m_objName.c_str(),  arrc_attributes [attrKey_code].getIntValue()); // like in otButton
+          fprintf (partFile_defines, "static const unsigned int vtKeyCode%s = %d;\n", m_objName.c_str(),  arrc_attributes [attrKey_code].getIntValue()); // like in otButton
           break;
 
         case otButton:
@@ -2882,7 +2882,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()) == -1)
             return false;
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str(), buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()));
-          fprintf (partFile_defines, "static const int vtKeyCode%s =  %d;\n", m_objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
+          fprintf (partFile_defines, "static const unsigned int vtKeyCode%s =  %d;\n", m_objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
           break;
 
         case otInputboolean:
@@ -4252,9 +4252,9 @@ vt2iso_c::skRelatedFileOutput()
       std::cout << "\n\nWARNING: You have NOT specified a SoftKey-Width/Height, so vt2iso assumes your softkeys are designed on a 60x32 pixel basis.\n"
                 << "ATTENTION: SoftKeys are scaled and centered to fit the SK-Dimensions of the VT it is displayed on, so take care that you know what you're doing!"<<std::endl<<std::endl;
   }
-  fprintf (partFile_defines, "static const int vtObjectPoolDimension = %d;\n", getOPDimension());
-  fprintf (partFile_defines, "static const int vtObjectPoolSoftKeyWidth = %d;\n", getSKWidth());
-  fprintf (partFile_defines, "static const int vtObjectPoolSoftKeyHeight = %d;\n", getSKHeight());
+  fprintf (partFile_defines, "static const unsigned int vtObjectPoolDimension = %d;\n", getOPDimension());
+  fprintf (partFile_defines, "static const unsigned int vtObjectPoolSoftKeyWidth = %d;\n", getSKWidth());
+  fprintf (partFile_defines, "static const unsigned int vtObjectPoolSoftKeyHeight = %d;\n", getSKHeight());
 }
 
 void vt2iso_c::generateIncludeDefines()
