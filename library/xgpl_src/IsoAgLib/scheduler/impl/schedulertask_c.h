@@ -296,6 +296,20 @@ protected:
   //! can be overloaded by Childclass for special condition
   virtual void updateEarlierAndLatestInterval();
 
+  //! Operation: setEarlierInterval
+  //! Set lowest time interval that can be handled by the application. The time period of a task is within the range
+  //! of ( timePeriod - earlierInterval ) <= timePeriod <= (timePeriod + latestInterval )
+  //! Parameter:
+  //! @param uint16_t aui16_interval: smallest possible interval between two time Events (timePeriod - aui16_interval) [msec]
+  void setEarlierInterval( uint16_t aui16_interval ) { mui16_earlierInterval = aui16_interval; }
+
+  //! Operation: setLatestInterval
+  //! Set latest time interval that can be handled by the application. The time period of a task is within the range
+  //! of ( timePeriod - earlierInterval ) <= timePeriod <= (timePeriod + latestInterval )
+  //! Parameter:
+  //! @param uint16_t aui16_interval: biggest possible interval between two time Events (timePeriod + aui16_interval) [msec]
+  void setLatestInterval( uint16_t aui16_interval ) { mui16_latestInterval = aui16_interval; }
+
   //! contains timeSpread for that a Task can be called EARLIER
   uint16_t mui16_earlierInterval;
 

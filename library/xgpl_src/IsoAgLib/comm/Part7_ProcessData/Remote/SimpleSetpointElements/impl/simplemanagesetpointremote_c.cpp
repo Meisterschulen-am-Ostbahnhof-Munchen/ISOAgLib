@@ -135,7 +135,6 @@ void SimpleManageSetpointRemote_c::processSetpoint()
   // pd = 0
   if (!c_pkg.mc_processCmd.checkIsRequest())
   {
-    bool b_change = false;
     switch (c_pkg.mc_processCmd.getValueGroup())
     {
       case ProcessCmd_c::exactValue: // exact setpoint
@@ -144,7 +143,6 @@ void SimpleManageSetpointRemote_c::processSetpoint()
         {
           if ( f_setpointMasterVal != c_pkg.dataFloat() ) {
             f_setpointMasterVal = c_pkg.dataFloat();
-            b_change = true;
           }
           // check for Fendt Reset Cmd
           setValType(float_val);
@@ -154,7 +152,6 @@ void SimpleManageSetpointRemote_c::processSetpoint()
         {
           if ( mi32_setpointMasterVal != c_pkg.dataLong() ) {
             mi32_setpointMasterVal = c_pkg.dataLong();
-            b_change = true;
           }
           // check for Fendt Reset Cmd
           setValType(i32_val);

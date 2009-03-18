@@ -220,6 +220,34 @@ public:
 
   int getSingletonVecKey() const { return mi_key;}
 
+protected:
+
+  /**  Operation: setTimePeriod
+    * Set client specific time period between calls of timeEvent.
+    * Each from Scheduler_Task_c derived class must set at its INIT
+    * or can use it to set other Time Period in timeEvent()
+    * Do NOT call from outside (e.g. processMsg)
+    * Parameter:
+    * @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
+    */
+  void setTimePeriod (uint16_t aui16_timePeriod) { return Scheduler_Task_c::setTimePeriod( aui16_timePeriod ); }
+
+  /** Operation: setEarlierInterval
+   * Set lowest time interval that can be handled by the application. The execution time period of a task is within the range
+   * of ( timePeriod - earlierInterval ) <= timePeriod <= (timePeriod + latestInterval )
+   * Parameter:
+   * @param uint16_t aui16_interval: smallest possible interval between two time Events (timePeriod - aui16_interval) [msec]
+   */
+  void setEarlierInterval( uint16_t aui16_interval ) { Scheduler_Task_c::setEarlierInterval( aui16_interval ); }
+
+  /** Operation: setLatestInterval
+   * Set latest time interval that can be handled by the application. The time period of a task is within the range
+   * of ( timePeriod - earlierInterval ) <= timePeriod <= (timePeriod + latestInterval )
+   * Parameter:
+   * @param uint16_t aui16_interval: biggest possible interval between two time Events (timePeriod + aui16_interval) [msec]
+   */
+  void setLatestInterval( uint16_t aui16_interval ) { Scheduler_Task_c::setLatestInterval( aui16_interval ); }
+
   private:
 
   /**protocol instance */
