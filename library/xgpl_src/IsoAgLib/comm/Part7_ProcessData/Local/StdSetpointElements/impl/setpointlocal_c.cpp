@@ -120,6 +120,7 @@
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -523,7 +524,7 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
     { // exact setpoint exist
       i32_delta = (ai32_val - masterConst().exact());
       if (masterConst().exact() != 0)
-        b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().exact());
+        b_deviationPercent = ((__IsoAgLib::abs( i32_delta) * 100)/masterConst().exact());
       else b_deviationPercent = 100;
       b_actualValid = (b_deviationPercent < mb_allowedDeltaPercent)?true:false;
     }
@@ -532,13 +533,13 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
       if (masterConst().existMin())
       {
         i32_delta = (ai32_val - masterConst().min());
-        b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().min());
+        b_deviationPercent = ((__IsoAgLib::abs( i32_delta) * 100)/masterConst().min());
         b_actualValid = ((i32_delta >= 0)||(b_deviationPercent < mb_allowedDeltaPercent))?true:false;
       }
       if (b_actualValid && (masterConst().existMax()))
       { // the min test was if done successfull -> max limit exist -> check it
         i32_delta = (ai32_val - masterConst().max());
-        b_deviationPercent = ((CNAMESPACE::labs( i32_delta) * 100)/masterConst().max());
+        b_deviationPercent = ((__IsoAgLib::abs( i32_delta) * 100)/masterConst().max());
         b_actualValid = ((i32_delta <= 0)||(b_deviationPercent < mb_allowedDeltaPercent))?true:false;
       }
       // check for (only) percent can`t be done dependent on measurement

@@ -375,7 +375,7 @@ bool MyProcessDataHandler_c::processSetpointSet( EventSource_c acrc_src, int32_t
   if ( rc_callerIsoName.getDevClass() == 0x1 ) {
     // reaction on setpoints sent by device type 1
   }
-  else if ( abs( ri32_val - currentVal ) < 10 )
+  else if ( __IsoAgLib::abs( ri32_val - currentVal ) < 10 )
   { // handle setpoints which are near to current value...
   }
 }

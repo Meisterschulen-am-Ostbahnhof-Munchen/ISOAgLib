@@ -89,6 +89,7 @@
 #include "measuresubprog_c.h"
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <cstdlib>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
@@ -188,7 +189,7 @@ bool MeasureSubprog_c::updateTrigger(int32_t ai32_val){
   { // special case: OnChange with value 0 means: SEND NO value; 1 meanse: send any change; ...
     return false;
   }
-  else if (CNAMESPACE::labs(ai32_val - mi32_lastVal) >= mi32_increment)
+  else if (__IsoAgLib::abs(ai32_val - mi32_lastVal) >= mi32_increment)
   {
     mi32_lastVal = ai32_val;
     return true;
@@ -209,7 +210,7 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
     {
 #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
       const int32_t ci32_restDistance = mi32_lastVal + mi32_increment - ai32_val;
-      const int32_t ci32_speed = CNAMESPACE::labs(getTracMoveInstance4Comm().selectedSpeed());  // speed can be negative
+      const int32_t ci32_speed = __IsoAgLib::abs(getTracMoveInstance4Comm().selectedSpeed());  // speed can be negative
 
       if (0 == ci32_speed)
         // speed == 0

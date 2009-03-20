@@ -89,6 +89,7 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include "../../../impl/process_c.h"
 #include "../../../processdatachangehandler_c.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 namespace __IsoAgLib {
   /**
@@ -508,7 +509,7 @@ void MeasureProgRemote_c::setVal(int32_t ai32_val){
   // claculate delta and accel in 1/s
   if (i32_timeDelta > 0)
   {
-    if (CNAMESPACE::labs(i32_incr) > 100000)
+    if (__IsoAgLib::abs(i32_incr) > 100000)
     { // i32_incr very big -> first divide than mult
       mi32_delta = (i32_incr / i32_timeDelta) * 1000;
       mi32_accel = ((mi32_delta - i32_oldDelta) / i32_timeDelta) * 1000;

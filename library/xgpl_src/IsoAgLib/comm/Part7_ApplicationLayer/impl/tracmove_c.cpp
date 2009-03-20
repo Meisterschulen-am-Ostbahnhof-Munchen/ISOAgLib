@@ -91,6 +91,8 @@
 #endif
 #include "tracmove_c.h"
 
+#include <IsoAgLib/util/impl/util_funcs.h>
+
 #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
@@ -563,11 +565,7 @@ void TracMove_c::singletonInit()
     if ( (mui16_suppressMask & GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK) == 0 )
     {
       data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
-      #ifdef SYSTEM_PC_VC
-      data().setUint16Data( 0, labs(mi32_speedReal));
-      #else
-      data().setUint16Data(0, CNAMESPACE::labs(mi32_speedReal));
-      #endif
+	  data().setUint16Data( 0, __IsoAgLib::abs(mi32_speedReal));
       data().setUint32Data(2, mui32_distReal);
 
       b_val8 |= mt_directionReal;
@@ -582,11 +580,7 @@ void TracMove_c::singletonInit()
     if ( (mui16_suppressMask & WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK) == 0 )
     {
       data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
-      #ifdef SYSTEM_PC_VC
-      data().setUint16Data(0, labs(mi32_speedTheor));
-      #else
-      data().setUint16Data(0, CNAMESPACE::labs(mi32_speedTheor));
-      #endif
+	  data().setUint16Data(0, __IsoAgLib::abs(mi32_speedTheor));
       data().setUint32Data(2, mui32_distTheor);
 
       b_val8 = 0;
@@ -610,11 +604,7 @@ void TracMove_c::singletonInit()
       data().setIsoPgn(SELECTED_SPEED_MESSAGE);
       uint8_t ui8_temp = 0;
 
-      #ifdef SYSTEM_PC_VC
-      data().setUint16Data(0, labs(mi32_selectedSpeed));
-      #else
-      data().setUint16Data(0, CNAMESPACE::labs(mi32_selectedSpeed));
-      #endif
+	  data().setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
       data().setUint32Data(2, mui32_selectedDistance);
       ui8_temp |= (mt_selectedSpeedLimitStatus << 5);
       ui8_temp |= (mt_selectedSpeedSource      << 2);

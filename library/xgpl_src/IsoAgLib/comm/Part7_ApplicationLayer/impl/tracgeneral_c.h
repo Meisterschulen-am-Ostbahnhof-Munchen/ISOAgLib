@@ -105,7 +105,7 @@ namespace __IsoAgLib {
 typedef struct
 {
   /** last time of maintain power request [ms] */
-  int32_t i32_lastMaintainPowerRequest : 32;
+  int32_t i32_lastMaintainPowerRequest;
 
   /** state whether maintenance of ECU power was requested */
   bool b_maintainEcuPower : 1;

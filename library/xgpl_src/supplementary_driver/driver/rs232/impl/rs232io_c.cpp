@@ -85,6 +85,7 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/hal/system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 #include "rs232io_c.h"
 
@@ -434,11 +435,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(int8_t ac_data)
   {
-    #ifdef WIN32
-    int16_t i16_val = (ac_data >= 0)?ac_data:(-1*(abs(ac_data)));
-    #else
-    int16_t i16_val = (ac_data >= 0)?ac_data:(-1*(CNAMESPACE::abs(ac_data)));
-    #endif
+    int16_t i16_val (ac_data);
     char pc_data[5];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
     CNAMESPACE::sprintf(pc_data, "%hi", i16_val);

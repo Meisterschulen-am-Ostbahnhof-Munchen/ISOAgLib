@@ -89,10 +89,10 @@
 #include "../../impl/process_c.h"
 #include "../../processdatachangehandler_c.h"
 #include <algorithm>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -731,7 +731,7 @@ void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
 
   if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
     // time proportional
-    addSubprog(Proc_c::TimeProp, CNAMESPACE::labs(ci32_val), ren_doSend);
+    addSubprog(Proc_c::TimeProp, __IsoAgLib::abs(ci32_val), ren_doSend);
 
   if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementDistanceValueStart)
     // distance proportional

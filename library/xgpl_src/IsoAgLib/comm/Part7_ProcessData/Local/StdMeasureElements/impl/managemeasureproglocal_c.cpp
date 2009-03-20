@@ -86,11 +86,11 @@
 /* *************************************** */
 #include "managemeasureproglocal_c.h"
 #include "../../../impl/process_c.h"
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #ifdef DEBUG_HEAP_USEAGE
@@ -616,7 +616,7 @@ bool ManageMeasureProgLocal_c::startDataLogging(Proc_c::type_t ren_type /* Proc_
   mpc_progCache->setISOName(*apc_receiverDevice);
 
   if (Proc_c::TimeProp == ren_type)
-    mpc_progCache->addSubprog(ren_type, CNAMESPACE::labs(ai32_increment));
+    mpc_progCache->addSubprog(ren_type, __IsoAgLib::abs(ai32_increment));
   else
     mpc_progCache->addSubprog(ren_type, ai32_increment);
 

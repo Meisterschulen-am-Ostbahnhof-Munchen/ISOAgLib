@@ -96,7 +96,13 @@ class StreamInput_c;
 #endif
 
 // Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
+namespace __IsoAgLib
+{
+  template <class T> inline T abs(const T& val)
+  {
+    return (val < 0) ? (-val) : val;
+  }
+
   uint8_t bcd2dec(uint8_t ab_bcd);
   uint8_t dec2bcd(uint8_t ab_dec);
 /**
