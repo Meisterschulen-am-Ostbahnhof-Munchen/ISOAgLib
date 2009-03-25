@@ -577,9 +577,24 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 //  changed to only one through this file, and the one defined externally.
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
-
   int32_t i32_rc;
   transferBuf_s s_transferBuf;
+
+  // See if the HALSimulator_c wants to insert a can msg for this bBusNumber and bMsgObj
+  // Note: bMsgObj may be changed by the HALSimulator_c - this happens in the case bMsgObj = COMMON_MSGOBJ_IN_QUEUE (0xFF)
+  // The HALSimulator_c is responsible for setting bMsgObj correctly for the returned message
+  // Otherwise, it can cause an infinite loop if the bMsgObj doesn't match the message.
+  // ( bMsgObj is basically which CAN hardware filter the message should fall into )
+  if( HALSimulator_c::GetHALSimulator_c().InsertReceiveCanMsg( bBusNumber, &bMsgObj, &ptReceive->bXtd, &ptReceive->dwId, &ptReceive->bDlc, ptReceive->abData ) == true )
+  {
+    // copy data
+    i32_lastReceiveTime = getTime();
+    ptReceive->bMsgObj = bMsgObj;
+    ptReceive->tReceiveTime.w1us = 0;
+    ptReceive->tReceiveTime.l1ms = i32_lastReceiveTime;
+
+    return HAL_NO_ERR;
+  }
 
   //DEBUG_PRINT2("getCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
 

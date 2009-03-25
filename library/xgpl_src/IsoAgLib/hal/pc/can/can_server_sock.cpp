@@ -710,6 +710,12 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
 
       case COMMAND_CONFIG:
+        if ( p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR )
+        {
+          i32_error = HAL_RANGE_ERR;
+          break;
+        }
+
         if (p_writeBuf->s_config.ui8_obj >= iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].size()) {
           // add new elements in the vector with resize
           iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].resize(p_writeBuf->s_config.ui8_obj+1);
@@ -907,7 +913,6 @@ void readWrite(server_c* pc_serverData)
                 monitorCanMsg (&s_transferBuf);
               }
             }
-            break; // handle only first found bus
           }
         }
         continue;
@@ -934,7 +939,6 @@ void readWrite(server_c* pc_serverData)
             monitorCanMsg (&s_transferBuf);
           }
         }
-        break; // handle only first found bus
       }
       continue;
     }

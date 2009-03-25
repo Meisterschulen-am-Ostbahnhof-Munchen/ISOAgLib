@@ -79,6 +79,9 @@
 #  elif defined(SYSTEM_A5)
    /* we know that this cpu is little endian */
 #    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
+#  elif defined(SYSTEM_PC_VC)
+   /* we know that the Microsoft Visual C++ platform is little endian */
+#    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 #  endif
 #endif
 

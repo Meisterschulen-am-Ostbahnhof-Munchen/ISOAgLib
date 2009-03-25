@@ -78,11 +78,9 @@ using namespace __HAL;
 // Globals
 
 // CAN Globals
-HANDLE htEventR;
-HANDLE htEventE;
-HANDLE handle;
-
-
+HANDLE htEventR[cui32_maxCanBusCnt];
+HANDLE htEventE[cui32_maxCanBusCnt];
+HANDLE handle[cui32_maxCanBusCnt];
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
 
@@ -96,6 +94,9 @@ uint32_t initCardApi ()
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
   {
     canBusIsOpen[i] = false;
+    htEventR[i] = CreateEvent (NULL,TRUE,FALSE,"R1");
+    htEventE[i] = CreateEvent (NULL,TRUE,FALSE,"E1");
+    handle[i]   = 0;
   }
 
   long l_netnumber_max = 26;                   // highest net number
@@ -104,13 +105,12 @@ uint32_t initCardApi ()
   long l_retval;
 
   // create events
-  htEventR = CreateEvent (NULL,TRUE,FALSE,"R1");
-  htEventE = CreateEvent (NULL,TRUE,FALSE,"E1");
  
   printf ( "HW detection ...\n");
   
+  uint32_t busnr=0;
   long l_netnumber = 0;
-  for (; l_netnumber < l_netnumber_max; l_netnumber++)
+  for (; (l_netnumber < l_netnumber_max) && (busnr<cui32_maxCanBusCnt); l_netnumber++)
   {
     // open new handle
     l_retval = canOpen (l_netnumber,
@@ -121,16 +121,16 @@ uint32_t initCardApi ()
                         "c_MyFirstApplication",
                         "R1",
                         "E1",
-                        &handle);
+                        &handle[busnr]);
     // successful?
     if ( l_retval == NTCAN_SUCCESS ) {
       // success => HW found
-      printf ( "canOpen: used netnumber %d\n", l_netnumber);
-      break;
+      printf ( "canOpen: CAN%d using netnumber %d\n", (unsigned int) busnr, l_netnumber);
+      busnr++;
     }
   }
   
-  if (l_netnumber == l_netnumber_max) 
+  if (busnr == 0) 
   {
      printf("HW detection failed.\n");
      exit(1);
@@ -154,7 +154,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     long                    l_retval;
     long                    l_baud = 0x00000003;    // 250kbit/sec
 
-    l_retval = canSetBaudrate ( handle, l_baud );
+    l_retval = canSetBaudrate ( handle[ui8_bus], l_baud );
     // successful ?
     if ( l_retval != NTCAN_SUCCESS ) {
       // error
@@ -163,14 +163,14 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
 
     // enable all CAN identifiers
-    l_retval = canEnableAllIds(handle, true);
+    l_retval = canEnableAllIds(handle[ui8_bus], true);
     if (l_retval != NTCAN_SUCCESS) {
       // Error handling...
       printf ( "error in  canEnableAllIds!\n");
       return false;       
     }
 
-    l_retval = canSetFilterMode(handle, filterMode_nofilter);
+    l_retval = canSetFilterMode(handle[ui8_bus], filterMode_nofilter);
     if (l_retval != NTCAN_SUCCESS) {
       // Error handling...
       printf ( "error in  canEnableAllIds!\n");
@@ -178,7 +178,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
 
     CAN_IF_STATUS t_CANStatus;
-    l_retval = canStatus ( handle, &t_CANStatus );
+    l_retval = canStatus ( handle[ui8_bus], &t_CANStatus );
     if ( l_retval == NTCAN_SUCCESS ) {
       printf ( "status from card:\n");
     //  printf ( "HW Rev. : %04X\n", t_CANStatus.w_hw_recv );
@@ -209,15 +209,15 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   long            l_retval;
   CMSG            t_CANMsg[1];
   long      l_len;
-  int i, k;
 
   l_len = 1;
-  l_retval = canRead (handle,
+  l_retval = canRead (handle[ui8_bus],
                       &t_CANMsg[0],
                       &l_len);
   // successful ?
   if ( l_retval == NTCAN_SUCCESS ) {
 #if 0
+  int i, k;
     // at least one message read
     // Parameter l_len contains now number of read frames
     for ( i = 0; i < l_len; i++ ) {
@@ -265,7 +265,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     t_CANMsg[0].aby_data[ind] = ps_canMsg->ui8_data[ind];
 
   // blocked transmit
-  l_retval = canSend ( handle,
+  l_retval = canSend ( handle[ui8_bus],
                        &t_CANMsg[0],
                        &l_len );
   if ( l_retval == NTCAN_SUCCESS ) {

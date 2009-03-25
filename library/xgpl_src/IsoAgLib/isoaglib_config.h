@@ -88,6 +88,13 @@
  */
 #define HANDLE_FAST_DATATYPE_AS_STRICT NO
 
+// If the system is a PC type (but SYSTEM_PC was not yet set), then we must auto-define SYSTEM_PC before including the project config file
+#ifndef (SYSTEM_PC)
+#  if defined( SYSTEM_PC_VC ) || defined( SYSTEM_PC_MFC ) || defined( SYSTEM_A1 ) || defined( SYSTEM_A5 )
+#    define SYSTEM_PC
+#  endif
+#endif
+
 /* ******************************************************** */
 /**
  * \name Decide if the project uses a auto generated configuration
@@ -983,10 +990,6 @@
   #if SYSTEM_MITRON167_YN == YES && !defined(SYSTEM_MITRON167)
     #define SYSTEM_MITRON167
   #endif
-
-#ifdef SYSTEM_PC_VC
-#define SYSTEM_PC
-#endif
 
 /** define the debug device to use */
 #ifndef INTERNAL_DEBUG_DEVICE

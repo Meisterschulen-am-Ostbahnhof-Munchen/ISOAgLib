@@ -52,6 +52,9 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
+#define DEF_USE_SERVER_SPECIFIC_HEADER
+#include "can_server.h"
+
 #ifdef WIN32
   #include <windows.h>
   #include <Pcan_usb.h>
@@ -61,9 +64,6 @@
   #include <fcntl.h>
   #include <sys/ioctl.h>
 #endif
-
-#define DEF_USE_SERVER_SPECIFIC_HEADER
-#include "can_server.h"
 
 using namespace __HAL;
 
