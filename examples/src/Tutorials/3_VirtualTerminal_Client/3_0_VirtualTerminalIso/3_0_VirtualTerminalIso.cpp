@@ -216,14 +216,46 @@
     #include <supplementary_driver/driver/rs232/irs232io_c.h>
   #endif
 #endif
-/* the following include direction includes
-   all generated ISO Terminal Object Pool Definitions */
-#include "MaskDefinition/simpleVTIsoPool_direct.h"
 #ifdef SYSTEM_PC
   #ifdef WIN32
     #include <windows.h>
   #endif
 #endif
+
+/* the following include direction includes
+   all generated ISO Terminal Object Pool Definitions */
+#include "MaskDefinition/simpleVTIsoPool_derived-h.h"
+#include "MaskDefinition/simpleVTIsoPool_derived-cpp.h"
+
+class MainApplicationClass : public iObjectPool_simpleVTIsoPool_c {
+public:
+  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);
+  /* Uncomment the following function if you want to use command-response handling! */
+  //virtual void eventPointingEvent (uint16_t aui16_xPosition, uint16_t aui16_yPosition);
+  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);
+  virtual void eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t aui8_unparsedBytes, bool b_isFirst, bool b_isLast);
+  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */
+  //virtual void eventStringValueAbort();
+  virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode);
+  // virtual void eventVtSelectInputObject(uint16_t aui16_objectId, uint8_t aui8_hasFocus, uint8_t aui8_selected);
+  //virtual void eventPrepareForLanguageChange (int8_t ai8_languageIndex, uint16_t aui16_languageCode);
+  virtual void eventEnterSafeState ();
+  /* Uncomment the following function if you want to use command-response handling! */
+  //virtual void eventCommandResponse (uint8_t aui8_responseCommandError, const uint8_t apui8_responseDataBytes[8]);
+  /* Uncomment the following function if you want to use a special colour-conversion! */
+  virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
+  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */
+  virtual void eventLanguagePgn (const localSettings_s& ars_localSettings);
+  /* Uncomment the following function if you want to react on any incoming VT Status messages */
+  //virtual void eventVtStatusMsg();
+  /* Uncomment the following function if you want to react on any incoming VT ESC */
+  //virtual void eventVtESC(uint16_t /*aui16_ObjectId*/);
+  /* Uncomment the following function if you want to react on any incoming Auxiliary Input Status messages */
+  //virtual void eventAuxFunctionValue (uint16_t mui16_functionUid, uint16_t cui16_inputValueAnalog, uint16_t cui16_inputValueTransitions, uint8_t cui8_inputValueDigital);
+  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */
+  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);
+};
+
 
 // the interface objects of the IsoAgLib are placed in the IsoAgLib namespace
 // -> include all elements of this area for easy access
@@ -231,7 +263,7 @@
 // is needed for the documentation generator
 using namespace IsoAgLib;
 
-static iObjectPool_simpleVTIsoPool_c Tutorial_3_0_Pool_c;
+static MainApplicationClass Tutorial_3_0_Pool_c;
 static iVtClientServerCommunication_c* spc_tut30csc;
 
 /// Things needed for the Partial Pool Update following...
@@ -294,7 +326,7 @@ void updateAccel(int32_t ai32_value) {
   @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...
   @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
 */
-uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c* /*obj*/, IsoAgLib::e_vtColour whichColour)
+uint8_t MainApplicationClass::convertColour(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c* /*obj*/, IsoAgLib::e_vtColour whichColour)
 {
   if (colorDepth == 0 /* 2colored b/w */) {
     if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
@@ -332,7 +364,7 @@ uint8_t iObjectPool_simpleVTIsoPool_c::convertColour(uint8_t colorValue, uint8_t
 }
 
 // handle incoming number-inputs from vt
-void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t ui8_value, uint32_t ui32_value )
+void MainApplicationClass::eventNumericValue ( uint16_t objId, uint8_t ui8_value, uint32_t ui32_value )
 {
   switch (objId) {
     case iVtObjectIDInputMiles:
@@ -362,7 +394,7 @@ void iObjectPool_simpleVTIsoPool_c::eventNumericValue ( uint16_t objId, uint8_t 
 
 
 // incoming key-events
-void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
+void MainApplicationClass::eventKeyCode ( uint8_t keyActivationCode, uint16_t /*objId*/, uint16_t /*objIdMask*/, uint8_t keyCode, bool /*wasButton*/ )
 {
 /* just for your information! - defines are to be found in the "ivttypes.h" include!
   #define BUTTON_HAS_BEEN_UNLATCHED 0
@@ -456,7 +488,7 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode ( uint8_t keyActivationCode, ui
   }
 }
 // has to be implemented - remember that if the VT drops out and comes again, the values have to be up2date!!!
-void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode)
+void MainApplicationClass::eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode)
 {
   //! The language-code/index given here indicates that the Objectpool Upload or Update has finished NOW with exactly THIS given language!
   //! --> There's a difference to "eventLanguagePgn", because "eventLanguagePgn" will be called IMMEDIATELY when the user changes the
@@ -487,7 +519,7 @@ void iObjectPool_simpleVTIsoPool_c::eventObjectPoolUploadedSuccessfully (bool ab
     #endif
   }
 }
-void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
+void MainApplicationClass::eventEnterSafeState ()
 {
   // Nothing done here for now. (Commands being sent out to the VT are ignored by IsoTerminalServer_c)
   // As it's a simple Tutorial example there's nothing in real danger!
@@ -496,7 +528,7 @@ void iObjectPool_simpleVTIsoPool_c::eventEnterSafeState ()
   EXTERNAL_DEBUG_DEVICE << "-->eventEnterSafeState<--" << EXTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
-void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t /*aui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
+void MainApplicationClass::eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t /*aui8_unparsedBytes*/, bool /*b_isFirst*/, bool b_isLast)
 {
   if (b_isLast)
   {
@@ -518,7 +550,7 @@ void iObjectPool_simpleVTIsoPool_c::eventStringValue (uint16_t aui16_objId, uint
   }
 }
 void
-iObjectPool_simpleVTIsoPool_c::eventLanguagePgn(const localSettings_s& ars_localSettings)
+MainApplicationClass::eventLanguagePgn(const localSettings_s& ars_localSettings)
 {
   /// THIS FUNCTION SHOULD ONLY BE USED FOR CHANGE IN UNITS, ETC.
   /// FOR LANGUAGE CHANGE, REFER TO --> "eventObjectPoolUploadedSuccessfully" <--

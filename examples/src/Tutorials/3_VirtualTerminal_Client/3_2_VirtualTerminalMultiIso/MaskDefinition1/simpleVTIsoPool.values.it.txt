@@ -1,3 +1,0 @@
-StrGreen, "verde"
-StrBlue, "blu"
-resetTextOS, "Risettare"

@@ -469,7 +469,6 @@ bool vt2iso_c::sb_WSFound = false;
 
 void vt2iso_c::clean_exit (const char* error_message)
 {
-  FILE* partFile_direct = NULL;
   std::string partFileName;
 
   // close all streams to files at the end of this function because someone may want
@@ -612,10 +611,12 @@ void vt2iso_c::clean_exit (const char* error_message)
     fclose (arrs_language [i].partFile);
   }
 
+#if 0
+  FILE* partFile_direct = NULL;
   if (partFile_handler_direct)
   { // handler class direct
-    fprintf (partFile_handler_direct, "\n #ifndef DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
-    fprintf (partFile_handler_direct, "\n #define DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_direct, "#ifndef DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_direct, "\n#define DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
     fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_direct, "\npublic:");
     fprintf (partFile_handler_direct, "\n");
@@ -668,10 +669,10 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
              mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_direct, "\n};\n");
-    fprintf (partFile_handler_direct, "\n #endif\n" );
+    fprintf (partFile_handler_direct, "\n#endif\n" );
     fclose (partFile_handler_direct);
   }
-
+#endif
 
 
 
@@ -680,8 +681,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_handler_derived)
   { // handler class derived
   // NEW:
-    fprintf (partFile_handler_derived, "\n #ifndef DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
-    fprintf (partFile_handler_derived, "\n #define DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_derived, "#ifndef DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_derived, "\n#define DECL_derived_iObjectPool_%s_c", mstr_className.c_str() );
+    fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationBegin.c_str());
+    fprintf (partFile_handler_derived, "\n// forward declaration");
+    fprintf (partFile_handler_derived, "\nextern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists%s [];", mstr_poolIdent.c_str());
+    fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationEnd.c_str());
     fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
     fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
@@ -689,7 +694,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
              mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
     fprintf (partFile_handler_derived, "\n};\n");
-    fprintf (partFile_handler_derived, "\n #endif\n" );
+    fprintf (partFile_handler_derived, "\n#endif\n" );
     fclose (partFile_handler_derived);
   }
 
@@ -697,6 +702,7 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (b_externalize)
     extension = "-extern";
 
+#if 0
   // Write Direct includes
   partFileName = mstr_destinDirAndProjectPrefix + "_direct.h";
   partFile_direct = &save_fopen (partFileName.c_str(),"wt");
@@ -732,49 +738,50 @@ void vt2iso_c::clean_exit (const char* error_message)
     pc_specialParsing->addFileIncludes(partFile_direct, mstr_outFileName.c_str());
   }
   fclose (partFile_direct);
-
+#endif
 
   // Write Derived Includes (-cpp)
+  FILE* partFile_derived = NULL;
   partFileName = mstr_destinDirAndProjectPrefix + "_derived-cpp.h";
-  partFile_direct = &save_fopen (partFileName.c_str(),"wt");
+  partFile_derived = &save_fopen (partFileName.c_str(),"wt");
 
-  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
-  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
+  fprintf (partFile_derived, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_derived, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
+  fprintf (partFile_derived, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   if (b_externalize)
   {
-    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo namespace!
-    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo namespace!
-    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo namespace!
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo namespace!
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects\n");
     for (unsigned int i=0; i<ui_languages; i++)
     {
-      fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i\n", i);
+      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i\n", i);
     }
   }
   else
   {
     for (unsigned int i=0; i<ui_languages; i++)
     {
-      fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
+      fprintf (partFile_derived, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
     }
-    fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
-    fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFile_derived, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
+    fprintf (partFile_derived, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
   }
-  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_derived, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
 
   if (pc_specialParsing)
   {
-    pc_specialParsing->addFileIncludes(partFile_direct, mstr_outFileName.c_str());
+    pc_specialParsing->addFileIncludes(partFile_derived, mstr_outFileName.c_str());
   }
-  fclose (partFile_direct);
+  fclose (partFile_derived);
 
 
   // Write Derived Includes (-h)
   partFileName = mstr_destinDirAndProjectPrefix + "_derived-h.h";
-  partFile_direct = &save_fopen (partFileName.c_str(),"wt");
+  partFile_derived = &save_fopen (partFileName.c_str(),"wt");
 
-  fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_direct, "#include \"%s-handler-derived.inc\"\n", mstr_outFileName.c_str());
+  fprintf (partFile_derived, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
+  fprintf (partFile_derived, "#include \"%s-handler-derived.inc\"\n", mstr_outFileName.c_str());
 
   if (b_externalize)
   {
@@ -824,7 +831,7 @@ void vt2iso_c::clean_exit (const char* error_message)
   fprintf (partFile_attributes_extern, mstr_namespaceDeclarationEnd.c_str());
   fprintf (partFile_defines,           mstr_namespaceDeclarationEnd.c_str());
 
-  if (partFile_direct)            fclose (partFile_direct);
+  if (partFile_derived)           fclose (partFile_derived);
   if (partFile_variables_extern)  fclose (partFile_variables_extern);
   if (partFile_attributes)        fclose (partFile_attributes);
   if (partFile_attributes_extern) fclose (partFile_attributes_extern);
@@ -840,7 +847,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     if (!mb_silentMode)
       std::cout
         << "*** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING" << std::endl << std::endl
-        << "Your objectpool uses softkeymasks with MORE THAN 6 softkeys. Be ware that this pool may fail to upload on some VTs!!" << std::endl << std::endl
+        << "Your objectpool uses softkeymasks with MORE THAN 6 softkeys. Be aware that this pool may fail to upload on some VTs!!" << std::endl << std::endl
         << "*** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING *** WARNING" << std::endl << std::endl;
 }
 
@@ -1108,7 +1115,9 @@ void vt2iso_c::init (
   partFile_obj_selection = NULL;
   partFile_list = NULL;
   partFile_listAttributes = NULL;
+#if 0
   partFile_handler_direct = NULL;
+#endif
   partFile_handler_derived = NULL;
 
   std::string partFileName;
@@ -1182,6 +1191,7 @@ void vt2iso_c::init (
   fprintf (partFile_listAttributes, mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs%s [] = {", mstr_poolIdent.c_str());
 
+#if 0
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-direct.inc";
   // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
   partFile_handler_direct = fopen (partFileName.c_str(),"rb"); // intentionally NO save_fopen!!
@@ -1193,6 +1203,7 @@ void vt2iso_c::init (
   }
   // else: file couldn't be opened, so create it, simply write to it...
   partFile_handler_direct = &save_fopen (partFileName.c_str(),"wt");
+#endif
 
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-derived.inc";
   partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
