@@ -89,7 +89,7 @@
 #define HANDLE_FAST_DATATYPE_AS_STRICT NO
 
 // If the system is a PC type (but SYSTEM_PC was not yet set), then we must auto-define SYSTEM_PC before including the project config file
-#ifndef (SYSTEM_PC)
+#ifndef SYSTEM_PC
 #  if defined( SYSTEM_PC_VC ) || defined( SYSTEM_PC_MFC ) || defined( SYSTEM_A1 ) || defined( SYSTEM_A5 )
 #    define SYSTEM_PC
 #  endif
