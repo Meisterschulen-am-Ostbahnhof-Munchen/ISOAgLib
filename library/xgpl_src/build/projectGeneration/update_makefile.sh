@@ -1060,9 +1060,12 @@ create_autogen_project_config()
   echo -e "$ENDLINE" >> $CONFIG_NAME
   echo    "#define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_NAME
   for SinglePrjDefine in $PRJ_DEFINES ; do
-    echo "#ifndef $SinglePrjDefine" >> $CONFIG_NAME
-    echo "#define $SinglePrjDefine" >> $CONFIG_NAME
-    echo "#endif // $SinglePrjDefine" >> $CONFIG_NAME
+    SingleDefName="${SinglePrjDefine%%=*}"
+    SingleDefRemainder="${SinglePrjDefine#$SingleDefName}"
+    SingleDefValue="${SingleDefRemainder#=}"
+    echo "#ifndef $SingleDefName" >> $CONFIG_NAME
+    echo "#define $SingleDefName $SingleDefValue" >> $CONFIG_NAME
+    echo "#endif // $SingleDefName" >> $CONFIG_NAME
   done
   echo -e "$ENDLINE" >> $CONFIG_NAME
 
