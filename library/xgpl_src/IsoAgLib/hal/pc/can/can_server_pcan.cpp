@@ -341,6 +341,15 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   TPCANMsg& msg = msgRd.Msg;
 #endif
 
+  switch (msg.MSGTYPE)
+  {
+    case MSGTYPE_STANDARD:
+    case MSGTYPE_EXTENDED:
+      break; // process
+    default: // don't process status, RTR or other messages
+      return 0;
+  }
+
   ps_canMsg->ui32_id = msg.ID;
   ps_canMsg->i32_msgType = (msg.MSGTYPE ? 1 : 0);
   ps_canMsg->i32_len = msg.LEN;
