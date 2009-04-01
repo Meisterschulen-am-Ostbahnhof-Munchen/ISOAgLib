@@ -326,54 +326,28 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   TPCANMsg msg;
 
   rc = CAN_Read(&msg);
-  if (CAN_ERR_OK == rc)
-  {
-    if (msg.MSGTYPE == MSGTYPE_EXTENDED) // MSGTYPE_EXTENDED == 2 !
-    {
-      //printf("CAN_receive ID %x, len %d, data %x %x %x %x %x %x %x %x\n", msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
-      ps_canMsg->ui32_id = msg.ID;
-
-      if (msg.MSGTYPE > 0)
-        ps_canMsg->i32_msgType = 1;
-      else
-        ps_canMsg->i32_msgType = 0;
-
-      ps_canMsg->i32_len = msg.LEN;
-
-      memcpy(ps_canMsg->ui8_data, msg.DATA, msg.LEN );
-
-      return msg.LEN;
-    }
-  }
-
+  if (CAN_ERR_OK != rc)
+    return 0;
 #else
-
-  TPCANRdMsg msg;
-#ifdef USE_PCAN_LIB
-  int ret = LINUX_CAN_Read(driverHandle[ui8_bus], &msg);
-#else
-  int ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], PCAN_READ_MSG, &msg);
-#endif
-
+  TPCANRdMsg msgRd;
+  #ifdef USE_PCAN_LIB
+    int ret = LINUX_CAN_Read(driverHandle[ui8_bus], &msgRd);
+  #else
+    int ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], PCAN_READ_MSG, &msgRd);
+  #endif
   if (ret < 0)
     return 0;
 
-  if (msg.Msg.ID == 0)
-    // invalid message
-    return 0;
-
-  ps_canMsg->ui32_id = msg.Msg.ID;
-  ps_canMsg->i32_msgType = (msg.Msg.MSGTYPE ? 1 : 0);
-  ps_canMsg->i32_len = msg.Msg.LEN;
-
-  memcpy( ps_canMsg->ui8_data, msg.Msg.DATA, msg.Msg.LEN );
-
-  return msg.Msg.LEN;
-
+  TPCANMsg& msg = msgRd.Msg;
 #endif
 
-  return 0;
+  ps_canMsg->ui32_id = msg.ID;
+  ps_canMsg->i32_msgType = (msg.MSGTYPE ? 1 : 0);
+  ps_canMsg->i32_len = msg.LEN;
 
+  memcpy( ps_canMsg->ui8_data, msg.DATA, msg.LEN );
+
+  return msg.LEN;
 }
 
 int32_t getServerTimeFromClientTime( client_c& r_receiveClient, int32_t ai32_clientTime )
