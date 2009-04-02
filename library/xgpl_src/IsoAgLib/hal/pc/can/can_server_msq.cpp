@@ -686,8 +686,8 @@ static void* can_write_thread_func(void* ptr)
     // acquire mutex (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
-    if (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus)
-    { // We're on ISOBUS, so mark this SA as LOCAL (i.e. NOT REMOTE)
+    if ((pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) && (msqWriteBuf.s_canMsg.i32_msgType != 0))
+    { // We're on ISOBUS with EXTENDED Identifier, so mark this SA as LOCAL (i.e. NOT REMOTE)
       #ifdef DEBUG
       if (pc_serverData->marrb_remoteDestinationAddressInUse[msqWriteBuf.s_canMsg.ui32_id & 0xFF])
       {
@@ -713,7 +713,7 @@ static void* can_write_thread_func(void* ptr)
 
       bool b_sendOnBus = true;
       // destination address check based on already collected source addresses from CAN bus messages
-      if ( (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) &&
+      if ( (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) && (msqWriteBuf.s_canMsg.i32_msgType != 0) &&
            (((msqWriteBuf.s_canMsg.ui32_id >> 16) & 0xFF) < 0xF0) && // PDU1 check
            (((msqWriteBuf.s_canMsg.ui32_id >> 8) & 0xFF) < 0xFE) ) // no broadcast (0xFF) or invalid (0xFE) message
       {
@@ -901,7 +901,7 @@ static void can_read(server_c* pc_serverData)
     }
     else
     { // check for new source address
-      if (pc_serverData->mi16_reducedLoadOnIsoBus == (int16_t)channel_with_change)
+      if ((pc_serverData->mi16_reducedLoadOnIsoBus == (int16_t)channel_with_change) && (s_canMsg.i32_msgType != 0))
       { // On ISOBUS, mark this SA as REMOTE
         #ifdef DEBUG
         if (!pc_serverData->marrb_remoteDestinationAddressInUse[s_canMsg.ui32_id & 0xFF] && ((s_canMsg.ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
