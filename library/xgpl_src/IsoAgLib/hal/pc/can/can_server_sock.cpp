@@ -91,6 +91,9 @@
 #include <time.h>
 #include <errno.h>
 
+static const uint32_t scui32_selectTimeoutMax = 50000;
+static const uint32_t scui32_selectTimeoutMin = 1000;
+
 
 using namespace __HAL;
 
@@ -107,7 +110,8 @@ __HAL::server_c::server_c()
   {
     marri32_sendDelay[i] = 0;
     marri_pendingMsgs[i] = 0;
-    marri16_can_device[i] = 0;
+    marri32_can_device[i] = 0;
+    marrb_deviceConnected[i] = false;
   }
 
   pthread_mutex_init(&mt_protectClientList, NULL);
@@ -831,13 +835,16 @@ void readWrite(server_c* pc_serverData)
   int i_selectResult;
   struct timeval t_timeout;
   bool b_deviceHandleFound;
-  uint32_t ui32_sleepTime = 50000;
-  uint32_t ui32_loopCnt = 0;
+  bool b_deviceConnected;
 
   for (;;) {
 
+    pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
+
     if (!pc_serverData->mlist_clients.size())
     {
+      pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
+
 #ifdef WIN32
       Sleep( 50 );
 #else
@@ -850,8 +857,6 @@ void readWrite(server_c* pc_serverData)
 
     std::list<client_c>::iterator iter_client;
 
-    pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
-
     for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
     {
       FD_SET(iter_client->i32_commandSocket, &rfds);
@@ -859,20 +864,31 @@ void readWrite(server_c* pc_serverData)
     }
 
     b_deviceHandleFound=false;
+    b_deviceConnected = false;
 
     for (uint32_t ui32=0; ui32<cui32_maxCanBusCnt; ui32++ )
     {
-      if (pc_serverData->marri16_can_device[ui32])
+      if (pc_serverData->marri32_can_device[ui32] > 0)
       {
-        FD_SET(pc_serverData->marri16_can_device[ui32], &rfds);
+        FD_SET(pc_serverData->marri32_can_device[ui32], &rfds);
         b_deviceHandleFound=true;
       }
+
+      if (pc_serverData->marrb_deviceConnected[ui32])
+        b_deviceConnected = true;
     }
 
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
     t_timeout.tv_sec = 0;
-    t_timeout.tv_usec = ui32_sleepTime;
+    // do long timeout if we have a device handle or if we do not have hardware device at all
+    if (b_deviceHandleFound || !b_deviceConnected)
+      t_timeout.tv_usec = scui32_selectTimeoutMax;
+    else
+    {
+      t_timeout.tv_usec = scui32_selectTimeoutMin;
+      printf("min timeout\n");
+    }
 
     // timeout to check for
     // 1. modified client list => new sockets to wait for
@@ -883,64 +899,32 @@ void readWrite(server_c* pc_serverData)
       // error
       continue;
 
-    ui32_sleepTime = 50000;
-
-    ui32_loopCnt++;
-
-    if (!b_deviceHandleFound)
-    { // if there is high CAN load between the clients, the timeout may not be reached
-      // => check for new messages from the CAN device each 10 msgs
-      if ((i_selectResult == 0) || (ui32_loopCnt % 10 == 0))
-      { // timeout or loopCount condition reached => read from can card if we do not have a valid device handle
-        // (important for WIN32 PEAK can card and for RTE)
-        for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++)
-        {
-          if (pc_serverData->marrui16_busRefCnt[ui32_cnt])
-          {
-            if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
-            {
-              pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
-              s_transferBuf.s_data.ui8_bus = ui32_cnt;
-              enqueue_msg(&s_transferBuf, 0, pc_serverData);
-              pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
-              ui32_sleepTime = 5000;  // CAN message received => reduce sleep time
-              if (pc_serverData->mb_logMode)
-              {
-                dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
-              }
-              if (pc_serverData->mb_monitorMode)
-              {
-                monitorCanMsg (&s_transferBuf);
-              }
-            }
-          }
-        }
-        continue;
-      }
-    }
+    printf("select %d, hd %d, ready %d, timeout %d\n", i_selectResult, b_deviceHandleFound, b_deviceConnected, t_timeout.tv_usec);
 
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++ )
     {
-      if (pc_serverData->marri16_can_device[ui32_cnt] && FD_ISSET(pc_serverData->marri16_can_device[ui32_cnt], &rfds))
-      {
-        if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData) > 0)
+      if (!pc_serverData->marrui16_busRefCnt[ui32_cnt])
+        continue; // unused bus
+
+      if ( !b_deviceHandleFound ||
+           (b_deviceHandleFound && pc_serverData->marri32_can_device[ui32_cnt] && FD_ISSET(pc_serverData->marri32_can_device[ui32_cnt], &rfds)) 
+         )
+      { // do card read
+
+      //printf("dev %d isset %d\n", pc_serverData->marri32_can_device[ui32_cnt], FD_ISSET(pc_serverData->marri32_can_device[ui32_cnt], &rfds));
+        if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))
         {
           pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
           s_transferBuf.s_data.ui8_bus = ui32_cnt;
           enqueue_msg(&s_transferBuf, 0, pc_serverData);
           pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
           if (pc_serverData->mb_logMode)
-          {
             dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
-          }
           if (pc_serverData->mb_monitorMode)
-          {
             monitorCanMsg (&s_transferBuf);
-          }
         }
       }
-      continue;
     }
 
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );

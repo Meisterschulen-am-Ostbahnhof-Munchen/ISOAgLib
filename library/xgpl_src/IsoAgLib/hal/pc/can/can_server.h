@@ -313,9 +313,10 @@ public:
   // if >0 => do not send messages with local destination address on the bus
   int16_t  mi16_reducedLoadOnIsoBus;
 
-  int16_t  marri16_can_device[cui32_maxCanBusCnt];
+  int32_t  marri32_can_device[cui32_maxCanBusCnt];
   int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
   int      marri_pendingMsgs[cui32_maxCanBusCnt];
+  bool     marrb_deviceConnected[cui32_maxCanBusCnt];
 
   uint16_t marrui16_busRefCnt[cui32_maxCanBusCnt];
 
@@ -362,7 +363,7 @@ bool     openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, __HAL::server_c* pc_s
 void     closeBusOnCard(uint8_t ui8_bus, __HAL::server_c* pc_serverData);
 
 int16_t  sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
+bool     readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
 
 bool     isBusOpen(uint8_t ui8_bus);
 

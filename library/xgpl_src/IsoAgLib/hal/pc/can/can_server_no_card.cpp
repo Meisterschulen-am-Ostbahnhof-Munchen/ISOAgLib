@@ -111,9 +111,9 @@ int16_t sendToBus(uint8_t /* ui8_bus */, canMsg_s* /* ps_canMsg */, server_c* /*
   return 1; // success
 }
 
-uint32_t readFromBus(uint8_t /* ui8_bus */, canMsg_s* /* ps_canMsg */, server_c* /* pc_serverData */)
+bool readFromBus(uint8_t /* ui8_bus */, canMsg_s* /* ps_canMsg */, server_c* /* pc_serverData */)
 {
-  return 0;
+  return false;
 }
 
 void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)

@@ -169,6 +169,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     //  rteCan_c [ui8_bus]->set_set_bus_state_handler( setBusState, rteCan_c [ui8_bus] );
 
     canBusIsOpen[ui8_bus] = true;
+    pc_serverData->marrb_deviceConnected[ui8_bus] = true;
 
     return true;
   }
@@ -204,7 +205,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 }
 
 
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   rte_poll();
 
@@ -212,10 +213,10 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   {
     *ps_canMsg = l_canMsg.front();
     l_canMsg.pop_front();
-    return ps_canMsg->i32_len;
+    return true;
   }
 
-  return 0;
+  return false;
 }
 
 void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)

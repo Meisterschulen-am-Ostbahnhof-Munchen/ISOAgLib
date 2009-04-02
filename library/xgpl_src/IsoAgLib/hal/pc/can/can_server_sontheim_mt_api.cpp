@@ -189,6 +189,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
 
     canBusIsOpen[ui8_bus] = true;
+    pc_serverData->marrb_deviceConnected[ui8_bus] = true;
     return true;
   }
   else
@@ -204,7 +205,7 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 }
 
 
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   long            l_retval;
   CMSG            t_CANMsg[1];
@@ -240,9 +241,9 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
     for (uint8_t ui8_cnt = 0; ui8_cnt < ps_canMsg->i32_len; ui8_cnt++)
       ps_canMsg->ui8_data[ui8_cnt] = t_CANMsg[0].aby_data[ui8_cnt];
 
-    return ps_canMsg->i32_len;
+    return true;
   }
-  return 0;
+  return false;
 }
 
 

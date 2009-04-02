@@ -509,6 +509,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
 
     canBusIsOpen[ui8_bus] = true;
+    pc_serverData->marrb_deviceConnected[ui8_bus] = true;
 	return true;
   }
   else
@@ -524,7 +525,7 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 }
 
 
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   bool b_dataReceived = false;
   static int pi_receivedata[15];
@@ -541,14 +542,14 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   }
 
   if (!b_dataReceived)
-    return 0;
+    return false;
 
   ps_canMsg->ui32_id = pi_receivedata[1];
 
   if (ps_canMsg->ui32_id >= 0x7FFFFFFF)
   {
     printf("!!Received of malformed message with undefined CAN ident: %x\n", ps_canMsg->ui32_id);
-    return 0;
+    return false;
   }
 
   ps_canMsg->i32_len = ( pi_receivedata[2] & 0xF );
@@ -584,7 +585,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   for (uint8_t ui8_cnt = 0; ui8_cnt < ps_canMsg->i32_len; ui8_cnt++)
 	ps_canMsg->ui8_data[ui8_cnt] = pi_receivedata[3 + ui8_cnt];
 
-  return ps_canMsg->i32_len;
+  return true;
 
 }
 
