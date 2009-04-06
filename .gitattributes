@@ -14,6 +14,7 @@ bin/update_makefile.sh -text
 bin/vt2iso -text
 /contact_and_support.txt -text
 doc/Doxyfile -text
+doc/DoxyfileInterface -text
 doc/footer.html -text
 doc/graphics/HAL_esx.odg -text
 doc/graphics/HAL_esx.png -text
@@ -70,6 +71,7 @@ doc/html/Images/rightarrow.gif -text
 doc/html/Images/structure.png -text
 doc/html/Images/tum_logo.gif -text
 doc/html/csshover.htc -text
+doc/html/interface/Images -text
 doc/index.html -text
 doc/stylesheet.css -text
 doc/txt/additionalInfo.txt -text
