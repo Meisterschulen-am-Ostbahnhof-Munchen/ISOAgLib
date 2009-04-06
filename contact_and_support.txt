@@ -7,7 +7,7 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><td>The following parts are described in this section:
     <ul>
     <li> \ref ContactInformation </li>
-    <li> \ref Mailing-Lists </li>
+    <li> \ref Mailing-List </li>
     <li> \ref Contributing </li>
     <li> \ref GeneralSupportInformation </li>
     </ul>
@@ -36,9 +36,7 @@ Support requests going further than what can be found on this website can be dir
 \section Mailing-List
 Like every other Open Source Project \isoaglib lives through its active community.
 You can direct your help requests to the community of \isoaglib users and developers, as well.
-Therefore the <a href="http://projects.osb-ag.de/cgi-bin/mailman/listinfo/isoaglib">ISOAgLib-mailing-list</a> has been established, You can subscribe there (via HTTP or HTTPS) or just send an email to <a href="mailto:isoaglib@projects:osb-ag:de">isoaglib@projects:osb-ag:de</a> (please replace the colons by dots). This way all users can help each other without the dependency on the maintainers. 
-New feature wishes, bug reports and other change suggestions can be discussed there, too.
-Please note that all important changes/announcements are done via this mailing-list.
+Therefore the <a href="http://projects.osb-ag.de/cgi-bin/mailman/listinfo/isoaglib">ISOAgLib-mailing-list</a> has been established, You're welcome to subscribe there (via HTTP or HTTPS) to get all important changes/announcements and discuss new features, post bug-reports or other suggestions. This way all users can help each other without the dependency on the maintainers. 
 
 Please keep in mind, that you might be one time the helping party, while you could need help from another user the other time.<br>
 Please keep this also in mind, if the company name in the email address of the asking user is not one of your best friends - maybe he can help you another time also.
