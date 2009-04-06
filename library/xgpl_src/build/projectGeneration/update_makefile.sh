@@ -664,7 +664,9 @@ create_filelist( )
   DRIVER_FEATURES=" -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*'  -o \( -path '*/hal/"$HAL_PATH"/system*' -not -path '*hal_simulator*' \) -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
 
 
-  echo "CAN driver: $USE_CAN_DRIVER"
+  echo "IsoAgLib's Project-Generator running..."
+  echo
+  echo "CAN driver:    $USE_CAN_DRIVER"
   if [ $USE_CAN_DRIVER = "simulating" ] ; then
     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'"
     if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
@@ -731,7 +733,7 @@ create_filelist( )
 #-- The following line is wrong and never had any effect.
 #-- Just leaving in for informational reasons.
 #     DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
-      echo "RS232 driver: $USE_RS232_DRIVER"
+      echo "RS232 driver:  $USE_RS232_DRIVER"
       if [ $USE_RS232_DRIVER = "simulating" ] ; then
         DRIVER_FEATURES="$DRIVER_FEATURES -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
       elif [ $USE_RS232_DRIVER = "hal_simulator" ] ; then
@@ -2302,27 +2304,35 @@ perform_everything()
   if [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_PC"
     GENERATE_FILES_ROOT_DIR="$1/Dev-C++/"
+    IDE_NAME="Visual Studio, Dev-C++"
   elif [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_PC"
     GENERATE_FILES_ROOT_DIR="$1/kdevelop_make/"
+    IDE_NAME="KDevelop, make"
   elif [ $USE_TARGET_SYSTEM = "esx" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_ESX"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
+    IDE_NAME="Tasking EDE"
   elif [ $USE_TARGET_SYSTEM = "esxu" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_ESXu"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
+    IDE_NAME="Tasking EDE"
   elif [ $USE_TARGET_SYSTEM = "c2c" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_C2C"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
+    IDE_NAME="Tasking EDE"
   elif [ $USE_TARGET_SYSTEM = "imi" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_IMI"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
+    IDE_NAME="Tasking EDE"
   elif [ $USE_TARGET_SYSTEM = "pm167" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_PM167"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
+    IDE_NAME="Tasking EDE"
   elif [ $USE_TARGET_SYSTEM = "Dj1" ] ; then
     USE_SYSTEM_DEFINE="SYSTEM_DJ1"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
+    IDE_NAME="Tasking EDE"
   fi
   GENERATE_FILES_ROOT_DIR=`echo "$GENERATE_FILES_ROOT_DIR" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]*\\\.\.//g'`
   # echo "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
@@ -2690,20 +2700,19 @@ perform_everything "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
 
 
 if [ $USE_LITTLE_ENDIAN_CPU -lt 1 ] ; then
-  echo "Configure for BIG ENDIAN CPU"
+  echo  "Endianess:     Big Endian CPU"
 else
-  echo "Configure for LITTLE ENDIAN CPU"
+  echo  "Endianess:     Little Endian CPU"
 fi
-
-
-echo "Please set the following DEFINES for your compiler in the project settings:"
-echo "$USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
-echo "Please add also the main application path ";
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;";
-    done
-echo " to the INCLUDE search path of the compiler"
-echo "( Note: All this is already set for Win32 Dev-C++ and Visual C++ version 6.0 and above DSP project file, LINUX make, Kdevelop3 and Tasking EDE )"
+echo    "Target:        $IDE_NAME - (The settings below are already set up therefore)"
+echo    "Defines:       $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
+echo -n "Include Path:  "
+  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+    echo -n "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH ";
+  done
+echo
+echo
+echo "Generation successful."
 
 if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
   # doxygen export is specified -> copy config file there with suitable doc block
