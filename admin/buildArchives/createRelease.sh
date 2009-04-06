@@ -15,7 +15,7 @@ echo "StartDir: $START, Script: $SCRIPT_DIR, Root: $ISOAGLIB_ROOT, Release: $REL
 
 
 # A) Adapt Doxyfile to create correct release string
-CMDLINE=`echo "perl -p -i -e 's/(PROJECT_NUMBER\s*=)\s*[^\n]*/\1 $RELEASE_VERION/g' Doxyfile"`
+CMDLINE=`echo "perl -p -i -e 's/(PROJECT_NUMBER\s*=)\s*[^\n]*/\1 $RELEASE_VERION/g' doc/Doxyfile"`
 echo $CMDLINE | sh
 
 # B) adapt Download links to release version
