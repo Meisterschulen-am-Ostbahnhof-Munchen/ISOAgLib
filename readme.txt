@@ -10,6 +10,9 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 <tr><td>
 \ref XMLProcSpec
 </td></tr>
+<tr><td>
+<a href="interface/index.html">Interface-only documentation of the ISOAgLib</a>
+</td></tr>
 </table>
 
 <table class="infobox" border="0">
