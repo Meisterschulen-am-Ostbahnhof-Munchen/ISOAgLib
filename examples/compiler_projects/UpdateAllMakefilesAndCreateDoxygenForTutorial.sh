@@ -8,11 +8,11 @@ DOXYGEN_EXPORT_DIR="../../examples/src/Tutorials"
 #EXAMPLE_LIST=`ls conf_tractor* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 EXAMPLE_LIST=`ls conf_* | grep -v "~" | sed -e 's/[ \t\n]+/:/g'`
 #EXAMPLE_LIST='conf_AutoDataCollector'
-TARGET_LIST="esx:esxu:c2c:imi:pm167:pc_win32:pc_linux"
-#TARGET_LIST="esxu:c2c"
-CAN_LIST="simulating:sys:socket_server:msq_server"
-RS232_LIST="simulating:rte:sys"
-DEVICE_LIST="pcan:A1:rte:no_card"
+#TARGET_LIST="esx:esxu:c2c:imi:pm167:pc_win32:pc_linux"
+TARGET_LIST="pc_linux"
+CAN_LIST="simulating"
+RS232_LIST="simulating"
+DEVICE_LIST="no_card"
 for conf_example in $EXAMPLE_LIST ; do
   echo "Processing... ". $conf_example
   EXAMPLE_DIR=""
@@ -110,4 +110,9 @@ for conf_example in $EXAMPLE_LIST ; do
   echo " */" >> $COLLECT_NAME
   rm -f $COLLECT_DIR/spec_*.txt $COLLECT_DIR/config_*.txt $COLLECT_DIR/file*.txt
   #exit 0
+
+#  echo "/** \page TutPrjDesc$EXAMPLE_DOXY Tutorial project description for build of Tutorial $EXAMPLE_DOXY" > $COLLECT_NAME
+#  echo "  This page is currently not available. Please refer the source!" >> $COLLECT_NAME
+
+
 done
