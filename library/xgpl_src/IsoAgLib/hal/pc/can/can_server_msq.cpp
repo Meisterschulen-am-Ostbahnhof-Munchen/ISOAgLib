@@ -129,7 +129,8 @@ __HAL::server_c::server_c()
   {
     marri32_sendDelay[i] = 0;
     marri_pendingMsgs[i] = 0;
-    marri16_can_device[i] = 0;
+    marri32_can_device[i] = 0;
+    marrb_deviceConnected[i] = false;
   }
 
   pthread_mutex_init(&mt_protectClientList, NULL);
@@ -686,8 +687,8 @@ static void* can_write_thread_func(void* ptr)
     // acquire mutex (prevents concurrent read/write access to can driver and modification of client list during execution of enqueue_msg
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
-    if (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus)
-    { // We're on ISOBUS, so mark this SA as LOCAL (i.e. NOT REMOTE)
+    if ((pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) && (msqWriteBuf.s_canMsg.i32_msgType != 0))
+    { // We're on ISOBUS with EXTENDED Identifier, so mark this SA as LOCAL (i.e. NOT REMOTE)
       #ifdef DEBUG
       if (pc_serverData->marrb_remoteDestinationAddressInUse[msqWriteBuf.s_canMsg.ui32_id & 0xFF])
       {
@@ -713,7 +714,7 @@ static void* can_write_thread_func(void* ptr)
 
       bool b_sendOnBus = true;
       // destination address check based on already collected source addresses from CAN bus messages
-      if ( (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) &&
+      if ( (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) && (msqWriteBuf.s_canMsg.i32_msgType != 0) &&
            (((msqWriteBuf.s_canMsg.ui32_id >> 16) & 0xFF) < 0xF0) && // PDU1 check
            (((msqWriteBuf.s_canMsg.ui32_id >> 8) & 0xFF) < 0xFE) ) // no broadcast (0xFF) or invalid (0xFE) message
       {
@@ -805,9 +806,9 @@ static void can_read(server_c* pc_serverData)
 
     for (channel=0; channel<cui32_maxCanBusCnt; channel++ )
     {
-      if (isBusOpen(channel) && (pc_serverData->marri16_can_device[channel] > 0))
+      if (isBusOpen(channel) && (pc_serverData->marri32_can_device[channel] > 0))
       { // valid file handle => use it for select
-        FD_SET(pc_serverData->marri16_can_device[channel], &rfds);
+        FD_SET(pc_serverData->marri32_can_device[channel], &rfds);
         ui8_cntOpenDevice++;
       }
     }
@@ -826,8 +827,8 @@ static void can_read(server_c* pc_serverData)
         // get device with changes
         for (channel_with_change=0; channel_with_change<cui32_maxCanBusCnt; channel_with_change++ ) {
           if (isBusOpen(channel_with_change)) {
-            if (FD_ISSET(pc_serverData->marri16_can_device[channel_with_change], &rfds) == 1) {
-              DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->marri16_can_device[channel_with_change], &rfds));
+            if (FD_ISSET(pc_serverData->marri32_can_device[channel_with_change], &rfds) == 1) {
+              DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->marri32_can_device[channel_with_change], &rfds));
               b_processMsg = TRUE;
               break;
             }
@@ -846,29 +847,13 @@ static void can_read(server_c* pc_serverData)
       // acquire mutex to prevent concurrent read/write to can driver
       pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
-      int16_t i16_rc = readFromBus(channel_with_change, &s_canMsg, pc_serverData);
+      bool b_rc = readFromBus(channel_with_change, &s_canMsg, pc_serverData);
 
-      if (i16_rc < 0) {
-        /* nothing to read or interrupted system call */
-#ifdef DEBUG
-        perror("ioctl");
-#endif
-        DEBUG_PRINT1("CANRead error: %i\n", i16_rc);
-        b_processMsg = FALSE;
-
-        // unlock mutex
-        pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
-
-        continue;
-      }
-
-      if (i16_rc > 0)
+      if (b_rc)
         ui32_sleepTime = 5000; // CAN message received => reduce sleep time
       else
-        ui32_sleepTime = 50000; // no CAN message received => increase sleep time
-
-      if (i16_rc == 0)
-      { // invalid message
+      { // invalid message or no CAN message received => increase sleep time
+        ui32_sleepTime = 50000; 
         pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
         continue;
       }
@@ -901,7 +886,7 @@ static void can_read(server_c* pc_serverData)
     }
     else
     { // check for new source address
-      if (pc_serverData->mi16_reducedLoadOnIsoBus == (int16_t)channel_with_change)
+      if ((pc_serverData->mi16_reducedLoadOnIsoBus == (int16_t)channel_with_change) && (s_canMsg.i32_msgType != 0))
       { // On ISOBUS, mark this SA as REMOTE
         #ifdef DEBUG
         if (!pc_serverData->marrb_remoteDestinationAddressInUse[s_canMsg.ui32_id & 0xFF] && ((s_canMsg.ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address

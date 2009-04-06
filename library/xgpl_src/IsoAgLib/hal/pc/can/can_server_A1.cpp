@@ -145,22 +145,23 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
 
-    pc_serverData->marri16_can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
+    pc_serverData->marri32_can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
 
-    if (pc_serverData->marri16_can_device[ui8_bus] == -1) {
+    if (pc_serverData->marri32_can_device[ui8_bus] == -1) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",ui8_bus);
       return 0;
     }
 
     // Set baud rate to 250 and turn on extended IDs
-    // For Opus A1, it is done by sending the following string to the marri16_can_device
+    // For Opus A1, it is done by sending the following string to the marri32_can_device
     char buf[16];
     sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
 
     DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
-    write(pc_serverData->marri16_can_device[ui8_bus], buf, strlen(buf));
+    write(pc_serverData->marri32_can_device[ui8_bus], buf, strlen(buf));
 
     canBusIsOpen[ui8_bus] = true;
+    pc_serverData->marrb_deviceConnected[ui8_bus] = true;
   }
 
   return true;
@@ -182,7 +183,7 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 bool doStatusCheck(uint8_t ui8_bus, server_c* pc_serverData)
 {
   static canStatus s_stat;
-  if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_GET_STATUS, &s_stat) == 0)
+  if (ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_GET_STATUS, &s_stat) == 0)
   {
     if (s_stat.errorFlag & CAN_ERR_PASSIVE)
     {
@@ -220,7 +221,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   ui32_calls++;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-    i_ioctlRet = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+    i_ioctlRet = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
     if (i_ioctlRet < 0) {
       perror("ioctl error during write");
@@ -229,10 +230,10 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
 #if 0
       printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
-      close(pc_serverData->marri16_can_device[ui8_bus]);
+      close(pc_serverData->marri32_can_device[ui8_bus]);
       canBusIsOpen[ui8_bus] = false;
       openBusOnCard(ui8_bus, 250, pc_serverData);
-      ret = ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+      ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
       printf("can_server: send message again on bus %d\n", ui8_bus);
 #endif
     }
@@ -242,11 +243,11 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
 }
 
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   canMsgA1_s msg;
 
-  if (ioctl(pc_serverData->marri16_can_device[ui8_bus], CAN_READ_MSG, &msg) == 0)
+  if (ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_READ_MSG, &msg) == 0)
   {
     ps_canMsg->ui32_id = msg.id;
 
@@ -259,10 +260,10 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
 
     memcpy(ps_canMsg->ui8_data, msg.data, msg.len );
 
-    return msg.len;
+    return true;
   }
 
-  return 0;
+  return false;
 
 }
 

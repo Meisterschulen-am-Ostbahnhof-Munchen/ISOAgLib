@@ -263,6 +263,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     }
     canBusIsOpen[ui8_bus] = true;
+    pc_serverData->marrb_deviceConnected[ui8_bus] = true;
   }
   
   // either fresh init without error or the bus was already initialized
@@ -318,7 +319,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   return 1; // success
 }
 
-uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
+bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   XLstatus xlStatus;
   XLevent  gpEvent;
@@ -333,14 +334,14 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
   // ACK for SENT messages is also returned!!!
   if( ( gpEvent.tag != XL_RECEIVE_MSG ) || ( gpEvent.tagData.msg.flags != 0 ) )
   { // don't further process this message as it is NO received message
-    return 0;
+    return false;
   }
 
   ps_canMsg->ui32_id = (gpEvent.tagData.msg.id & 0x1FFFFFFF);
   if (ps_canMsg->ui32_id >= 0x7FFFFFFF)
   {
     printf("!!Received of malformed message with undefined CAN ident: %x\n", ps_canMsg->ui32_id);
-    return 0;
+    return false;
   }
 
   ps_canMsg->i32_len = gpEvent.tagData.msg.dlc;
@@ -348,7 +349,7 @@ uint32_t readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverDa
 
   memcpy( ps_canMsg->ui8_data, gpEvent.tagData.msg.data, ps_canMsg->i32_len );
 
-  return ps_canMsg->i32_len;
+  return true;
 }
 
 void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)
