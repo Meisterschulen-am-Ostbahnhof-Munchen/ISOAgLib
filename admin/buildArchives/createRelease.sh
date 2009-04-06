@@ -28,10 +28,12 @@ find $ISOAGLIB_ROOT -name "*.html" -o -name "*.png" -o -name "*.md5" -o -name "*
 
 # B) Create Doc
 doxygen doc/Doxyfile
+doxygen doc/DoxyfileInterface
 
 # B) Build Packages
 cd $START
-sh "generateArchives.sh"
+### Archive generation currently disabled
+#sh "generateArchives.sh"
 
 # C) create Download directory and move packages with current verison number to that location
 mkdir -p "$ISOAGLIB_ROOT/doc/html/Download"
