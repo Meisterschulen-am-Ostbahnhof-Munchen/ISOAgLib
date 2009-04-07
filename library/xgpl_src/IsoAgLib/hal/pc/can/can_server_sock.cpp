@@ -885,10 +885,7 @@ void readWrite(server_c* pc_serverData)
     if (b_deviceHandleFound || !b_deviceConnected)
       t_timeout.tv_usec = scui32_selectTimeoutMax;
     else
-    {
       t_timeout.tv_usec = scui32_selectTimeoutMin;
-      printf("min timeout\n");
-    }
 
     // timeout to check for
     // 1. modified client list => new sockets to wait for
@@ -898,8 +895,6 @@ void readWrite(server_c* pc_serverData)
     if (i_selectResult < 0)
       // error
       continue;
-
-    printf("select %d, hd %d, ready %d, timeout %d\n", i_selectResult, b_deviceHandleFound, b_deviceConnected, t_timeout.tv_usec);
 
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++ )
@@ -911,8 +906,6 @@ void readWrite(server_c* pc_serverData)
            (b_deviceHandleFound && pc_serverData->marri32_can_device[ui32_cnt] && FD_ISSET(pc_serverData->marri32_can_device[ui32_cnt], &rfds)) 
          )
       { // do card read
-
-      //printf("dev %d isset %d\n", pc_serverData->marri32_can_device[ui32_cnt], FD_ISSET(pc_serverData->marri32_can_device[ui32_cnt], &rfds));
         if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))
         {
           pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
