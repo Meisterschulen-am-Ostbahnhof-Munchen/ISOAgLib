@@ -330,7 +330,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   // ACK for SENT messages is also returned!!!
   if( vErr || ( gpEvent->tag != V_RECEIVE_MSG ) || ( gpEvent->tagData.msg.flags != 0 ) )
   { // don't further process this message as it is NO received message
-    return flase;
+    return false;
   }
 
   ps_canMsg->ui32_id = (gpEvent->tagData.msg.id & 0x1FFFFFFF);
