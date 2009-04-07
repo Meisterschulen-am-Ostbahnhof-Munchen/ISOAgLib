@@ -1,0 +1,6 @@
+All files in this "tools" folder are under the GPL-license as given in the "LICENSE"-file.
+
+General overview:
+ - logalizer: Small helper tool for analyzing of CAN-log files.
+
+Each folder has its own README for further information on the specific tool.
