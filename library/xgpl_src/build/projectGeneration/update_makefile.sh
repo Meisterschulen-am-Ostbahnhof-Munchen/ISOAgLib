@@ -2123,7 +2123,7 @@ create_EdePrj()
   esac
 
 
-  echo "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
+  #echo "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
   cat $PROJECT_FILE_NAME.1 | gawk '{ sub("\r", ""); print $0;}' > $PROJECT_FILE_NAME
   cat $PROJECT_FILE_NAME | gawk '{ sub("$", "\r"); print $0;}' > $PROJECT_FILE_NAME.1
   mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
