@@ -342,13 +342,19 @@ if [ "A$CAN_BUS_CNT" = "A" ] ; then
 
   if test ! -d $EXT_BASE_SRC  ; then
     # ISO is not active -> deactivate all ISO only features
-    echo "Deactivate all ISO specific features, that are only available for registered users."
-    echo "The directory $EXT_BASE_SRC with the extensional modules does not exist."
-    echo "Please contact a.spangler@osb-ag.de when you want to register as user so that you can access the extensions area."
+    echo "Information:"; echo
+    echo "The directory $EXT_BASE_SRC with (optional) extension modules does not exist."
+    echo "Deactivating features:"; echo
+    echo "PRJ_TRACTOR_LIGHT=0"
+    echo "PRJ_TRACTOR_AUX=0"
+    echo "PRJ_TRACTOR_GUIDANCE=0"
+    echo "PRJ_TRACTOR_CERTIFICATION=0"; echo
+    echo "Please contact m.rothmund@osb-ag.de to gain access to this restriced area."
     PRJ_TRACTOR_LIGHT=0
     PRJ_TRACTOR_AUX=0
     PRJ_TRACTOR_GUIDANCE=0
     PRJ_TRACTOR_CERTIFICATION=0
+    echo
   fi
 
 
