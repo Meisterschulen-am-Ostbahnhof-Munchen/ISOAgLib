@@ -920,7 +920,7 @@ iFsCommandErrors FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
   return fsCommandNoError;
 }
 iFsCommandErrors FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_t  ui8_inHiddenAtt, uint8_t ui8_inReadOnlyAtt)
-{ 
+{
   en_lastCommand = en_setFileAttributes;
   ui8_hiddenAtt = ui8_inHiddenAtt;
   ui8_readOnlyAtt = ui8_inReadOnlyAtt;
@@ -970,7 +970,13 @@ iFsCommandErrors FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
   return fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::initializeVolume(uint8_t */*pui8_pathName*/, uint32_t /*ui32_space*/, bool /*b_createVolumeUsingSpace*/, bool /*b_createNewVolume*/)
+iFsCommandErrors FsCommand_c::initializeVolume(
+#ifdef DEBUG
+uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume
+#else
+uint8_t * /*pui8_pathName*/, uint32_t /*ui32_space*/, bool /*b_createVolumeUsingSpace*/, bool /*b_createNewVolume*/
+#endif
+)
 {
   en_lastCommand = en_initializeVolume;
 
