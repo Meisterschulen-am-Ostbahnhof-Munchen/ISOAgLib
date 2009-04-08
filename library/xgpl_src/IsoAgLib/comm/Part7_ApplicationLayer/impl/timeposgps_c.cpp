@@ -391,7 +391,7 @@ namespace __IsoAgLib {
 
     if ( checkMode( IsoAgLib::IdentModeTractor ) || checkModeGps( IsoAgLib::IdentModeTractor ) )
     { // we are in sending state for at least one type
-      ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodul up to now
+      ///setTimePeriod for Scheduler_c 100ms is minimal periode in GPSmodule up to now
       setTimePeriod( (uint16_t) 100 );
     }
     else
@@ -1450,9 +1450,13 @@ void TimePosGps_c::isoSendDirection( void )
     if (b_updateDate)
     {
       struct CNAMESPACE::tm* p_tm = currentUtcTm();
-      bit_calendar.year   = p_tm->tm_year + 1900;
-      bit_calendar.month  = p_tm->tm_mon +1;
-      bit_calendar.day    = p_tm->tm_mday;
+	  if (p_tm != NULL)
+	  {
+        bit_calendar.year   = p_tm->tm_year + 1900;
+        bit_calendar.month  = p_tm->tm_mon +1;
+        bit_calendar.day    = p_tm->tm_mday;
+	  }
+      // else: can't update date.
     }
 
     mi32_lastCalendarSet = System_c::getTime();
@@ -1471,9 +1475,12 @@ void TimePosGps_c::isoSendDirection( void )
       currentUtcTm();
     }
 
-    const time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000
-                                          + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
-                                          + bit_calendar.timezoneMinuteOffset * 60;
+    time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000
+                                     + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
+                                     + bit_calendar.timezoneMinuteOffset * 60;
+	// if it's negative, localtime(..) would return NULL!
+    if (t_secondsSince1970Local < 0)
+      t_secondsSince1970Local = 0;
 
     // compensate system time zone setting: call localtime() and not gmtime()
     return localtime( &t_secondsSince1970Local );
@@ -1560,16 +1567,25 @@ void TimePosGps_c::isoSendDirection( void )
     if ( 0 == mt_cachedLocalSeconds1970AtLastSet)
     { // recalculate seconds from bit_calendar struct
       // compensate system time zone setting (part 1)
-      struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
-                            bit_calendar.day, bit_calendar.month-1,
-                            (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
-                            0,0,-1
-                            #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                            , 0, NULL
-                            #endif
-                            };
-      mt_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
-      if (-1 == mt_cachedLocalSeconds1970AtLastSet) return NULL;
+      if (bit_calendar.year != 0)
+      {
+        struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+                              bit_calendar.day, bit_calendar.month-1,
+                              bit_calendar.year-1900,
+                              0,0,-1
+                              #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                              , 0, NULL
+                              #endif
+                              };
+        mt_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
+        if (-1 == mt_cachedLocalSeconds1970AtLastSet)
+        { // this shouldn't happen anymore, but in case it does, reset the cachedSeconds to 0
+          // because -1 will make localtime(..) return NULL!
+          mt_cachedLocalSeconds1970AtLastSet = 0;
+          return NULL;
+        }
+      }
+      // in case bit_calendar.year is not yet set: keep mt_cachedLocalSeconds1970AtLastSet 0.
     }
 
     const time_t t_secondsSince1970 = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
