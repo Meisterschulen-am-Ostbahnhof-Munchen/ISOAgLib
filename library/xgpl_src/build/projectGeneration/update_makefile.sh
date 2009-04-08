@@ -772,10 +772,10 @@ create_filelist( )
 
   LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
   SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
-  HDR_UTEST_EXT="\( -name '*-test.h' \)"
-  HDR_UTEST_MOCK_EXT="\( -name '*-mock.h' \)"
-  TESTRUNNER_EXT="\( -name 'testrunner.cpp' \)"
-  UTEST_DIRS_EXT="\( -name 'utest' -type d \)"
+#  HDR_UTEST_EXT="\( -name '*-test.h' \)"
+#  HDR_UTEST_MOCK_EXT="\( -name '*-mock.h' \)"
+#  TESTRUNNER_EXT="\( -name 'testrunner.cpp' \)"
+#  UTEST_DIRS_EXT="\( -name 'utest' -type d \)"
 
 
   # go back to directory where config file resides
@@ -970,6 +970,9 @@ create_filelist( )
 # and filelist_$FILELIST_UTEST_MOCK_PURE.txt
 create_utest_filelist()
 {
+# UTESTs are disabled for now.
+  return
+
   FILELIST_UTEST_PURE="filelist"'__'"$PROJECT.utest.txt"
   FILELIST_UTEST_MOCK_PURE="filelist"'__'"$PROJECT.utest.mock.txt"
   FILELIST_UTEST_MODSUT_PURE="filelist"'__'"$PROJECT.utest.modsut.txt"
@@ -1319,10 +1322,10 @@ create_makefile()
   MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
   MakefileFilelistAppHdr="$1/$PROJECT/$FILELIST_APP_HDR"
 
-  MakefileFileListUTest="$1/$PROJECT/$FILELIST_UTEST_PURE"
-  MakefileFileListUTestMock="$1/$PROJECT/$FILELIST_UTEST_MOCK_PURE"
-  MakefileFileListUTestMODSUT="$1/$PROJECT/$FILELIST_UTEST_MODSUT_PURE"
-  MakefileFileListUTestRunner="$1/$PROJECT/$FILELIST_UTEST_RUNNER_PURE"
+#  MakefileFileListUTest="$1/$PROJECT/$FILELIST_UTEST_PURE"
+#  MakefileFileListUTestMock="$1/$PROJECT/$FILELIST_UTEST_MOCK_PURE"
+#  MakefileFileListUTestMODSUT="$1/$PROJECT/$FILELIST_UTEST_MODSUT_PURE"
+#  MakefileFileListUTestRunner="$1/$PROJECT/$FILELIST_UTEST_RUNNER_PURE"
 
   MakefileName="Makefile"
   MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
@@ -1453,57 +1456,57 @@ create_makefile()
   done
   echo -e "\n" >> $MakefileNameLong
 
-  echo -n "HEADERS_UTEST = " >> $MakefileNameLong
-  FIRST_LOOP="YES"
-  for CcFile in `grep -E "\.h" $MakefileFileListUTest` ; do
-    if [ $FIRST_LOOP != "YES" ] ; then
-      echo -e -n '\\' >> $MakefileNameLong
-      echo -e -n "\n\t\t" >> $MakefileNameLong
-    else
-      FIRST_LOOP="NO"
-    fi
-    echo -e -n "$CcFile  " >> $MakefileNameLong
-  done
-  echo -e "\n" >> $MakefileNameLong
+#  echo -n "HEADERS_UTEST = " >> $MakefileNameLong
+#  FIRST_LOOP="YES"
+#  for CcFile in `grep -E "\.h" $MakefileFileListUTest` ; do
+#    if [ $FIRST_LOOP != "YES" ] ; then
+#      echo -e -n '\\' >> $MakefileNameLong
+#      echo -e -n "\n\t\t" >> $MakefileNameLong
+#    else
+#      FIRST_LOOP="NO"
+#    fi
+#    echo -e -n "$CcFile  " >> $MakefileNameLong
+#  done
+#  echo -e "\n" >> $MakefileNameLong
 
-  echo -n "HEADERS_UTEST_MOCKS = " >> $MakefileNameLong
-  FIRST_LOOP="YES"
-  for CcFile in `grep -E "\.h" $MakefileFileListUTestMock` ; do
-    if [ $FIRST_LOOP != "YES" ] ; then
-      echo -e -n '\\' >> $MakefileNameLong
-      echo -e -n "\n\t\t" >> $MakefileNameLong
-    else
-      FIRST_LOOP="NO"
-    fi
-    echo -e -n "$CcFile  " >> $MakefileNameLong
-  done
-  echo -e "\n" >> $MakefileNameLong
+#  echo -n "HEADERS_UTEST_MOCKS = " >> $MakefileNameLong
+#  FIRST_LOOP="YES"
+#  for CcFile in `grep -E "\.h" $MakefileFileListUTestMock` ; do
+#    if [ $FIRST_LOOP != "YES" ] ; then
+#      echo -e -n '\\' >> $MakefileNameLong
+#      echo -e -n "\n\t\t" >> $MakefileNameLong
+#    else
+#      FIRST_LOOP="NO"
+#    fi
+#    echo -e -n "$CcFile  " >> $MakefileNameLong
+#  done
+#  echo -e "\n" >> $MakefileNameLong
 
-  echo -n "HEADERS_UTEST_MOD_SUT = " >> $MakefileNameLong
-  FIRST_LOOP="YES"
-  for CcFile in `grep -E "\.h" $MakefileFileListUTestMODSUT` ; do
-    if [ $FIRST_LOOP != "YES" ] ; then
-      echo -e -n '\\' >> $MakefileNameLong
-      echo -e -n "\n\t\t" >> $MakefileNameLong
-    else
-      FIRST_LOOP="NO"
-    fi
-    echo -e -n "$CcFile  " >> $MakefileNameLong
-  done
-  echo -e "\n" >> $MakefileNameLong
+#  echo -n "HEADERS_UTEST_MOD_SUT = " >> $MakefileNameLong
+#  FIRST_LOOP="YES"
+#  for CcFile in `grep -E "\.h" $MakefileFileListUTestMODSUT` ; do
+#    if [ $FIRST_LOOP != "YES" ] ; then
+#      echo -e -n '\\' >> $MakefileNameLong
+#      echo -e -n "\n\t\t" >> $MakefileNameLong
+#    else
+#      FIRST_LOOP="NO"
+#    fi
+#    echo -e -n "$CcFile  " >> $MakefileNameLong
+#  done
+#  echo -e "\n" >> $MakefileNameLong
 
-  echo -n "TESTRUNNER_SOURCES = " >> $MakefileNameLong
-  FIRST_LOOP="YES"
-  for CcFile in `grep -E "\.cpp" $MakefileFileListUTestRunner` ; do
-    if [ $FIRST_LOOP != "YES" ] ; then
-      echo -e -n '\\' >> $MakefileNameLong
-      echo -e -n "\n\t\t" >> $MakefileNameLong
-    else
-      FIRST_LOOP="NO"
-    fi
-    echo -e -n "$CcFile  " >> $MakefileNameLong
-  done
-  echo -e "\n" >> $MakefileNameLong
+#  echo -n "TESTRUNNER_SOURCES = " >> $MakefileNameLong
+#  FIRST_LOOP="YES"
+#  for CcFile in `grep -E "\.cpp" $MakefileFileListUTestRunner` ; do
+#    if [ $FIRST_LOOP != "YES" ] ; then
+#      echo -e -n '\\' >> $MakefileNameLong
+#      echo -e -n "\n\t\t" >> $MakefileNameLong
+#    else
+#      FIRST_LOOP="NO"
+#    fi
+#    echo -e -n "$CcFile  " >> $MakefileNameLong
+#  done
+#  echo -e "\n" >> $MakefileNameLong
 
 
 ##### Library install header file gathering BEGIN
@@ -1608,17 +1611,18 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
   cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
 
-  # remove testrunner for A1
-   case $PRJ_DEFINES in
-       *SYSTEM_A1*)
-       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
-       mv $MakefileNameLong.1 $MakefileNameLong
-       ;;
-       *SYSTEM_A5*)
-       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
-       mv $MakefileNameLong.1 $MakefileNameLong
-       ;;
-   esac
+# NO UTESTs, no need to remove any testrunners
+#  # remove testrunner for A1
+#   case $PRJ_DEFINES in
+#       *SYSTEM_A1*)
+#       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
+#       mv $MakefileNameLong.1 $MakefileNameLong
+#       ;;
+#       *SYSTEM_A5*)
+#       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
+#       mv $MakefileNameLong.1 $MakefileNameLong
+#       ;;
+#   esac
 
   # add can_server creation to target "all"
   if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
@@ -2134,7 +2138,8 @@ create_VCPrj()
 
   DEV_PRJ_DIR=`echo "$1/$PROJECT" | sed -e 's/Dev-C++/VC6/g'`
   # echo "Create Projekt file for VC6 in $DEV_PRJ_DIR"
-  mkdir -p $DEV_PRJ_DIR/Debug
+  #mkdir -p $DEV_PRJ_DIR/Debug
+  # Visual Studio will create the needed Debug and Release directories on its own.
   PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dsp"
 
   DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
@@ -2346,9 +2351,12 @@ perform_everything()
   # now call the function create_filelist() which build
   # the file list based on the varibles defined above
   create_filelist $GENERATE_FILES_ROOT_DIR $2
+
   # call function which build the file list for the unit
   # tests
-  create_utest_filelist
+# UTESTs disabled right now! (even the create_utest_filelist simply returns at the beginning!)
+#  create_utest_filelist
+
   # call function to create project specific config file
   create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
   if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
@@ -2381,7 +2389,7 @@ perform_everything()
 usage () {
     cat <<EOF
 Usage: $0 [OPTION] project_config_file
-Create filelist, Makefile and configuration settings for a IsoAgLib project.
+Create filelist, Makefile and configuration settings for an IsoAgLib project.
 
   -h, --help                        print this message and exit.
   --doxygen-export-directory=DIR    write the filelist and configuration files with doxygen documentation
@@ -2403,7 +2411,7 @@ Create filelist, Makefile and configuration settings for a IsoAgLib project.
                                     Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
 
 $0 parses the selected project configuration file and overwrites the default values for all contained settings.
-It collects then the corresponding files which can then be imported to an individual IDE.
+It then collects the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the directory xgpl_src/Application_Config with the
 name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
 the central configuration header xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
@@ -2420,6 +2428,8 @@ EOF
 
 if [ $# -lt 1 ] ; then
   echo "ERROR! You must at least specify the configuration file for your project as parameter"
+  echo
+  usage
   exit 1
 fi
 
