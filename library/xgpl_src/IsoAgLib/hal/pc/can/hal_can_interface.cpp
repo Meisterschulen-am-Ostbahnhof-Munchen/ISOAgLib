@@ -431,6 +431,13 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr,
     pt_config->bMsgType = RX;
 
     pt_config->wNumberMsgs = 1; ///< @todo: can_server has to be adapted if wNumberMsgs is set to 0 for receiving
+
+    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+    // register the IRQ function to handle the received CAN messages
+    pt_config->pfIrqFunction = IwriteCentralCanfifo;
+    #else
+    pt_config->pfIrqFunction = 0;
+    #endif
   }
   else
   { // send
@@ -441,11 +448,11 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr,
     // clear send timestamp list
     list_sendTimeStamps.erase(list_sendTimeStamps.begin(),list_sendTimeStamps.end());
     #endif
+    pt_config->pfIrqFunction = 0;
   }
   arrHalCan[aui8_busNr][aui8_msgobjNr].ui8_cinterfBufSize = uint8_t(pt_config->wNumberMsgs);
   pt_config->bTimeStamped = true;
   pt_config->wPause = 0;
-  pt_config->pfIrqFunction = 0;
 
   return configCanObj(aui8_busNr, aui8_msgobjNr, pt_config);
 }
