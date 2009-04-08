@@ -2534,6 +2534,7 @@ library/xgpl_src/build/proc2iso/version.incl -text
 library/xgpl_src/build/projectGeneration/EDE.part1.pjt -text
 library/xgpl_src/build/projectGeneration/EDE.part2.pjt -text
 library/xgpl_src/build/projectGeneration/MakefileAppSkeleton.txt -text
+library/xgpl_src/build/projectGeneration/conf_template -text
 library/xgpl_src/build/projectGeneration/kdevelop3Generic.kdevelop -text
 library/xgpl_src/build/projectGeneration/qmake_stub.pro -text
 library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp eol=crlf
