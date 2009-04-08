@@ -171,6 +171,11 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
 	 int32_t i32_msgId = ((tCanregister->tArbit.dw & 0xF8000000) >> 27) | ((tCanregister->tArbit.dw & 0xFF0000) >> 11)
 							   | ((tCanregister->tArbit.dw & 0xFF00) << 5) | ((tCanregister->tArbit.dw & 0xFF) << 21);
 
+  if ((tCanregister->tCfg_D0.b[0] & 0x4) == 0)
+  { // for STD ident, the bits0..17 are marked as "don't care" in the C167 documentation
+    // --> shift i32_msgId down by 18 bits
+    i32_msgId >>= 18; // shift down by 18 bits, as bits0..17 are "don't care" in this case
+  }
 
 	  #ifdef USE_CAN_MEASURE_BUSLOAD
 	  if ((tCanregister->tCfg_D0.b[0] & 0x4) != 0)
