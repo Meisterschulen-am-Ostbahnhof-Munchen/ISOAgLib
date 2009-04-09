@@ -2278,7 +2278,7 @@ ENDOFHEADERB
   echo "# End Target" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   echo "# End Project" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-  echo "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
+  #echo "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
 
   cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME | gawk '{ sub("\r", ""); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
   cat $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 | gawk '{ sub("$", "\r"); print $0;}' > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.2
