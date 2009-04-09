@@ -2138,7 +2138,7 @@ create_VCPrj()
 
   DEV_PRJ_DIR=`echo "$1/$PROJECT" | sed -e 's/Dev-C++/VC6/g'`
   # echo "Create Projekt file for VC6 in $DEV_PRJ_DIR"
-  #mkdir -p $DEV_PRJ_DIR/Debug
+  mkdir -p $DEV_PRJ_DIR
   # Visual Studio will create the needed Debug and Release directories on its own.
   PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dsp"
 
