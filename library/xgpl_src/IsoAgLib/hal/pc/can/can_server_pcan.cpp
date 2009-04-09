@@ -124,18 +124,34 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
 #if WIN32
-    DWORD rc;
-    rc = CAN_Init(CAN_BAUD_250K, 1);  // Baudrate
-    printf("Init can driver: %x\n", rc);
-    if (CAN_ERR_OK == rc)
+  /* 
+   * ATTENTION!
+   *
+   * the PCAN multi card abilities are currently unused. Working with several (can_server)busses
+   * and less devices plugged causes random distribution of incomming messages.
+   *
+   * This is a temporary workarround!
+   *
+   */
+    if( 0 == ui8_bus ) {
+      DWORD rc;
+      rc = CAN_Init(CAN_BAUD_250K, 1 );  // Baudrate
+      printf("Init can driver: %x\n", rc);
+      if (CAN_ERR_OK == rc)
+      {
+        canBusIsOpen[ui8_bus] = true;
+        pc_serverData->marrb_deviceConnected[ui8_bus] = true;
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+    else 
     {
-      canBusIsOpen[ui8_bus] = true;
-      pc_serverData->marrb_deviceConnected[ui8_bus] = true;
+      /* wrong bus - but that's ok - see above */
       return true;
     }
-    else
-      return false;
-
 #else
 
     char fname[32];
@@ -242,24 +258,37 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #if WIN32
-  DWORD rc;
-  TPCANMsg msg;
+  /* 
+   * ATTENTION!
+   *
+   * the PCAN multi card abilities are currently unused. Working with several (can_server)busses
+   * and less devices plugged causes random distribution of incomming messages.
+   *
+   * This is a temporary workarround!
+   *
+   */
+  if( 0 == ui8_bus ) {
+    DWORD rc;
+    TPCANMsg msg;
 
-  msg.ID = ps_canMsg->ui32_id;
-  msg.MSGTYPE = (ps_canMsg->i32_msgType ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
-  msg.LEN = ps_canMsg->i32_len;
+    msg.ID = ps_canMsg->ui32_id;
+    msg.MSGTYPE = (ps_canMsg->i32_msgType ? MSGTYPE_EXTENDED : MSGTYPE_STANDARD );
+    msg.LEN = ps_canMsg->i32_len;
 
-  for( int i=0; i<msg.LEN; i++ )
-    msg.DATA[i] = ps_canMsg->ui8_data[i];
+    for( int i=0; i<msg.LEN; i++ )
+      msg.DATA[i] = ps_canMsg->ui8_data[i];
 
-  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
-  {
-    rc = CAN_Write(&msg);
-    // printf("CAN_write rc: %x, ID %x, len %d, data %x %x %x %x %x %x %x %x\n", rc, msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
-    if (CAN_ERR_OK == rc)
-      return 1;
+    if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+    {
+      rc = CAN_Write(&msg);
+      // printf("CAN_write rc: %x, ID %x, len %d, data %x %x %x %x %x %x %x %x\n", rc, msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
+      if (CAN_ERR_OK == rc)
+        return 1;
+    }
+    return 0;
+  } else {
+    return 1;
   }
-  return 0;
 
 #else
 
@@ -324,12 +353,28 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #if WIN32
-  DWORD rc;
   TPCANMsg msg;
+  /* 
+   * ATTENTION!
+   *
+   * the PCAN multi card abilities are currently unused. Working with several (can_server)busses
+   * and less devices plugged causes random distribution of incomming messages.
+   *
+   * This is a temporary workarround!
+   *
+   */
+  if( 0 == ui8_bus ) {
+    DWORD rc;
 
-  rc = CAN_Read(&msg);
-  if (CAN_ERR_OK != rc)
+    rc = CAN_Read(&msg);
+    if (CAN_ERR_OK != rc) 
+    {
+      return false;
+    }
+  } else {
+    /* bus number not 0 - we can't read anything here */
     return false;
+  }
 #else
   TPCANRdMsg msgRd;
   #ifdef USE_PCAN_LIB
