@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Project>
+  <Templates/>
+  <Dictionaries>
+    <Dictionary Path="lang" RelativePath="1"/>
+  </Dictionaries>
+  <Bitmaps>
+    <Bitmap Path="bitmaps" RelativePath="1"/>
+  </Bitmaps>
+  <ObjectPoolSettings dimension="200" softkeywidth="60" softkeyheight="47" fontsize="32767" fontstyle="127" color="8" preset="12"/>
+  <vtsettings dimension="200" softkeywidth="60" softkeyheight="47" fontsize="511" fontstyle="7" color="8" preset="27" id="21" physicalsoftkeycount="10" virtualsoftkeycount="10" hwwidth="320" hwheight="240" activelang="en"/>
+  <Files>
+    <File StandardNew="1" RelativePath="1" Writeable="1" FilePath="display.xml"/>
+	<File StandardNew="0" RelativePath="1" Writeable="1" FilePath="attributes.xml"/>
+  </Files>
+  <Meta ProjectName="tutorialDisplay" Description="" Notes=""/>
+</Project>

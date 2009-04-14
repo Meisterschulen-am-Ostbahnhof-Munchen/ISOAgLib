@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<objectpool>
+  
+  <!--- Font attributes -->
+  
+	<fontattributes name="fta6x8" id="10000" font_colour="black" font_size="6x8" font_type="0" font_style="none"/>
+	<fontattributes name="fta8x12_SK" id="23001" font_colour="black" font_size="8x12" font_type="0" font_style="none"/>
+	<fontattributes name="fta8x8" id="23002" font_colour="black" font_size="8x8" font_type="0" font_style="none"/>
+  
+  <!--- Fill attributes -->
+  
+	<fillattributes name="flaContentBg" id="25000" fill_type="fillcolour" fill_colour="229" fill_pattern="NULL"/>
+	<fillattributes name="flaFalse" id="65498" fill_type="fillcolour" fill_colour="red" fill_pattern="NULL"/>	
+	<fillattributes name="flaOk" id="65501" fill_type="fillcolour" fill_colour="40" fill_pattern="NULL"/>  
+	<fillattributes name="flaLogo" id="65519" fill_type="nofill" fill_colour="green" fill_pattern="NULL"/>	
+	
+  <!--- Line attributes -->	
+	
+	<lineattributes name="lnSolidBlack" id="65532" line_art="1111111111111111" line_colour="black" line_width="1"/>	
+	
+</objectpool>
