@@ -1588,6 +1588,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
     echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$USE_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
 
     echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
+    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_common.cpp" >> $MakefileNameLong
     echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
     cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
@@ -1604,6 +1605,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
     # now derive the source name of the specific CAN HAL module
     echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$USE_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
+    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_common.cpp" >> $MakefileNameLong
     echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
 
     cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong

@@ -62,8 +62,10 @@
 
 #include <list>
 #include <string>
+#include <sstream>
 
 #define DEF_USE_SERVER_SPECIFIC_HEADER
+#include "can_server_common.h"
 #include "can_server.h"
 
 #ifdef WIN32
@@ -95,18 +97,21 @@ static const uint32_t scui32_selectTimeoutMax = 50000;
 static const uint32_t scui32_selectTimeoutMin = 1000;
 
 
-using namespace __HAL;
-
-
-__HAL::server_c::server_c()
-  : mb_logMode(FALSE), mb_monitorMode(FALSE), mb_inputFileMode(FALSE), mi16_reducedLoadOnIsoBus(-1)
+__HAL::server_c::server_c() :
+  mb_logMode(FALSE),
+  mvec_logFile( cui32_maxCanBusCnt, 0 ),
+  mb_monitorMode(FALSE),
+  mb_inputFileMode(FALSE),
+  mi16_reducedLoadOnIsoBus(-1),
+  mb_interactive(true),
+  mi_canReadNiceValue(0),
+  mi_highPrioModeIfMin(0)
 {
-  memset(mf_canOutput, 0, sizeof(mf_canOutput));
   memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
   memset(marrui16_busRefCnt, 0, sizeof(marrui16_busRefCnt));
 
-  for (uint32_t i=0; i<cui32_maxCanBusCnt; i++)
+  for (uint32_t i=0; i<__HAL::cui32_maxCanBusCnt; i++)
   {
     marri32_sendDelay[i] = 0;
     marri_pendingMsgs[i] = 0;
@@ -118,7 +123,7 @@ __HAL::server_c::server_c()
 
 }
 
-client_c::client_c()
+__HAL::client_c::client_c()
   : ui16_pid(0), i32_msecStartDeltaClientMinusServer(0)
 {
   memset(b_busUsed, 0, sizeof(b_busUsed));
@@ -131,8 +136,6 @@ client_c::client_c()
 
 
 namespace __HAL {
-
-static int si_highPrioModeIfMin=0; // can be switch by commandline-parameter
 
 #ifndef WIN32
 /** linux-begin */
@@ -251,7 +254,7 @@ int32_t getStartUpTime()
 #endif
 
 
-void initClientTime( client_c& ref_receiveClient, clock_t rt_startupClock )
+void initClientTime( __HAL::client_c& ref_receiveClient, clock_t rt_startupClock )
 {
 #ifndef WIN32
   #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
@@ -265,28 +268,18 @@ void initClientTime( client_c& ref_receiveClient, clock_t rt_startupClock )
   DEBUG_PRINT1 ("Initialized ref_receiveClient.i32_msecStartDeltaClientMinusServer to %d\n", ref_receiveClient.i32_msecStartDeltaClientMinusServer);
 }
 
-int32_t getClientTime( client_c& ref_receiveClient )
+int32_t getClientTime( __HAL::client_c& ref_receiveClient )
 {
   return getTime() - ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 }
 
-//int32_t getServerTimeFromClientTime( client_c& ref_receiveClient, int32_t ri32_clientTime )
+//int32_t getServerTimeFromClientTime( __HAL::client_c& ref_receiveClient, int32_t ri32_clientTime )
 //{
 //  return ri32_clientTime + ref_receiveClient.i32_msecStartDeltaClientMinusServer;
 //}
 
 } // end namespace
 
-
-void usage() {
-  printf("usage: can_server [--log <log_file_name_base>] [--monitor] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>]n\n");
-  printf("  --log                      log can traffic into <log_file_name_base>_<bus_id>\n");
-  printf("  --monitor                  display can traffic in console\n");
-  printf("  --file-input               read can data from file <log_file_name>\n");
-  printf("  --high-prio-minimum        if 0: start normally without priority-handling (default - used if param not given!).\n");
-  printf("                             if >0: only clients with activated high-priority-send-mode can send messages if\n");
-  printf("                                    can-controller has equal or more than <num_pending_writes> in its queue.\n");
-}
 
 SOCKET_TYPE establish(unsigned short portnum)
 {
@@ -402,7 +395,7 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
   return(bcount);
 }
 
-void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
+void dumpCanMsg (__HAL::transferBuf_s *ps_transferBuf, FILE* f_handle)
 {
 #if WIN32
   clock_t t_sendTimestamp = timeGetTime();
@@ -425,8 +418,20 @@ void dumpCanMsg (transferBuf_s *ps_transferBuf, FILE* f_handle)
   }
 };
 
+void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server)
+{
+  size_t n_bus = ap_transferBuf->s_data.ui8_bus;
+  if (!ap_server->mvec_logFile[n_bus]) {
+    bool b_error = newFileLog( ap_server, n_bus );
+    if (b_error)
+      return;
+  }
+  dumpCanMsg(
+      ap_transferBuf,
+      ap_server->mvec_logFile[n_bus]->getRaw() );
+}
 
-void monitorCanMsg (transferBuf_s *ps_transferBuf)
+void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
 {
 #if WIN32
   clock_t t_sendTimestamp = timeGetTime();
@@ -448,11 +453,11 @@ void monitorCanMsg (transferBuf_s *ps_transferBuf)
 };
 
 
-void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_delete)
+void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_delete)
 {
   printf("release client\n");
 
-  for (uint8_t ui8_cnt=0; ui8_cnt<cui32_maxCanBusCnt; ui8_cnt++)
+  for (uint8_t ui8_cnt=0; ui8_cnt<__HAL::cui32_maxCanBusCnt; ui8_cnt++)
   {
     if (iter_delete->b_initReceived[ui8_cnt] && (pc_serverData->marrui16_busRefCnt[ui8_cnt] > 0))
     {
@@ -463,7 +468,7 @@ void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_
   }
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  for (uint8_t k=0; k<cui32_maxCanBusCnt; k++)
+  for (uint8_t k=0; k<__HAL::cui32_maxCanBusCnt; k++)
     iter_delete->arrMsgObj[k].clear();
 #endif
 
@@ -472,9 +477,9 @@ void releaseClient(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 
 }
 
-static void enqueue_msg(transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, server_c* pc_serverData)
+static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, __HAL::server_c* pc_serverData)
 {
-  std::list<client_c>::iterator iter, iter_delete = pc_serverData->mlist_clients.end();
+  std::list<__HAL::client_c>::iterator iter, iter_delete = pc_serverData->mlist_clients.end();
 
   const uint8_t ui8_bus = p_sockBuf->s_data.ui8_bus;
 
@@ -529,7 +534,7 @@ static void enqueue_msg(transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, 
 
           p_sockBuf->s_data.ui8_obj = i32_obj;
 
-          if (send(iter->i32_dataSocket, (char*)p_sockBuf, sizeof(transferBuf_s),
+          if (send(iter->i32_dataSocket, (char*)p_sockBuf, sizeof(__HAL::transferBuf_s),
 #ifdef WIN32
               0
 #else
@@ -555,13 +560,13 @@ std::list<int32_t> __HAL::list_sendTimeStamps;
 
 void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, int32_t ri32_data)
 {
-  transferBuf_s s_transferBuf;
+  __HAL::transferBuf_s s_transferBuf;
 
   s_transferBuf.ui16_command = COMMAND_ACKNOWLEDGE;
   s_transferBuf.s_acknowledge.i32_dataContent = ri32_dataContent;
   s_transferBuf.s_acknowledge.i32_data = ri32_data;
 
-  if (send(ri32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
+  if (send(ri32_commandSocket, (char*)&s_transferBuf, sizeof(__HAL::transferBuf_s),
 #ifdef WIN32
            0
 #else
@@ -575,7 +580,7 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
 
 
 /////////////////////////////////////////////////////////////////////////
-void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_client, transferBuf_s* p_writeBuf)
+void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_client, __HAL::transferBuf_s* p_writeBuf)
 {
   int32_t i32_error;
   int32_t i32_dataContent;
@@ -616,7 +621,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
       case COMMAND_DEREGISTER: {
         DEBUG_PRINT("COMMAND_DEREGISTER\n");
 
-        for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
+        for (uint8_t j=0; j<__HAL::cui32_maxCanBusCnt; j++)
         {
           iter_client->arrMsgObj[j].clear();
           if (iter_client->b_initReceived[j] && (pc_serverData->marrui16_busRefCnt[j] > 0))
@@ -636,19 +641,7 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
         { // first init command for current bus
           // open log file only once per bus
           if (pc_serverData->mb_logMode) {
-            char file_name[255];
-
-#ifdef WIN32
-            _snprintf
-#else
-            snprintf
-#endif
-            (file_name, 255, "%s_%hx", pc_serverData->mstr_logFileBase.c_str(), p_writeBuf->s_init.ui8_bus);
-
-            if ((pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
-              MACRO_ISOAGLIB_PERROR("fopen");
-              exit(1);
-            }
+            newFileLog( pc_serverData, p_writeBuf->s_init.ui8_bus);
           }
 
           // just to get sure that we reset the number of pending write-messages
@@ -701,9 +694,9 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
             closeBusOnCard(p_writeBuf->s_init.ui8_bus, pc_serverData);
           }
 
-          if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] && pc_serverData->mb_logMode && pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus]) {
-            fclose(pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus]);
-            pc_serverData->mf_canOutput[p_writeBuf->s_init.ui8_bus] = 0;
+          if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] && pc_serverData->mb_logMode) {
+            pc_serverData->mvec_logFile[p_writeBuf->s_init.ui8_bus] =
+              yasper::ptr< __HAL::LogFile_c >( 0 );
           }
 
           iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].clear();
@@ -827,10 +820,10 @@ void handleCommand(server_c* pc_serverData, std::list<client_c>::iterator& iter_
 }
 
 
-void readWrite(server_c* pc_serverData)
+void readWrite(__HAL::server_c* pc_serverData)
 {
   fd_set rfds;
-  transferBuf_s s_transferBuf;
+  __HAL::transferBuf_s s_transferBuf;
   uint16_t ui16_bytesRead;
   int i_selectResult;
   struct timeval t_timeout;
@@ -855,7 +848,7 @@ void readWrite(server_c* pc_serverData)
 
     FD_ZERO(&rfds);
 
-    std::list<client_c>::iterator iter_client;
+    std::list<__HAL::client_c>::iterator iter_client;
 
     for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
     {
@@ -866,7 +859,7 @@ void readWrite(server_c* pc_serverData)
     b_deviceHandleFound=false;
     b_deviceConnected = false;
 
-    for (uint32_t ui32=0; ui32<cui32_maxCanBusCnt; ui32++ )
+    for (uint32_t ui32=0; ui32<__HAL::cui32_maxCanBusCnt; ui32++ )
     {
       if (pc_serverData->marri32_can_device[ui32] > 0)
       {
@@ -897,7 +890,7 @@ void readWrite(server_c* pc_serverData)
       continue;
 
     // new message from can device ?
-    for (uint32_t ui32_cnt = 0; ui32_cnt < cui32_maxCanBusCnt; ui32_cnt++ )
+    for (uint32_t ui32_cnt = 0; ui32_cnt < __HAL::cui32_maxCanBusCnt; ui32_cnt++ )
     {
       if (!pc_serverData->marrui16_busRefCnt[ui32_cnt])
         continue; // unused bus
@@ -912,8 +905,11 @@ void readWrite(server_c* pc_serverData)
           s_transferBuf.s_data.ui8_bus = ui32_cnt;
           enqueue_msg(&s_transferBuf, 0, pc_serverData);
           pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
-          if (pc_serverData->mb_logMode)
-            dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
+          if (pc_serverData->mb_logMode) {
+            dumpCanMsg(
+                &s_transferBuf,
+                pc_serverData);
+          }
           if (pc_serverData->mb_monitorMode)
             monitorCanMsg (&s_transferBuf);
         }
@@ -933,7 +929,7 @@ void readWrite(server_c* pc_serverData)
         //int bytesRecv = select( 0, &rfds, NULL, NULL, 0 ); // this was a try for a workaround
         #error "This place has to be done correctly for Windows CE"
 #else
-        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
+        int bytesRecv = recv(iter_client->i32_commandSocket, (char*)&s_transferBuf, sizeof(__HAL::transferBuf_s),
         #ifndef WIN32
           MSG_DONTWAIT|
         #endif
@@ -965,7 +961,7 @@ void readWrite(server_c* pc_serverData)
         //int bytesRecv = select( 0, &rfds, NULL, NULL, 0 ); // this was a try for a workaround
         #error "This place has to be done correctly for Windows CE"
 #else
-        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
+        int bytesRecv = recv(iter_client->i32_dataSocket, (char*)&s_transferBuf, sizeof(__HAL::transferBuf_s),
         #ifndef WIN32
           MSG_DONTWAIT|
         #endif
@@ -992,9 +988,10 @@ void readWrite(server_c* pc_serverData)
 
           sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
 
-          if (pc_serverData->mb_logMode)
-          {
-            dumpCanMsg (&s_transferBuf, pc_serverData->mf_canOutput[s_transferBuf.s_data.ui8_bus]);
+          if (pc_serverData->mb_logMode) {
+            dumpCanMsg(
+                &s_transferBuf,
+                pc_serverData);
           }
           if (pc_serverData->mb_monitorMode)
           {
@@ -1017,9 +1014,9 @@ void readWrite(server_c* pc_serverData)
 static void* collectClient(void* ptr) {
 
   SOCKET_TYPE new_socket, base_commandSocket, base_dataSocket;
-  client_c s_tmpClient; // constructor initialize values to zero
+  __HAL::client_c s_tmpClient; // constructor initialize values to zero
 
-  server_c* pc_serverData = static_cast<server_c*>(ptr);
+  __HAL::server_c* pc_serverData = static_cast<__HAL::server_c*>(ptr);
 
   if ((base_commandSocket = establish(COMMAND_TRANSFER_PORT)) < 0) {
     MACRO_ISOAGLIB_PERROR("establish");
@@ -1073,52 +1070,30 @@ static void* collectClient(void* ptr) {
   }
 }
 
+Option_s const ga_options[] = {
+  makeOption< OPTION_MONITOR >(),
+  makeOption< OPTION_LOG >(),
+  makeOption< OPTION_HIGH_PRIO_MINIMUM >(),
+  makeOption< OPTION_REDUCED_LOAD_ISO_BUS_NO >(),
+  makeOption< OPTION_INTERACTIVE >(),
+  makeOption< OPTION_PRODUCTIVE >(),
+  makeOption< OPTION_HELP >()
+};
+
+Option_s const *const gp_optionsBegin = ga_options;
+Option_s const *const gp_optionsEnd = ga_options +
+  (sizeof ga_options) / (sizeof ga_options[0]);
 
 int main(int argc, char *argv[])
 {
   pthread_t threadCollectClient;
   int i_collectClientThreadHandle;
-  server_c c_serverData;
+  __HAL::server_c c_serverData;
 
-  if (argc > 1 && strcmp(argv[1], "--help") == 0) {
-    usage();
-    exit(0);
-  }
-
-  for (int i=1; i<argc; i=i+2) {
-    if (strcmp(argv[i], "--monitor") == 0) {
-      c_serverData.mb_monitorMode=true;
-      i--; // no second paramter => decrease count
-    }
-    if (strcmp(argv[i], "--log") == 0)
-    {
-      if (i+1>=argc)
-      {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      c_serverData.mstr_logFileBase = argv[i+1];
-      c_serverData.mb_logMode=true;
-    }
-    if (strcmp(argv[i], "--high-prio-minimum") == 0) {
-      if (i+1>=argc) {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      si_highPrioModeIfMin = atoi (argv[i+1]); // 0 for no prio mode!
-    }
-    if (strcmp(argv[i], "--reduced-load-iso-bus-no") == 0) {
-      if (i+1>=argc) {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      c_serverData.mi16_reducedLoadOnIsoBus = atoi (argv[i+1]);
-      printf("reduced bus load on ISO bus no. %d\n", c_serverData.mi16_reducedLoadOnIsoBus); fflush(0);
-    }
-  }
+  checkOptions( argc, argv, c_serverData );
 
   // some time init
-  getTime();
+  __HAL::getTime();
 
   const uint32_t apiversion = initCardApi();
   if ( apiversion == 0 ) { // failure - nothing found
@@ -1146,10 +1121,15 @@ int main(int argc, char *argv[])
 
   i_collectClientThreadHandle = pthread_create( &threadCollectClient, NULL, &collectClient, &c_serverData);
 
-  printf("operating\n");
+  if (c_serverData.mb_interactive) {
+    pthread_t thread_readUserInput;
+    int i_status = pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
+    if (i_status)
+      exit( i_status ); // thread could not be created
+    printf("operating\n");
+  }
 
   readWrite(&c_serverData);
-
 }
 
 #if defined(WINCE) || (defined(WIN32) && defined(UNICODE))

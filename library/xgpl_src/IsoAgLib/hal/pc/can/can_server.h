@@ -74,7 +74,8 @@
 #include <IsoAgLib/util/compiler_adaptation.h>
 
 #ifdef DEF_USE_SERVER_SPECIFIC_HEADER
-  #include <pthread.h>
+#include <pthread.h>
+#include <../../tools/libs/misc/yasper.h>
 #endif
 
 #include "can_target_extensions.h"
@@ -282,6 +283,23 @@ public:
 
 
 #ifdef DEF_USE_SERVER_SPECIFIC_HEADER
+class LogFile_c {
+public:
+  LogFile_c ( std::string const &arstr_filename )
+    : mp_file( std::fopen( arstr_filename.c_str(), "a+" ) ) {}
+  ~LogFile_c() {
+    if (mp_file)
+      std::fclose( mp_file );
+  }
+  std::FILE *getRaw() {
+    return mp_file;
+  }
+private:
+  std::FILE *mp_file;
+  // intentionally not implemented (prevent use):
+  LogFile_c( LogFile_c const & );
+  LogFile_c &operator= ( LogFile_c const & );
+};
 
 // server specific data
 class server_c {
@@ -298,7 +316,7 @@ public:
   uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
   // logging
   bool     mb_logMode;
-  FILE*    mf_canOutput[cui32_maxCanBusCnt];
+  std::vector< yasper::ptr< LogFile_c > > mvec_logFile;
   // monitor
   bool     mb_monitorMode;
   // replay
@@ -321,7 +339,9 @@ public:
   uint16_t marrui16_busRefCnt[cui32_maxCanBusCnt];
 
   pthread_mutex_t mt_protectClientList;
-
+  bool     mb_interactive;
+  int      mi_canReadNiceValue;
+  int      mi_highPrioModeIfMin;
 };
 
 

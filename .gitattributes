@@ -2461,6 +2461,8 @@ library/xgpl_src/IsoAgLib/hal/mitron167/system/time_clock.c -text
 library/xgpl_src/IsoAgLib/hal/mitron167/typedef.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_A1.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_common.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/can_server_common.h -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_no_card.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/can_server_pcan.cpp -text
@@ -2633,6 +2635,7 @@ tools/libs/freeimage/README.txt -text
 tools/libs/freeimage/license-fi.txt -text
 tools/libs/freeimage/license-gpl.txt -text
 tools/libs/freeimage/mingw/FreeImage.h -text
+tools/libs/misc/yasper.h -text
 tools/libs/pcan/README.txt -text
 tools/libs/pthread/ANNOUNCE -text
 tools/libs/pthread/BUGS -text

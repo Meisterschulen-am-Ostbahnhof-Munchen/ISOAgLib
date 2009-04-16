@@ -64,6 +64,7 @@
 
 #include <list>
 #include <string>
+#include <sstream>
 
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -83,6 +84,7 @@
 #include <linux/version.h>
 
 #define DEF_USE_SERVER_SPECIFIC_HEADER
+#include "can_server_common.h"
 #include "can_server.h"
 
 #ifdef DEBUG
@@ -93,8 +95,6 @@
   char*  reserve_memory_heap;
 #endif
 
-
-using namespace __HAL;
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -117,15 +117,22 @@ using namespace __HAL;
 #define PRIORITY_CAN_COMMAND  0
 
 
-__HAL::server_c::server_c()
-  : mb_logMode(FALSE), mb_monitorMode(FALSE), mb_inputFileMode(FALSE), mi32_lastPipeId(0), mi16_reducedLoadOnIsoBus(-1)
+__HAL::server_c::server_c() :
+  mb_logMode(FALSE),
+  mvec_logFile( cui32_maxCanBusCnt, 0 ),
+  mb_monitorMode(FALSE),
+  mb_inputFileMode(FALSE),
+  mi32_lastPipeId(0),
+  mi16_reducedLoadOnIsoBus(-1),
+  mb_interactive(true),
+  mi_canReadNiceValue(0),
+  mi_highPrioModeIfMin(0)
 {
-  memset(mf_canOutput, 0, sizeof(mf_canOutput));
   memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
   memset(marrui16_busRefCnt, 0, sizeof(marrui16_busRefCnt));
 
-  for (uint32_t i=0; i<cui32_maxCanBusCnt; i++)
+  for (uint32_t i=0; i<__HAL::cui32_maxCanBusCnt; i++)
   {
     marri32_sendDelay[i] = 0;
     marri_pendingMsgs[i] = 0;
@@ -137,7 +144,7 @@ __HAL::server_c::server_c()
 
 }
 
-client_c::client_c()
+__HAL::client_c::client_c()
   : ui16_pid(0), i32_msecStartDeltaClientMinusServer(0), i32_pipeHandle(0)
 {
   memset(b_busUsed, 0, sizeof(b_busUsed));
@@ -150,8 +157,6 @@ client_c::client_c()
 
 
 namespace __HAL {
-
-static int si_highPrioModeIfMin=0; // can be switch by commandline-parameter
 
 #ifndef WIN32
 /** linux-begin */
@@ -287,21 +292,6 @@ int32_t getClientTime( client_c& r_receiveClient )
 } // end namespace
 
 
-void usage() {
-  printf("usage: can_server_A1 [--log <log_file_name_base>] [--monitor] [--file-input <log_file_name>] [--high-prio-minimum <num_pending_writes>] [--reduced-load-iso-bus-no <bus_number>\n\n");
-  printf("  --log                      log can traffic into <log_file_name_base>_<bus_id>\n");
-  printf("  --monitor                  display can traffic in console\n");
-  printf("  --file-input               read can data from file <log_file_name>\n");
-  printf("  --high-prio-minimum        if 0: start normally without priority-handling (default - used if param not given!).\n");
-  printf("                             if >0: only clients with activated high-priority-send-mode can send messages if\n");
-  printf("                                    can-controller has equal or more than <num_pending_writes> in its queue.\n");
-  printf("  --reduced-load-iso-bus-no  avoid unnecessary CAN bus load due to\n");
-  printf("                             messages with local destination addresses\n");
-  printf("  --nice-can-read            set a nice value for can read thread to reduce slowing down effect on other applications\n");
-  printf("                             due to heavy OS task switches, 0 < value < 20 for reducing the priority\n\n");
-}
-
-
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE* f_handle)
 {
   clock_t t_sendTimestamp = times(NULL);
@@ -316,7 +306,21 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE*
     fprintf(f_handle, "\n");
     fflush(f_handle);
   }
-};
+}
+
+void dumpCanMsg(uint8_t au8_bus, uint8_t au8_msgObj, canMsg_s *ap_canMsg, __HAL::server_c *ap_server)
+{
+  if (!ap_server->mvec_logFile[au8_bus]) {
+    bool b_error = newFileLog( ap_server, au8_bus );
+    if (b_error)
+      return;
+  }
+  dumpCanMsg(
+      au8_bus,
+      au8_msgObj,
+      ap_canMsg,
+      ap_server->mvec_logFile[au8_bus]->getRaw() );
+}
 
 void monitorCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg)
 {
@@ -333,7 +337,7 @@ void monitorCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg)
 };
 
 
-bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
+bool readCanDataFile(__HAL::server_c* pc_serverData, __HAL::can_recv_data* ps_receiveData)
 {
   char zeile[100];
   static struct timeval tv_start;
@@ -408,17 +412,17 @@ bool readCanDataFile(server_c* pc_serverData, can_recv_data* ps_receiveData)
   return TRUE;
 }
 
-void releaseClient(server_c* pc_serverData, STL_NAMESPACE::list<client_c>::iterator& iter_delete) {
+void releaseClient(__HAL::server_c* pc_serverData, STL_NAMESPACE::list< __HAL::client_c >::iterator& iter_delete) {
 
-  for (uint8_t i=0; i<cui32_maxCanBusCnt; i++)
+  for (uint8_t i=0; i<__HAL::cui32_maxCanBusCnt; i++)
   {
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     for (uint8_t j=0; j<iter_delete->arrMsgObj[i].size(); j++) {
-      clearReadQueue (i, j, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_delete->ui16_pid);
+      __HAL::clearReadQueue (i, j, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_delete->ui16_pid);
 //      clearWriteQueue(i, j, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_delete->ui16_pid);
     }
 #else
-    clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle,iter_delete->ui16_pid);
+    __HAL::clearReadQueue (i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle,iter_delete->ui16_pid);
 //  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle,iter_delete->ui16_pid);
 #endif
 
@@ -430,7 +434,7 @@ void releaseClient(server_c* pc_serverData, STL_NAMESPACE::list<client_c>::itera
     close(iter_delete->i32_pipeHandle);
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  for (uint8_t k=0; k<cui32_maxCanBusCnt; k++)
+  for (uint8_t k=0; k<__HAL::cui32_maxCanBusCnt; k++)
     iter_delete->arrMsgObj[k].clear();
 #endif
 
@@ -440,16 +444,16 @@ void releaseClient(server_c* pc_serverData, STL_NAMESPACE::list<client_c>::itera
 }
 
 
-static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, uint16_t ui16_pid, server_c* pc_serverData)
+static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t b_xtd, uint8_t* pui8_data, uint16_t ui16_pid, __HAL::server_c* pc_serverData)
 {
 
-  can_data* pc_data;
-  STL_NAMESPACE::list<client_c>::iterator iter, iter_delete = pc_serverData->mlist_clients.end();
+  __HAL::can_data *pc_data;
+  STL_NAMESPACE::list<__HAL::client_c>::iterator iter, iter_delete = pc_serverData->mlist_clients.end();
 
   // mutex to prevent client list modification already got in calling function
 
   // prepare msqRead_s for each potential broadcast send
-  msqRead_s msqReadBuf;
+  __HAL::msqRead_s msqReadBuf;
   pc_data = &(msqReadBuf.s_canData);
   // preset constant fields of msqReadBuf
   pc_data->i32_ident = ui32_id;
@@ -548,14 +552,14 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
           pc_data->i32_time = getClientTime(*iter);
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-          DEBUG_PRINT1("mtype: 0x%08x\n", assembleRead_mtype(iter->ui16_pid, b_bus, i32_obj));
-          msqReadBuf.i32_mtypePidBusObj = assembleRead_mtype(iter->ui16_pid, b_bus, i32_obj);
+          DEBUG_PRINT1("mtype: 0x%08x\n", __HAL::assembleRead_mtype(iter->ui16_pid, b_bus, i32_obj));
+          msqReadBuf.i32_mtypePidBusObj = __HAL::assembleRead_mtype(iter->ui16_pid, b_bus, i32_obj);
 #else
-          msqReadBuf.i32_mtypePidBusObj = assembleRead_mtype(iter->ui16_pid, b_bus, COMMON_MSGOBJ_IN_QUEUE);
+          msqReadBuf.i32_mtypePidBusObj = __HAL::assembleRead_mtype(iter->ui16_pid, b_bus, COMMON_MSGOBJ_IN_QUEUE);
           msqReadBuf.s_canData.bMsgObj = i32_obj;
 #endif
 
-          int i_rcSnd=msgsnd(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(long), IPC_NOWAIT);
+          int i_rcSnd=msgsnd(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(__HAL::msqRead_s) - sizeof(long), IPC_NOWAIT);
           if (i_rcSnd == -1)
           {
             int error = errno;
@@ -566,7 +570,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
             #endif
             if (error == EAGAIN)
             { // queue is full => remove oldest msg and try again
-              msqWrite_s msqWriteBuf;
+              __HAL::msqWrite_s msqWriteBuf;
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
               DEBUG_PRINT4("message queue for CAN Ident: %x with Filter: %x, global Mask: %x for MsgObj: %d is full => try to remove oldest msg and send again!!\n",
                            ui32_id, iter->arrMsgObj[b_bus][i32_obj].ui32_filter, iter->ui32_globalMask[b_bus], i32_obj );
@@ -580,14 +584,14 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
                 << " for MsgObj NR: " << i32_obj
                 << " is full => try to remove oldest msg and send again!!" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
-              int i_rcRcv = msgrcv(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), 0,IPC_NOWAIT);
+              int i_rcRcv = msgrcv(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), 0,IPC_NOWAIT);
               if ( i_rcRcv > 0 )
               { // number of received bytes > 0 => msgrcv successfull => try again
                 DEBUG_PRINT("oldest msg from queue removed!!\n");
                 #ifdef CAN_SERVER_LOG_PATH
                 logging << "oldest msg from queue removed!!" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
-                i_rcSnd=msgsnd(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(msqRead_s) - sizeof(long), IPC_NOWAIT);
+                i_rcSnd=msgsnd(pc_serverData->ms_msqDataServer.i32_rdHandle, &msqReadBuf, sizeof(__HAL::msqRead_s) - sizeof(long), IPC_NOWAIT);
                 if (i_rcSnd == 0)
                 {
                   DEBUG_PRINT("message sent again after queue full!!\n");
@@ -635,9 +639,9 @@ static void* can_write_thread_func(void* ptr)
 {
   int16_t i16_rc;
   int32_t i32_error;
-  msqWrite_s msqWriteBuf;
+  __HAL::msqWrite_s msqWriteBuf;
 
-  server_c* pc_serverData = static_cast<server_c*>(ptr);
+  __HAL::server_c* pc_serverData = static_cast< __HAL::server_c * >(ptr);
 
   bool b_highPrioMode=false; // default to FALSE until some bus reports >= 5 pending msgs.
   for (;;) {
@@ -645,7 +649,7 @@ static void* can_write_thread_func(void* ptr)
     i32_error = 0;
 
 
-    if (si_highPrioModeIfMin > 0)
+    if (pc_serverData->mi_highPrioModeIfMin > 0)
     { // only if user requested high-prio mode via program parameter!
       if (b_highPrioMode)
       { // we've been in a pending-busy state before, so let's just update our pendingWrites to see if we still are...
@@ -654,9 +658,9 @@ static void* can_write_thread_func(void* ptr)
       }
 
       b_highPrioMode=false; // default to FALSE until some bus reports >= 5 pending msgs.
-      for (uint8_t ui8_bus = 0; ui8_bus < cui32_maxCanBusCnt; ui8_bus++)
+      for (uint8_t ui8_bus = 0; ui8_bus < __HAL::cui32_maxCanBusCnt; ui8_bus++)
       {
-        if (pc_serverData->marri_pendingMsgs[ui8_bus] >= si_highPrioModeIfMin)
+        if (pc_serverData->marri_pendingMsgs[ui8_bus] >= pc_serverData->mi_highPrioModeIfMin)
         {
           b_highPrioMode = true;
           break;
@@ -667,7 +671,7 @@ static void* can_write_thread_func(void* ptr)
     if (b_highPrioMode)
     { // at least 5 messages are pending - so check for the prioritized clients first now!
       // receive for max 10 msec only prioritized messages (listen for prioritized MTYPE msgs only)
-      if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), MTYPE_WRITE_PRIO_HIGH, IPC_NOWAIT) == -1)
+      if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), MTYPE_WRITE_PRIO_HIGH, IPC_NOWAIT) == -1)
       { // no hi-prio msgs waiting in the queue...
         usleep(3000); // will probably actually wait for 10ms anyway :-(
         continue;
@@ -675,7 +679,7 @@ static void* can_write_thread_func(void* ptr)
     }
     else
     {
-      if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(msqWrite_s) - sizeof(long), MTYPE_ANY, 0) == -1)
+      if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), MTYPE_ANY, 0) == -1)
       {
         perror("msgrcv-all");
         usleep(1000);
@@ -698,9 +702,9 @@ static void* can_write_thread_func(void* ptr)
       pc_serverData->marrb_remoteDestinationAddressInUse[msqWriteBuf.s_canMsg.ui32_id & 0xFF] = false;
     }
 
-    client_c* ps_client = NULL;
+    __HAL::client_c* ps_client = NULL;
     // search client...
-    for (STL_NAMESPACE::list<client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++)
+    for (STL_NAMESPACE::list<__HAL::client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++)
     {
       if (iter->ui16_pid == msqWriteBuf.ui16_pid) // not used any more in write thread!!! directly having the variables now! disassemble_client_id(msqWriteBuf.i32_mtype))
       {
@@ -737,11 +741,15 @@ static void* can_write_thread_func(void* ptr)
 
       if (pc_serverData->mb_logMode)
       {
-        dumpCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_canMsg), pc_serverData->mf_canOutput[msqWriteBuf.ui8_bus]);
+        dumpCanMsg(
+            msqWriteBuf.ui8_bus,
+            msqWriteBuf.ui8_obj,
+            &msqWriteBuf.s_canMsg,
+            pc_serverData);
       }
-      if (pc_serverData->mb_monitorMode)
+      if (pc_serverData->mb_monitorMode && pc_serverData->mb_interactive)
       {
-         monitorCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_canMsg));
+        monitorCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_canMsg));
       }
 
       if (!i16_rc)
@@ -750,7 +758,7 @@ static void* can_write_thread_func(void* ptr)
       { // i16_rc != 0: send was ok
         if (i16_rc == HAL_NEW_SEND_DELAY)
         { // send was okay with "new send delay detected"!
-          for (STL_NAMESPACE::list<client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++)
+          for (STL_NAMESPACE::list<__HAL::client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++)
           {
             iter->marri32_sendDelay[msqWriteBuf.ui8_bus] = pc_serverData->marri32_sendDelay[msqWriteBuf.ui8_bus];
           }
@@ -779,9 +787,9 @@ static void* can_write_thread_func(void* ptr)
 
 
 /////////////////////////////////////////////////////////////////////////
-static void can_read(server_c* pc_serverData)
+static void can_read(__HAL::server_c* pc_serverData)
 {
-  can_recv_data receiveData;
+  __HAL::can_recv_data receiveData;
   uint32_t DLC;
   bool b_moreToRead = TRUE;
   bool b_processMsg = FALSE;
@@ -804,7 +812,7 @@ static void can_read(server_c* pc_serverData)
 
     ui8_cntOpenDevice = 0;
 
-    for (channel=0; channel<cui32_maxCanBusCnt; channel++ )
+    for (channel=0; channel<__HAL::cui32_maxCanBusCnt; channel++ )
     {
       if (isBusOpen(channel) && (pc_serverData->marri32_can_device[channel] > 0))
       { // valid file handle => use it for select
@@ -825,7 +833,7 @@ static void can_read(server_c* pc_serverData)
       } else {
 
         // get device with changes
-        for (channel_with_change=0; channel_with_change<cui32_maxCanBusCnt; channel_with_change++ ) {
+        for (channel_with_change=0; channel_with_change<__HAL::cui32_maxCanBusCnt; channel_with_change++ ) {
           if (isBusOpen(channel_with_change)) {
             if (FD_ISSET(pc_serverData->marri32_can_device[channel_with_change], &rfds) == 1) {
               DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->marri32_can_device[channel_with_change], &rfds));
@@ -899,9 +907,13 @@ static void can_read(server_c* pc_serverData)
 
       if (pc_serverData->mb_logMode)
       {
-        dumpCanMsg (channel_with_change, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &s_canMsg, pc_serverData->mf_canOutput[channel_with_change]);
+        dumpCanMsg(
+            channel_with_change,
+            0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/,
+            &s_canMsg,
+            pc_serverData);
       }
-      if (pc_serverData->mb_monitorMode)
+      if (pc_serverData->mb_monitorMode && pc_serverData->mb_interactive)
       {
         monitorCanMsg (channel_with_change, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &s_canMsg);
       }
@@ -925,15 +937,15 @@ static void* command_thread_func(void* ptr)
   int32_t i32_error;
   int32_t i32_dataContent;
   int32_t i32_data = 0;
-  transferBuf_s s_transferBuf;
+  __HAL::transferBuf_s s_transferBuf;
 
-  server_c* pc_serverData = static_cast<server_c*>(ptr);
+  __HAL::server_c* pc_serverData = static_cast< __HAL::server_c * >(ptr);
 
   for (;;) {
 
     // check command queue
     /* The length is essentially the size of the structure minus sizeof(mtype) */
-    if((i16_rc = msgrcv(pc_serverData->ms_msqDataServer.i32_cmdHandle, &s_transferBuf, sizeof(transferBuf_s) - sizeof(long), 0, 0)) == -1) {
+    if((i16_rc = msgrcv(pc_serverData->ms_msqDataServer.i32_cmdHandle, &s_transferBuf, sizeof(__HAL::transferBuf_s) - sizeof(long), 0, 0)) == -1) {
       perror("msgrcv");
       usleep(1000);
       continue;
@@ -947,7 +959,7 @@ static void* command_thread_func(void* ptr)
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
     // get client
-    STL_NAMESPACE::list<client_c>::iterator iter_client = pc_serverData->mlist_clients.end(), tmp_iter;
+    STL_NAMESPACE::list<__HAL::client_c>::iterator iter_client = pc_serverData->mlist_clients.end(), tmp_iter;
     for (tmp_iter = pc_serverData->mlist_clients.begin(); tmp_iter != pc_serverData->mlist_clients.end(); tmp_iter++)
       if (tmp_iter->ui16_pid == s_transferBuf.i32_mtypePid) // here the mtype is the PID without any disassembling needed!
       {
@@ -976,11 +988,11 @@ static void* command_thread_func(void* ptr)
 
         case COMMAND_REGISTER:
         {
-          client_c s_tmpClient; // constructor initialize values to zero
+          __HAL::client_c s_tmpClient; // constructor initialize values to zero
           DEBUG_PRINT("command start driver\n");
 
           // do check for dead clients before queueing any new message
-          for (STL_NAMESPACE::list<client_c>::iterator iter_deadClient = pc_serverData->mlist_clients.begin(); iter_deadClient != pc_serverData->mlist_clients.end();) {
+          for (STL_NAMESPACE::list<__HAL::client_c>::iterator iter_deadClient = pc_serverData->mlist_clients.begin(); iter_deadClient != pc_serverData->mlist_clients.end();) {
 
             // send signal 0 (no signal is send, but error handling is done) to check is process is alive
             if (kill(iter_deadClient->ui16_pid, 0) == -1) {
@@ -1017,7 +1029,7 @@ static void* command_thread_func(void* ptr)
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
           // used cui8_maxCanObj MsgObj
-          for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
+          for (uint8_t j=0; j<__HAL::cui32_maxCanBusCnt; j++)
             s_tmpClient.arrMsgObj[j].resize(cui8_maxCanObj);
   #endif
 
@@ -1034,7 +1046,7 @@ static void* command_thread_func(void* ptr)
         case COMMAND_DEREGISTER: {
           DEBUG_PRINT("command stop driver\n");
 
-          for (uint8_t j=0; j<cui32_maxCanBusCnt; j++)
+          for (uint8_t j=0; j<__HAL::cui32_maxCanBusCnt; j++)
           {
             iter_client->arrMsgObj[j].clear();
             if (iter_client->b_initReceived[j] && (pc_serverData->marrui16_busRefCnt[j] > 0))
@@ -1057,12 +1069,7 @@ static void* command_thread_func(void* ptr)
           { // first init command for current bus
             // open log file only once per bus
             if (pc_serverData->mb_logMode) {
-              char file_name[255];
-              snprintf(file_name, 255, "%s_%hx", pc_serverData->mstr_logFileBase.c_str(), s_transferBuf.s_init.ui8_bus);
-              if ((pc_serverData->mf_canOutput[s_transferBuf.s_init.ui8_bus] = fopen(file_name, "a+")) == NULL ) {
-                perror("fopen");
-                exit(1);
-              }
+              (void)newFileLog( pc_serverData, s_transferBuf.s_init.ui8_bus );
             }
 
             // just to get sure that we reset the number of pending write-messages
@@ -1073,8 +1080,8 @@ static void* command_thread_func(void* ptr)
                                                 pc_serverData);
 
             if (!i16_init_rc) {
-              printf("can't initialize CAN\n");
-              printf("CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n");
+              std::cerr << "can't initialize CAN" << std::endl;
+              std::cerr << "CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n" << std::endl;
               i32_error = HAL_CONFIG_ERR;
               abort();
             }
@@ -1116,17 +1123,16 @@ static void* command_thread_func(void* ptr)
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
             for (uint8_t j=0; j<iter_client->arrMsgObj[s_transferBuf.s_init.ui8_bus].size(); j++) {
-              clearReadQueue (s_transferBuf.s_init.ui8_bus, j, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
+              __HAL::clearReadQueue (s_transferBuf.s_init.ui8_bus, j, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //            clearWriteQueue(s_transferBuf.s_init.ui8_bus, j, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
             }
   #else
-            clearReadQueue (s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
+            __HAL::clearReadQueue (s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
   #endif
 
-            if (!pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus] && pc_serverData->mb_logMode && pc_serverData->mf_canOutput[s_transferBuf.s_init.ui8_bus]) {
-              fclose(pc_serverData->mf_canOutput[s_transferBuf.s_init.ui8_bus]);
-              pc_serverData->mf_canOutput[s_transferBuf.s_init.ui8_bus] = 0;
+            if (!pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus] && pc_serverData->mb_logMode) {
+              pc_serverData->mvec_logFile[s_transferBuf.s_init.ui8_bus] = yasper::ptr< __HAL::LogFile_c >( 0 );
             }
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1167,7 +1173,7 @@ static void* command_thread_func(void* ptr)
     #endif
 
             if (s_transferBuf.ui16_command == COMMAND_CONFIG) {
-              clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
+              __HAL::clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //            clearWriteQueue(s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
               iter_client->arrMsgObj[s_transferBuf.s_config.ui8_bus][s_transferBuf.s_config.ui8_obj].ui8_bMsgType = s_transferBuf.s_config.ui8_bMsgType;
@@ -1215,7 +1221,7 @@ static void* command_thread_func(void* ptr)
 
             iter_client->arrMsgObj[s_transferBuf.s_config.ui8_bus][s_transferBuf.s_config.ui8_obj].b_canBufferLock = FALSE;
             iter_client->arrMsgObj[s_transferBuf.s_config.ui8_bus][s_transferBuf.s_config.ui8_obj].ui16_size = 0;
-            clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
+            __HAL::clearReadQueue (s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(s_transferBuf.s_config.ui8_bus, s_transferBuf.s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1295,12 +1301,27 @@ void segfaulthand(int /* i */ )
 }
 #endif
 
+Option_s const ga_options[] = {
+  makeOption< OPTION_MONITOR >(),
+  makeOption< OPTION_LOG >(),
+  makeOption< OPTION_FILE_INPUT >(),
+  makeOption< OPTION_HIGH_PRIO_MINIMUM >(),
+  makeOption< OPTION_REDUCED_LOAD_ISO_BUS_NO >(),
+  makeOption< OPTION_NICE_CAN_READ >(),
+  makeOption< OPTION_INTERACTIVE >(),
+  makeOption< OPTION_PRODUCTIVE >(),
+  makeOption< OPTION_HELP >()
+};
+
+Option_s const *const gp_optionsBegin = ga_options;
+Option_s const *const gp_optionsEnd = ga_options +
+  (sizeof ga_options) / (sizeof ga_options[0]);
+
 int main(int argc, char *argv[])
 {
   pthread_t thread_registerClient, thread_canWrite;
   int i_registerClientThreadHandle, i_canWriteThreadHandle;
-  server_c c_serverData;
-  int i_canReadNiceValue = 0;
+  __HAL::server_c c_serverData;
 
 #ifdef DEBUG
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1315,58 +1336,8 @@ int main(int argc, char *argv[])
     exit(0);
   }
 
-  for (int i=1; i<argc; i=i+2) {
-    if (strcmp(argv[i], "--monitor") == 0) {
-      c_serverData.mb_monitorMode=true;
-      i--; // no second paramter => decrease count
-    }
-    if (strcmp(argv[i], "--log") == 0) {
-      if (i+1>=argc)
-      {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      c_serverData.mstr_logFileBase = argv[i+1];
-      c_serverData.mb_logMode=true;
-    }
-    if (strcmp(argv[i], "--file-input") == 0) {
-      if (i+1>=argc)
-      {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      c_serverData.mstr_inputFile = argv[i+1];
-      c_serverData.mb_inputFileMode=true;
-    }
-    if (strcmp(argv[i], "--high-prio-minimum") == 0) {
-      if (i+1>=argc)
-      {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      si_highPrioModeIfMin = atoi (argv[i+1]); // 0 for no prio mode!
-    }
-    if (strcmp(argv[i], "--reduced-load-iso-bus-no") == 0) {
-      c_serverData.mi16_reducedLoadOnIsoBus = atoi (argv[i+1]);
-      if (i+1>=argc)
-      {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      printf("reduced bus load on ISO bus no. %d\n", c_serverData.mi16_reducedLoadOnIsoBus); fflush(0);
-    }
-    if (strcmp(argv[i], "--nice-can-read") == 0) {
-      if (i+1>=argc)
-      {
-        printf("error: option needs second parameter\n");
-        exit(1);
-      }
-      i_canReadNiceValue = atoi (argv[i+1]); // 0 for no prio mode!
-      printf("nice value for can read thread: %d\n", i_canReadNiceValue); fflush(0);
-    }
-  }
-
-  getTime();
+  checkOptions( argc, argv, c_serverData );
+  __HAL::getTime();
 
   const uint32_t apiversion = initCardApi();
   if ( apiversion == 0 ) { // failure - nothing found
@@ -1387,7 +1358,7 @@ int main(int argc, char *argv[])
   int16_t i16_rc = createMsqs(c_serverData.ms_msqDataServer);
 
   if (i16_rc) {
-    printf("error creating queues\n");
+    std::cerr << "error creating queues\n" << std::endl;
     exit(1);
   }
 #ifdef DEBUG
@@ -1395,18 +1366,54 @@ int main(int argc, char *argv[])
   signal(11,segfaulthand);
 #endif
 
-  printf("creating threads\n");
+  if (c_serverData.mb_interactive) {
+    printf("creating threads\n");
+  }
 
   i_registerClientThreadHandle = pthread_create( &thread_registerClient, NULL, &command_thread_func, &c_serverData);
   i_canWriteThreadHandle = pthread_create( &thread_canWrite, NULL, &can_write_thread_func, &c_serverData);
-
-  printf("operating\n");
+  
+  if (c_serverData.mb_interactive) {
+    pthread_t thread_readUserInput;
+    int i_status = pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
+    if (i_status)
+      exit( i_status ); // thread could not be created
+    printf("operating\n");
+  }
 
 #ifndef WIN32
-  if (i_canReadNiceValue)
-    setpriority(PRIO_PROCESS, 0, i_canReadNiceValue);
+  if (c_serverData.mi_canReadNiceValue)
+    setpriority(PRIO_PROCESS, 0, c_serverData.mi_canReadNiceValue);
 #endif
 
   can_read(&c_serverData);
 
+}
+
+int checkFileInput(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server)
+{
+  if (!strcmp(argv[ai_pos], "--file-input")) {
+    if (ai_pos+1>=argc) {
+      std::cerr << "error: option needs second parameter" << std::endl;
+      exit(1);
+    }
+    ar_server.mstr_inputFile = argv[ai_pos+1];
+    ar_server.mb_inputFileMode=true;
+    return 2;
+  }
+  return 0;
+}
+
+int checkNiceCanRead(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server)
+{
+  if (!strcmp(argv[ai_pos], "--nice-can-read")) {
+    if (ai_pos+1>=argc) {
+      std::cerr << "error: option needs second parameter" << std::endl;
+      exit(1);
+    }
+    ar_server.mi_canReadNiceValue = atoi (argv[ai_pos+1]); // 0 for no prio mode!
+    std::cout << "nice value for can read thread: " << ar_server.mi_canReadNiceValue << std::endl;
+    return 2;
+  }
+  return 0;
 }

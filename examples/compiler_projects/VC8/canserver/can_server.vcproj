@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9,00"
 	Name="canserver"
 	ProjectGUID="{B78E1032-1BB1-4B9D-9CB4-F457E31E95E3}"
 	RootNamespace="canserver"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -77,6 +78,8 @@
 				AdditionalLibraryDirectories="C:\Programme\Microsoft Platform SDK for Windows Server 2003 R2\Lib;;C:\Development\pthread;C:\STLport\lib"
 				ProgramDatabaseFile="~build\$(ConfigurationName)\can_server.pdb"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -98,9 +101,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -170,6 +170,8 @@
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="~build\$(ConfigurationName)\can_server.pdb"
 				SubSystem="1"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -193,9 +195,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -213,6 +212,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_sock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\can\can_server_common.cpp"
 				>
 			</File>
 		</Filter>
