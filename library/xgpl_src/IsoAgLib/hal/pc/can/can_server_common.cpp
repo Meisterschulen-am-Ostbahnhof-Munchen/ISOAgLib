@@ -1,9 +1,9 @@
 /***************************************************************************
-              can_server_common.cpp -
-                    dummy interface when no can device is present
+              can_server_common.cpp - Code common for both can_servers,
+                                      socket and msg-queue.
 
                              -------------------
-    begin                : Tue Oct 2 2001
+    begin                : Apr 12 2009
     copyright            : (C) 2009 Thomas Hafner
     email                : T.Hafner@osb-ag.de
  ***************************************************************************/
@@ -52,8 +52,11 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
+// following define is used for "can_server.h" to enable datastructs/functions
+// only used for the Server-part of can_server.
 #define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
+
 #include "can_server_common.h"
 #include <iostream>
 #include <sstream>
@@ -100,7 +103,7 @@ static std::string readInputLine()
   bool b_eof = false;
   do {
     ssize_t len = read(fileno(stdin), buf, sizeof(buf));
-    if ( len == -1)
+    if (len == -1) // error condition
       break;
     b_eof = (0 < len) && ('\n' == buf[len-1]);
     ostr_accumulator << std::string(buf, len - ssize_t(b_eof));
@@ -149,6 +152,7 @@ void *readUserInput( void *ap_arg )
     std::istringstream istr_inputLine( readInputLine() );
     std::string s_command;
     istr_inputLine >> s_command;
+    bool b_needHelp = false;
     if (!s_command.compare( s_on ) || !s_command.compare( s_enable )) {
       std::string s_toEnable;
       istr_inputLine >> s_toEnable;
@@ -159,9 +163,8 @@ void *readUserInput( void *ap_arg )
         istr_inputLine >> pc_serverData->mstr_logFileBase;
         enableLog( pc_serverData );
       } else {
-        std::cerr << "Don't know how to enable " << s_toEnable <<
-          ". It should be one of: " <<
-          s_monitor << ", " << s_log << "." << std::endl;
+        std::cerr << "Don't know how to enable " << s_toEnable << "." << std::endl;
+        b_needHelp = true;
       }
     } else if (!s_command.compare( s_off ) || !s_command.compare( s_disable )) {
       std::string s_toDisable;
@@ -172,11 +175,17 @@ void *readUserInput( void *ap_arg )
       } else if (!s_toDisable.compare( s_log )) {
         disableLog( pc_serverData );
       } else {
-        std::cerr << "Don't know how to disable " << s_toDisable <<
-          ". It should be one of: " <<
-          s_monitor << ", " << s_log << "." << std::endl;
+        std::cerr << "Don't know how to disable " << s_toDisable << "." << std::endl;
+        b_needHelp = true;
       }
     } else if (!s_command.compare( s_help )) {
+      b_needHelp = true; // set to wrongCommand to get help shown!
+    } else {
+      std::cerr << "Don't know command " << s_command << "." << std::endl;
+      b_needHelp = true;
+    }
+
+    if (b_needHelp) {
       std::cerr << "Interactive usage:" << std::endl <<
         "  " << s_enable << " " << s_monitor << std::endl <<
         "  " << s_disable << " " << s_monitor << std::endl <<
@@ -185,13 +194,10 @@ void *readUserInput( void *ap_arg )
         "  " << s_on << " ... (see " << s_enable << " ...)" << std::endl <<
         "  " << s_off << " ... (see " << s_disable << " ...)" << std::endl <<
         "  " << s_help << std::endl;
-    } else {
-      std::cerr << "Don't know command " << s_command <<
-        ". It should be one of: " << s_enable << ", " << s_disable << ", " <<
-        s_on << ", " << s_off << ", " << s_help << "." << std::endl;
     }
   }
-  return NULL;
+  // shouldn't reach here as thread runs in an endless loop.
+  return NULL; // dummy return
 }
 
 void usage() {

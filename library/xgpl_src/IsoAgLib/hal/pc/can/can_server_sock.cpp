@@ -395,7 +395,7 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
   return(bcount);
 }
 
-void dumpCanMsg (__HAL::transferBuf_s *ps_transferBuf, FILE* f_handle)
+void dumpCanMsg (__HAL::transferBuf_s *ps_transferBuf, FILE& f_handle)
 {
 #if WIN32
   clock_t t_sendTimestamp = timeGetTime();
@@ -405,18 +405,16 @@ void dumpCanMsg (__HAL::transferBuf_s *ps_transferBuf, FILE* f_handle)
   uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
 #endif
 
-  if (f_handle) {
-    /* split of fprintf 64bit-value is needed for windows! */
-    fprintf(f_handle, "%Ld ", ui64_timeStamp10);
-    fprintf(f_handle, "%-2d %-2d %-2d %-2d %-2d %-8x  ",
-        ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
-        (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
-	for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
-      fprintf(f_handle, " %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
-    fprintf(f_handle, "\n");
-    fflush(f_handle);
-  }
-};
+  /* split of fprintf 64bit-value is needed for windows! */
+  fprintf(&f_handle, "%Ld ", ui64_timeStamp10);
+  fprintf(&f_handle, "%-2d %-2d %-2d %-2d %-2d %-8x  ",
+      ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
+      (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
+  for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
+    fprintf(&f_handle, " %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
+  fprintf(&f_handle, "\n");
+  fflush(&f_handle);
+}
 
 void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server)
 {
@@ -428,7 +426,7 @@ void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server
   }
   dumpCanMsg(
       ap_transferBuf,
-      ap_server->mvec_logFile[n_bus]->getRaw() );
+      *(ap_server->mvec_logFile[n_bus]->getRaw()) );
 }
 
 void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)

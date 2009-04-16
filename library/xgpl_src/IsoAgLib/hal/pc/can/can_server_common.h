@@ -1,11 +1,8 @@
-#ifndef _CAN_SERVER_COMMON_H_
-#define _CAN_SERVER_COMMON_H_
 /***************************************************************************
-              can_server_common.cpp -
-                    dummy interface when no can device is present
-
+              can_server_common.h - Code common for both can_servers,
+                                    socket and msg-queue.
                              -------------------
-    begin                : Tue Oct 2 2001
+    begin                : Apr 12 2009
     copyright            : (C) 2009 Thomas Hafner
     email                : T.Hafner@osb-ag.de
  ***************************************************************************/
@@ -53,6 +50,8 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag.de                  *
  ***************************************************************************/
+#ifndef _CAN_SERVER_COMMON_H_
+#define _CAN_SERVER_COMMON_H_
 
 #ifdef DEF_USE_SERVER_SPECIFIC_HEADER
 

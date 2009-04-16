@@ -1337,7 +1337,9 @@ int main(int argc, char *argv[])
   }
 
   checkOptions( argc, argv, c_serverData );
-  __HAL::getTime();
+
+  // explicitly call getTime to initialize the time to 0.
+  (void) __HAL::getTime();
 
   const uint32_t apiversion = initCardApi();
   if ( apiversion == 0 ) { // failure - nothing found
