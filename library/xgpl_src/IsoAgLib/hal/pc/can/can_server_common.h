@@ -53,7 +53,8 @@
 #ifndef _CAN_SERVER_COMMON_H_
 #define _CAN_SERVER_COMMON_H_
 
-#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
+#include <pthread.h>
+#include <../../tools/libs/misc/yasper.h>
 
 namespace __HAL {
 
@@ -63,97 +64,143 @@ class server_c;
 
 void *readUserInput(void *ap_arg);
 
-typedef int OptionChecker_t(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server);
-
-struct Option_s {
-  Option_s(OptionChecker_t *apf_check, char const *as_usage) :
-    mpf_check(apf_check), ms_usage(as_usage) {}
-  OptionChecker_t *mpf_check;
-  char const *ms_usage;
-};
-
-extern Option_s const *const gp_optionsBegin;
-extern Option_s const *const gp_optionsEnd;
-void checkOptions(int argc, char *argv[], __HAL::server_c &ar_server);
+void checkAndHandleOptions(int argc, char *argv[], __HAL::server_c &ar_server);
+void printSettings(__HAL::server_c &ar_server);
 void usage();
 
-enum Option_e {
-  OPTION_MONITOR,
-  OPTION_LOG,
-  OPTION_FILE_INPUT,
-  OPTION_HIGH_PRIO_MINIMUM,
-  OPTION_REDUCED_LOAD_ISO_BUS_NO,
-  OPTION_NICE_CAN_READ,
-  OPTION_INTERACTIVE,
-  OPTION_PRODUCTIVE,
-  OPTION_HELP
+bool newFileLog( __HAL::server_c *p_server, size_t n_bus );
+void closeFileLog(__HAL::server_c *ap_server, size_t an_bus );
+void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE *f_handle);
+
+namespace __HAL {
+
+class LogFile_c {
+public:
+  LogFile_c ( std::string const &arstr_filename )
+    : mp_file( std::fopen( arstr_filename.c_str(), "a+" ) ) {}
+  ~LogFile_c() {
+    if (mp_file)
+      std::fclose( mp_file );
+  }
+  std::FILE *getRaw() {
+    return mp_file;
+  }
+  struct Null_s {
+    yasper::ptr< LogFile_c > operator()() {
+      return 0;
+    }
+  };
+private:
+  std::FILE *mp_file;
+  // intentionally not implemented (prevent use):
+  LogFile_c( LogFile_c const & );
+  LogFile_c &operator= ( LogFile_c const & );
 };
 
-OptionChecker_t checkHelp;
-OptionChecker_t checkMonitor;
-OptionChecker_t checkLog;
-OptionChecker_t checkFileInput;
-OptionChecker_t checkHighPrioMinimum;
-OptionChecker_t checkReducedLoadIsoBusNo;
-OptionChecker_t checkNiceCanRead;
-OptionChecker_t checkInteractive;
-OptionChecker_t checkProductive;
+// server specific data
+class server_c {
+public:
+  server_c();
 
-template < Option_e >
-inline Option_s makeOption(){
-  return Option_s();
-}
-template <> inline Option_s makeOption< OPTION_MONITOR >(){
-  return Option_s(
-      &checkMonitor,
-      "  --monitor                  display can traffic in console\n" );
-}
-template <> inline Option_s makeOption< OPTION_LOG >(){
-  return Option_s(
-      &checkLog,
-      "  --log LOG_FILE_NAME_BASE   log can traffic into <LOG_FILE_NAME_BASE>_<bus_id>\n" );
-}
-template <> inline Option_s makeOption< OPTION_FILE_INPUT >(){
-  return Option_s(
-      &checkFileInput,
-      "  --file-input LOG_FILE_NAME   read can data from file <LOG_FILE_NAME>\n" );
-}
-template <> inline Option_s makeOption< OPTION_HIGH_PRIO_MINIMUM >(){
-  return Option_s(
-      &checkHighPrioMinimum,
-      "  --high-prio-minimum NUM_PENDING_WRITES   if 0: start normally without priority-handling (default - used if param not given!).\n"
-      "                             if >0: only clients with activated high-priority-send-mode can send messages if\n"
-      "                                    can-controller has equal or more than <NUM_PENDING_WRITES> in its queue.\n" );
-}
-template <> inline Option_s makeOption< OPTION_REDUCED_LOAD_ISO_BUS_NO >(){
-  return Option_s(
-      &checkReducedLoadIsoBusNo,
-      "  --reduced-load-iso-bus-no BUS_NUMBER   avoid unnecessary CAN bus load due to\n"
-      "                             messages with local destination addresses\n" );
-}
-template <> inline Option_s makeOption< OPTION_NICE_CAN_READ >(){
-  return Option_s(
-      &checkNiceCanRead,
-      "  --nice-can-read VALUE      set a nice value for can read thread to reduce slowing down effect on other applications\n"
-      "                             due to heavy OS task switches, 0 < VALUE < 20 for reducing the priority\n\n" );
-}
-template <> inline Option_s makeOption< OPTION_INTERACTIVE >(){
-  return Option_s(
-      &checkInteractive,
-      "  --interactive              set interactive mode (contrarily to --productive)\n" );
-}
-template <> inline Option_s makeOption< OPTION_PRODUCTIVE >(){
-  return Option_s(
-      &checkProductive,
-      "  --productive               set productive mode (contrarily to --interactive)\n" );
-}
-template <> inline Option_s makeOption< OPTION_HELP >(){
-  return Option_s(
-      &checkHelp,
-      "  --help                     print this help.\n" );
-}
+#ifdef CAN_DRIVER_MESSAGE_QUEUE
+  msqData_s ms_msqDataServer;
+#endif
 
-bool newFileLog( __HAL::server_c *p_server, size_t n_bus );
+  std::list<client_c> mlist_clients;
+  std::string mstr_logFileBase;
+  std::string mstr_inputFile;
+  uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
+  // logging
+  bool     mb_logMode;
+  std::vector< yasper::ptr< LogFile_c > > mvec_logFile;
+  // monitor
+  bool     mb_monitorMode;
+  // replay
+  bool     mb_inputFileMode;
+  FILE*    mf_canInput;
 
-#endif //def DEF_USE_SERVER_SPECIFIC_HEADER
+  bool     marrb_remoteDestinationAddressInUse[0x100];
+
+#ifdef CAN_DRIVER_MESSAGE_QUEUE
+  int32_t  mi32_lastPipeId;
+#endif
+  // if >0 => do not send messages with local destination address on the bus
+  int16_t  mi16_reducedLoadOnIsoBus;
+
+  int32_t  marri32_can_device[cui32_maxCanBusCnt];
+  int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
+  int      marri_pendingMsgs[cui32_maxCanBusCnt];
+  bool     marrb_deviceConnected[cui32_maxCanBusCnt];
+
+  uint16_t marrui16_busRefCnt[cui32_maxCanBusCnt];
+
+  pthread_mutex_t mt_protectClientList;
+  bool     mb_interactive;
+  int      mi_canReadNiceValue;
+  int      mi_highPrioModeIfMin;
+};
+
+extern std::list<int32_t> list_sendTimeStamps;
+void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
+int32_t getTime();
+
+} //namespace __HAL
+
+class AOption_c {
+public:
+  int checkAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const {
+    return doCheckAndHandle(argc, argv, ai_pos, ar_server);
+  }
+  std::string getSetting(__HAL::server_c &ar_server) const { return doGetSetting(ar_server); }
+  std::string getUsage() const { return doGetUsage(); }
+  virtual ~AOption_c() {}
+private:
+  virtual int doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const = 0;
+  virtual std::string doGetSetting(__HAL::server_c &ar_server) const = 0;
+  virtual std::string doGetUsage() const = 0;
+};
+
+/* The following identifiers OPTION_... serve as template parameter
+ * values for Option_c (which is defined below). */
+enum OPTION_MONITOR {};
+enum OPTION_LOG {};
+enum OPTION_FILE_INPUT {};
+enum OPTION_HIGH_PRIO_MINIMUM {};
+enum OPTION_REDUCED_LOAD_ISO_BUS_NO {};
+enum OPTION_NICE_CAN_READ {};
+enum OPTION_INTERACTIVE {};
+enum OPTION_PRODUCTIVE {};
+enum OPTION_HELP {};
+
+template < typename OPTION >
+class Option_c : public AOption_c {
+public:
+  static yasper::ptr< AOption_c > create() {
+    return yasper::ptr< AOption_c >( new Option_c );
+  }
+private:
+  virtual int doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const;
+  virtual std::string doGetSetting(__HAL::server_c &ar_server) const;
+  virtual std::string doGetUsage() const;
+};
+
+extern yasper::ptr< AOption_c > const *const gp_optionsBegin;
+extern yasper::ptr< AOption_c > const *const gp_optionsEnd;
+
+/////////////////////////////////////////////////////////////////////////
+// Driver Function Declarations
+
+uint32_t initCardApi();
+bool     resetCard(void);
+
+bool     openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, __HAL::server_c* pc_serverData);
+void     closeBusOnCard(uint8_t ui8_bus, __HAL::server_c* pc_serverData);
+
+int16_t  sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
+bool     readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
+
+bool     isBusOpen(uint8_t ui8_bus);
+
+void addSendTimeStampToList(__HAL::client_c *ps_client, int32_t i32_sendTimeStamp);
+
 #endif //ndef _CAN_SERVER_COMMON_H_

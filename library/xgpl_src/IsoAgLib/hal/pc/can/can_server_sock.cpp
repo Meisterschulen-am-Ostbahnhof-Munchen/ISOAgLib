@@ -64,9 +64,8 @@
 #include <string>
 #include <sstream>
 
-#define DEF_USE_SERVER_SPECIFIC_HEADER
-#include "can_server_common.h"
 #include "can_server.h"
+#include "can_server_common.h"
 
 #ifdef WIN32
   #ifndef WINCE
@@ -99,7 +98,7 @@ static const uint32_t scui32_selectTimeoutMin = 1000;
 
 __HAL::server_c::server_c() :
   mb_logMode(FALSE),
-  mvec_logFile( cui32_maxCanBusCnt, 0 ),
+  mvec_logFile( cui32_maxCanBusCnt, LogFile_c::Null_s()() ),
   mb_monitorMode(FALSE),
   mb_inputFileMode(FALSE),
   mi16_reducedLoadOnIsoBus(-1),
@@ -395,27 +394,6 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
   return(bcount);
 }
 
-void dumpCanMsg (__HAL::transferBuf_s *ps_transferBuf, FILE& f_handle)
-{
-#if WIN32
-  clock_t t_sendTimestamp = timeGetTime();
-  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp;
-#else
-  clock_t t_sendTimestamp = times(NULL);
-  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
-#endif
-
-  /* split of fprintf 64bit-value is needed for windows! */
-  fprintf(&f_handle, "%Ld ", ui64_timeStamp10);
-  fprintf(&f_handle, "%-2d %-2d %-2d %-2d %-2d %-8x  ",
-      ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
-      (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
-  for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
-    fprintf(&f_handle, " %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
-  fprintf(&f_handle, "\n");
-  fflush(&f_handle);
-}
-
 void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server)
 {
   size_t n_bus = ap_transferBuf->s_data.ui8_bus;
@@ -424,9 +402,12 @@ void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server
     if (b_error)
       return;
   }
+
   dumpCanMsg(
-      ap_transferBuf,
-      *(ap_server->mvec_logFile[n_bus]->getRaw()) );
+      ap_transferBuf->s_data.ui8_bus,
+      ap_transferBuf->s_data.ui8_obj,
+      &ap_transferBuf->s_data.s_canMsg,
+      ap_server->mvec_logFile[n_bus]->getRaw());
 }
 
 void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
@@ -453,7 +434,9 @@ void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
 
 void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_delete)
 {
-  printf("release client\n");
+  if (pc_serverData->mb_interactive) {
+    printf("release client\n");
+  }
 
   for (uint8_t ui8_cnt=0; ui8_cnt<__HAL::cui32_maxCanBusCnt; ui8_cnt++)
   {
@@ -556,7 +539,7 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 std::list<int32_t> __HAL::list_sendTimeStamps;
 
 
-void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, int32_t ri32_data)
+void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, int32_t ri32_data, __HAL::server_c &ar_server)
 {
   __HAL::transferBuf_s s_transferBuf;
 
@@ -572,7 +555,9 @@ void send_command_ack(SOCKET_TYPE ri32_commandSocket, int32_t ri32_dataContent, 
 #endif
           ) < 0)
   {
-    MACRO_ISOAGLIB_PERROR("send");
+    if (ar_server.mb_interactive) {
+      MACRO_ISOAGLIB_PERROR("send");
+    }
   }
 }
 
@@ -693,8 +678,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           }
 
           if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] && pc_serverData->mb_logMode) {
-            pc_serverData->mvec_logFile[p_writeBuf->s_init.ui8_bus] =
-              yasper::ptr< __HAL::LogFile_c >( 0 );
+            closeFileLog(pc_serverData, p_writeBuf->s_init.ui8_bus);
           }
 
           iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].clear();
@@ -814,7 +798,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
     // do centralized error-answering here
     if (i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE) i32_data = i32_error;
 
-    send_command_ack(iter_client->i32_commandSocket, i32_dataContent, i32_data);
+    send_command_ack(iter_client->i32_commandSocket, i32_dataContent, i32_data, *pc_serverData);
 }
 
 
@@ -935,11 +919,13 @@ void readWrite(__HAL::server_c* pc_serverData)
 #endif
         if (bytesRecv == 0 || bytesRecv == -1)
         {
-          #ifdef WIN32
-          if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
-            printf("The attempted operation is not supported for the type of object referenced.\n");
-          #endif
-          printf( "connection closed.\n");
+          if (pc_serverData->mb_interactive) {
+#ifdef WIN32
+            if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
+              printf("The attempted operation is not supported for the type of object referenced.\n");
+#endif
+            printf( "connection closed.\n");
+          }
           releaseClient(pc_serverData, iter_client);
           break;
         }
@@ -968,11 +954,13 @@ void readWrite(__HAL::server_c* pc_serverData)
 
         if (bytesRecv == 0 || bytesRecv == -1)
         {
-          #ifdef WIN32
-          if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
-            printf("The attempted operation is not supported for the type of object referenced.\n");
-          #endif
-          printf( "connection closed.\n");
+          if (pc_serverData->mb_interactive) {
+#ifdef WIN32
+            if( bytesRecv == -1 && WSAGetLastError() == WSAEOPNOTSUPP )
+              printf("The attempted operation is not supported for the type of object referenced.\n");
+#endif
+            printf( "connection closed.\n");
+          }
           releaseClient(pc_serverData, iter_client);
           break;
         }
@@ -1020,13 +1008,17 @@ static void* collectClient(void* ptr) {
     MACRO_ISOAGLIB_PERROR("establish");
     exit(1);
   }
-  printf("command socket for port %d established\n", COMMAND_TRANSFER_PORT);
+  if (pc_serverData->mb_interactive) {
+    printf("command socket for port %d established\n", COMMAND_TRANSFER_PORT);
+  }
 
   if ((base_dataSocket = establish(DATA_TRANSFER_PORT)) < 0) {
     MACRO_ISOAGLIB_PERROR("establish");
     exit(1);
   }
-  printf("data socket for port %d established\n", DATA_TRANSFER_PORT);
+  if (pc_serverData->mb_interactive) {
+    printf("data socket for port %d established\n", DATA_TRANSFER_PORT);
+  }
 
   while (1) {
 
@@ -1064,22 +1056,24 @@ static void* collectClient(void* ptr) {
 
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
-    printf("command and data socket connected\n");
+    if (pc_serverData->mb_interactive) {
+      printf("command and data socket connected\n");
+    }
   }
 }
 
-Option_s const ga_options[] = {
-  makeOption< OPTION_MONITOR >(),
-  makeOption< OPTION_LOG >(),
-  makeOption< OPTION_HIGH_PRIO_MINIMUM >(),
-  makeOption< OPTION_REDUCED_LOAD_ISO_BUS_NO >(),
-  makeOption< OPTION_INTERACTIVE >(),
-  makeOption< OPTION_PRODUCTIVE >(),
-  makeOption< OPTION_HELP >()
+yasper::ptr< AOption_c > const ga_options[] = {
+  Option_c< OPTION_MONITOR >::create(),
+  Option_c< OPTION_LOG >::create(),
+  Option_c< OPTION_HIGH_PRIO_MINIMUM >::create(),
+  Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::create(),
+  Option_c< OPTION_INTERACTIVE >::create(),
+  Option_c< OPTION_PRODUCTIVE >::create(),
+  Option_c< OPTION_HELP >::create()
 };
 
-Option_s const *const gp_optionsBegin = ga_options;
-Option_s const *const gp_optionsEnd = ga_options +
+yasper::ptr< AOption_c > const *const gp_optionsBegin = ga_options;
+yasper::ptr< AOption_c > const *const gp_optionsEnd = ga_options +
   (sizeof ga_options) / (sizeof ga_options[0]);
 
 int main(int argc, char *argv[])
@@ -1088,7 +1082,12 @@ int main(int argc, char *argv[])
   int i_collectClientThreadHandle;
   __HAL::server_c c_serverData;
 
-  checkOptions( argc, argv, c_serverData );
+  checkAndHandleOptions( argc, argv, c_serverData );
+  if (c_serverData.mb_interactive) {
+    std::cerr << "IsoAgLib CAN-Server"  << std::endl;
+    std::cerr << "User --help to get help."  << std::endl << std::endl;
+    printSettings(c_serverData);
+  }
 
   // some time init
   __HAL::getTime();
@@ -1115,7 +1114,9 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  printf("creating collect client thread\n");
+  if (c_serverData.mb_interactive) {
+    printf("creating collect client thread\n");
+  }
 
   i_collectClientThreadHandle = pthread_create( &threadCollectClient, NULL, &collectClient, &c_serverData);
 

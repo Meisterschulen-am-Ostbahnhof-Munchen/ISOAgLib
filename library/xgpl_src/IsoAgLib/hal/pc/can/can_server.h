@@ -73,11 +73,6 @@
 #include <time.h>
 #include <IsoAgLib/util/compiler_adaptation.h>
 
-#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
-#include <pthread.h>
-#include <../../tools/libs/misc/yasper.h>
-#endif
-
 #include "can_target_extensions.h"
 
 // USE_UNIX_SOCKET to use /tmp/can_server.sock.<command_port> and /tmp/can_server.sock.<data_port> instead of real sockets 
@@ -281,76 +276,6 @@ public:
 };
 
 
-
-#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
-class LogFile_c {
-public:
-  LogFile_c ( std::string const &arstr_filename )
-    : mp_file( std::fopen( arstr_filename.c_str(), "a+" ) ) {}
-  ~LogFile_c() {
-    if (mp_file)
-      std::fclose( mp_file );
-  }
-  std::FILE *getRaw() {
-    return mp_file;
-  }
-private:
-  std::FILE *mp_file;
-  // intentionally not implemented (prevent use):
-  LogFile_c( LogFile_c const & );
-  LogFile_c &operator= ( LogFile_c const & );
-};
-
-// server specific data
-class server_c {
-public:
-  server_c();
-
-#ifdef CAN_DRIVER_MESSAGE_QUEUE
-  msqData_s ms_msqDataServer;
-#endif
-
-  std::list<client_c> mlist_clients;
-  std::string mstr_logFileBase;
-  std::string mstr_inputFile;
-  uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
-  // logging
-  bool     mb_logMode;
-  std::vector< yasper::ptr< LogFile_c > > mvec_logFile;
-  // monitor
-  bool     mb_monitorMode;
-  // replay
-  bool     mb_inputFileMode;
-  FILE*    mf_canInput;
-
-  bool     marrb_remoteDestinationAddressInUse[0x100];
-
-#ifdef CAN_DRIVER_MESSAGE_QUEUE
-  int32_t  mi32_lastPipeId;
-#endif
-  // if >0 => do not send messages with local destination address on the bus
-  int16_t  mi16_reducedLoadOnIsoBus;
-
-  int32_t  marri32_can_device[cui32_maxCanBusCnt];
-  int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
-  int      marri_pendingMsgs[cui32_maxCanBusCnt];
-  bool     marrb_deviceConnected[cui32_maxCanBusCnt];
-
-  uint16_t marrui16_busRefCnt[cui32_maxCanBusCnt];
-
-  pthread_mutex_t mt_protectClientList;
-  bool     mb_interactive;
-  int      mi_canReadNiceValue;
-  int      mi_highPrioModeIfMin;
-};
-
-
-extern std::list<int32_t> list_sendTimeStamps;
-void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);
-int32_t getTime();
-#endif
-
-
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
 void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data);
 
@@ -369,26 +294,5 @@ void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
 #endif
 
 } // end namespace
-
-
-#ifdef DEF_USE_SERVER_SPECIFIC_HEADER
-
-/////////////////////////////////////////////////////////////////////////
-// Driver Function Declarations
-
-uint32_t initCardApi();
-bool     resetCard(void);
-
-bool     openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, __HAL::server_c* pc_serverData);
-void     closeBusOnCard(uint8_t ui8_bus, __HAL::server_c* pc_serverData);
-
-int16_t  sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
-bool     readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, __HAL::server_c* pc_serverData);
-
-bool     isBusOpen(uint8_t ui8_bus);
-
-void addSendTimeStampToList(__HAL::client_c *ps_client, int32_t i32_sendTimeStamp);
-#endif
-
 
 #endif

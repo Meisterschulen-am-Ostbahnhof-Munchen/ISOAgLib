@@ -55,8 +55,8 @@
 
 #include "rte_global.h"
 
-#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
+#include "can_server_common.h"
 
 // RTE Includes
 #include <rte_client.h>   // be an RTE client

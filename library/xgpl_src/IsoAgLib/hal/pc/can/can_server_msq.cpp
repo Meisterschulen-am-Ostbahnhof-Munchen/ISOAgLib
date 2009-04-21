@@ -83,9 +83,8 @@
 #include <pthread.h>
 #include <linux/version.h>
 
-#define DEF_USE_SERVER_SPECIFIC_HEADER
-#include "can_server_common.h"
 #include "can_server.h"
+#include "can_server_common.h"
 
 #ifdef DEBUG
   //backtrace
@@ -119,7 +118,7 @@
 
 __HAL::server_c::server_c() :
   mb_logMode(FALSE),
-  mvec_logFile( cui32_maxCanBusCnt, 0 ),
+  mvec_logFile( cui32_maxCanBusCnt, LogFile_c::Null_s()() ),
   mb_monitorMode(FALSE),
   mb_inputFileMode(FALSE),
   mi32_lastPipeId(0),
@@ -291,22 +290,6 @@ int32_t getClientTime( client_c& r_receiveClient )
 
 } // end namespace
 
-
-void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE* f_handle)
-{
-  clock_t t_sendTimestamp = times(NULL);
-  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
-
-  if (f_handle) {
-    fprintf(f_handle, "%Ld %-2d %-2d %-2d %-2d %-2d %-8x  ",
-            ui64_timeStamp10, bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
-            (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);
-    for (uint8_t ui8_i = 0; (ui8_i < ps_canMsg->i32_len) && (ui8_i < 8); ui8_i++)
-      fprintf(f_handle, " %-3hx", ps_canMsg->ui8_data[ui8_i]);
-    fprintf(f_handle, "\n");
-    fflush(f_handle);
-  }
-}
 
 void dumpCanMsg(uint8_t au8_bus, uint8_t au8_msgObj, canMsg_s *ap_canMsg, __HAL::server_c *ap_server)
 {
@@ -681,7 +664,9 @@ static void* can_write_thread_func(void* ptr)
     {
       if (msgrcv(pc_serverData->ms_msqDataServer.i32_wrHandle, &msqWriteBuf, sizeof(__HAL::msqWrite_s) - sizeof(long), MTYPE_ANY, 0) == -1)
       {
-        perror("msgrcv-all");
+        if (pc_serverData->mb_interactive) {
+          perror("msgrcv-all");
+        }
         usleep(1000);
         continue;
       }
@@ -747,7 +732,7 @@ static void* can_write_thread_func(void* ptr)
             &msqWriteBuf.s_canMsg,
             pc_serverData);
       }
-      if (pc_serverData->mb_monitorMode && pc_serverData->mb_interactive)
+      if (pc_serverData->mb_monitorMode)
       {
         monitorCanMsg (msqWriteBuf.ui8_bus, msqWriteBuf.ui8_obj, &(msqWriteBuf.s_canMsg));
       }
@@ -913,7 +898,7 @@ static void can_read(__HAL::server_c* pc_serverData)
             &s_canMsg,
             pc_serverData);
       }
-      if (pc_serverData->mb_monitorMode && pc_serverData->mb_interactive)
+      if (pc_serverData->mb_monitorMode)
       {
         monitorCanMsg (channel_with_change, 0/* we don't have no msgobj when receiving .. msqWriteBuf.ui8_obj*/, &s_canMsg);
       }
@@ -946,7 +931,9 @@ static void* command_thread_func(void* ptr)
     // check command queue
     /* The length is essentially the size of the structure minus sizeof(mtype) */
     if((i16_rc = msgrcv(pc_serverData->ms_msqDataServer.i32_cmdHandle, &s_transferBuf, sizeof(__HAL::transferBuf_s) - sizeof(long), 0, 0)) == -1) {
-      perror("msgrcv");
+      if (pc_serverData->mb_interactive) {
+        perror("msgrcv");
+      }
       usleep(1000);
       continue;
     }
@@ -1132,7 +1119,7 @@ static void* command_thread_func(void* ptr)
   #endif
 
             if (!pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus] && pc_serverData->mb_logMode) {
-              pc_serverData->mvec_logFile[s_transferBuf.s_init.ui8_bus] = yasper::ptr< __HAL::LogFile_c >( 0 );
+              closeFileLog(pc_serverData, s_transferBuf.s_init.ui8_bus);
             }
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1301,20 +1288,20 @@ void segfaulthand(int /* i */ )
 }
 #endif
 
-Option_s const ga_options[] = {
-  makeOption< OPTION_MONITOR >(),
-  makeOption< OPTION_LOG >(),
-  makeOption< OPTION_FILE_INPUT >(),
-  makeOption< OPTION_HIGH_PRIO_MINIMUM >(),
-  makeOption< OPTION_REDUCED_LOAD_ISO_BUS_NO >(),
-  makeOption< OPTION_NICE_CAN_READ >(),
-  makeOption< OPTION_INTERACTIVE >(),
-  makeOption< OPTION_PRODUCTIVE >(),
-  makeOption< OPTION_HELP >()
+yasper::ptr< AOption_c > const ga_options[] = {
+  Option_c< OPTION_MONITOR >::create(),
+  Option_c< OPTION_LOG >::create(),
+  Option_c< OPTION_FILE_INPUT >::create(),
+  Option_c< OPTION_HIGH_PRIO_MINIMUM >::create(),
+  Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::create(),
+  Option_c< OPTION_NICE_CAN_READ >::create(),
+  Option_c< OPTION_INTERACTIVE >::create(),
+  Option_c< OPTION_PRODUCTIVE >::create(),
+  Option_c< OPTION_HELP >::create(),
 };
 
-Option_s const *const gp_optionsBegin = ga_options;
-Option_s const *const gp_optionsEnd = ga_options +
+yasper::ptr< AOption_c > const *const gp_optionsBegin = ga_options;
+yasper::ptr< AOption_c > const *const gp_optionsEnd = ga_options +
   (sizeof ga_options) / (sizeof ga_options[0]);
 
 int main(int argc, char *argv[])
@@ -1323,6 +1310,13 @@ int main(int argc, char *argv[])
   int i_registerClientThreadHandle, i_canWriteThreadHandle;
   __HAL::server_c c_serverData;
 
+  checkAndHandleOptions( argc, argv, c_serverData );
+  if (c_serverData.mb_interactive) {
+    std::cerr << "IsoAgLib CAN-Server"  << std::endl;
+    std::cerr << "User --help to get help."  << std::endl << std::endl;
+    printSettings(c_serverData);
+  }
+
 #ifdef DEBUG
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
@@ -1330,13 +1324,6 @@ int main(int argc, char *argv[])
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
 #endif
 #endif
-
-  if (argc > 1 && strcmp(argv[1], "--help") == 0) {
-    usage();
-    exit(0);
-  }
-
-  checkOptions( argc, argv, c_serverData );
 
   // explicitly call getTime to initialize the time to 0.
   (void) __HAL::getTime();
@@ -1368,10 +1355,6 @@ int main(int argc, char *argv[])
   signal(11,segfaulthand);
 #endif
 
-  if (c_serverData.mb_interactive) {
-    printf("creating threads\n");
-  }
-
   i_registerClientThreadHandle = pthread_create( &thread_registerClient, NULL, &command_thread_func, &c_serverData);
   i_canWriteThreadHandle = pthread_create( &thread_canWrite, NULL, &can_write_thread_func, &c_serverData);
   
@@ -1380,7 +1363,7 @@ int main(int argc, char *argv[])
     int i_status = pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
     if (i_status)
       exit( i_status ); // thread could not be created
-    printf("operating\n");
+    printf("Operating.\n");
   }
 
 #ifndef WIN32
@@ -1392,7 +1375,8 @@ int main(int argc, char *argv[])
 
 }
 
-int checkFileInput(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server)
+template <>
+int Option_c< OPTION_FILE_INPUT >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
 {
   if (!strcmp(argv[ai_pos], "--file-input")) {
     if (ai_pos+1>=argc) {
@@ -1406,7 +1390,25 @@ int checkFileInput(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_serve
   return 0;
 }
 
-int checkNiceCanRead(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server)
+template <>
+std::string Option_c< OPTION_FILE_INPUT >::doGetSetting(__HAL::server_c &ar_server) const
+{
+  std::ostringstream ostr_setting;
+  if (ar_server.mb_inputFileMode) {
+    ostr_setting << "Reading can data from file " <<
+      ar_server.mstr_inputFile << std::endl;
+  }
+  return ostr_setting.str();
+}
+
+template <>
+std::string Option_c< OPTION_FILE_INPUT >::doGetUsage() const
+{
+  return "  --file-input LOG_FILE_NAME   read can data from file <LOG_FILE_NAME>\n";
+}
+
+template <>
+int Option_c< OPTION_NICE_CAN_READ >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
 {
   if (!strcmp(argv[ai_pos], "--nice-can-read")) {
     if (ai_pos+1>=argc) {
@@ -1418,4 +1420,23 @@ int checkNiceCanRead(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_ser
     return 2;
   }
   return 0;
+}
+
+template <>
+std::string Option_c< OPTION_NICE_CAN_READ >::doGetSetting(__HAL::server_c &ar_server) const
+{
+  std::ostringstream ostr_setting;
+  if (ar_server.mi_canReadNiceValue > 0) {
+    ostr_setting << "Nice value set to " <<
+      ar_server.mi_canReadNiceValue << std::endl;
+  }
+  return ostr_setting.str();
+}
+
+template <>
+std::string Option_c< OPTION_NICE_CAN_READ >::doGetUsage() const
+{
+  return 
+    "  --nice-can-read VALUE      set a nice value for can read thread to reduce slowing down effect on other applications\n"
+    "                             due to heavy OS task switches, 0 < VALUE < 20 for reducing the priority\n\n";
 }

@@ -65,8 +65,8 @@ extern "C" {
 
 #endif
 
-#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
+#include "can_server_common.h"
 
 #define XL_HWTYPE_AUTO 1000
 

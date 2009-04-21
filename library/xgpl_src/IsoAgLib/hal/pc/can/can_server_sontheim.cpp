@@ -83,8 +83,8 @@ typedef int HINSTANCE;
 #define c_CANUSB_Std_Api    11
 
 
-#define DEF_USE_SERVER_SPECIFIC_HEADER
 #include "can_server.h"
+#include "can_server_common.h"
 
 using namespace __HAL;
 
