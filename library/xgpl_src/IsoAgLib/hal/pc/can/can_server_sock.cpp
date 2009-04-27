@@ -434,9 +434,9 @@ void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
 
 void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_delete)
 {
-  if (pc_serverData->mb_interactive) {
-    printf("release client\n");
-  }
+#ifdef DEBUG
+  printf("Client disconnected.\n");
+#endif
 
   for (uint8_t ui8_cnt=0; ui8_cnt<__HAL::cui32_maxCanBusCnt; ui8_cnt++)
   {
@@ -634,7 +634,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
                              p_writeBuf->s_init.ui16_wBitrate,  // BTR0BTR1
                              pc_serverData))
           {
-            printf("can't initialize CAN\n");
+            printf("Can't initialize CAN\n");
             printf("CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n");
             i32_error = HAL_CONFIG_ERR;
             MACRO_ISOAGLIB_ABORT();
@@ -1009,7 +1009,7 @@ static void* collectClient(void* ptr) {
     exit(1);
   }
   if (pc_serverData->mb_interactive) {
-    printf("command socket for port %d established\n", COMMAND_TRANSFER_PORT);
+    printf("Command socket for port %d established\n", COMMAND_TRANSFER_PORT);
   }
 
   if ((base_dataSocket = establish(DATA_TRANSFER_PORT)) < 0) {
@@ -1017,7 +1017,7 @@ static void* collectClient(void* ptr) {
     exit(1);
   }
   if (pc_serverData->mb_interactive) {
-    printf("data socket for port %d established\n", DATA_TRANSFER_PORT);
+    printf("Data socket for port %d established\n", DATA_TRANSFER_PORT);
   }
 
   while (1) {
@@ -1029,7 +1029,7 @@ static void* collectClient(void* ptr) {
     }
 #else
     if ((new_socket=get_connection(base_commandSocket)) == -1) {
-      perror("socket connect failed");
+      perror("Socket connect failed!");
       exit(1);
     }
 #endif
@@ -1057,7 +1057,7 @@ static void* collectClient(void* ptr) {
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
     if (pc_serverData->mb_interactive) {
-      printf("command and data socket connected\n");
+      printf("Command and data socket connected.\n");
     }
   }
 }
@@ -1085,7 +1085,7 @@ int main(int argc, char *argv[])
   checkAndHandleOptions( argc, argv, c_serverData );
   if (c_serverData.mb_interactive) {
     std::cerr << "IsoAgLib CAN-Server"  << std::endl;
-    std::cerr << "User --help to get help."  << std::endl << std::endl;
+    std::cerr << "(Run with --help to get help)"  << std::endl << std::endl;
     printSettings(c_serverData);
   }
 
@@ -1114,18 +1114,16 @@ int main(int argc, char *argv[])
   }
 #endif
 
-  if (c_serverData.mb_interactive) {
-    printf("creating collect client thread\n");
-  }
-
   i_collectClientThreadHandle = pthread_create( &threadCollectClient, NULL, &collectClient, &c_serverData);
 
   if (c_serverData.mb_interactive) {
     pthread_t thread_readUserInput;
     int i_status = pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
     if (i_status)
+    {
+      printf("Could not create collect-client-thread!\n");
       exit( i_status ); // thread could not be created
-    printf("operating\n");
+    }
   }
 
   readWrite(&c_serverData);

@@ -1313,7 +1313,7 @@ int main(int argc, char *argv[])
   checkAndHandleOptions( argc, argv, c_serverData );
   if (c_serverData.mb_interactive) {
     std::cerr << "IsoAgLib CAN-Server"  << std::endl;
-    std::cerr << "User --help to get help."  << std::endl << std::endl;
+    std::cerr << "(Run with '--help' to get help)"  << std::endl << std::endl;
     printSettings(c_serverData);
   }
 
@@ -1362,8 +1362,10 @@ int main(int argc, char *argv[])
     pthread_t thread_readUserInput;
     int i_status = pthread_create( &thread_readUserInput, NULL, &readUserInput, &c_serverData );
     if (i_status)
-      exit( i_status ); // thread could not be created
-    printf("Operating.\n");
+    {
+      std::cerr << "error creating user-input-read thread\n" << std::endl;
+      exit( i_status ); // thread could not be createdi
+    }
   }
 
 #ifndef WIN32
@@ -1372,8 +1374,8 @@ int main(int argc, char *argv[])
 #endif
 
   can_read(&c_serverData);
-
 }
+
 
 template <>
 int Option_c< OPTION_FILE_INPUT >::doCheckAndHandle(int argc, char *argv[], int ai_pos, __HAL::server_c &ar_server) const

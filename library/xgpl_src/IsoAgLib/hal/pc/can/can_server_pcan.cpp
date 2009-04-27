@@ -136,7 +136,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     if( 0 == ui8_bus ) {
       DWORD rc;
       rc = CAN_Init(CAN_BAUD_250K, 1 );  // Baudrate
-      printf("Init can driver: %x\n", rc);
       if (CAN_ERR_OK == rc)
       {
         canBusIsOpen[ui8_bus] = true;
@@ -144,6 +143,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         return true;
       }
       else {
+        std::cerr << "Open CAN Fault with return-code: " << rc << std::endl;
         return false;
       }
     }

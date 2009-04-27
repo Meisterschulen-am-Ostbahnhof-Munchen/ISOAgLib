@@ -59,16 +59,14 @@
 
 #include <iostream>
 #include <sstream>
-#ifdef WIN32
-#include <conio.h>
-#else
-#include <unistd.h>
-#endif
 #include <functional>
 #include <algorithm>
+
 #ifdef WIN32
+#include <conio.h>
 #include <time.h>
 #else
+#include <unistd.h>
 #include <sys/times.h>
 #endif
 
@@ -214,7 +212,9 @@ void printSettings(__HAL::server_c &ar_server)
 }
 
 void usage() {
-  std::cout << "Usage: can_server [OPTION]..." << std::endl << std::endl;
+  std::cout << "IsoAgLib CAN-Server - Virtual Host CAN-Bus." << std::endl << std::endl;
+  std::cout << "Usage: can_server [OPTIONS]" << std::endl;
+  std::cout << "       (When running in Interactive mode, type 'help' for a list of interactive commands)" << std::endl << std::endl;
   std::cout << "Options:" << std::endl;
   for (yasper::ptr< AOption_c > const *p_opt = gp_optionsBegin; p_opt < gp_optionsEnd; ++p_opt) {
     std::cout << (*p_opt)->getUsage();
@@ -234,7 +234,7 @@ int Option_c< OPTION_MONITOR >::doCheckAndHandle(int /*argc*/, char *argv[], int
 template <>
 std::string Option_c< OPTION_MONITOR >::doGetUsage() const
 {
-  return "  --monitor                  display can traffic in console\n";
+  return "  --monitor                  Display can traffic in console\n";
 }
 
 template <>
@@ -272,7 +272,7 @@ std::string Option_c< OPTION_LOG >::doGetSetting(__HAL::server_c &ar_server) con
 template <>
 std::string Option_c< OPTION_LOG >::doGetUsage() const
 {
-  return "  --log LOG_FILE_NAME_BASE   log can traffic into <LOG_FILE_NAME_BASE>_<bus_id>\n";
+  return "  --log LOG_FILE_NAME_BASE   Log can traffic into <LOG_FILE_NAME_BASE>_<bus_id>\n";
 }
 
 template <>
@@ -304,8 +304,8 @@ template <>
 std::string Option_c< OPTION_HIGH_PRIO_MINIMUM >::doGetUsage() const
 {
   return
-    "  --high-prio-minimum NUM_PENDING_WRITES   if 0: start normally without priority-handling (default - used if param not given!).\n"
-    "                             if >0: only clients with activated high-priority-send-mode can send messages if\n"
+    "  --high-prio-minimum NUM_PENDING_WRITES   If 0: start normally without priority-handling (default - used if param not given!).\n"
+    "                             If >0: Only clients with activated high-priority-send-mode can send messages if\n"
     "                                    can-controller has equal or more than <NUM_PENDING_WRITES> in its queue.\n";
 }
 
@@ -338,8 +338,9 @@ template <>
 std::string Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::doGetUsage() const
 {
   return
-    "  --reduced-load-iso-bus-no BUS_NUMBER   avoid unnecessary CAN bus load due to\n"
-    "                             messages with local destination addresses\n";
+    "  --reduced-load-iso-bus-no BUS_NUMBER   Don't send internal traffic to the physical CAN-Bus and thus\n"
+    "                             reduce the load on the specified (ISOBUS) bus number.\n"
+    "                             This is detected by the source and destination addresses in the identifier\n";
 }
 
 template <>
@@ -361,7 +362,7 @@ std::string Option_c< OPTION_INTERACTIVE >::doGetSetting(__HAL::server_c &ar_ser
 template <>
 std::string Option_c< OPTION_INTERACTIVE >::doGetUsage() const
 {
-  return "  --interactive              set interactive mode (contrarily to --productive)\n";
+  return "  --interactive              Set interactive mode (contrarily to --productive) explicitly. (It is set by default!)\n";
 }
 
 template <>
@@ -383,7 +384,7 @@ std::string Option_c< OPTION_PRODUCTIVE >::doGetSetting(__HAL::server_c &ar_serv
 template <>
 std::string Option_c< OPTION_PRODUCTIVE >::doGetUsage() const
 {
-  return "  --productive               set productive mode (contrarily to --interactive)\n";
+  return "  --productive               Set productive mode (contrarily to --interactive)\n";
 }
 
 template <>
@@ -405,7 +406,7 @@ std::string Option_c< OPTION_HELP >::doGetSetting(__HAL::server_c &/*ar_server*/
 template <>
 std::string Option_c< OPTION_HELP >::doGetUsage() const
 {
-  return "  --help                     print this help.\n";
+  return "  --help                     Print this help.\n";
 }
 
 /** Start a new file log.
