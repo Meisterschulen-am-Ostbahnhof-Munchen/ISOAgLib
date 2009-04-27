@@ -2491,11 +2491,9 @@ library/xgpl_src/IsoAgLib/util/convert.h -text
 library/xgpl_src/build/libs/freeimage/FreeImage.dll -text
 library/xgpl_src/build/libs/freeimage/FreeImage.lib -text
 library/xgpl_src/build/libs/freeimage/README.txt -text
-library/xgpl_src/build/libs/freeimage/libfreeimage.a -text
 library/xgpl_src/build/libs/freeimage/license-fi.txt -text
 library/xgpl_src/build/libs/freeimage/license-gpl.txt -text
 library/xgpl_src/build/libs/freeimage/mingw/FreeImage.h -text
-library/xgpl_src/build/libs/freeimage/mingw/libfreeimage.a -text
 library/xgpl_src/build/libs/xerces-c_2_5_0/README.txt -text
 library/xgpl_src/build/proc2iso/AUTHORS -text
 library/xgpl_src/build/proc2iso/COPYING -text
@@ -2632,9 +2630,11 @@ tools/libs/freeimage/FreeImage.dll -text
 tools/libs/freeimage/FreeImage.h -text
 tools/libs/freeimage/FreeImage.lib -text
 tools/libs/freeimage/README.txt -text
+tools/libs/freeimage/libfreeimage.a -text
 tools/libs/freeimage/license-fi.txt -text
 tools/libs/freeimage/license-gpl.txt -text
 tools/libs/freeimage/mingw/FreeImage.h -text
+tools/libs/freeimage/mingw/libfreeimage.a -text
 tools/libs/misc/yasper.h -text
 tools/libs/pcan/README.txt -text
 tools/libs/pthread/ANNOUNCE -text
