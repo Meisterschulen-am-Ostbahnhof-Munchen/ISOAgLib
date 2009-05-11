@@ -99,9 +99,9 @@ uint32_t initCardApi ()
     handle[i]   = 0;
   }
 
-  long l_netnumber_max = 26;                   // highest net number
+  long l_netnumber_max = 26;                  // highest net number
   long l_txtimeout = 50;                      // msec
-  long l_rxtimeout = 100;                      // msec
+  long l_rxtimeout = 1;                       // msec
   long l_retval;
 
   // create events

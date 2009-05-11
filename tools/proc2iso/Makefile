@@ -58,70 +58,68 @@
 # $Id: Makefile.in,v 1.12 2002/08/19 15:13:37 tng Exp $
 #
 
-###################################################################
-#                    IMPORTANT NOTE                               #
-###################################################################
-# If you are going to do the OS390BATCH build, make sure you have #
-# the OS390BATCH environment variable set.                        #
-#                                                                 #
-#   export OS390BATCH=1                                           #
-#                                                                 #
-###################################################################
-
-XERCESCROOT=/usr/include/xercesc
-LD_LIBRARY_PATH=/usr/lib/xercesc/
-ISOAGLIBRARY=../../..
-PLATFORM = LINUX
-COMPILER = g++
-GCC = yes
-GXX = yes
-CXXFLAGS =  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I${ISOAGLIBRARY}/xgpl_src
-CFLAGS =    -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I${ISOAGLIBRARY}/xgpl_src
-LDFLAGS =
-THREADS = none
-EXTRA_LIBS =
-PREFIX = /usr
+XERCESCROOT := /usr/include/xercesc
+LD_LIBRARY_PATH := /usr/lib/xercesc/
+ISOAGLIB := ../..
+ISOAGLIBRARY := $(ISOAGLIB)/library
+PLATFORM := LINUX
+COMPILER := g++
+GCC := yes
+GXX := yes
+CXXFLAGS :=  -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I$(ISOAGLIBRARY)/xgpl_src
+CFLAGS :=    -g  -Wall -DAPP_NO_THREADS -DXML_USE_NO_THREADS -DSYSTEM_PC -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN -I$(ISOAGLIBRARY)/xgpl_src
+LDFLAGS :=
+THREADS := none
+EXTRA_LIBS :=
+PREFIX := /usr
 
 include version.incl
 include Makefile.incl
 
-APP_NAME=proc2iso
+# Make list of objects for given list of cpp files:
+OBJECTS = $(addprefix $(OBJ_DIR)/,$(addsuffix .o,$(basename $(notdir $(1)))))
 
-OUTDIR= bin/obj
-EXEC=	../../../../bin
-OBJS=	${OUTDIR}/proc2iso.o ${OUTDIR}/isoname_c.o ${OUTDIR}/util_funcs.o ${OUTDIR}/iliberr_c.o
-myLIBRARY_NAMES = ${LIBRARY_NAMES} -lpthread
+APP_NAME := proc2iso
+IS_X86 = $(filter i%86,$(1))
+IS_X86LINUX = $(and $(call IS_X86,$(1)),$(filter Linux,$(1)))
+IS_WIN32 = $(and $(call IS_X86,$(1)),$(filter MINGW32_NT%,$(1)))
+SYSTEM := $(shell uname -a)
+OSDIRPART := $(if $(call IS_X86LINUX,$(SYSTEM)),x86linux,$(if $(call IS_WIN32,$(SYSTEM)),win32,anyos))
+OBJ_DIR := objects_$(OSDIRPART)
+EXEC :=	$(ISOAGLIB)/bin/$(OSDIRPART)
+SOURCES := \
+	src/proc2iso.cpp \
+	$(ISOAGLIBRARY)/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp \
+	$(ISOAGLIBRARY)/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp \
+	$(ISOAGLIBRARY)/xgpl_src/IsoAgLib/util/iliberr_c.cpp
+OBJS := $(call OBJECTS,$(SOURCES))
+myLIBRARY_NAMES = $(LIBRARY_NAMES) -lpthread
 
-## OS390BATCH
-ifeq (${OS390BATCH},1)
-BATCH_TARGET= "//'${LOADMOD}(${APP_NAME})'"
-all:: makedir ${BATCH_TARGET}
-else
-all:: makedir ${EXEC}/${APP_NAME}
-endif
+all: $(EXEC)/$(APP_NAME) $(EXEC)/proc2iso.xsd
 
-makedir::
-	-mkdir -p $(OUTDIR)
+## Dependencies will not be calculated. Use this ``force'' as
+## prerequisite to force compilation.
+.PHONY: force
 
-${EXEC}/${APP_NAME}:: ${OBJS}
-	${LINK} ${PLATFORM_LIB_LINK_OPTIONS} ${OBJS} -o $@ ${LIBRARY_SEARCH_PATHS} ${myLIBRARY_NAMES} ${EXTRA_LINK_OPTIONS}
-${BATCH_TARGET}:: ${OBJS}
-	${LINK} ${PLATFORM_LIB_LINK_OPTIONS} ${OBJS} -o $@ ${LIBRARY_SEARCH_PATHS} ${myLIBRARY_NAMES} ${EXTRA_LINK_OPTIONS}
+$(OBJ_DIR):
+	-mkdir -p $(OBJ_DIR)
 
-$(OUTDIR)/proc2iso.o:: src/proc2iso.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/proc2iso.o src/proc2iso.cpp
+$(EXEC)/$(APP_NAME): $(OBJS)
+	$(LINK) $(PLATFORM_LIB_LINK_OPTIONS) $(OBJS) -o $@ $(LIBRARY_SEARCH_PATHS) $(myLIBRARY_NAMES) $(EXTRA_LINK_OPTIONS)
 
-$(OUTDIR)/isoname_c.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/isoname_c.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
+$(EXEC)/proc2iso.xsd: bin/proc2iso.xsd
+	cp -p $< $@
 
-${OUTDIR}/util_funcs.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/util_funcs.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+define OBJECT_RULE
+$$(call OBJECTS,$(1)): $(1) force | $(OBJ_DIR)
+	$(CC) $(INCLUDES) $(CMP) -o $$@ $$<
+endef
 
-${OUTDIR}/iliberr_c.o:: ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/iliberr_c.cpp
-	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/iliberr_c.o ${ISOAGLIBRARY}/xgpl_src/IsoAgLib/util/iliberr_c.cpp
+$(foreach SRC,$(SOURCES),$(eval $(call OBJECT_RULE,$(SRC))))
 
-clean::
-	rm -f ${OBJS} ${EXEC}/${APP_NAME}
+clean:
+	-rm -f $(OBJS)
+	-rmdir $(OBJ_DIR)
 
-distclean::	clean
-	rm -f Makefile
+distclean: clean 
+	-rm -f $(EXEC)/$(APP_NAME)

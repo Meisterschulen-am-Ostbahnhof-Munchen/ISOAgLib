@@ -1577,40 +1577,6 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 ##### Library install header file gathering END
 
-
-  # build special target for CAN server
-  if [ $USE_CAN_DRIVER = "msq_server" ] ; then
-    mkdir -p objects_server
-    echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
-    echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \\" >> $MakefileNameLong
-
-    # now derive the source name of the specific CAN HAL module
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$USE_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
-
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \\" >> $MakefileNameLong
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_common.cpp" >> $MakefileNameLong
-    echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
-
-    cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
-    if [ $USE_PCAN_LIB -gt 0 ] ; then
-      echo -e "LIBS_CAN_SERVER  = -lpcan" >> $MakefileNameLong;
-    fi
-
-  fi
-  # build special target for CAN server
-  if [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-    mkdir -p objects_server
-    echo -e "\n#Special Sources for CAN Server" >> $MakefileNameLong
-    echo "SOURCES_SERVER = $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_sock.cpp \\" >> $MakefileNameLong
-
-    # now derive the source name of the specific CAN HAL module
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_"$USE_CAN_DEVICE_FOR_SERVER".cpp \\" >> $MakefileNameLong
-    echo -e "\t\t$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/hal/pc/can/can_server_common.cpp" >> $MakefileNameLong
-    echo -e "\n#Special Rules for CAN Server" >> $MakefileNameLong
-
-    cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileCanServerPart.txt >> $MakefileNameLong
-  fi
-
   cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
 
 # NO UTESTs, no need to remove any testrunners
@@ -1628,7 +1594,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
   # add can_server creation to target "all"
   if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-    sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
+    cp $MakefileNameLong $MakefileNameLong.1
     sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
   fi
 
@@ -1747,7 +1713,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
   # add can_server creation to target "all"
   if [ $USE_CAN_DRIVER = "msq_server" ] ; then
-    sed -e 's#all:#all: can_server#g'  $MakefileNameLong > $MakefileNameLong.1
+    cp $MakefileNameLong $MakefileNameLong.1
     sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
   fi
   rm -f $MakefileNameLong.1

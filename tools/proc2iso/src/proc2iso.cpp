@@ -69,7 +69,7 @@
 // Includes (proc2iso)
 #include "proc2iso.hpp"
 #include "proc2iso-defines.hpp"
-#include "../../../../xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
 // ### GLOBALS ###
 FILE *partFileA;

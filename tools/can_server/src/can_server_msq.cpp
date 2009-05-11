@@ -53,7 +53,6 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-#include "can_target_extensions.h"
 #include <cstring>
 #include <cstdio>
 #include <cctype>
