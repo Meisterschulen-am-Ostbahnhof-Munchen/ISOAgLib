@@ -44,7 +44,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/F4096"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\library\xgpl_src;C:\Development\boost\boost_1_39_0;&quot;..\libs\xerces-c\xerces-c_2_5_0-windows_nt-msvc_60\include&quot;;src"
+				AdditionalIncludeDirectories="..\..\library\xgpl_src;..\..\library\boost\boost_1_38_0;&quot;..\libs\xerces-c\xerces-c_2_5_0-windows_nt-msvc_60\include&quot;;src"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1;OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="0"
@@ -130,7 +130,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="..\..\library\xgpl_src;C:\Development\boost\boost_1_39_0;&quot;..\libs\xerces-c\xerces-c_2_5_0-windows_nt-msvc_60\include&quot;;src"
+				AdditionalIncludeDirectories="..\..\library\xgpl_src;..\..\library\boost\boost_1_38_0;&quot;..\libs\xerces-c\xerces-c_2_5_0-windows_nt-msvc_60\include&quot;;src"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;USE_FREE_IMAGE_LIB;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE=1;_CRT_NONSTDC_NO_DEPRECATE=1;OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN"
 				MinimalRebuild="false"
 				RuntimeLibrary="0"

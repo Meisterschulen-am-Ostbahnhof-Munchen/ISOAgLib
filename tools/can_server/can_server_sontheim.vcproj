@@ -137,7 +137,7 @@
       <Tool
          Name="VCCLCompilerTool"
          Optimization="0"
-         AdditionalIncludeDirectories="..\..\library\xgpl_src;..\libs\pthread\include"
+         AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include"
          PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS"
          MinimalRebuild="false"
          BasicRuntimeChecks="3"

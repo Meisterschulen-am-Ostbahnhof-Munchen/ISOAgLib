@@ -71,8 +71,8 @@
          />
       <Tool
          Name="VCLinkerTool"
-         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib vcand32.lib"
-         OutputFile="Release\can_server.exe"
+         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib vcandm32.lib"
+         OutputFile="Release\can_server_vector.exe"
          LinkIncremental="1"
          SuppressStartupBanner="true"
          AdditionalLibraryDirectories="C:\Programme\CANLIB\dll;../libs/pthread/lib"
@@ -163,11 +163,11 @@
          />
       <Tool
          Name="VCLinkerTool"
-         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib"
-         OutputFile="Debug\can_server.exe"
+         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib vcandm32.lib"
+         OutputFile="Debug\can_server_vector.exe"
          LinkIncremental="2"
          SuppressStartupBanner="true"
-         AdditionalLibraryDirectories="../libs/pthread/lib"
+         AdditionalLibraryDirectories="C:\Programme\CANLIB\dll;../libs/pthread/lib"
          GenerateDebugInformation="true"
          ProgramDatabaseFile="$(ConfigurationName)\can_server_vector.pdb"
          SubSystem="1"
