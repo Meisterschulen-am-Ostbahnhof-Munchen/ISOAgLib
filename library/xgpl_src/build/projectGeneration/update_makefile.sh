@@ -807,7 +807,7 @@ create_filelist( )
 
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
 
-  FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
+FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/Part12_DiagnosticsServices/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then

@@ -114,6 +114,7 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
   , mpc_isoItem (NULL)
   , mui16_eepromAdr (aui16_eepromAdr)
   , mui8_globalRunState (GlobalRunStateNeverClaimed)
+	, mc_diagnosticPgnHandler(*this)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
@@ -158,6 +159,7 @@ IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t 
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
   , mpc_isoItem (NULL)
   , mui8_globalRunState (GlobalRunStateNeverClaimed)
+	, mc_diagnosticPgnHandler(*this)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif

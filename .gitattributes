@@ -2324,6 +2324,8 @@ examples/src/Tutorials/7_SchedulerTask/7_2_SchedulerTaskCanMultipleChannels/vers
 /index.html -text
 /installation.txt -text
 library/LICENSE -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsclient_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsclientservercommunication_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsmanager_c.h -text
@@ -2479,6 +2481,7 @@ library/xgpl_src/IsoAgLib/util/compiler_adaptation.h -text
 library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h -text
 library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
+library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h -text
 library/xgpl_src/build/projectGeneration/EDE.part1.pjt -text
 library/xgpl_src/build/projectGeneration/EDE.part2.pjt -text
 library/xgpl_src/build/projectGeneration/MakefileAppSkeleton.txt -text
