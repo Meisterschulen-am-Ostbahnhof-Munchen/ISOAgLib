@@ -13,5 +13,6 @@
     <File StandardNew="1" RelativePath="1" Writeable="1" FilePath="display.xml"/>
 	<File StandardNew="0" RelativePath="1" Writeable="1" FilePath="attributes.xml"/>
   </Files>
+  <iso11783 version="4"/>
   <Meta ProjectName="tutorialDisplay" Description="" Notes=""/>
 </Project>
