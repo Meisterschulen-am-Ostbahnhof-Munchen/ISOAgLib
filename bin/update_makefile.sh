@@ -1,2 +1,2 @@
 #!/bin/sh
-../../library/xgpl_src/build/projectGeneration/update_makefile.sh "$@"
+exec "$(cd "$(dirname "$0")/../tools/project_generation" && pwd)/update_makefile.sh" "$@"

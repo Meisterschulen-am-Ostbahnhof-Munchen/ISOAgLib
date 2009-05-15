@@ -57,8 +57,10 @@
 #include <ctype.h>
 
 #ifdef WIN32
-  #include <dos.h>
+#include <dos.h>
 
+/* Typedef taken from windows.h to avoid complete windows inclusion: */
+typedef void *HANDLE;
 extern "C" {
   #include <vxlapi.h>
 }

@@ -2482,13 +2482,6 @@ library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h -text
 library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
 library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h -text
-library/xgpl_src/build/projectGeneration/EDE.part1.pjt -text
-library/xgpl_src/build/projectGeneration/EDE.part2.pjt -text
-library/xgpl_src/build/projectGeneration/MakefileAppSkeleton.txt -text
-library/xgpl_src/build/projectGeneration/conf_template -text
-library/xgpl_src/build/projectGeneration/kdevelop3Generic.kdevelop -text
-library/xgpl_src/build/projectGeneration/qmake_stub.pro -text
-library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp eol=crlf
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.cpp -text
@@ -2568,6 +2561,7 @@ tools/can_messenger/src/can_messenger.cpp -text
 tools/can_messenger/src/config_can_messenger.h -text
 tools/can_messenger/src/version.h -text
 tools/can_server/Makefile -text
+tools/can_server/README.txt -text
 tools/can_server/can_server.sln -text
 tools/can_server/can_server_no_card.vcproj -text
 tools/can_server/can_server_pcan.vcproj -text
@@ -2669,6 +2663,14 @@ tools/proc2iso/src/proc2iso-defines.hpp -text
 tools/proc2iso/src/proc2iso.cpp -text
 tools/proc2iso/src/proc2iso.hpp -text
 tools/proc2iso/version.incl -text
+tools/project_generation/conf_template -text
+tools/project_generation/update_makefile_EDE.part1.pjt -text
+tools/project_generation/update_makefile_EDE.part2.pjt -text
+tools/project_generation/update_makefile_MakefileAppSkeleton.txt -text
+tools/project_generation/update_makefile_conf_template -text
+tools/project_generation/update_makefile_kdevelop3Generic.kdevelop -text
+tools/project_generation/update_makefile_qmake_stub.pro -text
+tools/project_generation/update_makefile_vc6_prj_base.dsp eol=crlf
 tools/vt2iso/Makefile -text
 tools/vt2iso/Makefile.incl -text
 tools/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text

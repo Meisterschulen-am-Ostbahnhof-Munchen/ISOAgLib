@@ -807,7 +807,7 @@ create_filelist( )
 
   touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
 
-FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/Part12_DiagnosticsServices/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
+  FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
 
   # find wanted process data communication features
   if [ "$COMM_PROC_FEATURES" != "" ] ; then
@@ -1331,7 +1331,7 @@ create_makefile()
   MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
   if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
-    MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileSkeleton.txt"
+    MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"
   fi
   # create Makefile Header
   echo "#############################################################################" > $MakefileNameLong
@@ -1620,7 +1620,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
   MakefileNameLong="MakefileApp"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
   if [ "A$MAKEFILE_APP_SKELETON_FILE" = "A" ] ; then
-    MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/MakefileAppSkeleton.txt"
+    MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileAppSkeleton.txt"
   fi
 
 
@@ -1730,7 +1730,7 @@ rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.tx
 
 
   # now create a Kdevelop3 project file
-  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/kdevelop3Generic.kdevelop $PROJECT.kdevelop
+  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_kdevelop3Generic.kdevelop $PROJECT.kdevelop
 
   sed -e "s/REPLACE_AUTHOR/$PROJECT_AUTHOR/g" $PROJECT.kdevelop > $PROJECT.kdevelop.1
   sed -e "s/REPLACE_AUTHOR_EMAIL/$PROJECT_AUTHOR_EMAIL/g" $PROJECT.kdevelop.1 > $PROJECT.kdevelop
@@ -2039,7 +2039,7 @@ create_EdePrj()
 
 
   # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
-  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 	sed -e 's|\\\\|=_=_|g' -e 's|/|=_=_|g' $EdePrjFilelist > $EdePrjFilelist.1
 
@@ -2053,7 +2053,7 @@ create_EdePrj()
   done
 
 
-  cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/EDE.part2.pjt >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
   cd $DEV_PRJ_DIR
   sed -e "s#INSERT_PROJECT#$PROJECT#g" -e "s#INSERT_TARGET_LIB_DIRECTORY#$USE_EMBED_LIB_DIRECTORY#g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
   sed -e "s#INSERT_ISO_AG_LIB_PATH#$ISO_AG_LIB_PATH_WIN#g" -e "s#INSERT_TARGET_HEADER_DIRECTORY#$USE_EMBED_HEADER_DIRECTORY#g" $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
@@ -2181,7 +2181,7 @@ create_VCPrj()
 
 
 
-  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+  cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
   sed -e "s#INSERT_PROJECT#$PROJECT#g"  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
   sed -e "s#INSERT_INCLUDE_PATHS#$USE_INCLUDE_PATHS#g"  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME

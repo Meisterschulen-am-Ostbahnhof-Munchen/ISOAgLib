@@ -12,6 +12,7 @@ In order to run the can_server variants for
 you probably need driver specific runtime libraries that can be obtained on the manufactures website:
 
 Vector: http://www.vector-worldwide.com/downloads/drivers/canlib43.zip
+Vector XL: http://www.vector-worldwide.com/downloads/drivers/xl_lib67.zip
 PEAK: http://p103112.typo3server.info/fileadmin/media/files/usb.zip
 Sontheim: http://www.s-i-e.de/daten/software/MT_API_Setup.zip
 

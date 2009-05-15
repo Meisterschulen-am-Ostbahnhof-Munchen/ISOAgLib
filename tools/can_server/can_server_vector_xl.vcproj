@@ -46,7 +46,7 @@
          Name="VCCLCompilerTool"
          Optimization="2"
          InlineFunctionExpansion="1"
-         AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\CANLIB\dll"
+         AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\XL Driver Library\bin"
          PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;_CRT_SECURE_NO_WARNINGS"
          StringPooling="true"
          RuntimeLibrary="0"
@@ -71,11 +71,11 @@
          />
       <Tool
          Name="VCLinkerTool"
-         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib"
+         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib vxlapi.lib"
          OutputFile="Release\can_server_vector_xl.exe"
          LinkIncremental="1"
          SuppressStartupBanner="true"
-         AdditionalLibraryDirectories="../libs/pthread/lib"
+         AdditionalLibraryDirectories="../libs/pthread/lib;C:\Programme\XL Driver Library\bin"
          ProgramDatabaseFile="$(ConfigurationName)\can_server_vector_xl.pdb"
          SubSystem="1"
          RandomizedBaseAddress="1"
@@ -137,7 +137,7 @@
       <Tool
          Name="VCCLCompilerTool"
          Optimization="0"
-         AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\CANLIB\dll"
+         AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\XL Driver Library\bin"
          PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS"
          MinimalRebuild="true"
          BasicRuntimeChecks="3"
@@ -163,11 +163,11 @@
          />
       <Tool
          Name="VCLinkerTool"
-         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib"
+         AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib vxlapi.lib"
          OutputFile="Debug\can_server_vector_xl.exe"
          LinkIncremental="2"
          SuppressStartupBanner="true"
-         AdditionalLibraryDirectories="../libs/pthread/lib"
+         AdditionalLibraryDirectories="../libs/pthread/lib;C:\Programme\XL Driver Library\bin"
          GenerateDebugInformation="true"
          ProgramDatabaseFile="$(ConfigurationName)\can_server_vector_xl.pdb"
          SubSystem="1"
