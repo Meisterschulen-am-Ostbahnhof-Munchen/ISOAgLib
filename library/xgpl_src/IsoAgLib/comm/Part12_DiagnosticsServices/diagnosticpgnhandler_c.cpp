@@ -7,8 +7,8 @@
 namespace __IsoAgLib
 {
 
-DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_idetItem ) :
-    mrc_identItem ( arc_idetItem ),
+DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
+    mrc_identItem ( arc_identItem ),
     mstr_EcuIdentification ( "" ),
     mstr_SwIdentification ( "" ),
     mb_certificationIsSet ( false )
@@ -129,14 +129,16 @@ bool DiagnosticPgnHandler_c::setSwIdentification ( const STL_NAMESPACE::string& 
 	if (astr_SwId.length() > 200 )
 		return false;
 
-  mstr_SwIdentification = astr_SwId;
   uint8_t ui8_fields = 1;
-  for ( int i = 1; i < mstr_SwIdentification.length() -1 ; i++ )
+  for ( int i = 1; i < int(astr_SwId.length()) -1 ; i++ )
   {
-    if ( mstr_SwIdentification[i] == '*' || mstr_SwIdentification[i] == '#' )
+    if ( astr_SwId[i] == '*' || astr_SwId[i] == '#' )
       ui8_fields ++;
   }
-  mstr_SwIdentification.insert ( 0,1,ui8_fields );
+
+  mstr_SwIdentification = "0" + astr_SwId; // Reserve the first character for the number of fields
+  mstr_SwIdentification[0]= ui8_fields;  // insert the number of fields 
+  
   return true;
 }
 
@@ -154,7 +156,7 @@ bool DiagnosticPgnHandler_c::setCertificationData( uint16_t ui16_year ,Certifica
   m_certification[3] = acrc_certificationBitMask.getByte ( 0 );
   m_certification[4] = acrc_certificationBitMask.getByte ( 1 );
   m_certification[5] = acrc_certificationBitMask.getByte ( 2 );
-	m_certification[6] = ( aui16_referenceNumber & 0xFF );
+  m_certification[6] = ( aui16_referenceNumber & 0xFF );
   m_certification[7] = ( aui16_referenceNumber >> 8 ) & 0xFF ;
   
   mb_certificationIsSet = true;

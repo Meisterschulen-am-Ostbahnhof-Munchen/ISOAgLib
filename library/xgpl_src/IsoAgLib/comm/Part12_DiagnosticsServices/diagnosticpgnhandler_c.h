@@ -112,33 +112,34 @@ class DiagnosticPgnHandler_c: public IsoRequestPgnHandler_c
 {
 
 public:
-	DiagnosticPgnHandler_c(IdentItem_c & );
-	virtual ~DiagnosticPgnHandler_c();
+  DiagnosticPgnHandler_c(IdentItem_c & );
+  virtual ~DiagnosticPgnHandler_c();
 
   virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/);
+
   
   bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNr, const STL_NAMESPACE::string& astr_serialNr,const STL_NAMESPACE::string& astr_manufacturerName );
 
-	bool setSwIdentification( const STL_NAMESPACE::string& astr_swIdentification );
+  bool setSwIdentification( const STL_NAMESPACE::string& astr_swIdentification );
 
-
-	//! Setter for the different certification message fields 
-	//! Parameter:
-	//! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061 
-	//! @param a_revision Certification revision as in ISO 11783-7 A.29.2
-	//! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
-	//! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
-	//! @param acrc_certificationBitMask Compliance certification type bitfield (  as in ISO 11783-7 A.29.5 till A.29.17 )
-	//! @param aui16_referenceNumber Compliance certification reference number  as in ISO 11783-7 A.29.18
-	bool setCertificationData( uint16_t ui16_year ,CertificationRevision_t a_revision,CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-														 const CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
+  //! Setter for the different certification message fields 
+  //! Parameter:
+  //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061 
+  //! @param a_revision Certification revision as in ISO 11783-7 A.29.2
+  //! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
+  //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
+  //! @param acrc_certificationBitMask Compliance certification type bitfield ( as in ISO 11783-7 A.29.5 till A.29.17 )
+  //! @param aui16_referenceNumber Compliance certification reference number ( as in ISO 11783-7 A.29.18 )
+  bool setCertificationData( uint16_t ui16_year ,CertificationRevision_t a_revision,CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
+                             const CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
   
 private:
-	IdentItem_c& mrc_identItem;
+  IdentItem_c& mrc_identItem;
+
   STL_NAMESPACE::string mstr_EcuIdentification;
   STL_NAMESPACE::string mstr_SwIdentification;
-	bool mb_certificationIsSet;
-	uint8_t m_certification[8];	
+  bool mb_certificationIsSet;
+  uint8_t m_certification[8];	
 };
 
 }

@@ -114,11 +114,12 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
   , mpc_isoItem (NULL)
   , mui16_eepromAdr (aui16_eepromAdr)
   , mui8_globalRunState (GlobalRunStateNeverClaimed)
-	, mc_diagnosticPgnHandler(*this)
+  , mpc_diagnosticPgnHandler (NULL)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
 {
+  mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
   init (NULL, 0xFF, aui16_eepromAdr,
 #ifdef USE_WORKING_SET
         -1, NULL, // -1 indicates we're no working-set!
@@ -159,11 +160,12 @@ IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t 
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
   , mpc_isoItem (NULL)
   , mui8_globalRunState (GlobalRunStateNeverClaimed)
-	, mc_diagnosticPgnHandler(*this)
+  , mpc_diagnosticPgnHandler(NULL)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
 {
+  mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
   init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
         aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
         #ifdef USE_WORKING_SET
@@ -416,6 +418,7 @@ void IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 IdentItem_c::~IdentItem_c()
 {
   close();
+  delete mpc_diagnosticPgnHandler;
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
