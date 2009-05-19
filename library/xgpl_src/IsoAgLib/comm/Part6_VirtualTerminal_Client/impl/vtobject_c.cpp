@@ -210,7 +210,7 @@ void
 vtObject_c::saveValueP (uint16_t ui16_structOffset, uint16_t ui16_structLen, const IsoAgLib::iVtObject_c* const p_newValue)
 {
   createRamStructIfNotYet (ui16_structLen);
-  * ((const IsoAgLib::iVtObject_c** const) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
+  * ((const IsoAgLib::iVtObject_c**) (((uint8_t *)vtObject_a)+ui16_structOffset)) = p_newValue;
 }
 void
 vtObject_c::saveValueISOName (const uint16_t ui16_structOffset, const uint16_t ui16_structLen, const IsoAgLib::iIsoName_c& ar_newIsoName)
