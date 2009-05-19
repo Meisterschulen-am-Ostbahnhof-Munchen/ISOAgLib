@@ -627,7 +627,7 @@ namespace __IsoAgLib {
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
           return true;
         }
-        break;
+        break;  // This break is unreachable, but leave it here in case the above code changes.
 
       case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
         if ( checkParseReceived( rcc_tempISOName ) )
@@ -925,7 +925,7 @@ namespace __IsoAgLib {
         // NMEA NMEA_GPS_POSITON_DATA_PGN sends with 0.1 msec
         ui32_milliseconds /= 10;
 
-        const time_t t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60 * 60 * 24) ) + (ui32_milliseconds/1000);
+        const time_t t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
         tm* UtcNow = gmtime( &t_tempUnixTime );
         if ( UtcNow != NULL )
         {
@@ -1203,7 +1203,7 @@ void TimePosGps_c::isoSendDirection( void )
       // compensate mktime() time zone influence:
       const time_t secondsSince1970 = mktime( &testTime ) + mt_tzOffset;
       // calculate the days
-      ui16_daysSince1970 = secondsSince1970 / ( 60 * 60 *24 );
+      ui16_daysSince1970 = secondsSince1970 / ( 60L * 60L *24L );
     }
     const uint32_t ui32_milliseconds = ( ( ( ( ( ( hourUtcGps() * 60 ) + minuteUtcGps() ) * 60 ) + secondUtcGps() ) * 1000 ) + millisecondUtcGps()) * 10;
     // write Position Date as Days since 1.1.1970
@@ -1450,12 +1450,12 @@ void TimePosGps_c::isoSendDirection( void )
     if (b_updateDate)
     {
       struct CNAMESPACE::tm* p_tm = currentUtcTm();
-	  if (p_tm != NULL)
-	  {
+      if (p_tm != NULL)
+      {
         bit_calendar.year   = p_tm->tm_year + 1900;
         bit_calendar.month  = p_tm->tm_mon +1;
         bit_calendar.day    = p_tm->tm_mday;
-	  }
+      }
       // else: can't update date.
     }
 
@@ -1475,10 +1475,10 @@ void TimePosGps_c::isoSendDirection( void )
       currentUtcTm();
     }
 
-    time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000
-                                     + (bit_calendar.timezoneHourOffsetMinus24 - 24) * 60 * 60  // negative offsets => increased local time
-                                     + bit_calendar.timezoneMinuteOffset * 60;
-	// if it's negative, localtime(..) would return NULL!
+    time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000L
+                                     + (bit_calendar.timezoneHourOffsetMinus24 - 24L) * 60L * 60L  // negative offsets => increased local time
+                                     + bit_calendar.timezoneMinuteOffset * 60L;
+    // if it's negative, localtime(..) would return NULL!
     if (t_secondsSince1970Local < 0)
       t_secondsSince1970Local = 0;
 
@@ -1570,15 +1570,15 @@ void TimePosGps_c::isoSendDirection( void )
       if (bit_calendar.year != 0)
       {
         struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
-                              bit_calendar.day, bit_calendar.month-1,
-                              bit_calendar.year-1900,
-                              0,0,-1
-                              #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
-                              , 0, NULL
-                              #endif
-                              };
+                               bit_calendar.day, bit_calendar.month-1,
+                               bit_calendar.year-1900,
+                               0,0,-1
+                               #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
+                               , 0, NULL
+                               #endif
+                             };
         mt_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
-        if (-1 == mt_cachedLocalSeconds1970AtLastSet)
+        if ((time_t)-1 == mt_cachedLocalSeconds1970AtLastSet)
         { // this shouldn't happen anymore, but in case it does, reset the cachedSeconds to 0
           // because -1 will make localtime(..) return NULL!
           mt_cachedLocalSeconds1970AtLastSet = 0;
