@@ -2648,8 +2648,8 @@ VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 {
   mc_streamer.mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
   mc_streamer.mui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 1) // supporting multilanguage.
-  { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
+  if (mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
+  { // only if the objectpool has 1 or more languages, it makes sense to add the language code to the version-name
     const int8_t ci8_realUploadingLanguage = (mc_streamer.mi8_objectPoolUploadingLanguage < 0) ? 0 : mc_streamer.mi8_objectPoolUploadingLanguage;
     const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
     mc_streamer.mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
