@@ -123,7 +123,9 @@ public:
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
   int32_t  mi32_lastPipeId;
+  int32_t  marri32_fileDescrWakeUpPipeForNewBusEvent[2];
 #endif
+
   // if >0 => do not send messages with local destination address on the bus
   int16_t  mi16_reducedLoadOnIsoBus;
 

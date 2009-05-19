@@ -447,15 +447,8 @@ void closeFileLog(
 
 void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE *f_handle)
 {
-#if WIN32
-    clock_t t_sendTimestamp = timeGetTime();
-    uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp;
-#else
-    clock_t t_sendTimestamp = times(NULL);
-    uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
-#endif
-    fprintf(f_handle, "%Ld %-2d %-2d %-2d %-2d %-2d %-8x  ",
-            ui64_timeStamp10, bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
+    fprintf(f_handle, "%10d %-2d %-2d %-2d %-2d %-2d %-8x  ",
+            __HAL::getTime(), bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
             (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);
     for (uint8_t ui8_i = 0; (ui8_i < ps_canMsg->i32_len) && (ui8_i < 8); ui8_i++)
       fprintf(f_handle, " %-3hx", ps_canMsg->ui8_data[ui8_i]);

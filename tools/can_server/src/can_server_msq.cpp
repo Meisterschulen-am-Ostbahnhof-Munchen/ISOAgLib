@@ -129,6 +129,7 @@ __HAL::server_c::server_c() :
   memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
   memset(marrui16_busRefCnt, 0, sizeof(marrui16_busRefCnt));
+  memset(marri32_fileDescrWakeUpPipeForNewBusEvent, 0, sizeof(marri32_fileDescrWakeUpPipeForNewBusEvent));
 
   for (uint32_t i=0; i<__HAL::cui32_maxCanBusCnt; i++)
   {
@@ -306,11 +307,8 @@ void dumpCanMsg(uint8_t au8_bus, uint8_t au8_msgObj, canMsg_s *ap_canMsg, __HAL:
 
 void monitorCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg)
 {
-  clock_t t_sendTimestamp = times(NULL);
-  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
-
-  printf("%Ld %-2d %-2d %-2d %-2d %-2d %-8x  ",
-         ui64_timeStamp10, bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
+  printf("%10d %-2d %-2d %-2d %-2d %-2d %-8x  ",
+         __HAL::getTime(), bBusNumber, bMsgObj, ps_canMsg->i32_msgType, ps_canMsg->i32_len,
          (ps_canMsg->ui32_id >> 26) & 7 /* priority */, ps_canMsg->ui32_id);
   for (uint8_t ui8_i = 0; (ui8_i < ps_canMsg->i32_len) && (ui8_i < 8); ui8_i++)
     printf(" %-3hx", ps_canMsg->ui8_data[ui8_i]);
@@ -786,7 +784,7 @@ static void can_read(__HAL::server_c* pc_serverData)
 
   uint32_t channel_with_change = 0;
   uint8_t ui8_cntOpenDevice = 0;
-  uint32_t ui32_sleepTime = 50000;
+  uint32_t ui32_sleepTime = 10000;
 
   for (;;) {
 
@@ -805,16 +803,27 @@ static void can_read(__HAL::server_c* pc_serverData)
       }
     }
 
+    // COMMAND_INIT will write one wake byte to this pipe => select returns and file descriptor for new bus is used in next select call
+    FD_SET(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[0], &rfds);
+
     // we have open devices
     if (ui8_cntOpenDevice > 0) {
-      retval = select(FD_SETSIZE, &rfds, NULL, NULL, NULL);  // wait infinitely for next CAN msg
+
+      retval = select(FD_SETSIZE, &rfds, NULL, NULL, NULL);
 
       if(retval == -1) {
         DEBUG_PRINT("Error Occured in select\n");
         break;
       } else if (retval == 0) {
+        // timeout should not happen
         continue;
       } else {
+
+        if (FD_ISSET(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[0], &rfds) == 1) {
+          // wake up for new bus => just read pipe for clearing
+          char readbuffer[1];
+          read(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[0], readbuffer, sizeof(readbuffer));
+        }
 
         // get device with changes
         for (channel_with_change=0; channel_with_change<__HAL::cui32_maxCanBusCnt; channel_with_change++ ) {
@@ -845,7 +854,7 @@ static void can_read(__HAL::server_c* pc_serverData)
         ui32_sleepTime = 5000; // CAN message received => reduce sleep time
       else
       { // invalid message or no CAN message received => increase sleep time
-        ui32_sleepTime = 50000; 
+        ui32_sleepTime = 10000; 
         pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
         continue;
       }
@@ -862,7 +871,6 @@ static void can_read(__HAL::server_c* pc_serverData)
     }
 
     if (!b_processMsg) {
-      usleep(10000);
       continue;
     }
 
@@ -1071,6 +1079,11 @@ static void* command_thread_func(void* ptr)
               i32_error = HAL_CONFIG_ERR;
               abort();
             }
+
+            // wake up can_read thread to use file descriptor of new bus in next select call
+            char writebuffer[1];
+            write(pc_serverData->marri32_fileDescrWakeUpPipeForNewBusEvent[1], writebuffer, sizeof(writebuffer));
+
           }
 
           if (!i32_error) {
@@ -1353,6 +1366,11 @@ int main(int argc, char *argv[])
   reserve_memory_heap = new char[4096];
   signal(11,segfaulthand);
 #endif
+
+  if (pipe(c_serverData.marri32_fileDescrWakeUpPipeForNewBusEvent) != 0) {
+    std::cerr << "error creating wakeup pipe for new bus event\n" << std::endl;
+    exit(1);
+  }
 
   i_registerClientThreadHandle = pthread_create( &thread_registerClient, NULL, &command_thread_func, &c_serverData);
   i_canWriteThreadHandle = pthread_create( &thread_canWrite, NULL, &can_write_thread_func, &c_serverData);

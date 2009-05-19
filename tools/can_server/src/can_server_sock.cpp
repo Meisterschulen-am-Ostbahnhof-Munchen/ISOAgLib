@@ -412,18 +412,8 @@ void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server
 
 void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
 {
-#if WIN32
-  clock_t t_sendTimestamp = timeGetTime();
-  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp;
-#else
-  clock_t t_sendTimestamp = times(NULL);
-  uint64_t ui64_timeStamp10 = (uint64_t)t_sendTimestamp * 10;
-#endif
-
-  /* split of fprintf 64bit-value is needed for windows! */
-  printf("%Ld ", ui64_timeStamp10);
-  printf("%-2d %-2d %-2d %-2d %-2d %-8x  ",
-         ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
+  printf("%10d %-2d %-2d %-2d %-2d %-2d %-8x  ",
+         __HAL::getTime(), ps_transferBuf->s_data.ui8_bus, ps_transferBuf->s_data.ui8_obj, ps_transferBuf->s_data.s_canMsg.i32_msgType, ps_transferBuf->s_data.s_canMsg.i32_len,
          (ps_transferBuf->s_data.s_canMsg.ui32_id >> 26) & 7 /* priority */, ps_transferBuf->s_data.s_canMsg.ui32_id);
   for (uint8_t ui8_i = 0; (ui8_i < ps_transferBuf->s_data.s_canMsg.i32_len) && (ui8_i < 8); ui8_i++)
      printf(" %-3hx", ps_transferBuf->s_data.s_canMsg.ui8_data[ui8_i]);
