@@ -667,7 +667,6 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& acrc_isoName,
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
-  mvec_isoMember.sort(); // resort the list
 
   return pc_result;
 }
