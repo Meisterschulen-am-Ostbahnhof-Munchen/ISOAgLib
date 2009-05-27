@@ -257,20 +257,7 @@ public:
     @param ai32_val commanded setpoint value as long
   */
   void setSetpointMasterVal(int32_t ai32_val){ mc_setpoint.setSetpointMasterVal(ai32_val);};
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the actual master setpoint
-    @param ab_sendRequest true -> send request for actual value
-    @return setpoint value as float
-  */
-  float setpointMasterValFloat(bool ab_sendRequest = false)
-    { return mc_setpoint.setpointMasterValFloat( ab_sendRequest ); };
-  /**
-    send a setpoint cmd with given exact setpoint
-    @param af_val commanded setpoint value as float
-  */
-  void setSetpointMasterVal(float af_val){ mc_setpoint.setSetpointMasterVal(af_val);};
-  #endif
+
   /**
     deliver actual measurement value as long
     - if no exactValue present => take max or min as fallback
@@ -281,15 +268,6 @@ public:
     send reset cmd for the measurement value
   */
   void resetMasterVal() { mc_measure.resetMasterVal();};
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver actual measurement value as float
-    @param ab_sendRequest true -> request for new value is sent (optional, default false)
-  */
-  float masterValFloat(bool ab_sendRequest = false)
-    { return mc_measure.masterValFloat( ab_sendRequest );};
-  #endif
-
 
   /**
     perform periodic actions

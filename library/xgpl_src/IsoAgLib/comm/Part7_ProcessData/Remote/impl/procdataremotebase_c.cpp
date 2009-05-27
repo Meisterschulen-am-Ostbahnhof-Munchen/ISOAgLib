@@ -173,15 +173,6 @@ bool ProcDataRemoteBase_c::sendValISOName(const IsoName_c& ac_varISOName, int32_
   return ProcDataBase_c::sendValISOName (ac_varISOName, ai32_val);
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataRemoteBase_c::sendValISOName(const IsoName_c& ac_varISOName, float af_val) const
-{
-  setRemoteSendFlags (ac_varISOName);
-
-  return ProcDataBase_c::sendValISOName (ac_varISOName, af_val);
-}
-#endif
-
 void ProcDataRemoteBase_c::setRemoteSendFlags(const IsoName_c& ac_varISOName) const
 {
   ProcessPkg_c& c_data = getProcessPkg();

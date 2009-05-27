@@ -137,6 +137,7 @@ void SimpleManageSetpointLocal_c::init( ProcDataBase_c *const apc_processData )
     mi32_setpointMasterVal = 0;
   #endif
 }
+
 /** copy constructor */
 SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetpointLocal_c& acrc_src )
 : ProcessElementBase_c( acrc_src )
@@ -145,6 +146,7 @@ SimpleManageSetpointLocal_c::SimpleManageSetpointLocal_c( const SimpleManageSetp
     mi32_setpointMasterVal = acrc_src.mi32_setpointMasterVal;
   #endif
 }
+
 /** assignment operator */
 const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const SimpleManageSetpointLocal_c& acrc_src )
 {
@@ -155,6 +157,7 @@ const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const
 
   return *this;
 }
+
 /** process a setpoint message */
 void SimpleManageSetpointLocal_c::processSetpoint(){
   // for simple setpoint the message is process here
@@ -170,17 +173,9 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
       case ProcessCmd_c::minValue: // min -> simply set exact
       case ProcessCmd_c::maxValue: // max -> simply set exact
       case ProcessCmd_c::defaultValue: // max -> simply set exact
-        #ifdef USE_FLOAT_DATA_TYPE
-        if ( ( c_pkg.valType() == float_val)
-          && ( setpointMasterValFloat() != c_pkg.dataFloat() ) ) {
-          setSetpointMasterVal(c_pkg.dataFloat());
-          b_change = true;
-        }
-        else if ( setpointMasterVal() != c_pkg.dataLong() ) {
-        #else
-        if ( setpointMasterVal() != c_pkg.dataLong() ) {
-        #endif
-          setSetpointMasterVal(c_pkg.dataLong());
+        if ( setpointMasterVal() != c_pkg.getValue() )
+        {
+          setSetpointMasterVal(c_pkg.getValue());
           b_change = true;
         }
         break;
@@ -189,7 +184,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.dataLong(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.getValue(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
   }
   #ifndef SIMPLE_RESPOND_ON_SET
   // if no auto-response on setpoint set is want
@@ -213,19 +208,12 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
 */
 bool SimpleManageSetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
                                                        ProcessCmd_c::ValueGroup_t en_valueGroup,
-                                                       ProcessCmd_c::CommandType_t en_command ) const {
+                                                       ProcessCmd_c::CommandType_t en_command ) const
+{
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                              en_valueGroup, en_command);
-  //if ( aui8_mod != 1 ) {
-    // not percent
-    #ifdef USE_FLOAT_DATA_TYPE
-    if (valType() == float_val)
-      return processDataConst().sendValISOName(ac_targetISOName, setpointMasterValFloat());
-    else
-    #endif
-      return processDataConst().sendValISOName(ac_targetISOName, setpointMasterVal());
-  //}
+                                                           en_valueGroup, en_command);
+  return processDataConst().sendValISOName(ac_targetISOName, setpointMasterVal());
 }
 
 
@@ -243,22 +231,6 @@ uint32_t ui32_masterVal = c_localProcBase.masterMeasurementVal();
 return mi32_masterVal;
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
-  #ifdef USE_FLOAT_DATA_TYPE
-/**
-  retreive simple master setpoint
-  @return actual received setpoint value
-*/
-float SimpleManageSetpointLocal_c::setpointMasterValFloat() const
-{
-#ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
-return f_setpointMasterVal;
-#else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
-ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-float f_masterVal = c_localProcBase.masterValFloat();
-return f_masterVal;
-#endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
-}
-  #endif // USE_FLOAT_DATA_TYPE
 
 /**
   set the setpoint value
@@ -267,29 +239,12 @@ return f_masterVal;
 void SimpleManageSetpointLocal_c::setSetpointMasterVal(int32_t ai32_val)
 {
 #ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
-processData().setValType(i32_val);
 mi32_setpointMasterVal = ai32_val;
 #else // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
 c_localProcBase.setMasterMeasurementVal( ai32_val );
 #endif // HANDLE_SETPOINT_MEASURE_EQUIVALENT
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  set the setpoint value as float value
-  @param af_val new setpoint value
-*/
-void SimpleManageSetpointLocal_c::setSetpointMasterVal(float af_val)
-{
-#ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT
-processData().setValType(float_val);
-f_setpointMasterVal = af_val;
-#else // HANDLE_SETPOINT_MEASURE_EQUIVALEN
-ProcDataLocalBase_c& c_localProcBase = static_cast<ProcDataLocalBase_c&>(processData());
-c_localProcBase.setMasterMeasurementVal( af_val );
-#endif // HANDLE_SETPOINT_MEASURE_EQUIVALEN
-}
-#endif // USE_FLOAT_DATA_TYPE
 
 
 } // end of namespace __IsoAgLib

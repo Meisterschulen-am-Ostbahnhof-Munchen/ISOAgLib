@@ -359,7 +359,13 @@ void Process_c::resetTimerPeriod( void )
     * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
-bool Process_c::processMsg(){
+bool Process_c::processMsg()
+{
+  // check for invalid SA/DA
+  if (data().getMonitorItemForSA() == NULL)
+  { // SA = 0xFE  =>  don't handle such messages, we need to have a sender
+    return true;
+  }
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
@@ -370,12 +376,17 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
 }
 #endif
 
+  // check for sender isoName (only in remote)
+  const IsoName_c& c_isoNameSender = data().getMonitorItemForSA()->isoName();
+
   // process TC status message (for local instances)
   if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xE))
   {
     // update isoName of TC
-    mpc_tcISOName = &(data().memberSend().isoName());
-    processTcStatusMsg(mc_data.dataRawCmdLong(), data().memberSend().isoName());
+    /// @todo This only works until the IsoItem gets destructed!!!
+    /// --> Copy the ISONAME, do not take a pointer to that ISONAME!
+    mpc_tcISOName = &c_isoNameSender;
+    processTcStatusMsg(mc_data.getValue(), c_isoNameSender);
 
 #ifdef USE_PROC_DATA_DESCRIPTION_POOL
     mc_devPropertyHandler.updateTcStateReceived(mc_data[4]);
@@ -384,20 +395,22 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
     return TRUE;
   }
 
-  // process working set taks messag (for remote instances (e.g. TC))
+  // process working set task message (for remote instances (e.g. TC))
   if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xF))
   {
-    processWorkingSetTaskMsg(mc_data.dataRawCmdLong(), data().memberSend().isoName());
+    processWorkingSetTaskMsg(mc_data.getValue(), c_isoNameSender);
     return TRUE;
   }
 
   bool b_result = false;
 
-  // decide which isoName to use for matching
+  if (data().getMonitorItemForDA() == NULL)
+  { // broadcast message
+    return b_result;
+  }
+
   // use isoName from corresponding monitor item for checks
-  const IsoName_c& c_isoNameReceiver = data().memberEmpf().isoName();
-  // check for sender isoName (only in remote)
-  const IsoName_c& c_isoNameSender = data().memberSend().isoName();
+  const IsoName_c& c_isoNameReceiver = data().getMonitorItemForDA()->isoName();
 
   // check first for remote Process Data
   if ( existProcDataRemote( data().DDI(), data().element(), c_isoNameSender, c_isoNameReceiver) )

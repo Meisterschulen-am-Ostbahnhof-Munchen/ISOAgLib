@@ -367,10 +367,17 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
 
   return true;
 }
+
 /** process a measure prog message for local process data */
-void ManageMeasureProgLocal_c::processProg(){
+void ManageMeasureProgLocal_c::processProg()
+{
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  const IsoName_c& c_callerISOName =  c_pkg.memberSend().isoName();
+  if (c_pkg.senderItem() == NULL)
+  { // sender wit SA 0xFE is not of interest
+    return;
+  }
+
+  const IsoName_c& c_callerISOName =  c_pkg.senderItem()->isoName();
   ProcessCmd_c::CommandType_t en_command = c_pkg.mc_processCmd.getCommand();
 
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
@@ -448,22 +455,6 @@ void ManageMeasureProgLocal_c::setGlobalVal( int32_t ai32_val )
   for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
       pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(ai32_val);
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/** initialise value for all registered Measure Progs */
-void ManageMeasureProgLocal_c::initGlobalVal( float af_val )
-{
-  for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
-      pc_iter != vec_prog().end(); pc_iter++)pc_iter->initVal(af_val);
-}
-/** set value for all registered Measure Progs */
-void ManageMeasureProgLocal_c::setGlobalVal( float af_val )
-{
-  checkInitList();
-  for (Vec_MeasureProgLocal::iterator pc_iter = vec_prog().begin();
-      pc_iter != vec_prog().end(); pc_iter++)pc_iter->setVal(af_val);
-}
-#endif // USE_FLOAT_DATA_TYPE
-
 
 /**
   create a new measure prog item;
@@ -530,12 +521,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
   // set initial value of new item to eeprom value
   ProcDataLocalBase_c* pc_procdata =
     static_cast<ProcDataLocalBase_c*>(pprocessData());
-    #ifdef USE_FLOAT_DATA_TYPE
-  if (valType() != i32_val)
-    mpc_progCache->initVal(pc_procdata->eepromValFloat());
-  else
-    #endif
-    mpc_progCache->initVal((int32_t)pc_procdata->eepromVal());
+  mpc_progCache->initVal((int32_t)pc_procdata->eepromVal());
   #endif
 
   // set type and isoName for item

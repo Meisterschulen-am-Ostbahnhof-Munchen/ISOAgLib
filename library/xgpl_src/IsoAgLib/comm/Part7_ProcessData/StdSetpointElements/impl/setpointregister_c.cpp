@@ -187,17 +187,6 @@ int32_t SetpointRegister_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup
   }
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver the setpoint according to the value group
-  @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-  @return setpoint selected by value group
-*/
-float SetpointRegister_c::valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup)const{
-  int32_t i32_temp = valForGroup(en_valueGroup);
-  return *((float*)(&i32_temp));;
-}
-#endif
 /**
   checks if setpoint with value group en_valueGroup exists
   @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)
@@ -343,71 +332,6 @@ void SetpointRegister_c::setValForGroup(int32_t ai32_val, ProcessCmd_c::ValueGro
   }
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-
-/**
-  set the exact setpoint value
-  @param af_val new exact setpoint value
-*/
-void SetpointRegister_c::setExact(float af_val)
-{
-  int32_t i32_temp = (*(int32_t*)(&af_val));
-  setExact(i32_temp);
-}
-/**
-  set the minimum setpoint value
-  @param af_val new minimum setpoint value
-*/
-void SetpointRegister_c::setMin(float af_val)
-{
-  int32_t i32_temp = (*(int32_t*)(&af_val));
-  setMin(i32_temp);
-}
-/**
-  set the maximum setpoint value
-  @param af_val new maximum setpoint value
-*/
-void SetpointRegister_c::setMax(float af_val)
-{
-  int32_t i32_temp = (*(int32_t*)(&af_val));
-  setMax(i32_temp);
-}
-/**
-  set the default setpoint value
-  @param af_val new default setpoint value
-*/
-void SetpointRegister_c::setDefault(float af_val)
-{
-  int32_t i32_temp = (*(int32_t*)(&af_val));
-  setDefault(i32_temp);
-}
-
-/**
-  set a limit val for type given by value group
-  @param af_val new setpoint value
-  @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3)
-*/
-
-void SetpointRegister_c::setValForGroup(float af_val, ProcessCmd_c::ValueGroup_t en_valueGroup){
-  switch (en_valueGroup)
-  {
-    case ProcessCmd_c::exactValue:
-      setExact(af_val);
-      break;
-    case ProcessCmd_c::minValue:
-      setMin(af_val);
-      break;
-    case ProcessCmd_c::maxValue:
-      setMax(af_val);
-      break;
-    case ProcessCmd_c::defaultValue:
-      setDefault(af_val);
-      break;
-    default: ;
-  }
-}
-
-#endif
 
 /**
   set the handled state; return if state was changed

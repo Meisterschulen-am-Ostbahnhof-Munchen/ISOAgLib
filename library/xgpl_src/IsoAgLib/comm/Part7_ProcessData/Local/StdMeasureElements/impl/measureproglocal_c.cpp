@@ -123,35 +123,6 @@ void MeasureProgLocal_c::init(
   mlist_thresholdInfo.clear();
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/** initialise this MeasureProgLocal_c instance to a well defined initial state
-    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param af_masterVal actual central local measured value used as float masterVal
-    @param af_eepromVal optional value stored in EEPROM (default 0.0)
-    @param aui8_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-  */
-void MeasureProgLocal_c::init(
-  ProcDataBase_c *const apc_processData,
-  float af_masterVal,
-  float af_eepromVal, const IsoName_c& ac_callerISOName)
-{
-  MeasureProgBase_c::init( apc_processData, af_eepromVal, ac_callerISOName  );
-
-  f_lastMasterVal = af_masterVal;
-  if (af_eepromVal != 0)
-  { // set medSum, medCnt to initial value read from EEPROM
-    mi32_medCnt = 1;
-    f_medSum = af_eepromVal;
-  }
-  else
-  {
-    mi32_medCnt = 0;
-    f_medSum = 0.0F;
-  }
-}
-#endif
-
-
 /** assignment of MeasureProgLocal_c objects
     @param acrc_src source MeasureProgLocal_c instance
     @return reference to source instance for assignment like "prog1 = prog2 = prog3;"
@@ -262,74 +233,6 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
 }
 
 
-#ifdef USE_FLOAT_DATA_TYPE
-/** start a measuring programm with new master measurement value
-
-    possible errors:
-        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CanIo_c on send problems
-
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @param af_masterVal actual master value to start with
-    @return true -> starting values sent with success
-  */
-bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_masterVal)
-{
-  // call start function of base class
-  MeasureProgBase_c::start(ren_type, ren_doSend);
-  f_lastMasterVal = af_masterVal;
-  bool b_sendVal = TRUE;
-
-  // start the given subprog items
-  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin(); pc_iter != mvec_measureSubprog.end(); pc_iter++)
-  {
-    if (pc_iter->doSend() != ren_doSend)
-      //MeasureSubprog_c not matching!
-      continue;
-
-    switch (pc_iter->type() & ren_type)
-    {
-      case Proc_c::TimeProp:
-        pc_iter->start(System_c::getTime());
-        men_accumProp = Proc_c::AccumTime;
-        break;
-      #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-      case Proc_c::DistProp:
-        pc_iter->start(int32_t(getTracMoveInstance4Comm().distTheor()));
-        men_accumProp = Proc_c::AccumDist;
-        break;
-      #endif
-      case Proc_c::MaximumThreshold:
-      {
-        pc_iter->start();
-        b_sendVal = FALSE; // do not send value when a threshold is set
-        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), TRUE};
-        mlist_thresholdInfo.push_front(s_thresholdInfo);
-        break;
-      }
-      case Proc_c::MinimumThreshold:
-      {
-        pc_iter->start();
-        b_sendVal = FALSE;  // do not send value when a threshold is set
-        const ThresholdInfo_s s_thresholdInfo = {ren_type, ren_doSend, pc_iter->increment(), FALSE};
-        mlist_thresholdInfo.push_front(s_thresholdInfo);
-        break;
-      }
-      case Proc_c::NullType: break; // just to make compiler happy
-    } // switch
-  } // for
-
-  // send first values: if now without success mark for later resend with true
-  if (b_sendVal)
-    mb_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
-
-  // return if successful sent starting values
-  return mb_triggeredIncrement;
-}
-#endif
-
-
 /** start a measuring program without new master measurement value
 
     possible errors:
@@ -340,14 +243,9 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doS
     @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
     @return true -> starting values sent with success
   */
-bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
-                        Proc_c::doSend_t ren_doSend){
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val) return start(ren_type, ren_doSend, mi32_lastMasterVal);
-  else return start(ren_type, ren_doSend, f_lastMasterVal);
-#else
+bool MeasureProgLocal_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend)
+{
   return start(ren_type, ren_doSend, mi32_lastMasterVal);
-#endif
 }
 
 
@@ -405,17 +303,12 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
     @param ac_targetISOName ISOName of target
     @return true -> successful sent
   */
-bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
+bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const
+{
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
-                                                              en_valueGroup, ProcessCmd_c::setValue);
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processDataConst().valType() != float_val)
-     return processDataConst().sendValISOName(ac_targetISOName, valForGroup(en_valueGroup));
-  else return processDataConst().sendValISOName(ac_targetISOName, valForGroupFloat(en_valueGroup));
-#else
+                                                           en_valueGroup, ProcessCmd_c::setValue);
   return processDataConst().sendValISOName(ac_targetISOName, valForGroup(en_valueGroup));
-#endif
 }
 
 
@@ -470,7 +363,8 @@ int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_va
       * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
-bool MeasureProgLocal_c::processMsg(){
+bool MeasureProgLocal_c::processMsg()
+{
   bool b_result = MeasureProgBase_c::processMsg();
 
   // call base function - if base function returns true, nothing else must be done
@@ -478,38 +372,39 @@ bool MeasureProgLocal_c::processMsg(){
   { // only use the local vars if needed
     ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
+    if (c_pkg.senderItem() == NULL)
+    { // sender with SA 0xFE is not of interest here!
+      return true;
+    }
+
     // the message was a value message -> evaluate it here
     if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
       // ISO: value in message contains reset value
-      const int32_t ci32_val = c_pkg.dataRawCmdLong();
+      const int32_t ci32_val = c_pkg.getValue();
       resetValForGroup(c_pkg.mc_processCmd.getValueGroup(), ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.memberSend().isoName(), TRUE /* ab_skipLastTcStatus */);
+        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.senderItem()->isoName(), TRUE /* ab_skipLastTcStatus */);
       }
 
-      // resetted val is automatically sent
-      b_result = true;
       // call handler function if handler class is registered
       if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), ci32_val, c_pkg.memberSend().isoName().toConstIisoName_c());
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), ci32_val, c_pkg.senderItem()->isoName().toConstIisoName_c());
     } // write
     else
     { // read -> answer wanted value
-      sendValForGroup( c_pkg.mc_processCmd.getValueGroup(), c_pkg.memberSend().isoName() );
+      sendValForGroup( c_pkg.mc_processCmd.getValueGroup(), c_pkg.senderItem()->isoName() );
 
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
-        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().isoName().toConstIisoName_c() );
-
-
-      b_result = true;
+        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().getPkgValue(), c_pkg.senderItem()->isoName().toConstIisoName_c() );
     } // read
   }
-  return b_result;
+
+  return true;
 }
 
 
@@ -611,88 +506,6 @@ void MeasureProgLocal_c::setVal(int32_t ai32_val){
 }
 
 
-#ifdef USE_FLOAT_DATA_TYPE
-/** set the measure prog value and send values if triggered to do
-
-    possible errors:
-        * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-        * dependant error in CanIo_c on send problems
-    @param af_val new measure value
-  */
-void MeasureProgLocal_c::setVal(float af_val){
-  float f_incr =  af_val - f_lastMasterVal;
-  int32_t i32_time =  System_c::getTime();
-  int32_t i32_timeDelta = i32_time - mi32_lastTime;
-  float f_oldDelta = f_delta;
-  mi32_lastTime = i32_time;
-
-  // update values:
-  // for cumulative values -> update f_val by increment
-  // else take the actual given master value
-  f_lastMasterVal = af_val;
-  if (processData().mb_cumulativeValue) f_val += f_incr;
-  else f_val = af_val;
-
-  // update min max
-  if (valFloat() > maxFloat()) setMax(valFloat());
-  if (valFloat() < minFloat()) setMin(valFloat());
-
-  // claculate delta and accel in 1/s
-  if (i32_timeDelta > 0)
-  { // if two calls to this function follow immediate
-    f_delta = (f_incr * 1000.0F) / (float)i32_timeDelta;
-    f_accel = ((f_delta - f_oldDelta) * 1000.0F) / (float)i32_timeDelta;
-  }
-
-  // now check if one subprog triggers
-  bool b_singleTest = false;
-  for (Vec_MeasureSubprogIterator pc_iter = mvec_measureSubprog.begin();
-       pc_iter != mvec_measureSubprog.end(); pc_iter++)
-  {
-    mb_triggeredIncrement = false;
-    switch (pc_iter->type())
-    {
-      case Proc_c::TimeProp:
-        b_singleTest = pc_iter->updateTrigger(i32_time);
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
-        // update med/integ
-        updatePropDepVals();
-        break;
-      case Proc_c::DistProp:
-        #if defined(USE_BASE) || defined(USE_TRACTOR_MOVE)
-        b_singleTest = pc_iter->updateTrigger(int32_t(getTracMoveInstance4Comm().distTheor()));
-        #endif
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
-        // update med/integ
-        updatePropDepVals();
-        break;
-
-      case Proc_c::OnChange:
-        b_singleTest = pc_iter->updateTrigger(valFloat());
-        mb_triggeredIncrement = (b_singleTest)? true : mb_triggeredIncrement;
-        break;
-      case Proc_c::NullType: break; // just to make compiler happy
-      default: ;
-    } // switch
-
-    // if mb_triggeredIncrement == true the registered values should be sent
-    if (mb_triggeredIncrement)
-    { // send the registered values
-      if (!minMaxLimitsPassed(pc_iter->doSend()))
-      {
-        // omit this value send
-        mb_triggeredIncrement = false;
-        return;
-      }
-
-      // if at least one send try had success reset mb_triggeredIncrement
-      if (sendRegisteredVals()) mb_triggeredIncrement = false;
-    }
-  } // for
-}
-#endif
-
-
 /** send the values which are registered by a running mesuring program
 
     possible errors:
@@ -743,20 +556,6 @@ void MeasureProgLocal_c::initVal(int32_t ai32_val){
 }
 
 
-#ifdef USE_FLOAT_DATA_TYPE
-/** init the element vals
-    @param af_val initial measure val
-  */
-void MeasureProgLocal_c::initVal(float af_val){
-  // first call the base function
-  MeasureProgBase_c::initVal(af_val);
-
-  f_integ = f_medSum = af_val;
-  mi32_medCnt = 1;
-}
-#endif
-
-
 /** reset the local value
 
     possible errors:
@@ -772,23 +571,12 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               ProcessCmd_c::exactValue, ProcessCmd_c::setValue);
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
-    // allow reset with value
-    //mi32_val = 0;
-    mi32_val = ai32_val;
+  // allow reset with value
+  //mi32_val = 0;
+  mi32_val = ai32_val;
 
-    b_sendSuccess = processData().sendValISOName(mc_isoName, val());
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    f_val = 0;
-    b_sendSuccess = processData().sendValISOName(mc_isoName, valFloat());
-  }
-#endif
+  b_sendSuccess = processData().sendValISOName(mc_isoName, val());
+
   #ifdef USE_EEPROM_IO
   // call reset function for ProcessData -> if this prog is the first one reset eepromVal
   // processData().resetEeprom(this);
@@ -807,20 +595,9 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
       * dependant error in CanIo_c on send problems
     @return true -> reseted integ val sent with success
   */
-bool MeasureProgLocal_c::resetInteg(){
-
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
-    mi32_integ = 0;
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    f_integ = 0;
-  }
-#endif
+bool MeasureProgLocal_c::resetInteg()
+{
+  mi32_integ = 0;
   // do not send a message to remote instance
   return true;
 }
@@ -833,21 +610,10 @@ bool MeasureProgLocal_c::resetInteg(){
       * dependant error in CanIo_c on send problems
     @return true -> reseted medium val sent with success
   */
-bool MeasureProgLocal_c::resetMed(){
+bool MeasureProgLocal_c::resetMed()
+{
   mi32_medCnt = 0;
-
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
-    mi32_medSum = 0;
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    f_medSum = 0;
-  }
-#endif
+  mi32_medSum = 0;
   // do not send a message to remote instance
   return true;
 }
@@ -860,26 +626,13 @@ bool MeasureProgLocal_c::resetMed(){
       * dependant error in CanIo_c on send problems
     @return true -> reseted minimum val sent with success
   */
-bool MeasureProgLocal_c::resetMin(){
-
+bool MeasureProgLocal_c::resetMin()
+{
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               ProcessCmd_c::minValue, ProcessCmd_c::setValue);
-
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
   mi32_min = 0;
   return processData().sendValISOName(mc_isoName, min());
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    f_min = 0;
-    return processData().sendValISOName(mc_isoName, minFloat());
-  }
-#endif
 }
 
 
@@ -890,26 +643,13 @@ bool MeasureProgLocal_c::resetMin(){
       * dependant error in CanIo_c on send problems
     @return true -> reseted maximum val sent with success
   */
-bool MeasureProgLocal_c::resetMax(){
-
+bool MeasureProgLocal_c::resetMax()
+{
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               ProcessCmd_c::maxValue, ProcessCmd_c::setValue);
-
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
   mi32_max = 0;
   return processData().sendValISOName(mc_isoName, max());
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    f_max = 0;
-    return processData().sendValISOName(mc_isoName, maxFloat());
-  }
-#endif
 }
 
 
@@ -1036,23 +776,11 @@ bool MeasureProgLocal_c::minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const
 
 
 /** update proportional dependent values */
-void MeasureProgLocal_c::updatePropDepVals(){
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
-  {
-#endif
+void MeasureProgLocal_c::updatePropDepVals()
+{
   incrInteg(val()); // increment integral
   // update medium based on actual val and count of actual calculated vals
   incrMedSum(val());
-#ifdef USE_FLOAT_DATA_TYPE
-  }
-  else
-  {
-    incrInteg(valFloat()); // increment integral
-    // update medium based on actual val and count of actual calculated vals
-    incrMedSum(valFloat());
-  }
-#endif
 
   incrMedCnt(); // increment medCnt to calc medium from integ
 }

@@ -231,18 +231,11 @@ ProcDataLocalSimpleSetpoint_c::~ProcDataLocalSimpleSetpoint_c(){
 void ProcDataLocalSimpleSetpoint_c::setEepromAdr(uint16_t aui16_eepromAdr)
 {
   ProcDataLocalBase_c::setEepromAdr( aui16_eepromAdr );
-  #ifdef USE_FLOAT_DATA_TYPE
-  if (valType() == float_val)
-  { // now init read val for all MeasureProg
-    mc_measureprog.initGlobalVal( eepromValFloat() );
-  }
-  else
-  #endif
-  { // now init read val for all MeasureProg
-    mc_measureprog.initGlobalVal( eepromVal() );
-  }
+  // now init read val for all MeasureProg
+  mc_measureprog.initGlobalVal( eepromVal() );
 }
 #endif
+
 /**
   set the masterVal from main application independent from any measure progs
   @param ai32_val new measure value
@@ -260,25 +253,6 @@ void ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(int32_t ai32_val){
   // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::mi32_masterVal
   mc_measureprog.setGlobalVal( masterMeasurementVal() );
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  set the masterVal from main application independent from any measure progs
-  @param af_val new measure value
-*/
-void ProcDataLocalSimpleSetpoint_c::setMasterMeasurementVal(float af_val){
-  ProcDataLocalBase_c::setMasterMeasurementVal( af_val );
-  mc_measureprog.setGlobalVal( af_val );
-}
-/**
-  increment the value -> update the local and the measuring programs values
-  @param ai32_val size of increment of master value
-*/
-void ProcDataLocalSimpleSetpoint_c::incrMasterMeasurementVal(float af_val){
-  ProcDataLocalBase_c::incrMasterMeasurementVal( af_val );
-  // ProcDataLocalBase_c::incrMasterMeasurementVal sets new ProcDataLocalBase_c::mi32_masterVal
-  mc_measureprog.setGlobalVal( masterValFloat() );
-}
-#endif
 
 /**
   perform periodic actions

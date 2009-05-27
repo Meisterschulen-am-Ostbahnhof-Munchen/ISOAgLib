@@ -137,28 +137,11 @@ class SimpleManageMeasureProgRemote_c : public ProcessElementBase_c
     send reset cmd for the measurement value
   */
   void resetMasterVal();
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver actual measurement value as float
-    @param ab_sendRequest true -> request for new value is sent (optional, default false)
-  */
-  float masterValFloat(bool ab_sendRequest = false);
-  #endif
  private:
   /** process a measure prog message for remote process data */
   void processProg();
-  #ifdef USE_FLOAT_DATA_TYPE
-  /** store the master value of the main programm
-      in anonymous union for dircet access to float or long
-      presentation
-  */
-  union {
-    int32_t mi32_masterVal;
-    float f_masterVal;
-  };
-  #else
+
   int32_t mi32_masterVal;
-  #endif
 };
 
 }

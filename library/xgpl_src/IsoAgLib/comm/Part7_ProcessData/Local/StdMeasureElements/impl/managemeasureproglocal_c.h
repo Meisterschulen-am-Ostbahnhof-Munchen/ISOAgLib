@@ -183,14 +183,6 @@ private:
   /** set value for all registered Measure Progs */
   void setGlobalVal( int32_t ai32_val );
 
-  #ifdef USE_FLOAT_DATA_TYPE
-  /** initialise value for all registered Measure Progs */
-  void initGlobalVal( float af_val );
-
-  /** set value for all registered Measure Progs */
-  void setGlobalVal( float af_val );
-  #endif // USE_FLOAT_DATA_TYPE
-
   /**
     allow local client to actively start a measurement program
     (to react on a incoming "start" command for default data logging)

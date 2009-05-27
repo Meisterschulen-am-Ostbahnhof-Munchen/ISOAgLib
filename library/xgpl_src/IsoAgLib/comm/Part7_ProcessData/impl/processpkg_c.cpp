@@ -125,10 +125,13 @@ namespace __IsoAgLib {
 
 
 /** default constructor which has nothing to do */
-ProcessPkg_c::ProcessPkg_c( int ai_singletonVecKey ) : CanPkgExt_c( ai_singletonVecKey ) {
-  mc_specialTermISOName.setUnspecified();
-  mc_specialTermUseProcISOName.setUnspecified();
+ProcessPkg_c::ProcessPkg_c( int ai_singletonVecKey )
+  : CanPkgExt_c( ai_singletonVecKey )
+  , mi32_pdValue( 0 )
+  , bit_data()
+{
 }
+
 /** default constructor which has nothing to do */
 ProcessPkg_c::~ProcessPkg_c(){
 }
@@ -144,7 +147,7 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 {
   bool b_result = false;
 
-  const int32_t ci32_test = mc_flex4Data.getInt32Data();
+  const int32_t ci32_test = mi32_pdValue;
 
   if (mc_processCmd.getCommand() == ProcessCmd_c::setValue &&
       mc_processCmd.checkIsSetpoint())
@@ -181,242 +184,32 @@ bool ProcessPkg_c::isSpecCmd(proc_specCmd_t ren_checkCmd)const
 
 
 /**
-  deliver data value as int32_t; the 4byte data of the message are
-  accessed with the type defined by the format flags
-  -> then it's assigned to the wanted type (e.g. if float value
-  is received, this function access it as float and delivers the
-  rounded value as int32_t)
-  (4 uint8_t signed integer defined by int32_t in masterHeader)
-  @return data value of message
-*/
-int32_t ProcessPkg_c::dataLong()const{
-  int32_t i32_result = 0;
-  switch (valType())
-  {
-    case i32_val:
-    case cmdVal:
-      i32_result = mc_flex4Data.getInt32Data();
-      break;
-    case ui32_val:
-      i32_result = mc_flex4Data.getUint32Data();
-      break;
-#if defined(USE_FLOAT_DATA_TYPE)
-    case float_val:
-      littleEndianStream2FloatVar(mc_flex4Data.uint8, ((float*)(&i32_result)));
-      break;
-#endif
-  }
-  return i32_result;
-};
-/**
-  deliver data value as uint32_t; the 4byte data of the message are
-  accessed with the type defined by the format flags
-  -> then it's assigned to the wanted type (e.g. if float value
-  is received, this function access it as float and delivers the
-  rounded value as uint32_t)
-  (4 uint8_t signed integer defined by uint32_t in masterHeader)
-  @return data value of message
-*/
-uint32_t ProcessPkg_c::dataUlong()const{
-  uint32_t ulResult = 0;
-  switch (valType())
-  {
-    case i32_val:
-    case cmdVal:
-      ulResult = mc_flex4Data.getInt32Data();
-      break;
-    case ui32_val:
-      ulResult = mc_flex4Data.getUint32Data();
-      break;
-#if defined(USE_FLOAT_DATA_TYPE)
-    case float_val:
-      littleEndianStream2FloatVar(mc_flex4Data.uint8, ((float*)(&ulResult)));
-      break;
-#endif
-  }
-  return ulResult;
-};
-#if defined(USE_FLOAT_DATA_TYPE)
-/**
-  deliver data value as float; the 4byte data of the message are
-  accessed with the type defined by the format flags
-  -> then it's assigned to the wanted type (e.g. if int32_t value
-  is received, this function access it as int32_t and delivers the
-  value as float)
-  @return data value of message
-*/
-float ProcessPkg_c::dataFloat()const{
-  float f_result;
-  switch (valType())
-  {
-    case i32_val:
-      f_result = mc_flex4Data.getInt32Data();
-      break;
-    case ui32_val:
-      f_result = mc_flex4Data.getUint32Data();
-      break;
-    case float_val:
-      littleEndianStream2FloatVar(mc_flex4Data.uint8, &f_result);
-      break;
-    case cmdVal:
-      f_result = mc_flex4Data.getInt32Data();
-      break;
-  }
-  return f_result;
-};
-#endif
-
-/**
-  set the 4byte data as int32_t val without any conversion
-  for cmd's like measurement program increment, meas prog start/stop,
-  etc.
-  (4 uint8_t signed integer defined by int32_t in masterHeader)
-  @param ai32_val new cmd value for message
-  @param ren_procValType data type for message string (default i32_val)
-*/
-void ProcessPkg_c::setDataRawCmd(int32_t ai32_val, proc_valType_t ren_procValType)
-{
-  mc_flex4Data.setInt32Data( ai32_val );
-
-  bit_data.b_valType = ren_procValType;
-}
-
-
-/**
-  set data value as with int32_t value parameter
-  and with defined send value type and set data type flag
-  (if parameter and send type are different,
-   a conversion by assignment is performed; %e.g. int32_t val 3
-   can be sent as float 3.0)
-  @param ai32_val new data value for message
-  @param ren_procValType data type for message string (default i32_val)
-*/
-void ProcessPkg_c::setData(int32_t ai32_val, proc_valType_t ren_procValType)
-{
-  switch (ren_procValType)
-  {
-    case i32_val:
-      mc_flex4Data.setInt32Data( ai32_val );
-      set_d(0);
-      bit_data.b_valType = ren_procValType;
-      break;
-    case ui32_val:
-      mc_flex4Data.setUint32Data( ai32_val );
-      set_d(0);
-      bit_data.b_valType = ren_procValType;
-      break;
-#if defined(USE_FLOAT_DATA_TYPE)
-    case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&ai32_val)), mc_flex4Data.uint8);
-      set_d(1);
-      bit_data.b_valType = ren_procValType;
-      break;
-#endif
-    case cmdVal: // only to avoid compiler warning
-      break;
-  }
-}
-
-/**
-  set data value as with uint32_t value parameter
-  and with defined send value type and set data type flag
-  (if parameter and send type are different,
-   a conversion by assignment is performed; %e.g. int32_t val 3
-   can be sent as float 3.0)
-  @param aui32_val new data value for message
-  @param ren_procValType data type for message string (default ui32_val)
-*/
-void ProcessPkg_c::setData(uint32_t aui32_val, proc_valType_t ren_procValType)
-{
-  switch (ren_procValType)
-  {
-    case i32_val:
-      mc_flex4Data.setInt32Data( aui32_val );
-      set_d(0);
-      break;
-    case ui32_val:
-      mc_flex4Data.setUint32Data( aui32_val );
-      set_d(0);
-      break;
-#if defined(USE_FLOAT_DATA_TYPE)
-    case float_val:
-      floatVar2LittleEndianStream( ((float *const)(&aui32_val)), mc_flex4Data.uint8);
-      set_d(1);
-      break;
-#endif
-    case cmdVal: // only to avoid compiler warning
-      break;
-  }
-  bit_data.b_valType = ren_procValType;
-}
-/**
   set one of the special commands of type proc_specCmd_t:
   setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
   with specified data type specifying flag in CAN data string
   @param ren_procSpecCmd special command to send
-  @param ren_procValType data type for message string (default ui32_val)
 */
-void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_procValType)
+void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd)
 {
   switch (ren_procSpecCmd)
   {
     case setpointReleaseCmd:
-      mc_flex4Data.setInt32Data( SETPOINT_RELEASE_COMMAND );
+      mi32_pdValue = SETPOINT_RELEASE_COMMAND;
       break;
+
     case setpointErrCmd:
-      mc_flex4Data.setInt32Data( SETPOINT_ERROR_COMMAND );
+      mi32_pdValue = SETPOINT_ERROR_COMMAND;
       break;
+
     case noVal_32s:
-      mc_flex4Data.setInt32Data( NO_VAL_32S );
+      mi32_pdValue = NO_VAL_32S;
       break;
+
     case errVal_32s:
-      mc_flex4Data.setInt32Data( ERROR_VAL_32S );
-      break;
-  }
-#if defined(USE_FLOAT_DATA_TYPE)
-  if (ren_procValType == float_val)  set_d(1);
-  else
-#endif
-  set_d(0);
-
-  bit_data.b_valType = ren_procValType;
-}
-
-#if defined(USE_FLOAT_DATA_TYPE)
-/**
-  set data value as with float value parameter
-  and with defined send value type and set data type flag
-  (if parameter and send type are different,
-   a conversion by assignment is performed; %e.g. int32_t val 3
-   can be sent as float 3.0)
-  @param af_val new data value for message
-  @param ren_procValType data type for message string (default float_val)
-*/
-void ProcessPkg_c::setData(float af_val, proc_valType_t ren_procValType)
-{
-  switch (ren_procValType)
-  {
-    case i32_val:
-      mc_flex4Data.setInt32Data( int32_t(af_val) );
-      set_d(0);
-      bit_data.b_valType = ren_procValType;
-      break;
-    case ui32_val:
-      mc_flex4Data.setUint32Data( uint32_t(af_val) );
-      set_d(0);
-      bit_data.b_valType = ren_procValType;
-      break;
-    case float_val:
-      floatVar2LittleEndianStream(&af_val, mc_flex4Data.uint8);
-      set_d(1);
-      bit_data.b_valType = ren_procValType;
-      break;
-    default:
+      mi32_pdValue = ERROR_VAL_32S;
       break;
   }
 }
-#endif
-
 
 
 /**
@@ -427,48 +220,6 @@ void ProcessPkg_c::setData(float af_val, proc_valType_t ren_procValType)
 */
 void ProcessPkg_c::string2Flags()
 {
-  // New Part 10 code to go here -bac
-  // set pri, empf, send for convenience
-  setEmpf(isoPs());
-  setSend(isoSa());
-  setIdentType(Ident_c::ExtendedIdent);
-
-  // bit_data.b_valType = static_cast<proc_valType_t>((CanPkg_c::msc_data[0] >> 5) & 0x3);
-
-  // Not sure if this is needed at this point. May need the GPS portion but not the Float Data Type stuff since this is not really used in Part 10 now. -bac
-  #if defined(USE_FLOAT_DATA_TYPE)
-  if (bit_data.b_valType == float_val) set_d(1);
-  else
-  #endif
-  set_d(0);
-
-  //Need to replace this call with the getpos from the monitor item. ISOName no longer encapsulated in the message data itself
-  //See new line added below that uses c_isoMonitor. -bac
-  //setISOName( IsoName_c(((CanPkg_c::msc_data[2] >> 4) & 0xF), (CanPkg_c::msc_data[2] & 0xF) ) );
-
-  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-
-  // isoName in ProcessPkg_c is no longer used in ISO
-  //setISOName(c_isoMonitor.isoMemberNr(send()).isoName());  // Get the devClass and pos (Device Class, Device Class Instance -bac
-
-  // now set mpc_monitorSend and mpc_monitorEmpf
-  if (c_isoMonitor.existIsoMemberNr(empf()))
-  { // ISO targeted process msg with empf as defined ISO member
-    mpc_monitorEmpf = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(empf())));
-  }
-  else
-  { // either no target process msg or empf no defined member
-    mpc_monitorEmpf = NULL;
-  }
-  if (c_isoMonitor.existIsoMemberNr(send()))
-  { // sender SEND registered as
-    mpc_monitorSend = static_cast<IsoItem_c*>(&(c_isoMonitor.isoMemberNr(send())));
-  }
-  else
-  { // send is no defined member
-    mpc_monitorSend = NULL;
-  }
-
   set_Cmd(CanPkg_c::msc_data[0] & 0xf);
   uint16_t mui16_element = 0;
   mui16_element = uint16_t(CanPkg_c::msc_data[1]) << 4;
@@ -481,7 +232,7 @@ void ProcessPkg_c::string2Flags()
   newDDI |= CanPkg_c::msc_data[2];
   set_DDI(newDDI);
 
-  mc_flex4Data.setFlexible4DataValueInd( 1, CanPkg_c::msc_data );
+  mi32_pdValue = CanPkg_c::msc_data.getInt32Data(4);
 };
 
 /**
@@ -519,65 +270,10 @@ void ProcessPkg_c::flags2String()
   CanPkg_c::msc_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
   // for ISO the ident is directly read and written
 
-  CanPkg_c::msc_data.setFlexible4DataValueInd( 1, mc_flex4Data );
+  CanPkg_c::msc_data.setInt32Data(4, mi32_pdValue);
 
   setLen(8);
 };
-
-/**
-  deliver reference to IsoItem_c of EMPF member (IsoItem_c is base class for IsoItem_c)
-  (check with existMemberEmpf before access to not defined item)
-
-  @return reference to IsoItem_c of member which is addressed by EMPF
-  @exception containerElementNonexistant
-*/
-IsoItem_c& ProcessPkg_c::memberEmpf() const
-{ // check if mpc_monitorEmpf is set
-  if (mpc_monitorEmpf == NULL)
-  { // throw exception by constant -> if no exception configured no command is created
-    THROW_CONT_EL_NONEXIST
-
-    // only dummy to deliver something
-    return getIsoMonitorInstance4Comm().isoMemberNr(empf());
-  }
-  else
-  { // o.k. -> return item
-    return *mpc_monitorEmpf;
-  }
-}
-/**
-  deliver reference to IsoItem_c of SEND member (IsoItem_c is base class for IsoItem_c)
-  (check with existMemberSend before access to not defined item)
-
-  @return reference to IsoItem_c of member which is addressed by SEND
-  @exception containerElementNonexistant
-*/
-IsoItem_c& ProcessPkg_c::memberSend() const
-{ // check if mpc_monitorSend is set
-  if (mpc_monitorSend == NULL)
-  { // throw exception by constant -> if no exception configured no command is created
-    THROW_CONT_EL_NONEXIST
-
-    // only dummy to deliver something
-    return getIsoMonitorInstance4Comm().isoMemberNr(send());
-  }
-  else
-  { // o.k. -> return item
-    return *mpc_monitorSend;
-  }
-}
-/**
-  some LBS+ terminals wants process data interaction for syncronisation of
-  terminal mask with ISOName of terminal even for local process data
-  @param acrc_isoName ISOName of terminal, for which the ISOName of data is converted
-  @param acrc_useProcISOName ISOName for process data (optional, default to terminal isoName)
-*/
-void ProcessPkg_c::useTermISONameForLocalProc(const IsoName_c& acrc_isoName, const IsoName_c& acrc_useProcISOName)
-{
-  mc_specialTermISOName = acrc_isoName;
-  if (acrc_useProcISOName.isSpecified())mc_specialTermUseProcISOName = acrc_useProcISOName;
-  else mc_specialTermUseProcISOName = acrc_isoName;
-}
 
 /**
   extract data from ISO commands and save it to member class

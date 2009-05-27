@@ -97,7 +97,6 @@
 #include "processcmd_c.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include "../elementddi_s.h"
-#include <list>
 
 namespace __IsoAgLib {
 
@@ -106,6 +105,7 @@ namespace __IsoAgLib {
   transforms flag formated information to/from
   CAN uint8_t string
   @author Dipl.-Inform. Achim Spangler
+  @author Dipl.-Inf. Martin Wodok
 */
 class ProcessPkg_c : public CanPkgExt_c  {
 private:
@@ -118,24 +118,6 @@ public:
   /* ************************** */
   /* ***retreiving of values*** */
   /* ************************** */
-
-  /**
-    deliver EMPF of process msg (receiving member number)
-    @return EMPF value of message
-  */
-  uint8_t empf()const{return bit_data.b_empf;}
-
-  /**
-    deliver SEND of process msg (sending member number)
-    @return SEND value of message
-  */
-  uint8_t send()const{return bit_data.b_send;}
-
-  /**
-    deliver D of process msg (0 -> integer; 1 -> float)
-    @return D value of message
-  */
-  uint8_t d()const{return bit_data.b_d;}
 
    /**
     deliver Cmd of process msg
@@ -156,12 +138,6 @@ public:
   uint16_t DDI()const{return bit_data.ui16_DDI;}
 
   /**
-    deliver the data type of the value in the message
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  proc_valType_t valType()const{return static_cast<proc_valType_t>(bit_data.b_valType);}
-
-  /**
     check if the 4byte value of the message has a special command of type
     proc_specCmd_t: setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
     @param ren_checkCmd special command to check for
@@ -170,114 +146,25 @@ public:
   bool isSpecCmd(proc_specCmd_t ren_checkCmd)const;
 
   /**
-    deliver the 4byte data as int32_t val without any conversion
-    for cmd's like measurement program increment, meas prog start/stop,
-    etc.
-    (4 uint8_t signed integer defined by int32_t in masterHeader)
+    deliver data value as int32_t
     @return data value of message
   */
-  int32_t dataRawCmdLong()const {return mc_flex4Data.getInt32Data();}
+  int32_t getValue() const { return mi32_pdValue; }
 
   /**
-    deliver data value as int32_t; the 4byte data of the message are
-    accessed with the type defined by the format flags
-    -> then it's assigned to the wanted type (e.g. if float value
-    is received, this function access it as float and delivers the
-    rounded value as int32_t)
-    (4 uint8_t signed integer defined by int32_t in masterHeader)
-    @return data value of message
+    @return pointer to IsoItem_c of Receiver
   */
-  int32_t dataLong()const;
+  IsoItem_c* receiverItem() { return getMonitorItemForDA(); }
 
   /**
-    deliver data value as uint32_t; the 4byte data of the message are
-    accessed with the type defined by the format flags
-    -> then it's assigned to the wanted type (e.g. if float value
-    is received, this function access it as float and delivers the
-    rounded value as uint32_t)
-    (4 uint8_t signed integer defined by uint32_t in masterHeader)
-    @return data value of message
+    @return pointer to IsoItem_c of Sender
   */
-  uint32_t dataUlong()const;
-
-#if defined(USE_FLOAT_DATA_TYPE)
-  /**
-    deliver data value as float; the 4byte data of the message are
-    accessed with the type defined by the format flags
-    -> then it's assigned to the wanted type (e.g. if int32_t value
-    is received, this function access it as int32_t and delivers the
-    value as float)
-    @return data value of message
-  */
-  float dataFloat()const;
-#endif
-
-  /**
-    deliver data value as single uint8_t from position ab_pos
-    @return uint8_t of wanted data position of message
-  */
-  uint8_t data(uint8_t ab_pos)const{return mc_flex4Data.getUint8Data(ab_pos);}
-
-  /**
-    check if SEND member number is valid (e.g. there has claimed address member in
-    monitor list registered)
-    @return true -> there has claimed address member with number SEND
-  */
-  bool existMemberSend() const {return (mpc_monitorSend != NULL)?true:false;}
-
-  /**
-    check if EMPF member number is valid (e.g. there has claimed address member in
-    monitor list registered)
-    @return true -> there has claimed address member with number EMPF
-  */
-  bool existMemberEmpf() const {return (mpc_monitorEmpf != NULL)?true:false;}
-
-  /**
-    deliver reference to IsoItem_c of EMPF member (IsoItem_c is base class for IsoItem_c)
-    (check with existMemberEmpf before access to not defined item)
-
-    @return reference to IsoItem_c of member which is addressed by EMPF
-     @exception containerElementNonexistant
-  */
-  IsoItem_c& memberEmpf()const;
-
-  /**
-    deliver reference to IsoItem_c of SEND member (IsoItem_c is base class for IsoItem_c)
-    (check with existMemberSend before access to not defined item)
-
-    @return reference to IsoItem_c of member which is addressed by SEND
-     @exception containerElementNonexistant
-  */
-  IsoItem_c& memberSend()const;
+  IsoItem_c* senderItem() { return getMonitorItemForSA(); }
 
 
   /* *********************** */
   /* ***setting of values*** */
   /* *********************** */
-  /**
-    set value EMPF of process msg
-    @param ab_val new EMPF value for message
-  */
-  void setEmpf(uint8_t ab_val) {
-    bit_data.b_empf = ab_val;
-    setIdentType(Ident_c::StandardIdent);
-  }
-
-  /**
-    set value SEND of process msg
-    @param ab_val new SEND value for message
-  */
-  void setSend(uint8_t ab_val) {
-    bit_data.b_send = ab_val;
-    setIdentType(Ident_c::StandardIdent);
-  }
-
-  /**
-    set value D of process msg
-    @param ab_val new D value for message
-  */
-  void set_d(uint8_t ab_val){bit_data.b_d = ab_val;}
-
    /**
     set command of process msg
     @param ab_cmd command value of process data message
@@ -297,65 +184,18 @@ public:
   void set_Element(uint16_t ab_Element){bit_data.ui16_Element = ab_Element;}
 
   /**
-    set the 4byte data as int32_t val without any conversion
-    for cmd's like measurement program increment, meas prog start/stop,
-    etc.
-    (4 uint8_t signed integer defined by int32_t in masterHeader)
-    @param ai32_val new cmd value for message
-    @param ren_procValType data type for message string (default i32_val)
-  */
-  void setDataRawCmd(int32_t ai32_val, proc_valType_t ren_procValType = i32_val);
-
-  /**
-    set data value as with int32_t value parameter
-    and with defined send value type and set data type flag
-    (if parameter and send type are different,
-     a conversion by assignment is performed; %e.g. int32_t val 3
-     can be sent as float 3.0)
+    set data value
     @param ai32_val new data value for message
-    @param ren_procValType data type for message string (default i32_val)
   */
-  void setData(int32_t ai32_val, proc_valType_t ren_procValType = i32_val);
-
-  /**
-    set data value as with uint32_t value parameter
-    and with defined send value type and set data type flag
-    (if parameter and send type are different,
-     a conversion by assignment is performed; %e.g. int32_t val 3
-     can be sent as float 3.0)
-    @param ai32_val new data value for message
-    @param ren_procValType data type for message string (default ui32_val)
-  */
-  void setData(uint32_t ai32_val, proc_valType_t ren_procValType = ui32_val);
+  void setData (int32_t ai32_val) { mi32_pdValue = ai32_val; }
 
   /**
     set one of the special commands of type proc_specCmd_t:
     setpointReleaseCmd, setpointErrCmd, noVal_32s, errVal_32s
     with specified data type specifying flag in CAN data string
     @param ren_procSpecCmd special command to send
-    @param ren_procValType data type for message string (default ui32_val)
   */
-  void setData(proc_specCmd_t ren_procSpecCmd, proc_valType_t ren_procValType = i32_val);
-
-#if defined(USE_FLOAT_DATA_TYPE)
-  /**
-    set data value as with float value parameter
-    and with defined send value type and set data type flag
-    (if parameter and send type are different,
-     a conversion by assignment is performed; %e.g. int32_t val 3
-     can be sent as float 3.0)
-    @param af_val new data value for message
-    @param ren_procValType data type for message string (default float_val)
-  */
-  void setData(float af_val, proc_valType_t ren_procValType = float_val);
-#endif
-
-  /**
-    set value data value as single uint8_t on position ab_pos
-    @param ab_pos position of written uint8_t in data string
-    @param ab_val uint8_t data value
-  */
-  void setData(uint8_t ab_pos, uint8_t ab_val){mc_flex4Data.setUint8Data(ab_pos, ab_val);}
+  void setData (proc_specCmd_t ren_procSpecCmd);
 
   /**
     extract data from ISO commands and save it to member class
@@ -370,14 +210,6 @@ public:
     @see CanPkgExt_c::operator=
   */
   virtual void string2Flags();
-
-  /**
-    some LBS+ terminals wants process data interaction for syncronisation of
-    terminal mask with ISOName of terminal even for local process data
-    @param acrc_isoName ISOName of terminal, for which the ISOName of data is converted
-    @param acrc_useProcISOName ISOName for process data (optional, default to terminal isoName)
-  */
-  void useTermISONameForLocalProc(const IsoName_c& acrc_isoName, const IsoName_c& acrc_useProcISOName = IsoName_c::IsoNameUnspecified());
 
   /** stores the command in generalized form */
   ProcessCmd_c mc_processCmd;
@@ -395,47 +227,14 @@ private: // Private methods
   virtual void flags2String();
 
 private: // Private attributes
-  Flexible4ByteString_c mc_flex4Data;
+  int32_t mi32_pdValue;
 
   struct _bit_data {
-    /** EMPF forheader */
-    uint16_t b_empf : 8;
-    /** SEND for header */
-    uint16_t b_send : 8;
-
-    /** PD for data */
-    uint16_t b_pd : 2;
-
-    /** MOD for data */
-    uint16_t b_mod : 3;
-    /** D for data */
-    uint16_t b_d : 1;
-
-    /** decide about used val type: int32_t, uint32_t, float, cmd */
-    uint16_t b_valType : 2;
-
+    _bit_data() : ui8_Command(0), ui16_Element(0), ui16_DDI(0) {}
     uint16_t ui8_Command : 4;
     uint16_t ui16_Element : 12;
     uint16_t ui16_DDI : 16;
   } bit_data;
-
-  /** pointer to monitor list item of sender "SEND" (NULL if not claimed address) */
-  IsoItem_c* mpc_monitorSend;
-
-  /** pointer to monitor list item of receiver "EMPF" (NULL if not claimed address) */
-  IsoItem_c* mpc_monitorEmpf;
-  /**
-    some terminal wants to use ISOName of terminal even for local process
-    data for communication on CAN BUS (default 0xFF for off)
-  */
-  IsoName_c mc_specialTermISOName;
-
-  /**
-    some terminal wants to use ISOName of terminal even for local process
-    data for communication on CAN BUS (default 0xFF for off)
-  */
-  IsoName_c mc_specialTermUseProcISOName;
-
 };
 
 }

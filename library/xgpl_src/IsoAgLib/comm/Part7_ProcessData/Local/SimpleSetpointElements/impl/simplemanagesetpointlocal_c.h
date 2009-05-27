@@ -177,39 +177,18 @@ class SimpleManageSetpointLocal_c : public ProcessElementBase_c
     @return actual received setpoint value
   */
   int32_t setpointMasterVal() const;
-    #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @return actual received setpoint value
-  */
-  float setpointMasterValFloat() const;
-    #endif
+
   /**
     set the setpoint value
     @param ai32_val new setpoint value
   */
   void setSetpointMasterVal(int32_t ai32_val);
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the setpoint value as float value
-    @param af_val new setpoint value
-  */
-  void setSetpointMasterVal(float af_val);
-  #endif
+
  protected:
   #if !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-    #ifdef USE_FLOAT_DATA_TYPE
-    /** define simple setpoint master value */
-    union {
-      int32_t mi32_setpointMasterVal;
-      float f_setpointMasterVal;
-    };
-    #else // USE_FLOAT_DATA_TYPE
-    /** define simple setpoint master value */
-    int32_t mi32_setpointMasterVal;
-    #endif // USE_FLOAT_DATA_TYPE
+  /** define simple setpoint master value */
+  int32_t mi32_setpointMasterVal;
   #endif // !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-
 };
 
 }

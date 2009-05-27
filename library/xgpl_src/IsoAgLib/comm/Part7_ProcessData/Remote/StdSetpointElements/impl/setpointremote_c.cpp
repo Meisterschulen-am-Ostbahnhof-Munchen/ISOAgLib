@@ -154,33 +154,6 @@ void SetpointRemote_c::assignFromSource( const SetpointRemote_c& acrc_src )
 SetpointRemote_c::~SetpointRemote_c(){
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  command a exact setpoint; store value as commanded and send command
-
-  possible errors:
-      * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-      * dependant error in CanIo_c on CAN send problems
-  @return new exact setpoint to command
-*/
-void SetpointRemote_c::setExact(float af_val)
-{ // set value in mc_commanded
-  mc_commanded.setExact( af_val);
-  mc_commanded.setISOName( processData().commanderISOName());
-
-  // set time of command
-  mi32_commandedTime = System_c::getTime();
-
-  // prepare general command in process pkg
-  // isSetpoint = true, isRequest = false
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                           ProcessCmd_c::exactValue,
-                                                           ProcessCmd_c::setValue);
-
-  processData().sendValISOName(processData().commanderISOName(), af_val);
-}
-
-#endif
 
 /**
   command a exact setpoint; store value as commanded and send command
@@ -449,16 +422,22 @@ void SetpointRemote_c::processRequest() const {
 }
 
 /** process a setpoint set for remote process data */
-void SetpointRemote_c::processSet(){
+void SetpointRemote_c::processSet()
+{
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  // take raw val
-  const int32_t i32_val = c_pkg.dataLong();
+  if ( (c_pkg.senderItem() == NULL) || (c_pkg.receiverItem() == NULL) )
+  { // SA 0xFE or Broadcast
+    return;
+  }
+
+  const int32_t i32_val = c_pkg.getValue();
+
   // detect if something was changed, so that the handler shall be called
   bool b_change = false;
 
   // retreive the isoName of send and empf
-  const IsoName_c& c_empfISOName = c_pkg.memberEmpf().isoName();
-  const IsoName_c& c_sendISOName = c_pkg.memberSend().isoName();
+  const IsoName_c& c_empfISOName = c_pkg.receiverItem()->isoName();
+  const IsoName_c& c_sendISOName = c_pkg.senderItem()->isoName();
 
   if (c_sendISOName == processData().isoName())
   { // the owner sent the value
@@ -481,7 +460,7 @@ void SetpointRemote_c::processSet(){
       }
       // call processMeasurementUpdate handler function in case a measurement prog is running for this setpoint DDI
       if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.memberSend().isoName().toConstIisoName_c(), b_changeMeasurement);
+        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.senderItem()->isoName().toConstIisoName_c(), b_changeMeasurement);
 
       mc_answeredMaster.setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
       // set the isoName of the actual master
@@ -544,7 +523,7 @@ void SetpointRemote_c::processSet(){
   }
   // call handler function if handler class is registered
   if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) && ( b_change ) )
-    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.memberSend().isoName().toConstIisoName_c() );
+    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.senderItem()->isoName().toConstIisoName_c() );
 
 }
 

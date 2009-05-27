@@ -465,46 +465,6 @@ public:
   void incrMasterMeasurementVal(int32_t ai32_val)
     {ProcDataLocal_c::incrMasterMeasurementVal(ai32_val);}
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the master value (central measure value of this process data;
-    can differ from measure vals of measure progs, as these can be reseted
-    independent) as float value
-    @return actual master value
-  */
-  const float& masterValFloat()const
-    {return ProcDataLocal_c::masterValFloat();}
-
-  /**
-    set the masterMeasurementVal from main application independent from any measure progs
-    @param af_val new measure value
-  */
-  void setMasterMeasurementVal(float af_val)
-    {ProcDataLocal_c::setMasterMeasurementVal(af_val);}
-
-  /**
-    increment the value -> update the local and the measuring programs values
-    @param af_val size of increment of master value
-  */
-  void incrMasterMeasurementVal(float af_val)
-    {ProcDataLocal_c::incrMasterMeasurementVal(af_val);}
-#endif
-
-
-  /**
-    deliver the central data type of this process data
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  proc_valType_t valType()const
-    {return ProcDataLocal_c::valType();}
-
-  /**
-    set the central data type of this process data
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  void setValType(proc_valType_t ren_procValType)
-    {ProcDataLocal_c::setValType(ren_procValType);}
-
   /**
     retreive simple master setpoint
     @return actual received setpoint value
@@ -512,30 +472,12 @@ public:
   int32_t setpointMasterVal() const
     { return ProcDataLocal_c::setpointConst().setpointMasterVal();}
 
-    #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @return actual received setpoint value
-  */
-  float setpointMasterValFloat() const
-    { return ProcDataLocal_c::setpointConst().setpointMasterValFloat();}
-    #endif
-
   /**
     set the setpoint value
     @param ai32_val new setpoint value
   */
   void setSetpointMasterVal(int32_t ai32_val)
     { ProcDataLocal_c::setpoint().setSetpointMasterVal(ai32_val);}
-
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the setpoint value as float value
-    @param af_val new setpoint value
-  */
-  void setSetpointMasterVal(float af_val)
-    { ProcDataLocal_c::setpoint().setSetpointMasterVal(af_val);}
-  #endif
 
    /**
     check if specific measureprog exist

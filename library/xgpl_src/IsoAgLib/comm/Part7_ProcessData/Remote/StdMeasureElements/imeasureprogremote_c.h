@@ -192,53 +192,7 @@ public:
     @return acceleration calculated from the last delta values [1/(sec*sec)]
   */
   int32_t accel(){return MeasureProgRemote_c::accel();};
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver value
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return measure val for this prog (can differ from master measure val)
-  */
-  float valFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::valFloat(ab_sendRequest);};
-  /**
-    deliver integ val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return integral val for this measure prog
-  */
-  float integFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::integFloat(ab_sendRequest);};
-  /**
-    deliver med val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return actual medium value
-  */
-  float medFloat(bool ab_sendRequest = false) const {return MeasureProgRemote_c::medFloat(ab_sendRequest);};
-  /**
-    deliver min val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MIN val for this measure prog
-  */
-  float minFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::minFloat(ab_sendRequest);};
-  /**
-    deliver max val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MAX val for this measure prog
-  */
-  float maxFloat(bool ab_sendRequest = false){return MeasureProgRemote_c::maxFloat(ab_sendRequest);};
-  /**
-    deliver the delta
-    @return:delta between the last two measure vals [1/sec]
-  */
-  float deltaFloat(){return MeasureProgRemote_c::deltaFloat();};
-  /**
-    deliver the acceleration
-    @return acceleration calculated from the last delta values [1/(sec*sec)]
-  */
-  float accelFloat(){return MeasureProgRemote_c::accelFloat();};
-#endif
+
   /**
     return the c_isoName code for this measureProg
     @return ISOName of this measureProg

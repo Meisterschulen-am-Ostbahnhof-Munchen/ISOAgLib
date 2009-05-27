@@ -113,45 +113,7 @@ public:
     @return acceleration calculated from the last delta values [1/(sec*sec)]
   */
   int32_t accel(){return MeasureProgLocal_c::accel();};
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver med val
-  */
-  virtual float medFloat() const
-    {return MeasureProgLocal_c::medFloat();};
 
-
-  /**
-    deliver value
-    @return measure val for this prog (can differ from master measure val)
-  */
-  float valFloat(){return MeasureProgLocal_c::valFloat();};
-  /**
-    deliver integ val
-    @return integral val for this measure prog
-  */
-  float integFloat(){return MeasureProgLocal_c::integFloat();};
-  /**
-    deliver min val
-    @return MIN val for this measure prog
-  */
-  float minFloat(){return MeasureProgLocal_c::minFloat();};
-  /**
-    deliver max val
-    @return MAX val for this measure prog
-  */
-  float maxFloat(){return MeasureProgLocal_c::maxFloat();};
-  /**
-    deliver the delta
-    @return:delta between the last two measure vals [1/sec]
-  */
-  float deltaFloat(){return MeasureProgLocal_c::deltaFloat();};
-  /**
-    deliver the acceleration
-    @return acceleration calculated from the last delta values [1/(sec*sec)]
-  */
-  float accelFloat(){return MeasureProgLocal_c::accelFloat();};
-#endif
   /**
     return the c_isoName code for this measureProg
     @return ISOName of this measureProg

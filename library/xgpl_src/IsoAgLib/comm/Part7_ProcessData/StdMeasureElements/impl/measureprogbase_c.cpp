@@ -400,125 +400,6 @@ void MeasureProgBase_c::initVal(int32_t ai32_val){
   mi32_val = mi32_min = mi32_max = ai32_val;
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/** initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param af_val optional individual measure val for this program instance (can differ from master measure value)
-    @param acrc_isoName optional ISOName of partner member for this measure program
-  */
-void MeasureProgBase_c::init(
-  ProcDataBase_c *const apc_processData,
-  float af_val,
-  const IsoName_c& acrc_isoName)
-{ // set the dynamic list to a well defined cleared starting condition
-  #ifdef DEBUG_HEAP_USEAGE
-  static bool b_doPrint = true;
-  if ( b_doPrint )
-  {
-    b_doPrint = false;
-    INTERNAL_DEBUG_DEVICE
-      << "sizeof(MeasureSubprog_c) ==  " << sizeof(MeasureSubprog_c)
-      << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-
-  sui16_MeasureProgBaseTotal -= ( mvec_measureSubprog.size() * ( sizeof(MeasureSubprog_c) + 2 * sizeof(MeasureSubprog_c*) ) );
-  #endif
-
-  mvec_measureSubprog.clear();
-  // set the pointers in the baseClass ProcessElementBase
-  set(apc_processData);
-  // store the parameter init vals
-  mc_isoName = acrc_isoName;
-  f_val = af_val;
-  mb_active = false;
-
-  // set the rest of element vals to defined init
-  men_accumProp = Proc_c::AccumNone;
-  men_doSend = Proc_c::DoNone;
-  men_type = Proc_c::DistProp;
-
-  mi32_accel = mi32_delta = mi32_lastTime = mi32_max = mi32_min = 0;
-}
-
-/** deliver actual last received value
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return measure val for this prog (can differ from master measure val)
-  */
-float MeasureProgBase_c::valFloat(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::exactValue,
-                                                             ProcessCmd_c::requestValue);
-
-    processData().sendValISOName(isoName(), int32_t(0));
-  }
-  return f_val;
-}
-
-/** deliver min val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MIN val for this measure prog
-  */
-float MeasureProgBase_c::minFloat(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::minValue,
-                                                             ProcessCmd_c::requestValue);
-
-    processData().sendValISOName(isoName(), int32_t(0));
-  }
-  return f_min;
-}
-
-
-/** deliver max val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MAX val for this measure prog
-  */
-float MeasureProgBase_c::maxFloat(bool ab_sendRequest) const
-{
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::maxValue,
-                                                             ProcessCmd_c::requestValue);
-
-    processData().sendValISOName(isoName(), int32_t(0));
-  }
-  return f_max;
-}
-
-
-/** init the element vars
-    @param af_val initial measure val
-  */
-void MeasureProgBase_c::initVal(float af_val){
-  #ifdef DEBUG_HEAP_USEAGE
-  if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
-  || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
-  {
-    sui16_printedMeasureProgBaseTotal = sui16_MeasureProgBaseTotal;
-    sui16_printedDeconstructMeasureProgBaseTotal = sui16_deconstructMeasureProgBaseTotal;
-    INTERNAL_DEBUG_DEVICE
-      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
-  f_val = f_min = f_max = af_val;
-}
-#endif
-
 
 /** process a message;
     MeasureProgBase_c::processMsg is responsible for measure prog
@@ -607,7 +488,7 @@ bool MeasureProgBase_c::processMsg(){
         en_command == ProcessCmd_c::measurementMaximumThresholdValueStart)
     {
       Proc_c::type_t en_typePkg = Proc_c::NullType;
-      int32_t i32_dataLong = c_pkg.dataLong();
+      int32_t i32_dataLong = c_pkg.getValue();
       switch (en_command) {
         case ProcessCmd_c::measurementTimeValueStart:
           en_typePkg = Proc_c::TimeProp;
@@ -685,49 +566,25 @@ int32_t MeasureProgBase_c::valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)
 }
 
 
-#ifdef USE_FLOAT_DATA_TYPE
-/** deliver to en_valueGroup according measure val type
-    as float value
-    @param en_valueGroup of wanted subtype
-    @return value of specified subtype
-  */
-float MeasureProgBase_c::valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup) const
-{
-  float f_value = valFloat();
-    switch (en_valueGroup)
-    {
-      case ProcessCmd_c::exactValue:
-        // set val with function, to calc delta and accel
-        // i32_value = val();
-        break;
-      case ProcessCmd_c::minValue:
-        f_value = minFloat();
-        break;
-      case ProcessCmd_c::maxValue:
-        f_value = maxFloat();
-        break;
-      default:
-        getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Process );
-    }
-  return f_value;
-}
-#endif
-
-
 /** process a message with an increment for a measuring program
 
     possible errors:
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   */
-void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend){
+void MeasureProgBase_c::processIncrementMsg(Proc_c::doSend_t ren_doSend)
+{
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
-  // set mc_isoName to caller of prog
-  mc_isoName = c_pkg.memberSend().isoName();
+  if (c_pkg.senderItem() == NULL)
+  { // don't care for packets from SA 0xFE
+    return;
+  }
 
-  // get the int32_t data val without conversion
-  const int32_t ci32_val = c_pkg.dataRawCmdLong();
+  // set mc_isoName to caller of prog
+  mc_isoName = c_pkg.senderItem()->isoName();
+
+  const int32_t ci32_val = c_pkg.getValue();
 
   if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::measurementTimeValueStart)
     // time proportional

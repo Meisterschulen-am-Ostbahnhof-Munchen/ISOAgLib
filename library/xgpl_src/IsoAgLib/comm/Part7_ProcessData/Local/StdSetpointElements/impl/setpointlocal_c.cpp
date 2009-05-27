@@ -372,26 +372,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
   master().setHandled( true);
   master().setValid( true);
   master().setISOName(IsoName_c::IsoNameUnspecified());
-
-#ifdef USE_FLOAT_DATA_TYPE
-  setValType( i32_val);
-#endif
 }
-
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  set the master setpoint manually
-  (in some cases remote systems request informations
-   through process data setpoints)
-  @param af_val wanted setpoint value
-*/
-void SetpointLocal_c::setMasterMeasurementVal( float af_val)
-{
-  int32_t i32_temp = (*(int32_t*)(&af_val));
-  setMasterMeasurementVal( i32_temp);
-  setValType( float_val);
-}
-#endif
 
 /**
   deliver the count of unhandled setpoints
@@ -635,50 +616,51 @@ bool SetpointLocal_c::timeEvent( void ){
 */
 bool SetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
                                            ProcessCmd_c::ValueGroup_t en_valueGroup,
-                                           ProcessCmd_c::CommandType_t en_command) const {
+                                           ProcessCmd_c::CommandType_t en_command) const
+{
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
-                                                              en_valueGroup, en_command);
-  #ifdef USE_FLOAT_DATA_TYPE
-  if (valType() == i32_val) {
-  #endif
-    return processDataConst().sendValISOName(ac_targetISOName, masterConst().valForGroup(en_valueGroup));
-  #ifdef USE_FLOAT_DATA_TYPE
-  }
-  else {
-    return processDataConst().sendValISOName(ac_targetISOName, masterConst().valForGroupFloat(en_valueGroup));
-  }
-  #endif
+                                                           en_valueGroup, en_command);
+  return processDataConst().sendValISOName(ac_targetISOName, masterConst().valForGroup(en_valueGroup));
 }
 
 
 /**
   process a setpoint request for local process data
 */
-void SetpointLocal_c::processRequest() const {
+void SetpointLocal_c::processRequest() const
+{
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
 
   // check if master setpoint is defined
   bool b_existMaster = existMaster();
 
   if (b_existMaster)
-  {
-    // use the values in general command which are already set
-    sendSetpointForGroup(c_pkg.memberSend().isoName(), c_pkg.mc_processCmd.getValueGroup(), ProcessCmd_c::setValue );
+  { // use the values in general command which are already set
+    if (c_pkg.senderItem() != NULL)
+    { // sender is valid
+      sendSetpointForGroup (c_pkg.senderItem()->isoName(), c_pkg.mc_processCmd.getValueGroup(), ProcessCmd_c::setValue );
+    }
   }
 }
 
 /**
   process a setpoint set for local process data
 */
-void SetpointLocal_c::processSet(){
+void SetpointLocal_c::processSet()
+{
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   Vec_SetpointRegisterIterator pc_callerIter = mvec_register.begin();
 
   // detect if something was changed
   bool b_change = false;
 
-  const IsoName_c& c_callerISOName = c_pkg.memberSend().isoName();
+  if (c_pkg.senderItem() == NULL)
+  { // sender with SA 0xFE is not of interest
+    return;
+  }
+
+  const IsoName_c& c_callerISOName = c_pkg.senderItem()->isoName();
   for (pc_callerIter = mvec_register.begin(); pc_callerIter != mvec_register.end(); pc_callerIter++)
   { // check if c_callerISOName already set the item at ui8_callerIndex
     // ignore item of actual acepted master, as this should be handled as new
@@ -742,36 +724,19 @@ void SetpointLocal_c::processSet(){
                                                              ProcessCmd_c::exactValue,
                                                              ProcessCmd_c::setValue);
     // notify the caller
-    processData().sendValISOName( c_pkg.memberSend().isoName(), SETPOINT_RELEASE_COMMAND);
+    processData().sendValISOName( c_callerISOName, SETPOINT_RELEASE_COMMAND);
   }
   else
   {
-    #ifdef USE_FLOAT_DATA_TYPE
-    if (processData().valType() == i32_val)
-    { // get the int32_t data val; let it convert, if needed
-      setValType( i32_val);
-    #endif
-      int32_t i32_val = processData().pkgDataLong();
-      // now set according to mod the suitable setpoint type  value
-      // simply set the new setpoint vlue
-      if ( pc_callerIter->valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val ) b_change = true;
-      pc_callerIter->setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
-    #ifdef USE_FLOAT_DATA_TYPE
-    }
-    else
-    { // get the int32_t data val; let it convert, if needed
-      setValType( float_val);
-      float f_val = processData().pkgDataFloat();
-      // now set according to mod the suitable setpoint type  value
-      // simply set the new setpoint vlue
-      if ( pc_callerIter->valForGroupFloat( c_pkg.mc_processCmd.getValueGroup() ) != f_val ) b_change = true;
-      pc_callerIter->setValForGroup( f_val, c_pkg.mc_processCmd.getValueGroup() );
-    }
-    #endif
+    int32_t i32_val = processData().getPkgValue();
+    // now set according to mod the suitable setpoint type  value
+    // simply set the new setpoint vlue
+    if ( pc_callerIter->valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val ) b_change = true;
+    pc_callerIter->setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().getPkgValue(), c_callerISOName.toConstIisoName_c(), b_change );
 }
 
 } // end of namespace __IsoAgLib

@@ -143,30 +143,6 @@ public:
     @param ai32_val commanded setpoint value as long
   */
   void setSetpointMasterVal(int32_t ai32_val){setExact(ai32_val);};
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the actual master setpoint
-    @param ab_sendRequest true -> send request for actual value
-    @return setpoint value as float
-  */
-  float setpointMasterValFloat(bool ab_sendRequest = false) const
-    {if (ab_sendRequest) requestExact();
-     return master().exactFloat();};
-  /**
-    send a setpoint cmd with given exact setpoint
-    @param af_val commanded setpoint value as float
-  */
-  void setSetpointMasterVal(float af_val){ setExact(af_val); };
-  /**
-    command a exact setpoint; store value as commanded and send command
-
-    possible errors:
-        * dependant error in ProcDataRemoteBase_c if comanded remote system not found in Monitor List
-        * dependant error in CanIo_c on CAN send problems
-    @return new exact setpoint to command
-  */
-  void setExact(float af_val);
-  #endif
 
   /**
     command a exact setpoint; store value as commanded and send command

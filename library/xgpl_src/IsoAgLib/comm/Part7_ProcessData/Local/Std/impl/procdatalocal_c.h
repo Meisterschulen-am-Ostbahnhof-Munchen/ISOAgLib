@@ -326,20 +326,6 @@ public:
   */
   virtual void incrMasterMeasurementVal(int32_t ai32_val);
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the masterMeasurementVal from main application independent from any measure progs
-    @param af_val new measure value
-  */
-  virtual void setMasterMeasurementVal(float af_val);
-
-  /**
-    increment the value -> update the local and the measuring programs values
-    @param af_val size of increment of master value
-  */
-  virtual void incrMasterMeasurementVal(float af_val);
-#endif
-
   /**
     perform periodic actions
     delete all running measure programs of members which are >3sec inactive;

@@ -225,53 +225,25 @@ ProcDataLocalBase_c::~ProcDataLocalBase_c(){
 void ProcDataLocalBase_c::setEepromAdr(uint16_t aui16_eepromAdr)
 {
   mui16_eepromAdr = aui16_eepromAdr;
-  #ifdef USE_FLOAT_DATA_TYPE
-  if (valType() == float_val)
-  {
-    if (mui16_eepromAdr < 0xFFFF)
-    { // valid adress -> read in value
-      // set read position
-      getEepromInstance().setg(aui16_eepromAdr);
-      // read data from eeprom
-      float f_temp;
-      getEepromInstance() >> f_temp;
-      f_eepromVal = f_temp;
-      // decide if eeprom val should be assigned as starting masterMeasurementVal
-      if (!mb_cumulativeValue)
-      { // value is NOT cumulative -> use eeprom as starting master,
-        // else for cumulative values master value can be set independent from EEPROM
-        // ==> for cumulative values the communicated value is sum of masterMeasurementVal AND EEPROM val
-        f_masterVal = f_eepromVal;
-      }
-    }
-    else
-    { // for undefined adr set value 0
-      f_eepromVal = 0.0F;
+  if (mui16_eepromAdr < 0xFFFF)
+  { // valid adress -> read in value
+    // set read position
+    getEepromInstance().setg(aui16_eepromAdr);
+    // read data from eeprom
+    int32_t i32_temp;
+    getEepromInstance() >> i32_temp;
+    mi32_eepromVal = i32_temp;
+    // decide if eeprom val should be assigned as starting masterMeasurementVal
+    if (!mb_cumulativeValue)
+    { // value is NOT cumulative -> use eeprom as starting master,
+      // else for cumulative values master value can be set independent from EEPROM
+      // ==> for cumulative values the communicated value is sum of masterMeasurementVal AND EEPROM val
+      mi32_masterVal = mi32_eepromVal;
     }
   }
   else
-  #endif // USE_FLOAT_DATA_TYPE
-  {
-    if (mui16_eepromAdr < 0xFFFF)
-    { // valid adress -> read in value
-      // set read position
-      getEepromInstance().setg(aui16_eepromAdr);
-      // read data from eeprom
-      int32_t i32_temp;
-      getEepromInstance() >> i32_temp;
-      mi32_eepromVal = i32_temp;
-      // decide if eeprom val should be assigned as starting masterMeasurementVal
-      if (!mb_cumulativeValue)
-      { // value is NOT cumulative -> use eeprom as starting master,
-        // else for cumulative values master value can be set independent from EEPROM
-        // ==> for cumulative values the communicated value is sum of masterMeasurementVal AND EEPROM val
-        mi32_masterVal = mi32_eepromVal;
-      }
-    }
-    else
-    { // for undefined adr set value 0
-      mi32_eepromVal = 0;
-    }
+  { // for undefined adr set value 0
+    mi32_eepromVal = 0;
   }
 }
 #endif // USE_EEPROM_IO
@@ -280,9 +252,8 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t aui16_eepromAdr)
   set the masterMeasurementVal from main application independent from any measure progs
   @param ai32_val new measure value
 */
-void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ai32_val){
-  // set the local values
-  setValType(i32_val);
+void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ai32_val)
+{
 #ifdef USE_EEPROM_IO
   if (mb_cumulativeValue) mi32_eepromVal += (ai32_val - mi32_masterVal);
   else mi32_eepromVal = ai32_val;
@@ -294,43 +265,13 @@ void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ai32_val){
   increment the value -> update the local and the measuring programs values
   @param ai32_val size of increment of master value
 */
-void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ai32_val){
-  // set the local values
-  setValType(i32_val);
+void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ai32_val)
+{
 #ifdef USE_EEPROM_IO
   mi32_eepromVal += ai32_val;
 #endif // USE_EEPROM_IO
   mi32_masterVal += ai32_val;
 }
-
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  set the masterMeasurementVal from main application independent from any measure progs
-  @param af_val new measure value
-*/
-void ProcDataLocalBase_c::setMasterMeasurementVal(float af_val){
-  // set the local values
-  setValType(float_val);
-  #ifdef USE_EEPROM_IO
-  if (mb_cumulativeValue) f_eepromVal += (af_val - f_masterVal);
-  else f_eepromVal = af_val;
-  #endif // USE_EEPROM_IO
-  f_masterVal = af_val;
-}
-
-/**
-  increment the value -> update the local and the measuring programs values
-  @param ai32_val size of increment of master value
-*/
-void ProcDataLocalBase_c::incrMasterMeasurementVal(float af_val){
-  // set the local values
-  setValType(float_val);
-  #ifdef USE_EEPROM_IO
-  f_eepromVal += af_val;
-  #endif // USE_EEPROM_IO
-  f_masterVal += af_val;
-}
-#endif // USE_FLOAT_DATA_TYPE
 
 
 /**
@@ -340,7 +281,8 @@ void ProcDataLocalBase_c::incrMasterMeasurementVal(float af_val){
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
   @return true -> all planned executions performed
 */
-bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
+bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */)
+{
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   #ifdef USE_EEPROM_IO
   // check if eeprom value should be stored
@@ -348,16 +290,7 @@ bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */){
   if ((i32_time - mi32_lastEepromStore > CONFIG_PROC_STORE_EEPROM_INTERVAL) && (mui16_eepromAdr != 0xFFFF))
   { // store needed
     getEepromInstance().setp(mui16_eepromAdr);
-    #ifdef USE_FLOAT_DATA_TYPE
-    if (valType() == float_val)
-    {
-      getEepromInstance() << f_eepromVal;
-    }
-    else
-    #endif // USE_FLOAT_DATA_TYPE
-    {
-      getEepromInstance() << mi32_eepromVal;
-    }
+    getEepromInstance() << mi32_eepromVal;
     mi32_lastEepromStore = i32_time;
   }
   #endif // USE_EEPROM_IO
@@ -376,15 +309,9 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetIS
                                                              ProcessCmd_c::exactValue,
                                                              ProcessCmd_c::setValue);
 
-    #if defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValISOName(ac_targetISOName, eepromVal());
-    else return sendValISOName(ac_targetISOName, eepromValFloat());
-    #elif !defined(USE_EEPROM_IO) && defined(USE_FLOAT_DATA_TYPE)
-    if (valType() == i32_val) return sendValISOName(ac_targetISOName, masterMeasurementVal());
-    else return sendValISOName(ac_targetISOName, masterValFloat());
-    #elif defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
+    #if defined(USE_EEPROM_IO)
     return sendValISOName(ac_targetISOName, eepromVal());
-    #elif !defined(USE_EEPROM_IO) && !defined(USE_FLOAT_DATA_TYPE)
+    #else
     return sendValISOName(ac_targetISOName, masterMeasurementVal());
     #endif
 }
@@ -395,14 +322,20 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetIS
     derived classes with more flexible management (including measurement programs)
     use their own overloaded version.
 */
-void ProcDataLocalBase_c::processProg(){
+void ProcDataLocalBase_c::processProg()
+{
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
+  if (c_pkg.senderItem() == NULL)
+  { // sender with SA 0xFE is not of interest
+    return;
+  }
+
   // handle for simple measurement value
   if (c_pkg.mc_processCmd.checkIsRequest() &&
       // c_pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
       c_pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
   { // request for measurement value
-    sendMasterMeasurementVal( c_pkg.memberSend().isoName() );
+    sendMasterMeasurementVal( c_pkg.senderItem()->isoName() );
   }
 }
 
@@ -434,20 +367,11 @@ void ProcDataLocalBase_c::processSetpoint()
 */
 void ProcDataLocalBase_c::resetEeprom( void ){
   // now eeprom val can be reset
-  #ifdef USE_FLOAT_DATA_TYPE
-  if (valType() == float_val) f_eepromVal = 0.0F;
-  else
-  #endif // USE_FLOAT_DATA_TYPE
-    mi32_eepromVal = 0;
+  mi32_eepromVal = 0;
   if (mui16_eepromAdr != 0xFFFF)
   {   // write new val to EEPROM
     getEepromInstance().setp(mui16_eepromAdr);
-
-    #ifdef USE_FLOAT_DATA_TYPE
-    if (valType() == float_val) getEepromInstance() << f_eepromVal;
-    else
-    #endif // USE_FLOAT_DATA_TYPE
-      getEepromInstance() << mi32_eepromVal;
+    getEepromInstance() << mi32_eepromVal;
   }
 }
 #endif // USE_EEPROM_IO
@@ -458,15 +382,6 @@ bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& ac_varISOName, int32_t
 
   return ProcDataBase_c::sendValISOName (ac_varISOName, ai32_val);
 }
-
-#ifdef USE_FLOAT_DATA_TYPE
-bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& ac_varISOName, float af_val) const
-{
-  setLocalSendFlags (ac_varISOName);
-
-  return ProcDataBase_c::sendValISOName (ac_varISOName, af_val);
-}
-#endif
 
 void ProcDataLocalBase_c::setLocalSendFlags(const IsoName_c& ac_varISOName) const
 {

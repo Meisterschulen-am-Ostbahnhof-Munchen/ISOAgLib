@@ -145,7 +145,6 @@ namespace __IsoAgLib {
     ProcIdent_c::init( ps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName);
 
     setSingletonKey(ai_singletonVecKey);
-    men_procValType = i32_val;
     mpc_processDataChangeHandler = apc_processDataChangeHandler;
   }
 
@@ -180,7 +179,6 @@ ProcDataBase_c::ProcDataBase_c(const ProcDataBase_c& acrc_src)
 /** base function for assignment of element vars for copy constructor and operator= */
 void ProcDataBase_c::assignFromSource( const ProcDataBase_c& acrc_src )
 { // copy element vars
-  men_procValType = acrc_src.men_procValType;
   mpc_processDataChangeHandler = acrc_src.mpc_processDataChangeHandler;
 }
 
@@ -251,7 +249,7 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t
 {
   setBasicSendFlags();
 
-  getProcessPkg().setData( ai32_val, men_procValType);
+  getProcessPkg().setData( ai32_val );
 
   // send the msg
   getCanInstance4Comm() << getProcessPkg();
@@ -263,41 +261,6 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t
   else
     return false;
 }
-
-
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  send the given float value with variable ISOName ac_varISOName
-  (local: receiver; remote: sender)
-  (other paramter fixed by ident of process data)
-
-  set general command before sendValISOName !
-
-  possible errors:
-      * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-      * dependant error in CanIo_c on CAN send problems
-
-  @param ac_varISOName variable ISOName
-  @param ai32_val float value to send
-  @return true -> sendIntern set successful EMPF and SEND
-*/
-bool ProcDataBase_c::sendValISOName(const IsoName_c& /*ac_varISOName*/, float af_val) const
-{
-  setBasicSendFlags();
-
-  getProcessPkg().setData( af_val, men_procValType);
-
-  // send the msg
-  getCanInstance4Comm() << getProcessPkg();
-  // check for any error during send resolve, ...
-  if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
-  { // good
-    return true;
-  }
-  else
-    return false;
-}
-#endif
 
 
 void ProcDataBase_c::setBasicSendFlags() const

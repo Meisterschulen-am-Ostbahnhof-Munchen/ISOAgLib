@@ -217,7 +217,8 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::~ProcDataLocalSimpleSetpointSimpleMe
 
 
 /** process a setpoint message */
-void ProcDataLocalSimpleSetpointSimpleMeasure_c::processSetpoint(){
+void ProcDataLocalSimpleSetpointSimpleMeasure_c::processSetpoint()
+{
   mc_setpoint.processSetpoint();
   // call base function to perform some processing steps for all kinds of
   // local process data

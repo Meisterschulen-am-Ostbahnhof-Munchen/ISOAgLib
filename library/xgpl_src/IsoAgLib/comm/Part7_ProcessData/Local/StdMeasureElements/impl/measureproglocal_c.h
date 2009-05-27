@@ -148,34 +148,7 @@ public:
     int32_t ai32_masterVal = 0,
     int32_t ai32_initialVal = 0,
     const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    constructor which can optionally set most element vars of MeasureProgLocal
-    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param af_masterVal actual central local measured value used as float masterVal
-    @param af_eepromVal optional value stored in EEPROM (default 0.0)
-    @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-  */
-  MeasureProgLocal_c(
-    ProcDataBase_c *const apc_processData,
-    float af_masterVal,
-    float af_eepromVal = 0.0F,
-    const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() )
-    : MeasureProgBase_c(apc_processData, 0, ac_callerISOName )
-    {init(apc_processData, af_masterVal, af_eepromVal, ac_callerISOName  );};
-  /**
-    initialise this MeasureProgLocal_c instance to a well defined initial state
-    @param apc_processData optional pointer to containing ProcDataLocal_c instance (def NULL)
-    @param af_masterVal actual central local measured value used as float masterVal
-    @param af_eepromVal optional value stored in EEPROM (default 0.0)
-    @param ac_callerISOName optional ISOName of remote member, which caused creation of this instance (default 0xFF == no member)
-  */
-  void init(
-    ProcDataBase_c *const apc_processData,
-    float af_masterVal,
-    float af_eepromVal = 0.0F,
-    const IsoName_c& ac_callerISOName = IsoName_c::IsoNameUnspecified() );
-#endif
+
   /**
     assignment of MeasureProgLocal_c objects
     @param acrc_src source MeasureProgLocal_c instance
@@ -203,22 +176,7 @@ public:
   */
   bool start(Proc_c::type_t ren_type,
              Proc_c::doSend_t ren_doSend, int32_t ai32_masterVal);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    start a measuring programm with new master measurement value
 
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-
-    @param ren_type used increment types: Proc_c::TimeProp, Proc_c::DistProp, ...
-    @param ren_doSend value types to send on trigger of subprog: Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...
-    @param af_masterVal actual float master value to start with
-    @return true -> starting values sent with success
-  */
-  bool start(Proc_c::type_t ren_type,
-             Proc_c::doSend_t ren_doSend, float af_masterVal);
-#endif
   /**
     start a measuring program without new master measurement value
 
@@ -250,26 +208,11 @@ public:
   */
   int32_t med() const {return ( (mi32_medCnt > 0) ? (mi32_medSum/mi32_medCnt) : 0 );};
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver med val as float
-    @return actual medium value
-  */
-  float medFloat() const {return ( (mi32_medCnt > 0) ? (f_medSum/(float)mi32_medCnt) : (0.0F) );};
-#endif
-
   /**
     deliver integ val
     @return integral val for this measure prog
   */
   int32_t integ() const { return mi32_integ; };
-
-#ifdef USE_FLOAT_DATA_TYPE
-  /** deliver integ val
-    @return integral val for this measure prog
-  */
-  float integFloat() const { return f_integ; };
-#endif
 
   /**
     send a sub-information (selected by en_valueGroup) to a specified target (selected by GPT)
@@ -311,17 +254,7 @@ public:
     @param ai32_val new measure value
   */
   virtual void setVal(int32_t ai32_val);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the measure prog value as float and send values if triggered to do
 
-    possible errors:
-      * dependant error in ProcDataLocal_c if EMPF or SEND not valid
-      * dependant error in CanIo_c on send problems
-    @param af_val new measure value
-  */
-  virtual void setVal(float af_val);
-#endif
   /**
     send the values which are registered by a running mesuring program
 
@@ -348,13 +281,7 @@ public:
     @return true -> reseted measure val sent with success
   */
   virtual bool resetVal(int32_t ai32_val = 0);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    init the element vals
-    @param af_val initial measure val
-  */
-  virtual void initVal(float af_val);
-#endif
+
   /**
     reset the local intgral value
 
@@ -423,19 +350,6 @@ private: // Private methods
     @param ai32_val new measure val to use for calculating the medium value
   */
   void incrMedSum(int32_t ai32_val){mi32_medSum += ai32_val;};
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set medium val
-    @param af_val initial medium value
-  */
-  void setMed(float af_val){f_medSum = af_val; mi32_medCnt = 1;};
-  /**
-    increment the mediumSum
-    @param af_val new measure val to use for calculating the medium value
-  */
-  void incrMedSum(float af_val){f_medSum += af_val;};
-#endif
-
 
   /**
     set integ val
@@ -447,18 +361,6 @@ private: // Private methods
     @param ai32_val increment for integral
   */
   void incrInteg(int32_t ai32_val){mi32_integ += ai32_val;}
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    increment the integer value
-    @param af_val increment for integral
-  */
-  void incrInteg(float af_val){f_integ += af_val;}
-  /**
-    set integ val
-    @param af_val new integral value
-  */
-  void setInteg(float af_val){f_integ = af_val;}
-#endif
 
   /**
     deliver a reference to ProcDataLocal_c
@@ -486,37 +388,6 @@ private: // Private methods
   bool minMaxLimitsPassed(Proc_c::doSend_t ren_doSend) const;
 
 private: // Private attributes
-#ifdef USE_FLOAT_DATA_TYPE
-  union {
-    /** last master (eg. main prog or sensor) val  */
-    int32_t mi32_lastMasterVal;
-    /** last master (eg. main prog or sensor) val  */
-    float f_lastMasterVal;
-  };
-  union {
-    /**
-      sum of values which are used to calculate the medium
-      (only defined if one proportional prog is active)
-    */
-    int32_t mi32_medSum;
-    /**
-      sum of values which are used to calculate the medium
-      (only defined if one proportional prog is active)
-    */
-    float f_medSum;
-  };
-  union {
-    /**
-      integral value (only defined if one proportional prog is active)
-    */
-    int32_t mi32_integ;
-    /**
-      integral value (only defined if one proportional prog is active)
-    */
-    float f_integ;
-  };
-
-#else
   /** last master (eg. main prog or sensor) val  */
   int32_t mi32_lastMasterVal;
   /**
@@ -529,7 +400,6 @@ private: // Private attributes
   */
   int32_t mi32_integ;
 
-#endif
   /** count of used songle values to calculate medium val  */
   int32_t mi32_medCnt;
 

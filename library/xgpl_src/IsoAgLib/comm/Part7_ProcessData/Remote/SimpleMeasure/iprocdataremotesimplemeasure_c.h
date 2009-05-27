@@ -251,24 +251,6 @@ public:
   void setSetpointMasterVal(int32_t ai32_val)
     {ProcDataRemoteSimpleMeasure_c::setSetpointMasterVal(ai32_val);}
 
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the actual master setpoint
-    @param ab_sendRequest true -> send request for actual value
-    @return setpoint value as float
-  */
-  float setpointMasterValFloat(bool ab_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::setpointMasterValFloat(ab_sendRequest);}
-
-  /**
-    send a setpoint cmd with given exact setpoint
-    @param af_val commanded setpoint value as float
-  */
-  void setSetpointMasterVal(float af_val)
-    {ProcDataRemoteSimpleMeasure_c::setSetpointMasterVal(af_val);}
-
-  #endif
-
   /**
     deliver actual measurement value as long
     @param ab_sendRequest true -> request for new value is sent (optional, default false)
@@ -281,15 +263,6 @@ public:
   */
   void resetMasterVal(){ProcDataRemoteSimpleMeasure_c::resetMasterVal();}
 
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver actual measurement value as float
-    @param ab_sendRequest true -> request for new value is sent (optional, default false)
-  */
-  float masterValFloat(bool ab_sendRequest = false)
-    {return ProcDataRemoteSimpleMeasure_c::masterValFloat(ab_sendRequest);}
-  #endif
-
   /**
     deliver the commanderISOName (ISOName of local member)
     @return ISOName used for sending commands to remote owner member
@@ -301,21 +274,6 @@ public:
                 sending commands to remote owner member
   */
   void setCommanderISOName(const __IsoAgLib::IsoName_c* apc_externalOverridingIsoName){ProcDataRemoteSimpleMeasure_c::setCommanderISOName(apc_externalOverridingIsoName);};
-
-  /**
-    deliver the central data type of this process data
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  proc_valType_t valType()const
-    {return ProcDataRemoteSimpleMeasure_c::valType();}
-
-  /**
-    set the central data type of this process data
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  void setValType(proc_valType_t ren_procValType)
-    {ProcDataRemoteSimpleMeasure_c::setValType(ren_procValType);}
-
 };
 
 }

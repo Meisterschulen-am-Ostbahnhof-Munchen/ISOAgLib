@@ -178,13 +178,7 @@ public:
     @return exact setpoint value
   */
   int32_t exact()const{return mi32_exactOrMin;}
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the exact setpoint
-    @return exact setpoint value
-  */
-  float exactFloat()const{return f_exactOrMin;}
-#endif
+
   /**
     deliver the minimum limit; if no min is given (~0) return mi32_exactOrMin
     @return minimum setpoint value
@@ -207,29 +201,7 @@ public:
     @return setpoint selected by value group
   */
   int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the minimum limit; if no min is given (~0) return f_exactOrMin
-    @return minimum setpoint value
-  */
-  float minFloat()const{return f_exactOrMin;}
-  /**
-    deliver the maximum limit; if no max is given (~0) return f_exactOrMin
-    @return maximum setpoint value
-  */
-  float maxFloat()const{return (existMax())?(f_max):(f_exactOrMin);}
-  /**
-    deliver the default value; if no default is given (~0) return f_exactOrMin
-    @return default setpoint value
-  */
-  float defaultFloat()const{return (existDefault())?(f_default):(f_exactOrMin);}
-  /**
-    deliver the setpoint according to the value group
-    @param en_valueGroup code of wanted setpoint (exact 0, min 2, max 3, default)
-    @return setpoint selected by value group
-  */
-  float valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup)const;
-#endif
+
   /**
     check if setpoint value was already handled
     @return true -> this setpoint was handled by the application
@@ -313,34 +285,7 @@ public:
     @param ai32_val new default setpoint value
   */
   void setDefault(int32_t ai32_val);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the exact setpoint value
-    @param af_val new exact setpoint value
-  */
-  void setExact(float af_val);
-  /**
-    set the minimum setpoint value
-    @param af_val new minimum setpoint value
-  */
-  void setMin(float af_val);
-  /**
-    set the maximum setpoint value
-    @param af_val new maximum setpoint value
-  */
-  void setMax(float af_val);
-  /**
-    set the default setpoint value
-    @param af_val new default setpoint value
-  */
-  void setDefault(float af_val);
-  /**
-    set a limit val for type given by value group
-    @param af_val new setpoint value
-    @param en_valueGroup of setpoint type to set (exact 0, min 2, max 3, default)
-  */
-  void setValForGroup(float af_val, ProcessCmd_c::ValueGroup_t en_valueGroup);
-#endif
+
   /**
     set the handled state; return if state was changed
     @param ab_state true -> mark this setpoint as handled
@@ -370,35 +315,20 @@ public:
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const SetpointRegister_c& acrc_src );
+
 private: // Private attributes
-#ifdef USE_FLOAT_DATA_TYPE
-  union {
-    /** minimum limit setpoint */
-    int32_t mi32_exactOrMin;
-    float f_exactOrMin;
-  };
-  union {
-    /** maximum limit setpoint */
-    int32_t mi32_max;
-    float f_max;
-  };
-  union {
-    /** default setpoint */
-    int32_t mi32_default;
-    float f_default;
-  };
-#else
   /** minimum limit setpoint */
   int32_t mi32_exactOrMin;
   /** maximum limit setpoint */
   int32_t mi32_max;
   /** default setpoint */
   int32_t mi32_default;
-#endif
   /** tiemstamp of last setXx operation */
   int32_t mi32_lastHandledTime;
+
   /** isoName code of requester */
   IsoName_c mc_requestISOName;
+
   struct {
     /** master state == the setpoint requester can change the value if needed */
     bool b_master : 1;

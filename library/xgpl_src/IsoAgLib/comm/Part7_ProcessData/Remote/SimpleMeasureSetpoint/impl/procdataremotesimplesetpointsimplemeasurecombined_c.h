@@ -214,20 +214,6 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
     @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
   void setSetpointMasterVal(int32_t ai32_val, bool ab_onlyStoreOnResponse = true);
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the actual master setpoint
-    @param ab_sendRequest true -> send request for actual value
-    @return setpoint value as float
-  */
-  float setpointMasterValFloat(bool ab_sendRequest = false);
-  /**
-    send a setpoint cmd with given exact setpoint
-    @param af_val commanded setpoint value as float
-    @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
-  */
-  void setSetpointMasterVal(float af_val, bool ab_onlyStoreOnResponse = true);
-  #endif
 
   /**
     deliver actual measurement value as long
@@ -238,13 +224,7 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
     send reset cmd for the measurement value
   */
   void resetMasterVal();
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver actual measurement value as float
-    @param ab_sendRequest true -> request for new value is sent (optional, default false)
-  */
-  float masterValFloat(bool ab_sendRequest = false);
-  #endif
+
  private:
   /** process a measure prog message for remote process data */
   virtual void processProg();
@@ -253,19 +233,7 @@ class ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c : public ProcDataRemot
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataRemoteSimpleSetpointSimpleMeasureCombined_c& acrc_src );
 
-
-  #ifdef USE_FLOAT_DATA_TYPE
-  /** store the master value of the main programm
-      in anonymous union for dircet access to float or long
-      presentation
-  */
-  union {
-    int32_t mi32_masterVal;
-    float f_masterVal;
-  };
-  #else
   int32_t mi32_masterVal;
-  #endif
 };
 
 

@@ -159,17 +159,7 @@ public:
     @return pointer to containing ProcessData
   */
   const ProcDataBase_c * pprocessDataConst() const { return mpc_processData; }
-  /**
-    deliver the central data type of this process data
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  proc_valType_t valType() const { return mpc_processData->valType(); }
-  /**
-    set the central data type of this process data
-    @return proc_valType_t: i32_val, ui32_val, float_val, cmdVal
-  */
-  void setValType(proc_valType_t ren_procValType) { mpc_processData->setValType(ren_procValType); }
-  
+
 private: // Private attributes
   /** pointer to the containing ProcessData item */
   ProcDataBase_c* mpc_processData;

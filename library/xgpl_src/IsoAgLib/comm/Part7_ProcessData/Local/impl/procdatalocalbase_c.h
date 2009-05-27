@@ -266,25 +266,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   virtual void incrMasterMeasurementVal (int32_t ai32_val);
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /** deliver the master value (central measure value of this process data;
-    can differ from measure vals of measure progs, as these can be reseted
-    independent) as float
-    @return actual master value
-  */
-  const float& masterValFloat() const {return f_masterVal;}
-
-  /** set the masterMeasurementVal from main application independent from any measure progs
-    @param af_val new measure value
-  */
-  virtual void setMasterMeasurementVal (float af_val);
-
-  /** increment the value -> update the local and the measuring programs values
-    @param af_val size of increment of master value
-  */
-  virtual void incrMasterMeasurementVal (float af_val);
-#endif
-
   /** perform periodic actions
     task for ProcDataLocal_c::timeEvent is to store the actual
     eeprom value in the defined time intervall
@@ -345,22 +326,6 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   */
   bool sendValISOName( const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /** send the given float value with variable ISOName ac_varISOName;
-      set the float value with conversion (according to central data type) in message
-      string and set data format flags corresponding to central data type of this process data
-      (other parameter fixed by ident of process data)
-      possible errors:
-  * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
-  * dependant error in CanIo_c on CAN send problems
-
-      @param ac_varISOName variable ISOName
-      @param ai32_val float value to send
-      @return true -> sendIntern set successful EMPF and SEND
-  */
-  bool sendValISOName (const IsoName_c& ac_varISOName, float af_val = 0.0F) const;
-#endif
-
  protected:
   /** processing of a setpoint message.
       this base class variant checks only, if a setpoint cmd was recieved
@@ -389,13 +354,6 @@ private:
   */
   const int32_t& eepromVal() const {return mi32_eepromVal;}
 
-  #ifdef USE_FLOAT_DATA_TYPE
-  /** deliver the eeprom value
-    @return actual EEPROM value
-  */
-  const float& eepromValFloat() const {return f_eepromVal;}
-  #endif
-
   /** set the eeprom value
     @param ai32_val new EEPROM value
   */
@@ -416,30 +374,6 @@ private:
    /** allow explicit MeasureProgLocal_c the access to private elements */
   friend class MeasureProgLocal_c;
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /** store the master value of the main programm
-      in anonymous union for dircet access to float or long
-      presentation
-  */
-  union {
-    int32_t mi32_masterVal;
-    float f_masterVal;
-  };
-
-  #ifdef USE_EEPROM_IO
-    /** the eeprom value can differ from main programm value
-      (if value from eeprom has been restored, if value has been
-      resetted); mi32_masterVal starts with 0, and can be
-      set disregarding any reset commands from remote;
-      stored in anonymous union for dircet access to float or long
-      presentation
-      */
-    union {
-      int32_t mi32_eepromVal;
-      float f_eepromVal;
-    };
-  #endif
-#else
   /** store the master value of the main programm */
   int32_t mi32_masterVal;
 
@@ -450,7 +384,6 @@ private:
       set disregarding any reset commands from remote */
     int32_t mi32_eepromVal;
   #endif
-#endif
 
 #ifdef USE_EEPROM_IO
   /** last time, where automatic value store was performed */

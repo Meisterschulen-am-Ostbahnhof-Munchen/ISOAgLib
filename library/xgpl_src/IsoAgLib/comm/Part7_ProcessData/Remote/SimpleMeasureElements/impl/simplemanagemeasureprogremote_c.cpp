@@ -112,6 +112,7 @@ SimpleManageMeasureProgRemote_c::SimpleManageMeasureProgRemote_c( const SimpleMa
   mi32_masterVal( acrc_src.mi32_masterVal )
 {
 }
+
 /** assignment operator */
 const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator=( const SimpleManageMeasureProgRemote_c& acrc_src )
 {
@@ -126,7 +127,6 @@ const SimpleManageMeasureProgRemote_c& SimpleManageMeasureProgRemote_c::operator
 */
 int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool ab_sendRequest)
 {
-  setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   if (ab_sendRequest) {
     // prepare general command in process pkg
@@ -138,6 +138,7 @@ int32_t SimpleManageMeasureProgRemote_c::masterMeasurementVal(bool ab_sendReques
   }
   return mi32_masterVal;
 }
+
 /**
   send reset cmd for the measurement value
 */
@@ -164,27 +165,6 @@ void SimpleManageMeasureProgRemote_c::resetMasterVal()
   #endif
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver actual measurement value as float
-  @param ab_sendRequest true -> request for new value is sent (optional, default false)
-*/
-float SimpleManageMeasureProgRemote_c::masterValFloat(bool ab_sendRequest)
-{
-  setValType(float_val);
-  ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::exactValue,
-                                                             ProcessCmd_c::requestValue);
-
-    c_base.sendValISOName(c_base.commanderISOName(), 0);
-  }
-  return f_masterVal;
-}
-#endif
-
 /** process a measure prog message for remote process data */
 void SimpleManageMeasureProgRemote_c::processProg()
 { // for simple measurement the message is process here
@@ -193,23 +173,14 @@ void SimpleManageMeasureProgRemote_c::processProg()
 
   if (c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
   {
-  #ifdef USE_FLOAT_DATA_TYPE
-    if ( ( c_pkg.valType() == float_val)
-      && ( f_masterVal != c_pkg.dataFloat() ) ) {
-      b_change = true;
-      f_masterVal = c_pkg.dataFloat();
-    }
-    else if ( mi32_masterVal != c_pkg.dataLong() ) {
-  #else
-    if ( mi32_masterVal != c_pkg.dataLong() ) {
-  #endif
-      mi32_masterVal = c_pkg.dataLong();
+    if ( mi32_masterVal != c_pkg.getValue() ) {
+      mi32_masterVal = c_pkg.getValue();
       b_change = true;
     }
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataLong(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.getValue(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
 }
 
 

@@ -140,13 +140,6 @@ public:
     send reset cmd for the measurement value
   */
   void resetMasterVal() { resetVal();};
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver actual measurement value as float
-    @param ab_sendRequest true -> request for new value is sent (optional, default false)
-  */
-  float masterValFloat(bool ab_sendRequest = false) { return valFloat( ab_sendRequest );};
-  #endif
 
   /**
     start a measuring programm
@@ -194,15 +187,7 @@ public:
     @return actual medium value
   */
   int32_t med(bool ab_sendRequest = false) const;
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver med val as float
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return actual medium value
-  */
-  float medFloat(bool ab_sendRequest = false) const;
-#endif
+
   /**
     deliver time of last receive of new measurement value
     (val, min, max, integ or med)
@@ -251,19 +236,6 @@ public:
     @return true -> command successful sent
   */
   virtual bool resetVal(int32_t ai32_val = 0);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set a new measure val
-    @param af_val new val received from remote system
-  */
-  virtual void setVal(float af_val);
-
-  /**
-    init element values
-    @param af_val starting measuring value
-  */
-  virtual void initVal(float af_val);
-#endif
 
   /**
     perform periodic actions --> stop measuring prog if isoName isn't active any more

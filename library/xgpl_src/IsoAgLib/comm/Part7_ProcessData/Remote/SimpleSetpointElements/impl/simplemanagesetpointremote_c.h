@@ -136,20 +136,6 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
     @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
   */
   void setSetpointMasterVal(int32_t ai32_val, bool ab_onlyStoreOnResponse = true);
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the actual master setpoint
-    @param ab_sendRequest true -> send request for actual value
-    @return setpoint value as float
-  */
-  float setpointMasterValFloat(bool ab_sendRequest = false);
-  /**
-    send a setpoint cmd with given exact setpoint
-    @param af_val commanded setpoint value as float
-    @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
-  */
-  void setSetpointMasterVal(float af_val, bool ab_onlyStoreOnResponse = true);
-  #endif
 
  private:
   /** processing of a setpoint message */
@@ -157,15 +143,7 @@ class SimpleManageSetpointRemote_c : public ProcessElementBase_c
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const SimpleManageSetpointRemote_c& acrc_src );
 
-  #ifdef USE_FLOAT_DATA_TYPE
-  /** define simple setpoint master value */
-  union {
-    int32_t mi32_setpointMasterVal;
-    float f_setpointMasterVal;
-  };
-  #else
   int32_t mi32_setpointMasterVal;
- #endif
 };
 
 }

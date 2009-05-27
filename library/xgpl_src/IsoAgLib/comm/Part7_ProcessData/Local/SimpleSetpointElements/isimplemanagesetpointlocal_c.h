@@ -79,29 +79,15 @@ class iSimpleManageSetpointLocal_c : public __IsoAgLib::SimpleManageSetpointLoca
     @return actual received setpoint value
   */
   int32_t setpointMasterVal() const
-    { return SimpleManageSetpointLocal_c::setpointMasterVal();};
-    #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @return actual received setpoint value
-  */
-  float setpointMasterValFloat() const
-    { return SimpleManageSetpointLocal_c::setpointMasterValFloat();};
-    #endif
+    { return SimpleManageSetpointLocal_c::setpointMasterVal(); }
+
   /**
     set the setpoint value
     @param ai32_val new setpoint value
   */
   void setSetpointMasterVal(int32_t ai32_val)
-    { SimpleManageSetpointLocal_c::setSetpointMasterVal( ai32_val );};
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the setpoint value as float value
-    @param af_val new setpoint value
-  */
-  void setSetpointMasterVal(float af_val)
-    { SimpleManageSetpointLocal_c::setSetpointMasterVal( af_val );};
-  #endif
+    { SimpleManageSetpointLocal_c::setSetpointMasterVal( ai32_val ); }
+
  private:
   friend class iProcDataLocal_c;
   friend class iProcDataLocalSimpleMeasure_c;

@@ -186,22 +186,6 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
      */
   bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /** send the given float value with variable ISOName ac_varISOName;
-    set the float value with conversion (according to central data type) in message
-    string and set data format flags corresponding to central data type of this process data
-    (other parameter fixed by ident of process data)
-    possible errors:
- * Err_c::elNonexistent one of resolved EMPF/SEND isn't registered with claimed address in Monitor
- * dependant error in CanIo_c on CAN send problems
-
-      @param ac_varISOName variable ISOName
-      @param ai32_val float value to send
-      @return true -> sendIntern set successful EMPF and SEND
-   */
-  bool sendValISOName(const IsoName_c& ac_varISOName, float af_val = 0.0F) const;
-#endif
-
 private: // Private methods
   void setRemoteSendFlags (const IsoName_c& ac_varISOName) const;
 

@@ -260,63 +260,6 @@ public:
   */
   int32_t accel() const {return mi32_accel;}
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    initialise the measure prog instance, to set this instance to a well defined starting condition
-    @param apc_processData optional reference to containing ProcDataBase_c instance (default NULL)
-    @param af_val optional individual measure val for this program instance (can differ from master measure value)
-    @param acrc_isoName optional ISOName of partner member for this measure program
-  */
-  void init(
-    ProcDataBase_c *const apc_processData,
-    float af_val,
-    const IsoName_c& acrc_isoName = IsoName_c::IsoNameUnspecified());
-
-  /**
-    deliver actual last received value
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return measure val for this prog (can differ from master measure val)
-  */
-  float valFloat(bool ab_sendRequest = false) const;
-
-  /**
-    deliver integ val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return integral val for this measure prog
-  */
-  float integFloat(bool ab_sendRequest = false) const;
-
-  /**
-    deliver min val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MIN val for this measure prog
-  */
-  float minFloat(bool ab_sendRequest = false) const;
-
-  /**
-    deliver max val
-    @param ab_sendRequest choose wether a request for value update should be
-        sent (default false == send no request)
-    @return MAX val for this measure prog
-  */
-  float maxFloat(bool ab_sendRequest = false) const;
-
-  /**
-    deliver the delta
-    @return:delta between the last two measure vals [1/sec]
-  */
-  float deltaFloat() const {return f_delta;}
-
-  /**
-    deliver the acceleration
-    @return acceleration calculated from the last delta values [1/(sec*sec)]
-  */
-  float accelFloat() const {return f_accel;}
-#endif
-
   /**
     return the mc_isoName code for this measureprog
     @return ISOName of this measureprog
@@ -363,14 +306,6 @@ public:
   */
   virtual bool resetVal(int32_t ai32_val = 0) = 0;
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    init the element vars with float value
-    @param af_val initial measure val
-  */
-  virtual void initVal(float af_val);
-#endif
-
   /**
     reset MIN (pure virtual function)
   */
@@ -386,14 +321,6 @@ public:
     @param ai32_val new measure value
   */
   virtual void setVal(int32_t ai32_val) = 0;
-
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set a new value (pure virtual function)
-    @param af_val new measure value
-  */
-  virtual void setVal(float af_val) = 0;
-#endif
 
   /**
     set the type of the active increment types
@@ -489,62 +416,10 @@ protected: // Protected methods
   */
   void setMax(int32_t ai32_val){mi32_max = ai32_val;}
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    internal increment the value
-    @param af_val increment for internal measure val
-  */
-  void incrVal(float af_val){f_val += af_val;}
-
-  /**
-    set min val
-    @param af_val new MIN value
-  */
-  void setMin(float af_val){f_min = af_val;}
-
-  /**
-    set max val
-    @param af_val new MAN value
-  */
-  void setMax(float af_val){f_max = af_val;}
-
-#endif
 
 protected: // Protected attributes
   /**  last time were value was set */
   int32_t mi32_lastTime;
-#ifdef USE_FLOAT_DATA_TYPE
-  union {
-    /** actual value
-        (can differ from masterVal if f.e. value of this program
-        was resetted by caller)
-    */
-    int32_t mi32_val;
-    /** actual value as float representation
-        (can differ from masterVal if f.e. value of this program
-        was resetted by caller)
-    */
-    float f_val;
-  };
-
-  union {
-    /** calculated delta value between actual and last val */
-    int32_t mi32_delta;
-    /** calculated delta value between actual and last val */
-    float f_delta;
-  };
-
-  union {
-    /** acceleration between values
-        (= delta between last i32_deltaVal and actual i32_deltaVal)
-    */
-    int32_t mi32_accel;
-    /** acceleration between values
-        (= delta between last f_deltaVal and actual f_deltaVal)
-    */
-    float f_accel;
-  };
-#else
 
   /** actual value
       (can differ from masterVal if f.e. value of this program
@@ -559,7 +434,6 @@ protected: // Protected attributes
       (= delta between last i32_deltaVal and actual i32_deltaVal)
   */
   int32_t mi32_accel;
-#endif
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -579,15 +453,6 @@ private: // Private methods
   */
   int32_t valForGroup(ProcessCmd_c::ValueGroup_t en_valueGroup) const;
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver value according measure value group
-    @param en_valueGroup of wanted subtype
-    @return value of specified subtype
-  */
-  float valForGroupFloat(ProcessCmd_c::ValueGroup_t en_valueGroup) const;
-#endif
-
   /**
     process a message with an increment for a measuring program
 
@@ -598,30 +463,6 @@ private: // Private methods
   void processIncrementMsg(Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
 private: // Private attributes
-#ifdef USE_FLOAT_DATA_TYPE
-  union {
-    /**
-      minimum value (only defined if one proportional prog is active)
-    */
-    int32_t mi32_min;
-    /**
-      minimum value (only defined if one proportional prog is active)
-    */
-    float f_min;
-  };
-
-  union {
-    /**
-      maximum value (only defined if one proportional prog is active)
-    */
-    int32_t mi32_max;
-    /**
-      maximum value (only defined if one proportional prog is active)
-    */
-    float f_max;
-  };
-
-#else
 
   /**
     minimum value (only defined if one proportional prog is active)
@@ -632,8 +473,6 @@ private: // Private attributes
     maximum value (only defined if one proportional prog is active)
   */
   int32_t mi32_max;
-
-#endif
 
   /** dynamic array for subprogs */
   Vec_MeasureSubprog mvec_measureSubprog;

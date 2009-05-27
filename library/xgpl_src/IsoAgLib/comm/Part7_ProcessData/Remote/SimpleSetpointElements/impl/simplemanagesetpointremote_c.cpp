@@ -107,12 +107,14 @@ void SimpleManageSetpointRemote_c::init( ProcDataBase_c *const apc_processData )
   ProcessElementBase_c::set( apc_processData );
     mi32_setpointMasterVal = 0;
 }
+
 /** copy constructor */
 SimpleManageSetpointRemote_c::SimpleManageSetpointRemote_c( const SimpleManageSetpointRemote_c& acrc_src )
 : ProcessElementBase_c( acrc_src )
 {
   assignFromSource( acrc_src );
 }
+
 /** assignment operator */
 const SimpleManageSetpointRemote_c& SimpleManageSetpointRemote_c::operator=( const SimpleManageSetpointRemote_c& acrc_src )
 {
@@ -138,23 +140,8 @@ void SimpleManageSetpointRemote_c::processSetpoint()
     switch (c_pkg.mc_processCmd.getValueGroup())
     {
       case ProcessCmd_c::exactValue: // exact setpoint
-        #ifdef USE_FLOAT_DATA_TYPE
-        if (c_pkg.valType() == float_val)
-        {
-          if ( f_setpointMasterVal != c_pkg.dataFloat() ) {
-            f_setpointMasterVal = c_pkg.dataFloat();
-          }
-          // check for Fendt Reset Cmd
-          setValType(float_val);
-        }
-        else
-        #endif
-        {
-          if ( mi32_setpointMasterVal != c_pkg.dataLong() ) {
-            mi32_setpointMasterVal = c_pkg.dataLong();
-          }
-          // check for Fendt Reset Cmd
-          setValType(i32_val);
+        if ( mi32_setpointMasterVal != c_pkg.getValue() ) {
+          mi32_setpointMasterVal = c_pkg.getValue();
         }
         break;
       default:
@@ -163,11 +150,9 @@ void SimpleManageSetpointRemote_c::processSetpoint()
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), processData().pkgDataLong(), c_pkg.memberSend().isoName().toConstIisoName_c() );
+      processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), processData().getPkgValue(), c_pkg.memberSend().isoName().toConstIisoName_c() );
   }
 }
-
-
 
 
 /**
@@ -177,7 +162,6 @@ void SimpleManageSetpointRemote_c::processSetpoint()
 */
 int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool ab_sendRequest)
 {
-  setValType(i32_val);
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
   if (ab_sendRequest) {
     // prepare general command in process pkg
@@ -190,6 +174,7 @@ int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool ab_sendRequest)
   return mi32_setpointMasterVal;
 }
 
+
 /**
   send a setpoint cmd with given exact setpoint
   @param ai32_val commanded setpoint value as long
@@ -198,7 +183,6 @@ int32_t SimpleManageSetpointRemote_c::setpointMasterVal(bool ab_sendRequest)
 void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ai32_val, bool ab_onlyStoreOnResponse)
 {
   ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  setValType(i32_val);
 
   // prepare general command in process pkg
   getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
@@ -208,44 +192,6 @@ void SimpleManageSetpointRemote_c::setSetpointMasterVal(int32_t ai32_val, bool a
   c_base.sendValISOName(c_base.commanderISOName(), ai32_val);
   if (!ab_onlyStoreOnResponse) mi32_setpointMasterVal = ai32_val;
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  deliver the actual master setpoint
-  @param ab_sendRequest true -> send request for actual value
-  @return setpoint value as float
-*/
-float SimpleManageSetpointRemote_c::setpointMasterValFloat(bool ab_sendRequest)
-{
-  ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  setValType(float_val);
-  if (ab_sendRequest) {
-    // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
-                                                             ProcessCmd_c::exactValue,
-                                                             ProcessCmd_c::requestValue);
-
-    c_base.sendValISOName(c_base.commanderISOName(), int32_t(0));
-  }
-  return f_setpointMasterVal;
-}
-/**
-  send a setpoint cmd with given exact setpoint
-  @param af_val commanded setpoint value as float
-  @param ab_onlyStoreOnResponse true -> the given value is only stored if response arrives
-*/
-void SimpleManageSetpointRemote_c::setSetpointMasterVal(float af_val, bool ab_onlyStoreOnResponse)
-{
-  ProcDataRemoteBase_c& c_base = static_cast<ProcDataRemoteBase_c&>(processData());
-  setValType(float_val);
-  // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
-                                                           ProcessCmd_c::exactValue,
-                                                           ProcessCmd_c::setValue);
-
-  c_base.sendValISOName(c_base.commanderISOName(), af_val);
-  if (!ab_onlyStoreOnResponse) f_setpointMasterVal = af_val;
-}
-#endif
 
 
 } // end of namespace __IsoAgLib

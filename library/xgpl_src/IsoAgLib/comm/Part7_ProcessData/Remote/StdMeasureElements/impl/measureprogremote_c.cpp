@@ -397,7 +397,8 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
   process msg;
   @return true -> msg is already complete edited
 */
-bool MeasureProgRemote_c::processMsg(){
+bool MeasureProgRemote_c::processMsg()
+{
   bool b_result = MeasureProgBase_c::processMsg();
   // call base function - if base function returns true, nothing else must be done
   if (!b_result)
@@ -409,8 +410,8 @@ bool MeasureProgRemote_c::processMsg(){
     // ISO: cmd() == 3;
     if (    c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue
          &&
-            (     c_pkg.memberEmpf().itemState(IState_c::Local)
-              ||( mb_receiveForeignMeasurement)
+            (    (c_pkg.receiverItem() && c_pkg.receiverItem()->itemState(IState_c::Local))
+              || (mb_receiveForeignMeasurement)
             )
        )
     { // write -> data from remote process data
@@ -425,74 +426,43 @@ bool MeasureProgRemote_c::processMsg(){
   set according to values of the package the accoring value
   (uses function, wich converts if needed)
 */
-void MeasureProgRemote_c::setValFromPkg(){
+void MeasureProgRemote_c::setValFromPkg()
+{
   // convert the value if wanted
   // set timestamp of last measurement receive
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
+  if (c_pkg.senderItem() == NULL)
+  { // sender with SA 0xFE not of interest
+    return;
+  }
+
   mi32_lastMeasureReceive = c_pkg.time();
 
   bool b_change = false;
 
-#ifdef USE_FLOAT_DATA_TYPE
-  if (processData().valType() != float_val)
+  const int32_t i32_new_val = c_pkg.getValue();
+
+  switch (c_pkg.mc_processCmd.getValueGroup())
   {
-#endif
-
-    // get the int32_t data val; let it convert, if needed
-    const int32_t i32_new_val = c_pkg.dataLong();
-
-    switch (c_pkg.mc_processCmd.getValueGroup())
-    {
-      case ProcessCmd_c::exactValue: // msg contains measured val
-        // set val with function, to calc delta and accel
-        if ( val() != i32_new_val ) b_change = true;
-        setVal(i32_new_val);
-        break;
-      case ProcessCmd_c::minValue: // msg contains MIN val
-        if ( min() != i32_new_val ) b_change = true;
-        setMin(i32_new_val);
-        break;
-      case ProcessCmd_c::maxValue: // msg contains MAX val
-        if ( max() != i32_new_val ) b_change = true;
-        setMax(i32_new_val);
-        break;
-      default: ;
-    }
-
-    // call handler function if handler class is registered
-    if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
-
-#ifdef USE_FLOAT_DATA_TYPE
+    case ProcessCmd_c::exactValue: // msg contains measured val
+      // set val with function, to calc delta and accel
+      if ( val() != i32_new_val ) b_change = true;
+      setVal(i32_new_val);
+      break;
+    case ProcessCmd_c::minValue: // msg contains MIN val
+      if ( min() != i32_new_val ) b_change = true;
+      setMin(i32_new_val);
+      break;
+    case ProcessCmd_c::maxValue: // msg contains MAX val
+      if ( max() != i32_new_val ) b_change = true;
+      setMax(i32_new_val);
+      break;
+    default: ;
   }
-  else
-  {
-    // get the int32_t data val; let it convert, if needed
-    float f_new_val = processData().pkgDataFloat();
-    switch (c_pkg.mc_processCmd.getValueGroup())
-    {
-      case ProcessCmd_c::exactValue: // msg contains measured val
-        // set val with function, to calc delta and accel
-        if ( valFloat() != f_new_val ) b_change = true;
-        setVal(f_new_val);
-        break;
-      case ProcessCmd_c::minValue: // msg contains MIN val
-        if ( minFloat() != f_new_val ) b_change = true;
-        setMin(f_new_val);
-        break;
-      case ProcessCmd_c::maxValue: // msg contains MAX val
-        if ( maxFloat() != f_new_val ) b_change = true;
-        setMax(f_new_val);
-        break;
-      default: ;
-    }
 
-    // call handler function if handler class is registered
-    if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), c_pkg.dataFloat(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
-
-  }
-#endif
+  // call handler function if handler class is registered
+  if ( processDataConst().getProcessDataChangeHandler() != NULL )
+    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, c_pkg.senderItem()->isoName().toConstIisoName_c(), b_change );
 }
 
 /**
@@ -556,40 +526,6 @@ bool MeasureProgRemote_c::resetVal(int32_t ai32_val){
   return processData().sendValISOName(isoName(), ai32_val);
 }
 
-#ifdef USE_FLOAT_DATA_TYPE
-
-/**
-  set a new measure val
-  @param af_val new val received from remote system
-*/
-void MeasureProgRemote_c::setVal(float af_val){
-  int32_t i32_time =  System_c::getTime();
-  int32_t i32_timeDelta = i32_time - mi32_lastTime;
-  mi32_lastTime = i32_time;
-
-  float f_incr =  af_val - valFloat();
-  float f_oldDelta = f_delta;
-  // claculate delta and accel in 1/s
-  if (i32_timeDelta > 0)
-  {
-    f_delta = (f_incr / (float)i32_timeDelta) * 1000.0F;
-    f_accel = ((f_delta - f_oldDelta) / (float)i32_timeDelta) * 1000.0F;
-  }
-
-  // set the val
-  f_val = af_val;
-}
-
-/**
-  init element values
-  @param af_val starting measuring value
-*/
-void MeasureProgRemote_c::initVal(float af_val){
-  //first call base function
-  MeasureProgBase_c::initVal(af_val);
-
-}
-#endif
 
 /**
   perform periodic actions --> stop measuring prog if isoName isn't active any more

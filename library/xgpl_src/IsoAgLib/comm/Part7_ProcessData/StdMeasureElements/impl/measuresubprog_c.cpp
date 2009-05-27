@@ -114,25 +114,7 @@ MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren
   men_doSend( ren_doSend )
 {
 }
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  default constructor which can optionally set increment type, increment and running state
-  @param ren_type optional increment type (default time proportional)
-  @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-  @param af_increment increment value of ren_type
-  @param ab_started optional running state (default off)
-  @param af_lastVal optional value of last trigger event (default 0)
-*/
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-: ClientBase( SINGLETON_VEC_KEY_PARAMETER_USE ),
-  f_lastVal( 0.0 ),
-  f_increment( af_increment ),
-  mb_started( false ),
-  men_type( ren_type ),
-  men_doSend( ren_doSend )
-{
-}
-#endif
+
 /**
   operator= for Subprogs
   @param acrc_src source instance
@@ -242,40 +224,6 @@ int32_t MeasureSubprog_c::nextTriggerTime(int32_t ai32_val)
   }
 }
 
-
-#ifdef USE_FLOAT_DATA_TYPE
-/**
-  start a measuring subprogramm, potentially with increment and lastVal definition
-  @param af_increment increment value
-  @param af_lastVal last trigger value (default 0)
-*/
-void MeasureSubprog_c::start(float af_increment, float af_lastVal)
-{ // if wanted store given values (in both cases 0 is interpreted as not wanted)
-  if (af_increment != 0) f_increment = af_increment;
-  if (af_lastVal != 0) f_lastVal = af_lastVal;
-
-  // register as started
-  mb_started = true;
-}
-/**
-  delivers if given value forces trigger of send of registered informations
-  @param af_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
-  @return true -> this subprog triggers (e.g. send actual value)
-*/
-bool MeasureSubprog_c::updateTrigger(float af_val)
-{
-  if ( ( ( af_val > f_lastVal ) && ( ( af_val - f_lastVal) >= f_increment ) )
-    || ( ( af_val < f_lastVal ) && ( ( f_lastVal - af_val) >= f_increment ) ) )
-  {
-    f_lastVal = af_val;
-    return true;
-  }
-  else
-  {
-    return false;
-  }
-}
-#endif
 
 /**
   calculate a single identifying value for easier compare of Subprogs

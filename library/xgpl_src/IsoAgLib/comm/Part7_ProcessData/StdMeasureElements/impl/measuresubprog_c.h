@@ -113,17 +113,7 @@ public:
     @param ai32_lastVal optional value of last trigger event (default 0)
   */
   MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0  SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    default constructor which can optionally set increment type, increment and running state
-    @param ren_type increment type
-    @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
-    @param af_increment increment value of ren_type
-    @param ab_started optional running state (default off)
-    @param af_lastVal optional value of last trigger event (default 0)
-  */
-  MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, float af_increment  SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
-#endif
+
   /**
     operator= for Subprogs
     @param acrc_src source instance
@@ -188,31 +178,6 @@ public:
 
   int32_t nextTriggerTime(int32_t ai32_val);
 
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    deliver the increment value of this subprog
-    @return increment value
-  */
-  float incrementFloat() const {return f_increment;};
-  /**
-    set increment value
-    @param ai32_val wanted increment value
-  */
-  void setIncrement(float af_val){f_increment = af_val;};
-
-  /**
-    start a measuring subprogramm, potentially with increment and lastVal definition
-    @param af_increment increment value
-    @param af_lastVal last trigger value (default 0)
-  */
-  void start(float af_increment, float af_lastVal = 0);
-  /**
-    delivers if given value forces trigger of send of registered informations
-    @param af_val actual increment relevant value (time for TimeProp, distance for DistProp, ...)
-    @return true -> this subprog triggers (e.g. send actual value)
-  */
-  bool updateTrigger(float af_val);
-#endif
   /** stop a measuring subprogram  */
   void stop(){mb_started = false;};
 
@@ -290,25 +255,12 @@ public:
   */
   bool operator>=(Proc_c::type_t ren_type)const;
 
-
 private: // Private attributes
-#ifdef USE_FLOAT_DATA_TYPE
-  /** last value for the increment test of this instance */
-  union {
-  int32_t mi32_lastVal;
-  float f_lastVal;
-  };
-  /** increment of this subprog item */
-  union {
-  int32_t mi32_increment;
-  float f_increment;
-  };
-#else
   /** last value for the increment test of this instance */
   int32_t mi32_lastVal;
   /** increment of this subprog item */
   int32_t mi32_increment;
-#endif
+
   /** states if this subprog is started */
   bool mb_started;
   /** type of this subprog instance
@@ -316,12 +268,13 @@ private: // Private attributes
   */
   Proc_c::type_t men_type;
   Proc_c::doSend_t men_doSend;
+
 private: // Private methods
   /**
     calculate a single identifying value for easier compare of Subprogs
     @return single value for comparison of Subprogs
   */
-  int32_t calcCompVal()const;
+  int32_t calcCompVal() const;
 };
 
 }

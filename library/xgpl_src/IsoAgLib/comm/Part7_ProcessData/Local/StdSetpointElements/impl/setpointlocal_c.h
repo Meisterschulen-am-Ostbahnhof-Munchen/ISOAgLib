@@ -194,21 +194,6 @@ public:
     { if (!existMaster()) setStaticMaster();
       setMasterMeasurementVal( ai32_val );
     };
-  #ifdef USE_FLOAT_DATA_TYPE
-  /**
-    retreive simple master setpoint
-    @return actual received setpoint value (calculated with setpoint )
-  */
-  float setpointMasterValFloat() const {return mpc_master->exactFloat();};
-  /**
-    set the setpoint value as float value
-    @param af_val new setpoint value
-  */
-  void setSetpointMasterVal( float af_val )
-    { if (!existMaster()) setStaticMaster();
-      setMasterMeasurementVal( af_val );
-    };
-  #endif
 
   /**
     set if master setpoint should be preserved even if caller
@@ -274,15 +259,7 @@ public:
     @param ai32_val wanted setpoint value
   */
   void setMasterMeasurementVal( int32_t ai32_val );
-#ifdef USE_FLOAT_DATA_TYPE
-  /**
-    set the master setpoint manually
-    (in some cases remote systems request informations
-     through process data setpoints )
-    @param af_val wanted setpoint value
-  */
-  void setMasterMeasurementVal( float af_val );
-#endif
+
   /**
     deliver the count of unhandled setpoints
     @return count of unhandled received setpoints
