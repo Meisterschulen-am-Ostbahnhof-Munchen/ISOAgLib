@@ -89,7 +89,7 @@
 
 #include "rs232io_c.h"
 
-#if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
+#if (defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__))  || defined( __TMS320C2000__ )
 // #if 0
   #define isspace(_c) ((_c)&(0x1|0x4|'\r'|'\n'))
 #else

@@ -351,32 +351,32 @@ typedef struct
     /** deliver explicit information whether front PTO is engaged
       * @return IsoActive -> PTO is engaged
       */
-    IsoAgLib::IsoActiveFlag_t ptoFrontEngaged() const { return mt_ptoFront.t_ptoEngaged;}
+    IsoAgLib::IsoActiveFlag_t ptoFrontEngaged() const { return static_cast<IsoAgLib::IsoActiveFlag_t>(mt_ptoFront.t_ptoEngaged);}
 
     /** deliver explicit information whether rear PTO is engaged
       * @return IsoActive -> PTO is engaged
       */
-    IsoAgLib::IsoActiveFlag_t ptoRearEngaged() const { return mt_ptoRear.t_ptoEngaged;}
+    IsoAgLib::IsoActiveFlag_t ptoRearEngaged() const { return static_cast<IsoAgLib::IsoActiveFlag_t>(mt_ptoRear.t_ptoEngaged);}
 
     /** deliver std RPM of front PTO (1000 n/min; 540 n/min)
       * @return IsoActive == 1000 n/min; false == 540 n/min
       */
-    IsoAgLib::IsoActiveFlag_t ptoFront1000() const { return mt_ptoFront.t_pto1000;}
+    IsoAgLib::IsoActiveFlag_t ptoFront1000() const { return static_cast<IsoAgLib::IsoActiveFlag_t>(mt_ptoFront.t_pto1000);}
 
     /** deliver std RPM of rear PTO (1000 n/min; 540 n/min)
       * @return IsoActive == 1000 n/min; false == 540 n/min
       */
-    IsoAgLib::IsoActiveFlag_t ptoRear1000() const { return mt_ptoRear.t_pto1000;}
+    IsoAgLib::IsoActiveFlag_t ptoRear1000() const { return static_cast<IsoAgLib::IsoActiveFlag_t>(mt_ptoRear.t_pto1000);}
 
     /** deliver economy mode of front PTO
       * @return IsoActive -> front PTO is in economy mode
       */
-    IsoAgLib::IsoActiveFlag_t ptoFrontEconomy() const { return mt_ptoFront.t_ptoEconomy;}
+    IsoAgLib::IsoActiveFlag_t ptoFrontEconomy() const { return static_cast<IsoAgLib::IsoActiveFlag_t>(mt_ptoFront.t_ptoEconomy);}
 
     /** deliver economy mode of rear PTO
       * @return IsoActive -> rear PTO is in economy mode
       */
-    IsoAgLib::IsoActiveFlag_t ptoRearEconomy() const { return mt_ptoRear.t_ptoEconomy;}
+    IsoAgLib::IsoActiveFlag_t ptoRearEconomy() const { return static_cast<IsoAgLib::IsoActiveFlag_t>(mt_ptoRear.t_ptoEconomy);}
 
     /** get measured value of the set point of the rotational speed of the front power take-off (PTO) output shaft
         @return measured value of the set point [1RPM]
@@ -401,37 +401,37 @@ typedef struct
     /** get reported tractor ECU's status of front engagement
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t frontPtoEngagementReqStatus() const {return mt_ptoFront.t_ptoEngagementReqStatus;}
+    IsoAgLib::IsoReqFlag_t frontPtoEngagementReqStatus() const {return static_cast<IsoAgLib::IsoReqFlag_t>(mt_ptoFront.t_ptoEngagementReqStatus);}
 
     /** get reported tractor ECU's status of rear engagement
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t rearPtoEngagementReqStatus() const {return mt_ptoRear.t_ptoEngagementReqStatus;}
+    IsoAgLib::IsoReqFlag_t rearPtoEngagementReqStatus() const {return static_cast<IsoAgLib::IsoReqFlag_t>(mt_ptoRear.t_ptoEngagementReqStatus);}
 
     /** get reported tractor ECU's status of front mode
          @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t frontPtoModeReqStatus() const {return mt_ptoFront.t_ptoModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t frontPtoModeReqStatus() const {return static_cast<IsoAgLib::IsoReqFlag_t>(mt_ptoFront.t_ptoModeReqStatus);}
 
     /** get reported tractor ECU's status of rear mode
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t rearPtoModeReqStatus() const {return mt_ptoRear.t_ptoModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t rearPtoModeReqStatus() const {return static_cast<IsoAgLib::IsoReqFlag_t>(mt_ptoRear.t_ptoModeReqStatus);}
 
     /** get reported tractor ECU's status of front economy mode
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t frontPtoEconomyModeReqStatus() const {return mt_ptoFront.t_ptoEconomyModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t frontPtoEconomyModeReqStatus() const {return static_cast<IsoAgLib::IsoReqFlag_t>(mt_ptoFront.t_ptoEconomyModeReqStatus);}
 
     /** get reported tractor ECU's status of rear economy mode
         @return  reported status
       */
-    IsoAgLib::IsoReqFlag_t rearPtoEconomyModeReqStatus()const {return mt_ptoRear.t_ptoEconomyModeReqStatus;}
+    IsoAgLib::IsoReqFlag_t rearPtoEconomyModeReqStatus()const {return static_cast<IsoAgLib::IsoReqFlag_t>(mt_ptoRear.t_ptoEconomyModeReqStatus);}
 
     /** get present limit status of front pto shaft speed
         @return  present limit status
       */
-    IsoAgLib::IsoLimitFlag_t frontPtoShaftSpeedLimitStatus() const {return mt_ptoFront.t_ptoShaftSpeedLimitStatus;}
+    IsoAgLib::IsoLimitFlag_t frontPtoShaftSpeedLimitStatus() const {return static_cast<IsoAgLib::IsoLimitFlag_t>(mt_ptoFront.t_ptoShaftSpeedLimitStatus);}
 
     /** get present limit status of rear pto shaft speed
         @return  present limit status
@@ -441,7 +441,7 @@ typedef struct
     virtual const char* getTaskName() const;
 
 
- IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return mt_ptoRear.t_ptoShaftSpeedLimitStatus;}
+ IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return static_cast<IsoAgLib::IsoLimitFlag_t>(mt_ptoRear.t_ptoShaftSpeedLimitStatus);}
     /*@}*/
 
   private:
