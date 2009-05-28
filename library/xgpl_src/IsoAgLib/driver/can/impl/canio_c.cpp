@@ -1612,8 +1612,12 @@ void CanIo_c::CheckSetCntMsgObj()
 {
   // set i16_minDistance to the max possible bit difference
   // => amount of bits in data type for ident
-  int16_t i16_minDistance = sizeof(MASK_TYPE)*8,
-      i16_tempDist;
+#ifdef NO_8BIT_CHAR_TYPE
+  int16_t i16_minDistance = sizeof(MASK_TYPE)*16;
+#else
+  int16_t i16_minDistance = sizeof(MASK_TYPE)*8;
+#endif
+  int16_t i16_tempDist;
   // maxHALMsgObjNr() delivers also the special lastMsgObj, which cannot be used for normal receiveMsgObj
   // ==> subtract from (max - min + 1 ) again one item
   uint8_t ui8_allowedSize = maxHALMsgObjNr() - minReceiveObjNr() + 1 - 1;
@@ -1701,13 +1705,17 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
       // update the filters in the filters in the existing MsgObj_c to the changed mask
       for (ArrMsgObj::iterator c_iter = marr_msgObj.begin(); c_iter != marr_msgObj.end(); c_iter++)
       {
-        c_iter->updateFilterWithMask( *pc_useGlobalMask );
+        (*c_iter).updateFilterWithMask( *pc_useGlobalMask );
       }
 
 
       // reset search arguments for posible next search
       pc_minRight = pc_minLeft = marr_msgObj.begin();
+#ifdef NO_8BIT_CHAR_TYPE
+      i16_minDistance = sizeof(MASK_TYPE)*16;
+#else
       i16_minDistance = sizeof(MASK_TYPE)*8;
+#endif
     }
   }
 

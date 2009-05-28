@@ -201,7 +201,12 @@ uint16_t sizeVectorTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_capacity );
 /** convert little endian byte string into an unsigned variable */
 template<class T> void convertLittleEndianString( const uint8_t* apui8_src, T& r_result )
 {
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(NO_8BIT_CHAR_TYPE)
+  for ( int ind = sizeof(T)*2-1; ind >= 0; ind-- )
+  {
+    r_result |= (T(apui8_src[ind] & 0xFF) << (8*ind));
+  }
+  #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   CNAMESPACE::memcpy( &r_result, apui8_src, sizeof(T) );
   #else
   for ( int ind = sizeof(T)-1; ind >= 0; ind-- )
@@ -230,7 +235,14 @@ float convertLittleEndianStringFloat( const uint8_t* apui8_src );
 /** convert number reference variable to little endian byte string */
 template<class T> void numberRef2LittleEndianString( const T& acrc_src, uint8_t* pui8_target )
 {
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(NO_8BIT_CHAR_TYPE)
+  const unsigned int BitSize = sizeof(T) * 16;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+   *pui8_target = ((acrc_src >> ind) & 0xFF);
+    pui8_target++;
+  }
+  #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   CNAMESPACE::memcpy( pui8_target, &acrc_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
@@ -244,7 +256,14 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, uint8_t*
 /** convert number call-by-val variable to little endian byte string */
 template<class T> void number2LittleEndianString( const T at_src, uint8_t* pui8_target )
 {
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(NO_8BIT_CHAR_TYPE)
+  const unsigned int BitSize = sizeof(T) * 16;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+   *pui8_target = ((at_src >> ind) & 0xFF);
+    pui8_target++;
+  }
+  #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   CNAMESPACE::memcpy( pui8_target, &at_src, sizeof(T) );
   #else
   const unsigned int BitSize = sizeof(T) * 8;
@@ -262,7 +281,13 @@ template<class T> void number2LittleEndianString( const T at_src, uint8_t* pui8_
 */
 template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAMESPACE::vector<uint8_t>& acrc_target )
 {
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(NO_8BIT_CHAR_TYPE)
+  const unsigned int BitSize = sizeof(T) * 16;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    acrc_target.push_back((acrc_src >> ind) & 0xFF);
+  }
+#elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   const uint8_t* pui8_src = &acrc_src;
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
@@ -282,7 +307,13 @@ template<class T> void numberRef2LittleEndianString( const T& acrc_src, STL_NAME
 */
 template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE::vector<uint8_t>& rc_target )
 {
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(NO_8BIT_CHAR_TYPE)
+  const unsigned int BitSize = sizeof(T) * 16;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    rc_target.push_back((at_src >> ind) & 0xFF);
+  }
+#elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   const uint8_t* pui8_src = (const uint8_t*)(&at_src);
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
@@ -303,7 +334,14 @@ template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE:
 */
 template<class T> void number2LittleEndianString( const T at_src, STL_NAMESPACE::vector<uint8_t>& rc_target, uint16_t aui16_bytePos)
 {
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(NO_8BIT_CHAR_TYPE)
+  const unsigned int BitSize = sizeof(T) * 16;
+  for ( unsigned int ind = 0; ( ind < BitSize ); ind += 8 )
+  {
+    rc_target[ aui16_bytePos ] = (at_src >> ind) & 0xFF;
+    aui16_bytePos++;
+  }
+#elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
   const uint8_t* pui8_src = (const uint8_t*)(&at_src);
   const unsigned int size = sizeof(T);
   for ( unsigned int ind = 0; ind < size; ind++ )
@@ -354,7 +392,11 @@ class Flexible4ByteString_c {
 
  public:
   Flexible4ByteString_c( const Flexible4ByteString_c& acrc_src )
+  #ifndef NO_8BIT_CHAR_TYPE
   {uint32[0] = acrc_src.uint32[0];};
+  #else
+  {for (uint8_t index = 0; index < 4; index++) uint8[index] = acrc_src.uint8[index];};
+  #endif
 
   /**
     simply set a Flexible4ByteString_c at a specific value index with.
@@ -385,19 +427,43 @@ class Flexible4ByteString_c {
 
   /** assignment */
   const Flexible4ByteString_c& operator=( const Flexible4ByteString_c& acrc_src )
-  { uint32[0] = acrc_src.uint32[0]; return *this; };
+  {
+  #ifndef NO_8BIT_CHAR_TYPE  
+    uint32[0] = acrc_src.uint32[0]; 
+  #else
+    for (uint8_t index = 0; index < 4; index++)
+      uint8[index] = acrc_src.uint8[index];
+  #endif
+    return *this; 
+  };
   /** compare for EQUAL */
   bool operator==( const Flexible4ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
+  #ifndef NO_8BIT_CHAR_TYPE
     return ( uint32[0] == acrc_cmp.uint32[0] )?true:false;
+  #else
+    for (uint8_t index = 0; index < 4; index++)
+      if ( uint8[index] != acrc_cmp.uint8[index] )
+        return false;
+
+    return true;
+  #endif
   };
   /** compare for DIFFERENT */
   bool operator!=( const Flexible4ByteString_c& acrc_cmp ) const
   {
+  #ifndef NO_8BIT_CHAR_TYPE
     return ( uint32[0] != acrc_cmp.uint32[0] )?true:false;
+  #else
+    for (uint8_t index = 0; index < 4; index++)
+      if ( uint8[index] != acrc_cmp.uint8[index] )
+        return true;
+
+    return false;
+  #endif
   };
 
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   /** compare for LOWER */
   bool operator<( const Flexible4ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
@@ -459,7 +525,7 @@ class Flexible4ByteString_c {
   */
   uint8_t getUint8Data(uint8_t aui8_pos) const {return uint8[aui8_pos];};
 
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   /**
     set an uint16_t value at specified position in string.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -546,7 +612,7 @@ class Flexible4ByteString_c {
     @param aui32_val uint32_t value to set
   */
   void setUint32Data( uint32_t aui32_val)
-    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
     { uint32[0] = aui32_val;};
     #else
     {numberRef2LittleEndianString( aui32_val, uint8 );};
@@ -555,7 +621,7 @@ class Flexible4ByteString_c {
     @param ai32_val int32_t value to set
   */
   void setInt32Data( int32_t ai32_val)
-    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
     { int32[0] = ai32_val;};
     #else
     {numberRef2LittleEndianString( ai32_val, uint8 );};
@@ -565,7 +631,7 @@ class Flexible4ByteString_c {
     @return uint32_t balue in CAN data string at pos aui32_pos
   */
   uint32_t getUint32Data() const
-    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
     {return uint32[0];};
     #else
     { return convertLittleEndianStringUi32(uint8);};
@@ -574,7 +640,7 @@ class Flexible4ByteString_c {
     @return int32_t balue in CAN data string at pos aui32_pos
   */
   int32_t getInt32Data() const
-    #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+    #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
     {return int32[0];};
     #else
     { return convertLittleEndianStringI32(uint8);};
@@ -584,10 +650,12 @@ class Flexible4ByteString_c {
   union {
     uint8_t  uint8 [4];
     int8_t    int8 [4];
+#ifndef NO_8BIT_CHAR_TYPE
     uint16_t uint16[2];
     int16_t   int16[2];
     uint32_t uint32[1];
     int32_t   int32[1];
+#endif
   };
 };
 
@@ -742,7 +810,7 @@ class Flexible8ByteString_c {
    */
   void setFloatData(uint8_t aui8_pos, const float af_val);
 
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   /**
     set an uint16_t value at specified position in string.
     IMPORTANT: position 0 matches to the least significant byte,
@@ -911,14 +979,18 @@ class Flexible8ByteString_c {
     @return Flexible4ByteString_c balue in CAN data string at pos aui16_pos
   */
   void setFlexible4DataValueInd(uint8_t aui8_ind, const Flexible4ByteString_c& ac_value )
+#ifndef NO_8BIT_CHAR_TYPE
     {uint32[aui8_ind] = ac_value.uint32[0];};
-
+#else
+    {for (uint8_t index = 0; index < 4; index++) uint8[4*aui8_ind+index] = ac_value.uint8[index];};
+#endif
 
 
   /** define the values as anonymous union */
   union {
     uint8_t  uint8 [8];
     int8_t    int8 [8];
+#ifndef NO_8BIT_CHAR_TYPE
     uint16_t uint16[4];
     int16_t   int16[4];
     uint32_t uint32[2];
@@ -927,6 +999,7 @@ class Flexible8ByteString_c {
     uint64_t uint64[1];
     int64_t   int64[1];
     #endif
+#endif
   };
 };
 

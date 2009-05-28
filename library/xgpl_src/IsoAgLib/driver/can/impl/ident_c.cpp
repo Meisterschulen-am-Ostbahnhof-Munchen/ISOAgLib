@@ -103,7 +103,10 @@ namespace __IsoAgLib
     @param acrc_src source Ident_c instance
   */
   Ident_c::Ident_c(const Ident_c& acrc_src)
-    {CNAMESPACE::memcpy(this, &acrc_src, sizeof(Ident_c));}
+  {
+    t_ident = acrc_src.t_ident;
+    data = acrc_src.data;
+  }
 
   /** destructor which has nothing to do */
   Ident_c::~Ident_c()
@@ -144,16 +147,8 @@ namespace __IsoAgLib
   */
   void Ident_c::set(uint8_t ab_val, uint8_t ab_pos, identType_t ren_identType)
   {
-#if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
-    pb_ident[ab_pos] = ab_val;
-#elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
-    pb_ident[sizeof(MASK_TYPE) - 1 - ab_pos] = ab_val;
-#else
-    const uint8_t bitCount = (ab_pos*8);
-    MASK_TYPE clearMask = ~(0xFF << bitCount);
-    t_ident &= clearMask;
+    t_ident &= ~(MASK_TYPE(0xFF) << (ab_pos*8));
     t_ident |= (MASK_TYPE(ab_val) << (ab_pos*8));
-#endif
     data.type = ren_identType;
     data.empty = 0;
   }
@@ -169,16 +164,8 @@ namespace __IsoAgLib
   */
   void Ident_c::setWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type)
   {
-   /** @todo TEST: test with all possible number formats */
-#if defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN )
-    ((uint16_t*)pb_ident)[aui8_pos] = aui16_val;
-#elif defined(  OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN )
-    ((uint16_t*)pb_ident)[sizeof(MASK_TYPE)/2 - 1 - aui8_pos] = aui16_val;
-#else
-    const uint8_t bitCount = (aui8_pos*16);
-    t_ident &= ~(0xFFFFUL << bitCount);
+    t_ident &= ~(MASK_TYPE(0xFFFF) << (aui8_pos*16));
     t_ident |= (MASK_TYPE(aui16_val) << (aui8_pos*16));
-#endif
     data.type = at_type;
     data.empty = 0;
   }

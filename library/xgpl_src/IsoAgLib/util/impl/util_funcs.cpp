@@ -152,6 +152,29 @@ int32_t mul1Div1Mul2Div2(int32_t ai32_mul_1, int32_t ai32_div_1, int32_t ai32_mu
 */
 void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  uint32_t *pb_to = (uint32_t*)pf_to;
+  const uint8_t *const pb_from   = (const uint8_t *)pvFrom;
+  #if FLOAT_WORD_ORDER == WORD_HI_LO
+    // change first and last two bytes for float access
+    pb_to[0]  = uint32_t(pb_from[2]) << 0;
+    pb_to[0] |= uint32_t(pb_from[3]) << 8;
+    pb_to[0] |= uint32_t(pb_from[0]) << 16;
+    pb_to[0] |= uint32_t(pb_from[1]) << 24;
+  #elif FLOAT_WORD_ORDER == BYTE_HI_LO
+    pb_to[0]  = uint32_t(pb_from[3]) << 0;
+    pb_to[0] |= uint32_t(pb_from[2]) << 8;
+    pb_to[0] |= uint32_t(pb_from[1]) << 16;
+    pb_to[0] |= uint32_t(pb_from[0]) << 24;
+  #elif FLOAT_WORD_ORDER == WORD_LO_HI
+    pb_to[0]  = uint32_t(pb_from[0]) << 0;
+    pb_to[0] |= uint32_t(pb_from[1]) << 8;
+    pb_to[0] |= uint32_t(pb_from[2]) << 16;
+    pb_to[0] |= uint32_t(pb_from[3]) << 24;
+  #else
+  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
+  #endif
+#else
   uint8_t *pb_to = (uint8_t*)pf_to;
   const uint8_t *const pb_from   = (const uint8_t *)pvFrom;
   #if FLOAT_WORD_ORDER == WORD_HI_LO
@@ -171,43 +194,9 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
     pb_to[2] = pb_from[2];
     pb_to[3] = pb_from[3];
   #else
-    const float d = 716.532287598;
-    const uint32_t u32 = *((const uint32_t*)(&d));
-
-    const uint8_t r_u8_LE[sizeof(uint32_t)] = { '\x11', '\x22', '\x33', '\x44' };
-    const uint8_t r_u8_BE[sizeof(uint32_t)] = { '\x44', '\x33', '\x22', '\x11' };
-    const uint8_t r_u8_ME[sizeof(uint32_t)] = { '\x33', '\x44', '\x11', '\x22' };
-
-    const uint32_t *r_u32_LE =  (const uint32_t*)(r_u8_LE);
-    const uint32_t *r_u32_BE =  (const uint32_t*)(r_u8_BE);
-    const uint32_t *r_u32_ME =  (const uint32_t*)(r_u8_ME);
-
-    if (u32 == *r_u32_LE) {
-      // analogous to WORD_LO_HI
-      pb_to[0] = pb_from[0];
-      pb_to[1] = pb_from[1];
-      pb_to[2] = pb_from[2];
-      pb_to[3] = pb_from[3];
-    } else if (u32 == *r_u32_BE) {
-      // analogous to BYTE_HI_LO
-      pb_to[0] = pb_from[3];
-      pb_to[1] = pb_from[2];
-      pb_to[2] = pb_from[1];
-      pb_to[3] = pb_from[0];
-    } else if (u32 == *r_u32_ME) {
-      // analogous to WORD_HI_LO
-      pb_to[0] = pb_from[2];
-      pb_to[1] = pb_from[3];
-      pb_to[2] = pb_from[0];
-      pb_to[3] = pb_from[1];
-    } else {
-      #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << INTERNAL_DEBUG_DEVICE_ENDL;
-      MACRO_ISOAGLIB_ABORT();
-      #endif
-    }
-
+  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
   #endif
+#endif // NO_8BIT_CHAR_TYPE
 }
 /**
   copy float value to 4 uint8_t data string into pointer;
@@ -219,6 +208,28 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
 */
 void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  uint8_t *pb_to = (uint8_t*)pvTo;
+  const uint32_t *const pb_from   = (const uint32_t *)pf_from;
+  #if FLOAT_WORD_ORDER == WORD_HI_LO
+    pb_to[0] = (pb_from[0] >>  8) & 0xFF;
+    pb_to[1] = (pb_from[0] >>  0) & 0xFF;
+    pb_to[2] = (pb_from[0] >> 24) & 0xFF;
+    pb_to[3] = (pb_from[0] >> 16) & 0xFF;
+  #elif FLOAT_WORD_ORDER == BYTE_HI_LO
+    pb_to[0] = (pb_from[0] >>  0) & 0xFF;
+    pb_to[1] = (pb_from[0] >>  8) & 0xFF;
+    pb_to[2] = (pb_from[0] >> 16) & 0xFF;
+    pb_to[3] = (pb_from[0] >> 24) & 0xFF;
+  #elif FLOAT_WORD_ORDER == WORD_LO_HI
+    pb_to[0] = (pb_from[0] >> 24) & 0xFF;
+    pb_to[1] = (pb_from[0] >> 16) & 0xFF;
+    pb_to[2] = (pb_from[0] >>  8) & 0xFF;
+    pb_to[3] = (pb_from[0] >>  0) & 0xFF;
+  #else
+  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
+  #endif
+#else
   uint8_t *pb_to = (uint8_t*)pvTo;
   const uint8_t *const pb_from   = (const uint8_t *)pf_from;
   #if FLOAT_WORD_ORDER == WORD_HI_LO
@@ -238,43 +249,9 @@ void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
     pb_to[2] = pb_from[2];
     pb_to[3] = pb_from[3];
   #else
-    const float d = 716.532287598;
-    const uint32_t u32 = *((const uint32_t*)(&d));
-
-    const uint8_t r_u8_LE[sizeof(uint32_t)] = { '\x11', '\x22', '\x33', '\x44' };
-    const uint8_t r_u8_BE[sizeof(uint32_t)] = { '\x44', '\x33', '\x22', '\x11' };
-    const uint8_t r_u8_ME[sizeof(uint32_t)] = { '\x33', '\x44', '\x11', '\x22' };
-
-    const uint32_t *r_u32_LE =  (const uint32_t*)(r_u8_LE);
-    const uint32_t *r_u32_BE =  (const uint32_t*)(r_u8_BE);
-    const uint32_t *r_u32_ME =  (const uint32_t*)(r_u8_ME);
-
-    if (u32 == *r_u32_LE) {
-      // analogous to WORD_LO_HI
-      pb_to[0] = pb_from[0];
-      pb_to[1] = pb_from[1];
-      pb_to[2] = pb_from[2];
-      pb_to[3] = pb_from[3];
-    } else if (u32 == *r_u32_BE) {
-      // analogous to BYTE_HI_LO
-      pb_to[0] = pb_from[3];
-      pb_to[1] = pb_from[2];
-      pb_to[2] = pb_from[1];
-      pb_to[3] = pb_from[0];
-    } else if (u32 == *r_u32_ME) {
-      // analogous to WORD_HI_LO
-      pb_to[0] = pb_from[2];
-      pb_to[1] = pb_from[3];
-      pb_to[2] = pb_from[0];
-      pb_to[3] = pb_from[1];
-    } else {
-      #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "BIG PROBLEM: NO KNOWN BYTE ORDER REPRESENTATION OF FLOAT AT THIS TARGET" << INTERNAL_DEBUG_DEVICE_ENDL;
-      MACRO_ISOAGLIB_ABORT();
-      #endif
-    }
-
+  #error "PLEASE set either FLOAT_WORD_ORDER with WORD_HI_LO BYTE_HI_LO or WORD_LO_HI in the config-h from your target"
   #endif
+#endif // NO_8BIT_CHAR_TYPE
 }
 
 /** calculate the total allocated HEAP for:
@@ -458,7 +435,7 @@ uint32_t convertIstreamUi32( StreamInput_c& rc_stream )
 uint16_t convertLittleEndianStringUi16( const uint8_t* apui8_src )
 {
   uint16_t ui16_temp;
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( &ui16_temp, apui8_src, sizeof(uint16_t) );
 #else
   ui16_temp = uint16_t(apui8_src[0]) | (uint16_t(apui8_src[1]) << 8);
@@ -470,7 +447,7 @@ uint16_t convertLittleEndianStringUi16( const uint8_t* apui8_src )
 int16_t convertLittleEndianStringI16( const uint8_t* apui8_src )
 {
   int16_t i16_temp;
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( &i16_temp, apui8_src, sizeof(int16_t) );
 #else
   i16_temp = int16_t(apui8_src[0]) | (int16_t(apui8_src[1]) << 8);
@@ -481,7 +458,7 @@ int16_t convertLittleEndianStringI16( const uint8_t* apui8_src )
 uint32_t convertLittleEndianStringUi32( const uint8_t* apui8_src )
 {
   uint32_t ui32_temp;
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( &ui32_temp, apui8_src, sizeof(uint32_t) );
 #else
   ui32_temp = uint32_t(apui8_src[0]);
@@ -496,7 +473,7 @@ uint32_t convertLittleEndianStringUi32( const uint8_t* apui8_src )
 int32_t convertLittleEndianStringI32( const uint8_t* apui8_src )
 {
   int32_t i32_temp;
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( &i32_temp, apui8_src, sizeof(int32_t) );
 #else
   i32_temp = int32_t(apui8_src[0]);
@@ -518,7 +495,7 @@ float convertLittleEndianStringFloat( const uint8_t* apui8_src )
 
 void int2littleEndianString( unsigned int input, uint8_t* pui8_target, unsigned int size )
 {
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &input, size );
   #else
   for ( unsigned int ind = 0; ind < size; ind++ )
@@ -598,7 +575,7 @@ void bigEndianHexNumberText2CanStringUint16( const char* ac_src, uint8_t* pui8_t
   unsigned int temp;
   sscanf( ac_src, "%4x",  &temp );
   #endif
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &temp, 2 );
   #else
   pui8_target[0] =   ( temp        & 0xFF );
@@ -619,7 +596,7 @@ void bigEndianHexNumberText2CanStringUint32( const char* ac_src, uint8_t* pui8_t
   unsigned int temp;
   sscanf( ac_src, "%8x", &temp );
   #endif
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &temp, 4 );
   #else
   pui8_target[0] =   ( temp         & 0xFF );
@@ -656,7 +633,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
   { // source string contains only digits for lower 4-byte value
     sscanf( ac_src, "%8lx", &(temp[0]) );
   }
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target,   &(temp[0]), 4 );
   CNAMESPACE::memcpy( pui8_target+4, &(temp[1]), 4 );
   #else
@@ -675,7 +652,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
 #else
   sscanf( ac_src, "%16llx", &temp );
 #endif
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   memcpy( pui8_target, &temp, 8 );
   #else
   for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
@@ -683,7 +660,7 @@ void bigEndianHexNumberText2CanStringUint64( const char* ac_src, uint8_t* pui8_t
 #else
   unsigned int temp;
   sscanf( ac_src, "%16x", &temp );
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   memcpy( pui8_target, &temp, 8 );
   #else
   for ( unsigned int ind = 0; ind < 8; ind++ ) pui8_target[ind] = ( ( temp >> (ind*8) ) & 0xFF );
@@ -708,7 +685,7 @@ void bigEndianDecNumberText2CanStringUint( const char* ac_src, uint8_t* pui8_tar
   unsigned int temp;
   sscanf( ac_src, "%4d",  &temp );
 #endif
-  #ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
   CNAMESPACE::memcpy( pui8_target, &temp, 2 );
   #else
   pui8_target[0] =   ( temp        & 0xFF );
@@ -726,17 +703,27 @@ void bigEndianDecNumberText2CanStringUint( const char* ac_src, uint8_t* pui8_tar
 */
 void Flexible4ByteString_c::setFlexible4DataValueInd(uint8_t aui8_ind, const Flexible8ByteString_c& ac_value )
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  for (uint8_t index = 0; index < 4; index++)
+    uint8[index] = ac_value.uint8[aui8_ind+index];
+#else
   uint32[0] = ac_value.uint32[aui8_ind];
+#endif
 };
 
 Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& acrc_src )
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  for (uint8_t index = 0; index < 8; index++)
+    uint8[index] = acrc_src.uint8[index];
+#else
   #if SIZEOF_INT < 4 || defined( __IAR_SYSTEMS_ICC__ )
   uint32[1] = acrc_src.uint32[1];
   uint32[0] = acrc_src.uint32[0];
   #else
   uint64[0] = acrc_src.uint64[0];
   #endif
+#endif
 };
 
 
@@ -745,21 +732,33 @@ Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& acrc_
 */
 Flexible4ByteString_c::Flexible4ByteString_c( const uint8_t* apui8_srcStream )
 { if (apui8_srcStream != NULL) CNAMESPACE::memcpy(uint8, apui8_srcStream, 4 );
+#ifndef NO_8BIT_CHAR_TYPE
   else uint32[0] = 0UL;
+#else
+  else
+    for (uint8_t index = 0; index < 4; index++)
+      uint8[index] = 0;
+#endif
 };
 
 /** constructor for INIT directly from a flexible positioned Stream.
     IMPORTANT: this works also when the string starts at ODD position!
 */
 Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* apui8_srcStream )
-{ if (apui8_srcStream != NULL) CNAMESPACE::memcpy(uint8, apui8_srcStream, 8 );
+{
+  if (apui8_srcStream != NULL) CNAMESPACE::memcpy(uint8, apui8_srcStream, 8 );
   else
   {
+#ifdef NO_8BIT_CHAR_TYPE
+    for (uint8_t index = 0; index < 8; index++)
+      uint8[index] = 0;
+#else
     #if (SIZEOF_INT < 4) || defined( __IAR_SYSTEMS_ICC__ )
     uint32[0] = uint32[1] = 0UL;
     #else
     uint64[0] = 0ULL;
     #endif
+#endif
   }
 };
 
@@ -805,8 +804,13 @@ void Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_
 /** assignment */
 const Flexible8ByteString_c& Flexible8ByteString_c::operator=( const Flexible8ByteString_c& acrc_src )
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  for (uint8_t index = 0; index < 8; index++)
+    uint8[index] = acrc_src.uint8[index];
+#else
   uint32[1] = acrc_src.uint32[1];
   uint32[0] = acrc_src.uint32[0];
+#endif
   return *this;
 };
 
@@ -814,19 +818,35 @@ const Flexible8ByteString_c& Flexible8ByteString_c::operator=( const Flexible8By
 /** compare for EQUAL */
 bool Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) const
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  for (uint8_t index = 0; index < 8; index++)
+	if ( uint8[index] != acrc_cmp.uint8[index] )
+	  return false;
+
+  return true;
+#else
   return ( ( uint32[1] == acrc_cmp.uint32[1] )
         && ( uint32[0] == acrc_cmp.uint32[0] ) )?true:false;
+#endif
 };
 /** compare for DIFFERENT */
 bool Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) const
 {
+#ifdef NO_8BIT_CHAR_TYPE
+  for (uint8_t index = 0; index < 8; index++)
+	if ( uint8[index] != acrc_cmp.uint8[index] )
+	  return true;
+
+  return false;
+#else
   return ( ( uint32[1] != acrc_cmp.uint32[1] )
         && ( uint32[0] != acrc_cmp.uint32[0] ) )?true:false;
+#endif
 };
 #endif // end SIZEOF_INT < 4
 
 
-#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
 /** compare for LOWER */
 bool Flexible4ByteString_c::operator<( const Flexible4ByteString_c& acrc_cmp ) const
 {
@@ -872,7 +892,7 @@ int Flexible4ByteString_c::compare( const Flexible4ByteString_c& acrc_cmp ) cons
 /** compare for LOWER */
 bool Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
@@ -889,7 +909,7 @@ bool Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) c
 /** compare for LARGER */
 bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
@@ -909,7 +929,7 @@ bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) c
           -1 == this item has lower value than par */
 int Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) const
 {
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
@@ -951,7 +971,7 @@ void Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
 #endif
   }
 }
-#ifdef OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
+#if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
 /**
   set an uint16_t value at specified position in string.
   IMPORTANT: position 0 matches to the least significant byte,

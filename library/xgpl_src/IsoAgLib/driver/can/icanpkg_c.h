@@ -121,15 +121,6 @@ public:
   */
   static MASK_TYPE ident(uint8_t ab_pos) { return CanPkg_c::ident(ab_pos); }
 
-  /**
-    deliver the uint8_t value of ident at wanted position
-    (position 0 is least significant position -> nearest to DLC field of
-    CAN frame)
-    @param ab_pos
-    @return ident value
-  */
-  static uint8_t& identRef(uint8_t ab_pos) { return CanPkg_c::identRef(ab_pos); }
-
   /** retrieve CAN data bytes represented by pointer to Union8ByteString_u */
   static __IsoAgLib::Flexible8ByteString_c* getDataUnion() { return CanPkg_c::getDataUnion(); }
 

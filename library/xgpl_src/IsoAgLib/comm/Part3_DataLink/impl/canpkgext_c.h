@@ -102,20 +102,27 @@ class IsoItem_c;
 class AddressResolveResults_c
 {
   public:
-    AddressResolveResults_c(uint8_t* aui8_address);
+    AddressResolveResults_c(Ident_c& arc_ident, uint8_t aui8_position);
     ~AddressResolveResults_c();
+
+    uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
+    void setAddress(uint8_t aui8_newAddress) {mrc_ident.set(aui8_newAddress,mui8_position);}
 
     // IMPORTANT:
     // the IsoName_c instance should be handled as if it would be a fixed
     // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
     //                          and all other operations just operate on the allocated instance.
     IsoName_c* mpc_isoName;
+
     // IMPORTANT:
     // in contrast to IsoName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
     // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
     IsoItem_c* mpc_monitorItem;
+    
     //can be source or destination address
-    uint8_t* mpui8_address;
+    Ident_c& mrc_ident;
+    //can be source or destination address
+    uint8_t mui8_position;
 } ;
 
 
