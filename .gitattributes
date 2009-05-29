@@ -2669,6 +2669,7 @@ tools/proc2iso/src/proc2iso.cpp -text
 tools/proc2iso/src/proc2iso.hpp -text
 tools/proc2iso/version.incl -text
 tools/project_generation/conf_template -text
+tools/project_generation/update_makefile_CCSSkeleton.pjt -text
 tools/project_generation/update_makefile_EDE.part1.pjt -text
 tools/project_generation/update_makefile_EDE.part2.pjt -text
 tools/project_generation/update_makefile_MakefileAppSkeleton.txt -text

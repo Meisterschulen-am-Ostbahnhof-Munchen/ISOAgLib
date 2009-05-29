@@ -1,0 +1,30 @@
+; Code Composer Project File, Version 2.0 (do not modify or remove this line)
+
+[Project Settings]
+ProjectDir="INSERT_PROJECT_DIR"
+ProjectType=Library
+CPUFamily=TMS320C28XX
+Tool="Archiver"
+Tool="Compiler"
+Tool="CustomBuilder"
+Config="Debug"
+Config="Release"
+
+[Source Files]
+INSERT_SOURCE_FILE_LIST
+
+["Debug" Settings]
+
+["Archiver" Settings: "Debug"]
+Options=-r -o INSERT_LIB_INSTALL_DIR/INSERT_PROJECT_NAME_debug.lib
+
+["Compiler" Settings: "Debug"]
+Options=-g -q -pdv -pdse225 -pden -pds383 -pds230 -pds119 -pds112 -pds21 -pds869 -pds193 -fr"INSERT_PROJECT_DIR/Debug" INSERT_HEADER_SEARCH_PATH -d"SYSTEM_P1MC" -d"_STLP_NO_IOSTREAMS" -d"PRJ_USE_AUTOGEN_CONFIG=INSERT_CONFIG_HEADER_NAME" -dNDEBUG -d"LARGE_MODEL" -d"NO_8BIT_CHAR_TYPE=1" -ml -v28 -me
+
+["Release" Settings]
+
+["Archiver" Settings: "Release"]
+Options=-r -o INSERT_LIB_INSTALL_DIR/INSERT_PROJECT_NAME_release.lib
+
+["Compiler" Settings: "Release"]
+Options=-q -pdv -pdse225 -pden -pds383 -pds230 -pds119 -pds112 -pds21 -pds869 -pds193 -fr"INSERT_PROJECT_DIR/Debug" INSERT_HEADER_SEARCH_PATH -d"SYSTEM_P1MC" -d"_STLP_NO_IOSTREAMS" -d"PRJ_USE_AUTOGEN_CONFIG=INSERT_CONFIG_HEADER_NAME" -d"NDEBUG" -d"LARGE_MODEL" -d"NO_8BIT_CHAR_TYPE=1" -ml -v28 -me

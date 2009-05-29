@@ -2101,6 +2101,102 @@ create_EdePrj()
   mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 }
 
+create_CcsPrj()
+{
+  cd "$1/$PROJECT"
+  CCS_PROJECT_NAME="$PROJECT"
+  CCS_PROJECT_DIR="$1/$PROJECT"
+  CCS_PROJECT_FILE_NAME="$PROJECT"'_'"$USE_TARGET_SYSTEM.pjt"
+  CCS_PROJECT_FILE_LIST="$1/$PROJECT/$FILELIST_COMBINED_PURE"
+  CCS_CONFIG_HDR_NAME="config_""$PROJECT.h"
+  CCS_PROJECT_TEMPLATE=$CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/library/xgpl_src/build/projectGeneration/update_makefile_CCSSkeleton.pjt
+  CCS_COMMERCIAL_BIOS_PATH="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
+  CCS_PROJECT_FILE_NAME_PATH="$CCS_PROJECT_DIR/$CCS_PROJECT_FILE_NAME"
+
+  if [ "M$ISOAGLIB_INSTALL_PATH" = "M" ] ; then
+    CCS_LIB_INSTALL_DIR="./install/lib"
+  else
+    CCS_LIB_INSTALL_DIR=$ISOAGLIB_INSTALL_PATH
+  fi
+  CCS_LIB_INSTALL_HEADER_DIR="$CCS_LIB_INSTALL_DIR/include"
+  CCS_LIB_INSTALL_LIB_DIR="$CCS_LIB_INSTALL_DIR/lib"
+
+  # check platform specific settings
+  if test $PRJ_ACTOR -gt 0 -o $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ; then
+    echo
+    echo "Misconfigured config file: P1MC has no sensor/actor capabilities!"
+    exit 0
+  fi
+
+  if test $RS232_INSTANCE_CNT -gt 0 -a $PRJ_RS232_OVER_CAN -eq 0 ; then
+    echo
+    echo "Misconfigured config file: P1MC has no native rs232. Please enable PRJ_RS232_OVER_CAN or disable RS232_INSTANCE_CNT"
+    exit 0
+  fi
+
+  # copy project template
+  cp $CCS_PROJECT_TEMPLATE $CCS_PROJECT_DIR/$CCS_PROJECT_FILE_NAME
+
+
+  for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+    if [ "M$USE_APP_PATH" = "M" ] ; then
+      USE_APP_PATH=`echo "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+    else
+      USE_APP_PATH="$USE_APP_PATH"`echo ";$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g'`
+    fi
+  done
+
+  # project defines
+  CCS_PROJECT_DEFINES=
+
+  #include pathes
+  CCS_INCLUDE_PATH=""
+  CCS_INCLUDE_PATH="$CCS_INCLUDE_PATH -i\"\$(Proj_dir)/$ISO_AG_LIB_INSIDE/$CCS_COMMERCIAL_BIOS_PATH\""
+  CCS_INCLUDE_PATH="$CCS_INCLUDE_PATH -i\"\$(Proj_dir)/\""
+  CCS_INCLUDE_PATH="$CCS_INCLUDE_PATH -i\"\$(Proj_dir)/$ISO_AG_LIB_INSIDE/library\""
+  CCS_INCLUDE_PATH="$CCS_INCLUDE_PATH -i\"\$(Proj_dir)/$ISO_AG_LIB_INSIDE/library/xgpl_src\""
+
+  for EACH_EMBED_HEADER_DIR in $USE_EMBED_HEADER_DIRECTORY; do
+    CCS_INCLUDE_PATH="$CCS_INCLUDE_PATH -i\"$EACH_EMBED_HEADER_DIR\""
+  done
+
+  CCS_INCLUDE_PATH="$CCS_INCLUDE_PATH -i\"\$(Proj_dir)/$CCS_LIB_INSTALL_HEADER_DIR\""
+
+  # source files
+  for EACH_SOURCE_FILE in `cat $1/$PROJECT/$FILELIST_COMBINED_PURE | grep .*cpp$`; do
+        CCS_SOURCE_FILE_LIST="$CCS_SOURCE_FILE_LIST\nSource=\"$EACH_SOURCE_FILE\""
+  done
+
+  sed -e "s#INSERT_PROJECT_DIR#$CCS_PROJECT_DIR#g" $CCS_PROJECT_FILE_NAME_PATH > $CCS_PROJECT_FILE_NAME_PATH.1
+  sed -e "s#INSERT_ISOAGLIB_DIR#$ISO_AG_LIB_INSIDE#g" $CCS_PROJECT_FILE_NAME_PATH.1 > $CCS_PROJECT_FILE_NAME_PATH
+  sed -e "s#INSERT_SOURCE_FILE_LIST#$CCS_SOURCE_FILE_LIST#g" $CCS_PROJECT_FILE_NAME_PATH > $CCS_PROJECT_FILE_NAME_PATH.1
+  sed -e "s#INSERT_HEADER_SEARCH_PATH#$CCS_INCLUDE_PATH#g" $CCS_PROJECT_FILE_NAME_PATH.1 > $CCS_PROJECT_FILE_NAME_PATH
+  sed -e "s#INSERT_CONFIG_HEADER_NAME#$CCS_CONFIG_HDR_NAME#g" $CCS_PROJECT_FILE_NAME_PATH > $CCS_PROJECT_FILE_NAME_PATH.1
+  sed -e "s#INSERT_PROJECT_DEFINES#$CCS_PROJECT_DEFINES#g" $CCS_PROJECT_FILE_NAME_PATH.1 > $CCS_PROJECT_FILE_NAME_PATH
+  sed -e "s#INSERT_PROJECT_NAME#$CCS_PROJECT_NAME#g" $CCS_PROJECT_FILE_NAME_PATH > $CCS_PROJECT_FILE_NAME_PATH.1
+  sed -e "s#INSERT_LIB_INSTALL_DIR#$CCS_LIB_INSTALL_LIB_DIR#g" $CCS_PROJECT_FILE_NAME_PATH.1 > $CCS_PROJECT_FILE_NAME_PATH
+
+  #mv $CCS_PROJECT_FILE_NAME_PATH.1 $CCS_PROJECT_FILE_NAME_PATH
+
+  rm -f $CCS_PROJECT_FILE_NAME_PATH.1
+
+  # create output
+  mkdir -p $CCS_LIB_INSTALL_DIR
+  mkdir -p $CCS_LIB_INSTALL_HEADER_DIR
+  mkdir -p $CCS_LIB_INSTALL_LIB_DIR
+
+  for FIRST_REL_APP_PATH in $REL_APP_PATH ; do
+    mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h $CCS_LIB_INSTALL_HEADER_DIR
+    mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/version.h $CCS_LIB_INSTALL_HEADER_DIR
+    break;
+  done
+
+  for EACH_INSTALL_HEADER in `cat "$1/$PROJECT/$FILELIST_LIBRARY_HDR" | grep -v ".cpp"`; do
+    install -D $EACH_INSTALL_HEADER $CCS_LIB_INSTALL_HEADER_DIR/`echo $EACH_INSTALL_HEADER | sed -e 's/.*xgpl_src\///'` 
+  done
+
+}
+
 create_VCPrj()
 {
 
@@ -2312,6 +2408,9 @@ perform_everything()
     USE_SYSTEM_DEFINE="SYSTEM_DJ1"
     GENERATE_FILES_ROOT_DIR="$1/EDE/"
     IDE_NAME="Tasking EDE"
+  elif [ $USE_TARGET_SYSTEM = "p1mc" ] ; then
+    USE_SYSTEM_DEFINE="SYSTEM_P1MC"
+    GENERATE_FILES_ROOT_DIR="$1/CCS/"
   fi
   GENERATE_FILES_ROOT_DIR=`echo "$GENERATE_FILES_ROOT_DIR" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]*\\\.\.//g'`
   # echo "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
@@ -2334,6 +2433,8 @@ perform_everything()
   elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
     create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
     create_VCPrj $GENERATE_FILES_ROOT_DIR $2
+  elif [ $USE_TARGET_SYSTEM = "p1mc" ] ; then
+    create_CcsPrj $GENERATE_FILES_ROOT_DIR $2
   else
     create_EdePrj $GENERATE_FILES_ROOT_DIR $2
   fi
@@ -2497,7 +2598,7 @@ if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
   USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
 fi
 case "$USE_TARGET_SYSTEM" in
-  pc_linux | pc_win32 | esx | esxu | c2c | imi | pm167 | Dj1 | mitron167)
+  pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167)
   ;;
   *)
   echo "Unknown target system $USE_TARGET_SYSTEM" 1>&2
