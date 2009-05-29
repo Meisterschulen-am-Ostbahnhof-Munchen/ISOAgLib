@@ -82,6 +82,8 @@
 	#include "Dj1/system/system.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/system/system.h"
+#elif defined(SYSTEM_P1MC)
+	#include "p1mc/system/system.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/system/system.h"
 #elif defined(SYSTEM_MITRON167)

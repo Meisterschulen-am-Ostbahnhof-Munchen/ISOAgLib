@@ -1,11 +1,10 @@
 /***************************************************************************
-                          eeprom.h - include dependent on used target (defined
-													           in IsoAgLib/isoaglib_config.h)
-																		 the suitable HAL specific header for
-																		 EEPROM data storage
+                          system_target_extensions.h - header for P1MC specific
+                                                extensions for the HAL
+                                                for central system
                              -------------------
-    begin                : Sun Mar 09 2003
-    copyright            : (C) 2003 - 2009 Dipl.-Inform. Achim Spangler
+    begin                : Wed Mar 15 2000
+    copyright            : (C) 2000 - 2004 Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
     type                 : Header
  ***************************************************************************/
@@ -22,7 +21,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                 *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -53,40 +52,72 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-/* ************************************************************ */
-/** \file IsoAgLib/hal/eeprom.h
-  * include dependent on used target (defined in
-	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for EEPROM data storage.
+/* ********************************************************** */
+/** \file IsoAgLib/hal/pm167/system/system_system_target_extensions.h
+ * A module targetExtensions should be used
+ * for all methods, which can't be simply
+ * mapped from ECU standard BIOS to the needs of
+ * IsoAgLib by mostly renaming and reordering of functions, parameters
+ * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .   */
+/* ********************************************************** */
+
+#ifndef _HAL_P1MC_SYSTEM_TARGET_EXTENSIONS_H_
+#define _HAL_P1MC_SYSTEM_TARGET_EXTENSIONS_H_
+
+#include "../typedef.h"
+#include "../errcodes.h"
+
+#include "system_target_extensions.h"
+
+
+#define C_NO_ERR   0
+#define ON   1
+#define OFF  0
+
+namespace __HAL {
+
+/* ******************************************** */
+/** \name General BIOS Extenders                */
+/*@{*/
+/**
+  open the system with system specific function call
+  @return error state (C_NO_ERR == o.k.)
 */
-/* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_EEPROM_H_
-#define _HAL_INDEPENDEND_EEPROM_H_
+int16_t open_system();
+/**
+  close the system with system specific function call
+  @return error state (C_NO_ERR == o.k.)
+*/
+int16_t closeSystem( void );
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
+/**
+  configure the watchdog of the system with the
+  settings of configImi
+  @return error state (C_NO_ERR == o.k.)
+    or DATA_CHANGED on new values -> need call of wdReset to use new settings
+  @see wdReset
+*/
+int16_t configWatchdog();
+/*@}*/
 
-// now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/eeprom/eeprom.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/eeprom/eeprom.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/eeprom/eeprom.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/eeprom/eeprom.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/eeprom/eeprom.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/eeprom/eeprom.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/eeprom/eeprom.h"
-#endif
+int32_t getTime(void);
 
+int16_t  getSnr(uint8_t *snrDat);
+
+void  start_task_timer ( void );
+
+void  stayingAlive(void);
+
+void  powerDown(void);
+
+void  setRelais(bool bitState);
+
+int16_t  __getAdcUbat();
+
+int16_t  getAdc_u85();
+
+//int16_t getEepromSize(void);
+
+}
 
 #endif

@@ -1083,6 +1083,9 @@
 #elif defined(SYSTEM_IMI)
   /// set subdirectory name to "imi" for IMI platform
   #define HAL_SUBDIR imi
+#elif defined(SYSTEM_P1MC)
+  /// set subdirectory name to "P1MC" for PLUS+1 Microcontroller platform
+  #define HAL_SUBDIR p1mc
 #elif defined(SYSTEM_PM167)
   /// set subdirectory name to "pm167" for Procesor Module 167 platform
   #define HAL_SUBDIR pm167

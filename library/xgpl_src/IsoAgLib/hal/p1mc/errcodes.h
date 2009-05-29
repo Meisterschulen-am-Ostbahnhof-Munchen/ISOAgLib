@@ -1,13 +1,10 @@
 /***************************************************************************
-                          eeprom.h - include dependent on used target (defined
-													           in IsoAgLib/isoaglib_config.h)
-																		 the suitable HAL specific header for
-																		 EEPROM data storage
-                             -------------------
-    begin                : Sun Mar 09 2003
-    copyright            : (C) 2003 - 2009 Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
-    type                 : Header
+                          errcodes.h  - header for the P1MC
+                                        error codes
+                             -------------------                                         
+    begin                : Wed Aug 4 1999                                           
+    copyright            : THIS HEADER IS DERIVED FROM ORIGNINAL STW HEADER                         
+    email                : a.spangler@osb-ag:de                                     
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +19,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                 *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -52,41 +49,38 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
+#ifndef __P1MC_ERRCODES_H__
+#define __P1MC_ERRCODES_H__
 
-/* ************************************************************ */
-/** \file IsoAgLib/hal/eeprom.h
-  * include dependent on used target (defined in
-	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for EEPROM data storage.
-*/
-/* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_EEPROM_H_
-#define _HAL_INDEPENDEND_EEPROM_H_
+namespace HAL {
+  /* include BIOS errcode definition */
+  /* --- map BIOS error codes to target independent HAL codes --- */
+  #define HAL_NO_ERR            1
+  #define HAL_BUSY_ERR          2
+  #define HAL_CONFIG_ERR        3
+  #define HAL_RANGE_ERR         4
+  #define HAL_NOACT_ERR         5
+  #define HAL_WARN_ERR          6
+  #define HAL_OVERFLOW_ERR      7
+  #define HAL_RS232_RECEIVE_ERR 8
+  #define HAL_UNKNOWN_ERR       9
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
+  #define HAL_DEFAULT           10
+  #define HAL_RD_WR             11
+  #define HAL_COM               12
+  #define HAL_CHECKSUM          13
 
-// now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/eeprom/eeprom.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/eeprom/eeprom.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/eeprom/eeprom.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/eeprom/eeprom.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/eeprom/eeprom.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/eeprom/eeprom.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/eeprom/eeprom.h"
+  #define HAL_NEW_SEND_DELAY    14
+  
+  #define HAL_WD_DATA_CHANGED   15
+  
+  #define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
+  #define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
+  #define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
+  #define HAL_DIGOUT_UNDERVOLT   (int16_t)(-(23 * 0x0001))
+  #define HAL_DIGOUT_OVERVOLT    (int16_t)(-(24 * 0x0001))
+
+  #define EE_READY 0
+} // end namespace __HAL
 #endif
 
-
-#endif

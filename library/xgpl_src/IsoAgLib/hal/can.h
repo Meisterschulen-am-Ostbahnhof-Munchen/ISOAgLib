@@ -103,6 +103,8 @@ typedef enum C16xCtrlStatusReg_en
 	#include "Dj1/can/can.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/can/can.h"
+#elif defined(SYSTEM_P1MC)
+	#include "p1mc/can/can.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/can/can.h"
 #elif defined(SYSTEM_MITRON167)

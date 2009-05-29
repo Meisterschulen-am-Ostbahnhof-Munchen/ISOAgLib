@@ -97,6 +97,8 @@
 	#include "Dj1/config.h"
 #elif defined(SYSTEM_IMI)
 	#include "imi/config.h"
+#elif defined(SYSTEM_P1MC)
+	#include "p1mc/config.h"
 #elif defined(SYSTEM_PM167)
 	#include "pm167/config.h"
 #elif defined(SYSTEM_MITRON167)

@@ -1,13 +1,9 @@
 /***************************************************************************
-                          eeprom.h - include dependent on used target (defined
-													           in IsoAgLib/isoaglib_config.h)
-																		 the suitable HAL specific header for
-																		 EEPROM data storage
+                          typedef.h  -  system dependent basic typedef's
                              -------------------
-    begin                : Sun Mar 09 2003
-    copyright            : (C) 2003 - 2009 Dipl.-Inform. Achim Spangler
+    begin                : Thu Aug 08 2002
+    copyright            : (C) 2002 - 2004 Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
-    type                 : Header
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +18,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -52,41 +48,23 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
+#ifndef TYPEDEF_P1MC_H
+#define TYPEDEF_P1MC_H
 
-/* ************************************************************ */
-/** \file IsoAgLib/hal/eeprom.h
-  * include dependent on used target (defined in
-	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for EEPROM data storage.
-*/
-/* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_EEPROM_H_
-#define _HAL_INDEPENDEND_EEPROM_H_
+typedef unsigned short byte;
+typedef unsigned int word;
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
-
-// now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/eeprom/eeprom.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/eeprom/eeprom.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/eeprom/eeprom.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/eeprom/eeprom.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/eeprom/eeprom.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/eeprom/eeprom.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/eeprom/eeprom.h"
-#endif
+typedef byte uint8_t;
+typedef char int8_t;
+typedef word uint16_t;
+typedef int int16_t;
+typedef unsigned long uint32_t;
+typedef long int32_t;
 
 
+//typedef long off_t;
+#define off_t long
+
+typedef unsigned long long int uint64_t;
+typedef long long int int64_t;
 #endif

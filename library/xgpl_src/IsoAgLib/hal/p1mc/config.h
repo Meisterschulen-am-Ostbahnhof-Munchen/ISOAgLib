@@ -1,13 +1,9 @@
 /***************************************************************************
-                          eeprom.h - include dependent on used target (defined
-													           in IsoAgLib/isoaglib_config.h)
-																		 the suitable HAL specific header for
-																		 EEPROM data storage
+                          config.h  -  system dependent configs, defines and includes
                              -------------------
-    begin                : Sun Mar 09 2003
-    copyright            : (C) 2003 - 2009 Dipl.-Inform. Achim Spangler
+    begin                : Thu Jul 29 1999
+    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
     email                : a.spangler@osb-ag:de
-    type                 : Header
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +18,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2009 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -52,41 +48,66 @@
  * Alternative licenses for IsoAgLib may be arranged by contacting         *
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
+#ifndef _HAL_P1MC_CONFIG_H_
+#define _HAL_P1MC_CONFIG_H_
 
-/* ************************************************************ */
-/** \file IsoAgLib/hal/eeprom.h
-  * include dependent on used target (defined in
-	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for EEPROM data storage.
-*/
-/* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_EEPROM_H_
-#define _HAL_INDEPENDEND_EEPROM_H_
+// include target independent configs
+#include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/util/compiler_adaptation.h>
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
+// IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
+// -> all needed offsets shall be added at the lowest possible layer
+//    ( i.e. direct in the BIOS/OS call)
+#define HAL_CAN_MAX_BUS_NR 2
 
-// now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/eeprom/eeprom.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/eeprom/eeprom.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/eeprom/eeprom.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/eeprom/eeprom.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/eeprom/eeprom.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/eeprom/eeprom.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/eeprom/eeprom.h"
-#endif
+/** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO or BYTE_HI_LO*/
+#define FLOAT_WORD_ORDER BYTE_HI_LO
+/* we know that this cpu is little endian */
+//#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN 1
+#define USE_LITTLE_ENDIAN_CPU 1
 
+/** define size of int */
+#define SIZEOF_INT 2
+
+/** define suitable keyword for huge memory type */
+#define HUGE_MEM
+//#define HUGE_MEM huge
+/** the preprocessor can only distinguish between undefined or defined
+  * constant for conditional compilation
+  * -> use USE_HUGE_MEM
+  */
+#define USE_HUGE_MEM
+
+/** define suitable  keyword for near memory type */
+#define NEAR_MEM      _near
+#define USE_NEAR_MEM  _near
+
+#define MAX_EEPROM_SEGMENT_SIZE 40
+
+/** define max number of write try-cycle to EEPROM
+    ( one cycle: write value, re-read, compare )
+  */
+#define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
+
+// basic period of task manager (scheduler)= const * 500 us = 1 ms
+#define T_TASK_BASIC 2
+/* Initialisierung Watchdog 0 */
+#define WD_MAX_TIME      254
+//200        /* 128 ms                    */
+#define WD_MIN_TIME      0
+/* 0 ms                      */
+#define UD_MAX          233
+/* 16.7 V                    */
+#define UD_MIN        100
+/* 7.2 V                    */
+#define CONFIG_RELAIS    255
+/* Relais wird bei allen Fehlern abgeschaltet */
+#define  CONFIG_RESET    0x10
+/* (b 0001 0000) Reset bei WD Verzug      */
+
+
+// the P1MC processor modul has no static power line
+// where check of D-Plus can be used
+#define NO_CAN_EN_CHECK
 
 #endif
