@@ -377,6 +377,11 @@ check_set_correct_variables()
             GENERATE_FILES_ROOT_DIR="$1/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
+        p1mc)
+            USE_SYSTEM_DEFINE="SYSTEM_P1MC"
+            GENERATE_FILES_ROOT_DIR="$1/CCS/"
+            IDE_NAME="Code Composer Studio"
+            ;;
     esac
 }
 
@@ -386,6 +391,13 @@ append()
 {
     local VARIABLE="$1"
     local FUNCTION="append_$VARIABLE"
+    # If the following statement causes a visible error message "...
+    # not found", then the running shell is incompatible to the Bourne
+    # shell. This is problematic, not for the following statement, but
+    # elsewhere in this script! E.g. Bash is not compatible enough,
+    # but common Linux systems let you configure that /bin/dash plays
+    # the role of /bin/sh, and you should do so. (On Debian-like
+    # systems: dpkg-reconfigure dash)
     type "$FUNCTION" >/dev/null ||
         eval "$FUNCTION() { $VARIABLE=\"\$$VARIABLE\$*\"; }"
     shift
@@ -2312,9 +2324,6 @@ perform_everything()
     # verify and correct the variables
     check_set_correct_variables $1 $2
     GENERATE_FILES_ROOT_DIR=$(echo "$GENERATE_FILES_ROOT_DIR" | sed -e 's/\/[0-9a-zA-Z_+\-]*\/\.\.//g' -e 's/\\[0-9a-zA-Z_+\-]*\\\.\.//g')
-  elif [ $USE_TARGET_SYSTEM = "p1mc" ] ; then
-    USE_SYSTEM_DEFINE="SYSTEM_P1MC"
-    GENERATE_FILES_ROOT_DIR="$1/CCS/"
     # echo "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
 
     # now call the function create_filelist() which build
@@ -2335,8 +2344,8 @@ perform_everything()
     elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
         create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
         create_VCPrj $GENERATE_FILES_ROOT_DIR $2
-  elif [ $USE_TARGET_SYSTEM = "p1mc" ] ; then
-    create_CcsPrj $GENERATE_FILES_ROOT_DIR $2
+    elif [ $USE_TARGET_SYSTEM = "p1mc" ] ; then
+        create_CcsPrj $GENERATE_FILES_ROOT_DIR $2
     else
         create_EdePrj $GENERATE_FILES_ROOT_DIR $2
     fi
