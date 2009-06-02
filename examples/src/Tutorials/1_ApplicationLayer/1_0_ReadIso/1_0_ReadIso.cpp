@@ -247,7 +247,7 @@
 
 /* include some needed util headers */
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
@@ -863,8 +863,8 @@ int main()
       c_myCanExt.setIsoPri(3);
       c_myCanExt.setLen(3);
       //set 3 Byte long PGN
-      c_myCanExt.setUint16Data(0,ISOBUS_CERTIFICATION);
-      c_myCanExt.setUint8Data(2,ISOBUS_CERTIFICATION >> 16);
+      c_myCanExt.setUint16Data(0,ISOBUS_CERTIFICATION_PGN);
+      c_myCanExt.setUint8Data(2,ISOBUS_CERTIFICATION_PGN >> 16);
 
       getIcanInstance() <<    c_myCanExt ;
 

@@ -64,7 +64,7 @@
 namespace __IsoAgLib {
 
 	
-	typedef enum
+	enum Certification_t
 	{
 		CertificationMinEcu = 0
 		, CertificationTecuClass_1
@@ -79,26 +79,26 @@ namespace __IsoAgLib {
 		, CertificationTcWsMember
 		, CertificationFileServer
 		, CertificationGpsReceiver
-	} Certification_t;
+	};
 	
 	typedef BitFieldWrapper_c<Certification_t> CertificationBitMask_t;
 
-	typedef enum
+	enum CertificationRevision_t
 	{
 		CertificationRevisionFirstRevision = 0,
 		CertificationRevisionSecondRevision = 1,
 		CertificationRevisionThirdRevision = 2,
 		CertificationRevisionFourthRevision = 3,
 		CertificationRevisionNotAvailable =7
-	} CertificationRevision_t;
+	};
 
-	typedef enum
+	enum CertificationLabType_t
 	{
 		CertificationLabTypeNonCertifiedLab = 0,
 		CertificationLabTypeEUCertifiedLab = 1,
 		CertificationLabTypeNACertifiedLab = 2,
 		CertificationLabTypeNotAvailable = 7
-	} CertificationLabType_t;
+	};
 	
 
 	class IdentItem_c;

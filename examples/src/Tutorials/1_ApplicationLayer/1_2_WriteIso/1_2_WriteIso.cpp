@@ -755,12 +755,13 @@ int main()
 
         #ifdef TEST_TRACCERT
         //TRACTOR CERTIFICATION CLASS TEST FUNCTIONALITY
-        getITracCertInstance().setCertReferenceNumber(1530);
-        getITracCertInstance().setCertLabID(650);
-        getITracCertInstance().setIsobusCertYear(2006) ;
-        getITracCertInstance().setIsobusCertRevision(IsoAgLib::IsoFourthRev);
-        getITracCertInstance().setIsobusCertLabType(IsoAgLib::IsoEUCert);
-        getITracCertInstance().setMinimumECU(IsoAgLib::IsoCert);
+        c_myIdent.setCertificationData(
+          uint16_t(2006),
+          __IsoAgLib::CertificationRevisionFourthRevision,
+          __IsoAgLib::CertificationLabTypeEUCertifiedLab,
+          650,
+          __IsoAgLib::CertificationBitMask_t(16).setBit(__IsoAgLib::CertificationMinEcu),
+          1530);
         #endif
 
         #ifdef TEST_TRACGUIDANCE
