@@ -350,15 +350,7 @@ void Process_c::resetTimerPeriod( void )
   getSchedulerInstance().changeTimePeriodAndResortTask(this, 100);
 }
 
-/**
-  start processing of a process msg
-  ignore all invalid messages where SEND is not of a member with claimed address,
-  or where EMPF isn't valid
 
-  possible errors:
-    * Err_c::elNonexistent on SEND/EMPF not registered in Monitor-List
-  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-*/
 bool Process_c::processMsg()
 {
   // check for invalid SA/DA

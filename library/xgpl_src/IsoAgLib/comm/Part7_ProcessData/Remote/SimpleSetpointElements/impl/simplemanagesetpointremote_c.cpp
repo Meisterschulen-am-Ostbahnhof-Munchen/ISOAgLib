@@ -150,7 +150,9 @@ void SimpleManageSetpointRemote_c::processSetpoint()
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), processData().getPkgValue(), c_pkg.memberSend().isoName().toConstIisoName_c() );
+    {
+      processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), processData().getPkgValue(), c_pkg.getMonitorItemForSA()->isoName().toConstIisoName_c() );
+    }
   }
 }
 

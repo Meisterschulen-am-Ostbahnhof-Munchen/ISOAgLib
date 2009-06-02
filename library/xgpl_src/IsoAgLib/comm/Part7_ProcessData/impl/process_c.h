@@ -181,6 +181,8 @@ public:
 
   /**
     start processing of a process msg
+    ignore all invalid messages where sender has no address (0xFE)
+    @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
   */
   bool processMsg();
 

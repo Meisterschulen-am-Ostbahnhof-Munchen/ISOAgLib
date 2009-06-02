@@ -377,30 +377,34 @@ bool MeasureProgLocal_c::processMsg()
       return true;
     }
 
+    // backup sender isoname before answering with resetValForGroup() or sendValForGroup() (modification during send in c_pkg !)
+    const IsoName_c c_senderIsoNameOrig = c_pkg.senderItem()->isoName();
+
     // the message was a value message -> evaluate it here
     if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
+
       // ISO: value in message contains reset value
       const int32_t ci32_val = c_pkg.getValue();
       resetValForGroup(c_pkg.mc_processCmd.getValueGroup(), ci32_val);
 
       if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
-        getProcessInstance4Comm().processTcStatusMsg(0, c_pkg.senderItem()->isoName(), TRUE /* ab_skipLastTcStatus */);
+        getProcessInstance4Comm().processTcStatusMsg(0, c_senderIsoNameOrig, TRUE /* ab_skipLastTcStatus */);
       }
 
       // call handler function if handler class is registered
       if ( processDataConst().getProcessDataChangeHandler() != NULL )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), ci32_val, c_pkg.senderItem()->isoName().toConstIisoName_c());
+        processDataConst().getProcessDataChangeHandler()->processMeasurementReset( pprocessData(), ci32_val, c_senderIsoNameOrig.toConstIisoName_c());
     } // write
     else
     { // read -> answer wanted value
-      sendValForGroup( c_pkg.mc_processCmd.getValueGroup(), c_pkg.senderItem()->isoName() );
+      sendValForGroup( c_pkg.mc_processCmd.getValueGroup(), c_senderIsoNameOrig );
 
       if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
-        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().getPkgValue(), c_pkg.senderItem()->isoName().toConstIisoName_c() );
+        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().getPkgValue(), c_senderIsoNameOrig.toConstIisoName_c() );
     } // read
   }
 

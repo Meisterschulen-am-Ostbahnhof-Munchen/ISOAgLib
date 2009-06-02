@@ -162,7 +162,9 @@ const SimpleManageSetpointLocal_c& SimpleManageSetpointLocal_c::operator=( const
 void SimpleManageSetpointLocal_c::processSetpoint(){
   // for simple setpoint the message is process here
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  const IsoName_c& cc_senderISOName = c_pkg.memberSend().isoName();
+
+  // make backup copy
+  const IsoName_c cc_senderISOName = c_pkg.getMonitorItemForSA()->isoName();
 
   if (c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
   { // setpoint set
@@ -184,7 +186,7 @@ void SimpleManageSetpointLocal_c::processSetpoint(){
     }
     // call handler function if handler class is registered
     if ( processDataConst().getProcessDataChangeHandler() != NULL )
-      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.getValue(), c_pkg.memberSend().isoName().toConstIisoName_c(), b_change );
+      processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), c_pkg.getValue(), cc_senderISOName.toConstIisoName_c(), b_change );
   }
   #ifndef SIMPLE_RESPOND_ON_SET
   // if no auto-response on setpoint set is want
