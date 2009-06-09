@@ -1,9 +1,9 @@
 /***************************************************************************
                           config.h  -  system dependent configs, defines and includes
                              -------------------
-    begin                : Thu Jul 29 1999
-    copyright            : (C) 1999 - 2004 Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
+    begin                : May 29 2009
+    copyright            : (C) 2009 Dipl.-Ing. Antoine Kandera
+    email                : a.kandera@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,7 +18,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2009 Dipl.-Ing. Antoine Kandera                           *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -45,8 +45,7 @@
  * This exception does not invalidate any other reasons why a work based on*
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
- * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ * Alternative licenses for IsoAgLib may be arranged                       *
  ***************************************************************************/
 #ifndef _HAL_P1MC_CONFIG_H_
 #define _HAL_P1MC_CONFIG_H_

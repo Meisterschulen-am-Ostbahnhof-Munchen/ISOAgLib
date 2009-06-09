@@ -4,9 +4,9 @@
                                         CAN handling abstraction within
                                         one module
                              -------------------
-    begin                : Wed Jun 29 2001
-    copyright            : (C) 2001 - 2004 Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
+    begin                : May 29 2009
+    copyright            : (C) 2009 Dipl.-Ing. Antoine Kandera
+    email                : a.kandera@osb-ag:de
     type                 : Source
  ***************************************************************************/
 
@@ -22,7 +22,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2009 Dipl.-Ing. Antoine Kandera                           *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -49,8 +49,7 @@
  * This exception does not invalidate any other reasons why a work based on*
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
- * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ * Alternative licenses for IsoAgLib may be arranged                       *
  ***************************************************************************/
 
 #define NUMBER_CANMESSAGES 24
@@ -464,7 +463,7 @@ int16_t can_useMsgobjSend(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib:
     post->Message.data.U8Field.byte7      = uint8_t((pt_send->abData[7] ) & 0xFF);
 
     LinkedTxFIFOIn(&(_FIFOHandler[rui8_busNr].TxFIFOList), post);
-    
+
     return HAL_NO_ERR;
   }
 

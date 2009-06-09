@@ -2,9 +2,9 @@
                           eeprom.h - definition of HAL
                                      namesapce layer for P1MC
                              -------------------
-    begin                : Wed Mar 15 2000
-    copyright            : (C) 2000 - 2004 Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
+    begin                : May 29 2009
+    copyright            : (C) 2009 Dipl.-Ing. Antoine Kandera
+    email                : a.kandera@osb-ag:de
     type                 : Header
  ***************************************************************************/
 
@@ -20,7 +20,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                  *
+ * Copyright (C) 2009 Dipl.-Ing. Antoine Kandera                           *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -47,12 +47,11 @@
  * This exception does not invalidate any other reasons why a work based on*
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
- * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ * Alternative licenses for IsoAgLib may be arranged                       *
  ***************************************************************************/
 
 /* ************************************************************ */
-/** \file IsoAgLib/hal/pm167/eeprom/eeprom.h
+/** \file IsoAgLib/hal/p1mc/eeprom/eeprom.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -76,18 +75,6 @@ namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
     //#include <commercial_BIOS/bios_P1MC/P1MCos.h>
-
-    #if defined(USE_CAN_EEPROM_EDITOR)
-      /** include the BIOS specific header for CAN EEPROM editor
-        * into __HAL if this function is activated in the central target
-        * independent config file */
-      #include <../commercial_BIOS/bios_pm167/Xos20eec.h>
-    #elif defined(USE_RS232_EEPROM_EDITOR)
-      /** include the BIOS specific header for RS232 EEPROM editor
-        * into __HAL if this function is activated in the central target
-        * independent config file */
-      #include <../commercial_BIOS/bios_pm167/Xos20ees.h>
-    #endif
   }
 }
 /**

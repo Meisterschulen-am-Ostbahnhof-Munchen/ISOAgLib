@@ -1,10 +1,10 @@
 /***************************************************************************
                           errcodes.h  - header for the P1MC
                                         error codes
-                             -------------------                                         
-    begin                : Wed Aug 4 1999                                           
-    copyright            : THIS HEADER IS DERIVED FROM ORIGNINAL STW HEADER                         
-    email                : a.spangler@osb-ag:de                                     
+                             -------------------
+    begin                : May 29 2009
+    copyright            : (C) 2009 Dipl.-Ing. Antoine Kandera
+    email                : a.kandera@osb-ag:de
  ***************************************************************************/
 
 /***************************************************************************
@@ -19,7 +19,7 @@
  * Everybody and every company is invited to use this library to make a    *
  * working plug and play standard out of the printed protocol standard.    *
  *                                                                         *
- * Copyright (C) 1999 - 2004 Dipl.-Inform. Achim Spangler                 *
+ * Copyright (C) 2009 Dipl.-Ing. Antoine Kandera                           *
  *                                                                         *
  * The IsoAgLib is free software; you can redistribute it and/or modify it *
  * under the terms of the GNU General Public License as published          *
@@ -46,8 +46,7 @@
  * This exception does not invalidate any other reasons why a work based on*
  * this file might be covered by the GNU General Public License.           *
  *                                                                         *
- * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  *
+ * Alternative licenses for IsoAgLib may be arranged                       *
  ***************************************************************************/
 #ifndef __P1MC_ERRCODES_H__
 #define __P1MC_ERRCODES_H__
@@ -71,9 +70,9 @@ namespace HAL {
   #define HAL_CHECKSUM          13
 
   #define HAL_NEW_SEND_DELAY    14
-  
+
   #define HAL_WD_DATA_CHANGED   15
-  
+
   #define HAL_DIGOUT_OPEN        (int16_t)(-(20 * 0x0001))
   #define HAL_DIGOUT_SHORTCUT    (int16_t)(-(21 * 0x0001))
   #define HAL_DIGOUT_OVERTEMP    (int16_t)(-(22 * 0x0001))
