@@ -1906,7 +1906,9 @@ unix_lines_to_windows_lines()
 {
     local FROM_FILE=$1
     local TO_FILE=$2
-    sed -e 's|\r||' -e 's|$|\r|' <"$FROM_FILE" >"$TO_FILE"
+    # New versions of SED understand \r directly, but older ones (e.g.
+    # the current one of MSYS) don't. With printf it's OK for both:
+    sed -e "$(printf 's|\r||g;s|$|\r|')" <"$FROM_FILE" >"$TO_FILE"
 }
 
 create_EdePrj()
