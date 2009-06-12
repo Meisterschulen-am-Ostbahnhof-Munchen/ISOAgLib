@@ -18,6 +18,9 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+
 
 }
 
@@ -27,6 +30,8 @@ DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
+  __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
 }
 
 
@@ -42,7 +47,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
   switch ( rui32_pgn )
   {
     case ISOBUS_CERTIFICATION_PGN:
-      if ( mb_certificationIsSet && __IsoAgLib::getMultiSendInstance().sendIsoBroadcast ( mrc_identItem.isoName(),
+      if ( mb_certificationIsSet && __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
 																																													m_certification,
 																																													8,
 																																													ISOBUS_CERTIFICATION_PGN,
@@ -56,7 +61,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       }
       break;
     case ECU_DIAGNOSTIC_PROTOCOL_PGN:
-      if ( __IsoAgLib::getMultiSendInstance().sendIsoBroadcast ( mrc_identItem.isoName(),
+      if ( __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
 																																 diagProtocolId,
 																																 8,
 																																 ECU_DIAGNOSTIC_PROTOCOL_PGN,
@@ -71,7 +76,7 @@ INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL : 
 
     case SOFTWARE_IDENTIFICATION_PGN:
       if ( !mstr_SwIdentification.empty()
-           && __IsoAgLib::getMultiSendInstance().sendIsoBroadcast ( mrc_identItem.isoName(),
+           && __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
 																																		( uint8_t* ) mstr_SwIdentification.c_str(),
 																																		mstr_SwIdentification.size(),
 																																		SOFTWARE_IDENTIFICATION_PGN,
@@ -86,7 +91,7 @@ INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PG
 
     case ECU_IDENTIFICATION_INFORMATION_PGN:
       if ( !mstr_EcuIdentification.empty()
-           && __IsoAgLib::getMultiSendInstance().sendIsoBroadcast ( mrc_identItem.isoName(),
+           && __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
 																																		( uint8_t* ) mstr_EcuIdentification.c_str(),
 																																		mstr_EcuIdentification.size(),
 																																		ECU_IDENTIFICATION_INFORMATION_PGN,
@@ -94,6 +99,32 @@ INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PG
       { // Message successfully transmitted to multisend -> return true
 #ifdef DEBUG
 				INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN : " << mstr_multiSendBufferSwIdent << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+        return true;
+      }
+      break;
+    case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:// we are sending an empty reply message here. This part is not yet fully supported
+      if ( __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
+                                                                    ( uint8_t* ) NULL,
+                                                                    0,
+                                                                    ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
+                                                                    st_sendSuccessDONTCAREFOR ))
+      { // Message successfully transmitted to multisend -> return true
+#ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN : " << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+        return true;
+      }
+      break;
+    case PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:// we are sending an empty reply message here. This part is not yet fully supported 
+      if ( __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
+                                                                    ( uint8_t* ) NULL,
+                                                                    0,
+                                                                    PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
+                                                                    st_sendSuccessDONTCAREFOR ))
+      { // Message successfully transmitted to multisend -> return true
+#ifdef DEBUG
+        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN : " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
       }

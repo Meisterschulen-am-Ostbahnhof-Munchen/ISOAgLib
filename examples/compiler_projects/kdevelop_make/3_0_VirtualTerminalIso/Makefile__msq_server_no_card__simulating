@@ -7,7 +7,7 @@
 TARGET = 3_0_VirtualTerminalIso
 ISOAGLIB_PATH = ../../../..
 INSTALL_PATH = /usr/local
-APP_INC = -I../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso
+APP_INC = -I../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso 
 LIBPATH = 
 EXTERNAL_LIBS = 
 
@@ -34,6 +34,10 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.cpp  \
@@ -41,10 +45,6 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.cpp  \
@@ -94,6 +94,7 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputboolean_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpolygon_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
@@ -104,13 +105,7 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 
 SOURCES_APP = ../../../../examples/src/Tutorials/3_VirtualTerminal_Client/3_0_VirtualTerminalIso/3_0_VirtualTerminalIso.cpp  
 
-HEADERS_UTEST = 
-
-HEADERS_UTEST_MOCKS = 
-
-HEADERS_UTEST_MOD_SUT = 
-
-TESTRUNNER_SOURCES = 
+HEADERS_APP = 
 
 INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h \
 		../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h \
@@ -120,6 +115,8 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h \
 		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
 		../../../../library/xgpl_src/IsoAgLib/typedef.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h \
@@ -127,8 +124,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisend_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h \
@@ -176,6 +171,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectbutton_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectdatamask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectlinearbargraph_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/eeprom/ieepromio_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/system/isystem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/icanio_c.h \
@@ -184,27 +180,28 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/config.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectellipse_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputboolean_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputnumber_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpolygon_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstring_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectfillattributes_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectstringvariable_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectobjectpointer_c.h \
@@ -236,6 +233,8 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectbutton_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectdatamask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectlinearbargraph_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/eeprom/impl/eepromio_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.h \
@@ -244,14 +243,13 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vttypes.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminalpkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/eeprom.h \
@@ -271,33 +269,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
-
-
-#Special Sources for CAN Server
-SOURCES_SERVER = ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_msq.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server_no_card.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
-
-#Special Rules for CAN Server
-OBJ_DIR_SERVER  = objects_server
-OBJECTS_SERVER = $(patsubst %.cpp,$(OBJ_DIR_SERVER)/%.o,$(notdir $(SOURCES_SERVER)))
-DEPS_SERVER := $(patsubst %.o,%.d,$(OBJECTS_SERVER))
-
-$(OBJ_DIR_SERVER)/%.d :
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) 2>/dev/null | \
-	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_SERVER)/$$1!' > $@
-
-$(OBJ_DIR_SERVER)/%.o : $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.d,%,$@).cpp,$(SOURCES_SERVER)) $(OBJ_DIR_SERVER)/%.d
-	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_SERVER)/%.o,%,$@).cpp,$(SOURCES_SERVER))
-
-include $(DEPS_SERVER)
-
-can_server: $(OBJECTS_SERVER)
-	$(LINK) $(LFLAGS) -o can_server $(OBJECTS_SERVER) $(LIBS) $(LIBS_CAN_SERVER)
-
-clean_can_server:
-	rm can_server $(OBJECTS_SERVER) $(DEPS_SERVER)
-
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt
@@ -458,7 +429,7 @@ dynamic_library:  $(OBJECTS_LIBRARY)
 	$(CXX) -shared -o $(OBJ_DIR_LIBRARY)/libisoaglib.so $^
 
 
-all: can_server Makefile static_library dynamic_library  $(TARGET) testrunner
+all: Makefile static_library dynamic_library  $(TARGET) testrunner
 $(TARGET):  $(OBJECTS_APP) static_library dynamic_library
 	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.a $(LIBS)
 	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJ_DIR_LIBRARY)/libisoaglib.so $(LIBS)
@@ -526,5 +497,5 @@ uninstall_library: $(INSTALL_FILES_LIBRARY)
 	rm $(INSTALL_PATH)/lib/libisoaglib.so; \
 	echo Finished uninstalling includes/libraries from directory \"$(INSTALL_PATH)\"
 
-uninstall: can_server
+uninstall:
 

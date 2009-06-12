@@ -584,6 +584,25 @@ int main()
   // Attention: while not announced, some instance fields can change!
   // That's why you get a reference to the ISOName!
   /// IsoAgLib::iIsoName_c const &myISOName = c_myIdent.isoName();
+
+   __IsoAgLib::CertificationBitMask_t myCertification ( 24 );
+  myCertification.setBit ( __IsoAgLib::CertificationTecuClass_2 ).setBit ( __IsoAgLib::CertificationTecuClass_1 );
+
+  if ( ! c_myIdent.setEcuIdentification ( "abcde", "fghij", "klmn" ) )
+    return 1;
+  if ( ! c_myIdent.setSwIdentification ( "abcdef#ghijkl*" ) )
+    return 1;
+  if ( ! c_myIdent.setCertificationData ( 2008, // Certification year
+                                          myCertification , // Compliance certification type
+                                          __IsoAgLib::CertificationRevisionSecondRevision, //uint8_t aui8_revision
+                                          __IsoAgLib::CertificationLabTypeEUCertifiedLab, //uint8_t aui8_laboratoryType
+                                          0x07AA, // uint16_t aui16_laboratoryId,
+                                          0xAAAA //     uint16_t aui16_referenceNumber
+                                        ) )
+    return 1;
+
+
+  
   // Call to init iIsoTerminal instance and initialize object pool!
   spc_tut30csc = getIisoTerminalInstance().initAndRegisterIsoObjectPool (c_myIdent, Tutorial_3_0_Pool_c, "T30v2"); // PoolName: Tutorial 3.0 Version 2
   // only use 5 chars as the pool supports Multi-Language (the last 2 chars are used for the language-code then!

@@ -365,6 +365,19 @@ public: // methods
   bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
     { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
 
+
+  /**
+    Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer. 
+    Will check the size of the message and decide whether or not to use the transport protocol
+    @param acrc_isoNameSender ISOName of sender
+    @param rhpb_data HUGE_MEM pointer to the data
+    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
+    @param ai32_pgn PGN of the data
+    @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
+    @return true -> MultiSend_c was ready -> Transfer was started
+  */
+	bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+
   /**
     send an ISO 11783 (E)TP broadcast multipacket message using a given MultiSendStreamer
     @param acrc_isoNameSender ISOName of sender

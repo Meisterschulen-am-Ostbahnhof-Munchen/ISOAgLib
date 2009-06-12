@@ -941,6 +941,30 @@ MultiSend_c::processMsg()
   }
 }
 
+bool
+MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+{
+  if (aui16_dataSize < 9)
+  {
+    MultiSendPkg_c& rc_multiSendPkg = data();
+    rc_multiSendPkg.setIsoPri (6);
+    rc_multiSendPkg.setISONameForSA (acrc_isoNameSender);
+    rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
+    rc_multiSendPkg.setLen (aui16_dataSize);
+    rc_multiSendPkg.setIsoPgn(ai32_pgn);
+    for (int i = 0 ; i < aui16_dataSize; i++)
+      rc_multiSendPkg.setUint8Data (i, rhpb_data[i]);
+
+    getCanInstance4Comm() << rc_multiSendPkg;
+    rpen_sendSuccessNotify = SendSuccess;
+    return true;
+  }
+  else
+  {
+    return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast);
+  }
+}
+
 /** this function should NOT be called from INSIDE of timeEvent !
     ==> Only call it from OUTSIDE functions like init(), processMsg(), addSendStream, etc.
   */
