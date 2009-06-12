@@ -772,13 +772,6 @@ create_filelist( )
         FILELIST_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
     fi
 
-
-    rm -f "$FILELIST_LIBRARY_PURE" "$FILELIST_LIBRARY_HDR"
-    rm -f "$FILELIST_APP_PURE" "$FILELIST_APP_HDR"
-    rm -f "$FILELIST_COMBINED_PURE" "$FILELIST_COMBINED_HDR"
-
-    touch "$FILELIST_LIBRARY_PURE" "$FILELIST_APP_PURE" "$FILELIST_COMBINED_PURE"
-
     FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/Part12_DiagnosticsServices/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
 
     # find wanted process data communication features
@@ -803,8 +796,8 @@ create_filelist( )
         append EXCLUDE_PATH_PART " \)"
     fi
 
-    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
-    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
+    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
+    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
 
     ##############################
     # find application files
@@ -885,48 +878,49 @@ create_filelist( )
     append APP_SEARCH_HDR_TYPE_PART " \)"
 
     for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_PURE"
-        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >> $FILELIST_APP_HDR"
-    done
+        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
+        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
+    done 3>"$FILELIST_APP_PURE" 4>"$FILELIST_APP_HDR"
 
     cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
     cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
 
-    # create list with suitable block definition for doxygen import
-    # start main block for all files for project
-    #echo_ "/**" > $FILELIST_DOXYGEN_READY
-    #echo_ "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >> $FILELIST_DOXYGEN_READY
-    #echo_ "*/" >> $FILELIST_DOXYGEN_READY
-    #echo_ "/*@{*/" >> $FILELIST_DOXYGEN_READY
-    echo_e "\n\n @section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $FILELIST_DOXYGEN_READY
+    {
+        # create list with suitable block definition for doxygen import
+        # start main block for all files for project
+        #echo_ "/**" > $FILELIST_DOXYGEN_READY
+        #echo_ "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >&3
+        #echo_ "*/" >&3
+        #echo_ "/*@{*/" >&3
+        echo_e "\n\n @section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
 
-    # write block of source files
-    #echo_ "/**" >> $FILELIST_DOXYGEN_READY
-    #echo_ "* \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
-    #echo_ "*/" >> $FILELIST_DOXYGEN_READY
-    #echo_ "/*@{*/" >> $FILELIST_DOXYGEN_READY
-    echo_e "\n\n @section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
-    echo_ "\code" >> $FILELIST_DOXYGEN_READY
-    cat $FILELIST_COMBINED_PURE >> $FILELIST_DOXYGEN_READY
-    echo_ "\endcode" >> $FILELIST_DOXYGEN_READY
-    #echo_ "/*@}*/" >> $FILELIST_DOXYGEN_READY
+        # write block of source files
+        #echo_ "/**" >&3
+        #echo_ "* \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >&3
+        #echo_ "*/" >&3
+        #echo_ "/*@{*/" >&3
+        echo_e "\n\n @section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
+        echo_ "\code" >&3
+        cat $FILELIST_COMBINED_PURE >&3
+        echo_ "\endcode" >&3
+        #echo_ "/*@}*/" >&3
 
-    echo_ "" >> $FILELIST_DOXYGEN_READY
+        echo_ "" >&3
 
-    # write block of header files
-    #echo_ "/**" >> $FILELIST_DOXYGEN_READY
-    #echo_ "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >> $FILELIST_DOXYGEN_READY
-    #echo_ "*/" >> $FILELIST_DOXYGEN_READY
-    #echo_ "/*@{*/" >> $FILELIST_DOXYGEN_READY
-    echo_e "\n\n @section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >> $FILELIST_DOXYGEN_READY
-    echo_ "\code" >> $FILELIST_DOXYGEN_READY
-    cat $FILELIST_COMBINED_HDR >> $FILELIST_DOXYGEN_READY
-    echo_ "\endcode" >> $FILELIST_DOXYGEN_READY
-    #echo_ "/*@}*/" >> $FILELIST_DOXYGEN_READY
+        # write block of header files
+        #echo_ "/**" >&3
+        #echo_ "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >&3
+        #echo_ "*/" >&3
+        #echo_ "/*@{*/" >&3
+        echo_e "\n\n @section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
+        echo_ "\code" >&3
+        cat $FILELIST_COMBINED_HDR >&3
+        echo_ "\endcode" >&3
+        #echo_ "/*@}*/" >&3
 
-    # write end of main block of all project files
-    #echo_ "/*@}*/" >> $FILELIST_DOXYGEN_READY
-
+        # write end of main block of all project files
+        #echo_ "/*@}*/" >&3
+    } 3>"$FILELIST_DOXYGEN_READY"
     cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
     rm -f $FILELIST_COMBINED_HDR
 
@@ -1001,14 +995,14 @@ create_autogen_project_config()
         # CONFIG_NAME=$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/.config_$PROJECT.h
         CONFIG_NAME=$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h
         VERSION_FILE_NAME=$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/version.h
-        if [ ! -f $VERSION_FILE_NAME ] ; then
-            echo_    "#ifndef POOL_VERSION"            > $VERSION_FILE_NAME
-            echo_e "\t#define POOL_VERSION 1.0"     >> $VERSION_FILE_NAME
-            echo_    "#endif"                         >> $VERSION_FILE_NAME
-            echo_    "#ifndef FIRMWARE_VERSION"       >> $VERSION_FILE_NAME
-            echo_e "\t#define FIRMWARE_VERSION 1.0" >> $VERSION_FILE_NAME
-            echo_    "#endif"                         >> $VERSION_FILE_NAME
-        fi
+        [ -f $VERSION_FILE_NAME ] || {
+            echo_    "#ifndef POOL_VERSION"            >&3
+            echo_e "\t#define POOL_VERSION 1.0"     >&3
+            echo_    "#endif"                         >&3
+            echo_    "#ifndef FIRMWARE_VERSION"       >&3
+            echo_e "\t#define FIRMWARE_VERSION 1.0" >&3
+            echo_    "#endif"                         >&3
+        } 3>$VERSION_FILE_NAME
         break;
     done
 
@@ -1025,224 +1019,224 @@ create_autogen_project_config()
     else
         touch $CONFIG_NAME.bak
     fi
-    rm -f $CONFIG_NAME
-  # write INST counts
-    CONFIG_HEADER_FILENAME=$(basename $CONFIG_NAME)
-    echo_ "// File: $CONFIG_HEADER_FILENAME" > $CONFIG_NAME
-    echo_ "// IMPORTANT: Never change the first block of this header manually!!!" >> $CONFIG_NAME
-    echo_ "//            All manual changes are overwritten by the next call of \"update_makefile.sh $CONF_FILE\" " >> $CONFIG_NAME
-    echo_ "//            Perform changes direct in the feature and project setup file $CONF_FILE"  >> $CONFIG_NAME
-    echo_ "//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after" >> $CONFIG_NAME
-    echo_ "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >> $CONFIG_NAME
-    echo_ "//                      All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >> $CONFIG_NAME
-    echo_ "//                      if the corresponding value in isoaglib_config.h changed" >> $CONFIG_NAME
-
-    echo_e "\n\n// include an external file for definition of pool and firmware versions" >> $CONFIG_NAME
-    echo_    "#include \"version.h\""  >> $CONFIG_NAME
-
-    echo_e "$ENDLINE" >> $CONFIG_NAME
-    echo_    "#define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >> $CONFIG_NAME
-    for SinglePrjDefine in $PRJ_DEFINES ; do
-        SingleDefName="${SinglePrjDefine%%=*}"
-        SingleDefRemainder="${SinglePrjDefine#$SingleDefName}"
-        SingleDefValue="${SingleDefRemainder#=}"
-        echo_ "#ifndef $SingleDefName" >> $CONFIG_NAME
-        echo_ "#define $SingleDefName $SingleDefValue" >> $CONFIG_NAME
-        echo_ "#endif // $SingleDefName" >> $CONFIG_NAME
-    done
-    echo_e "$ENDLINE" >> $CONFIG_NAME
-
-
-    echo_e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >> $CONFIG_NAME
-    echo_e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >> $CONFIG_NAME
-    echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
-    echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
-    echo_e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >> $CONFIG_NAME
-
-
-    echo_ "// Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory." >> $CONFIG_NAME
-    echo_ "// Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian." >> $CONFIG_NAME
-    echo_ "// Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms," >> $CONFIG_NAME
-    echo_ "// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO ) - and other way." >> $CONFIG_NAME
-    if [ "$USE_LITTLE_ENDIAN_CPU" -gt 0 ] ; then
-        echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
-    else
-        echo_e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >> $CONFIG_NAME
-    fi
-    if [ "$USE_BIG_ENDIAN_CPU" -gt 0 ] ; then
-        echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >> $CONFIG_NAME
-    else
-        echo_e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >> $CONFIG_NAME
-    fi
-
-    if [ "$USE_PCAN_LIB" -gt 0 ] ; then
-        echo_e "#define USE_PCAN_LIB$ENDLINE" >> $CONFIG_NAME
-    else
-        echo_e "// #define USE_PCAN_LIB$ENDLINE" >> $CONFIG_NAME
-    fi
-
-    if [ "$PRJ_DO_NOT_START_RELAIS_ON_STARTUP" -gt 0 ] ; then
-        echo_e "#define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >> $CONFIG_NAME
-    else
-        echo_e "// #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >> $CONFIG_NAME
-    fi
-
-    if [ "$PRJ_RS232_OVER_CAN" -gt 0 ] ; then
-        echo_e "#define USE_RS232_OVER_CAN$ENDLINE" >> $CONFIG_NAME
-    fi
-
-    if [ "$USE_VT_UNICODE_SUPPORT" -gt 0 ] ; then
-        echo_e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >> $CONFIG_NAME
-    fi
-
-
-    if [ "$PRJ_BASE" -gt 0 ] ; then
-        echo_e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_GENERAL" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_GENERAL $ENDLINE\t#define USE_TRACTOR_GENERAL $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_MOVE" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_MOVE $ENDLINE\t#define USE_TRACTOR_MOVE $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_PTO" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_PTO $ENDLINE\t#define USE_TRACTOR_PTO $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_LIGHT" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_FACILITIES" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_FACILITIES $ENDLINE\t#define USE_TRACTOR_FACILITIES $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_AUX" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_GUIDANCE" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_GUIDANCE $ENDLINE\t#define USE_TRACTOR_GUIDANCE $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TRACTOR_CERTIFICATION" -gt 0 ; then
-        echo_e "#ifndef USE_TRACTOR_CERTIFICATION $ENDLINE\t#define USE_TRACTOR_CERTIFICATION $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if test "$PRJ_TIME_GPS" -gt 0 ; then
-        echo_e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-
-    if [ "$PROC_LOCAL" -gt 0 ] ; then
-        echo_e "#ifndef USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE\t#define USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-
-    echo_ "// Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed" >> $CONFIG_NAME
-    echo_ "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >> $CONFIG_NAME
-    echo_ "// Initialization of CAN filters and of local process data might get too slow under worst case conditions" >> $CONFIG_NAME
-    if [ "$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" -gt 0 ] ; then
-        echo_e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >> $CONFIG_NAME
-    else
-        echo_e "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >> $CONFIG_NAME
-    fi
-
-    echo_ "/** allow configuration by parameter value YES */" >> $CONFIG_NAME
-    echo_ "#ifndef YES" >> $CONFIG_NAME
-    echo_ "  #define YES 1" >> $CONFIG_NAME
-    echo_ "#endif" >> $CONFIG_NAME
-    echo_ "/** allow configuration by parameter value NO */" >> $CONFIG_NAME
-    echo_ "#ifndef NO" >> $CONFIG_NAME
-    echo_ "  #define NO 0" >> $CONFIG_NAME
-    echo_ "#endif" >> $CONFIG_NAME
-
-
-    if [ "$USE_FLOAT_DATA_TYPE" -gt 0 ] ; then
-        echo_ "// Decide if float shall be used for the project" >> $CONFIG_NAME
-        echo_e "#define USE_FLOAT_DATA_TYPE$ENDLINE" >> $CONFIG_NAME
-    fi
-
-
-    if [ "$PRJ_PROCESS" -gt 0 ] ; then
-        echo_e "#ifndef USE_PROCESS $ENDLINE  #define USE_PROCESS $ENDLINE#endif" >> $CONFIG_NAME
-        if [ "$PROC_REMOTE" -gt 0 ] ; then
-            if [ "$PROC_REMOTE_STD" -gt 0 ] ; then
-                echo_e "#ifndef USE_PROC_REMOTE_STD $ENDLINE  #define USE_PROC_REMOTE_STD $ENDLINE#endif" >> $CONFIG_NAME
+    {
+        # write INST counts
+        CONFIG_HEADER_FILENAME=$(basename $CONFIG_NAME)
+        echo_ "// File: $CONFIG_HEADER_FILENAME" >&3
+        echo_ "// IMPORTANT: Never change the first block of this header manually!!!" >&3
+        echo_ "//            All manual changes are overwritten by the next call of \"update_makefile.sh $CONF_FILE\" " >&3
+        echo_ "//            Perform changes direct in the feature and project setup file $CONF_FILE"  >&3
+        echo_ "//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after" >&3
+        echo_ "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >&3
+        echo_ "//                      All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >&3
+        echo_ "//                      if the corresponding value in isoaglib_config.h changed" >&3
+    
+        echo_e "\n\n// include an external file for definition of pool and firmware versions" >&3
+        echo_    "#include \"version.h\""  >&3
+    
+        echo_e "$ENDLINE" >&3
+        echo_    "#define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >&3
+        for SinglePrjDefine in $PRJ_DEFINES ; do
+            SingleDefName="${SinglePrjDefine%%=*}"
+            SingleDefRemainder="${SinglePrjDefine#$SingleDefName}"
+            SingleDefValue="${SingleDefRemainder#=}"
+            echo_ "#ifndef $SingleDefName" >&3
+            echo_ "#define $SingleDefName $SingleDefValue" >&3
+            echo_ "#endif // $SingleDefName" >&3
+        done
+        echo_e "$ENDLINE" >&3
+    
+    
+        echo_e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >&3
+        echo_e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >&3
+        echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >&3
+        echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >&3
+        echo_e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >&3
+    
+    
+        echo_ "// Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory." >&3
+        echo_ "// Most CPU will use LITTLE ENDIAN. Only some types of ARM, mostly 68k and PowerPC CPU types will use big endian." >&3
+        echo_ "// Please check the manual of your targret cpu. This setting is used to activate some quick number conversion algorithms," >&3
+        echo_ "// which provide quick conversion from number variable to CAN strings ( which are always little endian in ISO ) - and other way." >&3
+        if [ "$USE_LITTLE_ENDIAN_CPU" -gt 0 ] ; then
+            echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >&3
+        else
+            echo_e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN$ENDLINE" >&3
+        fi
+        if [ "$USE_BIG_ENDIAN_CPU" -gt 0 ] ; then
+            echo_e "#define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >&3
+        else
+            echo_e "// #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN$ENDLINE" >&3
+        fi
+    
+        if [ "$USE_PCAN_LIB" -gt 0 ] ; then
+            echo_e "#define USE_PCAN_LIB$ENDLINE" >&3
+        else
+            echo_e "// #define USE_PCAN_LIB$ENDLINE" >&3
+        fi
+    
+        if [ "$PRJ_DO_NOT_START_RELAIS_ON_STARTUP" -gt 0 ] ; then
+            echo_e "#define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >&3
+        else
+            echo_e "// #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP$ENDLINE" >&3
+        fi
+    
+        if [ "$PRJ_RS232_OVER_CAN" -gt 0 ] ; then
+            echo_e "#define USE_RS232_OVER_CAN$ENDLINE" >&3
+        fi
+    
+        if [ "$USE_VT_UNICODE_SUPPORT" -gt 0 ] ; then
+            echo_e "#define USE_VT_UNICODE_SUPPORT$ENDLINE" >&3
+        fi
+    
+    
+        if [ "$PRJ_BASE" -gt 0 ] ; then
+            echo_e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_GENERAL" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_GENERAL $ENDLINE\t#define USE_TRACTOR_GENERAL $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_MOVE" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_MOVE $ENDLINE\t#define USE_TRACTOR_MOVE $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_PTO" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_PTO $ENDLINE\t#define USE_TRACTOR_PTO $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_LIGHT" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_FACILITIES" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_FACILITIES $ENDLINE\t#define USE_TRACTOR_FACILITIES $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_AUX" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_GUIDANCE" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_GUIDANCE $ENDLINE\t#define USE_TRACTOR_GUIDANCE $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TRACTOR_CERTIFICATION" -gt 0 ; then
+            echo_e "#ifndef USE_TRACTOR_CERTIFICATION $ENDLINE\t#define USE_TRACTOR_CERTIFICATION $ENDLINE#endif" >&3
+        fi
+        if test "$PRJ_TIME_GPS" -gt 0 ; then
+            echo_e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >&3
+        fi
+    
+        if [ "$PROC_LOCAL" -gt 0 ] ; then
+            echo_e "#ifndef USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE\t#define USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE#endif" >&3
+        fi
+    
+        echo_ "// Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed" >&3
+        echo_ "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >&3
+        echo_ "// Initialization of CAN filters and of local process data might get too slow under worst case conditions" >&3
+        if [ "$OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED" -gt 0 ] ; then
+            echo_e "#define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >&3
+        else
+            echo_e "// #define OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED$ENDLINE" >&3
+        fi
+    
+        echo_ "/** allow configuration by parameter value YES */" >&3
+        echo_ "#ifndef YES" >&3
+        echo_ "  #define YES 1" >&3
+        echo_ "#endif" >&3
+        echo_ "/** allow configuration by parameter value NO */" >&3
+        echo_ "#ifndef NO" >&3
+        echo_ "  #define NO 0" >&3
+        echo_ "#endif" >&3
+    
+    
+        if [ "$USE_FLOAT_DATA_TYPE" -gt 0 ] ; then
+            echo_ "// Decide if float shall be used for the project" >&3
+            echo_e "#define USE_FLOAT_DATA_TYPE$ENDLINE" >&3
+        fi
+    
+    
+        if [ "$PRJ_PROCESS" -gt 0 ] ; then
+            echo_e "#ifndef USE_PROCESS $ENDLINE  #define USE_PROCESS $ENDLINE#endif" >&3
+            if [ "$PROC_REMOTE" -gt 0 ] ; then
+                if [ "$PROC_REMOTE_STD" -gt 0 ] ; then
+                    echo_e "#ifndef USE_PROC_REMOTE_STD $ENDLINE  #define USE_PROC_REMOTE_STD $ENDLINE#endif" >&3
+                fi
+                if [ "$PROC_REMOTE_SIMPLE_MEASURE" -gt 0 ] ; then
+                    echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE#endif" >&3
+                fi
+                if [ "$PROC_REMOTE_SIMPLE_SETPOINT" -gt 0 ] ; then
+                    echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE#endif" >&3
+                fi
+                if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 ] ; then
+                    echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE#endif" >&3
+                fi
+                if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ] ; then
+                    echo_e "#ifndef USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE  #define USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE#endif" >&3
+                fi
             fi
-            if [ "$PROC_REMOTE_SIMPLE_MEASURE" -gt 0 ] ; then
-                echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE#endif" >> $CONFIG_NAME
+        else
+        # the default in isoaglib_config.h is to activate
+        # PROCESS as long as USE_PROCESS_YN unset
+            echo_e "#ifndef USE_PROCESS_YN $ENDLINE\t#define USE_PROCESS_YN NO $ENDLINE#endif" >&3
+        fi
+        if [ "$PRJ_EEPROM" -gt 0 ] ; then
+            echo_e "#ifndef USE_EEPROM_IO $ENDLINE\t#define USE_EEPROM_IO $ENDLINE#endif" >&3
+        else
+        # the default in isoaglib_config.h is to activate
+        # EEPROM as long as USE_EEPROM_IO_YN unset
+            echo_e "#ifndef USE_EEPROM_IO_YN $ENDLINE\t#define USE_EEPROM_IO_YN NO $ENDLINE#endif" >&3
+        fi
+    
+        if test "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
+            echo_e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >&3
+        else
+        # the default in isoaglib_config.h is to activate
+        # DATASTREAMS as long as USE_DATASTREAMS_IO_YN unset
+            echo_e "#ifndef USE_DATASTREAMS_IO_YN $ENDLINE\t#define USE_DATASTREAMS_IO_YN NO $ENDLINE#endif" >&3
+        fi
+    
+        if [ "$PRJ_ISO11783" -gt 0 ] ; then
+            echo_e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >&3
+            if [ "$PRJ_ISO_TERMINAL" -gt 0 ] ; then
+                echo_e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >&3
+                if [ "$USE_ISO_TERMINAL_ATTRIBUTES" != "" ] ; then
+                    echo_e "#ifndef USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE\t#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE#endif" >&3
+                fi
+                if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" != "" ] ; then
+                    echo_e "#ifndef USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE\t#define USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE#endif" >&3
+                fi
+                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION1" != "" ] ; then
+                    echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $ENDLINE#endif" >&3
+                fi
+                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION2" != "" ] ; then
+                    echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $ENDLINE#endif" >&3
+                fi
+                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION3" != "" ] ; then
+                    echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $ENDLINE#endif" >&3
+                fi
+                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION4" != "" ] ; then
+                    echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE#endif" >&3
+                fi
             fi
-            if [ "$PROC_REMOTE_SIMPLE_SETPOINT" -gt 0 ] ; then
-                echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE#endif" >> $CONFIG_NAME
+            if [ "$PRJ_MULTIPACKET" -gt 0 ] ; then
+                if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ] ; then
+                    echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >&3
+                    echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >&3
+                else
+                    echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >&3
+                    echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >&3
+                fi
             fi
-            if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 ] ; then
-                echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-            if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ] ; then
-                echo_e "#ifndef USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE  #define USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE#endif" >> $CONFIG_NAME
+            if [ "$PRJ_ISO_TERMINAL_SERVER" -gt 0 ] ; then
+                echo_e "#ifndef USE_ISO_TERMINAL_SERVER $ENDLINE\t#define USE_ISO_TERMINAL_SERVER $ENDLINE#endif" >&3
+                echo_ "with ISO_TERMINAL_SERVER!"
             fi
         fi
-    else
-    # the default in isoaglib_config.h is to activate
-    # PROCESS as long as USE_PROCESS_YN unset
-        echo_e "#ifndef USE_PROCESS_YN $ENDLINE\t#define USE_PROCESS_YN NO $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-    if [ "$PRJ_EEPROM" -gt 0 ] ; then
-        echo_e "#ifndef USE_EEPROM_IO $ENDLINE\t#define USE_EEPROM_IO $ENDLINE#endif" >> $CONFIG_NAME
-    else
-    # the default in isoaglib_config.h is to activate
-    # EEPROM as long as USE_EEPROM_IO_YN unset
-        echo_e "#ifndef USE_EEPROM_IO_YN $ENDLINE\t#define USE_EEPROM_IO_YN NO $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-
-    if test "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
-        echo_e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >> $CONFIG_NAME
-    else
-    # the default in isoaglib_config.h is to activate
-    # DATASTREAMS as long as USE_DATASTREAMS_IO_YN unset
-        echo_e "#ifndef USE_DATASTREAMS_IO_YN $ENDLINE\t#define USE_DATASTREAMS_IO_YN NO $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-
-    if [ "$PRJ_ISO11783" -gt 0 ] ; then
-        echo_e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >> $CONFIG_NAME
-        if [ "$PRJ_ISO_TERMINAL" -gt 0 ] ; then
-            echo_e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >> $CONFIG_NAME
-            if [ "$USE_ISO_TERMINAL_ATTRIBUTES" != "" ] ; then
-                echo_e "#ifndef USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE\t#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-            if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" != "" ] ; then
-                echo_e "#ifndef USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE\t#define USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-            if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION1" != "" ] ; then
-                echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-            if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION2" != "" ] ; then
-                echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-            if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION3" != "" ] ; then
-                echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-            if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION4" != "" ] ; then
-                echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE#endif" >> $CONFIG_NAME
-            fi
+    
+        if [ "$PRJ_SEND_DEBUG" -gt 0 ] ; then
+            echo_e "#ifndef DEBUG $ENDLINE\t#define DEBUG $ENDLINE#endif" >&3
         fi
-        if [ "$PRJ_MULTIPACKET" -gt 0 ] ; then
-            if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ] ; then
-                echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >> $CONFIG_NAME
-                echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamChunk_c $ENDLINE#endif" >> $CONFIG_NAME
-            else
-                echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >> $CONFIG_NAME
-                echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >> $CONFIG_NAME
-            fi
-        fi
-        if [ "$PRJ_ISO_TERMINAL_SERVER" -gt 0 ] ; then
-            echo_e "#ifndef USE_ISO_TERMINAL_SERVER $ENDLINE\t#define USE_ISO_TERMINAL_SERVER $ENDLINE#endif" >> $CONFIG_NAME
-            echo_ "with ISO_TERMINAL_SERVER!"
-        fi
-    fi
-
-    if [ "$PRJ_SEND_DEBUG" -gt 0 ] ; then
-        echo_e "#ifndef DEBUG $ENDLINE\t#define DEBUG $ENDLINE#endif" >> $CONFIG_NAME
-    fi
-
-  # write overwriteable parts of isoaglib_config.h
-    echo_e "$ENDLINE// The following configuration values can be overwritten." >> $CONFIG_NAME
-    echo_ "// These settings are initially defined in isoaglib_config.h ." >> $CONFIG_NAME
-    echo_ "// These settings are in commented-out, so that you can activate and adapt them by" >> $CONFIG_NAME
-    echo_e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >> $CONFIG_NAME
+        # write overwriteable parts of isoaglib_config.h
+        echo_e "$ENDLINE// The following configuration values can be overwritten." >&3
+        echo_ "// These settings are initially defined in isoaglib_config.h ." >&3
+        echo_ "// These settings are in commented-out, so that you can activate and adapt them by" >&3
+        echo_e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >&3
+    } 3>"$CONFIG_NAME"
     for conf_line in $(grep "#define CONFIG_" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g') ; do
         conf_name=$(echo_ $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
         INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak)
@@ -1255,28 +1249,30 @@ create_autogen_project_config()
             echo_e_n "$ENDLINE" >> $CONFIG_NAME
         fi
     done
-    echo_e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >> $CONFIG_NAME
-    FRESH=$(grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak)
-    if [ "$FRESH" -lt 1 ] ; then
-        echo_ "// START_INDIVIDUAL_PROJECT_CONFIG" >> $CONFIG_NAME
-    fi
-    cat $CONFIG_NAME.bak >> $CONFIG_NAME
-    rm -f $CONFIG_NAME.bak
-
+    {
+        echo_e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >&3
+        FRESH=$(grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak)
+        if [ "$FRESH" -lt 1 ] ; then
+            echo_ "// START_INDIVIDUAL_PROJECT_CONFIG" >&3
+        fi
+        cat $CONFIG_NAME.bak >&3
+        rm -f $CONFIG_NAME.bak
+    } 3>>"$CONFIG_NAME"
     sed -e 's|^[ \t]*//|//|g' $CONFIG_NAME > $CONFIG_NAME.1
     sed -e 's|^[ \t]*/\*|/\*|g' $CONFIG_NAME.1 > $CONFIG_NAME
     rm -f $CONFIG_NAME.1
 
-
-    echo_e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT List of configuration settings for $PROJECT" > $CONFIG_HEADER_DOXYGEN_READY
-    echo_ " This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >> $CONFIG_HEADER_DOXYGEN_READY
-    echo_ " This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the" >> $CONFIG_HEADER_DOXYGEN_READY
-    echo_ " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h ( Important: place the directory of the application source files in the include search path )" >> $CONFIG_HEADER_DOXYGEN_READY
-    echo_ "" >> $CONFIG_HEADER_DOXYGEN_READY
-    echo_ " Use the file $CONF_FILE in the directory $1 as input file for $0 to create the project generation files." >> $CONFIG_HEADER_DOXYGEN_READY
-    echo_ "\code" >> $CONFIG_HEADER_DOXYGEN_READY
-    cat $CONFIG_NAME >> $CONFIG_HEADER_DOXYGEN_READY
-    echo_ "\endcode" >> $CONFIG_HEADER_DOXYGEN_READY
+    {
+        echo_e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT List of configuration settings for $PROJECT" >&3
+        echo_ " This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >&3
+        echo_ " This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the" >&3
+        echo_ " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h ( Important: place the directory of the application source files in the include search path )" >&3
+        echo_ "" >&3
+        echo_ " Use the file $CONF_FILE in the directory $1 as input file for $0 to create the project generation files." >&3
+        echo_ "\code" >&3
+        cat $CONFIG_NAME >&3
+        echo_ "\endcode" >&3
+    } 3>"$CONFIG_HEADER_DOXYGEN_READY"
 
     # go back to directory where config file resides
     cd $1
@@ -1305,251 +1301,252 @@ create_makefile()
     if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
         MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"
     fi
-    # create Makefile Header
-    echo_ "#############################################################################" > $MakefileNameLong
-    echo_ "# Makefile for building: $PROJECT" >> $MakefileNameLong
-    echo_ "# Project:               $PROJECT" >> $MakefileNameLong
-    echo_ "#############################################################################" >> $MakefileNameLong
-    echo_ ""  >> $MakefileNameLong
-    echo_ "####### Project specific variables" >> $MakefileNameLong
-    echo_ "TARGET = $PROJECT" >> $MakefileNameLong
-    echo_ "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >> $MakefileNameLong
-    echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
-    echo_n "APP_INC = " >> $MakefileNameLong
-    KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-        echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >> $MakefileNameLong
-        append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
-    done
-    for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-        echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >> $MakefileNameLong
-        append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
-    done
-    for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
-        echo_n " -I$SingleInclPath" >> $MakefileNameLong
-        append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
-    done
-    echo_ "" >> $MakefileNameLong
-    echo_n "LIBPATH = " >> $MakefileNameLong
-    for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
-        echo_n " -L$SingleLibPath" >> $MakefileNameLong
-    done
-    echo_ "" >> $MakefileNameLong
-
-    echo_n "EXTERNAL_LIBS = " >> $MakefileNameLong
-    for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
-        echo_n " $SingleLibItem" >> $MakefileNameLong
-    done
-    echo_ "" >> $MakefileNameLong
-
-    echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
-    echo_    "-include versions.mk" >> $MakefileNameLong
-
-    echo_ "" >> $MakefileNameLong
-    if [ "$USE_RS232_DRIVER" = "rte" -o "$USE_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
-        echo_ "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >> $MakefileNameLong
-        # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
-        echo_n "BIOS_INC =" >> $MakefileNameLong
-    fi
-    echo_e_n "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileNameLong
-    for SinglePrjDefine in $PRJ_DEFINES ; do
-        echo_n " -D$SinglePrjDefine" >> $MakefileNameLong
-    done
-    if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-        echo_n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >> $MakefileNameLong
-    fi
-
-    if [ $USE_CAN_DRIVER = "msq_server" ] ; then
-        echo_n " -DCAN_DRIVER_MESSAGE_QUEUE" >> $MakefileNameLong
-    fi
-    if [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-        echo_n " -DCAN_DRIVER_SOCKET" >> $MakefileNameLong
-    fi
-
-    echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
-    if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
-        echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileNameLong
-
-    else
-        case $PRJ_DEFINES in
-            *SYSTEM_A1*)
-                echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileNameLong
-                echo_ "SYSTEM_A1"
-                ;;
-            *SYSTEM_MCC*)
-                echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileNameLong
-                echo_ "SYSTEM_MCC"
-                ;;
-            *)
-                echo_ "COMPILER_BINARY_PRE = " >> $MakefileNameLong
-                ;;
-        esac
-    fi
-
-
-    echo_e "\n\nfirst: all\n" >> $MakefileNameLong
-    echo_ "####### Files" >> $MakefileNameLong
-    echo_n "SOURCES_LIBRARY = " >> $MakefileNameLong
-    FIRST_LOOP="YES"
-    for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistLibrary) ; do
-        if [ $FIRST_LOOP != "YES" ] ; then
-            echo_e_n '\\' >> $MakefileNameLong
-            echo_e_n "\n\t\t" >> $MakefileNameLong
-        else
-            FIRST_LOOP="NO"
-        fi
-        echo_e_n "$CcFile  " >> $MakefileNameLong
-    done
-    echo_e "\n" >> $MakefileNameLong
-
-    echo_n "SOURCES_APP = " >> $MakefileNameLong
-    FIRST_LOOP="YES"
-    for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp) ; do
-        if [ $FIRST_LOOP != "YES" ] ; then
-            echo_e_n '\\' >> $MakefileNameLong
-            echo_e_n "\n\t\t" >> $MakefileNameLong
-        else
-            FIRST_LOOP="NO"
-        fi
-        echo_e_n "$CcFile  " >> $MakefileNameLong
-    done
-    echo_e "\n" >> $MakefileNameLong
-
-    echo_n "HEADERS_APP = " >> $MakefileNameLong
-    FIRST_LOOP="YES"
-    for CcFile in $(grep -E "\.h|\.hpp|\.hh" $MakefileFilelistAppHdr) ; do
-        if [ $FIRST_LOOP != "YES" ] ; then
-            echo_e_n '\\' >> $MakefileNameLong
-            echo_e_n "\n\t\t" >> $MakefileNameLong
-        else
-            FIRST_LOOP="NO"
-        fi
-        echo_e_n "$CcFile  " >> $MakefileNameLong
-    done
-    echo_e "\n" >> $MakefileNameLong
-
-    #  echo_n "HEADERS_UTEST = " >> $MakefileNameLong
-    #  FIRST_LOOP="YES"
-    #  for CcFile in $(grep -E "\.h" $MakefileFileListUTest) ; do
-    #    if [ $FIRST_LOOP != "YES" ] ; then
-    #      echo_e_n '\\' >> $MakefileNameLong
-    #      echo_e_n "\n\t\t" >> $MakefileNameLong
-    #    else
-    #      FIRST_LOOP="NO"
-    #    fi
-    #    echo_e_n "$CcFile  " >> $MakefileNameLong
-    #  done
-    #  echo_e "\n" >> $MakefileNameLong
-
-    #  echo_n "HEADERS_UTEST_MOCKS = " >> $MakefileNameLong
-    #  FIRST_LOOP="YES"
-    #  for CcFile in $(grep -E "\.h" $MakefileFileListUTestMock) ; do
-    #    if [ $FIRST_LOOP != "YES" ] ; then
-    #      echo_e_n '\\' >> $MakefileNameLong
-    #      echo_e_n "\n\t\t" >> $MakefileNameLong
-    #    else
-    #      FIRST_LOOP="NO"
-    #    fi
-    #    echo_e_n "$CcFile  " >> $MakefileNameLong
-    #  done
-    #  echo_e "\n" >> $MakefileNameLong
-
-    #  echo_n "HEADERS_UTEST_MOD_SUT = " >> $MakefileNameLong
-    #  FIRST_LOOP="YES"
-    #  for CcFile in $(grep -E "\.h" $MakefileFileListUTestMODSUT) ; do
-    #    if [ $FIRST_LOOP != "YES" ] ; then
-    #      echo_e_n '\\' >> $MakefileNameLong
-    #      echo_e_n "\n\t\t" >> $MakefileNameLong
-    #    else
-    #      FIRST_LOOP="NO"
-    #    fi
-    #    echo_e_n "$CcFile  " >> $MakefileNameLong
-    #  done
-    #  echo_e "\n" >> $MakefileNameLong
-
-    #  echo_n "TESTRUNNER_SOURCES = " >> $MakefileNameLong
-    #  FIRST_LOOP="YES"
-    #  for CcFile in $(grep -E "\.cpp" $MakefileFileListUTestRunner) ; do
-    #    if [ $FIRST_LOOP != "YES" ] ; then
-    #      echo_e_n '\\' >> $MakefileNameLong
-    #      echo_e_n "\n\t\t" >> $MakefileNameLong
-    #    else
-    #      FIRST_LOOP="NO"
-    #    fi
-    #    echo_e_n "$CcFile  " >> $MakefileNameLong
-    #  done
-    #  echo_e "\n" >> $MakefileNameLong
-
-
-    ##### Library install header file gathering BEGIN
-
-    rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
-
-    grep    "/impl/" <"$MakefileFilelistLibraryHdr" > FileListInternal.txt
-    grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> FileListInternal.txt
-    grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v /hal/ | grep -v ".cpp" > FileListInterface.txt
-
-# it's a good idea to get the several typedef.h headers to the install set
-    grep typedef.h FileListInternal.txt >> FileListInterface.txt
-    grep -E "driver/*/i*.h" FileListInternal.txt >> FileListInterface.txt
-
-# special exception to enable ISO-Request-PGN implementation in app scope
-    grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
-
-
-    cp -a FileListInterface.txt FileListInterfaceStart.txt
-    cp -a FileListInterface.txt FileListInterface4Eval.txt
-
-    DoRepeat="TRUE";
-    Iteration=0
-    while [ $DoRepeat = "TRUE" ] ; do
-        DoRepeat="FALSE";
-        for InterfaceFile in $(cat FileListInterface4Eval.txt); do
-            for IncludeLine in $(grep "#include" $InterfaceFile | sed -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g'); do
-                #BaseName=$(basename $IncludeLine);
-                BaseName=$(echo_ $IncludeLine | sed -e 's#.*xgpl_src/IsoAgLib/\(.*\)#\1#g' | sed -e 's#\.\./##g')
-                CntHeader=$(echo_ $BaseName | grep -c '\.h');
-                #echo_ "CntHeader $CntHeader";
-                if [ $CntHeader -gt 0 ] ; then
-                    # echo_ "Include Line fuer $IncludeLine mit Datei $BaseName";
-                    CntInterface=$(grep -c "/$BaseName" FileListInterface.txt)
-                    CntInternal=$(grep -c "/$BaseName" FileListInternal.txt)
-
-                    #echo_ "Include Datei $BaseName kommt $CntInterface mal im Interface und $CntInternal mal intern vor";
-                    if test $CntInterface -lt 1 -a $CntInternal -gt 0 ; then
-                        #echo_ "Header $BaseName existiert noch nicht in Interface --> hinzufgen"
-                        grep $BaseName FileListInternal.txt >> FileListInterface.txt
-                        grep $BaseName FileListInternal.txt >> FileListInterface4EvalPre.txt
-                        DoRepeat="TRUE";
-                    fi
-                fi
-            done
+    {
+        # create Makefile Header
+        echo_ "#############################################################################" >&3
+        echo_ "# Makefile for building: $PROJECT" >&3
+        echo_ "# Project:               $PROJECT" >&3
+        echo_ "#############################################################################" >&3
+        echo_ ""  >&3
+        echo_ "####### Project specific variables" >&3
+        echo_ "TARGET = $PROJECT" >&3
+        echo_ "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >&3
+        echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
+        echo_n "APP_INC = " >&3
+        KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
+        for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+            echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >&3
+            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
         done
-        if [ $DoRepeat = "TRUE" ] ; then
-            Iteration=$(expr $Iteration + 1)
-            cp -a FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
-            cp -a FileListInterface4EvalPre.txt FileListInterface4Eval.txt
-            rm -f FileListInterface4EvalPre.txt
+        for SingleInclPath in $PRJ_INCLUDE_PATH ; do
+            echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >&3
+            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
+        done
+        for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
+            echo_n " -I$SingleInclPath" >&3
+            append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
+        done
+        echo_ "" >&3
+        echo_n "LIBPATH = " >&3
+        for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
+            echo_n " -L$SingleLibPath" >&3
+        done
+        echo_ "" >&3
+        
+        echo_n "EXTERNAL_LIBS = " >&3
+        for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
+            echo_n " $SingleLibItem" >&3
+        done
+        echo_ "" >&3
+        
+        echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
+        echo_    "-include versions.mk" >&3
+        
+        echo_ "" >&3
+        if [ "$USE_RS232_DRIVER" = "rte" -o "$USE_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
+            echo_ "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >&3
+            # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
+            echo_n "BIOS_INC =" >&3
         fi
-    done
-    echo_n "INSTALL_FILES_LIBRARY = " >> $MakefileNameLong
-    FIRST_LOOP="YES"
-    for InterfaceFile in $(cat FileListInterface.txt) ; do
-        if [ $FIRST_LOOP != "YES" ] ; then
-            echo_e_n ' \\' >> $MakefileNameLong
-            echo_e_n "\n\t\t" >> $MakefileNameLong
+        echo_e_n "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >&3
+        for SinglePrjDefine in $PRJ_DEFINES ; do
+            echo_n " -D$SinglePrjDefine" >&3
+        done
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+            echo_n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >&3
+        fi
+        
+        if [ $USE_CAN_DRIVER = "msq_server" ] ; then
+            echo_n " -DCAN_DRIVER_MESSAGE_QUEUE" >&3
+        fi
+        if [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
+            echo_n " -DCAN_DRIVER_SOCKET" >&3
+        fi
+        
+        echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
+        if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
+            echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
+            
         else
-            FIRST_LOOP="NO"
+            case $PRJ_DEFINES in
+                *SYSTEM_A1*)
+                    echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >&3
+                    echo_ "SYSTEM_A1"
+                    ;;
+                *SYSTEM_MCC*)
+                    echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >&3
+                    echo_ "SYSTEM_MCC"
+                    ;;
+                *)
+                    echo_ "COMPILER_BINARY_PRE = " >&3
+                    ;;
+            esac
         fi
-        echo_e_n "$InterfaceFile" >> $MakefileNameLong
-    done
-    echo_e "\n" >> $MakefileNameLong
-
-    rm -f FileListInterfaceStart.txt FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
-
-    ##### Library install header file gathering END
-
-    cat $MAKEFILE_SKELETON_FILE >> $MakefileNameLong
+        
+        
+        echo_e "\n\nfirst: all\n" >&3
+        echo_ "####### Files" >&3
+        echo_n "SOURCES_LIBRARY = " >&3
+        FIRST_LOOP="YES"
+        for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistLibrary) ; do
+            if [ $FIRST_LOOP != "YES" ] ; then
+                echo_e_n '\\' >&3
+                echo_e_n "\n\t\t" >&3
+            else
+                FIRST_LOOP="NO"
+            fi
+            echo_e_n "$CcFile  " >&3
+        done
+        echo_e "\n" >&3
+        
+        echo_n "SOURCES_APP = " >&3
+        FIRST_LOOP="YES"
+        for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp) ; do
+            if [ $FIRST_LOOP != "YES" ] ; then
+                echo_e_n '\\' >&3
+                echo_e_n "\n\t\t" >&3
+            else
+                FIRST_LOOP="NO"
+            fi
+            echo_e_n "$CcFile  " >&3
+        done
+        echo_e "\n" >&3
+        
+        echo_n "HEADERS_APP = " >&3
+        FIRST_LOOP="YES"
+        for CcFile in $(grep -E "\.h|\.hpp|\.hh" $MakefileFilelistAppHdr) ; do
+            if [ $FIRST_LOOP != "YES" ] ; then
+                echo_e_n '\\' >&3
+                echo_e_n "\n\t\t" >&3
+            else
+                FIRST_LOOP="NO"
+            fi
+            echo_e_n "$CcFile  " >&3
+        done
+        echo_e "\n" >&3
+        
+        #  echo_n "HEADERS_UTEST = " >&3
+        #  FIRST_LOOP="YES"
+        #  for CcFile in $(grep -E "\.h" $MakefileFileListUTest) ; do
+        #    if [ $FIRST_LOOP != "YES" ] ; then
+        #      echo_e_n '\\' >&3
+        #      echo_e_n "\n\t\t" >&3
+        #    else
+        #      FIRST_LOOP="NO"
+        #    fi
+        #    echo_e_n "$CcFile  " >&3
+        #  done
+        #  echo_e "\n" >&3
+        
+        #  echo_n "HEADERS_UTEST_MOCKS = " >&3
+        #  FIRST_LOOP="YES"
+        #  for CcFile in $(grep -E "\.h" $MakefileFileListUTestMock) ; do
+        #    if [ $FIRST_LOOP != "YES" ] ; then
+        #      echo_e_n '\\' >&3
+        #      echo_e_n "\n\t\t" >&3
+        #    else
+        #      FIRST_LOOP="NO"
+        #    fi
+        #    echo_e_n "$CcFile  " >&3
+        #  done
+        #  echo_e "\n" >&3
+        
+        #  echo_n "HEADERS_UTEST_MOD_SUT = " >&3
+        #  FIRST_LOOP="YES"
+        #  for CcFile in $(grep -E "\.h" $MakefileFileListUTestMODSUT) ; do
+        #    if [ $FIRST_LOOP != "YES" ] ; then
+        #      echo_e_n '\\' >&3
+        #      echo_e_n "\n\t\t" >&3
+        #    else
+        #      FIRST_LOOP="NO"
+        #    fi
+        #    echo_e_n "$CcFile  " >&3
+        #  done
+        #  echo_e "\n" >&3
+        
+        #  echo_n "TESTRUNNER_SOURCES = " >&3
+        #  FIRST_LOOP="YES"
+        #  for CcFile in $(grep -E "\.cpp" $MakefileFileListUTestRunner) ; do
+        #    if [ $FIRST_LOOP != "YES" ] ; then
+        #      echo_e_n '\\' >&3
+        #      echo_e_n "\n\t\t" >&3
+        #    else
+        #      FIRST_LOOP="NO"
+        #    fi
+        #    echo_e_n "$CcFile  " >&3
+        #  done
+        #  echo_e "\n" >&3
+        
+        
+        ##### Library install header file gathering BEGIN
+        
+        rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
+        
+        grep    "/impl/" <"$MakefileFilelistLibraryHdr" > FileListInternal.txt
+        grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> FileListInternal.txt
+        grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v /hal/ | grep -v ".cpp" > FileListInterface.txt
+        
+        # it's a good idea to get the several typedef.h headers to the install set
+        grep typedef.h FileListInternal.txt >> FileListInterface.txt
+        grep -E "driver/*/i*.h" FileListInternal.txt >> FileListInterface.txt
+        
+        # special exception to enable ISO-Request-PGN implementation in app scope
+        grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
+        
+        
+        cp -a FileListInterface.txt FileListInterface4Eval.txt
+        
+        DoRepeat="TRUE";
+        Iteration=0
+        while [ $DoRepeat = "TRUE" ] ; do
+            DoRepeat="FALSE";
+            for InterfaceFile in $(cat FileListInterface4Eval.txt); do
+                for IncludeLine in $(grep "#include" $InterfaceFile | sed -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g'); do
+                    #BaseName=$(basename $IncludeLine);
+                    BaseName=$(echo_ $IncludeLine | sed -e 's#.*xgpl_src/IsoAgLib/\(.*\)#\1#g' | sed -e 's#\.\./##g')
+                    CntHeader=$(echo_ $BaseName | grep -c '\.h');
+                    #echo_ "CntHeader $CntHeader";
+                    if [ $CntHeader -gt 0 ] ; then
+                        # echo_ "Include Line fuer $IncludeLine mit Datei $BaseName";
+                        CntInterface=$(grep -c "/$BaseName" FileListInterface.txt)
+                        CntInternal=$(grep -c "/$BaseName" FileListInternal.txt)
+                        
+                        #echo_ "Include Datei $BaseName kommt $CntInterface mal im Interface und $CntInternal mal intern vor";
+                        if test $CntInterface -lt 1 -a $CntInternal -gt 0 ; then
+                            #echo_ "Header $BaseName existiert noch nicht in Interface --> hinzufgen"
+                            grep $BaseName FileListInternal.txt >> FileListInterface.txt
+                            grep $BaseName FileListInternal.txt >> FileListInterface4EvalPre.txt
+                            DoRepeat="TRUE";
+                        fi
+                    fi
+                done
+            done
+            if [ $DoRepeat = "TRUE" ] ; then
+                Iteration=$(expr $Iteration + 1)
+                cp -a FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
+                cp -a FileListInterface4EvalPre.txt FileListInterface4Eval.txt
+                rm -f FileListInterface4EvalPre.txt
+            fi
+        done
+        echo_n "INSTALL_FILES_LIBRARY = " >&3
+        FIRST_LOOP="YES"
+        for InterfaceFile in $(cat FileListInterface.txt) ; do
+            if [ $FIRST_LOOP != "YES" ] ; then
+                echo_e_n ' \\' >&3
+                echo_e_n "\n\t\t" >&3
+            else
+                FIRST_LOOP="NO"
+            fi
+            echo_e_n "$InterfaceFile" >&3
+        done
+        echo_e "\n" >&3
+        
+        rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
+        
+        ##### Library install header file gathering END
+        
+        cat $MAKEFILE_SKELETON_FILE >&3
+    } 3>"$MakefileNameLong"
 
     # NO UTESTs, no need to remove any testrunners
     #  # remove testrunner for A1
@@ -1595,93 +1592,94 @@ create_makefile()
         MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileAppSkeleton.txt"
     fi
 
-
-    # create Makefile Header
-    echo_ "#############################################################################" > $MakefileNameLong
-    echo_ "# Makefile for building: $PROJECT" >> $MakefileNameLong
-    echo_ "# Project:               $PROJECT" >> $MakefileNameLong
-    echo_ "#############################################################################" >> $MakefileNameLong
-    echo_ ""  >> $MakefileNameLong
-    echo_ "####### Project specific variables" >> $MakefileNameLong
-    echo_ "TARGET = $PROJECT" >> $MakefileNameLong
-    echo_ "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >> $MakefileNameLong
-    echo_n "APP_INC = " >> $MakefileNameLong
-    KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-        echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >> $MakefileNameLong
-        append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
-    done
-    for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-        echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >> $MakefileNameLong
-        append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
-    done
-    for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
-        echo_n " -I$SingleInclPath" >> $MakefileNameLong
-        append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
-    done
-    echo_ "" >> $MakefileNameLong
-    echo_n "LIBPATH = " >> $MakefileNameLong
-    for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
-        echo_n " -L$SingleLibPath" >> $MakefileNameLong
-    done
-    echo_ "" >> $MakefileNameLong
-
-    echo_n "EXTERNAL_LIBS = " >> $MakefileNameLong
-    for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
-        echo_n " $SingleLibItem" >> $MakefileNameLong
-    done
-    echo_ "" >> $MakefileNameLong
-
-    echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >> $MakefileNameLong
-    echo_    "-include versions.mk" >> $MakefileNameLong
-
-
-    echo_ "" >> $MakefileNameLong
-
-    echo_e_n "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >> $MakefileNameLong
-    for SinglePrjDefine in $PRJ_DEFINES ; do
-        echo_n " -D$SinglePrjDefine" >> $MakefileNameLong
-    done
-    if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-        echo_n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >> $MakefileNameLong
-    fi
-
-    echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >> $MakefileNameLong
-    if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
-        echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >> $MakefileNameLong
-
-    else
-        case $PRJ_DEFINES in
-            *SYSTEM_A1*)
-                echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >> $MakefileNameLong
-                echo_ "SYSTEM_A1"
-                ;;
-            *SYSTEM_MCC*)
-                echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >> $MakefileNameLong
-                echo_ "SYSTEM_MCC"
-                ;;
-            *)
-                echo_ "COMPILER_BINARY_PRE = " >> $MakefileNameLong
-                ;;
-        esac
-    fi
-
-    echo_e "\n\nfirst: all\n" >> $MakefileNameLong
-    echo_ "####### Files" >> $MakefileNameLong
-    echo_n "SOURCES_APP = " >> $MakefileNameLong
-    FIRST_LOOP="YES"
-    for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp) ; do
-        if [ $FIRST_LOOP != "YES" ] ; then
-            echo_e_n '\\' >> $MakefileNameLong
-            echo_e_n "\n\t\t" >> $MakefileNameLong
-        else
-            FIRST_LOOP="NO"
+    {
+        # create Makefile Header
+        echo_ "#############################################################################" >&3
+        echo_ "# Makefile for building: $PROJECT" >&3
+        echo_ "# Project:               $PROJECT" >&3
+        echo_ "#############################################################################" >&3
+        echo_ ""  >&3
+        echo_ "####### Project specific variables" >&3
+        echo_ "TARGET = $PROJECT" >&3
+        echo_ "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
+        echo_n "APP_INC = " >&3
+        KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
+        for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+            echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >&3
+            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
+        done
+        for SingleInclPath in $PRJ_INCLUDE_PATH ; do
+            echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >&3
+            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
+        done
+        for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
+            echo_n " -I$SingleInclPath" >&3
+            append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
+        done
+        echo_ "" >&3
+        echo_n "LIBPATH = " >&3
+        for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
+            echo_n " -L$SingleLibPath" >&3
+        done
+        echo_ "" >&3
+        
+        echo_n "EXTERNAL_LIBS = " >&3
+        for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
+            echo_n " $SingleLibItem" >&3
+        done
+        echo_ "" >&3
+        
+        echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
+        echo_    "-include versions.mk" >&3
+        
+        
+        echo_ "" >&3
+        
+        echo_e_n "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >&3
+        for SinglePrjDefine in $PRJ_DEFINES ; do
+            echo_n " -D$SinglePrjDefine" >&3
+        done
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+            echo_n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >&3
         fi
-        echo_e_n "$CcFile  " >> $MakefileNameLong
-    done
-    echo_e "\n" >> $MakefileNameLong
-
-    cat $MAKEFILE_APP_SKELETON_FILE >> $MakefileNameLong
+        
+        echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
+        if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
+            echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
+            
+        else
+            case $PRJ_DEFINES in
+                *SYSTEM_A1*)
+                    echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >&3
+                    echo_ "SYSTEM_A1"
+                    ;;
+                *SYSTEM_MCC*)
+                    echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >&3
+                    echo_ "SYSTEM_MCC"
+                    ;;
+                *)
+                    echo_ "COMPILER_BINARY_PRE = " >&3
+                    ;;
+            esac
+        fi
+        
+        echo_e "\n\nfirst: all\n" >&3
+        echo_ "####### Files" >&3
+        echo_n "SOURCES_APP = " >&3
+        FIRST_LOOP="YES"
+        for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp) ; do
+            if [ $FIRST_LOOP != "YES" ] ; then
+                echo_e_n '\\' >&3
+                echo_e_n "\n\t\t" >&3
+            else
+                FIRST_LOOP="NO"
+            fi
+            echo_e_n "$CcFile  " >&3
+        done
+        echo_e "\n" >&3
+        
+        cat $MAKEFILE_APP_SKELETON_FILE >&3
+    } 3>"$MakefileNameLong"
 
     # add can_server creation to target "all"
     if [ $USE_CAN_DRIVER = "msq_server" ] ; then
@@ -1711,13 +1709,54 @@ create_makefile()
     # mv $PROJECT.kdevelop.1 $PROJECT.kdevelop
     rm -f $PROJECT.kdevelop.1
 
-    echo_ "# KDevelop Custom Project File List" > $PROJECT.kdevelop.filelist
-    cat filelist__$PROJECT.txt >> $PROJECT.kdevelop.filelist
+    {
+        echo_ "# KDevelop Custom Project File List" >&3
+        cat filelist__$PROJECT.txt >&3
+    } 3>"$PROJECT.kdevelop.filelist"
 
 
     cd $1
 
     return
+}
+
+PATH_SEPARATOR1='=_=_'
+PATH_SEPARATOR2='_=_='
+
+mangle_path1()
+{
+    if [ 0 -lt $# ]; then
+        printf '%b' "$*" | mangle_path1
+    else
+        sed -e "s|\\\\|${PATH_SEPARATOR1}|g;s|/|${PATH_SEPARATOR1}|g"
+    fi
+}
+
+demangle_path1()
+{
+    if [ 0 -lt $# ]; then
+        printf '%b' "$*" | demangle_path1
+    else
+        sed -e "s|${PATH_SEPARATOR1}|\\\\|g"
+    fi
+}
+
+mangle_path2()
+{
+    if [ 0 -lt $# ]; then
+        printf '%b' "$*" | mangle_path2
+    else
+        sed -e "s|\\\\|${PATH_SEPARATOR2}|g;s|/|${PATH_SEPARATOR1}|g"
+    fi
+}
+
+demangle_path2()
+{
+    if [ 0 -lt $# ]; then
+        printf '%b' "$*" | demangle_path2
+    else
+        sed -e "s|${PATH_SEPARATOR2}|\\\\|g"
+    fi
 }
 
 # Generate suitable project file for the Win32 IDE "Dev-C++"
@@ -1748,156 +1787,158 @@ create_DevCCPrj()
     UNIT_CNT=$(expr $UNIT_CNT_CC + $UNIT_CNT_HDR)
 
 
-    echo_ "[Project]" > $PROJECT_FILE_NAME
-    echo_ "FileName=$PROJECT_FILE_NAME" >> $PROJECT_FILE_NAME
-    echo_ "Name=$PROJECT" >> $PROJECT_FILE_NAME
-    echo_ "UnitCount=$UNIT_CNT" >> $PROJECT_FILE_NAME
-
-
-    cat <<-ENDOFHEADERA >> $PROJECT_FILE_NAME
-    Type=1
-    Ver=1
-    ObjFiles=
+    {
+        echo_ "[Project]" >&3
+        echo_ "FileName=$PROJECT_FILE_NAME" >&3
+        echo_ "Name=$PROJECT" >&3
+        echo_ "UnitCount=$UNIT_CNT" >&3
+    
+    
+        cat <<-ENDOFHEADERA >&3
+        Type=1
+        Ver=1
+        ObjFiles=
 ENDOFHEADERA
-
-    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-
-    DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
-    INCLUDE_DIR_LINE="$ISO_AG_LIB_PATH_WIN=_=_library;$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"
-
-    LIB_DIR_LINE=""
-    LIB_FILE_LINE="-lwinmm_@@_-lws2_32_@@_"
-
-
-    USE_WIN32_EXTERNAL_INCLUDE_PATH=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-
-    USE_WIN32_EXTERNAL_LIBRARY_PATH=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-
-    USE_DEVCPP_EXTERNAL_LIBRARIES=$(echo_ "$USE_DEVCPP_EXTERNAL_LIBRARIES" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-
-    REL_APP_PATH_WIN=$(echo_ "$REL_APP_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-
-    PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-
-    for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
-        append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN=_=_$EACH_REL_APP_PATH"
-    done
-    for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
-        append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN=_=_$SingleInclPath"
-    done
-    for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
-        append INCLUDE_DIR_LINE ";$SingleInclPath"
-    done
-    for SingleLibItem in $USE_DEVCPP_EXTERNAL_LIBRARIES ; do
-        append LIB_FILE_LINE "$SingleLibItem"'_@@_'
-    done
-    for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH ; do
-        if [ "M$LIB_DIR_LINE" != "M" ] ; then
-            append LIB_DIR_LINE ";$SingleLibPath"
-        else
-            LIB_DIR_LINE="$SingleLibPath"
+    
+        ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path1)
+    
+        DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
+        INCLUDE_DIR_LINE="$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library;$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library${PATH_SEPARATOR1}xgpl_src"
+    
+        LIB_DIR_LINE=""
+        LIB_FILE_LINE="-lwinmm_@@_-lws2_32_@@_"
+    
+    
+        USE_WIN32_EXTERNAL_INCLUDE_PATH=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | mangle_path1)
+    
+        USE_WIN32_EXTERNAL_LIBRARY_PATH=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | mangle_path1)
+    
+        USE_DEVCPP_EXTERNAL_LIBRARIES=$(echo_ "$USE_DEVCPP_EXTERNAL_LIBRARIES" | mangle_path1)
+    
+        REL_APP_PATH_WIN=$(echo_ "$REL_APP_PATH" | mangle_path1)
+    
+        PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | mangle_path1)
+    
+        for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
+            append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$EACH_REL_APP_PATH"
+        done
+        for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
+            append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$SingleInclPath"
+        done
+        for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
+            append INCLUDE_DIR_LINE ";$SingleInclPath"
+        done
+        for SingleLibItem in $USE_DEVCPP_EXTERNAL_LIBRARIES ; do
+            append LIB_FILE_LINE "$SingleLibItem"'_@@_'
+        done
+        for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH ; do
+            if [ "M$LIB_DIR_LINE" != "M" ] ; then
+                append LIB_DIR_LINE ";$SingleLibPath"
+            else
+                LIB_DIR_LINE="$SingleLibPath"
+            fi
+        done
+    
+    
+        if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
+            append DEFINE_LINE ""'-D__GNUWIN32___@@_-W_@@_-DWIN32_@@_-D_CONSOLE_@@_-D_MBCS_@@_-D_Windows_@@_-DCAN_DRIVER_SOCKET_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
         fi
-    done
-
-
-    if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-        append DEFINE_LINE ""'-D__GNUWIN32___@@_-W_@@_-DWIN32_@@_-D_CONSOLE_@@_-D_MBCS_@@_-D_Windows_@@_-DCAN_DRIVER_SOCKET_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
-    fi
-
-    echo_n "Includes=$INCLUDE_DIR_LINE" >> $PROJECT_FILE_NAME
-    echo_ "" >> $PROJECT_FILE_NAME
-
-    echo_ "Libs=$LIB_DIR_LINE" >> $PROJECT_FILE_NAME
-    echo_ "Linker=$LIB_FILE_LINE" >> $PROJECT_FILE_NAME
-
-    cat <<-ENDOFHEADERA >> $PROJECT_FILE_NAME
-    PrivateResource=
-    ResourceIncludes=
-    MakeIncludes=
+    
+        echo_n "Includes=$INCLUDE_DIR_LINE" >&3
+        echo_ "" >&3
+    
+        echo_ "Libs=$LIB_DIR_LINE" >&3
+        echo_ "Linker=$LIB_FILE_LINE" >&3
+    
+        cat <<-ENDOFHEADERA >&3
+        PrivateResource=
+        ResourceIncludes=
+        MakeIncludes=
 ENDOFHEADERA
-
-
-
-    for SinglePrjDefine in $PRJ_DEFINES ; do
-        append DEFINE_LINE ""'-D'"$SinglePrjDefine"'_@@_'
-    done
-    if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-        append DEFINE_LINE ""'-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
-    fi
-
-    echo_ "Compiler=$DEFINE_LINE" >> $PROJECT_FILE_NAME
-    echo_ "CppCompiler=$DEFINE_LINE" >> $PROJECT_FILE_NAME
-
-    while [ $(grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $PROJECT_FILE_NAME) -gt 0 ] ; do
-        sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+    
+    
+    
+        for SinglePrjDefine in $PRJ_DEFINES ; do
+            append DEFINE_LINE ""'-D'"$SinglePrjDefine"'_@@_'
+        done
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
+            append DEFINE_LINE ""'-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
+        fi
+    
+        echo_ "Compiler=$DEFINE_LINE" >&3
+        echo_ "CppCompiler=$DEFINE_LINE" >&3
+    } 3>"$PROJECT_FILE_NAME"
+    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME) -gt 0 ] ; do
+        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
         mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
     done
 
-    sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+    demangle_path1 < $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
     mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 
-
-    cat <<-ENDOFHEADERB >> $PROJECT_FILE_NAME
-    IsCpp=1
-    Icon=
-    ExeOutput=
-    ObjectOutput=objects
-    OverrideOutput=0
+    {
+        cat <<-ENDOFHEADERB >&3
+        IsCpp=1
+        Icon=
+        ExeOutput=
+        ObjectOutput=objects
+        OverrideOutput=0
 ENDOFHEADERB
 
-    echo_ "OverrideOutputName=$PROJECT_EXE_NAME" >> $PROJECT_FILE_NAME
+        echo_ "OverrideOutputName=$PROJECT_EXE_NAME" >&3
 
 
-    cat <<-ENDOFHEADERC >> $PROJECT_FILE_NAME
-    HostApplication=
-    Folders=
-    CommandLine=
-    UseCustomMakefile=0
-    CustomMakefile=
-    IncludeVersionInfo=0
-    SupportXPThemes=0
-    CompilerSet=0
-    CompilerSettings=0000000000000000000000
+        cat <<-ENDOFHEADERC >&3
+        HostApplication=
+        Folders=
+        CommandLine=
+        UseCustomMakefile=0
+        CustomMakefile=
+        IncludeVersionInfo=0
+        SupportXPThemes=0
+        CompilerSet=0
+        CompilerSettings=0000000000000000000000
 
-    [VersionInfo]
-    Major=0
-    Minor=1
-    Release=1
-    Build=1
-    LanguageID=1033
-    CharsetID=1252
-    CompanyName=
-    FileVersion=
-    FileDescription=Developed using the Dev-C++ IDE
-    InternalName=
-    LegalCopyright=
-    LegalTrademarks=
-    OriginalFilename=
-    ProductName=
-    ProductVersion=
-    AutoIncBuildNr=0
+        [VersionInfo]
+        Major=0
+        Minor=1
+        Release=1
+        Build=1
+        LanguageID=1033
+        CharsetID=1252
+        CompanyName=
+        FileVersion=
+        FileDescription=Developed using the Dev-C++ IDE
+        InternalName=
+        LegalCopyright=
+        LegalTrademarks=
+        OriginalFilename=
+        ProductName=
+        ProductVersion=
+        AutoIncBuildNr=0
 
 ENDOFHEADERC
 
-    SOURCES=$(cat $DevCcPrjFilelist)
-    unit_ind=0
-    for i in $SOURCES
-    do
-        if [ $i = "" ] ; then
-            continue
-        fi
-        unit_ind=$(expr $unit_ind + 1)
-        echo_ "[Unit$unit_ind]" >> $PROJECT_FILE_NAME
-        echo_ "FileName=$i" >> $PROJECT_FILE_NAME
-        echo_ "CompileCpp=1" >> $PROJECT_FILE_NAME
-        echo_ "Folder=$PROJECT" >> $PROJECT_FILE_NAME
-        echo_ "Compile=1" >> $PROJECT_FILE_NAME
-        echo_ "Link=1" >> $PROJECT_FILE_NAME
-        echo_ "Priority=1000" >> $PROJECT_FILE_NAME
-        echo_ "OverrideBuildCmd=0" >> $PROJECT_FILE_NAME
-        echo_ "BuildCmd=" >> $PROJECT_FILE_NAME
-        echo_ "" >> $PROJECT_FILE_NAME
-    done
+        SOURCES=$(cat $DevCcPrjFilelist)
+        unit_ind=0
+        for i in $SOURCES
+        do
+            if [ $i = "" ] ; then
+                continue
+            fi
+            unit_ind=$(expr $unit_ind + 1)
+            echo_ "[Unit$unit_ind]" >&3
+            echo_ "FileName=$i" >&3
+            echo_ "CompileCpp=1" >&3
+            echo_ "Folder=$PROJECT" >&3
+            echo_ "Compile=1" >&3
+            echo_ "Link=1" >&3
+            echo_ "Priority=1000" >&3
+            echo_ "OverrideBuildCmd=0" >&3
+            echo_ "BuildCmd=" >&3
+            echo_ "" >&3
+        done
+    } 3>>"$PROJECT_FILE_NAME"
 
     cd $1
 }
@@ -2006,36 +2047,37 @@ create_EdePrj()
     USE_TARGET_LIB_LINE=$(echo_ "$USE_TARGET_LIB_LINE" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
 
     # avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
-    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_EMBED_LIB_DIRECTORY=$(echo_ "$USE_EMBED_LIB_DIRECTORY" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_EMBED_HEADER_DIRECTORY=$(echo_ "$USE_EMBED_HEADER_DIRECTORY" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_TARGET_LIB_LINE=$(echo_ "$USE_TARGET_LIB_LINE" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_EMBED_ILO=$(echo_ "$USE_EMBED_ILO" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_APP_PATH=$(echo_ "$USE_APP_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    DEV_PRJ_DIR_WIN=$(echo_ "$DEV_PRJ_DIR" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_DEFINES=$(echo_ "$USE_DEFINES" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
-    USE_EMBED_COMPILER_DIR=$(echo_ "$USE_EMBED_COMPILER_DIR" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
+    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path1)
+    USE_EMBED_LIB_DIRECTORY=$(echo_ "$USE_EMBED_LIB_DIRECTORY" | mangle_path1)
+    USE_EMBED_HEADER_DIRECTORY=$(echo_ "$USE_EMBED_HEADER_DIRECTORY" | mangle_path1)
+    USE_TARGET_LIB_LINE=$(echo_ "$USE_TARGET_LIB_LINE" | mangle_path1)
+    USE_EMBED_ILO=$(echo_ "$USE_EMBED_ILO" | mangle_path1)
+    USE_APP_PATH=$(echo_ "$USE_APP_PATH" | mangle_path1)
+    DEV_PRJ_DIR_WIN=$(echo_ "$DEV_PRJ_DIR" | mangle_path1)
+    USE_DEFINES=$(echo_ "$USE_DEFINES" | mangle_path1)
+    USE_EMBED_COMPILER_DIR=$(echo_ "$USE_EMBED_COMPILER_DIR" | mangle_path1)
 
     # remove some file lists, which are not used for Dev-C++
     rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
+    {
+        # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
+        cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
 
-    # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
-    cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+        sed -e "s|\\\\\\\\|${PATH_SEPARATOR1}|g" -e "s|/|${PATH_SEPARATOR1}|g" $EdePrjFilelist > $EdePrjFilelist.1
 
-    sed -e 's|\\\\|=_=_|g' -e 's|/|=_=_|g' $EdePrjFilelist > $EdePrjFilelist.1
+        mv $EdePrjFilelist.1 $EdePrjFilelist
+        cat $EdePrjFilelist >&3
+        rm -f $EdePrjFilelist.1
 
-    mv $EdePrjFilelist.1 $EdePrjFilelist
-    cat $EdePrjFilelist >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    rm -f $EdePrjFilelist.1
-
-    # insert specific BIOS/OS sources
-    for BiosSrc in $USE_EMBED_BIOS_SRC ; do
-        echo_ "$USE_EMBED_LIB_DIRECTORY/$BiosSrc" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    done
+        # insert specific BIOS/OS sources
+        for BiosSrc in $USE_EMBED_BIOS_SRC ; do
+            echo_ "$USE_EMBED_LIB_DIRECTORY/$BiosSrc" >&3
+        done
 
 
-    cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+        cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >&3
+    } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     cd $DEV_PRJ_DIR
     sed -e "s#INSERT_PROJECT#$PROJECT#g" -e "s#INSERT_TARGET_LIB_DIRECTORY#$USE_EMBED_LIB_DIRECTORY#g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
     sed -e "s#INSERT_ISO_AG_LIB_PATH#$ISO_AG_LIB_PATH_WIN#g" -e "s#INSERT_TARGET_HEADER_DIRECTORY#$USE_EMBED_HEADER_DIRECTORY#g" $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
@@ -2046,17 +2088,17 @@ create_EdePrj()
 
     rm -f $PROJECT_FILE_NAME.1
 
-    while [ $(grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $PROJECT_FILE_NAME) -gt 0 ] ; do
-        sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME) -gt 0 ] ; do
+        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
         mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
     done
-    while [ $(grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $EdePrjFilelist) -gt 0 ] ; do
-        sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $EdePrjFilelist > $EdePrjFilelist.1
+    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $EdePrjFilelist) -gt 0 ] ; do
+        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $EdePrjFilelist > $EdePrjFilelist.1
         mv $EdePrjFilelist.1 $EdePrjFilelist
     done
 
-    sed -e 's#=_=_#\\#g'  $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-    sed -e 's#=_=_#\\#g'  $EdePrjFilelist > $EdePrjFilelist.1
+    demangle_path1 < $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
+    demangle_path1 <$EdePrjFilelist > $EdePrjFilelist.1
     mv $EdePrjFilelist.1 $EdePrjFilelist
 
     # now set the target CPU if this varies from default CpuC167CS
@@ -2199,34 +2241,34 @@ create_VCPrj()
     LIB_DIR_LINE=""
     LIB_FILE_LINE=""
 
-    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | sed -e 's#\\#_=_=#g' -e 's#/#=_=_#g')
+    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path2)
 
-    USE_STLPORT_HEADER_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" | sed -e 's#\\#_=_=#g' -e 's#/#=_=_#g')
+    USE_STLPORT_HEADER_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" | mangle_path2)
 
-    USE_WIN32_EXTERNAL_INCLUDE_PATH=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
+    USE_WIN32_EXTERNAL_INCLUDE_PATH=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | mangle_path1)
 
-    USE_WIN32_EXTERNAL_LIBRARY_PATH=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
+    USE_WIN32_EXTERNAL_LIBRARY_PATH=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | mangle_path1)
 
-    USE_MSVC_EXTERNAL_LIBRARIES=$(echo_ "$USE_MSVC_EXTERNAL_LIBRARIES" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
+    USE_MSVC_EXTERNAL_LIBRARIES=$(echo_ "$USE_MSVC_EXTERNAL_LIBRARIES" | mangle_path1)
 
-    REL_APP_PATH_WIN=$(echo_ "$REL_APP_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
+    REL_APP_PATH_WIN=$(echo_ "$REL_APP_PATH" | mangle_path1)
 
-    PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | sed -e 's#\\#=_=_#g' -e 's#/#=_=_#g')
+    PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | mangle_path1)
 
     # echo_ "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
 
     if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-        USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN=_=_library"'" /I "'"$ISO_AG_LIB_PATH_WIN=_=_library=_=_xgpl_src"'"'
+        USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library"'" /I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library${PATH_SEPARATOR1}xgpl_src"'"'
         append USE_DEFINES ""' /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
         append USE_d_DEFINES ""' /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
     fi
 
     for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
-        append USE_INCLUDE_PATHS ""' /I "'"$ISO_AG_LIB_PATH_WIN=_=_$EACH_REL_APP_PATH"'"'
+        append USE_INCLUDE_PATHS ""' /I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$EACH_REL_APP_PATH"'"'
     done
 
     for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
-        append USE_INCLUDE_PATHS ""' /I "'"$ISO_AG_LIB_PATH_WIN=_=_$SingleInclPath"'"'
+        append USE_INCLUDE_PATHS ""' /I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$SingleInclPath"'"'
     done
 
     for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
@@ -2239,8 +2281,7 @@ create_VCPrj()
         append LIB_DIR_LINE ""' /libpath:"'"$SingleLibPath"'"'
     done
 
-
-    sed -e 's#=_=_#\\#g'  $DspPrjFilelist > $DspPrjFilelist.1
+    demangle_path1 < $DspPrjFilelist > $DspPrjFilelist.1
     mv $DspPrjFilelist.1 $DspPrjFilelist
 
     #echo_ "Libs=$LIB_DIR_LINE"
@@ -2259,46 +2300,54 @@ create_VCPrj()
 
     cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
+    printf '(VCPROJ specific settings\n'
+    printf '  (Project name: %s)\n' "$PROJECT"
     sed -e "s#INSERT_PROJECT#$PROJECT#g"  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+    printf '  (Include paths: %s)\n' "$(demangle_path1 "$USE_INCLUDE_PATHS")"
     sed -e "s#INSERT_INCLUDE_PATHS#$USE_INCLUDE_PATHS#g"  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+    printf '  (Defines: %s)\n' "$USE_DEFINES"
     sed -e "s#INSERT_DEFINES#$USE_DEFINES#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+    printf '  (defines: %s)\n' "$USE_d_DEFINES"
     sed -e "s#INSERT_d_DEFINES#$USE_d_DEFINES#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+    printf '  (CAN Lib Path: %s)\n' "$(demangle_path1 "$INSERT_CAN_LIB_PATH")"
     sed -e "s#INSERT_CAN_LIB_PATH#$LIB_DIR_LINE#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
 
     USE_STLPORT_LIB_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" |sed 's|stlport|lib|g')
+    printf '  (STLport library directory: %s))\n' "$(demangle_path1 "$USE_STLPORT_LIB_DIRECTORY")"
     sed -e "s#INSERT_STLPORT_LIB_PATH#$USE_STLPORT_LIB_DIRECTORY#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
-    while [ $(grep -c -e '=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_' $DEV_PRJ_DIR/$PROJECT_FILE_NAME) -gt 0 ] ; do
-        sed -e 's|=_=_[0-9a-zA-Z_+\-]\+=_=_\.\.=_=_|=_=_|g' $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $DEV_PRJ_DIR/$PROJECT_FILE_NAME) -gt 0 ] ; do
+        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
         mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
     done
 
-    sed -e 's#=_=_#\\#g'  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
+    demangle_path1 <  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
     mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
 
 
     SOURCES=$(grep -E "\.cc|\.cpp|\.c|\.lib" $DspPrjFilelist)
     HEADERS=$(grep -E "\.h|\.hpp" $DspPrjFilelist)
 
-    cat <<-ENDOFHEADERB >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+    {
+        cat <<-ENDOFHEADERB >&3
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 ENDOFHEADERB
 
-    for i in $SOURCES
-    do
-        if [ $i = "" ] ; then
-            continue
-        fi
-        echo_ "# Begin Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-        filename=$(echo_ "$i" |sed 's|/|\\|g')
-        echo_ "SOURCE=$filename" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-        echo_ "# End Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-        echo_ "" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    done
+        for i in $SOURCES
+        do
+            if [ $i = "" ] ; then
+                continue
+            fi
+            echo_ "# Begin Source File" >&3
+            filename=$(echo_ "$i" |sed 's|/|\\|g')
+            echo_ "SOURCE=$filename" >&3
+            echo_ "# End Source File" >&3
+            echo_ "" >&3
+        done
 
-    cat <<-ENDOFHEADERB >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+        cat <<-ENDOFHEADERB >&3
 # End Group
 
 # Begin Group "Header-Dateien"
@@ -2306,21 +2355,22 @@ ENDOFHEADERB
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 ENDOFHEADERB
 
-    for i in $HEADERS
-    do
-        if [ $i = "" ] ; then
-            continue
-        fi
-        echo_ "# Begin Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-        filename=$(echo_ "$i" |sed 's|/|\\|g')
-        echo_ "SOURCE=$filename" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-        echo_ "# End Source File" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-        echo_ "" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    done
+        for i in $HEADERS
+        do
+            if [ $i = "" ] ; then
+                continue
+            fi
+            echo_ "# Begin Source File" >&3
+            filename=$(echo_ "$i" |sed 's|/|\\|g')
+            echo_ "SOURCE=$filename" >&3
+            echo_ "# End Source File" >&3
+            echo_ "" >&3
+        done
 
-    echo_ "# End Group" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    echo_ "# End Target" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    echo_ "# End Project" >> $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+        echo_ "# End Group" >&3
+        echo_ "# End Target" >&3
+        echo_ "# End Project" >&3
+    } 3>>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
 
     #echo_ "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     mv "$DEV_PRJ_DIR/$PROJECT_FILE_NAME" "$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"
@@ -2722,25 +2772,27 @@ if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
     # doxygen export is specified -> copy config file there with suitable doc block
     CONF_BASE=$(basename $CONF_FILE)
     CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
-    #echo_ "/**" > $CONFIG_SPEC_DOXYGEN_READY
-    #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >> $CONFIG_SPEC_DOXYGEN_READY
-    #echo_ "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >> $CONFIG_SPEC_DOXYGEN_READY
-    #echo_ "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
-    #echo_ "*/" >> $CONFIG_SPEC_DOXYGEN_READY
-    #echo_ "/*@{*/" >> $CONFIG_SPEC_DOXYGEN_READY
-#   cat $CONF_FILE >> $CONFIG_SPEC_DOXYGEN_READY
-    #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > /tmp/$CONF_BASE
-    #cat /tmp/$CONF_BASE >> $CONFIG_SPEC_DOXYGEN_READY
-    #rm -f /tmp/$CONF_BASE
-    #echo_ "/*@}*/" >> $CONFIG_SPEC_DOXYGEN_READY
-
-    echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
-    echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >> $CONFIG_SPEC_DOXYGEN_READY
-    echo_ " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >> $CONFIG_SPEC_DOXYGEN_READY
-    echo_ "\code" >> $CONFIG_SPEC_DOXYGEN_READY
-    sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
-    cat /tmp/$CONF_BASE >> $CONFIG_SPEC_DOXYGEN_READY
-    echo_ "\endcode" >> $CONFIG_SPEC_DOXYGEN_READY
+    {
+        #echo_ "/**" >&3
+        #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
+        #echo_ "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
+        #echo_ "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
+        #echo_ "*/" >&3
+        #echo_ "/*@{*/" >&3
+    #   cat $CONF_FILE >&3
+        #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > /tmp/$CONF_BASE
+        #cat /tmp/$CONF_BASE >&3
+        #rm -f /tmp/$CONF_BASE
+        #echo_ "/*@}*/" >&3
+    
+        echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
+        echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
+        echo_ " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
+        echo_ "\code" >&3
+        sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
+        cat /tmp/$CONF_BASE >&3
+        echo_ "\endcode" >&3
+    } 3>"$CONFIG_SPEC_DOXYGEN_READY"
     rm -f /tmp/$CONF_BASE
 
 fi
