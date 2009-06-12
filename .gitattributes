@@ -2561,6 +2561,7 @@ tests/addressclaim/test_E_ex.sh -text
 tests/addressclaim/test_F_ex.sh -text
 tests/addressclaim/test_G_1_ex.sh -text
 tests/addressclaim/test_G_2_ex.sh -text
+tests/testDiagnosticMessages.sh -text
 tools/LICENSE.txt -text
 tools/README.txt -text
 tools/can_messenger/README.txt -text
