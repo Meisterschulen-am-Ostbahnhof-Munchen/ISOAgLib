@@ -60,6 +60,29 @@
 # needed by the application
 # ####################################################################### #
 
+# global constants:
+PATH_SEPARATOR1='=_=_'
+PATH_SEPARATOR2='_=_='
+
+main()
+{
+    set_default_values
+    check_before_user_configuration "$@"
+    
+    # now source the config setting file
+    . ./$CONF_FILE
+
+    check_after_user_configuration
+    
+    # Create files to be used to build according to the users's
+    # configuration settings
+    create_buildfiles "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
+    
+    report_summary
+    
+    make_doxygen_ready_comment_blocks
+}
+
 # Prefer these functions to echo due to incompatible versions (Bourne
 # shell builtin, Bash builtin, command):
 echo_() { printf '%s\n' "$*"; }
@@ -67,36 +90,7 @@ echo_e() { printf '%b\n' "$*"; }
 echo_e_n() { printf '%b' "$*"; }
 echo_n() { printf '%s' "$*"; }
 # Compatible but slow variant as fallback:
-alias echo=$(which echo)
-
-PARAMETER_TARGET_SYSTEM="UseConfigFile"
-PARAMETER_CAN_DRIVER="UseConfigFile"
-PARAMETER_CAN_DEVICE_FOR_SERVER="UseConfigFile"
-PARAMETER_RS232_DRIVER="UseConfigFile"
-
-
-USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
-USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
-#USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
-#USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
-#USE_EMBED_ILO="Xos20lcs.ilo"
-USE_EMBED_COMPILER_DIR="c:/programme/tasking/c166"
-
-USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
-# USE_STLPORT_LIBRARY_DIRECTORY=""
-
-# if spec file defines this, the setting is simply overwritten
-APP_SEARCH_SRC_CONDITION="*.C *.cc *.c *.cpp *.cxx"
-APP_SEARCH_HDR_CONDITION="*.h *.hpp"
-
-APP_PATH_EXCLUDE=""
-APP_SRC_EXCLUDE=""
-
-ISOAGLIB_INSTALL_PATH="/usr/local"
-
-USE_SYSTEM_DEFINE=""
-
-GENERATE_FILES_ROOT_DIR="$PWD"
+eval 'echo() { '$(which echo)' "$@"; }'
 
 # this function is used to verify and
 # correct the several project configuration
@@ -149,6 +143,28 @@ GENERATE_FILES_ROOT_DIR="$PWD"
 
 set_default_values()
 {
+    PARAMETER_TARGET_SYSTEM="UseConfigFile"
+    PARAMETER_CAN_DRIVER="UseConfigFile"
+    PARAMETER_CAN_DEVICE_FOR_SERVER="UseConfigFile"
+    PARAMETER_RS232_DRIVER="UseConfigFile"
+    USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
+    USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
+    #USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
+    #USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
+    #USE_EMBED_ILO="Xos20lcs.ilo"
+    USE_EMBED_COMPILER_DIR="c:/programme/tasking/c166"
+    USE_STLPORT_HEADER_DIRECTORY="C:/STLport/stlport"
+    # USE_STLPORT_LIBRARY_DIRECTORY=""
+    # if spec file defines this, the setting is simply overwritten
+    APP_SEARCH_SRC_CONDITION="*.C *.cc *.c *.cpp *.cxx"
+    APP_SEARCH_HDR_CONDITION="*.h *.hpp"
+
+    APP_PATH_EXCLUDE=""
+    APP_SRC_EXCLUDE=""
+    ISOAGLIB_INSTALL_PATH="/usr/local"
+    USE_SYSTEM_DEFINE=""
+    GENERATE_FILES_ROOT_DIR="$PWD"
+
     PRJ_SEND_DEBUG=0
     USE_FLOAT_DATA_TYPE=0
     OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
@@ -216,22 +232,21 @@ set_default_values()
     PRJ_SENSOR_COUNTER=0
     PRJ_RS232=0
     PRJ_MULTIPACKET=0
-    # preset some conditional vars
-    INC_LOC_STD_MEASURE_ELEMENTS=0
-    INC_LOC_SIMPLE_MEASURE_ELEMENTS=0
-    INC_LOC_STD_SETPOINT_ELEMENTS=0
-    INC_LOC_SIMPLE_SETPOINT_ELEMENTS=0
-    INC_REM_STD_MEASURE_ELEMENTS=0
-    INC_REM_SIMPLE_MEASURE_ELEMENTS=0
-    INC_REM_STD_SETPOINT_ELEMENTS=0
-    INC_REM_SIMPLE_SETPOINT_ELEMENTS=0
     # has to be overridden by configuration:
     USE_TARGET_SYSTEM='void'
-    HAL_PATH='void'
+    USE_ISO_TERMINAL_GRAPHICCONTEXT=0
+    USE_ISO_TERMINAL_GETATTRIBUTES=0
+    USE_ISO_TERMINAL_ATTRIBUTES=0
+    PRJ_ISO_TERMINAL_OBJECT_SELECTION1=''
+    PRJ_ISO_TERMINAL_OBJECT_SELECTION2=''
+    PRJ_ISO_TERMINAL_OBJECT_SELECTION3=''
+    PRJ_ISO_TERMINAL_OBJECT_SELECTION4=''
 }
 
 check_set_correct_variables()
 {
+    local CONF_DIR="$1"
+
     if [ "$CAN_BUS_CNT" -lt "$CAN_INSTANCE_CNT" ]; then
         echo_ "ERROR! The amount of available CAN BUS channels at ECU must be at least as high as wanted of used CAN instances"
         exit 2
@@ -260,12 +275,6 @@ check_set_correct_variables()
 
     : ${PROJECT:?"ERROR! Please set the variable PROJECT to the build sub-directory and executable filename"}
     : ${REL_APP_PATH:?"ERROR! Please set the variable REL_APP_PATH to the directory of the application sources"}
-
-    if [ "$PRJ_ISO11783" -eq 0 ]; then
-        PRJ_ISO11783=0
-        PRJ_ISO_TERMINAL=0
-        PRJ_ISO_FILESERVER_CLIENT=0
-    fi
 
     if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_TERMINAL" -gt 0 ]; then
         echo_ "Warning overwrite setting of PRJ_ISO_TERMINAL == $PRJ_ISO_TERMINAL as ISO11783 is not activated"
@@ -345,48 +354,115 @@ check_set_correct_variables()
     case "$USE_TARGET_SYSTEM" in
         pc_win32)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
-            GENERATE_FILES_ROOT_DIR="$1/Dev-C++/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/Dev-C++/"
             IDE_NAME="Visual Studio, Dev-C++"
             ;;        
         pc_linux)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
-            GENERATE_FILES_ROOT_DIR="$1/kdevelop_make/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make/"
             IDE_NAME="KDevelop, make"
             ;;        
         esx)
             USE_SYSTEM_DEFINE="SYSTEM_ESX"
-            GENERATE_FILES_ROOT_DIR="$1/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;        
         esxu)
             USE_SYSTEM_DEFINE="SYSTEM_ESXu"
-            GENERATE_FILES_ROOT_DIR="$1/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
         c2c)
             USE_SYSTEM_DEFINE="SYSTEM_C2C"
-            GENERATE_FILES_ROOT_DIR="$1/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
         imi)
             USE_SYSTEM_DEFINE="SYSTEM_IMI"
-            GENERATE_FILES_ROOT_DIR="$1/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
         pm167)
             USE_SYSTEM_DEFINE="SYSTEM_PM167"
-            GENERATE_FILES_ROOT_DIR="$1/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
         Dj1)
             USE_SYSTEM_DEFINE="SYSTEM_DJ1"
-            GENERATE_FILES_ROOT_DIR="$1/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
         p1mc)
             USE_SYSTEM_DEFINE="SYSTEM_P1MC"
-            GENERATE_FILES_ROOT_DIR="$1/CCS/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS/"
             IDE_NAME="Code Composer Studio"
+            ;;
+    esac
+    
+    INC_LOC_STD_MEASURE_ELEMENTS=$(expr "$PROC_LOCAL" \& \
+        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_SETPOINT" \) )
+    INC_LOC_STD_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" \& \
+        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_MEASURE" \) )
+    INC_LOC_SIMPLE_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" \& \
+        \( "$PROC_LOCAL_SIMPLE_SETPOINT" \| "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" \) )
+    INC_REM_STD_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
+        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_SETPOINT" \) )
+    INC_REM_STD_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" \& \
+        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_MEASURE" \) )
+    INC_REM_SIMPLE_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" \& \
+        \( "$PROC_REMOTE_SIMPLE_SETPOINT" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) )
+    INC_REM_SIMPLE_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
+        \( "$PROC_REMOTE_SIMPLE_MEASURE" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) )
+    if [ "$PRJ_TRACTOR_LIGHT" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
+        PRJ_TRACTOR_LIGHT=0
+    fi
+    if [ "$PRJ_TRACTOR_FACILITIES" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
+        PRJ_TRACTOR_FACILITIES=0
+    fi
+    if [ "$PRJ_TRACTOR_AUX" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
+        PRJ_TRACTOR_AUX=0
+    fi
+    if [ "$PRJ_TRACTOR_GUIDANCE" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
+        PRJ_TRACTOR_GUIDANCE=0
+    fi
+    if [ "$PRJ_TRACTOR_CERTIFICATION" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
+        PRJ_TRACTOR_CERTIFICATION=0
+    fi
+    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
+        PRJ_MULTIPACKET=1
+    fi
+
+    if [ "$PRJ_ISO_TERMINAL_SERVER" -gt 0 ]; then
+        PRJ_MULTIPACKET=1
+    fi
+    if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
+        PRJ_MULTIPACKET=1
+    fi
+    if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
+        PRJ_MULTIPACKET=1
+    fi
+
+    case "$USE_CAN_DRIVER" in
+        simulating)
+            if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
+                echo_ 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
+                echo_ 'Thus the project files will be generated without enhanced CAN processing'
+                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+            fi
+            ;;
+        msq_server|socket_server|socket_server_hal_simulator)
+            ;;
+        sys)
+            if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
+                echo_ 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.'
+                echo_ 'Thus the project files will be generated without enhanced CAN processing'
+                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+            fi
+            ;;
+        *)
+            echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
+            echo_ 'Current Setting is $USE_CAN_DRIVER'
+            exit 3
             ;;
     esac
 }
@@ -397,17 +473,284 @@ append()
 {
     local VARIABLE="$1"
     local FUNCTION="append_$VARIABLE"
-    # If the following statement causes a visible error message "...
-    # not found", then the running shell is incompatible to the Bourne
-    # shell. This is problematic, not for the following statement, but
-    # elsewhere in this script! E.g. Bash is not compatible enough,
-    # but common Linux systems let you configure that /bin/dash plays
-    # the role of /bin/sh, and you should do so. (On Debian-like
-    # systems: dpkg-reconfigure dash)
-    type "$FUNCTION" >/dev/null ||
+    type "$FUNCTION" >/dev/null 2>&1 ||
         eval "$FUNCTION() { $VARIABLE=\"\$$VARIABLE\$*\"; }"
     shift
     "$FUNCTION" "$@"
+}
+
+# Write to FD3 what's needed for finding COMM features.
+comm_features()
+{
+    printf '%s' " -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'" >&3
+    if [ "$PRJ_BASE" -gt 0 ]; then
+        printf '%s' " -o -path '*/Part7_ApplicationLayer/*'" >&3
+    else
+        if test "$PRJ_TRACTOR_GENERAL" -gt 0 -o "$PRJ_TRACTOR_MOVE" -gt 0 -o "$PRJ_TRACTOR_FACILITIES" -gt 0 -o "$PRJ_TRACTOR_PTO" -gt 0 -o "$PRJ_TRACTOR_LIGHT" -gt 0 -o "$PRJ_TRACTOR_AUX" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 -o "$PRJ_TRACTOR_GUIDANCE" -gt 0 -o "$PRJ_TRACTOR_CERTIFICATION" -gt 0; then
+            printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
+        fi
+        if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)" >&3
+        fi
+        if test "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)" >&3
+        elif test "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)" >&3
+        fi
+        if test "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)" >&3
+        elif test "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)" >&3
+        fi
+        if [ "$PRJ_TRACTOR_LIGHT" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)" >&3
+        fi
+        if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+            # tracfacilities is only defined for ISO 11783
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)" >&3
+        fi
+        if [ "$PRJ_TRACTOR_AUX" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+            # tracaux is only defined for ISO 11783
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)" >&3
+        fi
+        if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+            # tracguidance is only defined for ISO 11783
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)" >&3
+        fi
+        if [ "$PRJ_TRACTOR_CERTIFICATION" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
+            # tracguidance is only defined for ISO 11783
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)" >&3
+        fi
+        if [ "$PRJ_TIME_GPS" -gt 0 ]; then
+            printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)" >&3
+        fi
+    fi
+
+    if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
+        printf '%s' " -o -path '*/ProprietaryCan/*'" >&3
+    fi
+
+    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
+        if [ "$PRJ_ISO11783" -gt 0 ]; then
+            printf '%s' " -o -path '*/Part13_FileServer_Client/*'" >&3
+        fi
+    fi
+
+    if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
+        if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -eq 0 ]; then
+            # exclude graphicscontext_c
+            if [ "$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" -gt 0 ]; then
+                printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/*' -a -not -name '*graphicscontext_c*' \)" >&3
+            else
+                printf '%s' " -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)" >&3
+            fi
+        else
+            if [ "$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part6_VirtualTerminal_Client/*'" >&3
+            else
+                printf '%s' " -o -path '*/Part6_VirtualTerminal_Client/i*'" >&3
+            fi
+        fi
+    fi
+    if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
+        if test "$PRJ_ISO_TERMINAL" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ; then
+            printf '%s' " -o -path '*/driver/datastreams/volatilememory_c.*'" >&3
+        fi
+    fi
+    if [ "$PRJ_ISO11783" -gt 0 ]; then
+        printf '%s' " -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'" >&3
+        if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ]; then
+            printf '%s' " -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'" >&3
+        else
+            printf '%s' " -o -path '*/Part3_DataLink/impl/streamlinear_c.*'" >&3
+        fi
+    fi
+
+    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
+        if [ "$PRJ_ISO11783" -gt 0 ]; then
+            printf '%s' " -o -path '*/Part13_FileServer_Client/*'" >&3
+        fi
+    fi
+}
+
+# Write to FD3 what's needed for finding DRIVER features.
+driver_features()
+{
+    printf '%s' " -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*'  -o \( -path '*/hal/"$HAL_PATH"/system*' -not -path '*hal_simulator*' \) -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'" >&3
+
+
+    echo_ "IsoAgLib's Project-Generator running..."
+    echo_
+    echo_ "CAN driver:    $USE_CAN_DRIVER"
+    case "$USE_CAN_DRIVER" in
+        simulating)
+            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'" >&3
+            ;;
+        msq_server)
+            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq.*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'" >&3
+            ;;
+        socket_server)
+            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock.*'" >&3
+            ;;
+        socket_server_hal_simulator)
+            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock_hal_simulator.*'" >&3
+            ;;
+    esac
+    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -lt 1 ]; then
+        #in NOT enhanced can hal -> we need to integrate the sources for the central CAN FIFO
+        printf '%s' " -o -path '*/hal/generic_utils/can/*'" >&3
+    fi
+
+    if [ "$PRJ_EEPROM" -gt 0 ]; then
+        printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/"$HAL_PATH"/eeprom/*' -o -path '*/hal/eeprom.h' -o -name 'eeprom_adr.h'" >&3
+    fi
+    if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
+        printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/"$HAL_PATH"/datastreams/*' -o -path '*/hal/datastreams.h'" >&3
+    fi
+    if [ "$PRJ_ACTOR" -gt 0 ]; then
+        printf '%s' " -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/actor.h' -o -path '*/hal/"$HAL_PATH"/actor/actor_target_extensions.*' -o -path '*/hal/actor.h'" >&3
+    fi
+    if [ "$PRJ_SENSOR_DIGITAL" -gt 0 ]; then
+        printf '%s' " -o -name '*digitali_c.*'" >&3
+    fi
+    if [ "$PRJ_SENSOR_ANALOG" -gt 0 ]; then
+        printf '%s' " -o -name '*analogi*'" >&3
+    fi
+    if [ "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
+        printf '%s' " -o -name '*counteri*'" >&3
+    fi
+    if test "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ; then
+        printf '%s' " -o -path '*/hal/"$HAL_PATH"/sensor/sensor.h' -path '*/hal/"$HAL_PATH"/sensor/sensor_target_extensions.*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'" >&3
+    fi
+    if [ "$PRJ_RS232" -gt 0 ]; then
+        printf '%s' " -o -path '*/driver/rs232/*' -o -path '*/hal/rs232.h' -o -path '*/hal/"$HAL_PATH"/rs232/rs232.h'" >&3
+        if [ "$PRJ_RS232_OVER_CAN" -gt 0 ]; then
+            printf '%s' " -o -path '*/hal/virtualDrivers/rs232/*'" >&3
+        else
+            #-- The following line is wrong and never had any effect.
+            #-- Just leaving in for informational reasons.
+            #     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'" >&3
+            echo_ "RS232 driver:  $USE_RS232_DRIVER"
+            case "$USE_RS232_DRIVER" in
+                simulating)
+                    printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'" >&3
+                    ;;
+                hal_simulator)
+                    printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_hal_simulator*'" >&3
+                    ;;
+                rte)
+                    printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'" >&3
+                    ;;
+                sys)
+                    if [ "$USE_TARGET_SYSTEM" = "pc_win32" ]; then
+                        printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'" >&3
+                    else
+                        printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'" >&3
+                    fi
+                    ;;
+                #     PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
+                #     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'" >&3
+                *)
+                    echo_ 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"hal_simulator"'
+                    echo_ 'Current Setting is $USE_RS232_DRIVER'
+                    exit 3
+            esac
+        fi
+        printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/rs232_target_extensions.h'" >&3
+    fi
+
+    # add the standard driver directory sources for CAN
+    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
+        printf '%s' " -o \( -path '*/driver/can/*' -a -not -name 'msgobj*' \)" >&3
+    else
+        printf '%s' " -o -path '*/driver/can/*'" >&3
+    fi
+}
+
+
+#Write to FD3 what's needed for finding COMM PROC features.
+comm_proc_features()
+{
+    if [ "$PRJ_PROCESS" -gt 0 ]; then
+        if [ -n "$COMM_PROC_FEATURES" ]; then
+            printf '%s' " -o " >&3
+        fi
+        printf '%s' " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/iprocesscmd*' -o -path '*/Part7_ProcessData/impl/processcmd*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'" >&3
+
+        if [ "$PRJ_ISO11783" -gt 0 -a "$PROC_LOCAL" -gt 0 ]; then
+            # allow DevPropertyHandler
+            printf '%s' " -o -path '*/Part10_TaskController_Client/i*devproperty*'" >&3
+        else
+            printf '%s' " -o \( -path '*/Part10_TaskController_Client/i*devproperty*' -a -not -name 'devproperty*' \)" >&3
+        fi
+
+        if [ "$PROC_LOCAL" -gt 0 ]; then
+            printf '%s' " -o -path '*/Part7_ProcessData/Local/impl/*'" >&3
+
+            if [ "$PROC_LOCAL_STD" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/Std/*'" >&3
+            fi
+            if [ "$PROC_LOCAL_SIMPLE_MEASURE" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleMeasure/*'" >&3
+            fi
+            if [ "$PROC_LOCAL_SIMPLE_SETPOINT" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleSetpoint/*'" >&3
+            fi
+            if [ "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleMeasureSetpoint/*'" >&3
+            fi
+
+            if [ "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/StdMeasureElements/*'" >&3
+            fi
+            if [ "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/StdSetpointElements/*'" >&3
+            fi
+            if [ "$INC_LOC_SIMPLE_SETPOINT_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleSetpointElements/*'" >&3
+            fi
+        fi
+        if [ "$PROC_REMOTE" -gt 0 ]; then
+            printf '%s' " -o -path '*/Part7_ProcessData/Remote/impl/*'" >&3
+
+            if [ "$PROC_REMOTE_STD" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/Std/*'" >&3
+            fi
+            if [ "$PROC_REMOTE_SIMPLE_MEASURE" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleMeasure/*'" >&3
+            fi
+            if [ "$PROC_REMOTE_SIMPLE_SETPOINT" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleSetpoint/*'" >&3
+            fi
+            if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 -a "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleMeasureSetpoint/*'" >&3
+            elif [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 ]; then
+                printf '%s' " -o -name '*procdataremotesimplesetpointsimplemeasure_c.*'" >&3
+            elif [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ]; then
+                printf '%s' " -o -name '*procdataremotesimplesetpointsimplemeasurecombined_c.*'" >&3
+            fi
+            if [ "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdMeasureElements/*'" >&3
+            fi
+            if [ "$INC_REM_SIMPLE_MEASURE_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleMeasureElements/*'" >&3
+            fi
+            if [ "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdSetpointElements/*'" >&3
+            fi
+            if [ "$INC_REM_SIMPLE_SETPOINT_ELEMENTS" -gt 0 ]; then
+                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleSetpointElements/*'" >&3
+            fi
+        fi
+
+        if test "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 -o "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ; then
+            printf '%s' " -o -path '*/Part7_ProcessData/StdMeasureElements/*'" >&3
+        fi
+        if test "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 -o "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ; then
+            printf '%s' " -o -path '*/Part7_ProcessData/StdSetpointElements/*'" >&3
+        fi
+
+    fi
 }
 
 # this function uses the "find" cmd
@@ -415,106 +758,11 @@ append()
 # corresponding file list into filelist_$PROJECT_PURE.txt
 create_filelist( )
 {
-    COMM_PROC_FEATURES=""
-
-    if [ "$PRJ_PROCESS" -gt 0 ]; then
-        if [ -n "$COMM_PROC_FEATURES" ]; then
-            append COMM_PROC_FEATURES " -o "
-        fi
-        append COMM_PROC_FEATURES " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/iprocesscmd*' -o -path '*/Part7_ProcessData/impl/processcmd*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'"
-
-        if [ "$PRJ_ISO11783" -gt 0 -a "$PROC_LOCAL" -gt 0 ]; then
-            # allow DevPropertyHandler
-            append COMM_PROC_FEATURES " -o -path '*/Part10_TaskController_Client/i*devproperty*'"
-        else
-            append COMM_PROC_FEATURES " -o \( -path '*/Part10_TaskController_Client/i*devproperty*' -a -not -name 'devproperty*' \)"
-        fi
-
-        if [ "$PROC_LOCAL" -gt 0 ]; then
-            append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/impl/*'"
-
-            if [ "$PROC_LOCAL_STD" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/Std/*'"
-                INC_LOC_STD_MEASURE_ELEMENTS=1
-                INC_LOC_STD_SETPOINT_ELEMENTS=1
-            fi
-            if [ "$PROC_LOCAL_SIMPLE_MEASURE" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/SimpleMeasure/*'"
-                INC_LOC_STD_SETPOINT_ELEMENTS=1
-            fi
-            if [ "$PROC_LOCAL_SIMPLE_SETPOINT" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/SimpleSetpoint/*'"
-                INC_LOC_STD_MEASURE_ELEMENTS=1
-                INC_LOC_SIMPLE_SETPOINT_ELEMENTS=1
-            fi
-            if [ "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/SimpleMeasureSetpoint/*'"
-                INC_LOC_SIMPLE_SETPOINT_ELEMENTS=1
-            fi
-
-            if [ "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/StdMeasureElements/*'"
-            fi
-            if [ "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/StdSetpointElements/*'"
-            fi
-            if [ "$INC_LOC_SIMPLE_SETPOINT_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Local/SimpleSetpointElements/*'"
-            fi
-        fi
-        if [ "$PROC_REMOTE" -gt 0 ]; then
-            append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/impl/*'"
-
-            if [ "$PROC_REMOTE_STD" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/Std/*'"
-                INC_REM_STD_MEASURE_ELEMENTS=1
-                INC_REM_STD_SETPOINT_ELEMENTS=1
-            fi
-            if [ "$PROC_REMOTE_SIMPLE_MEASURE" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/SimpleMeasure/*'"
-                INC_REM_SIMPLE_MEASURE_ELEMENTS=1
-                INC_REM_STD_SETPOINT_ELEMENTS=1
-            fi
-            if [ "$PROC_REMOTE_SIMPLE_SETPOINT" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/SimpleSetpoint/*'"
-                INC_REM_STD_MEASURE_ELEMENTS=1
-                INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
-            fi
-            if test "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 -a "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0   ; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/SimpleMeasureSetpoint/*'"
-                INC_REM_SIMPLE_MEASURE_ELEMENTS=1
-                INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
-            elif [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -name '*procdataremotesimplesetpointsimplemeasure_c.*'"
-                INC_REM_SIMPLE_MEASURE_ELEMENTS=1
-                INC_REM_SIMPLE_SETPOINT_ELEMENTS=1
-            elif [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -name '*procdataremotesimplesetpointsimplemeasurecombined_c.*'"
-            fi
-            if [ "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/StdMeasureElements/*'"
-            fi
-            if [ "$INC_REM_SIMPLE_MEASURE_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/SimpleMeasureElements/*'"
-            fi
-            if [ "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/StdSetpointElements/*'"
-            fi
-            if [ "$INC_REM_SIMPLE_SETPOINT_ELEMENTS" -gt 0 ]; then
-                append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/Remote/SimpleSetpointElements/*'"
-            fi
-        fi
-
-        if test "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 -o "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ; then
-            append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/StdMeasureElements/*'"
-        fi
-        if test "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 -o "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ; then
-            append COMM_PROC_FEATURES " -o -path '*/Part7_ProcessData/StdSetpointElements/*'"
-        fi
-
-    fi
+    local GENERATE_FILES_ROOT_DIR="$1"
+    local SCRIPT_DIR="$2"
 
     #USE_TARGET_SYSTEM="pc"
+    local HAL_PATH
     case "$USE_TARGET_SYSTEM" in
         pc*)
             HAL_PATH="pc"
@@ -524,223 +772,11 @@ create_filelist( )
             ;;
     esac
 
-    COMM_FEATURES=" -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'"
-    if [ "$PRJ_BASE" -gt 0 ]; then
-        append COMM_FEATURES " -o -path '*/Part7_ApplicationLayer/*'"
-    else
-        if test "$PRJ_TRACTOR_GENERAL" -gt 0 -o "$PRJ_TRACTOR_MOVE" -gt 0 -o "$PRJ_TRACTOR_FACILITIES" -gt 0 -o "$PRJ_TRACTOR_PTO" -gt 0 -o "$PRJ_TRACTOR_LIGHT" -gt 0 -o "$PRJ_TRACTOR_AUX" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 -o "$PRJ_TRACTOR_GUIDANCE" -gt 0 -o "$PRJ_TRACTOR_CERTIFICATION" -gt 0; then
-            append COMM_FEATURES " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'"
-        fi
-        if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)"
-        fi
-        if test "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)"
-        elif test "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)"
-        fi
-        if test "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)"
-        elif test "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)"
-        fi
-        if test "$PRJ_TRACTOR_LIGHT" -gt 0 -a "$PRJ_ISO11783" -gt 0 ; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)"
-        else
-            PRJ_TRACTOR_LIGHT=0
-        fi
-        if test "$PRJ_TRACTOR_FACILITIES" -gt 0 -a "$PRJ_ISO11783" -gt 0 ; then
-            # tracfacilities is only defined for ISO 11783
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)"
-        else
-            PRJ_TRACTOR_FACILITIES=0
-        fi
-        if test "$PRJ_TRACTOR_AUX" -gt 0 -a "$PRJ_ISO11783" -gt 0 ; then
-            # tracaux is only defined for ISO 11783
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)"
-        else
-            PRJ_TRACTOR_AUX=0
-        fi
-        if test "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ; then
-            # tracguidance is only defined for ISO 11783
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)"
-        else
-            PRJ_TRACTOR_GUIDANCE=0
-        fi
-        if test "$PRJ_TRACTOR_CERTIFICATION" -gt 0 -a "$PRJ_ISO11783" -gt 0 ; then
-            # tracguidance is only defined for ISO 11783
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)"
-        else
-            PRJ_TRACTOR_CERTIFICATION=0
-        fi
-        if [ "$PRJ_TIME_GPS" -gt 0 ]; then
-            append COMM_FEATURES " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*timeposgps*' \)"
-        fi
-    fi
-
-    if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
-        append COMM_FEATURES " -o -path '*/ProprietaryCan/*'"
-    fi
-
-    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
-        if [ "$PRJ_ISO11783" -gt 0 ]; then
-            append COMM_FEATURES " -o -path '*/Part13_FileServer_Client/*'"
-        fi
-    fi
-
-    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
-        PRJ_MULTIPACKET=1
-    fi
-
-    if [ "$PRJ_ISO_TERMINAL_SERVER" -gt 0 ]; then
-        PRJ_MULTIPACKET=1
-    fi
-    if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
-        if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" = "" ]; then
-            # exclude graphicscontext_c
-            if [ "$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" -gt 0 ]; then
-                append COMM_FEATURES " -o \( -path '*/Part6_VirtualTerminal_Client/*' -a -not -name '*graphicscontext_c*' \)"
-            else
-                append COMM_FEATURES " -o \( -path '*/Part6_VirtualTerminal_Client/i*' -a -not -name '*graphicscontext_c*' \)"
-            fi
-        else
-            if [ "$PRJ_ISO_TERMINAL_LAYOUT_MANAGER" -gt 0 ]; then
-                append COMM_FEATURES " -o -path '*/Part6_VirtualTerminal_Client/*'"
-            else
-                append COMM_FEATURES " -o -path '*/Part6_VirtualTerminal_Client/i*'"
-            fi
-            USE_ISO_TERMINAL_GRAPHICCONTEXT=1
-        fi
-        if [ "$USE_ISO_TERMINAL_GETATTRIBUTES" != "" ]; then
-            USE_ISO_TERMINAL_GETATTRIBUTES=1
-        fi
-        PRJ_MULTIPACKET=1
-    fi
-    if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
-        PRJ_MULTIPACKET=1
-    fi
-    if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
-        if test "$PRJ_ISO_TERMINAL" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ; then
-            append COMM_FEATURES " -o -path '*/driver/datastreams/volatilememory_c.*'"
-        fi
-    fi
-    if [ "$PRJ_ISO11783" -gt 0 ]; then
-        append COMM_FEATURES " -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'"
-        if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ]; then
-            append COMM_FEATURES " -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'"
-        else
-            append COMM_FEATURES " -o -path '*/Part3_DataLink/impl/streamlinear_c.*'"
-        fi
-    fi
-
-    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
-        if [ "$PRJ_ISO11783" -gt 0 ]; then
-            append COMM_FEATURES " -o -path '*/Part13_FileServer_Client/*'"
-        fi
-    fi
-
-    DRIVER_FEATURES=" -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*'  -o \( -path '*/hal/"$HAL_PATH"/system*' -not -path '*hal_simulator*' \) -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'"
-
-
-    echo_ "IsoAgLib's Project-Generator running..."
-    echo_
-    echo_ "CAN driver:    $USE_CAN_DRIVER"
-    if [ "$USE_CAN_DRIVER" = "simulating" ]; then
-        append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'"
-        if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-            echo_ 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
-            echo_ 'Thus the project files will be generated without enhanced CAN processing'
-            PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-        fi
-    elif [ "$USE_CAN_DRIVER" = "msq_server" ]; then
-        append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq.*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'"
-    elif [ "$USE_CAN_DRIVER" = "socket_server" ]; then
-        append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock.*'"
-    elif [ "$USE_CAN_DRIVER" = "socket_server_hal_simulator" ]; then
-        append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock_hal_simulator.*'"
-    elif [ "$USE_CAN_DRIVER" = "sys" ]; then
-        if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-            echo_ 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.'
-            echo_ 'Thus the project files will be generated without enhanced CAN processing'
-            PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-        fi
-        #-- Currently there's no direct access to Linux/Windows CAN. You have to use the can_server.
-        #-- The following is only kept for informational reasons - the files do not exist with these names currently!
-        #   if [ $USE_TARGET_SYSTEM = "pc_linux" ]; then
-        #     append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_linux_sys*'"
-        #   elif [ $USE_TARGET_SYSTEM = "pc_win32" ]; then
-        #     append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_w32_sys*'"
-        #   fi
-    else
-        echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
-        echo_ 'Current Setting is $USE_CAN_DRIVER'
-        exit 3
-    fi
-
-    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -lt 1 ]; then
-        #in NOT enhanced can hal -> we need to integrate the sources for the central CAN FIFO
-        append DRIVER_FEATURES " -o -path '*/hal/generic_utils/can/*'"
-    fi
-
-    if [ "$PRJ_EEPROM" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -path '*/driver/eeprom/*' -o -path '*/hal/"$HAL_PATH"/eeprom/*' -o -path '*/hal/eeprom.h' -o -name 'eeprom_adr.h'"
-    fi
-    if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -path '*/driver/datastreams/*' -o -path '*/hal/"$HAL_PATH"/datastreams/*' -o -path '*/hal/datastreams.h'"
-    fi
-    if [ "$PRJ_ACTOR" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/actor.h' -o -path '*/hal/"$HAL_PATH"/actor/actor_target_extensions.*' -o -path '*/hal/actor.h'"
-    fi
-    if [ "$PRJ_SENSOR_DIGITAL" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -name '*digitali_c.*'"
-    fi
-    if [ "$PRJ_SENSOR_ANALOG" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -name '*analogi*'"
-    fi
-    if [ "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -name '*counteri*'"
-    fi
-    if test "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ; then
-        append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/sensor/sensor.h' -path '*/hal/"$HAL_PATH"/sensor/sensor_target_extensions.*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'"
-    fi
-    if [ "$PRJ_RS232" -gt 0 ]; then
-        append DRIVER_FEATURES " -o -path '*/driver/rs232/*' -o -path '*/hal/rs232.h' -o -path '*/hal/"$HAL_PATH"/rs232/rs232.h'"
-        if [ "$PRJ_RS232_OVER_CAN" -gt 0 ]; then
-            append DRIVER_FEATURES " -o -path '*/hal/virtualDrivers/rs232/*'"
-        else
-            #-- The following line is wrong and never had any effect.
-            #-- Just leaving in for informational reasons.
-            #     append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'"
-            echo_ "RS232 driver:  $USE_RS232_DRIVER"
-            if [ "$USE_RS232_DRIVER" = "simulating" ]; then
-                append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
-            elif [ "$USE_RS232_DRIVER" = "hal_simulator" ]; then
-                append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_hal_simulator*'"
-            elif [ "$USE_RS232_DRIVER" = "rte" ]; then
-                append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'"
-            elif [ "$USE_RS232_DRIVER" = "sys" ]; then
-                if [ "$USE_TARGET_SYSTEM" = "pc_win32" ]; then
-                    append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'"
-                else
-                    append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'"
-                fi
-                #     PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
-                #     append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'"
-            else
-                echo_ 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"hal_simulator"'
-                echo_ 'Current Setting is $USE_RS232_DRIVER'
-                exit 3
-            fi
-        fi
-        append DRIVER_FEATURES " -o -path '*/hal/"$HAL_PATH"/rs232/rs232_target_extensions.h'"
-    fi
-
-    # add the standard driver directory sources for CAN
-    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-        append DRIVER_FEATURES " -o \( -path '*/driver/can/*' -a -not -name 'msgobj*' \)"
-    else
-        append DRIVER_FEATURES " -o -path '*/driver/can/*'"
-    fi
+    {
+        local COMM_PROC_FEATURES="$(comm_proc_features 3>&1 1>&9)"
+        local COMM_FEATURES="$(comm_features 3>&1 1>&9)"
+        local DRIVER_FEATURES="$(driver_features 3>&1 1>&9)"
+    } 9>&1
 
     LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
     SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
@@ -751,8 +787,8 @@ create_filelist( )
 
 
     # go back to directory where config file resides
-    mkdir -p $1
-    cd $1
+    mkdir -p "$GENERATE_FILES_ROOT_DIR"
+    cd "$GENERATE_FILES_ROOT_DIR"
     # echo_ "create filelist with 1 $1 and GENERATE_FILES_ROOT_DIR $GENERATE_FILES_ROOT_DIR"
     # mkdir tmpdir
     mkdir -p $PROJECT
@@ -771,22 +807,14 @@ create_filelist( )
     else
         FILELIST_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
     fi
-
-    FIND_TEMP_PATH="-path '*/scheduler/*' -o -path '*/Part5_NetworkManagement/*' -o -path '*/Part12_DiagnosticsServices/*' -o -path '*/util/*' -o -path '*/Part3_DataLink/i*can*' "
-
-    # find wanted process data communication features
-    if [ -n "$COMM_PROC_FEATURES" ]; then
-        append FIND_TEMP_PATH " -o $COMM_PROC_FEATURES"
-    fi
-    # find wanted other communication features
-    if [ -n "$COMM_FEATURES" ]; then
-        append FIND_TEMP_PATH " -o $COMM_FEATURES"
-    fi
-    #find optional HW features
-    if [ -n "$DRIVER_FEATURES" ]; then
-        append FIND_TEMP_PATH " -o $DRIVER_FEATURES"
-    fi
-
+    FIND_TEMP_PATH="$(printf '%s' "-path '*/scheduler/*'" \
+        " -o -path '*/Part5_NetworkManagement/*'" \
+        " -o -path '*/Part12_DiagnosticsServices/*' " \
+        " -o -path '*/util/*'" \
+        " -o -path '*/Part3_DataLink/i*can*' " \
+        "${COMM_PROC_FEATURES:+ -o ${COMM_PROC_FEATURES}}" \
+        "${COMM_FEATURES:+ -o ${COMM_FEATURES}}" \
+        "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
     EXCLUDE_PATH_PART="-a -not -path '*/xgpl_src/build/*'"
     if [ "A" != "A$APP_PATH_EXCLUDE"  ]; then
         EXCLUDE_PATH_PART="-and -not \( -path '*/xgpl_src/build/*'"
@@ -925,7 +953,7 @@ create_filelist( )
     rm -f $FILELIST_COMBINED_HDR
 
     # go back to directory where config file resides
-    cd $1
+    cd "$GENERATE_FILES_ROOT_DIR"
 
     return
 }
@@ -1194,22 +1222,22 @@ create_autogen_project_config()
             echo_e "#ifndef USE_ISO_11783 $ENDLINE\t#define USE_ISO_11783 $ENDLINE#endif" >&3
             if [ "$PRJ_ISO_TERMINAL" -gt 0 ] ; then
                 echo_e "#ifndef USE_ISO_TERMINAL $ENDLINE\t#define USE_ISO_TERMINAL $ENDLINE#endif" >&3
-                if [ "$USE_ISO_TERMINAL_ATTRIBUTES" != "" ] ; then
+                if [ "$USE_ISO_TERMINAL_ATTRIBUTES" -ne 0 ] ; then
                     echo_e "#ifndef USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE\t#define USE_ISO_TERMINAL_ATTRIBUTES $ENDLINE#endif" >&3
                 fi
-                if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" != "" ] ; then
+                if [ "$USE_ISO_TERMINAL_GRAPHICCONTEXT" -ne 0 ] ; then
                     echo_e "#ifndef USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE\t#define USE_ISO_TERMINAL_GRAPHICCONTEXT $ENDLINE#endif" >&3
                 fi
-                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION1" != "" ] ; then
+                if [ -n "$PRJ_ISO_TERMINAL_OBJECT_SELECTION1" ] ; then
                     echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $PRJ_ISO_TERMINAL_OBJECT_SELECTION1 $ENDLINE#endif" >&3
                 fi
-                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION2" != "" ] ; then
+                if [ -n "$PRJ_ISO_TERMINAL_OBJECT_SELECTION2" ] ; then
                     echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $PRJ_ISO_TERMINAL_OBJECT_SELECTION2 $ENDLINE#endif" >&3
                 fi
-                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION3" != "" ] ; then
+                if [ -n "$PRJ_ISO_TERMINAL_OBJECT_SELECTION3" ] ; then
                     echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $PRJ_ISO_TERMINAL_OBJECT_SELECTION3 $ENDLINE#endif" >&3
                 fi
-                if [ "$PRJ_ISO_TERMINAL_OBJECT_SELECTION4" != "" ] ; then
+                if [ -n "$PRJ_ISO_TERMINAL_OBJECT_SELECTION4" ] ; then
                     echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE#endif" >&3
                 fi
             fi
@@ -1719,9 +1747,6 @@ create_makefile()
 
     return
 }
-
-PATH_SEPARATOR1='=_=_'
-PATH_SEPARATOR2='_=_='
 
 mangle_path1()
 {
@@ -2380,16 +2405,19 @@ ENDOFHEADERB
     # org test
 }
 
-perform_everything()
+create_buildfiles()
 {
+    local CONF_DIR="$1"
+    local SCRIPT_DIR="$2"
+    local START_DIR="$3"
     # verify and correct the variables
-    check_set_correct_variables $1 $2
+    check_set_correct_variables "$CONF_DIR"
     GENERATE_FILES_ROOT_DIR=$(echo_ "$GENERATE_FILES_ROOT_DIR" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g')
     # echo_ "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
 
     # now call the function create_filelist() which build
     # the file list based on the varibles defined above
-    create_filelist $GENERATE_FILES_ROOT_DIR $2
+    create_filelist "$GENERATE_FILES_ROOT_DIR" "$SCRIPT_DIR"
 
     # call function which build the file list for the unit
     # tests
@@ -2397,19 +2425,23 @@ perform_everything()
     #  create_utest_filelist
 
     # call function to create project specific config file
-    create_autogen_project_config $GENERATE_FILES_ROOT_DIR $2
-    if [ $USE_TARGET_SYSTEM = "pc_linux" ] ; then
-        # call function to create the Makefile in the project dir
-        create_makefile $GENERATE_FILES_ROOT_DIR $2
+    create_autogen_project_config $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+    case "$USE_TARGET_SYSTEM" in
+        pc_linux)
+           # call function to create the Makefile in the project dir
+            create_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
         # check if a win32 project file whould be created
-    elif [ $USE_TARGET_SYSTEM = "pc_win32" ] ; then
-        create_DevCCPrj $GENERATE_FILES_ROOT_DIR $2
-        create_VCPrj $GENERATE_FILES_ROOT_DIR $2
-    elif [ $USE_TARGET_SYSTEM = "p1mc" ] ; then
-        create_CcsPrj $GENERATE_FILES_ROOT_DIR $2
-    else
-        create_EdePrj $GENERATE_FILES_ROOT_DIR $2
-    fi
+        pc_win32)
+            create_DevCCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            create_VCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
+        p1mc)
+            create_CcsPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
+        *)
+            create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+    esac
 
     # cleanup temporary files
     rm -f $GENERATE_FILES_ROOT_DIR/$PROJECT/directories__*.txt
@@ -2418,7 +2450,7 @@ perform_everything()
     #$GENERATE_FILES_ROOT_DIR/$PROJECT/filelist__*.txt
 
     # jump to initial directory on start of script
-    cd $3
+    cd "$START_DIR"
 }
 
 
@@ -2466,333 +2498,334 @@ EOF
 }
 
 
-# main
+abs_dir_of(){ cd "$(dirname "$1")" && pwd; }
 
-set_default_values
-
-if [ $# -lt 1 ] ; then
-    echo_ "ERROR! You must at least specify the configuration file for your project as parameter"
-    echo_
-    usage
-    exit 1
-fi
-
-# Check the arguments.
-for option in "$@"; do
-    case "$option" in
-        -h | --help)
-            usage
-            exit 0 ;;
-        '--doxygen-export-directory='*)
-            DOXYGEN_EXPORT_DIR_1=$(echo_ "$option" | sed -e 's/--doxygen-export-directory=//')
-            mkdir -p "$DOXYGEN_EXPORT_DIR_1"
-            CALL_DIR=$PWD
-            cd "$DOXYGEN_EXPORT_DIR_1"
-            DOXYGEN_EXPORT_DIR=$PWD
-            cd $CALL_DIR ;;
-        '--IsoAgLib-root='*)
-            ISOAGLIB_ROOT=$(echo_ "$option" | sed 's/--IsoAgLib-root=//')
-            if [ ! -f "$ISOAGLIB_ROOT/library/xgpl_src/IsoAgLib/isoaglib_config.h" ] ; then
-                echo_ "Directory $ISOAGLIB_ROOT doesn't contain valid IsoAgLib directory root. The file xgpl_src/IsoAgLib/isoaglib_config.h can't be found." 1>&2
+check_before_user_configuration()
+{
+    if [ $# -lt 1 ] ; then
+        echo_ "ERROR! You must at least specify the configuration file for your project as parameter"
+        echo_
+        usage
+        exit 1
+    fi
+    
+    # Check the arguments.
+    for option in "$@"; do
+        case "$option" in
+            -h | --help)
+                usage
+                exit 0 ;;
+            '--doxygen-export-directory='*)
+                DOXYGEN_EXPORT_DIR_1=$(echo_ "$option" | sed -e 's/--doxygen-export-directory=//')
+                mkdir -p "$DOXYGEN_EXPORT_DIR_1"
+                CALL_DIR=$PWD
+                cd "$DOXYGEN_EXPORT_DIR_1"
+                DOXYGEN_EXPORT_DIR=$PWD
+                cd $CALL_DIR ;;
+            '--IsoAgLib-root='*)
+                ISOAGLIB_ROOT=$(echo_ "$option" | sed 's/--IsoAgLib-root=//')
+                if [ ! -f "$ISOAGLIB_ROOT/library/xgpl_src/IsoAgLib/isoaglib_config.h" ] ; then
+                    echo_ "Directory $ISOAGLIB_ROOT doesn't contain valid IsoAgLib directory root. The file xgpl_src/IsoAgLib/isoaglib_config.h can't be found." 1>&2
+                    usage
+                    exit 1
+                else
+                    CALL_DIR=$PWD
+                    cd $ISOAGLIB_ROOT
+                    ISOAGLIB_ROOT=$PWD
+                    cd $CALL_DIR
+                fi ;;
+            '--target-system='*)
+                PARAMETER_TARGET_SYSTEM=$(echo_ "$option" | sed 's/--target-system=//')
+                ;;
+            '--pc-can-driver='*)
+                PARAMETER_CAN_DRIVER=$(echo_ "$option" | sed 's/--pc-can-driver=//')
+                ;;
+            '--pc-can-device-for-server='*)
+                PARAMETER_CAN_DEVICE_FOR_SERVER=$(echo_ "$option" | sed 's/--pc-can-device-for-server=//')
+                ;;
+            '--pc-rs232-driver='*)
+                PARAMETER_RS232_DRIVER=$(echo_ "$option" | sed 's/--pc-rs232-driver=//')
+                ;;
+            --little-endian-cpu)
+                PARAMETER_LITTLE_ENDIAN_CPU=1
+                ;;
+            --big-endian-cpu)
+                PARAMETER_LITTLE_ENDIAN_CPU=0
+                USE_BIG_ENDIAN_CPU=1
+                ;;
+            '--with-makefile-skeleton='*)
+                RootDir=$PWD
+                MAKEFILE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-skeleton=//')
+                ;;
+            '--with-makefile-app-skeleton='*)
+                RootDir=$PWD
+                MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
+                ;;
+            -*)
+                echo_ "Unrecognized option $option'" 1>&2
                 usage
                 exit 1
-            else
-                CALL_DIR=$PWD
-                cd $ISOAGLIB_ROOT
-                ISOAGLIB_ROOT=$PWD
-                cd $CALL_DIR
-            fi ;;
-        '--target-system='*)
-            PARAMETER_TARGET_SYSTEM=$(echo_ "$option" | sed 's/--target-system=//')
+                ;;
+            *)
+                CONF_FILE=$option
+                ;;
+        esac
+    done
+    
+    # check if configuration file exists
+    if [ ! -f $CONF_FILE ] ; then
+        echo_ "ERROR! configuration file $CONF_FILE does not exist!"
+        exit 1
+    elif [ ! -r $CONF_FILE ] ; then
+        echo_ "ERROR! configuration file $CONF_FILE is not readable!"
+        exit 1
+    fi
+    
+    SCRIPT_DIR="$(abs_dir_of "$0")"
+    CONF_DIR="$(abs_dir_of "$CONF_FILE")"
+    
+    # echo_ "StartDir $START_DIR"
+    # echo_ "ScriptDir $SCRIPT_DIR"
+    # echo_ "ConfDir $CONF_DIR"
+}
+
+check_after_user_configuration()
+{
+    # perform some checks based on user input
+    # check for correct target system setting
+    if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
+        USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
+    fi
+    case "$USE_TARGET_SYSTEM" in
+        pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167)
             ;;
-        '--pc-can-driver='*)
-            PARAMETER_CAN_DRIVER=$(echo_ "$option" | sed 's/--pc-can-driver=//')
+        *)
+            echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
+            usage
+            exit 1 ;;
+    esac
+    
+    # check for corrext CAN driver - and automatically adapt to embedded targets
+    if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
+        USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
+        IS_CAN_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | grep -c "msq_server")
+        if [ $IS_CAN_SERVER -gt 0 ] ; then
+            USE_CAN_DEVICE_FOR_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | sed 's/msq_server_//g')
+            USE_CAN_DRIVER="msq_server"
+            PARAMETER_CAN_DRIVER="msq_server"
+        fi
+    fi
+    
+    if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
+        USE_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
+    fi
+    
+    
+    #default for not-can_server
+    CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
+    case "$USE_CAN_DRIVER" in
+        simulating)
+            case "$USE_TARGET_SYSTEM" in
+                pc_linux | pc_win32)
+                    # enhanced CAN HAL is not yet supported for simulating CAN HAL
+                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+                    ;;
+                *)
+                    echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+                    USE_CAN_DRIVER="sys"
+                    PARAMETER_CAN_DRIVER="sys"
+                    # enhanced CAN HAL is not yet supported for the known embedded targets
+                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+                    ;;
+            esac
             ;;
-        '--pc-can-device-for-server='*)
-            PARAMETER_CAN_DEVICE_FOR_SERVER=$(echo_ "$option" | sed 's/--pc-can-device-for-server=//')
+        sys)
+            case "$USE_TARGET_SYSTEM" in
+                pc_linux | pc_win32)
+                    echo_ "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
+                    usage
+                    exit 1
+                    ;;
+                *)
+                    ;;
+            esac
+            # enhanced CAN HAL is not yet supported for the known embedded targets
+            PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
             ;;
-        '--pc-rs232-driver='*)
-            PARAMETER_RS232_DRIVER=$(echo_ "$option" | sed 's/--pc-rs232-driver=//')
+        msq_server)
+            case "$USE_TARGET_SYSTEM" in
+                pc_linux)
+                    # enhanced CAN HAL IS supported for the Linux can_server
+                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
+                    ;;
+                pc_win32)
+                    echo_ "Server Client CAN driver can only used for target pc_linux. Overridden with socket_server" 1>&2
+                    USE_CAN_DRIVER="socket_server"
+                    USE_CAN_DEVICE_FOR_SERVER="no_card"
+                    CAN_SERVER_FILENAME="can_server_sock"
+                    ;;
+                *)
+                    echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
+                    USE_CAN_DRIVER="sys"
+                    PARAMETER_CAN_DRIVER="sys"
+                    # enhanced CAN HAL is not yet supported for the known embedded targets
+                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+                    ;;
+            esac
+            # make sure, that USE_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
+            if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
+                case $PRJ_DEFINES in
+                    *SYSTEM_A1*)
+                        USE_CAN_DEVICE_FOR_SERVER="A1"
+                        ;;
+                    *)
+                        USE_CAN_DEVICE_FOR_SERVER="no_card"
+                        ;;
+                esac
+            fi
+            if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
+                CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
+            fi
             ;;
-        --little-endian-cpu)
-            PARAMETER_LITTLE_ENDIAN_CPU=1
+        socket_server | socket_server_hal_simulator)
+            # enhanced CAN HAL IS supported for the socket based can_server
+            PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
+            if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
+                case $PRJ_DEFINES in
+                    *SYSTEM_A1*)
+                        USE_CAN_DEVICE_FOR_SERVER="A1"
+                        ;;
+                    *)
+                        USE_CAN_DEVICE_FOR_SERVER="no_card"
+                        ;;
+                esac
+            fi
+    
+            CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
+            if test $USE_TARGET_SYSTEM = "pc_win32" ; then
+                if test $USE_CAN_DEVICE_FOR_SERVER = "no_card" ; then
+                    # skip extension "no_card"
+                    CAN_SERVER_FILENAME=can_server_sock
+                fi
+            fi
             ;;
-        --big-endian-cpu)
-            PARAMETER_LITTLE_ENDIAN_CPU=0
-            USE_BIG_ENDIAN_CPU=1
-            ;;
-        '--with-makefile-skeleton='*)
-            RootDir=$PWD
-            MAKEFILE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-skeleton=//')
-            ;;
-        '--with-makefile-app-skeleton='*)
-            RootDir=$PWD
-            MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
-            ;;
-        -*)
-            echo_ "Unrecognized option $option'" 1>&2
+        *)
+            echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
             usage
             exit 1
             ;;
-        *)
-            CONF_FILE=$option
+    esac
+    
+    case "$USE_CAN_DEVICE_FOR_SERVER" in
+        rte)
+            case "$USE_TARGET_SYSTEM" in
+                pc_linux)
+                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
+                    ;;
+                pc_win32)
+                    echo_ "RTE CAN driver can only used for target pc_linux" 1>&2
+                    usage
+                    exit 1
+                    ;;
+            esac
             ;;
     esac
-done
-
-# check if configuration file exists
-if [ ! -f $CONF_FILE ] ; then
-    echo_ "ERROR! configuration file $CONF_FILE does not exist!"
-    exit 1
-elif [ ! -r $CONF_FILE ] ; then
-    echo_ "ERROR! configuration file $CONF_FILE is not readable!"
-    exit 1
-fi
-
-abs_dir_of(){ cd "$(dirname "$1")" && pwd; }
-
-SCRIPT_DIR="$(abs_dir_of "$0")"
-CONF_DIR="$(abs_dir_of "$CONF_FILE")"
-
-# echo_ "StartDir $START_DIR"
-# echo_ "ScriptDir $SCRIPT_DIR"
-# echo_ "ConfDir $CONF_DIR"
-
-# now import the config setting file
-. ./$CONF_FILE
-
-# perform some checks based on user input
-# check for correct target system setting
-if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
-    USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
-fi
-case "$USE_TARGET_SYSTEM" in
-    pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167)
-        ;;
-    *)
-        echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
-        usage
-        exit 1 ;;
-esac
-
-# check for corrext CAN driver - and automatically adapt to embedded targets
-if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
-    USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
-    IS_CAN_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | grep -c "msq_server")
-    if [ $IS_CAN_SERVER -gt 0 ] ; then
-        USE_CAN_DEVICE_FOR_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | sed 's/msq_server_//g')
-        USE_CAN_DRIVER="msq_server"
-        PARAMETER_CAN_DRIVER="msq_server"
-    fi
-fi
-
-if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
-    USE_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
-fi
-
-
-#default for not-can_server
-CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
-case "$USE_CAN_DRIVER" in
-    simulating)
-        case "$USE_TARGET_SYSTEM" in
-            pc_linux | pc_win32)
-                # enhanced CAN HAL is not yet supported for simulating CAN HAL
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-                ;;
-            *)
-                echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                USE_CAN_DRIVER="sys"
-                PARAMETER_CAN_DRIVER="sys"
-                # enhanced CAN HAL is not yet supported for the known embedded targets
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-                ;;
-        esac
-        ;;
-    sys)
-        case "$USE_TARGET_SYSTEM" in
-            pc_linux | pc_win32)
-                echo_ "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
-                usage
-                exit 1
-                ;;
-            *)
-                ;;
-        esac
-        # enhanced CAN HAL is not yet supported for the known embedded targets
-        PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-        ;;
-    msq_server)
-        case "$USE_TARGET_SYSTEM" in
-            pc_linux)
-                # enhanced CAN HAL IS supported for the Linux can_server
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
-                ;;
-            pc_win32)
-                echo_ "Server Client CAN driver can only used for target pc_linux. Overridden with socket_server" 1>&2
-                USE_CAN_DRIVER="socket_server"
-                USE_CAN_DEVICE_FOR_SERVER="no_card"
-                CAN_SERVER_FILENAME="can_server_sock"
-                ;;
-            *)
-                echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                USE_CAN_DRIVER="sys"
-                PARAMETER_CAN_DRIVER="sys"
-                # enhanced CAN HAL is not yet supported for the known embedded targets
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-                ;;
-        esac
-        # make sure, that USE_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
-        if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
-            case $PRJ_DEFINES in
-                *SYSTEM_A1*)
-                    USE_CAN_DEVICE_FOR_SERVER="A1"
-                    ;;
-                *)
-                    USE_CAN_DEVICE_FOR_SERVER="no_card"
-                    ;;
-            esac
-        fi
-        if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
-            CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
-        fi
-        ;;
-    socket_server | socket_server_hal_simulator)
-        # enhanced CAN HAL IS supported for the socket based can_server
-        PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
-        if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
-            case $PRJ_DEFINES in
-                *SYSTEM_A1*)
-                    USE_CAN_DEVICE_FOR_SERVER="A1"
-                    ;;
-                *)
-                    USE_CAN_DEVICE_FOR_SERVER="no_card"
-                    ;;
-            esac
-        fi
-
-        CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
-        if test $USE_TARGET_SYSTEM = "pc_win32" ; then
-            if test $USE_CAN_DEVICE_FOR_SERVER = "no_card" ; then
-                # skip extension "no_card"
-                CAN_SERVER_FILENAME=can_server_sock
-            fi
-        fi
-        ;;
-    *)
-        echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
-        usage
-        exit 1
-        ;;
-esac
-
-case "$USE_CAN_DEVICE_FOR_SERVER" in
-    rte)
-        case "$USE_TARGET_SYSTEM" in
-            pc_linux)
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
-                ;;
-            pc_win32)
-                echo_ "RTE CAN driver can only used for target pc_linux" 1>&2
-                usage
-                exit 1
-                ;;
-        esac
-        ;;
-esac
-
-
-
-if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
-    USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
-fi
-case "$USE_RS232_DRIVER" in
-    simulating)
-        case "$USE_TARGET_SYSTEM" in
-            pc_linux | pc_win32)
-                ;;
-            *)
-                echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                USE_RS232_DRIVER="sys"
-                PARAMETER_RS232_DRIVER="sys"
-                ;;
-        esac
-        ;;
-    sys)
-        ;;
-    rte)
-        case "$USE_TARGET_SYSTEM" in
-            pc_linux)
-                ;;
-            pc_win32)
-                USE_RS232_DRIVER="sys"
-                echo_ "RTE RS232 driver can only used for target pc_linux -> Override by sys"
-                ;;
-            *)
-                echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                USE_RS232_DRIVER="sys"
-                PARAMETER_RS232_DRIVER="sys"
-                ;;
-        esac
-        ;;
-    *)
-        echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
-        usage
-        exit 1
-        ;;
-esac
-
-# check for little/big endian setting
-if [ "A$PARAMETER_LITTLE_ENDIAN_CPU" != "A" ] ; then
-    USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU
-fi
-
-
-# call the main function to create
-# Makefile for defined config setting
-perform_everything "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
-
-
-if [ "$USE_LITTLE_ENDIAN_CPU" -lt 1 ] ; then
-    echo_  "Endianess:     Big Endian CPU"
-else
-    echo_  "Endianess:     Little Endian CPU"
-fi
-echo_    "Target:        $IDE_NAME - (The settings below are already set up therefore)"
-echo_    "Defines:       $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
-echo_n "Include Path:  "
-for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-    echo_n "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH ";
-done
-echo_
-echo_
-echo_ "Generation successful."
-
-if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
-    # doxygen export is specified -> copy config file there with suitable doc block
-    CONF_BASE=$(basename $CONF_FILE)
-    CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
-    {
-        #echo_ "/**" >&3
-        #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
-        #echo_ "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
-        #echo_ "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
-        #echo_ "*/" >&3
-        #echo_ "/*@{*/" >&3
-    #   cat $CONF_FILE >&3
-        #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > /tmp/$CONF_BASE
-        #cat /tmp/$CONF_BASE >&3
-        #rm -f /tmp/$CONF_BASE
-        #echo_ "/*@}*/" >&3
     
-        echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
-        echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
-        echo_ " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
-        echo_ "\code" >&3
-        sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
-        cat /tmp/$CONF_BASE >&3
-        echo_ "\endcode" >&3
-    } 3>"$CONFIG_SPEC_DOXYGEN_READY"
-    rm -f /tmp/$CONF_BASE
+    
+    
+    if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
+        USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
+    fi
+    case "$USE_RS232_DRIVER" in
+        simulating)
+            case "$USE_TARGET_SYSTEM" in
+                pc_linux | pc_win32)
+                    ;;
+                *)
+                    echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
+                    USE_RS232_DRIVER="sys"
+                    PARAMETER_RS232_DRIVER="sys"
+                    ;;
+            esac
+            ;;
+        sys)
+            ;;
+        rte)
+            case "$USE_TARGET_SYSTEM" in
+                pc_linux)
+                    ;;
+                pc_win32)
+                    USE_RS232_DRIVER="sys"
+                    echo_ "RTE RS232 driver can only used for target pc_linux -> Override by sys"
+                    ;;
+                *)
+                    echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
+                    USE_RS232_DRIVER="sys"
+                    PARAMETER_RS232_DRIVER="sys"
+                    ;;
+            esac
+            ;;
+        *)
+            echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
+            usage
+            exit 1
+            ;;
+    esac
+    
+    # check for little/big endian setting
+    if [ "A$PARAMETER_LITTLE_ENDIAN_CPU" != "A" ] ; then
+        USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU
+    fi
+}
 
-fi
+report_summary()
+{
+    if [ "$USE_LITTLE_ENDIAN_CPU" -lt 1 ] ; then
+        echo_  "Endianess:     Big Endian CPU"
+    else
+        echo_  "Endianess:     Little Endian CPU"
+    fi
+    echo_    "Target:        $IDE_NAME - (The settings below are already set up therefore)"
+    echo_    "Defines:       $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
+    echo_n "Include Path:  "
+    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+        echo_n "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH ";
+    done
+    echo_
+    echo_
+    echo_ "Generation successful."
+}
+
+make_doxygen_ready_comment_blocks()
+{
+    if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
+        # doxygen export is specified -> copy config file there with suitable doc block
+        CONF_BASE=$(basename $CONF_FILE)
+        CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
+        {
+            #echo_ "/**" >&3
+            #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
+            #echo_ "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
+            #echo_ "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
+            #echo_ "*/" >&3
+            #echo_ "/*@{*/" >&3
+        #   cat $CONF_FILE >&3
+            #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > /tmp/$CONF_BASE
+            #cat /tmp/$CONF_BASE >&3
+            #rm -f /tmp/$CONF_BASE
+            #echo_ "/*@}*/" >&3
+        
+            echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
+            echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
+            echo_ " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
+            echo_ "\code" >&3
+            sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
+            cat /tmp/$CONF_BASE >&3
+            echo_ "\endcode" >&3
+        } 3>"$CONFIG_SPEC_DOXYGEN_READY"
+        rm -f /tmp/$CONF_BASE
+    
+    fi
+}
+
+main "$@"
