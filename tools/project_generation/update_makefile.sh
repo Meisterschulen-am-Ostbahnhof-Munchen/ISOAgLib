@@ -1819,10 +1819,10 @@ create_DevCCPrj()
         echo_ "UnitCount=$UNIT_CNT" >&3
     
     
-        cat <<-ENDOFHEADERA >&3
-        Type=1
-        Ver=1
-        ObjFiles=
+        cat <<'ENDOFHEADERA' >&3
+Type=1
+Ver=1
+ObjFiles=
 ENDOFHEADERA
     
         ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path1)
@@ -1875,10 +1875,10 @@ ENDOFHEADERA
         echo_ "Libs=$LIB_DIR_LINE" >&3
         echo_ "Linker=$LIB_FILE_LINE" >&3
     
-        cat <<-ENDOFHEADERA >&3
-        PrivateResource=
-        ResourceIncludes=
-        MakeIncludes=
+        cat <<'ENDOFHEADERA' >&3
+PrivateResource=
+ResourceIncludes=
+MakeIncludes=
 ENDOFHEADERA
     
     
@@ -1902,45 +1902,43 @@ ENDOFHEADERA
     mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
 
     {
-        cat <<-ENDOFHEADERB >&3
-        IsCpp=1
-        Icon=
-        ExeOutput=
-        ObjectOutput=objects
-        OverrideOutput=0
+        cat <<'ENDOFHEADERB' >&3
+IsCpp=1
+Icon=
+ExeOutput=
+ObjectOutput=objects
+OverrideOutput=0
 ENDOFHEADERB
 
         echo_ "OverrideOutputName=$PROJECT_EXE_NAME" >&3
+        cat <<'ENDOFHEADERC' >&3
+HostApplication=
+Folders=
+CommandLine=
+UseCustomMakefile=0
+CustomMakefile=
+IncludeVersionInfo=0
+SupportXPThemes=0
+CompilerSet=0
+CompilerSettings=0000000000000000000000
 
-
-        cat <<-ENDOFHEADERC >&3
-        HostApplication=
-        Folders=
-        CommandLine=
-        UseCustomMakefile=0
-        CustomMakefile=
-        IncludeVersionInfo=0
-        SupportXPThemes=0
-        CompilerSet=0
-        CompilerSettings=0000000000000000000000
-
-        [VersionInfo]
-        Major=0
-        Minor=1
-        Release=1
-        Build=1
-        LanguageID=1033
-        CharsetID=1252
-        CompanyName=
-        FileVersion=
-        FileDescription=Developed using the Dev-C++ IDE
-        InternalName=
-        LegalCopyright=
-        LegalTrademarks=
-        OriginalFilename=
-        ProductName=
-        ProductVersion=
-        AutoIncBuildNr=0
+[VersionInfo]
+Major=0
+Minor=1
+Release=1
+Build=1
+LanguageID=1033
+CharsetID=1252
+CompanyName=
+FileVersion=
+FileDescription=Developed using the Dev-C++ IDE
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=
+AutoIncBuildNr=0
 
 ENDOFHEADERC
 
@@ -2354,7 +2352,7 @@ create_VCPrj()
     HEADERS=$(grep -E "\.h|\.hpp" $DspPrjFilelist)
 
     {
-        cat <<-ENDOFHEADERB >&3
+        cat <<'ENDOFHEADERB' >&3
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
@@ -2372,7 +2370,7 @@ ENDOFHEADERB
             echo_ "" >&3
         done
 
-        cat <<-ENDOFHEADERB >&3
+        cat <<'ENDOFHEADERB' >&3
 # End Group
 
 # Begin Group "Header-Dateien"
