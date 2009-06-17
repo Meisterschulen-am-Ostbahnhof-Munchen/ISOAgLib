@@ -753,6 +753,22 @@ comm_proc_features()
     fi
 }
 
+# Calculate part of find command and write to FD3
+find_part()
+{
+    local OUTER_OP="$1"; local INNER_OP="$2"
+    shift 2
+    [ $# -gt 0 ] || return
+    printf '%s \( ' "$OUTER_OP" >&3
+    local OR; local PART
+    local FORMAT="%s${INNER_OP}"
+    for PART in $*; do
+        printf "$FORMAT" "$OR" "$PART" >&3
+        : ${OR:= -or }
+    done
+    printf ' \)' >&3
+}
+
 # this function uses the "find" cmd
 # to derive based on the selected features the
 # corresponding file list into filelist_$PROJECT_PURE.txt
@@ -778,8 +794,8 @@ create_filelist( )
         local DRIVER_FEATURES="$(driver_features 3>&1 1>&9)"
     } 9>&1
 
-    LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
-    SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
+    local LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
+    local SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
     #  HDR_UTEST_EXT="\( -name '*-test.h' \)"
     #  HDR_UTEST_MOCK_EXT="\( -name '*-mock.h' \)"
     #  TESTRUNNER_EXT="\( -name 'testrunner.cpp' \)"
@@ -799,7 +815,7 @@ create_filelist( )
     FILELIST_APP_HDR="filelist"'__'"$PROJECT_hdr.app.txt"
     FILELIST_APP_PURE="filelist"'__'"$PROJECT.app.txt"
 
-    FILELIST_COMBINED_HDR="filelist"'__'"$PROJECT_hdr.txt"
+    local FILELIST_COMBINED_HDR="filelist"'__'"$PROJECT_hdr.txt"
     FILELIST_COMBINED_PURE="filelist"'__'"$PROJECT.txt"
 
     if [ "A$DOXYGEN_EXPORT_DIR" = "A" ]; then
@@ -807,7 +823,7 @@ create_filelist( )
     else
         FILELIST_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
     fi
-    FIND_TEMP_PATH="$(printf '%s' "-path '*/scheduler/*'" \
+    local FIND_TEMP_PATH="$(printf '%s' "-path '*/scheduler/*'" \
         " -o -path '*/Part5_NetworkManagement/*'" \
         " -o -path '*/Part12_DiagnosticsServices/*' " \
         " -o -path '*/util/*'" \
@@ -815,99 +831,28 @@ create_filelist( )
         "${COMM_PROC_FEATURES:+ -o ${COMM_PROC_FEATURES}}" \
         "${COMM_FEATURES:+ -o ${COMM_FEATURES}}" \
         "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
-    EXCLUDE_PATH_PART="-a -not -path '*/xgpl_src/build/*'"
-    if [ "A" != "A$APP_PATH_EXCLUDE"  ]; then
-        EXCLUDE_PATH_PART="-and -not \( -path '*/xgpl_src/build/*'"
-        for itemPathExclude in $APP_PATH_EXCLUDE ; do
-            append EXCLUDE_PATH_PART " -or -path \"$itemPathExclude\""
-        done
-        append EXCLUDE_PATH_PART " \)"
-    fi
+    { local EXCLUDE_PATH_PART1="$(find_part '-and -not' -path $APP_PATH_EXCLUDE 3>&1 1>&9)"; } 9>&1
+    : ${EXCLUDE_PATH_PART1:=-a -not -path '*/xgpl_src/build/*'}
 
-    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
-    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
+    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
+    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
 
     ##############################
     # find application files
     ##############################
-    FIRST_LOOP="YES"
-    APP_SRC_PART=""
-    if [ "A$APP_SRC_FILE" != "A" ]; then
-        APP_SRC_PART="-and \( "
-        for itemSrcInclude in $APP_SRC_FILE ; do
-            if [ $FIRST_LOOP != "YES" ]; then
-                append APP_SRC_PART " -or"
-            else
-                FIRST_LOOP="NO"
-            fi
-            append APP_SRC_PART " -name \"$itemSrcInclude\""
-        done
-        append APP_SRC_PART " \)"
-    fi
-
-    FIRST_LOOP="YES"
-    EXCLUDE_PATH_PART=""
-    if [ "A" != "A$APP_PATH_EXCLUDE"  ]; then
-        EXCLUDE_PATH_PART="-and -not \( "
-        for itemPathExclude in $APP_PATH_EXCLUDE ; do
-            if [ $FIRST_LOOP != "YES" ]; then
-                append EXCLUDE_PATH_PART " -or"
-            else
-                FIRST_LOOP="NO"
-            fi
-            append EXCLUDE_PATH_PART " -path \"$itemPathExclude\""
-        done
-        append EXCLUDE_PATH_PART " \)"
-    fi
-
-    FIRST_LOOP="YES"
-    EXCLUDE_SRC_PART=""
-    if [ "A" != "A$APP_SRC_EXCLUDE"  ]; then
-        EXCLUDE_SRC_PART="-and -not \( "
-        for itemSrcExclude in $APP_SRC_EXCLUDE ; do
-            if [ $FIRST_LOOP != "YES" ]; then
-                append EXCLUDE_SRC_PART " -or"
-            else
-                FIRST_LOOP="NO"
-            fi
-            append EXCLUDE_SRC_PART " -name \"$itemSrcExclude\""
-        done
-        append EXCLUDE_SRC_PART " \)"
-    fi
-
-
-    FIRST_LOOP="YES"
-    APP_SEARCH_SRC_TYPE_PART="\( "
-
-    # remove the joker '*' from the file type spec, as this causes only trouble
-    APP_SEARCH_SRC_CONDITION=$(echo_ "$APP_SEARCH_SRC_CONDITION" |sed 's|\*||g')
-
-    for itemSrcType in $APP_SEARCH_SRC_CONDITION ; do
-        if [ $FIRST_LOOP != "YES" ]; then
-            append APP_SEARCH_SRC_TYPE_PART " -or"
-        else
-            FIRST_LOOP="NO"
-        fi
-        append APP_SEARCH_SRC_TYPE_PART " -name '*$itemSrcType'"
-    done
-    append APP_SEARCH_SRC_TYPE_PART " \)"
-
-
-    FIRST_LOOP="YES"
-    APP_SEARCH_HDR_TYPE_PART="\( "
-    for itemHdrType in $APP_SEARCH_HDR_CONDITION ; do
-        if [ $FIRST_LOOP != "YES" ]; then
-            append APP_SEARCH_HDR_TYPE_PART " -or"
-        else
-            FIRST_LOOP="NO"
-        fi
-        append APP_SEARCH_HDR_TYPE_PART " -name \"$itemHdrType\""
-    done
-    append APP_SEARCH_HDR_TYPE_PART " \)"
+    {
+        local APP_SRC_PART="$(find_part -and "-name '%s'" $APP_SRC_FILE 3>&1 1>&9)"
+        local EXCLUDE_PATH_PART2="$(find_part '-and -not' "-path '%s'" $APP_PATH_EXCLUDE 3>&1 1>&9)"
+        local EXCLUDE_SRC_PART="$(find_part '-and -not' "-path '%s'" $APP_SRC_EXCLUDE 3>&1 1>&9)"
+        # remove the joker '*' from the file type spec, as this causes only trouble
+        local APP_SEARCH_SRC_CONDITION1="$(printf '%s' "$APP_SEARCH_SRC_CONDITION" | tr -d '*')"
+        local APP_SEARCH_SRC_TYPE_PART="$(find_part '' "-name '*%s'" $APP_SEARCH_SRC_CONDITION1 3>&1 1>&9)"
+        local APP_SEARCH_HDR_TYPE_PART="$(find_part '' "-name '%s'" $APP_SEARCH_HDR_CONDITION 3>&1 1>&9)"
+    } 9>&1
 
     for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
-        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
+        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
+        eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
     done 3>"$FILELIST_APP_PURE" 4>"$FILELIST_APP_HDR"
 
     cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
@@ -986,16 +931,13 @@ create_utest_filelist()
         eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ $UTEST_DIRS_EXT >> $DIRECTORYLIST_UTEST_PURE"
     done
 
-    exec 0<$DIRECTORYLIST_UTEST_PURE
-
-    while read line
-    do
+    while read line; do
     # find unit test files (*-test.h)
         eval "find $line $HDR_UTEST_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_PURE"
 
     # find mock object files (*-mock.h)
         eval "find $line $HDR_UTEST_MOCK_EXT -printf '%h/%f\n' >> $FILELIST_UTEST_MOCK_PURE"
-    done
+    done 0<$DIRECTORYLIST_UTEST_PURE
     # determine modified software under test (MOD-SUT) files
     sed -e 's!\(.*\)/utest/\(.*\)-test\.h!\1/\2_c.h!' < $FILELIST_UTEST_PURE >> $FILELIST_UTEST_MODSUT_PURE
 
@@ -1306,23 +1248,8 @@ create_autogen_project_config()
     cd $1
 }
 
-create_makefile()
+create_standard_makefile()
 {
-    # go to project dir - below config dir
-    DEV_PRJ_DIR="$1/$PROJECT"
-    cd $DEV_PRJ_DIR
-    mkdir -p "objects_library" "objects_app" "objects_testrunner" "objects_utest"
-    MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
-    MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
-
-    MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
-    MakefileFilelistAppHdr="$1/$PROJECT/$FILELIST_APP_HDR"
-
-    #  MakefileFileListUTest="$1/$PROJECT/$FILELIST_UTEST_PURE"
-    #  MakefileFileListUTestMock="$1/$PROJECT/$FILELIST_UTEST_MOCK_PURE"
-    #  MakefileFileListUTestMODSUT="$1/$PROJECT/$FILELIST_UTEST_MODSUT_PURE"
-    #  MakefileFileListUTestRunner="$1/$PROJECT/$FILELIST_UTEST_RUNNER_PURE"
-
     MakefileName="Makefile"
     MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
@@ -1611,7 +1538,10 @@ create_makefile()
     # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
     rm -f "Makefile"
     ln -s $MakefileNameLong "Makefile"
+}
 
+create_pure_application_makefile()
+{
     # now create pure application makefile which is based upon an installed library
     MakefileName="MakefileApp"
     MakefileNameLong="MakefileApp"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
@@ -1725,8 +1655,10 @@ create_makefile()
     # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
     rm -f "MakefileApp"
     ln -s $MakefileNameLong "MakefileApp"
+}
 
-
+create_kdevelop3_project_file()
+{
     # now create a Kdevelop3 project file
     cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_kdevelop3Generic.kdevelop $PROJECT.kdevelop
 
@@ -1741,7 +1673,28 @@ create_makefile()
         echo_ "# KDevelop Custom Project File List" >&3
         cat filelist__$PROJECT.txt >&3
     } 3>"$PROJECT.kdevelop.filelist"
+}
 
+create_makefile()
+{
+    # go to project dir - below config dir
+    DEV_PRJ_DIR="$1/$PROJECT"
+    cd $DEV_PRJ_DIR
+    mkdir -p "objects_library" "objects_app" "objects_testrunner" "objects_utest"
+    MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
+    MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
+
+    MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
+    MakefileFilelistAppHdr="$1/$PROJECT/$FILELIST_APP_HDR"
+
+    #  MakefileFileListUTest="$1/$PROJECT/$FILELIST_UTEST_PURE"
+    #  MakefileFileListUTestMock="$1/$PROJECT/$FILELIST_UTEST_MOCK_PURE"
+    #  MakefileFileListUTestMODSUT="$1/$PROJECT/$FILELIST_UTEST_MODSUT_PURE"
+    #  MakefileFileListUTestRunner="$1/$PROJECT/$FILELIST_UTEST_RUNNER_PURE"
+
+    create_standard_makefile
+    create_pure_application_makefile
+    create_kdevelop3_project_file
 
     cd $1
 
@@ -2358,8 +2311,7 @@ create_VCPrj()
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 ENDOFHEADERB
 
-        for i in $SOURCES
-        do
+        for i in $SOURCES; do
             if [ $i = "" ] ; then
                 continue
             fi
