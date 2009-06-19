@@ -263,7 +263,8 @@ public:
     const std::string& arcstr_namespace,
     bool ab_acceptUnknownAttributes,
     bool ab_silentMode,
-    const std::string& str_outFileName);
+    const std::string& str_outFileName,
+    const std::string& arcstr_searchPath);
 
   void parse();
 
@@ -316,6 +317,10 @@ private:
 
   bool isProjectFileMode (const std::string& astr_fileName);
 
+  std::vector<std::string> getSearchPath( const std::string& arcstr_searchPathArg );
+
+  static bool existsFile( const std::string& arcstr_fileWithPath );
+
 public:
   bool isVerbose() { return mb_verbose; }
 
@@ -353,6 +358,10 @@ private:
   bool mb_projectFile;
   std::vector<Path_s> vec_xmlFiles;
   std::string mstr_poolIdent;
+
+  // search path
+  std::vector<std::string> mvec_searchPath;
+  static const char msc_searchPathSeperator = ':';
 
   std::bitset<65536> mbitset_objIdUsed;
 

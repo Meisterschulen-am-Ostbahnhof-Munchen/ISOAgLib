@@ -244,7 +244,14 @@ static void usage()
     " -l     Running in silent mode\n"
     " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"
     " -a=pre Use the given Prefix instead of the Projectname as a prefix for the generated files.\n"
-    " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)"<<std::endl;
+    " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)\n"
+#if 0
+    /*  This feature is not shown up in the help here in order to avoid confusion about. Furthermore it is not
+     *  yet extensively testd FOB 06/19/2009
+     */
+    " -d     Specify a search path for xmls marked as relative in vtp project file. Seperate directories with colons.\n"
+#endif 
+    << std::endl;
 
 #ifdef USE_SPECIAL_PARSING
     std::cout <<
@@ -1065,7 +1072,8 @@ void vt2iso_c::init (
   const std::string& arcstr_namespace,
   bool ab_acceptUnknownAttributes,
   bool ab_silentMode,
-  const std::string& arcstr_outFileName)
+  const std::string& arcstr_outFileName,
+  const std::string& arcstr_searchPath)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
@@ -1080,6 +1088,9 @@ void vt2iso_c::init (
 
   /// Are we running in project-file mode? (check extension for .VTP/.vtp)
   mb_projectFile = isProjectFileMode(arcstr_cmdlineName);
+
+  // Parse xml file search path if given
+  mvec_searchPath = getSearchPath( arcstr_searchPath );
 
   // Will generate all needed (part)filenames/directories
   if (!prepareFileNameAndDirectory (arcstr_cmdlineName)) 
@@ -4323,6 +4334,52 @@ bool vt2iso_c::isProjectFileMode (const std::string& astr_fileName)
 }
 
 
+std::vector<std::string> vt2iso_c::getSearchPath( const std::string& arcstr_searchPathArg )
+{
+  std::vector<std::string> vec_tmp(0);
+
+  if( arcstr_searchPathArg.empty() ) {
+    return vec_tmp;
+  }
+
+  std::string str_searchPathDelimiter( 1, msc_searchPathSeperator );
+  std::string str_tmp;
+  for ( std::size_t i = 0; i < arcstr_searchPathArg.size(); i++ ) {
+    if (( arcstr_searchPathArg.substr( i, str_searchPathDelimiter.size() ).compare( str_searchPathDelimiter ) == 0 ) ) {
+      vec_tmp.push_back( str_tmp );
+      str_tmp.clear();
+      i += str_searchPathDelimiter.size() - 1;
+    }
+    else {
+      str_tmp.append( 1, arcstr_searchPathArg[i] );
+      if ( i == ( arcstr_searchPathArg.size() - 1 ) )
+        vec_tmp.push_back( str_tmp );
+    }
+  }
+
+  // check sepeator
+  for( std::vector<std::string>::iterator it = vec_tmp.begin(); it != vec_tmp.end(); ++it ) {
+    std::replace ((*it).begin(), (*it).end(), scc_dirSeparatorWrong, scc_dirSeparatorCorrect);
+
+    if ((*it)[(*it).length()-1] != scc_dirSeparatorCorrect) { // No separator given, so append separator (i.e. (back)slash)
+      (*it).push_back (scc_dirSeparatorCorrect);
+    }
+  }
+
+
+  return vec_tmp;
+}
+
+bool vt2iso_c::existsFile( const std::string& arcstr_fileWithPath ) {
+  FILE* handle = fopen (arcstr_fileWithPath.c_str(), "r" );
+  if( handle ) {
+    fclose( handle );
+    return true;
+  }
+  return false;
+}
+
+
 bool vt2iso_c::prepareFileNameAndDirectory (const std::string& astr_fileName)
 {
   /// Cut extension off to be generated files...
@@ -4965,6 +5022,7 @@ int main(int argC, char* argV[])
   std::string localeStr;
   std::string str_outDir;
   std::string str_namespace;
+  std::string str_searchPath;
   int filenameInd = -1; // defaults to: no filename specified.
   for (int argInd = 1; argInd < argC; argInd++)
   {
@@ -5077,6 +5135,12 @@ int main(int argC, char* argV[])
     {
       str_namespace.assign (":projectname:"); // special key for projectname-use!
     }
+    else if (!strncmp(argV[argInd], "-d=", 3)
+         ||  !strncmp(argV[argInd], "-D=", 3))
+    {
+      str_searchPath = &argV[argInd][3];
+    }
+
     else if (!strncmp(argV[argInd], "-dict=", 6))
     {
       dictionary = &argV[argInd][6];
@@ -5184,7 +5248,7 @@ int main(int argC, char* argV[])
     // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName);
+  pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath );
   pc_vt2iso->parse();
 
   //  Delete the parser itself.  Must be done prior to calling Terminate, below.
@@ -5545,7 +5609,26 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
       {
         if (iter->b_relativePath)
         { // add the path to the project-file, because it's relative to that directory!
-          iter->str_pathName.insert (0, mstr_sourceDir);
+
+          bool found = false;
+
+          if( ! mvec_searchPath.empty() ) {
+            // search in path before prepending source
+            for( std::vector<std::string>::iterator it = mvec_searchPath.begin(); it != mvec_searchPath.end(); ++it ) {
+              std::string searchFile( (*it) + ( (*iter).str_pathName) );
+              if( existsFile( searchFile ) ) {
+                iter->str_pathName.insert (0, (*it) );
+                found = true;
+                break;
+              }
+            }
+          }
+
+          // if the source dir is not in the search path list or the search path is empty: prepend as default
+          if( ! found ) {
+            iter->str_pathName.insert (0, mstr_sourceDir);
+          }
+
         }
       }
 
