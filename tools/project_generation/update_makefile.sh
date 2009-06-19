@@ -1928,6 +1928,17 @@ unix_lines_to_windows_lines()
     sed -e "$(printf 's|\r||g;s|$|\r|')" <"$FROM_FILE" >"$TO_FILE"
 }
 
+expand_template()
+{
+    TEMPLATE_FILE="$1"
+    eval "cat <<END_OF_TEMPLATE
+$(cat "$TEMPLATE_FILE")
+END_OF_TEMPLATE" || {
+        printf 'ERROR when processing template file %s\n' "$TEMPLATE_FILE" >&2
+        exit 1
+    }
+}
+
 create_EdePrj()
 {
     DEV_PRJ_DIR="$1/$PROJECT"
@@ -2195,6 +2206,22 @@ create_CcsPrj()
     done
 }
 
+# print source paths in DSP format to FD3 and user information to FD1.
+format_sources_for_dsp()
+{
+    for i in $@; do
+        if [ -z "$i" ] ; then
+            continue
+        fi
+        echo_ "# Begin Source File" >&3
+        filename=$(echo_ "$i" |sed 's|/|\\|g')
+        echo_ "SOURCE=$filename" >&3
+        printf '\n    %s' "$filename"
+        echo_ "# End Source File" >&3
+        echo_ "" >&3
+    done
+}
+
 create_VCPrj()
 {
 
@@ -2272,55 +2299,64 @@ create_VCPrj()
         append USE_d_DEFINES ""' /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
     fi
 
-
-
-    cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_vc6_prj_base.dsp $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-
-    printf '(VCPROJ specific settings\n'
-    printf '  (Project name: %s)\n' "$PROJECT"
-    sed -e "s#INSERT_PROJECT#$PROJECT#g"  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-    printf '  (Include paths: %s)\n' "$(demangle_path1 "$USE_INCLUDE_PATHS")"
-    sed -e "s#INSERT_INCLUDE_PATHS#$USE_INCLUDE_PATHS#g"  $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    printf '  (Defines: %s)\n' "$USE_DEFINES"
-    sed -e "s#INSERT_DEFINES#$USE_DEFINES#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-    printf '  (defines: %s)\n' "$USE_d_DEFINES"
-    sed -e "s#INSERT_d_DEFINES#$USE_d_DEFINES#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    printf '  (CAN Lib Path: %s)\n' "$(demangle_path1 "$INSERT_CAN_LIB_PATH")"
-    sed -e "s#INSERT_CAN_LIB_PATH#$LIB_DIR_LINE#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-
     USE_STLPORT_LIB_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" |sed 's|stlport|lib|g')
-    printf '  (STLport library directory: %s))\n' "$(demangle_path1 "$USE_STLPORT_LIB_DIRECTORY")"
-    sed -e "s#INSERT_STLPORT_LIB_PATH#$USE_STLPORT_LIB_DIRECTORY#g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 > $DEV_PRJ_DIR/$PROJECT_FILE_NAME
+    SOURCES=$(grep -E "\.cc|\.cpp|\.c|\.lib" "$DspPrjFilelist")
+    HEADERS=$(grep -E "\.h|\.hpp" "$DspPrjFilelist")
 
-    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $DEV_PRJ_DIR/$PROJECT_FILE_NAME) -gt 0 ] ; do
-        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-        mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-    done
+    local INSERT_PROJECT="$PROJECT"
+    local INSERT_INCLUDE_PATHS="$(demangle_path1 "$USE_INCLUDE_PATHS")"
+    local INSERT_DEFINES="$USE_DEFINES"
+    local INSERT_d_DEFINES="$USE_d_DEFINES"
+    local INSERT_CAN_LIB_PATH="$(demangle_path1 "$INSERT_CAN_LIB_PATH")"
+    local INSERT_STLPORT_LIB_PATH="$(demangle_path1 "$USE_STLPORT_LIB_DIRECTORY")"
+    
+    local INSERT_DEBUG_USE_MFC=0
+    local INSERT_DEBUG_USE_DEBUG_LIBRARIES=1
+    local INSERT_DEBUG_OUTPUT_DIR=Debug
+    local INSERT_DEBUG_INTERMEDIATE_DIR=Debug
+    local INSERT_DEBUG_IGNORE_EXPORT_LIB=0
+    local INSERT_DEBUG_TARGET_DIR=''
+    local INSERT_DEBUG_CPP_PARAMETERS="/nologo /W3 /Gm /GX /ZI /Od ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES} /YX /FD /TP /GZ /c"
+    local INSERT_DEBUG_RSC_PARAMETERS="/l 0x407 /d \"_DEBUG\" ${INSERT_d_DEFINES}"
+    local INSERT_DEBUG_LINKER_PARAMETERS="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ws2_32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept ${INSERT_CAN_LIB_PATH} /libpath:\"${INSERT_STLPORT_LIB_PATH}\""
 
-    demangle_path1 <  $DEV_PRJ_DIR/$PROJECT_FILE_NAME > $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-    mv $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1 $DEV_PRJ_DIR/$PROJECT_FILE_NAME
-
-
-    SOURCES=$(grep -E "\.cc|\.cpp|\.c|\.lib" $DspPrjFilelist)
-    HEADERS=$(grep -E "\.h|\.hpp" $DspPrjFilelist)
+    local INSERT_RELEASE_USE_MFC=0
+    local INSERT_RELEASE_USE_DEBUG_LIBRARIES=0
+    local INSERT_RELEASE_OUTPUT_DIR=Release
+    local INSERT_RELEASE_INTERMEDIATE_DIR=Release
+    local INSERT_RELEASE_IGNORE_EXPORT_LIB=0
+    local INSERT_RELEASE_TARGET_DIR=''
+    local INSERT_RELEASE_CPP_PARAMETERS="/nologo /W3 /GX /O2 ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"NDEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES} /YX /FD /TP /c"
+    local INSERT_RELEASE_RSC_PARAMETERS="/l 0x407 /d \"NDEBUG\" ${INSERT_d_DEFINES}"
+    local INSERT_RELEASE_LINKER_PARAMETERS="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ws2_32.lib /nologo /subsystem:console /machine:I386 ${INSERT_CAN_LIB_PATH} /libpath:\"${INSERT_STLPORT_LIB_PATH}\""
 
     {
+        expand_template "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_vc6_prj_base.dsp" >&3
+
+        printf '(VCPROJ_specific_settings\n'
+        printf '  (Project_name %s)\n' "$PROJECT"
+        printf '  (Debug\n'
+        printf '    (Use_MFC %s)\n' "$INSERT_DEBUG_USE_MFC"
+        printf '    (Use_debug_libraries %s)\n' "$INSERT_DEBUG_USE_DEBUG_LIBRARIES"
+        printf '    (Ignore_export_lib %s)\n' "$INSERT_DEBUG_IGNORE_EXPORT_LIB"
+        printf '    (Cpp_parameters %s)\n' "$INSERT_DEBUG_CPP_PARAMETERS"
+        printf '    (Rsc_parameters %s)\n' "$INSERT_DEBUG_RSC_PARAMETERS"
+        printf '    (Linker_parameters %s))\n' "$INSERT_DEBUG_LINKER_PARAMETERS"
+        printf '  (Release\n'
+        printf '    (Use_MFC %s)\n' "$INSERT_RELEASE_USE_MFC"
+        printf '    (Use_release_libraries %s)\n' "$INSERT_RELEASE_USE_RELEASE_LIBRARIES"
+        printf '    (Ignore_export_lib %s)\n' "$INSERT_RELEASE_IGNORE_EXPORT_LIB"
+        printf '    (Cpp_parameters %s)\n' "$INSERT_RELEASE_CPP_PARAMETERS"
+        printf '    (Rsc_parameters %s)\n' "$INSERT_RELEASE_RSC_PARAMETERS"
+        printf '    (Linker_parameters %s))\n' "$INSERT_RELEASE_LINKER_PARAMETERS"
+
         cat <<'ENDOFHEADERB' >&3
 # Begin Group "Quellcodedateien"
 
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 ENDOFHEADERB
 
-        for i in $SOURCES; do
-            if [ $i = "" ] ; then
-                continue
-            fi
-            echo_ "# Begin Source File" >&3
-            filename=$(echo_ "$i" |sed 's|/|\\|g')
-            echo_ "SOURCE=$filename" >&3
-            echo_ "# End Source File" >&3
-            echo_ "" >&3
-        done
+        printf '  (Modules %s)\n' "$(format_sources_for_dsp $SOURCES)"
 
         cat <<'ENDOFHEADERB' >&3
 # End Group
@@ -2330,28 +2366,17 @@ ENDOFHEADERB
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 ENDOFHEADERB
 
-        for i in $HEADERS
-        do
-            if [ $i = "" ] ; then
-                continue
-            fi
-            echo_ "# Begin Source File" >&3
-            filename=$(echo_ "$i" |sed 's|/|\\|g')
-            echo_ "SOURCE=$filename" >&3
-            echo_ "# End Source File" >&3
-            echo_ "" >&3
-        done
+        printf '  (Headers %s))\n' "$(format_sources_for_dsp $HEADERS)"
 
         echo_ "# End Group" >&3
         echo_ "# End Target" >&3
         echo_ "# End Project" >&3
-    } 3>>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
+    } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"
 
     #echo_ "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-    mv "$DEV_PRJ_DIR/$PROJECT_FILE_NAME" "$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"
     unix_lines_to_windows_lines "$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1" "$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-    rm -f $DEV_PRJ_DIR/$PROJECT_FILE_NAME.1
-    cd $DEV_PRJ_DIR
+    rm -f "$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"
+    cd "$DEV_PRJ_DIR"
     # org test
 }
 
