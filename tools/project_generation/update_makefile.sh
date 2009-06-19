@@ -2333,22 +2333,22 @@ create_VCPrj()
     {
         expand_template "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_vc6_prj_base.dsp" >&3
 
-        printf '(VCPROJ_specific_settings\n'
-        printf '  (Project_name %s)\n' "$PROJECT"
-        printf '  (Debug\n'
-        printf '    (Use_MFC %s)\n' "$INSERT_DEBUG_USE_MFC"
-        printf '    (Use_debug_libraries %s)\n' "$INSERT_DEBUG_USE_DEBUG_LIBRARIES"
-        printf '    (Ignore_export_lib %s)\n' "$INSERT_DEBUG_IGNORE_EXPORT_LIB"
-        printf '    (Cpp_parameters %s)\n' "$INSERT_DEBUG_CPP_PARAMETERS"
-        printf '    (Rsc_parameters %s)\n' "$INSERT_DEBUG_RSC_PARAMETERS"
-        printf '    (Linker_parameters %s))\n' "$INSERT_DEBUG_LINKER_PARAMETERS"
-        printf '  (Release\n'
-        printf '    (Use_MFC %s)\n' "$INSERT_RELEASE_USE_MFC"
-        printf '    (Use_release_libraries %s)\n' "$INSERT_RELEASE_USE_RELEASE_LIBRARIES"
-        printf '    (Ignore_export_lib %s)\n' "$INSERT_RELEASE_IGNORE_EXPORT_LIB"
-        printf '    (Cpp_parameters %s)\n' "$INSERT_RELEASE_CPP_PARAMETERS"
-        printf '    (Rsc_parameters %s)\n' "$INSERT_RELEASE_RSC_PARAMETERS"
-        printf '    (Linker_parameters %s))\n' "$INSERT_RELEASE_LINKER_PARAMETERS"
+        printf '(VCPROJ_specific_settings\n' >&5
+        printf '  (Project_name %s)\n' "$PROJECT" >&5
+        printf '  (Debug\n' >&5
+        printf '    (Use_MFC %s)\n' "$INSERT_DEBUG_USE_MFC" >&5
+        printf '    (Use_debug_libraries %s)\n' "$INSERT_DEBUG_USE_DEBUG_LIBRARIES" >&5
+        printf '    (Ignore_export_lib %s)\n' "$INSERT_DEBUG_IGNORE_EXPORT_LIB" >&5
+        printf '    (Cpp_parameters %s)\n' "$INSERT_DEBUG_CPP_PARAMETERS" >&5
+        printf '    (Rsc_parameters %s)\n' "$INSERT_DEBUG_RSC_PARAMETERS" >&5
+        printf '    (Linker_parameters %s))\n' "$INSERT_DEBUG_LINKER_PARAMETERS" >&5
+        printf '  (Release\n' >&5
+        printf '    (Use_MFC %s)\n' "$INSERT_RELEASE_USE_MFC" >&5
+        printf '    (Use_release_libraries %s)\n' "$INSERT_RELEASE_USE_RELEASE_LIBRARIES" >&5
+        printf '    (Ignore_export_lib %s)\n' "$INSERT_RELEASE_IGNORE_EXPORT_LIB" >&5
+        printf '    (Cpp_parameters %s)\n' "$INSERT_RELEASE_CPP_PARAMETERS" >&5
+        printf '    (Rsc_parameters %s)\n' "$INSERT_RELEASE_RSC_PARAMETERS" >&5
+        printf '    (Linker_parameters %s))\n' "$INSERT_RELEASE_LINKER_PARAMETERS" >&5
 
         cat <<'ENDOFHEADERB' >&3
 # Begin Group "Quellcodedateien"
@@ -2356,7 +2356,7 @@ create_VCPrj()
 # PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 ENDOFHEADERB
 
-        printf '  (Modules %s)\n' "$(format_sources_for_dsp $SOURCES)"
+        printf '  (Modules %s)\n' "$(format_sources_for_dsp $SOURCES)" >&5
 
         cat <<'ENDOFHEADERB' >&3
 # End Group
@@ -2366,7 +2366,7 @@ ENDOFHEADERB
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 ENDOFHEADERB
 
-        printf '  (Headers %s))\n' "$(format_sources_for_dsp $HEADERS)"
+        printf '  (Headers %s))\n' "$(format_sources_for_dsp $HEADERS)" >&5
 
         echo_ "# End Group" >&3
         echo_ "# End Target" >&3
@@ -2441,6 +2441,8 @@ Usage: $0 [OPTION] project_config_file
 Create filelist, Makefile and configuration settings for an IsoAgLib project.
 
 -h, --help                        print this message and exit.
+--report                          Print generation report.
+--report=REPORT_FILE              print generation report to REPORT_FILE.
 --doxygen-export-directory=DIR    write the filelist and configuration files with doxygen documentation
 blocks to the given directory instead of the default directory of all generated files.
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
@@ -2484,6 +2486,9 @@ check_before_user_configuration()
         exit 1
     fi
     
+    # Initialize file descriptor for reports (may be overridden by option --report):
+    exec 5>/dev/null
+
     # Check the arguments.
     for option in "$@"; do
         case "$option" in
@@ -2535,6 +2540,14 @@ check_before_user_configuration()
             '--with-makefile-app-skeleton='*)
                 RootDir=$PWD
                 MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
+                ;;
+            '--report'*) # Set file descriptor for report:
+                local REPORTFILE="$(printf '%s' "$option" | sed -e 's|^--report\(=-\?\)\?||')"
+                if [ -n "$REPORTFILE" ]; then
+                    exec 5>"$REPORTFILE"
+                else
+                    exec 5>&1
+                fi
                 ;;
             -*)
                 echo_ "Unrecognized option $option'" 1>&2
