@@ -123,21 +123,27 @@ $(eval $(call RULES,socket,$(SOURCES_ALL_SOCKET),$(PROJ_DEFINES_SOCKET)))
 
 $(call PRE_EXEC,can_server_msq_no_card): $(call OBJECTS,msq,$(SOURCES_MSQ_NO_CARD))
 	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
+	$(STRIP) $@
 
 $(call PRE_EXEC,can_server_socket_no_card): $(call OBJECTS,socket,$(SOURCES_SOCKET_NO_CARD))
 	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
+	$(STRIP) $@
 
 $(call PRE_EXEC,can_server_msq_pcan): $(call OBJECTS,msq,$(SOURCES_MSQ_PCAN))
 	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
+	$(STRIP) $@
 
 $(call PRE_EXEC,can_server_socket_pcan): $(call OBJECTS,socket,$(SOURCES_SOCKET_PCAN))
 	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
+	$(STRIP) $@
 
 $(call PRE_EXEC,can_server_msq_rte): $(call OBJECTS,msq,$(SOURCES_MSQ_RTE))
 	$(LINK) -o $@ $^ $(CLFLAGS) $(LFLAGS_RTE) -lrt
+	$(STRIP) $@
 
 $(call PRE_EXEC,can_server_socket_rte): $(call OBJECTS,socket,$(SOURCES_SOCKET_RTE))
 	$(LINK) -o $@ $^ $(CLFLAGS) $(LFLAGS_RTE) -lrt
+	$(STRIP) $@
 
 deps: $(call DEPS,msq,$(SOURCES_ALL_MSQ)) $(call DEPS,socket,$(SOURCES_ALL_SOCKET))
 

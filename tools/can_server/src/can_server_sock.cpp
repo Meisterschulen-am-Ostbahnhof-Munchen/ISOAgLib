@@ -801,31 +801,23 @@ void readWrite(__HAL::server_c* pc_serverData)
   struct timeval t_timeout;
   bool b_deviceHandleFound;
   bool b_deviceConnected;
+  bool b_handlesAvailableForSelect;
 
   for (;;) {
 
     pthread_mutex_lock( &(pc_serverData->mt_protectClientList) );
 
-    if (!pc_serverData->mlist_clients.size())
-    {
-      pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
-
-#ifdef WIN32
-      Sleep( 50 );
-#else
-      usleep( 50000 );
-#endif
-      continue;
-    }
-
     FD_ZERO(&rfds);
 
     std::list<__HAL::client_c>::iterator iter_client;
+
+    b_handlesAvailableForSelect = false;
 
     for (iter_client = pc_serverData->mlist_clients.begin(); iter_client != pc_serverData->mlist_clients.end(); iter_client++)
     {
       FD_SET(iter_client->i32_commandSocket, &rfds);
       FD_SET(iter_client->i32_dataSocket, &rfds);
+      b_handlesAvailableForSelect = true; // calling select() makes sense because we have a socket from client
     }
 
     b_deviceHandleFound=false;
@@ -837,35 +829,49 @@ void readWrite(__HAL::server_c* pc_serverData)
       {
         FD_SET(pc_serverData->marri32_can_device[ui32], &rfds);
         b_deviceHandleFound=true;
+        b_handlesAvailableForSelect = true; // calling select() makes sense because we have a file handle from CAN device
       }
 
       if (pc_serverData->marrb_deviceConnected[ui32])
         b_deviceConnected = true;
     }
 
+    // from now on: no access to client list => unlock mutex
     pthread_mutex_unlock( &(pc_serverData->mt_protectClientList) );
 
-    t_timeout.tv_sec = 0;
-    // do long timeout if we have a device handle or if we do not have hardware device at all
-    if (b_deviceHandleFound || !b_deviceConnected)
-      t_timeout.tv_usec = scui32_selectTimeoutMax;
+    if (b_handlesAvailableForSelect)
+    {
+
+		t_timeout.tv_sec = 0;
+		// do long timeout if we have a device handle or if we do not have hardware device at all
+		if (b_deviceHandleFound || !b_deviceConnected)
+		  t_timeout.tv_usec = scui32_selectTimeoutMax;
+		else
+		  t_timeout.tv_usec = scui32_selectTimeoutMin;
+
+		// timeout to check for
+		// 1. modified client list => new sockets to wait for
+		// new incoming can messages when can device has no file handle (WIN32 PEAK can card and RTE)
+		i_selectResult = select(FD_SETSIZE, &rfds, NULL, NULL, &t_timeout);
+
+	   if (i_selectResult < 0)
+		  // error
+		  continue;
+    }
     else
-      t_timeout.tv_usec = scui32_selectTimeoutMin;
-
-    // timeout to check for
-    // 1. modified client list => new sockets to wait for
-    // new incoming can messages when can device has no file handle (WIN32 PEAK can card and RTE)
-    i_selectResult = select(FD_SETSIZE, &rfds, NULL, NULL, &t_timeout);
-
-    if (i_selectResult < 0)
-      // error
-      continue;
+    { // no sockets or device handle available for select => just sleep for a while
+#ifdef WIN32
+      Sleep( 10 );
+#else
+      usleep( 10000 );
+#endif
+    }
 
     // new message from can device ?
     for (uint32_t ui32_cnt = 0; ui32_cnt < __HAL::cui32_maxCanBusCnt; ui32_cnt++ )
     {
-      if (!pc_serverData->marrui16_busRefCnt[ui32_cnt])
-        continue; // unused bus
+      if( !isBusOpen(ui32_cnt) )
+        continue; // this bus number was not yet used => do not try to read
 
       if ( !b_deviceHandleFound ||
            (b_deviceHandleFound && pc_serverData->marri32_can_device[ui32_cnt] && FD_ISSET(pc_serverData->marri32_can_device[ui32_cnt], &rfds)) 

@@ -101,7 +101,7 @@ uint32_t initCardApi ()
 
   long l_netnumber_max = 26;                  // highest net number
   long l_txtimeout = 50;                      // msec
-  long l_rxtimeout = 0;                       // msec
+  long l_rxtimeout = 1;                       // msec
   long l_retval;
 
   // create events
