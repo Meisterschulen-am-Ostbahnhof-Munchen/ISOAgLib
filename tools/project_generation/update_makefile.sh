@@ -1337,105 +1337,42 @@ create_standard_makefile()
                     ;;
             esac
         fi
-        
+
+        list_source_files() {
+            while [ 0 -lt $# ]; do
+                local INTRO="$1"
+                local SOURCE_PATTERN="$2"
+                local FILE_LIST="$3"
+                shift 3
+                printf '%s' "$INTRO" >&3
+                local FIRST_LOOP="YES"
+                grep -E "$SOURCE_PATTERN" <"$FILE_LIST" | 
+                while read CcFile; do
+                    if [ $FIRST_LOOP != "YES" ] ; then
+                        echo_e_n '\\' >&3
+                        echo_e_n "\n\t\t" >&3
+                    else
+                        FIRST_LOOP="NO"
+                    fi
+                    echo_e_n "$CcFile  " >&3
+                done
+                echo_e "\n" >&3
+            done
+        }
         
         echo_e "\n\nfirst: all\n" >&3
         echo_ "####### Files" >&3
-        echo_n "SOURCES_LIBRARY = " >&3
-        FIRST_LOOP="YES"
-        for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistLibrary) ; do
-            if [ $FIRST_LOOP != "YES" ] ; then
-                echo_e_n '\\' >&3
-                echo_e_n "\n\t\t" >&3
-            else
-                FIRST_LOOP="NO"
-            fi
-            echo_e_n "$CcFile  " >&3
-        done
-        echo_e "\n" >&3
+        list_source_files \
+            'SOURCES_LIBRARY = ' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" \
+            'SOURCES_APP = ' '\.cc|\.cpp|\.c' "$MakefileFilelistApp" \
+            'HEADERS_APP = ' '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr"
         
-        echo_n "SOURCES_APP = " >&3
-        FIRST_LOOP="YES"
-        for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp) ; do
-            if [ $FIRST_LOOP != "YES" ] ; then
-                echo_e_n '\\' >&3
-                echo_e_n "\n\t\t" >&3
-            else
-                FIRST_LOOP="NO"
-            fi
-            echo_e_n "$CcFile  " >&3
-        done
-        echo_e "\n" >&3
-        
-        echo_n "HEADERS_APP = " >&3
-        FIRST_LOOP="YES"
-        for CcFile in $(grep -E "\.h|\.hpp|\.hh" $MakefileFilelistAppHdr) ; do
-            if [ $FIRST_LOOP != "YES" ] ; then
-                echo_e_n '\\' >&3
-                echo_e_n "\n\t\t" >&3
-            else
-                FIRST_LOOP="NO"
-            fi
-            echo_e_n "$CcFile  " >&3
-        done
-        echo_e "\n" >&3
-        
-        #  echo_n "HEADERS_UTEST = " >&3
-        #  FIRST_LOOP="YES"
-        #  for CcFile in $(grep -E "\.h" $MakefileFileListUTest) ; do
-        #    if [ $FIRST_LOOP != "YES" ] ; then
-        #      echo_e_n '\\' >&3
-        #      echo_e_n "\n\t\t" >&3
-        #    else
-        #      FIRST_LOOP="NO"
-        #    fi
-        #    echo_e_n "$CcFile  " >&3
-        #  done
-        #  echo_e "\n" >&3
-        
-        #  echo_n "HEADERS_UTEST_MOCKS = " >&3
-        #  FIRST_LOOP="YES"
-        #  for CcFile in $(grep -E "\.h" $MakefileFileListUTestMock) ; do
-        #    if [ $FIRST_LOOP != "YES" ] ; then
-        #      echo_e_n '\\' >&3
-        #      echo_e_n "\n\t\t" >&3
-        #    else
-        #      FIRST_LOOP="NO"
-        #    fi
-        #    echo_e_n "$CcFile  " >&3
-        #  done
-        #  echo_e "\n" >&3
-        
-        #  echo_n "HEADERS_UTEST_MOD_SUT = " >&3
-        #  FIRST_LOOP="YES"
-        #  for CcFile in $(grep -E "\.h" $MakefileFileListUTestMODSUT) ; do
-        #    if [ $FIRST_LOOP != "YES" ] ; then
-        #      echo_e_n '\\' >&3
-        #      echo_e_n "\n\t\t" >&3
-        #    else
-        #      FIRST_LOOP="NO"
-        #    fi
-        #    echo_e_n "$CcFile  " >&3
-        #  done
-        #  echo_e "\n" >&3
-        
-        #  echo_n "TESTRUNNER_SOURCES = " >&3
-        #  FIRST_LOOP="YES"
-        #  for CcFile in $(grep -E "\.cpp" $MakefileFileListUTestRunner) ; do
-        #    if [ $FIRST_LOOP != "YES" ] ; then
-        #      echo_e_n '\\' >&3
-        #      echo_e_n "\n\t\t" >&3
-        #    else
-        #      FIRST_LOOP="NO"
-        #    fi
-        #    echo_e_n "$CcFile  " >&3
-        #  done
-        #  echo_e "\n" >&3
-        
+        # 'HEADERS_UTEST = "$MakefileFileListUTest"
+        # 'HEADERS_UTEST_MOCKS = ' "$MakefileFileListUTestMock"
+        # 'HEADERS_UTEST_MOD_SUT = ' "$MakefileFileListUTestMODSUT"
+        # 'TESTRUNNER_SOURCES = ' "$MakefileFileListUTestRunner"
         
         ##### Library install header file gathering BEGIN
-        
-        rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
         
         grep    "/impl/" <"$MakefileFilelistLibraryHdr" > FileListInternal.txt
         grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> FileListInternal.txt
@@ -1447,42 +1384,20 @@ create_standard_makefile()
         
         # special exception to enable ISO-Request-PGN implementation in app scope
         grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
-        
-        
-        cp -a FileListInterface.txt FileListInterface4Eval.txt
-        
-        DoRepeat="TRUE";
-        Iteration=0
-        while [ $DoRepeat = "TRUE" ] ; do
-            DoRepeat="FALSE";
-            for InterfaceFile in $(cat FileListInterface4Eval.txt); do
-                for IncludeLine in $(grep "#include" $InterfaceFile | sed -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g'); do
-                    #BaseName=$(basename $IncludeLine);
-                    BaseName=$(echo_ $IncludeLine | sed -e 's#.*xgpl_src/IsoAgLib/\(.*\)#\1#g' | sed -e 's#\.\./##g')
-                    CntHeader=$(echo_ $BaseName | grep -c '\.h');
-                    #echo_ "CntHeader $CntHeader";
-                    if [ $CntHeader -gt 0 ] ; then
-                        # echo_ "Include Line fuer $IncludeLine mit Datei $BaseName";
-                        CntInterface=$(grep -c "/$BaseName" FileListInterface.txt)
-                        CntInternal=$(grep -c "/$BaseName" FileListInternal.txt)
-                        
-                        #echo_ "Include Datei $BaseName kommt $CntInterface mal im Interface und $CntInternal mal intern vor";
-                        if test $CntInterface -lt 1 -a $CntInternal -gt 0 ; then
-                            #echo_ "Header $BaseName existiert noch nicht in Interface --> hinzufgen"
-                            grep $BaseName FileListInternal.txt >> FileListInterface.txt
-                            grep $BaseName FileListInternal.txt >> FileListInterface4EvalPre.txt
-                            DoRepeat="TRUE";
-                        fi
-                    fi
-                done
+
+        local INTERFACE_FILE
+        while read INTERFACE_FILE; do
+            local BASE_NAME
+            sed -e '/#include/!d' \
+                -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g' \
+                -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
+                -e 's|\.\./||g' < "$INTERFACE_FILE" |
+            while read BASE_NAME; do
+                expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
+                    ! grep -q -F "/$BASE_NAME" FileListInterface.txt &&
+                    grep -F "$BASE_NAME" FileListInternal.txt >>FileListInterface.txt
             done
-            if [ $DoRepeat = "TRUE" ] ; then
-                Iteration=$(expr $Iteration + 1)
-                cp -a FileListInterface4EvalPre.txt FileListInterface4EvalPre.$Iteration.txt
-                cp -a FileListInterface4EvalPre.txt FileListInterface4Eval.txt
-                rm -f FileListInterface4EvalPre.txt
-            fi
-        done
+        done <FileListInterface.txt
         echo_n "INSTALL_FILES_LIBRARY = " >&3
         FIRST_LOOP="YES"
         for InterfaceFile in $(cat FileListInterface.txt) ; do
@@ -1496,7 +1411,7 @@ create_standard_makefile()
         done
         echo_e "\n" >&3
         
-        rm -f FileListInterface.txt FileListInterface4Eval.txt FileListInternal.txt FileListInterface4EvalPre.txt FileListInterface4EvalPre.*.txt
+        rm -f FileListInterface.txt FileListInternal.txt
         
         ##### Library install header file gathering END
         
