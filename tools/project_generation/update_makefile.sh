@@ -61,6 +61,7 @@
 # ####################################################################### #
 
 # global constants:
+TAB="$(printf '\t')"
 PATH_SEPARATOR1='=_=_'
 PATH_SEPARATOR2='_=_='
 
@@ -1253,9 +1254,7 @@ create_standard_makefile()
     MakefileName="Makefile"
     MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
-    if [ "A$MAKEFILE_SKELETON_FILE" = "A" ] ; then
-        MAKEFILE_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"
-    fi
+    : ${MAKEFILE_SKELETON_FILE:="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"}
     {
         # create Makefile Header
         echo_ "#############################################################################" >&3
@@ -1339,33 +1338,28 @@ create_standard_makefile()
         fi
 
         list_source_files() {
-            while [ 0 -lt $# ]; do
+            while [ 3 -le $# ]; do
                 local INTRO="$1"
                 local SOURCE_PATTERN="$2"
                 local FILE_LIST="$3"
                 shift 3
-                printf '%s' "$INTRO" >&3
-                local FIRST_LOOP="YES"
+                printf '%s =' "$INTRO" >&3
+                local FORMAT=' %s'
                 grep -E "$SOURCE_PATTERN" <"$FILE_LIST" | 
                 while read CcFile; do
-                    if [ $FIRST_LOOP != "YES" ] ; then
-                        echo_e_n '\\' >&3
-                        echo_e_n "\n\t\t" >&3
-                    else
-                        FIRST_LOOP="NO"
-                    fi
-                    echo_e_n "$CcFile  " >&3
+                    printf "$FORMAT" "$CcFile" >&3
+                    FORMAT='  \\\n\t\t%s'
                 done
-                echo_e "\n" >&3
+                printf '\n\n' >&3
             done
         }
         
         echo_e "\n\nfirst: all\n" >&3
         echo_ "####### Files" >&3
         list_source_files \
-            'SOURCES_LIBRARY = ' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" \
-            'SOURCES_APP = ' '\.cc|\.cpp|\.c' "$MakefileFilelistApp" \
-            'HEADERS_APP = ' '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr"
+            SOURCES_LIBRARY '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" \
+            SOURCES_APP '\.cc|\.cpp|\.c' "$MakefileFilelistApp" \
+            HEADERS_APP '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr"
         
         # 'HEADERS_UTEST = "$MakefileFileListUTest"
         # 'HEADERS_UTEST_MOCKS = ' "$MakefileFileListUTestMock"
@@ -1414,8 +1408,8 @@ create_standard_makefile()
         rm -f FileListInterface.txt FileListInternal.txt
         
         ##### Library install header file gathering END
-        
-        cat $MAKEFILE_SKELETON_FILE >&3
+        expand_template "$MAKEFILE_SKELETON_FILE" >&3
+        echo >&3
     } 3>"$MakefileNameLong"
 
     # NO UTESTs, no need to remove any testrunners
