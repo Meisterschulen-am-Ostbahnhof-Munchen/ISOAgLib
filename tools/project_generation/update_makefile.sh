@@ -1406,7 +1406,16 @@ create_standard_makefile()
         echo_e "\n" >&3
         
         rm -f FileListInterface.txt FileListInternal.txt
-        
+
+        local INSERT_EXTRA_COMPILER_PARAMETERS='-Wextra -Winit-self -Wmissing-include-dirs'
+        local INSERT_COMPILER_PARAMETERS='-pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)'
+        local INSERT_INCPATH='-I. -I$(ISOAGLIB_PATH)/library -I$(ISOAGLIB_PATH)/library/xgpl_src $(APP_INC) $(BIOS_INC)'
+        local INSERT_CPP_PARAMETERS='$(CXXFLAGS) $(INCPATH)'
+        local INSERT_LFLAGS='$(LIBPATH)'
+        local INSERT_SUBLIBS='-lrt'
+        local INSERT_LIBS='$(BIOS_LIB) $(SUBLIBS) $(EXTERNAL_LIBS)'
+        local INSERT_LINKER_PARAMETERS_1='$(LFLAGS)'
+        local INSERT_LINKER_PARAMETERS_2='$(LIBS)'
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
         echo >&3

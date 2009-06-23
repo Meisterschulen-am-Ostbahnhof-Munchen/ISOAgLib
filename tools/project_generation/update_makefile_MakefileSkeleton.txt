@@ -1,5 +1,5 @@
 ####### Some Standard Rules
-SUBLIBS  = -lrt
+SUBLIBS  = ${INSERT_SUBLIBS}
 CC       = \$(COMPILER_BINARY_PRE)gcc
 CXX      = \$(COMPILER_BINARY_PRE)g++
 STRIP    = \$(COMPILER_BINARY_PRE)strip
@@ -8,19 +8,19 @@ YACC     = yacc
 
 GCC_MAJOR    := \$(shell \$(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 ifneq (\$(GCC_MAJOR),2)
-	EXTRA_CFLAGS =  -Wextra -Winit-self -Wmissing-include-dirs
+	EXTRA_CFLAGS =  ${INSERT_EXTRA_COMPILER_PARAMETERS}
 else
 endif
 
-CFLAGS   = -pipe -O -Wall -g \$(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(PROJ_DEFINES)
-CXXFLAGS = -pipe -O -Wall -g \$(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(PROJ_DEFINES)
+CFLAGS   = ${INSERT_COMPILER_PARAMETERS}
+CXXFLAGS = ${INSERT_COMPILER_PARAMETERS}
 
 LEXFLAGS =
 YACCFLAGS= -d
-INCPATH  = -I. -I\$(ISOAGLIB_PATH)/library -I\$(ISOAGLIB_PATH)/library/xgpl_src \$(APP_INC) \$(BIOS_INC)
+INCPATH  = ${INSERT_INCPATH}
 LINK     = \$(COMPILER_BINARY_PRE)g++
-LFLAGS   = \$(LIBPATH)
-LIBS     = \$(BIOS_LIB) \$(SUBLIBS) \$(EXTERNAL_LIBS)
+LFLAGS   = ${INSERT_LFLAGS}
+LIBS     = ${INSERT_LIBS}
 AR       = ar cqs
 RANLIB   =
 TAR      = tar -cf
@@ -49,10 +49,10 @@ OBJECTS_LIBRARY = \$(patsubst %.cpp,\$(OBJ_DIR_LIBRARY)/%.o,\$(notdir \$(SOURCES
 DEPS_LIBRARY := \$(patsubst %.o,%.d,\$(OBJECTS_LIBRARY))
 
 # \$(OBJ_DIR_LIBRARY)/%.d :
-# 	\$(CXX) -c \$(CXXFLAGS) \$(INCPATH) -MM -MT \$(patsubst %.d,%.o,\$@)  \$(filter %/\$(patsubst \$(OBJ_DIR)/%.d,%,\$@).cpp,\$(SOURCES)) > \$@
+# 	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM -MT \$(patsubst %.d,%.o,\$@)  \$(filter %/\$(patsubst \$(OBJ_DIR)/%.d,%,\$@).cpp,\$(SOURCES)) > \$@
 
 \$(OBJ_DIR_LIBRARY)/%.d :
-	\$(CXX) -c \$(CXXFLAGS) \$(INCPATH) -MM \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.d,%,\$@).cpp,\$(SOURCES_LIBRARY)) 2>/dev/null | \\
+	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.d,%,\$@).cpp,\$(SOURCES_LIBRARY)) 2>/dev/null | \\
 	perl -p -e 's!^([^:]+:)!\$(OBJ_DIR_LIBRARY)/\$\$1!' > \$@
 
 include \$(DEPS_LIBRARY)
@@ -63,10 +63,10 @@ OBJECTS_APP = \$(patsubst %.cpp,\$(OBJ_DIR_APP)/%.o,\$(notdir \$(SOURCES_APP)))
 DEPS_APP := \$(patsubst %.o,%.d,\$(OBJECTS_APP))
 
 # \$(OBJ_DIR_APP)/%.d :
-# 	\$(CXX) -c \$(CXXFLAGS) \$(INCPATH) -MM -MT \$(patsubst %.d,%.o,\$@)  \$(filter %/\$(patsubst \$(OBJ_DIR)/%.d,%,\$@).cpp,\$(SOURCES)) > \$@
+# 	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM -MT \$(patsubst %.d,%.o,\$@)  \$(filter %/\$(patsubst \$(OBJ_DIR)/%.d,%,\$@).cpp,\$(SOURCES)) > \$@
 
 \$(OBJ_DIR_APP)/%.d :
-	\$(CXX) -c \$(CXXFLAGS) \$(INCPATH) -MM \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.d,%,\$@).cpp,\$(SOURCES_APP)) 2>/dev/null | \\
+	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.d,%,\$@).cpp,\$(SOURCES_APP)) 2>/dev/null | \\
 	perl -p -e 's!^([^:]+:)!\$(OBJ_DIR_APP)/\$\$1!' > \$@
 
 include \$(DEPS_APP)
@@ -120,11 +120,11 @@ OBJECTS_TESTRUNNER = \$(patsubst %.cpp,\$(OBJ_DIR_TESTRUNNER)/%.o,\$(notdir \$(T
 DEPS_TESTRUNNER := \$(patsubst %.o,%.d,\$(OBJECTS_TESTRUNNER))
 
 \$(OBJ_DIR_TESTRUNNER)/%.d :
-	\$(CXX) -c \$(CXXFLAGS) \$(INCPATH) -MM \$(filter %/\$(patsubst \$(OBJ_DIR_TESTRUNNER)/%.d,%,\$@).cpp,\$(TESTRUNNER_SOURCES)) 2>/dev/null | \\
+	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM \$(filter %/\$(patsubst \$(OBJ_DIR_TESTRUNNER)/%.d,%,\$@).cpp,\$(TESTRUNNER_SOURCES)) 2>/dev/null | \\
 	perl -p -e 's!^([^:]+:)!\$(OBJ_DIR_TESTRUNNER)/\$\$1!' > \$@
 
 \$(OBJ_DIR_TESTRUNNER)/%.o : \$(filter %/\$(patsubst \$(OBJ_DIR_TESTRUNNER)/%.d,%,\$@).cpp,\$(TESTRUNNER_SOURCES)) \$(OBJ_DIR_TESTRUNNER)/%.d
-	\$(CXX) \$(CXXFLAGS) \$(INCPATH)  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_TESTRUNNER)/%.o,%,\$@).cpp,\$(TESTRUNNER_SOURCES))
+	\$(CXX) ${INSERT_CPP_PARAMETERS}  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_TESTRUNNER)/%.o,%,\$@).cpp,\$(TESTRUNNER_SOURCES))
 
 include \$(DEPS_TESTRUNNER)
 
@@ -132,7 +132,7 @@ testrunner: \$(OBJECTS_TESTRUNNER) \$(OBJECTS_UTEST)
 ifeq (\$(TESTRUNNER_SOURCES),)
 	@echo "No testrunner build because of no testrunner.cpp is set!"
 else
-	\$(LINK) \$(LFLAGS) -o testrunner \$(OBJECTS_TESTRUNNER) \$(OBJECTS_UTEST) \$(LIBS) \$(WX_LIBS)
+	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o testrunner \$(OBJECTS_TESTRUNNER) \$(OBJECTS_UTEST) ${INSERT_LINKER_PARAMETERS_2} \$(WX_LIBS)
 endif
 
 ####### Implicit rules
@@ -140,10 +140,10 @@ endif
 .SUFFIXES: .c .o .cpp .cc .cxx .C
 
 \$(OBJ_DIR_LIBRARY)/%.o : \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.d,%,\$@).cpp,\$(SOURCES_LIBRARY)) \$(OBJ_DIR_LIBRARY)/%.d
-	\$(CXX) \$(CXXFLAGS) \$(INCPATH)  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.o,%,\$@).cpp,\$(SOURCES_LIBRARY))
+	\$(CXX) ${INSERT_CPP_PARAMETERS}  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.o,%,\$@).cpp,\$(SOURCES_LIBRARY))
 
 \$(OBJ_DIR_APP)/%.o : \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.d,%,\$@).cpp,\$(SOURCES_APP)) \$(OBJ_DIR_APP)/%.d
-	\$(CXX) \$(CXXFLAGS) \$(INCPATH)  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.o,%,\$@).cpp,\$(SOURCES_APP))
+	\$(CXX) ${INSERT_CPP_PARAMETERS}  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.o,%,\$@).cpp,\$(SOURCES_APP))
 
 ####### Build rules
 deps : \$(DEPS_LIBRARY) \$(DEPS_APP) \$(DEPS_UTEST) \$(DEPS_TESTRUNNER)
@@ -159,8 +159,8 @@ dynamic_library:  \$(OBJECTS_LIBRARY)
 
 all: Makefile static_library dynamic_library  \$(TARGET) testrunner
 \$(TARGET):  \$(OBJECTS_APP) static_library dynamic_library
-	\$(LINK) \$(LFLAGS) -o \$(TARGET)_static \$(OBJECTS_APP) \$(OBJ_DIR_LIBRARY)/libisoaglib.a \$(LIBS)
-	\$(LINK) \$(LFLAGS) -o \$(TARGET)_dynamic \$(OBJECTS_APP) \$(OBJ_DIR_LIBRARY)/libisoaglib.so \$(LIBS)
+	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o \$(TARGET)_static \$(OBJECTS_APP) \$(OBJ_DIR_LIBRARY)/libisoaglib.a ${INSERT_LINKER_PARAMETERS_2}
+	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o \$(TARGET)_dynamic \$(OBJECTS_APP) \$(OBJ_DIR_LIBRARY)/libisoaglib.so ${INSERT_LINKER_PARAMETERS_2}
 	-\$(DEL_FILE) \$(TARGET)
 	ln -s \$(TARGET)_static \$(TARGET)
 
