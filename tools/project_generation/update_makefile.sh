@@ -1251,6 +1251,8 @@ create_autogen_project_config()
 
 expand_definition()
 {
+    # Outputting the here document (cat <<) ist superior to other
+    # means especially when RULE contains quotes:
     eval "cat <<END_OF_STRING
 $RULE
 END_OF_STRING"
@@ -1282,7 +1284,7 @@ create_standard_makefile()
     MakefileName="Makefile"
     MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
-    : ${MAKEFILE_SKELETON_FILE:="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"}
+     : ${MAKEFILE_SKELETON_FILE:="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"}
     {
         # create Makefile Header
         echo_ "#############################################################################" >&3
@@ -1326,11 +1328,14 @@ create_standard_makefile()
         
         echo_ "" >&3
         if [ "$USE_RS232_DRIVER" = "rte" -o "$USE_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
-            echo_ "BIOS_LIB = /usr/local/lib/librte_client.a /usr/local/lib/libfevent.a" >&3
+            define_insert_and_report BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
+            echo_ "BIOS_LIB = $INSERT_BIOS_LIB" >&3
             # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
             echo_n "BIOS_INC =" >&3
         fi
-        echo_e_n "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >&3
+        local REPORT_VERSION_DEFINES=''
+        define_insert_and_report PROJ_DEFINES "\$(\$F VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h"
+        echo_e_n "\nPROJ_DEFINES = $INSERT_PROJ_DEFINES" >&3
         for SinglePrjDefine in $PRJ_DEFINES ; do
             echo_n " -D$SinglePrjDefine" >&3
         done
@@ -1435,22 +1440,14 @@ create_standard_makefile()
         
         rm -f FileListInterface.txt FileListInternal.txt
 
-        local REPORT_EXTRA_CFLAGS=DUMMY_REPORT_EXTRA_CFLAGS
-        local REPORT_PROJ_DEFINES=DUMMY_REPORT_PROJ_DEFINES
-        local REPORT_ISOAGLIB_PATH=DUMMY_REPORT_ISOAGLIB_PATH
+        local REPORT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
         local REPORT_APP_INC=DUMMY_REPORT_APP_INC
         local REPORT_BIOS_INC=DUMMY_REPORT_BIOS_INC
-        local REPORT_CXXFLAGS=DUMMY_REPORT_CXXFLAGS
-        local REPORT_INCPATH=DUMMY_REPORT_INCPATH
         local REPORT_LIBPATH=DUMMY_REPORT_LIBPATH
-        local REPORT_BIOS_LIB=DUMMY_REPORT_BIOS_LIB
-        local REPORT_SUBLIBS=DUMMY_REPORT_SUBLIBS
         local REPORT_EXTERNAL_LIBS=DUMMY_REPORT_EXTERNAL_LIBS
-        local REPORT_LFLAGS=DUMMY_REPORT_LFLAGS
-        local REPORT_LIBS=DUMMY_REPORT_LIBS
 
-        define_insert_and_report EXTRA_COMPILER_PARAMETERS '-Wextra -Winit-self -Wmissing-include-dirs'
-        define_insert_and_report COMPILER_PARAMETERS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
+        define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
+        define_insert_and_report CXXFLAGS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
         define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
         define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
         define_insert_and_report LFLAGS '$($F LIBPATH)'
@@ -1458,6 +1455,11 @@ create_standard_makefile()
         define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
         define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
         define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
+
+        printf '(Linux_specific_settings\n' >&5
+        printf '  (COMPILER_PARAMETERS %s)\n' "$REPORT_CXXFLAGS" >&5
+        printf '  (LINKER_PARAMETERS %s %s))\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
+        
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
         echo >&3
