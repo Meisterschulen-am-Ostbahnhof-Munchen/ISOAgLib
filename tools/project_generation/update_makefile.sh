@@ -1249,6 +1249,34 @@ create_autogen_project_config()
     cd $1
 }
 
+expand_definition()
+{
+    eval "cat <<END_OF_STRING
+$RULE
+END_OF_STRING"
+}
+
+expand_insert()
+{
+    printf '$(%s)' "$1"
+}
+
+expand_report()
+{
+    local NAME="$1"
+    eval "printf '%s' \"\$REPORT_$NAME\""
+}
+
+define_insert_and_report()
+{
+    local NAME="$1"
+    RULE="$2"
+    local F=expand_insert # first expand for insertion
+    eval "INSERT_${NAME}=\"\$(expand_definition)\""
+    F=expand_report # then expand for report
+    eval "REPORT_${NAME}=\"\$(expand_definition)\""
+}
+
 create_standard_makefile()
 {
     MakefileName="Makefile"
@@ -1407,15 +1435,29 @@ create_standard_makefile()
         
         rm -f FileListInterface.txt FileListInternal.txt
 
-        local INSERT_EXTRA_COMPILER_PARAMETERS='-Wextra -Winit-self -Wmissing-include-dirs'
-        local INSERT_COMPILER_PARAMETERS='-pipe -O -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)'
-        local INSERT_INCPATH='-I. -I$(ISOAGLIB_PATH)/library -I$(ISOAGLIB_PATH)/library/xgpl_src $(APP_INC) $(BIOS_INC)'
-        local INSERT_CPP_PARAMETERS='$(CXXFLAGS) $(INCPATH)'
-        local INSERT_LFLAGS='$(LIBPATH)'
-        local INSERT_SUBLIBS='-lrt'
-        local INSERT_LIBS='$(BIOS_LIB) $(SUBLIBS) $(EXTERNAL_LIBS)'
-        local INSERT_LINKER_PARAMETERS_1='$(LFLAGS)'
-        local INSERT_LINKER_PARAMETERS_2='$(LIBS)'
+        local REPORT_EXTRA_CFLAGS=DUMMY_REPORT_EXTRA_CFLAGS
+        local REPORT_PROJ_DEFINES=DUMMY_REPORT_PROJ_DEFINES
+        local REPORT_ISOAGLIB_PATH=DUMMY_REPORT_ISOAGLIB_PATH
+        local REPORT_APP_INC=DUMMY_REPORT_APP_INC
+        local REPORT_BIOS_INC=DUMMY_REPORT_BIOS_INC
+        local REPORT_CXXFLAGS=DUMMY_REPORT_CXXFLAGS
+        local REPORT_INCPATH=DUMMY_REPORT_INCPATH
+        local REPORT_LIBPATH=DUMMY_REPORT_LIBPATH
+        local REPORT_BIOS_LIB=DUMMY_REPORT_BIOS_LIB
+        local REPORT_SUBLIBS=DUMMY_REPORT_SUBLIBS
+        local REPORT_EXTERNAL_LIBS=DUMMY_REPORT_EXTERNAL_LIBS
+        local REPORT_LFLAGS=DUMMY_REPORT_LFLAGS
+        local REPORT_LIBS=DUMMY_REPORT_LIBS
+
+        define_insert_and_report EXTRA_COMPILER_PARAMETERS '-Wextra -Winit-self -Wmissing-include-dirs'
+        define_insert_and_report COMPILER_PARAMETERS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
+        define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
+        define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
+        define_insert_and_report LFLAGS '$($F LIBPATH)'
+        define_insert_and_report SUBLIBS '-lrt'
+        define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
+        define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
+        define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
         echo >&3
