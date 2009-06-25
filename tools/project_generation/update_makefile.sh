@@ -93,6 +93,16 @@ echo_n() { printf '%s' "$*"; }
 # Compatible but slow variant as fallback:
 eval 'echo() { '$(which echo)' "$@"; }'
 
+# Joins to one string.
+# E.g. the following command prints "a,bc,def":
+#   join , a bc def
+join()
+{
+    local IFS="$1"
+    shift
+    printf '%s' "$*"
+}
+
 # this function is used to verify and
 # correct the several project configuration
 # variables
@@ -1296,61 +1306,47 @@ create_standard_makefile()
         echo_ "TARGET = $PROJECT" >&3
         echo_ "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >&3
         echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
-        echo_n "APP_INC = " >&3
-        KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
-        for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-            echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >&3
-            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
-        done
-        for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-            echo_n " -I$ISO_AG_LIB_INSIDE/$SingleInclPath" >&3
-            append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$SingleInclPath;"
-        done
-        for SingleInclPath in $USE_LINUX_EXTERNAL_INCLUDE_PATH ; do
-            echo_n " -I$SingleInclPath" >&3
-            append KDEVELOP_INCLUDE_PATH " $SingleInclPath;"
-        done
-        echo_ "" >&3
-        echo_n "LIBPATH = " >&3
-        for SingleLibPath in $USE_LINUX_EXTERNAL_LIBRARY_PATH ; do
-            echo_n " -L$SingleLibPath" >&3
-        done
-        echo_ "" >&3
+
+        local RELATIVE_INC_PATHS="$(echo_ $REL_APP_PATH $PRJ_INCLUDE_PATH)"
+        local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$ISO_AG_LIB_INSIDE/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
+
+        local REPORT_APP_INC="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
+        printf "APP_INC = %s\n" "$REPORT_APP_INC" >&3
+        KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
         
-        echo_n "EXTERNAL_LIBS = " >&3
-        for SingleLibItem in $USE_LINUX_EXTERNAL_LIBRARIES ; do
-            echo_n " $SingleLibItem" >&3
-        done
-        echo_ "" >&3
+        local REPORT_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
+        printf 'LIBPATH = %s\n' "$REPORT_LIBPATH" >&3
+        local REPORT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
+        printf 'EXTERNAL_LIBS = %s\n' "$REPORT_EXTERNAL_LIBS" >&3
         
         echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
-        echo_    "-include versions.mk" >&3
+        printf -- '-include versions.mk\n\n\n' >&3
         
-        echo_ "" >&3
         if [ "$USE_RS232_DRIVER" = "rte" -o "$USE_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
             define_insert_and_report BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
             echo_ "BIOS_LIB = $INSERT_BIOS_LIB" >&3
             # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
             echo_n "BIOS_INC =" >&3
+            local REPORT_BIOS_INC=''
         fi
         local REPORT_VERSION_DEFINES=''
-        define_insert_and_report PROJ_DEFINES "\$(\$F VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h"
-        echo_e_n "\nPROJ_DEFINES = $INSERT_PROJ_DEFINES" >&3
-        for SinglePrjDefine in $PRJ_DEFINES ; do
-            echo_n " -D$SinglePrjDefine" >&3
-        done
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-            echo_n " -DSYSTEM_WITH_ENHANCED_CAN_HAL" >&3
+        local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- ' -D%s' $PRJ_DEFINES)}"
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
+            append RULE_PROJ_DEFINES ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
         fi
-        
-        if [ $USE_CAN_DRIVER = "msq_server" ] ; then
-            echo_n " -DCAN_DRIVER_MESSAGE_QUEUE" >&3
-        fi
-        if [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-            echo_n " -DCAN_DRIVER_SOCKET" >&3
-        fi
-        
-        echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
+        case "$USE_CAN_DRIVER" in
+            msq_server)
+                append RULE_PROJ_DEFINES ' -DCAN_DRIVER_MESSAGE_QUEUE'
+                ;;
+            socket_server|socket_server_hal_simulator)
+                append RULE_PROJ_DEFINES ' -DCAN_DRIVER_SOCKET'
+                ;;
+        esac
+
+        define_insert_and_report PROJ_DEFINES "$RULE_PROJ_DEFINES"
+        printf 'PROJ_DEFINES = %s\n' "$INSERT_PROJ_DEFINES" >&3
+
+        echo_e "\n####### Definition of compiler binary prefix corresponding to selected target" >&3
         if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
             echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
             
@@ -1441,10 +1437,6 @@ create_standard_makefile()
         rm -f FileListInterface.txt FileListInternal.txt
 
         local REPORT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
-        local REPORT_APP_INC=DUMMY_REPORT_APP_INC
-        local REPORT_BIOS_INC=DUMMY_REPORT_BIOS_INC
-        local REPORT_LIBPATH=DUMMY_REPORT_LIBPATH
-        local REPORT_EXTERNAL_LIBS=DUMMY_REPORT_EXTERNAL_LIBS
 
         define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
         define_insert_and_report CXXFLAGS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
@@ -1457,12 +1449,12 @@ create_standard_makefile()
         define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
 
         printf '(Linux_specific_settings\n' >&5
-        printf '  (COMPILER_PARAMETERS %s)\n' "$REPORT_CXXFLAGS" >&5
+        printf '  (COMPILER_PARAMETERS %s)\n' "$REPORT_CPP_PARAMETERS" >&5
         printf '  (LINKER_PARAMETERS %s %s))\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
         
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
-        echo >&3
+        echo_ >&3
     } 3>"$MakefileNameLong"
 
     # NO UTESTs, no need to remove any testrunners
@@ -1550,12 +1542,9 @@ create_pure_application_makefile()
         echo_ "" >&3
         
         echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
-        echo_    "-include versions.mk" >&3
+        printf -- '-include versions.mk\n\n\n' >&3
         
-        
-        echo_ "" >&3
-        
-        echo_e_n "\nPROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >&3
+        echo_e_n "PROJ_DEFINES = \$(VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h" >&3
         for SinglePrjDefine in $PRJ_DEFINES ; do
             echo_n " -D$SinglePrjDefine" >&3
         done
