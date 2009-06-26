@@ -1295,7 +1295,7 @@ create_standard_makefile()
     MakefileName="Makefile"
     MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
-     : ${MAKEFILE_SKELETON_FILE:="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"}
+    : ${MAKEFILE_SKELETON_FILE:="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"}
     {
         # create Makefile Header
         echo_ "#############################################################################" >&3
@@ -1347,25 +1347,21 @@ create_standard_makefile()
         define_insert_and_report PROJ_DEFINES "$RULE_PROJ_DEFINES"
         printf 'PROJ_DEFINES = %s\n' "$INSERT_PROJ_DEFINES" >&3
 
-        echo_e "\n####### Definition of compiler binary prefix corresponding to selected target" >&3
-        if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
-            echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
-            
-        else
-            case $PRJ_DEFINES in
+        local RULE_COMPILER_BINARY_PRE=$(
+            [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
+            case "$PRJ_DEFINES" in
                 *SYSTEM_A1*)
-                    echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >&3
-                    echo_ "SYSTEM_A1"
+                    printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
                     ;;
                 *SYSTEM_MCC*)
-                    echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >&3
-                    echo_ "SYSTEM_MCC"
+                    printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
                     ;;
                 *)
-                    echo_ "COMPILER_BINARY_PRE = " >&3
                     ;;
-            esac
-        fi
+            esac)
+        define_insert_and_report COMPILER_BINARY_PRE "$RULE_COMPILER_BINARY_PRE"
+        printf "\n####### Definition of compiler binary prefix corresponding to selected target\n" >&3
+        printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
 
         list_source_files() {
             while [ 3 -le $# ]; do
@@ -1450,8 +1446,10 @@ create_standard_makefile()
         define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
 
         printf '(Linux_specific_settings\n' >&5
-        printf '  (COMPILER_PARAMETERS %s)\n' "$REPORT_CPP_PARAMETERS" >&5
-        printf '  (LINKER_PARAMETERS %s %s))\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
+        printf '  (Miscellaneous_parameters\n' >&5
+        printf '    (Compiler_binary_prefix %s))\n' "$REPORT_COMPILER_BINARY_PRE" >&5
+        printf '  (Compiler_parameters %s)\n' "$REPORT_CPP_PARAMETERS" >&5
+        printf '  (Linker_parameters %s %s))\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
         
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
