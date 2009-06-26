@@ -23,11 +23,11 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP = ../../../../examples/src/AutoDataCollector//procdatamanager_c.cpp  \
-		../../../../examples/src/AutoDataCollector//defaultrecordconfig_c.cpp  \
-		../../../../examples/src/AutoDataCollector//gpsmanager_c.cpp  \
+SOURCES_APP = ../../../../examples/src/AutoDataCollector//specificrecordconfig_c.cpp  \
 		../../../../examples/src/AutoDataCollector//getyflexmanager_c.cpp  \
-		../../../../examples/src/AutoDataCollector//specificrecordconfig_c.cpp  \
+		../../../../examples/src/AutoDataCollector//gpsmanager_c.cpp  \
+		../../../../examples/src/AutoDataCollector//defaultrecordconfig_c.cpp  \
+		../../../../examples/src/AutoDataCollector//procdatamanager_c.cpp  \
 		../../../../examples/src/AutoDataCollector//autodatacollector.cpp  
 
 ####### Some Standard Rules

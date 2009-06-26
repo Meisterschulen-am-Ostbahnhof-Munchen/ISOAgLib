@@ -7,7 +7,7 @@
 TARGET = 1_4_WriteFlexibleIso
 ISOAGLIB_PATH = ../../../..
 INSTALL_PATH = /usr/local
-APP_INC = -I../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso 
+APP_INC = -I../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso
 LIBPATH = 
 EXTERNAL_LIBS = 
 
@@ -24,115 +24,131 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.cpp  \
+SOURCES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/canfifo_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_simulating.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp  \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp  \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp  
+		../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp  \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp  \
+		../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp
 
-SOURCES_APP = ../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/1_4_WriteFlexibleIso.cpp  
+SOURCES_APP = ../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/1_4_WriteFlexibleIso.cpp
 
-HEADERS_UTEST = 
+HEADERS_APP =
 
-HEADERS_UTEST_MOCKS = 
-
-HEADERS_UTEST_MOD_SUT = 
-
-TESTRUNNER_SOURCES = 
-
-INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h \
-		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h \
-		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h \
-		../../../../library/xgpl_src/IsoAgLib/util/config.h \
-		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
-		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
-		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
-		../../../../library/xgpl_src/IsoAgLib/typedef.h \
+INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/icanio_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/icancustomer_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/system/isystem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisend_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/system/isystem_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/icanio_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/icancustomer_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
+		../../../../library/xgpl_src/IsoAgLib/typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h \
+		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
+		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
+		../../../../library/xgpl_src/IsoAgLib/util/config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation.h \
+		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h \
+		../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h \
+		../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
-		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/config.h \
-		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.h \
+		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.h \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
-		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
-		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/system.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/config.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/system.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/msgobj_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h \
-		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
+		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/can/icanfifo.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.h \
+		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt
@@ -324,15 +340,15 @@ FORCE:
 install_library: $(INSTALL_FILES_LIBRARY)
 	mkdir -p /$(INSTALL_PATH)/lib;
 	@for INSTITEM in $(INSTALL_FILES_LIBRARY); do \
-		SEARCH=$(ISOAGLIB_PATH)/library/xgpl_src; \
-		REPLACE=$(INSTALL_PATH)/include; \
-		#echo "Search $$SEARCH -> replace $$REPLACE"; \
-		VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \
-		#echo "INSTITEM $$INSTITEM , ISOAGLIB_PATH $(ISOAGLIB_PATH) , INSTALL_PATH $(INSTALL_PATH) -> VAR_TEST $$VAR_TEST"; \
-		DEST_PATH=`dirname $$VAR_TEST`; \
-		#echo "DestPath $$DEST_PATH" ; \
-		mkdir -p $$DEST_PATH; \
-		install -m 0755 $$INSTITEM $$DEST_PATH; \
+	SEARCH=$(ISOAGLIB_PATH)/library/xgpl_src; \
+	REPLACE=$(INSTALL_PATH)/include; \
+	#echo "Search $$SEARCH -> replace $$REPLACE"; \
+	VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \
+	#echo "INSTITEM $$INSTITEM , ISOAGLIB_PATH $(ISOAGLIB_PATH) , INSTALL_PATH $(INSTALL_PATH) -> VAR_TEST $$VAR_TEST"; \
+	DEST_PATH=`dirname $$VAR_TEST`; \
+	#echo "DestPath $$DEST_PATH" ; \
+	mkdir -p $$DEST_PATH; \
+	install -m 0755 $$INSTITEM $$DEST_PATH; \
 	done && \
 	install -m 0755 ../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/config_1_4_WriteFlexibleIso.h $(INSTALL_PATH)/include; \
 	install -m 0755 ../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/version.h $(INSTALL_PATH)/include; \
@@ -345,13 +361,13 @@ install_library: $(INSTALL_FILES_LIBRARY)
 ####### Uninstall
 uninstall_library: $(INSTALL_FILES_LIBRARY)
 	@for INSTITEM in $(INSTALL_FILES_LIBRARY); do \
-		SEARCH=$(ISOAGLIB_PATH)/library/xgpl_src; \
-		REPLACE=$(INSTALL_PATH)/include; \
-		#echo "Search $$SEARCH -> replace $$REPLACE"; \
-		VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \
-		#echo "INSTITEM $$INSTITEM , ISOAGLIB_PATH $(ISOAGLIB_PATH) , INSTALL_PATH $(INSTALL_PATH) -> VAR_TEST $$VAR_TEST"; \
-		#echo "VAR_TEST $$VAR_TEST" ; \
-		rm -f $$VAR_TEST; \
+	SEARCH=$(ISOAGLIB_PATH)/library/xgpl_src; \
+	REPLACE=$(INSTALL_PATH)/include; \
+	#echo "Search $$SEARCH -> replace $$REPLACE"; \
+	VAR_TEST=`echo $$INSTITEM | sed -e "s#$$SEARCH#$$REPLACE#g"`; \
+	#echo "INSTITEM $$INSTITEM , ISOAGLIB_PATH $(ISOAGLIB_PATH) , INSTALL_PATH $(INSTALL_PATH) -> VAR_TEST $$VAR_TEST"; \
+	#echo "VAR_TEST $$VAR_TEST" ; \
+	rm -f $$VAR_TEST; \
 	done && \
 	CONFIG=`basename ../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/config_1_4_WriteFlexibleIso.h`; \
 	VERSION=`basename ../../../../examples/src/Tutorials/1_ApplicationLayer/1_4_WriteFlexibleIso/version.h`; \

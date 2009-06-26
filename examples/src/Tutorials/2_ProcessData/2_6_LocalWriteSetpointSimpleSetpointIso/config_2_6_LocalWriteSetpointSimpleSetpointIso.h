@@ -68,12 +68,6 @@
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
 #endif
-#ifndef DEF_Stream_IMPL   
-	#define DEF_Stream_IMPL   StreamChunk   
-#endif
-#ifndef DEF_Stream_c_IMPL 
-	#define DEF_Stream_c_IMPL StreamChunk_c 
-#endif
 
 // The following configuration values can be overwritten.
 // These settings are initially defined in isoaglib_config.h .
@@ -104,12 +98,6 @@
 /// defines the amount of msec. to be wait until sending out the next CTS to the sender IF MULTIPLE STREAMS BEING RECEIVED
 // #define CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS 50
 
-/// define default RS232 baudrate - can be manually overridden in project config file
-// #define CONFIG_RS232_DEFAULT_BAUDRATE 19200
-
-/// define default RS232 bit encoding - can be manually overridden in project config file
-// #define CONFIG_RS232_DEFAULT_DATA_MODE RS232IO_c::_8_N_1
-
 /// define default RS232 XON-XOFF usage - can be manually overridden in project config file
 // #define CONFIG_RS232_DEFAULT_XON_XOFF false
 
@@ -121,18 +109,6 @@
 
 /// set default PWM frequency for digital output - can be manually overridden in project config file
 // #define CONFIG_PWM_DEFAULT_FREQUENCY 100000
-
-/// define size of buffer for Hdd read access - can be manually overridden in project config file
-// #define CONFIG_HDD_READ_PUFFER_SIZE 100
-
-/// define minimum size of data to read as one bock from Hdd - can be manually overridden in project config file
-// #define CONFIG_HDD_READ_BLOCK_SIZE 20
-
-/// define longest token which is used to translate printed numbers to number variables - can be manually overridden in project config file
-// #define CONFIG_HDD_MAX_TOKEN_LEN 10
-
-/// define value coding for RS232 connected DOS Drive - can be manually overridden in project config file
-// #define CONFIG_HDD_DEFAULT_DATA_MODE RS232IO_c::_8_N_1
 
 /// default max execution time of iScheduler_c::timeEvent - can be manually overridden in project config file
 // #define CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME 500
@@ -146,26 +122,14 @@
 /// CAN BUS number for IsoAgLib (0xFF forces explicit call of init, to open the CAN BUS )
 // #define CONFIG_CAN_DEFAULT_BUS_NUMBER 0xFF
 
-/// define default MsgObj_c number to use for CAN send
-// #define CONFIG_CAN_DEFAULT_SEND_OBJ 0
-
 /// define default min number for CAN Msg-Obj used for IsoAgLib
 // #define CONFIG_CAN_DEFAULT_MIN_OBJ_NR 0
 
 /// define default max number for CAN Msg-Obj used for IsoAgLib
 // #define CONFIG_CAN_DEFAULT_MAX_OBJ_NR 13
 
-/// max time intervall of CAN err before switching back from 250 to 125 kbit/s in [msec.]
-// #define CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING 3000
-
-/// define bitrate to use after fallbcack /ref CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
-// #define CONFIG_CAN_FALLBACK_BITRATE 125
-
 /// BUS OFF if CAN send lasts longer then defined
 // #define CONFIG_CAN_MAX_SEND_WAIT_TIME 200
-
-/// BUS problem, if no message received in this time
-// #define CONFIG_CAN_MAX_CAN_IDLE 3000
 
 /// YES | NO for EEPROM editor access via CAN
 // #define CONFIG_EEPROM_USE_CAN_EDITOR_YN NO
@@ -176,20 +140,11 @@
 /// set CAN Ident_c for filtering out EEEditor msgs
 // #define CONFIG_EEPROM_USE_CAN_REC_IDENT 0x700
 
-/** set CAN Msg obejct for receiving EEEditor msg */
-// #define CONFIG_EEPROM_USE_CAN_REC_OBJ   13
-
-/** set CAN Msg obejct for sending EEEditor msg */
-// #define CONFIG_EEPROM_USE_CAN_SEND_OBJ  14
-
 /** set CAN BUS number for CAN EEPROM Editor */
 // #define CONFIG_EEPROM_USE_CAN_BUS       0
 
 /** set CAN buffer size for receive and send */
 // #define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
-
-/** to use standard ident (11bit) ->0, 29bit -> 1 */
-// #define CONFIG_EEPROM_USE_CAN_EXT_IDENT 0
 
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!

@@ -1249,7 +1249,7 @@ create_autogen_project_config()
         echo_ " This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the" >&3
         echo_ " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h ( Important: place the directory of the application source files in the include search path )" >&3
         echo_ "" >&3
-        echo_ " Use the file $CONF_FILE in the directory $1 as input file for $0 to create the project generation files." >&3
+        echo_ " Use the file $(basename "$CONF_FILE") in the directory $(basename "$1") as input file for $(basename "$0") to create the project generation files." >&3
         echo_ "\code" >&3
         cat $CONFIG_NAME >&3
         echo_ "\endcode" >&3
@@ -2754,9 +2754,9 @@ make_doxygen_ready_comment_blocks()
             #rm -f /tmp/$CONF_BASE
             #echo_ "/*@}*/" >&3
         
-            echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" > $CONFIG_SPEC_DOXYGEN_READY
+            echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
             echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
-            echo_ " Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
+            echo_ " Use the file $(basename "$CONF_FILE") in this directory as input file for $(basename "$0") to create the project generation files." >&3
             echo_ "\code" >&3
             sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
             cat /tmp/$CONF_BASE >&3

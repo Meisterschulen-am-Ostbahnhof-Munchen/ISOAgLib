@@ -739,6 +739,13 @@ examples/compiler_projects/kdevelop_make/13_0_SimpleFSClient/Makefile__simulatin
 examples/compiler_projects/kdevelop_make/13_0_SimpleFSClient/Makefile__simulating__sys -text
 examples/compiler_projects/kdevelop_make/13_0_SimpleFSClient/config_header__13_0_SimpleFSClient-doc.txt -text
 examples/compiler_projects/kdevelop_make/13_0_SimpleFSClient/filelist__13_0_SimpleFSClient.txt -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/13_1_FS_VT_TC.kdevelop -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/13_1_FS_VT_TC.kdevelop.filelist -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/Makefile -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/MakefileApp -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/MakefileApp__simulating__simulating -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/Makefile__simulating__simulating -text
+examples/compiler_projects/kdevelop_make/13_1_FS_VT_TC/filelist__13_1_FS_VT_TC.txt -text
 examples/compiler_projects/kdevelop_make/1_0_ReadIso/1_0_ReadIso.kdevelop -text
 examples/compiler_projects/kdevelop_make/1_0_ReadIso/1_0_ReadIso.kdevelop.filelist -text
 examples/compiler_projects/kdevelop_make/1_0_ReadIso/Makefile -text
@@ -2143,6 +2150,7 @@ examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/MaskDefinition/simpleVT
 examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/MaskDefinition/simpleVTIsoPool_derived-cpp.h -text
 examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/MaskDefinition/simpleVTIsoPool_derived-h.h -text
 examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/MaskDefinition/simpleVTIsoPool_direct.h -text
+examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/TutPrjDesc13_1_FS_VT_TC.txt -text
 examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/config_13_1_FS_VT_TC.h -text
 examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/devicedescription/DeviceDescription.xml -text
 examples/src/Tutorials/13_FileServerClient/13_1_FS_VT_TC/devicedescription/DeviceDescription.xml-bytestream.inc -text
