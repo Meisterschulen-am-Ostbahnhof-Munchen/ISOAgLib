@@ -208,7 +208,7 @@ public:
     /**
       check if current message is complete
     */
-    bool isCompleteBurst() const { return (mui8_burstPkgYetToSend == 0); }
+    bool isCompleteBurst() const { return (mui8_packetsLeftToSendInBurst == 0); }
 
     /**
       check if send of all data is complete
@@ -235,9 +235,19 @@ public:
 
   private: // methods
     /**
-      send a message -> set the ident and initiate sending to CAN
+      send an ISO message -> set the ident (depending on ab_data) and initiate sending to CAN
+      @param ab_data true -> use the (E)TP_DATA_TRANSFER_PGN
+                     false-> use the (E)TP_CONN_MANAGE_PGN
+                     --Value is not of interest in Fast-Packet sending!--
     */
-    void sendPacket();
+    void sendPacketIso (bool ab_data);
+
+#if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
+    /**
+      send a FP message -> set the ident and initiate sending to CAN
+    */
+    void sendPacketFp();
+#endif
 
     /**
       calculate the actual sequence number and
@@ -263,7 +273,8 @@ public:
     /** timestamp for time control */
     int32_t mi32_timestampToWaitTo;
 
-    /** data counter for data to send */
+    /** data counter for data to send
+        will be set on CTS and incremented after each sent packet. */
     uint32_t mui32_dataBufferOffset;
 
     /** size of the data complete */
@@ -288,19 +299,14 @@ public:
     /** pointer to an IsoAgLib::MultiSendStreamer_c class which streams out parts of the stream step by step */
     IsoAgLib::iMultiSendStreamer_c* mpc_mss;
 
-  /// Initialized on Runtime
-    /** sequence/offset number */
-    uint8_t mui8_sequenceNr;
-    uint32_t mui32_dataPacketOffset; // only for ETP
-
     /** save ... from last CTS so we can see if the CTS was resent... */
-    uint32_t mui32_lastNextPacketNumberToSend;
+    uint32_t mui32_packetNrRequestedInLastCts;
 
     /** cnt of pkg left to send in this burst */
-    uint8_t mui8_burstPkgYetToSend;
+    uint8_t mui8_packetsLeftToSendInBurst;
 
-    /** cnt of pkg sent since the last DPO */
-    uint8_t mb_pkgSent;
+    /** cnt of pkg sent since the last DPO (ETP) - now also used to TP */
+    uint8_t mui8_packetsSentInThisBurst;
 
   /// Back reference to MultiSend_c for setting the MAX of all delays, this can only be managed here...
     MultiSend_c& mrc_multiSend;
