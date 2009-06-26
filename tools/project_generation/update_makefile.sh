@@ -1364,28 +1364,47 @@ create_standard_makefile()
         printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
 
         list_source_files() {
-            while [ 3 -le $# ]; do
-                local INTRO="$1"
-                local SOURCE_PATTERN="$2"
-                local FILE_LIST="$3"
-                shift 3
-                printf '%s =' "$INTRO" >&3
-                local FORMAT=' %s'
-                grep -E "$SOURCE_PATTERN" <"$FILE_LIST" | 
-                while read CcFile; do
-                    printf "$FORMAT" "$CcFile" >&3
-                    FORMAT='  \\\n\t\t%s'
-                done
-                printf '\n\n' >&3
+            local FIRST_FORMAT="$1"
+            local NEXT_FORMAT="$2" 
+            local SOURCE_PATTERN="$3"
+            shift 3
+            local FORMAT="$FIRST_FORMAT"
+            cat "$@" | grep -E "$SOURCE_PATTERN" | 
+            while read CcFile; do
+                printf "$FORMAT" "$CcFile"
+                FORMAT="$NEXT_FORMAT"
             done
         }
         
         echo_e "\n\nfirst: all\n" >&3
         echo_ "####### Files" >&3
-        list_source_files \
-            SOURCES_LIBRARY '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" \
-            SOURCES_APP '\.cc|\.cpp|\.c' "$MakefileFilelistApp" \
-            HEADERS_APP '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr"
+        printf 'SOURCES_LIBRARY =' >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" >&3
+        printf '\n\nSOURCES_APP =' >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistApp" >&3
+        printf '\n\nHEADERS_APP =' >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr" >&3
+        printf '\n\n' >&3
+
+        local REPORT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
+        define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
+        define_insert_and_report CXXFLAGS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
+        define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
+        define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
+        define_insert_and_report LFLAGS '$($F LIBPATH)'
+        define_insert_and_report SUBLIBS '-lrt'
+        define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
+        define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
+        define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
+
+        printf '(Linux_specific_settings\n' >&5
+        printf '  (Miscellaneous_parameters\n' >&5
+        printf '    (Compiler_binary_prefix %s))\n' "$REPORT_COMPILER_BINARY_PRE" >&5
+        printf '  (Compiler_parameters %s)\n' "$REPORT_CPP_PARAMETERS" >&5
+        printf '  (Linker_parameters %s %s)\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
+        
+        list_source_files '  (Modules\n    %s' '\n    %s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" "$MakefileFilelistApp" >&5
+        printf '))\n' >&5
         
         # 'HEADERS_UTEST = "$MakefileFileListUTest"
         # 'HEADERS_UTEST_MOCKS = ' "$MakefileFileListUTestMock"
@@ -1433,24 +1452,6 @@ create_standard_makefile()
         
         rm -f FileListInterface.txt FileListInternal.txt
 
-        local REPORT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
-
-        define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
-        define_insert_and_report CXXFLAGS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
-        define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
-        define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
-        define_insert_and_report LFLAGS '$($F LIBPATH)'
-        define_insert_and_report SUBLIBS '-lrt'
-        define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
-        define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
-        define_insert_and_report LINKER_PARAMETERS_2 '$($F LIBS)'
-
-        printf '(Linux_specific_settings\n' >&5
-        printf '  (Miscellaneous_parameters\n' >&5
-        printf '    (Compiler_binary_prefix %s))\n' "$REPORT_COMPILER_BINARY_PRE" >&5
-        printf '  (Compiler_parameters %s)\n' "$REPORT_CPP_PARAMETERS" >&5
-        printf '  (Linker_parameters %s %s))\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
-        
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
         echo_ >&3
