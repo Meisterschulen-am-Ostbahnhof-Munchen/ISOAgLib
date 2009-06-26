@@ -1265,7 +1265,8 @@ expand_definition()
     # means especially when RULE contains quotes:
     eval "cat <<END_OF_STRING
 $RULE
-END_OF_STRING"
+END_OF_STRING
+"
 }
 
 expand_insert()
@@ -1884,7 +1885,8 @@ expand_template()
     TEMPLATE_FILE="$1"
     eval "cat <<END_OF_TEMPLATE
 $(cat "$TEMPLATE_FILE")
-END_OF_TEMPLATE" || {
+END_OF_TEMPLATE
+" || {
         printf 'ERROR when processing template file %s\n' "$TEMPLATE_FILE" >&2
         exit 1
     }
