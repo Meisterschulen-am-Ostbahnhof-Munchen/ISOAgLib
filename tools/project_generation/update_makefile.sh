@@ -1315,7 +1315,8 @@ create_standard_makefile()
         printf "APP_INC = %s\n" "$REPORT_APP_INC" >&3
         KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
         
-        local REPORT_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
+        local RULE_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
+        define_insert_and_report "$RULE_LIBPATH"
         printf 'LIBPATH = %s\n' "$REPORT_LIBPATH" >&3
         local REPORT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
         printf 'EXTERNAL_LIBS = %s\n' "$REPORT_EXTERNAL_LIBS" >&3
@@ -1348,17 +1349,17 @@ create_standard_makefile()
         printf 'PROJ_DEFINES = %s\n' "$INSERT_PROJ_DEFINES" >&3
 
         local RULE_COMPILER_BINARY_PRE=$(
-            [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
-            case "$PRJ_DEFINES" in
-                *SYSTEM_A1*)
-                    printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
-                    ;;
-                *SYSTEM_MCC*)
-                    printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
-                    ;;
-                *)
-                    ;;
-            esac)
+                [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
+                case "$PRJ_DEFINES" in
+                    *SYSTEM_A1*)
+                        printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
+                        ;;
+                    *SYSTEM_MCC*)
+                        printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
+                        ;;
+                    *)
+                        ;;
+                esac;)
         define_insert_and_report COMPILER_BINARY_PRE "$RULE_COMPILER_BINARY_PRE"
         printf "\n####### Definition of compiler binary prefix corresponding to selected target\n" >&3
         printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
@@ -1391,7 +1392,13 @@ create_standard_makefile()
         define_insert_and_report CXXFLAGS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
         define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
         define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
-        define_insert_and_report LFLAGS '$($F LIBPATH)'
+        local RULE_LFLAGS=$(
+            case "$USE_CAN_DRIVER" in
+                msq_server|socket_server|socket_server_hal_simulator)
+                    printf -- '-pthread'
+                    ;;
+            esac;)' $($F LIBPATH)'
+        define_insert_and_report LFLAGS "$RULE_LFLAGS"
         define_insert_and_report SUBLIBS '-lrt'
         define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
         define_insert_and_report LINKER_PARAMETERS_1 '$($F LFLAGS)'
@@ -1437,18 +1444,9 @@ create_standard_makefile()
                     grep -F "$BASE_NAME" FileListInternal.txt >>FileListInterface.txt
             done
         done <FileListInterface.txt
-        echo_n "INSTALL_FILES_LIBRARY = " >&3
-        FIRST_LOOP="YES"
-        for InterfaceFile in $(cat FileListInterface.txt) ; do
-            if [ $FIRST_LOOP != "YES" ] ; then
-                echo_e_n ' \\' >&3
-                echo_e_n "\n\t\t" >&3
-            else
-                FIRST_LOOP="NO"
-            fi
-            echo_e_n "$InterfaceFile" >&3
-        done
-        echo_e "\n" >&3
+        printf 'INSTALL_FILES_LIBRARY =' >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '.' "FileListInterface.txt" >&3
+        printf '\n\n' >&3
         
         rm -f FileListInterface.txt FileListInternal.txt
 
@@ -1469,12 +1467,6 @@ create_standard_makefile()
     #       mv $MakefileNameLong.1 $MakefileNameLong
     #       ;;
     #   esac
-
-    # add can_server creation to target "all"
-    if [ $USE_CAN_DRIVER = "msq_server" -o $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-        cp $MakefileNameLong $MakefileNameLong.1
-        sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
-    fi
 
     rm -f $MakefileNameLong.1
 
