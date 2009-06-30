@@ -103,6 +103,22 @@ join()
     printf '%s' "$*"
 }
 
+join_comma() { join ',' "$@"; }
+
+# map CONTINUATION FUNCTION ARG ...
+# apply FUNCTION to each ARG and continue with CONTINUATION
+map()
+{
+    local CONTINUE="$1"
+    local F="$2"
+    shift 2
+    for A in "$@"; do
+        shift
+        set -- "$@" "$("$F" "$A")"
+    done
+    "$CONTINUE" "$@"
+}
+
 # this function is used to verify and
 # correct the several project configuration
 # variables
@@ -1266,7 +1282,10 @@ expand_definition()
     eval "cat <<END_OF_STRING
 $RULE
 END_OF_STRING
-"
+" || {
+        printf 'ERROR when evaluating rule (%s)\n' "$RULE" >&2
+        exit 1
+    }
 }
 
 expand_insert()
@@ -1285,9 +1304,15 @@ define_insert_and_report()
     local NAME="$1"
     RULE="$2"
     local F=expand_insert # first expand for insertion
-    eval "INSERT_${NAME}=\"\$(expand_definition)\""
+    eval "INSERT_${NAME}=\"\$(expand_definition)\"" || {
+        printf 'ERROR when trying to set variable %s\n' "INSERT_${NAME}" >&2
+        exit 1
+    }
     F=expand_report # then expand for report
-    eval "REPORT_${NAME}=\"\$(expand_definition)\""
+    eval "REPORT_${NAME}=\"\$(expand_definition)\"" || {
+        printf 'ERROR when trying to set variable %s\n' "REPORT_${NAME}" >&2
+        exit 1
+    }
 }
 
 create_standard_makefile()
@@ -1908,7 +1933,7 @@ create_EdePrj()
         esac
     fi
 
-    if [ "M$USE_EMBED_LIBS" = "M" ] ; then
+    if [ -z "$USE_EMBED_LIBS" ]; then
        # no setting in the config file -> derive based on target
         case "$USE_TARGET_SYSTEM" in
             c2c) USE_EMBED_LIBS="c2c10l.lib" ;;
@@ -1919,7 +1944,7 @@ create_EdePrj()
             pm167) USE_EMBED_LIBS="mios1s.lib" ;;
         esac
     fi
-    if [ "M$USE_EMBED_BIOS_SRC" = "M" ] ; then
+    if [ -z "$USE_EMBED_BIOS_SRC" ]; then
         # no setting in the config file -> derive based on target
         case "$USE_TARGET_SYSTEM" in
             c2c) USE_EMBED_BIOS_SRC="c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h" ;;
@@ -1930,7 +1955,7 @@ create_EdePrj()
             pm167) USE_EMBED_BIOS_SRC="mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h" ;;
         esac
     fi
-    if [ "M$USE_EMBED_ILO" = "M" ] ; then
+    if [ -z "$USE_EMBED_ILO" ]; then
         # no setting in the config file -> derive based on target
         case "$USE_TARGET_SYSTEM" in
             c2c) USE_EMBED_ILO="c2c10osy.ilo" ;;
@@ -1942,58 +1967,64 @@ create_EdePrj()
         esac
     fi
 
+    path_for_ede()
+    {
+        echo_ "$1/$2" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g'
+    }
 
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
-        if [ "M$USE_APP_PATH" = "M" ] ; then
-            USE_APP_PATH=$(echo_ "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
-        else
-            append USE_APP_PATH ""$(echo_ ";$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
-        fi
-    done
+    isoaglib_path_for_ede()
+    {
+        path_for_ede "$ISO_AG_LIB_INSIDE" "$1"
+    }
+
+    embedlib_path_for_ede()
+    {
+        path_for_ede "$USE_EMBED_LIB_DIRECTORY" "$1"
+    }
+
+    USE_APP_PATH="$(map join_comma isoaglib_path_for_ede $REL_APP_PATH)"
     echo_ "USE_APP_PATH: $USE_APP_PATH"
 
-    INCLUDE_APP_PATH_TASKING="$ISO_AG_LIB_INSIDE/$USE_EMBED_HEADER_DIRECTORY"
-    for SingleInclPath in $PRJ_INCLUDE_PATH ; do
-        append INCLUDE_APP_PATH_TASKING ";$SingleInclPath"
-    done
+    INCLUDE_APP_PATH_TASKING="$(map join_comma isoaglib_path_for_ede $USE_EMBED_HEADER_DIRECTORY)"
+    USE_EMBED_HEADER_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_HEADER_DIRECTORY")"
+    USE_EMBED_LIB_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_LIB_DIRECTORY")"
+    USE_EMBED_ILO="$(embedlib_path_for_ede "$USE_EMBED_ILO")"
+    USE_DEFINES="$(join_comma __TSW_CPP_756__ "$USE_SYSTEM_DEFINE" "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME" $PRJ_DEFINES)"
 
-    USE_EMBED_HEADER_DIRECTORY=$(echo_ "$ISO_AG_LIB_INSIDE/$USE_EMBED_HEADER_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
-    USE_EMBED_LIB_DIRECTORY=$(echo_ "$ISO_AG_LIB_INSIDE/$USE_EMBED_LIB_DIRECTORY" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
+    libline_for_ede()
+    {
+        printf -- " -Wo %s" "$@"
+    }
 
-
-    USE_EMBED_ILO=$(echo_ "$USE_EMBED_LIB_DIRECTORY/$USE_EMBED_ILO" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
-
-    USE_DEFINES="__TSW_CPP_756__,$USE_SYSTEM_DEFINE,PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"
-
-    for SinglePrjDefine in $PRJ_DEFINES ; do
-        append USE_DEFINES ""','"$SinglePrjDefine"
-    done
-
-
-    USE_TARGET_LIB_LINE=""
-    for LIBRARY in $USE_EMBED_LIBS ; do
-        append USE_TARGET_LIB_LINE " -Wo $USE_EMBED_LIB_DIRECTORY/$LIBRARY"
-    done
-    # echo_ "Library line: $USE_TARGET_LIB_LINE"
-    USE_TARGET_LIB_LINE=$(echo_ "$USE_TARGET_LIB_LINE" | sed -e 's/\/[0-9a-zA-Z_+\-]+\/\.\.//g' -e 's|\\[0-9a-zA-Z_+\-]+\\\.\.||g')
+    USE_TARGET_LIB_LINE="$(map libline_for_ede embedlib_path_for_ede $USE_EMBED_LIBS)"
 
     # avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
-    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path1)
-    USE_EMBED_LIB_DIRECTORY=$(echo_ "$USE_EMBED_LIB_DIRECTORY" | mangle_path1)
-    USE_EMBED_HEADER_DIRECTORY=$(echo_ "$USE_EMBED_HEADER_DIRECTORY" | mangle_path1)
-    USE_TARGET_LIB_LINE=$(echo_ "$USE_TARGET_LIB_LINE" | mangle_path1)
-    USE_EMBED_ILO=$(echo_ "$USE_EMBED_ILO" | mangle_path1)
-    USE_APP_PATH=$(echo_ "$USE_APP_PATH" | mangle_path1)
-    DEV_PRJ_DIR_WIN=$(echo_ "$DEV_PRJ_DIR" | mangle_path1)
-    USE_DEFINES=$(echo_ "$USE_DEFINES" | mangle_path1)
-    USE_EMBED_COMPILER_DIR=$(echo_ "$USE_EMBED_COMPILER_DIR" | mangle_path1)
-
+    ISO_AG_LIB_PATH_WIN=$(mangle_path1 "$ISO_AG_LIB_INSIDE")
+    USE_EMBED_LIB_DIRECTORY=$(mangle_path1 "$USE_EMBED_LIB_DIRECTORY")
+    USE_EMBED_HEADER_DIRECTORY=$(mangle_path1 "$USE_EMBED_HEADER_DIRECTORY")
+    USE_TARGET_LIB_LINE=$(mangle_path1 "$USE_TARGET_LIB_LINE")
+    USE_EMBED_ILO=$(mangle_path1 "$USE_EMBED_ILO")
+    USE_APP_PATH=$(mangle_path1 "$USE_APP_PATH")
+    DEV_PRJ_DIR_WIN=$(mangle_path1 "$DEV_PRJ_DIR")
+    USE_DEFINES=$(mangle_path1 "$USE_DEFINES")
+    USE_EMBED_COMPILER_DIR=$(mangle_path1 "$USE_EMBED_COMPILER_DIR")
+ 
     # remove some file lists, which are not used for Dev-C++
     rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
+    local INSERT_PROJECT="$PROJECT"
+    local INSERT_TARGET_LIB_DIRECTORY="$USE_EMBED_LIB_DIRECTORY"
+    local INSERT_ISO_AG_LIB_PATH="$ISO_AG_LIB_PATH_WIN"
+    local INSERT_TARGET_HEADER_DIRECTORY="$USE_EMBED_HEADER_DIRECTORY"
+    local INSERT_TARGET_LIB="$USE_TARGET_LIB_LINE"
+    local INSERT_TARGET_ILO="$USE_EMBED_ILO"
+    local INSERT_APP_PATH="$USE_APP_PATH"
+    local INSERT_PRJ_PATH="$DEV_PRJ_DIR_WIN"
+    local INSERT_DEFINES="$USE_DEFINES"
+    local INSERT_EMBED_COMPILER_DIR="$USE_EMBED_COMPILER_DIR"
     {
         # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
-        cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
+        expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
 
         sed -e "s|\\\\\\\\|${PATH_SEPARATOR1}|g" -e "s|/|${PATH_SEPARATOR1}|g" $EdePrjFilelist > $EdePrjFilelist.1
 
@@ -2007,17 +2038,9 @@ create_EdePrj()
         done
 
 
-        cat $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >&3
+        expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >&3
     } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     cd $DEV_PRJ_DIR
-    sed -e "s#INSERT_PROJECT#$PROJECT#g" -e "s#INSERT_TARGET_LIB_DIRECTORY#$USE_EMBED_LIB_DIRECTORY#g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-    sed -e "s#INSERT_ISO_AG_LIB_PATH#$ISO_AG_LIB_PATH_WIN#g" -e "s#INSERT_TARGET_HEADER_DIRECTORY#$USE_EMBED_HEADER_DIRECTORY#g" $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
-
-    sed -e "s#INSERT_TARGET_LIB#$USE_TARGET_LIB_LINE#g" -e "s#INSERT_TARGET_ILO#$USE_EMBED_ILO#g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-
-    sed -e "s#INSERT_APP_PATH#$USE_APP_PATH#g" -e "s#INSERT_PRJ_PATH#$DEV_PRJ_DIR_WIN#g" -e "s#INSERT_DEFINES#$USE_DEFINES#g" -e "s#INSERT_EMBED_COMPILER_DIR#$USE_EMBED_COMPILER_DIR#g" $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
-
-    rm -f $PROJECT_FILE_NAME.1
 
     while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME) -gt 0 ] ; do
         sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1

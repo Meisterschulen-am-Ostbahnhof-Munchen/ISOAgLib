@@ -1,14 +1,14 @@
 
 
 [Directories]
-Executables=INSERT_EMBED_COMPILER_DIR\bin
-Includes=C:\C166\include.cpp;INSERT_EMBED_COMPILER_DIR\include.cpp;INSERT_APP_PATH;INSERT_ISO_AG_LIB_PATH/library;INSERT_ISO_AG_LIB_PATH/library/xgpl_src;INSERT_TARGET_HEADER_DIRECTORY
-Libraries=C:\C166\lib;INSERT_EMBED_COMPILER_DIR\lib;INSERT_TARGET_LIB_DIRECTORY
+Executables=${INSERT_EMBED_COMPILER_DIR}\\bin
+Includes=C:\\C166\\include.cpp;${INSERT_EMBED_COMPILER_DIR}\\include.cpp;${INSERT_APP_PATH};${INSERT_ISO_AG_LIB_PATH}/library;${INSERT_ISO_AG_LIB_PATH}/library/xgpl_src;${INSERT_TARGET_HEADER_DIRECTORY}
+Libraries=C:\\C166\\lib;${INSERT_EMBED_COMPILER_DIR}\\lib;${INSERT_TARGET_LIB_DIRECTORY}
 
 [Ede]
-Toolchain=INSERT_EMBED_COMPILER_DIR\etc\c166.dol
+Toolchain=${INSERT_EMBED_COMPILER_DIR}\\etc\\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=INSERT_PRJ_PATH
+ProjectDir=${INSERT_PRJ_PATH}
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
@@ -41,7 +41,7 @@ CCompGlobal=0
 CpuType=CpuC167CS
 CompAlternativeTokens=1
 CompRtti=0
-CppDefine=INSERT_DEFINES
+CppDefine=${INSERT_DEFINES}
 CMemModel=CModelLarge
 CEstimateUsk=0
 COutKeepSrc=0
@@ -49,7 +49,7 @@ CFragment=1
 CDispAllWarn=0
 CSupprSomeWarn=1
 CSupprWarn=91,68,135,144
-CDefine=INSERT_DEFINES
+CDefine=${INSERT_DEFINES}
 COptim=CAdvOptim
 COptimAliasTypeChk=0
 AsmGenDebug=1
@@ -57,11 +57,11 @@ AsmGenAsmlineinfo=1
 OutIHex=1
 OutIHexType=OutIHexType32
 OutIHexAdditionalOpt="-r -O -P"
-LocMyIlo=INSERT_TARGET_ILO
+LocMyIlo=${INSERT_TARGET_ILO}
 LocSmartlink=1
 LnkLocTrapFPLib=0
 LnkLocSupprWarn=118
-LnkLocAddOptions=INSERT_TARGET_LIB
+LnkLocAddOptions=${INSERT_TARGET_LIB}
 OptionList=CppCompGlobal,CCompGlobal,CpuType,CompAlternativeTokens,CompRtti,CppDefine,CMemModel,CEstimateUsk,COutKeepSrc,CFragment,CDispAllWarn,CSupprSomeWarn,CSupprWarn,CDefine,COptim,COptimAliasTypeChk,AsmGenDebug,AsmGenAsmlineinfo,OutIHex,OutIHexType,OutIHexAdditionalOpt,LocMyIlo,LocSmartlink,LnkLocTrapFPLib,LnkLocSupprWarn,LnkLocAddOptions
 
 

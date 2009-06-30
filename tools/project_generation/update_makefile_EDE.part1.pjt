@@ -1,6 +1,6 @@
 ;Codewright Project File (do not remove or modify this line)
 [State]
-SysSetCwd='INSERT_ISO_AG_LIB_PATH'
+SysSetCwd='${INSERT_ISO_AG_LIB_PATH}'
 SrchSetFlags=0x0418680a
 SrchSetAgainFlags=0x00006002,0
 SrchSetAgainFlags=0x0200600a,1
@@ -29,37 +29,37 @@ VCSProjectLocalPath=''
 ScrapSetCount=1
 ClipboardSetCount=1
 ClipboardEnableSepStr=1
-ClipboardSetSepStr='\r\n',0
+ClipboardSetSepStr='\\r\\n',0
 ClipboardEnableTermStr=1
-ClipboardSetTermStr='\r\n',0
+ClipboardSetTermStr='\\r\\n',0
 
 [Tools]
 ToolDeleteList
-ToolAddCmd='$_custom_tool_$_1','API Database Editor',1342177312,'cwtedit.exe'
+ToolAddCmd='\$_custom_tool_\$_1','API Database Editor',1342177312,'cwtedit.exe'
 
 [Compiler]
-TagSetCmd='"${HOME}${WTAGS}" -oc -d -t"${TAGFILE}.tag" -p"${TAGFILE}.ptg"',0x8000060
-BrowseSetFile='INSERT_PROJECT.ptg'
-TagSetFile='INSERT_PROJECT.tag'
-CompilerAddCmdEx='TASKING src','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+TagSetCmd='"\${HOME}\${WTAGS}" -oc -d -t"\${TAGFILE}.tag" -p"\${TAGFILE}.ptg"',0x8000060
+BrowseSetFile='${INSERT_PROJECT}.ptg'
+TagSetFile='${INSERT_PROJECT}.tag'
+CompilerAddCmdEx='TASKING src','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING src',
-CompilerAddCmdEx='TASKING fle','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING fle','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING fle',
-CompilerAddCmdEx='TASKING cc','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cc','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cc',
-CompilerAddCmdEx='TASKING cxx','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cxx','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cxx',
-CompilerAddCmdEx='TASKING asm','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING asm','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING asm',
-CompilerAddCmdEx='TASKING cmp','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cmp','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cmp',
-CompilerAddCmdEx='$_cw_proj_hash_$','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'!ExecuteBuild(\'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm"\')',1073742496,'${FTEE} nmake',0,'INSERT_EMBED_COMPILER_DIR\bin\xfw166.exe INSERT_PROJECT.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
-CompilerAddResponse='$_cw_proj_hash_$',
-CompilerAddCmdEx='TASKING ic','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='\$_cw_proj_hash_\$','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'!ExecuteBuild(\\'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -m "%x%y.opm"\\')',1073742496,'\${FTEE} nmake',0,'!ExecuteBuild(\\'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm"\\')',1073742496,'\${FTEE} nmake',0,'${INSERT_EMBED_COMPILER_DIR}\\bin\\xfw166.exe ${INSERT_PROJECT}.abs -f "%x_%y.xvo"',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddResponse='\$_cw_proj_hash_\$',
+CompilerAddCmdEx='TASKING ic','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING ic',
-CompilerAddCmdEx='TASKING cpp','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING cpp','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING cpp',
-CompilerAddCmdEx='TASKING c','"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"INSERT_EMBED_COMPILER_DIR\bin\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
+CompilerAddCmdEx='TASKING c','"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'"${INSERT_EMBED_COMPILER_DIR}\\bin\\wmk.exe" -a -m "%x%y.opm" "%r.obj"',1073742432,'',1073742496,'',0,'',1073742496,'',0,'',1073741856,'',0,'_TaskingErrorInfo1','','','%x%y.err','%v%p'
 CompilerAddResponse='TASKING c',
 CompilerNewExt=.htm
 CompilerAssign='TASKING src','.src'
@@ -105,7 +105,7 @@ VCSSetCmd=VCS_CHECKOUT_ID,'get -y "%b%e"',0x8000040
 VCSSetCmd=VCS_CHECKOUTLOCK_ID,'get -y -l "%b%e"',0x8000040
 VCSSetCmd=VCS_CHECKLOCK_ID,'vcs -y -l "%b%e"',0x8000040
 VCSSetCmd=VCS_CHECKUNLOCK_ID,'vcs -y -u "%b%e"',0x8000040
-VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"${VCSLABEL}" "%b%e"',0x8000040
+VCSSetCmd=VCS_CHECKLABEL_ID,'vcs -y -v"\${VCSLABEL}" "%b%e"',0x8000040
 VCSSetCmd=VCS_CHECKLOG_ID,'vlog "%b%e"',0x8000040
 VCSSetCmd=VCS_CHECKPROP_ID,'vlog -b "%b%e"',0x8000040
 VCSSetCmd=VCS_CHECKDIFF_ID,'vdiff -r "%b%e"',0x8000040
@@ -114,9 +114,9 @@ VCSSetCmd=VCS_ADD_ID,'vcs -i -t@"%Q" "%b%e"',0x8000040
 VCSSetCmd=VCS_REMOVE_ID,'del /f "%b%{??v|___}e"',0x8000040
 
 [Project]
-ConfigSetLinkDBFilename='INSERT_EMBED_COMPILER_DIR\bin\cwright.ldb'
-ConfigSetMarkDBFilename='INSERT_EMBED_COMPILER_DIR\bin\cwright.mrk'
-ConfigSetSymbolDBFilename='INSERT_PROJECT.sbl'
+ConfigSetLinkDBFilename='${INSERT_EMBED_COMPILER_DIR}\\bin\\cwright.ldb'
+ConfigSetMarkDBFilename='${INSERT_EMBED_COMPILER_DIR}\\bin\\cwright.mrk'
+ConfigSetSymbolDBFilename='${INSERT_PROJECT}.sbl'
 EditSetPath=''
 
 [Files]
