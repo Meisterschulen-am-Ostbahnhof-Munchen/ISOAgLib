@@ -5291,7 +5291,7 @@ void vt2iso_c::parse()
   generateIncludeDefines();
 
   clean_exit ((m_errorOccurred) ? "vt2iso: XML-Parsing error occurred. Terminating.\n"
-                                : "vt2iso: All conversion done successfully.\n");
+                                : mb_silentMode ? 0 : "vt2iso: All conversion done successfully.\n");
 }
 
 
