@@ -223,7 +223,6 @@ set_default_values()
     PRJ_ISO_FILESERVER_CLIENT=0
     PRJ_ISO_TERMINAL=0
     PRJ_ISO_FILESERVER_CLIENT=0
-    PRJ_ISO_TERMINAL_SERVER=0
     PRJ_ISO_TERMINAL_LAYOUT_MANAGER=0
     PRJ_RS232_OVER_CAN=0
     PRJ_MULTIPACKET_STREAM_CHUNK=1
@@ -459,9 +458,6 @@ check_set_correct_variables()
         PRJ_MULTIPACKET=1
     fi
 
-    if [ "$PRJ_ISO_TERMINAL_SERVER" -gt 0 ]; then
-        PRJ_MULTIPACKET=1
-    fi
     if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
         PRJ_MULTIPACKET=1
     fi
@@ -1218,10 +1214,6 @@ create_autogen_project_config()
                     echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamLinear   $ENDLINE#endif" >&3
                     echo_e "#ifndef DEF_Stream_c_IMPL $ENDLINE\t#define DEF_Stream_c_IMPL StreamLinear_c $ENDLINE#endif" >&3
                 fi
-            fi
-            if [ "$PRJ_ISO_TERMINAL_SERVER" -gt 0 ] ; then
-                echo_e "#ifndef USE_ISO_TERMINAL_SERVER $ENDLINE\t#define USE_ISO_TERMINAL_SERVER $ENDLINE#endif" >&3
-                echo_ "with ISO_TERMINAL_SERVER!"
             fi
         fi
     
