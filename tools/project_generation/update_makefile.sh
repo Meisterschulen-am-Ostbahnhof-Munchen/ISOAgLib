@@ -93,6 +93,12 @@ echo_n() { printf '%s' "$*"; }
 # Compatible but slow variant as fallback:
 eval 'echo() { '$(which echo)' "$@"; }'
 
+# Escapes % and \ to get a literal printf-format:
+literal_format()
+{
+    printf '%s' "$1" | sed -e 's|[%\\]|&&|g'
+}
+
 # Joins to one string.
 # E.g. the following command prints "a,bc,def":
 #   join , a bc def
@@ -104,6 +110,7 @@ join()
 }
 
 join_comma() { join ',' "$@"; }
+join_semicolon() { join ';' "$@"; }
 
 # map CONTINUATION FUNCTION ARG ...
 # apply FUNCTION to each ARG and continue with CONTINUATION
@@ -801,15 +808,11 @@ create_filelist( )
     local SCRIPT_DIR="$2"
 
     #USE_TARGET_SYSTEM="pc"
-    local HAL_PATH
-    case "$USE_TARGET_SYSTEM" in
-        pc*)
-            HAL_PATH="pc"
-            ;;
-        *)
-            HAL_PATH=$USE_TARGET_SYSTEM
-            ;;
-    esac
+    local HAL_PATH=$(
+        case "$USE_TARGET_SYSTEM" in
+            pc*) printf "pc" ;;
+            *) printf '%s' "$USE_TARGET_SYSTEM" ;;
+        esac;)
 
     {
         local COMM_PROC_FEATURES="$(comm_proc_features 3>&1 1>&9)"
@@ -1312,7 +1315,7 @@ create_standard_makefile()
     MakefileName="Makefile"
     MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
 
-    : ${MAKEFILE_SKELETON_FILE:="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt"}
+    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt}
     {
         # create Makefile Header
         echo_ "#############################################################################" >&3
@@ -1326,7 +1329,7 @@ create_standard_makefile()
         echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
 
         local RELATIVE_INC_PATHS="$(echo_ $REL_APP_PATH $PRJ_INCLUDE_PATH)"
-        local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$ISO_AG_LIB_INSIDE/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
+        local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
 
         local REPORT_APP_INC="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
         printf "APP_INC = %s\n" "$REPORT_APP_INC" >&3
@@ -1388,8 +1391,8 @@ create_standard_makefile()
             shift 3
             local FORMAT="$FIRST_FORMAT"
             cat "$@" | grep -E "$SOURCE_PATTERN" | 
-            while read CcFile; do
-                printf "$FORMAT" "$CcFile"
+            while read -r CC_FILE; do
+                printf "$FORMAT" "$CC_FILE"
                 FORMAT="$NEXT_FORMAT"
             done
         }
@@ -1449,13 +1452,13 @@ create_standard_makefile()
         grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
 
         local INTERFACE_FILE
-        while read INTERFACE_FILE; do
+        while read -r INTERFACE_FILE; do
             local BASE_NAME
             sed -e '/#include/!d' \
                 -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g' \
                 -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
                 -e 's|\.\./||g' < "$INTERFACE_FILE" |
-            while read BASE_NAME; do
+            while read -r BASE_NAME; do
                 expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
                     ! grep -q -F "/$BASE_NAME" FileListInterface.txt &&
                     grep -F "$BASE_NAME" FileListInternal.txt >>FileListInterface.txt
@@ -1925,39 +1928,37 @@ create_EdePrj()
         esac
     fi
 
-    if [ -z "$USE_EMBED_LIBS" ]; then
-       # no setting in the config file -> derive based on target
-        case "$USE_TARGET_SYSTEM" in
-            c2c) USE_EMBED_LIBS="c2c10l.lib" ;;
-            Dj1) USE_EMBED_LIBS="djbiosmvt.lib" ;;
-            esx) USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib" ;;
-            esxu) USE_EMBED_LIBS="Mos10l.lib" ;;
-            imi) USE_EMBED_LIBS="adis10l.lib" ;;
-            pm167) USE_EMBED_LIBS="mios1s.lib" ;;
-        esac
-    fi
-    if [ -z "$USE_EMBED_BIOS_SRC" ]; then
-        # no setting in the config file -> derive based on target
-        case "$USE_TARGET_SYSTEM" in
-            c2c) USE_EMBED_BIOS_SRC="c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h" ;;
-            Dj1) USE_EMBED_BIOS_SRC="DjBiosMVT.h" ;;
-            esx) USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ" ;;
-            esxu) USE_EMBED_BIOS_SRC="MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H" ;;
-            imi) USE_EMBED_BIOS_SRC="adis10go_cs.asm adis10.h Xos20eec.h XOS20EEC.OBJ" ;;
-            pm167) USE_EMBED_BIOS_SRC="mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h" ;;
-        esac
-    fi
-    if [ -z "$USE_EMBED_ILO" ]; then
-        # no setting in the config file -> derive based on target
-        case "$USE_TARGET_SYSTEM" in
-            c2c) USE_EMBED_ILO="c2c10osy.ilo" ;;
-            Dj1) USE_EMBED_ILO="MiniVT.ilo" ;;
-            esx) USE_EMBED_ILO="Xos20lcs.ilo" ;;
-            esxu) USE_EMBED_ILO="MOS10L.ILO" ;;
-            imi) USE_EMBED_ILO="adis10s_cs.ilo" ;;
-            pm167) USE_EMBED_ILO="mx1_0s.ilo" ;;
-        esac
-    fi
+    # if no setting in the config file -> derive based on target
+    : ${USE_EMBED_LIBS:=$(
+            case "$USE_TARGET_SYSTEM" in
+                c2c) printf 'c2c10l.lib' ;;
+                Dj1) printf 'djbiosmvt.lib' ;;
+                esx) printf 'C756/Xos20l.lib Module/Xma20l.lib' ;;
+                esxu) printf 'Mos10l.lib' ;;
+                imi) printf 'adis10l.lib' ;;
+                pm167) printf 'mios1s.lib' ;;
+            esac;)}
+    # if no setting in the config file -> derive based on target
+    : ${USE_EMBED_BIOS_SRC:=$(
+            case "$USE_TARGET_SYSTEM" in
+                c2c) printf 'c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h' ;;
+                Dj1) printf 'DjBiosMVT.h' ;;
+                esx) printf 'Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ' ;;
+                esxu) printf 'MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H' ;;
+                imi) printf 'adis10go_cs.asm adis10.h Xos20eec.h XOS20EEC.OBJ' ;;
+                pm167) printf 'mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h' ;;
+            esac;)}
+
+    # if no setting in the config file -> derive based on target
+    : ${USE_EMBED_ILO:=$(
+            case "$USE_TARGET_SYSTEM" in
+                c2c) printf 'c2c10osy.ilo' ;;
+                Dj1) printf 'MiniVT.ilo' ;;
+                esx) printf 'Xos20lcs.ilo' ;;
+                esxu) printf 'MOS10L.ILO' ;;
+                imi) printf 'adis10s_cs.ilo' ;;
+                pm167) printf 'mx1_0s.ilo' ;;
+            esac;)}
 
     path_for_ede()
     {
@@ -2014,31 +2015,47 @@ create_EdePrj()
     local INSERT_PRJ_PATH="$DEV_PRJ_DIR_WIN"
     local INSERT_DEFINES="$USE_DEFINES"
     local INSERT_EMBED_COMPILER_DIR="$USE_EMBED_COMPILER_DIR"
+    # now set the target CPU
+    local INSERT_TARGET_CPU=$(
+        case "$USE_TARGET_SYSTEM" in
+            Dj1) printf 'CpuC167CR' ;;
+            esxu) printf 'CpuF269' ;;
+            *) printf 'CpuC167CS' ;;
+        esac;)
+
+    with_ede_includes()
+    {
+        "$1" 'C:\C166\include.cpp' "${INSERT_EMBED_COMPILER_DIR}\\include.cpp" "${INSERT_APP_PATH}" "${INSERT_ISO_AG_LIB_PATH}/library" "${INSERT_ISO_AG_LIB_PATH}/library/xgpl_src" "${INSERT_TARGET_HEADER_DIRECTORY}"
+    }
+
+    with_ede_libraries()
+    {
+        "$1" 'C:\C166\lib' "${INSERT_EMBED_COMPILER_DIR}\\lib" "${INSERT_TARGET_LIB_DIRECTORY}"
+    }
+
+    local INSERT_INCLUDES="$(with_ede_includes join_semicolon)"
+    local INSERT_LIBRARIES="$(with_ede_libraries join_semicolon)"
     {
         # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
         expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
 
-        sed -e "s|\\\\\\\\|${PATH_SEPARATOR1}|g" -e "s|/|${PATH_SEPARATOR1}|g" $EdePrjFilelist > $EdePrjFilelist.1
-
-        mv $EdePrjFilelist.1 $EdePrjFilelist
-        cat $EdePrjFilelist >&3
+        mv $EdePrjFilelist $EdePrjFilelist.1
+        sed -e "s|\\\\\\\\|${PATH_SEPARATOR1}|g" -e "s|/|${PATH_SEPARATOR1}|g" $EdePrjFilelist.1 |
+        tee $EdePrjFilelist >&3
         rm -f $EdePrjFilelist.1
 
         # insert specific BIOS/OS sources
-        for BiosSrc in $USE_EMBED_BIOS_SRC ; do
-            echo_ "$USE_EMBED_LIB_DIRECTORY/$BiosSrc" >&3
-        done
-
-
+        local FORMAT="$(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s\n"
+        printf -- "$FORMAT" $USE_EMBED_BIOS_SRC >&3
         expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >&3
     } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     cd $DEV_PRJ_DIR
 
-    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME) -gt 0 ] ; do
+    while grep -q -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME; do
         sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
         mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
     done
-    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $EdePrjFilelist) -gt 0 ] ; do
+    while grep -q -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $EdePrjFilelist; do
         sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $EdePrjFilelist > $EdePrjFilelist.1
         mv $EdePrjFilelist.1 $EdePrjFilelist
     done
@@ -2047,23 +2064,34 @@ create_EdePrj()
     demangle_path1 <$EdePrjFilelist > $EdePrjFilelist.1
     mv $EdePrjFilelist.1 $EdePrjFilelist
 
-    # now set the target CPU if this varies from default CpuC167CS
-    ## also adopt the BIOS file, if $USE_EMBED_LIB_DIRECTORY and
-    ## and $USE_EMBED_HEADER_DIRECTORY reflect default value which doesn't match to defined target
-    case "$USE_TARGET_SYSTEM" in
-        Dj1)
-            sed -e 's#CpuC167CS#CpuC167CR#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
-            mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
-            ;;
-        esxu)
-            sed -e 's#CpuC167CS#CpuF269#g' $PROJECT_FILE_NAME.1 > $PROJECT_FILE_NAME
-            mv $PROJECT_FILE_NAME $PROJECT_FILE_NAME.1
-            ;;
-        esx)
-            # do nothing here
-            ;;
-    esac
-
+    printf '(Tasking_specific_settings\n' >&5
+    printf '  (Miscellaneous_parameters\n' >&5
+    printf '    (Target_cpu %s)\n' "$INSERT_TARGET_CPU" >&5
+    printf '    (Compiler_directory %s)\n' "$(demangle_path1 "$INSERT_EMBED_COMPILER_DIR")" >&5
+    printf '    (Project_path %s)\n' "$(demangle_path1 "$INSERT_PRJ_PATH")" >&5
+    printf '    (Target_ILO %s))\n' "$(demangle_path1 "$INSERT_TARGET_ILO")" >&5
+    printf '  (Compiler_parameters\n' >&5
+    printf '    (Includes'
+    report_ede_fileparts()
+    {
+        for P in "$@"; do
+            printf '\n      %s' "$(demangle_path1 "$P")"
+        done
+    }
+    with_ede_includes report_ede_fileparts >&5
+    printf ')\n    (Defines %s))\n' "$INSERT_DEFINES" >&5
+    printf '  (Linker_parameters\n' >&5
+    printf '    (Libraries ' >&5
+    with_ede_libraries report_ede_fileparts >&5
+    printf ')\n    (Target_libraries ' >&5
+    map report_ede_fileparts embedlib_path_for_ede $USE_EMBED_LIBS >&5
+    printf '))\n  (Sources' >&5
+    while read -r FILE; do
+        printf '\n    %s' "$FILE"
+    done <$EdePrjFilelist >&5
+    FORMAT="\n    $(literal_format "$(demangle_path1 "$USE_EMBED_LIB_DIRECTORY")")/%s"
+    printf -- "$FORMAT" $USE_EMBED_BIOS_SRC
+    printf '))\n' >&5
 
     #echo_ "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
     unix_lines_to_windows_lines "$PROJECT_FILE_NAME.1" "$PROJECT_FILE_NAME"
