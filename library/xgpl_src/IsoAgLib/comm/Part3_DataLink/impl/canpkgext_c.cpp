@@ -293,7 +293,18 @@ bool CanPkgExt_c::resolveAddress( AddressResolveResults_c& arc_addressResolveRes
 MessageState_t CanPkgExt_c::resolveReceivingInformation()
 {
   #ifdef DEBUG_CAN
-  INTERNAL_DEBUG_DEVICE << "*-*-*-* PROCESS MESSAGE *-*-*-*" << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE
+      << "*-*-*-* PROCESS MESSAGE *-*-*-*--> "
+      << std::hex << ident() << std::dec << uint16_t(getLen()) << " " << std::hex
+      << " " << uint16_t(getUint8Data(0))
+      << " " << uint16_t(getUint8Data(1))
+      << " " << uint16_t(getUint8Data(2))
+      << " " << uint16_t(getUint8Data(3))
+      << " " << uint16_t(getUint8Data(4))
+      << " " << uint16_t(getUint8Data(5))
+      << " " << uint16_t(getUint8Data(6))
+      << " " << uint16_t(getUint8Data(7))
+      << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // resolve source address
@@ -337,7 +348,7 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
 {
   //we are shure that we have PDU1 format and therefore we have a destination address
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(*mpc_addrResolveResDA->mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Scope local(DA) with ps-field = " << int(mpc_addrResolveResDA->getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // now try to resolve the address
@@ -349,7 +360,7 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
     { // everything is fine
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "We reached a VALID state. Either the target is known." << INTERNAL_DEBUG_DEVICE_ENDL;
-        INTERNAL_DEBUG_DEVICE << "address =  " << int( *mpc_addrResolveResDA->mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "address =  " << int(mpc_addrResolveResDA->getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return DaValid;
     }
@@ -358,7 +369,7 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
       // of Working-Set-Slaves which have to snoop messages to their Working-Set-Master
       #ifdef DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "We reached an ONLYNETWORKMGTM state. Destination is a remote node." << INTERNAL_DEBUG_DEVICE_ENDL;
-        INTERNAL_DEBUG_DEVICE << "address =  " << int( *mpc_addrResolveResDA->mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "address =  " << int(mpc_addrResolveResDA->getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return static_cast<MessageState_t>(DaInvalidRemote | AdrOnlyNetworkMgmt);
     }
@@ -380,7 +391,7 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
       return static_cast<MessageState_t>(DaInvalidAnonymous | AdrInvalid);
     } else {
       #ifdef DEBUG_CAN
-      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is " << int( *mpc_addrResolveResDA->mpui8_address ) << " which is NOT known." << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. Receiver is " << int(mpc_addrResolveResDA->getAddress()) << " which is NOT known." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return static_cast<MessageState_t>(DaInvalidUnknown | AdrInvalid);
     }
@@ -394,7 +405,7 @@ MessageState_t CanPkgExt_c::address2IdentLocalDa()
 MessageState_t CanPkgExt_c::address2IdentRemoteSa()
 {
   #ifdef DEBUG_CAN
-    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int( *mpc_addrResolveResSA->mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Scope remote(SA) with sa-field = " << int(mpc_addrResolveResSA->getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // now try to resolve the address
@@ -496,7 +507,7 @@ bool CanPkgExt_c::resolveMonitorItem( AddressResolveResults_c& arc_addressResolv
       INTERNAL_DEBUG_DEVICE << "ClaimedAddress state: " << arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::ClaimedAddress) << INTERNAL_DEBUG_DEVICE_ENDL;
       INTERNAL_DEBUG_DEVICE << "AddressClaim state:   " << arc_addressResolveResults.mpc_monitorItem->itemState(IState_c::AddressClaim) << INTERNAL_DEBUG_DEVICE_ENDL;
       INTERNAL_DEBUG_DEVICE << "isNetworkMgmt() =     " << isNetworkMgmt() << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "address =             " << int( *arc_addressResolveResults.mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "address =             " << int(arc_addressResolveResults.getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return true;
   }
@@ -546,7 +557,7 @@ bool CanPkgExt_c::resolveSendingInformation()
   }
   #ifdef DEBUG_CAN
     INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "SA = " << int( *mpc_addrResolveResSA->mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "SA = " << int(mpc_addrResolveResSA->getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // set the SA in the IDENT
   // - when the SA has been directly set by call to setIsoSa(), the requested SA is already
@@ -584,7 +595,7 @@ bool CanPkgExt_c::resolveSendingInformation()
     }
     #ifdef DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "Sending is possible. Item is known remote." << INTERNAL_DEBUG_DEVICE_ENDL;
-      INTERNAL_DEBUG_DEVICE << "DA = " << int( *mpc_addrResolveResDA->mpui8_address ) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "DA = " << int(mpc_addrResolveResDA->getAddress()) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
   // set the PS in the IDENT
