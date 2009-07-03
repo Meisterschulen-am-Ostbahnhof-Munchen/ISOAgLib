@@ -1219,9 +1219,12 @@ bool IsoMonitor_c::processMsg()
   {
     case ADDRESS_CLAIM_PGN: // adress claim
       b_processed = true;
-      if ( existIsoMemberISOName( data().isoName()) )
+      const IsoName_c cc_dataIsoName (data().isoName());
+      const uint8_t cui8_sa = data().isoSa();
+
+      if ( existIsoMemberISOName (cc_dataIsoName) )
       {
-        pc_itemSameISOName = &(isoMemberISOName(data().isoName()));
+        pc_itemSameISOName = &(isoMemberISOName (cc_dataIsoName));
         if (pc_itemSameISOName->itemState(IState_c::PreAddressClaim))
           // no need to check here for LostAddress, as it's only about the ISOName,
           // and that's correct in all other cases!
@@ -1231,9 +1234,9 @@ bool IsoMonitor_c::processMsg()
           pc_itemSameISOName = NULL;
         }
       }
-      if ( existIsoMemberNr(data().isoSa()) )
+      if ( existIsoMemberNr (cui8_sa) )
       {
-        pc_itemSameSa = &(isoMemberNr(data().isoSa()));
+        pc_itemSameSa = &(isoMemberNr (cui8_sa));
         if (pc_itemSameSa->itemState(IState_c::PreAddressClaim)
          || pc_itemSameSa->itemState(IState_c::AddressLost) )
         { // this item has no valid address, as it's not (anymore) active.
@@ -1250,19 +1253,28 @@ bool IsoMonitor_c::processMsg()
         /// Insert this new remote node (new isoname). Just check before if it steals a SA from someone
         if (NULL == pc_itemSameSa)
         { // New remote node took a fresh SA. The way it should be. Insert it to the list.
-          insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
+          insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
         }
         else
         { // New remote node stole a SA. Check if it stole from local or remote.
           if (pc_itemSameSa->itemState(IState_c::Local))
           { /// New remote node steals SA from Local node!
             // --> change address if it has lower PRIO
-            int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar(data().getDataUnionConst());
+            int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar (cc_dataIsoName.outputUnion());
             // "ci8_higherPrio" can't be 0 because we have "NULL == pc_itemSameISOName", so we can't have the identical IsoName
             if (ci8_higherPrio < 0)
             { // the LOCAL item has lower PRIO
-              pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
-              pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict, so we can skip the "AddressClaim"-phase!
+              if (pc_itemSameSa->itemState(IState_c::AddressClaim))
+              { // the LOCAL item was still in AddressClaim (250ms) phase
+                pc_itemSameSa->setNr (unifyIsoSa (pc_itemSameSa, true));
+                // No need to broadcast anything, we didn't yet even call AddToMonitorList...
+                pc_itemSameSa->sendAddressClaim (false); // false: Address-Claim due to SA-change on conflict **while 250ms-phase** , so we can skip the "AddressClaim"-phase!
+              }
+              else
+              { // the LOCAL item is already up and running, so simply change the SA, claim again and go on
+                pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
+                pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict **after 250ms-phase**, so we can skip the "AddressClaim"-phase!
+              }
 
               if (pc_itemSameSa->nr() == 254)
               { // Couldn't get a new address -> remove the item and let IdentItem go to OffUnable!
@@ -1271,13 +1283,13 @@ bool IsoMonitor_c::processMsg()
                   pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
                 }
               }
-              insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
+              insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
             }
             else
             { // let local IsoItem_c process the conflicting adr claim
               // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
               pc_itemSameSa->processMsg();
-              insertIsoMember (data().isoName(), 0xFE, IState_c::AddressLost, NULL, true);
+              insertIsoMember (cc_dataIsoName, 0xFE, IState_c::AddressLost, NULL, true);
               /// ATTENTION: We insert the IsoName WITHOUT a valid Address. (and even notify the registered clients about it!)
               /// But this may also happen anyway if you register your handler at a later time -
               /// then your handler will be called with "AddToMonitorList" for all yet known IsoItems -
@@ -1287,7 +1299,7 @@ bool IsoMonitor_c::processMsg()
           else
           { /// New remote node steals SA from Remote node!
             pc_itemSameSa->giveUpAddressAndBroadcast();
-            insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
+            insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
           }
         }
       }
@@ -1315,7 +1327,7 @@ bool IsoMonitor_c::processMsg()
               pc_itemSameISOName->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
             }
             // now create a new node for the remote SA claim
-            insertIsoMember (data().isoName(), data().isoSa(), IState_c::ClaimedAddress, NULL, true);
+            insertIsoMember (cc_dataIsoName, cui8_sa, IState_c::ClaimedAddress, NULL, true);
           }
         }
         else
@@ -1334,12 +1346,21 @@ bool IsoMonitor_c::processMsg()
             else if (pc_itemSameSa->itemState(IState_c::Local))
             { // (A5) Existing remote node steals SA from Local node!
               // --> change address if it has lower PRIO
-              int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar(data().getDataUnionConst());
+              int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar (cc_dataIsoName.outputUnion());
               // "ci8_higherPrio" can't be 0 because we have "NULL == pc_itemSameISOName", so we can't have the identical IsoName
               if (ci8_higherPrio < 0)
               { // the LOCAL item has lower PRIO
-                pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
-                pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict, so we can skip the "AddressClaim"-phase!
+                if (pc_itemSameSa->itemState(IState_c::AddressClaim))
+                { // the LOCAL item was still in AddressClaim (250ms) phase
+                  pc_itemSameSa->setNr (unifyIsoSa (pc_itemSameSa, true));
+                // No need to broadcast anything, we didn't yet even call AddToMonitorList...
+                  pc_itemSameSa->sendAddressClaim (false); // false: Address-Claim due to SA-change on conflict **while 250ms-phase** , so we can skip the "AddressClaim"-phase!
+                }
+                else
+                { // the LOCAL item is already up and running, so simply change the SA, claim again and go on
+                  pc_itemSameSa->changeAddressAndBroadcast (unifyIsoSa (pc_itemSameSa, true));
+                  pc_itemSameSa->sendAddressClaim (true); // true: Address-Claim due to SA-change on conflict **after 250ms-phase**, so we can skip the "AddressClaim"-phase!
+                }
 
                 if (pc_itemSameSa->nr() == 254)
                 { // Couldn't get a new address -> remove the item and let IdentItem go to OffUnable!
