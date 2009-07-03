@@ -352,11 +352,6 @@ bool IsoItem_c::timeEvent( void )
     if (i32_lastAdrRequestTime != -1)
     {
       int32_t i32_wait = 1250 + calc_randomWait();
-      if ( ( c_isoMonitor.isoMemberCnt( true ) < 1 ) && (i32_wait < 2500))
-      { // no claimed IsoItem_c nodes in the monitor list --> i.e. we received no adr claim
-        // --> when we are the only ECU on ISOBUS, it doesn't hurt to wait at least 2500 msec after last Req
-        i32_wait = 2500;
-      }
       if ((i32_time - i32_lastAdrRequestTime) > i32_wait)
       { // last iso adress claim request is still valid and should have been answered till now
         // check if this item is self conf
@@ -567,7 +562,7 @@ uint8_t IsoItem_c::calc_randomWait()
     }
   }
 
-  return uint8_t(ui16_result & 0xFF );
+  return static_cast<uint8_t>(ui16_result); // we can cast, as it's assured above that the ui16_result is <= 153.
 }
 
 
