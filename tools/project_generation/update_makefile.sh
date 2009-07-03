@@ -1700,6 +1700,15 @@ demangle_path2()
     fi
 }
 
+win_paths_from_unix_paths()
+{
+    if [ 0 -lt $# ]; then
+        printf '%s' "$*" | win_paths_from_unix_paths
+    else
+        sed -e 's|/|\\|g'
+    fi
+}
+
 # Generate suitable project file for the Win32 IDE "Dev-C++"
 # which is OpenSource and is based on MinGW - i.e. gcc for Win32
 # URL http://www.bloodshed.net/dev/devcpp.html
@@ -1884,11 +1893,9 @@ ENDOFHEADERC
 
 unix_lines_to_windows_lines()
 {
-    local FROM_FILE=$1
-    local TO_FILE=$2
     # New versions of SED understand \r directly, but older ones (e.g.
     # the current one of MSYS) don't. With printf it's OK for both:
-    sed -e "$(printf 's|\r||g;s|$|\r|')" <"$FROM_FILE" >"$TO_FILE"
+    sed -e "$(printf 's|\r||g;s|$|\r|')"
 }
 
 expand_template()
@@ -1911,7 +1918,6 @@ create_EdePrj()
     PROJECT_FILE_NAME="$PROJECT"'_'"$USE_TARGET_SYSTEM.pjt"
     EdePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
     CONFIG_HDR_NAME="config_""$PROJECT.h"
-
 
     if [ $USE_EMBED_LIB_DIRECTORY = "library/commercial_BIOS/bios_esx" ] ; then
         ## adopt the BIOS file, if $USE_EMBED_LIB_DIRECTORY and
@@ -1992,15 +1998,15 @@ create_EdePrj()
     USE_TARGET_LIB_LINE="$(map libline_for_ede embedlib_path_for_ede $USE_EMBED_LIBS)"
 
     # avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
-    ISO_AG_LIB_PATH_WIN=$(mangle_path1 "$ISO_AG_LIB_INSIDE")
-    USE_EMBED_LIB_DIRECTORY=$(mangle_path1 "$USE_EMBED_LIB_DIRECTORY")
-    USE_EMBED_HEADER_DIRECTORY=$(mangle_path1 "$USE_EMBED_HEADER_DIRECTORY")
-    USE_TARGET_LIB_LINE=$(mangle_path1 "$USE_TARGET_LIB_LINE")
-    USE_EMBED_ILO=$(mangle_path1 "$USE_EMBED_ILO")
-    USE_APP_PATH=$(mangle_path1 "$USE_APP_PATH")
-    DEV_PRJ_DIR_WIN=$(mangle_path1 "$DEV_PRJ_DIR")
-    USE_DEFINES=$(mangle_path1 "$USE_DEFINES")
-    USE_EMBED_COMPILER_DIR=$(mangle_path1 "$USE_EMBED_COMPILER_DIR")
+    ISO_AG_LIB_PATH_WIN=$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE")
+    USE_EMBED_LIB_DIRECTORY=$(win_paths_from_unix_paths "$USE_EMBED_LIB_DIRECTORY")
+    USE_EMBED_HEADER_DIRECTORY=$(win_paths_from_unix_paths "$USE_EMBED_HEADER_DIRECTORY")
+    USE_TARGET_LIB_LINE=$(win_paths_from_unix_paths "$USE_TARGET_LIB_LINE")
+    USE_EMBED_ILO=$(win_paths_from_unix_paths "$USE_EMBED_ILO")
+    USE_APP_PATH=$(win_paths_from_unix_paths "$USE_APP_PATH")
+    DEV_PRJ_DIR_WIN=$(win_paths_from_unix_paths "$DEV_PRJ_DIR")
+    USE_DEFINES=$(win_paths_from_unix_paths "$USE_DEFINES")
+    USE_EMBED_COMPILER_DIR=$(win_paths_from_unix_paths "$USE_EMBED_COMPILER_DIR")
  
     # remove some file lists, which are not used for Dev-C++
     rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
@@ -2040,7 +2046,7 @@ create_EdePrj()
         expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
 
         mv $EdePrjFilelist $EdePrjFilelist.1
-        sed -e "s|\\\\\\\\|${PATH_SEPARATOR1}|g" -e "s|/|${PATH_SEPARATOR1}|g" $EdePrjFilelist.1 |
+        sed -e 's|/|\\|g' $EdePrjFilelist.1 |
         tee $EdePrjFilelist >&3
         rm -f $EdePrjFilelist.1
 
@@ -2051,32 +2057,17 @@ create_EdePrj()
     } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     cd $DEV_PRJ_DIR
 
-    while grep -q -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME; do
-        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-        mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
-    done
-    while grep -q -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $EdePrjFilelist; do
-        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $EdePrjFilelist > $EdePrjFilelist.1
-        mv $EdePrjFilelist.1 $EdePrjFilelist
-    done
-
-    demangle_path1 < $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-    demangle_path1 <$EdePrjFilelist > $EdePrjFilelist.1
-    mv $EdePrjFilelist.1 $EdePrjFilelist
-
     printf '(Tasking_specific_settings\n' >&5
     printf '  (Miscellaneous_parameters\n' >&5
     printf '    (Target_cpu %s)\n' "$INSERT_TARGET_CPU" >&5
-    printf '    (Compiler_directory %s)\n' "$(demangle_path1 "$INSERT_EMBED_COMPILER_DIR")" >&5
-    printf '    (Project_path %s)\n' "$(demangle_path1 "$INSERT_PRJ_PATH")" >&5
-    printf '    (Target_ILO %s))\n' "$(demangle_path1 "$INSERT_TARGET_ILO")" >&5
+    printf '    (Compiler_directory %s)\n' "$INSERT_EMBED_COMPILER_DIR" >&5
+    printf '    (Project_path %s)\n' "$INSERT_PRJ_PATH" >&5
+    printf '    (Target_ILO %s))\n' "$INSERT_TARGET_ILO" >&5
     printf '  (Compiler_parameters\n' >&5
     printf '    (Includes'
     report_ede_fileparts()
     {
-        for P in "$@"; do
-            printf '\n      %s' "$(demangle_path1 "$P")"
-        done
+        printf '\n      %s' "$@"
     }
     with_ede_includes report_ede_fileparts >&5
     printf ')\n    (Defines %s))\n' "$INSERT_DEFINES" >&5
@@ -2089,12 +2080,14 @@ create_EdePrj()
     while read -r FILE; do
         printf '\n    %s' "$FILE"
     done <$EdePrjFilelist >&5
-    FORMAT="\n    $(literal_format "$(demangle_path1 "$USE_EMBED_LIB_DIRECTORY")")/%s"
+    FORMAT="\n    $(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s"
     printf -- "$FORMAT" $USE_EMBED_BIOS_SRC
     printf '))\n' >&5
 
     #echo_ "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
-    unix_lines_to_windows_lines "$PROJECT_FILE_NAME.1" "$PROJECT_FILE_NAME"
+    unix_lines_to_windows_lines <<EOF >"$PROJECT_FILE_NAME"
+$(cat "$PROJECT_FILE_NAME")
+EOF
 }
 
 create_CcsPrj()
@@ -2358,11 +2351,12 @@ ENDOFHEADERB
         echo_ "# End Group" >&3
         echo_ "# End Target" >&3
         echo_ "# End Project" >&3
-    } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"
+    } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
 
     #echo_ "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-    unix_lines_to_windows_lines "$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1" "$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-    rm -f "$DEV_PRJ_DIR/$PROJECT_FILE_NAME.1"
+    unix_lines_to_windows_lines <<EOF "$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
+$(cat "$DEV_PRJ_DIR/$PROJECT_FILE_NAME")
+EOF
     cd "$DEV_PRJ_DIR"
     # org test
 }
