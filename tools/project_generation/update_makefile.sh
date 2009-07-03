@@ -1667,7 +1667,7 @@ create_makefile()
 mangle_path1()
 {
     if [ 0 -lt $# ]; then
-        printf '%b' "$*" | mangle_path1
+        printf '%s' "$*" | mangle_path1
     else
         sed -e "s|\\\\|${PATH_SEPARATOR1}|g;s|/|${PATH_SEPARATOR1}|g"
     fi
@@ -1676,27 +1676,9 @@ mangle_path1()
 demangle_path1()
 {
     if [ 0 -lt $# ]; then
-        printf '%b' "$*" | demangle_path1
+        printf '%s' "$*" | demangle_path1
     else
         sed -e "s|${PATH_SEPARATOR1}|\\\\|g"
-    fi
-}
-
-mangle_path2()
-{
-    if [ 0 -lt $# ]; then
-        printf '%b' "$*" | mangle_path2
-    else
-        sed -e "s|\\\\|${PATH_SEPARATOR2}|g;s|/|${PATH_SEPARATOR1}|g"
-    fi
-}
-
-demangle_path2()
-{
-    if [ 0 -lt $# ]; then
-        printf '%b' "$*" | demangle_path2
-    else
-        sed -e "s|${PATH_SEPARATOR2}|\\\\|g"
     fi
 }
 
@@ -1759,9 +1741,9 @@ ENDOFHEADERA
         LIB_FILE_LINE="-lwinmm_@@_-lws2_32_@@_"
     
     
-        USE_WIN32_EXTERNAL_INCLUDE_PATH=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | mangle_path1)
+        USE_WIN32_EXTERNAL_INCLUDE_PATH_WIN=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | mangle_path1)
     
-        USE_WIN32_EXTERNAL_LIBRARY_PATH=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | mangle_path1)
+        USE_WIN32_EXTERNAL_LIBRARY_PATH_WIN=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | mangle_path1)
     
         USE_DEVCPP_EXTERNAL_LIBRARIES=$(echo_ "$USE_DEVCPP_EXTERNAL_LIBRARIES" | mangle_path1)
     
@@ -1775,13 +1757,13 @@ ENDOFHEADERA
         for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
             append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$SingleInclPath"
         done
-        for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
+        for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH_WIN ; do
             append INCLUDE_DIR_LINE ";$SingleInclPath"
         done
         for SingleLibItem in $USE_DEVCPP_EXTERNAL_LIBRARIES ; do
             append LIB_FILE_LINE "$SingleLibItem"'_@@_'
         done
-        for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH ; do
+        for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH_WIN ; do
             if [ "M$LIB_DIR_LINE" != "M" ] ; then
                 append LIB_DIR_LINE ";$SingleLibPath"
             else
@@ -1990,11 +1972,7 @@ create_EdePrj()
     USE_EMBED_ILO="$(embedlib_path_for_ede "$USE_EMBED_ILO")"
     USE_DEFINES="$(join_comma __TSW_CPP_756__ "$USE_SYSTEM_DEFINE" "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME" $PRJ_DEFINES)"
 
-    libline_for_ede()
-    {
-        printf -- " -Wo %s" "$@"
-    }
-
+    libline_for_ede() { printf -- ' -Wo %s' "$@"; }
     USE_TARGET_LIB_LINE="$(map libline_for_ede embedlib_path_for_ede $USE_EMBED_LIBS)"
 
     # avoid UNIX style directory seperator "/" as it can disturb Tasking during the link process ( during compile, everything runs fine with UNIX style - WMK seems to have problems with it durign link and hex gen )
@@ -2217,66 +2195,63 @@ create_VCPrj()
     # remove some file lists, which are not used for Dev-C++
     rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
-    USE_DEFINES=$(echo_ " /D "'"'"$USE_SYSTEM_DEFINE"'"' " /D "'"'"PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"'"' | sed -e 's/SYSTEM_PC/SYSTEM_PC_VC/g')
+    USE_DEFINES=$(sed -e 's/SYSTEM_PC/SYSTEM_PC_VC/g' <<EOF
+ /D "$USE_SYSTEM_DEFINE"  /D "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"
+EOF
+)
+    
     USE_d_DEFINES=$(echo_ $USE_DEFINES | sed -e 's#/D#/d#g')
 
 
     LIB_DIR_LINE=""
     LIB_FILE_LINE=""
 
-    ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path2)
+    ISO_AG_LIB_PATH_WIN=$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE")
 
-    USE_STLPORT_HEADER_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" | mangle_path2)
+    USE_STLPORT_HEADER_DIRECTORY=$(win_paths_from_unix_paths "$USE_STLPORT_HEADER_DIRECTORY")
 
-    USE_WIN32_EXTERNAL_INCLUDE_PATH=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | mangle_path1)
+    USE_WIN32_EXTERNAL_INCLUDE_PATH_WIN=$(win_paths_from_unix_paths "$USE_WIN32_EXTERNAL_INCLUDE_PATH" )
 
-    USE_WIN32_EXTERNAL_LIBRARY_PATH=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | mangle_path1)
+    USE_WIN32_EXTERNAL_LIBRARY_PATH_WIN=$(win_paths_from_unix_paths "$USE_WIN32_EXTERNAL_LIBRARY_PATH" )
 
-    USE_MSVC_EXTERNAL_LIBRARIES=$(echo_ "$USE_MSVC_EXTERNAL_LIBRARIES" | mangle_path1)
+    USE_MSVC_EXTERNAL_LIBRARIES_WIN=$(win_paths_from_unix_paths "$USE_MSVC_EXTERNAL_LIBRARIES" )
 
-    REL_APP_PATH_WIN=$(echo_ "$REL_APP_PATH" | mangle_path1)
+    REL_APP_PATH_WIN=$(win_paths_from_unix_paths "$REL_APP_PATH" )
 
-    PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | mangle_path1)
+    PRJ_INCLUDE_PATH_WIN=$(win_paths_from_unix_paths "$PRJ_INCLUDE_PATH" )
 
     # echo_ "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
 
+    upper_defines_vcproj() { printf -- ' /D "%s"' "$@"; }
+    lower_defines_vcproj() { printf -- ' /d "%s"' "$@"; }
+
+    STRANGE_DEFINES_VCPROJ=upper_defines_vcproj # supposed, that it has to be replaced by lower_defines_vcproj
     if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-        USE_INCLUDE_PATHS='/I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library"'" /I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library${PATH_SEPARATOR1}xgpl_src"'"'
-        append USE_DEFINES ""' /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
-        append USE_d_DEFINES ""' /d "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+        USE_INCLUDE_PATHS="/I \"$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/library")\" /I \"$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/library/xgpl_src")\""
+        append USE_DEFINES "$(upper_defines_vcproj CAN_DRIVER_SOCKET SYSTEM_WITH_ENHANCED_CAN_HAL)"
+        append USE_d_DEFINES "$(lower_defines_vcproj CAN_DRIVER_SOCKET)"
+        append USE_d_DEFINES "$($STRANGE_DEFINES_VCPROJ SYSTEM_WITH_ENHANCED_CAN_HAL)"
     fi
 
-    for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
-        append USE_INCLUDE_PATHS ""' /I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$EACH_REL_APP_PATH"'"'
-    done
+    isoaglib_path_vcproj() { win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/$1"; }
+    include_paths_vcproj() { printf -- ' /I "%s"' "$@"; }
+    append USE_INCLUDE_PATHS "${REL_APP_PATH:+$(map include_paths_vcproj isoaglib_path_vcproj $REL_APP_PATH)}"
+    append USE_INCLUDE_PATHS "${PRJ_INCLUDE_PATH:+$(map include_paths_vcproj isoaglib_path_vcproj $PRJ_INCLUDE_PATH)}"
 
-    for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
-        append USE_INCLUDE_PATHS ""' /I "'"$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$SingleInclPath"'"'
-    done
-
-    for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH ; do
-        append USE_INCLUDE_PATHS ""' /I "'"$SingleInclPath"'"'
-    done
-    for SingleLibItem in $USE_MSVC_EXTERNAL_LIBRARIES ; do
-        append LIB_DIR_LINE ""' '"$SingleLibItem"
-    done
-    for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH ; do
-        append LIB_DIR_LINE ""' /libpath:"'"$SingleLibPath"'"'
-    done
-
-    demangle_path1 < $DspPrjFilelist > $DspPrjFilelist.1
-    mv $DspPrjFilelist.1 $DspPrjFilelist
+    append USE_INCLUDE_PATHS "${USE_WIN32_EXTERNAL_INCLUDE_PATH:+$(map include_paths_vcproj win_paths_from_unix_paths $USE_WIN32_EXTERNAL_INCLUDE_PATH)}"
+    lib_list_vcproj() { printf -- ' "%s"' "$@"; }
+    append LIB_DIR_LINE "${USE_MSVC_EXTERNAL_LIBRARIES:+$(map lib_list_vcproj win_paths_from_unix_paths $USE_MSVC_EXTERNAL_LIBRARIES)}"
+    library_paths_vcproj() { printf -- ' /libpath:"%s"' "$@"; }
+    append LIB_DIR_LINE "${USE_WIN32_EXTERNAL_LIBRARY_PATH:+$(map library_paths_vcproj win_paths_from_unix_paths $USE_WIN32_EXTERNAL_LIBRARY_PATH)}"
 
     #echo_ "Libs=$LIB_DIR_LINE"
     #echo_ "Linker=$LIB_FILE_LINE"
 
-    for SinglePrjDefine in $PRJ_DEFINES ; do
-        append USE_DEFINES ""' /D '"$SinglePrjDefine"
-        append USE_d_DEFINES ""' /D '"$SinglePrjDefine"
-    done
+    append USE_DEFINES "${PRJ_DEFINES:+$(upper_defines_vcproj $PRJ_DEFINES)}"
+    append USE_d_DEFINES "${PRJ_DEFINES:+$($STRANGE_DEFINES_VCPROJ $PRJ_DEFINES)}"
     if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-        append USE_DEFINES ""' /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
-        append USE_d_DEFINES ""' /D "SYSTEM_WITH_ENHANCED_CAN_HAL"'
+        append USE_DEFINES "$(upper_defines_vcproj SYSTEM_WITH_ENHANCED_CAN_HAL)"
+        append USE_d_DEFINES "$($STRANGE_DEFINES_VCPROJ SYSTEM_WITH_ENHANCED_CAN_HAL)"
     fi
 
     USE_STLPORT_LIB_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" |sed 's|stlport|lib|g')
@@ -2284,11 +2259,11 @@ create_VCPrj()
     HEADERS=$(grep -E "\.h|\.hpp" "$DspPrjFilelist")
 
     local INSERT_PROJECT="$PROJECT"
-    local INSERT_INCLUDE_PATHS="$(demangle_path1 "$USE_INCLUDE_PATHS")"
+    local INSERT_INCLUDE_PATHS="$USE_INCLUDE_PATHS"
     local INSERT_DEFINES="$USE_DEFINES"
     local INSERT_d_DEFINES="$USE_d_DEFINES"
-    local INSERT_CAN_LIB_PATH="$(demangle_path1 "$INSERT_CAN_LIB_PATH")"
-    local INSERT_STLPORT_LIB_PATH="$(demangle_path1 "$USE_STLPORT_LIB_DIRECTORY")"
+    local INSERT_CAN_LIB_PATH="$LIB_DIR_LINE"
+    local INSERT_STLPORT_LIB_PATH="$USE_STLPORT_LIB_DIRECTORY"
     
     local INSERT_DEBUG_USE_MFC=0
     local INSERT_DEBUG_USE_DEBUG_LIBRARIES=1
@@ -2354,7 +2329,7 @@ ENDOFHEADERB
     } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
 
     #echo_ "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-    unix_lines_to_windows_lines <<EOF "$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
+    unix_lines_to_windows_lines <<EOF >"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
 $(cat "$DEV_PRJ_DIR/$PROJECT_FILE_NAME")
 EOF
     cd "$DEV_PRJ_DIR"
