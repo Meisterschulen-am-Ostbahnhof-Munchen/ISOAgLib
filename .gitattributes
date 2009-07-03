@@ -2569,6 +2569,11 @@ tests/addressclaim/test_E_ex.sh -text
 tests/addressclaim/test_F_ex.sh -text
 tests/addressclaim/test_G_1_ex.sh -text
 tests/addressclaim/test_G_2_ex.sh -text
+tests/compiler_projects/conf_AddressStealer -text
+tests/compiler_projects/update_makefile.sh -text
+tests/src/AddressStealer/AddressStealer.cpp -text
+tests/src/AddressStealer/config_AddressStealer.h -text
+tests/src/AddressStealer/version.h -text
 tests/testDiagnosticMessages.sh -text
 tools/LICENSE.txt -text
 tools/README.txt -text
