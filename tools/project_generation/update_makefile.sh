@@ -385,47 +385,47 @@ check_set_correct_variables()
     fi
 
     case "$USE_TARGET_SYSTEM" in
-        pc_win32)
+        (pc_win32)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/Dev-C++/"
             IDE_NAME="Visual Studio, Dev-C++"
             ;;        
-        pc_linux)
+        (pc_linux)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make/"
             IDE_NAME="KDevelop, make"
             ;;        
-        esx)
+        (esx)
             USE_SYSTEM_DEFINE="SYSTEM_ESX"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;        
-        esxu)
+        (esxu)
             USE_SYSTEM_DEFINE="SYSTEM_ESXu"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
-        c2c)
+        (c2c)
             USE_SYSTEM_DEFINE="SYSTEM_C2C"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
-        imi)
+        (imi)
             USE_SYSTEM_DEFINE="SYSTEM_IMI"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
-        pm167)
+        (pm167)
             USE_SYSTEM_DEFINE="SYSTEM_PM167"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
-        Dj1)
+        (Dj1)
             USE_SYSTEM_DEFINE="SYSTEM_DJ1"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
             IDE_NAME="Tasking EDE"
             ;;
-        p1mc)
+        (p1mc)
             USE_SYSTEM_DEFINE="SYSTEM_P1MC"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS/"
             IDE_NAME="Code Composer Studio"
@@ -473,23 +473,23 @@ check_set_correct_variables()
     fi
 
     case "$USE_CAN_DRIVER" in
-        simulating)
+        (simulating)
             if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
                 echo_ 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
                 echo_ 'Thus the project files will be generated without enhanced CAN processing'
                 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
             fi
             ;;
-        msq_server|socket_server|socket_server_hal_simulator)
+        (msq_server|socket_server|socket_server_hal_simulator)
             ;;
-        sys)
+        (sys)
             if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
                 echo_ 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.'
                 echo_ 'Thus the project files will be generated without enhanced CAN processing'
                 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
             fi
             ;;
-        *)
+        (*)
             echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
             echo_ 'Current Setting is $USE_CAN_DRIVER'
             exit 3
@@ -613,16 +613,16 @@ driver_features()
     echo_
     echo_ "CAN driver:    $USE_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
-        simulating)
+        (simulating)
             printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'" >&3
             ;;
-        msq_server)
+        (msq_server)
             printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq.*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'" >&3
             ;;
-        socket_server)
+        (socket_server)
             printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock.*'" >&3
             ;;
-        socket_server_hal_simulator)
+        (socket_server_hal_simulator)
             printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock_hal_simulator.*'" >&3
             ;;
     esac
@@ -662,16 +662,16 @@ driver_features()
             #     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'" >&3
             echo_ "RS232 driver:  $USE_RS232_DRIVER"
             case "$USE_RS232_DRIVER" in
-                simulating)
+                (simulating)
                     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'" >&3
                     ;;
-                hal_simulator)
+                (hal_simulator)
                     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_hal_simulator*'" >&3
                     ;;
-                rte)
+                (rte)
                     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'" >&3
                     ;;
-                sys)
+                (sys)
                     if [ "$USE_TARGET_SYSTEM" = "pc_win32" ]; then
                         printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'" >&3
                     else
@@ -680,7 +680,7 @@ driver_features()
                     ;;
                 #     PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
                 #     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'" >&3
-                *)
+                (*)
                     echo_ 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"hal_simulator"'
                     echo_ 'Current Setting is $USE_RS232_DRIVER'
                     exit 3
@@ -810,8 +810,8 @@ create_filelist( )
     #USE_TARGET_SYSTEM="pc"
     local HAL_PATH=$(
         case "$USE_TARGET_SYSTEM" in
-            pc*) printf "pc" ;;
-            *) printf '%s' "$USE_TARGET_SYSTEM" ;;
+            (pc*) printf "pc" ;;
+            (*) printf '%s' "$USE_TARGET_SYSTEM" ;;
         esac;)
 
     {
@@ -1357,10 +1357,10 @@ create_standard_makefile()
             append RULE_PROJ_DEFINES ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
         fi
         case "$USE_CAN_DRIVER" in
-            msq_server)
+            (msq_server)
                 append RULE_PROJ_DEFINES ' -DCAN_DRIVER_MESSAGE_QUEUE'
                 ;;
-            socket_server|socket_server_hal_simulator)
+            (socket_server|socket_server_hal_simulator)
                 append RULE_PROJ_DEFINES ' -DCAN_DRIVER_SOCKET'
                 ;;
         esac
@@ -1371,13 +1371,13 @@ create_standard_makefile()
         local RULE_COMPILER_BINARY_PRE=$(
                 [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
                 case "$PRJ_DEFINES" in
-                    *SYSTEM_A1*)
+                    (*SYSTEM_A1*)
                         printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
                         ;;
-                    *SYSTEM_MCC*)
+                    (*SYSTEM_MCC*)
                         printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
                         ;;
-                    *)
+                    (*)
                         ;;
                 esac;)
         define_insert_and_report COMPILER_BINARY_PRE "$RULE_COMPILER_BINARY_PRE"
@@ -1414,7 +1414,7 @@ create_standard_makefile()
         define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
         local RULE_LFLAGS=$(
             case "$USE_CAN_DRIVER" in
-                msq_server|socket_server|socket_server_hal_simulator)
+                (msq_server|socket_server|socket_server_hal_simulator)
                     printf -- '-pthread'
                     ;;
             esac;)' $($F LIBPATH)'
@@ -1478,11 +1478,11 @@ create_standard_makefile()
     # NO UTESTs, no need to remove any testrunners
     #  # remove testrunner for A1
     #   case $PRJ_DEFINES in
-    #       *SYSTEM_A1*)
+    #       (*SYSTEM_A1*)
     #       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
     #       mv $MakefileNameLong.1 $MakefileNameLong
     #       ;;
-    #       *SYSTEM_A5*)
+    #       (*SYSTEM_A5*)
     #       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
     #       mv $MakefileNameLong.1 $MakefileNameLong
     #       ;;
@@ -1570,15 +1570,15 @@ create_pure_application_makefile()
             
         else
             case $PRJ_DEFINES in
-                *SYSTEM_A1*)
+                (*SYSTEM_A1*)
                     echo_ "COMPILER_BINARY_PRE = /opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-" >&3
                     echo_ "SYSTEM_A1"
                     ;;
-                *SYSTEM_MCC*)
+                (*SYSTEM_MCC*)
                     echo_ "COMPILER_BINARY_PRE = /opt/eldk/usr/bin/ppc_6xx-" >&3
                     echo_ "SYSTEM_MCC"
                     ;;
-                *)
+                (*)
                     echo_ "COMPILER_BINARY_PRE = " >&3
                     ;;
             esac
@@ -1905,11 +1905,11 @@ create_EdePrj()
         ## adopt the BIOS file, if $USE_EMBED_LIB_DIRECTORY and
         ## and $USE_EMBED_HEADER_DIRECTORY reflect default value which doesn't match to defined target
         case "$USE_TARGET_SYSTEM" in
-            esx)
+            (esx)
                 ;;
-            pc*)
+            (pc*)
                 ;;
-            *)
+            (*)
                 USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
                 USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
                 ;;
@@ -1919,33 +1919,33 @@ create_EdePrj()
     # if no setting in the config file -> derive based on target
     : ${USE_EMBED_LIBS:=$(
             case "$USE_TARGET_SYSTEM" in
-                c2c) printf 'c2c10l.lib' ;;
-                Dj1) printf 'djbiosmvt.lib' ;;
-                esx) printf 'C756/Xos20l.lib Module/Xma20l.lib' ;;
-                esxu) printf 'Mos10l.lib' ;;
-                imi) printf 'adis10l.lib' ;;
-                pm167) printf 'mios1s.lib' ;;
+                (c2c) printf 'c2c10l.lib' ;;
+                (Dj1) printf 'djbiosmvt.lib' ;;
+                (esx) printf 'C756/Xos20l.lib Module/Xma20l.lib' ;;
+                (esxu) printf 'Mos10l.lib' ;;
+                (imi) printf 'adis10l.lib' ;;
+                (pm167) printf 'mios1s.lib' ;;
             esac;)}
     # if no setting in the config file -> derive based on target
     : ${USE_EMBED_BIOS_SRC:=$(
             case "$USE_TARGET_SYSTEM" in
-                c2c) printf 'c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h' ;;
-                Dj1) printf 'DjBiosMVT.h' ;;
-                esx) printf 'Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ' ;;
-                esxu) printf 'MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H' ;;
-                imi) printf 'adis10go_cs.asm adis10.h Xos20eec.h XOS20EEC.OBJ' ;;
-                pm167) printf 'mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h' ;;
+                (c2c) printf 'c2c10cs.asm c2c10err.c  c2c10err.h c2c10osy.h' ;;
+                (Dj1) printf 'DjBiosMVT.h' ;;
+                (esx) printf 'Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ' ;;
+                (esxu) printf 'MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H' ;;
+                (imi) printf 'adis10go_cs.asm adis10.h Xos20eec.h XOS20EEC.OBJ' ;;
+                (pm167) printf 'mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h' ;;
             esac;)}
 
     # if no setting in the config file -> derive based on target
     : ${USE_EMBED_ILO:=$(
             case "$USE_TARGET_SYSTEM" in
-                c2c) printf 'c2c10osy.ilo' ;;
-                Dj1) printf 'MiniVT.ilo' ;;
-                esx) printf 'Xos20lcs.ilo' ;;
-                esxu) printf 'MOS10L.ILO' ;;
-                imi) printf 'adis10s_cs.ilo' ;;
-                pm167) printf 'mx1_0s.ilo' ;;
+                (c2c) printf 'c2c10osy.ilo' ;;
+                (Dj1) printf 'MiniVT.ilo' ;;
+                (esx) printf 'Xos20lcs.ilo' ;;
+                (esxu) printf 'MOS10L.ILO' ;;
+                (imi) printf 'adis10s_cs.ilo' ;;
+                (pm167) printf 'mx1_0s.ilo' ;;
             esac;)}
 
     path_for_ede()
@@ -2002,9 +2002,9 @@ create_EdePrj()
     # now set the target CPU
     local INSERT_TARGET_CPU=$(
         case "$USE_TARGET_SYSTEM" in
-            Dj1) printf 'CpuC167CR' ;;
-            esxu) printf 'CpuF269' ;;
-            *) printf 'CpuC167CS' ;;
+            (Dj1) printf 'CpuC167CR' ;;
+            (esxu) printf 'CpuF269' ;;
+            (*) printf 'CpuC167CS' ;;
         esac;)
 
     with_ede_includes()
@@ -2358,19 +2358,19 @@ create_buildfiles()
     # call function to create project specific config file
     create_autogen_project_config $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
     case "$USE_TARGET_SYSTEM" in
-        pc_linux)
+        (pc_linux)
            # call function to create the Makefile in the project dir
             create_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         # check if a win32 project file whould be created
-        pc_win32)
+        (pc_win32)
             create_DevCCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             create_VCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        p1mc)
+        (p1mc)
             create_CcsPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        *)
+        (*)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
     esac
 
@@ -2448,17 +2448,17 @@ check_before_user_configuration()
     # Check the arguments.
     for option in "$@"; do
         case "$option" in
-            -h | --help)
+            (-h | --help)
                 usage
                 exit 0 ;;
-            '--doxygen-export-directory='*)
+            ('--doxygen-export-directory='*)
                 DOXYGEN_EXPORT_DIR_1=$(echo_ "$option" | sed -e 's/--doxygen-export-directory=//')
                 mkdir -p "$DOXYGEN_EXPORT_DIR_1"
                 CALL_DIR=$PWD
                 cd "$DOXYGEN_EXPORT_DIR_1"
                 DOXYGEN_EXPORT_DIR=$PWD
                 cd $CALL_DIR ;;
-            '--IsoAgLib-root='*)
+            ('--IsoAgLib-root='*)
                 ISOAGLIB_ROOT=$(echo_ "$option" | sed 's/--IsoAgLib-root=//')
                 if [ ! -f "$ISOAGLIB_ROOT/library/xgpl_src/IsoAgLib/isoaglib_config.h" ] ; then
                     echo_ "Directory $ISOAGLIB_ROOT doesn't contain valid IsoAgLib directory root. The file xgpl_src/IsoAgLib/isoaglib_config.h can't be found." 1>&2
@@ -2470,34 +2470,34 @@ check_before_user_configuration()
                     ISOAGLIB_ROOT=$PWD
                     cd $CALL_DIR
                 fi ;;
-            '--target-system='*)
+            ('--target-system='*)
                 PARAMETER_TARGET_SYSTEM=$(echo_ "$option" | sed 's/--target-system=//')
                 ;;
-            '--pc-can-driver='*)
+            ('--pc-can-driver='*)
                 PARAMETER_CAN_DRIVER=$(echo_ "$option" | sed 's/--pc-can-driver=//')
                 ;;
-            '--pc-can-device-for-server='*)
+            ('--pc-can-device-for-server='*)
                 PARAMETER_CAN_DEVICE_FOR_SERVER=$(echo_ "$option" | sed 's/--pc-can-device-for-server=//')
                 ;;
-            '--pc-rs232-driver='*)
+            ('--pc-rs232-driver='*)
                 PARAMETER_RS232_DRIVER=$(echo_ "$option" | sed 's/--pc-rs232-driver=//')
                 ;;
-            --little-endian-cpu)
+            (--little-endian-cpu)
                 PARAMETER_LITTLE_ENDIAN_CPU=1
                 ;;
-            --big-endian-cpu)
+            (--big-endian-cpu)
                 PARAMETER_LITTLE_ENDIAN_CPU=0
                 USE_BIG_ENDIAN_CPU=1
                 ;;
-            '--with-makefile-skeleton='*)
+            ('--with-makefile-skeleton='*)
                 RootDir=$PWD
                 MAKEFILE_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-skeleton=//')
                 ;;
-            '--with-makefile-app-skeleton='*)
+            ('--with-makefile-app-skeleton='*)
                 RootDir=$PWD
                 MAKEFILE_APP_SKELETON_FILE=$RootDir/$(echo_ "$option" | sed 's/--with-makefile-app-skeleton=//')
                 ;;
-            '--report'*) # Set file descriptor for report:
+            ('--report'*) # Set file descriptor for report:
                 local REPORTFILE="$(printf '%s' "$option" | sed -e 's|^--report\(=-\?\)\?||')"
                 if [ -n "$REPORTFILE" ]; then
                     exec 5>"$REPORTFILE"
@@ -2505,12 +2505,12 @@ check_before_user_configuration()
                     exec 5>&1
                 fi
                 ;;
-            -*)
+            (-*)
                 echo_ "Unrecognized option $option'" 1>&2
                 usage
                 exit 1
                 ;;
-            *)
+            (*)
                 CONF_FILE=$option
                 ;;
         esac
@@ -2541,9 +2541,9 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167)
+        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167)
             ;;
-        *)
+        (*)
             echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
             usage
             exit 1 ;;
@@ -2568,13 +2568,13 @@ check_after_user_configuration()
     #default for not-can_server
     CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
     case "$USE_CAN_DRIVER" in
-        simulating)
+        (simulating)
             case "$USE_TARGET_SYSTEM" in
-                pc_linux | pc_win32)
+                (pc_linux | pc_win32)
                     # enhanced CAN HAL is not yet supported for simulating CAN HAL
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
                     ;;
-                *)
+                (*)
                     echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
                     USE_CAN_DRIVER="sys"
                     PARAMETER_CAN_DRIVER="sys"
@@ -2583,32 +2583,32 @@ check_after_user_configuration()
                     ;;
             esac
             ;;
-        sys)
+        (sys)
             case "$USE_TARGET_SYSTEM" in
-                pc_linux | pc_win32)
+                (pc_linux | pc_win32)
                     echo_ "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
                     usage
                     exit 1
                     ;;
-                *)
+                (*)
                     ;;
             esac
             # enhanced CAN HAL is not yet supported for the known embedded targets
             PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
             ;;
-        msq_server)
+        (msq_server)
             case "$USE_TARGET_SYSTEM" in
-                pc_linux)
+                (pc_linux)
                     # enhanced CAN HAL IS supported for the Linux can_server
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
                     ;;
-                pc_win32)
+                (pc_win32)
                     echo_ "Server Client CAN driver can only used for target pc_linux. Overridden with socket_server" 1>&2
                     USE_CAN_DRIVER="socket_server"
                     USE_CAN_DEVICE_FOR_SERVER="no_card"
                     CAN_SERVER_FILENAME="can_server_sock"
                     ;;
-                *)
+                (*)
                     echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
                     USE_CAN_DRIVER="sys"
                     PARAMETER_CAN_DRIVER="sys"
@@ -2619,10 +2619,10 @@ check_after_user_configuration()
             # make sure, that USE_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
             if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
                 case $PRJ_DEFINES in
-                    *SYSTEM_A1*)
+                    (*SYSTEM_A1*)
                         USE_CAN_DEVICE_FOR_SERVER="A1"
                         ;;
-                    *)
+                    (*)
                         USE_CAN_DEVICE_FOR_SERVER="no_card"
                         ;;
                 esac
@@ -2631,15 +2631,15 @@ check_after_user_configuration()
                 CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
             fi
             ;;
-        socket_server | socket_server_hal_simulator)
+        (socket_server | socket_server_hal_simulator)
             # enhanced CAN HAL IS supported for the socket based can_server
             PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
             if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
                 case $PRJ_DEFINES in
-                    *SYSTEM_A1*)
+                    (*SYSTEM_A1*)
                         USE_CAN_DEVICE_FOR_SERVER="A1"
                         ;;
-                    *)
+                    (*)
                         USE_CAN_DEVICE_FOR_SERVER="no_card"
                         ;;
                 esac
@@ -2653,7 +2653,7 @@ check_after_user_configuration()
                 fi
             fi
             ;;
-        *)
+        (*)
             echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
             usage
             exit 1
@@ -2661,12 +2661,12 @@ check_after_user_configuration()
     esac
     
     case "$USE_CAN_DEVICE_FOR_SERVER" in
-        rte)
+        (rte)
             case "$USE_TARGET_SYSTEM" in
-                pc_linux)
+                (pc_linux)
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
                     ;;
-                pc_win32)
+                (pc_win32)
                     echo_ "RTE CAN driver can only used for target pc_linux" 1>&2
                     usage
                     exit 1
@@ -2681,7 +2681,7 @@ check_after_user_configuration()
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
     fi
     case "$USE_RS232_DRIVER" in
-        simulating)
+        (simulating)
             case "$USE_TARGET_SYSTEM" in
                 pc_linux | pc_win32)
                     ;;
@@ -2692,24 +2692,24 @@ check_after_user_configuration()
                     ;;
             esac
             ;;
-        sys)
+        (sys)
             ;;
-        rte)
+        (rte)
             case "$USE_TARGET_SYSTEM" in
-                pc_linux)
+                (pc_linux)
                     ;;
-                pc_win32)
+                (pc_win32)
                     USE_RS232_DRIVER="sys"
                     echo_ "RTE RS232 driver can only used for target pc_linux -> Override by sys"
                     ;;
-                *)
+                (*)
                     echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
                     USE_RS232_DRIVER="sys"
                     PARAMETER_RS232_DRIVER="sys"
                     ;;
             esac
             ;;
-        *)
+        (*)
             echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
             usage
             exit 1
