@@ -64,6 +64,7 @@
 TAB="$(printf '\t')"
 PATH_SEPARATOR1='=_=_'
 PATH_SEPARATOR2='_=_='
+TEMPFILE_PREFIX="/tmp/update_makefile$$"
 
 main()
 {
@@ -79,9 +80,8 @@ main()
     # configuration settings
     create_buildfiles "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
     
-    report_summary
-    
     make_doxygen_ready_comment_blocks
+    report_summary
 }
 
 # Prefer these functions to echo due to incompatible versions (Bourne
@@ -1229,15 +1229,16 @@ create_autogen_project_config()
         echo_ "// These settings are in commented-out, so that you can activate and adapt them by" >&3
         echo_e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >&3
     } 3>"$CONFIG_NAME"
+    TMP_CONFIG1="${TEMPFILE_PREFIX}config1"
     for conf_line in $(grep "#define CONFIG_" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g') ; do
         conf_name=$(echo_ $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
         INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak)
         if [ "$INDIV_CNT" -lt 1 ] ; then
             grep -B1 "#define $conf_line" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h >> $CONFIG_NAME
-            sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $CONFIG_NAME.1
-            #     CMDLINE=$(echo_ "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $CONFIG_NAME.1")
+            sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $TMP_CONFIG1
+            #     CMDLINE=$(echo_ "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $TMP_CONFIG1")
             #     echo_ $CMDLINE | sh
-            mv $CONFIG_NAME.1 $CONFIG_NAME
+            mv $TMP_CONFIG1 $CONFIG_NAME
             echo_e_n "$ENDLINE" >> $CONFIG_NAME
         fi
     done
@@ -1250,9 +1251,8 @@ create_autogen_project_config()
         cat $CONFIG_NAME.bak >&3
         rm -f $CONFIG_NAME.bak
     } 3>>"$CONFIG_NAME"
-    sed -e 's|^[ \t]*//|//|g' $CONFIG_NAME > $CONFIG_NAME.1
-    sed -e 's|^[ \t]*/\*|/\*|g' $CONFIG_NAME.1 > $CONFIG_NAME
-    rm -f $CONFIG_NAME.1
+    sed -e 's|^[ \t]*//|//|g' $CONFIG_NAME > $TMP_CONFIG1
+    sed -e 's|^[ \t]*/\*|/\*|g' $TMP_CONFIG1 > $CONFIG_NAME
 
     {
         echo_e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT List of configuration settings for $PROJECT" >&3
@@ -1475,30 +1475,31 @@ create_standard_makefile()
         echo_ >&3
     } 3>"$MakefileNameLong"
 
+    TMP_MAKEFILE="${TEMPFILE_PREFIX}makefile"
     # NO UTESTs, no need to remove any testrunners
     #  # remove testrunner for A1
     #   case $PRJ_DEFINES in
     #       (*SYSTEM_A1*)
-    #       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
-    #       mv $MakefileNameLong.1 $MakefileNameLong
+    #       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $TMP_MAKEFILE
+    #       mv $TMP_MAKEFILE $MakefileNameLong
     #       ;;
     #       (*SYSTEM_A5*)
-    #       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $MakefileNameLong.1
-    #       mv $MakefileNameLong.1 $MakefileNameLong
+    #       sed -e 's#all: \(.*\) testrunner\(.*\)#all: \1\2#g'  $MakefileNameLong > $TMP_MAKEFILE
+    #       mv $TMP_MAKEFILE $MakefileNameLong
     #       ;;
     #   esac
 
-    rm -f $MakefileNameLong.1
+    rm -f $TMP_MAKEFILE
 
     # replace the install rules for version.h and the app config file
-    sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $MakefileNameLong.1
-    sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $MakefileNameLong.1 > $MakefileNameLong
-    rm -f $MakefileNameLong.1
+    sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $TMP_MAKEFILE
+    sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $TMP_MAKEFILE > $MakefileNameLong
+    rm -f $TMP_MAKEFILE
 
     # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
     while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
-        sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $MakefileNameLong.1
-        mv $MakefileNameLong.1 $MakefileNameLong
+        sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $TMP_MAKEFILE
+        mv $TMP_MAKEFILE $MakefileNameLong
     done
 
     # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
@@ -1604,15 +1605,15 @@ create_pure_application_makefile()
 
     # add can_server creation to target "all"
     if [ $USE_CAN_DRIVER = "msq_server" ] ; then
-        cp $MakefileNameLong $MakefileNameLong.1
-        sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $MakefileNameLong.1 > $MakefileNameLong
+        cp $MakefileNameLong $TMP_MAKEFILE
+        sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $TMP_MAKEFILE > $MakefileNameLong
     fi
-    rm -f $MakefileNameLong.1
+    rm -f $TMP_MAKEFILE
 
     # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
     while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
-        sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $MakefileNameLong.1
-        mv $MakefileNameLong.1 $MakefileNameLong
+        sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $TMP_MAKEFILE
+        mv $TMP_MAKEFILE $MakefileNameLong
     done
 
     # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
@@ -1625,12 +1626,12 @@ create_kdevelop3_project_file()
     # now create a Kdevelop3 project file
     cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_kdevelop3Generic.kdevelop $PROJECT.kdevelop
 
-    sed -e "s/REPLACE_AUTHOR/$PROJECT_AUTHOR/g" $PROJECT.kdevelop > $PROJECT.kdevelop.1
-    sed -e "s/REPLACE_AUTHOR_EMAIL/$PROJECT_AUTHOR_EMAIL/g" $PROJECT.kdevelop.1 > $PROJECT.kdevelop
-    sed -e "s/REPLACE_PROJECT/$PROJECT/g" $PROJECT.kdevelop > $PROJECT.kdevelop.1
-    sed -e "s#REPLACE_INCLUDE#$KDEVELOP_INCLUDE_PATH#g" $PROJECT.kdevelop.1 > $PROJECT.kdevelop
-    # mv $PROJECT.kdevelop.1 $PROJECT.kdevelop
-    rm -f $PROJECT.kdevelop.1
+    TMP_KDEVELOP="${TEMPFILE_PREFIX}kdevelop1"
+    sed -e "s/REPLACE_AUTHOR/$PROJECT_AUTHOR/g" $PROJECT.kdevelop > $TMP_KDEVELOP
+    sed -e "s/REPLACE_AUTHOR_EMAIL/$PROJECT_AUTHOR_EMAIL/g" $TMP_KDEVELOP > $PROJECT.kdevelop
+    sed -e "s/REPLACE_PROJECT/$PROJECT/g" $PROJECT.kdevelop > $TMP_KDEVELOP
+    sed -e "s#REPLACE_INCLUDE#$KDEVELOP_INCLUDE_PATH#g" $TMP_KDEVELOP > $PROJECT.kdevelop
+    # mv $TMP_KDEVELOP $PROJECT.kdevelop
 
     {
         echo_ "# KDevelop Custom Project File List" >&3
@@ -2023,10 +2024,10 @@ create_EdePrj()
         # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
         expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
 
-        mv $EdePrjFilelist $EdePrjFilelist.1
-        sed -e 's|/|\\|g' $EdePrjFilelist.1 |
+        TMP_EDE="${TEMPFILE_PREFIX}ede"
+        mv $EdePrjFilelist $TMP_EDE
+        sed -e 's|/|\\|g' $TMP_EDE |
         tee $EdePrjFilelist >&3
-        rm -f $EdePrjFilelist.1
 
         # insert specific BIOS/OS sources
         local FORMAT="$(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s\n"
@@ -2502,7 +2503,8 @@ check_before_user_configuration()
                 if [ -n "$REPORTFILE" ]; then
                     exec 5>"$REPORTFILE"
                 else
-                    exec 5>&1
+                    TMP_REPORTFILE="${TEMPFILE_PREFIX}report"
+                    exec 5>"$TMP_REPORTFILE"
                 fi
                 ;;
             (-*)
@@ -2738,6 +2740,9 @@ report_summary()
     echo_
     echo_
     echo_ "Generation successful."
+    if [ -n "$TMP_REPORTFILE" ]; then
+        cat "$TMP_REPORTFILE"
+    fi
 }
 
 make_doxygen_ready_comment_blocks()
@@ -2746,6 +2751,7 @@ make_doxygen_ready_comment_blocks()
         # doxygen export is specified -> copy config file there with suitable doc block
         CONF_BASE=$(basename $CONF_FILE)
         CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
+        TMP_CONF="${TEMPFILE_PREFIX}$CONF_BASE"
         {
             #echo_ "/**" >&3
             #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
@@ -2754,22 +2760,36 @@ make_doxygen_ready_comment_blocks()
             #echo_ "*/" >&3
             #echo_ "/*@{*/" >&3
         #   cat $CONF_FILE >&3
-            #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > /tmp/$CONF_BASE
-            #cat /tmp/$CONF_BASE >&3
-            #rm -f /tmp/$CONF_BASE
+            #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > $TMP_CONF
+            #cat $TMP_CONF >&3
+            #rm -f $TMP_CONF
             #echo_ "/*@}*/" >&3
         
             echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
             echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
             echo_ " Use the file $(basename "$CONF_FILE") in this directory as input file for $(basename "$0") to create the project generation files." >&3
             echo_ "\code" >&3
-            sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > /tmp/$CONF_BASE
-            cat /tmp/$CONF_BASE >&3
+            sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > $TMP_CONF
+            cat $TMP_CONF >&3
             echo_ "\endcode" >&3
         } 3>"$CONFIG_SPEC_DOXYGEN_READY"
-        rm -f /tmp/$CONF_BASE
     
     fi
 }
+
+on_exit()
+{
+    set -- "$TMP_REPORTFILE" "$TMP_CONF" "$TMP_CONFIG1" "$TMP_MAKEFILE" "$TMP_EDE" "$TMP_KDEVELOP"
+    # omit empty filenames:
+    for FILE in "$@"; do
+        shift
+        [ -n "$FILE" ] && set -- "$@" "$FILE"
+    done
+    # delete temporary files:
+    [ $# -gt 0 ] && rm -f -- "$@"
+}
+
+trap on_exit 0
+trap 'exit 2' 1 2 3 13 15
 
 main "$@"
