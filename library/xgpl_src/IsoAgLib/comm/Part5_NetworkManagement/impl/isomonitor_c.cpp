@@ -1217,7 +1217,8 @@ bool IsoMonitor_c::processMsg()
   // Handle DESTINATION PGNs
   switch ((data().isoPgn() & 0x3FF00))
   {
-    case ADDRESS_CLAIM_PGN: // adress claim
+    case ADDRESS_CLAIM_PGN:
+    { // address claim
       b_processed = true;
       const IsoName_c cc_dataIsoName (data().isoName());
       const uint8_t cui8_sa = data().isoSa();
@@ -1386,7 +1387,7 @@ bool IsoMonitor_c::processMsg()
           }
         }
       }
-      break;
+    } break;
 
 #ifdef USE_PROCESS
     case PROCESS_DATA_PGN:
