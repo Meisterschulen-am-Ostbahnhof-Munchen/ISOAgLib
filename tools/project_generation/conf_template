@@ -95,7 +95,7 @@ APP_SRC_FILE="main.cpp"
 
 # Select if the project shall use the float data type
 # default is FALSE as far as possible
-# (this has impact on process data, RS232 output, GPS decode)
+# (this has impact on RS232 output and GPS decode)
 # USE_FLOAT_DATA_TYPE=0
 
 # select if HEAP usage should reduce size in favour of speed
