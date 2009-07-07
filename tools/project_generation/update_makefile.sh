@@ -1624,15 +1624,12 @@ create_pure_application_makefile()
 create_kdevelop3_project_file()
 {
     # now create a Kdevelop3 project file
-    cp -a $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_kdevelop3Generic.kdevelop $PROJECT.kdevelop
-
-    TMP_KDEVELOP="${TEMPFILE_PREFIX}kdevelop1"
-    sed -e "s/REPLACE_AUTHOR/$PROJECT_AUTHOR/g" $PROJECT.kdevelop > $TMP_KDEVELOP
-    sed -e "s/REPLACE_AUTHOR_EMAIL/$PROJECT_AUTHOR_EMAIL/g" $TMP_KDEVELOP > $PROJECT.kdevelop
-    sed -e "s/REPLACE_PROJECT/$PROJECT/g" $PROJECT.kdevelop > $TMP_KDEVELOP
-    sed -e "s#REPLACE_INCLUDE#$KDEVELOP_INCLUDE_PATH#g" $TMP_KDEVELOP > $PROJECT.kdevelop
-    # mv $TMP_KDEVELOP $PROJECT.kdevelop
-
+    local REPLACE_AUTHOR="$PROJECT_AUTHOR"
+    local REPLACE_AUTHOR_EMAIL="$PROJECT_AUTHOR_EMAIL"
+    local REPLACE_PROJECT="$PROJECT"
+    local REPLACE_INCLUDE="$KDEVELOP_INCLUDE_PATH"
+    expand_template "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_kdevelop3Generic.kdevelop" >"$PROJECT.kdevelop"
+    
     {
         echo_ "# KDevelop Custom Project File List" >&3
         cat filelist__$PROJECT.txt >&3
@@ -2779,7 +2776,7 @@ make_doxygen_ready_comment_blocks()
 
 on_exit()
 {
-    set -- "$TMP_REPORTFILE" "$TMP_CONF" "$TMP_CONFIG1" "$TMP_MAKEFILE" "$TMP_EDE" "$TMP_KDEVELOP"
+    set -- "$TMP_REPORTFILE" "$TMP_CONF" "$TMP_CONFIG1" "$TMP_MAKEFILE" "$TMP_EDE"
     # omit empty filenames:
     for FILE in "$@"; do
         shift

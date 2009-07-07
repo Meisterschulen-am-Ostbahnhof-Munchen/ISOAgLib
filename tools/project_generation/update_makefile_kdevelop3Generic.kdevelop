@@ -1,9 +1,9 @@
 <?xml version = '1.0'?>
 <kdevelop>
   <general>
-    <author>REPLACE_AUTHOR</author>
-    <email>REPLACE_AUTHOR_EMAIL</email>
-    <version>$VERSION$</version>
+    <author>${REPLACE_AUTHOR}</author>
+    <email>${REPLACE_AUTHOR_EMAIL}</email>
+    <version>\$VERSION\$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
     <ignoreparts>
@@ -16,12 +16,12 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description></description>
     <secondaryLanguages/>
-    <projectname>REPLACE_PROJECT</projectname>
+    <projectname>${REPLACE_PROJECT}</projectname>
     <defaultencoding></defaultencoding>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>./REPLACE_PROJECT</mainprogram>
+      <mainprogram>./${REPLACE_PROJECT}</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs></programargs>
@@ -120,7 +120,7 @@
       <alwaysParseInBackground>true</alwaysParseInBackground>
       <usePermanentCaching>true</usePermanentCaching>
       <alwaysIncludeNamespaces>true</alwaysIncludeNamespaces>
-      <includePaths>.;REPLACE_INCLUDE</includePaths>
+      <includePaths>.;${REPLACE_INCLUDE}</includePaths>
     </codecompletion>
     <references/>
     <qt>
