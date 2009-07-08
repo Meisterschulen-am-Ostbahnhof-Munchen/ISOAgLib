@@ -59,7 +59,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       }
       break;
 
-    case ECU_DIAGNOSTIC_PROTOCOL_PGN:
+    case ECU_DIAGNOSTIC_PROTOCOL_PGN: {
       static const uint8_t diagProtocolId[8] = {
         0, // We do not support any diagnostic protocol
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF// Reserved bytes according to the standard
@@ -77,7 +77,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
 #endif
         return true;
       }
-      break;
+      break; }
 
     case SOFTWARE_IDENTIFICATION_PGN:
       if (!mstr_SwIdentification.empty() &&
