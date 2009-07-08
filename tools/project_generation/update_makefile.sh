@@ -315,7 +315,7 @@ check_set_correct_variables()
         PRJ_ISO_TERMINAL=0
     fi
 
-    if test "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ; then
+    if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]; then
         echo_ "Warning overwrite setting of PRJ_ISO_FILESERVER_CLIENT == $PRJ_ISO_FILESERVER_CLIENT as ISO11783 is not activated"
         echo_ "Set PRJ_ISO11783 to 1 if you want ISO 11783 fileserver"
         PRJ_ISO_FILESERVER_CLIENT=0
@@ -446,31 +446,14 @@ check_set_correct_variables()
         \( "$PROC_REMOTE_SIMPLE_SETPOINT" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) )
     INC_REM_SIMPLE_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
         \( "$PROC_REMOTE_SIMPLE_MEASURE" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) )
-    if [ "$PRJ_TRACTOR_LIGHT" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
+    if [ "$PRJ_ISO11783" -eq 0 ]; then
         PRJ_TRACTOR_LIGHT=0
-    fi
-    if [ "$PRJ_TRACTOR_FACILITIES" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
         PRJ_TRACTOR_FACILITIES=0
-    fi
-    if [ "$PRJ_TRACTOR_AUX" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
         PRJ_TRACTOR_AUX=0
-    fi
-    if [ "$PRJ_TRACTOR_GUIDANCE" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
         PRJ_TRACTOR_GUIDANCE=0
-    fi
-    if [ "$PRJ_TRACTOR_CERTIFICATION" -eq 0 -o "$PRJ_ISO11783" -eq 0 ]; then
         PRJ_TRACTOR_CERTIFICATION=0
     fi
-    if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
-        PRJ_MULTIPACKET=1
-    fi
-
-    if [ "$PRJ_ISO_TERMINAL" -gt 0 ]; then
-        PRJ_MULTIPACKET=1
-    fi
-    if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
-        PRJ_MULTIPACKET=1
-    fi
+    PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" )
 
     case "$USE_CAN_DRIVER" in
         (simulating)
@@ -516,20 +499,20 @@ comm_features()
     if [ "$PRJ_BASE" -gt 0 ]; then
         printf '%s' " -o -path '*/Part7_ApplicationLayer/*'" >&3
     else
-        if test "$PRJ_TRACTOR_GENERAL" -gt 0 -o "$PRJ_TRACTOR_MOVE" -gt 0 -o "$PRJ_TRACTOR_FACILITIES" -gt 0 -o "$PRJ_TRACTOR_PTO" -gt 0 -o "$PRJ_TRACTOR_LIGHT" -gt 0 -o "$PRJ_TRACTOR_AUX" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 -o "$PRJ_TRACTOR_GUIDANCE" -gt 0 -o "$PRJ_TRACTOR_CERTIFICATION" -gt 0; then
+        if expr "$PRJ_TRACTOR_GENERAL" \| "$PRJ_TRACTOR_MOVE" \| "$PRJ_TRACTOR_FACILITIES" \| "$PRJ_TRACTOR_PTO" \| "$PRJ_TRACTOR_LIGHT" \| "$PRJ_TRACTOR_AUX" \| "$PRJ_TIME_GPS" \| "$PRJ_TRACTOR_GUIDANCE" \| "$PRJ_TRACTOR_CERTIFICATION" >/dev/null; then
             printf '%s' " -o -name 'ibasetypes.h' -o -name 'basecommon_c*'" >&3
         fi
         if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracgeneral_c*' \)" >&3
         fi
-        if test "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -gt 0 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove*' \)" >&3
-        elif test "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ; then
+        elif [ "$PRJ_TRACTOR_MOVE" -gt 0 -a "$PRJ_TRACTOR_MOVE_SETPOINT" -lt 1 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracmove_c.*' \)" >&3
         fi
-        if test "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -gt 0 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto*' \)" >&3
-        elif test "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ; then
+        elif [ "$PRJ_TRACTOR_PTO" -gt 0 -a "$PRJ_TRACTOR_PTO_SETPOINT" -lt 1 ]; then
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracpto_c.*' \)" >&3
         fi
         if [ "$PRJ_TRACTOR_LIGHT" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
@@ -583,7 +566,7 @@ comm_features()
         fi
     fi
     if [ "$PRJ_DATASTREAMS" -lt 1 ]; then
-        if test "$PRJ_ISO_TERMINAL" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ; then
+        if [ "$PRJ_ISO_TERMINAL" -gt 0 -o "$PRJ_TIME_GPS" -gt 0 ]; then
             printf '%s' " -o -path '*/driver/datastreams/volatilememory_c.*'" >&3
         fi
     fi
@@ -649,7 +632,7 @@ driver_features()
     if [ "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
         printf '%s' " -o -name '*counteri*'" >&3
     fi
-    if test "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ; then
+    if [ "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
         printf '%s' " -o -path '*/hal/"$HAL_PATH"/sensor/sensor.h' -path '*/hal/"$HAL_PATH"/sensor/sensor_target_extensions.*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/sensor.h'" >&3
     fi
     if [ "$PRJ_RS232" -gt 0 ]; then
@@ -773,10 +756,10 @@ comm_proc_features()
             fi
         fi
 
-        if test "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 -o "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ; then
+        if [ "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 -o "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ]; then
             printf '%s' " -o -path '*/Part7_ProcessData/StdMeasureElements/*'" >&3
         fi
-        if test "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 -o "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ; then
+        if [ "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 -o "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
             printf '%s' " -o -path '*/Part7_ProcessData/StdSetpointElements/*'" >&3
         fi
 
@@ -1042,31 +1025,31 @@ create_autogen_project_config()
         if [ "$PRJ_BASE" -gt 0 ] ; then
             echo_e "#ifndef USE_BASE $ENDLINE\t#define USE_BASE $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_GENERAL" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_GENERAL" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_GENERAL $ENDLINE\t#define USE_TRACTOR_GENERAL $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_MOVE" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_MOVE" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_MOVE $ENDLINE\t#define USE_TRACTOR_MOVE $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_PTO" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_PTO" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_PTO $ENDLINE\t#define USE_TRACTOR_PTO $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_LIGHT" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_LIGHT" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_LIGHT $ENDLINE\t#define USE_TRACTOR_LIGHT $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_FACILITIES" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_FACILITIES $ENDLINE\t#define USE_TRACTOR_FACILITIES $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_AUX" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_AUX" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_AUX $ENDLINE\t#define USE_TRACTOR_AUX $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_GUIDANCE" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_GUIDANCE $ENDLINE\t#define USE_TRACTOR_GUIDANCE $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TRACTOR_CERTIFICATION" -gt 0 ; then
+        if [ "$PRJ_TRACTOR_CERTIFICATION" -gt 0 ]; then
             echo_e "#ifndef USE_TRACTOR_CERTIFICATION $ENDLINE\t#define USE_TRACTOR_CERTIFICATION $ENDLINE#endif" >&3
         fi
-        if test "$PRJ_TIME_GPS" -gt 0 ; then
+        if [ "$PRJ_TIME_GPS" -gt 0 ]; then
             echo_e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >&3
         fi
     
@@ -1131,7 +1114,7 @@ create_autogen_project_config()
             echo_e "#ifndef USE_EEPROM_IO_YN $ENDLINE\t#define USE_EEPROM_IO_YN NO $ENDLINE#endif" >&3
         fi
     
-        if test "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ; then
+        if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ]; then
             echo_e "#ifndef USE_DATASTREAMS_IO $ENDLINE\t#define USE_DATASTREAMS_IO $ENDLINE#endif" >&3
         else
         # the default in isoaglib_config.h is to activate
@@ -1183,7 +1166,7 @@ create_autogen_project_config()
         echo_e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >&3
     } 3>"$CONFIG_NAME"
     TMP_CONFIG1="${TEMPFILE_PREFIX}config1"
-    for conf_line in $(grep "#define CONFIG_" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g') ; do
+    while read conf_line; do
         conf_name=$(echo_ $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
         INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak)
         if [ "$INDIV_CNT" -lt 1 ] ; then
@@ -1194,7 +1177,10 @@ create_autogen_project_config()
             mv $TMP_CONFIG1 $CONFIG_NAME
             echo_e_n "$ENDLINE" >> $CONFIG_NAME
         fi
-    done
+    done <<END_OF_CONFIG_SET
+$(grep "#define CONFIG_" <$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h |
+  sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
+END_OF_CONFIG_SET
     {
         echo_e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >&3
         FRESH=$(grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak)
@@ -1525,7 +1511,7 @@ create_pure_application_makefile()
         echo_ "####### Files" >&3
         echo_n "SOURCES_APP = " >&3
         FIRST_LOOP="YES"
-        for CcFile in $(grep -E "\.cc|\.cpp|\.c" $MakefileFilelistApp) ; do
+        while read CcFile; do
             if [ $FIRST_LOOP != "YES" ] ; then
                 echo_e_n '\\' >&3
                 echo_e_n "\n\t\t" >&3
@@ -1533,7 +1519,9 @@ create_pure_application_makefile()
                 FIRST_LOOP="NO"
             fi
             echo_e_n "$CcFile  " >&3
-        done
+        done <<END_OF_MODULE_LINES
+$(grep -E "\.cc|\.cpp|\.c" < "$MakefileFilelistApp")
+END_OF_MODULE_LINES
         echo_e "\n" >&3
         
         cat $MAKEFILE_APP_SKELETON_FILE >&3
@@ -1778,11 +1766,9 @@ AutoIncBuildNr=0
 
 ENDOFHEADERC
 
-        SOURCES=$(cat $DevCcPrjFilelist)
         unit_ind=0
-        for i in $SOURCES
-        do
-            if [ $i = "" ] ; then
+        while read i; do
+            if [ -z "$i" ] ; then
                 continue
             fi
             unit_ind=$(expr $unit_ind + 1)
@@ -1796,7 +1782,9 @@ ENDOFHEADERC
             echo_ "OverrideBuildCmd=0" >&3
             echo_ "BuildCmd=" >&3
             echo_ "" >&3
-        done
+        done <<END_OF_SOURCES
+$(cat $DevCcPrjFilelist)
+END_OF_SOURCES
     } 3>>"$PROJECT_FILE_NAME"
 
     cd $1
@@ -2023,13 +2011,13 @@ create_CcsPrj()
     CCS_LIB_INSTALL_LIB_DIR="$CCS_LIB_INSTALL_DIR/lib"
 
     # check platform specific settings
-    if test $PRJ_ACTOR -gt 0 -o $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ; then
+    if [ $PRJ_ACTOR -gt 0 -o $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ]; then
         echo_
         echo_ "Misconfigured config file: P1MC has no sensor/actor capabilities!"
         exit 0
     fi
 
-    if test $RS232_INSTANCE_CNT -gt 0 -a $PRJ_RS232_OVER_CAN -eq 0 ; then
+    if [ $RS232_INSTANCE_CNT -gt 0 -a $PRJ_RS232_OVER_CAN -eq 0 ]; then
         echo_
         echo_ "Misconfigured config file: P1MC has no native rs232. Please enable PRJ_RS232_OVER_CAN or disable RS232_INSTANCE_CNT"
         exit 0
@@ -2065,9 +2053,11 @@ create_CcsPrj()
     append CCS_INCLUDE_PATH " -i\"\$(Proj_dir)/$CCS_LIB_INSTALL_HEADER_DIR\""
 
     # source files
-    for EACH_SOURCE_FILE in $(cat $1/$PROJECT/$FILELIST_COMBINED_PURE | grep .*cpp$); do
+    while read EACH_SOURCE_FILE; do
         append CCS_SOURCE_FILE_LIST "\nSource=\"$EACH_SOURCE_FILE\""
-    done
+    done <<END_OF_FILELIST
+$(grep '.*cpp$' <$1/$PROJECT/$FILELIST_COMBINED_PURE)
+END_OF_FILELIST
 
     sed -e "s#INSERT_PROJECT_DIR#$CCS_PROJECT_DIR#g" $CCS_PROJECT_FILE_NAME_PATH > $CCS_PROJECT_FILE_NAME_PATH.1
     sed -e "s#INSERT_ISOAGLIB_DIR#$ISO_AG_LIB_INSIDE#g" $CCS_PROJECT_FILE_NAME_PATH.1 > $CCS_PROJECT_FILE_NAME_PATH
@@ -2093,15 +2083,17 @@ create_CcsPrj()
         break;
     done
 
-    for EACH_INSTALL_HEADER in $(cat "$1/$PROJECT/$FILELIST_LIBRARY_HDR" | grep -v ".cpp"); do
+    while read EACH_INSTALL_HEADER; do
         install -D $EACH_INSTALL_HEADER $CCS_LIB_INSTALL_HEADER_DIR/$(echo_ $EACH_INSTALL_HEADER | sed -e 's|.*xgpl_src/||')
-    done
+    done <<END_OF_HEADER_LIST
+$(grep -v ".cpp" < "$1/$PROJECT/$FILELIST_LIBRARY_HDR")
+END_OF_HEADER_LIST
 }
 
 # print source paths in DSP format to FD3 and user information to FD1.
 format_sources_for_dsp()
 {
-    for i in $@; do
+    for i in "$@"; do
         if [ -z "$i" ] ; then
             continue
         fi
@@ -2577,8 +2569,8 @@ check_after_user_configuration()
             fi
     
             CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
-            if test $USE_TARGET_SYSTEM = "pc_win32" ; then
-                if test $USE_CAN_DEVICE_FOR_SERVER = "no_card" ; then
+            if [ $USE_TARGET_SYSTEM = "pc_win32" ]; then
+                if [ $USE_CAN_DEVICE_FOR_SERVER = "no_card" ]; then
                     # skip extension "no_card"
                     CAN_SERVER_FILENAME=can_server_sock
                 fi
