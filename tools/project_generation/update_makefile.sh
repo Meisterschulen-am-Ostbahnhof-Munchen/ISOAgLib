@@ -70,6 +70,7 @@ SYSPATH="$(command -p getconf PATH 2>/dev/null)"
 PATH="$SYSPATH:$PATH"
 umask 022
 set -o nounset
+set -o errexit
 
 # global constants:
 TAB="$(printf '\t')"
@@ -137,6 +138,8 @@ map()
     "$CONTINUE" "$@"
 }
 
+status_le1() { [ $? -le 1 ]; }
+
 # this function is used to verify and
 # correct the several project configuration
 # variables
@@ -144,7 +147,6 @@ map()
 # the corresponding default values are used
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
 # + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator" -> select wanted driver connection for CAN
-# + USE_CAN_DEVICE_FOR_SERVER="no_card"|"pcan"|"A1"|"rte" -> use this device for building the can_server
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte"|"hal_simulator" -> select wanted driver connection for RS232
 # + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
@@ -400,9 +402,6 @@ check_set_correct_variables()
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
         #echo_ "Use Parameter value for can driver: $PARAMETER_CAN_DRIVER"
     fi
-    if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
-        USE_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
-    fi
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
         #echo_ "Use Parameter value for rs232 driver: $PARAMETER_RS232_DRIVER"
@@ -457,19 +456,19 @@ check_set_correct_variables()
     esac
     
     INC_LOC_STD_MEASURE_ELEMENTS=$(expr "$PROC_LOCAL" \& \
-        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_SETPOINT" \) )
+        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_SETPOINT" \) || status_le1)
     INC_LOC_STD_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" \& \
-        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_MEASURE" \) )
+        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_MEASURE" \) || status_le1)
     INC_LOC_SIMPLE_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" \& \
-        \( "$PROC_LOCAL_SIMPLE_SETPOINT" \| "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" \) )
+        \( "$PROC_LOCAL_SIMPLE_SETPOINT" \| "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
     INC_REM_STD_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_SETPOINT" \) )
+        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_SETPOINT" \) || status_le1)
     INC_REM_STD_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_MEASURE" \) )
+        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_MEASURE" \) || status_le1)
     INC_REM_SIMPLE_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_SIMPLE_SETPOINT" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) )
+        \( "$PROC_REMOTE_SIMPLE_SETPOINT" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
     INC_REM_SIMPLE_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_SIMPLE_MEASURE" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) )
+        \( "$PROC_REMOTE_SIMPLE_MEASURE" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
     if [ "$PRJ_ISO11783" -eq 0 ]; then
         PRJ_TRACTOR_LIGHT=0
         PRJ_TRACTOR_FACILITIES=0
@@ -477,7 +476,7 @@ check_set_correct_variables()
         PRJ_TRACTOR_GUIDANCE=0
         PRJ_TRACTOR_CERTIFICATION=0
     fi
-    PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" )
+    PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" || status_le1)
 
     case "$USE_CAN_DRIVER" in
         (simulating)
@@ -965,10 +964,10 @@ create_autogen_project_config()
 
     CONFIG_HEADER_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR:+$DOXYGEN_EXPORT_DIR/}config_header__${PROJECT}-doc.txt"
 
-  # first backup individual settings after line
-  # START_INDIVIDUAL_PROJECT_CONFIG
+    # first backup individual settings after line
+    # START_INDIVIDUAL_PROJECT_CONFIG
     if [ -f $CONFIG_NAME ] ; then
-        grep -A1000 "// START_INDIVIDUAL_PROJECT_CONFIG"  $CONFIG_NAME > $CONFIG_NAME.bak
+        grep -A1000 "// START_INDIVIDUAL_PROJECT_CONFIG" < $CONFIG_NAME > $CONFIG_NAME.bak || status_le1
     else
         touch $CONFIG_NAME.bak
     fi
@@ -1189,7 +1188,7 @@ create_autogen_project_config()
     TMP_CONFIG1="${TEMPFILE_PREFIX}config1"
     while read conf_line; do
         conf_name=$(echo_ $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
-        INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak)
+        INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak || status_le1)
         if [ "$INDIV_CNT" -lt 1 ] ; then
             grep -B1 "#define $conf_line" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h >> $CONFIG_NAME
             sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $TMP_CONFIG1
@@ -1204,7 +1203,7 @@ $(grep "#define CONFIG_" <$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_
 END_OF_CONFIG_SET
     {
         echo_e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >&3
-        FRESH=$(grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" $CONFIG_NAME.bak)
+        FRESH=$(grep -c "// START_INDIVIDUAL_PROJECT_CONFIG" < $CONFIG_NAME.bak || status_le1)
         if [ "$FRESH" -lt 1 ] ; then
             echo_ "// START_INDIVIDUAL_PROJECT_CONFIG" >&3
         fi
@@ -1402,7 +1401,7 @@ create_standard_makefile()
         
         # it's a good idea to get the several typedef.h headers to the install set
         grep typedef.h FileListInternal.txt >> FileListInterface.txt
-        grep -E "driver/*/i*.h" FileListInternal.txt >> FileListInterface.txt
+        grep -E "driver/*/i*.h" < FileListInternal.txt >> FileListInterface.txt || status_le1
         
         # special exception to enable ISO-Request-PGN implementation in app scope
         grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
@@ -1416,8 +1415,9 @@ create_standard_makefile()
                 -e 's|\.\./||g' < "$INTERFACE_FILE" |
             while read -r BASE_NAME; do
                 expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
-                    ! grep -q -F "/$BASE_NAME" FileListInterface.txt &&
-                    grep -F "$BASE_NAME" FileListInternal.txt >>FileListInterface.txt
+                    ! grep -q -F "/$BASE_NAME" <FileListInterface.txt &&
+                    grep -F "$BASE_NAME" <FileListInternal.txt >>FileListInterface.txt ||
+                    status_le1
             done
         done <FileListInterface.txt
         printf 'INSTALL_FILES_LIBRARY =' >&3
@@ -1652,7 +1652,7 @@ create_DevCCPrj()
 
     UNIT_CNT_CC=$(grep -c -E "\.cc|\.cpp|\.c" $DevCcPrjFilelist)
     UNIT_CNT_HDR=$(grep -c -E "\.h|\.hpp" $DevCcPrjFilelist)
-    UNIT_CNT=$(expr $UNIT_CNT_CC + $UNIT_CNT_HDR)
+    UNIT_CNT=$(expr $UNIT_CNT_CC + $UNIT_CNT_HDR || status_le1)
 
 
     {
@@ -1790,7 +1790,7 @@ ENDOFHEADERC
             if [ -z "$i" ] ; then
                 continue
             fi
-            unit_ind=$(expr $unit_ind + 1)
+            unit_ind=$(expr $unit_ind + 1 || status_le1)
             echo_ "[Unit$unit_ind]" >&3
             echo_ "FileName=$i" >&3
             echo_ "CompileCpp=1" >&3
@@ -2165,8 +2165,6 @@ EOF
 
     PRJ_INCLUDE_PATH_WIN=$(win_paths_from_unix_paths "$PRJ_INCLUDE_PATH" )
 
-    # echo_ "USE_CAN_DRIVER $USE_CAN_DRIVER; USE_CAN_DEVICE_FOR_SERVER $USE_CAN_DEVICE_FOR_SERVER"
-
     upper_defines_vcproj() { printf -- ' /D "%s"' "$@"; }
     lower_defines_vcproj() { printf -- ' /d "%s"' "$@"; }
 
@@ -2494,16 +2492,10 @@ check_after_user_configuration()
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
         IS_CAN_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | grep -c "msq_server")
         if [ $IS_CAN_SERVER -gt 0 ] ; then
-            USE_CAN_DEVICE_FOR_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | sed 's/msq_server_//g')
             USE_CAN_DRIVER="msq_server"
             PARAMETER_CAN_DRIVER="msq_server"
         fi
     fi
-    
-    if [ $PARAMETER_CAN_DEVICE_FOR_SERVER != "UseConfigFile" ] ; then
-        USE_CAN_DEVICE_FOR_SERVER=$PARAMETER_CAN_DEVICE_FOR_SERVER
-    fi
-    
     
     #default for not-can_server
     CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
@@ -2545,7 +2537,6 @@ check_after_user_configuration()
                 (pc_win32)
                     echo_ "Server Client CAN driver can only used for target pc_linux. Overridden with socket_server" 1>&2
                     USE_CAN_DRIVER="socket_server"
-                    USE_CAN_DEVICE_FOR_SERVER="no_card"
                     CAN_SERVER_FILENAME="can_server_sock"
                     ;;
                 (*)
@@ -2556,17 +2547,6 @@ check_after_user_configuration()
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
                     ;;
             esac
-            # make sure, that USE_CAN_DEVICE_FOR_SERVER is automatically set, when not yet defined
-            if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
-                case $PRJ_DEFINES in
-                    (*SYSTEM_A1*)
-                        USE_CAN_DEVICE_FOR_SERVER="A1"
-                        ;;
-                    (*)
-                        USE_CAN_DEVICE_FOR_SERVER="no_card"
-                        ;;
-                esac
-            fi
             if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
                 CAN_SERVER_FILENAME=${USE_CAN_DRIVER}
             fi
@@ -2574,16 +2554,6 @@ check_after_user_configuration()
         (socket_server | socket_server_hal_simulator)
             # enhanced CAN HAL IS supported for the socket based can_server
             PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
-            if [ "A$USE_CAN_DEVICE_FOR_SERVER" = "A" ] ; then
-                case $PRJ_DEFINES in
-                    (*SYSTEM_A1*)
-                        USE_CAN_DEVICE_FOR_SERVER="A1"
-                        ;;
-                    (*)
-                        USE_CAN_DEVICE_FOR_SERVER="no_card"
-                        ;;
-                esac
-            fi
     
             CAN_SERVER_FILENAME=can_server_sock
             ;;
@@ -2593,23 +2563,6 @@ check_after_user_configuration()
             exit 1
             ;;
     esac
-    
-    case "$USE_CAN_DEVICE_FOR_SERVER" in
-        (rte)
-            case "$USE_TARGET_SYSTEM" in
-                (pc_linux)
-                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
-                    ;;
-                (pc_win32)
-                    echo_ "RTE CAN driver can only used for target pc_linux" 1>&2
-                    usage
-                    exit 1
-                    ;;
-            esac
-            ;;
-    esac
-    
-    
     
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
