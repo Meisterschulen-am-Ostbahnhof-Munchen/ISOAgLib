@@ -60,6 +60,17 @@
 # needed by the application
 # ####################################################################### #
 
+# Prologue
+POSIXLY_CORRECT=y # for the case that bash is running
+unset -f unalias
+\unalias -a
+unset -f command
+SYSPATH="$(command -p getconf PATH 2>/dev/null)"
+: ${SYSPATH:=/usr/bin:/bin}
+PATH="$SYSPATH:$PATH"
+umask 022
+set -o nounset
+
 # global constants:
 TAB="$(printf '\t')"
 PATH_SEPARATOR1='=_=_'
@@ -78,7 +89,7 @@ main()
     
     # Create files to be used to build according to the users's
     # configuration settings
-    create_buildfiles "$CONF_DIR" "$SCRIPT_DIR" "$START_DIR"
+    create_buildfiles "$CONF_DIR" "$SCRIPT_DIR"
     
     make_doxygen_ready_comment_blocks
     report_summary
@@ -274,6 +285,19 @@ set_default_values()
     PRJ_ISO_TERMINAL_OBJECT_SELECTION2=''
     PRJ_ISO_TERMINAL_OBJECT_SELECTION3=''
     PRJ_ISO_TERMINAL_OBJECT_SELECTION4=''
+    PRJ_DEFINES=''
+    PRJ_INCLUDE_PATH=''
+    USE_LINUX_EXTERNAL_INCLUDE_PATH=''
+    USE_LINUX_EXTERNAL_LIBRARIES=''
+    USE_LINUX_EXTERNAL_LIBRARY_PATH=''
+    PRJ_COMPILER_BINARY_PRE=''
+    USE_WIN32_EXTERNAL_INCLUDE_PATH=''
+    USE_WIN32_EXTERNAL_LIBRARY_PATH=''
+    USE_DEVCPP_EXTERNAL_LIBRARIES=''
+    USE_WIN32_EXTERNAL_INCLUDE_PATH=''
+    USE_WIN32_EXTERNAL_LIBRARY_PATH=''
+    USE_MSVC_EXTERNAL_LIBRARIES=''
+    APP_SRC_FILE=''
 }
 
 check_set_correct_variables()
@@ -685,7 +709,7 @@ driver_features()
 comm_proc_features()
 {
     if [ "$PRJ_PROCESS" -gt 0 ]; then
-        if [ -n "$COMM_PROC_FEATURES" ]; then
+        if [ -n "${COMM_PROC_FEATURES:-}" ]; then
             printf '%s' " -o " >&3
         fi
         printf '%s' " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/iprocesscmd*' -o -path '*/Part7_ProcessData/impl/processcmd*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'" >&3
@@ -773,7 +797,8 @@ find_part()
     shift 2
     [ $# -gt 0 ] || return
     printf '%s \( ' "$OUTER_OP" >&3
-    local OR; local PART
+    local OR=''
+    local PART=''
     local FORMAT="%s${INNER_OP}"
     for PART in $*; do
         printf "$FORMAT" "$OR" "$PART" >&3
@@ -814,19 +839,19 @@ create_filelist( )
     # mkdir tmpdir
     mkdir -p $PROJECT
     cd $PROJECT
-    FILELIST_LIBRARY_HDR="filelist"'__'"$PROJECT_hdr.library.txt"
-    FILELIST_LIBRARY_PURE="filelist"'__'"$PROJECT.library.txt"
+    FILELIST_LIBRARY_HDR="filelist"'__'"${PROJECT}_hdr.library.txt"
+    FILELIST_LIBRARY_PURE="filelist"'__'"${PROJECT}.library.txt"
 
-    FILELIST_APP_HDR="filelist"'__'"$PROJECT_hdr.app.txt"
-    FILELIST_APP_PURE="filelist"'__'"$PROJECT.app.txt"
+    FILELIST_APP_HDR="filelist"'__'"${PROJECT}_hdr.app.txt"
+    FILELIST_APP_PURE="filelist"'__'"${PROJECT}.app.txt"
 
-    local FILELIST_COMBINED_HDR="filelist"'__'"$PROJECT_hdr.txt"
-    FILELIST_COMBINED_PURE="filelist"'__'"$PROJECT.txt"
+    local FILELIST_COMBINED_HDR="filelist"'__'"${PROJECT}_hdr.txt"
+    FILELIST_COMBINED_PURE="filelist"'__'"${PROJECT}.txt"
 
-    if [ "A$DOXYGEN_EXPORT_DIR" = "A" ]; then
-        FILELIST_DOXYGEN_READY="filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
+    if [ -z "${DOXYGEN_EXPORT_DIR:-}" ]; then
+        FILELIST_DOXYGEN_READY="filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}-doc.txt"
     else
-        FILELIST_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/filelist"'__'"$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
+        FILELIST_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}-doc.txt"
     fi
     local FIND_TEMP_PATH="$(printf '%s' "-path '*/scheduler/*'" \
         " -o -path '*/Part5_NetworkManagement/*'" \
@@ -839,8 +864,8 @@ create_filelist( )
     { local EXCLUDE_PATH_PART1="$(find_part '-and -not' -path $APP_PATH_EXCLUDE 3>&1 1>&9)"; } 9>&1
     : ${EXCLUDE_PATH_PART1:=-a -not -path '*/xgpl_src/build/*'}
 
-    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
-    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_FROM_SYSTEM_MGMT $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
+    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
+    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
 
     ##############################
     # find application files
@@ -870,14 +895,14 @@ create_filelist( )
         #echo_ "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >&3
         #echo_ "*/" >&3
         #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
+        echo_e "\n\n @section FileLists${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of Files for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
 
         # write block of source files
         #echo_ "/**" >&3
-        #echo_ "* \section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >&3
+        #echo_ "* \section SrcList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
         #echo_ "*/" >&3
         #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section SrcList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
+        echo_e "\n\n @section SrcList${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of Sourcefiles for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
         echo_ "\code" >&3
         cat $FILELIST_COMBINED_PURE >&3
         echo_ "\endcode" >&3
@@ -887,10 +912,10 @@ create_filelist( )
 
         # write block of header files
         #echo_ "/**" >&3
-        #echo_ "* \section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for $PROJECT ." >&3
+        #echo_ "* \section HdrList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
         #echo_ "*/" >&3
         #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section HdrList$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Headers for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
+        echo_e "\n\n @section HdrList${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of Headers for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
         echo_ "\code" >&3
         cat $FILELIST_COMBINED_HDR >&3
         echo_ "\endcode" >&3
@@ -938,11 +963,7 @@ create_autogen_project_config()
         break;
     done
 
-    if [ "A$DOXYGEN_EXPORT_DIR" = "A" ] ; then
-        CONFIG_HEADER_DOXYGEN_READY="config_header"'__'"$PROJECT-doc.txt"
-    else
-        CONFIG_HEADER_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/config_header"'__'"$PROJECT-doc.txt"
-    fi
+    CONFIG_HEADER_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR:+$DOXYGEN_EXPORT_DIR/}config_header__${PROJECT}-doc.txt"
 
   # first backup individual settings after line
   # START_INDIVIDUAL_PROJECT_CONFIG
@@ -1252,7 +1273,7 @@ define_insert_and_report()
 create_standard_makefile()
 {
     MakefileName="Makefile"
-    MakefileNameLong="Makefile"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
+    MakefileNameLong="Makefile__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}"
 
     : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt}
     {
@@ -1275,7 +1296,7 @@ create_standard_makefile()
         KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
         
         local RULE_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
-        define_insert_and_report "$RULE_LIBPATH"
+        define_insert_and_report LIBPATH "$RULE_LIBPATH"
         printf 'LIBPATH = %s\n' "$REPORT_LIBPATH" >&3
         local REPORT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
         printf 'EXTERNAL_LIBS = %s\n' "$REPORT_EXTERNAL_LIBS" >&3
@@ -1283,12 +1304,13 @@ create_standard_makefile()
         echo_e "\n####### Include a version definition file into the Makefile context - when this file exists"  >&3
         printf -- '-include versions.mk\n\n\n' >&3
         
-        if [ "$USE_RS232_DRIVER" = "rte" -o "$USE_CAN_DEVICE_FOR_SERVER" = "rte" ] ; then
+        define_insert_and_report BIOS_INC ''
+        define_insert_and_report BIOS_LIB ''
+        if [ "$USE_RS232_DRIVER" = "rte" ] ; then
             define_insert_and_report BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
             echo_ "BIOS_LIB = $INSERT_BIOS_LIB" >&3
             # the new RTE library places the headers in /usr/local/include --> no special include paths are needed any more
             echo_n "BIOS_INC =" >&3
-            local REPORT_BIOS_INC=''
         fi
         local REPORT_VERSION_DEFINES=''
         local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -D$USE_SYSTEM_DEFINE -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- ' -D%s' $PRJ_DEFINES)}"
@@ -1433,11 +1455,9 @@ create_pure_application_makefile()
 {
     # now create pure application makefile which is based upon an installed library
     MakefileName="MakefileApp"
-    MakefileNameLong="MakefileApp"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER"
+    MakefileNameLong="MakefileApp__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}"
 
-    if [ "A$MAKEFILE_APP_SKELETON_FILE" = "A" ] ; then
-        MAKEFILE_APP_SKELETON_FILE="$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileAppSkeleton.txt"
-    fi
+    : ${MAKEFILE_APP_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileAppSkeleton.txt}
 
     {
         # create Makefile Header
@@ -1488,9 +1508,8 @@ create_pure_application_makefile()
         fi
         
         echo_e "\n\n####### Definition of compiler binary prefix corresponding to selected target" >&3
-        if [ "A$PRJ_COMPILER_BINARY_PRE" != "A" ] ; then
+        if [ -n "$PRJ_COMPILER_BINARY_PRE" ] ; then
             echo_ "COMPILER_BINARY_PRE = \"$PRJ_COMPILER_BINARY_PRE\"" >&3
-            
         else
             case $PRJ_DEFINES in
                 (*SYSTEM_A1*)
@@ -1624,11 +1643,11 @@ create_DevCCPrj()
     rm -f $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
 
     # org test
-    PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dev"
+    PROJECT_FILE_NAME="${PROJECT}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}.dev"
     DevCcPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
 
     # echo_ "Erzeuge $PROJECT_FILE_NAME"
-    PROJECT_EXE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.exe"
+    PROJECT_EXE_NAME="${PROJECT}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}.exe"
     CONFIG_HDR_NAME="config_""$PROJECT.h"
 
     UNIT_CNT_CC=$(grep -c -E "\.cc|\.cpp|\.c" $DevCcPrjFilelist)
@@ -2029,7 +2048,7 @@ create_CcsPrj()
 
     for EACH_REL_APP_PATH in $REL_APP_PATH; do
         local PART="$(echo_ "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's|/[0-9a-zA-Z_+\-]+\\\.\.||g')"
-        if [ -z "$USE_APP_PATH" ]; then
+        if [ -z "${USE_APP_PATH:-}" ]; then
             USE_APP_PATH="$PART"
         else
             append USE_APP_PATH ";$PART"
@@ -2113,7 +2132,7 @@ create_VCPrj()
     # echo_ "Create Projekt file for VC6 in $DEV_PRJ_DIR"
     mkdir -p $DEV_PRJ_DIR
     # Visual Studio will create the needed Debug and Release directories on its own.
-    PROJECT_FILE_NAME="$PROJECT"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER.dsp"
+    PROJECT_FILE_NAME="${PROJECT}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}.dsp"
 
     DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
     CONFIG_HDR_NAME="config_""$PROJECT.h"
@@ -2205,6 +2224,7 @@ EOF
     local INSERT_RELEASE_USE_DEBUG_LIBRARIES=0
     local INSERT_RELEASE_OUTPUT_DIR=Release
     local INSERT_RELEASE_INTERMEDIATE_DIR=Release
+    local INSERT_RELEASE_USE_RELEASE_LIBRARIES=0
     local INSERT_RELEASE_IGNORE_EXPORT_LIB=0
     local INSERT_RELEASE_TARGET_DIR=''
     local INSERT_RELEASE_CPP_PARAMETERS="/nologo /W3 /GX /O2 ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"NDEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES} /YX /FD /TP /c"
@@ -2266,7 +2286,6 @@ create_buildfiles()
 {
     local CONF_DIR="$1"
     local SCRIPT_DIR="$2"
-    local START_DIR="$3"
     # verify and correct the variables
     check_set_correct_variables "$CONF_DIR"
     GENERATE_FILES_ROOT_DIR=$(echo_ "$GENERATE_FILES_ROOT_DIR" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g')
@@ -2302,8 +2321,6 @@ create_buildfiles()
     find $GENERATE_FILES_ROOT_DIR/$PROJECT -name "filelist__*-doc.txt" -exec rm {} \;
     #$GENERATE_FILES_ROOT_DIR/$PROJECT/filelist__*.txt
 
-    # jump to initial directory on start of script
-    cd "$START_DIR"
 }
 
 
@@ -2551,7 +2568,7 @@ check_after_user_configuration()
                 esac
             fi
             if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
-                CAN_SERVER_FILENAME=${USE_CAN_DRIVER}_${USE_CAN_DEVICE_FOR_SERVER}
+                CAN_SERVER_FILENAME=${USE_CAN_DRIVER}
             fi
             ;;
         (socket_server | socket_server_hal_simulator)
@@ -2568,13 +2585,7 @@ check_after_user_configuration()
                 esac
             fi
     
-            CAN_SERVER_FILENAME=can_server_sock_${USE_CAN_DEVICE_FOR_SERVER}
-            if [ $USE_TARGET_SYSTEM = "pc_win32" ]; then
-                if [ $USE_CAN_DEVICE_FOR_SERVER = "no_card" ]; then
-                    # skip extension "no_card"
-                    CAN_SERVER_FILENAME=can_server_sock
-                fi
-            fi
+            CAN_SERVER_FILENAME=can_server_sock
             ;;
         (*)
             echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
@@ -2640,7 +2651,7 @@ check_after_user_configuration()
     esac
     
     # check for little/big endian setting
-    if [ "A$PARAMETER_LITTLE_ENDIAN_CPU" != "A" ] ; then
+    if [ -n "${PARAMETER_LITTLE_ENDIAN_CPU:-}" ] ; then
         USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU
     fi
 }
@@ -2661,18 +2672,18 @@ report_summary()
     echo_
     echo_
     echo_ "Generation successful."
-    if [ -n "$TMP_REPORTFILE" ]; then
+    if [ -n "${TMP_REPORTFILE:-}" ]; then
         cat "$TMP_REPORTFILE"
     fi
 }
 
 make_doxygen_ready_comment_blocks()
 {
-    if [ "A$DOXYGEN_EXPORT_DIR" != "A" ] ; then
+    if [ -n "${DOXYGEN_EXPORT_DIR:-}" ] ; then
         # doxygen export is specified -> copy config file there with suitable doc block
         CONF_BASE=$(basename $CONF_FILE)
-        CONFIG_SPEC_DOXYGEN_READY="$DOXYGEN_EXPORT_DIR/spec"'__'"$CONF_BASE"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER-doc.txt"
-        TMP_CONF="${TEMPFILE_PREFIX}$CONF_BASE"
+        CONFIG_SPEC_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/spec__${CONF_BASE}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}-doc.txt"
+        TMP_CONF="${TEMPFILE_PREFIX}${CONF_BASE}"
         {
             #echo_ "/**" >&3
             #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
@@ -2686,9 +2697,9 @@ make_doxygen_ready_comment_blocks()
             #rm -f $TMP_CONF
             #echo_ "/*@}*/" >&3
         
-            echo_e "$ENDLINE$ENDLINE @section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT with CAN Driver $USE_CAN_DRIVER and RS232 Driver $USE_RS232_DRIVER" >&3
+            echo_e "${ENDLINE}${ENDLINE} @section PrjSpec${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of configuration settings for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
             echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
-            echo_ " Use the file $(basename "$CONF_FILE") in this directory as input file for $(basename "$0") to create the project generation files." >&3
+            echo_ " Use the file $(basename "${CONF_FILE}") in this directory as input file for $(basename "$0") to create the project generation files." >&3
             echo_ "\code" >&3
             sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > $TMP_CONF
             cat $TMP_CONF >&3
@@ -2700,7 +2711,7 @@ make_doxygen_ready_comment_blocks()
 
 on_exit()
 {
-    set -- "$TMP_REPORTFILE" "$TMP_CONF" "$TMP_CONFIG1" "$TMP_MAKEFILE" "$TMP_EDE"
+    set -- "${TMP_REPORTFILE:-}" "${TMP_CONF:-}" "${TMP_CONFIG1:-}" "${TMP_MAKEFILE:-}" "${TMP_EDE:-}"
     # omit empty filenames:
     for FILE in "$@"; do
         shift
