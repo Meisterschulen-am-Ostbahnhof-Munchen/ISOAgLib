@@ -2664,6 +2664,8 @@ make_doxygen_ready_comment_blocks()
 
 on_exit()
 {
+    local STATUS="$?"
+    set +o errexit # otherwise Bash may override the exit status due to another error
     set -- "${TMP_REPORTFILE:-}" "${TMP_CONF:-}" "${TMP_CONFIG1:-}" "${TMP_MAKEFILE:-}" "${TMP_EDE:-}"
     # omit empty filenames:
     for FILE in "$@"; do
@@ -2672,9 +2674,10 @@ on_exit()
     done
     # delete temporary files:
     [ $# -gt 0 ] && rm -f -- "$@"
+    [ "$STATUS" -eq 0 ] || printf 'ERROR (exit status %s).\n' "$STATUS" >&2
 }
 
 trap on_exit 0
-trap 'exit 2' 1 2 3 13 15
+trap 'exit 255' HUP INT QUIT PIPE TERM
 
 main "$@"
