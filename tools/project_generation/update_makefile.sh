@@ -74,6 +74,8 @@ set -o errexit
 
 # global constants:
 TAB="$(printf '\t')"
+LF="
+"
 PATH_SEPARATOR1='=_=_'
 PATH_SEPARATOR2='_=_='
 TEMPFILE_PREFIX="/tmp/update_makefile$$"
@@ -510,7 +512,7 @@ append()
     local VARIABLE="$1"
     local FUNCTION="append_$VARIABLE"
     type "$FUNCTION" >/dev/null 2>&1 ||
-        eval "$FUNCTION() { $VARIABLE=\"\$$VARIABLE\$*\"; }"
+        eval "$FUNCTION() { $VARIABLE=\"\${$VARIABLE:-}\$*\"; }"
     shift
     "$FUNCTION" "$@"
 }
@@ -806,6 +808,82 @@ find_part()
     printf ' \)' >&3
 }
 
+add_feature_partition_rule()
+{
+    local FEATURE_NAME="$1"
+    local FEATURE_PATTERN="$2"
+    append FEATURE_PARTITION_RULES "$FEATURE_NAME$LF$FEATURE_PATTERN$LF"
+}
+
+# Partition paths read from STDIN by the given rules and set variables
+# PARTITIONED_ accordingly.
+partition_features()
+{
+    local FEATURE_NAME
+
+    if [ -n "${PARTITIONED_DIRECTORY:-}" ]; then
+        # delete old partitions:
+        while read FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
+            unset "PARTITIONED_${FEATURE_NAME}"
+        done <<END_OF_PARTITIONED_FEATURES
+$PARTITIONED_DIRECTORY
+END_OF_PARTITIONED_FEATURES
+        unset "$PARTITIONED_DIRECTORY"
+    fi
+
+    local CANDIDATES1="$(cat)"
+    while read FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
+        read FEATURE_PATTERN
+        local CANDIDATES2="$CANDIDATES1"
+        CANDIDATES1=''
+        local FILE
+        while read FILE && [ -n "$FILE" ]; do
+            if expr "$FILE" : "$FEATURE_PATTERN" >/dev/null; then
+                if ! grep -q "^${FEATURE_NAME}$" <<END_OF_FEATURES >/dev/null
+${PARTITIONED_DIRECTORY:-}
+END_OF_FEATURES
+                then
+                    append PARTITIONED_DIRECTORY "$FEATURE_NAME$LF"
+                fi
+                append "PARTITIONED_${FEATURE_NAME}" "$FILE$LF"
+            else
+                append CANDIDATES1 "$FILE$LF"
+            fi
+        done <<END_OF_FILELIST
+${CANDIDATES2:-}
+END_OF_FILELIST
+    done <<END_OF_FEATURE_PARTITION_RULES
+${FEATURE_PARTITION_RULES:-}
+END_OF_FEATURE_PARTITION_RULES
+}
+
+report_feature_partitions()
+{
+    local FEATURE_NAME
+    while read FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
+        printf '\n    (%s' "$FEATURE_NAME"
+        eval "local FILESUBLIST=\"\$PARTITIONED_${FEATURE_NAME}\""
+        local FILE
+        while read FILE && [ -n "$FILE" ]; do
+            printf '\n      %s' "$FILE"
+        done <<END_OF_FILELIST
+$FILESUBLIST
+END_OF_FILELIST
+        printf ')'
+    done <<END_OF_PARTITIONED_FEATURES
+$PARTITIONED_DIRECTORY
+END_OF_PARTITIONED_FEATURES
+}
+
+prepare_feature_partitions()
+{
+    FEATURE_PARTITION_RULES=''
+    add_feature_partition_rule 'PRJ_PROCESS' '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc.*\|.*/Part7_ProcessData/iprocesscmd*\|.*/Part7_ProcessData/impl/processcmd*\|*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h'
+    add_feature_partition_rule 'PART7' '.*/Part7_ApplicationLayer/.*'
+    # TODO: enhance by another rules ...
+    add_feature_partition_rule 'OTHER' '.'
+}
+
 # this function uses the "find" cmd
 # to derive based on the selected features the
 # corresponding file list into filelist_$PROJECT_PURE.txt
@@ -925,6 +1003,8 @@ create_filelist( )
     } 3>"$FILELIST_DOXYGEN_READY"
     cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
     rm -f $FILELIST_COMBINED_HDR
+
+    prepare_feature_partitions
 
     # go back to directory where config file resides
     cd "$GENERATE_FILES_ROOT_DIR"
@@ -1389,8 +1469,17 @@ create_standard_makefile()
         printf '    (Compiler_binary_prefix %s))\n' "$REPORT_COMPILER_BINARY_PRE" >&5
         printf '  (Compiler_parameters %s)\n' "$REPORT_CPP_PARAMETERS" >&5
         printf '  (Linker_parameters %s %s)\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
-        
-        list_source_files '  (Modules\n    %s' '\n    %s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" "$MakefileFilelistApp" >&5
+
+        if [ -n "${FEATURE_PARTITIONS_IMPLEMENTED:-}" ]; then
+            partition_features <<EOF
+$(cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" |
+  grep -E '\.cc|\.cpp|\.c' || status_le1)
+EOF
+            printf '  (Modules' >&5
+            report_feature_partitions >&5
+        else # default implementation without feature partitions
+            list_source_files '  (Modules\n    %s' '\n    %s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" "$MakefileFilelistApp" >&5
+        fi
         printf '))\n' >&5
 
         ##### Library install header file gathering BEGIN
