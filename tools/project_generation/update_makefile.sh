@@ -827,7 +827,7 @@ partition_features()
 
     if [ -n "${PARTITIONED_DIRECTORY:-}" ]; then
         # delete old partitions:
-        while read FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
+        while read -r FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
             unset "PARTITIONED_${FEATURE_NAME}"
         done <<END_OF_PARTITIONED_FEATURES
 $PARTITIONED_DIRECTORY
@@ -836,12 +836,12 @@ END_OF_PARTITIONED_FEATURES
     fi
 
     local CANDIDATES1="$(cat)"
-    while read FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
-        read FEATURE_PATTERN
+    while read -r FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
+        read -r FEATURE_PATTERN
         local CANDIDATES2="$CANDIDATES1"
         CANDIDATES1=''
         local FILE
-        while read FILE && [ -n "$FILE" ]; do
+        while read -r FILE && [ -n "$FILE" ]; do
             if expr "$FILE" : "$FEATURE_PATTERN" >/dev/null; then
                 if ! grep -q "^${FEATURE_NAME}$" <<END_OF_FEATURES >/dev/null
 ${PARTITIONED_DIRECTORY:-}
@@ -864,11 +864,11 @@ END_OF_FEATURE_PARTITION_RULES
 report_feature_partitions()
 {
     local FEATURE_NAME
-    while read FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
+    while read -r FEATURE_NAME && [ -n "$FEATURE_NAME" ]; do
         printf '\n    (%s' "$FEATURE_NAME"
         eval "local FILESUBLIST=\"\$PARTITIONED_${FEATURE_NAME}\""
         local FILE
-        while read FILE && [ -n "$FILE" ]; do
+        while read -r FILE && [ -n "$FILE" ]; do
             printf '\n      %s' "$FILE"
         done <<END_OF_FILELIST
 $FILESUBLIST
@@ -882,10 +882,57 @@ END_OF_PARTITIONED_FEATURES
 prepare_feature_partitions()
 {
     FEATURE_PARTITION_RULES=''
-    add_feature_partition_rule 'PRJ_PROCESS' '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc.*\|.*/Part7_ProcessData/iprocesscmd*\|.*/Part7_ProcessData/impl/processcmd*\|*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h'
-    add_feature_partition_rule 'PART7' '.*/Part7_ApplicationLayer/.*'
-    # TODO: enhance by another rules ...
-    add_feature_partition_rule 'OTHER' '.'
+    # COMM PROC features:
+    add_feature_partition_rule PRJ_PROCESS '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc\|.*/Part7_ProcessData/iprocesscmd\|.*/Part7_ProcessData/impl/processcmd\|.*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h$'
+    add_feature_partition_rule PROC_LOCAL_STD '.*/Part7_ProcessData/Local/Std/'
+    add_feature_partition_rule PROC_LOCAL_SIMPLE_MEASURE_SETPOINT '*/Part7_ProcessData/Local/SimpleMeasureSetpoint/*'
+    add_feature_partition_rule PROC_LOCAL_SIMPLE_MEASURE '.*/Part7_ProcessData/Local/SimpleMeasure/'
+    add_feature_partition_rule PROC_LOCAL_SIMPLE_SETPOINT '.*/Part7_ProcessData/Local/SimpleSetpoint/'
+    add_feature_partition_rule INC_LOC_SIMPLE_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Local/SimpleSetpointElements/'
+    add_feature_partition_rule PROC_LOCAL '.*/Part10_TaskController_Client/.*devproperty\|.*/Part7_ProcessData/Local/'
+    add_feature_partition_rule PROC_REMOTE_STD '.*/Part7_ProcessData/Remote/Std/'
+    add_feature_partition_rule PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED '*procdataremotesimplesetpointsimplemeasurecombined_c\.[^/]*$'
+    add_feature_partition_rule PROC_REMOTE_SIMPLE_MEASURE_SETPOINT '.*/Part7_ProcessData/Remote/SimpleMeasureSetpoint/'
+    add_feature_partition_rule PROC_REMOTE_SIMPLE_MEASURE '.*/Part7_ProcessData/Remote/SimpleMeasure/'
+    add_feature_partition_rule PROC_REMOTE_SIMPLE_SETPOINT '.*/Part7_ProcessData/Remote/SimpleSetpoint/'
+    add_feature_partition_rule INC_REM_STD_MEASURE_ELEMENTS '.*/Part7_ProcessData/Remote/StdMeasureElements/'
+    add_feature_partition_rule INC_REM_SIMPLE_MEASURE_ELEMENTS '.*/Part7_ProcessData/Remote/SimpleMeasureElements/'
+    add_feature_partition_rule INC_REM_STD_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Remote/StdSetpointElements/'
+    add_feature_partition_rule INC_REM_SIMPLE_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Remote/SimpleSetpointElements/'
+    add_feature_partition_rule INC_LOC_STD_MEASURE_ELEMENTS '.*/Part7_ProcessData/.*/StdMeasureElements/'
+    add_feature_partition_rule INC_LOC_STD_SETPOINT_ELEMENTS '.*/Part7_ProcessData/.*/StdSetpointElements'
+    add_feature_partition_rule PROC_REMOTE '.*/Part7_ProcessData/Remote/impl/'
+
+    # COMM features:
+    add_feature_partition_rule PRJ_BASE '.*ibasetypes\.h\.[^/]*$\|.*basecommon_c*\.[^/]*$'
+    add_feature_partition_rule PRJ_TRACTOR_GENERAL '.*/Part7_ApplicationLayer/.*tracgeneral_c\.[^/]*$'
+    add_feature_partition_rule PRJ_TRACTOR_MOVE '.*/Part7_ApplicationLayer/.*tracmove'
+    add_feature_partition_rule PRJ_TRACTOR_PTO '.*/Part7_ApplicationLayer/.*tracpto'
+    add_feature_partition_rule PRJ_TRACTOR_LIGHT '.*/Part7_ApplicationLayer/.*traclight'
+    add_feature_partition_rule PRJ_TRACTOR_FACILITIES '.*/Part7_ApplicationLayer/.*tracfacilities_c*'
+    add_feature_partition_rule PRJ_TRACTOR_AUX '.*/Part7_ApplicationLayer/.*tracaux'
+    add_feature_partition_rule PRJ_TRACTOR_GUIDANCE -path '.*/Part7_ApplicationLayer/.*tracguidance'
+    add_feature_partition_rule PRJ_TRACTOR_CERTIFICATION '.*/Part7_ApplicationLayer/.*traccert'
+    add_feature_partition_rule PRJ_TIME_GPS '.*/Part7_ApplicationLayer/.*timeposgps.*'
+    add_feature_partition_rule PRJ_PROPRIETARY_PGN_INTERFACE '.*/ProprietaryCan/'
+    add_feature_partition_rule PRJ_ISO_FILESERVER_CLIENT '.*/Part13_FileServer_Client/'
+    add_feature_partition_rule PRJ_ISO_TERMINAL '.*/Part6_VirtualTerminal_Client/'
+    add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/volatilememory_c\.[^/]*$'
+    add_feature_partition_rule PRJ_MULTIPACKET_STREAM_CHUNK '.*/Part3_DataLink/impl/streamchunk_c\.[^/]*$'
+    add_feature_partition_rule PRJ_ISO11783 '.*/Part3_DataLink/i.*multi.*\|.*/Part3_DataLink/impl/stream_c\.[^/]*$\|.*/Part3_DataLink/istream_c\.[^/]*$\|.*/supplementary_driver/driver/datastreams/streaminput_c\.h\|.*/IsoAgLib/convert\.h'
+
+    # DRIVER features:
+    add_feature_partition_rule PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL '.*/hal/generic_utils/can/\|.*/driver/can/'
+    add_feature_partition_rule PRJ_EEPROM '.*/driver/eeprom/\|.*/hal/.*/eeprom/\|.*/hal/eeprom\.h$\|.*/eeprom_adr\.h$'
+    add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/\|.*/hal/.*/datastreams/\|.*/hal/datastreams\.h$'
+    add_feature_partition_rule PRJ_ACTOR '.*/driver/actor\|.*/hal/.*/actor/actor\.h$\|.*/hal/.*/actor/actor_target_extensions\.\|*/hal/actor\.h$'
+    add_feature_partition_rule PRJ_SENSOR_DIGITAL '.*digitali_c\.[^/]*$'
+    add_feature_partition_rule PRJ_SENSOR_ANALOG '.*analogi\.[^/]*$'
+    add_feature_partition_rule PRJ_SENSOR_COUNTER '.*counteri\.[^/]*$'
+    add_feature_partition_rule PRJ_SENSOR____ '.*/hal/.*/sensor/sensor\.h$\|.*/hal/.*/sensor/sensor_target_extensions\.\|.*sensorbase_c\.[^/]*$\|.*sensor_c\.[^/]*$\|.*sensori_c\.[^/]*$\|.*/hal/sensor\.h$'
+    add_feature_partition_rule PRJ_RS232_OVER_CAN '.*/hal/virtualDrivers/rs232/'
+    add_feature_partition_rule PRJ_RS232 '.*/hal/.*/rs232/\|.*/driver/rs232/'
+    add_feature_partition_rule 'MISCELLANEOUS' '.'
 }
 
 # this function uses the "find" cmd
@@ -1032,7 +1079,7 @@ create_autogen_project_config()
     fi
 
     local FIRST_REL_APP_PATH
-    read FIRST_REL_APP_PATH DUMMY <<END_OF_PATH
+    read -r FIRST_REL_APP_PATH DUMMY <<END_OF_PATH
 ${REL_APP_PATH:-}
 END_OF_PATH
 
@@ -1274,7 +1321,7 @@ END_OF_VERSION_H
         echo_e "// moving them below the line with START_INDIVIDUAL_PROJECT_CONFIG$ENDLINE"  >&3
     } 3>"$CONFIG_NAME"
     TMP_CONFIG1="${TEMPFILE_PREFIX}config1"
-    while read conf_line; do
+    while read -r conf_line; do
         conf_name=$(echo_ $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
         INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak || status_le1)
         if [ "$INDIV_CNT" -lt 1 ] ; then
@@ -1509,16 +1556,12 @@ create_standard_makefile()
         printf '  (Compiler_parameters %s)\n' "$REPORT_CPP_PARAMETERS" >&5
         printf '  (Linker_parameters %s %s)\n' "$REPORT_LINKER_PARAMETERS_1" "$REPORT_LINKER_PARAMETERS_2" >&5
 
-        if [ -n "${FEATURE_PARTITIONS_IMPLEMENTED:-}" ]; then
-            partition_features <<EOF
+        partition_features <<EOF
 $(cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" |
   grep -E '\.cc|\.cpp|\.c' || status_le1)
 EOF
-            printf '  (Modules' >&5
-            report_feature_partitions >&5
-        else # default implementation without feature partitions
-            list_source_files '  (Modules\n    %s' '\n    %s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" "$MakefileFilelistApp" >&5
-        fi
+        printf '  (Modules' >&5
+        report_feature_partitions >&5
         printf '))\n' >&5
 
         ##### Library install header file gathering BEGIN
@@ -1631,7 +1674,7 @@ create_pure_application_makefile()
         echo_ "####### Files" >&3
         echo_n "SOURCES_APP = " >&3
         FIRST_LOOP="YES"
-        while read CcFile; do
+        while read -r CcFile; do
             if [ $FIRST_LOOP != "YES" ] ; then
                 echo_e_n '\\' >&3
                 echo_e_n "\n\t\t" >&3
@@ -1886,7 +1929,7 @@ AutoIncBuildNr=0
 ENDOFHEADERC
 
         unit_ind=0
-        while read i; do
+        while read -r i; do
             if [ -z "$i" ] ; then
                 continue
             fi
@@ -2169,7 +2212,7 @@ create_CcsPrj()
 
     # source files
     CCS_SOURCE_FILE_LIST="$(
-        while read EACH_SOURCE_FILE; do
+        while read -r EACH_SOURCE_FILE; do
             printf 'Source="%s"\n' "$EACH_SOURCE_FILE"
         done <<END_OF_FILELIST
 $(grep '.*cpp$' <$1/$PROJECT/$FILELIST_COMBINED_PURE)
@@ -2196,7 +2239,7 @@ END_OF_FILELIST
         break;
     done
 
-    while read EACH_INSTALL_HEADER; do
+    while read -r EACH_INSTALL_HEADER; do
         install -D $EACH_INSTALL_HEADER $CCS_LIB_INSTALL_HEADER_DIR/$(echo_ $EACH_INSTALL_HEADER | sed -e 's|.*xgpl_src/||')
     done <<END_OF_HEADER_LIST
 $(grep -v ".cpp" < "$1/$PROJECT/$FILELIST_LIBRARY_HDR")
