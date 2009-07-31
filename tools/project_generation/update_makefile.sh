@@ -335,7 +335,6 @@ check_set_correct_variables()
     fi
 
     : ${PROJECT:?"ERROR! Please set the variable PROJECT to the build sub-directory and executable filename"}
-    : ${REL_APP_PATH:?"ERROR! Please set the variable REL_APP_PATH to the directory of the application sources"}
 
     if [ "$PRJ_ISO11783" -lt 1 -a "$PRJ_ISO_TERMINAL" -gt 0 ]; then
         echo_ "Warning overwrite setting of PRJ_ISO_TERMINAL == $PRJ_ISO_TERMINAL as ISO11783 is not activated"
@@ -412,48 +411,53 @@ check_set_correct_variables()
     case "$USE_TARGET_SYSTEM" in
         (pc_win32)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/Dev-C++/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/Dev-C++"
             IDE_NAME="Visual Studio, Dev-C++"
-            ;;        
+            ;;
         (pc_linux)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
             IDE_NAME="KDevelop, make"
-            ;;        
+            ;;
         (esx)
             USE_SYSTEM_DEFINE="SYSTEM_ESX"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
-            ;;        
+            ;;
         (esxu)
             USE_SYSTEM_DEFINE="SYSTEM_ESXu"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
         (c2c)
             USE_SYSTEM_DEFINE="SYSTEM_C2C"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
         (imi)
             USE_SYSTEM_DEFINE="SYSTEM_IMI"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
         (pm167)
             USE_SYSTEM_DEFINE="SYSTEM_PM167"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
         (Dj1)
             USE_SYSTEM_DEFINE="SYSTEM_DJ1"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
         (p1mc)
             USE_SYSTEM_DEFINE="SYSTEM_P1MC"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS/"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS"
             IDE_NAME="Code Composer Studio"
+            ;;
+        (src9)
+            USE_SYSTEM_DEFINE="SYSTEM_SRC9"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
+            IDE_NAME="KDevelop, make"
             ;;
     esac
     
@@ -957,7 +961,7 @@ create_filelist( )
         local APP_SEARCH_HDR_TYPE_PART="$(find_part '' "-name '%s'" $APP_SEARCH_HDR_CONDITION 3>&1 1>&9)"
     } 9>&1
 
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+    for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
         eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_SRC_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&3"
         eval "find $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH/ -follow $APP_SEARCH_HDR_TYPE_PART $APP_SRC_PART $EXCLUDE_PATH_PART2 $EXCLUDE_SRC_PART -printf '%h/%f\n' >&4"
     done 3>"$FILELIST_APP_PURE" 4>"$FILELIST_APP_HDR"
@@ -1027,20 +1031,24 @@ create_autogen_project_config()
         ENDLINE="\r\n"
     fi
 
-    for FIRST_REL_APP_PATH in $REL_APP_PATH ; do
-        # CONFIG_NAME=$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/.config_$PROJECT.h
-        CONFIG_NAME=$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h
-        VERSION_FILE_NAME=$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/version.h
-        [ -f $VERSION_FILE_NAME ] || {
-            echo_    "#ifndef POOL_VERSION"            >&3
-            echo_e "\t#define POOL_VERSION 1.0"     >&3
-            echo_    "#endif"                         >&3
-            echo_    "#ifndef FIRMWARE_VERSION"       >&3
-            echo_e "\t#define FIRMWARE_VERSION 1.0" >&3
-            echo_    "#endif"                         >&3
-        } 3>$VERSION_FILE_NAME
-        break;
-    done
+    local FIRST_REL_APP_PATH
+    read FIRST_REL_APP_PATH DUMMY <<END_OF_PATH
+${REL_APP_PATH:-}
+END_OF_PATH
+
+    local APP_VERSION_DIR="${FIRST_REL_APP_PATH:+$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH}"
+    local VERSION_DIR=${APP_VERSION_DIR:-$GENERATE_FILES_ROOT_DIR/$PROJECT}
+    CONFIG_NAME="$VERSION_DIR/config_${PROJECT}.h"
+    VERSION_FILE_NAME="$VERSION_DIR/version.h"
+
+    [ -f "$VERSION_FILE_NAME" ] || cat <<END_OF_VERSION_H >"$VERSION_FILE_NAME"
+#ifndef POOL_VERSION
+${TAB}#define POOL_VERSION 1.0
+#endif
+#ifndef FIRMWARE_VERSION
+${TAB}#define FIRMWARE_VERSION 1.0
+#endif
+END_OF_VERSION_H
 
     CONFIG_HEADER_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR:+$DOXYGEN_EXPORT_DIR/}config_header__${PROJECT}-doc.txt"
 
@@ -1274,7 +1282,7 @@ create_autogen_project_config()
             sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $TMP_CONFIG1
             #     CMDLINE=$(echo_ "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $TMP_CONFIG1")
             #     echo_ $CMDLINE | sh
-            mv $TMP_CONFIG1 $CONFIG_NAME
+            cp $TMP_CONFIG1 $CONFIG_NAME
             echo_e_n "$ENDLINE" >> $CONFIG_NAME
         fi
     done <<END_OF_CONFIG_SET
@@ -1349,6 +1357,50 @@ define_insert_and_report()
     }
 }
 
+list_source_files()
+{
+    local FIRST_FORMAT="$1"
+    local NEXT_FORMAT="$2" 
+    local SOURCE_PATTERN="$3"
+    shift 3
+    local FORMAT="$FIRST_FORMAT"
+    cat "$@" | grep -E "$SOURCE_PATTERN" | 
+    while read -r CC_FILE; do
+        printf "$FORMAT" "$CC_FILE"
+        FORMAT="$NEXT_FORMAT"
+    done
+}
+
+generate_interface_filelist()
+{
+    TMP_INTERFACE_FILELIST="${TEMPFILE_PREFIX}interface_filelist"
+    TMP_INTERNAL_FILELIST="${TEMPFILE_PREFIX}internal_filelist"
+    grep    "/impl/" <"$MakefileFilelistLibraryHdr" > "$TMP_INTERNAL_FILELIST"
+    grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> "$TMP_INTERNAL_FILELIST"
+    grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v /hal/ | grep -v ".cpp" > "$TMP_INTERFACE_FILELIST"
+    # it's a good idea to get the several typedef.h headers to the install set
+    grep typedef.h "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
+    grep -E "driver/*/i*.h" < "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST" || status_le1
+    
+    # special exception to enable ISO-Request-PGN implementation in app scope
+    grep -E "isorequestpgn_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
+
+    local INTERFACE_FILE
+    while read -r INTERFACE_FILE; do
+        local BASE_NAME
+        sed -e '/#include/!d' \
+            -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g' \
+            -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
+            -e 's|\.\./||g' < "$INTERFACE_FILE" |
+        while read -r BASE_NAME; do
+            expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
+                ! grep -q -F "/$BASE_NAME" <"$TMP_INTERFACE_FILELIST" &&
+                grep -F "$BASE_NAME" <"$TMP_INTERNAL_FILELIST" >>"$TMP_INTERFACE_FILELIST" ||
+                status_le1
+        done
+    done <"$TMP_INTERFACE_FILELIST"
+}
+
 create_standard_makefile()
 {
     MakefileName="Makefile"
@@ -1367,7 +1419,7 @@ create_standard_makefile()
         echo_ "ISOAGLIB_PATH = $ISO_AG_LIB_INSIDE" >&3
         echo_ "INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
 
-        local RELATIVE_INC_PATHS="$(echo_ $REL_APP_PATH $PRJ_INCLUDE_PATH)"
+        local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
         local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
 
         local REPORT_APP_INC="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
@@ -1423,19 +1475,6 @@ create_standard_makefile()
         define_insert_and_report COMPILER_BINARY_PRE "$RULE_COMPILER_BINARY_PRE"
         printf "\n####### Definition of compiler binary prefix corresponding to selected target\n" >&3
         printf 'COMPILER_BINARY_PRE = %s\n' "$INSERT_COMPILER_BINARY_PRE" >&3
-
-        list_source_files() {
-            local FIRST_FORMAT="$1"
-            local NEXT_FORMAT="$2" 
-            local SOURCE_PATTERN="$3"
-            shift 3
-            local FORMAT="$FIRST_FORMAT"
-            cat "$@" | grep -E "$SOURCE_PATTERN" | 
-            while read -r CC_FILE; do
-                printf "$FORMAT" "$CC_FILE"
-                FORMAT="$NEXT_FORMAT"
-            done
-        }
         
         echo_e "\n\nfirst: all\n" >&3
         echo_ "####### Files" >&3
@@ -1484,37 +1523,11 @@ EOF
 
         ##### Library install header file gathering BEGIN
         
-        grep    "/impl/" <"$MakefileFilelistLibraryHdr" > FileListInternal.txt
-        grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> FileListInternal.txt
-        grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v /hal/ | grep -v ".cpp" > FileListInterface.txt
-        
-        # it's a good idea to get the several typedef.h headers to the install set
-        grep typedef.h FileListInternal.txt >> FileListInterface.txt
-        grep -E "driver/*/i*.h" < FileListInternal.txt >> FileListInterface.txt || status_le1
-        
-        # special exception to enable ISO-Request-PGN implementation in app scope
-        grep -E "isorequestpgn_c.h" FileListInternal.txt >> FileListInterface.txt
-
-        local INTERFACE_FILE
-        while read -r INTERFACE_FILE; do
-            local BASE_NAME
-            sed -e '/#include/!d' \
-                -e 's/.*#include[ \t\<\"]*\([^\>\"\t ]*\).*/\1/g' \
-                -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
-                -e 's|\.\./||g' < "$INTERFACE_FILE" |
-            while read -r BASE_NAME; do
-                expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
-                    ! grep -q -F "/$BASE_NAME" <FileListInterface.txt &&
-                    grep -F "$BASE_NAME" <FileListInternal.txt >>FileListInterface.txt ||
-                    status_le1
-            done
-        done <FileListInterface.txt
+        generate_interface_filelist 
         printf 'INSTALL_FILES_LIBRARY =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '.' "FileListInterface.txt" >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '.' "$TMP_INTERFACE_FILELIST" >&3
         printf '\n\n' >&3
         
-        rm -f FileListInterface.txt FileListInternal.txt
-
         ##### Library install header file gathering END
         expand_template "$MAKEFILE_SKELETON_FILE" >&3
         echo_ >&3
@@ -1527,12 +1540,11 @@ EOF
     # replace the install rules for version.h and the app config file
     sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $TMP_MAKEFILE
     sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $TMP_MAKEFILE > $MakefileNameLong
-    rm -f $TMP_MAKEFILE
 
     # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
     while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
         sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $TMP_MAKEFILE
-        mv $TMP_MAKEFILE $MakefileNameLong
+        cp $TMP_MAKEFILE $MakefileNameLong
     done
 
     # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
@@ -1560,7 +1572,7 @@ create_pure_application_makefile()
         echo_ "ISOAGLIB_INSTALL_PATH = $ISOAGLIB_INSTALL_PATH" >&3
         echo_n "APP_INC = " >&3
         KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;"
-        for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+        for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
             echo_n "-I$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH " >&3
             append KDEVELOP_INCLUDE_PATH " $ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH;"
         done
@@ -1640,12 +1652,11 @@ END_OF_MODULE_LINES
         cp $MakefileNameLong $TMP_MAKEFILE
         sed -e 's#LFLAGS   =#LFLAGS   = -pthread#g' $TMP_MAKEFILE > $MakefileNameLong
     fi
-    rm -f $TMP_MAKEFILE
 
     # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
     while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
         sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' $MakefileNameLong > $TMP_MAKEFILE
-        mv $TMP_MAKEFILE $MakefileNameLong
+        cp $TMP_MAKEFILE $MakefileNameLong
     done
 
     # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
@@ -1721,7 +1732,7 @@ win_paths_from_unix_paths()
 # URL http://www.bloodshed.net/dev/devcpp.html
 create_DevCCPrj()
 {
-    DEV_PRJ_DIR="$1$PROJECT"
+    DEV_PRJ_DIR="$1/$PROJECT"
 
     # echo_ "Create Projekt file for Dev-C++ in $DEV_PRJ_DIR"
 
@@ -1772,11 +1783,11 @@ ENDOFHEADERA
     
         USE_DEVCPP_EXTERNAL_LIBRARIES=$(echo_ "$USE_DEVCPP_EXTERNAL_LIBRARIES" | mangle_path1)
     
-        REL_APP_PATH_WIN=$(echo_ "$REL_APP_PATH" | mangle_path1)
+        REL_APP_PATH_WIN=$(echo_ "${REL_APP_PATH:-}" | mangle_path1)
     
         PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | mangle_path1)
     
-        for EACH_REL_APP_PATH in $REL_APP_PATH_WIN ; do
+        for EACH_REL_APP_PATH in ${REL_APP_PATH_WIN:-} ; do
             append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$EACH_REL_APP_PATH"
         done
         for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
@@ -1993,7 +2004,7 @@ create_EdePrj()
         path_for_ede "$USE_EMBED_LIB_DIRECTORY" "$1"
     }
 
-    USE_APP_PATH="$(map join_comma isoaglib_path_for_ede $REL_APP_PATH)"
+    USE_APP_PATH="$(map join_comma isoaglib_path_for_ede ${REL_APP_PATH:-})"
     echo_ "USE_APP_PATH: $USE_APP_PATH"
 
     INCLUDE_APP_PATH_TASKING="$(map join_comma isoaglib_path_for_ede $USE_EMBED_HEADER_DIRECTORY)"
@@ -2054,7 +2065,7 @@ create_EdePrj()
         expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
 
         TMP_EDE="${TEMPFILE_PREFIX}ede"
-        mv $EdePrjFilelist $TMP_EDE
+        cp $EdePrjFilelist $TMP_EDE
         sed -e 's|/|\\|g' $TMP_EDE |
         tee $EdePrjFilelist >&3
 
@@ -2131,7 +2142,7 @@ create_CcsPrj()
         exit 0
     fi
 
-    for EACH_REL_APP_PATH in $REL_APP_PATH; do
+    for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
         local PART="$(echo_ "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's|/[0-9a-zA-Z_+\-]+\\\.\.||g')"
         if [ -z "${USE_APP_PATH:-}" ]; then
             USE_APP_PATH="$PART"
@@ -2179,7 +2190,7 @@ END_OF_FILELIST
     mkdir -p $CCS_LIB_INSTALL_HEADER_DIR
     mkdir -p $CCS_LIB_INSTALL_LIB_DIR
 
-    for FIRST_REL_APP_PATH in $REL_APP_PATH; do
+    for FIRST_REL_APP_PATH in ${REL_APP_PATH:-}; do
         mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h $CCS_LIB_INSTALL_HEADER_DIR
         mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/version.h $CCS_LIB_INSTALL_HEADER_DIR
         break;
@@ -2244,7 +2255,7 @@ EOF
 
     USE_MSVC_EXTERNAL_LIBRARIES_WIN=$(win_paths_from_unix_paths "$USE_MSVC_EXTERNAL_LIBRARIES" )
 
-    REL_APP_PATH_WIN=$(win_paths_from_unix_paths "$REL_APP_PATH" )
+    REL_APP_PATH_WIN=$(win_paths_from_unix_paths "${REL_APP_PATH:-}" )
 
     PRJ_INCLUDE_PATH_WIN=$(win_paths_from_unix_paths "$PRJ_INCLUDE_PATH" )
 
@@ -2363,6 +2374,93 @@ EOF
     # org test
 }
 
+create_library_makefile()
+{
+    local DEV_PRJ_DIR="$1/$PROJECT"
+    cd "$DEV_PRJ_DIR"
+    MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
+    MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
+    local MAKEFILE_NAME="Makefile"
+    local MAKEFILE_LONG_NAME="Makefile__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}"
+
+    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileLibSkeleton.txt}
+
+    local INSERT_APPLICATION_NAME="$PROJECT"
+    local REPORT_ISOAGLIB_PATH='dummy'
+    local INSERT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
+    local INSERT_ISOAGLIB_INSTALL_PATH="$ISOAGLIB_INSTALL_PATH"
+    local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
+    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_LINUX_EXTERNAL_INCLUDE_PATH)"
+    local INSERT_APP_INCS="$(echo_ ${ALL_INC_PATHS:+$(printf -- '-I%s\n' $ALL_INC_PATHS)})"
+    local REPORT_LIBPATH='dummy'
+    local INSERT_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
+    local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
+    local REPORT_PROJ_DEFINES='dummy'
+    local INSERT_PROJ_DEFINES="$(
+        printf -- '$(VERSION_DEFINES) -D%s' "$USE_SYSTEM_DEFINE"
+        printf -- ' -DPRJ_USE_AUTOGEN_CONFIG=config_%s.h' "$PROJECT"
+        if [ -n "${PRJ_DEFINES:-}" ]; then
+            printf -- ' -D%s' "$PRJ_DEFINES"
+        fi
+
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
+            printf -- ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
+        fi
+        
+        case "$USE_CAN_DRIVER" in
+            (msq_server)
+                printf -- ' -DCAN_DRIVER_MESSAGE_QUEUE'
+                ;;
+            (socket_server|socket_server_hal_simulator)
+                printf -- ' -DCAN_DRIVER_SOCKET'
+                ;;
+        esac;)"
+    local INSERT_COMPILER_BINARY_PRE=$(
+            [ -n "$PRJ_COMPILER_BINARY_PRE" ] && printf '%s' "$PRJ_COMPILER_BINARY_PRE" && return
+            case "$PRJ_DEFINES" in
+                (*SYSTEM_A1*)
+                    printf '%s' '/opt/hardhat/devkit/arm/xscale_le/bin/xscale_le-'
+                    ;;
+                (*SYSTEM_MCC*)
+                    printf '%s' '/opt/eldk/usr/bin/ppc_6xx-'
+                    ;;
+                (*)
+                    ;;
+            esac;)
+    local INSERT_SOURCES_LIBRARY="$(
+        list_source_files '%s' ' \\\n\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary")"
+    generate_interface_filelist
+    local INSERT_INSTALL_FILES_LIBRARY="$(
+        list_source_files '%s' ' \\\n\t%s' '.' "$TMP_INTERFACE_FILELIST")"
+    define_insert_and_report SUBLIBS '-lrt'
+    define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
+    define_insert_and_report CXXFLAGS '-pipe -O -Wall -g $($F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
+    define_insert_and_report BIOS_INC ''
+    local REPORT_APP_INC='dummy'
+    define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
+    local RULE_LFLAGS=$(
+        case "$USE_CAN_DRIVER" in
+            (msq_server|socket_server|socket_server_hal_simulator)
+                printf -- '-pthread'
+                ;;
+        esac;)' $($F LIBPATH)'
+    define_insert_and_report LFLAGS "$RULE_LFLAGS"
+    define_insert_and_report BIOS_LIB ''
+    if [ "$USE_RS232_DRIVER" = "rte" ] ; then
+        define_insert_and_report BIOS_LIB '/usr/local/lib/librte_client.a /usr/local/lib/libfevent.a'
+    fi
+    local REPORT_EXTERNAL_LIBS='dummy'
+    local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
+    define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
+    local INSERT_PROJECT_CONFIG="$CONFIG_NAME"
+    local INSERT_PROJECT_VERSION="$VERSION_FILE_NAME"
+
+    expand_template "$MAKEFILE_SKELETON_FILE" |
+    sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' >"$MAKEFILE_LONG_NAME"
+    ln -fns "$MAKEFILE_LONG_NAME" "$MAKEFILE_NAME"
+    cd "$1"
+}
+
 create_buildfiles()
 {
     local CONF_DIR="$1"
@@ -2391,6 +2489,9 @@ create_buildfiles()
             ;;
         (p1mc)
             create_CcsPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
+        (src9)
+            create_library_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (*)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
@@ -2424,7 +2525,7 @@ blocks to the given directory instead of the default directory of all generated 
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
 target which is specified in the configuration file
-("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167").
+("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167"|"p1mc"|"src9").
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
 ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator").
 --pc-can-device-for-server=CAN_DEVICE_FOR_SERVER
@@ -2562,7 +2663,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167)
+        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | src9)
             ;;
         (*)
             echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
@@ -2581,7 +2682,7 @@ check_after_user_configuration()
     fi
     
     #default for not-can_server
-    CAN_SERVER_FILENAME=$PARAMETER_CAN_DRIVER
+    CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
         (simulating)
             case "$USE_TARGET_SYSTEM" in
@@ -2593,6 +2694,7 @@ check_after_user_configuration()
                     echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
                     USE_CAN_DRIVER="sys"
                     PARAMETER_CAN_DRIVER="sys"
+                    CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
                     # enhanced CAN HAL is not yet supported for the known embedded targets
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
                     ;;
@@ -2600,7 +2702,7 @@ check_after_user_configuration()
             ;;
         (sys)
             case "$USE_TARGET_SYSTEM" in
-                (pc_linux | pc_win32)
+                (pc_linux | pc_win32 )
                     echo_ "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
                     usage
                     exit 1
@@ -2626,6 +2728,7 @@ check_after_user_configuration()
                     echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
                     USE_CAN_DRIVER="sys"
                     PARAMETER_CAN_DRIVER="sys"
+                    CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
                     # enhanced CAN HAL is not yet supported for the known embedded targets
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
                     ;;
@@ -2653,9 +2756,9 @@ check_after_user_configuration()
     case "$USE_RS232_DRIVER" in
         (simulating)
             case "$USE_TARGET_SYSTEM" in
-                pc_linux | pc_win32)
+                (pc_linux | pc_win32)
                     ;;
-                *)
+                (*)
                     echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
                     USE_RS232_DRIVER="sys"
                     PARAMETER_RS232_DRIVER="sys"
@@ -2702,7 +2805,7 @@ report_summary()
     echo_    "Target:        $IDE_NAME - (The settings below are already set up therefore)"
     echo_    "Defines:       $USE_SYSTEM_DEFINE PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES"
     echo_n "Include Path:  "
-    for EACH_REL_APP_PATH in $REL_APP_PATH ; do
+    for EACH_REL_APP_PATH in ${REL_APP_PATH:-} ; do
         echo_n "$ISO_AG_LIB_INSIDE/$EACH_REL_APP_PATH ";
     done
     echo_
@@ -2749,7 +2852,7 @@ on_exit()
 {
     local STATUS="$?"
     set +o errexit # otherwise Bash may override the exit status due to another error
-    set -- "${TMP_REPORTFILE:-}" "${TMP_CONF:-}" "${TMP_CONFIG1:-}" "${TMP_MAKEFILE:-}" "${TMP_EDE:-}"
+    set -- "${TMP_REPORTFILE:-}" "${TMP_CONF:-}" "${TMP_CONFIG1:-}" "${TMP_MAKEFILE:-}" "${TMP_EDE:-}" "${TMP_INTERNAL_FILELIST:-}" "${TMP_INTERFACE_FILELIST:-}"
     # omit empty filenames:
     for FILE in "$@"; do
         shift

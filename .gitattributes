@@ -2227,6 +2227,7 @@ tools/project_generation/update_makefile_CCSSkeleton.pjt -text
 tools/project_generation/update_makefile_EDE.part1.pjt -text
 tools/project_generation/update_makefile_EDE.part2.pjt -text
 tools/project_generation/update_makefile_MakefileAppSkeleton.txt -text
+tools/project_generation/update_makefile_MakefileLibSkeleton.txt -text
 tools/project_generation/update_makefile_conf_template -text
 tools/project_generation/update_makefile_kdevelop3Generic.kdevelop -text
 tools/project_generation/update_makefile_qmake_stub.pro -text

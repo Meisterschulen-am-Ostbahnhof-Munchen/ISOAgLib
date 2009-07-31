@@ -120,7 +120,7 @@ FORCE:
 
 ####### Install
 install_library: \$(INSTALL_FILES_LIBRARY)
-	mkdir -p /\$(INSTALL_PATH)/lib;
+	mkdir -p \$(INSTALL_PATH)/lib;
 	@for INSTITEM in \$(INSTALL_FILES_LIBRARY); do \\
 ${TAB}SEARCH=\$(ISOAGLIB_PATH)/library/xgpl_src; \\
 ${TAB}REPLACE=\$(INSTALL_PATH)/include; \\
