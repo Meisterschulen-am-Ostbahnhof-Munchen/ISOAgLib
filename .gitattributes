@@ -1769,6 +1769,14 @@ library/xgpl_src/IsoAgLib/hal/c2c/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/system/system_target_extensions.cpp -text
 library/xgpl_src/IsoAgLib/hal/c2c/system/system_target_extensions.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/typedef.h -text
+library/xgpl_src/IsoAgLib/hal/ees/can/can.h -text
+library/xgpl_src/IsoAgLib/hal/ees/can/hal_can_interface.cpp -text
+library/xgpl_src/IsoAgLib/hal/ees/can/hal_can_interface.h -text
+library/xgpl_src/IsoAgLib/hal/ees/config.h -text
+library/xgpl_src/IsoAgLib/hal/ees/eeprom/eeprom.h -text
+library/xgpl_src/IsoAgLib/hal/ees/errcodes.h -text
+library/xgpl_src/IsoAgLib/hal/ees/system/system.h -text
+library/xgpl_src/IsoAgLib/hal/ees/typedef.h -text
 library/xgpl_src/IsoAgLib/hal/esx/typedef.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/can/hal_can_interface.cpp -text

@@ -111,6 +111,8 @@ typedef enum C16xCtrlStatusReg_en
 	#include "mitron167/can/can.h"
 #elif defined(SYSTEM_AMS5)
 	#include "ams5/can/can.h"
+#elif defined(SYSTEM_EES)
+	#include "ees/can/can.h"
 #endif
 
 

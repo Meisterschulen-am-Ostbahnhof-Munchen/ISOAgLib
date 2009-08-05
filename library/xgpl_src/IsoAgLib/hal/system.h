@@ -90,6 +90,8 @@
 	#include "mitron167/system/system.h"
 #elif defined(SYSTEM_AMS5)
 	#include "ams5/system/system.h"
+#elif defined(SYSTEM_EES)
+	#include "ees/system/system.h"
 #endif
 
 

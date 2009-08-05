@@ -105,6 +105,8 @@
 	#include "mitron167/config.h"
 #elif defined(SYSTEM_AMS5)
 	#include "ams5/config.h"
+#elif defined(SYSTEM_EES)
+	#include "ees/config.h"
 #endif
 
 

@@ -1104,7 +1104,18 @@
   #ifdef USE_EEPROM_IO
     #undef USE_EEPROM_IO
   #endif
+/// set subdirectory name to "ess" for Embedded Event Systems
+#elif defined(SYSTEM_EES)
+   #define HAL_SUBDIR ees
+   #ifdef USE_EEPROM_IO_YN
+     #undef USE_EEPROM_IO_YN
+   #endif
+   #define USE_EEPROM_IO_YN NO
+   #ifdef USE_EEPROM_IO
+     #undef USE_EEPROM_IO
+   #endif
 #endif
+
 #ifndef gluetoks
   #define gluetoks(a, b)  a ## b
   #define gluetoks3(a, b, c)  a ## b ## c

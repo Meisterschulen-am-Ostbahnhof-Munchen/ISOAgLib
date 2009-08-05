@@ -454,6 +454,11 @@ check_set_correct_variables()
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS"
             IDE_NAME="Code Composer Studio"
             ;;
+        (ees)
+            USE_SYSTEM_DEFINE="SYSTEM_EES"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make/"
+            IDE_NAME="make"
+            ;;
         (src9)
             USE_SYSTEM_DEFINE="SYSTEM_SRC9"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
@@ -2525,6 +2530,9 @@ create_buildfiles()
            # call function to create the Makefile in the project dir
             create_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
+        (ees)
+            create_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
         # check if a win32 project file whould be created
         (pc_win32)
             create_DevCCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
@@ -2706,7 +2714,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | src9)
+        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | ees | src9 )
             ;;
         (*)
             echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
