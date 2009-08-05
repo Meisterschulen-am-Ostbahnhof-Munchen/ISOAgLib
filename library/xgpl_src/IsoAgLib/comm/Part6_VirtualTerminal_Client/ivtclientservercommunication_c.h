@@ -78,6 +78,8 @@ public:
   bool sendCommandUpdateObjectPool (IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
     { return VtClientServerCommunication_c::sendCommandUpdateObjectPool (rppc_vtObjects, aui16_numObjects); }
 
+  bool sendCommandChangeActiveMask (uint16_t aui16_objectUid, uint16_t aui16_maskId, bool b_enableReplaceOfCmd = true )
+    {return VtClientServerCommunication_c::sendCommandChangeActiveMask( aui16_objectUid, aui16_maskId, b_enableReplaceOfCmd ); }
   bool sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true)
     {return VtClientServerCommunication_c::sendCommandChangeNumericValue(aui16_objectUid, byte1, byte2, byte3, byte4, b_enableReplaceOfCmd);}
   bool sendCommandChangeAttribute    (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true)

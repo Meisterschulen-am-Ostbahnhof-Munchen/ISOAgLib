@@ -386,6 +386,10 @@ public:
   {
     return sendCommandChangeStringValue(apc_object->getID(), apc_newValue, overrideSendLength, b_enableReplaceOfCmd);
   };
+  bool sendCommandChangeActiveMask (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_mask, bool b_enableReplaceOfCmd=true )
+  {
+    return sendCommandChangeActiveMask( apc_object->getID(), apc_mask->getID(), b_enableReplaceOfCmd );
+  }
   bool sendCommandChangeStringValue  (IsoAgLib::iVtObjectString_c* apc_objectstring, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
 
   bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true)
@@ -427,6 +431,7 @@ public:
   bool sendCommandChangeNumericValue (uint16_t aui16_objectUid, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeAttribute    (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSoftKeyMask  (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true);
+  bool sendCommandChangeActiveMask   (uint16_t aui16_objectUid, uint16_t maskId, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeStringValue  (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
   bool sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);

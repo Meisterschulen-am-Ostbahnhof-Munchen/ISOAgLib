@@ -1610,6 +1610,15 @@ VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t aui16_obje
 }
 
 bool
+VtClientServerCommunication_c::sendCommandChangeActiveMask (uint16_t aui16_objectUid, uint16_t maskId, bool b_enableReplaceOfCmd )
+{
+  return sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
+                      aui16_objectUid & 0xFF, aui16_objectUid >> 8,
+                      maskId & 0xFF, maskId >> 8,
+                      0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+}
+
+bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
 #ifdef DEBUG

@@ -150,10 +150,7 @@ vtObjectWorkingSet_c::changeActiveMask(IsoAgLib::iVtObjectMask_c* apc_vtObjectMa
 {
   if (b_updateObject) saveValueP (MACRO_getStructOffset(get_vtObjectWorkingSet_a(), activeMask), sizeof(iVtObjectWorkingSet_s), apc_vtObjectMask);
 
-  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
-                                                   vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
-                                                   apc_vtObjectMask->getID() & 0xFF, apc_vtObjectMask->getID() >> 8,
-                                                   0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+  __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommandChangeActiveMask( this, apc_vtObjectMask, b_enableReplaceOfCmd);
 }
 
 void
