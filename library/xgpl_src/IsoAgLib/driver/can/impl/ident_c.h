@@ -163,7 +163,7 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @param acrc_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
-  MASK_TYPE masked(const Ident_c& acrc_mask = ~0) const
+  MASK_TYPE masked(const Ident_c& acrc_mask) const
     {return (data.type == StandardIdent)
       ?(acrc_mask.t_ident & t_ident & 0x7FF):(acrc_mask.t_ident & t_ident);}
 
