@@ -152,7 +152,21 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     long                    l_retval;
-    long                    l_baud = 0x00000003;    // 250kbit/sec
+    long                    l_baud;
+
+    switch (wBitrate) {
+      case 1000: l_baud = 0; break;
+      case 800:  l_baud = 1; break;
+      case 500:  l_baud = 2; break;
+      case 250:  l_baud = 3; break;
+      case 125:  l_baud = 4; break;
+      case 100:  l_baud = 5; break;
+      case  50:  l_baud = 6; break;
+      case  20:  l_baud = 7; break;
+      default: 
+        printf ( "invalid baud rate %dk\n(user defined baud rate not yet supported)\n", wBitrate);
+        return false;
+    }
 
     l_retval = canSetBaudrate ( handle[ui8_bus], l_baud );
     // successful ?
@@ -217,26 +231,9 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
                       &l_len);
   // successful ?
   if ( l_retval == NTCAN_SUCCESS ) {
-#if 0
-  int i, k;
-    // at least one message read
-    // Parameter l_len contains now number of read frames
-    for ( i = 0; i < l_len; i++ ) {
-      printf ( "message nr. %ld\n", i );
-      printf ( "identifier: %03X\n",
-               t_CANMsg[i].l_id );
-      printf ( "number of data bytes: %ld\n",
-               t_CANMsg[i].by_len & 0x0F );
-      // print data bytes
-      for (k= 0; k < (t_CANMsg[i].by_len&0x0F); k++ ) {
-        printf ( "%02X ", t_CANMsg[i].aby_data[k] );
-      }
-      printf ( "\n\n" );
-    }
-#endif
     ps_canMsg->ui32_id = t_CANMsg[0].l_id;
     ps_canMsg->i32_len = t_CANMsg[0].by_len & 0x0F;
-    ps_canMsg->i32_msgType = 1;
+    ps_canMsg->i32_msgType = (t_CANMsg[0].by_extended ? 1 : 0);
 
     for (uint8_t ui8_cnt = 0; ui8_cnt < ps_canMsg->i32_len; ui8_cnt++)
       ps_canMsg->ui8_data[ui8_cnt] = t_CANMsg[0].aby_data[ui8_cnt];
@@ -260,7 +257,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   // fill with CAN data
   t_CANMsg[0].l_id = ps_canMsg->ui32_id;
   t_CANMsg[0].by_len = ps_canMsg->i32_len;
-  t_CANMsg[0].by_extended = 1;
+  t_CANMsg[0].by_extended = ( ps_canMsg->i32_msgType ? 1 : 0 );
   t_CANMsg[0].by_remote = 0;
   for ( int32_t ind = 0; ind < ps_canMsg->i32_len; ind++ )
     t_CANMsg[0].aby_data[ind] = ps_canMsg->ui8_data[ind];

@@ -68,15 +68,8 @@
 using namespace __HAL;
 
 #ifndef WIN32
-  #ifdef USE_PCAN_LIB
-    #include <libpcan.h>
-    HANDLE driverHandle[cui32_maxCanBusCnt];
-  #else
-    #include <pcan.h>
-  #endif
-#endif
+  #include <pcan.h>
 
-#ifndef WIN32
   // device nodes minor base. Must be the same as defined in the driver
   #ifndef PCAN_MSCAN_MINOR_BASE
     // (USB driver)
@@ -102,9 +95,6 @@ uint32_t initCardApi ()
   for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
   {
     canBusIsOpen[i] = false;
-#ifdef USE_PCAN_LIB
-    driverHandle[i] = NULL;
-#endif
   }
 
   return 1;
@@ -157,28 +147,12 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     char fname[32];
     sprintf( fname, "/dev/pcan%u", PCAN_MSCAN_MINOR_BASE + ui8_bus );
 
-#ifdef USE_PCAN_LIB
-    driverHandle[ui8_bus] = LINUX_CAN_Open(fname, O_RDWR | O_NONBLOCK);
-    pc_serverData->can_device[ui8_bus] = LINUX_CAN_FileHandle(driverHandle[ui8_bus]);
-    if ( driverHandle[ui8_bus] == NULL ) {
-      std::cerr << "Open CAN Fault" << std::endl;
-      return false;
-    }
-#else
     pc_serverData->marri32_can_device[ui8_bus] = open(fname, O_RDWR | O_NONBLOCK);
     if (pc_serverData->marri32_can_device[ui8_bus] == -1) {
       DEBUG_PRINT1("Could not open CAN bus %d\n",ui8_bus);
       return false;
     }
-#endif
 
-#ifdef USE_PCAN_LIB
-    WORD useBtr = LINUX_CAN_BTR0BTR1(driverHandle[ui8_bus], wBitrate*1000);
-    if (CAN_Init(driverHandle[ui8_bus], useBtr, 2) < 0) {
-      std::cerr << "Init Problem" << std::endl;
-      return false;
-    }
-#else
     TPBTR0BTR1 ratix;
     TPCANInit init;
 
@@ -197,7 +171,6 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     init.ucListenOnly = 0;            // listen only mode when != 0
     if ((ioctl(pc_serverData->marri32_can_device[ui8_bus], PCAN_INIT, &init)) < 0)
       return false;
-#endif
 
     canBusIsOpen[ui8_bus] = true;
     pc_serverData->marrb_deviceConnected[ui8_bus] = true;
@@ -229,11 +202,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
     {
       if (pc_serverData->marri_pendingMsgs[ui8_bus] >= 5)
       { // we only need to update those who could change from >= 5 to < 5...
-#if 0 //def USE_PCAN_LIB
-        if (LINUX_CAN_Extended_Status(driverHandle[ui8_bus], &(extstat.nPendingReads), &(extstat.nPendingWrites))) continue;
-#else
         if ((ioctl(pc_serverData->marri32_can_device[ui8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
-#endif
         pc_serverData->marri_pendingMsgs[ui8_bus] = extstat.nPendingWrites;
         DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[ui8_bus]);
       }
@@ -241,11 +210,7 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
   }
   else
   { // update just the given bus!
-#if 0 //def USE_PCAN_LIB
-    if (LINUX_CAN_Extended_Status(driverHandle[ui8_bus], &(extstat.nPendingReads), &(extstat.nPendingWrites))) return;
-#else
     if ((ioctl(pc_serverData->marri32_can_device[i8_bus], PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
-#endif
     pc_serverData->marri_pendingMsgs[i8_bus] = extstat.nPendingWrites;
     DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->marri_pendingMsgs[i8_bus]);
   }
@@ -303,11 +268,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   int ret = 0;
 
   if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-#if 0 //def USE_PCAN_LIB
-    ret = CAN_Write(driverHandle[ui8_bus], &msg);
-#else
     ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], PCAN_WRITE_MSG, &msg);
-#endif
     if (ret < 0)
     {
       perror("sendToBus ioctl");
@@ -317,7 +278,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     }
 
     updatePendingMsgs(pc_serverData, ui8_bus);
-    int i_pendingMsgs = pc_serverData->marri_pendingMsgs[ui8_bus];
+    unsigned int i_pendingMsgs = pc_serverData->marri_pendingMsgs[ui8_bus];
     if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
     { // something pending!
       STL_NAMESPACE::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
@@ -377,11 +338,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   }
 #else
   TPCANRdMsg msgRd;
-  #ifdef USE_PCAN_LIB
-    int ret = LINUX_CAN_Read(driverHandle[ui8_bus], &msgRd);
-  #else
-    int ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], PCAN_READ_MSG, &msgRd);
-  #endif
+  int ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], PCAN_READ_MSG, &msgRd);
   if (ret < 0)
     return false;
 
