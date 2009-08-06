@@ -16,8 +16,6 @@
 
 #include "hal_can_interface.h"
 
-#include <commercial_BIOS/bios_ees/hal/hal_can.h>
-
 namespace HAL {
   /**
     test if the CAN BUS is in WARN state

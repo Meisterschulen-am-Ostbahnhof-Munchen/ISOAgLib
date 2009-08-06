@@ -10,7 +10,7 @@
 #ifndef __ERRCODES_H
 #define __ERRCODES_H__
 
-#include <commercial_BIOS/bios_ees/hal/hal_can.h>
+#include <hal_can.h>
 
 #define HAL_NO_ERR          hal_n::ec_noError
 #define HAL_UNKNOWN_ERR     0xF0

@@ -12,6 +12,9 @@
 #define ON                1
 #define OFF               0
 
+#define FALSE             0
+#define TRUE              1
+
 // the Hightec Tricore Toolchain lacks a proper stdint header...
 #include <stdint.h>
 
