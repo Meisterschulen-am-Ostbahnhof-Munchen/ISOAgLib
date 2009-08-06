@@ -89,6 +89,10 @@ APP_SRC_FILE="main.cpp"
 # (separate multiple defines by whitespace)
 # PRJ_DEFINES=""
 
+# Optionally replace the compiler flag default values by configured
+# ones. Only valid for Makefile generation.
+# RULE_CXXFLAGS='-pipe -O -Wall -g -Wextra -Winit-self -Wmissing-include-dirs -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
+
 # Select if Debug messages within IsoAgLib are sent via RS232
 # (automatically activates the PRJ_RS232 setting)
 # PRJ_SEND_DEBUG=1

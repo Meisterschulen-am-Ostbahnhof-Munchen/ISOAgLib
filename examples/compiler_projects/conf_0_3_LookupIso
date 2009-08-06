@@ -76,6 +76,10 @@ ISO_AG_LIB_PATH="../.."
 #   dynamic lists ( output on each list change )
 # PRJ_DEFINES=""
 
+# Optionally replace the compiler flag default values by configured
+# ones. Only valid for Makefile generation.
+# RULE_CXXFLAGS='-pipe -O -Wall -g -Wextra -Winit-self -Wmissing-include-dirs -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
+
 # select if Debug messages within the IsoAgLib shall be sent via RS232
 # ( if this is activated, the PRJ_RS232 setting is activated -> integrate
 #   the IsoAgLib RS232 driver extension to your project )
