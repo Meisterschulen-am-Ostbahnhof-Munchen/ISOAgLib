@@ -1131,10 +1131,11 @@ uint32_t ui32_msgNbr = 0;
           INTERNAL_DEBUG_DEVICE << " CanIo_c::processMsg --- search among all the FilterBox " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
           CanIo_c::ArrFilterBox::iterator pc_iFilterBox;
-          bool b_foundOne=false;
+          bool b_foundOne=false, b_initial=true;
 
               do {
-                b_foundOne = canMsg2FilterBox( i32_ident, identType, pc_iFilterBox, !b_foundOne );
+                b_foundOne = canMsg2FilterBox( i32_ident, identType, pc_iFilterBox, b_initial );
+                b_initial = false; // change, so that next call continues search in canMsg2FilterBox
 
                 if ( b_foundOne )
                 { // matching instance found
