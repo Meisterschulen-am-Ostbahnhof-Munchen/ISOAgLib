@@ -161,8 +161,6 @@ USE_RS232_DRIVER="simulating"
 # ( default 1 )
 CAN_BUS_CNT=1
 
-CAN_BUS_USED=0
-
 # define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
 CAN_INSTANCE_CNT=1
@@ -540,8 +538,6 @@ PRJ_EEPROM=1
 
 
 #define CAN_BUS_CNT 1 
-
-#define CAN_BUS_USED 0 
 
 #define CAN_INSTANCE_CNT 1 
 

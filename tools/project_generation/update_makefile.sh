@@ -233,7 +233,6 @@ set_default_values()
     USE_VT_UNICODE_SUPPORT=0
     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
     CAN_BUS_CNT=1
-    CAN_BUS_USED=0
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
     RS232_INSTANCE_CNT=1
@@ -1140,7 +1139,6 @@ END_OF_VERSION_H
     
     
         echo_e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >&3
-        echo_e "#define CAN_BUS_USED $CAN_BUS_USED $ENDLINE" >&3
         echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >&3
         echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >&3
         echo_e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >&3

@@ -23,8 +23,6 @@
 
 #define CAN_BUS_CNT 2 
 
-#define CAN_BUS_USED 0 
-
 #define CAN_INSTANCE_CNT 2 
 
 #define PRT_INSTANCE_CNT 2 
