@@ -108,6 +108,7 @@
   typedef SOCKET SOCKET_TYPE;
 #else
   typedef int    SOCKET_TYPE;
+  #define INVALID_SOCKET -1
 #endif
 
 
