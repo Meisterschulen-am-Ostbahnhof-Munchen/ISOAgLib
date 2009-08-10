@@ -163,7 +163,6 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
 {
   if ( comport >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   DCB dcb;
-  COMMTIMEOUTS ct;
   char com[] = "COMx";
   com[3] = comport + '1'; // comport starts counting at 0, while the device starts at COM1
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
@@ -227,9 +226,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
   uint8_t b_data = bByte;
 
-  DWORD x;
   return WriteABuffer(hCom[aui8_channel], &b_data, 1)?HAL_NO_ERR:HAL_NOACT_ERR;
-  //(WriteFile(hCom[aui8_channel],&b_data,1,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 
 /**
@@ -242,9 +239,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
-  DWORD x;
   return WriteABuffer(hCom[aui8_channel], bpWrite, wNumber)?HAL_NO_ERR:HAL_NOACT_ERR;
-  //(WriteFile(hCom[aui8_channel],bpWrite,wNumber,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 
 /**
@@ -256,9 +251,7 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
   if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
 
-  DWORD x;
   return WriteABuffer(hCom[aui8_channel], pbString, strlen((const char*)pbString))?HAL_NO_ERR:HAL_NOACT_ERR;
-  //(WriteFile(hCom[aui8_channel],pbString,strlen((const char*)pbString),&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 
 /**
