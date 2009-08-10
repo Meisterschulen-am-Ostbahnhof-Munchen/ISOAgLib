@@ -38,7 +38,7 @@
 //
 // text macro(s)
 //
-#	ifdef WIN32
+#	ifdef _MSC_VER
 #		pragma warning(disable:4005)
 #	endif
 #	if !defined(TEXT)

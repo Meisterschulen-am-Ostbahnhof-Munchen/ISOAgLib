@@ -160,7 +160,7 @@ public:
     * refine time schedule within execution
     * @return average execution time in [msec] (off complete performed runs)
     */
-  uint16_t getExecTime( void ) const { return mi32_averageExecTime;}
+  int32_t getExecTime( void ) const { return mi32_averageExecTime;}
 
   /**
     * if a very imprtant IRQ event forces stop of Scheduler_c::timeEvent AS SOON AS POSSIBLE

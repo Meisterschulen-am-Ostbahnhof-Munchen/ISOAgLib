@@ -126,7 +126,7 @@ public:
     @param acrc_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
-  MASK_TYPE masked(const Ident_c& acrc_mask = ~0) const
+  MASK_TYPE masked(const Ident_c& acrc_mask) const
     {return Ident_c::masked(acrc_mask);};
   /**
     @brief update the ident with bitwise AND with given ident setting

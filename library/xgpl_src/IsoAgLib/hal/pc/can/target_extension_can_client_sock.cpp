@@ -110,15 +110,15 @@ int32_t getPipeHandleForCanRcvEvent()
 
 SOCKET_TYPE call_socket(unsigned short portnum)
 {
-  SOCKET_TYPE connectSocket = 0;
+  SOCKET_TYPE connectSocket = INVALID_SOCKET;
 #ifdef WIN32
   // Create a SOCKET for listening for
   // incoming connection requests
   connectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (connectSocket == INVALID_SOCKET) {
-    printf("Error at socket(): %ld\n", WSAGetLastError());
+    DEBUG_PRINT("Error at socket(): %i\n", WSAGetLastError());
     WSACleanup();
-    return -1;
+    return INVALID_SOCKET;
   }
   //----------------------
   // The sockaddr_in structure specifies the address family,
@@ -131,9 +131,9 @@ SOCKET_TYPE call_socket(unsigned short portnum)
   //----------------------
   // Connect to server.
   if (connect(connectSocket, (SOCKADDR*) &service, sizeof(service) ) == SOCKET_ERROR) {
-    printf( "Failed to connect.\n" );
+    DEBUG_PRINT( "Failed to connect.\n" );
     WSACleanup();
-    return -1;
+    return INVALID_SOCKET;
   }
 
 #else
@@ -156,10 +156,10 @@ SOCKET_TYPE call_socket(unsigned short portnum)
 #endif
 
   if ((connectSocket = socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0)   /* get socket */
-    return(-1);
+    return INVALID_SOCKET;
   if (connect(connectSocket, (struct sockaddr *)&sa, ui32_len) < 0) {                  /* connect */
     close(connectSocket);
-    return(-1);
+    return INVALID_SOCKET;
   }
 
 #endif
@@ -215,7 +215,7 @@ int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
     if ( (p_writeBuf->s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
       && (p_writeBuf->s_acknowledge.i32_data != 0) )
     { // error!
-      printf("NACK received in send_command\n");
+      DEBUG_PRINT("NACK received in send_command\n");
       return p_writeBuf->s_acknowledge.i32_data;
     }
     else
@@ -225,7 +225,7 @@ int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
   }
   else
   { // wrong answer to a COMMAND. Must be COMMAND_ACKNOWLEDGE!
-    printf("no ACK nor NACK received in send_command\n");
+    DEBUG_PRINT("no ACK nor NACK received in send_command\n");
     return HAL_UNKNOWN_ERR;
   }
 }
@@ -234,12 +234,10 @@ int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
 int16_t can_startDriver()
 {
   DEBUG_PRINT("can_startDriver called\n");
-#ifdef DEBUG
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
+  DEBUG_PRINT("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
 #else
-  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
-#endif
+  DEBUG_PRINT("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
 #endif
 
 #ifdef WIN32
@@ -247,7 +245,7 @@ int16_t can_startDriver()
   WSADATA wsaData;
   int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
   if (iResult != NO_ERROR)
-    printf("Error at WSAStartup()\n");
+    DEBUG_PRINT("Error at WSAStartup()\n");
 #endif
 
   i32_commandSocket = call_socket(COMMAND_TRANSFER_PORT);
@@ -626,6 +624,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   ptReceive->bXtd = s_transferBuf.s_data.s_canMsg.i32_msgType;
   memcpy(ptReceive->abData, s_transferBuf.s_data.s_canMsg.ui8_data, s_transferBuf.s_data.s_canMsg.i32_len);
 
+// would equal DEBUG_PRINT8
 #ifdef DEBUG_CAN
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
@@ -646,6 +645,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
   transferBuf_s s_transferBuf;
 
+// would equal DEBUG_PRINT8
 #ifdef DEBUG_CAN
   printf("Senden: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
          ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
@@ -680,10 +680,10 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   {
     if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
     {
-#ifdef DEBUG
+#ifdef DEBUG_CAN
       if ((s_transferBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (s_transferBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
       {
-        printf("acknowledge-error received in sendCanMsg\n");
+        DEBUG_PRINT("acknowledge-error received in sendCanMsg\n");
       }
 #endif
       return s_transferBuf.s_acknowledge.i32_data;

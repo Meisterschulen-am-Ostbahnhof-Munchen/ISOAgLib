@@ -260,6 +260,8 @@ public:
 
     void switchToState (sendState_t ren_sendState, int32_t i32_timeDelta) { men_sendState = ren_sendState; retriggerIn (i32_timeDelta); }
 
+    const SendStream_c& operator= (const SendStream_c&); // Only private declaration, no implementation: Forbid assignment of SendStream_c instances.
+
   private: // attributes
   /// Initialized on init(...)
     uint32_t mui32_pgn;
@@ -363,7 +365,7 @@ public: // methods
     Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
+    @param aui16_dataSize Size of the complete buffer (should be in the range of [9..1785])
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
@@ -382,7 +384,7 @@ public: // methods
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-	bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+  bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     send an ISO 11783 (E)TP broadcast multipacket message using a given MultiSendStreamer

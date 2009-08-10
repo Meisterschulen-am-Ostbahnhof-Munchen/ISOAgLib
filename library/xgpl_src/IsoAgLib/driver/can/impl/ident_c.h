@@ -213,7 +213,7 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @param ab_pos
     @return ident value
   */
-  MASK_TYPE ident(uint8_t ab_pos) const {return ((t_ident >> (ab_pos*8)) & 0xFF);}
+  uint8_t ident(uint8_t ab_pos) const {return static_cast<uint8_t>((t_ident >> (ab_pos*8)) & 0xFF);}
 
   /** check if Ident_c is set as empty (needed for MsgObj) */
   bool empty() const {return (data.empty == 1)?true:false;}

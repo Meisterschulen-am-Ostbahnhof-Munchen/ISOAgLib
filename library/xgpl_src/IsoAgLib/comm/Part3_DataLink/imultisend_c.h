@@ -120,8 +120,8 @@ public:
     @param ai32_pgn PGN to use for the upload
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIsoBroadcast (const iIsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return MultiSend_c::sendIsoBroadcast (acrc_isoNameSender, rhpb_data, ai32_dataSize, ai32_pgn, rpen_sendSuccessNotify); }
+  bool sendIsoBroadcast (const iIsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return MultiSend_c::sendIsoBroadcast (acrc_isoNameSender, rhpb_data, aui16_dataSize, ai32_pgn, rpen_sendSuccessNotify); }
 
   /**
    * Currently not supported (needed) in the interface
