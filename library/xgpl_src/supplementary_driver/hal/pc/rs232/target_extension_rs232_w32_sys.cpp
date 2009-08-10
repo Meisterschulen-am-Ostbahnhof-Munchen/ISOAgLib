@@ -43,12 +43,12 @@ int16_t close_rs232(uint8_t comport)
     SetCommState(hCom[comport],&(oldConfig[comport]));
     CloseHandle(hCom[comport]);
     arr_usedPort[comport] = false;
-		return HAL_NO_ERR;
+    return HAL_NO_ERR;
   }
-	else
-	{
-		return HAL_NOACT_ERR;
-	}
+  else
+  {
+    return HAL_NOACT_ERR;
+  }
 }
 
 void close_rs232() {
@@ -79,27 +79,25 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
   DCB dcb;
   COMMTIMEOUTS ct;
-  char com[] = "//./COMx";
-  com[7] = comport + '0';
+  char com[] = "COMx";
+  com[3] = comport + '1'; // comport starts counting at 0, while the device starts at COM1
   // first close if already configured
   close_rs232(comport);
 
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
   if (hCom[comport]==INVALID_HANDLE_VALUE) return HAL_CONFIG_ERR;
+
   // read old config
   if (!GetCommState(hCom[comport],&(oldConfig[comport]))) return HAL_CONFIG_ERR;
   arr_usedPort[comport] = true;
 
   atexit(close_rs232);
 
-  if (!SetupComm(hCom[comport],1024,1024))
-  {
-		DWORD test = GetLastError();
-	  return HAL_CONFIG_ERR;
-  }
-
+  if (!SetupComm(hCom[comport],1024,1024)) return HAL_CONFIG_ERR;
   if (!GetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
+
   dcb.BaudRate    = baudrate;
+  dcb.fDtrControl = DTR_CONTROL_DISABLE;
 
   switch ( bMode )
   {
@@ -127,17 +125,19 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
   }
 
 
-  if ( bStoppbits == 2 ) dcb.StopBits    = TWOSTOPBITS;
-  else                   dcb.StopBits    = ONESTOPBIT;
+  if ( bStoppbits == 2 )
+	  dcb.StopBits    = TWOSTOPBITS;
+  else
+	  dcb.StopBits    = ONESTOPBIT;
 
-  if ( bitSoftwarehandshake ) dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
-  else                        dcb.fRtsControl = RTS_CONTROL_ENABLE;
+  if ( bitSoftwarehandshake )
+	  dcb.fRtsControl = RTS_CONTROL_HANDSHAKE;
+  else
+	  dcb.fRtsControl = RTS_CONTROL_ENABLE;
+
   if (!SetCommState(hCom[comport],&dcb)) return HAL_CONFIG_ERR;
-  if (!GetCommTimeouts(hCom[comport],&ct))
-  {
-	  DWORD temp = GetLastError();
-	  return HAL_CONFIG_ERR;
-  }
+  if (!GetCommTimeouts(hCom[comport],&ct)) return HAL_CONFIG_ERR;
+
   ct.ReadIntervalTimeout = MAXDWORD;
   ct.ReadTotalTimeoutMultiplier = 0;
   ct.ReadTotalTimeoutConstant = 0;
@@ -153,6 +153,7 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
   return HAL_NO_ERR;
 }
+
 /**
   set the RS232 Baudrate
   @param wBaudrate wanted baudrate
@@ -164,8 +165,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
   DCB dcb;
   COMMTIMEOUTS ct;
   char com[] = "COMx";
-
-  com[3] = comport + 1 + '0';
+  com[3] = comport + '1'; // comport starts counting at 0, while the device starts at COM1
   hCom[comport] = CreateFile(com,GENERIC_READ|GENERIC_WRITE,0,NULL,OPEN_EXISTING,FILE_FLAG_OVERLAPPED,NULL);
   if (!hCom[comport]) return HAL_CONFIG_ERR;
 
@@ -178,6 +178,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
 
   return HAL_NO_ERR;
 }
+
 BOOL WriteABuffer(HANDLE &r_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
 {
      OVERLAPPED osWrite = {0};
@@ -215,6 +216,7 @@ BOOL WriteABuffer(HANDLE &r_hCom, const uint8_t * lpBuf, DWORD dwToWrite)
      CloseHandle(osWrite.hEvent);
      return fRes;
 }
+
 /**
   send single uint8_t on RS232
   @param bByte data uint8_t to send
@@ -229,6 +231,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
   return WriteABuffer(hCom[aui8_channel], &b_data, 1)?HAL_NO_ERR:HAL_NOACT_ERR;
   //(WriteFile(hCom[aui8_channel],&b_data,1,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
+
 /**
   send string of n uint8_t on RS232
   @param bpWrite pointer to source data string
@@ -243,6 +246,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
   return WriteABuffer(hCom[aui8_channel], bpWrite, wNumber)?HAL_NO_ERR:HAL_NOACT_ERR;
   //(WriteFile(hCom[aui8_channel],bpWrite,wNumber,&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
+
 /**
   send '\0' terminated string on RS232
   @param pbString pointer to '\0' terminated (!) source data string
@@ -257,15 +261,13 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
   //(WriteFile(hCom[aui8_channel],pbString,strlen((const char*)pbString),&x,NULL))?HAL_NO_ERR:HAL_NOACT_ERR;
 }
 
-
-
 /**
   get the amount of data [uint8_t] in receive buffer
   @return receive buffer data byte
  */
 int16_t getRs232RxBufCount(uint8_t comport)
 {
-  if ( comport >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( comport >= RS232_INSTANCE_CNT ) return 0;
   int8_t c_temp[300];
   DWORD tempLen;
   ReadFile(hCom[comport],c_temp,299,&tempLen,NULL);
@@ -307,7 +309,6 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t ui8_terminateChar, uint8_t compor
   return HAL_NOACT_ERR;
 }
 
-
 /**
   read single int8_t from receive buffer
   @param pbRead pointer to target data
@@ -329,13 +330,6 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
   }
 }
 
-#if 0
-int8_t *KeyGetString(int8_t *buffer, int16_t len)
-{
-  return fgets(buffer, len, stdin);
-}
-#endif
-
 /**
   get the amount of data [uint8_t] in send buffer
   @return send buffer data byte
@@ -346,6 +340,7 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
   /** @todo ON REQUEST: decide if RS232 TX buffer from OS should be asked */
   return 0;
 }
+
 /**
   configure a receive buffer and set optional irq function pointer for receive
   @param wBuffersize wanted buffer size
@@ -357,6 +352,7 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
+
 /**
   configure a send buffer and set optional irq function pointer for send
   @param wBuffersize wanted buffer size
@@ -370,6 +366,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
+
 /**
   get errr code of BIOS
   @return 0=parity, 1=stopbit framing error, 2=overflow
@@ -380,7 +377,6 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
-
 
 /**
   clear receive buffer
