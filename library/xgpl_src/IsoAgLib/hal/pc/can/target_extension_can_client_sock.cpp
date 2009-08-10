@@ -116,7 +116,7 @@ SOCKET_TYPE call_socket(unsigned short portnum)
   // incoming connection requests
   connectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
   if (connectSocket == INVALID_SOCKET) {
-    DEBUG_PRINT("Error at socket(): %i\n", WSAGetLastError());
+    DEBUG_PRINT1("Error at socket(): %i\n", WSAGetLastError());
     WSACleanup();
     return INVALID_SOCKET;
   }
@@ -244,8 +244,10 @@ int16_t can_startDriver()
   // Initialize Winsock
   WSADATA wsaData;
   int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+# ifdef DEBUG_CAN
   if (iResult != NO_ERROR)
     DEBUG_PRINT("Error at WSAStartup()\n");
+# endif
 #endif
 
   i32_commandSocket = call_socket(COMMAND_TRANSFER_PORT);
