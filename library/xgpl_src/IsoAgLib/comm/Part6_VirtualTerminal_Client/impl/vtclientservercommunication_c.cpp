@@ -1039,7 +1039,7 @@ VtClientServerCommunication_c::processMsg()
                                          mc_data.getUint8Data (2) | (mc_data.getUint8Data (3) << 8) /* objID of key object */,
                                          mc_data.getUint8Data (4) | (mc_data.getUint8Data (5) << 8) /* objID of visible mask */,
                                          mc_data.getUint8Data (6) /* key code */,
-                                         mc_data.getUint8Data (0) /* 0 for sk, 1 for button -- matches wasButton? boolean */ );
+                                         (mc_data.getUint8Data (0) != 0)/* 0 for sk, 1 for button -- matches wasButton? boolean */ );
       break;
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
       mc_streamer.mrc_pool.eventPointingEvent (mc_data.getUint8Data (1) | (mc_data.getUint8Data (2) << 8) /* X position in pixels */,
