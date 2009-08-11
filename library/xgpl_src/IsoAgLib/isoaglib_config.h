@@ -439,6 +439,11 @@
   /** set CAN buffer size for receive and send */
   #define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
 #endif
+
+#ifndef CONFIG_EEPROM_PADDING_BYTE
+  /** set byte-value to retrieve when reading EEPROM out of bounds */
+  #define CONFIG_EEPROM_PADDING_BYTE 0xFF
+#endif
 /*@}*/
 
 /* ******************************************************** */

@@ -88,20 +88,22 @@ int16_t getEepromSize(void)
   return 8*1024;
 };
 
-/* get the segment size of the eeprom for page write access*/
+/* get the segment size of the eeprom for page write access */
 int16_t getEepromSegmentSize(void){
   return 32;
 };
 
-/* get the status of eeprom*/
-int16_t eepromReady(void){
-  // printf("eeprom ready aufgerufen\n");
-  return EE_READY;
+/* get the status of eeprom */
+int16_t eepromReady(void)
+{
+  return EE_READY; // PC EEPROM is always ready.
 }
 
-/* enable or disabel write protection*/
-int16_t eepromWp(boolean /* bitMode */ ){
- // printf("eepromWp mit %i aufgerufen\n", bitMode);
+/* enable or disable write protection */
+int16_t eepromWp(boolean /* bitMode */ )
+{
+  // printf("eepromWp mit %i aufgerufen\n", bitMode);
+  // @todo SOON Implement Write Protection for PC EEPROM?
   return HAL_NO_ERR;
 }
 
@@ -110,7 +112,14 @@ int16_t openDatFileAndSeek(long al_position)
   eepromDat = fopen(EEPROM_DAT_FILE, "r+b");
   if ( NULL == eepromDat )
   { // try to create file with creation mode
-    eepromDat = fopen(EEPROM_DAT_FILE, "a+b");
+    eepromDat = fopen(EEPROM_DAT_FILE, "w+b");
+    // Note: Using "w+b" instead of "a+b" for the following reason:
+    // (although we're only using this command for creation of the file,
+    //  it's being closed and reopened with "r+b" anyway!)
+    // [Mike: Appending a non-existent file in certain versions of Windows, does not fill
+    // the file with 00's up to the seek position.  So, the file ends up containing
+    // whatever garbage happened to exist on the disk previously.  Telling it w+b
+    // instead, creates the file and fills with 00's.]
     if ( NULL != eepromDat )
     { // we have to close the file, as the normal operation works only with a "r+b" opened FILE
       // - at least on some targets
@@ -124,7 +133,7 @@ int16_t openDatFileAndSeek(long al_position)
     eepromDat = fopen("eeprom.dat", "r+b");
     if ( NULL == eepromDat )
     { // try to create file with creation mode
-      eepromDat = fopen("eeprom.dat", "a+b");
+      eepromDat = fopen("eeprom.dat", "w+b"); // "w+b": See comment for fopen(..) above.
       if ( NULL != eepromDat )
       { // we have to close the file, as the normal operation works only with a "r+b" opened FILE
         // - at least on some targets
@@ -143,69 +152,53 @@ int16_t openDatFileAndSeek(long al_position)
 }
 
 /* write one or more bytes into the eeprom*/
-int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData){
-  int16_t i = 0;
-  short sTemp;
-  int8_t c_temp;
-  int32_t i32_temp;
-  uint8_t* pByte;
-//  printf("schreibe Daten von %i mit Daten aus Datei %s\n", wAddress, EEPROM_DAT_FILE );fflush(0);
+int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData)
+{
   int16_t errCode = openDatFileAndSeek(wAddress);
   if ( errCode  != HAL_NO_ERR ) return errCode;
 
+#ifdef DEBUG_EEPROM
+  INTERNAL_DEBUG_DEVICE << "Writing data to EEPROM address " << wAddress << " - Text: ";
+#endif
+
+  for (int i=0; i < wNumber; ++i)
+  {
+    fputc (pbData[i], eepromDat);
+#ifdef DEBUG_EEPROM
+    INTERNAL_DEBUG_DEVICE << (isprint (pbData[i])) ? pbData[i] : ".";
+#endif
+  }
+
+#ifdef DEBUG_EEPROM
   switch (wNumber)
   {
     case 4:
-      i32_temp = *(int32_t*)pbData;
-      pByte = (uint8_t*)&i32_temp;
-      for (i=0; i < wNumber; i++)
-      {
-        c_temp = pByte[i];
-#ifdef DEBUG_EEPROM
-        if ( isprint( c_temp ) ) putchar(c_temp);
-#endif
-        fputc(c_temp, eepromDat);
-      }
-//      printf(", als Zahl %i", i32_temp);
+      INTERNAL_DEBUG_DEVICE << " - Number (4 byte signed): " << *(int32_t*)pbData;
       break;
     case 2:
-      sTemp = *(short*)pbData;
-      pByte = (uint8_t*)&sTemp;
-      for (i=0; i < wNumber; i++)
-      {
-#ifdef DEBUG_EEPROM
-       if ( isprint( pByte[i] ) ) putchar(pByte[i]);
-#endif
-       fputc(pByte[i], eepromDat);
-      }
-//      printf(", als Zahl %hi", sTemp);
+      INTERNAL_DEBUG_DEVICE << " - Number (2 byte signed): " << *(int16_t*)pbData;
       break;
     case 1:
-      c_temp = *(int8_t*)pbData;
-#ifdef DEBUG_EEPROM
-      if ( isprint( c_temp ) ) putchar(c_temp);
-#endif
-      fputc(c_temp, eepromDat);
-//      printf(", als Zahl %hi oder als Text %c", c_temp, c_temp);
+      INTERNAL_DEBUG_DEVICE << " - Number (1 byte signed): " << *(int8_t*)pbData;
       break;
     default:
-      for (i=0; i < wNumber; i++)
-      {
-#ifdef DEBUG_EEPROM
-        if ( isprint( pbData[i] ) ) putchar(pbData[i]);
-#endif
-        fputc(pbData[i], eepromDat);
-      }
       break;
   }
-//  printf("\n");
+  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
   fclose(eepromDat);
   return HAL_NO_ERR;
 }
 
 /* write one uint8_t into the eeprom */
-int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
-//  printf("schreibe Daten von %i mit Daten %i\n", wAddress, uint16_t(bByte));
+int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte)
+{
+#ifdef DEBUG_EEPROM
+  INTERNAL_DEBUG_DEVICE << "Writing byte '" << uint16_t (bByte) << "' to EEPROM address " << wAddress << " - Text: ";
+  INTERNAL_DEBUG_DEVICE <<  isprint(bByte) ? bByte : ".";
+  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
   int16_t errCode = openDatFileAndSeek(wAddress);
   if ( errCode  != HAL_NO_ERR ) return errCode;
 
@@ -214,61 +207,46 @@ int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte){
   return HAL_NO_ERR;
 }
 
-/* read one or more uint8_t from the eeprom*/
-int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte){
-  int16_t i;
-  short sTemp;
-  int8_t c_temp;
-  int32_t i32_temp;
-//  printf("lese Daten von %i mit Daten als text:", wAddress);
-  int16_t errCode = openDatFileAndSeek(wAddress);
+/* read one or more uint8_t from the eeprom */
+int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
+{
+  const int16_t errCode = openDatFileAndSeek(wAddress);
   if ( errCode  != HAL_NO_ERR ) return errCode;
 
+#ifdef DEBUG_EEPROM
+  INTERNAL_DEBUG_DEVICE << "Reading EEPROM data from address " << wAddress << " - Text: ";
+#endif
+
+  for (int i=0; i < wNumber; ++i)
+  {
+    const int16_t c = fgetc(eepromDat);
+    pbByte[i] = ( c == EOF ) ?  EEPROM_PADDING_BYTE : (const uint8_t)c;   // pad when at EOF
+#ifdef DEBUG_EEPROM
+    INTERNAL_DEBUG_DEVICE << (pbByte[i] >= 0x20) ? pbByte[i] : ".";
+#endif
+  }
+
+#ifdef DEBUG_EEPROM
   switch (wNumber)
   {
     case 4:
-      for (i=0; i < wNumber; i++)
-      {
-        pbByte[i] = (uint8_t)fgetc(eepromDat);
-#ifdef DEBUG_EEPROM
-        putchar(pbByte[i]);
-#endif
-      }
-      i32_temp = *(int32_t*)pbByte;
-//      printf(", als Zahl %i", i32_temp);
+      INTERNAL_DEBUG_DEVICE << " - Number (4 byte signed): " << *(int32_t*)pbByte;
       break;
     case 2:
-      for (i=0; i < wNumber; i++)
-      {
-        pbByte[i] = (uint8_t)fgetc(eepromDat);
-#ifdef DEBUG_EEPROM
-        putchar(pbByte[i]);
-#endif
-      }
-      sTemp = *(short*)pbByte;
-//      printf(", als Zahl %hi", sTemp);
+      INTERNAL_DEBUG_DEVICE << " - Number (2 byte signed): " << *(int16_t*)pbByte;
       break;
     case 1:
-      pbByte[0] =  (uint8_t)fgetc(eepromDat);
-#ifdef DEBUG_EEPROM
-      putchar(pbByte[0]);
-#endif
-      c_temp = *(int8_t*)pbByte;
-//      printf(", als Zahl %hi", c_temp);
+      INTERNAL_DEBUG_DEVICE << " - Number (1 byte signed): " << *(int8_t*)pbByte;
       break;
     default:
-      for (i=0; i < wNumber; i++)
-      {
-        pbByte[i] = (uint8_t)fgetc(eepromDat);
-#ifdef DEBUG_EEPROM
-        putchar(pbByte[i]);
-#endif
-      }
       break;
   }
-//  printf("\n");
+  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
   fclose(eepromDat);
   return HAL_NO_ERR;
 }
 
 } // End of namespace __HAL
+
