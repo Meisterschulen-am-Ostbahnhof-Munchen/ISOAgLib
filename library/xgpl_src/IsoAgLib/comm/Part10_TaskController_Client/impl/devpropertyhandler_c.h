@@ -99,7 +99,7 @@ namespace IsoAgLib { class iProcess_c;};
 namespace __IsoAgLib {
 
 class LanguageLabel_c {
-  char str[2];
+  char str[2+1]; // 2 language characters + 0x00-termination
 public:
   LanguageLabel_c (const HUGE_MEM char* label = "de");
   LanguageLabel_c (const LanguageLabel_c& ar_str);

@@ -145,16 +145,17 @@ LanguageLabel_c::LanguageLabel_c (const HUGE_MEM char* label)
 {
   str[0] = label[0];
   str[1] = label[1];
+  str[2] = 0x00;
 };
 
 LanguageLabel_c::LanguageLabel_c (const LanguageLabel_c& c_langLabel)
 {
-  CNAMESPACE::memcpy(str, c_langLabel.str, 2);
+  CNAMESPACE::memcpy(str, c_langLabel.str, sizeof (str));
 };
 
 const LanguageLabel_c& LanguageLabel_c::operator=(const LanguageLabel_c& c_langLabel)
 {
-  CNAMESPACE::memcpy(str, c_langLabel.str, 2);
+  CNAMESPACE::memcpy(str, c_langLabel.str, sizeof (str));
   return c_langLabel;
 };
 
@@ -162,17 +163,18 @@ const LanguageLabel_c& LanguageLabel_c::operator=(const HUGE_MEM uint8_t* ui8_st
 {
   str[0] = ui8_str[0];
   str[1] = ui8_str[1];
+  str[2] = 0x00;
   return *this;
 };
 
 bool LanguageLabel_c::operator<(const LanguageLabel_c& c_langLabel) const
 {
-  return CNAMESPACE::strcmp(str, c_langLabel.str);
+  return (CNAMESPACE::strcmp(str, c_langLabel.str) < 0);
 };
 
 bool LanguageLabel_c::operator==(const LanguageLabel_c& c_langLabel)
 {
-  return (CNAMESPACE::strcmp(str, c_langLabel.str)==0)?true:false;
+  return (CNAMESPACE::strcmp(str, c_langLabel.str) == 0);
 };
 //end of definition LanguageLabel_c
 //===================================================================
