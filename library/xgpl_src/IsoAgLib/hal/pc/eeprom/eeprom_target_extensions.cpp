@@ -220,7 +220,7 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
   for (int i=0; i < wNumber; ++i)
   {
     const int16_t c = fgetc(eepromDat);
-    pbByte[i] = ( c == EOF ) ?  EEPROM_PADDING_BYTE : (const uint8_t)c;   // pad when at EOF
+    pbByte[i] = ( c == EOF ) ? CONFIG_EEPROM_PADDING_BYTE : (const uint8_t)c;   // pad when at EOF
 #ifdef DEBUG_EEPROM
     INTERNAL_DEBUG_DEVICE << (pbByte[i] >= 0x20) ? pbByte[i] : ".";
 #endif

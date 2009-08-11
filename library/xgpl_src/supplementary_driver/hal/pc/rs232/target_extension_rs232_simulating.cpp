@@ -88,7 +88,6 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   #ifdef WRITE_LOG_FILE
   if (rs232_log[aui8_channel]) fclose( rs232_log[aui8_channel] );
   #endif
-  char name[50];
   #ifdef WIN32
   sprintf(sendName[aui8_channel], "rs232_send_%hd", aui8_channel);
   rs232_output[aui8_channel] = fopen(sendName[aui8_channel], "w"); // "a+"
@@ -113,6 +112,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
   #endif
 
   #ifdef WRITE_LOG_FILE
+  char name[50];
   #ifdef WIN32
   sprintf(name, "rs232_log_%hd", aui8_channel);
   #else
