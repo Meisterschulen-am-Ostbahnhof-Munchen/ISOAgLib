@@ -83,6 +83,7 @@
 
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "../ivtobjectmacro_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -85,6 +85,7 @@
 #ifdef USE_VTOBJECT_container
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
 namespace IsoAgLib {

@@ -82,6 +82,7 @@
 #include "vtobjectinputlist_c.h"
 
 #ifdef USE_VTOBJECT_inputlist
+#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

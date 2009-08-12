@@ -84,6 +84,7 @@
 #ifdef USE_VTOBJECT_alarmmask
 #include "isoterminal_c.h"
 #include "../ivtobjectfontattributes_c.h"
+#include "../ivtobjectmacro_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

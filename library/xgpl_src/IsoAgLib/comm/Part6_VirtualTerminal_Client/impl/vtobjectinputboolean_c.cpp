@@ -82,6 +82,7 @@
 #include "vtobjectinputboolean_c.h"
 
 #ifdef USE_VTOBJECT_inputboolean
+#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

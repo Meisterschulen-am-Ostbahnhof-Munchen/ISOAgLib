@@ -85,6 +85,7 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include "../ivtobjectfontattributes_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

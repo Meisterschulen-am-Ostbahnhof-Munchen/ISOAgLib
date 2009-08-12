@@ -83,6 +83,7 @@
 
 #ifdef USE_VTOBJECT_inputnumber
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

@@ -84,6 +84,7 @@
 #include "vtobjectfontattributes_c.h"
 #include "isoterminal_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "../ivtobjectmacro_c.h"
 
 namespace IsoAgLib {
 // implement here a normal constructor and functions, as the compiler dislikes inlining of that simple

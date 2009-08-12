@@ -85,6 +85,7 @@
 #include "../ivtobjectlineattributes_c.h"
 #include "../ivtobjectfillattributes_c.h"
 #include "../ivtobjectbutton_c.h"
+#include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 
 // Begin Namespace __IsoAgLib

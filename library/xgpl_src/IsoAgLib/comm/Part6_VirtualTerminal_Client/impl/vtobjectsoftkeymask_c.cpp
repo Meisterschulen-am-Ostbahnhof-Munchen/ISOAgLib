@@ -80,6 +80,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 #include "vtobjectsoftkeymask_c.h"
+#include "../ivtobjectmacro_c.h"
 
 #include "isoterminal_c.h"
 
