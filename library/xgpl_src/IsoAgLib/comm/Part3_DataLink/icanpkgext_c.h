@@ -111,7 +111,7 @@ public:
   IsoAgLib::iIdent_c::identType_t identType() {return CanPkgExt_c::identType();}
 
   /** retrieve len of last received CAN message */
-  uint8_t getLen() { return CanPkgExt_c::getLen(); }
+  static uint8_t getLen() { return CanPkgExt_c::getLen(); }
 
   /**
     simply deliver a uint8_t from a specific position with operator[]
@@ -204,6 +204,19 @@ public:
   virtual void getData(MASK_TYPE& rt_ident, uint8_t& rui8_identType,
                        uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
     {CanPkgExt_c::getData(rt_ident, rui8_identType, rb_dlcTarget, pb_dataTarget); }
+
+  /**
+    set data with size bytes from source array;
+    if aui8_len is greater than 8 (max data length of CAN) than max 8 bytes are transfered
+    @param apb_data pointer to source data uint8_t array
+    @param aui8_len amount/len of the source data string
+  */
+  static void setDataFromString(const uint8_t* apb_data, uint8_t aui8_len)
+    {CanPkgExt_c::setDataFromString(apb_data,aui8_len);}
+
+  /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
+  static const uint8_t* getUint8DataConstPointer()
+    {return CanPkgExt_c::getUint8DataConstPointer();}
 
   /**
     get the value of the ISO11783 ident field SA
