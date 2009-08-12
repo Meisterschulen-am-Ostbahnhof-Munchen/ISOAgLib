@@ -820,7 +820,6 @@ INTERNAL_DEBUG_DEVICE << "end CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_E
   @param at_identType ident type of the deleted ident: standard 11bit or extended 29bit
         (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
   @return true -> FilterBox_c found and deleted
-  @todo SOON: incorporate additional parameter "bool ab_reconfigImmediate = true" from insertFilter before at_identType - AND update all callers
 */
 bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
                            MASK_TYPE at_mask, MASK_TYPE at_filter,
@@ -1273,7 +1272,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
     HAL::wdTriggern();
     // exit loop, if CAN BUS is OFF and exit function
     if (HAL::can_stateGlobalOff(mui8_busNumber))
-    { /** @todo SOON: check whether HAL::can_stateGlobalOff() detects all possible reasons that can block the send queue from emptying by sending of queued messages on CAN BUS */
+    { /** @todo SOON-69: check whether HAL::can_stateGlobalOff() detects all possible reasons that can block the send queue from emptying by sending of queued messages on CAN BUS */
       // clear MsgObj CAN queue
       #ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
       INTERNAL_DEBUG_DEVICE

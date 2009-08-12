@@ -903,7 +903,7 @@ void readWrite(__HAL::server_c* pc_serverData)
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
 #ifdef WINCE
-        // @todo WINCE Windows CE has a bug with MSG_PEEK (bytes are actually read)
+        // @todo WINCE-176 Windows CE has a bug with MSG_PEEK (bytes are actually read)
         //int bytesRecv = select( 0, &rfds, NULL, NULL, 0 ); // this was a try for a workaround
         #error "This place has to be done correctly for Windows CE"
 #else
@@ -937,7 +937,7 @@ void readWrite(__HAL::server_c* pc_serverData)
       {
         // socket still alive? (returns 0 (peer shutdown) or -1 (error))
 #ifdef WINCE
-        // @todo WINCE Windows CE has a bug with MSG_PEEK (bytes are actually read)
+        // @todo WINCE-176 Windows CE has a bug with MSG_PEEK (bytes are actually read)
         //int bytesRecv = select( 0, &rfds, NULL, NULL, 0 ); // this was a try for a workaround
         #error "This place has to be done correctly for Windows CE"
 #else

@@ -1006,7 +1006,6 @@ class Flexible8ByteString_c {
 
 #ifdef USE_DATASTREAMS_IO
 /** convert receive multistream (LE) into an unsigned 16-bit variable */
-/// @todo INLINE the convert-functions?
 uint16_t convertIstreamUi16( StreamInput_c& rc_stream );
 /** convert receive multistream (LE) into a signed 16-bit variable */
 inline
@@ -1050,7 +1049,7 @@ int32_t convertIstreamI32( StreamInput_c& rc_stream )
     }
   }
 
-  /// @todo OPTIMIZE: Reverse lookup up to now done a slow but non-space-consuming way. To be optimized later on using a generated reverse lookup table */
+  /// @todo ON REQUEST OPTIMIZE: Reverse lookup up to now done a slow but non-space-consuming way. To be optimized later on using a generated reverse lookup table */
   /// keep inlined, as it will be optimized, so it's smaller then!
   inline uint8_t convertUnicodeTo8859 (uint16_t aui16_unicode, uint8_t aui8_encoding)
   {

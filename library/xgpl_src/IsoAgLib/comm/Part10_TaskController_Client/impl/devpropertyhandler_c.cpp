@@ -362,7 +362,7 @@ DevPropertyHandler_c::processMsg()
         }
         else
         {
-          /** @todo SOON: further output for user to locate the error which caused the upload fail -> interprete TC-Response to get more detailed debug output*/
+          /** @todo SOON-62: further output for user to locate the error which caused the upload fail -> interprete TC-Response to get more detailed debug output*/
           men_uploadStep = UploadFailed;
           men_poolState = OPCannotBeUploaded;
           mui8_commandParameter = procCmdPar_OPActivateRespMsg;
@@ -387,7 +387,7 @@ DevPropertyHandler_c::processMsg()
         }
         else
         {
-          /** @todo SOON: if the pool couldn't be deleted: fail upload or just ignore it??? */
+          /** @todo SOON-62: if the pool couldn't be deleted: fail upload or just ignore it??? */
           mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
           getCanInstance4Comm() << *mpc_data;
@@ -524,7 +524,7 @@ DevPropertyHandler_c::timeEvent( void )
     case UploadWaitForVersionResponse:
       if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        /** @todo SOON: check when the responses could not be received, and whether simple sending of new pool could cause harm */
+        /** @todo SOON-62: check when the responses could not be received, and whether simple sending of new pool could cause harm */
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "No version available..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -801,7 +801,7 @@ DevPropertyHandler_c::timeEvent( void )
 bool
 DevPropertyHandler_c::queuePoolInMap (const HUGE_MEM uint8_t* apc_devicePoolByteArray, uint32_t aui32_bytestreamlength, bool ab_setToDefault)
 {
-  /** @todo SOON: add test for minimum size of the pool (1 DeviceObject + 1 DeviceElementObject)*/
+  /** @todo SOON-62: add test for minimum size of the pool (1 DeviceObject + 1 DeviceElementObject)*/
 
   LanguageLabel_c langLabel;
   DevicePool_c devicePool (apc_devicePoolByteArray, aui32_bytestreamlength);

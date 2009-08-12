@@ -189,7 +189,7 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& acrc_src)
 /** default destructor */
 IsoItem_c::~IsoItem_c()
 { // first inform SA-Claim handlers on SA-Loss
-  /// @todo SOON We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
+  /// @todo SOON-240 We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
   getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::RemoveFromMonitorList, *this);
 #ifdef USE_WORKING_SET
   if (mpvec_slaveIsoNames)
@@ -289,8 +289,8 @@ void IsoItem_c::set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t au
 
 /// @param ab_fromConflict false => Initial Address-Claim, so we need to go to "AddressClaim"-phase!
 ///                        true => go to "ClaimedAddress" state, no 250ms wait (for now) as we changed SA!
-/// @todo SOON Do we really need this parameter? Should we wait 250ms on change of SA also???
-/// @todo SOON Merge with sendSaClaim - create an enum for the three cases!
+/// @todo SOON-240 Do we really need this parameter? Should we wait 250ms on change of SA also??? (clarification says: NO!)
+/// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
 void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 {
   CanIo_c& c_can = getCanInstance4Comm();
@@ -301,8 +301,8 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
   { // no success -> send NACK and switch to off | error state
     setItemState(IState_c::itemState_t(IState_c::OffUnable | IState_c::Error));
     clearItemState(IState_c::PreAddressClaim);
-    /** @todo SOON Do we need to notify the IdentItem of the OFF state? Or will it check that regularly?
-              Somehow this IsoItem needs to be thrown out of the list! */
+    /** @todo SOON-240 Do we need to notify the IdentItem of the OFF state? Or will it check that regularly?
+              Somehow this IsoItem needs to be thrown out of the list! (New: We don't remove IsoItems anymore ;-) */
   }
   else
   { // success -> start address claim mode
@@ -471,7 +471,7 @@ bool IsoItem_c::processMsg()
   IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
   int32_t i32_pkgTime = c_pkg.time(),
       i32_now = Scheduler_Task_c::getLastRetriggerTime();
-  /// @todo SOON what is the sense of the check below?
+  /// @todo SOON-240 what is the sense of the check below?
   if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
   else updateTime(i32_pkgTime);
 
@@ -584,7 +584,7 @@ IsoItem_c::setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoName
 {
   if (mpvec_slaveIsoNames)
   { // already registered as working-set master.
-    /** @todo SOON How to handle changing Workingset-State when it's already set? Maybe that's simply not allowed at all... */
+    /** @todo SOON-240 How to handle changing Workingset-State when it's already set? Maybe that's simply not allowed at all... */
   }
   else
   { // create a copy of the vector. (if it's set...)
@@ -602,7 +602,7 @@ IsoItem_c::setMaster (uint8_t aui8_slaveCount)
 {
   if (mpvec_slaveIsoNames)
   { // already registered as working-set master.
-    /** @todo SOON How to handle an UPDATE of the working-set definition? First keep it parallel until it finishes successful or fails? Maybe also check if this is a remote item?? */
+    /** @todo SOON-240 How to handle an UPDATE of the working-set definition? First keep it parallel until it finishes successful or fails? Maybe also check if this is a remote item?? */
   }
   else
   { // by creating the vector and setting the pointer, we're master now and have "aui8_slaveCount" slaves.
@@ -618,7 +618,7 @@ IsoItem_c::setMaster (uint8_t aui8_slaveCount)
 void
 IsoItem_c::addSlave (IsoName_c const& rcc_slaveName)
 {
-  /// @todo SOON We currently IGNORE any subsequent working-set announces! If the list is full, it stays full and no nothing is overwritten or alike...
+  /// @todo SOON-240 We currently IGNORE any subsequent working-set announces! If the list is full, it stays full and no nothing is overwritten or alike...
   if (mpvec_slaveIsoNames)
   {
     const STL_NAMESPACE::vector<IsoName_c>::iterator end = mpvec_slaveIsoNames->end();

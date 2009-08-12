@@ -253,7 +253,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
   if ( openBus >= 0 )
   { // an open CAN BUS found
     uint32_t n = 1;
-    /** @todo SOON: how to handle TWO open BUSSes -> how can wait be called then */
+    /** @todo ON REQUEST - DEPRECATED HAL: how to handle TWO open BUSSes -> how can wait be called then */
     if ( rteCan_c[openBus]->wait( &n, RTE_ONE_MILLISECOND*rte_time_t(aui16_timeoutInterval), false ) == rte_ret_error( timeout ) ) return false;
     else return true;
   }

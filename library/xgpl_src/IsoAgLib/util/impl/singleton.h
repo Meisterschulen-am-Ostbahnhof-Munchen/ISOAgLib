@@ -321,7 +321,7 @@
   #define RS232_SINGLETON( CLASS ) Singleton<CLASS>
 #endif
 
-/** @todo ON REQUEST: try to remove these include hacks, as soon as Tasking provides a bugfix
+/** @todo ON REQUEST TASKING: try to remove these include hacks, as soon as Tasking provides a bugfix
     for their broken version 7.x STL headers.
     Official STL headers like "c166/include.cpp/stl_algobase.h"
     where the C-Header \<string.h\> is imported into the global namespace, prevent
@@ -679,9 +679,5 @@ template<class T, class B, int SIZE> class SingletonDerivedVec : public B
 #define CLIENT_TYPE_CNT() 3
 /* by multiple inclusion of singleton_container.h the suitable template class can be generated */
 #include "singleton_container.h"
-
-/// @todo REMOVE SOON FOR REV 2.2: This is just to be compatible with older versionen vt2iso generated files.
-/// This can be removed after some migration time. State now is 20 Sep 2007.
-#define SINGLETON_VEC_KEY_PARAMETER_VAR_WITH_COMMA SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
 
 #endif

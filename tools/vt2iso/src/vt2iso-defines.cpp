@@ -380,15 +380,15 @@ char ctCommandTable [maxCommandsToCompare] [stringLength+1] = {
   " ",
   "command_change_string_value",
   "command_change_child_position",
-  "command_set_object_label",       // @todo soon
-  "command_change_polygon_point",   // @todo soon
-  "command_change_polygon_scale",   // @todo soon
-  "command_graphics_context",       // @todo soon
+  "command_set_object_label",       // @todo ON REQUEST: Revision 4
+  "command_change_polygon_point",   // @todo ON REQUEST: Revision 4
+  "command_change_polygon_scale",   // @todo ON REQUEST: Revision 4
+  "command_graphics_context",       // @todo ON REQUEST: Revision 4
   " ",
   " ",
   " ",
   " ",
-  "command_lock_unlock_mask",       // @todo soon
+  "command_lock_unlock_mask",       // @todo ON REQUEST: Revision 4
   "command_execute_macro"
 };
 

@@ -156,7 +156,7 @@ clock_t getStartUpTime()
   }
   #endif
   // MinGW doesn't need getStartupTime() AS IT SEEMS RIGHT NOW.
-  // @todo needs to be compiled under MinGW and tested!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // @todo SOON-175 needs to be compiled under MinGW and tested!!!!!!!!!!!!!!!!!!!!!!!!!!
 #endif
 
 
@@ -413,7 +413,7 @@ int16_t KeyGetByte(uint8_t *p)
     return read(0, p, sizeof *p) == sizeof *p;
   #else
     #ifdef WINCE
-      return 0;  //@TODO ON REQUEST: add key handling for WINCE
+      return 0;  /// @todo WINCE-176 add key handling for WINCE
     #else
       if (!_kbhit()) return 0;
       *p = _getch();

@@ -111,7 +111,7 @@ static const int32_t msci32_timeOutT4=1100;  // cts(0)<->cts
 static const int32_t msci32_timeOutT5=1000;  // dpo -> data (ETP only, naming "T5" done by Martin)
 static const int32_t msci32_timeOutFP=1000;  // FPdata <-> FPdata
 static const int32_t msci32_timeNever=-1;
-/** @todo SOON The above should be adapted to the new revision of Part 3 - Data Link Layer, or should we use the old IS timings to be correct??
+/** @todo SOON-178 DataLinkLayerRevision The above should be adapted to the new revision of Part 3 - Data Link Layer, or should we use the old IS timings to be correct??
   * also limit number of retries to 2 (if retries are implemented, if not, do so ;-) */
 
 

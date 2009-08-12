@@ -430,7 +430,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr,
     arrHalCan[aui8_busNr][(aui8_msgobjNr)].ui8_cinterfLastSendBufCnt = 0xFF;
     pt_config->bMsgType = RX;
 
-    pt_config->wNumberMsgs = 1; ///< @todo: can_server has to be adapted if wNumberMsgs is set to 0 for receiving
+    pt_config->wNumberMsgs = 1; /// can_server uses this to decide if this MsgObj can receive a message (1) or not (0).
 
     #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     // register the IRQ function to handle the received CAN messages

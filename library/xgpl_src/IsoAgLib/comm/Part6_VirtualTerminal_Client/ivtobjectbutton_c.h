@@ -84,8 +84,8 @@ public:
   //  WHICH ARE CURRENTLY NOT YET ON THE MARKET.
   //  SO USE THIS COMMAND ONYL FOR SPECIAL PURPOSES AND IF YOU KNOW YOUR VT-SERVER
   //  SUPPORTS THIS COMMAND - OTHER THAN THAT YOU WILL GET 4,5 SECONDS OF DELAY IN YOUR COMMUNICATION!
-  //  @todo Put this command into some #ifdef REVISION3_CLIENT.
-  //  @todo Change #ifdef REVISION3_CLIENT to #ifdef REVISION4_CLIENT
+  //  @todo SOON-59 Put this command into some #ifdef REVISION3_CLIENT.
+  //  @todo SOON-59 Change #ifdef REVISION3_CLIENT to #ifdef REVISION4_CLIENT
   bool select(uint8_t selectOrActivate) { return vtObject_c::select(selectOrActivate); }
 
 

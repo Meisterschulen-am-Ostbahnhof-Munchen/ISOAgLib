@@ -505,7 +505,7 @@ bool IdentItem_c::timeEventPreAddressClaim( void )
   {
     // insert element in list
     mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_preferredSa,
-      IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false); // do not yet announce. @todo SOON Maybe also announce right now?
+      IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
 
     if (mpc_isoItem != NULL)
     {
@@ -542,7 +542,7 @@ bool IdentItem_c::timeEventActive( void )
   #ifdef CHANGE_DEV_CLASS_INST_ON_CONFLICT
   // only change dev class inst and repeated address claim on adress conflicts, if following define
   // is set in masterHeader
-  /** @todo SOON USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
+  /** @todo SOON-240 USE THIS PRINCIPLE IN CASE WE RECEIVE MESSAGE WITH LOCAL SA -> detected in DataLinkLayer (CanPkgExt_c->resolving)
            --> we should change SA in such a case AND maybe send some sort of DIAGNOSE MESSAGE
     */
   // because of errors caused by terminals, which doesn't claim correctly an address
@@ -606,7 +606,7 @@ bool IdentItem_c::timeEventActive( void )
   }
   else
   { // remote ISO item has overwritten local item
-    /// @todo SOON This case shouldn't happen anymore!!!!!!!! --> See conflict handling when some sends an ADDRESS_CLAIM with our ISONAME!
+    /// @todo SOON-240 This case shouldn't happen anymore!!!!!!!! --> See conflict handling when some sends an ADDRESS_CLAIM with our ISONAME!
     // ->see if we can still live with our IsoName
     // ->if not, we'lost because we can't change our IsoName
     IsoMonitor_c& rc_isoMonitor = getIsoMonitorInstance4Comm();
@@ -615,7 +615,7 @@ bool IdentItem_c::timeEventActive( void )
     if (cb_isoNameStillAvailable)
     { // insert element in list
       mpc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), mui8_preferredSa,
-        IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false); // do not yet announce. @todo SOON Maybe also announce right now?
+        IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
       if ( NULL != mpc_isoItem )
       {
         // register the new item for ISORequestPGN
@@ -630,7 +630,7 @@ bool IdentItem_c::timeEventActive( void )
     }
     else
     { /// IsoName now already used on the bus - we can't claim an address now anymore!
-      /** @todo SOON insert new error-location/type for those cases! */
+      /** @todo SOON-240 insert new error-location/type for those cases! */
       getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
       IsoItem_c& rc_foundIsoItemSameIsoName = rc_isoMonitor.isoMemberISOName (mc_isoName);
       if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))

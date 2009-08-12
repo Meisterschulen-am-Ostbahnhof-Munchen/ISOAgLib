@@ -267,7 +267,7 @@ bool IsoMonitor_c::timeEvent( void )
   { // call timeEvent for each registered client -> if timeEvent of item returns false
     // it had to return BEFORE its planned activities were performed (because of the registered end time)
     if ( !(*pc_iter)->timeEvent() ) return false;
-    /// @todo SOON Adapt the check on itemState. Check if 0x7C is correct...
+    /// @todo SOON-240 Adapt the check on itemState. Check if 0x7C is correct...
     switch( (*pc_iter)->itemState() & 0x7C )
     {
     case IState_c::AddressClaim | IState_c::Active:
@@ -1094,7 +1094,7 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveCo
     }
   }
 
-  /// @todo SOON Maybe wrap around to SA 0 if we couldn't allocate one up to 253!?
+  /// @todo SOON-240 Maybe wrap around to SA 0 if we couldn't allocate one up to 253!?
 
   // while we have addresses to try, try!
   while (ui8_wishSa < 254)
@@ -1309,7 +1309,7 @@ bool IsoMonitor_c::processMsg()
         if (pc_itemSameISOName->itemState(IState_c::Local))
         { // We have a local item with this IsoName
           /// WE GOT A PROBLEM! SOMEONE IS SENDING WITH OUR ISONAME!
-          /// @todo SOON Handle the case when a remote message claims an address with a local running IsoName!
+          /// @todo SOON-240 Handle the case when a remote message claims an address with a local running IsoName!
           // for now, we shut down our own Ident...
           if (pc_itemSameISOName->getIdentItem())
           { // as it should be! as it's local!
@@ -1412,7 +1412,7 @@ bool IsoMonitor_c::processMsg()
       { // in Record Byte 1 (i.e. offset-byte 0) stands the number of TOTAL MEMBERS of this Working-Set.
         // Note that this includes the Master, too - So we need to substract the master
         pc_masterItem->setMaster (data().getUint8Data (1-1)-1);
-        /** @todo SOON: WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
+        /** @todo SOON-240: WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
          * for now the slaves' isonames are just initialized with IsoNameUnspecified until the WORKING_SET_SLAVE message arrives...
          * AND: Check what happens if the WS-sequence arrives a further time?
          * --> for timings see Iso11783-Part1
@@ -1422,7 +1422,7 @@ bool IsoMonitor_c::processMsg()
       { // shouldn't happen normally (but could be a theoretical message on the bus,
         // so we needed the check. But we don't have to do anything...
         // ! Someone with an unknown SA sent a WORKING_SET_MASTER_PGN message...
-        /// @todo SOON Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
+        /// @todo SOON-240 Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
         //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
     } break;
@@ -1443,7 +1443,7 @@ bool IsoMonitor_c::processMsg()
       { // shouldn't happen normally (but could be a theoretical message on the bus,
         // so we needed the check. But we don't have to do anything...
         // ! Someone with an unknown SA sent a WORKING_SET_MASTER_PGN message...
-        /// @todo SOON Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
+        /// @todo SOON-240 Should we register such errors at all? Should we register such errors as "(iLibErr_c::Inconsistency, iLibErr_c::System)" ?
         //getILibErrInstance().registerError( iLibErr_c::Inconsistency, iLibErr_c::System );
       }
     } break;

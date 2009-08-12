@@ -114,7 +114,7 @@ static const uint8_t scui8_eCM_DPO = 22;
 static const uint8_t scui8_eCM_EndofMsgACK = 23;
 static const uint8_t scui8_CM_ConnAbort = 255;
 
-/** @todo SOON figure that one out... new ISO says we can put out head2head messages! */
+/** @todo SOON-178 figure that one out... new ISO says we can put out head2head messages! */
 static const uint8_t scui8_isoCanPkgDelay = 4;
 
 
@@ -132,7 +132,7 @@ namespace __IsoAgLib {
 
 
 
-/** @todo SOON remove any IsoTerminal dependant stuff from MultiSend!!! */
+/** @todo SOON-178 remove any IsoTerminal dependant stuff from MultiSend!!! */
 #define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 #define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
@@ -325,7 +325,7 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
     }
     mui32_dataBufferOffset += ui8_nettoCnt; // already sent out the first 6 bytes along with the first FP message.
     switchToState (SendData, 2); // go, send the rest!
-    /** @todo SOON maybe send out more packets right now if it's just about some.
+    /** @todo SOON-178 maybe send out more packets right now if it's just about some.
               Why wait? If we wait, it's probably not a "FAST Packet" anymore...*/
     sendPacketFp();
   }
@@ -471,7 +471,7 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 
   if (mlist_sendStream.empty()) {
     mlist_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_WITH_COMMA ));
-    /** @todo SOON remove if there's no minimum between data-packets! */
+    /** @todo SOON-178 remove if there's no minimum between data-packets! */
     getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1);
   } else {
     mlist_sendStream.insert (mlist_sendStream.end(), mlist_sendStream.back()); // insert a copy of the first element (for performance reasons)
@@ -605,7 +605,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
             return true; // FINISHED SendStream, remove it from list please!
           }
         } // for
-        /** @todo SOON how fast must fast-packet be? send all right now? set retriggerIn to (0) or (1) ?? */
+        /** @todo SOON-178 how fast must fast-packet be? send all right now? set retriggerIn to (0) or (1) ?? */
         retriggerIn (2); // if we couldn't finish now, retrigger right soon! we're FAST-PACKET!
       }
       else
@@ -703,7 +703,7 @@ MultiSend_c::timeEvent()
     return true;
   }
 
-  /** @todo SOON Check how we want to calculate the max nr. of packets to send
+  /** @todo SOON-178 Check how we want to calculate the max nr. of packets to send
             ==> Best would be to know when the next comes.
             clip that value as we may expect incoming can-pkgs, too - so be a little polite!
   */
@@ -744,7 +744,7 @@ MultiSend_c::timeEvent()
 
   if (mlist_sendStream.empty())
   { // (re-)set the CAN send pause to 0, because not a single SendStream is active anymore.
-    /** @todo SOON remove if there's no minimum between data-packets! */
+    /** @todo SOON-178 remove if there's no minimum between data-packets! */
     getCanInstance4Comm().setSendpause (0);
   }
 
@@ -769,7 +769,7 @@ MultiSend_c::timeEvent()
 //! can be overloaded by Childclass for special condition
 void
 MultiSend_c::updateEarlierAndLatestInterval()
-{ /** @todo OPTIMIZE improve with a flag for HARD/SOFT timing, but it's okay for right now... */
+{ /** @todo OPTIMIZE-178 improve with a flag for HARD/SOFT timing, but it's okay for right now... */
   if (getTimePeriod() <= 1250)
   { // use HARD-Timing
     mui16_earlierInterval = 0;
@@ -901,13 +901,13 @@ MultiSend_c::SendStream_c::processMsg()
         *mpen_sendSuccessNotify = SendSuccess; // will be kicked out after next timeEvent!
         // so trigger timeEvent so it gets actually deleted - but needn't be too soon
         retriggerIn (1500);
-        /** @todo SOON Should we remove the finished send-stream here now immediately
+        /** @todo SOON-178 Should we remove the finished send-stream here now immediately
             even though we're NOT iterating through the list now? */
         break;
       }
       // else: handle the same as ConnAbort (EoMACK was sent unsolicited)
 #if 0
-/// @todo SOON reactivate as it should work now with the new iLibeErr. Please test on ESX as it made problems there.
+/// @todo SOON-178 reactivate as it should work now with the new iLibeErr. Please test on ESX as it made problems there.
       else
       {  // not awaiting end of message ack, no action taken for this error-case in normal operation.
         getILibErrInstance().registerError( iLibErr_c::MultiSendWarn, iLibErr_c::MultiSend );
@@ -1044,10 +1044,10 @@ MultiSend_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoIte
     case RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
-        /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
+        /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
         getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        /// @todo SOON Maybe clean up some streams and clients?
+        /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }
       break;

@@ -112,7 +112,7 @@ public:
 
   iIdentItem_c& getIdentItem() { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientServerCommunication_c::getIdentItem()); }
 
-  /** @todo SOON Make an iVtServerInstance_c !*/
+  /** @todo SOON-258 Make an iVtServerInstance_c !*/
   const __IsoAgLib::VtServerInstance_c& getVtServerInst() { return VtClientServerCommunication_c::getVtServerInst(); }
 
 private:

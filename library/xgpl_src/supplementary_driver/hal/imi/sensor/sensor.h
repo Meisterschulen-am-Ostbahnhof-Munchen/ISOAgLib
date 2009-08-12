@@ -103,11 +103,11 @@
 #define MAX_ANALOG_MA_DIGIT 833
 
 /** define the scale factor to get [mV] from the return value of get_analogin_mean */
-/** @todo SOON verify this with STW, as there are differing informations on this */
+/** @todo ON REQUEST-173 IMI verify this with STW, as there are differing informations on this */
 #define ADC2MILLIVOLT 16
 
 /** define the scale factor to get [mA] from the return value of get_analogin_mean */
-/** @todo SOON verify this with STW, as there are differing informations on this */
+/** @todo ON REQUEST-173 IMI verify this with STW, as there are differing informations on this */
 #define ADC2MILLIAMPERE 20
 /*@}*/
 
@@ -189,7 +189,7 @@ namespace HAL
   /**
     reset the given counter
     @param ab_channel channel of counter [0..7]
-    @return C_NO_ERR ; C_RANGE if counter for ab_channel isn´t configured properly
+    @return C_NO_ERR ; C_RANGE if counter for ab_channel isnï¿½t configured properly
   */
   inline int16_t resetCounter(uint8_t ab_channel)
   {return __HAL::resetCounter(ab_channel);};

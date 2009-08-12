@@ -319,7 +319,8 @@ IsoTerminal_c::timeEvent(void)
     if (mvec_vtClientServerComm[ui8_index])
       b_allActivitiesPerformed &= mvec_vtClientServerComm[ui8_index]->timeEvent();
   }
-  /** @todo SOON: maybe store the one that was out of time if not all could perform their actions? - by member variable of IsoTerminal_c */
+  /** @todo SOON-241: maybe store the one that was out of time if not all could perform their actions? - by member variable of IsoTerminal_c
+                      Update: They all need to be scheduled on their own, so then it's okay with this point. */
 
   // set back the scheduler period to 100msec, as any waiting command has been set
   if (getTimePeriod() != 100) setTimePeriod( 100 );
@@ -392,15 +393,8 @@ IsoTerminal_c::processMsg()
     for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
     {
       if (mvec_vtClientServerComm[ui8_index])
-        mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
+        mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn(); /// @todo OPTIMIZATION: Only notify those vtCSCs which are connected to this VT!
     }
-    /** @todo SOON: Change language management, so that the main language code is maintained per VtInstance_c, as the VT
-              - or each single VT - is authoritative for language definition. The TECU is only the fallback in case of a
-                factory default VT. But even in this case, the VT takes the language from TECU, and publishes the language
-                on its own.
-             -> extend VtInstance_c
-             -> avoid double handling of Language PGN in other classes (TracGeneral_c should only handle language PGN, if
-                no VT-Client ist used */
     return false;
   }
 
@@ -449,7 +443,7 @@ IsoTerminal_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoI
         }
 
         // VtServerInstance not yet in list, so add it ...
-        /// @todo It should enough if we store the IsoItem*, we don't need both the IsoItem AND IsoName...
+        /// @todo SOON-79: It should be enough if we store the IsoItem*, we don't need both the IsoItem AND IsoName...
         ml_vtServerInst.push_back (VtServerInstance_c (acrc_isoItem, acrc_isoItem.isoName(), *this SINGLETON_VEC_KEY_WITH_COMMA));
         VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
 

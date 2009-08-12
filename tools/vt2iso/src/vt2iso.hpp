@@ -168,6 +168,7 @@ public:
   void set (const std::string& newString);
   const std::string& get();
   void setIfNotGiven (const std::string& newString);
+  void setIfNotGivenOrNull (const std::string& newString);
   bool isGiven();
   int getLength();
   int getIntValue();
@@ -252,7 +253,7 @@ public:
 
   void getKeyCode();
 
-  void init (
+  bool init (
     const std::string& xmlFile,
     std::string* dictionary,
     bool ab_externalize,

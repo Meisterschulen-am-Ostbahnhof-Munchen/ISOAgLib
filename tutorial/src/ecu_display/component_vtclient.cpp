@@ -124,7 +124,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::maskChanged( uint16_t aui_activeMask
 void
 IsoAgLibTutorialDisplay::TutorialDisplay_c::clearValues()
 {
-  /// @todo Doesn't make too much sense because the active mask doesn't match!
+  /// @todo SOON-81: Doesn't make too much sense because the active mask doesn't match!
   handleNewPosValues( 0, 0 );
   handleNewTimeValues( 0, 0, 0 );
   handleNewGeneralValues( false, 0 );

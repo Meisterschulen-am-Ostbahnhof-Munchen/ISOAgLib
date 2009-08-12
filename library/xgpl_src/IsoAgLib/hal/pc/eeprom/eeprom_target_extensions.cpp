@@ -103,7 +103,7 @@ int16_t eepromReady(void)
 int16_t eepromWp(boolean /* bitMode */ )
 {
   // printf("eepromWp mit %i aufgerufen\n", bitMode);
-  // @todo SOON Implement Write Protection for PC EEPROM?
+  // @todo ON REQUEST Implement Write Protection for PC EEPROM?
   return HAL_NO_ERR;
 }
 

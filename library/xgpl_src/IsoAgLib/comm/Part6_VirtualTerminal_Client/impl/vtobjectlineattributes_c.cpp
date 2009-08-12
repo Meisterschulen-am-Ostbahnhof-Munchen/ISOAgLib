@@ -107,7 +107,7 @@ vtObjectLineAttributes_c::stream(uint8_t* destMemory,
       destMemory [1] = vtObject_a->ID >> 8;
       destMemory [2] = 24; // Object Type = Line Attributes
       destMemory [3] = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getUserClippedColor (vtObjectLineAttributes_a->lineColour, this, IsoAgLib::LineColour);
-      /** @todo SOON not yet supporting different lineAttributes scaling for buttons!! */
+      /** @todo SOON-174 not yet supporting different lineAttributes scaling for buttons!! */
       if (s_properties.flags & FLAG_ORIGIN_SKM) {
         destMemory [4] = (((uint32_t) vtObjectLineAttributes_a->lineWidth*factorM)/factorD) & 0xFF;
       } else {

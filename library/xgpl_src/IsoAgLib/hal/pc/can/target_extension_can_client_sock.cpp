@@ -535,7 +535,7 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 #ifdef WIN32
   #ifdef WINCE
-    return 0; //@TODO SOON: verify conditional return value for Windows CE
+    return 0; /// @todo WINCE-176: verify conditional return value for Windows CE
   #else
     if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK)) > 0)
   #endif
@@ -590,7 +590,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 #ifdef WIN32
   #ifdef WINCE
-    if( TRUE ) //@TODO SOON WINCE: get number of bytes waiting in socket stream
+    if( TRUE ) /// @todo WINCE-176: get number of bytes waiting in socket stream
   #else
     if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK)) > 0)
   #endif
@@ -696,7 +696,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
 };
 
-/** @todo SOON: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
+/** @todo ON REQUEST MaxSendDelay: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
  *        this as error code. THEN change this function to use negative values as error codes
  */
 int32_t getMaxSendDelay(uint8_t /* aui8_busNr */)

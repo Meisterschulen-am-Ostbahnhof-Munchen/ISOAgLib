@@ -299,8 +299,8 @@ public:
 
   /// @param ab_fromConflict false => Initial Address-Claim, so we need to go to "AddressClaim"-phase!
   ///                        true => go to "ClaimedAddress" state, no 250ms wait (for now) as we changed SA!
-  /// @todo SOON Do we really need this parameter? Should we wait 250ms on change of SA also???
-  /// @todo SOON Merge with sendSaClaim - create an enum for the three cases!
+  /// @todo SOON-240 Do we really need this parameter? Should we wait 250ms on change of SA also???
+  /// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
   void sendAddressClaim (bool ab_fromConflict);
 
 #ifdef USE_WORKING_SET

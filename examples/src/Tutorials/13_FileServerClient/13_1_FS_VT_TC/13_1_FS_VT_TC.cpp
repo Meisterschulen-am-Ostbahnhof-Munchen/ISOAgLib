@@ -458,14 +458,14 @@ void iObjectPool_simpleVTIsoPool_c::eventKeyCode (
         }
         break;
       case vtKeyCodeKeyUpdatePool:
-        { /// @todo We should wait until a previous partial update has finished,
-	  /// as else we would
-          /// modify the buffer while it's being used for the pool update!
+        { /// @todo OBSOLETE_WITH_NEW_TUTORIAL - Needs to be done correctly in the new tutorial with the new event-handler
+          /// We should wait until a previous partial update has finished,
+          /// as else we would modify the buffer while it's being used for the pool update!
           // this actually only needs to be done once!!! but I don't care for now...
           iVtObjectBigLogo.setRawData2 (newLogoBuffer, (sizeof (newLogoBuffer) / sizeof (uint8_t)), false, scui_newLogoWidth, scui_newLogoHeight, 32);
           for (unsigned int y=0; y < scui_newLogoHeight; y++)
             for (unsigned int x=0; x < scui_newLogoWidth; x++)
-	      // write some nice pattern (depending on SPEED) in there...
+              // write some nice pattern (depending on SPEED) in there...
               newLogoBuffer [x+y*scui_newLogoHeight] = valSpeed + (x+y*scui_newLogoHeight);
           spc_tut30csc->sendCommandUpdateObjectPool (arrpc_vtObjectsToUpdate, sizeof(arrpc_vtObjectsToUpdate)/sizeof(iVtObject_c*));
         }

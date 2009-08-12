@@ -383,7 +383,7 @@ int16_t KeyGetByte(uint8_t *p)
     return read(0, p, sizeof *p) == sizeof *p;
   #else
     #ifdef WINCE
-      return 0;  //@TODO ON REQUEST: add key handling for WINCE
+      return 0;  /// @todo WINCE-176 add key handling for WINCE
     #else
       if (!_kbhit()) return 0;
       *p = _getch();

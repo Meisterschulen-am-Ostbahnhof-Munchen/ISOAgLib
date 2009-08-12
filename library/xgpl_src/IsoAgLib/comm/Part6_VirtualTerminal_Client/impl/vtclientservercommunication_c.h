@@ -340,10 +340,6 @@ public:
   /** function that handles incoming Vt Status Message */
   void notifyOnVtStatusMessage();
 
-  /** function that handles incoming VT ESC */
-  /// @todo SOON does not seem to be used
-  void notifyOnVtESC() { mc_streamer.mrc_pool.eventVtESC(0xFFFF); }
-
   void notifyOnAuxInputStatus();
 
   virtual bool processMsg();

@@ -1635,7 +1635,7 @@ VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension
     ui32_height= (((uint32_t) ai32_vtDimension * (marr_font2PixelDimensionTableH [ui8_fontSizeScaled]) <<10)/ai32_opDimension); // (8 bit shifted fixed floating)
   }
 
-  /** @todo DISCUSSION maybe keep aspect ratio?? Make it a user-flag on registerIsoObjectPool? Or put it into the objects itself?? */
+  /** @todo ON REQUEST-174 maybe keep aspect ratio?? Make it a user-flag on registerIsoObjectPool? Or put it into the objects itself?? */
   // now get the lower possible size...
   int i, j;
   for (i=14; i>=0; i--) {

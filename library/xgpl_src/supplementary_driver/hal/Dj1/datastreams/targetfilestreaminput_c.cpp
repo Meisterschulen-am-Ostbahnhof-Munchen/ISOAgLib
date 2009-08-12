@@ -201,7 +201,7 @@ bool TargetFileStreamInput_c::eof() const
 //! @param ui8_data:
 TargetFileStreamInput_c& TargetFileStreamInput_c::operator>>(uint8_t &ui8_data)
 {
-  /** @TODO SOON: check if call to eof() can be omitted. (If DjBios_IOP_Read
+  /** @TODO ON REQUEST HAL DJ: check if call to eof() can be omitted. (If DjBios_IOP_Read
       behaves like standard fread, then this should be the case.) */
   if (eof()) {
     is_failed_ = true;

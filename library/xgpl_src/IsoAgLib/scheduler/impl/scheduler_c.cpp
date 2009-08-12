@@ -504,7 +504,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   else i32_endCanProcessing = HAL::getTime() + i32_endCanProcessing;
   Scheduler_Task_c::setDemandedExecEnd( ( i32_endCanProcessing < ai32_demandedExecEndScheduler)? i32_endCanProcessing : ai32_demandedExecEndScheduler   );
 
-  /// @todo Removing the below extra-CAN-processing is subject to be done..
+  /// @todo SOON-126 Removing the below extra-CAN-processing is subject to be done..
   // check if all tasks are called
   if ( i32_idleTime > 0 )
   { // as we are in time, call CanIo_c::processMsg() if last CanIo_c::timeEvent

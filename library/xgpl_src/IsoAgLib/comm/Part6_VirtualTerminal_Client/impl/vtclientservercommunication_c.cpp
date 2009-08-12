@@ -350,7 +350,7 @@ VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStream
   if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
   //handling string value >= 9 Bytes
   if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
-    /** @todo SOON Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
+    /** @todo SOON-258 Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
     return false;
   return true;
 }
@@ -372,7 +372,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 
         const uint16_t ui16_totalstreamsize = arc_stream.getByteTotalSize();
         if (ui16_totalstreamsize < (mui8_inputStringLength + 4))
-        { /** @todo SOON "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
+        { /** @todo SOON-258 "if (ui16_totalstreamsize > (mui8_inputStringLength + 4)) registerErronousVtMessage("VT Input String Activation CAN-Message too long.");
 	      This is/was a problem of the John Deere GS2 VT and needs to be registered for any VT.
 	      It will be fixed in the GS2 in 2008, but for now we have relaxed the checking and put this comment in here.
 	   */
@@ -721,7 +721,7 @@ VtClientServerCommunication_c::timeEvent(void)
     // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
   if ((!mpc_vtServerInstance->getLocalSettings()->lastReceived) && ((mpc_vtServerInstance->getLocalSettings()->lastRequested == 0) || ((HAL::getTime()-mpc_vtServerInstance->getLocalSettings()->lastRequested) > 2000)))
   { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
-    /** @todo SOON Give up somewhen?? Or retry really every 2 seconds? Don't care too much for now, shouldn't happen in real systems... */
+    /** @todo SOON-258 Give up somewhen?? Or retry really every 2 seconds? Don't care too much for now, shouldn't happen in real systems... */
     timeEventSendLanguagePGN();
   }
 
@@ -730,7 +730,7 @@ VtClientServerCommunication_c::timeEvent(void)
     return true; // do not proceed if LANGUAGE not yet received!
 
   if (men_objectPoolState == OPCannotBeUploaded)
-    /** @todo SOON is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
+    /** @todo SOON-258 is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
     return true;
 
   // from HERE ON potential longer command sequences might be started
@@ -1152,7 +1152,7 @@ VtClientServerCommunication_c::processMsg()
     /*** ### AUX Assignment Messages ### ***/
     case 0x20:
     { // Command: "Auxiliary Control", parameter "Auxiliary Assignment"
-      /** @todo SOON If we can't assign because WE don't know this SA, should we anyway answer the assignment?
+      /** @todo SOON-258 If we can't assign because WE don't know this SA, should we anyway answer the assignment?
        * for now we don't answer if we can't take the assignment - VTs have to handle this anyway...
        * Update on 22.11.2007: Should be okay so far, as written, VT has to handle, and we can't NACK the assignment! */
       bool const cb_assignmentOkay = storeAuxAssignment();
@@ -1836,7 +1836,7 @@ VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
                       DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
 }
 
-/// @todo Better struct for array of x/y pairs!
+/// @todo OPTIMIZATION Revision4 Better struct for array of x/y pairs!
 bool
 VtClientServerCommunication_c::sendCommandDrawPolygon(
   IsoAgLib::iVtObject_c* apc_object, uint16_t ui16_numOfPoints, const int16_t* api16_x, const int16_t* api16_y, bool b_enableReplaceOfCmd)
@@ -2440,7 +2440,7 @@ VtClientServerCommunication_c::indicateObjectPoolCompletion()
 bool
 VtClientServerCommunication_c::startUploadCommand()
 {
-  /** @todo SOON Up to now, none cares for the return code. implement error handling in case multisend couldn't be started? */
+  /** @todo SOON-258 Up to now, none cares for the return code. implement error handling in case multisend couldn't be started? */
   // Set new state
   men_uploadType = UploadCommand;
   // along with UploadCommand ALWAYS set "men_sendSuccess", not only for Multipacket!
@@ -2574,10 +2574,11 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
       { // from timeEvent we can just call
         // IsoTerminal's setTimePeriod() is protected, so we need a wrapper for it.
         // this is all just a bad hack and should really be TEMPORARY
-        // @todo Make a mechanismn where all vtCSCs are asked for the state and the
+        // Make a mechanismn where all vtCSCs are asked for the state and the
         // IsoTerminal calculates the appropriate period from
         // - timeEvent
         // - processMsg
+        // This needs to be replaced by new scheduling architecture: every vtCSC should be an own SchedulerTask_c.
         getIsoTerminalInstance4Comm().TEMPORARYSOLUTION_setTimePeriod (4);
       }
       else

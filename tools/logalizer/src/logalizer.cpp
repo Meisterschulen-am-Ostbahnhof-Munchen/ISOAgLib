@@ -20,7 +20,7 @@ uint64_t can_time;
 uint32_t can_id;
 uint8_t  can_data[8];
 uint8_t can_bytes;
-bool can_ext; /// @todo to be used! =)
+bool can_ext; /// @todo SOON-260: to be used! =)
 
 bool b_tpcts = false;
 bool b_tprts = false;
@@ -214,7 +214,7 @@ bool parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0
 #ifdef DEBUG
   cout << line << endl;
 #endif
-// @todo handle std/ext, too...
+/// @todo SOON-260: handle std/ext, too...
   int i1, i2, i3, i4, i5, i6, i7, i8, iA, iB, iDb; // "%i* %x
   int parsed_count = sscanf (line.c_str(), "m e 0x%x %u 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x %i", &iA, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8, &iB);
 
@@ -810,7 +810,7 @@ void interpretePgnData (uint32_t rui32_pgn)
     case NMEA_GPS_DIRECTION_DATA_PGN:    break;
     case 129542: /* 0x1Fa06 */           break;
     default:                             break;
-        /// @todo to be done...
+        /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
 #define AUX_VALVE_1_ESTIMATED_FLOW  0x00FE11LU
         //...
@@ -868,7 +868,7 @@ void interpretePgn (uint32_t rui32_pgn)
     case NMEA_GPS_DIRECTION_DATA_PGN:    cout << "NMEA_GPS_DIRECTION_DATA"; break;
     case 129542: /* 0x1Fa06 */           cout << "GNSS Pseudorange Noise Statistics"; break;
     default:                             cout << "                  "; break;
-        /// @todo to be done...
+        /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
 #define AUX_VALVE_1_ESTIMATED_FLOW  0x00FE11LU
         //...
@@ -916,7 +916,7 @@ bool parseLogLine()
   }
   else
   {
-    cout << "---- line missing - error in parsing!----"<<endl; /// @todo replace by the original line!
+    cout << "---- line missing - error in parsing!----"<<endl; /// @todo SOON-260: replace by the original line!
   }
   return b_result;
 }
@@ -1033,7 +1033,7 @@ void checkHandshakingTP()
                  struct_messages[4].svec_response [canGetDa()].push_back (mtype);
                  struct_messages[4].svec_alives   [canGetDa()].push_back (canGetTime());
                  break; // CONN ABORT BY SENDER!
-      /// @todo Damn, can't we detect ConnAbort by Receiver here, too?
+      /// @todo SOON-260: Damn, can't we detect ConnAbort by Receiver here, too?
     }
   }
   else return;
@@ -1151,7 +1151,7 @@ int main (int argc, char** argv)
                 case msgTypeCommand:  cout << " Command   "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
                 case msgTypeRTS:      cout << " (E)TP-CONN: Request to Send (RTS)         "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here! 
                 case msgTypeCTS:      cout << " (E)TP-CONN: Clear to Send (CTS)           "; i32_alivePeriodSpecial = 1250; break;
-                case msgTypeDPO:      cout << " (E)TP-CONN: Data Packet Offset (DPO)      "; i32_alivePeriodSpecial = 1250; break; /// @todo set the correct values here!
+                case msgTypeDPO:      cout << " (E)TP-CONN: Data Packet Offset (DPO)      "; i32_alivePeriodSpecial = 1250; break; /// @todo SOON-260: set the correct values here!
                 case msgTypeEOMACK:   cout << " (E)TP-CONN: End of Message ACK (EoMACK)   "; i32_alivePeriodSpecial = 1250; break;
                 case msgTypeDATA:     cout << " (E)TP-DATA                                "; i32_alivePeriodSpecial = 250; break;
                 case msgTypeCONNABORT:cout << " (E)TP-CONN: Connection Abort (CONNABORT)  "; i32_alivePeriodSpecial = -1; break; // doesn't come normally!

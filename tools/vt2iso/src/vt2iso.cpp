@@ -391,6 +391,14 @@ void OneAttribute_c::setIfNotGiven (const std::string& newString)
   }
 }
 
+void OneAttribute_c::setIfNotGivenOrNull (const std::string& newString)
+{
+  if (!isGiven() || isNull())
+  {
+    set(newString);
+  }
+}
+
 bool OneAttribute_c::isGiven()
 {
   return attrIsGiven;
@@ -618,72 +626,6 @@ void vt2iso_c::clean_exit (const char* error_message)
     fclose (arrs_language [i].partFile);
   }
 
-#if 0
-  FILE* partFile_direct = NULL;
-  if (partFile_handler_direct)
-  { // handler class direct
-    fprintf (partFile_handler_direct, "#ifndef DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
-    fprintf (partFile_handler_direct, "\n#define DECL_direct_iObjectPool_%s_c", mstr_className.c_str() );
-    fprintf (partFile_handler_direct, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
-    fprintf (partFile_handler_direct, "\npublic:");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  virtual void eventKeyCode (uint8_t keyActivationCode, uint16_t objId, uint16_t objIdMask, uint8_t keyCode, bool wasButton);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventPointingEvent (uint16_t aui16_xPosition, uint16_t aui16_yPosition);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  virtual void eventNumericValue (uint16_t objId, uint8_t ui8_value, uint32_t ui32_value);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  virtual void eventStringValue (uint16_t aui16_objId, uint8_t aui8_length, StreamInput_c &rc_streaminput, uint8_t aui8_unparsedBytes, bool b_isFirst, bool b_isLast);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use input value string on-the-fly parsing/handling! */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventStringValueAbort();");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  virtual void eventObjectPoolUploadedSuccessfully (bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on successful partil-pool-updates! */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventPartialPoolUploadedSuccessfully();");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventVtSelectInputObject(uint16_t aui16_objectId, uint8_t aui8_hasFocus, uint8_t aui8_selected);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventPrepareForLanguageChange (int8_t ai8_languageIndex, uint16_t aui16_languageCode);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  virtual void eventEnterSafeState ();");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use command-response handling! */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventCommandResponse (uint8_t aui8_responseCommandError, const uint8_t apui8_responseDataBytes[8]);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to use a special colour-conversion! */");
-    fprintf (partFile_handler_direct, "\n  //virtual uint8_t convertColour (uint8_t colourValue, uint8_t colourDepth, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming LANGUAGE_PGN */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventLanguagePgn (const localSettings_s& ars_localSettings);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Status messages */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventVtStatusMsg();");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT ESC */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventVtESC(uint16_t /*aui16_ObjectId*/);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming Auxiliary Input Status messages */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventAuxFunctionValue (uint16_t mui16_functionUid, uint16_t cui16_inputValueAnalog, uint16_t cui16_inputValueTransitions, uint8_t cui8_inputValueDigital);");
-    fprintf (partFile_handler_direct, "\n  /* Uncomment the following function if you want to react on any incoming VT Get Attribute Value messages */");
-    fprintf (partFile_handler_direct, "\n  //virtual void eventAttributeValue(IsoAgLib::iVtObject_c* obj, uint8_t ui8_attributeValue, uint8_t* pui8_value);");
-    fprintf (partFile_handler_direct, "\n");
-    fprintf (partFile_handler_direct, "\n  /* This initialization-function is being automatically called by the vt2iso-generated VT-Client code. Do not call in the application! */");
-    fprintf (partFile_handler_direct, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
-    int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
-    fprintf (partFile_handler_direct, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
-             mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);
-    fprintf (partFile_handler_direct, "\n};\n");
-    fprintf (partFile_handler_direct, "\n#endif\n" );
-    fclose (partFile_handler_direct);
-  }
-#endif
-
-
-
-
 
   if (partFile_handler_derived)
   { // handler class derived
@@ -709,44 +651,6 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (b_externalize)
     extension = "-extern";
 
-#if 0
-  // Write Direct includes
-  partFileName = mstr_destinDirAndProjectPrefix + "_direct.h";
-  partFile_direct = &save_fopen (partFileName.c_str(),"wt");
-
-  fprintf (partFile_direct, "#include \"%s-defines.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_direct, "#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtincludes.h>\n");
-  fprintf (partFile_direct, "#include \"%s-variables%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
-  fprintf (partFile_direct, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
-  if (b_externalize)
-  {
-    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo namespace!
-    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo namespace!
-    fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects;\n");
-    for (unsigned int i=0; i<ui_languages; i++)
-    {
-      fprintf (partFile_direct, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i;\n", i);
-    }
-  }
-  else
-  {
-    for (unsigned int i=0; i<ui_languages; i++)
-    {
-      fprintf (partFile_direct, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
-    }
-    fprintf (partFile_direct, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
-    fprintf (partFile_direct, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
-  }
-  fprintf (partFile_direct, "#include \"%s-handler-direct.inc\"\n", mstr_outFileName.c_str());
-  fprintf (partFile_direct, "#include \"%s-functions.inc\"\n", mstr_outFileName.c_str());
-
-  if (pc_specialParsing)
-  {
-    pc_specialParsing->addFileIncludes(partFile_direct, mstr_outFileName.c_str());
-  }
-  fclose (partFile_direct);
-#endif
-
   // Write Derived Includes (-cpp)
   FILE* partFile_derived = NULL;
   partFileName = mstr_destinDirAndProjectPrefix + "_derived-cpp.h";
@@ -757,8 +661,8 @@ void vt2iso_c::clean_exit (const char* error_message)
   fprintf (partFile_derived, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   if (b_externalize)
   {
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo namespace!
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo namespace!
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo SOON-261 namespace!
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo SOON-261 namespace!
     fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects\n");
     for (unsigned int i=0; i<ui_languages; i++)
     {
@@ -1038,9 +942,21 @@ signed long int vt2iso_c::idOrName_toi(const char* apc_string, bool ab_isMacro)
     std::cerr << "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!"<<std::endl<<std::endl;
     return -1;
   }
-  /** @todo SOON: add search loop for any non-digit in the "name" and make conversion with atoi() if complete name
-      consists of digits */
-  if ((apc_string [0] >= '0') && (apc_string [0] <= '9')) return atoi (apc_string);
+
+  if ((apc_string [0] >= '0') && (apc_string [0] <= '9'))
+  {
+    const int len = strlen (apc_string);
+    for (int i = 1; i<len; ++i)
+    {
+      if ((apc_string[i] < '0') || (apc_string[i] > '9'))
+      {
+        std::cerr << "*** ERROR *** idOrName_toi: value starts with digit [0..9] but has other characters in it, too!"<<std::endl<<std::endl;
+        return -1;
+      }
+    }
+    // if reaching here, the "name" consists of digits only...
+    return atoi (apc_string);
+  }
 
   if (strstr (apc_string, mstr_poolIdent.c_str()) != apc_string)
   {
@@ -1061,7 +977,8 @@ void vt2iso_c::getKeyCode()
 }
 
 
-void vt2iso_c::init (
+bool
+vt2iso_c::init (
   const string& arcstr_cmdlineName,
   std::string* dictionary,
   bool ab_externalize,
@@ -1094,11 +1011,7 @@ void vt2iso_c::init (
 
   // Will generate all needed (part)filenames/directories
   if (!prepareFileNameAndDirectory (arcstr_cmdlineName)) 
-  {
-    clean_exit("Error occurred. Terminating.\n");
-    /* @todo maybe better cleanup. return false? or alike... */
-    exit (-1);
-  }
+    return false;
 
   std::string str_namespace;
   if (arcstr_namespace == ":projectname:")
@@ -1160,9 +1073,6 @@ void vt2iso_c::init (
   }
 
 
-// partFile_variables = fopen ("picture.raw", "wb");
-// fwrite (vtObjectdeXbitmap1_aRawBitmap, 16384, 1, partFile_variables);
-// fclose (partFile_variables);
   partFileName = mstr_destinDirAndProjectPrefix + "-variables.inc";
   partFile_variables = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_variables, mstr_namespaceDeclarationBegin.c_str());
@@ -1202,20 +1112,6 @@ void vt2iso_c::init (
   fprintf (partFile_listAttributes, mstr_namespaceDeclarationBegin.c_str());
   fprintf (partFile_listAttributes, "IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs%s [] = {", mstr_poolIdent.c_str());
 
-#if 0
-  partFileName = mstr_destinDirAndProjectPrefix + "-handler-direct.inc";
-  // check if "-hanlder-direct" is there, in this case generate "-handler-direct.inc-template" !
-  partFile_handler_direct = fopen (partFileName.c_str(),"rb"); // intentionally NO save_fopen!!
-  if (partFile_handler_direct)
-  {
-   // could open file, so it exists --> don't overwrite - create "-template" then
-    fclose (partFile_handler_direct);
-    partFileName += "-template";
-  }
-  // else: file couldn't be opened, so create it, simply write to it...
-  partFile_handler_direct = &save_fopen (partFileName.c_str(),"wt");
-#endif
-
   partFileName = mstr_destinDirAndProjectPrefix + "-handler-derived.inc";
   partFile_handler_derived = &save_fopen (partFileName.c_str(),"wt");
 
@@ -1236,6 +1132,7 @@ void vt2iso_c::init (
 #else
   pc_specialParsing = NULL;
 #endif
+  return true;
 }
 
 void vt2iso_c::defaultAttributes (unsigned int a_objType)
@@ -1248,8 +1145,8 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   arrc_attributes[attrVertical_justification].setIfNotGiven("top");
   arrc_attributes[attrActivate_for_editing].setIfNotGiven("false");
   arrc_attributes[attrFont_style].setIfNotGiven("none");
-  arrc_attributes[attrVariable_reference].setIfNotGiven("NULL");
-  arrc_attributes[attrTarget_value_variable_reference].setIfNotGiven("NULL");
+  arrc_attributes[attrVariable_reference].setIfNotGivenOrNull("NULL");
+  arrc_attributes[attrTarget_value_variable_reference].setIfNotGivenOrNull("NULL");
   arrc_attributes[attrEnabled].setIfNotGiven("yes");
   arrc_attributes[attrScale].setIfNotGiven("1");
   arrc_attributes[attrRle].setIfNotGiven("auto");
@@ -1265,18 +1162,6 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   //  sprintf (attrString [attrFormat], "8bit");
   //  attrIsGiven [attrFormat] = true;
   // }
-
-  /// @todo rethink the both NULL setters below. maybe they can be done more generic...
-  // may the variable reference is given as 65535 (0xFFFF)
-  if ( arrc_attributes [attrVariable_reference].isGiven() && arrc_attributes [attrVariable_reference].isNull() )
-  {
-    arrc_attributes [attrVariable_reference].set("NULL");
-  }
-
-  if ( arrc_attributes [attrTarget_value_variable_reference].isGiven() && arrc_attributes [attrTarget_value_variable_reference].isNull() )
-  {
-    arrc_attributes [attrTarget_value_variable_reference].set("NULL");
-  }
 
   if ((a_objType == otStringvariable) || (a_objType == otOutputstring))
   {
@@ -2119,21 +2004,18 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         switch (objType)
         {
           case otDatamask:
-            /// @todo why is for otDataMask also "arrc_attributes[attrSoft_key_mask]" being used?
           case otAlarmmask:
             /// attribute for reference to softkeymask
             if (!pc_specialParsing->parseKnownTag(n, objType, m_objName.c_str(), &objID, &is_objID, arrc_attributes[attrSoft_key_mask].get().c_str()))
               return false;
             break;
           default:
-            /// @todo why is default "variable reference"?
             /// attribute for variable reference
             if (!pc_specialParsing->parseKnownTag(n, objType, m_objName.c_str(), &objID, &is_objID, "NULL", arrc_attributes[attrVariable_reference].get().c_str()))
               return false;
             break;
         }
       }
-      /// @todo warum h�ngt das id von resource setzen von hasUnknAttrs ab???
       if (b_hasUnknownAttributes)
       // set object ID here to ensure that the resource ID is used as object ID
         setID (m_objName.c_str(), objID);
@@ -2777,7 +2659,6 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         }
         fprintf (partFile_functions_origin, "  iVtObject%s%s.setOriginSKM (%s);\n", m_objName.c_str(), pc_postfix.c_str(), resultat ? "true":"false");
       }
-      /// @todo rewrite the below...
       if ((arrc_attributes [attrVariable_reference].get().compare("NULL") != 0) && (strncmp (arrc_attributes [attrVariable_reference].get().c_str(), "&iVtObject", strlen ("&iVtObject")) != 0))
       { // != 0 means an object reference is given, so add the "&iVtObject" prefix!!
         arrc_attributes [attrVariable_reference].set( getObjectReferencePrefixed(attrVariable_reference) );
@@ -2787,7 +2668,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         arrc_attributes [attrTarget_value_variable_reference].set ( getObjectReferencePrefixed(attrTarget_value_variable_reference) );
       }
 
-      //! @todo SOON To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the
+      //! @todo ON REQUEST To be enabled when handling cases where only IDs are used in XMLs. Not 100% supported now, even if the
       //! following "convertIdReferencesToNameReferences();" call wouldn't be commented out!
       //convertIdReferencesToNameReferences();
       // ###########################################
@@ -2938,7 +2819,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT '" << m_objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
-          /// @todo SOON: MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
+          /// @todo ON REQUEST: MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
           /*
             if (arrs_language[i].valueBuffer == NULL)
             { // open failed.
@@ -5245,19 +5126,21 @@ int main(int argC, char* argV[])
   XMLCh* propertyValue = XMLString::transcode(xsdLocation.c_str());
   parser->setProperty(XMLUni::fgXercesSchemaExternalNoNameSpaceSchemaLocation, propertyValue);
 
-    // And create our error handler and install it
+  // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath );
-  pc_vt2iso->parse();
+  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath );
 
-  //  Delete the parser itself.  Must be done prior to calling Terminate, below.
+  if (cb_initSuccess)
+    pc_vt2iso->parse();
+
+  // Delete the parser itself.  Must be done prior to calling Terminate, below.
   parser->release();
   // And call the termination method
   XMLPlatformUtils::Terminate();
 
   delete pc_vt2iso;
-  return 0; /// everything well done
+  return (cb_initSuccess) ? 0 : -1; /// everything well done - or not...
 }
 
 
@@ -5636,7 +5519,7 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
   }
 
 #if 0
-    // @todo: not yet extracted values:
+    // @todo ON REQUEST not yet extracted values:
     // additionally_required_objects=
     opAdditionallyRequiredObjects =
     is_opAdditionallyRequiredObjects = true;

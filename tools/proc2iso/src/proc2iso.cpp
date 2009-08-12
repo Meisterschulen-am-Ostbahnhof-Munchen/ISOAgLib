@@ -476,10 +476,25 @@ unsigned int objectIsType (char* lookup_name)
 
 unsigned int idOrName_toi(const char* apc_string, unsigned int parentObjType, bool b_skipParentCheck = FALSE)
 {
-  if (apc_string [0] == 0x00) clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
-  /** @todo SOON: add search loop for any non-digit in the "name" and make conversion with atoi() if complete name
-      consists of digits */
-  if ((apc_string [0] >= '0') && (apc_string [0] <= '9')) return atoi (apc_string);
+  if (apc_string [0] == 0x00)
+  {
+    clean_exit (-1, "*** ERROR *** idOrName_toi: Empty 'object_id' attribute!\n\n");
+  }
+
+  if ((apc_string [0] >= '0') && (apc_string [0] <= '9'))
+  {
+    const int len = strlen (apc_string);
+    for (int i = 1; i<len; ++i)
+    {
+      if ((apc_string[i] < '0') || (apc_string[i] > '9'))
+      {
+        clean_exit (-1, "*** ERROR *** idOrName_toi: value starts with digit [0..9] but has other characters in it, too!\n\n");
+      }
+    }
+    // if reaching here, the "name" consists of digits only...
+    return atoi (apc_string);
+  }
+
   // Starting with a letter, so look up id!
   return getID (apc_string, false, 0, parentObjType, b_skipParentCheck);
 };
@@ -1765,7 +1780,7 @@ int main(int argC, char* argV[])
     // enable datatype normalization - default is off
     parser->setFeature(XMLUni::fgDOMDatatypeNormalization, true);
 
-    /** @todo SOON: Get path of proc2iso and add it to "proc2iso.xsd" */
+    /** @todo ON REQUEST: Get path of proc2iso and add it to "proc2iso.xsd" - or how to handle searching the XML-schema? */
     char xsdLocation[1024+1];
     if (schemaPath == NULL)
     {

@@ -313,7 +313,7 @@ typedef uint16_t objRange_t;
       sourceOffset += 2; \
     }
 
-/** @todo SOON polygon positions with x/yBlock!?
+/** @todo SOON-174 polygon positions with x/yBlock!?
       if (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont != NULL) { \
         xBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].col * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () >> 8); \
         yBlock = MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].row * (MACRO_vtObjectTypeA->objectsToFollow [nrObjectXY].vtObjectBlockFont->getScaledWidthHeight () & 0xFF); \

@@ -375,7 +375,7 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xE))
   {
     // update isoName of TC
-    /// @todo This only works until the IsoItem gets destructed!!!
+    /// @todo SOON-240 This only works until the IsoItem gets destructed!!!
     /// --> Copy the ISONAME, do not take a pointer to that ISONAME!
     mpc_tcISOName = &c_isoNameSender;
     processTcStatusMsg(mc_data.getValue(), c_isoNameSender);
@@ -819,12 +819,12 @@ Process_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_
     case RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
-        /// @todo SOON activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
         getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (*this, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent));
       }
       else
       { // remote IsoItem_c
-        /** @todo SOON: change handling so that DataLinkLayer issues error, when the target ISONAME is not available, so that the furhter sending of messages to this ISONAME
+        /** @todo SOON-240: change handling so that DataLinkLayer issues error, when the target
+            ISONAME is not available, so that the further sending of messages to this ISONAME
             can be explicitly stopped, to avoid ongoing send tries to undefined destination.
             As soon as this is done, the removal of receive filters should be de-activated.
         */
