@@ -230,7 +230,7 @@
 * otherwise the overflow of the UC and AC counter can lead to loss of CAN message. */
 
 #ifndef CAN_FIFO_EXPONENT_BUFFER_SIZE
-  #define  CAN_FIFO_EXPONENT_BUFFER_SIZE 4
+  #define  CAN_FIFO_EXPONENT_BUFFER_SIZE 8
 #endif
 
 /** When during the reconfiguration only a number of place less than CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL
