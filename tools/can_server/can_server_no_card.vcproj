@@ -209,7 +209,7 @@
        Filter="cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
        >
       <File
-         RelativePath="src\can_server_no_card.cpp"
+         RelativePath="src\devices\can_device_no_card.cpp"
          >
       </File>
       <File

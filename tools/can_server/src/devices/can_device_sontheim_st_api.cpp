@@ -1,6 +1,6 @@
 /***************************************************************************
-              can_server_sontheim.cpp -
-                    interface for SONTHEIM can card
+              can_device_sontheim_st_api.cpp -
+                    interface for SONTHEIM can card (single thread API)
 
                              -------------------
     begin                : Tue Oct 2 2001

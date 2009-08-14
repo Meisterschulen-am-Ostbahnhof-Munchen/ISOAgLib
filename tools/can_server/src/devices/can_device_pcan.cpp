@@ -1,5 +1,5 @@
 /***************************************************************************
-              can_server_pcan.cpp -
+              can_device_pcan.cpp -
                     interface for PEAK can card
 
                              -------------------

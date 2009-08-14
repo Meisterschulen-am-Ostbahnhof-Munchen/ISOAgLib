@@ -1,5 +1,5 @@
 /***************************************************************************
-              can_server_vector_canlib.cpp -
+              can_device_vector_canlib.cpp -
                     interface for Vector-Informatik can card (canlib)
 
                              -------------------

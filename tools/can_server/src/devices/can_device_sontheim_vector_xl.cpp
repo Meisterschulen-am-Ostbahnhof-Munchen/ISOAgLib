@@ -1,5 +1,5 @@
 /***************************************************************************
-              can_server_vector_xl.cpp -
+              can_device_vector_xl.cpp -
                     interface for Vector-Informatik can card (xl)
 
                              -------------------

@@ -1,5 +1,5 @@
 /***************************************************************************
-              can_server_pc.cpp -
+              can_server_no_card.cpp -
                     dummy interface when no can device is present
 
                              -------------------

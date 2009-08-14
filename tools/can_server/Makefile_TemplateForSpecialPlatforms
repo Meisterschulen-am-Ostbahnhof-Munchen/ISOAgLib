@@ -12,9 +12,9 @@ COMPILER_BINARY_PRE :=<cross compile directory>/<cross compile prefix>
 SOURCES_MSQ_SPECIAL := \
 	src/can_server_common.cpp \
 	$(SOURCES_MSQ) \
-	src/can_server_special.cpp
+	src/devices/can_device_special.cpp
 
-SOURCES_ALL_MSQ := $(SOURCES_ALL_MSQ) src/can_server_special.cpp
+SOURCES_ALL_MSQ := $(SOURCES_ALL_MSQ) src/devices/can_device_special.cpp
 
 
 $(call PRE_EXEC,can_server_special_platform): $(call OBJECTS,msq,$(SOURCES_MSQ_SPECIAL))

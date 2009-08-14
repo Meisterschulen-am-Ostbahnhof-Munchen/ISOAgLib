@@ -217,7 +217,7 @@
          >
       </File>
       <File
-         RelativePath="src\can_server_vector_canlib.cpp"
+         RelativePath="src\devices\can_device_vector_canlib.cpp"
          >
       </File>
     </Filter>

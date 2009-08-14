@@ -20,49 +20,62 @@ SOURCES_SOCKET := src/can_server_sock.cpp
 SOURCES_MSQ_NO_CARD := \
 	src/can_server_common.cpp \
 	$(SOURCES_MSQ) \
-	src/can_server_no_card.cpp
+	src/devices/can_device_no_card.cpp
 
 SOURCES_SOCKET_NO_CARD := \
 	src/can_server_common.cpp \
 	$(SOURCES_SOCKET) \
-	src/can_server_no_card.cpp
+	src/devices/can_device_no_card.cpp
 
 
 SOURCES_MSQ_PCAN := \
 	src/can_server_common.cpp \
 	$(SOURCES_MSQ) \
-	src/can_server_pcan.cpp
+	src/devices/can_device_pcan.cpp
 
 SOURCES_SOCKET_PCAN := \
 	src/can_server_common.cpp \
 	$(SOURCES_SOCKET) \
-	src/can_server_pcan.cpp
+	src/devices/can_device_pcan.cpp
+
+
+SOURCES_MSQ_SOCKETCAN := \
+	src/can_server_common.cpp \
+	$(SOURCES_MSQ) \
+	src/devices/can_device_socketcan.cpp
+
+SOURCES_SOCKET_SOCKETCAN := \
+	src/can_server_common.cpp \
+	$(SOURCES_SOCKET) \
+	src/devices/can_device_socketcan.cpp
 
 
 SOURCES_MSQ_RTE := \
 	src/can_server_common.cpp \
 	$(SOURCES_MSQ) \
-	src/can_server_rte.cpp
+	src/devices/can_device_rte.cpp
 
 SOURCES_SOCKET_RTE := \
 	src/can_server_common.cpp \
 	$(SOURCES_SOCKET) \
-	src/can_server_rte.cpp
+	src/devices/can_device_rte.cpp
 
 # SOURCES_ALL_MSQ/SOCKET are used for the target "clean"
 SOURCES_ALL_MSQ := \
 	src/can_server_common.cpp \
 	$(SOURCES_MSQ) \
-	src/can_server_no_card.cpp \
-	src/can_server_pcan.cpp	\
-	src/can_server_rte.cpp \
+	src/devices/can_device_no_card.cpp \
+	src/devices/can_device_pcan.cpp	\
+	src/devices/can_device_socketcan.cpp	\
+	src/devices/can_device_rte.cpp \
 
 SOURCES_ALL_SOCKET := \
 	src/can_server_common.cpp \
 	$(SOURCES_SOCKET) \
-	src/can_server_no_card.cpp \
-	src/can_server_pcan.cpp	\
-	src/can_server_rte.cpp \
+	src/devices/can_device_no_card.cpp \
+	src/devices/can_device_pcan.cpp	\
+	src/devices/can_device_socketcan.cpp	\
+	src/devices/can_device_rte.cpp \
 
 
 LFLAGS_RTE := -L/usr/local/lib -lrte_client -lfevent
@@ -96,7 +109,7 @@ OBJECTS = $(patsubst %.cpp,$(call OBJ_DIR,$(1))/%.o,$(notdir $(2)))
 DEPS = $(patsubst %.o,%.d,$(call OBJECTS,$(1),$(2)))
 EXEC_DIR := $(ISOAGLIB_PATH)/bin/x86linux
 PRE_EXEC = $(addprefix $(ISOAGLIB_PATH)/bin/x86linux/,$(1))
-TARGETS := $(call PRE_EXEC,can_server_msq_no_card can_server_socket_no_card can_server_msq_pcan can_server_socket_pcan can_server_msq_rte can_server_socket_rte)
+TARGETS := $(call PRE_EXEC,can_server_msq_no_card can_server_socket_no_card can_server_msq_pcan can_server_socket_pcan can_server_msq_socketcan can_server_socket_socketcan can_server_msq_rte can_server_socket_rte)
 
 # Rules
 
@@ -134,6 +147,14 @@ $(call PRE_EXEC,can_server_msq_pcan): $(call OBJECTS,msq,$(SOURCES_MSQ_PCAN))
 	$(STRIP) $@
 
 $(call PRE_EXEC,can_server_socket_pcan): $(call OBJECTS,socket,$(SOURCES_SOCKET_PCAN))
+	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
+	$(STRIP) $@
+
+$(call PRE_EXEC,can_server_msq_socketcan): $(call OBJECTS,msq,$(SOURCES_MSQ_SOCKETCAN))
+	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
+	$(STRIP) $@
+
+$(call PRE_EXEC,can_server_socket_socketcan): $(call OBJECTS,socket,$(SOURCES_SOCKET_SOCKETCAN))
 	$(LINK) -o $@ $^ $(CLFLAGS) -lrt
 	$(STRIP) $@
 

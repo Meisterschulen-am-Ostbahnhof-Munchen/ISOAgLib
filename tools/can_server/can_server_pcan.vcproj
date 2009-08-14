@@ -208,7 +208,7 @@
        Filter="cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
        >
       <File
-         RelativePath="src\can_server_pcan.cpp"
+         RelativePath="src\devices\can_device_pcan.cpp"
          >
       </File>
       <File

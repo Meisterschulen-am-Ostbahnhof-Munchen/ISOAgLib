@@ -1,5 +1,5 @@
 /***************************************************************************
-              can_server_rte.cpp -
+              can_device_rte.cpp -
                     interface for RTE can 
                              -------------------
     begin                : Tue Jul 15 2003

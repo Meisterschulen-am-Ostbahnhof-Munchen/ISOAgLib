@@ -2,7 +2,7 @@
 <VisualStudioProject
    ProjectType="Visual C++"
    Version="9,00"
-   Name="can_server_sontheim_mt"
+   Name="can_server_sontheim_mt_api"
    ProjectGUID="{C670B004-FAB7-406A-85E6-587F5F85C122}"
    RootNamespace="canserver"
    TargetFrameworkVersion="131072"
@@ -39,7 +39,7 @@
          />
       <Tool
          Name="VCMIDLTool"
-         TypeLibraryName=".\Release/can_server_sontheim_mt.tlb"
+         TypeLibraryName=".\Release/can_server_sontheim_mt_api.tlb"
          HeaderFileName=""
          />
       <Tool
@@ -51,7 +51,7 @@
          StringPooling="false"
          RuntimeLibrary="0"
          EnableFunctionLevelLinking="true"
-         PrecompiledHeaderFile="Release\can_server_sontheim_mt.pch"
+         PrecompiledHeaderFile="Release\can_server_sontheim_mt_api.pch"
          AssemblerListingLocation="$(ConfigurationName)\"
          ObjectFile="$(ConfigurationName)\"
          ProgramDataBaseFileName="$(ConfigurationName)\"
@@ -72,11 +72,11 @@
       <Tool
          Name="VCLinkerTool"
          AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib SIECA132.lib"
-         OutputFile="Release\can_server_sontheim_mt.exe"
+         OutputFile="Release\can_server_sontheim_mt_api.exe"
          LinkIncremental="1"
          SuppressStartupBanner="true"
          AdditionalLibraryDirectories="C:\Programme\Sontheim\MT_Api\Library;../libs/pthread/lib"
-         ProgramDatabaseFile="$(ConfigurationName)\can_server_sontheim_mt.pdb"
+         ProgramDatabaseFile="$(ConfigurationName)\can_server_sontheim_mt_api.pdb"
          SubSystem="1"
          RandomizedBaseAddress="1"
          DataExecutionPrevention="0"
@@ -94,7 +94,7 @@
       <Tool
          Name="VCBscMakeTool"
          SuppressStartupBanner="true"
-         OutputFile="$(ConfigurationName)\can_server_sontheim_mt.bsc"
+         OutputFile="$(ConfigurationName)\can_server_sontheim_mt_api.bsc"
          />
       <Tool
          Name="VCFxCopTool"
@@ -104,7 +104,7 @@
          />
       <Tool
          Name="VCPostBuildEventTool"
-         CommandLine="echo &quot;Copying can_server_sontheim_mt.exe to ..\..\bin\win32!&quot;&#x0D;&#x0A;copy Release\can_server_sontheim_mt.exe ..\..\bin\win32&#x0D;&#x0A;"
+         CommandLine="echo &quot;Copying can_server_sontheim_mt_api.exe to ..\..\bin\win32!&quot;&#x0D;&#x0A;copy Release\can_server_sontheim_mt_api.exe ..\..\bin\win32&#x0D;&#x0A;"
          />
     </Configuration>
     <Configuration
@@ -131,7 +131,7 @@
          />
       <Tool
          Name="VCMIDLTool"
-         TypeLibraryName=".\Debug/can_server_sontheim_mt.tlb"
+         TypeLibraryName=".\Debug/can_server_sontheim_mt_api.tlb"
          HeaderFileName=""
          />
       <Tool
@@ -142,7 +142,7 @@
          MinimalRebuild="false"
          BasicRuntimeChecks="3"
          RuntimeLibrary="1"
-         PrecompiledHeaderFile="Debug\can_server_sontheim_mt.pch"
+         PrecompiledHeaderFile="Debug\can_server_sontheim_mt_api.pch"
          AssemblerListingLocation="$(ConfigurationName)\"
          ObjectFile="$(ConfigurationName)\"
          ProgramDataBaseFileName="$(ConfigurationName)\"
@@ -164,12 +164,12 @@
       <Tool
          Name="VCLinkerTool"
          AdditionalDependencies="odbc32.lib odbccp32.lib winmm.lib pthreadVC2.lib ws2_32.lib SIECA132.lib"
-         OutputFile="Debug\can_server_sontheim_mt.exe"
+         OutputFile="Debug\can_server_sontheim_mt_api.exe"
          LinkIncremental="2"
          SuppressStartupBanner="true"
          AdditionalLibraryDirectories="C:\Programme\Sontheim\MT_Api\Library;../libs/pthread/lib"
          GenerateDebugInformation="true"
-         ProgramDatabaseFile="$(ConfigurationName)\can_server_sontheim_mt.pdb"
+         ProgramDatabaseFile="$(ConfigurationName)\can_server_sontheim_mt_api.pdb"
          SubSystem="1"
          RandomizedBaseAddress="1"
          DataExecutionPrevention="0"
@@ -187,7 +187,7 @@
       <Tool
          Name="VCBscMakeTool"
          SuppressStartupBanner="true"
-         OutputFile="$(ConfigurationName)\can_server_sontheim_mt.bsc"
+         OutputFile="$(ConfigurationName)\can_server_sontheim_mt_api.bsc"
          />
       <Tool
          Name="VCFxCopTool"
@@ -217,7 +217,7 @@
          >
       </File>
       <File
-         RelativePath="src\can_server_sontheim_mt_api.cpp"
+         RelativePath="src\devices\can_device_sontheim_mt_api.cpp"
          >
       </File>
     </Filter>
