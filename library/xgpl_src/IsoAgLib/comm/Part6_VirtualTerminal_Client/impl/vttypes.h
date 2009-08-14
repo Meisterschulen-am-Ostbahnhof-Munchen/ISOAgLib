@@ -162,9 +162,32 @@ typedef uint16_t objRange_t;
 #define MACRO_scaleLocalVarOpDimension \
     int32_t opDimension=__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolDimension();
 
-#define MACRO_scaleLocalVars \
-    MACRO_scaleLocalVarOpDimension \
-    MACRO_scaleLocalVarVtDimension
+#ifdef PROPRIETARY_NO_POOL_SCALING
+  #define MACRO_scaleLocalVars \
+      MACRO_scaleLocalVarOpDimension \
+      MACRO_scaleLocalVarVtDimension \
+      vtDimension = opDimension; /* prevent scaling by setting the vtDimension equal to opDimension */
+#else
+  #define MACRO_scaleLocalVars \
+      MACRO_scaleLocalVarOpDimension \
+      MACRO_scaleLocalVarVtDimension
+#endif
+
+
+#ifdef PROPRIETARY_NO_POOL_SCALING
+  #define MACRO_getSkDimension \
+      opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
+      opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
+      /* prevent scaling by setting the vtDimension equal to opDimension */ \
+      vtSoftKeyWidth  = opSoftKeyWidth; \
+      vtSoftKeyHeight = opSoftKeyHeight; 
+#else
+  #define MACRO_getSkDimension \
+      opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
+      opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
+      vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skWidth; \
+      vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skHeight;
+#endif
 
 #define MACRO_scaleSKLocalVars \
     int32_t opSoftKeyWidth,  opSoftKeyHeight, vtSoftKeyWidth, vtSoftKeyHeight; \
@@ -187,10 +210,7 @@ typedef uint16_t objRange_t;
       /* initialize variables which are normally only used in the else branch */ \
       opSoftKeyWidth = opSoftKeyHeight = vtSoftKeyWidth = vtSoftKeyHeight = 0; \
     } else {  \
-      opSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyWidth(); \
-      opSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtObjectPoolSoftKeyHeight(); \
-      vtSoftKeyWidth  = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skWidth; \
-      vtSoftKeyHeight = __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).getVtServerInst().getVtCapabilities ()->skHeight; \
+      MACRO_getSkDimension \
       /* set defaults for button sizes to avoid compiler warning */ \
       opButtonWidth = opButtonHeight = vtButtonWidth = vtButtonHeight = 0; \
       const int32_t ci_factorX = (vtSoftKeyWidth  << 20) / opSoftKeyWidth; \
