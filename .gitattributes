@@ -12,8 +12,8 @@ bin/win32/README.txt -text
 bin/win32/can_messenger.exe -text
 bin/win32/can_server_no_card.exe -text
 bin/win32/can_server_pcan.exe -text
-bin/win32/can_server_sontheim.exe -text
-bin/win32/can_server_sontheim_mt.exe -text
+bin/win32/can_server_sontheim_mt_api.exe -text
+bin/win32/can_server_sontheim_st_api.exe -text
 bin/win32/can_server_vector.exe -text
 bin/win32/can_server_vector_xl.exe -text
 bin/win32/logalizer.exe -text
@@ -25,9 +25,11 @@ bin/x86linux/can_messenger -text
 bin/x86linux/can_server_msq_no_card -text
 bin/x86linux/can_server_msq_pcan -text
 bin/x86linux/can_server_msq_rte -text
+bin/x86linux/can_server_msq_socketcan -text
 bin/x86linux/can_server_socket_no_card -text
 bin/x86linux/can_server_socket_pcan -text
 bin/x86linux/can_server_socket_rte -text
+bin/x86linux/can_server_socket_socketcan -text
 bin/x86linux/logalizer -text
 bin/x86linux/proc2iso -text
 bin/x86linux/vt2iso -text
