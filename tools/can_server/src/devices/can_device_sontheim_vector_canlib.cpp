@@ -66,7 +66,7 @@ extern "C" {
 #endif
 
 #include "can_server.h"
-#include "can_server_common.h"
+#include "../can_server_common.h"
 
 #define HWTYPE_AUTO 1000
 

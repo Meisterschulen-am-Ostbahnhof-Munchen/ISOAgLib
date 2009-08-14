@@ -70,7 +70,7 @@ typedef int HINSTANCE;
 
 
 #include "can_server.h"
-#include "can_server_common.h"
+#include "../can_server_common.h"
 
 using namespace __HAL;
 
