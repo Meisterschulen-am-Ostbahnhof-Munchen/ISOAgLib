@@ -201,15 +201,6 @@ IsoTerminal_c::close()
 }
 
 
-/** Register the given object pool
-  It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
-  and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
-  @return NULL if new vtClientServerCommunication_c instance could be created.
-          This could be the case because you have passed a versionLabel
-          - longer than 7 characters for a non-multilanguage object-pool
-          - longer than 5 characters for a multilanguage object-pool
-          or if you already registered an object-pool for this IdentItem
- */
 VtClientServerCommunication_c*
 IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel)
 {
@@ -224,6 +215,28 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
     #endif
     return NULL;
   }
+
+  return initAndRegisterIsoObjectPoolCommon(rc_identItem, arc_pool, apc_versionLabel, false /* ab_isSlave */);
+}
+
+VtClientServerCommunication_c*
+IsoTerminal_c::initAndRegisterIsoObjectPoolForSlave (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool)
+{
+  return initAndRegisterIsoObjectPoolCommon(rc_identItem, arc_pool, NULL /* apc_versionLabel */, true /* ab_isSlave */);
+}
+
+/** Register the given object pool
+  It will automatically be uploaded as soon as ISO_Terminal_c is connected to the VT
+  and all initialization stuff has been done (Get VT Capabilities, Memory, etc.)
+  @return NULL if new vtClientServerCommunication_c instance could be created.
+          This could be the case because you have passed a versionLabel
+          - longer than 7 characters for a non-multilanguage object-pool
+          - longer than 5 characters for a multilanguage object-pool
+          or if you already registered an object-pool for this IdentItem
+ */
+VtClientServerCommunication_c*
+IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, bool ab_isSlave)
+{
   uint8_t ui8_index = 0;
   // add new instance of VtClientServerCommunication
   for (; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
@@ -242,7 +255,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index SINGLETON_VEC_KEY_WITH_COMMA);
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index, ab_isSlave SINGLETON_VEC_KEY_WITH_COMMA);
   if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!

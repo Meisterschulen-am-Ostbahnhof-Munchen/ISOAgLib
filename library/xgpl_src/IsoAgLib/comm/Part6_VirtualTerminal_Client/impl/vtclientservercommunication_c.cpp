@@ -397,7 +397,7 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId, bool ab_isSlave SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
   : mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , mb_checkSameCommand (true)
   , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
@@ -406,6 +406,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsM
   , men_displayState (VtClientDisplayStateHidden)
   , mc_streamer (arc_pool)
   , mi32_timeWsAnnounceKey (-1) // no announce tries started yet...
+  , mb_isSlave(ab_isSlave)
 {
   mpc_vtServerInstance = NULL;
   mi8_vtLanguage = -1;
@@ -705,40 +706,49 @@ VtClientServerCommunication_c::timeEvent(void)
   // Do nothing if there's no VT active
   if (!isVtActive()) return true;
 
-  // Check if the working-set is completely announced
-  if (!mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey)) return true;
-
-  // Check if WS-Maintenance is needed
-  if ((mi32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= mi32_nextWsMaintenanceMsg))
-  { // Do periodically WS-Maintenance sending (every second)
-    mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                          0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << mc_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
-
-    mi32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
+  if (mb_isSlave)
+  {
+    if (men_objectPoolState != OPUploadedSuccessfully)
+    { // @todo WS SLAVE: set to OPUploadedSuccessfully only after master has successfully uploaded pool
+      men_objectPoolState = OPUploadedSuccessfully;
+      men_uploadType = UploadIdle;
+    }
   }
+  else
+  {
+    // Check if the working-set is completely announced
+    if (!mrc_wsMasterIdentItem.getIsoItem()->isWsAnnounced (mi32_timeWsAnnounceKey)) return true;
+
+    // Check if WS-Maintenance is needed
+    if ((mi32_nextWsMaintenanceMsg <= 0) || (HAL::getTime() >= mi32_nextWsMaintenanceMsg))
+    { // Do periodically WS-Maintenance sending (every second)
+      mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                            0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+      getCanInstance4Comm() << mc_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
+
+      mi32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
+    }
 
     // If our IsoItem has claimed address, immediately try to get the LANGUAGE_PGN from VT/anyone ;-) (regardless of pool-upload!)
-  if ((!mpc_vtServerInstance->getLocalSettings()->lastReceived) && ((mpc_vtServerInstance->getLocalSettings()->lastRequested == 0) || ((HAL::getTime()-mpc_vtServerInstance->getLocalSettings()->lastRequested) > 2000)))
-  { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
-    /** @todo SOON-258 Give up somewhen?? Or retry really every 2 seconds? Don't care too much for now, shouldn't happen in real systems... */
-    timeEventSendLanguagePGN();
+    if ((!mpc_vtServerInstance->getLocalSettings()->lastReceived) && ((mpc_vtServerInstance->getLocalSettings()->lastRequested == 0) || ((HAL::getTime()-mpc_vtServerInstance->getLocalSettings()->lastRequested) > 2000)))
+    { // Try every 2 seconds to get the LANGUAGE_PGN, be polite to not bombard the VT...
+      /** @todo SOON-258 Give up somewhen?? Or retry really every 2 seconds? Don't care too much for now, shouldn't happen in real systems... */
+      timeEventSendLanguagePGN();
+    }
+
+    // lastReceived will be set if vtserverinstance processes the language pgn
+    if (!mpc_vtServerInstance->getLocalSettings()->lastReceived)
+      return true; // do not proceed if LANGUAGE not yet received!
+
+    if (men_objectPoolState == OPCannotBeUploaded)
+      /** @todo SOON-258 is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
+      return true;
   }
-
-  // lastReceived will be set if vtserverinstance processes the language pgn
-  if (!mpc_vtServerInstance->getLocalSettings()->lastReceived)
-    return true; // do not proceed if LANGUAGE not yet received!
-
-  if (men_objectPoolState == OPCannotBeUploaded)
-    /** @todo SOON-258 is this correctly assumed? -> if it couldn't be uploaded, only disconnecting/connecting VT helps! Should be able to be uploaded anyway... */
-    return true;
-
   // from HERE ON potential longer command sequences might be started
   // which include sending or starting of TP sessions and the like
   // - and the most time critical ALIVE has already been sent
   // ---> stop continuation, if execution time end is reached
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
-
 
 
   /// Now from here on the Pool's state is: "OPInitial" or "OPUploadedSuccessfully"
@@ -910,15 +920,18 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
   mi8_vtLanguage = -1; // indicate that VT's language is not supported by this WS, so the default language should be used
 
   if (mpc_vtServerInstance)
-  {
-    const uint8_t cui8_languages = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
-    for (int i=0; i<cui8_languages; i++)
+  { // slave may have no WS in pool!
+    if (!mb_isSlave)
     {
-      const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
-      if (mpc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
+      const uint8_t cui8_languages = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
+      for (int i=0; i<cui8_languages; i++)
       {
-        mi8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
-        break;
+        const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
+        if (mpc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
+        {
+          mi8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
+          break;
+        }
       }
     }
     mc_streamer.mrc_pool.eventLanguagePgn (*mpc_vtServerInstance->getLocalSettings());
@@ -2066,6 +2079,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
 #endif
     return false;
   }
+
   SendUpload_c* p_queue = NULL;
   uint8_t i = 0;
 #ifdef USE_LIST_FOR_FIFO

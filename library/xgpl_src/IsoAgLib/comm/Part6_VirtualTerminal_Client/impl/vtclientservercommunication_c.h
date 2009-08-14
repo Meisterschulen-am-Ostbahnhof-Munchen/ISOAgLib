@@ -308,7 +308,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId, bool ab_isSlave SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -600,6 +600,9 @@ private: // attributes
   VtClientServerCommStreamer_c mc_streamer;
 
   int32_t mi32_timeWsAnnounceKey;
+
+  bool mb_isSlave; // @todo WS SLAVE: could be substituted by master/slave specific derived classes
+
 };
 
 }

@@ -88,6 +88,14 @@ public:
   iVtClientServerCommunication_c* initAndRegisterIsoObjectPool (iIdentItem_c& arc_wsMasterIdentItem, iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel)
   { return IsoTerminal_c::initAndRegisterIsoObjectPool (static_cast<__IsoAgLib::IdentItem_c&>(arc_wsMasterIdentItem), arc_pool, apc_versionLabel)->toInterfacePointer(); }
 
+  /**
+    initialize pool for slave but do no uploading
+    @param arc_slaveIdentItem pointer to an IdentItem_c instance for that the ISO_Terminal acts
+    @param arc_pool this pool does not need to have objects (slave can send object change commands via UIDs)
+  */
+  iVtClientServerCommunication_c* initAndRegisterIsoObjectPoolForSlave (iIdentItem_c& arc_slaveIdentItem, iIsoTerminalObjectPool_c& arc_pool)
+  { return IsoTerminal_c::initAndRegisterIsoObjectPoolForSlave (static_cast<__IsoAgLib::IdentItem_c&>(arc_slaveIdentItem), arc_pool)->toInterfacePointer(); }
+
   bool deregisterIsoObjectPool (iIdentItem_c& arc_wsMasterIdentItem)
   { return IsoTerminal_c::deregisterIsoObjectPool (arc_wsMasterIdentItem); }
 

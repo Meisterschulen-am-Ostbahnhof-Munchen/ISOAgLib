@@ -119,12 +119,7 @@ private:
   /** PRIVATE constructor to forbid instantiation of this interface class.
     * it can only be static_cast'ed to this class, not constructed!
     */
-  iVtClientServerCommunication_c (iIdentItem_c& arc_wsMasterIdentItem,iIsoTerminal_c& ar_isoTerminal,iIsoTerminalObjectPool_c& arc_pool,char* apc_versionLabel, uint8_t ui8_clientID SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  : __IsoAgLib::VtClientServerCommunication_c(
-      static_cast<__IsoAgLib::IdentItem_c&>(arc_wsMasterIdentItem),
-      static_cast<__IsoAgLib::IsoTerminal_c&>( ar_isoTerminal),
-      arc_pool, apc_versionLabel, ui8_clientID SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
-  {}
+  iVtClientServerCommunication_c ();
 
   friend class iIsoTerminal_c;
   friend class __IsoAgLib::VtClientServerCommunication_c;

@@ -125,6 +125,8 @@ public:
 
   VtClientServerCommunication_c* initAndRegisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel);
 
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolForSlave (IdentItem_c& apc_slaveIdentItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool);
+
   bool deregisterIsoObjectPool (IdentItem_c& apc_wsMasterIdentItem);
 
   /** periodically event -> call timeEvent for all  identities and parent objects
@@ -190,6 +192,8 @@ private:
 
   // helper function to shield removal access to vtCSC-list
   void deregisterIsoObjectPoolInd (uint8_t aui8_index);
+
+  VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, bool ab_isSlave);
 
 protected:
 
