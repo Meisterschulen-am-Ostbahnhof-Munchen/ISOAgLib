@@ -1451,6 +1451,20 @@ generate_interface_filelist()
     done <"$TMP_INTERFACE_FILELIST"
 }
 
+# Create a makefile including another one. Typically the including
+# makefile serves as shortcut, because it has a shorter name than the
+# included makefile.
+shortcut_makefile()
+{
+    local TARGET="$1"
+    local SHORTCUT="$2"
+
+    rm -f "$SHORTCUT"
+    cat <<END_OF_MAKEFILE >"$SHORTCUT"
+include $TARGET
+END_OF_MAKEFILE
+}
+
 create_standard_makefile()
 {
     MakefileName="Makefile"
@@ -1593,9 +1607,7 @@ EOF
         cp $TMP_MAKEFILE $MakefileNameLong
     done
 
-    # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
-    rm -f "Makefile"
-    ln -s $MakefileNameLong "Makefile"
+    shortcut_makefile "$MakefileNameLong" "Makefile"
 }
 
 create_pure_application_makefile()
@@ -1705,9 +1717,7 @@ END_OF_MODULE_LINES
         cp $TMP_MAKEFILE $MakefileNameLong
     done
 
-    # create a symbolic link to get this individual MakefileNameLong referred as "Makefile"
-    rm -f "MakefileApp"
-    ln -s $MakefileNameLong "MakefileApp"
+    shortcut_makefile "$MakefileNameLong" "MakefileApp"
 }
 
 create_kdevelop3_project_file()
@@ -2503,7 +2513,7 @@ create_library_makefile()
 
     expand_template "$MAKEFILE_SKELETON_FILE" |
     sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' >"$MAKEFILE_LONG_NAME"
-    ln -fns "$MAKEFILE_LONG_NAME" "$MAKEFILE_NAME"
+    shortcut_makefile "$MAKEFILE_LONG_NAME" "$MAKEFILE_NAME"
     cd "$1"
 }
 
