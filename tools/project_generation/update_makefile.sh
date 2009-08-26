@@ -2139,7 +2139,7 @@ create_EdePrj()
     printf '    (Project_path %s)\n' "$INSERT_PRJ_PATH" >&5
     printf '    (Target_ILO %s))\n' "$INSERT_TARGET_ILO" >&5
     printf '  (Compiler_parameters\n' >&5
-    printf '    (Includes'
+    printf '    (Includes' >&5
     report_ede_fileparts()
     {
         printf '\n      %s' "$@"
@@ -2156,7 +2156,7 @@ create_EdePrj()
         printf '\n    %s' "$FILE"
     done <$EdePrjFilelist >&5
     FORMAT="\n    $(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s"
-    printf -- "$FORMAT" $USE_EMBED_BIOS_SRC
+    printf -- "$FORMAT" $USE_EMBED_BIOS_SRC >&5
     printf '))\n' >&5
 
     #echo_ "Converted UNIX to Windows Linebreak in $PROJECT_FILE_NAME"
