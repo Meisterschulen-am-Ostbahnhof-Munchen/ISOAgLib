@@ -2750,12 +2750,8 @@ check_after_user_configuration()
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
                     ;;
                 (*)
-                    echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                    USE_CAN_DRIVER="sys"
-                    PARAMETER_CAN_DRIVER="sys"
-                    CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
-                    # enhanced CAN HAL is not yet supported for the known embedded targets
-                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM"
+                    exit 2
                     ;;
             esac
             ;;
@@ -2779,17 +2775,12 @@ check_after_user_configuration()
                     PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
                     ;;
                 (pc_win32)
-                    echo_ "Server Client CAN driver can only used for target pc_linux. Overridden with socket_server" 1>&2
-                    USE_CAN_DRIVER="socket_server"
-                    CAN_SERVER_FILENAME="can_server_sock"
+                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=socket_server instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM"
+                    exit 2
                     ;;
                 (*)
-                    echo_ "Override $USE_CAN_DRIVER CAN driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                    USE_CAN_DRIVER="sys"
-                    PARAMETER_CAN_DRIVER="sys"
-                    CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
-                    # enhanced CAN HAL is not yet supported for the known embedded targets
-                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM"
+                    exit 2
                     ;;
             esac
             if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
@@ -2818,9 +2809,8 @@ check_after_user_configuration()
                 (pc_linux | pc_win32)
                     ;;
                 (*)
-                    echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                    USE_RS232_DRIVER="sys"
-                    PARAMETER_RS232_DRIVER="sys"
+                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM"
+                    exit 2
                     ;;
             esac
             ;;
@@ -2830,14 +2820,9 @@ check_after_user_configuration()
             case "$USE_TARGET_SYSTEM" in
                 (pc_linux)
                     ;;
-                (pc_win32)
-                    USE_RS232_DRIVER="sys"
-                    echo_ "RTE RS232 driver can only used for target pc_linux -> Override by sys"
-                    ;;
-                (*)
-                    echo_ "Override $USE_RS232_DRIVER RS232 driver by system driver for embedded target $USE_TARGET_SYSTEM"
-                    USE_RS232_DRIVER="sys"
-                    PARAMETER_RS232_DRIVER="sys"
+                (pc_win32 | *)
+                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM"
+                    exit 2
                     ;;
             esac
             ;;
