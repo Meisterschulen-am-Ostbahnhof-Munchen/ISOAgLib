@@ -127,6 +127,10 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\generic_utils\can\canfifo_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\esx\system\system_target_extensions.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\esx\can\hal_can_interface.cpp
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.cpp
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.cpp
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\streamchunk_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\multisendpkg_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\chunk_c.cpp
@@ -134,10 +138,6 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\multisend_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\canpkgext_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\multireceive_c.cpp
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.cpp
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.cpp
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.cpp
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\istate_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\identitem_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\isofilterbox_c.cpp
@@ -187,6 +187,7 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectinputboolean_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\impl\vtobjectpolygon_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobject_c.cpp
+..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\diagnosticpgnhandler_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\eeprom\impl\eepromio_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\system\impl\system_c.cpp
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\canio_c.cpp
@@ -200,11 +201,13 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\supplementary_driver\driver\datastreams\volatilememory_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\iliberr_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
+..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\bitfieldwrapper_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton_container.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\util_funcs.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\compiler_adaptation.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\config.h
+..\..\..\..\library\xgpl_src\IsoAgLib\util\compiler_adaptation_unicode.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\iutil_funcs.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\util\convert.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\generic_utils\can\canfifo_c.h
@@ -222,6 +225,11 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\eeprom.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\system.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\hal\can.h
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischeduler_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\isoaglib_config.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\typedef.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\icanpkgext_c.h
@@ -236,11 +244,6 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\multisendpkg_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\streamchunk_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\imultisend_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulertask_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\schedulerentry_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\impl\scheduler_c.h
-..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischeduler_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\istate_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\iidentitem_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\iisoname_c.h
@@ -339,6 +342,7 @@ EditSetPath=''
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectbutton_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectdatamask_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part6_VirtualTerminal_Client\ivtobjectlinearbargraph_c.h
+..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\diagnosticpgnhandler_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\eeprom\ieepromio_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\eeprom\impl\eepromio_c.h
 ..\..\..\..\library\xgpl_src\IsoAgLib\driver\system\impl\system_c.h
@@ -368,7 +372,7 @@ Libraries=C:\C166\lib;c:\programme\tasking\c166\lib;..\..\..\..\library\commerci
 [Ede]
 Toolchain=c:\programme\tasking\c166\etc\c166.dol
 ToolchainName=TASKING Tools for C166/ST10 v7.5 r6
-ProjectDir=\home\wodokm\Projects\IsoAgLib\IsoAgLib-HEAD-clean\examples\compiler_projects\EDE\\3_0_VirtualTerminalIso
+ProjectDir=\home\staub\Projekte\IsoFass\IsoAgLib\examples\compiler_projects\EDE\3_0_VirtualTerminalIso
 UserMode=Expert
 EdeVersion=2.7r5 (094)
 CodeWrightVersion=6.5b
