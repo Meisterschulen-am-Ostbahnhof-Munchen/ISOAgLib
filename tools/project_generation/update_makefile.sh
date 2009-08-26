@@ -231,7 +231,9 @@ set_default_values()
     # (default: set relais to ON on startup):
     PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
     USE_VT_UNICODE_SUPPORT=0
-    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+    # no reasonable default for all targets (will be set later
+    # conditionally):
+    unset PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL
     CAN_BUS_CNT=1
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
@@ -301,6 +303,29 @@ set_default_values()
     USE_WIN32_EXTERNAL_LIBRARY_PATH=''
     USE_MSVC_EXTERNAL_LIBRARIES=''
     APP_SRC_FILE=''
+}
+
+# update PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL unless contradiction with
+# user configuration
+update_prj_system_with_enhanced_can_hal()
+{
+    local SETPOINT="$1"
+    local MESSAGE="$2"
+    printf '(PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL %s)\n' "${PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL:-not set}"
+    if [ -n "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG" ]; then
+        # user has configured PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL
+        if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG" -ne "$SETPOINT" ]; then
+            # contradiction
+            printf 'ERROR: try PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=%s\n' "$SETPOINT" >&2
+            exit 2
+        fi
+    elif [ "${PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL:-}" = "$SETPOINT" ]; then
+        : # omit redundant update
+    else
+        # actually update
+        printf '%b' "$MESSAGE" >&2
+        PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL="$SETPOINT"
+    fi
 }
 
 check_set_correct_variables()
@@ -490,20 +515,12 @@ check_set_correct_variables()
 
     case "$USE_CAN_DRIVER" in
         (simulating)
-            if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-                echo_ 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.'
-                echo_ 'Thus the project files will be generated without enhanced CAN processing'
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-            fi
+            update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.\nThus the project files will be generated without enhanced CAN processing\n'
             ;;
         (msq_server|socket_server|socket_server_hal_simulator)
             ;;
         (sys)
-            if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-                echo_ 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.'
-                echo_ 'Thus the project files will be generated without enhanced CAN processing'
-                PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
-            fi
+            update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.\nThus the project files will be generated without enhanced CAN processing\n'
             ;;
         (*)
             echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
@@ -2718,6 +2735,7 @@ check_after_user_configuration()
 {
     # perform some checks based on user input
     # check for correct target system setting
+    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG=${PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL:-}
     if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
@@ -2747,10 +2765,10 @@ check_after_user_configuration()
             case "$USE_TARGET_SYSTEM" in
                 (pc_linux | pc_win32)
                     # enhanced CAN HAL is not yet supported for simulating CAN HAL
-                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+                    update_prj_system_with_enhanced_can_hal 0 ''
                     ;;
                 (*)
-                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM"
+                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
                     exit 2
                     ;;
             esac
@@ -2766,20 +2784,20 @@ check_after_user_configuration()
                     ;;
             esac
             # enhanced CAN HAL is not yet supported for the known embedded targets
-            PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=0
+            update_prj_system_with_enhanced_can_hal 0 ''
             ;;
         (msq_server)
             case "$USE_TARGET_SYSTEM" in
                 (pc_linux)
                     # enhanced CAN HAL IS supported for the Linux can_server
-                    PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
+                    update_prj_system_with_enhanced_can_hal 1 ''
                     ;;
                 (pc_win32)
-                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=socket_server instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM"
+                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=socket_server instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
                     exit 2
                     ;;
                 (*)
-                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM"
+                    printf 'ERROR: USE_CAN_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_CAN_DRIVER=sys instead.\n' "$USE_CAN_DRIVER" "$USE_TARGET_SYSTEM" >&2
                     exit 2
                     ;;
             esac
@@ -2789,8 +2807,7 @@ check_after_user_configuration()
             ;;
         (socket_server | socket_server_hal_simulator)
             # enhanced CAN HAL IS supported for the socket based can_server
-            PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
-    
+            update_prj_system_with_enhanced_can_hal 1 ''
             CAN_SERVER_FILENAME=can_server_sock
             ;;
         (*)
@@ -2809,7 +2826,7 @@ check_after_user_configuration()
                 (pc_linux | pc_win32)
                     ;;
                 (*)
-                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM"
+                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
                     exit 2
                     ;;
             esac
@@ -2821,7 +2838,7 @@ check_after_user_configuration()
                 (pc_linux)
                     ;;
                 (pc_win32 | *)
-                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM"
+                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
                     exit 2
                     ;;
             esac
