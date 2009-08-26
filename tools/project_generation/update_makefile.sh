@@ -311,7 +311,6 @@ update_prj_system_with_enhanced_can_hal()
 {
     local SETPOINT="$1"
     local MESSAGE="$2"
-    printf '(PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL %s)\n' "${PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL:-not set}"
     if [ -n "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG" ]; then
         # user has configured PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL
         if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL_ORIG" -ne "$SETPOINT" ]; then
