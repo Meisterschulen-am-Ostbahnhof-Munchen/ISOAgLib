@@ -245,6 +245,7 @@ static void usage()
     " -o=dir Use the given Outputdirectory for the generated files instead of the directory where the XML/VTP-files are located.\n"
     " -a=pre Use the given Prefix instead of the Projectname as a prefix for the generated files.\n"
     " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)\n"
+    " -c=xxx Specify a VT preset which contains proprietary colours (important for images with poprietary colours)\n"
 #if 0
     /*  This feature is not shown up in the help here in order to avoid confusion about. Furthermore it is not
      *  yet extensively testd FOB 06/19/2009
@@ -4904,6 +4905,8 @@ int main(int argC, char* argV[])
   std::string str_outDir;
   std::string str_namespace;
   std::string str_searchPath;
+  std::string str_vtPresetFile;
+
   int filenameInd = -1; // defaults to: no filename specified.
   for (int argInd = 1; argInd < argC; argInd++)
   {
@@ -4994,6 +4997,11 @@ int main(int argC, char* argV[])
     {
       str_outDir.assign (&argV[argInd][3]);
     }
+    else if (!strncmp(argV[argInd], "-c=", 3)
+         ||  !strncmp(argV[argInd], "-C=", 3))
+    {
+      str_vtPresetFile.assign (&argV[argInd][3]);
+    }
     else if (!strncmp(argV[argInd], "-a=", 3)
          ||  !strncmp(argV[argInd], "-A=", 3))
     {
@@ -5048,21 +5056,6 @@ int main(int argC, char* argV[])
 
   if(!b_silentMode){
     c_Bitmap.printLicenseText();
-  }
-
-  if (generatePalette)
-  {
-    std::cout << "Generating ISO11783-6(VT)-Palette to 'iso11783vt-palette.act'..." << std::endl;
-    FILE* paletteFile = &vt2iso_c::save_fopen ("iso11783vt-palette.act", "wt");
-    RGB_s vtColourTableRGB [256];
-    for (int i=0; i<256; i++)
-    {
-      vtColourTableRGB[i].rgbRed  = vtColourTable[i].bgrRed;
-      vtColourTableRGB[i].rgbGreen= vtColourTable[i].bgrGreen;
-      vtColourTableRGB[i].rgbBlue = vtColourTable[i].bgrBlue;
-    }
-    fwrite (vtColourTableRGB, sizeof(RGB_s), 256, paletteFile);
-    fclose (paletteFile);
   }
 
   //
@@ -5132,7 +5125,34 @@ int main(int argC, char* argV[])
   const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath );
 
   if (cb_initSuccess)
+  {
+
+    if (!str_vtPresetFile.empty())
+    {
+      if (!pc_vt2iso->processVtPresetFile(str_vtPresetFile))
+      {
+        std::cerr << "vt2iso: Error in processing vt preset file." << std::endl;
+        return 1; 
+      }
+    }
+
+    if (generatePalette)
+    {
+      std::cout << "Generating ISO11783-6(VT)-Palette to 'iso11783vt-palette.act'..." << std::endl;
+      FILE* paletteFile = &vt2iso_c::save_fopen ("iso11783vt-palette.act", "wt");
+      RGB_s vtColourTableRGB [256];
+      for (int i=0; i<256; i++)
+      {
+        vtColourTableRGB[i].rgbRed  = vtColourTable[i].bgrRed;
+        vtColourTableRGB[i].rgbGreen= vtColourTable[i].bgrGreen;
+        vtColourTableRGB[i].rgbBlue = vtColourTable[i].bgrBlue;
+      }
+      fwrite (vtColourTableRGB, sizeof(RGB_s), 256, paletteFile);
+      fclose (paletteFile);
+    }
+
     pc_vt2iso->parse();
+  }
 
   // Delete the parser itself.  Must be done prior to calling Terminate, below.
   parser->release();
@@ -5528,5 +5548,165 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
     strcpy (spc_autoLanguage, );
 #endif
 
+  return !errorOccurred;
+}
+
+
+bool
+vt2iso_c::processVtPresetFile(const std::string& pch_fileName)
+{
+  FILE* presetFile = &save_fopen(pch_fileName.c_str(),"r");
+  fclose (presetFile);
+
+  const std::string xmlFile = pch_fileName;
+
+  resetErrors();
+
+  XERCES_CPP_NAMESPACE_QUALIFIER DOMDocument* doc;
+
+  bool errorOccurred = false;
+
+  try
+  {   // reset document pool
+    parser->resetDocumentPool();
+    doc = parser->parseURI(xmlFile.c_str());
+  }
+
+  catch (const XMLException& toCatch)
+  {
+    std::cerr << "\nError during parsing: '" << xmlFile << "'\n"
+        << "Exception message is:  \n"
+        << StrX(toCatch.getMessage()) << "\n" << std::endl;
+    errorOccurred = true;
+  }
+  catch (const DOMException& toCatch)
+  {
+    const unsigned int maxChars = 2047;
+    XMLCh errText[maxChars + 1];
+
+    std::cerr << "\nDOM Error during parsing: '" << xmlFile << "'\n"
+        << "DOMException code is:  " << toCatch.code << std::endl;
+
+    if (DOMImplementation::loadDOMExceptionMsg(toCatch.code, errText, maxChars))
+      std::cerr << "Message is: " << StrX(errText) << std::endl;
+
+    errorOccurred = true;
+  }
+  catch (...)
+  {
+    std::cerr << "\nUnexpected exception during parsing: '" << xmlFile << "'"<<std::endl;
+    errorOccurred = true;
+  }
+
+  //  Extract the DOM tree, get the list of all the elements and report the
+  //  length as the count of elements.
+  if (getSawErrors() || errorOccurred)
+  {
+    std::cout << "\nErrors occurred, no output available\n" << std::endl;
+    errorOccurred = true;
+  }
+  else
+  {
+    if (doc)
+    {
+      DOMNode* vtsettingsNode = NULL;
+      DOMNode* proprietaryTableNode = NULL;
+      for (vtsettingsNode = doc->getDocumentElement()->getFirstChild(); vtsettingsNode != 0; vtsettingsNode = vtsettingsNode->getNextSibling())
+      {
+        if (vtsettingsNode->getNodeType() == DOMNode::ELEMENT_NODE)
+          break;
+      }
+      if (!vtsettingsNode)
+        errorOccurred = true;
+
+      if (!errorOccurred)
+      {
+        for (proprietaryTableNode = vtsettingsNode->getFirstChild(); proprietaryTableNode != 0; proprietaryTableNode = proprietaryTableNode->getNextSibling())
+        {
+          if (proprietaryTableNode->getNodeType() == DOMNode::ELEMENT_NODE)
+            break;
+        }
+      }
+      if (!proprietaryTableNode)
+        errorOccurred = true;
+
+      if (!errorOccurred)
+      {
+        int i_colIndex, i_colRed, i_colGreen, i_colBlue;
+
+        for (DOMNode* child = proprietaryTableNode->getFirstChild(); child != 0; child=child->getNextSibling())
+        {
+          if (child->getNodeType() != DOMNode::ELEMENT_NODE)
+            continue;
+
+          bool b_colIndex = false, b_colRed = false, b_colGreen = false, b_colBlue = false;
+
+          std::string local_attrName;
+          std::string local_attrValue;
+
+          if (!child->hasAttributes())
+          {
+            errorOccurred = true;
+            break;
+          }
+
+          DOMNamedNodeMap *pAttributes = child->getAttributes();
+          int nSize = pAttributes->getLength();
+
+          for (int i=0;i<nSize;++i)
+          {
+            DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+            utf16convert (pAttributeNode->getName(), local_attrName);
+            utf16convert (pAttributeNode->getValue(), local_attrValue);
+
+            if (local_attrName.compare("index") == 0)
+            {
+              i_colIndex = StringToInt(local_attrValue);
+              b_colIndex = true;
+            }
+            if (local_attrName.compare("blue") == 0)
+            {
+              i_colBlue = StringToInt(local_attrValue);
+              b_colBlue = true;
+            }
+            if (local_attrName.compare("green") == 0)
+            {
+              i_colGreen = StringToInt(local_attrValue);
+              b_colGreen = true;
+            }
+            if (local_attrName.compare("red") == 0)
+            {
+              i_colRed = StringToInt(local_attrValue);
+              b_colRed = true;
+            }
+          }
+
+          if (b_colIndex && b_colBlue && b_colGreen && b_colRed)
+          {
+            if ( (i_colIndex < 232) || (i_colIndex > 255)
+              || (i_colRed < 0) || (i_colRed > 255)
+              || (i_colGreen < 0) || (i_colGreen > 255)
+              || (i_colBlue < 0) || (i_colBlue > 255)
+               )
+            { // some value out of range
+              errorOccurred = true;
+              break;
+            }
+            else
+            { // values okay, write to color-table
+              vtColourTable[i_colIndex].bgrRed = static_cast<uint8_t>(i_colRed);
+              vtColourTable[i_colIndex].bgrGreen = static_cast<uint8_t>(i_colGreen);
+              vtColourTable[i_colIndex].bgrBlue = static_cast<uint8_t>(i_colBlue);
+            }
+          }
+          else
+          {
+            errorOccurred = true;
+            break;
+          }
+        }
+      }
+    }
+  }
   return !errorOccurred;
 }

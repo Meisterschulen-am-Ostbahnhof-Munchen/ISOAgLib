@@ -280,6 +280,8 @@ public:
   void setParseModeWorkingSet (bool ab_parseOnlyWorkingSet) { mb_parseOnlyWorkingSet = ab_parseOnlyWorkingSet; }
   bool isParseModeWorkingSet() { return mb_parseOnlyWorkingSet;}
 
+  bool processVtPresetFile(const std::string& pch_fileName);
+
 private:
   signed int strlenUnescaped (const std::string& pcc_string);
 

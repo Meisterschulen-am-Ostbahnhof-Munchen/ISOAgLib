@@ -357,7 +357,22 @@ unsigned int Vt2IsoImageBase_c::get8BitPixel( unsigned int aui_x, unsigned int a
     return idx;
   }
   else 
-  {	// we're NOT palettized, calculate a palette index!
+  { // we're NOT palettized, calculate a palette index!
+    const uint8_t ui8_red = getR( aui_x, aui_y );
+    const uint8_t ui8_green = getG( aui_x, aui_y );
+    const uint8_t ui8_blue = getB( aui_x, aui_y );
+
+    static unsigned int directMatchIdx = 0;
+    // try previous value (prevent iteration for speed up)
+    if ((vtColourTable[directMatchIdx].bgrRed == ui8_red) && (vtColourTable[directMatchIdx].bgrGreen == ui8_green) && (vtColourTable[directMatchIdx].bgrBlue == ui8_blue)) 
+      return directMatchIdx;
+
+    for ( directMatchIdx = 0; directMatchIdx < 256; directMatchIdx++)
+    {
+      if ((vtColourTable[directMatchIdx].bgrRed == ui8_red) && (vtColourTable[directMatchIdx].bgrGreen == ui8_green) && (vtColourTable[directMatchIdx].bgrBlue == ui8_blue)) 
+        return directMatchIdx;
+    }
+
     idx = 16 + ( componenttoindex6 ( getR( aui_x, aui_y ) )*36 )
              + ( componenttoindex6 ( getG( aui_x, aui_y ) )*6  )
              + ( componenttoindex6 ( getB( aui_x, aui_y ) )    );
