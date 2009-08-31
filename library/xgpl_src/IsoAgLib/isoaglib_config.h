@@ -750,7 +750,7 @@
     #ifdef USE_VTOBJECT_inputnumber
       #define USE_VTOBJECT_numbervariable
     #else
-      #if USE_VTOBJECT_outputnumber
+      #ifdef USE_VTOBJECT_outputnumber
         #define USE_VTOBJECT_numbervariable
       #endif
     #endif
