@@ -233,7 +233,7 @@ set_default_values()
     USE_VT_UNICODE_SUPPORT=0
     # no reasonable default for all targets (will be set later
     # conditionally):
-    unset PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL
+    unset PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL || :
     CAN_BUS_CNT=1
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
