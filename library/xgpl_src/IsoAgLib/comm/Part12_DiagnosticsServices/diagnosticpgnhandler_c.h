@@ -61,58 +61,63 @@
 
 #include <string>
 
+
+// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-	
-	enum Certification_t
-	{
-		CertificationMinEcu = 0
-		, CertificationTecuClass_1
-		, CertificationTecuClass_2
-		, CertificationTecuClass_3 
-		, CertificationClass_3_Ecu
-		, CertificationVirtualTerminal
-		, CertificationVtWsMaster
-		, CertificationVtWsMember
-		, CertificationTaskController
-		, CertificationTcWsMaster
-		, CertificationTcWsMember
-		, CertificationFileServer
-		, CertificationGpsReceiver
-	};
-	
-	typedef BitFieldWrapper_c<Certification_t> CertificationBitMask_t;
+// forward declarations
+class IdentItem_c;
 
-	enum CertificationRevision_t
-	{
-		CertificationRevisionFirstRevision = 0,
-		CertificationRevisionSecondRevision = 1,
-		CertificationRevisionThirdRevision = 2,
-		CertificationRevisionFourthRevision = 3,
-		CertificationRevisionNotAvailable =7
-	};
 
-	enum CertificationLabType_t
-	{
-		CertificationLabTypeNonCertifiedLab = 0,
-		CertificationLabTypeEUCertifiedLab = 1,
-		CertificationLabTypeNACertifiedLab = 2,
-		CertificationLabTypeNotAvailable = 7
-	};
-	
+enum Certification_t
+{
+  CertificationMinEcu = 0
+  , CertificationTecuClass_1
+  , CertificationTecuClass_2
+  , CertificationTecuClass_3
+  , CertificationClass_3_Ecu
+  , CertificationVirtualTerminal
+  , CertificationVtWsMaster
+  , CertificationVtWsMember
+  , CertificationTaskController
+  , CertificationTcWsMaster
+  , CertificationTcWsMember
+  , CertificationFileServer
+  , CertificationGpsReceiver
+};
 
-	class IdentItem_c;
+typedef BitFieldWrapper_c<Certification_t> CertificationBitMask_t;
+
+enum CertificationRevision_t
+{
+  CertificationRevisionFirstRevision = 0,
+  CertificationRevisionSecondRevision = 1,
+  CertificationRevisionThirdRevision = 2,
+  CertificationRevisionFourthRevision = 3,
+  CertificationRevisionNotAvailable = 7
+};
+
+enum CertificationLabType_t
+{
+  CertificationLabTypeNonCertifiedLab = 0,
+  CertificationLabTypeEUCertifiedLab = 1,
+  CertificationLabTypeNACertifiedLab = 2,
+  CertificationLabTypeNotAvailable = 7
+};
+
 
 /**
-  This class implements the handling of Diagnostic requests
+  This class implements the handling of Diagnostic
+  requests for a given IdentItem_c instance
 
   @author Nizar Souissi
+  @author Martin Wodok
 */
-class DiagnosticPgnHandler_c: public IsoRequestPgnHandler_c
+class DiagnosticPgnHandler_c : public IsoRequestPgnHandler_c
 {
 
 public:
-  DiagnosticPgnHandler_c(IdentItem_c & );
+  DiagnosticPgnHandler_c (IdentItem_c&);
   virtual ~DiagnosticPgnHandler_c();
 
   virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/);
@@ -122,7 +127,7 @@ public:
 
   bool setSwIdentification( const STL_NAMESPACE::string& astr_swIdentification );
 
-  //! Setter for the different certification message fields 
+  //! Setter for the different certification message fields
   //! Parameter:
   //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061 
   //! @param a_revision Certification revision as in ISO 11783-7 A.29.2
@@ -133,7 +138,7 @@ public:
   bool setCertificationData( uint16_t ui16_year ,CertificationRevision_t a_revision,CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
                              const CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
 
-private:
+private: // attributes
   IdentItem_c& mrc_identItem;
 
   STL_NAMESPACE::string mstr_EcuIdentification;
@@ -142,8 +147,5 @@ private:
   uint8_t m_certification[8];
 };
 
-}
+} // namespace __IsoAgLib
 #endif
-
-
-

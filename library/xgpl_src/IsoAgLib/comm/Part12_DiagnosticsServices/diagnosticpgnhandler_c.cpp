@@ -4,6 +4,14 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 
+// not done as private member function because of recursive-include problems.
+// IdentItem_c needs DiagnosticPgnHandler_c because of the enums.
+// Actually those enums should then just be moved out into its own file
+// then the problems would vanish and it would be clean. But the define is
+// okay for this case here, as the singletons are currently all done by define.
+#define getSingletonVecKey() mrc_identItem.getSingletonVecKey()
+
+
 namespace __IsoAgLib
 {
 
