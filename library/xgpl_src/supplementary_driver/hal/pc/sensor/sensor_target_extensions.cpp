@@ -222,6 +222,9 @@ int16_t  getDiginOnoff(uint8_t bInputNumber){
   }
   return (lastSensorDigitalInputVal[bInputNumber] > 0)?true:false;
 }
+
+/// @todo HAL RETURN VALUES (SENSORS): return type would be int16_t, but returned are either HAL_CONFIG_ERR or bool.
+
 int16_t  getDiginOnoffStatic(uint8_t bInputNumber){
   // printf("getDiginOnoffStatic(%i)\n", bInputNumber);
   if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
@@ -288,6 +291,12 @@ int16_t  init_analogin(uint8_t bNumber, uint8_t bType){
     // try again in current directory...
     sprintf(name, "analogInput_%hu", bNumber );
     sensorAnalogInput[ bNumber] = fopen(name, "r");
+    // check if file can't be opened in current directory
+    if (sensorAnalogInput[ bNumber] == NULL) {
+      // still not open
+      sensorAnalogInputOpen[bInput] = false;
+      return HAL_CONFIG_ERR;
+    }
   }
   // END: Added by M.Wodok 6.12.04
   sensorAnalogInputOpen[bNumber] = true;
@@ -313,7 +322,7 @@ int16_t  getAnaloginMean(uint8_t bInput){
   { // save next_XX to last_XX
     lastSensorAnalogInputTime[bInput] = next_sensorAnalogInputTime[bInput];
     lastSensorAnalogInputVal[bInput] = next_sensorAnalogInputVal[bInput];
-    if ( feof(sensorAnalogInput[bInput]) == 0 )
+    if ( sensorAnalogInput[bInput] != NULL && feof(sensorAnalogInput[bInput]) == 0 )
     { // read next line
       char zeile[100];
       fgets(zeile, 99, sensorAnalogInput[bInput]);
