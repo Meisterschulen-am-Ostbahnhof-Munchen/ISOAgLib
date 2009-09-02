@@ -61,6 +61,7 @@
 #include <sstream>
 #include <functional>
 #include <algorithm>
+#include <string.h>
 
 #ifdef WIN32
 #include <conio.h>
