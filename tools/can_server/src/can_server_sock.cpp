@@ -624,8 +624,8 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
                              p_writeBuf->s_init.ui16_wBitrate,  // BTR0BTR1
                              pc_serverData))
           {
-            printf("Can't initialize CAN\n");
-            printf("CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n");
+            std::cerr << "Can't initialize CAN-BUS." << std::endl;
+            std::cerr << "CAN device/driver not ready.\n" << std::endl;
             i32_error = HAL_CONFIG_ERR;
             MACRO_ISOAGLIB_ABORT();
           }
@@ -1078,27 +1078,7 @@ int main(int argc, char *argv[])
   int i_collectClientThreadHandle;
   __HAL::server_c c_serverData;
 
-  checkAndHandleOptions( argc, argv, c_serverData );
-  if (c_serverData.mb_interactive) {
-    std::cerr << "IsoAgLib CAN-Server"  << std::endl;
-    std::cerr << "(Run with --help to get help)"  << std::endl << std::endl;
-    printSettings(c_serverData);
-  }
-
-  // some time init
-  __HAL::getTime();
-
-  const uint32_t apiversion = initCardApi();
-  if ( apiversion == 0 ) { // failure - nothing found
-    DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
-    exit(1);
-  }
-
-  if (!resetCard()) {
-    DEBUG_PRINT("Reset card not ok\n");
-    exit(1);
-  }
-
+  checkAndHandleOptionsAndStartup( argc, argv, c_serverData );
 
 #ifdef WIN32
   WSADATA wsaData;

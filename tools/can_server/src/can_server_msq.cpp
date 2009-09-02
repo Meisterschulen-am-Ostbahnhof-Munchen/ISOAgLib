@@ -1074,8 +1074,8 @@ static void* command_thread_func(void* ptr)
                                                 pc_serverData);
 
             if (!i16_init_rc) {
-              std::cerr << "can't initialize CAN" << std::endl;
-              std::cerr << "CAN device not ready or wrong PRJ_CAN_DRIVER_DEVICE selected?\n" << std::endl;
+              std::cerr << "Can't initialize CAN-BUS." << std::endl;
+              std::cerr << "CAN device/driver not ready.\n" << std::endl;
               i32_error = HAL_CONFIG_ERR;
               abort();
             }
@@ -1322,36 +1322,7 @@ int main(int argc, char *argv[])
   int i_registerClientThreadHandle, i_canWriteThreadHandle;
   __HAL::server_c c_serverData;
 
-  checkAndHandleOptions( argc, argv, c_serverData );
-  if (c_serverData.mb_interactive) {
-    std::cerr << "IsoAgLib CAN-Server"  << std::endl;
-    std::cerr << "(Run with '--help' to get help)"  << std::endl << std::endl;
-    printSettings(c_serverData);
-  }
-
-#ifdef DEBUG
-#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
-#else
-  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
-#endif
-#endif
-
-  // explicitly call getTime to initialize the time to 0.
-  (void) __HAL::getTime();
-
-  const uint32_t apiversion = initCardApi();
-  if ( apiversion == 0 ) { // failure - nothing found
-    DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
-    exit(1);
-  }
-
-
-  // do the reset
-  if (!resetCard()) {
-    DEBUG_PRINT("Reset not ok\n");
-    exit(1);
-  }
+  checkAndHandleOptionsAndStartup( argc, argv, c_serverData );
 
   // wait to be shure that CAN card is clean reset
   //  usleep(100);

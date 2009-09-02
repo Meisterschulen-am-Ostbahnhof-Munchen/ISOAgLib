@@ -64,8 +64,7 @@ class server_c;
 
 void *readUserInput(void *ap_arg);
 
-void checkAndHandleOptions(int argc, char *argv[], __HAL::server_c &ar_server);
-void printSettings(__HAL::server_c &ar_server);
+void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar_server);
 void usage();
 
 bool newFileLog( __HAL::server_c *p_server, size_t n_bus );

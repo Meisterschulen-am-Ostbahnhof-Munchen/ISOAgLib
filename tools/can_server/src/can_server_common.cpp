@@ -52,8 +52,6 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
-// following define is used for "can_server.h" to enable datastructs/functions
-// only used for the Server-part of can_server.
 #include "can_server.h"
 #include "can_server_common.h"
 
@@ -72,7 +70,22 @@
 #endif
 
 
-void checkAndHandleOptions(int argc, char *argv[], __HAL::server_c &ar_server)
+struct PrintSetting_s : public std::unary_function< yasper::ptr< AOption_c >, void >{
+  PrintSetting_s( __HAL::server_c &ar_server ) : mr_server(ar_server) {}
+  void operator()(yasper::ptr< AOption_c > ap_option) {
+    std::cerr << ap_option->getSetting(mr_server);
+  }
+  __HAL::server_c &mr_server;
+};
+
+
+void printSettings(__HAL::server_c &ar_server)
+{
+  std::for_each(gp_optionsBegin, gp_optionsEnd, PrintSetting_s(ar_server));
+}
+
+
+void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar_server)
 {
   for (int i = 1, step = 0; i < argc; i += step) {
     for (yasper::ptr< AOption_c > const *p_opt = gp_optionsBegin; p_opt != gp_optionsEnd; ++p_opt) {
@@ -84,6 +97,35 @@ void checkAndHandleOptions(int argc, char *argv[], __HAL::server_c &ar_server)
     usage();
     exit(1);
   NextStep:;
+  }
+
+  if (ar_server.mb_interactive) {
+    std::cerr << "IsoAgLib CAN-Server" << std::endl;
+    std::cerr << "(Run with '--help' to get help)" << std::endl << std::endl;
+    printSettings (ar_server);
+  }
+
+#ifdef DEBUG
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
+#else
+  printf("SYSTEM_WITH_ENHANCED_CAN_HAL is NOT defined !\n");
+#endif
+#endif
+
+  // explicitly call getTime to initialize the time to 0.
+  (void) __HAL::getTime();
+
+  const uint32_t apiversion = initCardApi();
+  if ( apiversion == 0 ) { // failure - nothing found
+    DEBUG_PRINT("FAILURE - No CAN card was found with automatic search\n");
+    exit(1);
+  }
+
+  // do the reset
+  if (!resetCard()) {
+    DEBUG_PRINT("Reset not ok\n");
+    exit(1);
   }
 }
 
@@ -197,19 +239,6 @@ void *readUserInput( void *ap_arg )
   }
   // shouldn't reach here as thread runs in an endless loop.
   return NULL; // dummy return
-}
-
-struct PrintSetting_s : public std::unary_function< yasper::ptr< AOption_c >, void >{
-  PrintSetting_s( __HAL::server_c &ar_server ) : mr_server(ar_server) {}
-  void operator()(yasper::ptr< AOption_c > ap_option) {
-    std::cerr << ap_option->getSetting(mr_server);
-  }
-  __HAL::server_c &mr_server;
-};
-
-void printSettings(__HAL::server_c &ar_server)
-{
-  std::for_each(gp_optionsBegin, gp_optionsEnd, PrintSetting_s(ar_server));
 }
 
 void usage() {
@@ -456,3 +485,4 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE 
     fprintf(f_handle, "\n");
     fflush(f_handle);
 }
+
