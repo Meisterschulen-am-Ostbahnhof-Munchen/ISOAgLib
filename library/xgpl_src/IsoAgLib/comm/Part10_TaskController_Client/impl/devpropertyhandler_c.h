@@ -80,6 +80,13 @@
  *                                                                         *
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
+// Note: The define PROPRIETARY_DEVPROPERTYHANDLER_H is just a temporary solution
+//       and may be removed as soon as IsoAgLib's own DPH is able to handle the
+//       complete feature-set. If you're don't know what this is for, don't use it!
+#ifdef PROPRIETARY_DEVPROPERTYHANDLER_H
+#include <PROPRIETARY_DEVPROPERTYHANDLER_H>
+#else
+
 #ifndef DEVPROPERTYHANDLER_C_H
 #define DEVPROPERTYHANDLER_C_H
 
@@ -291,3 +298,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
 }
 #endif
+
+#endif
+// endif for "#ifdef PROPRIETARY_DEVPROPERTYHANDLER_H" workaround
+
