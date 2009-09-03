@@ -1934,6 +1934,7 @@ tools/can_server/src/devices/can_device_a1.cpp -text
 tools/can_server/src/devices/can_device_no_card.cpp -text
 tools/can_server/src/devices/can_device_pcan.cpp -text
 tools/can_server/src/devices/can_device_rte.cpp -text
+tools/can_server/src/devices/can_device_socketcan.cpp -text
 tools/can_server/src/devices/can_device_sontheim_mt_api.cpp -text
 tools/can_server/src/devices/can_device_sontheim_st_api.cpp -text
 tools/can_server/src/devices/can_device_sontheim_vector_canlib.cpp -text
