@@ -294,7 +294,7 @@ int16_t  init_analogin(uint8_t bNumber, uint8_t bType){
     // check if file can't be opened in current directory
     if (sensorAnalogInput[ bNumber] == NULL) {
       // still not open
-      sensorAnalogInputOpen[bInput] = false;
+      sensorAnalogInputOpen[bNumber] = false;
       return HAL_CONFIG_ERR;
     }
   }
