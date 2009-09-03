@@ -15,7 +15,11 @@
 #include <time.h>
 #include <vector>
 
-#include <mcheck.h>
+#ifdef SYSTEM_PC
+  #ifdef WIN32
+    #include <Windows.h>
+  #endif
+#endif
 
 using namespace IsoAgLib;
 
