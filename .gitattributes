@@ -21,6 +21,7 @@ bin/win32/proc2iso.cmd -text
 bin/win32/pthreadVC2.dll -text
 bin/win32/vt2iso.exe -text
 bin/win32/xerces-c_2_5_0.dll -text
+bin/x86linux/README.txt -text
 bin/x86linux/can_messenger -text
 bin/x86linux/can_server_msq_no_card -text
 bin/x86linux/can_server_msq_pcan -text
