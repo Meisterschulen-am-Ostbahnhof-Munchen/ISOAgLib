@@ -1113,7 +1113,7 @@ MultiReceive_c::sendCurrentCts(DEF_Stream_c_IMPL* apc_stream)
   uint32_t ui32_allowPackets = (getStreamCount() > 0) ? ((CONFIG_MULTI_RECEIVE_MAX_OVERALL_PACKETS_ADDED_FROM_ALL_BURSTS) / getStreamCount()) : 1;
   if (ui32_allowPackets == 0)
   { // Don't allow 0 packets here as this would mean HOLD-CONNECTION OPEN and
-    // we'd have to take action and can not wait for the sender sending...
+    // we'd have to take action and cannot wait for the sender sending...
     ui32_allowPackets = 1;
   }
   if (ui32_allowPackets > CONFIG_MULTI_RECEIVE_MAX_PER_CLIENT_BURST_IN_PACKETS)

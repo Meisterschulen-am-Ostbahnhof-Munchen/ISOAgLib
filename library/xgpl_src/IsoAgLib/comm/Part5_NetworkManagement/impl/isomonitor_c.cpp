@@ -286,7 +286,7 @@ bool IsoMonitor_c::timeEvent( void )
       break;
 
     // do not change period
-    case IState_c::PreAddressClaim | IState_c::Active: // shouldn't happen. after timeEvent we can not be any longer PreAddressClaim
+    case IState_c::PreAddressClaim | IState_c::Active: // shouldn't happen. after timeEvent we cannot be any longer PreAddressClaim
     case IState_c::OffExplicitly:
     case IState_c::OffUnable:
     default:
