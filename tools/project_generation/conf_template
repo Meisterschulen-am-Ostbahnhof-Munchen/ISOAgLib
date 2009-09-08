@@ -3,10 +3,12 @@
 # and activate some commented-out options (if needed)...
 #
 # The steps are:
-#  1.) Setup your wanted IsoAgLib configuration here
-#  2.) Create your application files (these will be collected by update_makefile.sh)
-#  3.) Run "update_makefile.sh conf_template"
-#      in your native Linux or MSYS/MinGW Windows shell to get the generated project
+#  [0. On Windows, have MSYS/MinGW installed.]
+#   1. Copy conf_template -> conf_<PROJECTNAME>
+#   2. Setup your wanted IsoAgLib configuration here
+#   3. Create your application files (these will be collected by update_makefile.sh)
+#   4. Run "<PATH_TO_bin>/update_makefile.sh conf_<PROJECTNAME>"
+#       in your native Linux or MSYS/MinGW Windows shell to get the generated project
 
 
 # ###############################################################
@@ -27,13 +29,16 @@ PROJECT_AUTHOR_EMAIL=MyEmail@Location
 # ###############################################################
 
 # Path to IsoAgLib's main directory (where "library" is located in)
-# relative to the directory from which "update_makefile.sh" is called.
+# relative to the directory from which "update_makefile.sh conf_<PROJECTNAME>" is called.
 ISO_AG_LIB_PATH="../.."
 
 
 # ###############################################################
 # Selection of Application Sources
 # ###############################################################
+#
+# NOTE: If building IsoAgLib purely as a library (currently only existing for Linux)
+#       then you'll have to leave out all of the following settings in this part 
 
 # Path(es) to the application files
 # relative to the IsoAgLib-path (as specified right above here)
@@ -53,8 +58,8 @@ APP_SRC_FILE="main.cpp"
 # Pathes which shall be excluded from the application file search
 # (wildcards like "*" are allowed) 
 # Example:
-#    - exclude path Fii somewhere in deep dir: ".../Fii/..."
-#    - exclude file Foo.cpp as part of directory Fii: ".../Fii/Foo.c"
+#    - exclude path Foo somewhere in deep dir: ".../Foo/..."
+#    - exclude file Bar.cpp as part of directory Foo: ".../Foo/Bar.cpp"
 #      (includes occurences of Foo.cpp in other directories!!)
 # APP_PATH_EXLCUDE=""
 
@@ -89,8 +94,8 @@ APP_SRC_FILE="main.cpp"
 # (separate multiple defines by whitespace)
 # PRJ_DEFINES=""
 
-# Optionally replace the compiler flag default values by configured
-# ones. Only valid for Makefile generation.
+# Optionally replace the compiler flag default values by configured ones.
+# Only valid for Linux Makefile generation currently.
 # RULE_CXXFLAGS='-pipe -O -Wall -g -Wextra -Winit-self -Wmissing-include-dirs -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
 
 # Select if Debug messages within IsoAgLib are sent via RS232
@@ -114,7 +119,7 @@ APP_SRC_FILE="main.cpp"
 
 # Select type of target system:
 #   Host:     "pc_linux" | "pc_win32"
-#   Embedded: "esx" | "imi" | "c2c" | "esxu" | "pm167" | "mitron167"
+#   Embedded: "esx" | "imi" | "c2c" | "esxu" | "pm167" | "mitron167" | "ams5" | "ees" | "p1mc"
 USE_TARGET_SYSTEM="pc_win32"
 
 # specify integer number memory representation type: LITTLE or BIG ENDIAN
@@ -132,25 +137,17 @@ USE_TARGET_SYSTEM="pc_win32"
 # default: off
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection: "simulating"|"sys"|"msq_server"|"socket_server"
-# targets other than pc_linux or pc_win32 can only use "sys"
-# target "pc_win32" can't use "msq_server" (Linux message queue version of the can_server)
-USE_CAN_DRIVER="msq_server"
+# select wanted type of CAN driver connection:
+# embedded targets: "sys"
+# pc_win32 targets: "simulating" | "socket_server"
+# pc_linux targets: "simulating" | "socket_server" | "msq_server" 
+# (Note: "sys" for pc_linux to come soon. This will be the SocketCAN interface)
+USE_CAN_DRIVER="socket_server"
 
-# the can server ("msq_server"|"socket_server") is available for different can cards,
-# where all of them use some common files and just one individual file.
-# target "pc_linux": a multi target Makefile is created which builds the application
-#                    and also the can_server with support for the selected CAN device (no_card|pcan|A1|rte)
-# target "pc_win32": extra project files exist for the can_server (socket version)
-#                    with support for different CAN devices
-#                    (see the folder "canserver" in compiler_projects/Dev-C++ and compiler_projects/VC6)
-#                    therefore for "pc_win32" only USE_CAN_DEVICE_FOR_SERVER="no_card" should be used
-# USE_CAN_DEVICE_FOR_SERVER=no_card|pcan|A1|rte (default: no_card)
-USE_CAN_DEVICE_FOR_SERVER="no_card"
-
-# select wanted type of RS232 driver connection: "simulating"|"sys"|"rte"
-# targets other than pc_linux or pc_win32 can only use "sys"
-# only target "pc_linux" can us the driver "rte"
+# select wanted type of RS232 driver connection: "simulating" | "sys" | "rte"
+# embedded targets: "sys"
+# pc_win32 targets: "sys" | "simulating"
+# pc_linux targets: "sys" | "simulating" | "rte"
 USE_RS232_DRIVER="simulating"
 
 # define the amount of available CAN BUSes at the ECU
@@ -161,22 +158,15 @@ CAN_BUS_CNT=1
 # ( all values lower than 1 are overwritten by default 1 )
 CAN_INSTANCE_CNT=1
 
-if [ $CAN_INSTANCE_CNT -gt 1 ] ; then
-  # if more than one CAN BUS is defined, the selected
-  # protocol(s) can be executed as independent instances
-  # at more than one channel
-  # ( if more than one CAN instance is used, but
-  #   only one channel is used for protocol, than
-  #   the index 0 - i.e. the first item is used for protocol )
-  PRT_INSTANCE_CNT=1
-else
-  # default is to run only one protocol instance
-  PRT_INSTANCE_CNT=1
-fi
+# define the amount of ISOBUS protocol instances
+# ( needs to be less than or equal to CAN_INSTANCE_CNT.
+#   The CAN Instances [0..PRT_INSTANCE_CNT-1] are treated as ISOBUS then )
+PRT_INSTANCE_CNT=1
 
 # define the amount of RS232 instances to support
 # ( all values lower than 1 are overwritten by default 1 )
 # This is especially important if your ECU has more than one RS232 channel
+# and you intend to use more than one RS232 channel at the same time.
 RS232_INSTANCE_CNT=1
 
 
@@ -186,20 +176,24 @@ RS232_INSTANCE_CNT=1
 
 # set value of feature to 1 if wanted
 # unset or set to 0 if not wanted
+
+# define if ISOBUS protocol support is enabled.
 PRJ_ISO11783=1
 
-PRJ_ISO_TERMINAL=1
+# define if Part 6 - VT-Client support is enabled.
+#PRJ_ISO_TERMINAL=1
 # The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
 # has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
 # the object pool and thus need not to be included in the client application.
-PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition/simpleVTIsoPool-objectselection.inc"
+#PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition/simpleVTIsoPool-objectselection.inc"
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION3="MaskDefinition"
 #PRJ_ISO_TERMINAL_OBJECT_SELECTION4="MaskDefinition"
 
-# PRJ_ISO_FILESERVER_CLIENT=0
+# define if Part 13 - FS-Client support is enabled.
+# PRJ_ISO_FILESERVER_CLIENT=1
 
-# if you Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
+# if you need Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
 # note: this is done automatically if other features
 # require it (e.g. PRJ_ISO_TERMINAL=1 or PRJ_ISO_FILESERVER_CLIENT=1 will implicitly set PRJ_MULTIPACKET=1)
 # PRJ_MULTIPACKET=1
