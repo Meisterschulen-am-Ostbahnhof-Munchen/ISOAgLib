@@ -255,6 +255,28 @@ public:
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
 
+  enum TransferError_e {
+    TransferErrorExtendedCommandOnStandardPgn = 100,
+    TransferErrorAlreadyRunningStream = 101,
+    TransferErrorWrongPackageAmountOrMessageSize = 102,
+    TransferErrorClientRejectingStream = 103,
+    TransferErrorDpoForUnknownOrUnopenedStream = 104,
+    TransferErrorDpoNotAwaitedNow = 105,
+    TransferErrorUnknownSafety = 107,
+    TransferErrorUnknownOrInvalidCommandWithTpPgn = 108,
+    TransferErrorWrongSequenceNumber = 109,
+    TransferErrorStreamTimedOut = 110,
+    TransferErrorNoStreamRunningForMultiPacketData = 111,
+    TransferErrorBamToNonGlobalAddress = 112,
+    TransferErrorBamNotTakenWrongPkgNumberOrMessageSize = 113,
+    TransferErrorBamSequenceError = 114,
+    TransferErrorPgnNotRequestedToReceive = 115,
+    TransferErrorDpoForAStandardTpStream = 116,
+    TransferErrorBamInBetweenAlreadyRunningStream = 117,
+    TransferErrorFastPacketFrameButNoOpenStream = 118,
+    TransferErrorFastpacketSequenceError = 119
+  };
+
 protected:
 
 private:
@@ -309,12 +331,22 @@ private:
   void connAbortTellClient(bool ab_sendConnAbort, Stream_c* apc_stream);
   void connAbortTellClientRemoveStream(bool ab_sendConnAbort, Stream_c* apc_stream);
   void removeStream(Stream_c* apc_stream);
+  void notifyError (const IsoAgLib::ReceiveStreamIdentifier_c &ac_streamIdent, TransferError_e a_error);
 
 
-  void notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& ac_streamIdent, uint8_t aui8_multiReceiveErrorCode);
+private:
+  static void notifyCanCustomerOfTransferError(
+      CanCustomer_c &ar_canCustomer,
+      const IsoAgLib::ReceiveStreamIdentifier_c &ac_streamIdent,
+      TransferError_e a_transferError,
+      bool ab_isGlobal) {
+    ar_canCustomer.notificationOnMultiReceiveError(
+        ac_streamIdent,
+        uint8_t(a_transferError),
+        ab_isGlobal);
+  }
 
-
-private: // attributes
+  // attributes
 
   STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
 

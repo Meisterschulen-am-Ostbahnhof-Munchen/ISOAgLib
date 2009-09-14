@@ -714,7 +714,7 @@ int main()
       EXTERNAL_DEBUG_DEVICE << "implement left forward work light:  " << getIsoActiveFlag(temp) << "\n";
 
       temp = getITracLightInstance().getCommand(IsoAgLib::dataMsgReq);
-      EXTERNAL_DEBUG_DEVICE << "lighting data message request:      " << getIsoDataReq( static_cast<IsoAgLib::IsoDataReq_t>(temp) ) << "\n";
+      EXTERNAL_DEBUG_DEVICE << "lighting data message request:      " << getIsoDataReq(IsoAgLib::IsoDataReq_t(temp)) << "\n";
 
       temp = getITracLightInstance().getCommand(IsoAgLib::implRightFacingWork);
       EXTERNAL_DEBUG_DEVICE << "implement right facing work light:  " << getIsoActiveFlag(temp) << "\n";

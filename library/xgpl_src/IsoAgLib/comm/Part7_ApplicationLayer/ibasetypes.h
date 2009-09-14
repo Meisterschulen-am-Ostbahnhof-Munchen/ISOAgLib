@@ -58,24 +58,24 @@
 
 namespace IsoAgLib {
 
-/** use an enum typedef for the different states of ISO flags */
-typedef enum {
+/** use an enum for the different states of ISO flags */
+enum IsoActiveFlag_t {
   IsoInactive = 0,    ///< Flag is marked explicit as not active
   IsoActive = 1,      ///< corresponding function is active
   IsoError = 2,       ///< correspnding function is in error state, and thus not useable
   IsoNotAvailable = 3 ///< corresponding function is not available/not implemented in service provider
-} IsoActiveFlag_t;
+};
 
-/** use an enum typedef for the different states of ISO flags */
-typedef enum {
+/** use an enum for the different states of ISO flags */
+enum IsoDataReq_t {
   IsoNoDataRequested = 0, ///< no lighting data is requested from all implements
   IsoDataRequested = 1,   ///< lighting data is requested from all implements
   IsoReservedData = 2,        ///< reserved field
   IsoDontCare = 3         ///< corresponding function is not available/not implemented in service provider
-} IsoDataReq_t;
+};
 
 /** GPS GNSS Method */
-typedef enum {
+enum IsoGnssMethod_t {
   IsoNoGps           = 0,
   IsoGnssFix         = 1,
   IsoDgnssFix        = 2,
@@ -88,20 +88,20 @@ typedef enum {
   IsoGnssError       = 14,
   IsoGnssNull        = 15,
   IsoGnssMethodMAX   = 15
-} IsoGnssMethod_t;
+};
 
 /** type of GNSS system */
-typedef enum {
+enum IsoGnssType_t {
   IsoGnssGps            = 0,
   IsoGnssGlonass        = 1,
   IsoGnssGpsGlonass     = 2,
   IsoGnssGpsSbas        = 3,
   IsoGnssGpsSbasGlonass = 4,
   IsoGnssTypeMAX        = 4
-} IsoGnssType_t;
+};
 
 /** different lighting types; implements and tractor*/
-typedef enum {
+enum IsoCommandFlag_t {
   daytimeRunning =        1,
   alternateHead =         2,
   lowBeamHead =           3,
@@ -134,16 +134,16 @@ typedef enum {
   implRightFacingWork =  30,
   implLeftFacingWork =   31,
   implRearWork =         32,
-} IsoCommandFlag_t;
+};
 
-typedef enum {
+enum IsoMaintainPower_t {
   implInTransport = 1,
   implInPark =      2,
   implInWork =      3,
-} IsoMaintainPower_t;
+};
 
 /** different lighting types; implements and tractor*/
-typedef enum {
+enum IsoFacility_t {
 // Byte 1
   IsoFacilityPowerManagementKeySwitch =                       2,  // Byte 1, Bit6
   IsoFacilityPowerManagementMaxTimeTractorPower =             3,  // Byte 1, Bit5
@@ -192,189 +192,187 @@ typedef enum {
   IsoFacilityPTOCommandsFrontPTOEngagementCommand =           47, // Byte 6, Bit1
 // Byte 8
   IsoFacilityReservedBitssetTo0 =                             63  // Byte 8, Bit1
-} IsoFacility_t;
+};
 
 /** use an extended enum for the different states of ISO flags for auxiliary valve */
-typedef enum {
+enum IsoAuxFlagExtended_t {
   IsoBlocked = 0,            ///< corresponding valve is closed
   IsoExtend = 1,             ///< corresponding valve is controlled from valves extended port
   IsoRetract = 2,            ///< corresponding valve is controlled from valves retract port
   IsoFloating = 3,           ///< corresponding valve has no control from or to the valve
   IsoErrorAuxExt = 14,       ///< corresponding function is in error state, and thus not useable
   IsoNotAvailableAuxExt = 15 ///< corresponding function is not available/not implemented in service provider
-} IsoAuxFlagExtended_t;
+};
 
 /** use an enum for the different states of ISO flags for auxiliary valve */
-typedef enum {
+enum IsoAuxFlag_t {
   IsoBlock = 0,          ///< corresponding valve is closed
   IsoFloat = 1,          ///< corresponding valve has no control from or to the valve
   IsoErrorAux = 2,       ///< corresponding function is in error state, and thus not useable
   IsoNotAvailableAux = 3 ///< corresponding function is not available/not implemented in service provider
-} IsoAuxFlag_t;
+};
 
 /** use an enum for the different states of ISO flags for auxiliary valve limit status*/
-typedef enum {
+enum IsoLimitFlag_t {
   IsoNotLimited = 0,          ///< corresponding limit status is not active
   IsoOperatorLimited = 1,     ///< request cannot be implemented
   IsoLimitedHigh = 2,         ///< corresponding function is in error state, and thus not useable
   IsoLimitedLow = 3,           ///< corresponding function is not available/not implemented in service provider
   IsoNonRecoverabelFault = 6, ///not recoverable from the viewpoint of the implemented
   IsoNotAvailableLimit = 7    ///paramter not supported
-} IsoLimitFlag_t;
+};
 
 /** use an enum typedef for the different states of direction */
-typedef enum {
+enum IsoOperatorDirectionFlag_t {
   IsoNotReversed = 0,         ///< reported direction is not reversed from the perspective of the operator
   IsoReversed = 1,            ///< reported direction is reversed from the perspective of the operator
   IsoErrorReversed = 2,       ///< correspnding function is in error state, and thus not useable
   IsoNotAvailableReversed = 3 ///< corresponding function is not available in service provider
-} IsoOperatorDirectionFlag_t;
+};
 
 /** use an enum typedef for the different states of a parameter whose requests are transient/temporary/one-shot */
-typedef enum {
+enum IsoReqFlag_t {
   IsoExternalReqAccepted = 0, ///< External Request accepted. No subsequent operator intervention.
   IsoControlOverride = 1,     ///< most recent external request ignored because of an operator or tractor system override
   IsoErrorReq = 2,            ///< correspnding function is in error state, and thus not useable
   IsoNotAvailableReq = 3      ///< corresponding function is not available in service provider
-} IsoReqFlag_t;
+};
 
 /** use an enum typedef for the different states of the guidance system */
-typedef enum {
+enum IsoSteerFlag_t {
   IsoNotIntendedToSteer = 0, ///< guidance system is not intending to control steering
   IsoIntendedToSteer = 1,    ///< guidance system is intending to control steering
   IsoReserved = 2,           ///< reserved field
   IsoNotAvailableSteer = 3   ///< corresponding function is not available in service provider
-} IsoSteerFlag_t;
+};
 
 /** use an enum typedef for the different states of the request reset command status */
-typedef enum {
+enum IsoResetFlag_t {
   IsoResetNotRequired = 0, ///< reset of command status is not required
   IsoResetRequired = 1,    ///< reset of command status is required
   IsoErrorReset = 2,       ///< correspnding function is in error state, and thus not useable
   IsoNotAvailableReset = 3 ///< corresponding function is not available in service provider
-} IsoResetFlag_t;
+};
 
 /** use an enum typedef for the steering input position status */
-typedef enum {
+enum IsoSteerPosFlag_t {
   IsoNotCorrectPos = 0,       ///< manual steering is not in correct position for guidance to function
   IsoCorrectPos = 1,          ///< manual steering is in correct position for guidance to function
   IsoErrorSteerPos = 2,       ///< correspnding function is in error state, and thus not useable
   IsoNotAvailableSteerPos = 3 ///< corresponding function is not available in service provider
-} IsoSteerPosFlag_t;
+};
 
 /** use an enum typedef for the steering system readiness */
-typedef enum {
+enum IsoSteerReadinessFlag_t {
   IsoSystemNotReady = 0,            ///< machine steering system indicates that it is not free from faults that would preclude guidance sytstem operation
   IsoSystemReady = 1,               ///< machine steering system indicates that it is not free from faults that would preclude guidance sytstem operation
   IsoErrorSteerReadiness = 2,       ///< correspnding function is in error state, and thus not useable
   IsoNotAvailableSteerReadiness = 3 ///< corresponding function is not available in service provider
-} IsoSteerReadinessFlag_t;
+};
 
 /** use an enum typedef for certification type */
-typedef enum {
+enum IsoCertTypeFlag_t {
   IsoNotCert = 0,  ///< certification test is not certified
   IsoCert = 1      ///< certification test performed
-} IsoCertTypeFlag_t;
+};
 
 /** use an enum typedef for facilities type */
-typedef enum {
+enum IsoFacilityFlag_t {
   IsoFacilityNotAvailable = 0,  ///< facility is not available
   IsoFacilityAvailable = 1      ///< facility is available
-} IsoFacilityFlag_t;
+};
 
 /** use an enum typedef for TECU type */
-typedef enum {
+enum IsoTecuClassFlag_t {
   IsoTecuClass1 = 0,              ///< TECU class 1
   IsoTecuClass2 = 1,              ///< TECU class 2
   IsoTecuClass3 = 2,              ///< TECU class 3
   IsoTecuClassNotAvailable = 3,   ///< TECU class is not available
-} IsoTecuClassFlag_t;
+};
 
 /** use an enum for the different revisions of the certification test*/
-typedef enum {
+enum IsoCertRevisionFlag_t {
   IsoFirstRev = 0,        ///< first revision (no suffix)
   IsoSecondRev = 1,       ///< second revision (suffix A)
   IsoThirdRev = 2,        ///< third revision (suffix B)
   IsoFourthRev = 3,       ///< fourth revision (suffix C)
   IsoNotAvailableRev = 7  ///<corresponding function is not available in service provider
-} IsoCertRevisionFlag_t;
+};
 
 /** use an enum for the different certification laboratory types*/
-typedef enum {
+enum IsoCertLabTypeFlag_t {
   IsoNonCert = 0,          ///< non-certified laboratory / self certification
   IsoEUCert = 1,           ///< EU certified laboratory
   IsoNaCert = 2,           ///< NA certified laboratory
   IsoNotAvailableCert = 7  ///< not available (not certified)
-} IsoCertLabTypeFlag_t;
+};
 
 /** use an enum for the different states of ISO flags for the direction of travel of the chassis */
-typedef enum {
+enum IsoDirectionFlag_t {
   IsoReverse = 0,              ///< direction of travel of the machine is reversed
   IsoForward = 1,              ///< direction of travel of the machine is forward
   IsoErrorDirection = 2,       ///< corresponding function is in error state, and thus not useable
   IsoNotAvailableDirection = 3 ///< corresponding function is not available/not implemented in service provider
-} IsoDirectionFlag_t;
+};
 
 /** use an enum for the different sources of speed*/
-typedef enum {
+enum IsoSpeedSourceFlag_t {
   IsoWheelBasedSpeed = 0,      ///< speed source is wheel-based
   IsoGroundBasedSpeed = 1,     ///< speed source is ground-based
   IsoNavigationBasedSpeed = 2, ///< speed source is navigation-based
   IsoBlendedSpeed = 3,         ///< speed source is "blended"
   IsoSimulatedSpeed = 4,       ///< speed source is simulated
   IsoNotAvailableSpeed = 7     ///<corresponding function is not available in service provider
-} IsoSpeedSourceFlag_t;
+};
 
 /** use an enum for the different states of ISO flags for the implement work state */
-typedef enum {
+enum IsoImplWorkFlag_t {
   IsoNotReadyForFieldWork = 0, ///< Implement is not ready for field work
   IsoReadyForFieldWork = 1,    ///< Implement is ready for field work
   IsoErrorWork = 2,            ///< corresponding function is in error state, and thus not useable
   IsoNotAvailableWork = 3      ///< corresponding function is not available/not implemented in service provider
-} IsoImplWorkFlag_t;
+};
 
 /** use an enum for the different states of ISO flags for the implement transport state */
-typedef enum {
+enum IsoImplTransportFlag_t {
   IsoNotTransported = 0,       ///< Implement may not be transported
   IsoTransported = 1,          ///< Implement may be transported
   IsoErrorTransport = 2,       ///< corresponding function is in error state, and thus not useable
   IsoNotAvailableTransport = 3 ///< corresponding function is not available/not implemented in service provider
-} IsoImplTransportFlag_t;
+};
 
 /** use an enum for the different states of ISO flags for the implement park state */
-typedef enum {
+enum IsoImplParkFlag_t {
   IsoNotDisconnected = 0, ///< Implement may not be disconnected
   IsoDisconnect = 1,      ///< Implement may be disconnected
   IsoErrorPark = 2,       ///< corresponding function is in error state, and thus not useable
   IsoNotAvailablePark = 3 ///< corresponding function is not available/not implemented in service provider
-} IsoImplParkFlag_t;
+};
 
 /** use an enum for the different sources of the selected speed */
-typedef enum
-{
+enum SpeedSource_t {
   NoSpeed = 0,
   WheelBasedSpeed = 1,
   GroundBasedSpeed = 2,
   GpsBasedSpeed = 3,
   SelectedSpeed = 4
-}SpeedSource_t;
+};
 
 /** use an enum for the different sources of distance and direction */
-typedef enum
-{
+enum DistanceDirectionSource_t {
   NoDistDirec = 0,
   WheelBasedDistDirec = 1,
   GroundBasedDistDirec = 2,
   SelectedDistDirec = 3
-}DistanceDirectionSource_t;
+};
 
 /** define mode */
-typedef enum {
+enum IdentMode_t {
   IdentModeTractor = 0,
   IdentModeImplement = 1
-} IdentMode_t;
+};
 
-}; // end namespace IsoAgLib
+} // end namespace IsoAgLib
 
 
 #endif

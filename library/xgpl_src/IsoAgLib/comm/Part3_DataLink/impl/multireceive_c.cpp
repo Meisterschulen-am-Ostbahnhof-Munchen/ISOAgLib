@@ -181,7 +181,7 @@ MultiReceive_c::~MultiReceive_c()
 
 
 void
-MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& acrc_streamIdent, uint8_t aui8_multiReceiveErrorCode)
+MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c &acrc_streamIdent, MultiReceive_c::TransferError_e a_transferErrorCode)
 {
   if (acrc_streamIdent.getDa() == 0xFF)
   { // BAM
@@ -189,7 +189,11 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& acrc_str
     { // // inform all clients that want Broadcast-TP-Messages
       MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
       if (curClientWrapper.mb_alsoBroadcast) {
-        curClientWrapper.mpc_client->notificationOnMultiReceiveError (acrc_streamIdent, aui8_multiReceiveErrorCode, false);
+          notifyCanCustomerOfTransferError(
+              *curClientWrapper.mpc_client,
+              acrc_streamIdent,
+              a_transferErrorCode,
+              false);
       }
     }
   }
@@ -197,7 +201,11 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& acrc_str
   { // really destin specific
     if (getClient(acrc_streamIdent))
     {
-      getClient(acrc_streamIdent)->notificationOnMultiReceiveError (acrc_streamIdent, aui8_multiReceiveErrorCode, false);
+      notifyCanCustomerOfTransferError(
+          *getClient(acrc_streamIdent),
+          acrc_streamIdent,
+          a_transferErrorCode,
+          false);
     }
     else
     {
@@ -206,7 +214,11 @@ MultiReceive_c::notifyError (const IsoAgLib::ReceiveStreamIdentifier_c& acrc_str
       { // // inform all clients that want Broadcast-TP-Messages
         MultiReceiveClientWrapper_s& curClientWrapper = *i_list_clients;
         if (curClientWrapper.mb_alsoGlobalErrors) {
-          curClientWrapper.mpc_client->notificationOnMultiReceiveError (acrc_streamIdent, aui8_multiReceiveErrorCode, true);
+          notifyCanCustomerOfTransferError(
+              *curClientWrapper.mpc_client,
+              acrc_streamIdent,
+              a_transferErrorCode,
+              true);
         }
       }
     }
@@ -225,7 +237,7 @@ MultiReceive_c::processMsg()
     if (mt_streamType == StreamSpgnEcmdINVALID) { \
       /* this type is invalid - using Extended commands on Standard-TP PGN */ \
       /* answer with ConnAbort! */ \
-      notifyError(c_tmpRSI, 100); \
+      notifyError(c_tmpRSI, TransferErrorExtendedCommandOnStandardPgn); \
       sendConnAbort (mt_streamType, c_tmpRSI); \
       return true; /* no other CAN-Customer should be interested in that one */\
     }
@@ -282,7 +294,7 @@ MultiReceive_c::processMsg()
 
               if (pc_streamFound != NULL) {
                 // abort, already running stream is interrupted by RTS
-                notifyError(c_tmpRSI, 101);
+                notifyError(c_tmpRSI, TransferErrorAlreadyRunningStream);
                 connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int) data().isoSa() << " " << (int)cui8_da << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -304,7 +316,7 @@ MultiReceive_c::processMsg()
               if (((cui8_dataByte0 == 0x10) && (data().getUint8Data(3) != cui32_numPkg))
                 || (ui32_msgSize < 9))
               { // This handles both
-                notifyError(c_tmpRSI, 102);
+                notifyError(c_tmpRSI, TransferErrorWrongPackageAmountOrMessageSize);
                 sendConnAbort (mt_streamType, c_tmpRSI);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to (Wrong Pkg Amount || msgSize < 9) ***" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -316,7 +328,7 @@ MultiReceive_c::processMsg()
               CanCustomer_c* pc_clientFound = getClient(c_tmpRSI);
               if (pc_clientFound == NULL)
               { // There's no client registered to take this PGN->thisAddress! */
-                notifyError(c_tmpRSI, 115);
+                notifyError(c_tmpRSI, TransferErrorPgnNotRequestedToReceive);
                 sendConnAbort (mt_streamType, c_tmpRSI);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to PGN requested that the MR-Client has not registered to receive ***" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -327,7 +339,7 @@ MultiReceive_c::processMsg()
               // Send the Request To Send (RTS) to the client - Does he give us a Clear To Send (CTS) ?
               if (!pc_clientFound->reactOnStreamStart (c_tmpRSI, ui32_msgSize)) {
                 // Client rejects this stream!
-                notifyError(c_tmpRSI, 103);
+                notifyError(c_tmpRSI, TransferErrorClientRejectingStream);
                 sendConnAbort (mt_streamType, c_tmpRSI);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to Client Rejecting the stream ***" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -359,7 +371,7 @@ MultiReceive_c::processMsg()
 
               if (pc_streamFound == NULL)
               {
-                notifyError(c_tmpRSI, 104);
+                notifyError(c_tmpRSI, TransferErrorDpoForUnknownOrUnopenedStream);
                 sendConnAbort (mt_streamType, c_tmpRSI); // according to Brad: ConnAbort
                 #ifdef DEBUG
                   INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE << "DPO for an unknown/unopened stream!!" << INTERNAL_DEBUG_DEVICE_ENDL ;
@@ -369,7 +381,7 @@ MultiReceive_c::processMsg()
 
               if (!b_ePgn)
               {
-                notifyError(c_tmpRSI, 116);
+                notifyError(c_tmpRSI, TransferErrorDpoForAStandardTpStream);
                 connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound); // according to Brad: ConnAbort
                 #ifdef DEBUG
                   INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE << "DPO for a Standard-TP stream!!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -382,7 +394,7 @@ MultiReceive_c::processMsg()
                                                         (uint32_t(data().getUint8Data(3)) << 8) |
                                                         (uint32_t(data().getUint8Data(4)) << 16))))
               { // DPO not awaited now!
-                notifyError(c_tmpRSI, 105);
+                notifyError(c_tmpRSI, TransferErrorDpoNotAwaitedNow);
                 connAbortTellClientRemoveStream (true /* send connAbort-Msg */, pc_streamFound);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to DPO at wrong 'mt_awaitStep' - was NOT AwaitDpo ***" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -404,7 +416,7 @@ MultiReceive_c::processMsg()
               // Is BAM directed to 0xFF (global) ?
               if (cui8_da != 0xFF)
               { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
-                notifyError(c_tmpRSI, 112);
+                notifyError(c_tmpRSI, TransferErrorBamToNonGlobalAddress);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** BAM to NON-GLOBAL address "<< (uint16_t) cui8_da <<" ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
@@ -421,7 +433,7 @@ MultiReceive_c::processMsg()
               );
               if (pc_streamFound != NULL) {
                 // abort already running stream is interrupted by BAM
-                notifyError(c_tmpRSI, 117);
+                notifyError(c_tmpRSI, TransferErrorBamInBetweenAlreadyRunningStream);
                 connAbortTellClientRemoveStream (false /* do NOT send ConnAbort msg */, pc_streamFound);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to Already-Running-Stream! (BAM in between) ***" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -435,7 +447,7 @@ MultiReceive_c::processMsg()
               // check for TP-RTS if pkg-count matches the calculated AND if size > 0
               if ((data().getUint8Data(3) != cui32_numPkg) || (cui32_msgSize < 9))
               { // This handles both
-                notifyError(c_tmpRSI, 113);
+                notifyError(c_tmpRSI, TransferErrorBamNotTakenWrongPkgNumberOrMessageSize);
                 #ifdef DEBUG
                 INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** BAM not taken due to (Wrong Pkg Number || msgSize < 9) ***" << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
@@ -467,7 +479,7 @@ MultiReceive_c::processMsg()
               );
 
               if (pc_streamFound) {
-                notifyError (c_tmpRSI, 107);
+                notifyError (c_tmpRSI, TransferErrorUnknownSafety);
                 connAbortTellClientRemoveStream (false /* do not send connAbort-Msg */, pc_streamFound);
                 // here TRUE could be returned, but for unknown safety just let both (MS/MR) process ConnAbort!
                 // Also it "could" happen that MultiReceive & MultiSend are running parallel, so this ConnAbort would be for both!
@@ -495,7 +507,7 @@ MultiReceive_c::processMsg()
               INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN: Sending ConnAbort, not passing this on to MultiSend!!" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             mt_streamType = (StreamType_t) ((b_ePgn) ? 0x2:0); // only care for ePgn or not for ConnAbort
-            notifyError(c_tmpRSI, 108);
+            notifyError(c_tmpRSI, TransferErrorUnknownOrInvalidCommandWithTpPgn);
             sendConnAbort (mt_streamType, c_tmpRSI);
             return true;
         }//end switch (ui8_dataByte)
@@ -524,7 +536,7 @@ MultiReceive_c::processMsg()
             #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** (E)TP.DATA, but no open stream! ignoring that... ***" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
-            notifyError(c_tmpRSI, 111);
+            notifyError(c_tmpRSI, TransferErrorNoStreamRunningForMultiPacketData);
             return false;
           }
           // From this point on the SA/DA pair matches, so that we can return true
@@ -532,12 +544,12 @@ MultiReceive_c::processMsg()
             // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
             if (cui8_da == 0xFF)
             {
-              notifyError(c_tmpRSI, 114);
+              notifyError(c_tmpRSI, TransferErrorBamSequenceError);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** BAM sequence error ***" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
             } else {
-              notifyError(c_tmpRSI, 109);
+              notifyError(c_tmpRSI, TransferErrorWrongSequenceNumber);
               #ifdef DEBUG
               INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to (E)TP.DATA, but wrong sequence number, see msg before! ***" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
@@ -592,7 +604,7 @@ MultiReceive_c::processMsg()
         }
         else
         { // else no stream open and wrong packeted number comes in.
-          notifyError(c_tmpRSI, 118);
+          notifyError(c_tmpRSI, TransferErrorFastPacketFrameButNoOpenStream);
           #ifdef DEBUG
           INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** FastPacket-Frame "<<(uint16_t)ui8_counterFrame<<", but no open stream! ignoring that... ***" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -602,7 +614,7 @@ MultiReceive_c::processMsg()
 
       if (!(pc_streamFound->handleDataPacket(data().getDataUnionConst()))) {
         // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
-        notifyError(c_tmpRSI, 119);
+        notifyError(c_tmpRSI, TransferErrorFastpacketSequenceError);
         /// Do NOT tell client on Abort of something it doesn't know about.
         //connAbortTellClientRemoveStream (false /* no ConnAbort to GlobalAddress */, pc_streamFound);
         removeStream (pc_streamFound);
@@ -1025,7 +1037,7 @@ MultiReceive_c::timeEvent( void )
           INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** (E)TP-";
         INTERNAL_DEBUG_DEVICE << "Stream with SA " << (uint16_t) rc_stream.getIdent().getSa() << " timedOut, so sending out 'connAbort'. AwaitStep was " << (uint16_t) rc_stream.getNextComing() << " ***" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      notifyError (rc_stream.getIdent(), 110);
+      notifyError (rc_stream.getIdent(), TransferErrorStreamTimedOut);
       connAbortTellClient (/* send Out ConnAbort Msg*/ true, &rc_stream);
       // remove Stream
       i_list_streams = mlist_streams.erase (i_list_streams);
