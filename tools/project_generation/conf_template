@@ -107,7 +107,7 @@ APP_SRC_FILE="main.cpp"
 # (this has impact on RS232 output and GPS decode)
 # USE_FLOAT_DATA_TYPE=0
 
-# select if HEAP usage should reduce size in favour of speed
+# Select if HEAP usage should reduce size in favour of speed
 # (default: maximize speed, which costs about 10KByte more HEAPSIZE,
 #           but avoids slow memory allocation in too small units)
 # OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
@@ -122,7 +122,7 @@ APP_SRC_FILE="main.cpp"
 #   Embedded: "esx" | "imi" | "c2c" | "esxu" | "pm167" | "mitron167" | "ams5" | "ees" | "p1mc"
 USE_TARGET_SYSTEM="pc_win32"
 
-# specify integer number memory representation type: LITTLE or BIG ENDIAN
+# Specify integer number memory representation type: LITTLE or BIG ENDIAN
 # default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1
 # typical cases for BIG ENDIAN are some ARM and mostly all Motorola 68k and PowerPC CPUs
 # USE_LITTLE_ENDIAN_CPU=1
@@ -131,39 +131,40 @@ USE_TARGET_SYSTEM="pc_win32"
 # this can be avoided by setting PRJ_DO_NOT_START_RELAIS_ON_STARTUP to 1
 # PRJ_DO_NOT_START_RELAIS_ON_STARTUP=0
 
-# select enhanced CAN processing which is only available for some
+# Select enhanced CAN processing which is only available for some
 # CAN architectures, where the OS/BIOS does already provide selective
 # receive with individual <filters, mask> combinations
-# default: off
+# (Note: This setting will be moved to the HAL soon
+#  because it's actually dependent on the used platform)
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-# select wanted type of CAN driver connection:
+# Select wanted type of CAN driver connection:
 # embedded targets: "sys"
 # pc_win32 targets: "simulating" | "socket_server"
 # pc_linux targets: "simulating" | "socket_server" | "msq_server" 
 # (Note: "sys" for pc_linux to come soon. This will be the SocketCAN interface)
 USE_CAN_DRIVER="socket_server"
 
-# select wanted type of RS232 driver connection: "simulating" | "sys" | "rte"
+# Select wanted type of RS232 driver connection: "simulating" | "sys" | "rte"
 # embedded targets: "sys"
 # pc_win32 targets: "sys" | "simulating"
 # pc_linux targets: "sys" | "simulating" | "rte"
 USE_RS232_DRIVER="simulating"
 
-# define the amount of available CAN BUSes at the ECU
+# Define the amount of available CAN BUSes at the ECU
 # ( default 1 )
 CAN_BUS_CNT=1
 
-# define the amount of CAN instances to support
+# Define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
 CAN_INSTANCE_CNT=1
 
-# define the amount of ISOBUS protocol instances
+# Define the amount of ISOBUS protocol instances
 # ( needs to be less than or equal to CAN_INSTANCE_CNT.
 #   The CAN Instances [0..PRT_INSTANCE_CNT-1] are treated as ISOBUS then )
 PRT_INSTANCE_CNT=1
 
-# define the amount of RS232 instances to support
+# Define the amount of RS232 instances to support
 # ( all values lower than 1 are overwritten by default 1 )
 # This is especially important if your ECU has more than one RS232 channel
 # and you intend to use more than one RS232 channel at the same time.
@@ -171,42 +172,32 @@ RS232_INSTANCE_CNT=1
 
 
 # ###############################################################
-# Core Communication Setup
+# Core Communication Setup 
 # ###############################################################
+# Set value of feature to 1 if wanted - unset or set to 0 if not wanted
 
-# set value of feature to 1 if wanted
-# unset or set to 0 if not wanted
+### General Setup
+#################
 
-# define if ISOBUS protocol support is enabled.
+# Specify if Part 3 - Data Link Layer: Basic ISOBUS Protocol is enabled.
 PRJ_ISO11783=1
 
-# define if Part 6 - VT-Client support is enabled.
-#PRJ_ISO_TERMINAL=1
-# The following define can be set to the MaskDefinition folder, if a file "IsoTerminalObjectSelection.inc" 
-# has been created from vt2iso here.  That file comprises #defines with objects that are NOT part of 
-# the object pool and thus need not to be included in the client application.
-#PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition/simpleVTIsoPool-objectselection.inc"
-#PRJ_ISO_TERMINAL_OBJECT_SELECTION2="MaskDefinition"
-#PRJ_ISO_TERMINAL_OBJECT_SELECTION3="MaskDefinition"
-#PRJ_ISO_TERMINAL_OBJECT_SELECTION4="MaskDefinition"
+# Specify if Part 6 - VT-Client support is enabled.
+# PRJ_ISO_TERMINAL=1
 
-# define if Part 13 - FS-Client support is enabled.
+# Specify if Part 10 - TC-Client support is enabled.
+# Note: There will be an exclusive setting for TC-Client in some future
+#       release of IsoAgLib analog to VT- and FS-Client.
+#       Currently please enable Process-Data (PRJ_PROCESS) below.
+
+# Specify if Part 12 - Diagnostic Services is enabled.
+# Note: This is currently always added to IsoAgLib as it was
+#       specified to be mandatory in the first place.
+
+# Specify if Part 13 - FS-Client support is enabled.
 # PRJ_ISO_FILESERVER_CLIENT=1
 
-# if you need Transport Protocol (TP/ETP) or FastPacket, active PRJ_MULTIPACKET=1
-# note: this is done automatically if other features
-# require it (e.g. PRJ_ISO_TERMINAL=1 or PRJ_ISO_FILESERVER_CLIENT=1 will implicitly set PRJ_MULTIPACKET=1)
-# PRJ_MULTIPACKET=1
-
-# select stream receive strategy:
-# chunk (default): use list of chunks where each receive burst is stored in one chunk -> usefull when on-the-fly parsing is used
-#                  and thereby less HEAP has to be used for storage
-#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
-# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
-#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
-# PRJ_MULTIPACKET_STREAM_CHUNK=1
-
-# all BASE data are selected
+# Specify if Part 7 - all BASE data are selected
 # if only special BASE data should be used select one or more of the following parts
 # PRJ_BASE=0
 
@@ -221,10 +212,8 @@ PRJ_ISO11783=1
 # additionally integrate sending of tractor move commands
 # PRJ_TRACTOR_MOVE_SETPOINT=0
 
-
 # only incorporate parts from BASE that provide tractor PTO information
-# this part includes tractor pto set point data which is not available in the
-# free ISOAgLib edition. If you are interested in this feature please contact OSB AG
+# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # the following project setting includes only measurement of tractor data.
 # i.e. NO SETTING OF COMMANDS
 # PRJ_TRACTOR_PTO=0
@@ -233,12 +222,10 @@ PRJ_ISO11783=1
 # PRJ_TRACTOR_PTO_SETPOINT=0
 
 # only incorporate parts from BASE that provide tractor lighting information
-# this part is only defined for ISO 11783
 # this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_LIGHT=0
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
-# this part is only defined for ISO 11783
 # this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_AUX=0
 
@@ -246,25 +233,47 @@ PRJ_ISO11783=1
 # PRJ_TIME_GPS=0
 
 # only incorporate parts from BASE that provide tractor guidance information
-# this part is only defined for ISO 11783
 # this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_GUIDANCE=0
 
 # only incorporate parts from BASE that provide tractor certification information
-# this part is only defined for ISO 11783
 # this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_CERTIFICATION=0
 
-# decide if the functionality of the graphical context is necessary for the client
-# USE_ISO_TERMINAL_GRAPHICCONTEXT=1
+### Special Setup / Customization / Optimization
+##############################################
 
-# if Iso_Terminal should offer the attributes via getter functions, this feature can be enabled.
-# thus it is recommended to store attributes at client side (smaller binary + less traffic)
-# USE_ISO_TERMINAL_GETATTRIBUTES=1
+# Specify if Part 3 - Data Link Layer: Transport Protocol is enabled.
+# (Note: This is done automatically if other features like VT-/TC-/FS-Client
+#  require it - Normally you shouldn't need to set this manually!)
+# PRJ_MULTIPACKET=1
+
+# Specify Part 3 - Data Link Layer: Transport Protocol stream receive strategy:
+# chunk (default): use list of chunks where each receive burst is stored in one chunk -> useful when on-the-fly parsing is used
+#                  and thereby less HEAP has to be used for storage
+#                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
+# linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
+#                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
+# PRJ_MULTIPACKET_STREAM_CHUNK=0
+
+# Specify if Part 6 - VT-Client should be size optimized
+#                     (leaves out unneeded object-type implementations)
+# The following defines can be set to "<PATH>/<OBJECTPOOLPROJECT_NAME>-objectselection.inc"
+# files created by vt2iso to specify which objects are NOT part of the object pool(s)
+# and thus need not be included in IsoAgLib's VT-Client module.
+# PRJ_ISO_TERMINAL_OBJECT_SELECTION1="MaskDefinition/simpleVTIsoPool-objectselection.inc"
+# PRJ_ISO_TERMINAL_OBJECT_SELECTION2="<ANOTHER_POOL>-objectselection.inc"
+# PRJ_ISO_TERMINAL_OBJECT_SELECTION3="<ANOTHER_POOL>-objectselection.inc"
+# PRJ_ISO_TERMINAL_OBJECT_SELECTION4="<ANOTHER_POOL>-objectselection.inc"
+
 
 # ###############################################################
 # Process Data Communication Setup
 # ###############################################################
+# Note: This part is subject to be REMOVED from the API.
+#       Process-Data communication will be moved to the
+#       TC-Client internals. It can't be used by the Application
+#       Programmer directly in the next release of IsoAgLib.
 
 # activate globally the use of process data
 # PRJ_PROCESS=0
@@ -336,12 +345,12 @@ PRJ_ISO11783=1
 # value is needed
 # PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
 
+
 # ###############################################################
 # Special CAN features
 # ###############################################################
 
-# Decide to activate an interface for handling of proprietary PGN messages
-# as defined by ISO 11783
+# Specify if handling of Proprietary PGN messages is enabled.
 # PRJ_PROPRIETARY_PGN_INTERFACE=0
 
 
@@ -400,6 +409,7 @@ PRJ_EEPROM=1
 # projects
 # PRJ_ACTOR=0
 
+
 # ###############################################################
 # Build System Configuration for LINUX
 # ###############################################################
@@ -413,13 +423,11 @@ PRJ_EEPROM=1
 
 
 # ###############################################################
-# Build System Configuration for Cross Compilers ( like Tasking EDE )
+# Build System Configuration for Cross Compilers (like Tasking EDE)
 # ###############################################################
 
 # #############################################
-# Configuration options typical for embedded project
-# ( these are used for target systems like "esx",
-#   "imi", "pm167" )
+# Configuration options typical for embedded projects
 # where the system libraries aren't placed in standard
 # directories ( UNIX/LINUX has standard directories
 # /usr/include, /usr/local/include, /usr/lib
@@ -464,8 +472,9 @@ PRJ_EEPROM=1
 # specify the needed linker / locater control file
 # USE_EMBED_ILO="Xos20lcs.ilo"
 
+
 # ###############################################################
-# Build System Configuration for Win32 ( like Visual C++ and Dev-C++ )
+# Build System Configuration for Win32 (Visual C++)
 # ###############################################################
 
 # specify path to headers of STLport - default corresponds to \ref Vc6StlPort
@@ -475,7 +484,6 @@ PRJ_EEPROM=1
 # version of IOSTREAMS ( and not the native version as advised by the doc at \ref Vc6StlPort )
 # let empty if native IOSTREAMS library is used
 # USE_STLPORT_LIBRARY_DIRECTORY=""
-
 
 # include directory for external libraries in windows (MSVC and Dev-Cpp)
 # USE_WIN32_EXTERNAL_INCLUDE_PATH=""
@@ -488,6 +496,7 @@ PRJ_EEPROM=1
 
 # additional libs when using Dev-Cpp (notation of library files differs between MSVC and Dev-Cpp)
 # USE_DEVCPP_EXTERNAL_LIBRARIES=""
+
 
 # ###############################################################
 # Build System Configuration for gcc based cross compilers and the like
