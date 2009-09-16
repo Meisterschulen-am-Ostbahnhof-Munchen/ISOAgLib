@@ -39,6 +39,7 @@ RSC=rc.exe
 # PROP Use_Debug_Libraries 0
 # PROP Output_Dir "Release"
 # PROP Intermediate_Dir "Release"
+
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /I "..\..\..\..\library" /I "..\..\..\..\library\xgpl_src" /I "..\..\..\..\tutorial\src\ecu_display" /I "..\..\..\..\tutorial\src\common" /I "..\..\..\..\tutorial\src\common" /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS"  /D "SYSTEM_PC_VC"  /D "PRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h" /D "CAN_DRIVER_SOCKET" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /D "SYSTEM_WITH_ENHANCED_CAN_HAL" /YX /FD /TP /c
@@ -381,6 +382,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part7_ApplicationLayer\impl\tr
 # End Source File
 
 # Begin Source File
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\diagnosticpgnhandler_c.cpp
+# End Source File
+
+# Begin Source File
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\driver\eeprom\impl\eepromio_c.cpp
 # End Source File
 
@@ -447,6 +452,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\util\iliberr_c.h
 
 # Begin Source File
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\singleton_container_decl.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\util\impl\bitfieldwrapper_c.h
 # End Source File
 
 # Begin Source File
@@ -1059,6 +1068,10 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part7_ApplicationLayer\ibasety
 
 # Begin Source File
 SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part7_ApplicationLayer\itimeposgps_c.h
+# End Source File
+
+# Begin Source File
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\diagnosticpgnhandler_c.h
 # End Source File
 
 # Begin Source File
