@@ -84,7 +84,8 @@
 //       and may be removed as soon as IsoAgLib's own DPH is able to handle the
 //       complete feature-set. If you're don't know what this is for, don't use it!
 #ifdef PROPRIETARY_DEVPROPERTYHANDLER_H
-#include <PROPRIETARY_DEVPROPERTYHANDLER_H>
+  #define _devproperty_handler_header <PROPRIETARY_DEVPROPERTYHANDLER_H>
+  #include _devproperty_handler_header
 #else
 
 #ifndef DEVPROPERTYHANDLER_C_H
