@@ -349,6 +349,11 @@ bool IsoItem_c::timeEvent( void )
   if (itemState(IState_c::PreAddressClaim))
   { // this item is in prepare address claim state -> wait for sending first adress claim
     int32_t i32_lastAdrRequestTime = c_isoMonitor.lastIsoSaRequest();
+
+    // for local instance (mpc_identItem is set): use timestamp from ident item and not the global one from ISO monitor
+    if (mpc_identItem)
+      i32_lastAdrRequestTime = mpc_identItem->getLastIsoSaRequestForThisItem();
+
     if (i32_lastAdrRequestTime != -1)
     {
       int32_t i32_wait = 1250 + calc_randomWait();
@@ -371,6 +376,9 @@ bool IsoItem_c::timeEvent( void )
     else
     { // no adress claim request sent till now
       getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true );
+
+      if (mpc_identItem)
+        mpc_identItem->updateLastIsoSaRequestForThisItem();
     }
   }
   else if (itemState(IState_c::AddressClaim))

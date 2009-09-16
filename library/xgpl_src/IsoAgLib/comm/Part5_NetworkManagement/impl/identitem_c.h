@@ -352,6 +352,8 @@ public: // methods
                                                            acrc_certificationBitMask, aui16_referenceNumber );
   }
 
+  void updateLastIsoSaRequestForThisItem() { i32_lastIsoSaRequestForThisItem = HAL::getTime(); }
+  int32_t getLastIsoSaRequestForThisItem() const { return i32_lastIsoSaRequestForThisItem; }
 
 protected: // methods
 
@@ -445,6 +447,8 @@ private: // attributes
    */
   STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNames;
   #endif
+
+  int32_t i32_lastIsoSaRequestForThisItem;
 };
 
 }

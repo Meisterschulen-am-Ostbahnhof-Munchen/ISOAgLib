@@ -118,6 +118,7 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
+  , i32_lastIsoSaRequestForThisItem(-1)
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
   init (NULL, 0xFF, aui16_eepromAdr,
@@ -328,6 +329,8 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
                                                                   IState_c::Local)), ai_singletonVecKey);
     getIsoMonitorInstance4Comm().registerClient (this);
     getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
+
+    updateLastIsoSaRequestForThisItem();
   }
 }
 
