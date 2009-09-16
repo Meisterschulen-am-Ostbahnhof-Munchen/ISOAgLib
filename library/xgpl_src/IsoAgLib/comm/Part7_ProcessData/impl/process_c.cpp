@@ -324,6 +324,10 @@ bool Process_c::timeEvent( void ){
     { // skip small values
       ui16_nextTimePeriod = 20;
     }
+    if (ui16_nextTimePeriod > 200)
+    { // limit large values (for Alive sending)
+      ui16_nextTimePeriod = 200;
+    }
     Scheduler_Task_c::setTimePeriod(ui16_nextTimePeriod); // + Scheduler_Task_c::getEarlierInterval());
   }
   // call the time event for all remote data
