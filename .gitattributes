@@ -18,6 +18,8 @@ bin/win32/can_server_vector.exe -text
 bin/win32/can_server_vector_xl.exe -text
 bin/win32/logalizer.exe -text
 bin/win32/proc2iso.cmd -text
+bin/win32/proc2iso.exe -text
+bin/win32/proc2iso.xsd -text
 bin/win32/pthreadVC2.dll -text
 bin/win32/vt2iso.exe -text
 bin/win32/xerces-c_2_5_0.dll -text
@@ -2208,7 +2210,6 @@ tools/proc2iso/INSTALL.Win32.txt -text
 tools/proc2iso/Makefile -text
 tools/proc2iso/Makefile.incl -text
 tools/proc2iso/Makefile.win -text
-tools/proc2iso/Proc2Iso.dev -text
 tools/proc2iso/bin/Proc2Iso.exe -text
 tools/proc2iso/bin/proc2iso.cmd -text
 tools/proc2iso/bin/proc2iso.xsd -text
