@@ -2589,37 +2589,34 @@ create_buildfiles()
 usage ()
 {
     cat <<EOF
-Usage: $0 [OPTION] project_config_file
-Create filelist, Makefile and configuration settings for an IsoAgLib project.
+Usage: update_makefile.sh [OPTIONS] project_config_file
+Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLib project.
 
 -h, --help                        print this message and exit.
 --report                          Print generation report.
 --report=REPORT_FILE              print generation report to REPORT_FILE.
 --doxygen-export-directory=DIR    write the filelist and configuration files with doxygen documentation
-blocks to the given directory instead of the default directory of all generated files.
+                                  blocks to the given directory instead of the default directory of all generated files.
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
-target which is specified in the configuration file
-("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167"|"p1mc"|"src9").
+                                  target which is specified in the configuration file
+                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167"|"p1mc"|"src9")
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
-("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator").
---pc-can-device-for-server=CAN_DEVICE_FOR_SERVER
-use this device for building the can_server
-("no_card"|"pcan"|"A1"|"rte").
+                                  --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
-("simulating"|"sys"|"rte"|"hal_simulator").
+                                  --> ("simulating"|"sys"|"rte"|"hal_simulator").
 --little-endian-cpu               select configuration for LITTLE ENDIAN CPU type
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
-Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
+                                  Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
 
-$0 parses the selected project configuration file and overwrites the default values for all contained settings.
+"update_makefile.sh" parses the selected project configuration file and overwrites the default values for all contained settings.
 It then collects the corresponding files which can then be imported to an individual IDE.
-Additionally a project specific configuration header is created in the directory xgpl_src/Application_Config with the
-name scheme ".config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to ".config_<project_name>.h",
-the central configuration header xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
-Please set additionally the SYSTEM_FOO for the wanted platform - $0 will output the correct define at the end of the
-run.
+Additionally a project specific configuration header is created in the application source directory with the
+name scheme "config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to "config_<project_name>.h",
+the central configuration header library/xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
+Additionally set the SYSTEM_FOO for the wanted platform (this is already done in generated projectfiles).
+"update_makefile.sh" will output the correct define at the end of the run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
 
 Report bugs to <m.wodok@osb-ag.de>.
