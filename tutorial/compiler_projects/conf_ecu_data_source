@@ -1,0 +1,29 @@
+# Configuration setting for tutorial ECU Data Source
+
+PROJECT=ecuDataSource
+
+PROJECT_AUTHOR="Martin Wodok"
+PROJECT_AUTHOR_EMAIL="m.wodok@osb-ag.de"
+
+REL_APP_PATH="tutorial/src/ecu_data_source tutorial/src/common"
+APP_SRC_FILE="main.cpp ecu_data_source.cpp component_tcclient.cpp component_simulatedsource.cpp"
+
+PRJ_INCLUDE_PATH="tutorial/src/common"
+
+ISO_AG_LIB_PATH="../.."
+
+USE_TARGET_SYSTEM="pc_win32"
+PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
+USE_CAN_DRIVER="socket_server"
+USE_RS232_DRIVER="simulating"
+
+CAN_BUS_CNT=1
+CAN_INSTANCE_CNT=1
+PRT_INSTANCE_CNT=1
+RS232_INSTANCE_CNT=1
+
+PRJ_ISO11783=1
+PRJ_PROCESS=1
+PROC_LOCAL=1
+PROC_LOCAL_STD=1
+PRJ_EEPROM=1

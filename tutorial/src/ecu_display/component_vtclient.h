@@ -10,10 +10,6 @@
 
 namespace IsoAgLibTutorialDisplay {
 
-  class TutorialPool_c: public iObjectPool_tutorialDisplay_c {
-    public:
-  };
-
   /** General Display handler */
   class iDisplay_c {
     public:

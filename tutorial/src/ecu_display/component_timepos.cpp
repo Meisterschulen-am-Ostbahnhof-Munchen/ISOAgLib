@@ -3,7 +3,11 @@
 #include "component_timepos.h"
 
 /* reception of time pos data */
-IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c::TutorialDisplayTimePos_c() {}
+IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c::TutorialDisplayTimePos_c()
+{
+  setTimePeriod (250);
+}
+
 
 IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c::~TutorialDisplayTimePos_c() {}
 
@@ -24,10 +28,12 @@ void IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c::registerDisplay( iDispla
 }
 
 void IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c::unRegisterDisplay( iDisplay_c* ap_display ) {
-  for ( std::vector<iDisplay_c*>::iterator it = mvec_display.begin(); it != mvec_display.end(); ++it ) {
+  for ( std::vector<iDisplay_c*>::iterator it = mvec_display.begin(); it != mvec_display.end(); ) {
     if (( *it ) == ap_display ) {
-      mvec_display.erase( it );
-      return;
+      it = mvec_display.erase( it );
+    }
+    else {
+      ++it;
     }
   }
 }
@@ -76,5 +82,3 @@ void IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c::sendVtTimeValues( const 
     }
   }
 }
-
-/* eof tutorialDisplayTimePos_c.cpp */

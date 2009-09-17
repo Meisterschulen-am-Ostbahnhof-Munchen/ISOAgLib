@@ -1,11 +1,14 @@
 #include "tutorial_settings.h"
 
+// components
 #include "component_vtclient.h"
 #include "component_tecu.h"
 #include "component_timepos.h"
 
+// IsoAgLib
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+
 
 IsoAgLib::iIdentItem_c* p_ident;
 IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display;
