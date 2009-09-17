@@ -2214,7 +2214,6 @@ tools/proc2iso/bin/Proc2Iso.exe -text
 tools/proc2iso/bin/proc2iso.cmd -text
 tools/proc2iso/bin/proc2iso.xsd -text
 tools/proc2iso/bin/xerces-c_2_5_0.dll -text
-tools/proc2iso/bin_vc/proc2iso.exe -text
 tools/proc2iso/config.guess -text
 tools/proc2iso/config.h.in -text
 tools/proc2iso/config.sub -text
