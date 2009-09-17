@@ -3,6 +3,7 @@ Xerces-C++ XML Parser
 
 This library is used in IsoAgLib at least for
   tools/vt2iso
+  tools/proc2iso
 .
 
 Files from Xerces-C++ v2.5.0.0 should be copied in here and named:
