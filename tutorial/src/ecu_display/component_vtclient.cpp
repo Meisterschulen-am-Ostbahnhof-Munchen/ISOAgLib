@@ -55,30 +55,8 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::getDisplayHandler()
  */
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::eventKeyCode( uint8_t , uint16_t , uint16_t , uint8_t , bool )
-{
-  // This feature is not used in this simple ECU.
-}
-
-
-void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::eventStringValue( uint16_t , uint8_t , StreamInput_c& , uint8_t, bool , bool )
-{
-  // This feature is not used in this simple ECU.
-}
-
-
-void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::eventNumericValue( uint16_t, uint8_t, uint32_t )
-{
-  // This feature is not used in this simple ECU.
-}
-
-
-void
 IsoAgLibTutorialDisplay::TutorialDisplay_c::eventObjectPoolUploadedSuccessfully( bool /* ab_wasLanguageUpdate */, int8_t /* ai8_languageIndex */, uint16_t /* aui16_languageCode */ )
 {
-  clearValues();
   setMetaInfo();
   iVtObjectwsTutorialDisplay.changeActiveMask( &iVtObjectdmAbout, false, false ); /* make sure about the mask */
   maskChanged( iVtObjectIDdmAbout ); // initialize the stored current mask
@@ -86,17 +64,12 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::eventObjectPoolUploadedSuccessfully(
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::eventEnterSafeState()
-{
-  // This feature is not used in the simple ECU
-}
-
-
-void
 IsoAgLibTutorialDisplay::TutorialDisplay_c::eventVtStatusMsg()
 {
+  //! This function is needed to keep track of the active mask
+  //! as it is changed via Macros in this somponent's objectpool.
   if ( 0 != mp_srcHandle ) {
-    uint16_t amId = mp_srcHandle->getVtServerInst().getVtState()->dataAlarmMask;
+    const uint16_t amId = mp_srcHandle->getVtServerInst().getVtState()->dataAlarmMask;
     if ( amId != mui_activeMaskId )
     { // a (macro-triggered) mask change has been detected
       maskChanged( amId );
@@ -118,18 +91,6 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::maskChanged( uint16_t aui_activeMask
 {
   // keep track of the current mask to avoid unnecessary updates to objects in hidden masks.
   mui_activeMaskId = aui_activeMaskId;
-}
-
-
-void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::clearValues()
-{
-  /// @todo SOON-81: Doesn't make too much sense because the active mask doesn't match!
-  handleNewPosValues( 0, 0 );
-  handleNewTimeValues( 0, 0, 0 );
-  handleNewGeneralValues( false, 0 );
-  handleNewMoveValues( 0, 0, 0, 0 );
-  handleNewPto( 0, false, 0, false );
 }
 
 

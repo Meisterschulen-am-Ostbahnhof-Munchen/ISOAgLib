@@ -41,19 +41,20 @@ namespace IsoAgLibTutorialDisplay {
 
       void init( IsoAgLib::iIdentItem_c& ar_ident );
 
-      void clearValues();
+      //! Initializes run-time MetaInformation for this ECU
       void setMetaInfo();
+      //! Notify this component on the current active mask
       void maskChanged( uint16_t aui_activeMaskId );
 
       iDisplay_c* getDisplayHandler();
 
       /* iObjectPool_tutorialDisplay_c */
-      void eventKeyCode( uint8_t , uint16_t , uint16_t , uint8_t , bool );
-      void eventStringValue( uint16_t , uint8_t , StreamInput_c& , uint8_t, bool , bool );
-      void eventNumericValue( uint16_t, uint8_t, uint32_t );
+      void eventKeyCode( uint8_t , uint16_t , uint16_t , uint8_t , bool ) { /* not used in this simple tutorial */ }
+      void eventStringValue( uint16_t , uint8_t , StreamInput_c& , uint8_t, bool , bool ) { /* not used in this simple tutorial */ }
+      void eventNumericValue( uint16_t, uint8_t, uint32_t ) { /* not used in this simple tutorial */ }
       void eventVtStatusMsg();
       void eventObjectPoolUploadedSuccessfully( bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode );
-      void eventEnterSafeState();
+      void eventEnterSafeState() { /* not used in this simple tutorial */ }
 
       /* iDisplayImplementation_c */
       virtual void handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon );
