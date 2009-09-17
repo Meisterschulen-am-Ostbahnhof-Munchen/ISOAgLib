@@ -125,6 +125,8 @@ join()
 
 join_comma() { join ',' "$@"; }
 join_semicolon() { join ';' "$@"; }
+join_space() { join ' ' "$@"; }
+prefix_library_path() { printf -- '-L%s' "$@"; }
 
 # map CONTINUATION FUNCTION ARG ...
 # apply FUNCTION to each ARG and continue with CONTINUATION
@@ -1506,7 +1508,7 @@ create_standard_makefile()
         printf "APP_INC = %s\n" "$REPORT_APP_INC" >&3
         KDEVELOP_INCLUDE_PATH="$ISO_AG_LIB_INSIDE/library;$ISO_AG_LIB_INSIDE/library/xgpl_src;${ALL_INC_PATHS:+$(printf '%s;' $ALL_INC_PATHS)}"
         
-        local RULE_LIBPATH="${USE_LINUX_EXTERNAL_LIBRARY_PATH:+-L $(printf '%s -L' $USE_LINUX_EXTERNAL_LIBRARY_PATH)}"
+        local RULE_LIBPATH="$(map join_space prefix_library_path ${USE_LINUX_EXTERNAL_LIBRARY_PATH:-})"
         define_insert_and_report LIBPATH "$RULE_LIBPATH"
         printf 'LIBPATH = %s\n' "$REPORT_LIBPATH" >&3
         local REPORT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
