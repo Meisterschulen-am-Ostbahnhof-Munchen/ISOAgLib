@@ -94,7 +94,7 @@ unsigned int objCount;
 
 std::vector<std::string> vecstr_attrString (maxAttributeNames);
 std::vector<std::string> vecstr_objtableIDTable;
-std::vector<std::string> vecstr_constructor (7);
+std::vector<std::string> vecstr_constructor (4);
 std::vector<std::string> vecstr_dataForCombination;
 std::vector<std::string> vecstr_dataFromDPD (4);
 std::stringstream buffer;
@@ -425,11 +425,6 @@ void defaultAttributes ()
   {
     vecstr_attrString [attrElement_number] = "0xFF";
     attrIsGiven [attrElement_number] = true;
-  }
-  if (!attrIsGiven [attrPriority])
-  {
-    vecstr_attrString [attrPriority] = "2";
-    attrIsGiven [attrPriority] = true;
   }
   if (!attrIsGiven [attrFeature_set])
   {
@@ -934,10 +929,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         {
           clean_exit (-1, "structure_label= AND localization_label= ATTRIBUTES FOR THE <device> OBJECT NEED A LENGTH OF 7 BYTES! STOPPING PARSER! bye.\n\n");
         }
-        if (!(attrIsGiven[attrDevProgVarName]))
-        {
-          clean_exit (-1, "YOU NEED TO SPECIFY device_program_name= ATTRIBUTE FOR THE <device> OBJECT! STOPPING PARSER! bye.\n\n");
-        }
 
         if (!(attrIsGiven[attrWorkingset_mastername] ||
             (attrIsGiven[attrManufacturer_code] && attrIsGiven[attrWS_identity_number] && attrIsGiven[attrDevice_class] && attrIsGiven[attrDevice_class_instance])))
@@ -1120,9 +1111,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
                     c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
                     c_isoname.manufCode(), vecstr_attrString [attrWS_identity_number].c_str(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                     c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
-
-          vecstr_constructor[0] = vecstr_attrString[attrDevProgVarName].c_str();
-          vecstr_constructor[1] = vecstr_attrString[attrPriority].c_str();
         }
         break;
 
@@ -1200,7 +1188,6 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
         fprintf(partFileA, "%s", buffer.str().c_str());
         buffer.str("");
-        vecstr_constructor[2] = vecstr_attrString[attrElement_number].c_str();
 
         // write child buffer in file
         fprintf(partFileA, "%s", childBuffer.str().c_str());
@@ -1266,10 +1253,10 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         vecstr_dataFromDPD[2] = vecstr_attrString[attrDevice_value_presentation_name].c_str();
         vecstr_dataFromDPD[3] = vecstr_attrString[attrDesignator];
 
-        vecstr_constructor[3] = vecstr_attrString[attrFeature_set].c_str();
-        vecstr_constructor[4] = vecstr_attrString[attrCumulative_value].c_str();
-        vecstr_constructor[5] = vecstr_attrString[attrProcProgVarName].c_str();
-        vecstr_constructor[6] = vecstr_attrString[attrDdi].c_str();
+        vecstr_constructor[0] = vecstr_attrString[attrFeature_set].c_str();
+        vecstr_constructor[1] = vecstr_attrString[attrCumulative_value].c_str();
+        vecstr_constructor[2] = vecstr_attrString[attrProcProgVarName].c_str();
+        vecstr_constructor[3] = vecstr_attrString[attrDdi].c_str();
 
         uint8_t cntChildWithProcDataCombination = cntNodeChild(node, otDeviceProcessDataCombination);
 
@@ -1379,16 +1366,16 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
             vecstr_dataForCombination.pop_back();
         }
 
-        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[3].c_str(), vecstr_constructor[5].c_str());
+        fprintf(partFileB, "IsoAgLib::iProcDataLocal%s_c c_%s(", vecstr_constructor[0].c_str(), vecstr_constructor[2].c_str());
         if (b_dpdCombination)
-          fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[5].c_str(), vecstr_dataForCombination[1].c_str());
+          fprintf(partFileB, "s_%sElementDDI,\nscui16_%sElementNumber, ", vecstr_constructor[2].c_str(), vecstr_dataForCombination[1].c_str());
         else
-          fprintf(partFileB, "0x%x, %i, ", stringtonumber(vecstr_constructor[6].c_str(), 0, -1), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
+          fprintf(partFileB, "0x%x, %i, ", stringtonumber(vecstr_constructor[3].c_str(), 0, -1), stringtonumber(vecstr_dataForCombination[0].c_str(), 0, -1));
 
         b_dpdCombination = FALSE;
 
         fprintf(partFileB, "c_myIdent.isoName(), &c_myIdent.isoName(), %s",
-                vecstr_constructor[4].c_str());
+                vecstr_constructor[1].c_str());
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf(partFileB, "\n#endif\n");
