@@ -4,7 +4,7 @@
 #############################################################################
 
 ####### Project specific variables
-TARGET = ../../bin/logalizer
+TARGET = ../../bin/x86linux/logalizer
 APP_INC = -Isrc 
 COMPILER_BINARY_PRE = 
 
