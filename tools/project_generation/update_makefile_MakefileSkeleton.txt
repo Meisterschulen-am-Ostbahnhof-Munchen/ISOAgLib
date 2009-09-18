@@ -133,7 +133,6 @@ ${TAB}mkdir -p \$\$DEST_PATH; \\
 ${TAB}install -m 0755 \$\$INSTITEM \$\$DEST_PATH; \\
 	done && \\
 	install -m 0755 _PROJECT_CONFIG_REPLACE_ \$(INSTALL_PATH)/include; \\
-	install -m 0755 _PROJECT_VERSION_REPLACE_ \$(INSTALL_PATH)/include; \\
 	install -m 0755 \$(OBJ_DIR_LIBRARY)/libisoaglib.a \$(INSTALL_PATH)/lib/; \\
 	install -m 0755 \$(OBJ_DIR_LIBRARY)/libisoaglib.so \$(INSTALL_PATH)/lib/; \\
 	\$(STRIP) \$(INSTALL_PATH)/lib/libisoaglib.a; \\
@@ -152,9 +151,7 @@ ${TAB}#echo "VAR_TEST \$\$VAR_TEST" ; \\
 ${TAB}rm -f \$\$VAR_TEST; \\
 	done && \\
 	CONFIG=\`basename _PROJECT_CONFIG_REPLACE_\`; \\
-	VERSION=\`basename _PROJECT_VERSION_REPLACE_\`; \\
 	rm \$(INSTALL_PATH)/include/\$\$CONFIG; \\
-	rm \$(INSTALL_PATH)/include/\$\$VERSION; \\
 	rm \$(INSTALL_PATH)/lib/libisoaglib.a; \\
 	rm \$(INSTALL_PATH)/lib/libisoaglib.so; \\
 	echo Finished uninstalling includes/libraries from directory \\"\$(INSTALL_PATH)\\"

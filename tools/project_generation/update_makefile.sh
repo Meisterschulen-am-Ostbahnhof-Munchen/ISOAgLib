@@ -1108,16 +1108,6 @@ END_OF_PATH
     local APP_VERSION_DIR="${FIRST_REL_APP_PATH:+$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH}"
     local VERSION_DIR=${APP_VERSION_DIR:-$GENERATE_FILES_ROOT_DIR/$PROJECT}
     CONFIG_NAME="$VERSION_DIR/config_${PROJECT}.h"
-    VERSION_FILE_NAME="$VERSION_DIR/version.h"
-
-    [ -f "$VERSION_FILE_NAME" ] || cat <<END_OF_VERSION_H >"$VERSION_FILE_NAME"
-#ifndef POOL_VERSION
-${TAB}#define POOL_VERSION 1.0
-#endif
-#ifndef FIRMWARE_VERSION
-${TAB}#define FIRMWARE_VERSION 1.0
-#endif
-END_OF_VERSION_H
 
     CONFIG_HEADER_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR:+$DOXYGEN_EXPORT_DIR/}config_header__${PROJECT}-doc.txt"
 
@@ -1139,9 +1129,6 @@ END_OF_VERSION_H
         echo_ "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >&3
         echo_ "//                      All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >&3
         echo_ "//                      if the corresponding value in isoaglib_config.h changed" >&3
-    
-        echo_e "\n\n// include an external file for definition of pool and firmware versions" >&3
-        echo_    "#include \"version.h\""  >&3
     
         echo_e "$ENDLINE" >&3
         echo_    "#define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h" >&3
@@ -1601,7 +1588,7 @@ EOF
 
         ##### Library install header file gathering BEGIN
         
-        generate_interface_filelist 
+        generate_interface_filelist
         printf 'INSTALL_FILES_LIBRARY =' >&3
         list_source_files ' %s' ' \\\n\t\t%s' '.' "$TMP_INTERFACE_FILELIST" >&3
         printf '\n\n' >&3
@@ -1615,9 +1602,9 @@ EOF
 
     rm -f $TMP_MAKEFILE
 
-    # replace the install rules for version.h and the app config file
+    # replace the install rules for the app config file
     sed -e "s#_PROJECT_CONFIG_REPLACE_#$CONFIG_NAME#g"  $MakefileNameLong > $TMP_MAKEFILE
-    sed -e "s#_PROJECT_VERSION_REPLACE_#$VERSION_FILE_NAME#g" $TMP_MAKEFILE > $MakefileNameLong
+    cp "$TMP_MAKEFILE" "$MakefileNameLong"
 
     # replace any path items like "Bla/foo/../Blu" --> "Bla/Blu"
     while [ $(grep -c -e '/[0-9a-zA-Z_+\-]\+/\.\./' $MakefileNameLong) -gt 0 ] ; do
@@ -2266,7 +2253,6 @@ END_OF_FILELIST
 
     for FIRST_REL_APP_PATH in ${REL_APP_PATH:-}; do
         mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/config_$PROJECT.h $CCS_LIB_INSTALL_HEADER_DIR
-        mv $CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH/version.h $CCS_LIB_INSTALL_HEADER_DIR
         break;
     done
 
@@ -2527,7 +2513,6 @@ create_library_makefile()
     local INSERT_EXTERNAL_LIBS="$USE_LINUX_EXTERNAL_LIBRARIES"
     define_insert_and_report LIBS '$($F BIOS_LIB) $($F SUBLIBS) $($F EXTERNAL_LIBS)'
     local INSERT_PROJECT_CONFIG="$CONFIG_NAME"
-    local INSERT_PROJECT_VERSION="$VERSION_FILE_NAME"
 
     expand_template "$MAKEFILE_SKELETON_FILE" |
     sed -e 's|/[0-9a-zA-Z_+\-]\+/\.\./|/|g' >"$MAKEFILE_LONG_NAME"
