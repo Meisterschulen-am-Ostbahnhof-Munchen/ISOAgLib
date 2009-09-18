@@ -253,7 +253,6 @@
       <xs:attribute use="optional" name="serialnumber"               type="attrName" />
       <xs:attribute use="required" name="structure_label"            type="attrStructureLabel" />
       <xs:attribute use="required" name="localization_label"         type="attrLocalizationLabel" />
-      <xs:attribute use="required" name="device_program_name"        type="attrVarName" />
       <xs:attribute use="optional" name="wanted_sa"                  type="attrIntTo255" />
       <xs:attribute use="optional" name="store_sa_at_eeprom_address" type="attrIntTo65535" />
       <xs:attributeGroup ref="attrWSMasterName_split" />
