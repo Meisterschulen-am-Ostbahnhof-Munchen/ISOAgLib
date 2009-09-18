@@ -162,7 +162,7 @@ bool parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iB; // "%i* %x
   long long iA;
-  int parsed_count = sscanf (line.c_str(), "%Li %*i %*i %*i %*i %*i %x %x %x %x %x %x %x %x %x", &iA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+  int parsed_count = sscanf (line.c_str(), "%lli %*i %*i %*i %*i %*i %x %x %x %x %x %x %x %x %x", &iA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
 
   can_time = iA;
   can_id = iB;
@@ -777,13 +777,13 @@ void interpretePgnData (uint32_t rui32_pgn)
     case FS_TO_CLIENT_PGN:               interpretePgnsFs2Cl(); break;
     case GUIDANCE_MACHINE_STATUS:        break;
     case GUIDANCE_SYSTEM_CMD:            break;
-    case ISOBUS_CERTIFICATION:           break;
+    case ISOBUS_CERTIFICATION_PGN:       break;
     case ETP_DATA_TRANSFER_PGN:          interpretePgnsTPETP(); break;
     case ETP_CONN_MANAGE_PGN:            interpretePgnsTPETP(); break;
     case REQUEST_PGN_MSG_PGN:            break;
     case TP_DATA_TRANSFER_PGN:           interpretePgnsTPETP(); break;
     case TP_CONN_MANAGE_PGN:             interpretePgnsTPETP(); break;
-    case ADDRESS_CLAIM_PGN:               break;
+    case ADDRESS_CLAIM_PGN:              break;
     case PROPRIETARY_A_PGN:              break;
     case PROPRIETARY_A2_PGN:             break;
     case WORKING_SET_MEMBER_PGN:         break;
@@ -835,13 +835,13 @@ void interpretePgn (uint32_t rui32_pgn)
     case FS_TO_CLIENT_PGN:               cout << "FS_TO_CLIENT      "; break;
     case GUIDANCE_MACHINE_STATUS:        cout << "GUIDANCE_MACH_ST  "; break;
     case GUIDANCE_SYSTEM_CMD:            cout << "GUIDANCE_SYS_CMD  "; break;
-    case ISOBUS_CERTIFICATION:           cout << "ISOBUS_CERTIFIC.  "; break;
+    case ISOBUS_CERTIFICATION_PGN:       cout << "ISOBUS_CERTIFICAT."; break;
     case ETP_DATA_TRANSFER_PGN:          cout << "ETP_DATA_TRANSFER "; break;
     case ETP_CONN_MANAGE_PGN:            cout << "ETP_CONN_MANAGE   "; break;
     case REQUEST_PGN_MSG_PGN:            cout << "REQUEST_MSG       "; break;
     case TP_DATA_TRANSFER_PGN:           cout << "TP_DATA_TRANSFER  "; break;
     case TP_CONN_MANAGE_PGN:             cout << "TP_CONN_MANAGE    "; break;
-    case ADDRESS_CLAIM_PGN:               cout << "ADDRESS_CLAIM     "; break;
+    case ADDRESS_CLAIM_PGN:              cout << "ADDRESS_CLAIM     "; break;
     case PROPRIETARY_A_PGN:              cout << "PROPRIETARY_A     "; break;
     case PROPRIETARY_A2_PGN:             cout << "PROPRIETARY_A2    "; break;
     case WORKING_SET_MEMBER_PGN:         cout << "WORKING_SET_MEMBER"; break;
@@ -1063,7 +1063,7 @@ void setup()
 
 int main (int argc, char** argv)
 {
-  cerr << "ISOBUS-Logalizer (c) in 2007 by Martin Wodok, OSB AG." << endl << endl;
+  cerr << "ISOBUS-Logalizer (c) 2007-2009 by Martin Wodok et al., OSB AG." << endl << endl;
 
   if (argc < 2)
     exit_with_usage(argv[0]);
