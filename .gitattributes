@@ -2260,6 +2260,7 @@ tools/vt2iso/vt2iso.kdevelop -text
 tools/vt2iso/vt2iso.kdevelop.filelist -text
 tools/vt2iso/vt2iso.sln -text
 tools/vt2iso/vt2iso.vcproj -text
+tutorial/compiler_projects/VC6/ecuDataSource/ecuDataSource__can_server_sock__simulating.dsp -text
 tutorial/compiler_projects/VC6/ecuDisplay/ecuDisplay__can_server_sock__simulating.dsp -text
 tutorial/compiler_projects/VC6/ecuGpsSensor/ecuGpsSensor__can_server_sock__sys.dsp -text
 tutorial/compiler_projects/VC6/ecuProprietaryCan/ecuProprietaryCan__can_server_sock__sys.dsp -text
