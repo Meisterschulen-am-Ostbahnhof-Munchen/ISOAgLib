@@ -899,8 +899,9 @@ MultiSend_c::SendStream_c::processMsg()
         #endif
         // Notify sender that it finished!
         *mpen_sendSuccessNotify = SendSuccess; // will be kicked out after next timeEvent!
-        // so trigger timeEvent so it gets actually deleted - but needn't be too soon
-        retriggerIn (1500);
+        // so trigger timeEvent so it gets actually deleted - do it asap so that there's
+        // no confusion about the finished stream and a possible new stream!
+        retriggerIn (0); // changed from 1500 to 0 by JVB 20090916
         /** @todo SOON-178 Should we remove the finished send-stream here now immediately
             even though we're NOT iterating through the list now? */
         break;
@@ -1141,7 +1142,11 @@ void
 MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver)
 {
   SendStream_c* pc_sendStream = getSendStream (acrc_isoNameSender, acrc_isoNameReceiver);
-  if (pc_sendStream) pc_sendStream->abortSend();
+  if (pc_sendStream)
+  {
+    if (!pc_sendStream->isFinished() // check added by JVB 20090916
+      pc_sendStream->abortSend();
+  }
   /// let timeEvent do the erasing from the list.
   /// reason: if someone starts a new send directly after aborting the current,
   /// we can use the same place in the stl-list without remove/insert!
