@@ -1144,7 +1144,7 @@ MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& ac
   SendStream_c* pc_sendStream = getSendStream (acrc_isoNameSender, acrc_isoNameReceiver);
   if (pc_sendStream)
   {
-    if (!pc_sendStream->isFinished() // check added by JVB 20090916
+    if (!pc_sendStream->isFinished()) // check added by JVB 20090916
       pc_sendStream->abortSend();
   }
   /// let timeEvent do the erasing from the list.
