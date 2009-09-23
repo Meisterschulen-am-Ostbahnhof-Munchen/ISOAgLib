@@ -631,87 +631,87 @@ void interpretePgnLanguage()
   else
   {
     // Language Code
-    cout << canGetAsciiData(0) << canGetAsciiData(1);
+    cout << "LC:" << canGetAsciiData(0) << canGetAsciiData(1) << " ";
 
     // Decimal Point
     switch (canGetData(2) >> 6) {
-      case 0x0: cout << "DP: ,  "; break;
-      case 0x1: cout << "DP: .  "; break;
-      case 0x2: cout << "DP: R  "; break;
-      case 0x3: cout << "DP: N  "; break;
+      case 0x0: cout << "dp:, "; break;
+      case 0x1: cout << "dp:. "; break;
+      case 0x2: cout << "dp:R "; break;
+      case 0x3: cout << "dp:N "; break;
     }
     // Time Format
     switch ((canGetData(2) >> 4) & 0x03) {
-      case 0x0: cout << "T: 24  "; break;
-      case 0x1: cout << "T: 12  "; break;
-      case 0x2: cout << "T: R   "; break;
-      case 0x3: cout << "T: N   "; break;
+      case 0x0: cout << "t:24 "; break;
+      case 0x1: cout << "t:12 "; break;
+      case 0x2: cout << "t:R  "; break;
+      case 0x3: cout << "t:N  "; break;
     }
     // Date Format
     switch (canGetData(3)) {
-      case 0x0: cout << "D: ddmmyyyy "; break;
-      case 0x1: cout << "D: ddyyyymm "; break;
-      case 0x2: cout << "D: mmyyyydd "; break;
-      case 0x3: cout << "D: mmddyyyy "; break;
-      case 0x4: cout << "D: yyyymmdd "; break;
-      case 0x5: cout << "D: yyyyddmm "; break;
-      default:  cout << "D: UNSPECIF "; break;
+      case 0x0: cout << "d:ddmmyyyy "; break;
+      case 0x1: cout << "d:ddyyyymm "; break;
+      case 0x2: cout << "d:mmyyyydd "; break;
+      case 0x3: cout << "d:mmddyyyy "; break;
+      case 0x4: cout << "d:yyyymmdd "; break;
+      case 0x5: cout << "d:yyyyddmm "; break;
+      default:  cout << "d:UNSPECIF "; break;
     }
     // Distance
     switch ((canGetData(4) >> 6) & 0x3) {
-      case 0x0: cout << "D: M   "; break;
-      case 0x1: cout << "D: IU  "; break;
-      case 0x2: cout << "D: R   "; break;
-      case 0x3: cout << "D: N   "; break;
+      case 0x0: cout << "d:M  "; break;
+      case 0x1: cout << "d:IU "; break;
+      case 0x2: cout << "d:R  "; break;
+      case 0x3: cout << "d:N  "; break;
     }
     // Area
     switch ((canGetData(4) >> 4) & 0x3) {
-      case 0x0: cout << "A: M   "; break;
-      case 0x1: cout << "A: IU  "; break;
-      case 0x2: cout << "A: R   "; break;
-      case 0x3: cout << "A: N   "; break;
+      case 0x0: cout << "a:M  "; break;
+      case 0x1: cout << "a:IU "; break;
+      case 0x2: cout << "a:R  "; break;
+      case 0x3: cout << "a:N  "; break;
     }
     // Volume
     switch ((canGetData(4) >> 2) & 0x3) {
-      case 0x0: cout << "V: M  "; break;
-      case 0x1: cout << "V: I  "; break;
-      case 0x2: cout << "V: U  "; break;
-      case 0x3: cout << "V: N  "; break;
+      case 0x0: cout << "v:M "; break;
+      case 0x1: cout << "v:I "; break;
+      case 0x2: cout << "v:U "; break;
+      case 0x3: cout << "v:N "; break;
     }
     // Mass
     switch ((canGetData(4) >> 0) & 0x3) {
-      case 0x0: cout << "M: M  "; break;
-      case 0x1: cout << "M: I  "; break;
-      case 0x2: cout << "M: U  "; break;
-      case 0x3: cout << "M: N  "; break;
+      case 0x0: cout << "m:M "; break;
+      case 0x1: cout << "m:I "; break;
+      case 0x2: cout << "m:U "; break;
+      case 0x3: cout << "m:N "; break;
     }
     // Temperature
     switch ((canGetData(5) >> 6) & 0x3) {
-      case 0x0: cout << "T: M   "; break;
-      case 0x1: cout << "T: IU  "; break;
-      case 0x2: cout << "T: R   "; break;
-      case 0x3: cout << "T: N   "; break;
+      case 0x0: cout << "t:M  "; break;
+      case 0x1: cout << "t:IU "; break;
+      case 0x2: cout << "t:R  "; break;
+      case 0x3: cout << "t:N  "; break;
     }
     // Pressure
     switch ((canGetData(5) >> 4) & 0x3) {
-      case 0x0: cout << "P: M   "; break;
-      case 0x1: cout << "P: IU  "; break;
-      case 0x2: cout << "P: R   "; break;
-      case 0x3: cout << "P: N   "; break;
+      case 0x0: cout << "p:M  "; break;
+      case 0x1: cout << "p:IU "; break;
+      case 0x2: cout << "p:R  "; break;
+      case 0x3: cout << "p:N  "; break;
     }
     // Force
     switch ((canGetData(5) >> 2) & 0x3) {
-      case 0x0: cout << "F: M   "; break;
-      case 0x1: cout << "F: IU  "; break;
-      case 0x2: cout << "F: R   "; break;
-      case 0x3: cout << "F: N   "; break;
+      case 0x0: cout << "f:M  "; break;
+      case 0x1: cout << "f:IU "; break;
+      case 0x2: cout << "f:R  "; break;
+      case 0x3: cout << "f:N  "; break;
     }
     // System
     switch ((canGetData(5) >> 0) & 0x3) {
-      case 0x0: cout << "S: M  "; break;
-      case 0x1: cout << "S: I  "; break;
-      case 0x2: cout << "S: U  "; break;
-      case 0x3: cout << "S: N  "; break;
+      case 0x0: cout << "s:M "; break;
+      case 0x1: cout << "s:I "; break;
+      case 0x2: cout << "s:U "; break;
+      case 0x3: cout << "s:N "; break;
     }
   }
 }
@@ -1008,13 +1008,14 @@ bool parseLogLine()
     int i;
     for (i=0; i< canGetBytes(); i++) cout << " " << setw (2) <<uint16_t(canGetData(i));
     for (;    i<8;              i++) cout << "   ";
+    cout << "  ";
 
     // Databytes (HEX)
-    for (i=0; i< canGetBytes(); i++) cout << " " << setw (2) << char(canGetAsciiData(i));
+    for (i=0; i< canGetBytes(); i++) cout << setw (1) << char(canGetAsciiData(i));
     for (;    i<8;              i++) cout << " ";
 
     // SA
-    cout << "   "<<setw(2) << uint16_t(canGetSa()) << "->";
+    cout << "  "<<setw(2) << uint16_t(canGetSa()) << "->";
     // DA
     if (canIsPdu1()) cout << setw(2) << uint16_t(canGetPs());
     else cout << "FF";
