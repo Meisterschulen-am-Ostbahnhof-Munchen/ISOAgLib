@@ -48,6 +48,7 @@ uint8_t  canGetPf()   { return (can_id >> 16) & 0xFF; }
 uint32_t canGetPgn()  { return ((canGetDp() << 16) | (canGetPf() << 8) | ((canGetPf() >= 0xF0) ? canGetPs():0)); }
 uint64_t canGetTime() { return (can_time); }
 uint8_t  canGetData(int i) { return (can_data[i]); }
+char     canGetAsciiData(int i) { return ((can_data[i] >= 0x20) && (can_data[i] < 0x7F)) ? (char(can_data[i])) : '.'; }
 uint8_t  canGetBytes() {return (can_bytes); }
 bool     canIsPdu1()  { return (canGetPf() < 0xF0); }// with DA
 
@@ -621,6 +622,101 @@ void interpretePgnAcknowledge()
 {
 }
 
+void interpretePgnLanguage()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+    // Language Code
+    cout << canGetAsciiData(0) << canGetAsciiData(1);
+
+    // Decimal Point
+    switch (canGetData(2) >> 6) {
+      case 0x0: cout << "DP: ,  "; break;
+      case 0x1: cout << "DP: .  "; break;
+      case 0x2: cout << "DP: R  "; break;
+      case 0x3: cout << "DP: N  "; break;
+    }
+    // Time Format
+    switch ((canGetData(2) >> 4) & 0x03) {
+      case 0x0: cout << "T: 24  "; break;
+      case 0x1: cout << "T: 12  "; break;
+      case 0x2: cout << "T: R   "; break;
+      case 0x3: cout << "T: N   "; break;
+    }
+    // Date Format
+    switch (canGetData(3)) {
+      case 0x0: cout << "D: ddmmyyyy "; break;
+      case 0x1: cout << "D: ddyyyymm "; break;
+      case 0x2: cout << "D: mmyyyydd "; break;
+      case 0x3: cout << "D: mmddyyyy "; break;
+      case 0x4: cout << "D: yyyymmdd "; break;
+      case 0x5: cout << "D: yyyyddmm "; break;
+      default:  cout << "D: UNSPECIF "; break;
+    }
+    // Distance
+    switch ((canGetData(4) >> 6) & 0x3) {
+      case 0x0: cout << "D: M   "; break;
+      case 0x1: cout << "D: IU  "; break;
+      case 0x2: cout << "D: R   "; break;
+      case 0x3: cout << "D: N   "; break;
+    }
+    // Area
+    switch ((canGetData(4) >> 4) & 0x3) {
+      case 0x0: cout << "A: M   "; break;
+      case 0x1: cout << "A: IU  "; break;
+      case 0x2: cout << "A: R   "; break;
+      case 0x3: cout << "A: N   "; break;
+    }
+    // Volume
+    switch ((canGetData(4) >> 2) & 0x3) {
+      case 0x0: cout << "V: M  "; break;
+      case 0x1: cout << "V: I  "; break;
+      case 0x2: cout << "V: U  "; break;
+      case 0x3: cout << "V: N  "; break;
+    }
+    // Mass
+    switch ((canGetData(4) >> 0) & 0x3) {
+      case 0x0: cout << "M: M  "; break;
+      case 0x1: cout << "M: I  "; break;
+      case 0x2: cout << "M: U  "; break;
+      case 0x3: cout << "M: N  "; break;
+    }
+    // Temperature
+    switch ((canGetData(5) >> 6) & 0x3) {
+      case 0x0: cout << "T: M   "; break;
+      case 0x1: cout << "T: IU  "; break;
+      case 0x2: cout << "T: R   "; break;
+      case 0x3: cout << "T: N   "; break;
+    }
+    // Pressure
+    switch ((canGetData(5) >> 4) & 0x3) {
+      case 0x0: cout << "P: M   "; break;
+      case 0x1: cout << "P: IU  "; break;
+      case 0x2: cout << "P: R   "; break;
+      case 0x3: cout << "P: N   "; break;
+    }
+    // Force
+    switch ((canGetData(5) >> 2) & 0x3) {
+      case 0x0: cout << "F: M   "; break;
+      case 0x1: cout << "F: IU  "; break;
+      case 0x2: cout << "F: R   "; break;
+      case 0x3: cout << "F: N   "; break;
+    }
+    // System
+    switch ((canGetData(5) >> 0) & 0x3) {
+      case 0x0: cout << "S: M  "; break;
+      case 0x1: cout << "S: I  "; break;
+      case 0x2: cout << "S: U  "; break;
+      case 0x3: cout << "S: N  "; break;
+    }
+  }
+}
+
+
 void interpretePgnsCl2FS()
 {
   analyzeCl2FS(canGetSa(), canGetDa(), 8, can_data);
@@ -788,7 +884,7 @@ void interpretePgnData (uint32_t rui32_pgn)
     case PROPRIETARY_A2_PGN:             break;
     case WORKING_SET_MEMBER_PGN:         break;
     case WORKING_SET_MASTER_PGN:         break;
-    case LANGUAGE_PGN:                   break;
+    case LANGUAGE_PGN:                   interpretePgnLanguage(); break;
     case LIGHTING_DATA_PGN:              break;
     case LIGHTING_COMMAND_PGN:           break;
     case HITCH_PTO_COMMANDS:             break;
@@ -900,17 +996,37 @@ bool parseLogLine()
     default:               exit_with_error("Unknown Log-Type!"); return false; // return just to satisfy compiler. exit_with_error will exit anyway ;)
   }
   if (b_result)
-  {
+  { /// Printout interpreted line
+
+    // Timestamp
     cout << setfill (' ') << dec << setw (10) << (can_time/1000) << "." << setfill('0')<<setw(3)<<(can_time%1000)<< "   ";
+
+    // CAN-ID / number of bytes
     cout << setfill ('0') << hex << setw (8) << can_id << "  " << uint16_t(can_bytes) << " ";
+
+    // Databytes (HEX)
     int i;
     for (i=0; i< canGetBytes(); i++) cout << " " << setw (2) <<uint16_t(canGetData(i));
     for (;    i<8;              i++) cout << "   ";
+
+    // Databytes (HEX)
+    for (i=0; i< canGetBytes(); i++) cout << " " << setw (2) << char(canGetAsciiData(i));
+    for (;    i<8;              i++) cout << " ";
+
+    // SA
     cout << "   "<<setw(2) << uint16_t(canGetSa()) << "->";
+    // DA
     if (canIsPdu1()) cout << setw(2) << uint16_t(canGetPs());
     else cout << "FF";
-    cout << "  prio:" << uint16_t(canGetPrio()) << "  pgn:" << setw(6) << canGetPgn() << " => ";
+
+    // Priority
+    cout << "  prio:" << uint16_t(canGetPrio());
+
+    // PGN
+    cout << "  pgn:" << setw(6) << canGetPgn() << " => ";
+    // Interpreted PGN
     interpretePgn (canGetPgn());
+    // Interpreted PGN-Data
     interpretePgnData (canGetPgn());
     cout << endl;
   }
