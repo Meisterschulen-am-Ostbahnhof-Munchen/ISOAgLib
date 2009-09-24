@@ -1,5 +1,3 @@
-#define NDEBUG
-
 #ifdef WIN32
 #  define SYSTEM_PC_VC
 #endif
@@ -84,14 +82,25 @@ void interpretePgnsVtEcu(bool);
 
 void exit_with_usage(const char* progname)
 {
-  cout << "Usage: " << progname << " <logFile> [logType(default=0=can_server)]" << endl << endl;
-  cout << "logType=0 is can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
-  cout << "logType=1 is rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06' (with OR without Channel-Nr. in []. Autodetected.)"<<endl;
-  cout << "logType=2 is CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<endl;
-  cout << "logType=3 is CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<endl;
-  cout << "logType=4 is A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<endl;
-  cout << "logType=5 is PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
-  cout << "logType=6 is JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<endl;
+  cout << "Usage: " << progname << " <logFile> [logType]" << endl << endl;
+  cout << "logTypes: 0 -> can_server [DEFAULT]"<<endl;
+  cout << "          1 -> rte"<<endl;
+  cout << "          2 -> CANMon"<<endl;
+  cout << "          3 -> CANoe"<<endl;
+  cout << "          4 -> A1ASCII"<<endl;
+  cout << "          5 -> PCANView"<<endl;
+  cout << "          6 -> JohnDeere"<<endl;
+  cout << endl;
+  cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
+  cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
+  cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<endl;
+  cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<endl;
+  cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<endl;
+  cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..."<<endl;
+  cout << "            ...'   446270'"<<endl;
+  cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
+  cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<endl;
+  cout << "            ...'    17920  ....... '"<<endl;
 
   exit(0);
 }
@@ -104,7 +113,7 @@ void exit_with_error(const char* error_message)
 
 
 
-bool parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB
+int parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB
 {
   string line;
   getline (ifs_in, line);
@@ -127,10 +136,10 @@ bool parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count >= 2);
+  return (parsed_count >= 2) ? 0 : -1;
 }
 
-bool parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....\\. "
+int parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....\\. "
 {
   string line;
   getline (ifs_in, line);
@@ -151,10 +160,10 @@ bool parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count >= 2);
+  return (parsed_count >= 2) ? 0 : -1;
 }
 
-bool parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
+int parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
 {
   string line;
   getline (ifs_in, line);
@@ -177,11 +186,11 @@ bool parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count >= 2);
+  return (parsed_count >= 2) ? 0 : -1;
 }
 
 
-bool parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF "
+int parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF "
 {
   string line;
   getline (ifs_in, line);
@@ -204,11 +213,11 @@ bool parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF 
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count == (3+iDb));
+  return (parsed_count == (3+iDb)) ? 0 : -1;
 }
 
 
-bool parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270"
+int parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270"
 {
   string line;
   getline (ifs_in, line);
@@ -231,12 +240,12 @@ bool parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count == (3+iDb));
+  return (parsed_count == (3+iDb)) ? 0 : -1;
 }
 
 
 
-bool parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06"
+int parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06"
 {
   string line;
   getline (ifs_in, line);
@@ -270,7 +279,7 @@ bool parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 5
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count == (3+iDb));
+  return (parsed_count == (3+iDb)) ? 0 : -1;
 }
 
 
@@ -312,7 +321,7 @@ int parseLogLineRte2 ()
     rte_time += big;
     can_time = rte_time;
     can_id = strtol (cursor, &cursor, 16);
-    can_bytes = strtol (cursor, &cursor, 0);
+    can_bytes = uint8_t (strtol (cursor, &cursor, 0));
 
 
     if (can_bytes > 8) {
@@ -324,16 +333,16 @@ int parseLogLineRte2 ()
         if (byte > can_bytes)     /* TODO: shouldn't this be >= ? */
             break;
 
-        can_data[byte] = strtol (cursor, &cursor, 16);
+        can_data[byte] = uint8_t (strtol (cursor, &cursor, 16));
     }
 
-    return true;
+    return 0;
 }
 
 
 
 
-bool parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15"
+int parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15"
 {
   string line;
   getline (ifs_in, line);
@@ -355,7 +364,7 @@ bool parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 
   can_data[6] = i7;
   can_data[7] = i8;
 
-  return (parsed_count == (3+iDb));
+  return (parsed_count == (3+iDb)) ? 0 : -1;
 }
 
 
@@ -980,22 +989,22 @@ void interpretePgn (uint32_t rui32_pgn)
 
 
 
-bool parseLogLine()
+int parseLogLine()
 {
-  bool b_result;
+  int i_result=-1; // default to error, variable will always be set
   switch (logType)
   {
-    case logTypeCanServer: b_result = parseLogLineCanServer();   break;
-    case logTypeRte:       b_result = parseLogLineRte();         break;
-    case logTypeCANMon:    b_result = parseLogLineCANMon();      break;
-    case logTypeCANoe:     b_result = parseLogLineCANoe();       break;
-    case logTypeA1ASCII:   b_result = parseLogLineA1ASCII();     break;
-    case logTypeTrc:       b_result = parseLogLineTrc();         break;
-    case logTypeJohnDeere: b_result = parseLogLineJohnDeere();   break;
-    case logTypeRte2:      b_result = parseLogLineRte2();        break;
+    case logTypeCanServer: i_result = parseLogLineCanServer();   break;
+    case logTypeRte:       i_result = parseLogLineRte();         break;
+    case logTypeCANMon:    i_result = parseLogLineCANMon();      break;
+    case logTypeCANoe:     i_result = parseLogLineCANoe();       break;
+    case logTypeA1ASCII:   i_result = parseLogLineA1ASCII();     break;
+    case logTypeTrc:       i_result = parseLogLineTrc();         break;
+    case logTypeJohnDeere: i_result = parseLogLineJohnDeere();   break;
+    case logTypeRte2:      i_result = parseLogLineRte2();        break;
     default:               exit_with_error("Unknown Log-Type!"); return false; // return just to satisfy compiler. exit_with_error will exit anyway ;)
   }
-  if (b_result)
+  if (i_result == 0) // no error
   { /// Printout interpreted line
 
     // Timestamp
@@ -1035,7 +1044,7 @@ bool parseLogLine()
   {
     cout << "---- line missing - error in parsing!----"<<endl; /// @todo SOON-260: replace by the original line!
   }
-  return b_result;
+  return i_result;
 }
 
 
@@ -1196,7 +1205,7 @@ int main (int argc, char** argv)
 
   while (!ifs_in.eof())
   {
-    if (parseLogLine())
+    if (parseLogLine() == 0)
     {
       checkAlives();
       checkSingles();
@@ -1281,7 +1290,7 @@ int main (int argc, char** argv)
                 if (cui32_delta > (unsigned int) (i32_alivePeriodSpecial)) cout << " *** !!! TIMEOUT - Check relative time!!!! ***";
                 else
                 {
-                  int32_t time = (cui32_delta*100) / i32_alivePeriodSpecial;
+                  int32_t time = int32_t ((cui32_delta*100) / i32_alivePeriodSpecial);
                   cout <<setw(2)<<time<< " percent of timeout ("<<setw(4)<<i32_alivePeriodSpecial<<"): (one '%' shows 10%) ";
                   while (time > 10)
                   {
