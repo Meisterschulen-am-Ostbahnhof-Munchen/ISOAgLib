@@ -242,10 +242,12 @@ void *readUserInput( void *ap_arg )
 }
 
 void usage() {
-  std::cout << "IsoAgLib CAN-Server - Virtual Host CAN-Bus." << std::endl << std::endl;
-  std::cout << "Usage: can_server [OPTIONS]" << std::endl;
-  std::cout << "       (When running in Interactive mode, type 'help' for a list of interactive commands)" << std::endl << std::endl;
-  std::cout << "Options:" << std::endl;
+  std::cout
+    << "IsoAgLib CAN-Server - Virtual Host CAN-Bus." << std::endl << std::endl
+    << "Usage: can_server [OPTIONS]" << std::endl << std::endl
+    << "Note: When running in Interactive mode (default)" << std::endl
+    << "      type 'help' for a list of interactive commands)" << std::endl << std::endl
+    << "Options:" << std::endl;
   for (yasper::ptr< AOption_c > const *p_opt = gp_optionsBegin; p_opt < gp_optionsEnd; ++p_opt) {
     std::cout << (*p_opt)->getUsage();
   }
@@ -334,9 +336,13 @@ template <>
 std::string Option_c< OPTION_HIGH_PRIO_MINIMUM >::doGetUsage() const
 {
   return
-    "  --high-prio-minimum NUM_PENDING_WRITES   If 0: start normally without priority-handling (default - used if param not given!).\n"
-    "                             If >0: Only clients with activated high-priority-send-mode can send messages if\n"
-    "                                    can-controller has equal or more than <NUM_PENDING_WRITES> in its queue.\n";
+    "  --high-prio-minimum NUM_PENDING_WRITES\n"
+    "                             If =0: start normally without priority-handling\n"
+    "                                    (default - used if parameter not given!)\n"
+    "                             If >0: Only clients with activated high-priority-\n"
+    "                                    send-mode can send messages if\n"
+    "                                    can-controller has equal or more than\n"
+    "                                    <NUM_PENDING_WRITES> in its queue.\n";
 }
 
 template <>
@@ -368,9 +374,11 @@ template <>
 std::string Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::doGetUsage() const
 {
   return
-    "  --reduced-load-iso-bus-no BUS_NUMBER   Don't send internal traffic to the physical CAN-Bus and thus\n"
-    "                             reduce the load on the specified (ISOBUS) bus number.\n"
-    "                             This is detected by the source and destination addresses in the identifier\n";
+    "  --reduced-load-iso-bus-no BUS_NUMBER\n"
+    "                             Don't send internal traffic to the physical\n"
+    "                             CAN-Bus and thus reduce the load on the specified\n"
+    "                             (ISOBUS) bus number. This is detected by source\n"
+    "                             and destination addresses in the identifier\n";
 }
 
 template <>
@@ -392,7 +400,9 @@ std::string Option_c< OPTION_INTERACTIVE >::doGetSetting(__HAL::server_c &ar_ser
 template <>
 std::string Option_c< OPTION_INTERACTIVE >::doGetUsage() const
 {
-  return "  --interactive              Set interactive mode (contrarily to --productive) explicitly. (It is set by default!)\n";
+  return
+    "  --interactive              Set interactive mode (contrarily to --productive)\n"
+    "                             explicitly. (This is the default!)\n";
 }
 
 template <>
