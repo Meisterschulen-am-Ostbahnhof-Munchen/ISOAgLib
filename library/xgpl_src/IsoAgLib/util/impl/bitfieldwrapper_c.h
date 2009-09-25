@@ -144,7 +144,7 @@ class BitFieldWrapper_c
     /** do bitwise right shift */
     void operator >>= ( size_t num )
     { // for bitset, bit 0 is the LSB => we need to invert >>= to <<=
-      m_bitField <<= c_refBitField;
+      m_bitField <<= num;
     }
 
     /** A bytewise getter */
