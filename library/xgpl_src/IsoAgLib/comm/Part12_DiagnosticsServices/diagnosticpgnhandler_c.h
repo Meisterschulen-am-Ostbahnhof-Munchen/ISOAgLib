@@ -61,32 +61,8 @@
 
 #include <string>
 
-
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
-
-// forward declarations
-class IdentItem_c;
-
-
-enum Certification_t
+namespace IsoAgLib
 {
-  CertificationMinEcu = 0
-  , CertificationTecuClass_1
-  , CertificationTecuClass_2
-  , CertificationTecuClass_3
-  , CertificationClass_3_Ecu
-  , CertificationVirtualTerminal
-  , CertificationVtWsMaster
-  , CertificationVtWsMember
-  , CertificationTaskController
-  , CertificationTcWsMaster
-  , CertificationTcWsMember
-  , CertificationFileServer
-  , CertificationGpsReceiver
-};
-
-typedef BitFieldWrapper_c<Certification_t> CertificationBitMask_t;
 
 enum CertificationRevision_t
 {
@@ -104,6 +80,39 @@ enum CertificationLabType_t
   CertificationLabTypeNACertifiedLab = 2,
   CertificationLabTypeNotAvailable = 7
 };
+
+enum Certification_t
+{
+  CertificationMinEcu = 0,
+  CertificationTecuClass_1,
+  CertificationTecuClass_2,
+  CertificationTecuClass_3,
+  CertificationClass_3_Ecu,
+  CertificationVirtualTerminal,
+  CertificationVtWsMaster,
+  CertificationVtWsMember,
+  CertificationTaskController,
+  CertificationTcWsMaster,
+  CertificationTcWsMember,
+  CertificationFileServer,
+  CertificationGpsReceiver
+};
+
+struct Certification_s
+{
+  typedef Certification_t enum_type;
+  enum { number_of_bits = 24 };
+};
+
+typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
+} // namespace IsoAgLib
+
+
+// Begin Namespace __IsoAgLib
+namespace __IsoAgLib {
+
+// forward declarations
+class IdentItem_c;
 
 
 /**
@@ -135,8 +144,10 @@ public:
   //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
   //! @param acrc_certificationBitMask Compliance certification type bitfield ( as in ISO 11783-7 A.29.5 till A.29.17 )
   //! @param aui16_referenceNumber Compliance certification reference number ( as in ISO 11783-7 A.29.18 )
-  bool setCertificationData( uint16_t ui16_year ,CertificationRevision_t a_revision,CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-                             const CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
+  bool setCertificationData(
+    uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision,
+    IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
+    const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber );
 
 private: // attributes
   IdentItem_c& mrc_identItem;

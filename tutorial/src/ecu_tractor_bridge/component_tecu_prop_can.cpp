@@ -10,7 +10,7 @@ IsoAgLibTutorialTecu::TutorialTecu_c::TutorialTecu_c() { }
 
 IsoAgLibTutorialTecu::TutorialTecu_c::~TutorialTecu_c() { }
 
-void  IsoAgLibTutorialTecu::TutorialTecu_c::init( IsoAgLib::iIdentItem_c* ap_ident ) {
+void IsoAgLibTutorialTecu::TutorialTecu_c::init( IsoAgLib::iIdentItem_c* ap_ident ) {
   /* initialize tractor classes */
   IsoAgLib::getITracGeneralInstance().config( &(ap_ident->isoName()), IsoAgLib::IdentModeTractor );
   IsoAgLib::getITracMoveInstance().config( &(ap_ident->isoName()), IsoAgLib::IdentModeTractor );

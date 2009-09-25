@@ -2,9 +2,9 @@
 #include "component_tcclient.h"
 
 // IsoAgLib
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/iprocess_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/Local/Std/iprocdatalocal_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 // device description object pool
 #include "component_tcclient_pool/tutorialDataSource-func.h"

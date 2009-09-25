@@ -254,34 +254,34 @@ public:
                                                         else return NULL; }
 
 
-	/**
-		Set ECU Identification fields, needed during the diagnostic procedure
-	*/
-	bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNbr, const STL_NAMESPACE::string& astr_serialNbr,const STL_NAMESPACE::string& astr_manufacturerName )
-	{
-		return IdentItem_c::setEcuIdentification(astr_partNbr,  astr_serialNbr, astr_manufacturerName);
-	}
+  /**
+    Set ECU Identification fields, needed during the diagnostic procedure
+  */
+  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNbr, const STL_NAMESPACE::string& astr_serialNbr,const STL_NAMESPACE::string& astr_manufacturerName )
+  {
+    return IdentItem_c::setEcuIdentification (astr_partNbr, astr_serialNbr, astr_manufacturerName);
+  }
 
-	/** Set SW Identification fields, needed during the diagnostic procedure */
-	bool setSwIdentification( const STL_NAMESPACE::string& astr_partNbr)
-	{
-		return IdentItem_c::setSwIdentification( astr_partNbr);
-	}
+  /** Set SW Identification fields, needed during the diagnostic procedure */
+  bool setSwIdentification( const STL_NAMESPACE::string& astr_swId)
+  {
+    return IdentItem_c::setSwIdentification (astr_swId);
+  }
 
-	//! Setter for the different certification message fields
-	//! Parameter:
-	//! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061
-	//! @param a_revision Certification revision as in ISO 11783-7 A.29.2
-	//! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
-	//! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
-	//! @param acrc_certificationBitMask Compliance certification type bitfield (  as in ISO 11783-7 A.29.5 till A.29.17 )
-	//! @param aui16_referenceNumber Compliance certification reference number  as in ISO 11783-7 A.29.18
-	bool setCertificationData( uint16_t ui16_year , __IsoAgLib::CertificationRevision_t a_revision,__IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-														const __IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
-		{
-			return IdentItem_c::setCertificationData( ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
-																								acrc_certificationBitMask, aui16_referenceNumber );
-		}
+  //! Setter for the different certification message fields
+  //! Parameter:
+  //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061
+  //! @param a_revision Certification revision as in ISO 11783-7 A.29.2
+  //! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
+  //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
+  //! @param acrc_certificationBitMask Compliance certification type bitfield (  as in ISO 11783-7 A.29.5 till A.29.17 )
+  //! @param aui16_referenceNumber Compliance certification reference number  as in ISO 11783-7 A.29.18
+  bool setCertificationData( uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
+                               const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
+  {
+    return IdentItem_c::setCertificationData( ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
+                                              acrc_certificationBitMask, aui16_referenceNumber );
+  }
 
   /// Using the singletonVecKey from internal class
   SINGLETON_PAR_BASE_DEF(IdentItem_c)

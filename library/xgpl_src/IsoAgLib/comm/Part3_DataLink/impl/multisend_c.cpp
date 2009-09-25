@@ -965,7 +965,7 @@ MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender
     rc_multiSendPkg.setIsoPri (6);
     rc_multiSendPkg.setISONameForSA (acrc_isoNameSender);
     rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
-    rc_multiSendPkg.setLen (aui16_dataSize);
+    rc_multiSendPkg.setLen (uint8_t (aui16_dataSize));
     rc_multiSendPkg.setIsoPgn(ai32_pgn);
     for (int i = 0 ; i < aui16_dataSize; i++)
       rc_multiSendPkg.setUint8Data (i, rhpb_data[i]);

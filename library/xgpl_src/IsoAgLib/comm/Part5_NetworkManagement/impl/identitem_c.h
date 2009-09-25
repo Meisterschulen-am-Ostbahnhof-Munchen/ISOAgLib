@@ -344,12 +344,14 @@ public: // methods
   //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
   //! @param acrc_certificationBitMask Compliance certification type bitfield (  as in ISO 11783-7 A.29.5 till A.29.17 )
   //! @param aui16_referenceNumber Compliance certification reference number  as in ISO 11783-7 A.29.18
-  bool setCertificationData( uint16_t ui16_year, CertificationRevision_t a_revision, CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-                             const CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
+  bool setCertificationData(
+    uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType,
+    uint16_t aui16_laboratoryId, const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
   {
     // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-    return mpc_diagnosticPgnHandler->setCertificationData( ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
-                                                           acrc_certificationBitMask, aui16_referenceNumber );
+    return mpc_diagnosticPgnHandler->setCertificationData(
+      ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
+      acrc_certificationBitMask, aui16_referenceNumber );
   }
 
   void updateLastIsoSaRequestForThisItem() { i32_lastIsoSaRequestForThisItem = HAL::getTime(); }

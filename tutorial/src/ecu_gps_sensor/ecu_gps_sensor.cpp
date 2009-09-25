@@ -48,6 +48,18 @@ bool ecuMain() {
     sci8_selfConf,
     sci8_master );
 
+  p_ident->setEcuIdentification( "PartNr G", "Serial 127", "Manufacturer" ); // dummy values
+  p_ident->setSwIdentification( "IsoAgLib GPS Sensor ECU Tutorial" );
+  p_ident->setCertificationData(
+    2009, // certification year
+    IsoAgLib::CertificationRevisionNotAvailable,
+    IsoAgLib::CertificationLabTypeNotAvailable,
+    42, // dummy laboratory id
+    IsoAgLib::CertificationBitMask_t()
+      .setBit (IsoAgLib::CertificationGpsReceiver)
+      .setBit (IsoAgLib::CertificationMinEcu),
+    8); // dummy reference number
+
   p_gpsSensor->init( p_ident );
   return true;
 }

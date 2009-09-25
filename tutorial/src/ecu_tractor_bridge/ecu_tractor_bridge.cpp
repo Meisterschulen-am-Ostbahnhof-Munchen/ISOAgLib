@@ -55,6 +55,18 @@ bool ecuMain() {
     sci8_selfConf,
     sci8_master );
 
+  p_ident->setEcuIdentification( "PartNr T", "Serial 127", "Manufacturer" ); // dummy values
+  p_ident->setSwIdentification( "IsoAgLib Tractor Bridge ECU Tutorial" );
+  p_ident->setCertificationData(
+    2009, // certification year
+    IsoAgLib::CertificationRevisionNotAvailable,
+    IsoAgLib::CertificationLabTypeNotAvailable,
+    42, // dummy laboratory id
+    IsoAgLib::CertificationBitMask_t()
+      .setBit (IsoAgLib::CertificationTecuClass_1)
+      .setBit (IsoAgLib::CertificationMinEcu),
+    8); // dummy reference number
+
   p_tractorBridge->init( p_ident );
 
   return true;

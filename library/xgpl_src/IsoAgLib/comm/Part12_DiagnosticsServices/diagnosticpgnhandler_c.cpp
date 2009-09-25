@@ -194,13 +194,19 @@ bool DiagnosticPgnHandler_c::setSwIdentification ( const STL_NAMESPACE::string& 
   return true;
 }
 
-bool DiagnosticPgnHandler_c::setCertificationData( uint16_t ui16_year ,CertificationRevision_t a_revision,CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-																									 const CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
+bool
+DiagnosticPgnHandler_c::setCertificationData(
+  uint16_t ui16_year,
+  IsoAgLib::CertificationRevision_t a_revision,
+  IsoAgLib::CertificationLabType_t a_laboratoryType,
+  uint16_t aui16_laboratoryId,
+  const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask,
+  uint16_t aui16_referenceNumber)
 {
-	if ( ( ui16_year < 2000 ) || ( ui16_year > 2061 ) )
+  if ( ( ui16_year < 2000 ) || ( ui16_year > 2061 ) )
+  return false;
+  if ( aui16_laboratoryId > 2047 ) // Lab ID is only 11 bits wide
     return false;
-	if ( aui16_laboratoryId > 2047 ) // Lab ID is only 11 bits wide
-		return false;
 
   m_certification[0] = 0x00 | ( ( a_revision & 0x03 ) << 6 ) | ( ( ui16_year - 2000 ) & 0x3F );
   m_certification[1] = 0x00 | ( ( aui16_laboratoryId & 0x07 ) << 5 ) | ( ( a_laboratoryType & 0x07 ) << 1 ) | ( ( a_revision & 0x04 ) >> 2 );
@@ -210,10 +216,9 @@ bool DiagnosticPgnHandler_c::setCertificationData( uint16_t ui16_year ,Certifica
   m_certification[5] = acrc_certificationBitMask.getByte ( 2 );
   m_certification[6] = ( aui16_referenceNumber & 0xFF );
   m_certification[7] = ( aui16_referenceNumber >> 8 ) & 0xFF ;
-  
+
   mb_certificationIsSet = true;
   return true;
 }
 
 }
-

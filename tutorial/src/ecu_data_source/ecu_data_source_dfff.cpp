@@ -8,6 +8,10 @@
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
+// Certification needs access to the generated IsoAgLib::iIdentItem
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+extern IsoAgLib::iIdentItem_c c_myIdent;
+
 
 IsoAgLibTutorialDataSource::TutorialDataSource_c* p_dataSource;
 IsoAgLibTutorialDataSource::TutorialDataSourceSimulation_c* p_simulatedSource;
@@ -36,6 +40,18 @@ bool ecuMain() {
    *         CAN-Bus is initialized, so we need to repeat the initialization message here.
    */
   __IsoAgLib::getIsoMonitorInstance().sendRequestForClaimedAddress();
+
+  c_myIdent.setEcuIdentification( "PartNr T", "Serial 127", "Manufacturer" ); // dummy values
+  c_myIdent.setSwIdentification( "IsoAgLib Data Source DFFF ECU Tutorial" );
+  c_myIdent.setCertificationData(
+    2009, // certification year
+    IsoAgLib::CertificationRevisionNotAvailable,
+    IsoAgLib::CertificationLabTypeNotAvailable,
+    42, // dummy laboratory id
+    IsoAgLib::CertificationBitMask_t()
+      .setBit (IsoAgLib::CertificationTcWsMaster)
+      .setBit (IsoAgLib::CertificationMinEcu),
+    8); // dummy reference number
 
   p_dataSource->init();
   p_simulatedSource->init();

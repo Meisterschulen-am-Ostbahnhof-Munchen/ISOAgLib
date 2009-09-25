@@ -1,9 +1,10 @@
 /***************************************************************************
-														bitfieldwrapper_c.h -
+                             bitfieldwrapper_c.h
                              -------------------
-		class                : ::BitFieldWrapper_c
+    class                : ::BitFieldWrapper_c
     begin                : Mai 2009
-    copyright            : (C) 2009 by Nizar Souissi (n.souissi@osb-ag.de)
+    authors              : Nizar Souissi (n.souissi@osb-ag.de)
+                           Christophe Henry (c.henry@osb-ag.de)
     $Log$
  ***************************************************************************/
 
@@ -54,6 +55,8 @@
 #ifndef BITFIELDWRAPPER_C_H
 #define BITFIELDWRAPPER_C_H
 
+#include <bitset>
+
 //! Example:
 //! 11 bit
 //! gets put into 2 bytes counted from 0 starting at the outmost left:
@@ -61,87 +64,108 @@
 template <class T>
 class BitFieldWrapper_c
 {
+  private:
+    enum {sizeInBits = T::number_of_bits};
+    enum {sizeInBytes = ( T::number_of_bits+7 ) >> 3 };
+
   public:
     /** Constructor */
-    BitFieldWrapper_c ( uint16_t aui16_size ) :
-        mui16_sizeInBits ( aui16_size ),
-        mui8_sizeInBytes ( ( aui16_size+7 ) >> 3 )
+      BitFieldWrapper_c ():
+        m_bitField()
     {
-      mpui8_bitField = new uint8_t[mui8_sizeInBytes];
-      for ( int i = 0; i < mui8_sizeInBytes; i++ )
-        mpui8_bitField [i] = 0;
     }
 
     /** Destructor */
     ~BitFieldWrapper_c()
     {
-      delete[] mpui8_bitField;
     }
 
 
     /** Set the given bit to 1. Bits are counted from the left
-    		@param  a_bitsFromTheLeft  bit position from the left, counting from 0
+        @param  a_bitsFromTheLeft  bit position from the left, counting from 0
         @return  reference to BitFieldWrapper_c
       */
-    BitFieldWrapper_c& setBit ( T a_bitsFromTheLeft )
+    BitFieldWrapper_c& setBit ( typename T::enum_type a_bitsFromTheLeft )
     {
-      if ( a_bitsFromTheLeft < mui16_sizeInBits )
+      if ( a_bitsFromTheLeft < sizeInBits )
       {
-        mpui8_bitField[ a_bitsFromTheLeft >> 3 ] |= ( 0x80 >> ( a_bitsFromTheLeft & 0x07 ) );
+         m_bitField.set(a_bitsFromTheLeft);
       }
       return *this;
     }
 
-#if 0
-		// This function is unused rigth at the moment. One still needs to decide whether or not to set the unused bits
-    /** set all object types */
+    /** set all bits - be sure to check if this is appropriate,
+        or if there are any reserved bits which should not be set */
     BitFieldWrapper_c& setAllBits()
     {
-      for ( int i = 0; i < mui8_sizeInBytes; i++ )
-        mpui8_bitField [i] = 0xFF;
+      m_bitField.set();
       return *this;
     }
-#endif
 
     /** Checks wheether the given bit is set to 1. Bits are counted from the left
     @param  a_bitsFromTheLeft  bit position from the left, counting from 0
+                               if it is out-of-range, false (0 bit) is returned
     @return  true if the bit is set
     */
-    bool isBitSet ( T a_bitsFromTheLeft )
+    bool isBitSet (T a_bitsFromTheLeft)
     {
-      if ( a_bitsFromTheLeft < mui16_sizeInBits )
+      if ( a_bitsFromTheLeft < sizeInBits )
       {
-        if ( mpui8_bitField[ a_bitsFromTheLeft >> 3 ] & ( 0x80 >> ( a_bitsFromTheLeft & 0x07 ) ) )
-          return true;
+        return m_bitField.test(a_bitsFromTheLeft);
       }
+      // out of range handling
       return false;
     }
 
-    /** do bitwise AND assignment for each uint8_t of array */
-    void operator&= ( const BitFieldWrapper_c& c_refBitField )
+    /** do bitwise AND assignment */
+    void operator &= ( const BitFieldWrapper_c& c_refBitField )
     {
-      uint8_t minSize = ( mui8_sizeInBytes < c_refBitField.mui8_sizeInBytes ) ? mui8_sizeInBytes : c_refBitField.mui8_sizeInBytes  ;
-
-      for ( int i = 0; i < minSize; i++ )
-        mpui8_bitField[i] &= c_refBitField.mpui8_bitField[i];
+      m_bitField &= c_refBitField;
     }
 
-		/** A bytewise getter
-		*/
-    uint8_t getByte ( uint8_t aui8_byteOrder ) const
+    /** do bitwise OR assignment */
+    void operator |= ( const BitFieldWrapper_c& c_refBitField )
     {
-      if ( aui8_byteOrder <= mui8_sizeInBytes )
+      m_bitField |= c_refBitField;
+    }
+
+    /** do bitwise XOR assignment */
+    void operator ^= ( const BitFieldWrapper_c& c_refBitField )
+    {
+      m_bitField ^= c_refBitField;
+    }
+
+    /** do bitwise left shift */
+    void operator <<= ( size_t num )
+    { // for bitset, bit 0 is the LSB => we need to invert <<= to >>=
+      m_bitField >>= num;
+    }
+
+    /** do bitwise right shift */
+    void operator >>= ( size_t num )
+    { // for bitset, bit 0 is the LSB => we need to invert >>= to <<=
+      m_bitField <<= c_refBitField;
+    }
+
+    /** A bytewise getter */
+    uint8_t getByte ( uint8_t aui8_byteOffset ) const
+    {
+      if ( aui8_byteOffset < sizeInBytes )
       {
-        return mpui8_bitField[aui8_byteOrder];
+          uint8_t ui8_res = 0;
+          for (int i=0; i<8; ++i)
+          {
+            if (m_bitField[aui8_byteOffset*8+i])
+              ui8_res |= (1 << (7-i));
+          }
+          return ui8_res;
       }
+      // out-of-range handling
       return 0;
     }
 
   private:
-    uint8_t* mpui8_bitField;
-    uint16_t mui16_sizeInBits;
-    uint8_t  mui8_sizeInBytes;
+    std::bitset<T::number_of_bits> m_bitField;
+};
 
-}; // ~X2C
-
-#endif // -X2C
+#endif

@@ -27,7 +27,6 @@ bool ecuMain() {
   p_ptoRearSensor->setMode( IsoAgLibTutorialPropCan::PtoSensor_c::modeRear );
   p_powerSensor = new IsoAgLibTutorialPropCan::PowerSensor_c();
 
-
   p_propCan->registerSensor( p_speedSensor );
   p_propCan->registerSensor( p_distanceSensor );
   p_propCan->registerSensor( p_ptoFrontSensor );

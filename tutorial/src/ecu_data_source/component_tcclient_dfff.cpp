@@ -32,7 +32,7 @@ void
 IsoAgLibTutorialDataSource::TutorialDataSource_c::init()
 {
   // DFFF-specific
-  c_defaultLogging.setProcessDataChangeHandler( NULL );
+  c_defaultLogging.setProcessDataChangeHandler( this );
 
   const bool cb_registerSuccess =
     IsoAgLib::getIProcessInstance().getDevPropertyHandlerInstance().registerDevicePool(
