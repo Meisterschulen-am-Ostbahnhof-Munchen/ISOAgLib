@@ -2287,6 +2287,9 @@ tutorial/src/ecu_data_source/component_tcclient.cpp -text
 tutorial/src/ecu_data_source/component_tcclient.h -text
 tutorial/src/ecu_data_source/component_tcclient_dfff.cpp -text
 tutorial/src/ecu_data_source/component_tcclient_dfff.h -text
+tutorial/src/ecu_data_source/component_tcclient_dfff_pool/tutorialDataSourceDFFF-bytestream.inc -text
+tutorial/src/ecu_data_source/component_tcclient_dfff_pool/tutorialDataSourceDFFF-func.h -text
+tutorial/src/ecu_data_source/component_tcclient_dfff_pool/tutorialDataSourceDFFF.xml -text
 tutorial/src/ecu_data_source/component_tcclient_pool/tutorialDataSource-bytestream.inc -text
 tutorial/src/ecu_data_source/component_tcclient_pool/tutorialDataSource-func.h -text
 tutorial/src/ecu_data_source/component_tcclient_pool/tutorialDataSource.xml -text
