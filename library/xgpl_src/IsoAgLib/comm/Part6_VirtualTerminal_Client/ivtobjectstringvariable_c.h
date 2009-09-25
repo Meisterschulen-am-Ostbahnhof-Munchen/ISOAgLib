@@ -81,7 +81,7 @@ public:
   //  Operation: setValueCopy
   //! @param newValue:
   //! @param b_updateObject:
-  void setValueCopy(char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
+  void setValueCopy(const char* newValue, bool b_updateObject=false, bool b_enableReplaceOfCmd=false) {
     vtObjectStringVariable_c::setValueCopy (newValue, b_updateObject, b_enableReplaceOfCmd);
   }
 
