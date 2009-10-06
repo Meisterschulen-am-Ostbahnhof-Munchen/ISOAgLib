@@ -1,9 +1,10 @@
 #############################################################################
 # Makefile for building: can_server_[sock/msq]_{can-card}
 # Project:               can_server
+# Help:                  make help
 #############################################################################
 
-.PHONY: all deps clean distclean
+.PHONY: all deps clean distclean first help
 
 ISOAGLIB_PATH := ../..
 
@@ -114,6 +115,10 @@ TARGETS := $(call PRE_EXEC,can_server_msq_no_card can_server_socket_no_card can_
 # Rules
 
 first: $(call PRE_EXEC,can_server_msq_no_card can_server_socket_no_card)
+
+help:
+	@printf 'Invocation Examples:\n'
+	@printf '$$ make %s\n' $(TARGETS)
 
 all: $(TARGETS)
 
