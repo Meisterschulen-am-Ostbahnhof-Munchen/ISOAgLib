@@ -99,7 +99,7 @@ APP_SRC_FILE="main.cpp"
 # RULE_CXXFLAGS='-pipe -O -Wall -g -Wextra -Winit-self -Wmissing-include-dirs -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
 
 # Select if Debug messages within IsoAgLib are sent via RS232
-# (automatically activates the PRJ_RS232 setting)
+# (you need to have PRJ_RS232 activated therefore)
 # PRJ_SEND_DEBUG=1
 
 # Select if the project shall use the float data type
@@ -182,6 +182,9 @@ RS232_INSTANCE_CNT=1
 # Specify if Part 3 - Data Link Layer: Basic ISOBUS Protocol is enabled.
 PRJ_ISO11783=1
 
+# Specify if Part 3 - Proprietary Messages (via Proprietary PGNs) is enabled.
+# PRJ_PROPRIETARY_PGN_INTERFACE=0
+
 # Specify if Part 6 - VT-Client support is enabled.
 # PRJ_ISO_TERMINAL=1
 
@@ -213,7 +216,6 @@ PRJ_ISO11783=1
 # PRJ_TRACTOR_MOVE_SETPOINT=0
 
 # only incorporate parts from BASE that provide tractor PTO information
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # the following project setting includes only measurement of tractor data.
 # i.e. NO SETTING OF COMMANDS
 # PRJ_TRACTOR_PTO=0
@@ -222,23 +224,20 @@ PRJ_ISO11783=1
 # PRJ_TRACTOR_PTO_SETPOINT=0
 
 # only incorporate parts from BASE that provide tractor lighting information
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_LIGHT=0
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_AUX=0
 
 # only incorporate parts from BASE that provide time and GPS information
 # PRJ_TIME_GPS=0
 
 # only incorporate parts from BASE that provide tractor guidance information
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_GUIDANCE=0
 
 # only incorporate parts from BASE that provide tractor certification information
-# this part is not available in the free ISO AgLib edition. If you are interested in this feature please contact OSB AG
 # PRJ_TRACTOR_CERTIFICATION=0
+
 
 ### Special Setup / Customization / Optimization
 ##############################################
@@ -344,14 +343,6 @@ PRJ_ISO11783=1
 # This is only useful if no distinguishing between setpoint and measurement
 # value is needed
 # PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
-
-
-# ###############################################################
-# Special CAN features
-# ###############################################################
-
-# Specify if handling of Proprietary PGN messages is enabled.
-# PRJ_PROPRIETARY_PGN_INTERFACE=0
 
 
 # ###############################################################
@@ -516,3 +507,4 @@ PRJ_EEPROM=1
 
 # additional libs when using Linux (or general: Makefile based builds
 # USE_LINUX_EXTERNAL_LIBRARIES=""
+

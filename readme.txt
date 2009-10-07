@@ -157,53 +157,6 @@ The \isoaglib provides the following features to facilitate the development of I
 - Design orientated to the requirements of networks with more then two devices
 - IsoAgLib also supports the \ref DefaultDataLogging of the task controller specification.
 
-<!--Brad Cox developed a tool for his company, that is able to convert the project files of the WTK mask generator to the XML definition. Please contact Achim Spangler if you are interested in this tool for your own use, as Brad Cox indicated already, that he might be willing to provide this undest some conditions.
-But this tool would only help to start the virtual mask definition with XML, as this method provides some additional attributes to control the automatic runtime adaptation of the single core mask pool to the different terminal properties (e.g. font size dependent spacing).
-\section wtk2xml XML Mask Generator
-  <a href="mailto:Brad.Cox@agcocorp:com">Brad Cox</a> developed a tool
-  for his company that is able to convert the project files of the WTK
-  mask generator to the XML definition.  Please contact
-  <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> if you
-  are interested in this tool for your own use, as Brad Cox indicated
-  that he might be willing to provide this under some conditions.
-
-  Note that this tool helps to start the virtual mask definition
-  with XML, as the method provides some additional attributes to
-  control the automatic runtime adaptation of the single core mask
-  pool to the different terminal properties
-  (e.g. font size dependent spacing).
-
-\section brad_cox Brad Cox: Pioneer Win32 User and First External Contributor
-  <a href="mailto:Brad.Cox@agcocorp:com">Brad Cox</a> helped to find
-  several optimization needs for documentation, tutorial and project
-  generation support.  The resulting documentation helped him to
-  implement all missing VT Object types, even those which weren't needed
-  for his <b>MiniVeg N</b> project.  Thanks to him, the
-  ISO<i><sub>AgLib</sub></i> also implements VT Objects like Macro and
-  AuxiliaryInput.
-
-  As the ISO<i><sub>AgLib</sub></i> is mainly developed on Linux,
-  all Win32 specific adaptations including driver mappings and project
-  file generation for Win32 IDEs were not initially optimal.
-  Brad Cox's efforts to try ISO<i><sub>AgLib</sub></i> in
-  combination with <b>Microsoft Visual Studio C++</b> resulted in
-  the following improvements to ISO<i><sub>AgLib</sub></i>:
-  - it now provides automatic project file generation for Microsoft Visual
-    Studio VC++ version 6.0 (DSP file), with the requirement of installation
-    of STLport, if version 7.0 and above isn't used
-  - the Open Source Win32 IDE "Dev-C++" is used for the Win32 compile
-    of vt2iso, as there the several required utils can be installed a
-    lot easier.
-
-  Brad is already using ISO<i><sub>AgLib</sub></i> for some interesting
-  test applications,
-
-  Some other extensions that he has done are moveChildLocation and setOriginSKM
-  functions for VT Objects.  He also got us started with the integration
-  of multi-language support.
--->
-
-
 \section UsingProjects Known Users
 As the used license <i>GPL with exception</i> requires from each user to accompany any distributed Program
 ( or a work based on it - see GPL §3) with some information on the used library, it would be quite kind to
@@ -245,7 +198,7 @@ Other known users are:
 - <a href="http://www.dygron.com.au/">Dygron Technologies (Ben Murray)</a>
 
 
-The \isoaglib will be actively maintained by <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a> at <a href="http://www.osb-ag.de">OSB AG</a>
+The \isoaglib will be actively maintained at <a href="http://www.osb-ag.de">OSB AG</a>
 as long as the invested time is affordable in relation to corresponding projects and support contracts.<br>
 Even in case the active maintenance by <a href="http://www.osb-ag.de">OSB AG</a> might be stopped some day, the GPL license and
 the independent website at the
@@ -291,28 +244,6 @@ AZH GmbH,-->
 <a href="http://www.ivm-automotive.com/">IVM Automotive München Gmb</a>
 
 More information on commercial backing of \isoaglib can be obtained in the \ref GeneralSupportInformation and the \ref PageContactAndSupport section.
-
-
-\subsection MaintainersExtensions Exclusive feature area for new customers and researchers
-Even if \isoaglib provides already most of the features, a agricultural device
-may need, there are still some functions, that are missing or that could ease application
-development. But their implementation can only be done, when people of the user community
-do at least part of the work, some sponsoring companies give OSB some money to do this,
-or if OSB has the option to refinance the work with surrounding customer contracts (we want
-at least to avoid that our competitors take the code for free and make their own business without
-even asking us).
-
-Interested parties don't have to pay much money, as we are mostly interested in information about
-everybody who uses those additional features. So don't hesitate to contact <a href="mailto:Achim.Spangler_at_osb-ag:de">Achim Spangler</a>
-for registration to get access to the <b>EXT</b> part of \isoaglib.
-
-The following areas are examples for such extensions:
-    - tractor data level 2 + 3 server
-        - <i>iTracLight_c</i> for lightning information and control
-        - <i>iTracMoveSetpoint_c</i> for control of tractor moving parameters by implement
-        - <i>iTracPtoSetpoint_c</i> for control of PTO settings by implement
-        - <i>iTracAux_c</i> for management of axiliary valves of tractor (control and information)
-    - additional features for virtual terminal access like multi language framework (simple definition of variable language depend parts of the mask pool)
 
 
 \section Authors Authors and Contributors

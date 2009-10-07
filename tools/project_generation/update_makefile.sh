@@ -397,26 +397,6 @@ check_set_correct_variables()
         PRJ_TRACTOR_PTO=1 # force basic trac move to compile in
     fi
 
-    # and also deactivate the features that are only available with the extension directories
-    EXT_BASE_SRC="$ISO_AG_LIB_PATH/library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/ext"
-
-    if [ ! -d "$EXT_BASE_SRC" ]; then
-        # ISO is not active -> deactivate all ISO only features
-        echo_ "Information:"; echo_
-        echo_ "The directory $EXT_BASE_SRC with (optional) extension modules does not exist."
-        echo_ "Deactivating features:"; echo_
-        echo_ "PRJ_TRACTOR_LIGHT=0"
-        echo_ "PRJ_TRACTOR_AUX=0"
-        echo_ "PRJ_TRACTOR_GUIDANCE=0"
-        echo_ "PRJ_TRACTOR_CERTIFICATION=0"; echo_
-        echo_ "Please contact m.rothmund@osb-ag.de to gain access to this restriced area."
-        PRJ_TRACTOR_LIGHT=0
-        PRJ_TRACTOR_AUX=0
-        PRJ_TRACTOR_GUIDANCE=0
-        PRJ_TRACTOR_CERTIFICATION=0
-        echo_
-    fi
-
     # overwrite settings from config file with command line parameter settings
     if [ $PARAMETER_TARGET_SYSTEM != "UseConfigFile" ] ; then
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM

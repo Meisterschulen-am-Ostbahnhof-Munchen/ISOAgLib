@@ -100,13 +100,13 @@
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h>
 #endif
 #ifdef USE_TRACTOR_FACILITIES
-#include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.h>
 #endif
 #ifdef USE_TRACTOR_LIGHT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/traclight_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/traclight_c.h>
 #endif
 #ifdef USE_TRACTOR_AUX
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/impl/tracaux_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracaux_c.h>
 #endif
 #ifdef USE_TIME_GPS
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>

@@ -41,7 +41,6 @@ classes:
   - activation state of 100 n/min feature of front and rear PTO
   - activation state of economy mode in front and rear PTO
 
-The following classes are available in the <tt>ext</tt> area:
 - iTracAux_c: handles management of axiliary valves of tractor (control and information)
   <!--- flow through the extended/retract port of auxiliary valve of a tractor
   - measured state of the fail save mode of auxiliary valve
@@ -84,8 +83,6 @@ The following classes are available in the <tt>ext</tt> area:
   - front/rear power take-off (PTO)
   - mode of the front/rear power take-off (PTO)
   - economy mode of front/rear power take-off (PTO)-->
-
-See \ref MaintainersExtensions for more information on how to get access to the exclusive areas.
 
 
 Some exemplary data requests are presented below.
