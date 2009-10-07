@@ -1656,6 +1656,7 @@ examples/src/Tutorials/7_SchedulerTask/7_2_SchedulerTaskCanMultipleChannels/vers
 /index.html -text
 /installation.txt -text
 library/LICENSE -text
+library/commercial_BIOS/readme.txt -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsclient_c.h -text
