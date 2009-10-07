@@ -1685,6 +1685,14 @@ library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamlinear_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamlinear_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/igenericdata_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/igenericdata_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessageclient_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessageclient_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessagehandler_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessagehandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/iproprietarymessageclient_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/iproprietarymessagehandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.cpp -text
