@@ -80,12 +80,12 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-
 #ifndef iPROPRIETARYMESSAGEHANDLER_C_H
 #define iPROPRIETARYMESSAGEHANDLER_C_H
 
 #include "impl/proprietarymessagehandler_c.h"
 #include "iproprietarymessageclient_c.h"
+
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib

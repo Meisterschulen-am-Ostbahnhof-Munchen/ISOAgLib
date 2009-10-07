@@ -85,7 +85,7 @@
   #define PRJ_USE_AUTOGEN_CONFIG config_ProprietaryCan.h
 #endif
 #include "5_1_ProprietaryPgn.h"
-#include "IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h"
+#include "IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h"
 
 
 #ifdef SYSTEM_PC
@@ -122,7 +122,7 @@ iIsoName_c c_remoteECU (true, // ab_selfConf
                         );
 
   /** process a can message - receive data -> reimplemented fom proprietarymessageclient */
-  void ProprietaryCanClient_c::processMsg()
+  void ProprietaryCanClient_c::processProprietaryMsg()
   {
     /** data evaluation part */
     /** takes the ident from the stored data */

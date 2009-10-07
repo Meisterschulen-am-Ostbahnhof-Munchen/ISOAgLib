@@ -80,8 +80,9 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#include <IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h>
-#include <IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h>
+#include "proprietarymessageclient_c.h"
+#include "proprietarymessagehandler_c.h"
+
 
 namespace __IsoAgLib
 {
@@ -106,8 +107,8 @@ namespace __IsoAgLib
   ProprietaryMessageClient_c::ProprietaryMessageClient_c( uint32_t aui32_mask, uint32_t aui32_filter,
                                                           const IsoName_c& acrc_rremoteECU,
                                                           const IdentItem_c& apc_localIdent)
-                                                          : men_sendSuccess(MultiSend_c::SendSuccess),
-                                                            mpc_localIdent(NULL)
+                                                          : mpc_localIdent(NULL),
+                                                            men_sendSuccess(MultiSend_c::SendSuccess)
   {
     setSendPeriodMsec(0);
     mui32_nextSendTimeStamp = 0;

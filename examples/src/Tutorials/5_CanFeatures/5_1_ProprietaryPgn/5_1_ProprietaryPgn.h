@@ -88,7 +88,7 @@
    of the "IsoAgLib" */
 #include <IsoAgLib/scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisend_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h>
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
@@ -96,7 +96,8 @@
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 
 // you just need to derive from the client!
-#include "IsoAgLib/comm/ext/ProprietaryCan/iproprietarymessageclient_c.h"
+#include <IsoAgLib/comm/Part3_ProprietaryMessages/iproprietarymessageclient_c.h>
+
 
 class ProprietaryCanClient_c : public IsoAgLib::iProprietaryMessageClient_c
 {
@@ -133,7 +134,7 @@ public:// Public methods
 private: // Private methods
 
   /** receives the data */
-  virtual void processMsg();
+  virtual void processProprietaryMsg();
 
   /** time last updated */
   int32_t i32_lastReceived;

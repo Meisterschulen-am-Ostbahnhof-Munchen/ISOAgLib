@@ -80,7 +80,7 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-#include <IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessagehandler_c.h>
+#include "proprietarymessagehandler_c.h"
 
 #include <list>
 

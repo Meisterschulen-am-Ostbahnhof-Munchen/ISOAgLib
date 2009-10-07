@@ -83,9 +83,9 @@
 #ifndef PROPRIETARYMESSAGEHANDLER_H
 #define PROPRIETARYMESSAGEHANDLER_H
 
-#include <IsoAgLib/comm/ext/ProprietaryCan/impl/proprietarymessageclient_c.h>
+#include "proprietarymessageclient_c.h"
 
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisofilter_s.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>

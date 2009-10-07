@@ -591,7 +591,7 @@ comm_features()
     fi
 
     if [ "$PRJ_PROPRIETARY_PGN_INTERFACE" -gt 0 ]; then
-        printf '%s' " -o -path '*/ProprietaryCan/*'" >&3
+        printf '%s' " -o -path '*/Part3_ProprietaryMessages/*'" >&3
     fi
 
     if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ]  ; then
@@ -936,7 +936,7 @@ prepare_feature_partitions()
     add_feature_partition_rule PRJ_TRACTOR_GUIDANCE -path '.*/Part7_ApplicationLayer/.*tracguidance'
     add_feature_partition_rule PRJ_TRACTOR_CERTIFICATION '.*/Part7_ApplicationLayer/.*traccert'
     add_feature_partition_rule PRJ_TIME_GPS '.*/Part7_ApplicationLayer/.*timeposgps.*'
-    add_feature_partition_rule PRJ_PROPRIETARY_PGN_INTERFACE '.*/ProprietaryCan/'
+    add_feature_partition_rule PRJ_PROPRIETARY_PGN_INTERFACE '.*/Part3_ProprietaryMessages/'
     add_feature_partition_rule PRJ_ISO_FILESERVER_CLIENT '.*/Part13_FileServer_Client/'
     add_feature_partition_rule PRJ_ISO_TERMINAL '.*/Part6_VirtualTerminal_Client/'
     add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/volatilememory_c\.[^/]*$'
