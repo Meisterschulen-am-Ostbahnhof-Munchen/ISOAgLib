@@ -509,6 +509,11 @@ check_set_correct_variables()
             exit 3
             ;;
     esac
+
+    if [ "$PRJ_SEND_DEBUG" -gt "$PRJ_RS232" ]; then
+        printf 'ERROR: If DEBUG messages are wanted, then RS232 is needed. Try PRJ_RS232=%s.\n' "$PRJ_SEND_DEBUG" >&2
+        exit 2
+    fi
 }
 
 # Take the first argument as variable name and append the remaining
