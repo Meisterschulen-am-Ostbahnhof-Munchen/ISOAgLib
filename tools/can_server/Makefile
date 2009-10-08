@@ -118,7 +118,7 @@ first: $(call PRE_EXEC,can_server_msq_no_card can_server_socket_no_card)
 
 help:
 	@printf 'Invocation Examples:\n'
-	@printf '$$ make %s\n' $(TARGETS)
+	@printf '$$ make %s\n' all '' $(TARGETS)
 
 all: $(TARGETS)
 
