@@ -300,7 +300,6 @@ set_default_values()
     PRJ_COMPILER_BINARY_PRE=''
     USE_WIN32_EXTERNAL_INCLUDE_PATH=''
     USE_WIN32_EXTERNAL_LIBRARY_PATH=''
-    USE_DEVCPP_EXTERNAL_LIBRARIES=''
     USE_WIN32_EXTERNAL_INCLUDE_PATH=''
     USE_WIN32_EXTERNAL_LIBRARY_PATH=''
     USE_MSVC_EXTERNAL_LIBRARIES=''
@@ -1773,188 +1772,6 @@ win_paths_from_unix_paths()
     fi
 }
 
-# Generate suitable project file for the Win32 IDE "Dev-C++"
-# which is OpenSource and is based on MinGW - i.e. gcc for Win32
-# URL http://www.bloodshed.net/dev/devcpp.html
-create_DevCCPrj()
-{
-    DEV_PRJ_DIR="$1/$PROJECT"
-
-    # echo_ "Create Projekt file for Dev-C++ in $DEV_PRJ_DIR"
-
-
-    mkdir -p $DEV_PRJ_DIR/objects
-    cd $DEV_PRJ_DIR
-    # remove some file lists, which are not used for Dev-C++
-    rm -f $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE
-
-    # org test
-    PROJECT_FILE_NAME="${PROJECT}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}.dev"
-    DevCcPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
-
-    # echo_ "Erzeuge $PROJECT_FILE_NAME"
-    PROJECT_EXE_NAME="${PROJECT}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}.exe"
-    CONFIG_HDR_NAME="config_""$PROJECT.h"
-
-    UNIT_CNT_CC=$(grep -c -E "\.cc|\.cpp|\.c" $DevCcPrjFilelist)
-    UNIT_CNT_HDR=$(grep -c -E "\.h|\.hpp" $DevCcPrjFilelist)
-    UNIT_CNT=$(expr $UNIT_CNT_CC + $UNIT_CNT_HDR || status_le1)
-
-
-    {
-        echo_ "[Project]" >&3
-        echo_ "FileName=$PROJECT_FILE_NAME" >&3
-        echo_ "Name=$PROJECT" >&3
-        echo_ "UnitCount=$UNIT_CNT" >&3
-    
-    
-        cat <<'ENDOFHEADERA' >&3
-Type=1
-Ver=1
-ObjFiles=
-ENDOFHEADERA
-    
-        ISO_AG_LIB_PATH_WIN=$(echo_ "$ISO_AG_LIB_INSIDE" | mangle_path1)
-    
-        DEFINE_LINE='-D'"$USE_SYSTEM_DEFINE"'_@@_-DPRJ_USE_AUTOGEN_CONFIG='"$CONFIG_HDR_NAME"'_@@_'
-        INCLUDE_DIR_LINE="$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library;$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}library${PATH_SEPARATOR1}xgpl_src"
-    
-        LIB_DIR_LINE=""
-        LIB_FILE_LINE="-lwinmm_@@_-lws2_32_@@_"
-    
-    
-        USE_WIN32_EXTERNAL_INCLUDE_PATH_WIN=$(echo_ "$USE_WIN32_EXTERNAL_INCLUDE_PATH" | mangle_path1)
-    
-        USE_WIN32_EXTERNAL_LIBRARY_PATH_WIN=$(echo_ "$USE_WIN32_EXTERNAL_LIBRARY_PATH" | mangle_path1)
-    
-        USE_DEVCPP_EXTERNAL_LIBRARIES=$(echo_ "$USE_DEVCPP_EXTERNAL_LIBRARIES" | mangle_path1)
-    
-        REL_APP_PATH_WIN=$(echo_ "${REL_APP_PATH:-}" | mangle_path1)
-    
-        PRJ_INCLUDE_PATH_WIN=$(echo_ "$PRJ_INCLUDE_PATH" | mangle_path1)
-    
-        for EACH_REL_APP_PATH in ${REL_APP_PATH_WIN:-} ; do
-            append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$EACH_REL_APP_PATH"
-        done
-        for SingleInclPath in $PRJ_INCLUDE_PATH_WIN ; do
-            append INCLUDE_DIR_LINE ";$ISO_AG_LIB_PATH_WIN${PATH_SEPARATOR1}$SingleInclPath"
-        done
-        for SingleInclPath in $USE_WIN32_EXTERNAL_INCLUDE_PATH_WIN ; do
-            append INCLUDE_DIR_LINE ";$SingleInclPath"
-        done
-        for SingleLibItem in $USE_DEVCPP_EXTERNAL_LIBRARIES ; do
-            append LIB_FILE_LINE "$SingleLibItem"'_@@_'
-        done
-        for SingleLibPath in $USE_WIN32_EXTERNAL_LIBRARY_PATH_WIN ; do
-            if [ "M$LIB_DIR_LINE" != "M" ] ; then
-                append LIB_DIR_LINE ";$SingleLibPath"
-            else
-                LIB_DIR_LINE="$SingleLibPath"
-            fi
-        done
-    
-    
-        if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-            append DEFINE_LINE ""'-D__GNUWIN32___@@_-W_@@_-DWIN32_@@_-D_CONSOLE_@@_-D_MBCS_@@_-D_Windows_@@_-DCAN_DRIVER_SOCKET_@@_-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
-        fi
-    
-        echo_n "Includes=$INCLUDE_DIR_LINE" >&3
-        echo_ "" >&3
-    
-        echo_ "Libs=$LIB_DIR_LINE" >&3
-        echo_ "Linker=$LIB_FILE_LINE" >&3
-    
-        cat <<'ENDOFHEADERA' >&3
-PrivateResource=
-ResourceIncludes=
-MakeIncludes=
-ENDOFHEADERA
-    
-    
-    
-        for SinglePrjDefine in $PRJ_DEFINES ; do
-            append DEFINE_LINE ""'-D'"$SinglePrjDefine"'_@@_'
-        done
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-            append DEFINE_LINE ""'-DSYSTEM_WITH_ENHANCED_CAN_HAL_@@_'
-        fi
-    
-        echo_ "Compiler=$DEFINE_LINE" >&3
-        echo_ "CppCompiler=$DEFINE_LINE" >&3
-    } 3>"$PROJECT_FILE_NAME"
-    while [ $(grep -c -e "${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}" $PROJECT_FILE_NAME) -gt 0 ] ; do
-        sed -e "s|${PATH_SEPARATOR1}[0-9a-zA-Z_+\\-]\\+${PATH_SEPARATOR1}\\.\\.${PATH_SEPARATOR1}|${PATH_SEPARATOR1}|g" $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-        mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
-    done
-
-    demangle_path1 < $PROJECT_FILE_NAME > $PROJECT_FILE_NAME.1
-    mv $PROJECT_FILE_NAME.1 $PROJECT_FILE_NAME
-
-    {
-        cat <<'ENDOFHEADERB' >&3
-IsCpp=1
-Icon=
-ExeOutput=
-ObjectOutput=objects
-OverrideOutput=0
-ENDOFHEADERB
-
-        echo_ "OverrideOutputName=$PROJECT_EXE_NAME" >&3
-        cat <<'ENDOFHEADERC' >&3
-HostApplication=
-Folders=
-CommandLine=
-UseCustomMakefile=0
-CustomMakefile=
-IncludeVersionInfo=0
-SupportXPThemes=0
-CompilerSet=0
-CompilerSettings=0000000000000000000000
-
-[VersionInfo]
-Major=0
-Minor=1
-Release=1
-Build=1
-LanguageID=1033
-CharsetID=1252
-CompanyName=
-FileVersion=
-FileDescription=Developed using the Dev-C++ IDE
-InternalName=
-LegalCopyright=
-LegalTrademarks=
-OriginalFilename=
-ProductName=
-ProductVersion=
-AutoIncBuildNr=0
-
-ENDOFHEADERC
-
-        unit_ind=0
-        while read -r i; do
-            if [ -z "$i" ] ; then
-                continue
-            fi
-            unit_ind=$(expr $unit_ind + 1 || status_le1)
-            echo_ "[Unit$unit_ind]" >&3
-            echo_ "FileName=$i" >&3
-            echo_ "CompileCpp=1" >&3
-            echo_ "Folder=$PROJECT" >&3
-            echo_ "Compile=1" >&3
-            echo_ "Link=1" >&3
-            echo_ "Priority=1000" >&3
-            echo_ "OverrideBuildCmd=0" >&3
-            echo_ "BuildCmd=" >&3
-            echo_ "" >&3
-        done <<END_OF_SOURCES
-$(cat $DevCcPrjFilelist)
-END_OF_SOURCES
-    } 3>>"$PROJECT_FILE_NAME"
-
-    cd $1
-}
-
 unix_lines_to_windows_lines()
 {
     # New versions of SED understand \r directly, but older ones (e.g.
@@ -2531,7 +2348,6 @@ create_buildfiles()
             ;;
         # check if a win32 project file whould be created
         (pc_win32)
-            create_DevCCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             create_VCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (p1mc)
