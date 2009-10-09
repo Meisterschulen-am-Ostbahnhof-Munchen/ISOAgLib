@@ -587,7 +587,7 @@ public:
   int32_t getGpsAltitudeCm( void ) const { return mi32_altitudeCm; }
 
   /** simply check for some sort of Differential signal */
-  bool hasDifferentialPosition() const { return ( ( mt_gnssMethod > IsoAgLib::IsoGnssFix ) && ( mt_gnssMethod < IsoAgLib::IsoDrEstimated ) )?true:false;}
+  bool hasDifferentialPosition() const { return ( ( mt_gnssMethod > IsoAgLib::IsoGnssFix ) && ( mt_gnssMethod < IsoAgLib::IsoDrEstimated ) );}
 
   /** deliver GNSS type ( e.g. GPS, GLONASS or SBAS ) */
   IsoAgLib::IsoGnssType_t getGnssType(void) const { return mt_gnssType; }

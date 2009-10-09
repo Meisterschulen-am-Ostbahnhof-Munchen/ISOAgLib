@@ -159,7 +159,7 @@ public:
     @param ab_useFast default-argument for setting fast ADC (true as default)
   */
   void setFastAdc(bool ab_useFast=true);
-  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() )?true:false;};
+  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() );};
 protected:
   /**
     HIDDEN! copy constructor for AnalogI_c

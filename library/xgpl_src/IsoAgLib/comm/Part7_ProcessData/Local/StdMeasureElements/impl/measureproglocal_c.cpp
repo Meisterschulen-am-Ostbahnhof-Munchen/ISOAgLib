@@ -223,7 +223,7 @@ bool MeasureProgLocal_c::start(Proc_c::type_t ren_type,
 
   // send first values: if now without success mark for later resend with true
   if (b_sendVal)
-    mb_triggeredIncrement = (sendRegisteredVals(ren_doSend))? false:true;
+    mb_triggeredIncrement = !sendRegisteredVals(ren_doSend);
 
   // set the timer period for process_c to a low value (maybe the new programm triggers soon)
   getProcessInstance4Comm().resetTimerPeriod();

@@ -208,7 +208,7 @@ public:
     @return true -> an answer to the last command was received
   */
   bool answered() const
-    {return (mi32_answeredTime > mi32_commandedTime)?true:false;};
+    {return (mi32_answeredTime > mi32_commandedTime);};
   /**
     check if an active master setpoint exist
     @return true -> a master setpoint commander exist

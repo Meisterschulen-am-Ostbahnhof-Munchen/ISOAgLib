@@ -440,7 +440,7 @@ class Flexible4ByteString_c {
   bool operator==( const Flexible4ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
   #ifndef NO_8BIT_CHAR_TYPE
-    return ( uint32[0] == acrc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] == acrc_cmp.uint32[0] );
   #else
     for (uint8_t index = 0; index < 4; index++)
       if ( uint8[index] != acrc_cmp.uint8[index] )
@@ -453,7 +453,7 @@ class Flexible4ByteString_c {
   bool operator!=( const Flexible4ByteString_c& acrc_cmp ) const
   {
   #ifndef NO_8BIT_CHAR_TYPE
-    return ( uint32[0] != acrc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] != acrc_cmp.uint32[0] );
   #else
     for (uint8_t index = 0; index < 4; index++)
       if ( uint8[index] != acrc_cmp.uint8[index] )
@@ -467,12 +467,12 @@ class Flexible4ByteString_c {
   /** compare for LOWER */
   bool operator<( const Flexible4ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
-    return ( uint32[0] < acrc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] < acrc_cmp.uint32[0] );
   };
   /** compare for LARGER */
   bool operator>( const Flexible4ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
-    return ( uint32[0] > acrc_cmp.uint32[0] )?true:false;
+    return ( uint32[0] > acrc_cmp.uint32[0] );
   };
   /** compare with:
     @return 0 == equal;
@@ -711,12 +711,12 @@ class Flexible8ByteString_c {
   /** compare for EQUAL */
   bool operator==( const Flexible8ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
-    return ( uint64[0] == acrc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] == acrc_cmp.uint64[0] );
   };
   /** compare for DIFFERENT */
   bool operator!=( const Flexible8ByteString_c& acrc_cmp ) const
   {
-    return ( uint64[0] != acrc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] != acrc_cmp.uint64[0] );
   };
   #else
   /** assignment */
@@ -732,12 +732,12 @@ class Flexible8ByteString_c {
   /** compare for LOWER */
   bool operator<( const Flexible8ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
-    return ( uint64[0] < acrc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] < acrc_cmp.uint64[0] );
   };
   /** compare for LARGER */
   bool operator>( const Flexible8ByteString_c& acrc_cmp ) const
   { // use inline implementation for this case
-    return ( uint64[0] > acrc_cmp.uint64[0] )?true:false;
+    return ( uint64[0] > acrc_cmp.uint64[0] );
   };
   /** compare with:
     @return 0 == equal;

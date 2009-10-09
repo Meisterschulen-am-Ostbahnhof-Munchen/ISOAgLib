@@ -156,7 +156,7 @@ public:
     @return true -> the given state is set
   */
   bool itemState(itemState_t ren_itemState) const
-    {return ((en_itemState & ren_itemState) == ren_itemState)?true:false;}
+    {return ((en_itemState & ren_itemState) == ren_itemState);}
 
   /**
   check if specific state is partially set
@@ -164,7 +164,7 @@ public:
   @return true -> one of the given combined states is set
    */
   bool itemStatePartialMatch(itemState_t ren_itemState) const
-  {return ((en_itemState & ren_itemState) != 0)?true:false;}
+  {return ((en_itemState & ren_itemState) != 0);}
 
   /**
     deliver the state information

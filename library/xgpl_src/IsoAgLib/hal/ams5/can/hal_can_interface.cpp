@@ -177,7 +177,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
       // update CAN bus error state and timestamps
       AMSBIOS::can_getBusErrorState(aui8_busNr, &gt_cinterfaceBusErrorState);
       // check if the CAN module is placed in an error-passive state now
-      return (gt_cinterfaceBusErrorState.statusReg&0x2000)?true:false;
+      return (gt_cinterfaceBusErrorState.statusReg&0x2000);
    };
 
    /**
@@ -190,7 +190,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
       // update CAN bus error state and timestamps
       AMSBIOS::can_getBusErrorState(aui8_busNr, &gt_cinterfaceBusErrorState);
       // check if the CAN module is placed in a bus-off state now
-      return (gt_cinterfaceBusErrorState.statusReg&0x4000)?true:false;
+      return (gt_cinterfaceBusErrorState.statusReg&0x4000);
     };
 
    /**
@@ -205,7 +205,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
    {
       // update CAN bus error state and timestamps
       AMSBIOS::can_getBusErrorState(aui8_busNr, &gt_cinterfaceBusErrorState);
-      return (gt_cinterfaceBusErrorState.lastSuccTx>gt_cinterfaceBusErrorState.lastBit1Err)?false:true;
+      return !(gt_cinterfaceBusErrorState.lastSuccTx>gt_cinterfaceBusErrorState.lastBit1Err);
    };
 
    /**
@@ -368,7 +368,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
    */
    bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
    {
-      return (AMSBIOS::can_isRingBufferFull( aui8_busNr, aui8_msgobjNr ) == 1 )?true:false;
+      return (AMSBIOS::can_isRingBufferFull( aui8_busNr, aui8_msgobjNr ) == 1 );
    };
 
    /**
@@ -415,7 +415,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
    */
    bool can_stateMsgobjLocked(uint8_t rui8_busNr, uint8_t rui8_msgobjNr)
    {
-      return (AMSBIOS::can_isMsgObjLocked(rui8_busNr, rui8_msgobjNr) == 1 )?true:false;
+      return (AMSBIOS::can_isMsgObjLocked(rui8_busNr, rui8_msgobjNr) == 1 );
    };
 
    /*@}*/

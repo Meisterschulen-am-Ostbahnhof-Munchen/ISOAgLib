@@ -105,7 +105,7 @@ int16_t closeSystem( void )
 /** check if open_System() has already been called */
 bool isSystemOpened( void )
 {
-  return ( sui32_detectStart == 0x9876 )?true:false;
+  return ( sui32_detectStart == 0x9876 );
 }
 /**
   get the system time in [ms]

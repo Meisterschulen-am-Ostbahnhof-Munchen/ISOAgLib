@@ -148,8 +148,8 @@ void AnalogIRangeCheck_c::setRange( uint16_t aui16_minValid, uint16_t aui16_maxV
 */
 int16_t AnalogIRangeCheck_c::validatedVal( bool &rb_tooLow, bool &rb_tooHigh ) const {
   const int16_t ci16_tempVal = val();
-  rb_tooLow  = ( ci16_tempVal < ui16_minValid )?true:false;
-  rb_tooHigh = ( ci16_tempVal > ui16_maxValid )?true:false;
+  rb_tooLow  = ( ci16_tempVal < ui16_minValid );
+  rb_tooHigh = ( ci16_tempVal > ui16_maxValid );
   return ci16_tempVal;
 }
 

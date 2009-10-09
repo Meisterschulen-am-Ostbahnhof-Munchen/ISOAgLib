@@ -248,7 +248,7 @@ inline
 bool
 SchedulerEntry_c::operator<=(const SchedulerEntry_c& acrc_rightSide) const
 {
-  return ( mpc_taskInstance->getNextTriggerTime() <= acrc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() <= acrc_rightSide.mpc_taskInstance->getNextTriggerTime() );
 }
 
 //! Parameter:
@@ -257,7 +257,7 @@ inline
 bool
 SchedulerEntry_c::operator==(const SchedulerEntry_c& acrc_rightSide) const
 {
-  return ( mpc_taskInstance->getNextTriggerTime() == acrc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() == acrc_rightSide.mpc_taskInstance->getNextTriggerTime() );
 }
 
 
@@ -270,7 +270,7 @@ inline
 bool
 SchedulerEntry_c::isTask(const Scheduler_Task_c* apc_cmpTask) const
 {
-  return ( mpc_taskInstance == apc_cmpTask )?true:false;
+  return ( mpc_taskInstance == apc_cmpTask );
 }
 
 //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time
@@ -313,7 +313,7 @@ inline
 bool
 SchedulerEntry_c::operator<(const SchedulerEntry_c& acrc_rightSide) const
 {
-  return ( mpc_taskInstance->getNextTriggerTime() < acrc_rightSide.mpc_taskInstance->getNextTriggerTime() )?true:false;
+  return ( mpc_taskInstance->getNextTriggerTime() < acrc_rightSide.mpc_taskInstance->getNextTriggerTime() );
 }
 
 //!  Return ClassName for Scheduler_c

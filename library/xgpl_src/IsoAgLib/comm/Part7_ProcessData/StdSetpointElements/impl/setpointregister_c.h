@@ -206,7 +206,7 @@ public:
     check if setpoint value was already handled
     @return true -> this setpoint was handled by the application
   */
-  bool handled()const{return (data.b_handled == 1)?true:false;}
+  bool handled()const{return (data.b_handled == 1);}
   /**
     deliver the timestamp of the last setHandled event
     @return last setHandled timestamp
@@ -216,32 +216,32 @@ public:
     check if setpoint is used as master control
     @return true -> the application set this setpoint as master before
   */
-  bool master()const{return (data.b_master == 1)?true:false;}
+  bool master()const{return (data.b_master == 1);}
   /**
     check if setpoint is conformant with actual (!!) master setpoint
     @return true -> the application set this setpoint as valid (accepted)
   */
-  bool valid()const{return (data.b_valid == 1)?true:false;}
+  bool valid()const{return (data.b_valid == 1);}
   /**
     check if valid exact limit is set
     @return true -> this setpoint register instance has an exact setpoint value
   */
-  bool existExact()const{return ((data.en_definedSetpoints & exactType) != 0)?true:false;}
+  bool existExact()const{return ((data.en_definedSetpoints & exactType) != 0);}
   /**
     check if valid minimum limit is set
     @return true -> this setpoint register instance has an minimum setpoint value
   */
-  bool existMin()const{return ((data.en_definedSetpoints & minType) != 0)?true:false;}
+  bool existMin()const{return ((data.en_definedSetpoints & minType) != 0);}
   /**
     check if valid maximum limit is set
     @return true -> this setpoint register instance has an maximum setpoint value
   */
-  bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0)?true:false;}
+  bool existMax()const{return ((data.en_definedSetpoints & maxType) != 0);}
   /**
     check if valid default value is set
     @return true -> this setpoint register instance has a default setpoint value
   */
-  bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0)?true:false;}
+  bool existDefault()const{return ((data.en_definedSetpoints & defaultType) != 0);}
   /**
     checks if setpoint with value group en_valueGroup exists
     @param en_valueGroup value group of tested setpoint type (exact 0, min 2, max 3, default)

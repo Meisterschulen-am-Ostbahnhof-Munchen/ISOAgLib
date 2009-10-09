@@ -132,7 +132,7 @@ namespace HAL
   /** check if open_System() has already been called */
   inline bool isSystemOpened ( void )
   {
-    return ( __HAL::DjBios_SysIsOpen() == __HAL::BIOS_YES ? true : false );
+    return ( __HAL::DjBios_SysIsOpen() == __HAL::BIOS_YES );
   };
 
 

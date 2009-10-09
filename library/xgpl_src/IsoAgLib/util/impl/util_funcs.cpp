@@ -826,7 +826,7 @@ bool Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) 
   return true;
 #else
   return ( ( uint32[1] == acrc_cmp.uint32[1] )
-        && ( uint32[0] == acrc_cmp.uint32[0] ) )?true:false;
+        && ( uint32[0] == acrc_cmp.uint32[0] ) );
 #endif
 };
 /** compare for DIFFERENT */
@@ -840,7 +840,7 @@ bool Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) 
   return false;
 #else
   return ( ( uint32[1] != acrc_cmp.uint32[1] )
-        && ( uint32[0] != acrc_cmp.uint32[0] ) )?true:false;
+        && ( uint32[0] != acrc_cmp.uint32[0] ) );
 #endif
 };
 #endif // end SIZEOF_INT < 4

@@ -274,7 +274,7 @@ bool iLibErr_c::good( iLibErrTypes_t at_errType ) const
   else {
     errors = getErrCnt( at_errType );
   }
-  return (errors > 0 )?false:true;
+  return !(errors > 0 );
 }
 
 
@@ -294,7 +294,7 @@ bool iLibErr_c::good( iLibErrLocations_t at_errLocation ) const
   else {
     errors = getErrCnt( at_errLocation );
   }
-  return (errors > 0 )?false:true;
+  return !(errors > 0);
 }
 
 

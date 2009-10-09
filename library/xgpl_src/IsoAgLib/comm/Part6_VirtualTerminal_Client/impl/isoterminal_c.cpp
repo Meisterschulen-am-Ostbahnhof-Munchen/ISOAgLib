@@ -165,9 +165,10 @@ IsoTerminal_c::init()
     getIsoMonitorInstance4Comm().registerSaClaimHandler(this);
 
     // register Filter in CanIo_c
-    bool b_atLeastOneFilterAdded=false;
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertStandardIsoFilter(*this,(VT_TO_GLOBAL_PGN),false)!= NULL);
-    b_atLeastOneFilterAdded |= (getCanInstance4Comm().insertStandardIsoFilter(*this,(LANGUAGE_PGN),false)!= NULL);
+    bool b_atLeastOneFilterAdded = NULL != getCanInstance4Comm().insertStandardIsoFilter(*this,(VT_TO_GLOBAL_PGN),false);
+    bool const cb_set = NULL != getCanInstance4Comm().insertStandardIsoFilter(*this,(LANGUAGE_PGN),false);
+    if (cb_set)
+      b_atLeastOneFilterAdded = true;
 
     if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
   }
@@ -329,8 +330,10 @@ IsoTerminal_c::timeEvent(void)
 
   for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
   {
-    if (mvec_vtClientServerComm[ui8_index])
-      b_allActivitiesPerformed &= mvec_vtClientServerComm[ui8_index]->timeEvent();
+    bool const cb_clear = mvec_vtClientServerComm[ui8_index] &&
+      !mvec_vtClientServerComm[ui8_index]->timeEvent();
+    if (cb_clear)
+        b_allActivitiesPerformed = false;
   }
   /** @todo SOON-241: maybe store the one that was out of time if not all could perform their actions? - by member variable of IsoTerminal_c
                       Update: They all need to be scheduled on their own, so then it's okay with this point. */

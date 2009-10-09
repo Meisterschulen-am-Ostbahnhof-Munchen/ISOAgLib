@@ -162,7 +162,7 @@ int32_t BaseItem_c::lastedTime( void ) const {
   @return true -> time last timestamp older than intervall
 */
 bool BaseItem_c::checkTime(uint16_t aui16_timeInterval) const  {
-  return ( lastedTime() >= aui16_timeInterval )?true:false;
+  return ( lastedTime() >= aui16_timeInterval );
 }
 
 /**

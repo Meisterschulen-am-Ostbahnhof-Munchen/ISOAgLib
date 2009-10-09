@@ -117,10 +117,10 @@ void DefaultRecordConfig_c::init(uint16_t aui16_eepromAdr)
 	c_eeprom.setg(ui16_eepromAdr);
 
 	c_eeprom >> ui8_data;
-	b_accumulatedTimeDist = (ui8_data == 1)?true:false;
+	b_accumulatedTimeDist = (ui8_data == 1);
 
 	c_eeprom >> ui8_data;
-	b_diagnoseData = (ui8_data == 1)?true:false;
+	b_diagnoseData = (ui8_data == 1);
 
 	c_eeprom >> ui16_recordingRate;
 
@@ -135,16 +135,16 @@ void DefaultRecordConfig_c::init(uint16_t aui16_eepromAdr)
 	ui8_applrateRecording = ui8_data;
 
 	c_eeprom >> ui8_data;
-	b_transportDummyWidth = (ui8_data == 1)?true:false;
+	b_transportDummyWidth = (ui8_data == 1);
 
 	c_eeprom >> ui8_data;
-	b_transportWorkDist = (ui8_data == 1)?true:false;
+	b_transportWorkDist = (ui8_data == 1);
 
 	c_eeprom >> ui8_data;
 	ui8_useMeasureProgs = ui8_data;
 
 	c_eeprom >> ui8_data;
-	b_fuelConsumption = (ui8_data == 1)?true:false;
+	b_fuelConsumption = (ui8_data == 1);
 
 	c_eeprom >> ui8_data;
 	ui8_draftForce = ui8_data;

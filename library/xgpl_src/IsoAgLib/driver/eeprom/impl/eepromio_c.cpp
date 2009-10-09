@@ -374,7 +374,7 @@ bool EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8
     } // if write init
   } // while
   // if good()
-  return (getILibErrInstance().good( iLibErr_c::Eeprom )?true:false);
+  return (getILibErrInstance().good( iLibErr_c::Eeprom ));
 }
 
 
@@ -394,7 +394,7 @@ bool EepromIo_c::writeInit(){
   }
 
   // set EEPROM to writable
-  setState4BiosReturn(HAL::eepromWp(OFF));
+  setState4BiosReturn(HAL::eepromWp(false));
 
   if (getILibErrInstance().good( iLibErr_c::Eeprom ))
   { // only try writing if write protect was succesful deactivated
@@ -402,7 +402,7 @@ bool EepromIo_c::writeInit(){
     setState4BiosReturn(wait_eepromReady());
   }
   // return if EEPROM is in good state with writeable and ready state
-  return (getILibErrInstance().good( iLibErr_c::Eeprom )?true:false);
+  return (getILibErrInstance().good( iLibErr_c::Eeprom ));
 }
 /**
   wait with triggering the watchdog, till the EEPROM is ready

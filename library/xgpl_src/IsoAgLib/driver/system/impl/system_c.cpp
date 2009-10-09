@@ -159,7 +159,7 @@ bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at
 				- update_makefile.sh creates CONFIG_DO_NOT_START_RELAIS_ON_STARTUP */
 #ifndef CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
     // set Relais to ON
-    HAL::setRelais(ON);
+    HAL::setRelais(true);
 #endif
   }
   // avoid second call of sensible ECU functions
@@ -169,8 +169,8 @@ bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at
 /** control the relay which is responsible for activation of the PWM output */
 void System_c::setRelais( bool ab_activateRelaisForPwm )
 {
-  if ( ab_activateRelaisForPwm ) HAL::setRelais(ON);
-  else                           HAL::setRelais(OFF);
+  if ( ab_activateRelaisForPwm ) HAL::setRelais(true);
+  else                           HAL::setRelais(false);
 }
 
 /**
@@ -238,7 +238,7 @@ bool System_c::canEn( void ) {
 	static int32_t si32_lastCanEnActive = 0;
 	const int32_t ci32_now = getTime();
 	if ( HAL::getOn_offSwitch() ) si32_lastCanEnActive = ci32_now;
-	return ( ci32_now - si32_lastCanEnActive <= CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC )?true:false;
+	return ( ci32_now - si32_lastCanEnActive <= CONFIG_BUFFER_SHORT_CAN_EN_LOSS_MSEC );
 	#endif
 }
 

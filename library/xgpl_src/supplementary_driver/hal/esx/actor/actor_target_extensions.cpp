@@ -104,7 +104,7 @@ static const uint16_t cui16_openLow_4000mA_13_17  = ( 170000 / 900 ); // 1700mV 
       :__HAL::BA_get_adc( POSITION_1, (aui8_channel-12) );;
     #endif
 
-		const bool b_hiSet = ( aui16_maxCurrent > 0 )?true:false;
+		const bool b_hiSet = ( aui16_maxCurrent > 0 );
 		uint16_t ui16_useLowCompare = (aui8_channel<8)?cui16_openLow_4000mA_6_8:cui16_openLow_2500mA_9_12;
     #ifdef _INIT_BABYBOARD_
     if (aui8_channel>11) ui16_useLowCompare = cui16_openLow_4000mA_13_17;

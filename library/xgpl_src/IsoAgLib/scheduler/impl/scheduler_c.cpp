@@ -765,7 +765,7 @@ Scheduler_c::setDebugTimeAccuracy(SchedulerEntry_c& rc_selectedTask)
                  si16_minDeviation = +32767;
 
   int16_t i16_timeDeviation = rc_selectedTask.getStdTimeToNextTrigger();
-  bool b_correctTimeManagement = ( rc_selectedTask.getTimeToNextTrigger( LatestRetrigger ) >= 0  )?true:false;
+  bool b_correctTimeManagement = ( rc_selectedTask.getTimeToNextTrigger( LatestRetrigger ) >= 0  );
   int32_t i32_now = System_c::getTime();
   // update extreme times
   if ( i16_timeDeviation > si16_maxDeviation ) si16_maxDeviation = i16_timeDeviation;

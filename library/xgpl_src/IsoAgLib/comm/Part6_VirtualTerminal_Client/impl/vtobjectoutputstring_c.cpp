@@ -97,7 +97,7 @@ namespace IsoAgLib {
   // constructor/destructor direct in scope of iVtObjectOutputString_c
   iVtObjectOutputString_c::iVtObjectOutputString_c() {}
   iVtObjectOutputString_c::~iVtObjectOutputString_c(){}
-};
+}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

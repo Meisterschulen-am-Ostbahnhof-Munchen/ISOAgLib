@@ -147,8 +147,10 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_
   bool b_msgProcessed = false;
   for (;ui8_index < cui8_pgnCount; ui8_index++)
   {
-    if (!checkIfAlreadyRegistered (r_PGNHandler, *pcui32_pgnToRegister))
-      b_msgProcessed |= registerPGN (r_PGNHandler, *pcui32_pgnToRegister);
+    bool const cb_set = !checkIfAlreadyRegistered (r_PGNHandler, *pcui32_pgnToRegister) &&
+      registerPGN(r_PGNHandler, *pcui32_pgnToRegister);
+    if (cb_set)
+      b_msgProcessed = true;
     pcui32_pgnToRegister++;
   }
   return b_msgProcessed;
@@ -234,8 +236,10 @@ IsoRequestPgn_c::processMsg ()
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
         regPGN_it != m_registeredClientsWithPGN.end(); regPGN_it++)
   { // let all local regPGN_it process this request
-    if (regPGN_it->ui32_pgn == mui32_requestedPGN)
-      b_processedByAnyClient |= regPGN_it->p_handler->processMsgRequestPGN (mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA);
+    bool const cb_set = (regPGN_it->ui32_pgn == mui32_requestedPGN) &&
+      regPGN_it->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA);
+    if (cb_set)
+      b_processedByAnyClient = true;
   }
 
   /// 2. Check if we have to send a NACK as nobody could answer it

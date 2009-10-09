@@ -82,6 +82,6 @@ namespace convert_n
   //! Template to get n-th significant nibble of integer (no matter if signed or not).
   template<class T> inline uint8_t getNibble( T value, int n ) {
     return (castUI(value) >> (4*n)) & 0xFU; }
-};
+}
 
 #endif // __CONVERT_H__

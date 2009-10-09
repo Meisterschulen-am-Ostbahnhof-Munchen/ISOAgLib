@@ -264,7 +264,7 @@ bool SetpointLocal_c::existUnhandledMaster() {
       mpc_registerCache++;
 
   } // for
-  return ( i8_result > 0 )?true:false;
+  return ( i8_result > 0 );
 }
 
 /**
@@ -507,7 +507,7 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
       if (masterConst().exact() != 0)
         b_deviationPercent = ((__IsoAgLib::abs( i32_delta) * 100)/masterConst().exact());
       else b_deviationPercent = 100;
-      b_actualValid = (b_deviationPercent < mb_allowedDeltaPercent)?true:false;
+      b_actualValid = (b_deviationPercent < mb_allowedDeltaPercent);
     }
     else
     { // min or max
@@ -515,13 +515,13 @@ int32_t SetpointLocal_c::checkMeasurement( int32_t ai32_val, bool ab_sendIfError
       {
         i32_delta = (ai32_val - masterConst().min());
         b_deviationPercent = ((__IsoAgLib::abs( i32_delta) * 100)/masterConst().min());
-        b_actualValid = ((i32_delta >= 0)||(b_deviationPercent < mb_allowedDeltaPercent))?true:false;
+        b_actualValid = ((i32_delta >= 0)||(b_deviationPercent < mb_allowedDeltaPercent));
       }
       if (b_actualValid && (masterConst().existMax()))
       { // the min test was if done successfull -> max limit exist -> check it
         i32_delta = (ai32_val - masterConst().max());
         b_deviationPercent = ((__IsoAgLib::abs( i32_delta) * 100)/masterConst().max());
-        b_actualValid = ((i32_delta <= 0)||(b_deviationPercent < mb_allowedDeltaPercent))?true:false;
+        b_actualValid = ((i32_delta <= 0)||(b_deviationPercent < mb_allowedDeltaPercent));
       }
       // check for (only) percent can`t be done dependent on measurement
     }

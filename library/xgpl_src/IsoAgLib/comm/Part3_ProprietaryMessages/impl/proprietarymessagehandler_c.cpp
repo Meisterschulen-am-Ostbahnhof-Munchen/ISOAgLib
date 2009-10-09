@@ -172,7 +172,7 @@ namespace __IsoAgLib
     mvec_proprietaryclient.push_back (t_tempClientNode);
 
     // return true if new client is registered
-    return ( mvec_proprietaryclient.size() > oldClientSize ) ? true : false;
+    return ( mvec_proprietaryclient.size() > oldClientSize );
   }
 
   /** deregister a ProprietaryMessageClient */
@@ -193,7 +193,7 @@ namespace __IsoAgLib
       }
     }
     // true if client ist deregistered
-    return (mvec_proprietaryclient.size() < oldClientSize) ? true : false;
+    return (mvec_proprietaryclient.size() < oldClientSize);
   }
 
 

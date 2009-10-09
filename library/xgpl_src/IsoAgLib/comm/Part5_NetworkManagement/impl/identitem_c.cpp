@@ -671,7 +671,7 @@ bool IdentItem_c::equalNr(uint8_t aui8_nr)
 {
   bool b_result = false;
 
-  if (mpc_isoItem != NULL) b_result = (mpc_isoItem->nr() == aui8_nr)?true:false;
+  if (mpc_isoItem != NULL) b_result = (mpc_isoItem->nr() == aui8_nr);
 
   return b_result;
 }

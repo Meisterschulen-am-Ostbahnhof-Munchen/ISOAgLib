@@ -239,7 +239,9 @@ IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action,
         it_isoFilterBox != mvec_isoFilterBox.end();
         it_isoFilterBox++)
     { // the ISOFilterBoxes will take care if they have to do anything at all or not...
-      b_reconfig |= it_isoFilterBox->updateOnAdd();
+      bool const cb_set = it_isoFilterBox->updateOnAdd();
+      if (cb_set)
+        b_reconfig = true;
     }
 
     if (b_reconfig)
@@ -253,7 +255,9 @@ IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action,
         it_isoFilterBox++)
     { // the ISOFilterBoxes will take care if they have to do anything at all or not...
       it_isoFilterBox->updateOnRemove(&acrc_isoItem.isoName());
-      b_reconfig |= it_isoFilterBox->updateOnAdd();
+      bool const cb_set = it_isoFilterBox->updateOnAdd();
+      if (cb_set)
+        b_reconfig = true;
     }
 
     if (b_reconfig)

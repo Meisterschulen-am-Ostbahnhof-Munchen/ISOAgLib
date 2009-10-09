@@ -232,12 +232,12 @@ static uint8_t ui8_currentBaudrate[2] = { 0, 0 };
 /** low level helper function to check if buffer is full */
 bool isCanRingBufferFull( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
   if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return true;
-  return ( ui16_canBufferSize[aui8_busNr][aui8_msgObj] < ui16_canBufferMaxSize[aui8_busNr][aui8_msgObj] )?false:true;
+  return !( ui16_canBufferSize[aui8_busNr][aui8_msgObj] < ui16_canBufferMaxSize[aui8_busNr][aui8_msgObj] );
 }
 /** low level helper function to check if buffer is empty */
 bool isCanRingBufferEmpty( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
   if ( ( aui8_busNr > 1 ) || ( aui8_msgObj> 14 ) ) return true;
-  return ( ui16_canBufferSize[aui8_busNr][aui8_msgObj] == 0 )?true:false;
+  return ( ui16_canBufferSize[aui8_busNr][aui8_msgObj] == 0 );
 }
 /** low level helper function to get current count of elements in buffer */
 uint16_t getCanRingBufferSize( uint8_t aui8_busNr, uint8_t aui8_msgObj ) {
@@ -444,7 +444,7 @@ bool can_stateGlobalWarn(uint8_t aui8_busNr)
   if ( aui8_busNr > 1 ) return true;
   updateCanStateTimestamps(aui8_busNr);
   // check if WARN bit is set in CAN control status register
-  return (ui16_lastCanBusState[aui8_busNr] & CanStateWarn)?true:false;
+  return (ui16_lastCanBusState[aui8_busNr] & CanStateWarn);
 }
 
 /**
@@ -457,7 +457,7 @@ bool can_stateGlobalOff(uint8_t aui8_busNr)
   if ( aui8_busNr > 1 ) return true;
   updateCanStateTimestamps(aui8_busNr);
   // check if OFF bit is set in CAN control status register
-  return (ui16_lastCanBusState[aui8_busNr] & CanStateOff)?true:false;
+  return (ui16_lastCanBusState[aui8_busNr] & CanStateOff);
 }
 
 /**
@@ -538,7 +538,7 @@ bool can_stateGlobalBit1err(uint8_t aui8_busNr)
   // if bit1err timestamp is -1 no actual Bit1Err
   // check if WARN or ERR was detected
   updateCanStateTimestamps(aui8_busNr);
-  return (i32_cinterfBeginBit1err[aui8_busNr] < 0)?false:true;
+  return !(i32_cinterfBeginBit1err[aui8_busNr] < 0);
 }
 
 /* ***************************** */
@@ -586,7 +586,7 @@ bool can_stateMsgobjSendproblem(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
   if ( ( aui8_busNr > 1 ) || ( aui8_msgobjNr> 14 ) ) return true;
-  return ( can_stateMsgobjFreecnt( aui8_busNr, aui8_msgobjNr ) == 0 )?true:false;
+  return ( can_stateMsgobjFreecnt( aui8_busNr, aui8_msgobjNr ) == 0 );
 }
 /**
   check if MsgObj is currently locked

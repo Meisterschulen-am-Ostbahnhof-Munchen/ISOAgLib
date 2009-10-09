@@ -94,7 +94,7 @@ static const int16_t cui16_openLow  = 10;	// 800mV (40mV per bit)
   {
 		const int16_t i16_adc = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 
-		const bool b_hiSet = ( aui16_maxCurrent > 0 )?true:false;
+		const bool b_hiSet = ( aui16_maxCurrent > 0 );
 		const uint16_t cui16_useLowCompare = cui16_openLow;
 
 		if ( b_hiSet )

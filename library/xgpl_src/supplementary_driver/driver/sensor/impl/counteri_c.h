@@ -177,7 +177,7 @@ public:
    @return time since last signal [msec.]
   */
   uint32_t lastSignalAge();
-  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() )?true:false;};
+  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() );};
 private:
   /**
     HIDDEN! copy constructor for CounterI_c

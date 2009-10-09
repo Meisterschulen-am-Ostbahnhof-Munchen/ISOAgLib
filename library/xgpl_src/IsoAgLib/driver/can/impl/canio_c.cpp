@@ -425,7 +425,7 @@ bool CanIo_c::timeEvent( void ){
   if ( (mui16_bitrate == 0) || ( mui8_busNumber > HAL_CAN_MAX_BUS_NR ) ) return false;
 
   // start process of all received msg
-  return (processMsg() >= 0)?true:false;
+  return (processMsg() >= 0);
 }
 
 #ifdef USE_CAN_MEASURE_BUSLOAD

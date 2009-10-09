@@ -90,11 +90,11 @@ static bool b_isChannelOpen = false;
 
 /** low level helper function to check if buffer is full */
 bool stackparm isRs232RingBufferFull( void ) {
-  return ( __HAL::serial.rx.ascii.count < SD_MAX_ASCII_CHARS )?false:true;
+  return !( __HAL::serial.rx.ascii.count < SD_MAX_ASCII_CHARS );
 }
 /** low level helper function to check if buffer is empty */
 bool isRs232RingBufferEmpty( void ) {
-  return ( __HAL::serial.rx.ascii.count == 0 )?true:false;
+  return ( __HAL::serial.rx.ascii.count == 0 );
 }
 /** low level helper function to get current count of elements in buffer */
 uint16_t getRs232RingBufferSize( void ) {

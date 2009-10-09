@@ -1314,8 +1314,8 @@ void TimePosGps_c::isoSendDirection( void )
    */
   bool TimePosGps_c::isCalendarReceived() const
   {
-    return ( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 ) // year 0 (absolute) indicates NO_VAL!
-        && ( bit_calendar.second == 0 ) && ( bit_calendar.minute == 0 ) && ( bit_calendar.hour == 0 ) )?false:true;
+    return !( ( bit_calendar.day == 1 ) && ( bit_calendar.month == 1 ) && ( bit_calendar.year == 0 ) // year 0 (absolute) indicates NO_VAL!
+        && ( bit_calendar.second == 0 ) && ( bit_calendar.minute == 0 ) && ( bit_calendar.hour == 0 ) );
   }
 
   /** check if a calendar's DATE information that was received is VALID */

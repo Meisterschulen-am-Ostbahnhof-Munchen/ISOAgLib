@@ -90,7 +90,7 @@
 namespace IsoAgLib {
 typedef enum SystemPowerdownStrategy_en { PowerdownByExplcitCall, PowerdownOnCanEnLoss } SystemPowerdownStrategy_t;
  class iSystem_c;
-};
+}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -212,7 +212,7 @@ bool BaseCommon_c::checkParseReceived(const IsoName_c& acrc_currentSender) const
                    (mc_selectedDataSourceISOName == acrc_currentSender  ) // actual sender equivalent to last
                 || (mc_selectedDataSourceISOName.isUnspecified()         ) // last sender has not correctly claimed address member
                )
-          )?true:false;
+          );
 }
 
 

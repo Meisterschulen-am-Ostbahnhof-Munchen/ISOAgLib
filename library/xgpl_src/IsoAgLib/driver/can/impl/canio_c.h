@@ -219,7 +219,7 @@ class CanIo_c : public SingletonCanIo_c {
   bool init(uint8_t aui8_busNumber, uint16_t aui16_bitrate, Ident_c::identType_t ren_identType, uint8_t aui8_minObjNr, uint8_t aui8_maxObjNr);
 
   /** check if this CanIo_c instance is configured so that it can be used to send */
-  bool isReady2Send() const { return ( mui8_busNumber != 0xFF )?true:false;}
+  bool isReady2Send() const { return ( mui8_busNumber != 0xFF );}
 
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -232,7 +232,7 @@ class CanIo_c : public SingletonCanIo_c {
 }
 
 /** fast or full reconfiguration */
-  bool isFullReconfigNecessary()const {return ((mi32_minChangedFilterBox < 0 )?  true:  false);}
+  bool isFullReconfigNecessary()const {return ((mi32_minChangedFilterBox < 0 ));}
 
 /** set full reconfiguration */
  void setFullReconfigNecessary(){mi32_minChangedFilterBox = -2 ;}
@@ -752,6 +752,6 @@ class CanIo_c : public SingletonCanIo_c {
 
 /** this typedef is only for some time to provide backward compatibility at API level */
 typedef CanIo_c CANIO_c;
-};
+}
 
 #endif

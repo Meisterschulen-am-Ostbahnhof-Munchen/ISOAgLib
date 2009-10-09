@@ -119,7 +119,7 @@ public:
   /** compare this channel to an uint8_t value representing a dout channel
     * this function is used by the base Singleton to find a specific item
     */
-  bool operator==( uint8_t aui8_channel ) const { return ( aui8_channel == channelNr() )?true:false;};
+  bool operator==( uint8_t aui8_channel ) const { return ( aui8_channel == channelNr() );};
   /**
     set the output PWM frequency
     (uses BIOS function)
@@ -166,7 +166,7 @@ public:
   /** check if this digital output channel is in FAIL condition
     * @return true -> channel is in fail condition
     */
-  bool operator!( void ) const { return (good())?false:true;};
+  bool operator!( void ) const { return (!good());};
   /** check if this digital output channel is in GOOD condition
     * @return true -> channel is in GOOD condition
     */

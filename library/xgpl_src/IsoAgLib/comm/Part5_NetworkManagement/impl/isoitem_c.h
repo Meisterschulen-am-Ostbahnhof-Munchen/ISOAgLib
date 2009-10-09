@@ -315,7 +315,7 @@ public:
   bool isMaster () const { return (mpvec_slaveIsoNames != NULL); }
   // check if this item belong to a working set -> either master or client
   // NOTE: only to be used for checking -> if master IsoItem_c is need use function getMaster()
-  bool isWsmMember () { return (getMaster() != NULL ? true : false); }
+  bool isWsmMember () { return (getMaster() != NULL); }
   /** get master of this isoItem
       @return  this if master himself; get master if client; NULL if standalone
     */
@@ -358,13 +358,13 @@ public:
     @param acrc_right rigth parameter for lower compare
   */
   bool operator<(const IsoItem_c& acrc_right) const
-    {return (isoName() < acrc_right.isoName())?true:false;}
+    {return (isoName() < acrc_right.isoName());}
 
   /**
     lower comparison with ISOName uint8_t on the rigth
     @param acrc_isoName rigth parameter for lower compare
   */
-  bool operator<(const IsoName_c& acrc_isoName)const{return (isoName() < acrc_isoName)?true:false;}
+  bool operator<(const IsoName_c& acrc_isoName)const{return (isoName() < acrc_isoName);}
 
   /**
     lower comparison between left ISOName uint8_t and right MonitorItem
@@ -384,20 +384,20 @@ public:
     equality comparison with ISOName uint8_t on the rigth
     @param acrc_right rigth parameter for lower compare
   */
-  bool operator==(const IsoName_c& acrc_right)const { return (isoName() == acrc_right)?true:false;}
+  bool operator==(const IsoName_c& acrc_right)const { return (isoName() == acrc_right);}
 
   /**
     difference comparison with ISOName uint8_t on the rigth
     @param acrc_right rigth parameter for lower compare
   */
-  bool operator!=(const IsoName_c& acrc_right) const{ return (isoName() != acrc_right)?true:false;}
+  bool operator!=(const IsoName_c& acrc_right) const{ return (isoName() != acrc_right);}
 
   /**
     compare given number to nr of this item and return result
     @param aui8_nr compared number
     @return true -> given number equal to nr of this item
   */
-  bool equalNr(const uint8_t aui8_nr)const{return (nr() == aui8_nr)?true:false;}
+  bool equalNr(const uint8_t aui8_nr)const{return (nr() == aui8_nr);}
 
   IdentItem_c* getIdentItem() { return mpc_identItem; }
 

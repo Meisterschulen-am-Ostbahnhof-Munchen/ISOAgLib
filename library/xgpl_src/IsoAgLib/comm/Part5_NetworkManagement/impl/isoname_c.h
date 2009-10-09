@@ -185,10 +185,10 @@ public:
   void setUnspecified( void ) { setDevClass( 0x7F ); setDevClassInst( 0xF );}
 
   /** check if this instance has specified value (different from default) */
-  bool isSpecified( void ) const { return ( ( devClass() != 0x7F ) || ( devClassInst() != 0xF ) )?true:false;}
+  bool isSpecified( void ) const { return ( ( devClass() != 0x7F ) || ( devClassInst() != 0xF ) );}
 
   /** check if this instance has unspecified value (match default) */
-  bool isUnspecified( void ) const { return ( ( devClass() == 0x7F ) && ( devClassInst() == 0xF ) )?true:false;}
+  bool isUnspecified( void ) const { return ( ( devClass() == 0x7F ) && ( devClassInst() == 0xF ) );}
 
   /** IsoAgLib-specific enum for often used types of "functions" of IsoNames */
   enum ecuType_t {
@@ -330,19 +330,19 @@ public:
 
   /** compare two IsoName_c values with operator== */
   bool operator==( const IsoName_c& rc_right ) const
-    { return (higherPriThanPar( rc_right.outputUnion() ) == 0)?true:false;}
+    { return (higherPriThanPar( rc_right.outputUnion() ) == 0);}
 
   /** compare two IsoName_c values with operator!= */
   bool operator!=( const IsoName_c& rc_right ) const
-    { return (higherPriThanPar( rc_right.outputUnion() ) != 0)?true:false;}
+    { return (higherPriThanPar( rc_right.outputUnion() ) != 0);}
 
   /** compare IsoName_c value and Flexible8ByteString_c with operator!= */
   bool operator!=( const Flexible8ByteString_c& acrc_right ) const
-    { return (higherPriThanPar( &acrc_right ) != 0)?true:false;}
+    { return (higherPriThanPar( &acrc_right ) != 0);}
 
   /** compare two IsoName_c values with operator< */
   bool operator<( const IsoName_c& rc_right ) const
-    { return (higherPriThanPar( rc_right.outputUnion() ) == -1)?true:false;}
+    { return (higherPriThanPar( rc_right.outputUnion() ) == -1);}
 
   /** convert function */
   IsoAgLib::iIsoName_c& toIisoName_c();

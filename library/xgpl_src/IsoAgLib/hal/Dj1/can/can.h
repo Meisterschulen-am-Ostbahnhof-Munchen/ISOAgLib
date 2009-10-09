@@ -102,7 +102,7 @@ namespace HAL
   */
   inline bool can_stateGlobalWarn (uint8_t aui8_busNr = 0 )
   {
-    return ( (__HAL::DjBios_CanGlobalWarn(aui8_busNr) == __HAL::BIOS_TRUE) ? true : false );
+    return ( (__HAL::DjBios_CanGlobalWarn(aui8_busNr) == __HAL::BIOS_TRUE) );
 
   };
 
@@ -114,7 +114,7 @@ namespace HAL
   */
   inline bool can_stateGlobalOff ( uint8_t aui8_busNr = 0 )
   {
-    return ( (__HAL::DjBios_CanBusOff(aui8_busNr) == __HAL::BIOS_TRUE) ? true : false );
+    return ( (__HAL::DjBios_CanBusOff(aui8_busNr) == __HAL::BIOS_TRUE) );
   };
 
 
@@ -132,7 +132,7 @@ namespace HAL
   */
   inline bool can_stateGlobalBlocked ( uint8_t aui8_busNr = 0 )
   {
-    return ( (__HAL::DjBios_CanBlocked(aui8_busNr) == __HAL::BIOS_TRUE) ? true : false );
+    return ( (__HAL::DjBios_CanBlocked(aui8_busNr) == __HAL::BIOS_TRUE) );
   };
 
 
@@ -157,7 +157,7 @@ namespace HAL
   */
   inline bool can_stateGlobalBit1err ( uint8_t aui8_busNr = 0 )
   {
-    return ( (__HAL::DjBios_CanBit1Err(aui8_busNr) == __HAL::BIOS_TRUE) ? true : false );
+    return ( (__HAL::DjBios_CanBit1Err(aui8_busNr) == __HAL::BIOS_TRUE) );
   };
 
   /*@}*/
@@ -195,7 +195,7 @@ namespace HAL
               (
                 (__HAL::DjBios_CanGetTxDelay(aui8_busNr) > CONFIG_CAN_MAX_SEND_WAIT_TIME) &&
                 (__HAL::DjBios_CanObjBufCount(aui8_busNr, aui8_msgobjNr) > 0 )
-              )?  true : false
+              )
 
            );
   };
@@ -210,7 +210,7 @@ namespace HAL
   */
   inline bool can_stateMsgobjOverflow ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-    return ( (__HAL::DjBios_CanObjTxBuffFull(aui8_busNr, aui8_msgobjNr) == __HAL::BIOS_CAN_Q_FULL)? true : false );
+    return ( (__HAL::DjBios_CanObjTxBuffFull(aui8_busNr, aui8_msgobjNr) == __HAL::BIOS_CAN_Q_FULL) );
   };
 
 
@@ -252,7 +252,7 @@ namespace HAL
   */
   inline bool can_stateMsgobjLocked ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
   {
-    return ( __HAL::DjBios_CanIsObjLocked ( aui8_busNr, aui8_msgobjNr ) ? true : false );
+    return ( __HAL::DjBios_CanIsObjLocked ( aui8_busNr, aui8_msgobjNr ) );
   };
 
 
@@ -319,7 +319,7 @@ namespace HAL
   */
   inline bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
   {
-    return ( __HAL::DjBios_CanWaitUntilRx(aui16_timeoutInterval)?true:false );
+    return ( __HAL::DjBios_CanWaitUntilRx(aui16_timeoutInterval) );
   };
 
 

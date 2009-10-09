@@ -185,7 +185,7 @@ bool can_stateGlobalWarn(uint8_t aui8_busNr)
   updateCanStateTimestamps(aui8_busNr);
   uint16_t ui16_canState = t_cinterfCanState.wCtrlStatusReg;
   // check if WARN bit is set in CAN control status register
-  return ((ui16_canState & CanStateWarn) != 0)?true:false;
+  return ((ui16_canState & CanStateWarn) != 0);
 }
 
 /**
@@ -198,7 +198,7 @@ bool can_stateGlobalOff(uint8_t aui8_busNr)
   updateCanStateTimestamps(aui8_busNr);
   uint16_t ui16_canState = t_cinterfCanState.wCtrlStatusReg;
   // check if OFF bit is set in CAN control status register
-  return ((ui16_canState & CanStateOff) != 0)?true:false;
+  return ((ui16_canState & CanStateOff) != 0);
 }
 /**
   update the timestamp of last succ receive by
@@ -305,7 +305,7 @@ bool can_stateGlobalBit1err(uint8_t aui8_busNr)
 { // if bit1err timestamp is -1 no actual Bit1Err
   // check if WARN or ERR was detected
   updateCanStateTimestamps(aui8_busNr);
-  return (i32_cinterfBeginBit1err[aui8_busNr] < 0)?false:true;
+  return !(i32_cinterfBeginBit1err[aui8_busNr] < 0);
 }
 
 /* ***************************** */
@@ -394,8 +394,10 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 { // add offset 1 to aui8_msgobjNr as ESX BIOS starts counting with 1
   // whereas IsoAgLib starts with 0
   int16_t i16_msgcnt = getCanMsgBufCount(aui8_busNr, (aui8_msgobjNr+1));//BW
-  if ((i16_msgcnt == HAL_CONFIG_ERR) || (i16_msgcnt == HAL_RANGE_ERR)) return i16_msgcnt;
-  else return ( ui8_cinterfBufSize[aui8_busNr][aui8_msgobjNr] - i16_msgcnt);
+  if (i16_msgcnt < 0)
+    return i16_msgcnt;
+  else
+    return ui8_cinterfBufSize[aui8_busNr][aui8_msgobjNr] - i16_msgcnt;
 }
 /**
   check if MsgObj is currently locked

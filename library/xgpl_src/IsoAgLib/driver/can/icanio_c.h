@@ -254,9 +254,9 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
    inline bool insertFilter(IsoAgLib::iSchedulerTask_c& ar_schedulerTask, MASK_TYPE at_mask,
        MASK_TYPE at_filter, bool ab_reconfigImmediate = true,
                      const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return CanIo_c::insertFilter
+  {return NULL != CanIo_c::insertFilter
     (static_cast<CanCustomer_c&>(ar_schedulerTask),
-       at_mask, at_filter, ab_reconfigImmediate, at_identType) ? true : false;
+       at_mask, at_filter, ab_reconfigImmediate, at_identType);
 
   };
 
@@ -291,9 +291,9 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
    inline bool insertFilter(IsoAgLib::iCanCustomer_c& ar_customer, MASK_TYPE at_mask,
        MASK_TYPE at_filter, bool ab_reconfigImmediate = true,
                      const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return CanIo_c::insertFilter
+  {return NULL != CanIo_c::insertFilter
     (static_cast<CanCustomer_c&>(ar_customer),
-       at_mask, at_filter, ab_reconfigImmediate, at_identType) ? true : false;
+       at_mask, at_filter, ab_reconfigImmediate, at_identType);
 
   };
 

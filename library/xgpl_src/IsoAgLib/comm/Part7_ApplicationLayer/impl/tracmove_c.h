@@ -245,12 +245,12 @@ namespace __IsoAgLib {
     /** is looking for a missing speed value
         @return true if speed is missing otherwise false
       */
-    bool isRealSpeedMissing() const { return (mi32_speedReal == NO_VAL_32S)?true:false;}
+    bool isRealSpeedMissing() const { return (mi32_speedReal == NO_VAL_32S);}
 
     /** is looking for a erroneous speed value
         @return true if speed is erroneous otherwise false
       */
-    bool isRealSpeedErroneous() const { return (mi32_speedReal == ERROR_VAL_32S)?true:false;}
+    bool isRealSpeedErroneous() const { return (mi32_speedReal == ERROR_VAL_32S);}
 
     /** get the value of theoretical speed (calculated from gear)
         @return theoretical gear calculated speed value
@@ -265,12 +265,12 @@ namespace __IsoAgLib {
     /** is looking for a missing speed value
         @return true if speed is missing otherwise false
       */
-    bool isTheorSpeedMissing() const { return (mi32_speedTheor == NO_VAL_32S)?true:false;}
+    bool isTheorSpeedMissing() const { return (mi32_speedTheor == NO_VAL_32S);}
 
     /** is looking for a erroneous speed value
         @return true if speed is erroneous otherwise false
       */
-    bool isTheorSpeedErroneous() const { return (mi32_speedTheor == ERROR_VAL_32S)?true:false;}
+    bool isTheorSpeedErroneous() const { return (mi32_speedTheor == ERROR_VAL_32S);}
 
     /** get measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
@@ -313,12 +313,12 @@ namespace __IsoAgLib {
     /** is looking for a missing speed value
         @return true if speed is missing otherwise false
       */
-    bool isSelectedSpeedMissing() const { return (mi32_selectedSpeed == NO_VAL_32S)?true:false; }
+    bool isSelectedSpeedMissing() const { return (mi32_selectedSpeed == NO_VAL_32S); }
 
     /** is looking for a erroneous speed value
         @return true if speed is erroneous otherwise false
       */
-    bool isSelectedSpeedErroneous() const { return (mi32_selectedSpeed == ERROR_VAL_32S)?true:false; }
+    bool isSelectedSpeedErroneous() const { return (mi32_selectedSpeed == ERROR_VAL_32S); }
 
     /** present limit status of selected speed
         @return  limit status

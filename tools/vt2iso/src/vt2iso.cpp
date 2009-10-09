@@ -1454,7 +1454,7 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     {
       arr_file[depth] = arrc_attributes[attrFile].get();
       if (arrc_attributes [attrAbsolutePath].isGiven())
-        b_absPath[depth] = (arrc_attributes [attrAbsolutePath].get().compare("1") == 0) ? true : false;
+        b_absPath[depth] = (arrc_attributes [attrAbsolutePath].get().compare("1") == 0);
     }
   }
 
@@ -1464,7 +1464,7 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     {
       arr_file[i] = arrc_attributes[attrFile0 + i].get(); // arrc_attributes[attrFile0 + i] can be empty => empty arr_file[i] will not used for bitmap generation
       if (arrc_attributes[attrAbsolutePath1 + i].isGiven())
-        b_absPath[i] = (arrc_attributes [attrAbsolutePath1 + i].get().compare("1") == 0) ? true : false;
+        b_absPath[i] = (arrc_attributes [attrAbsolutePath1 + i].get().compare("1") == 0);
       else
         b_absPath[i] = false; // no absPath attribute given => set to default relative path
     }
@@ -1961,7 +1961,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     defaultAttributes (objType);
 
     // get a new ID for this object if not yet done
-    signed long int checkObjID = getID (m_objName.c_str(), (objType == otMacro) ? true: false, is_objID, objID);
+    signed long int checkObjID = getID (m_objName.c_str(), (objType == otMacro), is_objID, objID);
 
     if (checkObjID == -1)
     {

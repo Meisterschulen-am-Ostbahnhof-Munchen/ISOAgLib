@@ -258,7 +258,7 @@
 using namespace IsoAgLib;
 
 /** dummy function to deliver the current working state */
-bool localIsWorking()       { return ( ( ( IsoAgLib::iSystem_c::getTime() / 3000 ) % 2 ) == 0 )?true:false; }
+bool localIsWorking()       { return ( ( ( IsoAgLib::iSystem_c::getTime() / 3000 ) % 2 ) == 0 ); }
 bool localGetWorkingWidth() { return 3000; }
 int32_t localGetApplicationRate() { return IsoAgLib::iSystem_c::getTime(); }
 

@@ -160,7 +160,7 @@ bool SetpointRegister_c::operator==(const SetpointRegister_c& acrc_src)const{
         && (mi32_default == acrc_src.mi32_default)
         && (data.en_definedSetpoints == acrc_src.data.en_definedSetpoints)
         && (isoName() == acrc_src.isoName()))
-        ? true:false;
+;
 }
 
 /* ************************************ */
@@ -196,13 +196,13 @@ bool SetpointRegister_c::valueGroupExists(ProcessCmd_c::ValueGroup_t en_valueGro
   switch (en_valueGroup)
   {
     case ProcessCmd_c::exactValue:
-      return ((data.en_definedSetpoints & exactType) != 0)?true:false;
+      return ((data.en_definedSetpoints & exactType) != 0);
     case ProcessCmd_c::minValue:
-      return ((data.en_definedSetpoints & minType) != 0)?true:false;
+      return ((data.en_definedSetpoints & minType) != 0);
     case ProcessCmd_c::defaultValue:
-      return ((data.en_definedSetpoints & defaultType) != 0)?true:false;
+      return ((data.en_definedSetpoints & defaultType) != 0);
     case ProcessCmd_c::maxValue:
-      return ((data.en_definedSetpoints & maxType) != 0)?true:false;
+      return ((data.en_definedSetpoints & maxType) != 0);
     default:
       return false;
   }

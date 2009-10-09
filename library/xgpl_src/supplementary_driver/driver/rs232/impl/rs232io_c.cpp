@@ -188,7 +188,7 @@ bool RS232IO_c::init(uint16_t aui16_baudrate, t_dataMode ren_dataMode, bool ab_x
   if ((b_dataParityVal > 0) && (b_dataParityVal < 6))
   { // setting for data bit and parity is correct
     // now check if stop bis are set to 1 or 2
-    b_dataModeAllowed = ((b_stopBit == 1) || (b_stopBit == 2))?true:false;
+    b_dataModeAllowed = ((b_stopBit == 1) || (b_stopBit == 2));
   }
   // stop RS232 interface if configured before
   if ( ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE )

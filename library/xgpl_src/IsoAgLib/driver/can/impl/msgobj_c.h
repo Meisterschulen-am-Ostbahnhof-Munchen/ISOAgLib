@@ -182,7 +182,7 @@ public:
     -> if the close function must be called in destructor
     @return true -> open
   */
-  bool isOpen()const{return (bit_data.isOpen > 0)?true:false;}
+  bool isOpen()const{return (bit_data.isOpen > 0);}
 
   //+++++++++++++++++++++++++++++++++++
   // functions for configuring MsgObj_c
@@ -219,7 +219,7 @@ public:
     @param acrc_filter compared filter setting
   */
   bool equalFilter(const Ident_c& acrc_filter) const
-    {return (acrc_filter == mc_filter)?true:false;}
+    {return (acrc_filter == mc_filter);}
 
   /** configures the CAN hardware of given Msg Object (uses BIOS function)
     possible errors:

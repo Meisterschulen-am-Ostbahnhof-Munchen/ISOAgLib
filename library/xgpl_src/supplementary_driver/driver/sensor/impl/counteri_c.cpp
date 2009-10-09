@@ -143,7 +143,7 @@ CounterI_c::~CounterI_c(){
   @return true for counter > 0
 */
 bool CounterI_c::active() const {
-  return (val() > 0)?true:false;
+  return (val() > 0);
 }
 /**
   check for the input value (uses BIOS function)

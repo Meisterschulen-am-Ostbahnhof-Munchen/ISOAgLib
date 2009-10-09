@@ -51,13 +51,13 @@ public:
   DevClassFlexManager_c(const DevClassFlexManager_c& acrc_src);
   virtual ~DevClassFlexManager_c();
   void init(DefaultRecordConfig_c* apc_defaultRecordConfig);
-  bool operator==(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName == acrc_comp.c_remoteISOName)?true:false;};
-  bool operator!=(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName != acrc_comp.c_remoteISOName)?true:false;};
-  bool operator<(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName < acrc_comp.c_remoteISOName)?true:false;};
+  bool operator==(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName == acrc_comp.c_remoteISOName);};
+  bool operator!=(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName != acrc_comp.c_remoteISOName);};
+  bool operator<(const DevClassFlexManager_c& acrc_comp)const{return (c_remoteISOName < acrc_comp.c_remoteISOName);};
 
-  bool operator==(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName == ac_comp)?true:false;};
-  bool operator!=(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName != ac_comp)?true:false;};
-  bool operator<(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName < ac_comp)?true:false;};
+  bool operator==(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName == ac_comp);};
+  bool operator!=(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName != ac_comp);};
+  bool operator<(const IsoAgLib::iIsoName_c& ac_comp)const{return (c_remoteISOName < ac_comp);};
   /**
     activate with creating the needed ProcessData
     @param apc_monitor pointer to member_item of data delivering member
@@ -84,12 +84,12 @@ private:
     @return true --> record working width
   */
   bool recordWidth()const
-  {return ((pc_monitor->devClass() != 11)||(configField.transportDummyWidth == 1))?true:false;};
+  {return ((pc_monitor->devClass() != 11)||(configField.transportDummyWidth == 1));};
   /**
     check if a single measurement request should be sent on every local
     value access
   */
-  bool sendRequest()const{return (configField.requestSingleVals == 1)?true:false;};
+  bool sendRequest()const{return (configField.requestSingleVals == 1);};
   /** NEW: 14-10-2004
     check if a single measurement request should be sent on every local
     value access.

@@ -255,7 +255,7 @@ public:
     check if the receive buffer is empty
     @return true -> receive buffer is empty
   */
-  bool eof()const{return (HAL::getRs232RxBufCount(RS232_CHANNEL_PARAM_SINGLE) == 0)?true:false;};
+  bool eof()const{return (HAL::getRs232RxBufCount(RS232_CHANNEL_PARAM_SINGLE) == 0);};
   /**
     deliver the count of data uint8_t in receive buffer
     @return amount of data bytes in receive buffer

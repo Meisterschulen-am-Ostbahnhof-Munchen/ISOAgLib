@@ -56,7 +56,7 @@ namespace __HAL /** \brief Sublayer of HAL */
    bool isSystemOpened(void)
    {
       /** check "systemState" set by BIOS::systemInit()  */
-      return (AMSBIOS::sysSystemState == 0x0001)?true:false;
+      return (AMSBIOS::sysSystemState == 0x0001);
    };
 
    /**

@@ -93,7 +93,7 @@ namespace IsoAgLib {
   // constructor/destructor direct in scope of iVtObjectContainer_c
   iVtObjectContainer_c::iVtObjectContainer_c() {}
   iVtObjectContainer_c::~iVtObjectContainer_c() {}
-};
+}
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

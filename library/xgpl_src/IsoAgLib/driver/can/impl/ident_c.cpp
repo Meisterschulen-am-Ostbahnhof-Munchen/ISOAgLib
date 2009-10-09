@@ -122,7 +122,7 @@ namespace __IsoAgLib
   {
     return ((ident()==acrc_src.ident())
             &&(identType()==acrc_src.identType())
-            &&(empty()==acrc_src.empty()))?true:false;
+            &&(empty()==acrc_src.empty()));
   }
 
   /** set this ident

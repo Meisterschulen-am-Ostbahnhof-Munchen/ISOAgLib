@@ -255,7 +255,7 @@ bool DigitalI_c::active() const {
   { // wrong input channel
     return false;
   }
-  return (i16_val == ON)?true:false;
+  return (i16_val == ON);
 }
 /**
   check for the input value (uses BIOS function)

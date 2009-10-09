@@ -568,7 +568,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   i16_rc = select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
 
   // return true, when the timeout was NOT the trigger for coming back from select
-  return ( i16_rc > 0 )?true:false;
+  return ( i16_rc > 0 );
 };
 
 // MDS NOTE: This is code is highly inefficient and needs to be optimized!
@@ -727,4 +727,4 @@ int32_t getMaxSendDelay(uint8_t /* aui8_busNr */)
   return 0; // we don't have no error code, we can just return some error-maxDelay instead
 }
 
-}; // end namespace __HAL
+} // end namespace __HAL

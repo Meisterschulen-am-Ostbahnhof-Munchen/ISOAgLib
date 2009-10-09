@@ -239,7 +239,7 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
  */
 bool operator<(const IsoName_c& acrc_left, const IsoItem_c& acrc_right)
 {
-  return (acrc_left < acrc_right.isoName())?true:false;
+  return (acrc_left < acrc_right.isoName());
 }
 
 
@@ -581,7 +581,7 @@ uint8_t IsoItem_c::calc_randomWait()
 */
 bool lessThan(const IsoItem_c& acrc_left, const IsoName_c& acrc_right)
 {
-  return (acrc_left.isoName() < acrc_right)?true:false;
+  return (acrc_left.isoName() < acrc_right);
 }
 
 

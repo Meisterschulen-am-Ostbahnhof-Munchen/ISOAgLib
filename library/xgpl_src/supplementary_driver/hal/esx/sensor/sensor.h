@@ -277,7 +277,7 @@ namespace HAL
     @return true == case is connected to ground
   */
   inline bool  getAdcVirtMass( void )
-    {return (__HAL::get_adc(GET_M_VIRT) < 440 )?true:false;};
+    {return (__HAL::get_adc(GET_M_VIRT) < 440 );};
   /**
     get the temperature
     @return temperature in degree [-40..85]

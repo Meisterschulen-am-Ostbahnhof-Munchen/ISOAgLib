@@ -365,7 +365,7 @@ bool SetpointRemote_c::valid() const {
   bool b_result =
     ((answered()
   && (mc_commanded.isoName() == mc_answeredMaster.isoName())
-    )) ? true : false;
+    ));
 
   if ((!b_result) && (answered()) && (existMaster()))
   { // I am not the master -> check if my setpoint is conformant with master setpoint

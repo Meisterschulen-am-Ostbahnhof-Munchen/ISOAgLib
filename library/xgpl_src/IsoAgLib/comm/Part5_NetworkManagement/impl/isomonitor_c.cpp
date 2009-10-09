@@ -813,7 +813,7 @@ bool IsoMonitor_c::existLocalIsoMemberNr(uint8_t aui8_nr)
       if ( (*pc_searchCacheC1)->equalNr(aui8_nr) )
         break;
     }
-    return (pc_searchCacheC1 != c_arrClientC1.end())?true:false;
+    return (pc_searchCacheC1 != c_arrClientC1.end());
   }
 }
 
@@ -859,7 +859,7 @@ bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
     apc_client->reactOnIsoItemModification (AddToMonitorList, *iter);
   }
 
-  return ( mvec_saClaimHandler.size() > oldSize )?true:false;
+  return ( mvec_saClaimHandler.size() > oldSize );
 }
 
 
@@ -876,7 +876,7 @@ IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
       break;
     }
   }
-  return (mvec_saClaimHandler.size() > oldSize)?true:false;
+  return (mvec_saClaimHandler.size() > oldSize);
 }
 
 
@@ -952,7 +952,7 @@ IsoItem_c& IsoMonitor_c::isoMemberNr(uint8_t aui8_nr)
 */
 IsoItem_c& IsoMonitor_c::isoMemberISOName(const IsoName_c& acrc_isoName, bool *const pb_success, bool ab_forceClaimedAddress, Vec_ISOIterator *const pbc_iter)
 {
-  *pb_success = (existIsoMemberISOName(acrc_isoName, ab_forceClaimedAddress))?true:false;
+  *pb_success = (existIsoMemberISOName(acrc_isoName, ab_forceClaimedAddress));
 
   if (pbc_iter != NULL)
   {
@@ -1471,8 +1471,10 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
         for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
               pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
         { // let all local pc_iterItem process this request
-          if (pc_iterItem->itemState (IState_c::Local))
-            b_processedRequestPGN |= pc_iterItem->sendSaClaim();
+          bool const cb_set = pc_iterItem->itemState (IState_c::Local) &&
+            pc_iterItem->sendSaClaim();
+          if (cb_set)
+            b_processedRequestPGN = true;
         }
         return b_processedRequestPGN; //return value doesn't matter, because the request was for GLOBAL (255), so it isn't NACKed anyway
       }

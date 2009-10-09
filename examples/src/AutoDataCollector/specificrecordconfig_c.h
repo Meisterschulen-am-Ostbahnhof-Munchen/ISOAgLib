@@ -104,22 +104,22 @@ public:
     check if x/ha should be recorded
     @return true-> record apllication rate per ha
   */
-  bool applrateXHa()const {return ((ui8_applrateRecording & 1) != 0)?true:false;};
+  bool applrateXHa()const {return ((ui8_applrateRecording & 1) != 0);};
   /**
     check if x/min should be recorded
     @return true-> record apllication rate per minute
   */
-  bool applrateXMin()const {return ((ui8_applrateRecording & 2) != 0)?true:false;};
+  bool applrateXMin()const {return ((ui8_applrateRecording & 2) != 0);};
   /**
     check if x (total) should be recorded
     @return true-> record apllication (total)
   */
-  bool applrateX()const {return ((ui8_applrateRecording & 4) != 0)?true:false;};
+  bool applrateX()const {return ((ui8_applrateRecording & 4) != 0);};
   /**
     check if x in tank should be recorded
     @return true-> record amount of x in tank
   */
-  bool applrateTankX()const {return ((ui8_applrateRecording & 8) != 0)?true:false;};
+  bool applrateTankX()const {return ((ui8_applrateRecording & 8) != 0);};
   /**
     deliver information whether diagnose dummy working width for
     transport should be recorded
@@ -137,13 +137,13 @@ public:
     this device
     @return true-> start measuring progs, false-> request everytime a single value
   */
-  bool useMeasureProgs() const {return (ui8_useMeasureProgs == 3)?true:false;};
+  bool useMeasureProgs() const {return (ui8_useMeasureProgs == 3);};
   /**
     deliver information whether measure programs should be used for
     this device
     @return true-> start measuring progs, false-> request everytime a single value
   */
-  bool sendRequest() const {return (ui8_useMeasureProgs == 2)?true:false;};
+  bool sendRequest() const {return (ui8_useMeasureProgs == 2);};
   /** some creative devices doesn't send process data on their own
       -> Fieldstar ComUnit and Terminal sends data for them
       @return true-> normal proc data sent by ComUnit, time_dist sent by Fieldstar Terminal

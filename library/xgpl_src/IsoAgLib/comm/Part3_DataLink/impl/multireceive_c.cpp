@@ -934,7 +934,7 @@ MultiReceive_c::finishStream (DEF_Stream_c_IMPL& arc_stream)
 {
   bool b_keepStream = false;
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-  const bool cb_isFastPacketStream = (arc_stream.getStreamType() == StreamFastPacket)?true:false;
+  const bool cb_isFastPacketStream = (arc_stream.getStreamType() == StreamFastPacket);
   if (cb_isFastPacketStream || (arc_stream.getIdent().getDa() == 0xFF))
   { // FastPacket or BAM
   #else

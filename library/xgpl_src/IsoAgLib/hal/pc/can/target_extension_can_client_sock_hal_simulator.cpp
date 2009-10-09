@@ -566,7 +566,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
   i16_rc = select(FD_SETSIZE, &rfds, NULL, NULL, &s_timeout);
 
   // return true, when the timeout was NOT the trigger for coming back from select
-  return ( i16_rc > 0 )?true:false;
+  return ( i16_rc > 0 );
 };
 
 // MDS NOTE: This is code is highly inefficient and needs to be optimized!

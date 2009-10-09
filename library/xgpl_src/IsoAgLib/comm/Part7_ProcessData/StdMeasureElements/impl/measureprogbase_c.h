@@ -222,7 +222,7 @@ public:
     @return true -> program is running
   */
   bool started()
-    {return (men_doSend == Proc_c::DoNone)?false:true;};
+    {return (men_doSend != Proc_c::DoNone);};
 
   /**
     deliver actual last received value
@@ -278,7 +278,7 @@ public:
     @return true -> given increment type is set
   */
   bool checkType(Proc_c::type_t ren_type) const
-    {return ((men_type & ren_type) > 0)?true:false;}
+    {return ((men_type & ren_type) > 0);}
 
   /**
     return the program active flag
@@ -292,7 +292,7 @@ public:
     @return true -> given value is sent on trigger
   */
   bool checkDoSend(Proc_c::doSend_t ren_doSend) const
-    {return ((men_doSend & ren_doSend) > 0)?true:false;}
+    {return ((men_doSend & ren_doSend) > 0);}
 
   /**
     init the element vars

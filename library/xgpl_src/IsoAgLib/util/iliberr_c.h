@@ -259,7 +259,7 @@ public:
   /**
     check if the object has a local error
   */
-  inline bool operator!(){ return (good(AllErrTypes))?false:true;};
+  inline bool operator!(){ return (!good(AllErrTypes));};
 
   /** default destructor which has nothing to do */
   ~iLibErr_c() {}

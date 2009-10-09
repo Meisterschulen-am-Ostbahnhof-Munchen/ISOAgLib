@@ -220,7 +220,7 @@ int16_t  getDiginOnoff(uint8_t bInputNumber){
       sscanf(zeile, "%u %u\n", &(next_sensorDigitalInputTime[bInputNumber]), &(next_sensorDigitalInputVal[bInputNumber]));
     }
   }
-  return (lastSensorDigitalInputVal[bInputNumber] > 0)?true:false;
+  return (lastSensorDigitalInputVal[bInputNumber] > 0);
 }
 
 /// @todo HAL RETURN VALUES (SENSORS): return type would be int16_t, but returned are either HAL_CONFIG_ERR or bool.
@@ -239,7 +239,7 @@ int16_t  getDiginOnoffStatic(uint8_t bInputNumber){
       sscanf(zeile, "%u %u\n", &(next_sensorDigitalInputTime[bInputNumber]), &(next_sensorDigitalInputVal[bInputNumber]));
     }
   }
-  return (lastSensorDigitalInputVal[bInputNumber] > 0)?true:false;
+  return (lastSensorDigitalInputVal[bInputNumber] > 0);
 }
 int16_t  setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
 {printf("setDiginPrescaler fuer Gruppe %d mit Prescale Modus %d aufgerufen\n",

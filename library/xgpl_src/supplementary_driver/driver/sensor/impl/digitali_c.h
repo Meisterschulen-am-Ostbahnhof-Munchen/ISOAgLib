@@ -177,7 +177,7 @@ public:
   bool active() const;
   /** handler function which is called from HAL */
   static void handleHalIrqEvent( uint8_t aui8_channel );
-  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() )?true:false;};
+  bool operator==( uint8_t aui8_key ) const { return ( aui8_key == channelNr() );};
 private:
 // Private attributes
   /**

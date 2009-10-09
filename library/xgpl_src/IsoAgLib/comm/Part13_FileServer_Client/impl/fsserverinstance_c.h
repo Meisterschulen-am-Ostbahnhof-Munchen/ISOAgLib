@@ -196,7 +196,7 @@ class FsServerInstance_c
     /**
       * have to fileserver's volumes been requested successfully?
       */
-    bool knowsVolumes() { return (v_volumes.size() != 0)?true:false;}
+    bool knowsVolumes() { return (v_volumes.size() != 0);}
 
     /**
       * constructor of the class. necessary parameters are the fileserver's isoitem, isoname and the manager of the

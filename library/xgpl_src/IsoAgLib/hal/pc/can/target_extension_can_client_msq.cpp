@@ -468,7 +468,7 @@ bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
   i16_rc = select(msqDataClient.i32_pipeHandle+1, &rfds, NULL, NULL, &s_timeout);
 
   // return true, when the timeout was NOT the trigger for coming back from select
-  const bool cb_result = ( i16_rc > 0 )?true:false;
+  const bool cb_result = ( i16_rc > 0 );
 
   if(i16_rc > 0 && FD_ISSET(msqDataClient.i32_pipeHandle, &rfds) > 0)
   {  // clear pipe (is done also in can server before next write)

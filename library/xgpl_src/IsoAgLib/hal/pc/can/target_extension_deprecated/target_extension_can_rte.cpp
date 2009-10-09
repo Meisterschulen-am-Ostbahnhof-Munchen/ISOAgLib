@@ -134,10 +134,10 @@ class RteCanPkg {
       { id = aui32_id; b_xtd = aui8_xtd; size = ( aui8_size <= 8 )?aui8_size:8; memcpy( data, apui8_data, size ); };
 
     bool operator==( const RteCanPkg& acrc_src ) const
-      { return ( ( id == acrc_src.id ) && ( b_xtd == acrc_src.b_xtd ) && ( size == acrc_src.size ) && ( memcmp( data, acrc_src.data, size ) == 0 ) )?true:false; } ;
+      { return ( ( id == acrc_src.id ) && ( b_xtd == acrc_src.b_xtd ) && ( size == acrc_src.size ) && ( memcmp( data, acrc_src.data, size ) == 0 ) ); } ;
 
     bool operator!=( const RteCanPkg& acrc_src ) const
-      { return ( ( id != acrc_src.id ) || ( b_xtd != acrc_src.b_xtd ) || ( size != acrc_src.size ) || ( memcmp( data, acrc_src.data, size ) != 0 ) )?true:false; } ;
+      { return ( ( id != acrc_src.id ) || ( b_xtd != acrc_src.b_xtd ) || ( size != acrc_src.size ) || ( memcmp( data, acrc_src.data, size ) != 0 ) ); } ;
 
     const RteCanPkg& operator=( const RteCanPkg& acrc_src )
       { id = acrc_src.id; b_xtd = acrc_src.b_xtd; size = acrc_src.size; memcpy( data, acrc_src.data, size ); return *this;};

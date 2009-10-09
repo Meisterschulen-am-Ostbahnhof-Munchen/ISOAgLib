@@ -190,9 +190,9 @@ bool DigitalO_c::good( void ) const
   if ( get() == 0 )  return true;
     // as even in OFF mode the digout reports currnt of ca. 3 mA, only the ACTIVE state is
 	// used to decide about state
-    // return (HAL::getDigoutDiagnose( channelNr(), 0, 0 ) == HAL_NO_ERR )?true:false;
+    // return (HAL::getDigoutDiagnose( channelNr(), 0, 0 ) == HAL_NO_ERR );
   else
-    return (HAL::getDigoutDiagnose( channelNr(), ui16_minAllowedCurrent, ui16_maxAllowedCurrent ) == HAL_NO_ERR )?true:false;
+    return (HAL::getDigoutDiagnose( channelNr(), ui16_minAllowedCurrent, ui16_maxAllowedCurrent ) == HAL_NO_ERR );
 }
 
 /** deliver detailed error state information for this Digital Output

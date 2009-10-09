@@ -216,7 +216,7 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
   uint8_t ident(uint8_t ab_pos) const {return static_cast<uint8_t>((t_ident >> (ab_pos*8)) & 0xFF);}
 
   /** check if Ident_c is set as empty (needed for MsgObj) */
-  bool empty() const {return (data.empty == 1)?true:false;}
+  bool empty() const {return (data.empty == 1);}
 
   /** set the Ident_c to empty state
     @param ab_empty set empty state (default = true)

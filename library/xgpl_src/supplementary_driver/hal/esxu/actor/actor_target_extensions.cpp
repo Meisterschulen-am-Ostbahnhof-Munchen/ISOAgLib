@@ -91,7 +91,7 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 		if( i16_adc < 0 )
 			return HAL_NO_ERR;	// Pin doesn't support current checking - should really do something else here!!!
 
-		bool b_hiSet = ( aui16_maxCurrent > 0 )?true:false;
+		bool b_hiSet = ( aui16_maxCurrent > 0 );
 		uint16_t cui16_useLowCompare = cui16_openLow;
 
 		if ( b_hiSet )
