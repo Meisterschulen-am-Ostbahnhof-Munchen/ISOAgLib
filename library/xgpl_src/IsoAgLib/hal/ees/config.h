@@ -12,7 +12,7 @@
 // include target independent configs
 #include <IsoAgLib/isoaglib_config.h>
 
-#define HAL_CAN_MAX_BUS_NR 4
+#define HAL_CAN_MAX_BUS_NR 3
 
 #define SIZEOF_INT 4
 
