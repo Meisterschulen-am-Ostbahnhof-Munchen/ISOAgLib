@@ -231,7 +231,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 #ifdef DEBUG_CAN
     m_clog << "sendToBus(): bus: " << (int)ui8_bus << " isOpen: " << canBusIsOpen[ui8_bus] << std::endl;
 #endif
-    if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+    if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
     {
         // Create the frame
         struct can_frame frame;
@@ -279,7 +279,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 #ifdef DEBUG_CAN
         m_clog << "readFromBus(): bus: " << (int)ui8_bus << " driverHandle: " << pc_serverData->marri32_can_device[ui8_bus] << std::endl;
 #endif
-    if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+    if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
     {
         struct can_frame frame;
         fd_set rfds;       // read file descriptor

@@ -243,7 +243,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     for( int i=0; i<msg.LEN; i++ )
       msg.DATA[i] = ps_canMsg->ui8_data[i];
 
-    if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+    if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
     {
       rc = CAN_Write(&msg);
       // printf("CAN_write rc: %x, ID %x, len %d, data %x %x %x %x %x %x %x %x\n", rc, msg.ID, msg.LEN, msg.DATA[0], msg.DATA[1], msg.DATA[2], msg.DATA[3], msg.DATA[4], msg.DATA[5], msg.DATA[6], msg.DATA[7]);
@@ -267,7 +267,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   int ret = 0;
 
-  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
+  if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
     ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], PCAN_WRITE_MSG, &msg);
     if (ret < 0)
     {

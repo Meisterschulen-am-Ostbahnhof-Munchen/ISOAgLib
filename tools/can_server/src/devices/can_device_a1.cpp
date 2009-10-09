@@ -220,7 +220,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   ui32_calls++;
 
-  if ((ui8_bus < HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
+  if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
     i_ioctlRet = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
     if (i_ioctlRet < 0) {
