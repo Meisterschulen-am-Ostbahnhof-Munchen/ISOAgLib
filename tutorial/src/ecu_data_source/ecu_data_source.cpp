@@ -1,7 +1,7 @@
 #include "tutorial_settings.h"
 
 // components
-#include "component_tcclient.h"
+#include "component_tcclient_dfff.h"
 #include "component_simulatedsource.h"
 
 // IsoAgLib
@@ -42,7 +42,7 @@ bool ecuMain() {
   __IsoAgLib::getIsoMonitorInstance().sendRequestForClaimedAddress();
 
   c_myIdent.setEcuIdentification( "PartNr T", "Serial 127", "Manufacturer" ); // dummy values
-  c_myIdent.setSwIdentification( "IsoAgLib Data Source ECU Tutorial" );
+  c_myIdent.setSwIdentification( "IsoAgLib Data Source DFFF ECU Tutorial" );
   c_myIdent.setCertificationData(
     2009, // certification year
     IsoAgLib::CertificationRevisionNotAvailable,

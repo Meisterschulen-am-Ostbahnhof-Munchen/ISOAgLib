@@ -3,6 +3,11 @@
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
+/// --------------------------------------------------------
+///  NOTE: This Tutorial-ECU is NOT available as OpenSource
+///        For further information please contact OSB AG
+/// --------------------------------------------------------
+
 IsoAgLib::iIdentItem_c* p_ident;
 
 /* ISO identification */

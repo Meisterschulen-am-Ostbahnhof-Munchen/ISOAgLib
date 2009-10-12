@@ -5,11 +5,10 @@
     <deviceprocessdata designator="On Off" ddi="0x008D" properties="defaultset" trigger_methods="timeinterval" proc_program_name="workState" cumulative_value="false">
       <deviceprocessdatacombination ddi="0x008D" command_type="exact" is_setpoint="false" />
     </deviceprocessdata>
-    <!-- In this simple version, default data-logging is not supported.
-      <deviceprocessdata designator="default data logging DDI" ddi="0xDFFF" properties="defaultset" trigger_methods="timeinterval" proc_program_name="defaultLogging" cumulative_value="false">
-        <deviceprocessdatacombination ddi="0xDFFF" command_type="exact" is_setpoint="false" />
-      </deviceprocessdata>
-    -->
+    <!-- In this more extended version, default data-logging is supported -->
+    <deviceprocessdata designator="default data logging DDI" ddi="0xDFFF" properties="defaultset" trigger_methods="timeinterval" proc_program_name="defaultLogging" cumulative_value="false">
+      <deviceprocessdatacombination ddi="0xDFFF" command_type="exact" is_setpoint="false" />
+    </deviceprocessdata>
   </deviceelement>
   <deviceelement designator="DeviceElementSensorA" element_type="section" element_number="1" parent_name="DeviceElementGeneral">
     <deviceprocessdata designator="Application Rate" ddi="0x0002" properties="defaultset" trigger_methods="timeinterval" proc_program_name="applicationRateSensorA" cumulative_value="false">
