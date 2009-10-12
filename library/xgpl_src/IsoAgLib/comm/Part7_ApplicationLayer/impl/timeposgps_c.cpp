@@ -583,6 +583,17 @@ namespace __IsoAgLib {
   #endif
 
 
+  /** check if a received GPS message should be parsed */
+  bool TimePosGps_c::checkParseReceivedGps(const IsoName_c& acrc_currentSender) const
+  {
+    return ( checkModeGps(IsoAgLib::IdentModeImplement) // I'm not the sender
+             && ( // one of the following conditions must be true
+                     (mc_sendGpsISOName == acrc_currentSender) // actual sender equivalent to last
+                  || (mc_sendGpsISOName.isUnspecified()      ) // last sender has not correctly claimed address member
+                )
+           );
+  }
+
   /** process a ISO11783 base information PGN
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
@@ -620,17 +631,15 @@ namespace __IsoAgLib {
           // set last time
           setUpdateTime(ci32_now);
           setSelectedDataSourceISOName (rcc_tempISOName);
-          return true;
         }
         else
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
-          return true;
         }
-        break;  // This break is unreachable, but leave it here in case the above code changes.
+        return true;
 
       case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
-        if ( checkParseReceived( rcc_tempISOName ) )
+        if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
           mi32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
           mi32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
@@ -645,10 +654,14 @@ namespace __IsoAgLib {
             #endif
           }
         }
+        else
+        { // there is a sender conflict
+          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+        }
         return true;
 
       case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:
-        if ( checkParseReceived( rcc_tempISOName ) )
+        if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
           mui8_directionSequenceID          = data().getUint8Data ( 0 );
           mui8_courseOverGroundReference    = data().getUint8Data ( 1 ) & 0x03;
@@ -672,7 +685,11 @@ namespace __IsoAgLib {
           }
           // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
         }
-    break;
+        else
+        { // there is a sender conflict
+          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+        }
+        return true;
 
     }
     return false;
@@ -964,7 +981,7 @@ namespace __IsoAgLib {
         // now fetch PDOP from raw uint16_t to float [1.0*1.0e-2)
         IsoAgLib::convertIstream( rc_stream, mi16_pdop );
         // Geodial Separation
-        IsoAgLib::convertIstream( rc_stream, mi32_geoidalSeparation );
+        IsoAgLib::convertIstream( rc_stream, mi32_geoidalSeparationCm );
         // number of reference stations
         IsoAgLib::convertIstream( rc_stream, mui8_noRefStations );
         // now read the type and age of all following reference stations
@@ -1229,7 +1246,7 @@ void TimePosGps_c::isoSendDirection( void )
     // write PDOP
     number2LittleEndianString( mi16_pdop, writeRef );
     // write geodial separation
-    number2LittleEndianString( mi32_geoidalSeparation, writeRef );
+    number2LittleEndianString( mi32_geoidalSeparationCm, writeRef );
 
     // write number of reference stations
     uint8_t ui8_limit = mui8_noRefStations;

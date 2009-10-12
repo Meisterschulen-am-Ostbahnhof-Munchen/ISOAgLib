@@ -226,6 +226,8 @@ class TimePosGps_c : public SingletonTimePosGps_c
   /** return if you currently are in gps mode*/
   bool checkModeGps(IsoAgLib::IdentMode_t at_identModeGps) const {return (mt_identModeGps == at_identModeGps);}
 
+  bool checkParseReceivedGps(const IsoName_c& acrc_currentSender) const;
+
   /** send ISO11783 calendar PGN
     possible errors:
       * dependant error in CanIo_c on CAN send problems
@@ -586,6 +588,9 @@ public:
   /** deliver GPS altitude - [cm] */
   int32_t getGpsAltitudeCm( void ) const { return mi32_altitudeCm; }
 
+  /** deliver GPS Geodial Separation - [cm] */
+  int32_t getGpsGeoidalSeparationCm ( void ) const { return mi32_geoidalSeparationCm; }
+
   /** simply check for some sort of Differential signal */
   bool hasDifferentialPosition() const { return ( ( mt_gnssMethod > IsoAgLib::IsoGnssFix ) && ( mt_gnssMethod < IsoAgLib::IsoDrEstimated ) );}
 
@@ -784,7 +789,7 @@ private:
 
   /** sequence ID of GPS string */
   uint8_t mui8_positionSequenceID;
-  int32_t mi32_geoidalSeparation;
+  int32_t mi32_geoidalSeparationCm;
   uint8_t mui8_noRefStations;
   STL_NAMESPACE::vector<uint16_t> mvec_refStationTypeAndStation;
   STL_NAMESPACE::vector<uint16_t> mvec_refStationDifferentialAge10Msec;

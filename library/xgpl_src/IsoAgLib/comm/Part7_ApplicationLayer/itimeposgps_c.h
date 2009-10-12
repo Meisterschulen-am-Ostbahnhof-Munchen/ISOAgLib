@@ -235,6 +235,9 @@ public:
   /** deliver GPS altitude - [cm] */
   int32_t getGpsAltitudeCm(void) const { return TimePosGps_c::getGpsAltitudeCm();}
 
+  /** deliver GPS Geodial Separation - [cm] */
+  int32_t getGpsGeoidalSeparationCm ( void ) const { return TimePosGps_c::getGpsGeoidalSeparationCm(); }
+
   /** simply check for some sort of Differential signal */
   bool hasDifferentialPosition() const{ return TimePosGps_c::hasDifferentialPosition();}
 
