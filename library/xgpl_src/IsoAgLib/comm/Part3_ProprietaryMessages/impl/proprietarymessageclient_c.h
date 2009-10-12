@@ -130,6 +130,14 @@ namespace __IsoAgLib
         */
       virtual ~ProprietaryMessageClient_c();
 
+    private:
+      /** forbid copy construction / assignment as it would
+          perform too many client-/filter-/mr-/ms-(de)registrations */
+      ProprietaryMessageClient_c(const ProprietaryMessageClient_c& rhs);
+      ProprietaryMessageClient_c& operator= (const ProprietaryMessageClient_c& rhs);
+
+
+    public:
       /** virtual bool processProprietaryMsg() must be overloaded by the application
         */
       virtual void processProprietaryMsg() = 0;
