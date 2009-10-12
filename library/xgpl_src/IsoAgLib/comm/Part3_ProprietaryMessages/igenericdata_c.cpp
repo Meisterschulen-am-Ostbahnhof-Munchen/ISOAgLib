@@ -60,6 +60,7 @@ namespace IsoAgLib
 {
   /** Constructor which has nothing to do */
   iGenericData_c::iGenericData_c()
+    : vec_data(), ui32_ident(0)
   { // nothing to do.
   }
 
@@ -71,9 +72,8 @@ namespace IsoAgLib
   }
 
   iGenericData_c::iGenericData_c (const iCanPkgExt_c& arc_canPkg)
+    : vec_data(), ui32_ident(arc_canPkg.ident())
   {
-    // copy ident
-    setIdent (arc_canPkg.ident());
     // copy data
     setDataStream (0, arc_canPkg.getUint8DataConstPointer(), arc_canPkg.getLen());
   }
