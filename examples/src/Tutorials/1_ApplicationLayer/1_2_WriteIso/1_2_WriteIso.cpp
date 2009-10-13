@@ -263,26 +263,26 @@
   #include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #endif
 #ifdef TEST_TRACTOR_LIGHTING
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itraclight_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itraclight_c.h>
 #endif
 #ifdef TEST_TRACPTOSETPOINT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracptosetpoint_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracptosetpoint_c.h>
 #endif
 #ifdef TEST_TRACMOVESETPOINT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracmovesetpoint_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracmovesetpoint_c.h>
 #endif
 #ifdef TEST_TRACAUX
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracaux_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracaux_c.h>
 #endif
 #ifdef TEST_TRACPTO
   #include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
 #endif
 #ifdef TEST_TRACCERT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itraccert_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itraccert_c.h>
 #endif
 #ifdef TEST_TRACGUIDANCE
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracguidance_c.h>
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/ext/itracguidancecommand_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracguidance_c.h>
+  #include <IsoAgLib/comm/Part7_ApplicationLayer/itracguidancecommand_c.h>
 #endif
 
 
@@ -757,10 +757,10 @@ int main()
         //TRACTOR CERTIFICATION CLASS TEST FUNCTIONALITY
         c_myIdent.setCertificationData(
           uint16_t(2006),
-          __IsoAgLib::CertificationRevisionFourthRevision,
-          __IsoAgLib::CertificationLabTypeEUCertifiedLab,
+          IsoAgLib::CertificationRevisionFourthRevision,
+          IsoAgLib::CertificationLabTypeEUCertifiedLab,
           650,
-          __IsoAgLib::CertificationBitMask_t(16).setBit(__IsoAgLib::CertificationMinEcu),
+          IsoAgLib::CertificationBitMask_t().setBit(IsoAgLib::CertificationMinEcu),
           1530);
         #endif
 
