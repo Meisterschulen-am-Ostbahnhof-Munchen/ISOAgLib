@@ -415,8 +415,8 @@ check_set_correct_variables()
     case "$USE_TARGET_SYSTEM" in
         (pc_win32)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/Dev-C++"
-            IDE_NAME="Visual Studio, Dev-C++"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/VC6"
+            IDE_NAME="Visual Studio"
             ;;
         (pc_linux)
             USE_SYSTEM_DEFINE="SYSTEM_PC"
@@ -1890,7 +1890,7 @@ create_EdePrj()
     USE_DEFINES=$(win_paths_from_unix_paths "$USE_DEFINES")
     USE_EMBED_COMPILER_DIR=$(win_paths_from_unix_paths "$USE_EMBED_COMPILER_DIR")
  
-    # remove some file lists, which are not used for Dev-C++
+    # remove some file lists, which are not used
     rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
 
     local INSERT_PROJECT="$PROJECT"
@@ -2084,7 +2084,7 @@ format_sources_for_dsp()
 create_VCPrj()
 {
 
-    DEV_PRJ_DIR=$(echo_ "$1/$PROJECT" | sed -e 's/Dev-C++/VC6/g')
+    DEV_PRJ_DIR="$1/$PROJECT"
     # echo_ "Create Projekt file for VC6 in $DEV_PRJ_DIR"
     mkdir -p $DEV_PRJ_DIR
     # Visual Studio will create the needed Debug and Release directories on its own.
