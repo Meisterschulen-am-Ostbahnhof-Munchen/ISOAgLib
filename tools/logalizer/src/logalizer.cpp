@@ -37,6 +37,10 @@ uint32_t i_etplengthData = 0;
 uint32_t i_etpPacketOffSet = 0;
 uint8_t *i_etpData = NULL;
 
+int i_multipacketWrap=0; // default will be set when parsing parameters
+
+char getAscii(uint8_t val) { return ((val >= 0x20) && (val < 0x7F)) ? (char(val)) : '.'; }
+
 uint8_t  canGetPrio() { return (can_id >> 26)       ; }
 uint8_t  canGetDp()   { return (can_id >> 24) & 0x03; }
 uint8_t  canGetSa()   { return (can_id      ) & 0xFF; }
@@ -46,7 +50,7 @@ uint8_t  canGetPf()   { return (can_id >> 16) & 0xFF; }
 uint32_t canGetPgn()  { return ((canGetDp() << 16) | (canGetPf() << 8) | ((canGetPf() >= 0xF0) ? canGetPs():0)); }
 uint64_t canGetTime() { return (can_time); }
 uint8_t  canGetData(int i) { return (can_data[i]); }
-char     canGetAsciiData(int i) { return ((can_data[i] >= 0x20) && (can_data[i] < 0x7F)) ? (char(can_data[i])) : '.'; }
+char     canGetAsciiData(int i) { return getAscii (can_data[i]); }
 uint8_t  canGetBytes() {return (can_bytes); }
 bool     canIsPdu1()  { return (canGetPf() < 0xF0); }// with DA
 
@@ -70,7 +74,7 @@ logType_t logType;
 
 void analyzeCl2FS(uint8_t, uint8_t, uint16_t, uint8_t[]);
 void analyzeFS2Cl(uint8_t, uint8_t, uint16_t, uint8_t[]);
-void analyzeRest(uint8_t, uint8_t, uint16_t, uint8_t[]);
+void analyzeRest(uint8_t, uint8_t, uint16_t, uint8_t[], uint32_t);
 void decodeErrorCode(uint8_t);
 void decodeAttributes(uint8_t);
 void decodeDate(uint16_t);
@@ -82,7 +86,7 @@ void interpretePgnsVtEcu(bool);
 
 void exit_with_usage(const char* progname)
 {
-  cout << "Usage: " << progname << " <logFile> [logType]" << endl << endl;
+  cout << "Usage: " << progname << " <logFile> [logType] [wrapMultipacket]" << endl << endl;
   cout << "logTypes: 0 -> can_server [DEFAULT]"<<endl;
   cout << "          1 -> rte"<<endl;
   cout << "          2 -> CANMon"<<endl;
@@ -90,6 +94,8 @@ void exit_with_usage(const char* progname)
   cout << "          4 -> A1ASCII"<<endl;
   cout << "          5 -> PCANView"<<endl;
   cout << "          6 -> JohnDeere"<<endl;
+  cout << endl;
+  cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << endl;
   cout << endl;
   cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
   cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
@@ -739,6 +745,9 @@ void interpretePgnsFS2Cl()
 
 void interpretePgnsTPETP()
 {
+  bool b_tpStreamEnd = false;
+  bool b_etpStreamEnd = false;
+
   if (canGetBytes() != 8)
   {
     cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
@@ -785,66 +794,47 @@ void interpretePgnsTPETP()
           i_etpPacketOffSet = (canGetData(4)<<16) | (canGetData(3)<<8) | (canGetData(2));
           break;
         case 0x13: 
-           //cout << "EoMACK - End of Message Ack (TP)      ";
-
-          if (ui32_tpembeddedPgn == 0xab00)
-            analyzeFS2Cl(i_tpsa, i_tpda, i_tplengthData, i_tpData);
-          else if (ui32_tpembeddedPgn == 0xaa00)
-            analyzeCl2FS(i_tpsa, i_tpda, i_tplengthData, i_tpData);
-          else
-            analyzeRest(i_tpsa, i_tpda, i_tplengthData, i_tpData);
-
-          b_tprts = false;
-          b_tpcts = false;
-          i_tpsa = 0;
-          i_tpda = 0;
-          i_tplengthData = 0;
-          i_tpData = NULL;
-          ui32_tpembeddedPgn = 0;
-          return;
+          cout << "EoMACK - End of Message Ack (TP)      ";
+          b_tpStreamEnd = true;
+          break;
         case 0x17: 
           cout << "EoMACK - End of Message Ack (ETP)     ";
+          b_etpStreamEnd = true;
 
-          if (ui32_etpembeddedPgn == 0xab00)
-            analyzeFS2Cl(i_etpsa, i_etpda, i_etplengthData, i_etpData);
-          else if (ui32_etpembeddedPgn == 0xaa00)
-            analyzeCl2FS(i_etpsa, i_etpda, i_etplengthData, i_etpData);
-          else
-            analyzeRest(i_etpsa, i_etpda, i_etplengthData, i_etpData);
-
-          b_etprts = false;
-          b_etpcts = false;
-          i_etpsa = 0;
-          i_etpda = 0;
-          i_etplengthData = 0;
-          i_etpData = NULL;
-          i_etpPacketOffSet = 0;
-          ui32_etpembeddedPgn = 0;
-          return;
+          break;
         case 0x20: 
            cout << "BAM - Broadcast Announce Msg (TP)     ";
           break;
         case 0xFF: 
            cout << "CONNABORT - Connection Abort (TP/ETP) ";
 
-          b_tprts = false;
-          b_tpcts = false;
-          i_tpsa = 0;
-          i_tpda = 0;
-          i_tplengthData = 0;
-          i_tpData = NULL;
-          ui32_tpembeddedPgn = 0;
-          break;
+           b_tprts = false;
+           b_tpcts = false;
+           i_tpsa = 0;
+           i_tpda = 0;
+           i_tplengthData = 0;
+           i_tpData = NULL;
+           ui32_tpembeddedPgn = 0;
+
+           b_etprts = false;
+           b_etpcts = false;
+           i_etpsa = 0;
+           i_etpda = 0;
+           i_etplengthData = 0;
+           i_etpData = NULL;
+           i_etpPacketOffSet = 0;
+           ui32_etpembeddedPgn = 0;
+           break;
         default: return;
       }
       if ((canGetPgn() == TP_CONN_MANAGE_PGN)) {
         ui32_tpembeddedPgn = (canGetData(7)<<16) | (canGetData(6)<<8) | (canGetData(5));
-        cout << " for PGN "<<setw(6)<<setfill('0')<<ui32_tpembeddedPgn<< " (";
+        cout << " on "<<setw(6)<<setfill('0')<<ui32_tpembeddedPgn<< " (";
         interpretePgn (ui32_tpembeddedPgn);
         cout << ")";
       } else if (canGetPgn() == ETP_CONN_MANAGE_PGN) {
         ui32_etpembeddedPgn = (canGetData(7)<<16) | (canGetData(6)<<8) | (canGetData(5));
-        cout << " for PGN "<<setw(6)<<setfill('0')<<ui32_etpembeddedPgn<< " (";
+        cout << " on "<<setw(6)<<setfill('0')<<ui32_etpembeddedPgn<< " (";
         interpretePgn (ui32_etpembeddedPgn);
         cout << ")";
       }
@@ -866,6 +856,42 @@ void interpretePgnsTPETP()
           i_etpData[(((i_etpPacketOffSet) * 7) + (7 *  (canGetData(0) - 1))) + i] = canGetData(i + 1);
         }
       }
+    }
+
+    if (b_tpStreamEnd)
+    {
+      if (ui32_tpembeddedPgn == 0xab00)
+        analyzeFS2Cl(i_tpsa, i_tpda, i_tplengthData, i_tpData);
+      else if (ui32_tpembeddedPgn == 0xaa00)
+        analyzeCl2FS(i_tpsa, i_tpda, i_tplengthData, i_tpData);
+      else
+        analyzeRest(i_tpsa, i_tpda, i_tplengthData, i_tpData, ui32_tpembeddedPgn);
+
+      b_tprts = false;
+      b_tpcts = false;
+      i_tpsa = 0;
+      i_tpda = 0;
+      i_tplengthData = 0;
+      i_tpData = NULL;
+      ui32_tpembeddedPgn = 0;
+    }
+
+    if (b_etpStreamEnd)
+    {
+      if (ui32_etpembeddedPgn == 0xab00)
+        analyzeFS2Cl(i_etpsa, i_etpda, i_etplengthData, i_etpData);
+      else if (ui32_etpembeddedPgn == 0xaa00)
+        analyzeCl2FS(i_etpsa, i_etpda, i_etplengthData, i_etpData);
+      else
+        analyzeRest(i_etpsa, i_etpda, i_etplengthData, i_etpData, ui32_etpembeddedPgn);
+      b_etprts = false;
+      b_etpcts = false;
+      i_etpsa = 0;
+      i_etpda = 0;
+      i_etplengthData = 0;
+      i_etpData = NULL;
+      i_etpPacketOffSet = 0;
+      ui32_etpembeddedPgn = 0;
     }
   }
 }
@@ -1030,10 +1056,10 @@ int parseLogLine()
     else cout << "FF";
 
     // Priority
-    cout << "  prio:" << uint16_t(canGetPrio());
+    cout << " (" << uint16_t(canGetPrio()) << ")";
 
     // PGN
-    cout << "  pgn:" << setw(6) << canGetPgn() << " => ";
+    cout << " " << setw(6) << canGetPgn() << " => ";
     // Interpreted PGN
     interpretePgn (canGetPgn());
     // Interpreted PGN-Data
@@ -1202,6 +1228,11 @@ int main (int argc, char** argv)
     logType = (logType_t) atoi (argv[2]);
   else // default to can_server
     logType = logTypeCanServer;
+
+  if (argc >= 4)
+    i_multipacketWrap = atoi (argv[3]);
+  else // default to can_server
+    i_multipacketWrap = 32;
 
   while (!ifs_in.eof())
   {
@@ -1466,18 +1497,38 @@ void analyzeFS2Cl(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[])
   }
 }
 
-void analyzeRest(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[])
+void analyzeRest(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[], uint32_t aui32_embeddedPgn)
 {
-  cout << endl << endl; 
-  cout << "SA: " << setw(2)<<setfill('0') << uint32_t(SA) << " DA: " << setw(2)<<setfill('0') << uint32_t(DA) << " length Data: " << setw(4)<<setfill('0') << uint32_t(lengthData) << " " << endl;
-  cout << "For PGN "<<setw(6)<<setfill('0')<<ui32_tpembeddedPgn<< " (";
-      interpretePgn (ui32_tpembeddedPgn);
-  cout << ")" << endl << "";
-  for (int i = 0; i < lengthData; i++)
+  (void)aui32_embeddedPgn; // currently unused
+
+  int local_multipacketWrap = i_multipacketWrap;
+  if (local_multipacketWrap > lengthData)
+    local_multipacketWrap = lengthData;
+
+  cout << ")" << endl;
+
+  cout << "              " << hex << setw(2)<<setfill('0') << uint32_t(SA) << "->" << setw(2)<<setfill('0') << uint32_t(DA) << " " << dec << setw(7)<<setfill(' ') << uint32_t(lengthData) << "  " << hex;
+
+  for (int blockoffset=0; blockoffset < lengthData; blockoffset += local_multipacketWrap)
   {
-    cout << setw(2)<<setfill('0') << uint32_t(Data[i]) << " ";
-    if (i != 0 && (i + 1) % 8 == 0)
-      cout << endl << "";
+    if (blockoffset > 0)
+      cout << "                              ";
+
+    for (int inblock = 0; inblock < i_multipacketWrap; ++inblock)
+    {
+      if ((blockoffset + inblock) < lengthData)
+        cout << setw(2)<<setfill('0') << uint32_t(Data[blockoffset+inblock]) << " ";
+      else
+        cout << "   ";
+    }
+    for (int inblock = 0; inblock < i_multipacketWrap; ++inblock)
+    {
+      if ((blockoffset + inblock) < lengthData)
+        cout << getAscii (Data[blockoffset+inblock]);
+      else
+        cout << " ";
+    }
+    cout << endl;
   }
 }
 
