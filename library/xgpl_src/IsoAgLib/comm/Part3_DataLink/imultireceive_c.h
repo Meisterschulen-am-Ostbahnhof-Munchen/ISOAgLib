@@ -134,13 +134,21 @@ public:
     { return MultiReceive_c::getStreamCompletion1000 (aui32_index, ab_checkFirstByte, aui8_returnNullIfThisIsFirstByte); }
 
   uint32_t getMaxStreamCompletion1000 (bool ab_checkFirstByte=false, uint8_t aui8_returnNullIfThisIsFirstByte=0x00 /*don't care if check=false*/) const
-    { return getMaxStreamCompletion1000 (ab_checkFirstByte, aui8_returnNullIfThisIsFirstByte); }
+    { return MultiReceive_c::getMaxStreamCompletion1000 (ab_checkFirstByte, aui8_returnNullIfThisIsFirstByte); }
 
   bool isAtLeastOneWithFirstByte (uint8_t aui8_firstByte)
-    { return isAtLeastOneWithFirstByte (aui8_firstByte); }
+    { return MultiReceive_c::isAtLeastOneWithFirstByte (aui8_firstByte); }
 
   IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* apc_lastKeptStream)
-    { return getFinishedJustKeptStream (apc_lastKeptStream); }
+    { return MultiReceive_c::getFinishedJustKeptStream (apc_lastKeptStream); }
+
+  //! Override the default configured values CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM and CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS
+  //! This function is "thread safe", it only overwrites member variables.
+  //! Use only if you know what you're doing!
+  //! @param ai32_ctsSendDelayOneStream time to wait (in ms) before sending out the next CTS [if only one session is running]
+  //! @param ai32_ctsSendDelayMoreStreams time to wait (in ms) before sending out the next CTS [if multiple sessions running concurrently]
+  void setCtsDelays (int32_t ai32_ctsSendDelayOneStream, int32_t ai32_ctsSendDelayMoreStreams)
+    { MultiReceive_c::setCtsDelays (ai32_ctsSendDelayOneStream, ai32_ctsSendDelayMoreStreams); }
 
 
   private:

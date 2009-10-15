@@ -90,10 +90,10 @@
 #include "multireceive_c.h"
 
 // IsoAgLib
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
 
 #ifdef DEBUG
@@ -169,15 +169,22 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s( CanCustomer_c& arc_cli
 }
 
 
+// c'tor
 MultiReceive_c::MultiReceive_c()
+  : mlist_streams()
+  , mlist_clients()
+  , mi32_ctsSendDelayOneStream (CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM) // data -> cts
+  , mi32_ctsSendDelayMoreStreams (CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS) // data -> cts
+  , mi32_retriggerDelayForFirstCts (100)
+  , mi32_timePeriodForActiveStreams (100)
 {
 }
 
-// //////////////////////////////// +X2C Operation 5653 : ~MultiReceive_c
+// d'tor
 MultiReceive_c::~MultiReceive_c()
-{ // ~X2C
+{
   close();
-} // -X2C
+}
 
 
 void
@@ -781,7 +788,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acr
 
 // //////////////////////////////// +X2C Operation 845 : createStream
 //! Parameter:
-//! ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
+//! @pre ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
 //! @param at_streamType
 //! @param ac_streamIdent
 //! @param aui32_msgSize
@@ -805,8 +812,7 @@ MultiReceive_c::createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStream
   // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
   // this is yet to optimize because we can detect exactly how long to sleep, etc.etc.
   /// THIS IS ALWAYS CALLED FROM ::processMsg, so we can't use setTimePeriod() here
-  if (getTimePeriod() != 100)
-    __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this, HAL::getTime()+100, 100);
+  __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this, HAL::getTime()+mi32_retriggerDelayForFirstCts, mi32_timePeriodForActiveStreams);
 
   return &mlist_streams.back();
 } // -X2C
@@ -1053,7 +1059,7 @@ MultiReceive_c::timeEvent( void )
   }
   else
   { // we have at least on Stream in the list...
-    setTimePeriod (100);
+    setTimePeriod (mi32_timePeriodForActiveStreams);
   }
   return true;
 } // -X2C

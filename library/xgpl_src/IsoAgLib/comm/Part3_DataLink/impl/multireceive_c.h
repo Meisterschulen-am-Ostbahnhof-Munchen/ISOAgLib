@@ -102,7 +102,6 @@ namespace IsoAgLib {
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 
 // stl
 #include <list>
@@ -188,7 +187,6 @@ public:
   void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
 
   //  Operation: createStream
-  //! 
   //! @param at_streamType
   //! @param ac_streamIdent
   //! @param aui32_msgSize
@@ -202,6 +200,23 @@ public:
   , bool ab_fastPacket=false
   #endif
   );
+
+  int32_t getCtsDelay() const { return (getStreamCount() == 1) ? mi32_ctsSendDelayOneStream : mi32_ctsSendDelayMoreStreams; }
+
+  //! Override the default configured values CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_SINGLE_STREAM and CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS
+  //! This function is "thread safe", it only overwrites member variables.
+  void setCtsDelays (int32_t ai32_ctsSendDelayOneStream, int32_t ai32_ctsSendDelayMoreStreams)
+  { mi32_ctsSendDelayOneStream = ai32_ctsSendDelayOneStream;
+    mi32_ctsSendDelayMoreStreams = ai32_ctsSendDelayMoreStreams; }
+
+  //! This method is intentionally not placed in the interface class iMultiReceive_c,
+  //! as it's only for experimental reasons (until the internal stream-scheduling is improved)
+  //! This function is "thread safe", it only overwrites member variables.
+  //! @param ai32_retriggerDelayForFirstCts defaults to 100 ms
+  //! @param ai32_timePeriodForActiveStreams defaults to 100 ms
+  void setExperimentalTimings (int32_t ai32_retriggerDelayForFirstCts, int32_t ai32_timePeriodForActiveStreams)
+  { mi32_retriggerDelayForFirstCts = ai32_retriggerDelayForFirstCts;
+    mi32_timePeriodForActiveStreams = ai32_timePeriodForActiveStreams; }
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
@@ -346,12 +361,19 @@ private:
         ab_isGlobal);
   }
 
-  // attributes
 
+  // attributes
+private:
   STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
 
   STL_NAMESPACE::list<MultiReceiveClientWrapper_s> mlist_clients;
 
+  int32_t mi32_ctsSendDelayOneStream;
+  int32_t mi32_ctsSendDelayMoreStreams;
+
+  // soon obsolete - only used for the current "bad" management of multiple streams with one schedulertask.
+  int32_t mi32_retriggerDelayForFirstCts;
+  int32_t mi32_timePeriodForActiveStreams;
 }; // ~X2C
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
