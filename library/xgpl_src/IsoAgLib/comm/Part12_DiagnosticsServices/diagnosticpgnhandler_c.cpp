@@ -3,6 +3,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <algorithm>
 
 // not done as private member function because of recursive-include problems.
 // IdentItem_c needs DiagnosticPgnHandler_c because of the enums.
@@ -212,12 +213,10 @@ bool DiagnosticPgnHandler_c::setSwIdentification ( const STL_NAMESPACE::string& 
   if (astr_SwId[astr_SwId.length()-1] != '*')
     return false; // last character must be '*'
 
-  uint8_t ui8_fields = 0;
-  for ( int i = 1; i < int(astr_SwId.length()); i++ )
-  {
-    if ( astr_SwId[i] == '*' )
-      ui8_fields ++;
-  }
+  uint8_t ui8_fields = STL_NAMESPACE::count(
+      astr_SwId.begin(),
+      astr_SwId.end(),
+      '*');
 
   mstr_SwIdentification = "0" + astr_SwId; // Reserve the first character for the number of fields
   mstr_SwIdentification[0]= ui8_fields;  // insert the number of fields 
