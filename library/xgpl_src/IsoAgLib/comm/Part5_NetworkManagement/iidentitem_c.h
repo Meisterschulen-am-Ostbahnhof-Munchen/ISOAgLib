@@ -256,13 +256,20 @@ public:
 
   /**
     Set ECU Identification fields, needed during the diagnostic procedure
+    @return true if the fields were okay
+            false if one field was too long (> 200 chars) or had '*' in it.
   */
-  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNbr, const STL_NAMESPACE::string& astr_serialNbr,const STL_NAMESPACE::string& astr_manufacturerName )
+  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNbr, const STL_NAMESPACE::string& astr_serialNbr, const STL_NAMESPACE::string& astr_location, const STL_NAMESPACE::string& astr_type, const STL_NAMESPACE::string& astr_manufacturerName )
   {
-    return IdentItem_c::setEcuIdentification (astr_partNbr, astr_serialNbr, astr_manufacturerName);
+    return IdentItem_c::setEcuIdentification (astr_partNbr, astr_serialNbr, astr_location, astr_type, astr_manufacturerName);
   }
 
-  /** Set SW Identification fields, needed during the diagnostic procedure */
+  /** Set SW Identification fields, needed during the diagnostic procedure
+      @param astr_swId SwIdentification according to ISO 11783-12.
+                       End fields with *, even the last one (and even if it is only one)
+      @return true if the SW Identification was okay
+              false if it was too long (> 200 chars) or empty
+   */
   bool setSwIdentification( const STL_NAMESPACE::string& astr_swId)
   {
     return IdentItem_c::setSwIdentification (astr_swId);
@@ -274,8 +281,10 @@ public:
   //! @param a_revision Certification revision as in ISO 11783-7 A.29.2
   //! @param a_laboratoryType Certification laboratory type as in ISO 11783-7 A.29.3
   //! @param aui16_laboratoryId Certification laboratory ID (11 bits wide) as in ISO 11783-7 A.29.4
-  //! @param acrc_certificationBitMask Compliance certification type bitfield (  as in ISO 11783-7 A.29.5 till A.29.17 )
-  //! @param aui16_referenceNumber Compliance certification reference number  as in ISO 11783-7 A.29.18
+  //! @param acrc_certificationBitMask Compliance certification type bitfield as in ISO 11783-7 A.29.5 till A.29.17
+  //! @param aui16_referenceNumber Compliance certification reference number as in ISO 11783-7 A.29.18
+  //! @return true all parameters were okay in range
+  //!         false at least one parameter was wrong
   bool setCertificationData( uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
                                const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
   {

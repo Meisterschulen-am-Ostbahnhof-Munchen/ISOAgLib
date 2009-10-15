@@ -188,8 +188,7 @@ public:
   int32_t getTimeOfLastRequest() { return data().time(); }
 
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
-  void answerRequestPGNwithNACK()                       { if (mpc_isoItemDA != NULL) sendAcknowledgePGN (*mpc_isoItemDA, 0x01); } // Control Byte 1 = NOT Acknowledge
-  void answerRequestPGNwithCannotRespondNow(IsoItem_c& arc_isoItemSender) { sendAcknowledgePGN (arc_isoItemSender, 0x03); } // Control Byte 3 = Cannot Respond
+  void answerRequestPGNwithACK (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackCode) { sendAcknowledgePGN (arc_isoItemSender, aui8_ackCode); }
 
   ///  Operation:  Funktion for Debugging in Scheduler_c
   virtual const char* getTaskName() const;

@@ -13,6 +13,7 @@ namespace IsoAgLibTutorialDisplay {
   /** General Display handler */
   class iDisplay_c {
     public:
+      virtual ~iDisplay_c() {}
       virtual void handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon ) = 0;
       virtual void handleNewTimeValues( uint8_t aui_h, uint8_t aui_m, uint8_t aui_s ) = 0;
       virtual void handleNewGeneralValues( bool ab_keySwitch, uint8_t aui_maxPower ) = 0;

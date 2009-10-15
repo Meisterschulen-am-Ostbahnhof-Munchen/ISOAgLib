@@ -41,8 +41,8 @@ bool ecuMain() {
    */
   __IsoAgLib::getIsoMonitorInstance().sendRequestForClaimedAddress();
 
-  c_myIdent.setEcuIdentification( "PartNr T", "Serial 127", "Manufacturer" ); // dummy values
-  c_myIdent.setSwIdentification( "IsoAgLib Data Source DFFF ECU Tutorial" );
+  c_myIdent.setEcuIdentification( "PartNr T", "Serial 127", "Frontside", "PD Supplier", "OSB AG" ); // dummy values
+  c_myIdent.setSwIdentification( "IsoAgLib Data Source DFFF ECU Tutorial*" );
   c_myIdent.setCertificationData(
     2009, // certification year
     IsoAgLib::CertificationRevisionNotAvailable,

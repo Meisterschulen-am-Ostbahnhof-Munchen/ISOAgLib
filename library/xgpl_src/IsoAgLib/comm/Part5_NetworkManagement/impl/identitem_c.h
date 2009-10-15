@@ -323,16 +323,14 @@ public: // methods
 #endif
 
   /** Set ECU Identification fields, needed during the diagnostic procedure */
-  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNr, const STL_NAMESPACE::string& astr_serialNr,const STL_NAMESPACE::string& astr_manufacturerName )
-  {
-    // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-    return mpc_diagnosticPgnHandler->setEcuIdentification( astr_partNr, astr_serialNr,astr_manufacturerName );
+  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNr, const STL_NAMESPACE::string& astr_serialNr, const STL_NAMESPACE::string& astr_location, const STL_NAMESPACE::string& astr_type, const STL_NAMESPACE::string& astr_manufacturerName )
+  { // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
+    return mpc_diagnosticPgnHandler->setEcuIdentification( astr_partNr, astr_serialNr, astr_location, astr_type, astr_manufacturerName );
   }
 
   /** Set SW Identification fields, needed during the diagnostic procedure */
   bool setSwIdentification( const STL_NAMESPACE::string& astr_partNbr)
-  {
-    // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
+  { // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
     return mpc_diagnosticPgnHandler->setSwIdentification( astr_partNbr);
   }
 

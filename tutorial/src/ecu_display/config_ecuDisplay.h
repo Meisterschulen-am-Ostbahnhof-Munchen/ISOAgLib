@@ -8,10 +8,6 @@
 //                      if the corresponding value in isoaglib_config.h changed
 
 
-// include an external file for definition of pool and firmware versions
-#include "version.h"
-
-
 #define PRJ_USE_AUTOGEN_CONFIG config_ecuDisplay.h
 
 

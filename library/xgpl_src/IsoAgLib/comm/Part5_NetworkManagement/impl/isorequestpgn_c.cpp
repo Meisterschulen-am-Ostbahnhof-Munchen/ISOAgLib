@@ -243,10 +243,13 @@ IsoRequestPgn_c::processMsg ()
   }
 
   /// 2. Check if we have to send a NACK as nobody could answer it
-  /// (only for destination-specific, will be checked by answerRequestPGNwithNACK() !)
   if (!b_processedByAnyClient)
-  { // no client could answer the Request PGN, so NACK it!
-    answerRequestPGNwithNACK ();
+  { // no client could answer the Request PGN
+    if (mpc_isoItemDA != NULL)
+    { // and it was Destination specific
+      answerRequestPGNwithACK (*mpc_isoItemDA, 0x01);  // so "NOT Acknowledge (NACK)" it (Control Byte 0x01)
+    }
+    // else: Don't NACK if it was requested to global!
   }
 
   return true;

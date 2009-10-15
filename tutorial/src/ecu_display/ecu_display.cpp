@@ -60,8 +60,8 @@ bool ecuMain() {
     sci8_selfConf,
     sci8_master );
 
-  p_ident->setEcuIdentification( "PartNr D", "Serial 127", "Manufacturer" ); // dummy values
-  p_ident->setSwIdentification( "IsoAgLib Display ECU Tutorial" );
+  p_ident->setEcuIdentification( "PartNr D", "Serial 127", "Frontside", "Display", "OSB AG" ); // dummy values
+  p_ident->setSwIdentification( "IsoAgLib Display ECU Tutorial*" );
   p_ident->setCertificationData(
     2009, // certification year
     IsoAgLib::CertificationRevisionNotAvailable,
