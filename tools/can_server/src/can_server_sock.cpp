@@ -967,8 +967,11 @@ void readWrite(__HAL::server_c* pc_serverData)
         {
           // process data message
           enqueue_msg(&s_transferBuf, iter_client->i32_dataSocket, pc_serverData); // not done any more: disassemble_client_id(msqWriteBuf.i32_mtype)
-
-          sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
+          
+          if (isBusOpen(s_transferBuf.s_data.ui8_bus))
+          {
+            (void)sendToBus(s_transferBuf.s_data.ui8_bus, &(s_transferBuf.s_data.s_canMsg), pc_serverData);
+          }
 
           if (pc_serverData->mb_logMode) {
             dumpCanMsg(

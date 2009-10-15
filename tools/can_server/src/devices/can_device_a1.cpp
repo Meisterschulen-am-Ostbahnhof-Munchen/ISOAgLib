@@ -60,6 +60,7 @@
 
 #include "can_server.h"
 #include "can_server_common.h"
+#include <assert.h>
 
 struct canMsgA1_s {
         unsigned        id;
@@ -220,23 +221,24 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   ui32_calls++;
 
-  if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]) {
-    i_ioctlRet = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+  // should have been checked already by calling function isBusOpen:
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
+  i_ioctlRet = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
 
-    if (i_ioctlRet < 0) {
-      perror("ioctl error during write");
+  if (i_ioctlRet < 0) {
+    perror("ioctl error during write");
 
-      ui32_calls = 0; // reset counter => before next send doStatusCheck() is called
+    ui32_calls = 0; // reset counter => before next send doStatusCheck() is called
 
 #if 0
-      printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
-      close(pc_serverData->marri32_can_device[ui8_bus]);
-      canBusIsOpen[ui8_bus] = false;
-      openBusOnCard(ui8_bus, 250, pc_serverData);
-      ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
-      printf("can_server: send message again on bus %d\n", ui8_bus);
+    printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
+    close(pc_serverData->marri32_can_device[ui8_bus]);
+    canBusIsOpen[ui8_bus] = false;
+    openBusOnCard(ui8_bus, 250, pc_serverData);
+    ret = ioctl(pc_serverData->marri32_can_device[ui8_bus], CAN_WRITE_MSG, &msg);
+    printf("can_server: send message again on bus %d\n", ui8_bus);
 #endif
-    }
+    return 0;
   }
 
   return 1; // do not return an error to IsoAgLib

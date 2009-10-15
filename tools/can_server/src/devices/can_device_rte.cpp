@@ -57,6 +57,7 @@
 
 #include "can_server.h"
 #include "can_server_common.h"
+#include <assert.h>
 
 // RTE Includes
 #include <rte_client.h>   // be an RTE client
@@ -190,6 +191,8 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 //          0 on error
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
+  // should have been checked already by calling function isBusOpen:
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
   rteCan_c[ui8_bus]->set_delta (0); // NOW!
   rteCan_c[ui8_bus]->set_count (1); // send only once
 

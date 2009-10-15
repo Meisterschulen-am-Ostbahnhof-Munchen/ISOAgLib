@@ -85,6 +85,7 @@ typedef int HINSTANCE;
 
 #include "can_server.h"
 #include "../can_server_common.h"
+#include <assert.h>
 
 using namespace __HAL;
 
@@ -614,6 +615,8 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   pi_transmitdata[11] = 0; // no remote
 
+  // should have been checked already by calling function isBusOpen:
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
   int result = ca_TransmitCanCard_1(ui8_bus + 1 /* channel (starts from 1!) */, ps_canMsg->i32_msgType, pi_transmitdata);
   if ( result )
     return 1;

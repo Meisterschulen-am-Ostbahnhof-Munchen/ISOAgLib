@@ -62,6 +62,7 @@
 
 #include "can_server.h"
 #include "can_server_common.h"
+#include <assert.h>
 
 using namespace __HAL;
 
@@ -229,48 +230,39 @@ void __HAL::updatePendingMsgs(server_c* /*pc_serverData*/, int8_t /*i8_bus*/)
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #ifdef DEBUG_CAN
-    m_clog << "sendToBus(): bus: " << (int)ui8_bus << " isOpen: " << canBusIsOpen[ui8_bus] << std::endl;
+  m_clog << "sendToBus(): bus: " << (int)ui8_bus << " isOpen: " << canBusIsOpen[ui8_bus] << std::endl;
 #endif
-    if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
-    {
-        // Create the frame
-        struct can_frame frame;
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
+  // Create the frame
+  struct can_frame frame;
 
-        frame.can_id = ps_canMsg->ui32_id;
-        if (ps_canMsg->i32_msgType > 0)
-            frame.can_id |= CAN_EFF_FLAG;   // set extended frame
-        frame.can_dlc = ps_canMsg->i32_len;
+  frame.can_id = ps_canMsg->ui32_id;
+  if (ps_canMsg->i32_msgType > 0)
+    frame.can_id |= CAN_EFF_FLAG;   // set extended frame
+  frame.can_dlc = ps_canMsg->i32_len;
 
-        for( int i=0; i<frame.can_dlc; i++ )
-            frame.data[i] = ps_canMsg->ui8_data[i];
+  for( int i=0; i<frame.can_dlc; i++ )
+    frame.data[i] = ps_canMsg->ui8_data[i];
 
-        // ...and send the packet
-        int bytes_sent = send(pc_serverData->marri32_can_device[ui8_bus], &frame, sizeof(frame), 0 );
-        if (bytes_sent < 0)
-        {
-            perror( "send" );
+  // ...and send the packet
+  int bytes_sent = send(pc_serverData->marri32_can_device[ui8_bus], &frame, sizeof(frame), 0 );
+  if (bytes_sent < 0)
+  {
+    perror( "send" );
 #ifdef DEBUG_CAN
-            m_clog << "sendToBus(): error, bytes_sent: " << bytes_sent << std::endl;
+    m_clog << "sendToBus(): error, bytes_sent: " << bytes_sent << std::endl;
 #endif
-            return 0;
-        }
+    return 0;
+  }
 
 #ifdef DEBUG_CAN
-        char buf[200];
-        m_clog << "sendToBus(): bytes_sent: " << bytes_sent << std::endl;
-        sprintf(buf,"sendToBus(): %X,%X,%d,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X",
-                frame.can_id, ps_canMsg->i32_msgType, frame.can_dlc, frame.data[0], frame.data[1], frame.data[2], frame.data[3], frame.data[4], frame.data[5], frame.data[6], frame.data[7]);
-        m_clog << buf << std::endl;
+  char buf[200];
+  m_clog << "sendToBus(): bytes_sent: " << bytes_sent << std::endl;
+  sprintf(buf,"sendToBus(): %X,%X,%d,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X",
+          frame.can_id, ps_canMsg->i32_msgType, frame.can_dlc, frame.data[0], frame.data[1], frame.data[2], frame.data[3], frame.data[4], frame.data[5], frame.data[6], frame.data[7]);
+  m_clog << buf << std::endl;
 #endif
-        return bytes_sent;
-    }
-    else
-    {
-        perror( "invalid call" );
-        return 0;
-    }
-
-    return 0; // shouldn't reach here actually. only for compiler.
+  return 1;
 }
 
 

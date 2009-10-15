@@ -617,7 +617,7 @@ STL_NAMESPACE::list<int32_t> __HAL::list_sendTimeStamps;
 /////////////////////////////////////////////////////////////////////////
 static void* can_write_thread_func(void* ptr)
 {
-  int16_t i16_rc;
+  int16_t i16_rc = 1; // default means OK (no error)
   int32_t i32_error;
   __HAL::msqWrite_s msqWriteBuf;
 
@@ -696,8 +696,6 @@ static void* can_write_thread_func(void* ptr)
     }
     if (ps_client != NULL)
     {
-      addSendTimeStampToList(ps_client, msqWriteBuf.i32_sendTimeStamp);
-
       bool b_sendOnBus = true;
       // destination address check based on already collected source addresses from CAN bus messages
       if ( (pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) && (msqWriteBuf.s_canMsg.i32_msgType != 0) &&
@@ -712,13 +710,19 @@ static void* can_write_thread_func(void* ptr)
 
       if (b_sendOnBus)
       {
-        DEBUG_PRINT("+");
-        i16_rc = sendToBus(msqWriteBuf.ui8_bus, &(msqWriteBuf.s_canMsg), pc_serverData);
-        DEBUG_PRINT1("send: %d\n", i16_rc);
-      }
-      else
-      { // no send => no error
-        i16_rc = 1; // successfull return value of ca_TransmitCanCard_1
+        if (isBusOpen(msqWriteBuf.ui8_bus)) {
+          DEBUG_PRINT("+");
+          int16_t const i16_sent = sendToBus(msqWriteBuf.ui8_bus, &(msqWriteBuf.s_canMsg), pc_serverData);
+          DEBUG_PRINT1("send: %d\n", i16_sent);
+          if (i16_sent) {
+            addSendTimeStampToList(ps_client, msqWriteBuf.i32_sendTimeStamp);
+            i16_rc = i16_sent; // interested in the reason (e.g.
+                               // HAL_NEW_SEND_DELAY)
+          } // otherwise don't report the error, but just as little
+            // add send time stamp to list
+        } else {
+          i16_rc = 0; // can't longer deny that it's an error
+        }
       }
 
       if (pc_serverData->mb_logMode)
