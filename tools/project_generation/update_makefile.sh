@@ -196,7 +196,6 @@ set_default_values()
 {
     PARAMETER_TARGET_SYSTEM="UseConfigFile"
     PARAMETER_CAN_DRIVER="UseConfigFile"
-    PARAMETER_CAN_DEVICE_FOR_SERVER="UseConfigFile"
     PARAMETER_RS232_DRIVER="UseConfigFile"
     USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
     USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
@@ -995,7 +994,7 @@ create_filelist( )
         "${COMM_PROC_FEATURES:+ -o ${COMM_PROC_FEATURES}}" \
         "${COMM_FEATURES:+ -o ${COMM_FEATURES}}" \
         "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
-    { local EXCLUDE_PATH_PART1="$(find_part '-and -not' -path $APP_PATH_EXCLUDE 3>&1 1>&9)"; } 9>&1
+    { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" $APP_PATH_EXCLUDE 3>&1 1>&9)"; } 9>&1
     : ${EXCLUDE_PATH_PART1:=-a -not -path '*/xgpl_src/build/*'}
 
     eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
@@ -2457,9 +2456,6 @@ check_before_user_configuration()
             ('--pc-can-driver='*)
                 PARAMETER_CAN_DRIVER=$(echo_ "$option" | sed 's/--pc-can-driver=//')
                 ;;
-            ('--pc-can-device-for-server='*)
-                PARAMETER_CAN_DEVICE_FOR_SERVER=$(echo_ "$option" | sed 's/--pc-can-device-for-server=//')
-                ;;
             ('--pc-rs232-driver='*)
                 PARAMETER_RS232_DRIVER=$(echo_ "$option" | sed 's/--pc-rs232-driver=//')
                 ;;
@@ -2535,14 +2531,10 @@ check_after_user_configuration()
     # check for corrext CAN driver - and automatically adapt to embedded targets
     if [ $PARAMETER_CAN_DRIVER != "UseConfigFile" ] ; then
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
-        IS_CAN_SERVER=$(echo_ $PARAMETER_CAN_DRIVER | grep -c "msq_server")
-        if [ $IS_CAN_SERVER -gt 0 ] ; then
-            USE_CAN_DRIVER="msq_server"
-            PARAMETER_CAN_DRIVER="msq_server"
-        fi
     fi
     
     #default for not-can_server
+    #I doubt the sense of that below - what if $PARAMETER_CAN_DRIVER == "UseConfigFile" ??? -m.wodok 2009-10-16
     CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
         (simulating)
