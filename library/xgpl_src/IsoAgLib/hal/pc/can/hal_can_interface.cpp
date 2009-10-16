@@ -721,7 +721,7 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
 */
 void can_useMsgobjPopFront(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
-  if ((aui8_msgobjNr < arrHalCan[aui8_busNr].size())&&(aui8_busNr < cui32_maxCanBusCnt))
+  if ( ( aui8_busNr < cui32_maxCanBusCnt ) && ( aui8_msgobjNr < arrHalCan[aui8_busNr].size() ) )
   { // valid parameters
     b_cinterfBufferedReceivedMsg = false;
   }
