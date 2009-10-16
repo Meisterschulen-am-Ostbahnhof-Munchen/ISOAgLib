@@ -123,7 +123,16 @@ IsoName_c::IsoNameInitialProcessData()
 IsoName_c::IsoName_c(const uint8_t* apb_src)
 : mu_data(apb_src)
 { // simply copy 8byte string
+  // if NULL, mu_data will be 0ULL
 }
+
+
+IsoName_c::IsoName_c()
+: mu_data() // initializes to 0ULL
+{
+  setUnspecified();
+}
+
 
 /** constructor which can read in initial data from uint8_t string
   @param apu_src  64bit input data string

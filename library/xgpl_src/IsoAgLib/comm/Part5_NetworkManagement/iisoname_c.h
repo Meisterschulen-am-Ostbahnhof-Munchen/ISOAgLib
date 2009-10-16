@@ -144,9 +144,13 @@ public:
         : IsoName_c( ab_selfConf, aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo, ab_funcInst, ab_ecuInst ) {}
 
   /** constructor which can read in initial data from uint8_t string
-    @param apb_src 64bit input data string
+    @param apb_src 64bit input data string, mustn't be NULL.
+                   (if NULL, currently all fields are set to 0, but future behaviour is not defined.)
   */
-  iIsoName_c(const uint8_t* apb_src = NULL) : IsoName_c(apb_src) {}
+  iIsoName_c(const uint8_t* apb_src) : IsoName_c(apb_src) {}
+
+  /** (default) constructor which will set the IsoName to Unspecified */
+  iIsoName_c() : IsoName_c() {}
 
   /** copy constructor for ISOName
     @param acrc_src source IsoName_c instance

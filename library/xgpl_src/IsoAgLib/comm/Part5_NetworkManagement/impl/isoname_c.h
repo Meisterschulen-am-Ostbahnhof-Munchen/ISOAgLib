@@ -125,9 +125,13 @@ public:
   { set( true, 2, aui8_devClass, aui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ); }
 
   /** constructor which can read in initial data from uint8_t string
-    @param apb_src 64bit input data string
+    @param apb_src 64bit input data string, mustn't be NULL.
+                   (if NULL, currently all fields are set to 0, but future behaviour is not defined.)
   */
-  IsoName_c(const uint8_t* apb_src = NULL);
+  IsoName_c(const uint8_t* apb_src);
+
+  /** (default) constructor which will set the IsoName to Unspecified */
+  IsoName_c();
 
   /** constructor which can read in initial data from uint8_t string
     @param apu_src 64bit input data string
