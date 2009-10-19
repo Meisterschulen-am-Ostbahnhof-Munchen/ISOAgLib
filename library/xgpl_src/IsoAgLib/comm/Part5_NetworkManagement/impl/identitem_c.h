@@ -92,7 +92,7 @@
 #include "baseitem_c.h"
 #include "isoname_c.h"
 #include "isoitem_c.h"
-#include <IsoAgLib/comm/Part12_DiagnosticsServices/diagnosticpgnhandler_c.h>
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
 
 
 // Begin Namespace __IsoAgLib
