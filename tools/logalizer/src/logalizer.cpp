@@ -90,7 +90,7 @@ void exit_with_usage(const char* progname)
   cout << "logTypes: 0 -> can_server [DEFAULT]"<<endl;
   cout << "          1 -> rte"<<endl;
   cout << "          2 -> CANMon"<<endl;
-  cout << "          3 -> CANoe"<<endl;
+  cout << "          3 -> CANoe ASCII (.asc)"<<endl;
   cout << "          4 -> A1ASCII"<<endl;
   cout << "          5 -> PCANView"<<endl;
   cout << "          6 -> JohnDeere"<<endl;
