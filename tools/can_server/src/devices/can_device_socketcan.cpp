@@ -59,6 +59,7 @@
 
 #include <linux/can.h>
 #include <linux/can/raw.h>
+#include <linux/version.h>
 
 #include "can_server.h"
 #include "can_server_common.h"
