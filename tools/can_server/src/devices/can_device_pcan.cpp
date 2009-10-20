@@ -54,6 +54,7 @@
 
 #include "can_server.h"
 #include "../can_server_common.h"
+#include <string.h>
 #include <assert.h>
 
 #ifdef WIN32
@@ -64,11 +65,6 @@
   #include <sys/stat.h>
   #include <fcntl.h>
   #include <sys/ioctl.h>
-#endif
-
-using namespace __HAL;
-
-#ifndef WIN32
   #include <pcan.h>
 
   // device nodes minor base. Must be the same as defined in the driver
@@ -83,6 +79,9 @@ using namespace __HAL;
     #endif
   #endif
 #endif
+
+
+using namespace __HAL;
 
 static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
@@ -357,7 +356,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   ps_canMsg->i32_msgType = (msg.MSGTYPE ? 1 : 0);
   ps_canMsg->i32_len = msg.LEN;
 
-  memcpy( ps_canMsg->ui8_data, msg.DATA, msg.LEN );
+  (void) memcpy( ps_canMsg->ui8_data, msg.DATA, msg.LEN );
 
   return true;
 }
