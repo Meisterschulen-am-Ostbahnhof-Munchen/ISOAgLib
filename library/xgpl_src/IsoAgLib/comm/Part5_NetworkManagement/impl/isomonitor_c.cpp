@@ -971,6 +971,11 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
 {
   if (existIsoMemberISOName(acrc_isoName))
   { // set correct state
+    // check if "mpc_activeLocalMember" will be invalidated by this deletion
+    if (mpc_activeLocalMember == &(*mpc_isoMemberCache))
+    { // clear cached active local item - it points to the to be deleted one
+      mpc_activeLocalMember = NULL;
+    }
     // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
     mvec_isoMember.erase(mpc_isoMemberCache);
     // immediately reset cache, because it may have gotten invalid due to the erase!!
