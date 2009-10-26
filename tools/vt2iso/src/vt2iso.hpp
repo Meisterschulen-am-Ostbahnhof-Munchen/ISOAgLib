@@ -327,6 +327,8 @@ private:
   //! copies tmpFileName (the text-file without linewrapping) over to destFileName respecting the given mayLineLen
   void lineWrapTextFile( const std::string &destFileName, const std::string &tmpFileName, unsigned int maxLineLen );
 
+  void diffFileSave( const std::string &destFileName, const std::string &tempFileName );
+
 public:
   bool isVerbose() { return mb_verbose; }
 
@@ -353,6 +355,7 @@ private:
   unsigned int ui_languages;
 
   std::string partFileName_attributes; // original destination filename for the attributes. stored for writing in the wrapped attributes at the end of program execution.
+  std::string partFileName_obj_selection; // original destination filename for the obj-selection. stored for overwriting it at the end of program execution if new content is available.
   std::string mstr_sourceDir;
   std::string mstr_sourceDirAndProjectPrefix;
   std::string mstr_destinDirAndProjectPrefix;

@@ -749,15 +749,22 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_attributes_extern) fclose (partFile_attributes_extern);
   if (partFile_defines)           fclose (partFile_defines);
   if (partFile_obj_selection)     fclose (partFile_obj_selection);
+
   if (partFile_functions)         fclose (partFile_functions);
   if (partFile_functions_origin)  fclose (partFile_functions_origin);
 
   if (partFile_attributes)
-  { // if any "-attributes.tmp" were written, copy them over to "-attributes.inc"
+  { // if any "-attributes.inc.tmp" were written, copy them over wrapped to "-attributes.inc"
     partFileName = partFileName_attributes + ".tmp";
     lineWrapTextFile( partFileName_attributes, partFileName, 1022 );
   }
 
+  if (partFile_obj_selection)
+  { // if any "-objectselection.inc.tmp" were written, copy them over to "-objectselection.inc", but only if the content differs
+    // this is to avoid an unneeded rebuild of IsoAgLib, as it includes the generated object-selection file.
+    partFileName = partFileName_obj_selection + ".tmp";
+    diffFileSave( partFileName_obj_selection, partFileName );
+  }
   if (error_message != NULL)
     std::cout << error_message;
 
@@ -1107,7 +1114,8 @@ vt2iso_c::init (
   partFile_defines = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_defines, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_destinDirAndProjectPrefix + "-objectselection.inc";
+  partFileName_obj_selection = mstr_destinDirAndProjectPrefix + "-objectselection.inc";
+  partFileName = partFileName_obj_selection + ".tmp";
   partFile_obj_selection = &save_fopen (partFileName.c_str(),"wt");
 
   partFileName = mstr_destinDirAndProjectPrefix + "-list.inc";
@@ -5858,6 +5866,105 @@ void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::str
   if ( destFile && srcFile )
   { /* delete temp file */
     remove( tmpFileName.c_str() );
+  }
+}
+
+
+void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string &tempFileName )
+{
+  if ( existsFile( destFileName ) )
+  {
+    bool filesMatch = false;
+    FILE* destFile = fopen( destFileName.c_str(), "rb" );
+    FILE* srcFile = fopen( tempFileName.c_str(), "rb" );
+
+    if ( destFile && srcFile )
+    {
+      fseek( destFile, 0, SEEK_END );
+      long destLen = ftell( destFile );
+
+      fseek( srcFile, 0, SEEK_END );
+      long srcLen = ftell( srcFile );
+
+      char *destBuf = new char[destLen + 2];
+      char *srcBuf = new char[srcLen + 2];
+
+      if ( destBuf && srcBuf )
+      {
+        fseek( destFile, 0, SEEK_SET );
+        fread( destBuf, 1, destLen, destFile);
+        destBuf[destLen++] = '\n';
+        destBuf[destLen] = '\0';
+
+        fseek( srcFile, 0, SEEK_SET );
+        fread( srcBuf, 1, srcLen, srcFile);
+        srcBuf[srcLen++] = '\n';
+        srcBuf[srcLen] = '\0';
+
+        long destStart = 0;
+        long destI = 0;
+
+        long srcStart = 0;
+        long srcI = 0;
+
+        filesMatch = true;
+        while ( (destI < destLen) && (srcI < srcLen) )
+        {
+          /* find end of line */
+          char charVal = destBuf[destI];
+          while ( (charVal != '\r') && (charVal != '\n') )
+          {
+            charVal = destBuf[++destI];
+          }
+          /* terminate string */
+          destBuf[destI++] = '\0';
+          if ( (charVal == '\r') && (destBuf[destI] == '\n') )
+            ++destI; /* carriage return line feed combo */
+
+          /* find end of line */
+          charVal = srcBuf[srcI];
+          while ( (charVal != '\r') && (charVal != '\n') )
+          {
+            charVal = srcBuf[++srcI];
+          }
+          /* terminate string */
+          srcBuf[srcI++] = '\0';
+          if ( (charVal == '\r') && (srcBuf[srcI] == '\n') )
+            ++srcI; /* carriage return line feed combo */
+
+          if ( strcmp( &destBuf[destStart], &srcBuf[srcStart] ) == 0 )
+          { /* move on to next line */
+            destStart = destI;
+            srcStart = srcI;
+          }
+          else
+          { /* no match, quit */
+            filesMatch = false;
+            break;
+          }
+        }
+      }
+
+      if ( destBuf )  delete [] destBuf;
+      if ( srcBuf )   delete [] srcBuf;
+    }
+
+    if ( destFile ) fclose( destFile );
+    if ( srcFile )  fclose( srcFile );
+
+    if ( filesMatch )
+    {
+      remove( tempFileName.c_str() );
+    }
+    else
+    {
+      remove( destFileName.c_str() );
+      rename( tempFileName.c_str(), destFileName.c_str() );
+    }
+  }
+  else
+  { /* destination does not exist, just rename the temp */
+    rename( tempFileName.c_str(), destFileName.c_str() );
   }
 }
 
