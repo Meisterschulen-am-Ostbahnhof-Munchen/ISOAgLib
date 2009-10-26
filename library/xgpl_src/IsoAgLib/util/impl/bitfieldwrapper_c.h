@@ -85,12 +85,13 @@ class BitFieldWrapper_c
         @param  a_bitsFromTheLeft  bit position from the left, counting from 0
         @return  reference to BitFieldWrapper_c
       */
-    BitFieldWrapper_c& setBit ( typename T::enum_type a_bitsFromTheLeft )
+    BitFieldWrapper_c& setBit( typename T::enum_type a_bitsFromTheLeft )
     {
-      if ( a_bitsFromTheLeft < sizeInBits )
+      if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
       {
-         m_bitField.set(a_bitsFromTheLeft);
+         m_bitField.set (a_bitsFromTheLeft);
       }
+      // else: Out of Range - nothing done.
       return *this;
     }
 
@@ -107,13 +108,13 @@ class BitFieldWrapper_c
                                if it is out-of-range, false (0 bit) is returned
     @return  true if the bit is set
     */
-    bool isBitSet (T a_bitsFromTheLeft)
+    bool isBitSet( typename T::enum_type a_bitsFromTheLeft )
     {
-      if ( a_bitsFromTheLeft < sizeInBits )
+      if ( static_cast<unsigned int>(a_bitsFromTheLeft) < static_cast<unsigned int>(sizeInBits) )
       {
-        return m_bitField.test(a_bitsFromTheLeft);
+        return m_bitField.test (a_bitsFromTheLeft);
       }
-      // out of range handling
+      // else: Out of Range handling: return false.
       return false;
     }
 
