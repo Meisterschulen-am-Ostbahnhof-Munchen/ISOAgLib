@@ -324,6 +324,9 @@ private:
 
   static bool existsFile( const std::string& arcstr_fileWithPath );
 
+  //! copies tmpFileName (the text-file without linewrapping) over to destFileName respecting the given mayLineLen
+  void lineWrapTextFile( const std::string &destFileName, const std::string &tmpFileName, unsigned int maxLineLen );
+
 public:
   bool isVerbose() { return mb_verbose; }
 
@@ -349,6 +352,7 @@ private:
 
   unsigned int ui_languages;
 
+  std::string partFileName_attributes; // original destination filename for the attributes. stored for writing in the wrapped attributes at the end of program execution.
   std::string mstr_sourceDir;
   std::string mstr_sourceDirAndProjectPrefix;
   std::string mstr_destinDirAndProjectPrefix;

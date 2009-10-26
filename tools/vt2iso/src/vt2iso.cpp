@@ -752,6 +752,12 @@ void vt2iso_c::clean_exit (const char* error_message)
   if (partFile_functions)         fclose (partFile_functions);
   if (partFile_functions_origin)  fclose (partFile_functions_origin);
 
+  if (partFile_attributes)
+  { // if any "-attributes.tmp" were written, copy them over to "-attributes.inc"
+    partFileName = partFileName_attributes + ".tmp";
+    lineWrapTextFile( partFileName_attributes, partFileName, 1022 );
+  }
+
   if (error_message != NULL)
     std::cout << error_message;
 
@@ -1082,7 +1088,8 @@ vt2iso_c::init (
   partFile_variables_extern = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_variables_extern, mstr_namespaceDeclarationBegin.c_str());
 
-  partFileName = mstr_destinDirAndProjectPrefix + "-attributes.inc";
+  partFileName_attributes = mstr_destinDirAndProjectPrefix + "-attributes.inc"; // store original file-name for later wrap-copying over
+  partFileName = partFileName_attributes + ".tmp";
   partFile_attributes = &save_fopen (partFileName.c_str(),"wt");
   fprintf (partFile_attributes, mstr_namespaceDeclarationBegin.c_str());
 
@@ -5710,3 +5717,147 @@ vt2iso_c::processVtPresetFile(const std::string& pch_fileName)
   }
   return !errorOccurred;
 }
+
+
+void vt2iso_c::lineWrapTextFile( const std::string &destFileName, const std::string &tmpFileName, unsigned int maxLineLen )
+{
+  FILE *destFile = &save_fopen( destFileName.c_str(), "wt" );
+  FILE *srcFile = fopen( tmpFileName.c_str(), "r" );
+
+  if ( destFile && srcFile )
+  {
+    char *strBuf = new char[maxLineLen];
+    if ( !strBuf ) return; // catch out-of-memory-case. (shouldn't really happen for those few bytes)
+    --maxLineLen;
+    long strBufI = 0;
+    long writeToI = 0;
+    long bytesRead = fread( strBuf, 1, maxLineLen, srcFile );
+    const char wrapChars[] = {' ', ',', '(', '{', '['}; /* list in the order to be used */
+    const unsigned int NUM_WRAP_CHARS = sizeof(wrapChars);
+    unsigned int i=0; // counters set/used below for different reasons
+    unsigned int j=0; // counters set/used below for different reasons
+    unsigned int lastWrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
+    unsigned int wrapCharI[NUM_WRAP_CHARS]; // initialization follows right below
+    for ( i = 0; i < NUM_WRAP_CHARS; ++i )
+    {
+      lastWrapCharI[i] = maxLineLen;
+      wrapCharI[i] = maxLineLen;
+    }
+
+    while ( bytesRead > 0 )
+    {
+      for ( ; strBufI < bytesRead; ++strBufI )
+      {
+        char charVal = strBuf[strBufI];
+
+        /* look for places to break the line */
+        i = 0;
+        for ( ; i < NUM_WRAP_CHARS; ++i )
+        {
+          if ( charVal == wrapChars[i] )
+          {
+            if ( (lastWrapCharI[i] + 1) != (unsigned int)strBufI )
+            {
+              wrapCharI[i] = (unsigned int)strBufI;
+            }
+
+            lastWrapCharI[i] = (unsigned int)strBufI;
+            break;
+          }
+        }
+
+        if ( i >= NUM_WRAP_CHARS )
+        {
+          /* not a line break character */
+          if ( charVal == '\n' )
+          { /* new line index */
+            writeToI = strBufI;
+          }
+        }
+      }
+
+
+      bool addLineFeed = false;
+      if ( writeToI == 0 )
+      { /* did not find a new line, check for a break character */
+        i = 0;
+        for ( ; i < NUM_WRAP_CHARS; ++i )
+        {
+          if ( wrapCharI[i] < maxLineLen ) /* use the first one in the list */
+            break;
+        }
+
+        if ( i < NUM_WRAP_CHARS )
+        {
+          writeToI = wrapCharI[i];
+          addLineFeed = true;
+        }
+        /* else, no break character (this line will be long) */
+      }
+
+      if ( writeToI == (bytesRead - 1) || (writeToI == 0) )
+      { /* full buffer can be written */
+        fwrite( strBuf, 1, bytesRead, destFile );
+        bytesRead = fread( strBuf, 1, maxLineLen, srcFile );
+
+        strBufI = 0;
+        for ( i = 0; i < NUM_WRAP_CHARS; ++i )
+        {
+          lastWrapCharI[i] = maxLineLen;
+          wrapCharI[i] = maxLineLen;
+        }
+      }
+      else
+      { /* partial can be written */
+        j = writeToI + 1;
+        fwrite( strBuf, 1, writeToI + 1, destFile );
+
+        i = 0;
+        for ( ; j < (unsigned int)bytesRead; ++i, ++j )
+        { /* copy down the rest of buffer */
+          strBuf[i] = strBuf[j];
+        }
+
+        /* read in a new block */
+        bytesRead = fread( &strBuf[i], 1, maxLineLen - i, srcFile );
+        bytesRead += i;
+        strBufI = i;
+
+        /* reset the wrap characters */
+        for ( i = 0; i < NUM_WRAP_CHARS; ++i )
+        {
+          if ( wrapCharI[i] < maxLineLen )
+          {
+            if ( wrapCharI[i] > i )
+            {
+              lastWrapCharI[i] -= i;
+              wrapCharI[i] -= i;
+            }
+            else
+            {
+              lastWrapCharI[i] = maxLineLen;
+              wrapCharI[i] = maxLineLen;
+            }
+          }
+        }
+      }
+
+      writeToI = 0;
+
+      if ( addLineFeed )
+        fwrite( "\n", 1, 1, destFile );
+    }
+
+    delete [] strBuf;
+  }
+  /* else, file open error */
+
+  if ( destFile ) fclose( destFile );
+  if ( srcFile )  fclose( srcFile );
+
+  if ( destFile && srcFile )
+  { /* delete temp file */
+    remove( tmpFileName.c_str() );
+  }
+}
+
