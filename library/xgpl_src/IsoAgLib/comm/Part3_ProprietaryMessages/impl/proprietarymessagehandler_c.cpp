@@ -213,21 +213,19 @@ namespace __IsoAgLib
         { // client not yet ready
           return false;
         }
-        const IsoName_c* pc_localIsoName;
-        if (apc_proprietaryclient->mpc_localIdent == NULL)
-        { // if we have no IdentItem, we have no IsoName
-          pc_localIsoName = NULL; // or set to IsoNameUnspecified - don't care, is the same!!
-        }
-        else
-        {
-          pc_localIsoName = &apc_proprietaryclient->mpc_localIdent->isoName();
-        }
+        const IsoName_c& rc_localIsoName = (
+                                            (apc_proprietaryclient->mpc_localIdent == NULL) 
+                                            || 
+                                            (((apc_proprietaryclient->mui32_canFilter & 0x3FF0000) >> 8) == PROPRIETARY_B_PGN) 
+                                           )
+                                            ? IsoName_c::IsoNameUnspecified() // if we have no IdentItem, we have no IsoName
+                                            : apc_proprietaryclient->mpc_localIdent->isoName();
 
         // create new IsoFilter
         IsoFilter_s s_tempIsoFilter(static_cast<__IsoAgLib::CanCustomer_c&>(*this),
                                                 apc_proprietaryclient->mui32_canMask,
                                                 apc_proprietaryclient->mui32_canFilter,
-                                                pc_localIsoName,
+                                                &rc_localIsoName,
                                                 &apc_proprietaryclient->mc_isonameRemoteECU);
 
         // Have the filter settings changed?
@@ -251,7 +249,7 @@ namespace __IsoAgLib
             //  insert new filter
             __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter(s_tempIsoFilter);
             /** register for multi-receive */
-            getMultiReceiveInstance4Comm().registerClient (*this, *pc_localIsoName,
+            getMultiReceiveInstance4Comm().registerClient (*this, rc_localIsoName,
                                                             (apc_proprietaryclient->mui32_canFilter) >> 8,
                                                             (apc_proprietaryclient->mui32_canMask) >> 8,
                                                             true /* also Broadcast */);
