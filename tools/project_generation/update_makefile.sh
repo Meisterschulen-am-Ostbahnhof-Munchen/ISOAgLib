@@ -1866,10 +1866,9 @@ create_EdePrj()
         path_for_ede "$USE_EMBED_LIB_DIRECTORY" "$1"
     }
 
-    USE_APP_PATH="$(map join_comma isoaglib_path_for_ede ${REL_APP_PATH:-})"
+    USE_APP_PATH="$(map join_semicolon isoaglib_path_for_ede ${REL_APP_PATH:-})"
     echo_ "USE_APP_PATH: $USE_APP_PATH"
 
-    INCLUDE_APP_PATH_TASKING="$(map join_comma isoaglib_path_for_ede $USE_EMBED_HEADER_DIRECTORY)"
     USE_EMBED_HEADER_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_HEADER_DIRECTORY")"
     USE_EMBED_LIB_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_LIB_DIRECTORY")"
     USE_EMBED_ILO="$(embedlib_path_for_ede "$USE_EMBED_ILO")"
