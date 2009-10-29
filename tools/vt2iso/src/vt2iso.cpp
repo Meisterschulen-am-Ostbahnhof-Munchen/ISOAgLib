@@ -664,10 +664,10 @@ void vt2iso_c::clean_exit (const char* error_message)
   {
     fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo SOON-261 namespace!
     fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo SOON-261 namespace!
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects;\n");
     for (unsigned int i=0; i<ui_languages; i++)
     {
-      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i\n", i);
+      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i;\n", i);
     }
   }
   else
@@ -721,7 +721,6 @@ void vt2iso_c::clean_exit (const char* error_message)
     {
       fprintf (partFileTmp, "#include \"%s-list%02d.inc\"\n", mstr_outFileName.c_str(), i);
     }
-    fprintf (partFileTmp, "#include \"%s-list_attributes.inc\"\n", mstr_outFileName.c_str());
     fprintf (partFileTmp, "#include \"%s-list.inc\"\n", mstr_outFileName.c_str());
     fclose (partFileTmp);
 
