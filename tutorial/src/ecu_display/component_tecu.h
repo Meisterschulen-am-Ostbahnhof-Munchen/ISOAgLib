@@ -1,12 +1,13 @@
 #ifndef __COMPONENT_TECU_H
 #define __COMPONENT_TECU_H
 
-#include <vector>
-
 #include "component_vtclient.h"
 
 #include <IsoAgLib/scheduler/ischedulertask_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+
+#include <vector>
+
 
 namespace IsoAgLibTutorialDisplay {
 
