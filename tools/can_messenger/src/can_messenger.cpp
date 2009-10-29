@@ -141,7 +141,7 @@ void cmdline_c::usage_and_exit (int ai_errorCode) const
   printf ("   -d <Databytes (up to 8) as HEX> (for compatibility also -s can be used)\n");
   printf ("   -p <Period in ms>\n");
   printf ("   -x     (use eXtended Identifier)\n");
-  printf ("\n Example: CanServerMessenger -x -n 1 -c 0 -i 1ceafffe -d a1b2c3d4e5f6affe\n\n");
+  printf ("\n Example: can_messenger -x -n 1 -c 0 -i 1ceafffe -d a1b2c3d4e5f6affe\n\n");
 
   exit (ai_errorCode);
 }
@@ -169,7 +169,12 @@ int main( int argc, char *argv[] )
   pkg.setIdent(params.i_id, (params.b_ext ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent));
   pkg.setDataFromString(0, params.pui8_databytes, params.i_databytes);
 
-  getIcanInstance() << pkg;
+  for( int i = 0; i < params.i_repeat; ++i ) {
+    getIcanInstance() << pkg;
+    if( params.i_period && ( 1 != params.i_repeat ) ) {
+      usleep( params.i_period * 1000 );
+    }
+  }
 
   return 0;
 }
