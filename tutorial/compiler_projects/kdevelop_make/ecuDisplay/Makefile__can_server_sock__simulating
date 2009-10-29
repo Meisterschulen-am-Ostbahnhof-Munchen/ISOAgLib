@@ -111,7 +111,7 @@ SOURCES_APP = ../../../../tutorial/src/ecu_display/component_tecu.cpp \
 		../../../../tutorial/src/ecu_display/component_vtclient.cpp \
 		../../../../tutorial/src/ecu_display/ecu_display.cpp \
 		../../../../tutorial/src/ecu_display/component_timepos.cpp \
-		../../../../tutorial/src/common/main.cpp
+		../../../../tutorial/src/common/ecu_main.cpp
 
 HEADERS_APP =
 

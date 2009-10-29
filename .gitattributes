@@ -761,7 +761,7 @@ tutorial/compiler_projects/kdevelop_make/ecuDisplay/ecuDisplay.kdevelop -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/ecuDisplay.kdevelop.filelist -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/filelist__ecuDisplay.txt -text
 tutorial/compiler_projects/update_makefile.sh -text
-tutorial/src/common/main.cpp -text
+tutorial/src/common/ecu_main.cpp -text
 tutorial/src/common/tutorial_settings.h -text
 tutorial/src/ecu_display/_generate_vtclient_pool.bat -text
 tutorial/src/ecu_display/_generate_vtclient_pool.sh -text

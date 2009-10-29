@@ -84,7 +84,7 @@
 ../../../../tutorial/src/ecu_display/component_vtclient.cpp
 ../../../../tutorial/src/ecu_display/ecu_display.cpp
 ../../../../tutorial/src/ecu_display/component_timepos.cpp
-../../../../tutorial/src/common/main.cpp
+../../../../tutorial/src/common/ecu_main.cpp
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h

@@ -430,7 +430,7 @@ SOURCE=..\..\..\..\tutorial\src\ecu_display\component_timepos.cpp
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\tutorial\src\common\main.cpp
+SOURCE=..\..\..\..\tutorial\src\common\ecu_main.cpp
 # End Source File
 
 # End Group
