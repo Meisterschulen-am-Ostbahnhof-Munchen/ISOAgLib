@@ -800,21 +800,42 @@ comm_proc_features()
     fi
 }
 
+# Split given string by delimiting whitespace and print parts with
+# given format.
+# Parameters: input string, first format, continuation format
+split_and_printf()
+{
+    local INPUT="$1"
+    local FORMAT="$2"
+    local NEXT_FORMAT="$3"
+
+    while [ -n "$INPUT" ]; do
+        local N_MAXIMAL=$(expr length "$INPUT")
+        local N_WHITESPACE=$(expr "$INPUT" : ' *')
+        if [ 0 -lt "$N_WHITESPACE" ]; then
+            INPUT="$(expr substr "$INPUT" $(($N_WHITESPACE + 1)) $N_MAXIMAL)"
+        fi
+        local N_NONWHITE=$(expr "$INPUT" : '[^ ]*')
+        local PART=$(expr substr "$INPUT" 1 $N_NONWHITE)
+        printf -- "$FORMAT" "$PART"
+        FORMAT="$NEXT_FORMAT"
+        if [ 0 -lt "$N_NONWHITE" ]; then
+            INPUT="$(expr substr "$INPUT" $(($N_NONWHITE + 1)) $N_MAXIMAL || printf '')"
+        fi
+    done
+}
+
 # Calculate part of find command and write to FD3
 find_part()
 {
-    local OUTER_OP="$1"; local INNER_OP="$2"
-    shift 2
-    [ $# -gt 0 ] || return
-    printf '%s \( ' "$OUTER_OP" >&3
-    local OR=''
-    local PART=''
-    local FORMAT="%s${INNER_OP}"
-    for PART in $*; do
-        printf "$FORMAT" "$OR" "$PART" >&3
-        : ${OR:= -or }
-    done
-    printf ' \)' >&3
+    local OUTER_OP="$1"
+    local INNER_OP="$2"
+    local INPUT="$3"
+    if [ -n "$INPUT" ]; then
+        printf '%s \( ' "$OUTER_OP" >&3
+        split_and_printf "$INPUT" "$INNER_OP" " -or $INNER_OP" >&3
+        printf ' \)' >&3
+    fi
 }
 
 add_feature_partition_rule()
@@ -994,8 +1015,8 @@ create_filelist( )
         "${COMM_PROC_FEATURES:+ -o ${COMM_PROC_FEATURES}}" \
         "${COMM_FEATURES:+ -o ${COMM_FEATURES}}" \
         "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
-    { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" $APP_PATH_EXCLUDE 3>&1 1>&9)"; } 9>&1
-    : ${EXCLUDE_PATH_PART1:=-a -not -path '*/xgpl_src/build/*'}
+    { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" "$APP_PATH_EXCLUDE" 3>&1 1>&9)"; } 9>&1
+    : ${EXCLUDE_PATH_PART1:="-a -not -path '*/xgpl_src/build/*'"}
 
     eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
     eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
@@ -1004,13 +1025,13 @@ create_filelist( )
     # find application files
     ##############################
     {
-        local APP_SRC_PART="$(find_part -and "-name '%s'" $APP_SRC_FILE 3>&1 1>&9)"
-        local EXCLUDE_PATH_PART2="$(find_part '-and -not' "-path '%s'" $APP_PATH_EXCLUDE 3>&1 1>&9)"
-        local EXCLUDE_SRC_PART="$(find_part '-and -not' "-path '%s'" $APP_SRC_EXCLUDE 3>&1 1>&9)"
+        local APP_SRC_PART="$(find_part -and "-name '%s'" "$APP_SRC_FILE" 3>&1 1>&9)"
+        local EXCLUDE_PATH_PART2="$(find_part '-and -not' "-path '%s'" "$APP_PATH_EXCLUDE" 3>&1 1>&9)"
+        local EXCLUDE_SRC_PART="$(find_part '-and -not' "-name '%s'" "$APP_SRC_EXCLUDE" 3>&1 1>&9)"
         # remove the joker '*' from the file type spec, as this causes only trouble
         local APP_SEARCH_SRC_CONDITION1="$(printf '%s' "$APP_SEARCH_SRC_CONDITION" | tr -d '*')"
-        local APP_SEARCH_SRC_TYPE_PART="$(find_part '' "-name '*%s'" $APP_SEARCH_SRC_CONDITION1 3>&1 1>&9)"
-        local APP_SEARCH_HDR_TYPE_PART="$(find_part '' "-name '%s'" $APP_SEARCH_HDR_CONDITION 3>&1 1>&9)"
+        local APP_SEARCH_SRC_TYPE_PART="$(find_part '' "-name '*%s'" "$APP_SEARCH_SRC_CONDITION1" 3>&1 1>&9)"
+        local APP_SEARCH_HDR_TYPE_PART="$(find_part '' "-name '%s'" "$APP_SEARCH_HDR_CONDITION" 3>&1 1>&9)"
     } 9>&1
 
     for EACH_REL_APP_PATH in ${REL_APP_PATH:-}; do
