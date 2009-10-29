@@ -1,10 +1,19 @@
+
+
+ \section PrjConfigecuDisplay List of configuration settings for ecuDisplay
+ This is only a copy with doxygen ready comment blocks from the original file ../../../../tutorial/src/ecu_display/config_ecuDisplay.h 
+ This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the
+ project define #define PRJ_USE_AUTOGEN_CONFIG config_ecuDisplay.h ( Important: place the directory of the application source files in the include search path )
+
+ Use the file conf_ecu_display_x86linux in the directory kdevelop_make as input file for update_makefile.sh to create the project generation files.
+\code
 // File: config_ecuDisplay.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_ecu_display_win32" 
-//            Perform changes direct in the feature and project setup file conf_ecu_display_win32
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_ecu_display_x86linux" 
+//            Perform changes direct in the feature and project setup file conf_ecu_display_x86linux
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_ecu_display_win32" call,
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_ecu_display_x86linux" call,
 //                      if the corresponding value in isoaglib_config.h changed
 
 
@@ -164,3 +173,4 @@
 
 // DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!
 // START_INDIVIDUAL_PROJECT_CONFIG
+\endcode

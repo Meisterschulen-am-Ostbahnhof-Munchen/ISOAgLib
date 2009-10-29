@@ -382,7 +382,7 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part7_ApplicationLayer\impl\tr
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\diagnosticpgnhandler_c.cpp
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\impl\diagnosticpgnhandler_c.cpp
 # End Source File
 
 # Begin Source File
@@ -1071,7 +1071,7 @@ SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part7_ApplicationLayer\itimepo
 # End Source File
 
 # Begin Source File
-SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\diagnosticpgnhandler_c.h
+SOURCE=..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\impl\diagnosticpgnhandler_c.h
 # End Source File
 
 # Begin Source File

@@ -1,7 +1,0 @@
-IsoAgLib::iVtObjectWorkingSet_c iVtObjectimiIsoMaskupload;
-IsoAgLib::iVtObjectOutputString_c iVtObjectos1;
-IsoAgLib::iVtObjectOutputString_c iVtObjectos2;
-IsoAgLib::iVtObjectDataMask_c iVtObjectMainMask;
-IsoAgLib::iVtObjectOutputString_c iVtObjectos3;
-IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesNormal12x16;
-IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesSKM6x8;

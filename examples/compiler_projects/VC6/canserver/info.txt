@@ -1,2 +1,0 @@
-At the moment there is no CAN server VC6 project. Please use the projects for
-Visual Studio 2005 (VC8)

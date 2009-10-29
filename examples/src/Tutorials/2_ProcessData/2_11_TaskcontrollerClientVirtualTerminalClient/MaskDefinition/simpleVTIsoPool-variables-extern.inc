@@ -1,7 +1,0 @@
-extern IsoAgLib::iVtObjectWorkingSet_c iVtObjectimiIsoMaskupload;
-extern IsoAgLib::iVtObjectOutputString_c iVtObjectos1;
-extern IsoAgLib::iVtObjectOutputString_c iVtObjectos2;
-extern IsoAgLib::iVtObjectDataMask_c iVtObjectMainMask;
-extern IsoAgLib::iVtObjectOutputString_c iVtObjectos3;
-extern IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesNormal12x16;
-extern IsoAgLib::iVtObjectFontAttributes_c iVtObjectFontAttributesSKM6x8;
