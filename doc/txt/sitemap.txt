@@ -1,8 +1,0 @@
-/*! \page PageSitemap Sitemap
-INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
-<div style="clear:left"></div>
-\section Sitemap Sitemap
-<div id="sitemap">
-INCLUDE_doc/txt/menu-list.txt_INCLUDE
-</div>
-*/

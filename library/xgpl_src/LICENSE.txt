@@ -1,26 +1,34 @@
-##############################################################################
-SPECIAL EXCEPTION DEFINITION INRELATION TO THE GPL DEFINITION
-WHICH IS INSPIRED BY THE eCos LICENSE CONDITIONS:
-As a special exception, if other files instantiate templates or use
-macros or inline functions from this file, or you compile this file and
-link it with other works to produce a work based on this file, this file
-does not by itself cause the resulting work to be covered by the GNU
-General Public License. However the source code for this file must still
-be made available in accordance with section (3) of the
-GNU General Public License.
+ISOAgLib is licensed under GNU General Public License with exceptions
+for ISOAgLib.
 
-This exception does not invalidate any other reasons why a work based on
-this file might be covered by the GNU General Public License.
+The ISOAgLib Software (in the following "ISOAgLib") shall be governed
+by the GNU General Public License v2 (in the following "GPL"). However,
+it will be subject to the exceptions set out in the following paragraphs
+concerning the integration of the ISOAgLib into other applications:
 
-Alternative licenses for IsoAgLib may be arranged by contacting
-the main author Achim Spangler by a.spangler@osb-ag.de
-##############################################################################
+As a special exception to section (2) of the GPL, if other works
+integrate templates or use macros or inline functions from ISOAgLib,
+or if you compile ISOAgLib and link it with other works to produce a
+work based on ISOAgLib, this integration, compilation or linking of
+ISOAgLib does not by itself cause the resulting work to be covered by
+the GPL as a derivative work of ISOAgLib.
+However the source code of ISOAgLib itself, in unmodified and/or
+modified form, as the case may be, must still be made available in
+accordance with section (3) of the GPL.
 
-				GNU GENERAL PUBLIC LICENSE
+The aforementioned special exceptions do not invalidate any other
+reasons why a work based on ISOAgLib is covered by the GPL. Furthermore,
+the aforementioned special exceptions shall prevail over any
+contradicting provisions of the GPL and/or any other license terms that
+may be applicable to the work based on the ISOAgLib.
+
+
+
+		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
- Copyright (C) 1989, 1991 Free Software Foundation, Inc.
-                       59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ Copyright (C) 1989, 1991 Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  Everyone is permitted to copy and distribute verbatim copies
  of this license document, but changing it is not allowed.
 
@@ -33,7 +41,7 @@ software--to make sure the software is free for all its users.  This
 General Public License applies to most of the Free Software
 Foundation's software and to any other program whose authors commit to
 using it.  (Some other Free Software Foundation software is covered by
-the GNU Library General Public License instead.)  You can apply it to
+the GNU Lesser General Public License instead.)  You can apply it to
 your programs, too.
 
   When we speak of free software, we are referring to freedom, not
@@ -321,10 +329,9 @@ the "copyright" line and a pointer to where the full notice is found.
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 Also add information on how to contact you by electronic and paper mail.
 
@@ -354,5 +361,6 @@ necessary.  Here is a sample; alter the names:
 This General Public License does not permit incorporating your program into
 proprietary programs.  If your program is a subroutine library, you may
 consider it more useful to permit linking proprietary applications with the
-library.  If this is what you want to do, use the GNU Library General
+library.  If this is what you want to do, use the GNU Lesser General
 Public License instead of this License.
+

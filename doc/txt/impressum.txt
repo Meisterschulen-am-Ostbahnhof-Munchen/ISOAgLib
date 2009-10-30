@@ -1,7 +1,5 @@
 /*! \page PageImpressum Impressum
 
-INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
-
 <div style="clear:left"></div>
 
 \section Impressum Impressum

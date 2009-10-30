@@ -1,29 +1,22 @@
-/*! \page PageChanges Changelog of IsoAgLib
-
+/*! \mainpage
 
 INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
-<table class="infobox" border="0">
-<tr><th>Section Overview</th></tr>
-<tr><td>The following parts are described on the respective pages:
-<ol type="I">
-    <li>\ref PageDeveloperInfo "Developer Information Page"
-        <ul><li> \ref WhereToStart 
-    <ul><li> \ref StartToLearn
-        <li> \ref DocOverview </li>
-        <li> \ref GettingHelp </li>
-    </ul>
-    </li>
-        <li> \ref MemoryUsage </li>
-        </ul>
-    </li>
-    <li> \ref PageAdditionalInfo </li>
-    <li> Changelog </li>
-    <li> \ref PageTodo "Main TODO Items Page"</li>
-</ol>
+<table class="infoboxLinks" border="0">
+<tr><th>Quick-Links</th></tr>
+<tr><td>
+\ref XMLspec
+</td></tr>
+<tr><td>
+\ref XMLProcSpec
 </td></tr>
 </table>
-<div style="clear:left"></div>
+
+\section Home Welcome to the ISOAgLib Developer Zone!
+
+Please use the upper navigation bar to browse the documentation.
+
+To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a>. There you will find information about ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, Download and commercial services.
 
 \section Changes Changes
 
@@ -459,5 +452,3 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 			of affected files
 
 */
-
-

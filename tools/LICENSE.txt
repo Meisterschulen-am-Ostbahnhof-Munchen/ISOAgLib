@@ -1,5 +1,10 @@
+ISOAgLib's own tools (available in the "tools" directory) are published
+under the following GPL:
+(For the licenses of the individually used libraries, see the according
+licensing-information inside of the libraries' directories ("libs/<libname>")
 
-				GNU GENERAL PUBLIC LICENSE
+
+                    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
 
  Copyright (C) 1989, 1991 Free Software Foundation, Inc.

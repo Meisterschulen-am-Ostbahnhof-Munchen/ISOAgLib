@@ -1,5 +1,4 @@
 * text=auto !eol
-/LICENSE.txt -text
 admin/includeTaggedFile.pl -text
 admin/log/doxylog_categorizer.pl -text
 bin/update_makefile.sh -text
@@ -64,19 +63,7 @@ doc/html/api/Images/tum_logo.gif -text
 doc/html/csshover.htc -text
 doc/index.html -text
 doc/stylesheet.css -text
-doc/txt/additionalInfo.txt -text
-doc/txt/applications.txt -text
-doc/txt/developer-info.txt -text
-doc/txt/disc-further.txt -text
-doc/txt/gpl-with-exception.txt -text
 doc/txt/impressum.txt -text
-doc/txt/menu-list.txt -text
-doc/txt/procdatafaq.txt -text
-doc/txt/sitemap.txt -text
-doc/txt/tech-info.txt -text
-doc/txt/todo.txt -text
-/index.html -text
-library/LICENSE -text
 library/commercial_BIOS/readme.txt -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h -text
@@ -285,6 +272,7 @@ library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h -text
 library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
 library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h -text
+library/xgpl_src/LICENSE.txt -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.cpp -text
@@ -321,7 +309,6 @@ library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_si
 library/xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
 library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h -text
-/licensing.txt -text
 tests/addressclaim/README -text
 tests/addressclaim/runall.sh -text
 tests/addressclaim/templates/logTestA-1_0 -text

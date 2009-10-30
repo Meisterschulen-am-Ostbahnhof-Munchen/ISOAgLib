@@ -1,4 +1,0 @@
-<hr>
-<div id="menu">
-INCLUDE_doc/txt/menu-list.txt_INCLUDE
-</div>
