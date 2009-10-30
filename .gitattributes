@@ -1,11 +1,8 @@
 * text=auto !eol
 /AUTHORS.txt -text
 /LICENSE.txt -text
-admin/buildArchives/create_win32_projects.sh -text
 admin/includeTaggedFile.pl -text
 admin/log/doxylog_categorizer.pl -text
-admin/testscripts/compileSelectedTutorials.sh -text
-admin/testscripts/compileTutorials.sh -text
 bin/update_makefile.sh -text
 bin/win32/FreeImage.dll -text
 bin/win32/README.txt -text
@@ -36,7 +33,6 @@ bin/x86linux/can_server_socket_socketcan -text
 bin/x86linux/logalizer -text
 bin/x86linux/proc2iso -text
 bin/x86linux/vt2iso -text
-/contact_and_support.txt -text
 doc/DoxyfileAll -text
 doc/DoxyfileApi -text
 doc/footer.html -text
@@ -80,9 +76,7 @@ doc/txt/procdatafaq.txt -text
 doc/txt/sitemap.txt -text
 doc/txt/tech-info.txt -text
 doc/txt/todo.txt -text
-/download.txt -text
 /index.html -text
-/installation.txt -text
 library/LICENSE -text
 library/commercial_BIOS/readme.txt -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text
