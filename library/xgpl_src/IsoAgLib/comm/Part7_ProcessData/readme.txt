@@ -6,7 +6,7 @@ publish some measurement data on the BUS, restricted variants of them are provid
 
 
 \section ProcDataOverviewGrp Overview on type of Process Data
-  <img src="Images/processData.png" alt="Process Data Hierarchy" title="Process Data Hierarchy">
+  <img src="images/processData.png" alt="Process Data Hierarchy" title="Process Data Hierarchy">
   More information can be found on the detail pages and class descriptions:
   <ul>
   <li>\ref IsoAgLib::iProcDataLocal_c</li>

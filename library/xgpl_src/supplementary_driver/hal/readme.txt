@@ -6,7 +6,7 @@ Please see \ref MainHalAdaptationNew for details.
 
 \section SuppHalStructure Structure of HAL for Main Parts
 \subsection SupplHalEsx HAL for Supplementary Drivers on ESX of STW
-<img src="Images/HAL_suppl_esx.png" title="HAL for supplementary drivers of ESX of STW" alt="HAL for supplementary drivers of ESX of STW"><br>
+<img src="images/HAL_suppl_esx.png" title="HAL for supplementary drivers of ESX of STW" alt="HAL for supplementary drivers of ESX of STW"><br>
 More information can be found in the general HAL header files:
 - \ref hal/actor.h "hal/actor.h"
 - \ref hal/rs232.h "hal/rs232.h"
@@ -54,7 +54,7 @@ digraph SupplHalEsx
 
 
 \subsection SupplHalImi HAL for Supplementary Drivers on IMI of STW
-<img src="Images/HAL_suppl_imi.png" title="HAL for Supplementary Drivers on IMI of STW" alt="HAL for Supplementary Drivers on IMI of STW"><br>
+<img src="images/HAL_suppl_imi.png" title="HAL for Supplementary Drivers on IMI of STW" alt="HAL for Supplementary Drivers on IMI of STW"><br>
 More information can be found in the general HAL header files (see links in previous subsection) and in the device specific headers:
 - \ref imi/actor/actor.h "supplementary_driver/hal/imi/actor/actor.h"
 - \ref imi/rs232/rs232.h "supplementary_driver/hal/imi/rs232/rs232.h"
@@ -93,7 +93,7 @@ digraph SupplHalImi
 
 
 \subsection SupplHalPm167 HAL for Supplementary Drivers on Pm167 of STW
-<img src="Images/HAL_suppl_pm167.png" title="HAL for Supplementary Drivers on PM167" alt="HAL for Supplementary Drivers on PM167"><br>
+<img src="images/HAL_suppl_pm167.png" title="HAL for Supplementary Drivers on PM167" alt="HAL for Supplementary Drivers on PM167"><br>
 More information can be found in the general HAL header files (see links in first subsection) and in the device specific headers:
 - \ref pm167/rs232/rs232.h "supplementary_driver/hal/pm167/rs232/rs232.h"
 
@@ -124,7 +124,7 @@ digraph SupplHalPm167
 
 
 \subsection SupplHalPc HAL for Supplementary Drivers on PC
-<img src="Images/HAL_suppl_pc.png" title="HAL for Supplementary Drivers on PC" alt="HAL for Supplementary Drivers on PC"><br>
+<img src="images/HAL_suppl_pc.png" title="HAL for Supplementary Drivers on PC" alt="HAL for Supplementary Drivers on PC"><br>
 More information can be found in the general HAL header files (see links in first subsection) and in the device specific headers:
 - \ref pc/actor/actor.h "supplementary_driver/hal/pc/actor/actor.h"
 - \ref pc/rs232/rs232.h "supplementary_driver/hal/pc/rs232/rs232.h"

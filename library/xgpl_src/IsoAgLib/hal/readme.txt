@@ -26,8 +26,8 @@ The following steps are enough for adaptation to a new hardware:
 \anchor MainHalPm167 
 \anchor MainHalImi
 \anchor MainHalPc
-<img src="Images/HAL_esx.png" alt="Structure of HAL for ESX of STW" title="Structure of HAL for ESX of STW"><br>
-<img src="Images/HAL_imi_pm167_pc.png" alt="Structure of HAL for IMI/PM167/PC" title="Structure of HAL for IMI/PM167/PC"><br>
+<img src="images/HAL_esx.png" alt="Structure of HAL for ESX of STW" title="Structure of HAL for ESX of STW"><br>
+<img src="images/HAL_imi_pm167_pc.png" alt="Structure of HAL for IMI/PM167/PC" title="Structure of HAL for IMI/PM167/PC"><br>
 For more information see the different header file references:
 - \ref hal/config.h "hal/config.h"
 - \ref hal/system.h "hal/system.h"

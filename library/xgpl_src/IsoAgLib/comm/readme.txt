@@ -9,7 +9,7 @@ Most of the protocol features can be selected independent from other functions f
 a specific project. The dependencies are described in the following overview diagram. The file storage sheme of the services is also 
 shown by the analogous distribution in the diagram.
 
-  <img src="Images/commOverview.png" alt="Communication Protocol Overview" title="Communication Protocol Overview">
+  <img src="images/commOverview.png" alt="Communication Protocol Overview" title="Communication Protocol Overview">
   For details check the information on the individual item pages:
   <ul ><li> \ref SchedulerPage
   </li><li> \ref NetworkMgmtPage
