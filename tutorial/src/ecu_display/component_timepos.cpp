@@ -1,3 +1,10 @@
+/** \example component_timepos.cpp
+ * This is the TimePosGPS-component used in the Display ECU of the Tutorial ECU Network.
+ *
+ * It handles reception of Time and Position (GPS) information
+ * and forwarding it to the VT-Client component for display.
+ */
+
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itimeposgps_c.h>
 
 #include "component_timepos.h"

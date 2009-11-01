@@ -1,3 +1,10 @@
+/** \example ecu_display.cpp
+ * This is the Display ECU of the Tutorial ECU Network.
+ *
+ * It handles a local network node (iIdentItem_c instance) and
+ * the sub-components Tractor-ECU, VT-Client and GPS.
+ */
+
 #include "tutorial_settings.h"
 
 // components
@@ -8,7 +15,6 @@
 // IsoAgLib
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-
 
 IsoAgLib::iIdentItem_c* p_ident;
 IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display;

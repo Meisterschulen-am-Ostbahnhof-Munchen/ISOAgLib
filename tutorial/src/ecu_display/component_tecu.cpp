@@ -1,3 +1,10 @@
+/** \example component_tecu.cpp
+ * This is the Tractor-ECU-component used in the Display ECU of the Tutorial ECU Network.
+ *
+ * It handles reception of Tractor information like Speed and PTO
+ * and forwarding it to the VT-Client component for display.
+ */
+
 #include "component_tecu.h"
 
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracgeneral_c.h>

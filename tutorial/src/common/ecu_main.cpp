@@ -1,13 +1,11 @@
-/*
- * file:    main.cpp
- * created: 02/20/09 04:57:55 PM CET
+/** \example ecu_main.cpp
+ * This file implements the common main function
+ * which is used in all tutorials.
  *
- * This file implements the common main,
- * which is used in all tutorials
+ * The main-loop will keep ISOAgLib running.
  *
  * The single tutorial-ECUs differ in the
  * implementation of ecuMain() and ecuShutdown() only.
- *
  */
 
 #include <IsoAgLib/driver/can/icanio_c.h>
@@ -34,4 +32,4 @@ int main( int /* argc */, char** /*argv*/ )
   return 1;
 }
 
-/* eof main.cpp */
+/* eof ecu_main.cpp */

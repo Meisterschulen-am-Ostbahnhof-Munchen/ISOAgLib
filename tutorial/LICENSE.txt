@@ -1,0 +1,4 @@
+The Tutorial examples (inside of the "tutorial"-directory) are free for
+everybody to use without any licensing-restrictions. You don't need to
+contribute back changed/adapted code or code that is based on the
+tutorial sources.

@@ -1,7 +1,5 @@
 /*! \mainpage
 
-INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
-
 <table class="infoboxLinks" border="0">
 <tr><th>Quick-Links</th></tr>
 <tr><td>
@@ -16,9 +14,153 @@ INCLUDE_doc/txt/mainHeaderWithNavbar.txt_INCLUDE
 
 Please use the upper navigation bar to browse the documentation.
 
-To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a>. There you will find information about ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, Download and commercial services.
+To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
 
 \section Changes Changes
+
+\subsection Change_Q 2.1.2 to 2.2.0
+ Repository restructuring:
+ - All tools (including can_server) can now be found in the "tools" directory. Added the logalizer (can-log analyzer) tool.
+   All needed libraries need to be put in the corresponding "tools/libs/<libname>" directory.
+ - Removed "library/simulated_io"
+ - Removed all svn:externals, no more user-authentication-checkout-problems:
+   * Complete Tractor Data and Proprietary PGN handling now available to the public.
+   * All commercial_BIOS externals removed. If you need to build for an embedded target,
+     copy the BIOS files into the commercial_BIOS folder on your own, request access to the BIOS-repository at OSB's subversion-server
+     or change the BIOS path in your conf_<projectname> file to the path where you have the BIOS already installed.
+ - Restructured doc/html: Now there's an API and an ALL documentation
+ - Cleanup of root and admin directory
+
+ Tutorial:
+ - Added new Tutorial Network ECU Display with ecu_main (including main-loop) and its three components.
+ - Removed obsolete examples.
+
+ Diagnostics Service (ISO 11783-Part 12):
+ - Added support in (i)IdentItem_c for Basic Diagnostics Servives: ECU-Identification, SW-Identification, Certification-Data. 
+
+ Tools:
+ - Improved output of the different tools such as CAN-Server, logalizer, update_makefile.sh, etc.
+ - Enhanced logalizer with printing out ASCII and proper display of TP/ETP sessions. Also LANGUAGE_PGN decoding added.
+ - Enhanced can_messenger with implementation of period and repeat parameter
+
+ VT-Client:
+ - Fixed bug in vt input element selection/pointing event callback-message.
+ - vtObjectAlarmMask_c::setSoftKeyMask(NULL) did crash. Now correctly checks NULL-pointer as done in vtObjectDataMask_c.
+ - Now adding language-code to the versionlabel if >= 1 languages
+ - Added sendChangeActiveMaskCommand to iVtClientservercommunication
+ - First simple support for WS slaves added.
+ - Fixed signature of iVtObjectStringVariable_c::setValueCopy(char*..)
+ 
+ TC-Client / ProcessData:
+ - Removed Float-Processdata and some old DIN-relicts
+ - MeasureProgLocal_c::processMsg(): use backuped sender IsoName for processTcStatusMsg(), sendValForGroup() and processDefaultLoggingStart()
+ - Comparison between LanguageLabels using operator< was wrong (only occurred in multi-language device descriptions]
+ - Allow unscaled pool upload via PROPRIETARY_NO_POOL_SCALING define
+ - Allow proprietary DevPropertyHandler
+ - Fixed timing on TC-Client alive if the minimum time-dist is >2sec.
+
+ vt2iso:
+ - Added SilentMode, Object-IDs/KeyCodes are being grouped into namespace now, too - Generated DEFINEs changed to static const unsigned int.
+ - Added -a / -a=abc parameter: Now using ProjectName from VTP for filename per default, if not overridden using -a/-a=abc
+ - Added option to provide an xml search path (-d= | -D=) [Attention: Usage() does not tell about the switch to avoid confusion!]
+ - Enhanced informational output
+ - put "Overriding values" warning into verbose mode.
+ - -o=dir doesn't need to have the separator in it anymore.
+ - Optimization for ROM-size usage: -functions.inc does now use a _sROM-list and a loop to initialize the iVtObject_c-instances.
+ - Enhancement: Added eventPartialPoolUploaded()-handler.
+ - "-direct"-files are NO MORE generated. Please switch to only using the "-derived"-files! (Please remove any old "-direct.inc" files to avoid confusion
+ - Added support for specifying proprietary colors via vtsettings-file
+ - Added linewrapping in generated <project>-attributes.inc
+ - Don't overwrite object-selection if no change of content
+ - Fixed wrong generated code which didn't compile when using the "externalize"-option
+
+ proc2iso:
+ - Removed need for 'device_program_name' tag in <device> element, as it's currently unused
+
+ can_server:
+ - Cleaned output.
+ - Added build-instructions for can_server with several CAN-devices
+ - Enhancement: Introduced run modes "interactive" and "productive". Please refer to can_server for the usage description. (Interactive will be default)
+ - Enhancement: Allowing multiple Busses with Sontheim and Socket-CAN-Server
+ - Enhancement: Added support for Linux SocketCAN. Currently via CAN-Server. (Later via direct HAL)
+ - Fix: WIN32: "send: no error"-message doesn't appear after disconnecting clients all the time in a loop anymore.
+ - Fix: PEAK device: Now getting STD-messages on Windows and ID=0-messages on Linux
+ - Fix: Std-Messages weren't broadcast to phy. bus if in ISOBUS-internal mode
+ - Fix: [Windows: >1 PEAK Cards] Using multiple busses with only one card resulted in random distribution of CAN-messages
+ - Fix: avoid message flooding after client reconnect
+ - Fix: continue reading CAN device after disconnect of last client
+ - Fix: CAN-Devices Multiple BUSses: Fixed check for valid bus nr.
+ - Fix: Growing timestamp list in PEAK PCAN card device
+ - Cleanup on (sleep-)timings and readFromBus strategy.
+
+ update_makefile.sh
+ - Removed Dev-C++ Support as Dev-C++ is a discontinued product. Focussing on Visual Studio Project-file generation instead.
+ - Introduced "conf_template" as template for own project configurations. Originating from former examples' conf-files, but cleaned up / restructured.
+ - Makefiles will no more automatically build a can_server-binary. The can_server-binary is available prebuilt in different
+   flavors in the "bin" folder - thus removed USE_CAN_DEVICE_FOR_SERVER.
+ - Project-defines with NAME=VALUE now properly generated into config_xy.h, too. (Gave warnings before)
+ - Removed unit-test generation and outputting help if run without parameters
+ - Added "conf_template" as basis to use for own projects.
+ - Removed creation (and usage in isoaglib_config.h) of "version.h", which actually should be an application issue rather than an ISOAgLib issue.
+ - Add new platform P1MC and CCS project handling
+ - Improved generation speed.
+ - New options --report and --report=REPORT_FILE. Separate reports from standard output in case the user wants this.
+ - Change: Removed ISO_TERMINAL_SERVER support in update_makefile.sh - Use PRJ_MULTIPACKET and USE_WORKING_SET instead.
+ - Removed senseless CAN_BUS_USED define in .txt/conf_/config_/update_makefile.sh
+ - If wrong option/configuration is given, bail out instead of trying to adapt the option.
+ - Fixed bug reported by Andy Skeel: LIBPATH = -LONELIBRARY -LANOTHERLIBRARY.
+ - Fixed problem when using APP_PATH_EXCLUDE
+ - Fixed problem in Tasking generation when multiple pathes are used. Now using semicolon in include path rather than comma
+ - Fixed problem in gathering files given by APP_SRC_EXCLUDE
+
+ General Enhancements:
+ - Adding new function to determine how many devices on the bus have a certain deviceclass and function.
+ - Added the HALSimulator_c class to allow the application layer to handle HAL functions or print CAN communication.
+ - Interface "iSchedulerTask_c" enhanced for setting the timePeriod and earlier/latest interval.
+ - FastPacket now available in iMultiSend_c
+ - Optimization: IsoMonitor_c: Remove obsolete/unnecessary std::vector.sort()
+ - Adapt IsoAgLib for target without 8 bit char type (Add new NO_8BIT_CHAR_TYPE define for target that do not have 8 bit char type)
+ - Added subset of Boost C++ libraries. Improved README files. Listed where libraries are used within IsoAgLib.
+ - Addition of EES HAL
+ - PC-HAL: Allow FLOAT_WORD_ORDER to be officially set with global DEFINEs
+
+ General Fixes:
+ - TimePosGps_c: Fixed crash when calling localHour() at a very early stage (getTime() == 0) under Windows
+ - TimePosGps_c: Added missing Long-modifier for calculations like 60*60*24, did overrun on 16bit systems.
+ - TimePosGps_c: Was not properly handling different senders for Trac/GPS
+ - CAN-HAL: Standard Identifier CAN-messages weren't handled properly
+ - CAN-HAL PC: Fixed out of bounds array access
+ - CanIo_c: Change, so that next call continues search in canMsg2FilterBox.
+ - MultiSend: Fixing CTS-request while sending burst:
+   * MultiSend cleaned up. TP/ETP are now handled more similar.
+   * CTS while burst-sending is now handled correctly, too.
+   * CTS can retrieve any position in Buffer
+   * CTS can retrieve start or in middle of last burst when using MultiSendStreamer
+   * Request-check now enhanced. Not only position is checked to be in-range, but also the length is considered now (can we supply all the queried data?)
+ - Functionality-Fix: Address-Claiming: Removed the 2500ms wait on AddressClaiming when no other item online to act normal with 1250ms.
+ - AddressClaim: Now correctly handling AddressStealing in the 250ms-phase
+ - Ident_c::masked def.param: Corrected wrong default parameter
+ - Windows RS232-HAL: Fixed first instance 0 to be COM1 instead of COM0
+ - Using consequently COMx instead of //./COMx. Both should work of course.
+ - PC-EEPROM: Cleaned up DEBUG-statements and Code
+ - CAN-Reception Overflow with default value: Default CAN-Receive buffer increased from 16 to 256 messages
+   (Caused problems when just too many messages were on the bus - in that example
+   56 address-claim messages were received, but the buffer of 16 was just too small.)
+ - PC Sensor HAL: If simulated sensor-input-file was missing, it crashed
+ - ECU didn't come up at all if secondly addressclaim-request was on the bus
+ - Logalizer Output on Win32: Timestamp output is fixed now, using correct lli instead of Li
+ - TP/ETP-Sending: Faster Cleanup of SendStream / Forbid ConnAbort on Finished Streams
+ - iGenericData: Add default member in c'tors
+ - Forbid copy construction of ProprietaryMessageClient_c
+ - API-Fix in iMultiReceive_c: Added some missing 'MultiReceive_c::' qualifiers (resulted in self-calling endless-loop)
+ - API-Enhancement in MultiReceive_c: Added methods to configure MultiReceive-timings: MultiReceive_c::setCtsDelays & MultiReceive_c::setExperimentalTimings
+ - API-Change in iIsoName_c/IsoName_c: Changed behavior of default constructor iIsoName_c()/IsoName_c()
+ - IsoMonitor: deleteIsoMember for Local Network Nodes ((i)IdentItem_c) did not take the cached active local item into account,
+   hence it was dangling to some old memory and caused strange behavior
+ - Proprietary-Message-Handling: Fixed registering with a NULL IdentItem
+
+ ...and of course several warning-cleanups as found with newer compilers and lint...
+
 
 \subsection Change_P 2.1.1 to 2.1.2
  vt2iso:

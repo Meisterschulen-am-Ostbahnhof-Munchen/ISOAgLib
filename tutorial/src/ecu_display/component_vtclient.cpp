@@ -1,3 +1,10 @@
+/** \example component_vtclient.cpp
+ * This is the VT-Client-component used in the Display ECU of the Tutorial ECU Network.
+ *
+ * It handles complete communication with a Virtual Terminal including
+ * receiving events from it and updating of values on it.
+ */
+
 #include "tutorial_settings.h"
 #include "component_vtclient.h"
 
