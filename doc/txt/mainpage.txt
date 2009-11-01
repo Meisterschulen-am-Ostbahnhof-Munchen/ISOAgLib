@@ -1,3 +1,46 @@
+/*! \namespace __IsoAgLib
+    \brief Internal namespace, not allowed to be used by Application-Code
+
+    All members of the internal __IsoAgLib namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
+*/
+
+/*! \namespace IsoAgLib
+    \brief API-Namespace, allowed to be used by Application-Code
+
+    Applications are only allowed to use this namespace. Code using this namespace is and can stay proprietary and doesn't need to be opened to the public.
+*/
+
+/*! \namespace __HAL
+    \brief Internal HAL-Namespace, not allowed to be used by Application-Code
+
+    All members of the internal __HAL namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
+*/
+
+/*! \namespace HAL
+    \brief API-HAL-Namespace, allowed to be used by Application-Code
+
+    Applications are only allowed to use this namespace. Code using this namespace is and can stay proprietary and doesn't need to be opened to the public.
+*/
+
+/*! \namespace AMSBIOS
+    \brief Namespace for the AMS5-BIOS.
+*/
+
+/*! \namespace convert_n
+    \brief Common convert helpers
+
+    Common convert helpers (like endianess/sign conversion) are grouped into this namespace.
+*/
+
+/*! \namespace IsoAgLibTutorial
+    \brief General Namespace for the Tutorial Network
+*/
+
+/*! \namespace IsoAgLibTutorialDisplay
+    \brief Namespace for the Display ECU of the Tutorial Network
+*/
+
+
 /*! \mainpage
 
 <table class="infoboxLinks" border="0">
@@ -14,7 +57,7 @@
 
 Please use the upper navigation bar to browse the documentation.
 
-To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
+To get more information about ISOAgLib in general, please visit <a href="http://www.isoaglib.com">www.isoaglib.com</a> where you can find information about licensing, ISOAgLib as product, ISOAgLib's functions, principles and toolchain, the Tutorial Network, download and commercial services.
 
 \section Changes Changes
 
@@ -35,8 +78,8 @@ To get more information about ISOAgLib in general, please visit <a href="http://
  - Added new Tutorial Network ECU Display with ecu_main (including main-loop) and its three components.
  - Removed obsolete examples.
 
- Diagnostics Service (ISO 11783-Part 12):
- - Added support in (i)IdentItem_c for Basic Diagnostics Servives: ECU-Identification, SW-Identification, Certification-Data. 
+ Diagnostics Services (ISO 11783-Part 12):
+ - Added support in (i)IdentItem_c for Basic Diagnostics Services: ECU-Identification, SW-Identification, Certification-Data. 
 
  Tools:
  - Improved output of the different tools such as CAN-Server, logalizer, update_makefile.sh, etc.
