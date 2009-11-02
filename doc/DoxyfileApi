@@ -1278,7 +1278,7 @@ HAVE_DOT               = YES
 # indirect inheritance relations. Setting this tag to YES will force the 
 # the CLASS_DIAGRAMS tag to NO.
 
-CLASS_GRAPH            = YES
+CLASS_GRAPH            = NO
 
 # If the COLLABORATION_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
