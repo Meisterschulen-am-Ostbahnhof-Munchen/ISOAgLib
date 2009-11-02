@@ -1177,20 +1177,7 @@ PREDEFINED             = SYSTEM_PC \
 # The macro definition that is found in the sources will be used. 
 # Use the PREDEFINED tag if you want to use a different macro definition.
 
-EXPAND_AS_DEFINED      = CONFIG_NUMBER_ENTRY \
-                         LAST_CONFIG_NUMBER_ENTRY \
-                         CONFIG_STRING_ENTRY \
-                         LAST_CONFIG_STRING_ENTRY \
-                         ERROR_ENTRY \
-                         LAST_ERROR_ENTRY \
-                         MMI_ENTRY \
-                         LAST_MMI_ENTRY \
-                         SUBCOMPONENT \
-                         LAST_SUBCOMPONENT \
-                         COMPONENT \
-                         LAST_COMPONENT \
-                         LIMIT_TYPE \
-                         gluemacs1 \
+EXPAND_AS_DEFINED      = gluemacs1 \
                          gluemacs2 \
                          gluemacs3 \
                          gluemacs4 \
