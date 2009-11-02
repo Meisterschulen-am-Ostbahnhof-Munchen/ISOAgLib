@@ -4,7 +4,8 @@
 cd `dirname $0`
 
 # B) remove old DOC
-find ./ -name "*.html" -o -name "*.png" -o -name "*.gif" -o -name "*.md5" -o -name "*.map" -exec rm -f {} \;
+. ./cleanup_doxygen_documentation.sh
+cd `dirname $0`
 
 # C) copy images to api/all
 mkdir -p html/all/images
