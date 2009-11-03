@@ -265,7 +265,8 @@ public:
     bool ab_acceptUnknownAttributes,
     bool ab_silentMode,
     const std::string& str_outFileName,
-    const std::string& arcstr_searchPath);
+    const std::string& arcstr_searchPath,
+    const std::string& arcstr_langPrefix);
 
   void parse();
 
@@ -414,6 +415,7 @@ private:
   std::string mstr_namespaceDeclarationBegin;       // namespace BLA {
   std::string mstr_namespaceDeclarationEnd;         // }
   std::string mstr_namespacePrefix;                 // BLA::
+  std::string mstr_langPrefix;
 
   std::string attr_name;
   std::string attr_value;

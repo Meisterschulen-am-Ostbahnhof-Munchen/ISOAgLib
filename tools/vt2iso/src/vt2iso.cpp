@@ -246,6 +246,7 @@ static void usage()
     " -a=pre Use the given Prefix instead of the Projectname as a prefix for the generated files.\n"
     " -a     (Not specifying a value for -a lets vt2iso use the name of the XML/VTP - think of it as Legacy-Mode!)\n"
     " -c=xxx Specify a VT preset which contains proprietary colours (important for images with poprietary colours)\n"
+    " -x=pre Use the given Prefix for Multilanguage objects. Will generate iVtObjectX_pre1 instead of iVtObjectX_1.\n"
 #if 0
     /*  This feature is not shown up in the help here in order to avoid confusion about. Furthermore it is not
      *  yet extensively testd FOB 06/19/2009
@@ -1003,7 +1004,8 @@ vt2iso_c::init (
   bool ab_acceptUnknownAttributes,
   bool ab_silentMode,
   const std::string& arcstr_outFileName,
-  const std::string& arcstr_searchPath)
+  const std::string& arcstr_searchPath,
+  const std::string& arcstr_langPrefix)
 {
   parser = ap_parser;
   mb_verbose = ab_verbose;
@@ -1011,6 +1013,7 @@ vt2iso_c::init (
   mb_silentMode = ab_silentMode;
   mstr_outDirName = arcstr_outDirName; // overriding parameters!
   mstr_outFileName = arcstr_outFileName; // overriding parameters!
+  mstr_langPrefix = arcstr_langPrefix;
 
   // pass verbose-level on to vt2isoimagebase_c
   if (!mb_verbose)
@@ -2510,7 +2513,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         arrs_language[curLang].count++; // and do NOT count the normal list up!
         if (curLang > 0)
         {
-          pc_postfix = str(format("_%d") % curLang);
+          pc_postfix = str(format("_%s%d") % mstr_langPrefix % curLang);
         }
         if ( checkForAllowedExecution() )
         {
@@ -4065,11 +4068,11 @@ bool vt2iso_c::processChildElements(unsigned int& r_objChildren, DOMNode *r_n, b
           {
             if (rpcc_inButton)
             {
-              fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginBTN (&iVtObject%s);\n", objChildName.c_str(), childLang, rpcc_inButton);
+              fprintf (partFile_functions_origin, "  iVtObject%s_%s%d.setOriginBTN (&iVtObject%s);\n", objChildName.c_str(), mstr_langPrefix.c_str(), childLang, rpcc_inButton);
             }
             if (rpcc_inKey)
             {
-              fprintf (partFile_functions_origin, "  iVtObject%s_%d.setOriginSKM (%s);\n", objChildName.c_str(), childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
+              fprintf (partFile_functions_origin, "  iVtObject%s_%s%d.setOriginSKM (%s);\n", objChildName.c_str(), mstr_langPrefix.c_str(), childLang, rpcc_inKey ? "true":"false"); // is now always "true"...
             }
           }
         }
@@ -4920,6 +4923,7 @@ int main(int argC, char* argV[])
   std::string str_namespace;
   std::string str_searchPath;
   std::string str_vtPresetFile;
+  std::string str_langPrefix;
 
   int filenameInd = -1; // defaults to: no filename specified.
   for (int argInd = 1; argInd < argC; argInd++)
@@ -5038,12 +5042,16 @@ int main(int argC, char* argV[])
     {
       str_namespace.assign (":projectname:"); // special key for projectname-use!
     }
+    else if (!strncmp(argV[argInd], "-x=", 3)
+         ||  !strncmp(argV[argInd], "-X=", 3))
+    {
+      str_langPrefix = &argV[argInd][3];
+    }
     else if (!strncmp(argV[argInd], "-d=", 3)
          ||  !strncmp(argV[argInd], "-D=", 3))
     {
       str_searchPath = &argV[argInd][3];
     }
-
     else if (!strncmp(argV[argInd], "-dict=", 6))
     {
       dictionary = &argV[argInd][6];
@@ -5136,7 +5144,7 @@ int main(int argC, char* argV[])
   // And create our error handler and install it
   parser->setErrorHandler(pc_vt2iso);
 
-  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath );
+  const bool cb_initSuccess = pc_vt2iso->init (str_cmdlineName, &dictionary, externalize, b_disableContainmentRules, parser, verbose, str_outDir, str_namespace, b_accept_unknown_attributes, b_silentMode, str_outFileName, str_searchPath, str_langPrefix );
 
   if (cb_initSuccess)
   {
