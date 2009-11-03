@@ -11,6 +11,10 @@
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/driver/can/icanpkg_c.h>
 
+#ifdef WIN32
+#include <windows.h>
+#endif
+
 class cmdline_c
 {
 public:
@@ -172,7 +176,11 @@ int main( int argc, char *argv[] )
   for( int i = 0; i < params.i_repeat; ++i ) {
     getIcanInstance() << pkg;
     if( params.i_period && ( 1 != params.i_repeat ) ) {
+#ifdef WIN32
+      Sleep ( params.i_period ); // won't be too accurate though due to bad Windows Sleep-capability.
+#else
       usleep( params.i_period * 1000 );
+#endif
     }
   }
 
