@@ -2,7 +2,7 @@
 <kdevelop>
   <general>
     <author>Martin Wodok</author>
-    <email>Martin Wodok_EMAIL</email>
+    <email>m.wodok@osb-ag.de</email>
     <version>$VERSION$</version>
     <projectmanagement>KDevCustomProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
@@ -16,12 +16,12 @@
     <absoluteprojectpath>false</absoluteprojectpath>
     <description></description>
     <secondaryLanguages/>
-    <projectname>can_messenger</projectname>
+    <projectname>can_messenger_socket</projectname>
     <defaultencoding></defaultencoding>
   </general>
   <kdevcustomproject>
     <run>
-      <mainprogram>./can_messenger</mainprogram>
+      <mainprogram>./can_messenger_socket</mainprogram>
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <programargs></programargs>

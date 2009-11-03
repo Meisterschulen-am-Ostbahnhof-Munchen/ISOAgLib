@@ -4,9 +4,8 @@
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
 ../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp
-../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp
-../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp
 ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
+../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp
 ../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp
@@ -28,6 +27,7 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/baseitem_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.cpp
+../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp
 ../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp
@@ -43,6 +43,7 @@
 ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/streaminput_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h
+../../../../library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h
 ../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h
@@ -102,6 +103,7 @@
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h
 ../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h
+../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h
 ../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.h
 ../../../../library/xgpl_src/IsoAgLib/driver/system/isystem_c.h
 ../../../../library/xgpl_src/IsoAgLib/driver/can/icanio_c.h

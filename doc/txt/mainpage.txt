@@ -53,7 +53,7 @@
 </td></tr>
 </table>
 
-\section Home Welcome to the ISOAgLib Developer Zone!
+\section Home Welcome to the ISOAgLib Reference!
 
 Please use the upper navigation bar to browse the documentation.
 
@@ -93,18 +93,19 @@ To get more information about ISOAgLib in general, please visit <a href="http://
  - Added sendChangeActiveMaskCommand to iVtClientservercommunication
  - First simple support for WS slaves added.
  - Fixed signature of iVtObjectStringVariable_c::setValueCopy(char*..)
+ - Allow unscaled pool upload via PROPRIETARY_NO_POOL_SCALING define
  
  TC-Client / ProcessData:
  - Removed Float-Processdata and some old DIN-relicts
  - MeasureProgLocal_c::processMsg(): use backuped sender IsoName for processTcStatusMsg(), sendValForGroup() and processDefaultLoggingStart()
  - Comparison between LanguageLabels using operator< was wrong (only occurred in multi-language device descriptions]
- - Allow unscaled pool upload via PROPRIETARY_NO_POOL_SCALING define
  - Allow proprietary DevPropertyHandler
  - Fixed timing on TC-Client alive if the minimum time-dist is >2sec.
 
  vt2iso:
  - Added SilentMode, Object-IDs/KeyCodes are being grouped into namespace now, too - Generated DEFINEs changed to static const unsigned int.
  - Added -a / -a=abc parameter: Now using ProjectName from VTP for filename per default, if not overridden using -a/-a=abc
+ - Added -x=prefix parameter: Generated language-objects can now get a prefix. iVtObjectX_1 => iVtObjectX_prefix1
  - Added option to provide an xml search path (-d= | -D=) [Attention: Usage() does not tell about the switch to avoid confusion!]
  - Enhanced informational output
  - put "Overriding values" warning into verbose mode.

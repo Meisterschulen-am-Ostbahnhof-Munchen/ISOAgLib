@@ -9,8 +9,9 @@ concerning the integration of the ISOAgLib into other applications:
 As a special exception to section (2) of the GPL, if other works
 integrate templates or use macros or inline functions from ISOAgLib,
 or if you compile ISOAgLib and link it with other works to produce a
-work based on ISOAgLib, this integration, compilation or linking of
-ISOAgLib does not by itself cause the resulting work to be covered by
+work based on ISOAgLib while only accessing classes with a prefixed "i"
+from the namespace "IsoAgLib", this integration, compilation or linking
+of ISOAgLib does not by itself cause the resulting work to be covered by
 the GPL as a derivative work of ISOAgLib.
 However the source code of ISOAgLib itself, in unmodified and/or
 modified form, as the case may be, must still be made available in

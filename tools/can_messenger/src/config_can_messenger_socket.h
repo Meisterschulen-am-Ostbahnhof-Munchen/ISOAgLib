@@ -1,14 +1,14 @@
-// File: config_can_messenger.h
+// File: config_can_messenger_socket.h
 // IMPORTANT: Never change the first block of this header manually!!!
-//            All manual changes are overwritten by the next call of "update_makefile.sh conf_can_messenger_socket_win32" 
-//            Perform changes direct in the feature and project setup file conf_can_messenger_socket_win32
+//            All manual changes are overwritten by the next call of "update_makefile.sh conf_can_messenger_socket_x86linux" 
+//            Perform changes direct in the feature and project setup file conf_can_messenger_socket_x86linux
 //  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after
 //                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there.
-//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_can_messenger_socket_win32" call,
+//                      All commented out defines in the middle block will be upated on next "update_makefile.sh conf_can_messenger_socket_x86linux" call,
 //                      if the corresponding value in isoaglib_config.h changed
 
 
-#define PRJ_USE_AUTOGEN_CONFIG config_can_messenger.h
+#define PRJ_USE_AUTOGEN_CONFIG config_can_messenger_socket.h
 
 
 #define CAN_BUS_CNT 4 

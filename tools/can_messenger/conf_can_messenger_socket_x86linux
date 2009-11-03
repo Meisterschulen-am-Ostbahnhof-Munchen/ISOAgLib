@@ -1,5 +1,4 @@
-# Filename: conf_can_server_messenger
-PROJECT=can_messenger
+PROJECT=can_messenger_socket
 
 PROJECT_AUTHOR="Martin Wodok"
 PROJECT_AUTHOR_EMAIL=m.wodok@osb-ag.de
@@ -12,8 +11,7 @@ USE_TARGET_SYSTEM="pc_linux"
 
 PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 
-USE_CAN_DRIVER="msq_server"
-USE_CAN_DEVICE_FOR_SERVER="no_card"
+USE_CAN_DRIVER="socket_server"
 USE_RS232_DRIVER="simulating"
 CAN_BUS_CNT=4
 CAN_INSTANCE_CNT=1
