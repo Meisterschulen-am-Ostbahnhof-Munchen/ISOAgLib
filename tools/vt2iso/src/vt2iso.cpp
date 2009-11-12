@@ -663,13 +663,15 @@ void vt2iso_c::clean_exit (const char* error_message)
   fprintf (partFile_derived, "#include \"%s-attributes%s.inc\"\n", mstr_outFileName.c_str(), extension.c_str());
   if (b_externalize)
   {
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n"); // @todo SOON-261 namespace!
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n"); // @todo SOON-261 namespace!
-    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects;\n");
+    fputs(mstr_namespaceDeclarationBegin.c_str(), partFile_derived);
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c::iVtObject_s* HUGE_MEM all_sROMs [];\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM * all_iVtObjectLists [];\n");
+    fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects [];\n");
     for (unsigned int i=0; i<ui_languages; i++)
     {
-      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i;\n", i);
+      fprintf (partFile_derived, "extern IsoAgLib::iVtObject_c* HUGE_MEM all_iVtObjects%i [];\n", i);
     }
+    fputs(mstr_namespaceDeclarationEnd.c_str(), partFile_derived);
   }
   else
   {
