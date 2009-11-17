@@ -16,9 +16,9 @@
 #include "../typedef.h"
 #include "../errcodes.h"
 
-#include <IsoAgLib/util/impl/util_funcs.h>
+#include <hal_timer.h>
 
-#include <hwh_timer.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 namespace HAL {
 
@@ -29,7 +29,7 @@ namespace HAL {
     @return [ms] since start of the system
   */
   inline int32_t getTime( void ) {
-    return (( hwh_n::timer_c::getUs() / 1000L ) - startupTime );
+    return (( hal_n::timer_c::getUs() / 1000L ) - startupTime );
   };
 
   /**
@@ -37,7 +37,7 @@ namespace HAL {
     @return error state (HAL_NO_ERR == o.k.)
   */
   inline int16_t open_system() {
-    startupTime = hwh_n::timer_c::getUs() / 1000L;
+    startupTime = hal_n::timer_c::getUs() / 1000L;
     return HAL_NO_ERR;
   };
 
