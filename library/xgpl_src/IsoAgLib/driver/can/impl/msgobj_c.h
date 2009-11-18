@@ -89,16 +89,7 @@
 #include <IsoAgLib/hal/can.h>
 
 
-#ifdef DO_USE_SLIST
-  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
-    #include <ext/slist>
-    namespace std { using __gnu_cxx::slist;}
-  #else
-    #include <slist>
-  #endif
-#else
-  #include <list>
-#endif
+#include <list>
 
 #include "filterbox_c.h"
 #include "ident_c.h"

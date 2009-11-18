@@ -104,16 +104,7 @@
 
 #include <map>
 
-#ifdef DO_USE_SLIST
-  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
-    #include <ext/slist>
-    namespace std { using __gnu_cxx::slist;}
-  #else
-    #include <slist>
-  #endif
-#else
-  #include <list>
-#endif
+#include <list>
 namespace IsoAgLib { class iIsoMonitor_c;}
 
 // Begin Namespace __IsoAgLib
@@ -139,13 +130,13 @@ class IsoMonitor_c : public SingletonIsoMonitor_c
 private:
   // private typedef alias names
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) > Vec_ISO;
-  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::iterator Vec_ISOIterator;
-  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::const_iterator Vec_ISOIteratorConst;
+  typedef STL_NAMESPACE::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) > Vec_ISO;
+  typedef STL_NAMESPACE::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::list<IsoItem_c,MALLOC_TEMPLATE(IsoItem_c) >::const_iterator Vec_ISOIteratorConst;
   #else
-  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c> Vec_ISO;
-  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c>::iterator Vec_ISOIterator;
-  typedef STL_NAMESPACE::USABLE_SLIST<IsoItem_c>::const_iterator Vec_ISOIteratorConst;
+  typedef STL_NAMESPACE::list<IsoItem_c> Vec_ISO;
+  typedef STL_NAMESPACE::list<IsoItem_c>::iterator Vec_ISOIterator;
+  typedef STL_NAMESPACE::list<IsoItem_c>::const_iterator Vec_ISOIteratorConst;
   #endif
 
 public:

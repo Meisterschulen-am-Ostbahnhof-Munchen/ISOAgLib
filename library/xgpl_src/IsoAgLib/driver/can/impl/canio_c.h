@@ -105,17 +105,7 @@
 #endif
 #include "filterbox_c.h"
 
-#ifdef DO_USE_SLIST
-  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
-    #include <ext/slist>
-    namespace std { using __gnu_cxx::slist;}
-  #else
-    #include <slist>
-  #endif
-#else
-  #include <list>
-#endif
-
+#include <list>
 
 
 // Begin Namespace __IsoAgLib
@@ -155,9 +145,9 @@ class CanIo_c : public SingletonCanIo_c {
   */
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-    typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
+    typedef STL_NAMESPACE::list<MsgObj_c,STL_NAMESPACE::__malloc_alloc_template<0> > ArrMsgObj;
     #else
-    typedef STL_NAMESPACE::USABLE_SLIST<MsgObj_c> ArrMsgObj;
+    typedef STL_NAMESPACE::list<MsgObj_c> ArrMsgObj;
     #endif
     /** define dynamic array of FilterBox_c instances;
       if a __IsoAgLib::CanCustomer_c  creates one FilterBox_c definitions,

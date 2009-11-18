@@ -105,17 +105,7 @@
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 #endif
 
-#ifdef DO_USE_SLIST
-  #if defined(SYSTEM_PC) && !defined(SYSTEM_PC_VC) && !defined(SYSTEM_A1) && __GNUC__ >= 3
-    #include <ext/slist>
-    namespace std { using __gnu_cxx::slist;}
-  #else
-    #include <slist>
-  #endif
-#else
-  #include <list>
-#endif
-
+#include <list>
 
 namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 
@@ -472,7 +462,7 @@ private: // Private attributes
   /** last timestamp with FilterBox_c check */
   int32_t mi32_lastFilterBoxTime;
 
-  STL_NAMESPACE::USABLE_SLIST<IsoName_c> ml_filtersToDeleteISO;
+  STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
   bool mb_needCallOfCheckCreateRemoteReceiveFilter;
   const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;

@@ -114,13 +114,13 @@ private:
     bool b_isMax;
   };
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
-  typedef STL_NAMESPACE::USABLE_SLIST<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) > List_ThresholdInfo;
-  typedef STL_NAMESPACE::USABLE_SLIST<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) >::iterator List_ThresholdInfoIterator;
-  typedef STL_NAMESPACE::USABLE_SLIST<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s)>::const_iterator List_ThresholdInfoConstIterator;
+  typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) > List_ThresholdInfo;
+  typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s) >::iterator List_ThresholdInfoIterator;
+  typedef STL_NAMESPACE::list<ThresholdInfo_s,MALLOC_TEMPLATE(ThresholdInfo_s)>::const_iterator List_ThresholdInfoConstIterator;
   #else
-  typedef STL_NAMESPACE::USABLE_SLIST<ThresholdInfo_s> List_ThresholdInfo;
-  typedef STL_NAMESPACE::USABLE_SLIST<ThresholdInfo_s>::iterator List_ThresholdInfoIterator;
-  typedef STL_NAMESPACE::USABLE_SLIST<ThresholdInfo_s>::const_iterator List_ThresholdInfoConstIterator;
+  typedef STL_NAMESPACE::list<ThresholdInfo_s> List_ThresholdInfo;
+  typedef STL_NAMESPACE::list<ThresholdInfo_s>::iterator List_ThresholdInfoIterator;
+  typedef STL_NAMESPACE::list<ThresholdInfo_s>::const_iterator List_ThresholdInfoConstIterator;
   #endif
 
 public:

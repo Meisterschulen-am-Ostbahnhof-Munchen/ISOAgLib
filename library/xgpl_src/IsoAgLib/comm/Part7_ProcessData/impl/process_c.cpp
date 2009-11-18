@@ -253,7 +253,7 @@ bool Process_c::timeEvent( void ){
 
   if ( ml_filtersToDeleteISO.size() > 0)
   {
-    for (STL_NAMESPACE::USABLE_SLIST<IsoName_c>::const_iterator iter = ml_filtersToDeleteISO.begin();
+    for (STL_NAMESPACE::list<IsoName_c>::const_iterator iter = ml_filtersToDeleteISO.begin();
          iter != ml_filtersToDeleteISO.end();
          iter++)
     {

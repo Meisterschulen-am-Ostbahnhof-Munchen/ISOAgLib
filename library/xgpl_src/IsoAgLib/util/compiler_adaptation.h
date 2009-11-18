@@ -144,22 +144,6 @@
 	#define STL_NAMESPACE std
 #endif
 
-/** define whether to use SLIST or LIST
- * on win32 systems we'll use the native stl list
- * comparison */
-#if !defined(USABLE_SLIST) && !defined(WIN32) && !defined(DO_USE_SLIST)
-  #if defined (__GNUC__) || defined(__TSW_CPP__)
-    /** both the GCC and Tasking Compiler support slist */
-    #define USABLE_SLIST slist
-    #define DO_USE_SLIST
-  #endif
-#endif
-
-/** default: use std::list<T> */
-#ifndef USABLE_SLIST
-  #define USABLE_SLIST list
-#endif
-
 
 #if defined( __GNUC__ ) || __GNUC__ >= 4
   #define MALLOC_TEMPLATE(PAR) __gnu_cxx::malloc_allocator<PAR>
