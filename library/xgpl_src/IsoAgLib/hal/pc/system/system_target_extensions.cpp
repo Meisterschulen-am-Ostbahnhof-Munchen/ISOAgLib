@@ -155,6 +155,8 @@ clock_t getStartUpTime()
     return st_startup4Times;
   }
   #endif
+  // MinGW doesn't need getStartupTime() AS IT SEEMS RIGHT NOW.
+  // Building MinGW executables is currently not supported.
 #endif
 
 
@@ -236,10 +238,15 @@ int16_t configWatchdog()
     return timeGetTime() - getStartupTime();
   }
   #else
+  // MinGW has neither simple access to timeGetTime()
+  // nor to gettimeofday()
+  // - but beware: at least in LINUX clock() measures
+  //   only the times of the EXE in CPU core
   int32_t getTime()
   { // returns time in msec
     return (clock()/(CLOCKS_PER_SEC/1000));
   }
+  // Building MinGW executables is currently not supported.
   #endif
 #else
 
