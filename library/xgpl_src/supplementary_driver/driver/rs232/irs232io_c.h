@@ -440,7 +440,7 @@ private: //Private methods
   inline iRS232IO_c& getIrs232Instance( uint8_t aui8_instance = 0 )
   { return static_cast<iRS232IO_c&>(__IsoAgLib::getRs232Instance(aui8_instance));};
 #else
-  /** C-style function, to get access to the unique DINMonitor_c singleton instance */
+  /** C-style function, to get access to the unique iRS232IO_c singleton instance */
   inline iRS232IO_c& getIrs232Instance( void )
   { return static_cast<iRS232IO_c&>(__IsoAgLib::getRs232Instance());};
 #endif

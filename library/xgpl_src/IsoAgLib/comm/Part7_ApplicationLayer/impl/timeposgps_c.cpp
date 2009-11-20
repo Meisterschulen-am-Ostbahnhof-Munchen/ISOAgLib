@@ -216,10 +216,10 @@ namespace __IsoAgLib {
 
 
   /** HIDDEN constructor for a TimePosGps_c object instance which can optional
-  set the configuration for send/receive for base msg type NMEA 2000 GPS
-  and calendar
-  NEVER instantiate a variable of type TimePosGps_c within application
-  only access TimePosGps_c via getTimePosGpsInstance() or getTimePosGpsInstance( int riLbsBusNr ) in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+      set the configuration for send/receive for base msg type NMEA 2000 GPS and calendar
+      NEVER instantiate a variable of type TimePosGps_c within application
+      only access TimePosGps_c via getTimePosGpsInstance()
+      or getTimePosGpsInstance (protocolInstanceNr) in case more than one ISO11783 BUS is used for IsoAgLib
    */
   TimePosGps_c::TimePosGps_c()
   : mc_sendGpsISOName(),

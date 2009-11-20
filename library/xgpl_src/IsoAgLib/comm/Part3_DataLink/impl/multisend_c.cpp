@@ -684,8 +684,9 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
 /**
   HIDDEN constructor for a MultiSend_c object instance
   NEVER instantiate a variable of type MultiSend_c within application
-  only access MultiSend_c via getMultiSendInstance() or getMultiSendInstance( int riLbsBusNr )
-  in case more than one ISO11783 or DIN9684 BUS is used for IsoAgLib
+  only access MultiSend_c via getMultiSendInstance() or
+  getMultiSendInstance (protocolInstanceNr) in case more than one
+  ISO11783 BUS is used for IsoAgLib
   */
  MultiSend_c::MultiSend_c() {};
 

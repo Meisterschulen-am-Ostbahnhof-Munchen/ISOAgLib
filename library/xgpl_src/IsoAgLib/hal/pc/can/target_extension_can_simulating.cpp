@@ -443,8 +443,6 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
       "test 1 - %05d %-8x  %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx %-3hx",
       i32_sendTimestamp, ptSend->dwId,
       data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]);
-    if ( ptSend->dwId == 0x10 )
-      printf( "Sent DIN message through ISO MsgObj\n" );
   }
   else
   {

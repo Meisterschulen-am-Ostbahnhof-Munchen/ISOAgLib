@@ -78,61 +78,22 @@ class iProprietaryMessageHandler_c;
 class iProprietaryMessageClient_c;
 
 /**
-  class for identity/ies which are managed by the actual ECU;
-  new instances start in prepare address claim state and stay there for a randomic and serialNo dependent time;
-  then they are inserted as announcing member in the monitoring list of the selected protocol type and start announcing;
+  class for identity/ies (Control Function(s)) which are managed by the actual ECU;
+  new instances start in prepare address claim state and stay there for a random and serialNo dependent time;
+  then they are inserted as announcing member in the monitoring list and start announcing;
 
   If the IsoAgLib shall not start immediately with address claim on definition of the variable
   ( e.g. if some data must be read for definition of local identity ),
   the address claim can be started later with explicit call of iIdentItem_c::start( ).
-  This is also useful, if the corresponding protocol is selected during runtime.
-  Example:
-  \code
-  bool     b_selfConf = true;
-  uint8_t  ui8_indGroup = 2,
-           ui8_func = 25,
-           ui8_wantedSa = 128,
-           ui8_funcInst = 0,
-           ui8_ecuInst = 0,
-           ui8_deviceClass = 2,
-           ui8_deviceClassInst = 0;
-  uint16_t ui16_manufCode = 0x7FF;
-  uint32_t ui32_serNo = 27;
-
-  IsoAgLib::iIdentItem_c c_isoItemLaterAddressClaim;
-  // Start address claim of the local identity/member
-  IsoAgLib::iIdentItem_c c_myIdent ( ui8_indGroup,
-                                     rui8_deviceClass,
-                                     ui8_deviceClassInst,
-                                     ui8_func,
-                                     ui16_manufCode,
-                                     ui32_serNo); // further parameters use the defaults
-  // ...
-  // now start address claim
-  c_isoItemLaterAddressClaim.init( ui8_indGroup,
-                                   ui8_deviceClass,
-                                   ui8_deviceClassInst,
-                                   ui8_func,
-                                   ui16_manufCode,
-                                   ui32_serNo,
-                                   ui8_wantedSa,
-                                   ui16_eepromAdrSa,
-                                   ui8_funcInst,
-                                   ui8_ecuInst );
-  \endcode
 
   The IsoAgLib backend is responsible for answering all requests like
-  RequestForClaimedSourceAdress ( ISO 11783 ) or
-  RequestAllMemberNames ( DIN 9684 ).
+  RequestForClaimedSourceAdress ( ISO 11783 )
 
   The application just has to call the main trigger function Scheduler_c::timeEvent().
 
   After the monitor list report a completed address claim the status changes to active/claimed address;
 
-  Dependent on of defining of CHANGE_DEV_CLASS_INST_ON_CONFLICT in the project Makefile, a repeated address claim for a DIN 9684 ident is performed with different device class instance
-  after some static conflicting alive messages.
-
-  @short member ident item of this ECU
+  @short member ident item of this Control Function 
   @author Dipl.-Inform. Achim Spangler
   */
 class iIdentItem_c : private __IsoAgLib::IdentItem_c  {
@@ -227,8 +188,7 @@ public:
     */
   iIsoItem_c* getIsoItem( void ) const { return static_cast<iIsoItem_c*>(IdentItem_c::getIsoItem()); }
 
-  /** send address release for DIN identities and perform other stop actions at end of lifetime
-    * of a local ident
+  /** perform stop actions at end of lifetime of a local ident
     */
   void close( void ) { IdentItem_c::close();}
 

@@ -769,10 +769,8 @@ bool IsoMonitor_c::existActiveLocalIsoMember()
     -> using the number of the first active member serves as default (f.e. for requesting other member names)
     can throw an preconditionViolation error, if none of the own identities is active/claimed address yet
     possible errors:
- * lbsSysNoActiveLocalMember on missing own active ident
-    @return reference to the MonitorItem_c of the first active local member
-      (MonitorItem_c is bas class of both IsoItem_c or DINItem_c which serves
-      adress, isoName, itemState)
+ * SysNoActiveLocalMember on missing own active ident
+    @return reference to the IsoItem_c of the first active local member
     @exception preconditionViolation
  */
 IsoItem_c& IsoMonitor_c::getActiveLocalIsoMember()
