@@ -669,6 +669,8 @@ tutorial/README.txt -text
 tutorial/compiler_projects/VC6/ecuDisplay/config_header__ecuDisplay-doc.txt -text
 tutorial/compiler_projects/VC6/ecuDisplay/ecuDisplay__can_server_sock__simulating.dsp -text
 tutorial/compiler_projects/VC6/ecuDisplay/filelist__ecuDisplay.txt -text
+tutorial/compiler_projects/conf_ecu_display_c2c -text
+tutorial/compiler_projects/conf_ecu_display_esx -text
 tutorial/compiler_projects/conf_ecu_display_win32 -text
 tutorial/compiler_projects/conf_ecu_display_x86linux -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/Makefile -text
