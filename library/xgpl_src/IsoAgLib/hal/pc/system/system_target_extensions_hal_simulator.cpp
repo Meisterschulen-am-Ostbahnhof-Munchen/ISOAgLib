@@ -172,8 +172,8 @@ int16_t open_system()
   getTime();
 
   t_biosextSysdata.wRAMSize = 1000;
-  DEBUG_PRINT("open_esx aufgerufen\n");
-  DEBUG_PRINT("\n\nPRESS RETURN TO STOP PROGRAM!!!\n\n");
+  DEBUG_PRINT("DEBUG: open_system called\n");
+  DEBUG_PRINT("DEBUG: PRESS RETURN TO STOP PROGRAM!!!\n\n");
   return can_startDriver();
 }
 /**
@@ -315,7 +315,7 @@ int16_t getSnr(uint8_t *snrDat)
 /* configuration of the system supervisor*/
 int16_t  configWd(tWDConfig *tConfigArray)
 {
-  DEBUG_PRINT4("configWd aufgerufen mit MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
+  DEBUG_PRINT4("DEBUG: configWd called with MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
     tConfigArray->bWDmaxTime, tConfigArray->bWDminTime, tConfigArray->bUDmax, tConfigArray->bUDmin);
   tConfigArray = tConfigArray; // Just suppress warning.
   return 0;
@@ -326,24 +326,24 @@ void wdTriggern(void)
 }
 int16_t wdReset(void)
 {
-  DEBUG_PRINT("WD reset\n");
+  DEBUG_PRINT("DEBUG: WD reset\n");
   return 1;
 }
 void startTaskTimer ( void )
 {
-  DEBUG_PRINT1("startTaskTimer mit %d aufgerufen\n", T_TASK_BASIC );
+  DEBUG_PRINT1("DEBUG: startTaskTimer with %d called\n", T_TASK_BASIC );
 }
 /* get the cpu frequency*/
 int16_t  getCpuFreq(void)
 {
-  DEBUG_PRINT("getCpuFreq aufgerufen\n");
+  DEBUG_PRINT("DEBUG: getCpuFreq called\n");
   return 20;
 }
 
 /* to activate the power selfholding*/
 void stayingAlive(void)
 {
-  DEBUG_PRINT("staying alive aktiviert\n");
+  DEBUG_PRINT("DEBUG: staying alive activated\n");
 }
 
 /* to deactivate the power selfholding*/
@@ -352,7 +352,7 @@ void powerDown(void)
   if ( getOn_offSwitch() == 0 )
   { // CAN_EN is OFF -> stop now system
     can_stopDriver();
-    DEBUG_PRINT("System Stop aufgerufen\n");
+    DEBUG_PRINT("DEBUG: Power Down called\n");
   }
 }
 
@@ -372,7 +372,7 @@ int16_t getOn_offSwitch(void)
 /* switch relais on or off*/
 void setRelais(boolean bitState)
 {
-  DEBUG_PRINT1("setRelais(%d) aufgerufen", bitState);
+  DEBUG_PRINT1("DEBUG: setRelais(%d) called\n", bitState);
   bitState = bitState; // Just suppress warning
 }
 
