@@ -21,6 +21,13 @@ and run the contained setup program. Install to
 If it's already installed in a different path, then adapt
     can_server_vector_xl.vcproj .
 
+For the LAWICEL driver download
+    http://www.canusb.com/cdm/CDM_2.04.06_WHQL_Certified_CANUSB.zip
+and run the contained installation program. Install to
+    C:\Programme\LAWICEL\CANUSB .
+If it's already installed in a different path, then adapt
+    can_server_lawicel.vcproj .
+
 Note: Only if you chose ``Release'' rather than ``Debug'' as MSVC++
 solution configuration, then the resulting can server executable will
 be copied to ..\..\bin\win32\ during the build.

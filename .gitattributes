@@ -326,6 +326,7 @@ tools/can_server/Makefile -text
 tools/can_server/Makefile_TemplateForSpecialPlatforms -text
 tools/can_server/README.txt -text
 tools/can_server/can_server.sln -text
+tools/can_server/can_server_lawicel.vcproj -text
 tools/can_server/can_server_no_card.vcproj -text
 tools/can_server/can_server_pcan.vcproj -text
 tools/can_server/can_server_sontheim_mt_api.vcproj -text
@@ -338,6 +339,7 @@ tools/can_server/src/can_server_msq.cpp -text
 tools/can_server/src/can_server_sock.cpp -text
 tools/can_server/src/config_can_server.h -text
 tools/can_server/src/devices/can_device_a1.cpp -text
+tools/can_server/src/devices/can_device_lawicel.cpp -text
 tools/can_server/src/devices/can_device_no_card.cpp -text
 tools/can_server/src/devices/can_device_pcan.cpp -text
 tools/can_server/src/devices/can_device_rte.cpp -text
