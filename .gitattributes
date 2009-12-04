@@ -624,11 +624,6 @@ tools/proc2iso/config.sub -text
 tools/proc2iso/configure -text
 tools/proc2iso/configure.in -text
 tools/proc2iso/doc/ISO-ProcessData-Objects.txt -text
-tools/proc2iso/html/XMLProcSpec.html -text
-tools/proc2iso/html/doxygen.css -text
-tools/proc2iso/html/doxygen.png -text
-tools/proc2iso/html/index.html -text
-tools/proc2iso/html/pages.html -text
 tools/proc2iso/proc2iso.kdevelop -text
 tools/proc2iso/proc2iso.kdevelop.filelist -text
 tools/proc2iso/proc2iso.vcproj -text
