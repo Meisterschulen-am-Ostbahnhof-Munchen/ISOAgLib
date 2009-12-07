@@ -4,8 +4,9 @@ BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
 BODY {
   background: #fff;
   color: black;
-  margin-right: 20px;
-  margin-left: 20px;
+  margin-right: 0px;
+  margin-left: 0px;
+  margin-top: 0px;
 }
 BODY,TD {
   font-size: 90%;
@@ -582,7 +583,7 @@ a#anchor4hiddendiv:hover {
 
 /* a#ext { color:#080; } */
 
-TABLE { border-collapse:collapse; border: 1px dotted silver; }
+TABLE { border-collapse:collapse; border:none; }
 /*TABLE TR { border:0; }*/
 TABLE TH { border-bottom: 1px solid gray; }
 
