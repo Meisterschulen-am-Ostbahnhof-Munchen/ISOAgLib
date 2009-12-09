@@ -178,6 +178,7 @@ library/xgpl_src/IsoAgLib/hal/a2/can/can_typedef.h -text
 library/xgpl_src/IsoAgLib/hal/a2/can/hal_can_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/a2/can/hal_can_interface.h -text
 library/xgpl_src/IsoAgLib/hal/a2/config.h -text
+library/xgpl_src/IsoAgLib/hal/a2/eeprom/eeprom.h -text
 library/xgpl_src/IsoAgLib/hal/a2/errcodes.h -text
 library/xgpl_src/IsoAgLib/hal/a2/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/a2/system/system_target_extensions.cpp -text
@@ -232,6 +233,7 @@ library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_emulated.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_pthread.h -text
 library/xgpl_src/IsoAgLib/hal/mitron167/can/hal_can_interface.h -text
+library/xgpl_src/IsoAgLib/hal/mitron167/eeprom/eeprom.h -text
 library/xgpl_src/IsoAgLib/hal/mitron167/errcodes.h -text
 library/xgpl_src/IsoAgLib/hal/mitron167/system/time_clock.c -text
 library/xgpl_src/IsoAgLib/hal/mitron167/typedef.h -text

@@ -1134,9 +1134,6 @@
   #define gluemacs4(a, b, c, d)  gluetoks4(a, b, c, d)
   #define gluemacs5(a, b, c, d, e)  gluetoks5(a, b, c, d, e)
 #endif
-
-
-#define HAL_PATH gluemacs( <IsoAgLib/hal/, HAL_SUBDIR )
 /*@}*/
 
 

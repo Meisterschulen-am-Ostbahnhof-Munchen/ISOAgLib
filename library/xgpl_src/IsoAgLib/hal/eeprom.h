@@ -68,27 +68,8 @@
 #include "config.h"
 
 // now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/eeprom/eeprom.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/eeprom/eeprom.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/eeprom/eeprom.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/eeprom/eeprom.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/eeprom/eeprom.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/eeprom/eeprom.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/eeprom/eeprom.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/eeprom/eeprom.h"
-#elif defined(SYSTEM_EES)
-	#include "ees/eeprom/eeprom.h"
-#endif
+#define _hal_eeprom_header_ <IsoAgLib/hal/HAL_SUBDIR/eeprom.h>
+#include _hal_eeprom_header_
 
 
 #endif

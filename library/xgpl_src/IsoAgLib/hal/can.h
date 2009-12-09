@@ -89,31 +89,8 @@ typedef enum C16xCtrlStatusReg_en
 
 
 // now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/can/can.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/can/can.h"
-#elif defined(SYSTEM_A2)
-	#include "a2/can/can.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/can/can.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/can/can.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/can/can.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/can/can.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/can/can.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/can/can.h"
-#elif defined(SYSTEM_MITRON167)
-	#include "mitron167/can/can.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/can/can.h"
-#elif defined(SYSTEM_EES)
-	#include "ees/can/can.h"
-#endif
+#define _hal_can_header_ <IsoAgLib/hal/HAL_SUBDIR/can.h>
+#include _hal_can_header_
 
 
 #endif

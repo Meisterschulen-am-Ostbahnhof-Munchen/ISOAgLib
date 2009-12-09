@@ -83,31 +83,8 @@
 #define HAL_RS232_BITRATE_CNT 9                                          
 
 // now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/config.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/config.h"
-#elif defined(SYSTEM_A2)
-	#include "a2/config.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/config.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/config.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/config.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/config.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/config.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/config.h"
-#elif defined(SYSTEM_MITRON167)
-	#include "mitron167/config.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/config.h"
-#elif defined(SYSTEM_EES)
-	#include "ees/config.h"
-#endif
+#define _hal_config_header_ <IsoAgLib/hal/HAL_SUBDIR/config.h>
+#include _hal_config_header_
 
 
 #endif

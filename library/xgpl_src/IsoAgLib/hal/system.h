@@ -68,31 +68,8 @@
 #include "config.h"
 
 // now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/system/system.h"
-#elif defined(SYSTEM_ESX)
-	#include "esx/system/system.h"
-#elif defined(SYSTEM_A2)
-	#include "a2/system/system.h"
-#elif defined(SYSTEM_ESXu)
-	#include "esxu/system/system.h"
-#elif defined(SYSTEM_C2C)
-	#include "c2c/system/system.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/system/system.h"
-#elif defined(SYSTEM_IMI)
-	#include "imi/system/system.h"
-#elif defined(SYSTEM_P1MC)
-	#include "p1mc/system/system.h"
-#elif defined(SYSTEM_PM167)
-	#include "pm167/system/system.h"
-#elif defined(SYSTEM_MITRON167)
-	#include "mitron167/system/system.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/system/system.h"
-#elif defined(SYSTEM_EES)
-	#include "ees/system/system.h"
-#endif
+#define _hal_system_header_ <IsoAgLib/hal/HAL_SUBDIR/system.h>
+#include _hal_system_header_
 
 
 #endif
