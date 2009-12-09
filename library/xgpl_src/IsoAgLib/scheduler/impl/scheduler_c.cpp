@@ -123,10 +123,6 @@
   #include <IsoAgLib/hal/eeprom.h>
 #endif
 
-#ifdef SYSTEM_DJ1
-#include <compilerswitches.h>
-#endif
-
 #if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
