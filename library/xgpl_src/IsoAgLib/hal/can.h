@@ -89,7 +89,7 @@ typedef enum C16xCtrlStatusReg_en
 
 
 // now include dependent on used target the suitable header
-#define _hal_can_header_ <IsoAgLib/hal/HAL_SUBDIR/can.h>
+#define _hal_can_header_ <IsoAgLib/hal/HAL_SUBDIR/can/can.h>
 #include _hal_can_header_
 
 

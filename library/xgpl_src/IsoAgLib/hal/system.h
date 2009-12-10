@@ -68,7 +68,7 @@
 #include "config.h"
 
 // now include dependent on used target the suitable header
-#define _hal_system_header_ <IsoAgLib/hal/HAL_SUBDIR/system.h>
+#define _hal_system_header_ <IsoAgLib/hal/HAL_SUBDIR/system/system.h>
 #include _hal_system_header_
 
 

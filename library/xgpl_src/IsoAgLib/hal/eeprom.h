@@ -68,7 +68,7 @@
 #include "config.h"
 
 // now include dependent on used target the suitable header
-#define _hal_eeprom_header_ <IsoAgLib/hal/HAL_SUBDIR/eeprom.h>
+#define _hal_eeprom_header_ <IsoAgLib/hal/HAL_SUBDIR/eeprom/eeprom.h>
 #include _hal_eeprom_header_
 
 
