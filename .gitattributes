@@ -643,6 +643,10 @@ tools/project_generation/update_makefile_EDE.part1.pjt -text
 tools/project_generation/update_makefile_EDE.part2.pjt -text
 tools/project_generation/update_makefile_MakefileAppSkeleton.txt -text
 tools/project_generation/update_makefile_MakefileLibSkeleton.txt -text
+tools/project_generation/update_makefile_ams5_ewd.txt -text
+tools/project_generation/update_makefile_ams5_ewp.txt -text
+tools/project_generation/update_makefile_ams5_eww.txt -text
+tools/project_generation/update_makefile_ams5_xcl.txt -text
 tools/project_generation/update_makefile_conf_template -text
 tools/project_generation/update_makefile_kdevelop3Generic.kdevelop -text
 tools/project_generation/update_makefile_qmake_stub.pro -text

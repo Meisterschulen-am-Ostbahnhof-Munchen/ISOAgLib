@@ -197,8 +197,10 @@ set_default_values()
     PARAMETER_TARGET_SYSTEM="UseConfigFile"
     PARAMETER_CAN_DRIVER="UseConfigFile"
     PARAMETER_RS232_DRIVER="UseConfigFile"
-    USE_EMBED_LIB_DIRECTORY="library/commercial_BIOS/bios_esx"
-    USE_EMBED_HEADER_DIRECTORY="library/commercial_BIOS/bios_esx"
+    # may be overridden by configuration file or check_after_user_configuration:
+    USE_EMBED_LIB_DIRECTORY=''
+    # may be overridden by configuration file or check_after_user_configuration:
+    USE_EMBED_HEADER_DIRECTORY=''
     #USE_EMBED_LIBS="C756/Xos20l.lib Module/Xma20l.lib"
     #USE_EMBED_BIOS_SRC="Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ"
     #USE_EMBED_ILO="Xos20lcs.ilo"
@@ -466,6 +468,11 @@ check_set_correct_variables()
             USE_SYSTEM_DEFINE="SYSTEM_SRC9"
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
             IDE_NAME="KDevelop, make"
+            ;;
+        (ams5)
+            USE_SYSTEM_DEFINE="SYSTEM_AMS5"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/ams5"
+            IDE_NAME="IAR Embedded Workbench IDE"
             ;;
     esac
     
@@ -975,7 +982,6 @@ create_filelist( )
             (pc*) printf "pc" ;;
             (*) printf '%s' "$USE_TARGET_SYSTEM" ;;
         esac;)
-
     {
         local COMM_PROC_FEATURES="$(comm_proc_features 3>&1 1>&9)"
         local COMM_FEATURES="$(comm_features 3>&1 1>&9)"
@@ -2341,6 +2347,57 @@ create_library_makefile()
     cd "$1"
 }
 
+
+create_ams5_workspace()
+{
+    DEV_PRJ_DIR="$1/$PROJECT"
+
+    local INSERT_NEW_CC_INCLUDE_PATHS="$(
+        for EACH_PATH in library library/xgpl_src ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH; do
+            printf '          <state>$PROJ_DIR$\\%s</state>\n' \
+                "$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/$EACH_PATH")"
+        done)"
+
+    local INSERT_CC_DEFINES="$({
+          echo_ "$USE_SYSTEM_DEFINE"
+          printf -- 'PRJ_USE_AUTOGEN_CONFIG=config_%s.h\n' "$PROJECT"
+          for EACH_DEF in ${PRJ_DEFINES:-}; do
+              echo_ "$EACH_DEF"
+          done
+
+          if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
+              printf -- 'SYSTEM_WITH_ENHANCED_CAN_HAL'
+          fi
+          
+          case "$USE_CAN_DRIVER" in
+              (msq_server)
+                  printf -- 'CAN_DRIVER_MESSAGE_QUEUE'
+                  ;;
+              (socket_server|socket_server_hal_simulator)
+                  printf -- 'CAN_DRIVER_SOCKET'
+                  ;;
+          esac
+      } | while read -r DEFINE; do
+          printf '          <state>%s</state>\n' "$DEFINE"
+      done)"
+
+    local INSERT_FILES="$({
+            grep -E '\.(cpp|c)$' <$1/$PROJECT/$FILELIST_COMBINED_PURE;
+            cd "$DEV_PRJ_DIR" && find "$ISO_AG_LIB_INSIDE/$USE_EMBED_LIB_DIRECTORY" -iname '*.cpp'
+        } |
+        while read -r EACH_SOURCE_FILE; do
+            printf '  <file>\n    <name>$PROJ_DIR$/%s</name>\n  </file>\n' "$EACH_SOURCE_FILE"
+        done)"
+
+    local TEMPLATE_DIR="$(abs_dir_of "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/.")"
+    local EXTENSION
+    for EXTENSION in ewd ewp eww xcl; do
+        local SOURCE="$TEMPLATE_DIR/update_makefile_ams5_${EXTENSION}.txt"
+        local DESTINATION="${PROJECT}/${PROJECT}.${EXTENSION}"
+        expand_template "$SOURCE" >"$DESTINATION"
+    done
+}
+
 create_buildfiles()
 {
     local CONF_DIR="$1"
@@ -2375,7 +2432,10 @@ create_buildfiles()
         (src9)
             create_library_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        (*)
+        (ams5)
+            create_ams5_workspace $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
+        (esx | esxu | c2c | imi | pm167 | Dj1 | mitron167 | *)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
     esac
 
@@ -2407,7 +2467,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
-                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167"|"p1mc"|"src9")
+                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167"|"p1mc"|"src9"|"ams5")
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -2540,7 +2600,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | ees | src9 )
+        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | ees | src9 | ams5)
             ;;
         (*)
             echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
@@ -2645,7 +2705,10 @@ check_after_user_configuration()
             exit 1
             ;;
     esac
-    
+
+    : ${USE_EMBED_LIB_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}
+    : ${USE_EMBED_HEADER_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}
+
     # check for little/big endian setting
     if [ -n "${PARAMETER_LITTLE_ENDIAN_CPU:-}" ] ; then
         USE_LITTLE_ENDIAN_CPU=$PARAMETER_LITTLE_ENDIAN_CPU

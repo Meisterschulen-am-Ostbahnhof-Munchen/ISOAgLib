@@ -1,0 +1,147 @@
+// Generated : 08/29/07 10:26:34
+//
+// Example file to be used with ICCM32C and XLINK.
+// This file shows a possible linker setup.
+//
+// Usage:  XLINK  your_file(s)  -f this_file
+//
+
+// Define CPU
+-cm32c
+
+//================================================================
+// USER DEFINITIONS
+// Please customize according to your specific derivative!
+//================================================================
+
+// Size of the user stack
+// Uncomment for command line use
+//-D_CSTACK_SIZE=1000
+
+// Size of the interrupt stack
+// Uncomment for command line use
+//-D_ISTACK_SIZE=100
+
+// Size of the heap
+// Uncomment for command line use
+//-D_NEAR_HEAP_SIZE=100
+//-D_FAR_HEAP_SIZE=100
+//-D_HUGE_HEAP_SIZE=1000
+
+// ID code written to ROM memory for the ID Code Check Function
+-D_ID_CODE_1=0
+-D_ID_CODE_2=0
+-D_ID_CODE_3=0
+-D_ID_CODE_4=0
+-D_ID_CODE_5=0
+-D_ID_CODE_6=0
+-D_ID_CODE_7=0
+-D_OFS_VALUE=FF
+
+
+// =======================
+//      near RAM
+// =======================
+
+// Relocatable "bit" segment
+-Z(BIT)BITVARS=2800-61FF8
+
+// Set up user stack
+-Z(NEAR)CSTACK+_CSTACK_SIZE=500-C3FF
+
+// Set up interrupt stack
+-Z(NEAR)ISTACK+_ISTACK_SIZE
+
+// Set up near heap
+-Z(NEAR)HEAP+_NEAR_HEAP_SIZE
+
+// Near variables
+-Z(NEAR)IDATA0,UDATA0,NDATA0
+
+
+// User defined near DATA segments
+
+// =======================
+//      near ROM
+// =======================
+
+// Constant segments (in ROM), reachable for near pointers
+-Z(NEARCONST)CONST0=F000-FFFF
+
+// User defined near const segments
+
+
+// =======================
+//      far/huge RAM
+// =======================
+
+// Far and huge data segments
+-Z(FAR)IDATA1,UDATA1,NDATA1=180000-27FFFF
+
+// SB-relative data segments (in RAM)
+// The offset is calculated from the start of SBDATA
+-Z(FAR)SBDATA,SBDATA16
+
+-Z(FAR)FAR_HEAP+_FAR_HEAP_SIZE
+-Z(HUGE)IDATA2,UDATA2,NDATA2
+-Z(HUGE)HUGE_HEAP+_HUGE_HEAP_SIZE
+
+// User defined far & huge DATA segments
+
+// =======================
+//      far/huge ROM
+// =======================
+
+// Constant and initializer segments (in ROM)
+-Z(FARCONST)CDATA0,CDATA1,CONST1=F00800-FEFFFF
+-Z(HUGECONST)CDATA2,CONST2,CHECKSUM,DIFUNCT
+
+// CODE segments
+-Z(HUGECODE)CSTART,CODE=F00800-FEFFFF
+
+// TINYFUNC code must be located above 0xFF0000
+-Z(HUGECODE)TINYFUNC=FF0000-FFFDFF
+
+// User defined CODE segments
+
+// User defined far & huge CONST segments
+
+// Variable vector table
+-Z(CONST)INTVEC=FF0000-FFFDFF
+
+// Special page table
+-Z(CONST)FLIST=FFFE00-FFFFDB
+
+// Fixed interrupt vector table
+-Z(CONST)INTVEC1=FFFFDC-FFFFFF
+
+// ========================
+// IAR C library formatting
+// ========================
+
+// Uncomment for command line use
+//-e_small_write=_formatted_write
+//-e_medium_read=_formatted_read
+
+// ========================
+// Output files
+// ========================
+// Use the -O option to create one or more output files
+// at the same link session. Formats flags, file name and
+// extension is optional. Please un-comment the wanted
+// output formats below.
+//
+// CAUTION: Do not combine other output formats with -rt (special
+// UBROF for Terminal I/O in C-SPY). Output files are valid but
+// contain code that expects to be run under C-SPY.
+
+// Motorola output
+//-Omotorola=.mot
+
+// IEEE-695 output with format flags for the Renesas debugger
+//-Oieee695,lbm=.x30
+
+// ELF/DWARF output with format flags for the Renesas debugger
+//-Oelf,spc=.elf
+
+
