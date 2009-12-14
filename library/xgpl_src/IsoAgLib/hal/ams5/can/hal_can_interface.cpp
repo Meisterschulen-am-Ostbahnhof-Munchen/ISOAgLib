@@ -78,7 +78,6 @@ void IwriteCentralCanfifo(uint8_t aui8_busNr,uint8_t aui8_ObjNr, canSlotMBox_t *
    int32_t i32_fbIndex = -1; /** initialization value*/
    uint32_t i32_msgId = 0 ;
 
-
     if (aui8_bXtd)
     {
      // extended format
@@ -95,56 +94,49 @@ void IwriteCentralCanfifo(uint8_t aui8_busNr,uint8_t aui8_ObjNr, canSlotMBox_t *
     else
     {
       // standard format
-      i32_msgId=  (((uint32_t)tCanregister->ba.sidh) << 6);
-      i32_msgId+=   (uint32_t)tCanregister->ba.sidl;
+      i32_msgId =  (((uint32_t)tCanregister->ba.sidl & 0x3f)     );
+      i32_msgId+=  (((uint32_t)tCanregister->ba.sidh & 0x1f) << 6);
 
       #ifdef USE_CAN_MEASURE_BUSLOAD
       updateCanBusLoad(aui8_busNr, (tCanregister->ba.dlc + 2));
       #endif
     }
-
-      /** if the irQTable is not valid, maybe there is a reconfiguration,
-      * so put all the received message in the FIFO
-      */
-
+   
+    /** if the irQTable is not valid, maybe there is a reconfiguration,
+    * so put all the received message in the FIFO
+    */
     if(true == HAL::isIrqTable(aui8_busNr, aui8_ObjNr))
-          {
+    {
+      /** BIOS objects starts from 1 */
+      HAL::findFilterBox(aui8_busNr, aui8_ObjNr,i32_msgId,&i32_fbIndex);
+      if(i32_fbIndex == -1)
+      {/** message discarded, no FB interested **/
+        return;
+        /** exit from the switch and doesn't write in the central fifo **/
+      }
+    }
 
-           /** BIOS objects starts from 1 */
-            HAL::findFilterBox(aui8_busNr, aui8_ObjNr,i32_msgId,&i32_fbIndex);
+    //TODO !!! in the function iFifoWrite define the last parameter as optional and pass the value to
+    // function getIrqData
+    bool b_ret = HAL::iFifoWrite(aui8_busNr,i32_fbIndex,i32_msgId,(void*)tCanregister,aui8_bXtd);
 
-            if(i32_fbIndex == -1)
-            {/** message discarded, no FB interested **/
-              return;
-              /** exit from the switch and doesn't write in the central fifo **/
-            }
-          }
-
-          //TODO !!! in the function iFifoWrite define the last parameter as optional and pass the value to
-          // function getIrqData
-         bool b_ret = HAL::iFifoWrite(aui8_busNr,i32_fbIndex,i32_msgId,(void*)tCanregister,aui8_bXtd);
-
-          #ifdef DEBUG_FIFO_WRITE
-           if(!b_ret)
-           {
-              INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;
-           }
-           if(i32_fbIndex == -1)
-           {
-            INTERNAL_DEBUG_DEVICE << "message received during the reconfiguration" << INTERNAL_DEBUG_DEVICE_ENDL;
-           }
-           #endif
-
+    #ifdef DEBUG_FIFO_WRITE
+    if(!b_ret)
+    {
+       INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;
+    }
+    if(i32_fbIndex == -1)
+    {
+      INTERNAL_DEBUG_DEVICE << "message received during the reconfiguration" << INTERNAL_DEBUG_DEVICE_ENDL;
+    }
+    #endif
   return;
 }
 
 /** user defined function to retrieve the data from tCanMsgReg  */
-
 void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
 {
   canSlotMBox_t* tCanregister = (canSlotMBox_t*)inputData;
-
-
  // destination->bDlc = C0Slot1.ba.dlc;     /** len of the data **/
   destination->bDlc = tCanregister->ba.dlc;
   destination->bXtd = aui8_bXtd ;
@@ -153,9 +145,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
   {
      //destination->abData[ui8_i] = C0Slot1.ba.data[ui8_i];
      destination->abData[ui8_i] = tCanregister->ba.data[ui8_i];
-
   }
-
 }
 
 

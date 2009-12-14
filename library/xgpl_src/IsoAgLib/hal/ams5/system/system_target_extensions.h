@@ -62,12 +62,6 @@ namespace __HAL
    int32_t getSerialNr(int16_t* pi16_errCode);
 
    /**
-      serial number as long interger
-      @return serial number
-   */
-   uint32_t getSerialNr(void);
-
-   /**
       software output enable/disable
       @param bitState true  -> outputs enable
                       false -> outputs disable

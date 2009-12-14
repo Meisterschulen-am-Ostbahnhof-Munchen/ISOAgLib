@@ -1,10 +1,10 @@
 // ---------------------------------------------------------------------------------------------
 /** \file      system_target_extensions.cpp
     \brief     AMS5 specific extensions for the HAL for central system
-    \version   1.01
-    \date      24.07.2007
+    \version   1.02
+    \date      09.09.2008
     \author    Stefan Klueh (stefan.klueh@gesas:de)
-    \author    copyright (c) 2007 GESAS GmbH
+    \author    copyright (c) 2007/2008 GESAS GmbH
 */
 // ---------------------------------------------------------------------------------------------
 /*   History: 
@@ -12,10 +12,13 @@
 
               20.02.2008 V1.01  - revision of NMI interrupt handler
 
+              09.09.2008 V1.02  - revision of function open_system:
+                                  AMS5 with decentral periphery (ZMDL/LW)
 */
 
 #include "system_target_extensions.h"
 #include <../commercial_BIOS/bios_ams5/ams_bios.h>
+
 
 namespace __HAL /** \brief Sublayer of HAL */
 {
@@ -27,18 +30,28 @@ namespace __HAL /** \brief Sublayer of HAL */
 
    /**
       open the system with system specific function call
+
       @return error state (HAL_NO_ERR == o.k.)
+       -       HAL_WARN_ERR     == Bus is already open
+       -       HAL_RANGE_ERR    == invalid paramater
+       -       HAL_OVERFLOW_ERR == not enough free memory
    */
    int16_t open_system(void)
    {
-      /**
-         initialize the system
-         - set all BIOS variables
-         - start system timer
-      */
-      AMSBIOS::sys_init();
-      AMSBIOS::sys_setSystemTimer(1);
-      return HAL_NO_ERR;
+     // initialize the system and set all BIOS variables
+     int16_t RetValue = AMSBIOS::sys_init();
+
+     if (RetValue != HAL_NO_ERR)
+     {
+       // return on error
+       return RetValue;
+     }
+     else
+     {
+       // start system timer
+       AMSBIOS::sys_setSystemTimer(1);
+     }
+     return RetValue;
    };
 
    /**
@@ -99,10 +112,6 @@ namespace __HAL /** \brief Sublayer of HAL */
       return ((int32_t)SerialNumber);
    };
 
-   uint32_t getSerialNr(void)
-   {
-     return((int32_t)SerialNumber);   
-   }
    /**
       software output enable/disable
       @param bitState true  -> outputs enable
@@ -151,8 +160,7 @@ extern "C"
          {
             // power supply is still below 8V  (NMI-Input == 0)
             // wait for WDT-Reset
-           AMSBIOS::io_setOutput(doX9_1, 1) ;
-           while (1);
+            while (1);
          }      
       }
    }
