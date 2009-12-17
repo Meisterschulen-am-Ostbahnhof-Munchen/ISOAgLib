@@ -1,18 +1,18 @@
-// ---------------------------------------------------------------------------------------------
+/*
+  hal_eeprom_interface.cpp: definition of AMS5 eeprom functions
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 /** \file      hal_eeprom_interface.cpp
     \brief     definition of AMS5 eeprom functions
-    \version   1.01
-    \date      28.02.2008
-    \author    Stefan Klueh (stefan.klueh@gesas:de)
-    \author    copyright (c) 2007 GESAS GmbH
-*/
-// ---------------------------------------------------------------------------------------------
-/*   History: 
-              18.06.2007 V1.00  - first release
-
-              28.02.2008 V1.01  - AMSBIOS-function "eeprom_isReadyForNextWrite" removed
-                                  AMSBIOS-function "eeprom_isReadyForNextRead" removed
-                                  AMSBIOS-function "eeprom_isReady" implemented
 */
 
 #include "hal_eeprom_interface.h"

@@ -1,16 +1,16 @@
-/***************************************************************************
-                          target_extension_can_a2.cpp - CAN communication
-                                       for A2 terminal
-                             -------------------
-    begin                : Tue Oct 2 2001
-    copyright            : (C) 2001 - 2009 Dipl.-Inform. Achim Spangler
-             : This file was based on the corresponding file in
-             : the ESX HAL and modified for A2 HAL.
-             : These changes (C) 2006 - 2010 Brian Wei
-    email                : a.spangler@osb-ag:de
-             : brian.wei@agcocorp:com
-    type                 : Source
- ***************************************************************************/
+/*
+  target_extension_can_a2.cpp: CAN communication for A2 terminal
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 extern "C" 
 {
 #include "cap_interface.h"

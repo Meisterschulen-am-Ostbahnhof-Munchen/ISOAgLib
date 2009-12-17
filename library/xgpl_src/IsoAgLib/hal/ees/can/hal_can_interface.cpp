@@ -1,14 +1,16 @@
-/***************************************************************************
-                          hal_can_interface.cpp - CAN interface between
-                                        BIOS/OS and IsoAgLib to concentrate
-                                        CAN handling abstraction within
-                                        one module
-                             -------------------
-    begin                : 04/20/09 11:32:46 AM CEST
-    copyright            : (C) 2009 OSB-AG
-    email                : m.wodok@osb-ag:de
- ***************************************************************************/
+/*
+  hal_can_interface.cpp: CAN interface between BIOS/OS and IsoAgLib to
+    concentrate CAN handling abstraction within one module
 
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 
 #include "../errcodes.h"
 #include "../typedef.h"

@@ -1,11 +1,16 @@
-//==============================================================================
-//  File:           unicode_helper.h
-//  Author:         Florian Mücke <f.muecke@osb-ag.de>
-//  Created:        04.07.2008 15:59:05 (fmu)
-//  Modified:       $Date$
-//  Copyright:      2008, OSB AG
-//  Description:    Helper functions for multibyte/widechar handling 
-//==============================================================================
+/*
+  compiler_adaptation_unicode.h:
+    Helper functions for multibyte/widechar handling
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 
 #ifndef __UNICODE_HELPER_H__
 #define __UNICODE_HELPER_H__

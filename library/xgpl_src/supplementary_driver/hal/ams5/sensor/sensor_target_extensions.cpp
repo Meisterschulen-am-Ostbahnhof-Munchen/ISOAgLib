@@ -1,24 +1,15 @@
-/***************************************************************************
-    sensor_target_extensions.cpp - AMS5 specific extensions
+/*
+  sensor_target_extensions.cpp: AMS5 specific extensions
 
-    -------------------
-    date                 : 09.09.2008
-    copyright            : (c) 2007/2008 GESAS GmbH
-    email                : stefan.klueh@gesas:de
-    type                 : Module
- ***************************************************************************/
-/*   History:
-              18.06.2007 V1.00  - first release
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
-              04.08.2008 V1.01  - correction of function "initCounter" and
-                                  "getCounterLastSignalAge":
-                                  wrong distinction between the interrupt input channels
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
 
-              09.09.2008 V1.02  - revision of function "get_digin_onoff" and "get_digin_onoff":
-                                  AMS5 with decentral periphery (ZMDL/LW)
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-// ---------------------------------------------------------------------------------------------
-
 
 #include "sensor_target_extensions.h"
 #include <..\commercial_BIOS\bios_ams5\ams_bios.h>

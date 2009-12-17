@@ -1,12 +1,15 @@
-/***************************************************************************
-                          eeprom.h - definition of HAL
-                                     namesapce layer for EES
-                             -------------------
-    begin                : 04/20/09 11:48:49 AM CEST
-    copyright            : (C) 2009 OSB-AG
-    email                : m.wodok@osb-ag:de
- ***************************************************************************/
+/*
+  eeprom.h: definition of HAL namesapce layer for EES
 
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 #ifndef _HAL_ESS_EEPROM_H_
 #define _HAL_ESS_EEPROM_H_
 

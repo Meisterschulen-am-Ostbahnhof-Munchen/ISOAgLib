@@ -1,13 +1,21 @@
-// ---------------------------------------------------------------------------------------------
+/*
+  errcodes.h: header file for AMS5 (M32C/87) error codes
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 /** \file      errcodes.h
     \brief     header file for AMS5 (M32C/87)
                error codes
-    \version   1.00
-    \date      10.07.2007
-    \author    Stefan Klueh
-    \author    copyright (c) 2007 GESAS GmbH
 */
-// ---------------------------------------------------------------------------------------------
+
 
 #ifndef __AMS5_ERRCODES_H__
    #define __AMS5_ERRCODES_H__

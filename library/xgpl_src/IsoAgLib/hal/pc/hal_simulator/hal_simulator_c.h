@@ -1,14 +1,17 @@
-/***************************************************************************
-                          hal_simulator_c.h - Base class for the HAL callback functions
-                                      Derive from this class to override the callback
-                                      functions for the Hardware Abstraction layer.
-                             -------------------
-    begin                :  Feb 16, 2009
-    copyright            : (C) 2009 AGCO Corporation
-    Author               : Mike Schmidt
-    email                : Mike.Schmidt@AgcoCorp.com
- ***************************************************************************/
+/*
+  hal_simulator_c.h: Base class for the HAL callback functions Derive
+    from this class to override the callback functions for the
+    Hardware Abstraction layer.
 
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 #ifndef HALEVENTS_C_H
 #define HALEVENTS_C_H
 

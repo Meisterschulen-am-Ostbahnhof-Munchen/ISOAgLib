@@ -1,22 +1,20 @@
-// ---------------------------------------------------------------------------------------------
+/*
+  typedef.h: header file for AMS5 (M32C/87) system dependent basic
+    type definitions
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 /** \file      typedef.h
     \brief     header file for AMS5 (M32C/87)
                system dependent basic type definitions
-    \version   1.02
-    \date      09.09.2008
-    \author    Stefan Klueh
-    \author    copyright (c) 2007/2008 GESAS GmbH
-*/
-// ---------------------------------------------------------------------------------------------
-/*   History: 
-              10.07.2007 V1.00  - first release
-
-              28.07.2008 V1.01  - structure "sysIrqPriority_t" changed -> ams_can.cpp V2.00
-
-              09.09.2008 V1.02  - structure "ioExtNodeImage_t" added -> see also ams_periphery.cpp
-                                - structure "sysRTC_t" changed -> "day of week" added
-                                - structure "canMsg_t" and "canConfigObj_t" changed -> element renamed: "id" to "dwId"
-                                - Global definitions: directive "#ifndef" added
 */
 
 #ifndef _TYPEDEF_AMS5_H

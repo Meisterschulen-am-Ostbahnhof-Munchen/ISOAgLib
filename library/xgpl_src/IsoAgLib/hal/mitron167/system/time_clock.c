@@ -1,27 +1,15 @@
 /*
- *	Version : @(#)time.c	1.14 02/01/02
- */
+  time_clock.c
 
-/**************************************************************************
-**                                                                        *
-**  FILE        :  time.c                                                 *
-**                                                                        *
-**  Copyright 1996-2002 Altium BV                                           *
-**                                                                        *
-**  DESCRIPTION :  Implementation of _time() using core timer T3.         *
-**		   Return system-time in msec since first call,           *
-**		   which automatically initializes the timer.		  *
-**                                                                        *
-**  NOTE        :  Previous versions of this routine used T6,             *
-**                 but that timer is not available on the C164,           *
-**                 so it is changed to use T3 by default.                 *
-**                                                                        *
-**  MACROS TO INFLUENCE THE BEHAVIOUR:                                    *
-**	HASBCLKCON	Define if the uC has a SYSCON1.BCLKCON field.	  *
-**	LONGPERIOD	Define if a long measurement time is needed.	  *
-**	USE_T6_TIMER	Define if T6/T5 must be used rather than T3/T2.	  *
-**                                                                        *
-**************************************************************************/
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 // Adaptations for mitron with C167
 #define USE_T6_TIMER
 #define LONGPERIOD

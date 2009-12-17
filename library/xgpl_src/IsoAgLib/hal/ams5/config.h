@@ -1,19 +1,20 @@
-// ---------------------------------------------------------------------------------------------
+/*
+  config.h: header file for AMS5 (M32C/87) system dependent configs,
+    defines and includes
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 /** \file      config.h
     \brief     header file for AMS5 (M32C/87)
                system dependent configs, defines and includes
-    \version   1.02
-    \date      28.08.2008
-    \author    Stefan Klueh
-    \author    copyright (c) 2007/2008 GESAS GmbH
-*/
-// ---------------------------------------------------------------------------------------------
-/*   History: 
-              xx.xx.2007 V1.00  - first release
-
-              13.11.2007 V1.01  - ?
-
-              28.08.2008 V1.02  - symbolic channels of outputs and digital inputs expanded 
 */
 
 #ifndef _HAL_AMS5_CONFIG_H_

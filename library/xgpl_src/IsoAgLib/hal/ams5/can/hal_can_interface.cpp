@@ -1,21 +1,16 @@
-/***************************************************************************
-    hal_can_interface.cpp - CAN interface between BIOS/OS and IsoAgLib
-                            to concentrate CAN handling abstraction
-                            within one module
-    -------------------
-    date                 : 09.09.2008
-    copyright            : (c) 2008 GESAS GmbH
-    email                : stefan.klueh@gesas:de
-    type                 : Module
- ***************************************************************************/
-/*   History:
-              26.06.2007 V1.00  - first release
+/*
+  hal_can_interface.cpp: CAN interface between BIOS/OS and IsoAgLib to
+    concentrate CAN handling abstraction within one module
 
-              01.08.2008 V1.01  - function "AMSBIOS::can_resetRingBuffer" removed
-                                  use new function "AMSBIOS::can_clearMsgObj" instead
-              09.09.2008 V1.02  - structure "canMsg_t" and "canConfigObj_t" changed -> element renamed: "id" to "dwId"
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-
 
 #include "../commercial_BIOS/bios_ams5/ams_bios.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>

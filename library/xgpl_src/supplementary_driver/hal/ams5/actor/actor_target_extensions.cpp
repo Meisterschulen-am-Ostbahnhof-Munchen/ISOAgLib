@@ -1,20 +1,15 @@
-/***************************************************************************
-    actor_target_extension.cpp - __HAL namespace layer for AMS5
+/*
+  actor_target_extension.cpp: __HAL namespace layer for AMS5
 
-    -------------------
-    date                 : 09.09.2008
-    copyright            : (c) 2007/2008 GESAS GmbH
-    email                : stefan.klueh@gesas:de
-    type                 : Module
- ***************************************************************************/
-/*   History:
-              18.06.2007 V1.00  - first release
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
-              09.09.2008 V1.01  - revision of function "getMaxDigout" and "setDigout":
-                                  AMS5 with decentral periphery (ZMDL/LW)
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-// ---------------------------------------------------------------------------------------------
-
 
 #include "actor_target_extensions.h"
 #include <../commercial_BIOS/bios_ams5/ams_bios.h>

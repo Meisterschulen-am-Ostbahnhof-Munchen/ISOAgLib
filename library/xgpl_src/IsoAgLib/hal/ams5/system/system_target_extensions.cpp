@@ -1,19 +1,19 @@
-// ---------------------------------------------------------------------------------------------
+/*
+  system_target_extensions.cpp: AMS5 specific extensions for the HAL
+    for central system
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 /** \file      system_target_extensions.cpp
     \brief     AMS5 specific extensions for the HAL for central system
-    \version   1.02
-    \date      09.09.2008
-    \author    Stefan Klueh (stefan.klueh@gesas:de)
-    \author    copyright (c) 2007/2008 GESAS GmbH
-*/
-// ---------------------------------------------------------------------------------------------
-/*   History: 
-              18.06.2007 V1.00  - first release
-
-              20.02.2008 V1.01  - revision of NMI interrupt handler
-
-              09.09.2008 V1.02  - revision of function open_system:
-                                  AMS5 with decentral periphery (ZMDL/LW)
 */
 
 #include "system_target_extensions.h"

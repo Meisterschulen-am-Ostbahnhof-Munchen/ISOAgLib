@@ -1,13 +1,15 @@
-/***************************************************************************
-    hal_rs232_interface.h - declaration of AMS5 RS232 interface
+/*
+  hal_rs232_interface.h: declaration of AMS5 RS232 interface
 
-    -------------------
-    date                 : 18.06.2007
-    copyright            : (c) 2007 GESAS GmbH
-    email                : stefan.klueh@gesas:de
-    type                 : Header
- ***************************************************************************/
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 
 #ifndef _HAL_AMS5_RS232_INTERFACE_H_
 #define _HAL_AMS5_RS232_INTERFACE_H_
