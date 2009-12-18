@@ -1,7 +1,7 @@
 /*
-  eeprom.h: include dependent on used target (defined in
+  hal_sensor.h: include dependent on used target (defined in
     IsoAgLib/isoaglib_config.h) the suitable HAL specific header for
-    EEPROM data storage
+    sensor data input
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -13,22 +13,24 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/eeprom.h
+/* ************************************************************ */
+/** \file
+ * 
   * include dependent on used target (defined in
 	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for EEPROM data storage.
+		specific header for sensor data input.
 */
 /* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_EEPROM_H_
-#define _HAL_INDEPENDEND_EEPROM_H_
+#ifndef _HAL_INDEPENDENT_SENSOR_H_
+#define _HAL_INDEPENDENT_SENSOR_H_
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
+#include <IsoAgLib/isoaglib_config.h>
 
-// now include dependent on used target the suitable header
-#define _hal_eeprom_header_ <IsoAgLib/hal/HAL_SUBDIR/eeprom/eeprom.h>
-#include _hal_eeprom_header_
+
+#ifdef HAL_PATH_SUPPLEMENTARY_SENSOR
+#  define _hal_sensor_header_ <HAL_PATH_SUPPLEMENTARY_SENSOR/sensor.h>
+#  include _hal_sensor_header_
+#endif
 
 
 #endif

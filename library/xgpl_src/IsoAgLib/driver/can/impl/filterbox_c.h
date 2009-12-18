@@ -18,7 +18,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/hal/can.h>
+#include <IsoAgLib/hal/hal_can.h>
 
 #include "ident_c.h"
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>

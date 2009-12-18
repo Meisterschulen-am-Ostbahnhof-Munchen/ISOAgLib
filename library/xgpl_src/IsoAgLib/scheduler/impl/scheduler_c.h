@@ -17,7 +17,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 

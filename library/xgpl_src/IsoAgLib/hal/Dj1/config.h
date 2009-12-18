@@ -13,19 +13,14 @@
 #ifndef _HAL_DJ1_CONFIG_H_
 #define _HAL_DJ1_CONFIG_H_
 
-// include target independent configs
-#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/compiler_adaptation.h>
+
+#define SYSTEM_DJ1
+
 
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer
 //    ( i.e. direct in the BIOS/OS call)
 #define HAL_CAN_MAX_BUS_NR 2
-
-// If not allready defined in compiler_adaptation.h ...
-#ifndef STL_NAMESPACE
-  #define STL_NAMESPACE std
-#endif
 
 /** define uint16_t order of float: WORD_LO_HI, WORD_HI_LO */
 #define FLOAT_WORD_ORDER WORD_HI_LO

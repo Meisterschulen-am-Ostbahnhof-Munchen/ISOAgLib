@@ -24,8 +24,8 @@
    can be used to derive the meaning of the specific function.
 */
 /* ************************************************************ */
-#ifndef _HAL_ESX_SYSTEM_H_
-#define _HAL_ESX_SYSTEM_H_
+#ifndef _HAL_A2_SYSTEM_H_
+#define _HAL_A2_SYSTEM_H_
 
 #include <cstdio>
 #include "../config.h"
@@ -58,7 +58,7 @@ namespace HAL
   inline int16_t scanf(...) {return 1;};
 
   //BW, 4/13/06, compilation error ,will clean up later
-  #if defined( DEBUG ) &&  defined(SYSTEM_A2)
+  #if defined( DEBUG )
   using CNAMESPACE::sprintf;
   using CNAMESPACE::sscanf;
   #endif

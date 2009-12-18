@@ -11,20 +11,11 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#ifndef __MASTER_CONFIG_HEADER_H__
-#define __MASTER_CONFIG_HEADER_H__
+#ifndef __UTIL_CONFIG_HEADER_H__
+#define __UTIL_CONFIG_HEADER_H__
 
-#include "../typedef.h"
-#include "compiler_adaptation.h"
+#include <IsoAgLib/isoaglib_config.h>
 
-
-/* ****************************************** */
-/* * include of standard header files */
-/* ****************************************** */
-
-/* include of system specific headers */
-/* (not headers with BIOS function adaptors) */
-#include <IsoAgLib/hal/config.h>
 
 #define STANDARD_CAN_IDENT uint16_t
 #define EXTENDED_CAN_IDENT uint32_t

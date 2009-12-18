@@ -1,5 +1,5 @@
 /*
-  datastreams.h:
+  hal_datastreams.h:
     include dependent on used target (defined in
     IsoAgLib/isoaglib_config.h) the suitable HAL specific header for
     datastreams input and output
@@ -14,6 +14,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+/* ************************************************************ */
 /** \file
  * 
   * include dependent on used target (defined in
@@ -21,12 +22,11 @@
 		specific header for datastreams output control.
 */
 /* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_DATASTREAMS_H_
-#define _HAL_INDEPENDEND_DATASTREAMS_H_
+#ifndef _HAL_INDEPENDENT_DATASTREAMS_H_
+#define _HAL_INDEPENDENT_DATASTREAMS_H_
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/hal/config.h>
+#include <IsoAgLib/isoaglib_config.h>
+
 
 typedef enum
 {
@@ -39,25 +39,9 @@ typedef enum
 } FileMode_t;
 
 
-// now include dependent on used target the suitable header
-#if defined(SYSTEM_PC)
-	#include "pc/datastreams/datastreams.h"
-#elif defined(SYSTEM_ESX)
-//	#include "esx/datastreams/datastreams.h"
-#elif defined(SYSTEM_A2)
-//	#include "esx/datastreams/datastreams.h"
-#elif defined(SYSTEM_ESXu)
-//	#include "esxu/datastreams/datastreams.h"
-#elif defined(SYSTEM_C2C)
-//	#include "c2c/datastreams/datastreams.h"
-#elif defined(SYSTEM_DJ1)
-	#include "Dj1/datastreams/datastreams.h"
-#elif defined(SYSTEM_IMI)
-//	#include "imi/datastreams/datastreams.h"
-#elif defined(SYSTEM_PM167)
-//	#include "pm167/datastreams/datastreams.h"
-#elif defined(SYSTEM_AMS5)
-	#include "ams5/datastreams/datastreams.h"
+#ifdef HAL_PATH_SUPPLEMENTARY_DATASTREAMS
+#  define _hal_datastreams_header_ <HAL_PATH_SUPPLEMENTARY_DATASTREAMS/datastreams.h>
+#  include _hal_datastreams_header_
 #endif
 
 

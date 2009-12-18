@@ -13,7 +13,7 @@
 #ifndef VTOBJECTGRAPHICSCONTEXT_C_H
 #define VTOBJECTGRAPHICSCONTEXT_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #include "vtobject_c.h"
 #include "isoterminal_c.h"

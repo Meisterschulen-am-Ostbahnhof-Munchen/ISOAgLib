@@ -15,13 +15,13 @@
 #define TARGETFILESTREAMINPUT_C_H
 
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #include <compilerswitches.h>
 
 
 #include <string>
-#include <supplementary_driver/hal/datastreams.h>
+#include <supplementary_driver/hal/hal_datastreams.h>
 
 
 // +X2C includes

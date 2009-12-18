@@ -20,8 +20,8 @@
 #include "can_target_extensions.h"
 #include <stdlib.h>
 #include <ctype.h>
-#include <IsoAgLib/hal/system.h>
-#include <IsoAgLib/hal/can.h>
+#include <IsoAgLib/hal/hal_system.h>
+#include <IsoAgLib/hal/hal_can.h>
 
 // RTE Includes
 #include <rte_client.h>   // be an RTE client

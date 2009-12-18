@@ -15,7 +15,6 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#include "../compiler_adaptation.h"
 
 #if defined(OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED) && defined( __GNUC__ ) && __GNUC__ >= 4
   #include <ext/malloc_allocator.h>

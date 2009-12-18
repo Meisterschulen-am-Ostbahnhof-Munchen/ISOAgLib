@@ -14,43 +14,29 @@
 #ifndef TARGETFILESTREAMOUTPUT_C_H
 #define TARGETFILESTREAMOUTPUT_C_H
 
-
-
 #include <compilerswitches.h>
-#include <IsoAgLib/typedef.h>
-#include <supplementary_driver/hal/datastreams.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <supplementary_driver/hal/hal_datastreams.h>
 
-//#include <fstream>
 #include <string>
 
-#ifndef SYSTEM_DJ1
-  #ifndef WIN32
-    #include <unistd.h>
-    #include <sys/types.h>
-    #include <sys/stat.h>
-    #include <fcntl.h>
-  #endif
-#endif
-
-// +X2C includes
-// ~X2C
 
 //  +X2C Class 915 : FileTargetFileStreamOutput_c
-class TargetFileStreamOutput_c //: public STL_NAMESPACE::ofstream
+class TargetFileStreamOutput_c
 {
 
 public:
   TargetFileStreamOutput_c();
   ~TargetFileStreamOutput_c();
 
-	//! open a output stream
- 	bool open( CNAMESPACE::string& filename, FileMode_t at_mode );
+  //! open a output stream
+  bool open( CNAMESPACE::string& filename, FileMode_t at_mode );
 
-	//! open a output stream
-	bool open( const char* filename, FileMode_t at_mode );
-	//! close a output stream
+  //! open a output stream
+  bool open( const char* filename, FileMode_t at_mode );
+  //! close a output stream
   //! @param pathname if pathname != NULL => sync file and path
-	void close( const char* pathname = NULL);
+  void close( const char* pathname = NULL);
 
   //  Operation: operator<<
   //! Parameter:
@@ -66,7 +52,7 @@ public:
   // Operation: good
   virtual bool good() const { return !fail(); };
 
-  private:
+private:
 
   #if DEBUG_FILESTREAMOUTPUT
   uint32_t mui32_byteCount;

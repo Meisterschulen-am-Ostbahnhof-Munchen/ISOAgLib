@@ -14,7 +14,7 @@
 #ifndef IGENERICDATA_H
 #define IGENERICDATA_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 #include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>

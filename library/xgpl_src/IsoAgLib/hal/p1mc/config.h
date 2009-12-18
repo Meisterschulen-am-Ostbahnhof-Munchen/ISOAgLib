@@ -13,9 +13,9 @@
 #ifndef _HAL_P1MC_CONFIG_H_
 #define _HAL_P1MC_CONFIG_H_
 
-// include target independent configs
-#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/compiler_adaptation.h>
+
+#define SYSTEM_P1MC
+
 
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer

@@ -15,6 +15,11 @@
 #ifndef IACTOR_H
 #define IACTOR_H
 
+
+#error "This file is currently not supported."
+
+
+
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */

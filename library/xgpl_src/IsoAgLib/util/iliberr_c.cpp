@@ -13,7 +13,7 @@
 
 #include "iliberr_c.h"
 #include "config.h"
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 
 
 #ifdef DEBUG

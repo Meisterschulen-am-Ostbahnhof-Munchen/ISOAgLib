@@ -16,7 +16,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

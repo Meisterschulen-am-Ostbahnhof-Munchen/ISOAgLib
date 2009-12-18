@@ -13,7 +13,7 @@
 #ifndef VTOBJECTELLIPSE_C_H
 #define VTOBJECTELLIPSE_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef USE_VTOBJECT_ellipse
 #include "vtobject_c.h"

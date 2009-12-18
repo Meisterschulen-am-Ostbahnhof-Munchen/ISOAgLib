@@ -13,13 +13,12 @@
 */
 #define  STRICT
 
-#define CVS_REV "$Revision$"
 #define RTE_CLIENT
 #include <rte_client.h>   // be an RTE client
 #include <rte_serial.h>
 
 #include "rs232_target_extensions.h"
-#include <IsoAgLib/util/compiler_adaptation.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/pc/system/system.h>
 #include <cstdio>
 #include <cstring>

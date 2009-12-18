@@ -49,7 +49,7 @@ namespace __HAL
 
 
 //  #include "../djbiosdrawinterface.h"
-//#include <IsoAgLib/typedef.h>
+//#include <IsoAgLib/hal/hal_typedef.h>
 
 
 

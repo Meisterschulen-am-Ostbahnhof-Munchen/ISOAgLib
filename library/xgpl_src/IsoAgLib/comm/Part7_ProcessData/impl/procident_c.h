@@ -16,7 +16,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
 #include <IsoAgLib/util/impl/singleton.h>

@@ -27,11 +27,8 @@
   #include <string>
 #endif
 #include <deque>
-#ifdef USE_RS232_OVER_CAN
-  #include <supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h>
-#else
-  #include <supplementary_driver/hal/rs232.h>
-#endif
+#include <supplementary_driver/hal/hal_rs232.h>
+
 
 /** define based on system type the support of several RS232 channels */
 #if defined(USE_RS232_CHANNEL)

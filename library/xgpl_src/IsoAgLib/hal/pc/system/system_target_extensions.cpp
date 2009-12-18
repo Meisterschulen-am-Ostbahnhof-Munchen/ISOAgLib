@@ -28,17 +28,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#ifndef PC_OS_Linux
-  #ifndef WINCE
-    #include <conio.h>
-  #endif
-#else
-  #include <unistd.h>
-  #include <fcntl.h>
-#endif
 #include <iostream>
 
 #ifdef WIN32
+  #ifndef WINCE
+    #include <conio.h>
+  #endif
   #if defined( _MSC_VER )
     #include <windows.h>
     #include <MMSYSTEM.H>
@@ -46,6 +41,7 @@
     #include <time.h>
   #endif
 #else
+  #include <fcntl.h>
   #include <sys/time.h>
   #include <sys/times.h>
   #include <unistd.h>
@@ -313,7 +309,8 @@ void powerDown(void)
   }
 }
 
-#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
+//#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
+#if defined(USE_SENSOR_I)
 typedef void (*_counterIrqFunction)(...);
 static _counterIrqFunction _irqFuncArr[16] = {NULL, NULL, NULL, NULL, NULL, NULL,
  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -323,7 +320,8 @@ int32_t i32_lastTime[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 /* the evaluation of the on/off-switch (D+)*/
 int16_t  getOn_offSwitch(void)
 {
-#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
+//#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
+#if defined(USE_SENSOR_I)
   // simulate digital RPM input
   uint8_t ui8_ind;
   int32_t i32_time = getTime();
@@ -368,7 +366,7 @@ void setRelais(boolean bitState)
 
 int16_t KeyGetByte(uint8_t *p)
 {
-  #ifdef PC_OS_Linux
+  #ifndef WIN32
     // fcntl( 0,
     return read(0, p, sizeof *p) == sizeof *p;
   #else

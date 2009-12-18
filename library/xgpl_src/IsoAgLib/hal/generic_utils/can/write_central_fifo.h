@@ -16,10 +16,9 @@
 #ifndef WRITE_CENTRALFIFO_H
 #define WRITE_CENTRALFIFO_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/filterbox_c.h>
-#include <IsoAgLib/hal/config.h>
 
 #ifdef SYSTEM_PC
 #include <IsoAgLib/hal/pc/can/can_typedef.h>

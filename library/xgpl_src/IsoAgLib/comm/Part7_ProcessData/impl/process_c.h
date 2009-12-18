@@ -19,7 +19,7 @@
 /* *************************************** */
 #include <functional>
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>

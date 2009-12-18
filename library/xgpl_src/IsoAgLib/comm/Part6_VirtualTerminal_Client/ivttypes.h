@@ -13,7 +13,7 @@
 #ifndef IVTTYPES_H
 #define IVTTYPES_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <cstdlib>       // using abs()
 #include <algorithm>     // using min() max()
 

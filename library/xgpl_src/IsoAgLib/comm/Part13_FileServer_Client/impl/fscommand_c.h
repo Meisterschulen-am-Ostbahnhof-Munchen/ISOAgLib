@@ -13,7 +13,7 @@
 #ifndef FSCOMMAND_C_H
 #define FSCOMMAND_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
 //Fileserver includes

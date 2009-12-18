@@ -1,5 +1,5 @@
 /*
-  rs232_over_can.cpp: definition of HAL namesapce layer for Hardware Abstraction Layer
+  rs232.cpp: definition of HAL namesapce layer for Hardware Abstraction Layer
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -11,9 +11,8 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "rs232_over_can.h"
+#include "rs232.h"
 
-#ifdef USE_RS232_OVER_CAN
 
 uint8_t StoreInBigBuf = true;
 
@@ -139,4 +138,3 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 	return put_rs232NChar((uint8_t*)pbString, CNAMESPACE::strlen( (char*)pbString ), aui8_channel);
 };
 }
-#endif

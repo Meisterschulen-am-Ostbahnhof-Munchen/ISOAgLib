@@ -14,7 +14,7 @@
 #define VTOBJECTINPUTSTRING_C_H
 
 #include "../ivtobjectstring_c.h"
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef USE_VTOBJECT_inputstring
 #include "../ivtobjectfontattributes_c.h"

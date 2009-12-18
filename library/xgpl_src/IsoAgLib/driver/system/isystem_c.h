@@ -79,20 +79,17 @@ public:
   */
   static bool canEn() {return System_c::canEn();};
 
-#ifndef SYSTEM_PM167
   /**
     get the main power voltage
     @return voltage of power [mV]
   */
-  static int16_t  getBatteryVoltage( void ) {return System_c::getBatteryVoltage();};
+  static int16_t getBatteryVoltage( void ) {return System_c::getBatteryVoltage();};
   /**
     get the voltage of the external reference 8.5Volt for work of external sensors
     @return voltage at external reference [mV]
   */
-  static int16_t  getExternalSensorPowerVoltage( void )
+  static int16_t getExternalSensorPowerVoltage( void )
     { return System_c::getExternalSensorPowerVoltage();};
-
-#endif
 
   /**
     deliver the serial nr of the device into uint8_t[6] array

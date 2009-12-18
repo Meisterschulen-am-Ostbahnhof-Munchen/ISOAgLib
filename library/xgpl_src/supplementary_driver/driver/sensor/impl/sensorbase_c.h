@@ -17,7 +17,7 @@
 
 #include "sensor_c.h"
 #include <IsoAgLib/util/iliberr_c.h>
-#include <supplementary_driver/hal/sensor.h>
+#include <supplementary_driver/hal/hal_sensor.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

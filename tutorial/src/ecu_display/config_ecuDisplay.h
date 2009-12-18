@@ -8,7 +8,18 @@
 //                      if the corresponding value in isoaglib_config.h changed
 
 
-#define PRJ_USE_AUTOGEN_CONFIG config_ecuDisplay.h
+// These defines are needed for inclusion of the correct HAL modules:
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+#define HAL_PATH_ISOAGLIB_SYSTEM IsoAgLib/hal/pc/system
+#define HAL_PATH_ISOAGLIB_CAN IsoAgLib/hal/pc/can
+#define HAL_PATH_ISOAGLIB_EEPROM IsoAgLib/hal/pc/eeprom
+#define HAL_PATH_SUPPLEMENTARY_RS232 supplementary_driver/hal/pc/rs232
+#define HAL_PATH_SUPPLEMENTARY_ACTOR supplementary_driver/hal/pc/actor
+#define HAL_PATH_SUPPLEMENTARY_SENSOR supplementary_driver/hal/pc/sensor
+#define HAL_PATH_SUPPLEMENTARY_DATASTREAMS supplementary_driver/hal/pc/datastreams
+
+
+// These defines are set in the conf_ecu_display_x86linux:
 
 
 #define CAN_BUS_CNT 1 

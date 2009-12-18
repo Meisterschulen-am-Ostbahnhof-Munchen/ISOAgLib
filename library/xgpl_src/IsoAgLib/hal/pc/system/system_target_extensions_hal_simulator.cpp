@@ -1,7 +1,6 @@
 /*
   target_extension_system_HALSimulator.cpp: source for HAL simulator
-    for Sensors (Inputs) This file was based on
-    sensor_target_extensions.cpp
+    for Sensors (Inputs) This file was based on sensor_target_extensions.cpp
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -32,17 +31,12 @@
 
 #include <IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h>
 
-#ifndef PC_OS_Linux
-  #ifndef WINCE
-    #include <conio.h>
-  #endif
-#else
-  #include <unistd.h>
-  #include <fcntl.h>
-#endif
 #include <iostream>
 
 #ifdef WIN32
+  #ifndef WINCE
+    #include <conio.h>
+  #endif
   #if defined( _MSC_VER )
     #include <windows.h>
     #include <MMSYSTEM.H>
@@ -50,6 +44,7 @@
     #include <time.h>
   #endif
 #else
+  #include <fcntl.h>
   #include <sys/time.h>
   #include <sys/times.h>
   #include <unistd.h>
@@ -316,7 +311,8 @@ void powerDown(void)
   }
 }
 
-#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
+//#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
+#if defined(USE_SENSOR_I)
 typedef void (*_counterIrqFunction)(...);
 static _counterIrqFunction _irqFuncArr[16] = {NULL, NULL, NULL, NULL, NULL, NULL,
  NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
@@ -338,7 +334,7 @@ void setRelais(boolean bitState)
 
 int16_t KeyGetByte(uint8_t *p)
 {
-  #ifdef PC_OS_Linux
+  #ifndef WIN32
     // fcntl( 0,
     return read(0, p, sizeof *p) == sizeof *p;
   #else

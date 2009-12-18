@@ -11,15 +11,15 @@
 */
 
 /*! \namespace __HAL
-    \brief Internal HAL-Namespace, not allowed to be used by Application-Code
+    \brief Internal namespace, used for wrapping of the BIOS functions
 
-    All members of the internal __HAL namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
+    All members of the internal __HAL namespace are only for internal use inside of IsoAgLib's HAL. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
 */
 
 /*! \namespace HAL
-    \brief API-HAL-Namespace, allowed to be used by Application-Code
+    \brief Internal namespace, used to abstract any given hardware-platform
 
-    Applications are only allowed to use this namespace. Code using this namespace is and can stay proprietary and doesn't need to be opened to the public.
+    All members of the internal HAL namespace are only for internal use inside of IsoAgLib. Applications are not allowed to directly use this namespace. All code using this namespace is treated as an extension of IsoAgLib and hence needs to be given back to the IsoAgLib project.
 */
 
 /*! \namespace AMSBIOS

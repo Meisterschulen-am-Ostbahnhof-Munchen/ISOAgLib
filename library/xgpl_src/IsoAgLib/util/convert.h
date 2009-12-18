@@ -14,7 +14,7 @@
 #ifndef __CONVERT_H__
 #define __CONVERT_H__
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 
 /** Common convert helpers (e.g. type conversion with type check).

@@ -16,7 +16,7 @@
 
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/hal/can.h>
+#include <IsoAgLib/hal/hal_can.h>
 
 
 #include <list>

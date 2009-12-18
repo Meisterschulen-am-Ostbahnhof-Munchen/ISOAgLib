@@ -14,7 +14,7 @@
 #ifndef _PC_EEPROM_TARGET_EXTENSIONS_H_
 #define _PC_EEPROM_TARGET_EXTENSIONS_H_
 
-#include "../config.h"
+#include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
 #include "../errcodes.h"
 

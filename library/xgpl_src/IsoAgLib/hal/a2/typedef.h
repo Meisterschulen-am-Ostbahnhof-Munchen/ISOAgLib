@@ -19,7 +19,6 @@
  typedef unsigned int size_t;
 #endif
 
-#ifdef SYSTEM_A2
 #include <string.h> //Brian Wei, 8/31/06
 extern "C"	char *  strchr   ( const char *, int );
 extern "C"	char *  strncat  ( char *, const char *, size_t );
@@ -32,7 +31,6 @@ _ext_C	_USMLIB	void *  memmove  ( void *, const void *, size_t );
 _ext_C	_USMLIB	void *  memchr   ( const void *, int, size_t );
 _ext_C	_USMLIB	void *  memset   ( void *, int, size_t );
 _ext_C	_USMLIB	int     memcmp   ( const void *, const void *, size_t );
-#endif
 
 
 typedef unsigned char uint8_t;

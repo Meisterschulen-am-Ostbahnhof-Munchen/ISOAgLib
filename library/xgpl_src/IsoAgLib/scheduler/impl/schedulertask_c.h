@@ -19,8 +19,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-//#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/hal/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>

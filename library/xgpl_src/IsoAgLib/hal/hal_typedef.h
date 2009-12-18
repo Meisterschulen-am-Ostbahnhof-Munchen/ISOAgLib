@@ -1,5 +1,5 @@
 /*
-  config.h: system dependent configs, defines and includes
+  hal_typedef.h: central typedef
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -10,20 +10,18 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef _HAL_EES_CONFIG_H_
-#define _HAL_EES_CONFIG_H_
+#ifndef __HAL_TYPEDEF_H__
+#define __HAL_TYPEDEF_H__
+
+#include <IsoAgLib/isoaglib_config.h>
 
 
-#define SYSTEM_EES
-
-
-#define HAL_CAN_MAX_BUS_NR 3
-
-#define SIZEOF_INT 4
-
-#define HUGE_MEM
-#define NEAR_MEM
-#define USE_NEAR_MEM
+#ifdef HAL_PATH_ISOAGLIB
+#  define _hal_typedef_header_ <HAL_PATH_ISOAGLIB/typedef.h>
+#  include _hal_typedef_header_
+#else
+#  error "No HAL_PATH_ISOAGLIB set. This is a mandatory module!"
 #endif
 
-// eof
+
+#endif

@@ -15,13 +15,8 @@
 
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/typedef.h>
-#include <IsoAgLib/hal/can.h>
-
-#ifdef SYSTEM_MITRON167
-  #undef CNAMESPACE
-  #define CNAMESPACE
-#endif
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/hal/hal_can.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

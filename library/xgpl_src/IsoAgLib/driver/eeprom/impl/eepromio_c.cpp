@@ -13,7 +13,7 @@
 */
 
 #include "eepromio_c.h"
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>

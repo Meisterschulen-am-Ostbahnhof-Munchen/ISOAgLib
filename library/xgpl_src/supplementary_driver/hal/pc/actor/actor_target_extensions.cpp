@@ -12,7 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 #include "actor_target_extensions.h"
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/hal/pc/errcodes.h>
 #include <cstdio>

@@ -16,7 +16,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 //#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 namespace IsoAgLib {
 

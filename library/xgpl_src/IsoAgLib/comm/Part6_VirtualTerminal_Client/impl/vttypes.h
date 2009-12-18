@@ -14,7 +14,7 @@
 #define VTTYPES_H
 
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #define FLAG_BIT_IN_RAM 0
 #define FLAG_BIT_ORIGIN_SKM 1

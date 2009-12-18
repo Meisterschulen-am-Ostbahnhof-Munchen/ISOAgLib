@@ -18,9 +18,9 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 #ifdef USE_CAN_EEPROM_EDITOR
-  #include <IsoAgLib/hal/eeprom.h>
+  #include <IsoAgLib/hal/hal_eeprom.h>
 #endif
 
 #if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION) || defined(DEBUG_HEAP_USEAGE) || defined(DEBUG_CAN_BUFFER_FILLING)

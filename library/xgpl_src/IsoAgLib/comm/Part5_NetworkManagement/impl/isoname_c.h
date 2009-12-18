@@ -16,7 +16,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
 namespace IsoAgLib {

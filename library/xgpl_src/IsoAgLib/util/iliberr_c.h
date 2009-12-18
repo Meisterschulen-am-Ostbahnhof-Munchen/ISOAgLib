@@ -14,7 +14,7 @@
 #ifndef _ILIB_ERR_H
 #define _ILIB_ERR_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 #include <vector>

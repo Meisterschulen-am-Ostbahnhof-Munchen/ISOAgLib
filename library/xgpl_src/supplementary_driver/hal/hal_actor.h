@@ -1,7 +1,7 @@
 /*
-  system.h: include dependent on used target (defined in
+  hal_actor.h: include dependent on used target (defined in
     IsoAgLib/isoaglib_config.h) the suitable HAL specific header for
-    central system functions
+    actor output control
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -13,22 +13,24 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/system.h
+/* ************************************************************ */
+/** \file
+ * 
   * include dependent on used target (defined in
 	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for central system functions.
+		specific header for actor output control.
 */
 /* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_SYSTEM_H_
-#define _HAL_INDEPENDEND_SYSTEM_H_
+#ifndef _HAL_INDEPENDENT_ACTOR_H_
+#define _HAL_INDEPENDENT_ACTOR_H_
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
+#include <IsoAgLib/isoaglib_config.h>
 
-// now include dependent on used target the suitable header
-#define _hal_system_header_ <IsoAgLib/hal/HAL_SUBDIR/system/system.h>
-#include _hal_system_header_
+
+#ifdef HAL_PATH_SUPPLEMENTARY_ACTOR
+#  define _hal_actor_header_ <HAL_PATH_SUPPLEMENTARY_ACTOR/actor.h>
+#  include _hal_actor_header_
+#endif
 
 
 #endif

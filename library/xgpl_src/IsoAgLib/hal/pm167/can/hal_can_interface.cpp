@@ -27,7 +27,7 @@
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>

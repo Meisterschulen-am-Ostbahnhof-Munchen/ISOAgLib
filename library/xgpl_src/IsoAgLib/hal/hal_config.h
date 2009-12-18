@@ -1,5 +1,5 @@
 /*
-  config.h: include dependent on used target (defined in
+  hal_config.h: include dependent on used target (defined in
     IsoAgLib/isoaglib_config.h) the suitable HAL specific header for
     central configuration settings
 
@@ -12,18 +12,17 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-/** \file IsoAgLib/hal/config.h
+
+/* ************************************************************ */
+/** \file IsoAgLib/hal/hal_config.h
   * include dependent on used target (defined in
-	  IsoAgLib/isoaglib_config.h) the suitable HAL
-		specific header for central configuration settings.
+    IsoAgLib/isoaglib_config.h) the suitable HAL
+    specific header for central configuration settings.
 */
 /* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_CONFIG_H_
-#define _HAL_INDEPENDEND_CONFIG_H_
+#ifndef _HAL_INDEPENDENT_CONFIG_H_
+#define _HAL_INDEPENDENT_CONFIG_H_
 
-// include interface aplication relevant configuration settings
-#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/util/compiler_adaptation.h>
 
 #define HAL_CAN_BITRATE_LIST {10, 20, 40, 50, 100, 125, 250, 500, 1000}
 #define HAL_CAN_BITRATE_CNT 9
@@ -40,9 +39,13 @@
 #define HAL_RS232_BAUDRATE_LIST {75, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600}
 #define HAL_RS232_BITRATE_CNT 9                                          
 
-// now include dependent on used target the suitable header
-#define _hal_config_header_ <IsoAgLib/hal/HAL_SUBDIR/config.h>
-#include _hal_config_header_
+
+#ifdef HAL_PATH_ISOAGLIB
+#  define _hal_config_header_ <HAL_PATH_ISOAGLIB/config.h>
+#  include _hal_config_header_
+#else
+#  error "No HAL_PATH_ISOAGLIB set. This is mandatory! Make sure you don't include 'hal_config.h' directly. Include 'isoaglib_config.h' instead!"
+#endif
 
 
 #endif

@@ -13,7 +13,7 @@
 #ifndef VTOBJECTINPUTLIST_C_H
 #define VTOBJECTINPUTLIST_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef USE_VTOBJECT_inputlist
 #include "vtobject_c.h"

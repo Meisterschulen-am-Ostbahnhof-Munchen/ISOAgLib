@@ -127,6 +127,20 @@ namespace HAL
     {__HAL::start_task_timer ( T_TASK_BASIC );};
 
   /**
+    get the main power voltage
+    @return voltage of power [mV]
+  */
+  inline int16_t  getAdcUbat( void )
+    { return 13500; /* actually not implementable for this hardware */ }
+
+  /**
+    get the voltage of the external reference 8.5Volt for work of external sensors
+    @return voltage at external reference [mV]
+  */
+  inline int16_t  getAdc_u85( void )
+    { return 8500; /* actually not implementable for this hardware */ }
+
+  /**
     check if D+/CAN_EN is active
     (if NO_CAN_EN_CHECK is defined this function return always return ON)
     @return ON(1) or OFF(0)

@@ -30,7 +30,7 @@
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/hal/mitron167/system/system.h>
 
-#include <supplementary_driver/hal/rs232.h>
+#include <supplementary_driver/hal/hal_rs232.h>
 
 
 #define TASKING

@@ -302,8 +302,8 @@ library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h
 library/xgpl_src/supplementary_driver/hal/pc/actor/actor_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions_hal_simulator.cpp -text
-library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.cpp -text
-library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232/rs232_over_can.h -text
+library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232_over_can/rs232.cpp -text
+library/xgpl_src/supplementary_driver/hal/virtualDrivers/rs232_over_can/rs232.h -text
 tools/LICENSE.txt -text
 tools/README.txt -text
 tools/can_messenger/README.txt -text

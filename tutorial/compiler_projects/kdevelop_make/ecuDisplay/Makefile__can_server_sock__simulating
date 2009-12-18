@@ -15,7 +15,7 @@ EXTERNAL_LIBS =
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DSYSTEM_PC -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_SOCKET
+PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_SOCKET
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
@@ -123,10 +123,28 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h \
 		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/hal_system.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/hal_config.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/hal_typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/hal_can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/hal_eeprom.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
-		../../../../library/xgpl_src/IsoAgLib/typedef.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h \
@@ -190,11 +208,8 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/icancustomer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/config.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.h \
@@ -256,7 +271,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
@@ -269,24 +283,12 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vttypes.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminalpkg_c.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/eeprom.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/system.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/can.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container_decl.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h \
-		../../../../library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h
+		../../../../library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt
@@ -420,10 +422,10 @@ install_library: $(INSTALL_FILES_LIBRARY)
 	DEST_PATH=`dirname $$VAR_TEST`; \
 	#echo "DestPath $$DEST_PATH" ; \
 	mkdir -p $$DEST_PATH; \
-	install -m 0755 $$INSTITEM $$DEST_PATH; \
+	install -m 0644 $$INSTITEM $$DEST_PATH; \
 	done && \
-	install -m 0755 ../../../../tutorial/src/ecu_display/config_ecuDisplay.h $(INSTALL_PATH)/include; \
-	install -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.a $(INSTALL_PATH)/lib/; \
+	install -m 0644 ../../../../tutorial/src/ecu_display/config_ecuDisplay.h $(INSTALL_PATH)/include; \
+	install -m 0644 $(OBJ_DIR_LIBRARY)/libisoaglib.a $(INSTALL_PATH)/lib/; \
 	install -m 0755 $(OBJ_DIR_LIBRARY)/libisoaglib.so $(INSTALL_PATH)/lib/; \
 	$(STRIP) $(INSTALL_PATH)/lib/libisoaglib.a; \
 	$(STRIP) $(INSTALL_PATH)/lib/libisoaglib.so; \

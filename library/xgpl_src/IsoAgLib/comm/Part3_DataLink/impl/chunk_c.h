@@ -15,7 +15,7 @@
 
 
 // IsoAgLib
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 // stl
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking

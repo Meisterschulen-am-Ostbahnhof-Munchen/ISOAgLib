@@ -1,5 +1,5 @@
 /*
-  can.h: include dependent on used target (defined in
+  hal_can.h: include dependent on used target (defined in
     IsoAgLib/isoaglib_config.h) the suitable HAL specific header for
     CAN communication
 
@@ -13,18 +13,18 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/can.h
+/* ************************************************************ */
+/** \file IsoAgLib/hal/hal_can.h
   * include dependent on used target (defined in
 	  IsoAgLib/isoaglib_config.h) the suitable HAL
 		specific header for CAN communication.
 */
 /* ************************************************************ */
-#ifndef _HAL_INDEPENDEND_CAN_H_
-#define _HAL_INDEPENDEND_CAN_H_
+#ifndef _HAL_INDEPENDENT_CAN_H_
+#define _HAL_INDEPENDENT_CAN_H_
 
-// include interface aplication relevant configuration settings
-// #include <IsoAgLib/isoaglib_config.h>
-#include "config.h"
+#include <IsoAgLib/isoaglib_config.h>
+
 
 /** CAN state labels for C167
 		( and comparable ) CAN controllers
@@ -47,9 +47,12 @@ typedef enum C16xCtrlStatusReg_en
 } C16xCtrlStatusReg_t;
 
 
-// now include dependent on used target the suitable header
-#define _hal_can_header_ <IsoAgLib/hal/HAL_SUBDIR/can/can.h>
-#include _hal_can_header_
+#ifdef HAL_PATH_ISOAGLIB_CAN
+#  define _hal_can_header_ <HAL_PATH_ISOAGLIB_CAN/can.h>
+#  include _hal_can_header_
+#else
+#  error "No HAL_PATH_ISOAGLIB_CAN set. (CAN is a mandatory module)"
+#endif
 
 
 #endif

@@ -13,7 +13,7 @@
 
 #include "vtserverinstance_c.h"
 
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include "isoterminal_c.h"
 

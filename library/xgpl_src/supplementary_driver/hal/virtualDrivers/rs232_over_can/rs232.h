@@ -34,7 +34,7 @@
 #endif
 
 #include <IsoAgLib/driver/can/icanio_c.h>
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifndef RS232_1
 #  define RS232_1		0

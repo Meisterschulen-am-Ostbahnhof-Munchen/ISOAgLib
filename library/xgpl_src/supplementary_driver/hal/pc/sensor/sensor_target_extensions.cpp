@@ -128,9 +128,13 @@ static counterIrqFunction irqFuncArr[16] =
 
 int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...)){
   printf("init_digin mit Kanal %i, Modus %i, HiLo %i aufgerufen\n", bInput,bMode, bAktivhighlow);
-  #if !defined(SYSTEM_PC_VC)
+  // The following seems to have made problems under Visual C++
+  // It shouldn't anymore with the lastest Visual Studio versions,
+  // but for the case that there is a problem, the #if is kept for
+  // informational reasons commented out.
+  //#if !defined(SYSTEM_PC_VC)
   irqFuncArr[bInput] = pfFunctionName;
-  #endif
+  //#endif
   if ( sensorDigitalInputOpen[bInput] ) fclose(sensorDigitalInput[ bInput]);
   char name[100], zeile[100];
 

@@ -20,6 +20,10 @@
 #ifndef _HAL_AMS5_CONFIG_H_
 #define _HAL_AMS5_CONFIG_H_
 
+
+#define SYSTEM_AMS5
+
+
 #ifndef SIZEOF_INT
   #define SIZEOF_INT 2
 #endif

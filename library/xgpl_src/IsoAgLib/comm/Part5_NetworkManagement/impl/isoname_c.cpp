@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <cstring>
 #include "isoname_c.h"
 // necessary for convert operators

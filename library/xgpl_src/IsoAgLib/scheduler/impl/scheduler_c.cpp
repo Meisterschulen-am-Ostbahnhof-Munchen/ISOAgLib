@@ -52,7 +52,7 @@
 #endif
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
-  #include <IsoAgLib/hal/eeprom.h>
+  #include <IsoAgLib/hal/hal_eeprom.h>
 #endif
 
 #if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE

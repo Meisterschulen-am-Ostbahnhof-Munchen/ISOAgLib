@@ -16,7 +16,7 @@
 
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 
 namespace IsoAgLib {
 typedef enum SystemPowerdownStrategy_en { PowerdownByExplcitCall, PowerdownOnCanEnLoss } SystemPowerdownStrategy_t;
@@ -87,20 +87,18 @@ public:
   */
   static inline int32_t getTime(){return HAL::getTime();};
 
-#ifndef SYSTEM_PM167
   /**
     get the main power voltage
     @return voltage of power [mV]
   */
-  static int16_t  getBatteryVoltage( void )
+  static int16_t getBatteryVoltage( void )
     {return HAL::getAdcUbat();};
   /**
     get the voltage of the external reference 8.5Volt for work of external sensors
     @return voltage at external reference [mV]
   */
-  static int16_t  getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
+  static int16_t getExternalSensorPowerVoltage( void ) { return HAL::getAdc_u85();};
 
-#endif
   /** control the relay which is responsible for activation of the PWM output */
   static void setRelais( bool ab_activateRelaisForPwm );
 

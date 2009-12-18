@@ -58,16 +58,6 @@
  */
 namespace HAL
 {
-  /* *********************************** */
-  /** \name Global System BIOS functions
-    */
-  /*@{*/
-#ifndef SYSTEM_PC_VC
-  using CNAMESPACE::printf;
-  using CNAMESPACE::scanf;
-  using CNAMESPACE::sscanf;
-  using CNAMESPACE::sprintf;
-#endif
   /**
     open the system with system specific function call
     @return error state (HAL_NO_ERR == o.k.)

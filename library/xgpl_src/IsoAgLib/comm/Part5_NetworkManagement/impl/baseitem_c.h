@@ -17,7 +17,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include "istate_c.h"
 

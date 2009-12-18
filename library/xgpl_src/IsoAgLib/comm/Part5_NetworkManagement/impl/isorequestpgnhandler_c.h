@@ -13,7 +13,7 @@
 #ifndef ISO_REQUEST_PGN_HANDLER_C_H
 #define ISO_REQUEST_PGN_HANDLER_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 /* *************************************** */
 /* ********** include headers ************ */

@@ -13,10 +13,10 @@
 #ifndef IVTOBJECT_C_H
 #define IVTOBJECT_C_H
 
-// includes
 #include "ivttypes.h"
-#include <IsoAgLib/hal/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/util/impl/singleton.h>
+
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

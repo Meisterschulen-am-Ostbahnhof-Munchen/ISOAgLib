@@ -16,7 +16,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 

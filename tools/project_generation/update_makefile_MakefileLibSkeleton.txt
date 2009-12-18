@@ -139,10 +139,10 @@ ${TAB}#echo "INSTITEM \$\$INSTITEM , ISOAGLIB_PATH \$(ISOAGLIB_PATH) , INSTALL_P
 ${TAB}DEST_PATH=\`dirname \$\$VAR_TEST\`; \\
 ${TAB}#echo "DestPath \$\$DEST_PATH" ; \\
 ${TAB}mkdir -p \$\$DEST_PATH; \\
-${TAB}install -m 0755 \$\$INSTITEM \$\$DEST_PATH; \\
+${TAB}install -m 0644 \$\$INSTITEM \$\$DEST_PATH; \\
 	done && \\
-	install -m 0755 ${INSERT_PROJECT_CONFIG} \$(INSTALL_PATH)/include; \\
-	install -m 0755 \$(OBJ_DIR_LIBRARY)/libisoaglib.a \$(INSTALL_PATH)/lib/; \\
+	install -m 0644 ${INSERT_PROJECT_CONFIG} \$(INSTALL_PATH)/include; \\
+	install -m 0644 \$(OBJ_DIR_LIBRARY)/libisoaglib.a \$(INSTALL_PATH)/lib/; \\
 	install -m 0755 \$(OBJ_DIR_LIBRARY)/libisoaglib.so \$(INSTALL_PATH)/lib/; \\
 	\$(STRIP) \$(INSTALL_PATH)/lib/libisoaglib.a; \\
 	\$(STRIP) \$(INSTALL_PATH)/lib/libisoaglib.so; \\

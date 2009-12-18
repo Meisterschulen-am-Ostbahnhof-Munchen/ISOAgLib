@@ -13,7 +13,7 @@
 #ifndef FSSERVERINSTANCE_C_H
 #define FSSERVERINSTANCE_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 

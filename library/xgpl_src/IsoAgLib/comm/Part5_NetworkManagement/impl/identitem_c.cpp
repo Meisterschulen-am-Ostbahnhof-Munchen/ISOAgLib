@@ -10,7 +10,7 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include "identitem_c.h"
 #include "../impl/isomonitor_c.h"
 #include "../impl/isorequestpgn_c.h"

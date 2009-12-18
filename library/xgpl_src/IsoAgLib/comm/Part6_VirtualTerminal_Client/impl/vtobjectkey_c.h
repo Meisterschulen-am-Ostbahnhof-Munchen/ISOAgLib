@@ -13,7 +13,7 @@
 #ifndef VTOBJECTKEY_C_H
 #define VTOBJECTKEY_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef USE_VTOBJECT_key
 #include "isoterminal_c.h"

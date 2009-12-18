@@ -13,7 +13,7 @@
 #ifndef DIAGNOSTIC_PGN_HANDLER_C_H
 #define DIAGNOSTIC_PGN_HANDLER_C_H
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 

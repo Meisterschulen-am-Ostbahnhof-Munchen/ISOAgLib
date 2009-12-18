@@ -15,7 +15,7 @@
 #define STREAMOUTPUT_C_H
 
 
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 // +X2C includes
 // ~X2C

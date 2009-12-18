@@ -14,7 +14,7 @@
 #define CAN_PKG_H
 
 
-#include <IsoAgLib/hal/config.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 

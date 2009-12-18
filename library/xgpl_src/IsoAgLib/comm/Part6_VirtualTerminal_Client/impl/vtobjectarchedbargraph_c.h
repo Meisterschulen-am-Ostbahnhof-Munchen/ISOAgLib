@@ -14,7 +14,7 @@
 #define VTOBJECTARCHEDBARGRAPH_C_H
 
 // includes
-#include <IsoAgLib/typedef.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef USE_VTOBJECT_archedbargraph
 #include "vtobject_c.h"

@@ -15,7 +15,7 @@
 #include "msgobj_c.h"
 #include "canio_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 
 #if defined(DEBUG) || defined(DEBUG_CAN_BUFFER_FILLING)
   #ifdef SYSTEM_PC

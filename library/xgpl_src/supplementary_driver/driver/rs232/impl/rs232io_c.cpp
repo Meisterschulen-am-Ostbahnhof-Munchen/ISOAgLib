@@ -14,20 +14,16 @@
 
 #include <cstdlib>
 #include <IsoAgLib/util/config.h>
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 #include "rs232io_c.h"
 
 #if (defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__))  || defined( __TMS320C2000__ )
-// #if 0
   #define isspace(_c) ((_c)&(0x1|0x4|'\r'|'\n'))
 #else
   #include <cctype>
-  #if !defined(__TSW_CPP_756__) && !defined(SYSTEM_PC_VC)
-//  using STL_NAMESPACE::isspace;
-  #endif
 #endif
 
 // Begin Namespace __IsoAgLib

@@ -15,7 +15,7 @@
 #include "multireceive_c.h"
 
 // IsoAgLib
-#include <IsoAgLib/hal/system.h>
+#include <IsoAgLib/hal/hal_system.h>
 #include <algorithm>
 #ifdef DEBUG
   #ifdef SYSTEM_PC

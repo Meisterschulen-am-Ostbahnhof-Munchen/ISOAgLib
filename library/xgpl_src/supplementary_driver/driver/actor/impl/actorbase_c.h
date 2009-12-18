@@ -16,7 +16,7 @@
 
 #include "actor_c.h"
 #include <IsoAgLib/util/iliberr_c.h>
-#include <supplementary_driver/hal/actor.h>
+#include <supplementary_driver/hal/hal_actor.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -21,7 +21,7 @@
 #include "vtclientservercommunication_c.h"
 #include "../ivtclientservercommunication_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-// #include <IsoAgLib/hal/system.h>
+// #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 // #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
