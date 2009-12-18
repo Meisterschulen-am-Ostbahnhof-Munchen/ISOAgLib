@@ -1974,7 +1974,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
     autoDetectLanguage (n);
     if (!getAttributesFromNode (n, true))
+    {
+      std::cerr << "\n\nCOULDN'T GET ATTRIBUTES FROM NODE!"<<std::endl<<std::endl;
       return false; // true: read name= and id=
+    }
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
     defaultAttributes (objType);
@@ -2345,19 +2348,28 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 #endif
 
         if (picturegraphicoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+        {
+          std::cerr << "\n\nFAILED ON picturegraphicoptionstoi!"<<std::endl<<std::endl;
           return false;
+        }
 
         objBitmapOptions = picturegraphicoptionstoi (arrc_attributes [attrOptions].get().c_str());
         // set deXcolourDepth per reference, according to the found file and fileX attributes
         if (!openDecodePrintOut (l_stdBitmapPath, objBitmapOptions, deXcolourDepth))
+        {
+          std::cerr << "\n\nCOULDN'T openDecodePrintOut!"<<std::endl<<std::endl;
           return false;
+        }
 
         // copy values from c_Bitmap somewhere to have them when Print'ing out the array afterwards...
         deXwidth = arrc_attributes [attrWidth].getIntValue();
 
         deXtransCol = colourtoi (arrc_attributes [attrTransparency_colour].get().c_str());
         if (deXtransCol == -1)
+        {
+          std::cerr << "\n\nFAILED ON colourtoi!"<<std::endl<<std::endl;
           return false;
+        }
 
         deXactualWidth = c_Bitmap.getWidth();
         deXactualHeight = c_Bitmap.getHeight();
@@ -2377,12 +2389,18 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if ( (child->getNodeType() == DOMNode::ELEMENT_NODE) && (0 == strcmp (XMLString::transcode(child->getNodeName()), otCompTable [otFixedBitmap]) )) {
             if (!getAttributesFromNode(child, false))
+            {
+              std::cerr << "\n\nCOULDN'T getAttributesFromNode!"<<std::endl<<std::endl;
               return false; // false: DON'T read name= and id=
+            }
             // no defaultAttributes() needed here...
 
             c_Bitmap.resetLengths();
             if (!checkForFileOrFile148 ("fixedbitmap"))
+            {
+              std::cerr << "\n\nCOULDN'T checkForFileOrFile148!"<<std::endl<<std::endl;
               return false;
+            }
 
             fixBitmapOptions [fixNr] = objBitmapOptions & 0x3; // keep flashing/transparency information from <pictureobject>
             int dummyMaxDepth;
@@ -2432,7 +2450,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       {
         // Process all Child-Elements
         if (!processChildElements (objChildObjects, n, xyNeeded))
+        {
+          std::cerr << "\n\nCOULDN'T processChildElements!"<<std::endl<<std::endl;
           return false;
+        }
       }
 
       // ### Print out EVENT_MACRO array
@@ -2440,7 +2461,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       if (objHasArrayEventMacro)
       { // Process all macro-Elements
         if (!processMacroElements (objChildMacros, n))
+        {
+          std::cerr << "\n\nCOULDN'T processMacroElements!"<<std::endl<<std::endl;
           return false;
+        }
       }
 
       // ### Print out MACRO_COMMAND array
@@ -2466,7 +2490,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::string commandMessage;
             bool const isNotSet = !setCommandElement(commandTypeChild, child/*, pAttributes*/, n, objChildCommands, commandMessage);
             if (isNotSet)
+            {
+              std::cerr << "\n\nsetCommandElement WAS NOT SET!"<<std::endl<<std::endl;
               return false;
+            }
             if (!isStillMissingCommand)
               fprintf (partFile_attributes, ", ");
             fprintf (partFile_attributes, "%s", commandMessage.c_str());
@@ -2485,7 +2512,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       if (objHasArrayPoints)
       {
         if ( !processPointElements(objChildPoints, n) )
+        {
+          std::cerr << "\n\nCOULDN'T processPointElements" << std::endl;
           return false;
+        }
       }
 
       // ###################################################
