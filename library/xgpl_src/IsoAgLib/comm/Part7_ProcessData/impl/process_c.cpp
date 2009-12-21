@@ -295,7 +295,7 @@ bool Process_c::processMsg()
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
 if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
-     ( ( mc_data[0] & 0xF ) < 2 ) || ( mc_data[0] == 0xD ) || ( mc_data[0] > 0xF ) ) )
+     ( ( data().cmd() ) < 2 ) || ( data().cmd() == 0xD ) || ( data().cmd() > 0xF ) ) )
 {
   if (mc_devPropertyHandler.processMsg()) return true;
 }
@@ -305,7 +305,7 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   const IsoName_c& c_isoNameSender = data().getMonitorItemForSA()->isoName();
 
   // process TC status message (for local instances)
-  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xE))
+  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (data().cmd() == 0xE))
   {
     // update isoName of TC
     /// @todo SOON-240 This only works until the IsoItem gets destructed!!!
@@ -321,7 +321,7 @@ if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
   }
 
   // process working set task message (for remote instances (e.g. TC))
-  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (mc_data[0] == 0xF))
+  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (data().cmd() == 0xF))
   {
     processWorkingSetTaskMsg(mc_data.getValue(), c_isoNameSender);
     return TRUE;
