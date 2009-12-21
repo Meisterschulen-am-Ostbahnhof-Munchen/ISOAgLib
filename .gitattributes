@@ -679,8 +679,6 @@ tutorial/compiler_projects/conf_ecu_display_win32 -text
 tutorial/compiler_projects/conf_ecu_display_x86linux -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/Makefile -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/MakefileApp -text
-tutorial/compiler_projects/kdevelop_make/ecuDisplay/MakefileApp__can_server_sock__simulating -text
-tutorial/compiler_projects/kdevelop_make/ecuDisplay/Makefile__can_server_sock__simulating -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/config_header__ecuDisplay-doc.txt -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/ecuDisplay.kdevelop -text
 tutorial/compiler_projects/kdevelop_make/ecuDisplay/ecuDisplay.kdevelop.filelist -text
