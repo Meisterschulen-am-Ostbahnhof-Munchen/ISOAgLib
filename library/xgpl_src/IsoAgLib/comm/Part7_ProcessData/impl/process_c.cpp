@@ -295,7 +295,7 @@ bool Process_c::processMsg()
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
 if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
-     ( ( data().cmd() ) < 2 ) || ( data().cmd() == 0xD ) || ( data().cmd() > 0xF ) ) )
+     ( ( data().cmd() ) < 2 ) || ( data().cmd() == 0xD ) ) )
 {
   if (mc_devPropertyHandler.processMsg()) return true;
 }
