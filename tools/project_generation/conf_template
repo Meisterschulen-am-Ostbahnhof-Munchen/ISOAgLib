@@ -48,7 +48,7 @@ REL_APP_PATH="../src"
 # Filename of the application
 # If not set, all files of the selected directories are collected
 # (separate multiple files by whitespace)
-APP_SRC_FILE="main.cpp"
+APP_SRC_FILE="ecu_main.cpp"
 
 # File extensions to include for the application source file search
 # (default: Sources: "*.c *.cc *.cpp" - Headers: "*.h *.hpp")
@@ -68,11 +68,11 @@ APP_SRC_FILE="main.cpp"
 # Example: "test*.cpp"
 # APP_SRC_EXCLUDE=""
 
-# Additional Include pathes
-# relative to the IsoAgLib-path. (directories of REL_APP_PATH are already
-# integrated into the compiler list of header include search paths)
-# (Absolute include paths to external directories should be defined in config variables
-#  like: USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY)
+# Additional Include pathes relative to the IsoAgLib-path.
+# (directories of REL_APP_PATH are already integrated into the compiler list of header
+#  include search paths - Absolute include paths to external directories should be
+#  defined in config variables like:
+#   - USE_WIN32_EXTERNAL_INCLUDE_PATH, USE_LINUX_EXTERNAL_INCLUDE_PATH, USE_EMBED_HEADER_DIRECTORY)
 # (separate multiple directories by whitespace)
 # PRJ_INCLUDE_PATH=""
 
@@ -118,9 +118,18 @@ APP_SRC_FILE="main.cpp"
 # ###############################################################
 
 # Select type of target system:
-#   Host:     "pc_linux" | "pc_win32"
-#   Embedded: "esx" | "imi" | "c2c" | "esxu" | "pm167" | "mitron167" | "ams5" | "ees" | "p1mc"
+#   Host:        "pc_linux" | "pc_win32"
+#   Embedded:    "ams5" | "a2" | "c2c" | "Dj1" | "ees" | "esx" | "esxu" | "imi" | "mitron167" | "pm167" | "p1mc"
+#   Proprietary:  any other name than the above ones
 USE_TARGET_SYSTEM="pc_win32"
+
+# Specify the path to the proprietary HALs
+# in case a proprietary HAL is selected above in USE_TARGET_SYSTEM
+# (Note: A directory '$USE_HAL_PATH/$USE_TARGET_SYSTEM' must then exist,
+#  including the subdirectories 'system', 'can', 'eeprom' and optionally
+#  'rs232', 'sensor', 'actor' and/or 'datastreams'.
+#  Please add this path to PRJ_INCLUDE_PATH if it's not already part of it)
+# USE_HAL_PATH=""
 
 # Specify integer number memory representation type: LITTLE or BIG ENDIAN
 # default is for most targets: LITTLE -> USE_LITTLE_ENDIAN_CPU=1

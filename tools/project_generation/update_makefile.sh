@@ -242,6 +242,7 @@ set_default_values()
     PRJ_MULTIPACKET=0
     # has to be overridden by configuration:
     USE_TARGET_SYSTEM='void'
+    USE_HAL_PATH=''
     USE_ISO_TERMINAL_GRAPHICCONTEXT=0
     USE_ISO_TERMINAL_GETATTRIBUTES=0
     USE_ISO_TERMINAL_ATTRIBUTES=0
@@ -294,7 +295,7 @@ check_set_correct_variables()
         exit 2
     fi
 
-    : ${ISO_AG_LIB_PATH:?"ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src and IsoAgLibExamples are located"}
+    : ${ISO_AG_LIB_PATH:?"ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src is located"}
     ISO_AG_LIB_INSIDE="../../$ISO_AG_LIB_PATH"
 
     # check if ISO_AG_LIB_PATH valid
@@ -374,23 +375,32 @@ check_set_correct_variables()
     # workaround as long as we don't have separate HALs
     case "$USE_TARGET_SYSTEM" in
       (pc_win32|pc_linux)
-        HAL_PATH="pc"
+        HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
+        HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/pc"
+        HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/pc"
         ;;
-      (*)
-        HAL_PATH="$USE_TARGET_SYSTEM"
+       (ams5|a2|c2c|Dj1|ees|esx|esxu|imi|pm167|p1mc|src9)
+        HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
+        HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/$USE_TARGET_SYSTEM"
+        HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/$USE_TARGET_SYSTEM"
+        ;;
+      (*) #All other one are proprietary and need the USE_HAL_PATH set!
+        HAL_FIND_PATH="$USE_HAL_PATH"
+        HAL_PREFIX_ISOAGLIB="$USE_TARGET_SYSTEM"
+        HAL_PREFIX_SUPPLEMENTARY="$USE_TARGET_SYSTEM"
         ;;
     esac
 
-    # set default values for the target platform (HAL)
+    # set default values for the default target platforms (HAL)
     # the N/A ones will be re-set in the case afterwards
-    HAL_PATH_ISOAGLIB="IsoAgLib/hal/$HAL_PATH"
-    HAL_PATH_ISOAGLIB_SYSTEM="IsoAgLib/hal/$HAL_PATH/system"
-    HAL_PATH_ISOAGLIB_CAN="IsoAgLib/hal/$HAL_PATH/can"
-    HAL_PATH_ISOAGLIB_EEPROM="IsoAgLib/hal/$HAL_PATH/eeprom"
-    HAL_PATH_SUPPLEMENTARY_RS232="supplementary_driver/hal/$HAL_PATH/rs232"
-    HAL_PATH_SUPPLEMENTARY_ACTOR="supplementary_driver/hal/$HAL_PATH/actor"
-    HAL_PATH_SUPPLEMENTARY_SENSOR="supplementary_driver/hal/$HAL_PATH/sensor"
-    HAL_PATH_SUPPLEMENTARY_DATASTREAMS="supplementary_driver/hal/$HAL_PATH/datastreams"
+    HAL_PATH_ISOAGLIB="$HAL_PREFIX_ISOAGLIB"
+    HAL_PATH_ISOAGLIB_SYSTEM="$HAL_PREFIX_ISOAGLIB/system"
+    HAL_PATH_ISOAGLIB_CAN="$HAL_PREFIX_ISOAGLIB/can"
+    HAL_PATH_ISOAGLIB_EEPROM="$HAL_PREFIX_ISOAGLIB/eeprom"
+    HAL_PATH_SUPPLEMENTARY_RS232="$HAL_PREFIX_SUPPLEMENTARY/rs232"
+    HAL_PATH_SUPPLEMENTARY_ACTOR="$HAL_PREFIX_SUPPLEMENTARY/actor"
+    HAL_PATH_SUPPLEMENTARY_SENSOR="$HAL_PREFIX_SUPPLEMENTARY/sensor"
+    HAL_PATH_SUPPLEMENTARY_DATASTREAMS="$HAL_PREFIX_SUPPLEMENTARY/datastreams"
 
     case "$USE_TARGET_SYSTEM" in
         (pc_win32)
@@ -404,7 +414,6 @@ check_set_correct_variables()
         (esx|esxu|c2c|imi|pm167)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
-            HAL_PATH_SUPPLEMENTARY_DATASTREAMS=""
             ;;
         (Dj1)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
@@ -413,18 +422,10 @@ check_set_correct_variables()
         (p1mc)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/CCS"
             IDE_NAME="Code Composer Studio"
-            HAL_PATH_SUPPLEMENTARY_RS232=""
-            HAL_PATH_SUPPLEMENTARY_ACTOR=""
-            HAL_PATH_SUPPLEMENTARY_SENSOR=""
-            HAL_PATH_SUPPLEMENTARY_DATASTREAMS=""
             ;;
         (ees)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make/"
             IDE_NAME="make"
-            HAL_PATH_SUPPLEMENTARY_RS232=""
-            HAL_PATH_SUPPLEMENTARY_ACTOR=""
-            HAL_PATH_SUPPLEMENTARY_SENSOR=""
-            HAL_PATH_SUPPLEMENTARY_DATASTREAMS=""
             ;;
         (src9)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
@@ -433,9 +434,23 @@ check_set_correct_variables()
         (ams5)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/ams5"
             IDE_NAME="IAR Embedded Workbench IDE"
-            HAL_PATH_SUPPLEMENTARY_DATASTREAMS=""
+            ;;
+        (*)
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/proprietary_hal"
+            IDE_NAME="Proprietary - Filelist only"
             ;;
     esac
+
+    # Force mandatory modules
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB" ]; then echo_ "Invalid proprietary HAL path: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB"; exit 2; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_SYSTEM" ]; then echo_ "Proprietary HAL is missing the 'system' directory: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_SYSTEM"; exit 2; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_CAN" ]; then echo_ "Proprietary HAL is missing the 'can' directory: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_CAB"; exit 2; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_EEPROM" ]; then echo_ "Proprietary HAL is missing the 'eeprom' directory: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_EEPROM"; exit 2; fi
+    # Disable N/A supplementary modules
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_RS232" ]; then HAL_PATH_SUPPLEMENTARY_RS232=""; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_ACTOR" ]; then HAL_PATH_SUPPLEMENTARY_ACTOR=""; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_SENSOR" ]; then HAL_PATH_SUPPLEMENTARY_SENSOR=""; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_DATASTREAMS" ]; then HAL_PATH_SUPPLEMENTARY_DATASTREAMS=""; fi
 
     # handle virtual drivers
     if [ "$PRJ_RS232_OVER_CAN" -gt 0 ]; then
@@ -456,23 +471,17 @@ check_set_correct_variables()
         \( "$PROC_REMOTE_SIMPLE_SETPOINT" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
     INC_REM_SIMPLE_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
         \( "$PROC_REMOTE_SIMPLE_MEASURE" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
-    if [ "$PRJ_ISO11783" -eq 0 ]; then
-        PRJ_TRACTOR_LIGHT=0
-        PRJ_TRACTOR_FACILITIES=0
-        PRJ_TRACTOR_AUX=0
-        PRJ_TRACTOR_GUIDANCE=0
-        PRJ_TRACTOR_CERTIFICATION=0
-    fi
     PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" || status_le1)
 
     case "$USE_CAN_DRIVER" in
         (simulating)
-            update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.\nThus the project files will be generated without enhanced CAN processing\n'
+            update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "simulating" does NOT provide the enhanced CAN processing.\n'
             ;;
         (msq_server|socket_server|socket_server_hal_simulator)
             ;;
         (sys)
-            update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.\nThus the project files will be generated without enhanced CAN processing\n'
+            # Allow any setting of Enhanced CAN HAL, because we do not want to limit Proprietary HALs by that.
+            #update_prj_system_with_enhanced_can_hal 0 'The selected CAN driver "sys" on embedded targets does NOT provide the enhanced CAN processing.\n\n'
             ;;
         (*)
             echo_ 'ERROR! Please set the config variable "USE_CAN_DRIVER" to one of "simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator"'
@@ -502,7 +511,7 @@ append()
 # Write to FD3 what's needed for finding COMM features.
 comm_features()
 {
-    printf '%s' " -path '*/IsoAgLib/typedef.h' -o -path '*/hal/"$HAL_PATH"/typedef.h' -o -name 'isoaglib_config.h' -o -path '*/hal/config.h'" >&3
+    printf '%s' " -name 'isoaglib_config.h'" >&3
     if [ "$PRJ_BASE" -gt 0 ]; then
         printf '%s' " -o -path '*/Part7_ApplicationLayer/*'" >&3
     else
@@ -526,19 +535,15 @@ comm_features()
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traclight*' \)" >&3
         fi
         if [ "$PRJ_TRACTOR_FACILITIES" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            # tracfacilities is only defined for ISO 11783
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracfacilities_c*' \)" >&3
         fi
         if [ "$PRJ_TRACTOR_AUX" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            # tracaux is only defined for ISO 11783
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracaux*' \)" >&3
         fi
         if [ "$PRJ_TRACTOR_GUIDANCE" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            # tracguidance is only defined for ISO 11783
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*tracguidance*' \)" >&3
         fi
         if [ "$PRJ_TRACTOR_CERTIFICATION" -gt 0 -a "$PRJ_ISO11783" -gt 0 ]; then
-            # tracguidance is only defined for ISO 11783
             printf '%s' " -o \( -path '*/Part7_ApplicationLayer/*' -a -name '*traccert*' \)" >&3
         fi
         if [ "$PRJ_TIME_GPS" -gt 0 ]; then
@@ -594,52 +599,60 @@ comm_features()
 }
 
 # Write to FD3 what's needed for finding DRIVER features.
-driver_features()
+driver_and_hal_features()
 {
-    echo_ "IsoAgLib's Project-Generator running..."
-    echo_
-
     printf '%s' \
-      " -path '*/hal/"$HAL_PATH"/can/can*.h'  -o " \
-      " -path '*/hal/"$HAL_PATH"/can/hal_can*' -o " \
-      "\( -path '*/hal/"$HAL_PATH"/system*' -not -path '*hal_simulator*' \) -o " \
-      " -path '*/hal/"$HAL_PATH"/errcodes.h' -o " \
-      " -path '*/hal/"$HAL_PATH"/config.h' -o " \
-      " -path '*/hal/"$HAL_PATH"/typedef.h' -o " \
       " -path '*/hal/hal_system.h' -o " \
       " -path '*/hal/hal_can.h' -o " \
       " -path '*/hal/hal_config.h' -o " \
       " -path '*/hal/hal_typedef.h' -o " \
       " -path '*/driver/system*' " >&3
 
+    printf '%s' \
+      " -path '*"$HAL_PATH_ISOAGLIB_CAN"/can*.h'  -o " \
+      " -path '*"$HAL_PATH_ISOAGLIB_CAN"/hal_can*' -o " \
+      "\( -path '*"$HAL_PATH_ISOAGLIB"/system*' -not -path '*hal_simulator*' \) -o " \
+      " -path '*"$HAL_PATH_ISOAGLIB"/errcodes.h' -o " \
+      " -path '*"$HAL_PATH_ISOAGLIB"/config.h' -o " \
+      " -path '*"$HAL_PATH_ISOAGLIB"/typedef.h' " >&4
+
     echo_ "CAN driver:    $USE_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
         (simulating)
-            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_simulating*'" >&3
+            printf '%s' " -o -path '*"$HAL_PATH_ISOAGLIB_CAN"/target_extension_can_simulating*'" >&4
             ;;
         (msq_server)
-            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_msq.*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'" >&3
+            printf '%s' " -o -path '*"$HAL_PATH_ISOAGLIB_CAN"/target_extension_can_client_msq.*' -o -path '*/hal/"$HAL_PATH"/can/msq_helper*'" >&4
             ;;
         (socket_server)
-            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock.*'" >&3
+            printf '%s' " -o -path '*"$HAL_PATH_ISOAGLIB_CAN"/target_extension_can_client_sock.*'" >&4
             ;;
         (socket_server_hal_simulator)
-            printf '%s' " -o -path '*/hal/"$HAL_PATH"/can/target_extension_can_client_sock_hal_simulator.*'" >&3
+            printf '%s' " -o -path '*"$HAL_PATH_ISOAGLIB_CAN"/target_extension_can_client_sock_hal_simulator.*'" >&4
             ;;
     esac
-    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -lt 1 ]; then
-        #in NOT enhanced can hal -> we need to integrate the sources for the central CAN FIFO
+
+    # add the standard driver directory sources for CAN
+    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
+        # no msgobjs in enh. can hal
+        printf '%s' " -o \( -path '*/driver/can/*' -a -not -name 'msgobj*' \)" >&3
+    else
+        printf '%s' " -o -path '*/driver/can/*'" >&3
+        # we need to integrate the sources for the central CAN FIFO
         printf '%s' " -o -path '*/hal/generic_utils/can/*'" >&3
     fi
 
     if [ "$PRJ_EEPROM" -gt 0 ]; then
-        printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/"$HAL_PATH"/eeprom/*' -o -path '*/hal/hal_eeprom.h' -o -name 'eeprom_adr.h'" >&3
+        printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/hal_eeprom.h'" >&3
+        printf '%s' " -o -path '*"$HAL_PATH_ISOAGLIB_EEPROM"/*'" >&4
     fi
     if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
-        printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/"$HAL_PATH"/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
+        printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
+        printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_DATASTREAMS"/*'" >&4
     fi
     if [ "$PRJ_ACTOR" -gt 0 ]; then
-        printf '%s' " -o -path '*/driver/actor*' -o -path '*/hal/"$HAL_PATH"/actor/actor.h' -o -path '*/hal/"$HAL_PATH"/actor/actor_target_extensions.*' -o -path '*/hal/hal_actor.h'" >&3
+        printf '%s' " -o -path '*/driver/actor*' -o -path '*/hal/hal_actor.h'" >&3
+        printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_ACTOR"/actor.h' -o -path '*"$HAL_PATH_SUPPLEMENTARY_ACTOR"/actor_target_extensions.*'" >&4
     fi
     if [ "$PRJ_SENSOR_DIGITAL" -gt 0 ]; then
         printf '%s' " -o -name '*digitali_c.*'" >&3
@@ -651,50 +664,41 @@ driver_features()
         printf '%s' " -o -name '*counteri*'" >&3
     fi
     if [ "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
-        printf '%s' " -o -path '*/hal/"$HAL_PATH"/sensor/sensor.h' -o -path '*/hal/"$HAL_PATH"/sensor/sensor_target_extensions.*' -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/hal_sensor.h'" >&3
+        printf '%s' " -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/hal_sensor.h'" >&3
+        printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_SENSOR"/sensor.h' -o -path '*/"$HAL_PATH_SUPPLEMENTARY_SENSOR"/sensor_target_extensions.*'" >&4
     fi
     if [ "$PRJ_RS232" -gt 0 ]; then
-        printf '%s' " -o -path '*/driver/rs232/*' -o -path '*/hal/hal_rs232.h' -o -path '*/hal/"$HAL_PATH"/rs232/rs232.h'" >&3
+        printf '%s' " -o -path '*/driver/rs232/*' -o -path '*/hal/hal_rs232.h'" >&3
+        printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/rs232.h'" >&4
         if [ "$PRJ_RS232_OVER_CAN" -gt 0 ]; then
+            echo_ "RS232 driver:  rs232_over_can"
             printf '%s' " -o -path '*/hal/virtualDrivers/rs232_over_can/*'" >&3
         else
-            #-- The following line is wrong and never had any effect.
-            #-- Just leaving in for informational reasons.
-            #     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/rs232/*'" >&3
             echo_ "RS232 driver:  $USE_RS232_DRIVER"
             case "$USE_RS232_DRIVER" in
                 (simulating)
-                    printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'" >&3
+                    printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/target_extension_rs232_simulating*'" >&4
                     ;;
                 (hal_simulator)
-                    printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_hal_simulator*'" >&3
+                    printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/target_extension_rs232_hal_simulator*'" >&4
                     ;;
                 (rte)
-                    printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_rte*'" >&3
+                    printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/target_extension_rs232_rte*'" >&4
                     ;;
                 (sys)
                     if [ "$USE_TARGET_SYSTEM" = "pc_win32" ]; then
-                        printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_w32_sys*'" >&3
+                        printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/target_extension_rs232_w32_sys*'" >&4
                     else
-                        printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_linux_sys*'" >&3
+                        printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/target_extension_rs232_linux_sys*'" >&4
                     fi
                     ;;
-                #     PRJ_DEFINES="$PRJ_DEFINES USE_REAL_RS232"
-                #     printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/target_extension_rs232_simulating*'" >&3
                 (*)
                     echo_ 'ERROR! Please set the config variable "USE_RS232_DRIVER" to one of "simulating"|"sys"|"rte"|"hal_simulator"'
                     echo_ 'Current Setting is $USE_RS232_DRIVER'
                     exit 3
             esac
+            printf '%s' " -o -path '*"$HAL_PATH_SUPPLEMENTARY_RS232"/rs232_target_extensions.h'" >&4
         fi
-        printf '%s' " -o -path '*/hal/"$HAL_PATH"/rs232/rs232_target_extensions.h'" >&3
-    fi
-
-    # add the standard driver directory sources for CAN
-    if [ "$PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL" -gt 0 ]; then
-        printf '%s' " -o \( -path '*/driver/can/*' -a -not -name 'msgobj*' \)" >&3
-    else
-        printf '%s' " -o -path '*/driver/can/*'" >&3
     fi
 }
 
@@ -953,29 +957,22 @@ create_filelist( )
     local GENERATE_FILES_ROOT_DIR="$1"
     local SCRIPT_DIR="$2"
 
-    #USE_TARGET_SYSTEM="pc"
-    local HAL_PATH=$(
-        case "$USE_TARGET_SYSTEM" in
-            (pc*) printf "pc" ;;
-            (*) printf '%s' "$USE_TARGET_SYSTEM" ;;
-        esac;)
+    # Create directory to place generated files into...
+    mkdir -p "$GENERATE_FILES_ROOT_DIR"
+    cd "$GENERATE_FILES_ROOT_DIR"
+    mkdir -p $PROJECT
+    cd $PROJECT
+
     {
         local COMM_PROC_FEATURES="$(comm_proc_features 3>&1 1>&9)"
         local COMM_FEATURES="$(comm_features 3>&1 1>&9)"
-        local DRIVER_FEATURES="$(driver_features 3>&1 1>&9)"
+        local DRIVER_FEATURES="$(driver_and_hal_features 3>&1 4>/tmp/__hal_features_temp 1>&9)"
+        local HAL_FEATURES=`cat /tmp/__hal_features_temp`
     } 9>&1
 
-    local LIB_ROOT="$ISO_AG_LIB_INSIDE/library/xgpl_src"
     local SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
+    local HDR_EXT="-name '*.h'"
 
-
-    # go back to directory where config file resides
-    mkdir -p "$GENERATE_FILES_ROOT_DIR"
-    cd "$GENERATE_FILES_ROOT_DIR"
-    # echo_ "create filelist with 1 $1 and GENERATE_FILES_ROOT_DIR $GENERATE_FILES_ROOT_DIR"
-    # mkdir tmpdir
-    mkdir -p $PROJECT
-    cd $PROJECT
     FILELIST_LIBRARY_HDR="filelist"'__'"${PROJECT}_hdr.library.txt"
     FILELIST_LIBRARY_PURE="filelist"'__'"${PROJECT}.library.txt"
 
@@ -986,9 +983,9 @@ create_filelist( )
     FILELIST_COMBINED_PURE="filelist"'__'"${PROJECT}.txt"
 
     if [ -z "${DOXYGEN_EXPORT_DIR:-}" ]; then
-        FILELIST_DOXYGEN_READY="filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}-doc.txt"
+        FILELIST_DOXYGEN_READY="filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}-doc.txt"
     else
-        FILELIST_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}-doc.txt"
+        FILELIST_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}-doc.txt"
     fi
     local FIND_TEMP_PATH="$(printf '%s' \
             "-path '*/scheduler/*'" \
@@ -1002,8 +999,13 @@ create_filelist( )
     { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" "$APP_PATH_EXCLUDE" 3>&1 1>&9)"; } 9>&1
     : ${EXCLUDE_PATH_PART1:="-a -not -path '*/xgpl_src/build/*'"}
 
-    eval "find $LIB_ROOT -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
-    eval "find $LIB_ROOT -follow -name '*.h' -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
+    eval "find ../../$ISO_AG_LIB_PATH/library/xgpl_src -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
+    eval "find ../../$ISO_AG_LIB_PATH/library/xgpl_src -follow $HDR_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
+
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
 
     ##############################
     # find application files
@@ -1030,17 +1032,17 @@ create_filelist( )
         # create list with suitable block definition for doxygen import
         # start main block for all files for project
         #echo_ "/**" > $FILELIST_DOXYGEN_READY
-        #echo_ "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >&3
+        #echo_ "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >&3
         #echo_ "*/" >&3
         #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section FileLists${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of Files for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
+        echo_e "\n\n @section FileLists${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of Files for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
 
         # write block of source files
         #echo_ "/**" >&3
-        #echo_ "* \section SrcList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
+        #echo_ "* \section SrcList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
         #echo_ "*/" >&3
         #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section SrcList${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of Sourcefiles for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
+        echo_e "\n\n @section SrcList${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of Sourcefiles for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
         echo_ "\code" >&3
         cat $FILELIST_COMBINED_PURE >&3
         echo_ "\endcode" >&3
@@ -1050,10 +1052,10 @@ create_filelist( )
 
         # write block of header files
         #echo_ "/**" >&3
-        #echo_ "* \section HdrList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
+        #echo_ "* \section HdrList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
         #echo_ "*/" >&3
         #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section HdrList${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of Headers for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
+        echo_e "\n\n @section HdrList${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of Headers for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
         echo_ "\code" >&3
         cat $FILELIST_COMBINED_HDR >&3
         echo_ "\endcode" >&3
@@ -1096,8 +1098,6 @@ END_OF_PATH
     local APP_VERSION_DIR="${FIRST_REL_APP_PATH:+$ISO_AG_LIB_INSIDE/$FIRST_REL_APP_PATH}"
     local VERSION_DIR=${APP_VERSION_DIR:-$GENERATE_FILES_ROOT_DIR/$PROJECT}
     CONFIG_NAME="$VERSION_DIR/config_${PROJECT}.h"
-
-    CONFIG_HEADER_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR:+$DOXYGEN_EXPORT_DIR/}config_header__${PROJECT}-doc.txt"
 
     # first backup individual settings after line
     # START_INDIVIDUAL_PROJECT_CONFIG
@@ -1367,25 +1367,13 @@ END_OF_CONFIG_SET
     sed -e 's|^[ \t]*//|//|g' $CONFIG_NAME > $TMP_CONFIG1
     sed -e 's|^[ \t]*/\*|/\*|g' $TMP_CONFIG1 > $CONFIG_NAME
 
-    {
-        echo_e "$ENDLINE$ENDLINE \section PrjConfig$PROJECT List of configuration settings for $PROJECT" >&3
-        echo_ " This is only a copy with doxygen ready comment blocks from the original file $CONFIG_NAME " >&3
-        echo_ " This header is included by <IsoAgLib/library/xgpl_src/IsoAgLib/isoaglib_config.h> based on the" >&3
-        echo_ " project define #define PRJ_USE_AUTOGEN_CONFIG config_$PROJECT.h ( Important: place the directory of the application source files in the include search path )" >&3
-        echo_ "" >&3
-        echo_ " Use the file $(basename "$CONF_FILE") in the directory $(basename "$1") as input file for $(basename "$0") to create the project generation files." >&3
-        echo_ "\code" >&3
-        cat $CONFIG_NAME >&3
-        echo_ "\endcode" >&3
-    } 3>"$CONFIG_HEADER_DOXYGEN_READY"
-
     # go back to directory where config file resides
     cd $1
 }
 
 expand_definition()
 {
-    # Outputting the here document (cat <<) ist superior to other
+    # Outputting the here document (cat <<) is superior to other
     # means especially when RULE contains quotes:
     eval "cat <<END_OF_STRING
 $RULE
@@ -1490,7 +1478,7 @@ shortcut_makefile()
 create_standard_makefile()
 {
     MakefileName="Makefile"
-    MakefileNameLong="Makefile__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}"
+    MakefileNameLong="Makefile__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
 
     : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt}
     {
@@ -1636,7 +1624,7 @@ create_pure_application_makefile()
 {
     # now create pure application makefile which is based upon an installed library
     MakefileName="MakefileApp"
-    MakefileNameLong="MakefileApp__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}"
+    MakefileNameLong="MakefileApp__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
 
     : ${MAKEFILE_APP_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileAppSkeleton.txt}
 
@@ -1901,7 +1889,7 @@ create_EdePrj()
     }
 
     USE_APP_PATH="$(map join_semicolon isoaglib_path_for_ede ${REL_APP_PATH:-})"
-    echo_ "USE_APP_PATH: $USE_APP_PATH"
+    ##### debug: echo_ "USE_APP_PATH: $USE_APP_PATH"
 
     USE_EMBED_HEADER_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_HEADER_DIRECTORY")"
     USE_EMBED_LIB_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_LIB_DIRECTORY")"
@@ -2120,7 +2108,7 @@ create_VCPrj()
     # echo_ "Create Projekt file for VC6 in $DEV_PRJ_DIR"
     mkdir -p $DEV_PRJ_DIR
     # Visual Studio will create the needed Debug and Release directories on its own.
-    PROJECT_FILE_NAME="${PROJECT}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}.dsp"
+    PROJECT_FILE_NAME="${PROJECT}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}.dsp"
 
     DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
     CONFIG_HDR_NAME="config_""$PROJECT.h"
@@ -2271,7 +2259,7 @@ create_library_makefile()
     MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
     MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
     local MAKEFILE_NAME="Makefile"
-    local MAKEFILE_LONG_NAME="Makefile__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}"
+    local MAKEFILE_LONG_NAME="Makefile__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
 
     : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileLibSkeleton.txt}
 
@@ -2409,6 +2397,11 @@ create_buildfiles()
     GENERATE_FILES_ROOT_DIR=$(echo_ "$GENERATE_FILES_ROOT_DIR" | sed -e 's|/[0-9a-zA-Z_+\-]+/\.\.||g' -e 's/\\[0-9a-zA-Z_+\-]+\\\.\.//g')
     # echo_ "Create project for $USE_TARGET_SYSTEM in $GENERATE_FILES_ROOT_DIR"
 
+
+    echo_ "IsoAgLib's Project-Generator running..."
+    echo_
+
+
     # now call the function create_filelist() which build
     # the file list based on the varibles defined above
     create_filelist "$GENERATE_FILES_ROOT_DIR" "$SCRIPT_DIR"
@@ -2437,8 +2430,12 @@ create_buildfiles()
         (ams5)
             create_ams5_workspace $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        (esx | esxu | c2c | imi | pm167 | Dj1 | mitron167 | *)
+        (esx | esxu | c2c | imi | pm167 | Dj1 | mitron167)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            ;;
+        (*)
+            ### PROPRIETARY HAL - to come...
+            ;;
     esac
 
     # cleanup temporary files
@@ -2605,9 +2602,12 @@ check_after_user_configuration()
         (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | ees | src9 | ams5)
             ;;
         (*)
-            echo_ "Unknown target system $USE_TARGET_SYSTEM" 1>&2
-            usage
-            exit 1 ;;
+            if [ -z $USE_HAL_PATH ] ; then 
+                echo_ "No HAL Path (USE_HAL_PATH) specified for proprietary HAL $USE_TARGET_SYSTEM" 1>&2
+                usage
+                exit 1
+            fi
+            ;;
     esac
     
     # check for corrext CAN driver - and automatically adapt to embedded targets
@@ -2615,9 +2615,6 @@ check_after_user_configuration()
         USE_CAN_DRIVER=$PARAMETER_CAN_DRIVER
     fi
     
-    #default for not-can_server
-    #I doubt the sense of that below - what if $PARAMETER_CAN_DRIVER == "UseConfigFile" ??? -m.wodok 2009-10-16
-    CAN_SERVER_FILENAME="$PARAMETER_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
         (simulating)
             case "$USE_TARGET_SYSTEM" in
@@ -2642,7 +2639,8 @@ check_after_user_configuration()
                     ;;
             esac
             # enhanced CAN HAL is not yet supported for the known embedded targets
-            update_prj_system_with_enhanced_can_hal 0 ''
+            # but it may be supported on a proprietary HAL
+            #update_prj_system_with_enhanced_can_hal 0 ''
             ;;
         (msq_server)
             case "$USE_TARGET_SYSTEM" in
@@ -2659,14 +2657,10 @@ check_after_user_configuration()
                     exit 2
                     ;;
             esac
-            if [ $USE_TARGET_SYSTEM != "pc_win32" ] ; then
-                CAN_SERVER_FILENAME=${USE_CAN_DRIVER}
-            fi
             ;;
         (socket_server | socket_server_hal_simulator)
             # enhanced CAN HAL IS supported for the socket based can_server
             update_prj_system_with_enhanced_can_hal 1 ''
-            CAN_SERVER_FILENAME=can_server_sock
             ;;
         (*)
             echo_ "Unknown CAN driver $USE_CAN_DRIVER" 1>&2
@@ -2743,11 +2737,11 @@ make_doxygen_ready_comment_blocks()
     if [ -n "${DOXYGEN_EXPORT_DIR:-}" ] ; then
         # doxygen export is specified -> copy config file there with suitable doc block
         CONF_BASE=$(basename $CONF_FILE)
-        CONFIG_SPEC_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/spec__${CONF_BASE}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER}-doc.txt"
+        CONFIG_SPEC_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/spec__${CONF_BASE}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}-doc.txt"
         TMP_CONF="${TEMPFILE_PREFIX}${CONF_BASE}"
         {
             #echo_ "/**" >&3
-            #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$CAN_SERVER_FILENAME"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
+            #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
             #echo_ "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
             #echo_ "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
             #echo_ "*/" >&3
@@ -2758,7 +2752,7 @@ make_doxygen_ready_comment_blocks()
             #rm -f $TMP_CONF
             #echo_ "/*@}*/" >&3
         
-            echo_e "${ENDLINE}${ENDLINE} @section PrjSpec${PROJECT}__${USE_TARGET_SYSTEM}__${CAN_SERVER_FILENAME}__${USE_RS232_DRIVER} List of configuration settings for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
+            echo_e "${ENDLINE}${ENDLINE} @section PrjSpec${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of configuration settings for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
             echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
             echo_ " Use the file $(basename "${CONF_FILE}") in this directory as input file for $(basename "$0") to create the project generation files." >&3
             echo_ "\code" >&3
