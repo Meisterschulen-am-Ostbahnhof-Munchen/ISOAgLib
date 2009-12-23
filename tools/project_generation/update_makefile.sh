@@ -967,7 +967,8 @@ create_filelist( )
         local COMM_PROC_FEATURES="$(comm_proc_features 3>&1 1>&9)"
         local COMM_FEATURES="$(comm_features 3>&1 1>&9)"
         local DRIVER_FEATURES="$(driver_and_hal_features 3>&1 4>/tmp/__hal_features_temp 1>&9)"
-        local HAL_FEATURES=`cat /tmp/__hal_features_temp`
+        TMP_HAL_FEATURES="${TEMPFILE_PREFIX}hal_features"
+        local HAL_FEATURES="$(cat "$TMP_HAL_FEATURES")"
     } 9>&1
 
     local SRC_EXT="\( -name '*.c' -o -name '*.cc' -o -name '*.cpp' \)"
@@ -2768,7 +2769,7 @@ on_exit()
 {
     local STATUS="$?"
     set +o errexit # otherwise Bash may override the exit status due to another error
-    set -- "${TMP_REPORTFILE:-}" "${TMP_CONF:-}" "${TMP_CONFIG1:-}" "${TMP_MAKEFILE:-}" "${TMP_EDE:-}" "${TMP_INTERNAL_FILELIST:-}" "${TMP_INTERFACE_FILELIST:-}"
+    set -- "${TMP_REPORTFILE:-}" "${TMP_CONF:-}" "${TMP_CONFIG1:-}" "${TMP_MAKEFILE:-}" "${TMP_EDE:-}" "${TMP_INTERNAL_FILELIST:-}" "${TMP_INTERFACE_FILELIST:-}" "${TMP_HAL_FEATURES:-}"
     # omit empty filenames:
     for FILE in "$@"; do
         shift
