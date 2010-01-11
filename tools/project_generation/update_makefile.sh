@@ -609,26 +609,26 @@ driver_and_hal_features()
       " -path '*/driver/system*' " >&3
 
     printf '%s' \
-      " -path '*/${HAL_PATH_ISOAGLIB_CAN}/can*.h'  -o " \
-      " -path '*/${HAL_PATH_ISOAGLIB_CAN}/hal_can*' -o " \
-      "\( -path '*/${HAL_PATH_ISOAGLIB}/system*' -not -path '*hal_simulator*' \) -o " \
-      " -path '*/${HAL_PATH_ISOAGLIB}/errcodes.h' -o " \
-      " -path '*/${HAL_PATH_ISOAGLIB}/config.h' -o " \
-      " -path '*/${HAL_PATH_ISOAGLIB}/typedef.h' " >&4
+      " -path '*${HAL_PATH_ISOAGLIB_CAN}/can*.h'  -o " \
+      " -path '*${HAL_PATH_ISOAGLIB_CAN}/hal_can*' -o " \
+      "\( -path '*${HAL_PATH_ISOAGLIB}/system*' -not -path '*hal_simulator*' \) -o " \
+      " -path '*${HAL_PATH_ISOAGLIB}/errcodes.h' -o " \
+      " -path '*${HAL_PATH_ISOAGLIB}/config.h' -o " \
+      " -path '*${HAL_PATH_ISOAGLIB}/typedef.h' " >&4
 
     echo_ "CAN driver:    $USE_CAN_DRIVER"
     case "$USE_CAN_DRIVER" in
         (simulating)
-            printf '%s' " -o -path '*/${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_simulating*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_simulating*'" >&4
             ;;
         (msq_server)
-            printf '%s' " -o -path '*/${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_msq.*' -o -path '*/${HAL_PATH_ISOAGLIB}/can/msq_helper*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_msq.*' -o -path '*${HAL_PATH_ISOAGLIB}/can/msq_helper*'" >&4
             ;;
         (socket_server)
-            printf '%s' " -o -path '*/${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock.*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock.*'" >&4
             ;;
         (socket_server_hal_simulator)
-            printf '%s' " -o -path '*/${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock_hal_simulator.*'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock_hal_simulator.*'" >&4
             ;;
     esac
 
@@ -644,15 +644,15 @@ driver_and_hal_features()
 
     if [ "$PRJ_EEPROM" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/hal_eeprom.h'" >&3
-        printf '%s' " -o -path '*/${HAL_PATH_ISOAGLIB_EEPROM}/*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_EEPROM}/*'" >&4
     fi
     if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
-        printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_DATASTREAMS}/*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_DATASTREAMS}/*'" >&4
     fi
     if [ "$PRJ_ACTOR" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/actor*' -o -path '*/hal/hal_actor.h'" >&3
-        printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_ACTOR}/actor.h' -o -path '*/${HAL_PATH_SUPPLEMENTARY_ACTOR}/actor_target_extensions.*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_ACTOR}/actor.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_ACTOR}/actor_target_extensions.*'" >&4
     fi
     if [ "$PRJ_SENSOR_DIGITAL" -gt 0 ]; then
         printf '%s' " -o -name '*digitali_c.*'" >&3
@@ -665,11 +665,11 @@ driver_and_hal_features()
     fi
     if [ "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
         printf '%s' " -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/hal_sensor.h'" >&3
-        printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_SENSOR}/sensor.h' -o -path '*/${HAL_PATH_SUPPLEMENTARY_SENSOR}/sensor_target_extensions.*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_SENSOR}/sensor.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_SENSOR}/sensor_target_extensions.*'" >&4
     fi
     if [ "$PRJ_RS232" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/rs232/*' -o -path '*/hal/hal_rs232.h'" >&3
-        printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/rs232.h'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/rs232.h'" >&4
         if [ "$PRJ_RS232_OVER_CAN" -gt 0 ]; then
             echo_ "RS232 driver:  rs232_over_can"
             printf '%s' " -o -path '*/hal/virtualDrivers/rs232_over_can/*'" >&3
@@ -677,19 +677,19 @@ driver_and_hal_features()
             echo_ "RS232 driver:  $USE_RS232_DRIVER"
             case "$USE_RS232_DRIVER" in
                 (simulating)
-                    printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_simulating*'" >&4
+                    printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_simulating*'" >&4
                     ;;
                 (hal_simulator)
-                    printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_hal_simulator*'" >&4
+                    printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_hal_simulator*'" >&4
                     ;;
                 (rte)
-                    printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_rte*'" >&4
+                    printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_rte*'" >&4
                     ;;
                 (sys)
                     if [ "$USE_TARGET_SYSTEM" = "pc_win32" ]; then
-                        printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_w32_sys*'" >&4
+                        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_w32_sys*'" >&4
                     else
-                        printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_linux_sys*'" >&4
+                        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/target_extension_rs232_linux_sys*'" >&4
                     fi
                     ;;
                 (*)
@@ -697,7 +697,7 @@ driver_and_hal_features()
                     echo_ 'Current Setting is $USE_RS232_DRIVER'
                     exit 3
             esac
-            printf '%s' " -o -path '*/${HAL_PATH_SUPPLEMENTARY_RS232}/rs232_target_extensions.h'" >&4
+            printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_RS232}/rs232_target_extensions.h'" >&4
         fi
     fi
 }
@@ -999,14 +999,13 @@ create_filelist( )
         "${DRIVER_FEATURES:+ -o ${DRIVER_FEATURES}}")"
     { local EXCLUDE_PATH_PART1="$(find_part '-and -not' "-path '%s'" "$APP_PATH_EXCLUDE" 3>&1 1>&9)"; } 9>&1
     : ${EXCLUDE_PATH_PART1:="-a -not -path '*/xgpl_src/build/*'"}
-    local AND_HAL_FEATURES="${HAL_FEATURES:+-a \( $HAL_FEATURES \)}"
     eval "find ../../$ISO_AG_LIB_PATH/library/xgpl_src -follow $SRC_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_PURE"
     eval "find ../../$ISO_AG_LIB_PATH/library/xgpl_src -follow $HDR_EXT -a \( $FIND_TEMP_PATH \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' > $FILELIST_LIBRARY_HDR"
 
-    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $SRC_EXT $AND_HAL_FEATURES $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
-    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $HDR_EXT $AND_HAL_FEATURES $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
-    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $SRC_EXT $AND_HAL_FEATURES $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
-    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $HDR_EXT $AND_HAL_FEATURES $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_ISOAGLIB -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $SRC_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_PURE"
+    eval "find ../../$HAL_FIND_PATH/$HAL_PREFIX_SUPPLEMENTARY -follow $HDR_EXT -a \( $HAL_FEATURES \) $EXCLUDE_PATH_PART1 -printf '%h/%f\n' >> $FILELIST_LIBRARY_HDR"
 
     ##############################
     # find application files

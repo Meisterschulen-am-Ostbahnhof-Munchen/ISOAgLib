@@ -401,6 +401,8 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 
   if (mlist_sendStream.empty()) {
     mlist_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_WITH_COMMA ));
+    /** @todo SOON-178 remove if there's no minimum between data-packets! */
+    getCanInstance4Comm().setSendpause (scui8_isoCanPkgDelay + 1);
   } else {
     mlist_sendStream.insert (mlist_sendStream.end(), mlist_sendStream.back()); // insert a copy of the first element (for performance reasons)
   }
@@ -669,6 +671,12 @@ MultiSend_c::timeEvent()
       }
       pc_iter++;
     }
+  }
+
+  if (mlist_sendStream.empty())
+  { // (re-)set the CAN send pause to 0, because not a single SendStream is active anymore.
+    /** @todo SOON-178 remove if there's no minimum between data-packets! */
+    getCanInstance4Comm().setSendpause (0);
   }
 
   // ALWAYS calculate when we want to be triggered again!

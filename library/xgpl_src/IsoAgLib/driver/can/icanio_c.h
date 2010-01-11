@@ -102,6 +102,12 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
 
 
   /**
+    set the minimum delay in msec. between two sent CAN messages
+    @param aui16_minDelay minimum time between two CAN messages [msec.]
+  */
+  void setSendpause(uint16_t aui16_minDelay) const { CanIo_c::setSendpause(aui16_minDelay);};
+
+  /**
     deliver the numbers which can be placed at the moment in the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
       (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)

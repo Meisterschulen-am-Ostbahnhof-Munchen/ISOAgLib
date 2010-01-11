@@ -189,6 +189,16 @@ int16_t can_configGlobalInit(uint8_t rui8_busNr, uint16_t rb_baudrate, uint16_t 
 */
 int16_t can_configGlobalMask(uint8_t rui8_busNr, uint16_t rb_maskStd, uint32_t rui32_maskExt, uint32_t rui32_maskLastmsg);
 
+/**
+  change the the send rate for one MsgObj by setting the minimum
+  pause time between two messages [msec.]
+  @param rui8_busNr number of the BUS to config
+  @param rui8_msgobjNr number of the MsgObj to config
+  @param rui16_minSendPause minimum send pause between two sent messages [msec.]
+  @return HAL_NO_ERR == no error;
+          HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
+          HAL_RANGE_ERR == wrong BUS or MsgObj number
+*/
 int16_t can_configMsgobjSendpause(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, uint16_t rui16_minSend);
 
 /**
