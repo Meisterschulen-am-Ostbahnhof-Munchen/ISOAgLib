@@ -234,16 +234,6 @@ namespace HAL
 
 
 
-  /**
-    change the the send rate for one MsgObj by setting the minimum
-    pause time between two messages [msec.]
-    @param aui8_busNr number of the BUS to config
-    @param aui8_msgobjNr number of the MsgObj to config
-    @param aui16_minSend minimum send pause between two sent messages [msec.]
-    @return HAL_NO_ERR == no error;
-            C_CONFIG == BUS not initialised or ident can't be changed
-            C_RANGE == wrong BUS or MsgObj number
-  */
   inline int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uint16_t aui16_minSend)
     {return __HAL::can_configMsgobjSendpause(aui8_busNr, aui8_msgobjNr, aui16_minSend);};
 

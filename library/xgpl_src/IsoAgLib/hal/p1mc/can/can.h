@@ -266,16 +266,6 @@ namespace HAL
   inline int16_t can_configMsgobjLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock = true )
     {return __HAL::can_configMsgobjLock( rui8_busNr, rui8_msgobjNr, rb_doLock);};
 
-  /**
-    change the the send rate for one MsgObj by setting the minimum
-    pause time between two messages [msec.]
-    @param rui8_busNr number of the BUS to config
-    @param rui8_msgobjNr number of the MsgObj to config
-    @param rui16_minSendPause minimum send pause between two sent messages [msec.]
-    @return C_NO_ERR == no error;
-            C_CONFIG == BUS not initialised or ident can't be changed
-            C_RANGE == wrong BUS or MsgObj number
-  */
   inline int16_t can_configMsgobjSendpause(uint8_t rui8_busNr, uint8_t rui8_msgobjNr, uint16_t rui16_minSend)
     {return __HAL::can_configMsgobjSendpause(rui8_busNr, rui8_msgobjNr, rui16_minSend);};
 
