@@ -14,10 +14,10 @@
 
 #define NUMBER_CANMESSAGES 24
 
+#include "hal_can_interface.h"
 #include "../typedef.h"
 #include "../config.h"
 #include "../errcodes.h"
-#include "hal_can_interface.h"
 #include "../system/system_target_extensions.h"
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>

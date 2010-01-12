@@ -15,6 +15,7 @@
 #ifndef _HAL_AMS5_CAN_INTERFACE_H_
 #define _HAL_AMS5_CAN_INTERFACE_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <IsoAgLib/hal/ams5/typedef.h>
 #include <IsoAgLib/hal/ams5/errcodes.h>
 

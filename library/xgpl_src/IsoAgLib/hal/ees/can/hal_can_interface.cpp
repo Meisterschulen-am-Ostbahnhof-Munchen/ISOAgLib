@@ -12,9 +12,9 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include "hal_can_interface.h"
 #include "../errcodes.h"
 #include "../typedef.h"
-#include "hal_can_interface.h"
 
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 

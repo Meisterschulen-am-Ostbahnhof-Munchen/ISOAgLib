@@ -24,6 +24,7 @@
 #ifndef _HAL_PM167_CAN_INTERFACE_H_
 #define _HAL_PM167_CAN_INTERFACE_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "../typedef.h"
 
 

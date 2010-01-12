@@ -12,6 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "../commercial_BIOS/bios_ams5/ams_bios.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>

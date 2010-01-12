@@ -20,10 +20,10 @@
  * directories xgpl_src/IsoAgLib/hal/xx/can/ .
  * ********************************************************** */
 
+#include "hal_can_interface.h"
 #include "../typedef.h"
 #include "../config.h"
 #include "../errcodes.h"
-#include "hal_can_interface.h"
 
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
