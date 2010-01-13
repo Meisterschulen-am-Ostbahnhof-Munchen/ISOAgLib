@@ -350,21 +350,11 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
 {
   if (!existMaster())
   { // create register entry for master value
-    const uint16_t cui16_oldSize = mvec_register.size();
     mvec_register.push_front(SetpointRegister_c());
-    if ( cui16_oldSize >= mvec_register.size() )
-    { // out-of-memory
-      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-      return;
-    }
     #ifdef DEBUG_HEAP_USEAGE
-    else
-    {
-      sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
-
-      INTERNAL_DEBUG_DEVICE
-        << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
+    sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+    INTERNAL_DEBUG_DEVICE
+      << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     mpc_master = mvec_register.begin();
   }
@@ -674,21 +664,12 @@ void SetpointLocal_c::processSet()
   { // caller didn't set setpoint previous to this -> create item
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
-      const uint16_t cui16_oldSize = mvec_register.size();
       mvec_register.push_front( SetpointRegister_c( c_callerISOName));
-      if ( cui16_oldSize >= mvec_register.size() )
-      { // out-of-memory
-        getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-        return;
-      }
       #ifdef DEBUG_HEAP_USEAGE
-      else
-      {
-        sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
+      sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
-        INTERNAL_DEBUG_DEVICE
-          << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
-      }
+      INTERNAL_DEBUG_DEVICE
+        << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       pc_callerIter = mvec_register.begin();
       b_change = true;

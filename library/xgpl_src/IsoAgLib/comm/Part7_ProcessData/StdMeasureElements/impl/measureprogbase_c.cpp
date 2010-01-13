@@ -178,26 +178,17 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   }
   else
   { // no subprog with same type exist -> insert new one
-    const uint8_t b_oldSize = mvec_measureSubprog.size();
     mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment SINGLETON_VEC_KEY_WITH_COMMA));
-    if (b_oldSize >= mvec_measureSubprog.size())
-    { // array didn't grow
-      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-      return false;
-    }
     #ifdef DEBUG_HEAP_USEAGE
-    else
-    {
-      sui16_MeasureProgBaseTotal++;
+    sui16_MeasureProgBaseTotal++;
 
-      INTERNAL_DEBUG_DEVICE
-        << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
-        <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-        << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
-        << ", Chunk-Alloc: "
-        << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
-        << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
+    INTERNAL_DEBUG_DEVICE
+      << sui16_MeasureProgBaseTotal << " x MeasureSubprog_c: Mal-Alloc: "
+      <<  sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << "/" << sizeSlistTWithMalloc( sizeof(MeasureSubprog_c), 1 )
+      << ", Chunk-Alloc: "
+      << sizeSlistTWithChunk( sizeof(MeasureSubprog_c), sui16_MeasureProgBaseTotal )
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
 

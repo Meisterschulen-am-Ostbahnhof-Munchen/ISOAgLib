@@ -61,10 +61,8 @@ template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( register, GE
     if ( *gluemacs( pc_searchCache, GET_CL_DEF() ) == pc_client ) { b_exists = true; break;}
   if ( !b_exists )
   { // given entry is new -> insert in list
-    size_t oldSize = gluemacs( c_arrClient, GET_CL_DEF() ).size();
     gluemacs( c_arrClient, GET_CL_DEF() ).push_back( pc_client );
-    // test if vector grew by one entry
-    if ( gluemacs( c_arrClient, GET_CL_DEF() ).size() == ( oldSize + 1 ) ) b_result = true;
+    b_result = true;
     gluemacs( pc_searchCache, GET_CL_DEF() ) = gluemacs( c_arrClient, GET_CL_DEF() ).end() - 1;
   }
   return b_result;

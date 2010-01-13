@@ -468,8 +468,6 @@ void ManageMeasureProgLocal_c::setGlobalVal( int32_t ai32_val )
 */
 void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
 {
-  const uint8_t b_oldSize = vec_prog().size();
-
   Vec_MeasureProgLocalIterator pc_iter = vec_prog().begin();
   for (; pc_iter != vec_prog().end(); pc_iter++)
   { // check if it's not active
@@ -484,11 +482,6 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
   else
   {
     vec_prog().push_front( MeasureProgLocal_c(pprocessData() ) );
-    if (b_oldSize >= vec_prog().size())
-    { // array didn't grow
-      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
-      return;
-    }
     mpc_progCache = vec_prog().begin();
   }
 

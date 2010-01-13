@@ -33,7 +33,7 @@ namespace IsoAgLib
       The internal implementation will take care to adapt the receive filter as soon as
       the SA of the remote or local is changed.
    */
-  bool registerProprietaryMessageClient (iProprietaryMessageClient_c* client);
+  void registerProprietaryMessageClient (iProprietaryMessageClient_c* client);
 
 
   /** force an update of the CAN receive filter, as new data has been set in an already

@@ -1453,24 +1453,11 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
             << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
 
-            // check if insertion try result in growed dyn array
-            const uint16_t ui16_oldSize = cntMsgObj();
             // insert obj in vector
             marr_msgObj.push_front(mc_tempObj);
             setCntMsgObj( marr_msgObj.size() );
-            if (ui16_oldSize >= cntMsgObj())
-            { // dyn array didn't grow -> set badAlloc error state
-
-            #ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-            INTERNAL_DEBUG_DEVICE << "CanIo_c::FilterBox2MsgObj : the vector doesn't grow " << INTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
-              getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
-            }
             #ifdef DEBUG_HEAP_USEAGE
-            else
-            {
-              sui16_msgObjTotal++;
-            }
+            sui16_msgObjTotal++;
             #endif
             pc_search4MsgObjReuse = marr_msgObj.end();
 
@@ -1480,8 +1467,7 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
         {
           // same filter definition at position q already inserted in msgOb vector
           // insert new FilterBox_c reference
-          if ( pc_iterMsgObj->insertFilterBox(pc_iterFilterBox) == false)
-            i16_result = -1;
+          pc_iterMsgObj->insertFilterBox(pc_iterFilterBox);
         }
 
 

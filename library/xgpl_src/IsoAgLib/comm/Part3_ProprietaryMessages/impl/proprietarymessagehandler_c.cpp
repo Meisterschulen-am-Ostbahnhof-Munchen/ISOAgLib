@@ -86,33 +86,26 @@ namespace __IsoAgLib
       the SA of the remote or local is changed.
       @return true if client is registered otherwise false
     */
-  bool ProprietaryMessageHandler_c::registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
+  void ProprietaryMessageHandler_c::registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
   {
     // look in the whole list
     for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     { // client is registered
-      if ( (*client_iterator).pc_client ==  apc_proprietaryclient ) return true;
+      if ( (*client_iterator).pc_client ==  apc_proprietaryclient ) return;
     }
-    // store old list size
-    const unsigned int oldClientSize = mvec_proprietaryclient.size();
     /* define receive filter with "no"-values
     scui32_noFilter marks the whole filter as "not set"*/
     IsoFilter_s s_tempIsoFilter(static_cast<__IsoAgLib::CanCustomer_c&>(*this), scui32_noMask, scui32_noFilter, NULL, NULL);
     ClientNode_t t_tempClientNode (apc_proprietaryclient, s_tempIsoFilter);
     // push back new client
     mvec_proprietaryclient.push_back (t_tempClientNode);
-
-    // return true if new client is registered
-    return ( mvec_proprietaryclient.size() > oldClientSize );
   }
 
   /** deregister a ProprietaryMessageClient */
-  bool ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
+  void ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
   {
     /* define receive filter with "no"-values*/
     apc_proprietaryclient->defineReceiveFilter(scui32_noMask, scui32_noFilter, screfc_noIsoName, spc_nolocalIdent);
-    /* store list size */
-    const unsigned int oldClientSize = mvec_proprietaryclient.size();
     // look in the whole list
     for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     {
@@ -123,8 +116,6 @@ namespace __IsoAgLib
         break;
       }
     }
-    // true if client ist deregistered
-    return (mvec_proprietaryclient.size() < oldClientSize);
   }
 
 

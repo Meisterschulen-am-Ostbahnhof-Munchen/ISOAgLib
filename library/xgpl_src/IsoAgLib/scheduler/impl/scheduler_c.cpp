@@ -263,11 +263,9 @@ bool Scheduler_c::registerClient( Scheduler_Task_c* apc_client)
 
   apc_client->startTaskTiming(si32_taskStartTime);
   /// put client in taskQueue
-  const uint16_t ui16_oldSize = cntClient();
   mc_taskQueue.push_front( SchedulerEntry_c( apc_client ) );
   // check whether the task list grew as awaited
   setCntClient(mc_taskQueue.size() );
-  if ( cntClient() <= ui16_oldSize ) return false;
   #ifdef DEBUG_HEAP_USEAGE
   sui16_clientPointerTotal++;
 

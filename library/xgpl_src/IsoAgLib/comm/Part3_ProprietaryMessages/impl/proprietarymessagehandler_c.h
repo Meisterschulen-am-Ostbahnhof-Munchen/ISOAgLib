@@ -83,10 +83,10 @@ namespace __IsoAgLib
         The internal implementation will take care to adapt the receive filter as soon as
         the SA of the remote or local is changed.
     */
-    bool registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
+    void registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
 
     /** deregister ProprietaryMessageClient */
-    bool deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
+    void deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient);
 
     /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
      * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t

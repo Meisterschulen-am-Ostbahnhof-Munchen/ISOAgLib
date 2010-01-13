@@ -570,33 +570,27 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& acrc_isoName,
     mc_tempIsoMemberItem.setIdentItem(*apc_identItemForLocalItems);
 
   // now insert element
-  const uint8_t b_oldSize = mvec_isoMember.size();
   mvec_isoMember.push_front(mc_tempIsoMemberItem);
   mpc_isoMemberCache = mvec_isoMember.begin();
-  if (mvec_isoMember.size() <= b_oldSize)
-  { // array didn't grow
-    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::System );
+  // item was inserted
+  pc_result = &(*mpc_isoMemberCache);
+  if (ab_announceAddition)
+  { // immediately announce addition.
+    // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
+    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *pc_result);
   }
-  else
-  { // item was inserted
-    pc_result = &(*mpc_isoMemberCache);
-    if (ab_announceAddition)
-    { // immediately announce addition.
-      // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
-      getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *pc_result);
-    }
-    #ifdef DEBUG_HEAP_USEAGE
-    sui16_isoItemTotal++;
+#ifdef DEBUG_HEAP_USEAGE
+  sui16_isoItemTotal++;
 
-    INTERNAL_DEBUG_DEVICE
-      << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
-      <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
-      << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
-      << ", Chunk-Alloc: "
-      << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
-      << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-  }
+  INTERNAL_DEBUG_DEVICE
+    << sui16_isoItemTotal << " x IsoItem_c: Mal-Alloc: "
+    <<  sizeSlistTWithMalloc( sizeof(IsoItem_c), sui16_isoItemTotal )
+    << "/" << sizeSlistTWithMalloc( sizeof(IsoItem_c), 1 )
+    << ", Chunk-Alloc: "
+    << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
+    << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
 
   return pc_result;
 }
@@ -771,13 +765,12 @@ bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bo
 
 
 /** register an SaClaimHandler_c */
-bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
+void IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
-    if ( *iter == apc_client ) return true; // already in multimap -> don't insert again
+    if ( *iter == apc_client ) return; // already in multimap -> don't insert again
   }
-  const unsigned int oldSize = mvec_saClaimHandler.size();
   // if this position is reached, a new item must be inserted
   mvec_saClaimHandler.push_back( apc_client );
 
@@ -786,16 +779,13 @@ bool IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
   { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
     apc_client->reactOnIsoItemModification (AddToMonitorList, *iter);
   }
-
-  return ( mvec_saClaimHandler.size() > oldSize );
 }
 
 
 /** deregister an SaClaimHandler */
-bool
+void
 IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
 {
-  const unsigned int oldSize = mvec_saClaimHandler.size();
   for ( SaClaimHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
     if ( *iter == apc_client )
@@ -804,7 +794,6 @@ IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
       break;
     }
   }
-  return (mvec_saClaimHandler.size() > oldSize);
 }
 
 

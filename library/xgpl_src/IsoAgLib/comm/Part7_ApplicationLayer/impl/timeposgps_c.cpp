@@ -917,10 +917,14 @@ namespace __IsoAgLib {
         // now read the type and age of all following reference stations
         for ( unsigned int ind = 0; ((ind < mui8_noRefStations) &&(!rc_stream.eof())); ind++ )
         { // push new items at the end or simply update the corresponding value
-          if ( mvec_refStationTypeAndStation.size() < (ind+1) ) mvec_refStationTypeAndStation.push_back(__IsoAgLib::convertIstreamUi16( rc_stream ) );
-          else IsoAgLib::convertIstream( rc_stream, mvec_refStationTypeAndStation[ind] );
-          if ( mvec_refStationDifferentialAge10Msec.size() < (ind+1) ) mvec_refStationDifferentialAge10Msec.push_back(__IsoAgLib::convertIstreamUi16( rc_stream ) );
-          else IsoAgLib::convertIstream( rc_stream, mvec_refStationDifferentialAge10Msec[ind] );
+          if ( mvec_refStationTypeAndStation.size() < (ind+1) )
+            mvec_refStationTypeAndStation.push_back(__IsoAgLib::convertIstreamUi16( rc_stream ) );
+          else
+            IsoAgLib::convertIstream( rc_stream, mvec_refStationTypeAndStation[ind] );
+          if ( mvec_refStationDifferentialAge10Msec.size() < (ind+1) )
+            mvec_refStationDifferentialAge10Msec.push_back(__IsoAgLib::convertIstreamUi16( rc_stream ) );
+          else
+            IsoAgLib::convertIstream( rc_stream, mvec_refStationDifferentialAge10Msec[ind] );
         }
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_POSITON_DATA_PGN Lat: " << mi32_latitudeDegree10Minus7

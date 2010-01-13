@@ -271,10 +271,10 @@ public:
   bool existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress = false);
 
   /** register a SaClaimHandler_c */
-  bool registerSaClaimHandler (SaClaimHandler_c* apc_client);
+  void registerSaClaimHandler (SaClaimHandler_c* apc_client);
 
   /** deregister a SaClaimHandler */
-  bool deregisterSaClaimHandler (SaClaimHandler_c* apc_client);
+  void deregisterSaClaimHandler (SaClaimHandler_c* apc_client);
 
   void broadcastIsoItemModification2Clients( IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
 

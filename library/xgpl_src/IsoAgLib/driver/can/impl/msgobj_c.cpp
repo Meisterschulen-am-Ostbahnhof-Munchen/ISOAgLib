@@ -157,7 +157,7 @@ void MsgObj_c::close()
   @param arc_box reference to FilterBox_c which should be inserted as possible processing instance of msg received by this instance
   @return true -> this reference could be stored in this MsgObj_c (limited amount)
 */
-bool MsgObj_c::insertFilterBox(FilterRef arc_box)
+void MsgObj_c::insertFilterBox(FilterRef arc_box)
 {
 
 
@@ -173,30 +173,14 @@ bool MsgObj_c::insertFilterBox(FilterRef arc_box)
       INTERNAL_DEBUG_DEVICE << "Reject try to insert the same FilterBox a second time"
         << (*arc_box).getFbVecIdx() << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      return true;
+      return;
     }
   }
-  const unsigned int cui_oldSize = marr_filterBoxIndex.size();
   marr_filterBoxIndex.push_back( (*arc_box).getFbVecIdx() );
  #ifdef DEBUG
   INTERNAL_DEBUG_DEVICE << "Inserted the index"
         << (*arc_box).getFbVecIdx() << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  if ( marr_filterBoxIndex.size() > cui_oldSize )
-  { // fine
-
-
-    return true;
-  }
-  else
-  { // vector didn't grow --> out of memory
-#ifdef DEBUG
-     INTERNAL_DEBUG_DEVICE << "MsgObj_c::insertFilterBox : the vector doesn't grow " << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
-    getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
-    return false;
-  }
 }
 
 /** delete pointer to a Filter Box and move following pointers one position forward
