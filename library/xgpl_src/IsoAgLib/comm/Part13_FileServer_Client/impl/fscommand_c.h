@@ -35,61 +35,61 @@ class FsClientServerCommunication_c;
 class FsCommand_c : Scheduler_Task_c
 {
   private:
-    /** the TAN counter for the fileserver communication. */
+    /** the TAN counter for the fileserver communication. **/
     uint8_t ui8_tan;
-    /** the version of the standard used by the fileserver */
+    /** the version of the standard used by the fileserver **/
     int8_t i8_fsVersion;
-    /** the reference to the fsclientservercommunication. responses will be directed to this. */
+    /** the reference to the fsclientservercommunication. responses will be directed to this. **/
     FsClientServerCommunication_c &rc_csCom;
-    /** the reference to the used fileserver */
+    /** the reference to the used fileserver **/
     FsServerInstance_c &rc_filerserver;
 
-    /** packet filter functions*/
-    void registerPacketFilter();
-    void deletePacketFilter();
-    void registerMultiReceiveFilter();
-    void deleteMultiReceiveFilter();
-
-    /**open file maintenance message*/
-    /** number of opened files */
+    /** open file maintenance message **/
+    /** number of opened files **/
     uint8_t ui8_nrOpenFiles;
-    /** when has the last alive been sent?*/
+    /** keep connection open even after all files are closed **/
+    bool b_keepConnectionOpen;
+    /** when has the last alive been sent? **/
     int32_t i32_lastAliveSent;
-    /** buffer containing the standard maintenance message, content equal for all clients! */
+    /** buffer containing the standard maintenance message, content equal for all clients! **/
     static uint8_t pui8_maintenanceBuffer[8];
 
-    /**send information*/
+    /** send information **/
     CANPkgExt_c c_data;
-    /** send package length */
+    /** send package length **/
     uint8_t ui8_packetLength;
-    /** buffer containing the sent message. */
+    /** buffer containing the sent message. **/
     uint8_t pui8_sendBuffer[256];
-    /** buffer used for multi-receive messages */
-    uint8_t *pui_receiveBuffer;
-    /** has a response for the sent message been received? */
+    /** buffer used for multi-receive messages **/
+    uint8_t *pui8_receiveBuffer;
+    uint32_t ui32_recBufAllocSize;
+    uint8_t ui8_recTan;
+    /** has a response for the sent message been received? **/
     bool b_receivedResponse;
-    /** when has the last request been sent? time to resend?*/
+    /** when has the last request been sent? time to resend? **/
     int32_t i32_lastrequestAttempt;
-    /** how many times has the request been sent?*/
+    /** how many times has the request been sent? **/
     uint8_t ui8_requestAttempts;
-    /** status of a sent multi-message */
+    /** status of a sent multi-message **/
     MultiSend_c::sendSuccess_t en_sendSuccessNotify;
 
-    /**recieve information*/
+    /** recieve information **/
     uint8_t ui8_errorCode;
 
-    /**currentDirectory information*/
+    /** currentDirectory information **/
     uint8_t *pui8_currentDirectory;
+    uint16_t ui16_curDirAllocSize;
 
-    /**file handle information*/
+    /** file handle information **/
     uint8_t ui8_fileHandle;
 
-    /**open file information*/
-    /** file to be opend. important as return for change current directory */
+    /** open file information **/
+    /** file to be opend. important as return for change current directory **/
     uint8_t *pui8_fileName;
-    /** flags used to open file */
+    uint16_t ui16_fileNameAllocSize;
+    /** flags used to open file **/
     uint8_t ui8_flags;
-    /** attributes of opend file returned after open. */
+    /** attributes of opend file returned after open. **/
     bool b_archive;
     bool b_system;
     bool b_caseSensitive;
@@ -100,16 +100,18 @@ class FsCommand_c : Scheduler_Task_c
     bool b_hidden;
     bool b_readOnly;
 
-    /**seek file information*/
+    /** seek file information **/
     uint8_t ui8_possitionMode;
     int32_t i32_offset;
     uint32_t ui32_possition;
 
-    /**read file information*/
+    /** read file information */
     uint16_t ui16_count;
     bool b_reportHiddenFiles;
     uint8_t *pui8_data;
-    std::vector<struct iFsDirectory *> v_dirData;
+    uint16_t ui16_dataAllocSize;
+    IsoAgLib::iFsDirList v_dirData;
+    bool b_readDirectory;
 
     /** set file attributes commands **/
     uint8_t ui8_hiddenAtt;
@@ -119,24 +121,34 @@ class FsCommand_c : Scheduler_Task_c
     uint16_t ui16_date;
     uint16_t ui16_time;
 
-    /** function used to send a request. depending on the size of the request single of multi packet send is selected. */
+    /** filter information **/
+    bool b_receiveFilterCreated;
+
+    /** function used to send a request. depending on the size of the request single of multi packet send is selected. **/
     void sendRequest();
-    /** decodes a given attribute and saves the decoded values in the corresponding member variables*/ 
+    /** decodes a given attribute and saves the decoded values in the corresponding member variables **/
     void decodeAttributes(uint8_t ui8_attributes);
 
-    /** functions to decode fileserver repsonses. */
+    /** functions to decode fileserver repsonses. **/
     void decodeGetCurrentDirectoryResponse();
     void decodeOpenFileResponse();
     void decodeSeekFileResponse();
     void decodeReadFileResponse();
     void decodeReadDirectoryResponse();
 
-    /** draft version of "getFileAttributes" */
+    /** draft version of "getFileAttributes" **/
     void getFileAttributesDIS(uint8_t ui8_fileHandle);
     void setFileAttributesDIS(uint8_t ui8_fileHandle);
     void getFileDateTimeDIS(uint8_t ui8_fileHandle);
 
-    /** which command are we sending? */
+    /** clean up when done **/
+    void clearDirectoryList();
+    void doneCleanUp();
+
+    /** internal read file use for read file and read directory **/
+    IsoAgLib::iFsCommandErrors readFile(uint8_t ui8_inFileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
+
+    /** which command are we sending? **/
     enum commandtype_en
     {
       en_noCommand = 0x00,
@@ -158,10 +170,10 @@ class FsCommand_c : Scheduler_Task_c
 
   public:
 
-    /** is the command busy, meaning waiting for a response? */
+    /** is the command busy, meaning waiting for a response? **/
     bool isBusy() { return !b_receivedResponse; }
 
-    /** time evnet function. If no response received, resend request periodically. */
+    /** time evnet function. If no response received, resend request periodically. **/
     bool timeEvent(void);
 
     /**
@@ -189,14 +201,14 @@ class FsCommand_c : Scheduler_Task_c
       * Method called by FsClientServerCommunciation_c. After the response of get current directory, the fileserver is considered to
       * be ready for use.
       */
-    iFsCommandErrors getCurrentDirectory();
+    IsoAgLib::iFsCommandErrors getCurrentDirectory();
     /**
       * Method to change the fileserver's current directory. The response-method returns the new current directory to the
       * FsClientServerCommunication_c, as this information is saved there.
       * @param pui8_newDirectory the new current directory of the fileserver.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors changeCurrentDirectory(uint8_t *pui8_newDirectory);
+    IsoAgLib::iFsCommandErrors changeCurrentDirectory(uint8_t *pui8_newDirectory);
 
     /**
       * Method to open a file and request a filehandle for the opened file.
@@ -209,7 +221,7 @@ class FsCommand_c : Scheduler_Task_c
       * @param bool b_openDirectory open directory?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory);
+    IsoAgLib::iFsCommandErrors openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory);
     /**
       * Change the position pointer of a file.
       * @param ui8_fileHandle filehandle of the file to be seeked in.
@@ -217,15 +229,22 @@ class FsCommand_c : Scheduler_Task_c
       * @param i32_offset offset from position given in ui8_possitionMode
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset);
+    IsoAgLib::iFsCommandErrors seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset);
     /**
       * read content of a file
       * @param ui8_fileHandle filehandle of the file to be read.
       * @param ui16_count number of bytes to be read.
+      * @return 0 if request was sent without problems, else an errorcode is returned.
+      */
+    IsoAgLib::iFsCommandErrors readFile(uint8_t ui8_fileHandle, uint16_t ui16_count);
+    /**
+      * read content of a directory
+      * @param ui8_fileHandle directoryhandle of the directory to be read.
+      * @param ui16_count number of entries to be read.
       * @param b_reportHiddenFiles shall hidden files of a directory be reported?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors readFile(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
+    IsoAgLib::iFsCommandErrors readDirectory(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
     /**
       * write data to a file
       * @param ui8_fileHandle filehandle of the file to be written.
@@ -233,13 +252,13 @@ class FsCommand_c : Scheduler_Task_c
       * @param pui8_data data that shall be written
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data);
+    IsoAgLib::iFsCommandErrors writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data);
     /**
       * close a file
       * @param ui8_fileHandle filehandle of the file to be closed.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors closeFile(uint8_t ui8_fileHandle);
+    IsoAgLib::iFsCommandErrors closeFile(uint8_t ui8_fileHandle);
 
     /**
       * move/copy a file.
@@ -250,7 +269,7 @@ class FsCommand_c : Scheduler_Task_c
       * @param b_copy shall the file be moved or copied?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy);
+    IsoAgLib::iFsCommandErrors moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy);
     /**
       * delete a file.
       * @param pui8_fileName name of the file to be deleted.
@@ -258,13 +277,13 @@ class FsCommand_c : Scheduler_Task_c
       * @param b_force shall write-protected files be deleted?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force);
+    IsoAgLib::iFsCommandErrors deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force);
     /**
       * get Attributes of a file.
       * @param pui8_fileName name of the requested file.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors getFileAttributes(uint8_t *pui8_fileName);
+    IsoAgLib::iFsCommandErrors getFileAttributes(uint8_t *pui8_fileName);
     /**
       * change attributed for a file.
       * @param pui8_fileName name of the file that's attributes have to be changed.
@@ -272,13 +291,13 @@ class FsCommand_c : Scheduler_Task_c
       * @param ui8_readOnlyAtt change read only attribute command: 0 clear, 1 set abd 3 leave as is.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt);
+    IsoAgLib::iFsCommandErrors setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt);
     /**
       * get date and time of last change of file.
       * @param pui8_fileName name of the reqeusted file.
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors getFileDateTime(uint8_t *pui8_fileName);
+    IsoAgLib::iFsCommandErrors getFileDateTime(uint8_t *pui8_fileName);
 
     /**
       * initialize volume
@@ -288,7 +307,7 @@ class FsCommand_c : Scheduler_Task_c
       * @param b_createNewVolume shall a new volum be created?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    iFsCommandErrors initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume);
+    IsoAgLib::iFsCommandErrors initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume);
 
     /**
       * Constructor of a FsCommand_c. FsClientServerCommunication_c and FsServerInstance_c have to be provided. Sets
@@ -307,11 +326,23 @@ class FsCommand_c : Scheduler_Task_c
       */
     FsServerInstance_c &getFileserver() { return rc_filerserver; }
 
-    /// MultiReceiveClient functions BEGIN
+    /**
+      * set connection state to keep open even after all files have been closed
+      * @param b_keepOpen connection state.
+      * @param b_forceClose force the connection to close even if files are open.
+      */
+    void setKeepConnectionOpen( bool b_keepOpen, bool b_forceClose=false );
+    /**
+      * get conneciton state
+      * @return true if the keep connection open is current set else false is returned.
+      */
+    bool getKeepConnectionOpen() const { return b_keepConnectionOpen; }
+
+    /** MultiReceiveClient functions BEGIN **/
     bool processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, bool rb_isFirstChunk, bool rb_isLastChunkAndACKd);
     void reactOnAbort(IsoAgLib::iStream_c& refc_stream);
     bool reactOnStreamStart(const IsoAgLib::ReceiveStreamIdentifier_c& refc_ident, uint32_t rui32_totalLen);
-    /// MultiReceiveClient functions END
+    /** MultiReceiveClient functions END **/
 };
 
 }

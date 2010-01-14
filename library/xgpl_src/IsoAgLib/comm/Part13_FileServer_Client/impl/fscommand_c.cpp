@@ -15,9 +15,12 @@
 #include "fscommand_c.h"
 #include "fsclientservercommunication_c.h"
 #include <IsoAgLib/driver/can/icanio_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 
 #define NR_REQUEST_ATTEMPTS 5
-#define REQUEST_REPEAT_TIME 5000
+#define REQUEST_REPEAT_TIME 6500
+/* TODO may need to create a timeout based on number of bytes being read */
+#define REQUEST_REPEAT_BUSY_TIME 24000
 
 namespace __IsoAgLib
 {
@@ -26,88 +29,127 @@ uint8_t FsCommand_c::pui8_maintenanceBuffer[8] = {0x00, 0xff, 0xff, 0xff, 0xff, 
 
 bool FsCommand_c::timeEvent(void)
 {
-  //are we waiting for a response? if not, delete all filters.
-  if (b_receivedResponse)
+  if (!rc_csCom.getClientIdentItem().isClaimedAddress()) return true;
+
+  if (!b_receiveFilterCreated)
   {
-    deleteMultiReceiveFilter();
+    // Multi-Packet
+    getMultiReceiveInstance4Comm().registerClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN);
+
+    // Single-Packet
+    IsoFilter_s tempIsoFilter (*this, 0x3FFFF00UL, (FS_TO_CLIENT_PGN << 8),
+                               &rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
+                               NULL,
+                               8, Ident_c::ExtendedIdent);
+
+    if (!getIsoFilterManagerInstance4Comm().existIsoFilter( tempIsoFilter ))
+    { // no suitable FilterBox_c exist -> create it
+      getIsoFilterManagerInstance4Comm().insertIsoFilter( tempIsoFilter, true );
+    }
+
+    b_receiveFilterCreated = true;
   }
 
-  if (!b_receivedResponse && (HAL::getTime() - i32_lastrequestAttempt) > REQUEST_REPEAT_TIME)
+  int32_t i32_requestRepeatTime = REQUEST_REPEAT_TIME;
+  if ( rc_filerserver.getBusy() )
+    i32_requestRepeatTime = REQUEST_REPEAT_BUSY_TIME;
+
+  if (!b_receivedResponse && ((HAL::getTime() - i32_lastrequestAttempt) > i32_requestRepeatTime) )
   {
     if (ui8_requestAttempts < NR_REQUEST_ATTEMPTS)
     {
       sendRequest();
-    } else {
+    }
+    else
+    {
       switch (en_lastCommand)
       {
         case en_noCommand:
           break;
         case en_getCurrentDirectory:
-          rc_csCom.getCurrentDirectoryResponse(fsFileserverNotResponding, (uint8_t *)NULL);
+          rc_csCom.getCurrentDirectoryResponse(IsoAgLib::fsFileserverNotResponding, (uint8_t *)NULL);
           break;
         case en_changeCurrentDirectory:
-          rc_csCom.changeCurrentDirectoryResponse(fsFileserverNotResponding, (uint8_t *)NULL);
+          rc_csCom.changeCurrentDirectoryResponse(IsoAgLib::fsFileserverNotResponding, (uint8_t *)NULL);
           break;
         case en_openFile:
-          rc_csCom.openFileResponse(fsFileserverNotResponding, 0, false, false, false, false, false, false, false);
+          rc_csCom.openFileResponse(IsoAgLib::fsFileserverNotResponding, 0, false, false, false, false, false, false, false);
           break;
         case en_seekFile:
-          rc_csCom.seekFileResponse(fsFileserverNotResponding, 0);
+          rc_csCom.seekFileResponse(IsoAgLib::fsFileserverNotResponding, 0);
           break;
         case en_readFile:
-          rc_csCom.readFileResponse(fsFileserverNotResponding, 0, (uint8_t *)NULL);
+          if (b_readDirectory)
+          {
+            clearDirectoryList();
+
+            rc_csCom.readDirectoryResponse(IsoAgLib::fsFileserverNotResponding, v_dirData);
+          } 
+          else
+            rc_csCom.readFileResponse(IsoAgLib::fsFileserverNotResponding, 0, (uint8_t *)NULL);
           break;
         case en_writeFile:
-          rc_csCom.writeFileResponse(fsFileserverNotResponding, 0);
+          rc_csCom.writeFileResponse(IsoAgLib::fsFileserverNotResponding, 0);
           break;
         case en_closeFile:
-          rc_csCom.closeFileResponse(fsFileserverNotResponding);
+          rc_csCom.closeFileResponse(IsoAgLib::fsFileserverNotResponding);
           break;
         case en_moveFile:
-          rc_csCom.moveFileResponse(fsFileserverNotResponding);
+          rc_csCom.moveFileResponse(IsoAgLib::fsFileserverNotResponding);
           break;
         case en_deleteFile:
-          rc_csCom.deleteFileResponse(fsFileserverNotResponding);
+          rc_csCom.deleteFileResponse(IsoAgLib::fsFileserverNotResponding);
           break;
         case en_getFileAttributes:
-          rc_csCom.getFileAttributesResponse(fsFileserverNotResponding, false, false, false, false, false, false, false);
+          rc_csCom.getFileAttributesResponse(IsoAgLib::fsFileserverNotResponding, false, false, false, false, false, false, false);
           break;
         case en_setFileAttributes:
-          rc_csCom.setFileAttributesResponse(fsFileserverNotResponding);
+          rc_csCom.setFileAttributesResponse(IsoAgLib::fsFileserverNotResponding);
           break;
         case en_getFileDateTime:
-          rc_csCom.getFileDateTimeResponse(fsFileserverNotResponding, 0, 0, 0, 0, 0, 0);
+          rc_csCom.getFileDateTimeResponse(IsoAgLib::fsFileserverNotResponding, 0, 0, 0, 0, 0, 0);
           break;
         case en_initializeVolume:
-          rc_csCom.initializeVolumeResponse(fsFileserverNotResponding, false, false, false, false, false, false, false);
+          rc_csCom.initializeVolumeResponse(IsoAgLib::fsFileserverNotResponding, false, false, false, false, false, false, false);
           break;
         default:
 #ifdef DEBUG
-          std::cout << "Repetition of command not defined!" << std::endl;
+          EXTERNAL_DEBUG_DEVICE << "Repetition of command not defined!" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
           break;
       }
+
       b_receivedResponse = true;
       en_lastCommand = en_noCommand;
-      i32_lastrequestAttempt = -1;
       ui8_requestAttempts = 0;
       i32_offset = 0;
     }
   }
 
-  // do we have open files? -> send maintenance messages.
-  if (ui8_nrOpenFiles > 0 && (i32_lastAliveSent == -1 || (HAL::getTime () - (uint32_t)i32_lastAliveSent) > 2000))
+  // do we have open files or request is active? -> send maintenance messages.
+  if ( (ui8_nrOpenFiles > 0) || !b_receivedResponse || b_keepConnectionOpen )
   {
-    CANPkgExt_c canpkgext;
-    canpkgext.setExtCanPkg8 (0x07, 0x00, CLIENT_TO_FS_PGN >> 8,
-                             rc_filerserver.getIsoItem().nr(),
-                             rc_csCom.getClientIdentItem().getIsoItem()->nr(),
-                             pui8_maintenanceBuffer[0], pui8_maintenanceBuffer[1], pui8_maintenanceBuffer[2],
-                             pui8_maintenanceBuffer[3], pui8_maintenanceBuffer[4], pui8_maintenanceBuffer[5],
-                             pui8_maintenanceBuffer[6], pui8_maintenanceBuffer[7]);
+    if ( (i32_lastAliveSent == -1) || ( (HAL::getTime () - (uint32_t)i32_lastAliveSent) > 2000 ) )
+    {
+      CANPkgExt_c canpkgext;
+      canpkgext.setExtCanPkg8(0x07, 0x00, CLIENT_TO_FS_PGN >> 8,
+                              rc_filerserver.getIsoItem().nr(),
+                              rc_csCom.getClientIdentItem().getIsoItem()->nr(),
+                              pui8_maintenanceBuffer[0], pui8_maintenanceBuffer[1], pui8_maintenanceBuffer[2],
+                              pui8_maintenanceBuffer[3], pui8_maintenanceBuffer[4], pui8_maintenanceBuffer[5],
+                              pui8_maintenanceBuffer[6], pui8_maintenanceBuffer[7]);
 
-    getCanInstance() << canpkgext;
-    i32_lastAliveSent = HAL::getTime ();
+      getCanInstance4Comm() << canpkgext;
+      i32_lastAliveSent = HAL::getTime();
+    }
+  }
+  else
+  {
+    if ( (i32_lastAliveSent != -1) && ( (HAL::getTime () - (uint32_t)i32_lastAliveSent) > 6000 ) )
+    {
+      doneCleanUp();
+      i32_lastAliveSent = -1;
+    }
   }
   return true;
 }
@@ -117,24 +159,40 @@ bool FsCommand_c::processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, b
 {
   uint16_t ui16_notParsedSize;
 
-  if (refc_stream.getStreamInvalid()) return false;
+  if (refc_stream.getStreamInvalid())
+    return false; // don't keep the stream, we've processed it right now, so remove it
 
   if (rb_isFirstChunk)
   {
-    uint8_t ui8_tmpTan = refc_stream.get();
-    if (ui8_tmpTan != ui8_tan)
+    i32_offset = 0;
+    ui8_recTan = refc_stream.get();
+    if (ui8_recTan != ui8_tan)
     {
 #ifdef DEBUG
-      std::cout << "TAN does not match expected one!" << std::endl;
+      EXTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      return false;
+      return false; // don't keep the stream, we've processed it right now, so remove it
     }
+  }
+  else
+  {
+    if (ui8_recTan != ui8_tan)
+      return false; // don't keep the stream, we've processed it right now, so remove it
   }
 
   ui16_notParsedSize = refc_stream.getNotParsedSize();
 
-  for (uint8_t i = 0; i < ui16_notParsedSize; i++)
-    pui_receiveBuffer[i + i32_offset] = refc_stream.get();
+  if ( (uint32_t)(i32_offset + ui16_notParsedSize) > ui32_recBufAllocSize )
+  {
+#ifdef DEBUG
+    EXTERNAL_DEBUG_DEVICE << "More data than allocated! " << ui32_recBufAllocSize << " " << uint32_t(i32_offset + ui16_notParsedSize) << EXTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+
+    return false; // don't keep the stream, we've processed it right now, so remove it
+  }
+
+  for (uint8_t i = 0; i < ui16_notParsedSize; ++i)
+    pui8_receiveBuffer[i + i32_offset] = refc_stream.get();
 
   i32_offset += ui16_notParsedSize;
 
@@ -147,38 +205,39 @@ bool FsCommand_c::processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, b
       //get current directroy
       case 0x10:
         decodeGetCurrentDirectoryResponse();
-        rc_csCom.getCurrentDirectoryResponse(iFsError(ui8_errorCode), pui8_currentDirectory);
+        rc_csCom.getCurrentDirectoryResponse(IsoAgLib::iFsError(ui8_errorCode), pui8_currentDirectory);
         i32_offset = 0;
-        delete[] pui_receiveBuffer;
         en_lastCommand = en_noCommand;
-        return true;
+        return false; // don't keep the stream, we've processed it right now, so remove it
       //read file response
       case 0x22:
-
-        ui16_count = pui_receiveBuffer[1] | (pui_receiveBuffer[2] << 0x08);
         en_lastCommand = en_noCommand;
-        if (ui16_count == (uint16_t)(i32_offset - 3))
+        if ( b_readDirectory )
         {
-          decodeReadFileResponse();
-          rc_csCom.readFileResponse(iFsError(ui8_errorCode), ui16_count, pui8_data);
-        } else {
           decodeReadDirectoryResponse();
-
-          if (rc_filerserver.getInitStatus() == FsServerInstance_c::online) {
+          if (rc_filerserver.getInitStatus() == FsServerInstance_c::online)
+          {
             closeFile(ui8_fileHandle);
-          } else {
-            rc_csCom.readDirectoryResponse(iFsError(ui8_errorCode), v_dirData);
+          }
+          else
+          {
+            rc_csCom.readDirectoryResponse(IsoAgLib::iFsError(ui8_errorCode), v_dirData);
           }
         }
-        delete[] pui_receiveBuffer;
+        else
+        {
+          decodeReadFileResponse();
+          rc_csCom.readFileResponse(IsoAgLib::iFsError(ui8_errorCode), ui16_count, pui8_data);
+        }
         i32_offset = 0;
-        return true;
+        return false; // don't keep the stream, we've processed it right now, so remove it
       default:
-        return false;
+        return false; // don't keep the stream, we've processed it right now, so remove it
     }
   }
-  return true;
+  return false; // don't keep the stream, we've processed it right now, so remove it
 }
+
 
 //nothing to be done, new message will be sent periodically.
 void FsCommand_c::reactOnAbort(IsoAgLib::iStream_c& /*refc_stream*/)
@@ -188,21 +247,32 @@ void FsCommand_c::reactOnAbort(IsoAgLib::iStream_c& /*refc_stream*/)
 //initializes the buffer for a message stream
 bool FsCommand_c::reactOnStreamStart(const IsoAgLib::ReceiveStreamIdentifier_c& /*refc_ident*/, uint32_t rui32_totalLen)
 {
-  pui_receiveBuffer = new uint8_t[rui32_totalLen - 1];
+  uint32_t ui32_tempSize = rui32_totalLen - 1;
+
+  if (ui32_tempSize > ui32_recBufAllocSize)
+  {
+    if ( pui8_receiveBuffer != NULL )
+      delete [] pui8_receiveBuffer;
+
+    ui32_recBufAllocSize = ui32_tempSize;
+    pui8_receiveBuffer = new uint8_t[ui32_recBufAllocSize];
+  }
   return true;
 }
+
 //process single packages.
 bool FsCommand_c::processMsg()
 {
   if (data().getUint8Data(1) != ui8_tan && data().getUint8Data(0) != 0x00  && data().getUint8Data(0) != 0x01)
   {
 #ifdef DEBUG
-      std::cout << "TAN does not match expected one!" << std::endl;
+      EXTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-    return false;
+    return true;
   }
 
-  switch (data().getUint8Data(0)) {
+  switch (data().getUint8Data(0))
+  {
     case 0x00:
       if (rc_filerserver.getInitStatus() == FsServerInstance_c::offline)
       {
@@ -217,43 +287,43 @@ bool FsCommand_c::processMsg()
       i8_fsVersion = data().getUint8Data(1);
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
       openFile((uint8_t *)"\\\\", false, false, false, true, false, true);
       return true;
     //change current directory
     case 0x11:
-      rc_csCom.changeCurrentDirectoryResponse(iFsError(data().getUint8Data(2)), pui8_fileName);
+      rc_csCom.changeCurrentDirectoryResponse(IsoAgLib::iFsError(data().getUint8Data(2)), pui8_fileName);
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
       en_lastCommand = en_noCommand;
       return true;
     //open file
     case 0x20:
       decodeOpenFileResponse();
 
-      if (!ui8_errorCode)
-        ui8_nrOpenFiles++;
+      if (ui8_errorCode == IsoAgLib::fsSuccess)
+        ++ui8_nrOpenFiles;
 
       //init case get volumes or real external open file?
       if (rc_filerserver.getInitStatus() == FsServerInstance_c::online)
       {
         seekFile(ui8_fileHandle, 2, 0);
       }
-      else if (en_lastCommand == en_getFileAttributes && ui8_errorCode && !pui8_fileName)
+      else if (en_lastCommand == en_getFileAttributes && ui8_errorCode && (pui8_fileName == NULL))
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.getFileAttributesResponse(iFsError(ui8_errorCode), false, false, false, false, false, false, false);
+        rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(ui8_errorCode), false, false, false, false, false, false, false);
       }
-      else if (en_lastCommand == en_setFileAttributes && ui8_errorCode && !pui8_fileName)
+      else if (en_lastCommand == en_setFileAttributes && ui8_errorCode && (pui8_fileName == NULL))
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.setFileAttributesResponse(iFsError(ui8_errorCode));
+        rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(ui8_errorCode));
       }
-      else if (en_lastCommand == en_getFileDateTime && ui8_errorCode && !pui8_fileName)
+      else if (en_lastCommand == en_getFileDateTime && ui8_errorCode && (pui8_fileName == NULL))
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.getFileDateTimeResponse(iFsError(ui8_errorCode), 0, 0, 0, 0, 0, 0);
+        rc_csCom.getFileDateTimeResponse(IsoAgLib::iFsError(ui8_errorCode), 0, 0, 0, 0, 0, 0);
       }
       else if ((en_lastCommand == en_getFileAttributes ||
                 en_lastCommand == en_setFileAttributes ||
@@ -261,6 +331,9 @@ bool FsCommand_c::processMsg()
                 ui8_errorCode && pui8_fileName)
       {
         openFile(pui8_fileName, false, true, false, false, false, true);
+
+        if (pui8_fileName != NULL)
+          delete [] pui8_fileName;
         pui8_fileName = (uint8_t *)NULL;
       }
       else if (en_lastCommand == en_getFileAttributes)
@@ -278,7 +351,7 @@ bool FsCommand_c::processMsg()
       else
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.openFileResponse(iFsError(ui8_errorCode), ui8_fileHandle, b_caseSensitive, b_removable, b_longFilenames, b_isDirectory,  b_isVolume, b_hidden, b_readOnly);
+        rc_csCom.openFileResponse(IsoAgLib::iFsError(ui8_errorCode), ui8_fileHandle, b_caseSensitive, b_removable, b_longFilenames, b_isDirectory,  b_isVolume, b_hidden, b_readOnly);
       }
 
       return true;
@@ -289,17 +362,17 @@ bool FsCommand_c::processMsg()
       {
         b_receivedResponse = true;
         ui8_requestAttempts = 0;
-        ui8_tan++;
-	if (ui32_possition == 0) {
+        ++ui8_tan;
+	      if (ui32_possition == 0)
+        {
 #ifdef DEBUG
-	    std::cerr
-	        << "exploratory seek failed: using read length of 16\n"
-		<< std::endl;
+	        STL_NAMESPACE::cerr << "exploratory seek failed: using read length of 16\n" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-	    readFile(ui8_fileHandle, 16, true);
-	}
-	else
-	    readFile(ui8_fileHandle, ui32_possition, true);
+	        readDirectory(ui8_fileHandle, 16, true);
+   	    }
+     	  else
+          readDirectory(ui8_fileHandle, ui32_possition, true);
+
         return true;
       }
 
@@ -313,30 +386,51 @@ bool FsCommand_c::processMsg()
       else
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.seekFileResponse(iFsError(ui8_errorCode), ui32_possition);
+        rc_csCom.seekFileResponse(IsoAgLib::iFsError(ui8_errorCode), ui32_possition);
       }
 
       return true;
 
     //read file
     case 0x22:
-      pui_receiveBuffer = new uint8_t[6];
+      if (6 > ui32_recBufAllocSize)
+      {
+        if ( pui8_receiveBuffer != NULL )
+          delete [] pui8_receiveBuffer;
 
-      for (uint8_t i = 0; i < 6; i++)
-        pui_receiveBuffer[i] = data().getUint8Data(i + 2);
+        ui32_recBufAllocSize = 6;
+        pui8_receiveBuffer = new uint8_t[ui32_recBufAllocSize];
+      }
 
-      decodeReadFileResponse();
+      for (uint8_t i = 0; i < 6; ++i)
+        pui8_receiveBuffer[i] = data().getUint8Data(i + 2);
+
       en_lastCommand = en_noCommand;
-
-      rc_csCom.readFileResponse(iFsError(ui8_errorCode), ui16_count, pui8_data);
+      if ( b_readDirectory )
+      {
+        decodeReadDirectoryResponse();
+        if (rc_filerserver.getInitStatus() == FsServerInstance_c::online)
+        {
+          closeFile(ui8_fileHandle);
+        }
+        else
+        {
+          rc_csCom.readDirectoryResponse(IsoAgLib::iFsError(ui8_errorCode), v_dirData);
+        }
+      }
+      else
+      {
+        decodeReadFileResponse();
+        rc_csCom.readFileResponse(IsoAgLib::iFsError(ui8_errorCode), ui16_count, pui8_data);
+      }
 
       return true;
     //write file
     case 0x23:
-      rc_csCom.writeFileResponse(iFsError(data().getUint8Data(2)), (data().getUint8Data(3) | data().getUint8Data(4) << 0x08));
+      rc_csCom.writeFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)), (data().getUint8Data(3) | data().getUint8Data(4) << 0x08));
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
       en_lastCommand = en_noCommand;
 
       return true;
@@ -345,36 +439,36 @@ bool FsCommand_c::processMsg()
       ui8_errorCode = data().getUint8Data(2);
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
 
-      if (!ui8_errorCode)
-        ui8_nrOpenFiles--;
+      if ( (ui8_errorCode == IsoAgLib::fsSuccess) && (ui8_nrOpenFiles > 0) )
+        --ui8_nrOpenFiles;
 
       //init case get volumes or real external seek file?
-      if (rc_filerserver.getInitStatus() == FsServerInstance_c::online && !ui8_errorCode)
+      if ((rc_filerserver.getInitStatus() == FsServerInstance_c::online) && (ui8_errorCode == IsoAgLib::fsSuccess))
       {
         rc_filerserver.setVolumes(v_dirData);
       }
       else if (en_lastCommand == en_getFileAttributes)
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.getFileAttributesResponse(iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
+        rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
       }
       else if (en_lastCommand == en_getFileAttributes)
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.setFileAttributesResponse(iFsError(data().getUint8Data(2)));
+        rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
       }
       else if (en_lastCommand == en_getFileDateTime)
       {
         en_lastCommand = en_noCommand;
 
-        rc_csCom.getFileDateTimeResponse(iFsError(data().getUint8Data(2)), (uint16_t)(1980 + ((ui16_date >> 9) & 0x7F)), (ui16_date >> 5) & 0xF, (ui16_date) & 0x1F, (ui16_time >> 11) & 0x1F, (ui16_time >> 5) & 0x3F, 2 * ((ui16_time) & 0x1F));
+        rc_csCom.getFileDateTimeResponse(IsoAgLib::iFsError(data().getUint8Data(2)), (uint16_t)(1980 + ((ui16_date >> 9) & 0x7F)), (ui16_date >> 5) & 0xF, (ui16_date) & 0x1F, (ui16_time >> 11) & 0x1F, (ui16_time >> 5) & 0x3F, 2 * ((ui16_time) & 0x1F));
       }
       else
       {
         en_lastCommand = en_noCommand;
-        rc_csCom.closeFileResponse(iFsError(ui8_errorCode));
+        rc_csCom.closeFileResponse(IsoAgLib::iFsError(ui8_errorCode));
       }
 
       return true;
@@ -382,25 +476,25 @@ bool FsCommand_c::processMsg()
     case 0x30:
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
 
       if (en_lastCommand == en_moveFile)
-        rc_csCom.moveFileResponse(iFsError(data().getUint8Data(2)));
+        rc_csCom.moveFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
       else if (en_lastCommand == en_deleteFile)
-        rc_csCom.deleteFileResponse(iFsError(data().getUint8Data(2)));
+        rc_csCom.deleteFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
 
       en_lastCommand = en_noCommand;
       return true;
     //delete file
     case 0x31:
-      ui8_tan++;
+      ++ui8_tan;
       ui8_requestAttempts = 0;
 
       if (en_lastCommand == en_deleteFile)
       {
         b_receivedResponse = true;
         en_lastCommand = en_noCommand;
-        rc_csCom.deleteFileResponse(iFsError(data().getUint8Data(2)));
+        rc_csCom.deleteFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
       }
       else if (en_lastCommand == en_getFileAttributes)
       {
@@ -411,15 +505,16 @@ bool FsCommand_c::processMsg()
     //get file attributes
     case 0x32:
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
 
       if (en_lastCommand == en_getFileAttributes)
       {
         b_receivedResponse = true;
         decodeAttributes(data().getUint8Data(3));
-        rc_csCom.getFileAttributesResponse(iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
+        rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
         en_lastCommand = en_noCommand;
-      } else if (en_lastCommand == en_setFileAttributes)
+      }
+      else if (en_lastCommand == en_setFileAttributes)
       {
         closeFile(ui8_fileHandle);
       }
@@ -427,15 +522,16 @@ bool FsCommand_c::processMsg()
     //set file attributes
     case 0x33:
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
 
       if (en_lastCommand == en_setFileAttributes)
       {
         b_receivedResponse = true;
 
-        rc_csCom.setFileAttributesResponse(iFsError(data().getUint8Data(2)));
+        rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
         en_lastCommand = en_noCommand;
-      } else if (en_lastCommand == en_getFileDateTime)
+      }
+      else if (en_lastCommand == en_getFileDateTime)
       {
         ui16_date = data().getUint8Data(3) | (data().getUint8Data(4) << 8);
         ui16_time = data().getUint8Data(5) | (data().getUint8Data(6) << 8);
@@ -446,30 +542,30 @@ bool FsCommand_c::processMsg()
     case 0x34:
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
 
       ui16_date = data().getUint8Data(3) | (data().getUint8Data(4) << 8);
       ui16_time = data().getUint8Data(5) | (data().getUint8Data(6) << 8);
 
-      rc_csCom.getFileDateTimeResponse(iFsError(data().getUint8Data(2)), (uint16_t)(1980 + ((ui16_date >> 9) & 0x7F)), (ui16_date >> 5) & 0xF, (ui16_date) & 0x1F, (ui16_time >> 11) & 0x1F, (ui16_time >> 5) & 0x3F, 2 * ((ui16_time) & 0x1F));
+      rc_csCom.getFileDateTimeResponse(IsoAgLib::iFsError(data().getUint8Data(2)), (uint16_t)(1980 + ((ui16_date >> 9) & 0x7F)), (ui16_date >> 5) & 0xF, (ui16_date) & 0x1F, (ui16_time >> 11) & 0x1F, (ui16_time >> 5) & 0x3F, 2 * ((ui16_time) & 0x1F));
       en_lastCommand = en_noCommand;
       return true;
     //init volume
     case 0x40:
       b_receivedResponse = true;
       ui8_requestAttempts = 0;
-      ui8_tan++;
+      ++ui8_tan;
 
       decodeAttributes(data().getUint8Data(3));
 
-      rc_csCom.initializeVolumeResponse(iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
+      rc_csCom.initializeVolumeResponse(IsoAgLib::iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
       en_lastCommand = en_noCommand;
       return true;
     default:
 #ifdef DEBUG
-      std::cout << "got message with content: " << std::hex << (uint32_t)data().getUint8Data(0) << std::dec << std::endl;
+      EXTERNAL_DEBUG_DEVICE << "got message with content: " << STL_NAMESPACE::hex << (uint32_t)data().getUint8Data(0) << STL_NAMESPACE::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-      return false;
+      return true;
   }
 }
 
@@ -478,7 +574,7 @@ void FsCommand_c::sendRequest()
 {
   b_receivedResponse = false;
   i32_lastrequestAttempt = HAL::getTime();
-  ui8_requestAttempts++;
+  ++ui8_requestAttempts;
 
   //single packet
   if (ui8_packetLength <= 8)
@@ -491,8 +587,10 @@ void FsCommand_c::sendRequest()
 
     getCanInstance4Comm() << canpkgext;
   //multi-packet
-  } else {
-    getMultiSendInstance().sendIsoTarget(rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
+  }
+  else
+  {
+    getMultiSendInstance4Comm().sendIsoTarget(rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
         rc_filerserver.getIsoName(),
         pui8_sendBuffer,
         ui8_packetLength,
@@ -525,7 +623,17 @@ void FsCommand_c::initFileserver()
   }
 }
 
-iFsCommandErrors FsCommand_c::getCurrentDirectory()
+void FsCommand_c::setKeepConnectionOpen( bool b_keepOpen, bool b_forceClose )
+{
+  b_keepConnectionOpen = b_keepOpen;
+  if ( !b_keepOpen && b_forceClose )
+  {
+    /* connection is being force closed, clear out number of open files */
+    ui8_nrOpenFiles = 0;
+  }
+}
+
+IsoAgLib::iFsCommandErrors FsCommand_c::getCurrentDirectory()
 {
   en_lastCommand = en_getCurrentDirectory;
 
@@ -540,21 +648,26 @@ iFsCommandErrors FsCommand_c::getCurrentDirectory()
 
   ui8_packetLength = 8;
 
-  registerMultiReceiveFilter();
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
+IsoAgLib::iFsCommandErrors FsCommand_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
 {
   en_lastCommand = en_changeCurrentDirectory;
 
   uint16_t ui16_length = CNAMESPACE::strlen((const char*)pui8_newDirectory);
   uint8_t ui8_bufferPosition = 0;
-  pui8_fileName = new uint8_t[ui16_length + 1];
+  if ((ui16_length + 1) > ui16_fileNameAllocSize)
+  {
+    if (pui8_fileName != NULL)
+      delete [] pui8_fileName;
+    ui16_fileNameAllocSize = ui16_length + 1;
+    pui8_fileName = new uint8_t[ui16_fileNameAllocSize];
+  }
   pui8_fileName[ui16_length] = 0;
 
-  for (uint16_t i = 0; i < ui16_length; i++)
+  for (uint16_t i = 0; i < ui16_length; ++i)
     pui8_fileName[i] = pui8_newDirectory[i];
 
   pui8_sendBuffer[ui8_bufferPosition++] = 0x11;
@@ -564,25 +677,31 @@ iFsCommandErrors FsCommand_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
   if (i8_fsVersion == 1)
     pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
   else if (i8_fsVersion != 0)
-    return fsWrongFsVersion;
+    return IsoAgLib::fsWrongFsVersion;
 
-  for (uint16_t i = 0; i < ui16_length; i++)
+  for (uint16_t i = 0; i < ui16_length; ++i)
     pui8_sendBuffer[ui8_bufferPosition + i] = pui8_fileName[i];
 
   ui8_packetLength = ui8_bufferPosition + ui16_length;
 
   sendRequest();
 
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory)
+IsoAgLib::iFsCommandErrors FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory)
 {
   if (en_lastCommand == en_noCommand)
     en_lastCommand = en_openFile;
 
   uint16_t ui16_length = CNAMESPACE::strlen((const char*)pui8_inFileName);
-  pui8_fileName = new uint8_t[ui16_length + 1];
+  if ((ui16_length + 1) > ui16_fileNameAllocSize)
+  {
+    if (pui8_fileName != NULL)
+      delete [] pui8_fileName;
+    ui16_fileNameAllocSize = ui16_length + 1;
+    pui8_fileName = new uint8_t[ui16_fileNameAllocSize];
+  }
   pui8_fileName[ui16_length] = 0;
   uint8_t ui8_bufferPosition = 0;
 
@@ -591,25 +710,37 @@ iFsCommandErrors FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExcl
 
   ui8_flags = 0x0;
 
-  if (b_openExclusive) {
+  if (b_openExclusive)
+  {
     ui8_flags = ui8_flags | (0x1 << 4);
   }
-  if (b_openForAppend) {
+  if (b_openForAppend)
+  {
     ui8_flags = ui8_flags | (0x1 << 3);
   }
-  if (b_createNewFile) {
+  if (b_createNewFile)
+  {
     ui8_flags = ui8_flags | (0x1 << 2);
   }
 
-  if (b_openDirectory) {
+  if (b_openDirectory)
+  {
     ui8_flags = ui8_flags | 0x3;
-  } else if (b_openForReading && b_openForWriting) {
+  }
+  else if (b_openForReading && b_openForWriting)
+  {
     ui8_flags = ui8_flags | 0x2;
-  } else if (b_openForReading) {
-  } else if (b_openForWriting) {
+  }
+  else if (b_openForReading)
+  {
+  }
+  else if (b_openForWriting)
+  {
     ui8_flags = ui8_flags | 0x1;
-  } else {
-    return fsCommandWrongFlag;
+  }
+  else
+  {
+    return IsoAgLib::fsCommandWrongFlag;
   }
 
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_flags;
@@ -618,9 +749,9 @@ iFsCommandErrors FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExcl
   if (i8_fsVersion == 1)
     pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
   else if (i8_fsVersion != 0)
-    return fsWrongFsVersion;
+    return IsoAgLib::fsWrongFsVersion;
 
-  for (uint8_t i = 0; (i < ui16_length) || (5 + i < 8); i++)
+  for (uint8_t i = 0; (i < ui16_length) || (5 + i < 8); ++i)
   {
     if (i < ui16_length)
     {
@@ -635,10 +766,10 @@ iFsCommandErrors FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExcl
 
   sendRequest();
 
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::seekFile(uint8_t ui8_inFileHandle, uint8_t ui8_inPossitionMode, int32_t i32_inOffset)
+IsoAgLib::iFsCommandErrors FsCommand_c::seekFile(uint8_t ui8_inFileHandle, uint8_t ui8_inPossitionMode, int32_t i32_inOffset)
 {
   if (en_lastCommand == en_noCommand)
     en_lastCommand = en_seekFile;
@@ -660,44 +791,22 @@ iFsCommandErrors FsCommand_c::seekFile(uint8_t ui8_inFileHandle, uint8_t ui8_inP
 
   sendRequest();
 
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::readFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, bool b_inReportHiddenFiles)
+IsoAgLib::iFsCommandErrors FsCommand_c::readFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount)
 {
-  if (en_lastCommand == en_noCommand)
-    en_lastCommand = en_readFile;
-
-  ui8_fileHandle = ui8_inFileHandle;
-  ui16_count = ui16_inCount;
-  b_reportHiddenFiles = b_inReportHiddenFiles;
-  uint8_t ui8_bufferPosition = 0;
-
-  pui8_sendBuffer[ui8_bufferPosition++] = 0x22;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui8_fileHandle;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_count;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_count >> 8;
-
-
-  if (i8_fsVersion == 1)
-  {
-    pui8_sendBuffer[ui8_bufferPosition++] = b_inReportHiddenFiles;
-  } else if (i8_fsVersion != 0) {
-    return fsWrongFsVersion;
-  }
-
-  while (ui8_bufferPosition < 8)
-    pui8_sendBuffer[ui8_bufferPosition++] = 0xFF;
-
-  ui8_packetLength = ui8_bufferPosition;
-
-  registerMultiReceiveFilter();
-  sendRequest();
-
-  return fsCommandNoError;
+  b_readDirectory = false;
+  return readFile(ui8_inFileHandle, ui16_inCount, false);
 }
-iFsCommandErrors FsCommand_c::writeFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, uint8_t *pui8_inData)
+
+IsoAgLib::iFsCommandErrors FsCommand_c::readDirectory(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, bool b_inReportHiddenFiles)
+{
+  b_readDirectory = true;
+  return readFile(ui8_inFileHandle, ui16_inCount, b_inReportHiddenFiles);
+}
+
+IsoAgLib::iFsCommandErrors FsCommand_c::writeFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, uint8_t *pui8_inData)
 {
   en_lastCommand = en_writeFile;
 
@@ -709,7 +818,7 @@ iFsCommandErrors FsCommand_c::writeFile(uint8_t ui8_inFileHandle, uint16_t ui16_
   pui8_sendBuffer[3] = ui16_inCount;
   pui8_sendBuffer[4] = ui16_inCount >> 0x08;
 
-  for (uint16_t ui16_writeDataSz = 0; ui16_writeDataSz < ui16_inCount; ui16_writeDataSz++)
+  for (uint16_t ui16_writeDataSz = 0; ui16_writeDataSz < ui16_inCount; ++ui16_writeDataSz)
   {
     pui8_sendBuffer[ui16_writeDataSz + 5] = pui8_inData[ui16_writeDataSz];
   }
@@ -718,10 +827,10 @@ iFsCommandErrors FsCommand_c::writeFile(uint8_t ui8_inFileHandle, uint16_t ui16_
 
   sendRequest();
 
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::closeFile(uint8_t ui8_inFileHandle)
+IsoAgLib::iFsCommandErrors FsCommand_c::closeFile(uint8_t ui8_inFileHandle)
 {
   en_lastCommand = en_closeFile;
 
@@ -739,10 +848,10 @@ iFsCommandErrors FsCommand_c::closeFile(uint8_t ui8_inFileHandle)
   ui8_packetLength = 8;
 
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy)
+IsoAgLib::iFsCommandErrors FsCommand_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy)
 {
   uint8_t ui8_bufferPosition = 0;
 
@@ -772,18 +881,19 @@ iFsCommandErrors FsCommand_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_d
   if (i8_fsVersion == 1)
     pui8_sendBuffer[ui8_bufferPosition++] = ui16_destLength >> 0x08;
 
-  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ui16_iSrc++)
+  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[ui8_bufferPosition + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
 
-  for (uint16_t ui16_iDst = 0; ui16_iDst < ui16_destLength; ui16_iDst++)
+  for (uint16_t ui16_iDst = 0; ui16_iDst < ui16_destLength; ++ui16_iDst)
     pui8_sendBuffer[ui8_bufferPosition + ui16_srcLength + ui16_iDst] = pui8_destName[ui16_iDst];
 
   ui8_packetLength = ui8_bufferPosition + ui16_srcLength + ui16_destLength;
 
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
-iFsCommandErrors FsCommand_c::deleteFile(uint8_t *pui8_sourceName, bool b_recursive, bool b_force)
+
+IsoAgLib::iFsCommandErrors FsCommand_c::deleteFile(uint8_t *pui8_sourceName, bool b_recursive, bool b_force)
 {
   uint8_t ui8_bufferPosition = 0;
 
@@ -818,15 +928,16 @@ iFsCommandErrors FsCommand_c::deleteFile(uint8_t *pui8_sourceName, bool b_recurs
     pui8_sendBuffer[ui8_bufferPosition++] = 0x00;
   }
 
-  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ui16_iSrc++)
+  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[ui8_bufferPosition + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
 
   ui8_packetLength = ui8_bufferPosition + ui16_srcLength;
 
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
-iFsCommandErrors FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
+
+IsoAgLib::iFsCommandErrors FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
 {
   en_lastCommand = en_getFileAttributes;
 
@@ -841,15 +952,16 @@ iFsCommandErrors FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
   pui8_sendBuffer[2] = ui16_srcLength;
   pui8_sendBuffer[3] = ui16_srcLength >> 0x08;
 
-  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ui16_iSrc++)
+  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[4 + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
 
   ui8_packetLength = 4 + ui16_srcLength;
 
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
-iFsCommandErrors FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_t  ui8_inHiddenAtt, uint8_t ui8_inReadOnlyAtt)
+
+IsoAgLib::iFsCommandErrors FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_t  ui8_inHiddenAtt, uint8_t ui8_inReadOnlyAtt)
 {
   en_lastCommand = en_setFileAttributes;
   ui8_hiddenAtt = ui8_inHiddenAtt;
@@ -868,15 +980,16 @@ iFsCommandErrors FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_
   pui8_sendBuffer[3] = ui16_srcLength;
   pui8_sendBuffer[4] = ui16_srcLength >> 0x08;
 
-  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ui16_iSrc++)
+  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[5 + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
 
   ui8_packetLength = 5 + ui16_srcLength;
 
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
-iFsCommandErrors FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
+
+IsoAgLib::iFsCommandErrors FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
 {
   en_lastCommand = en_getFileDateTime;
 
@@ -891,20 +1004,20 @@ iFsCommandErrors FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
   pui8_sendBuffer[2] = ui16_srcLength;
   pui8_sendBuffer[3] = ui16_srcLength >> 0x08;
 
-  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ui16_iSrc++)
+  for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[4 + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
 
   ui8_packetLength = 4 + ui16_srcLength;
 
   sendRequest();
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-iFsCommandErrors FsCommand_c::initializeVolume(
+IsoAgLib::iFsCommandErrors FsCommand_c::initializeVolume(
 #ifdef DEBUG
-uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume
+  uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume
 #else
-uint8_t * /*pui8_pathName*/, uint32_t /*ui32_space*/, bool /*b_createVolumeUsingSpace*/, bool /*b_createNewVolume*/
+  uint8_t * /*pui8_pathName*/, uint32_t /*ui32_space*/, bool /*b_createVolumeUsingSpace*/, bool /*b_createNewVolume*/
 #endif
 )
 {
@@ -913,53 +1026,17 @@ uint8_t * /*pui8_pathName*/, uint32_t /*ui32_space*/, bool /*b_createVolumeUsing
 //TODO implement this one...
 
 #ifdef DEBUG
-  //std::cout << "initializeVolume pathname: " << pui8_pathName << " space: " << ui32_space << " attributes: " << b_createVolumeUsingSpace << b_createNewVolume << std::endl;
-  std::cout << "initializeVolume pathname: NOT IMPLEMENTED" << std::endl;
+  //EXTERNAL_DEBUG_DEVICE << "initializeVolume pathname: " << pui8_pathName << " space: " << ui32_space << " attributes: " << b_createVolumeUsingSpace << b_createNewVolume << EXTERNAL_DEBUG_DEVICE_ENDL;
+  EXTERNAL_DEBUG_DEVICE << "initializeVolume pathname: NOT IMPLEMENTED" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-  return fsCommandNoError;
+  return IsoAgLib::fsCommandNoError;
 }
 
-void FsCommand_c::registerMultiReceiveFilter()
-{
-  getMultiReceiveInstance4Comm().registerClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN);
-}
-
-void FsCommand_c::deleteMultiReceiveFilter()
-{
-  getMultiReceiveInstance().deregisterClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFF);
-}
-
-void FsCommand_c::registerPacketFilter()
-{
-  bool b_atLeastOneFilterAdded = false;
-
-  b_atLeastOneFilterAdded |= (
-        getCanInstance4Comm().insertFilter (*this,
-                                            (0x3FF0000UL),
-                                            ((static_cast<MASK_TYPE>(FS_TO_CLIENT_PGN)<<8) /*|
-                                            c_clientIdentItem.getIsoItem()->nr()<<8 |
-                                            rc_fileServer->getSa()*/),
-                                            false,
-                                            Ident_c::ExtendedIdent, 8)
-                            != NULL);
-
-  if (b_atLeastOneFilterAdded)
-    getCanInstance4Comm().reconfigureMsgObj();
-}
-
-void FsCommand_c::deletePacketFilter()
-{
-  getCanInstance4Comm().deleteFilter(*this,
-                                     (0x3FF0000UL),
-                                     ((static_cast<MASK_TYPE>(FS_TO_CLIENT_PGN)<<8) /*|
-                                     c_clientIdentItem.getIsoItem()->nr()<<8 |
-                                     rc_fileServer->getSa()*/),
-                                     Ident_c::ExtendedIdent);
-}
 
 void FsCommand_c::decodeAttributes(uint8_t ui8_attributes)
 {
-  if (i8_fsVersion == 1) {
+  if (i8_fsVersion == 1)
+  {
     b_caseSensitive = ui8_attributes & 0x80;
     b_removable = !(ui8_attributes & 0x40);
     b_longFilenames = ui8_attributes & 0x20;
@@ -967,7 +1044,9 @@ void FsCommand_c::decodeAttributes(uint8_t ui8_attributes)
     b_isVolume = ui8_attributes & 0x8;
     b_hidden = ui8_attributes & 0x2;
     b_readOnly = ui8_attributes & 0x1;
-  } else if (i8_fsVersion == 0) {
+  }
+  else if (i8_fsVersion == 0)
+  {
     b_removable = !(ui8_attributes & 0x40);
     b_archive = ui8_attributes & 0x20;
     b_isDirectory = ui8_attributes & 0x10;
@@ -987,31 +1066,41 @@ void FsCommand_c::decodeGetCurrentDirectoryResponse()
   uint16_t ui16_length;
   uint8_t *pui8_receivePointer;
 
-  ui8_errorCode = pui_receiveBuffer[0];
+  ui8_errorCode = pui8_receiveBuffer[0];
 
   if (i8_fsVersion == 0)
   {
-    ui16_length = pui_receiveBuffer[9];
-    pui8_receivePointer = &pui_receiveBuffer[10];
-  } else if (i8_fsVersion == 1) {
-    ui16_length = pui_receiveBuffer[9] | (pui_receiveBuffer[10] << 8);
-    pui8_receivePointer = &pui_receiveBuffer[11];
-  } else {
+    ui16_length = pui8_receiveBuffer[9];
+    pui8_receivePointer = &pui8_receiveBuffer[10];
+  }
+  else if (i8_fsVersion == 1)
+  {
+    ui16_length = pui8_receiveBuffer[9] | (pui8_receiveBuffer[10] << 8);
+    pui8_receivePointer = &pui8_receiveBuffer[11];
+  }
+  else
+  {
     ui16_length = 0;
     pui8_receivePointer = (uint8_t *)NULL;
-    ui8_errorCode = fsFileserverVersionNotSupported;
+    ui8_errorCode = IsoAgLib::fsFileserverVersionNotSupported;
   }
 
   b_receivedResponse = true;
   ui8_requestAttempts = 0;
-  ui8_tan++;
-  pui8_currentDirectory = new uint8_t[ui16_length + 1];
+  ++ui8_tan;
+  if ((ui16_length + 1) > ui16_curDirAllocSize)
+  {
+    if (pui8_currentDirectory != NULL)
+      delete [] pui8_currentDirectory;
+    ui16_curDirAllocSize = ui16_length + 1;
+    pui8_currentDirectory = new uint8_t[ui16_curDirAllocSize];
+  }
   pui8_currentDirectory[ui16_length] = 0;
 
-  for (uint16_t i = 0; i < ui16_length; i++)
+  for (uint16_t i = 0; i < ui16_length; ++i)
   {
     pui8_currentDirectory[i] = *pui8_receivePointer;
-    pui8_receivePointer++;
+    ++pui8_receivePointer;
   }
 }
 
@@ -1019,7 +1108,7 @@ void FsCommand_c::decodeOpenFileResponse()
 {
   b_receivedResponse = true;
   ui8_requestAttempts = 0;
-  ui8_tan++;
+  ++ui8_tan;
   ui8_errorCode = data().getUint8Data(2);
   ui8_fileHandle = data().getUint8Data(3);
   decodeAttributes(data().getUint8Data(4));
@@ -1029,7 +1118,7 @@ void FsCommand_c::decodeSeekFileResponse()
 {
   b_receivedResponse = true;
   ui8_requestAttempts = 0;
-  ui8_tan++;
+  ++ui8_tan;
   ui8_errorCode = data().getUint8Data(2);
 
   ui32_possition = static_cast<uint32_t>(data().getUint8Data(4)) | (static_cast<uint32_t>(data().getUint8Data(5)) << 0x08) | (static_cast<uint32_t>(data().getUint8Data(6)) << 0x10) | (static_cast<uint32_t>(data().getUint8Data(7)) << 0x18);
@@ -1039,16 +1128,30 @@ void FsCommand_c::decodeReadFileResponse()
 {
   b_receivedResponse = true;
   ui8_requestAttempts = 0;
-  ui8_tan++;
+  ++ui8_tan;
 
-  ui8_errorCode = pui_receiveBuffer[0];
-  ui16_count = pui_receiveBuffer[1] | (pui_receiveBuffer[2] << 0x08);
+  ui8_errorCode = pui8_receiveBuffer[0];
+  ui16_count = pui8_receiveBuffer[1] | (pui8_receiveBuffer[2] << 0x08);
 
-  pui8_data = new uint8_t[ui16_count];
-
-  for (uint16_t i = 0; i < ui16_count; i++)
+  if (ui16_count > ui16_dataAllocSize)
   {
-    pui8_data[i] = pui_receiveBuffer[i + 3];
+    if (pui8_data != NULL)
+      delete [] pui8_data;
+    ui16_dataAllocSize = ui16_count;
+    pui8_data = new uint8_t[ui16_dataAllocSize];
+  }
+
+  if ( ((uint32_t)ui16_count + 3) > ui32_recBufAllocSize )
+  {
+    ui16_count = ui32_recBufAllocSize - 3;
+#ifdef DEBUG
+    EXTERNAL_DEBUG_DEVICE << "message size larger then allocated buffer " << ui32_recBufAllocSize << " " << uint32_t(ui16_count + 3) << EXTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+  }
+
+  for (uint16_t i = 0; i < ui16_count; ++i)
+  {
+    pui8_data[i] = pui8_receiveBuffer[i + 3];
   }
 }
 
@@ -1056,28 +1159,33 @@ void FsCommand_c::decodeReadDirectoryResponse()
 {
   b_receivedResponse = true;
   ui8_requestAttempts = 0;
-  ui8_tan++;
-  struct iFsDirectory *ps_tmpDir;
+  ++ui8_tan;
+  IsoAgLib::iFsDirectoryPtr ps_tmpDir;
 
-  ui8_errorCode = pui_receiveBuffer[0];
+  ui8_errorCode = pui8_receiveBuffer[0];
 
-  v_dirData.clear();
+  clearDirectoryList();
 
   i32_offset = 3;
 
-  for (uint16_t ui16_nrEntries = 0; ui16_nrEntries < ui16_count; ui16_nrEntries++)
+  for (uint16_t ui16_nrEntries = 0; ui16_nrEntries < ui16_count; ++ui16_nrEntries)
   {
-    ps_tmpDir = new iFsDirectory();
+    if ((uint32_t)i32_offset >= ui32_recBufAllocSize)
+      break;
 
-    ps_tmpDir->pui8_filename = new uint8_t[pui_receiveBuffer[i32_offset] + 1];
-    ps_tmpDir->pui8_filename[pui_receiveBuffer[i32_offset]] = 0;
+    ps_tmpDir = new IsoAgLib::iFsDirectory();
 
-    for (uint8_t ui8_nameLength = 0; ui8_nameLength < pui_receiveBuffer[i32_offset]; ui8_nameLength++)
-      ps_tmpDir->pui8_filename[ui8_nameLength] = pui_receiveBuffer[ui8_nameLength + i32_offset + 1];
+    ps_tmpDir->pui8_filename = new uint8_t[pui8_receiveBuffer[i32_offset] + 1];
+    ps_tmpDir->pui8_filename[pui8_receiveBuffer[i32_offset]] = 0;
 
-    i32_offset += (pui_receiveBuffer[i32_offset] + 1);
+    for (uint8_t ui8_nameLength = 0; ui8_nameLength < pui8_receiveBuffer[i32_offset]; ++ui8_nameLength)
+      ps_tmpDir->pui8_filename[ui8_nameLength] = pui8_receiveBuffer[ui8_nameLength + i32_offset + 1];
 
-    decodeAttributes(pui_receiveBuffer[i32_offset]);
+    i32_offset += (pui8_receiveBuffer[i32_offset] + 1);
+    if ((uint32_t)i32_offset >= ui32_recBufAllocSize)
+      break;
+
+    decodeAttributes(pui8_receiveBuffer[i32_offset]);
 
     ps_tmpDir->b_caseSensitive = b_caseSensitive;
     ps_tmpDir->b_removable = b_removable;
@@ -1087,37 +1195,81 @@ void FsCommand_c::decodeReadDirectoryResponse()
     ps_tmpDir->b_hidden = b_hidden;
     ps_tmpDir->b_readOnly = b_readOnly;
 
-    i32_offset++;
+    ++i32_offset;
+    if ((uint32_t)(i32_offset + 1) >= ui32_recBufAllocSize)
+      break;
 
-    ps_tmpDir->ui16_date = pui_receiveBuffer[i32_offset] | (pui_receiveBuffer[i32_offset + 1] << 0x08);
+    ps_tmpDir->ui16_date = pui8_receiveBuffer[i32_offset] | (pui8_receiveBuffer[i32_offset + 1] << 0x08);
+
     i32_offset += 2;
-    ps_tmpDir->ui16_time = pui_receiveBuffer[i32_offset] | (pui_receiveBuffer[i32_offset + 1] << 0x08);
+    if ((uint32_t)(i32_offset + 1) >= ui32_recBufAllocSize)
+      break;
+
+    ps_tmpDir->ui16_time = pui8_receiveBuffer[i32_offset] | (pui8_receiveBuffer[i32_offset + 1] << 0x08);
+
     i32_offset += 2;
-    ps_tmpDir->ui32_size = static_cast<uint32_t>(pui_receiveBuffer[i32_offset]) | (static_cast<uint32_t>(pui_receiveBuffer[i32_offset + 1]) << 0x08) | (static_cast<uint32_t>(pui_receiveBuffer[i32_offset + 1]) << 0x10) | (static_cast<uint32_t>(pui_receiveBuffer[i32_offset + 1]) << 0x18);
+    if ((uint32_t)(i32_offset + 3) >= ui32_recBufAllocSize)
+      break;
+
+    ps_tmpDir->ui32_size = static_cast<uint32_t>(pui8_receiveBuffer[i32_offset]) | (static_cast<uint32_t>(pui8_receiveBuffer[i32_offset + 1]) << 0x08) | (static_cast<uint32_t>(pui8_receiveBuffer[i32_offset + 2]) << 0x10) | (static_cast<uint32_t>(pui8_receiveBuffer[i32_offset + 3]) << 0x18);
+
     i32_offset += 4;
 
     v_dirData.push_back(ps_tmpDir);
   }
 }
 
+
 FsCommand_c::~FsCommand_c()
 {
+  doneCleanUp();
+
+  if (b_receiveFilterCreated)
+  {
+    // Single-Packet
+    IsoFilter_s tempIsoFilter (*this, 0x3FFFF00UL, (FS_TO_CLIENT_PGN << 8),
+                               &rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
+                               NULL,
+                               8, Ident_c::ExtendedIdent);
+
+    if (getIsoFilterManagerInstance4Comm().existIsoFilter( tempIsoFilter ))
+    { // corresponding FilterBox_c exist -> delete it
+      getIsoFilterManagerInstance4Comm().removeIsoFilter(  tempIsoFilter );
+    }
+
+    // Multi-Packet
+    getMultiReceiveInstance4Comm().deregisterClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFF);
+  }
+
+  // Scheduler
   getSchedulerInstance4Comm().unregisterClient(this);
-  deletePacketFilter();
 }
 
-FsCommand_c::FsCommand_c(FsClientServerCommunication_c &rc_inCsCom, FsServerInstance_c &rc_inFilerserver) :
-                         rc_csCom(rc_inCsCom), rc_filerserver(rc_inFilerserver)
+FsCommand_c::FsCommand_c (FsClientServerCommunication_c &rc_inCsCom, FsServerInstance_c &rc_inFilerserver)
+  : ui8_tan( 0 )
+  , rc_csCom( rc_inCsCom )
+  , rc_filerserver( rc_inFilerserver )
+  , ui8_nrOpenFiles( 0 )
+  , b_keepConnectionOpen( false )
+  , i32_lastAliveSent( -1 )
+  , pui8_receiveBuffer( NULL )
+  , ui32_recBufAllocSize( 0 )
+  , b_receivedResponse( true )
+  , pui8_currentDirectory( NULL )
+  , ui16_curDirAllocSize( 0 )
+  , pui8_fileName( NULL )
+  , ui16_fileNameAllocSize( 0 )
+  , i32_offset( 0 )
+  , pui8_data( NULL )
+  , ui16_dataAllocSize( 0 )
+  , b_readDirectory( false )
+  , b_receiveFilterCreated( false )
 {
-  ui8_tan = 0;
-  getSchedulerInstance4Comm().registerClient(this);
-  ui8_nrOpenFiles = 0;
-  i32_lastAliveSent = -1;
-  b_receivedResponse = true;
   i8_fsVersion = rc_filerserver.getStandardVersion();
-  i32_offset = 0;
 
-  registerPacketFilter();
+  // Scheduler
+  getSchedulerInstance4Comm().registerClient(this);
+
 }
 
 void FsCommand_c::getFileAttributesDIS(uint8_t ui8_inFileHandle)
@@ -1172,6 +1324,88 @@ void FsCommand_c::getFileDateTimeDIS(uint8_t ui8_inFileHandle)
   ui8_packetLength = 8;
 
   sendRequest();
+}
+
+void FsCommand_c::clearDirectoryList()
+{
+  IsoAgLib::iFsDirectoryPtr ps_tmpDir;
+  while (!v_dirData.empty())
+  {
+    ps_tmpDir = v_dirData.back();
+    v_dirData.pop_back();
+    if (ps_tmpDir->pui8_filename != NULL)
+      delete [] ps_tmpDir->pui8_filename;
+    delete ps_tmpDir;
+  }
+}
+
+void FsCommand_c::doneCleanUp()
+{
+  if (pui8_receiveBuffer != NULL)
+  {
+    delete [] pui8_receiveBuffer;
+    pui8_receiveBuffer = NULL;
+  }
+  ui32_recBufAllocSize = 0;
+
+  if (pui8_currentDirectory != NULL)
+  {
+    delete [] pui8_currentDirectory;
+    pui8_currentDirectory = NULL;
+  }
+  ui16_curDirAllocSize = 0;
+
+  if (pui8_fileName != NULL)
+  {
+    delete [] pui8_fileName;
+    pui8_fileName = NULL;
+  }
+  ui16_fileNameAllocSize = 0;
+
+  if (pui8_data != NULL)
+  {
+    delete [] pui8_data;
+    pui8_data = NULL;
+  }
+  ui16_dataAllocSize = 0;
+
+  clearDirectoryList();
+}
+
+IsoAgLib::iFsCommandErrors FsCommand_c::readFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, bool b_inReportHiddenFiles)
+{
+  if (en_lastCommand == en_noCommand)
+    en_lastCommand = en_readFile;
+
+  ui8_fileHandle = ui8_inFileHandle;
+  ui16_count = ui16_inCount;
+  b_reportHiddenFiles = b_inReportHiddenFiles;
+  uint8_t ui8_bufferPosition = 0;
+
+  pui8_sendBuffer[ui8_bufferPosition++] = 0x22;
+  pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
+  pui8_sendBuffer[ui8_bufferPosition++] = ui8_fileHandle;
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_count;
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_count >> 8;
+
+
+  if (i8_fsVersion == 1)
+  {
+    pui8_sendBuffer[ui8_bufferPosition++] = b_inReportHiddenFiles;
+  }
+  else if (i8_fsVersion != 0)
+  {
+    return IsoAgLib::fsWrongFsVersion;
+  }
+
+  while (ui8_bufferPosition < 8)
+    pui8_sendBuffer[ui8_bufferPosition++] = 0xFF;
+
+  ui8_packetLength = ui8_bufferPosition;
+
+  sendRequest();
+
+  return IsoAgLib::fsCommandNoError;
 }
 
 }

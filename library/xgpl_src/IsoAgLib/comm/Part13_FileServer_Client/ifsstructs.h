@@ -13,6 +13,9 @@
 #ifndef IFSSTRCUTS_H
 #define IFSSTRCUTS_H
 
+// Begin Namespace IsoAgLib
+namespace IsoAgLib {
+
 /**
   * struct used to save all available information on a directory.
   */
@@ -31,12 +34,18 @@ struct iFsDirectory
   uint32_t ui32_size;
 };
 
+typedef struct iFsDirectory * iFsDirectoryPtr;
+typedef STL_NAMESPACE::vector<iFsDirectoryPtr> iFsDirList;
+
 struct iFsWhitelist_c
 {
   bool b_requestRemoveableMedium;
   int32_t i32_requestedManufacturer;
   uint8_t ui8_minSimultaniouslyOpenFiles;
 };
+
+typedef struct iFsWhitelist_c * iFsWhitelistPtr;
+typedef STL_NAMESPACE::vector<iFsWhitelistPtr> iFsWhitelistList;
 
 enum iFsCommandErrors
 {
@@ -70,5 +79,8 @@ enum iFsError
   fsFileserverNotResponding = 0xB0,
   fsFileserverVersionNotSupported
 };
+
+//End namespace
+}
 
 #endif

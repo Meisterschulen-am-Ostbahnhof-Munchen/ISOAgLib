@@ -39,14 +39,16 @@
 namespace __IsoAgLib {
 
 /** constructor to init client-server communication without fileserver */
-FsClientServerCommunication_c::FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, std::vector<iFsWhitelist_c *> v_inFsWhitelist) : c_fsClient(rc_fsClient), c_identItem(rc_identItem)
+FsClientServerCommunication_c::FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, IsoAgLib::iFsWhitelistList v_inFsWhitelist)
+ : v_fsWhitelist( v_inFsWhitelist )
+ , c_fsClient(rc_fsClient)
+ , c_fileServer( NULL )
+ , c_identItem( rc_identItem )
+ , b_notifiedOnFileservers( false )
+ , pui8_currentDirectory( NULL )
+ , pc_commandHandler( NULL )
+ , b_finishedRegistering( false )
 {
-  b_notifiedOnFileservers = false;
-  b_finishedRegistering = false;
-  c_fileServer = NULL;
-  pui8_currentDirectory = 0;
-  pc_commandHandler = 0;
-  v_fsWhitelist = v_inFsWhitelist;
 }
 
 /** explicit conversion to reference of interface class type */
@@ -59,9 +61,9 @@ bool FsClientServerCommunication_c::notifyOnNewFileServer(FsServerInstance_c &rc
 {
   b_notifiedOnFileservers = true;
 
-  for (std::vector<iFsWhitelist_c *>::iterator it_whitelist = v_fsWhitelist.begin();
+  for (IsoAgLib::iFsWhitelistList::iterator it_whitelist = v_fsWhitelist.begin();
        it_whitelist != v_fsWhitelist.end();
-       it_whitelist++)
+       ++it_whitelist)
   {
     if ((*it_whitelist)->b_requestRemoveableMedium == rc_fsServerInstance.getSupportsMultiVolumes() &&
         ((*it_whitelist)->i32_requestedManufacturer == rc_fsServerInstance.getIsoName().manufCode() ||
@@ -99,125 +101,151 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
 }
 
 /// FileServer access functions
-    iFsCommandErrors FsClientServerCommunication_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->changeCurrentDirectory(pui8_newDirectory);
     }
 
-    iFsCommandErrors FsClientServerCommunication_c::openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->openFile(pui8_fileName, b_openExclusive, b_openForAppend, b_createNewFile, b_openForReading, b_openForWriting, b_openDirectory);
     }
-    iFsCommandErrors FsClientServerCommunication_c::seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->seekFile(ui8_fileHandle, ui8_possitionMode, i32_offset);
     }
-    iFsCommandErrors FsClientServerCommunication_c::readFile(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::readFile(uint8_t ui8_fileHandle, uint16_t ui16_count)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
-        return pc_commandHandler->readFile(ui8_fileHandle, ui16_count, b_reportHiddenFiles);
+        return pc_commandHandler->readFile(ui8_fileHandle, ui16_count);
     }
-    iFsCommandErrors FsClientServerCommunication_c::writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::readDirectory(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
+      else
+        return pc_commandHandler->readDirectory(ui8_fileHandle, ui16_count, b_reportHiddenFiles);
+    }
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data)
+    {
+      if (!pc_commandHandler)
+        return IsoAgLib::fsCommandNotPressent;
+      if (pc_commandHandler->isBusy())
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->writeFile(ui8_fileHandle, ui16_count, pui8_data);
     }
-    iFsCommandErrors FsClientServerCommunication_c::closeFile(uint8_t ui8_fileHandle)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::closeFile(uint8_t ui8_fileHandle)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->closeFile(ui8_fileHandle);
     }
 
-    iFsCommandErrors FsClientServerCommunication_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->moveFile(pui8_sourceName, pui8_destName, b_recursive, b_force, b_copy);
     }
-    iFsCommandErrors FsClientServerCommunication_c::deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->deleteFile(pui8_fileName, b_recursive, b_force);
     }
-    iFsCommandErrors FsClientServerCommunication_c::getFileAttributes(uint8_t *pui8_fileName)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::getFileAttributes(uint8_t *pui8_fileName)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->getFileAttributes(pui8_fileName);
     }
-    iFsCommandErrors FsClientServerCommunication_c::setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->setFileAttributes(pui8_fileName, ui8_hiddenAtt, ui8_readOnlyAtt);
     }
-    iFsCommandErrors FsClientServerCommunication_c::getFileDateTime(uint8_t *pui8_fileName)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::getFileDateTime(uint8_t *pui8_fileName)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->getFileDateTime(pui8_fileName);
     }
 
-    iFsCommandErrors FsClientServerCommunication_c::initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume)
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume)
     {
       if (!pc_commandHandler)
-        return fsCommandNotPressent;
+        return IsoAgLib::fsCommandNotPressent;
       if (pc_commandHandler->isBusy())
-        return fsCommandBusy;
+        return IsoAgLib::fsCommandBusy;
       else
         return pc_commandHandler->initializeVolume(pui8_pathName, ui32_space, b_createVolumeUsingSpace, b_createNewVolume);
     }
 
+    IsoAgLib::iFsCommandErrors FsClientServerCommunication_c::setKeepConnectionOpen( bool b_keepOpen, bool b_forceClose )
+    {
+      if (!pc_commandHandler)
+        return IsoAgLib::fsCommandNotPressent;
+      else
+      {
+        pc_commandHandler->setKeepConnectionOpen(b_keepOpen, b_forceClose);
+        return IsoAgLib::fsCommandNoError;
+      }
+    }
+    bool FsClientServerCommunication_c::getKeepConnectionOpen()
+    {
+      if (!pc_commandHandler)
+        return false;
+      else
+        return pc_commandHandler->getKeepConnectionOpen();
+    }
 
 /// FileServer access functions END
 
 
 
     /// FileServer access response functions
-    void FsClientServerCommunication_c::getCurrentDirectoryResponse(iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory)
+    void FsClientServerCommunication_c::getCurrentDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory)
     {
       if (!ui8_errorCode)
       {
@@ -225,7 +253,7 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
 
-        for (uint16_t i = 0; i < ui16_length; i++)
+        for (uint16_t i = 0; i < ui16_length; ++i)
         {
           pui8_currentDirectory[i] = piu8_newCurrentDirectory[i];
         }
@@ -236,7 +264,7 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
 
     }
 
-    void FsClientServerCommunication_c::changeCurrentDirectoryResponse(iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory)
+    void FsClientServerCommunication_c::changeCurrentDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory)
     {
       if (!ui8_errorCode)
       {
@@ -244,7 +272,7 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
         pui8_currentDirectory = new uint8_t[ui16_length + 1];
         pui8_currentDirectory[ui16_length] = 0;
 
-        for (uint16_t i = 0; i < ui16_length; i++)
+        for (uint16_t i = 0; i < ui16_length; ++i)
         {
           pui8_currentDirectory[i] = piu8_newCurrentDirectory[i];
         }
@@ -253,15 +281,15 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
       c_fsClient.changeCurrentDirectoryResponse(ui8_errorCode);
     }
 
-    void FsClientServerCommunication_c::moveFileResponse(iFsError ui8_errorCode)
+    void FsClientServerCommunication_c::moveFileResponse(IsoAgLib::iFsError ui8_errorCode)
     {
       c_fsClient.moveFileResponse(ui8_errorCode);
     }
-    void FsClientServerCommunication_c::deleteFileResponse(iFsError ui8_errorCode)
+    void FsClientServerCommunication_c::deleteFileResponse(IsoAgLib::iFsError ui8_errorCode)
     {
       c_fsClient.deleteFileResponse(ui8_errorCode);
     }
-    void FsClientServerCommunication_c::getFileAttributesResponse(iFsError ui8_errorCode,
+    void FsClientServerCommunication_c::getFileAttributesResponse(IsoAgLib::iFsError ui8_errorCode,
                                    bool b_caseSensitive,
                                    bool b_removable,
                                    bool b_longFilenames,
@@ -272,11 +300,11 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
     {
       c_fsClient.getFileAttributesResponse(ui8_errorCode, b_caseSensitive, b_removable, b_longFilenames, b_directory, b_volume, b_hidden, b_readOnly);
     }
-    void FsClientServerCommunication_c::setFileAttributesResponse(iFsError ui8_errorCode)
+    void FsClientServerCommunication_c::setFileAttributesResponse(IsoAgLib::iFsError ui8_errorCode)
     {
       c_fsClient.setFileAttributesResponse(ui8_errorCode);
     }
-    void FsClientServerCommunication_c::getFileDateTimeResponse(iFsError ui8_errorCode,
+    void FsClientServerCommunication_c::getFileDateTimeResponse(IsoAgLib::iFsError ui8_errorCode,
                                  uint16_t ui16_fileYear,
                                  uint8_t ui8_fileMonth,
                                  uint8_t ui8_fileDay,
@@ -287,7 +315,7 @@ void FsClientServerCommunication_c::requestFsConnection(FsServerInstance_c &rc_F
       c_fsClient.getFileDateTimeResponse(ui8_errorCode, ui16_fileYear, ui8_fileMonth, ui8_fileDay, ui8_fileHour, ui8_fileMinute, ui8_fileSecond);
     }
 
-    void FsClientServerCommunication_c::initializeVolumeResponse(iFsError ui8_errorCode,
+    void FsClientServerCommunication_c::initializeVolumeResponse(IsoAgLib::iFsError ui8_errorCode,
                                    bool b_caseSensitive,
                                    bool b_removable,
                                    bool b_longFilenames,

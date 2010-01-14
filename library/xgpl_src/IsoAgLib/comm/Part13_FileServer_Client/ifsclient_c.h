@@ -83,7 +83,7 @@ class iFsClient_c
                           bool /*b_caseSensitive*/,
                           bool /*b_removable*/,
                           bool /*b_longFilenames*/,
-                          bool /*b_directory*/, 
+                          bool /*b_directory*/,
                           bool /*b_volume*/,
                           bool /*b_hidden*/,
                           bool /*b_readOnly*/) {}
@@ -103,7 +103,7 @@ class iFsClient_c
       * After the call to read a file, this function is used to receive the successstatus of the command if the file was a directory.
       * The content of the file is returned.
       */
-    virtual void readDirectoryResponse(iFsError /*ui8_errorCode*/, std::vector<struct iFsDirectory *> /*v_directories*/) {}
+    virtual void readDirectoryResponse(iFsError /*ui8_errorCode*/, iFsDirList /*v_directories*/) {}
     /**
       * After the call to write data to a file, this function is used to receive the successstatus of the command and the number of
       * written data.

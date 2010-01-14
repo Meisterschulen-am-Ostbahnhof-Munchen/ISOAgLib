@@ -40,7 +40,7 @@ class FsClientServerCommunication_c
       * The whitelist of fileserver-properties that are desired for this client server communication.
       * Only fileservers of that type will be forwarded to the iFsClient (c_fsClient).
       */
-    std::vector<iFsWhitelist_c *> v_fsWhitelist;
+    IsoAgLib::iFsWhitelistList v_fsWhitelist;
     /** The fileserver client for the client-server communication */
     IsoAgLib::iFsClient_c &c_fsClient;
     /**
@@ -96,10 +96,10 @@ class FsClientServerCommunication_c
       * Method used to get the used fileserver's existing volumes.
       * @return std::vector<struct ::fsDirectory *> the volumes of the used fileserver.
       */
-    std::vector<struct ::iFsDirectory *> getFsVolumes() { return c_fileServer->getFsVolumes();}
+    IsoAgLib::iFsDirList getFsVolumes() { return c_fileServer->getFsVolumes();}
 
     /** constructor to init client-server communication without fileserver*/
-    FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, std::vector<iFsWhitelist_c *> v_fsWhitelist);
+    FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, IsoAgLib::iFsWhitelistList v_fsWhitelist);
 
     /** explicit conversion to reference of interface class type*/
     IsoAgLib::iFsClientServerCommunication_c* toInterfacePointer();
@@ -141,65 +141,69 @@ class FsClientServerCommunication_c
     void requestFsConnection(FsServerInstance_c &rc_FileServer);
 
     /// FileServer access functions as defined in iFsClientServerCommunication_c
-    iFsCommandErrors getFileServerProperties();
+    IsoAgLib::iFsCommandErrors getFileServerProperties();
 
-    iFsCommandErrors changeCurrentDirectory(uint8_t *pui8_newDirectory);
+    IsoAgLib::iFsCommandErrors changeCurrentDirectory(uint8_t *pui8_newDirectory);
 
-    iFsCommandErrors openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory);
-    iFsCommandErrors seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset);
-    iFsCommandErrors readFile(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
-    iFsCommandErrors writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data);
-    iFsCommandErrors closeFile(uint8_t ui8_fileHandle);
+    IsoAgLib::iFsCommandErrors openFile(uint8_t *pui8_fileName, bool b_openExclusive, bool b_openForAppend, bool b_createNewFile, bool b_openForReading, bool b_openForWriting, bool b_openDirectory);
+    IsoAgLib::iFsCommandErrors seekFile(uint8_t ui8_fileHandle, uint8_t ui8_possitionMode, int32_t i32_offset);
+    IsoAgLib::iFsCommandErrors readFile(uint8_t ui8_fileHandle, uint16_t ui16_count);
+    IsoAgLib::iFsCommandErrors readDirectory(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
+    IsoAgLib::iFsCommandErrors writeFile(uint8_t ui8_fileHandle, uint16_t ui16_count, uint8_t *pui8_data);
+    IsoAgLib::iFsCommandErrors closeFile(uint8_t ui8_fileHandle);
 
-    iFsCommandErrors moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy);
-    iFsCommandErrors deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force);
-    iFsCommandErrors getFileAttributes(uint8_t *pui8_fileName);
-    iFsCommandErrors setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt);
-    iFsCommandErrors getFileDateTime(uint8_t *pui8_fileName);
+    IsoAgLib::iFsCommandErrors moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_recursive, bool b_force, bool b_copy);
+    IsoAgLib::iFsCommandErrors deleteFile(uint8_t *pui8_fileName, bool b_recursive, bool b_force);
+    IsoAgLib::iFsCommandErrors getFileAttributes(uint8_t *pui8_fileName);
+    IsoAgLib::iFsCommandErrors setFileAttributes(uint8_t *pui8_fileName, uint8_t ui8_hiddenAtt, uint8_t ui8_readOnlyAtt);
+    IsoAgLib::iFsCommandErrors getFileDateTime(uint8_t *pui8_fileName);
 
-    iFsCommandErrors initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume);
+    IsoAgLib::iFsCommandErrors initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume);
+
+    IsoAgLib::iFsCommandErrors setKeepConnectionOpen( bool b_keepOpen, bool b_forceClose=false );
+    bool getKeepConnectionOpen();
     /// FileServer access functions END
 
     /// FileServer access response functions as defined in iFsClient_c
 
     void getFileServerPropertiesResponse(uint8_t ui8_versionNumber, uint8_t ui8_maxNumberOpenFiles, bool b_fsMultiVolumes);
 
-    void getCurrentDirectoryResponse(iFsError ui8_errorCode, uint8_t *piu8_currentDirectory);
-    void changeCurrentDirectoryResponse(iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory);
+    void getCurrentDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, uint8_t *piu8_currentDirectory);
+    void changeCurrentDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, uint8_t *piu8_newCurrentDirectory);
 
-    void openFileResponse(iFsError ui8_errorCode,
+    void openFileResponse(IsoAgLib::iFsError ui8_errorCode,
                           uint8_t ui8_fileHandle,
                           bool b_caseSensitive,
                           bool b_removable,
                           bool b_longFilenames,
-                          bool b_directory, 
+                          bool b_directory,
                           bool b_volume,
                           bool b_hidden,
                           bool b_readOnly)
     { c_fsClient.openFileResponse(ui8_errorCode, ui8_fileHandle, b_caseSensitive, b_removable, b_longFilenames, b_directory,  b_volume, b_hidden, b_readOnly); }
-    void seekFileResponse(iFsError ui8_errorCode, uint32_t ui32_position)
+    void seekFileResponse(IsoAgLib::iFsError ui8_errorCode, uint32_t ui32_position)
     { c_fsClient.seekFileResponse(ui8_errorCode, ui32_position); }
-    void readFileResponse(iFsError ui8_errorCode, uint16_t ui16_dataLength, uint8_t *pui8_data)
+    void readFileResponse(IsoAgLib::iFsError ui8_errorCode, uint16_t ui16_dataLength, uint8_t *pui8_data)
     { c_fsClient.readFileResponse(ui8_errorCode, ui16_dataLength, pui8_data); }
-    void readDirectoryResponse(iFsError ui8_errorCode, std::vector<struct iFsDirectory *> v_directories)
+    void readDirectoryResponse(IsoAgLib::iFsError ui8_errorCode, IsoAgLib::iFsDirList v_directories)
     { c_fsClient.readDirectoryResponse(ui8_errorCode, v_directories); }
-    void writeFileResponse(iFsError ui8_errorCode, uint16_t ui16_dataWritten)
+    void writeFileResponse(IsoAgLib::iFsError ui8_errorCode, uint16_t ui16_dataWritten)
     { c_fsClient.writeFileResponse(ui8_errorCode, ui16_dataWritten); }
-    void closeFileResponse(iFsError ui8_errorCode)
+    void closeFileResponse(IsoAgLib::iFsError ui8_errorCode)
     { c_fsClient.closeFileResponse(ui8_errorCode); }
 
-    void moveFileResponse(iFsError ui8_errorCode);
-    void deleteFileResponse(iFsError ui8_errorCode);
-    void getFileAttributesResponse(iFsError ui8_errorCode,
+    void moveFileResponse(IsoAgLib::iFsError ui8_errorCode);
+    void deleteFileResponse(IsoAgLib::iFsError ui8_errorCode);
+    void getFileAttributesResponse(IsoAgLib::iFsError ui8_errorCode,
                                    bool b_caseSensitive,
                                    bool b_removable,
                                    bool b_longFilenames,
-                                   bool b_directory, 
+                                   bool b_directory,
                                    bool b_volume,
                                    bool b_hidden,
                                    bool b_readOnly);
-    void setFileAttributesResponse(iFsError ui8_errorCode);
-    void getFileDateTimeResponse(iFsError ui8_errorCode,
+    void setFileAttributesResponse(IsoAgLib::iFsError ui8_errorCode);
+    void getFileDateTimeResponse(IsoAgLib::iFsError ui8_errorCode,
                                  uint16_t ui16_fileYear,
                                  uint8_t ui8_fileMonth,
                                  uint8_t ui8_fileDay,
@@ -207,11 +211,11 @@ class FsClientServerCommunication_c
                                  uint8_t ui8_fileMinute,
                                  uint8_t ui8_fileSecond);
 
-    void initializeVolumeResponse(iFsError ui8_errorCode,
+    void initializeVolumeResponse(IsoAgLib::iFsError ui8_errorCode,
                                    bool b_caseSensitive,
                                    bool b_removable,
                                    bool b_longFilenames,
-                                   bool b_directory, 
+                                   bool b_directory,
                                    bool b_volume,
                                    bool b_hidden,
                                    bool b_readOnly);

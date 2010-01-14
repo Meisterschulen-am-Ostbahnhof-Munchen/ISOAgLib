@@ -81,7 +81,7 @@ class FsServerInstance_c
     bool b_isMultivolumes;
 
     /** the fileservers volumes*/
-    std::vector<struct ::iFsDirectory *> v_volumes;
+    IsoAgLib::iFsDirList v_volumes;
 
     /** initialization state of the fileserver, as described at the enum */
     FsState_en en_initStatus;
@@ -118,11 +118,11 @@ class FsServerInstance_c
       * sets the fileserver's volumes. this value is set after the property-request. therefore the status of the
       * fileserver is set to unreported. next step is to report it to all known fsclientservercommunciations.
       */
-    void setVolumes(std::vector<struct ::iFsDirectory*> v_inVolumes) { v_volumes = v_inVolumes; en_initStatus = unreported; }
+    void setVolumes(IsoAgLib::iFsDirList v_inVolumes);
     /**
       * Get the fileserver's volumes.
       */
-    std::vector<struct ::iFsDirectory*> getFsVolumes() { return v_volumes; }
+    IsoAgLib::iFsDirList getFsVolumes() { return v_volumes; }
     /**
       * have to fileserver's volumes been requested successfully?
       */
@@ -200,6 +200,13 @@ class FsServerInstance_c
       * @return -1 if property has not been requested yet, else number of standard used as defined in Part 13 Filserver
       */
    int8_t getStandardVersion() { return b_propertiesSet?(int8_t)ui8_versionNumber:-1;}
+
+    /**
+      * get the fileserver's busy status. the values are described in the corresponding enum.
+      */
+   FsState_en getBusy() { return en_busy; }
+
+   ~FsServerInstance_c();
 
 };
 

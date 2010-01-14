@@ -57,9 +57,9 @@ class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommuni
 
     /**
       * get the fileservers volumes.
-      * @return fileservers volume information saved as std::vector<struct ::iFsDirectory *>
+      * @return fileservers volume information saved as iFsDirList
       */
-    std::vector<struct ::iFsDirectory *> getFsVolumes() { return __IsoAgLib::FsClientServerCommunication_c::getFsVolumes(); }
+    iFsDirList getFsVolumes() { return __IsoAgLib::FsClientServerCommunication_c::getFsVolumes(); }
 
     /// FileServer access functions
 
@@ -104,11 +104,20 @@ class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommuni
       * read content of a file
       * @param ui8_fileHandle filehandle of the desired file
       * @param ui16_count number of bytes that shall be read
+      * @return 0 if request was sent without problems, else an errorcode is returned.
+      */
+    uint8_t readFile(uint8_t ui8_fileHandle, uint16_t ui16_count)
+    { return __IsoAgLib::FsClientServerCommunication_c::readFile(ui8_fileHandle, ui16_count); }
+
+    /**
+      * read content of a file
+      * @param ui8_fileHandle filehandle of the desired file
+      * @param ui16_count number of bytes that shall be read
       * @param b_reportHiddenFiles report hidden files?
       * @return 0 if request was sent without problems, else an errorcode is returned.
       */
-    uint8_t readFile(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles)
-    { return __IsoAgLib::FsClientServerCommunication_c::readFile(ui8_fileHandle, ui16_count, b_reportHiddenFiles); }
+    uint8_t readDirectory(uint8_t ui8_fileHandle, uint16_t ui16_count, bool b_reportHiddenFiles)
+    { return __IsoAgLib::FsClientServerCommunication_c::readDirectory(ui8_fileHandle, ui16_count, b_reportHiddenFiles); }
 
     /**
       * write data to a file
@@ -187,6 +196,21 @@ class iFsClientServerCommunication_c : private __IsoAgLib::FsClientServerCommuni
     uint8_t initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume)
     { return __IsoAgLib::FsClientServerCommunication_c::initializeVolume(pui8_pathName, ui32_space, b_createVolumeUsingSpace, b_createNewVolume); }
 
+
+    /**
+      * set connection state to keep open even after all files have been closed
+      * @param b_keepOpen connection state.
+      * @param b_forceClose force the connection to close even if files are open.
+      */
+    uint8_t setKeepConnectionOpen( bool b_keepOpen, bool b_forceClose=false )
+    { return __IsoAgLib::FsClientServerCommunication_c::setKeepConnectionOpen(b_keepOpen, b_forceClose); }
+
+    /**
+      * get conneciton state
+      * @return true if the keep connection open is current set else false is returned.
+      */
+    bool getKeepConnectionOpen()
+    { return __IsoAgLib::FsClientServerCommunication_c::getKeepConnectionOpen(); }
 
     /// FileServer access functions END
 };

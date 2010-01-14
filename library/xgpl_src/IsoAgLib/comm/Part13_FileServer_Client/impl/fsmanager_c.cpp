@@ -30,10 +30,10 @@ FsManager_c::timeEvent(void)
 
   bool b_fsPropertiesRequested = false;
 
-  std::vector<FsServerInstance_c *>::iterator it_end = v_serverInstances.end();
-  for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
+  STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = v_serverInstances.end();
+  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
        it_serverInstance != it_end;
-       it_serverInstance++)
+       ++it_serverInstance)
   {
     // check if FsServerInstance to delete is in list
     if ((*it_serverInstance)->getLastTime() != -1 && (uint32_t)(HAL::getTime () - (uint32_t)(*it_serverInstance)->getLastTime()) > (uint32_t)6000)
@@ -74,13 +74,13 @@ FsManager_c::timeEvent(void)
 
   //look for clientservercom with unreported fileservers...
 
-  for (std::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
        it_communications != v_communications.end();
-       it_communications++)
+       ++it_communications)
   {
-    for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
+    for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
        it_serverInstance != it_end;
-       it_serverInstance++)
+       ++it_serverInstance)
     {
       if ((*it_serverInstance)->knowsVolumes())
       {
@@ -99,7 +99,7 @@ FsManager_c::timeEvent(void)
   }
 
   //delete commands for fileservers whoes properties have been requested or who have been removed.
-  for (std::list<FsCommand_c *>::iterator it_command = l_commands.begin();
+  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = l_commands.begin();
        it_command != l_commands.end();
        )
   {
@@ -115,7 +115,7 @@ FsManager_c::timeEvent(void)
       it_command = l_commands.erase(it_command);
       continue;
     }
-    it_command++;
+    ++it_command;
   }
 
   return true;
@@ -129,9 +129,9 @@ FsManager_c::timeEvent(void)
 FsServerInstance_c *FsManager_c::getFileServerBySA(uint8_t ui8_SA)
 {
 
-  for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
+  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
        it_serverInstance != v_serverInstances.end();
-       it_serverInstance++)
+       ++it_serverInstance)
   {
     if (ui8_SA == (*it_serverInstance)->getIsoItem().nr())
     {
@@ -170,9 +170,9 @@ void FsManager_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModificat
       return;
     }
 
-    for (std::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
+    for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
          it_serverInstance != v_serverInstances.end();
-         it_serverInstance++)
+         ++it_serverInstance)
     {
       // check if FsServerInstance to delete is in list
       if (acrc_isoItem.isoName() == (*it_serverInstance)->getIsoItem().isoName())
@@ -194,9 +194,9 @@ bool FsManager_c::requestFsProperties(FsServerInstance_c &pc_fsInstance)
 {
   CANPkgExt_c canpkgext;
 
-  for (std::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
        it_communications != v_communications.end();
-       it_communications++)
+       ++it_communications)
   {
     if ((*it_communications)->getClientIdentItem().isClaimedAddress())
     {
@@ -258,13 +258,13 @@ FsManager_c::FsManager_c()
   * @return a new FsClientServerCommunication_c* if the client has not been registered yet. If the fileserver has been registered,
   * the original FsClientServerCommunication_c is returned.
   */
-FsClientServerCommunication_c *FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, std::vector<iFsWhitelist_c *> v_fsWhitelist)
+FsClientServerCommunication_c *FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, IsoAgLib::iFsWhitelistList v_fsWhitelist)
 {
   FsClientServerCommunication_c *c_fscscClient = NULL;
 
-  for (std::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
        it_communications != v_communications.end();
-       it_communications++)
+       ++it_communications)
   {
     if ((*it_communications)->getClientIdentItem() == rc_identItem)
     {
@@ -299,9 +299,9 @@ FsManager_c::close()
 
 void FsManager_c::removeFileserverFromUsingClients(FsServerInstance_c &rc_fileserver)
 {
-  for (std::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
        it_communications != v_communications.end();
-       it_communications++)
+       ++it_communications)
   {
     if ((*it_communications)->getFileserver()->getInitStatus() == FsServerInstance_c::offline)
     {
