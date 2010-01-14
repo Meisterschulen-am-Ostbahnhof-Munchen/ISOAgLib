@@ -214,10 +214,10 @@ class CanPkgExt_c : public CanPkg_c
   uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x3FF00 ) | isoPs() );}
 
   /**
-    get the value of the ISO11783 ident field DP
+    get the value of the ISO11783 ident field EDP+DP
     @return data page
   */
-  uint8_t isoDp() const {return (ident(3) & 0x1);}
+  uint8_t isoDp() const {return (ident(3) & 0x3);}
 
   /**
     get the value of the ISO11783 ident field PF
@@ -278,7 +278,7 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t aui8_val){setIdent( uint8_t((ident(3)&1) | (aui8_val << 2)), 3, Ident_c::ExtendedIdent);}
+  void setIsoPri(uint8_t aui8_val){setIdent( uint8_t((ident(3)&3) | (aui8_val << 2)), 3, Ident_c::ExtendedIdent);}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
     CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
