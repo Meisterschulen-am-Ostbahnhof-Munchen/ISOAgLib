@@ -190,7 +190,7 @@ public:
     set the data len of CAN pkg (if ab_val is greater than 8, 8 is stored)
     @param ab_val length/amount of uint8_t in data string
   */
-  static void setLen(uint8_t ab_val){msui8_len = (ab_val<9)?ab_val:8;}
+  static void setLen(uint8_t ab_val){msui8_len = (ab_val<9)?ab_val:uint8_t(8);}
 
   /**
     set receive time

@@ -235,7 +235,7 @@ class CanPkgExt_c : public CanPkg_c
     get the value of the ISO11783 ident field PRI
     @return priority
   */
-  uint8_t isoPri() const {return (ident(3) >> 2);}
+  uint8_t isoPri() const {return uint8_t(ident(3) >> 2);}
 
   /**
     set the value of the ISO11783 ident field SA
@@ -255,7 +255,7 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t aui8_val) {setIdent( ((ident(3)& 0x1C) | (aui8_val & 0x03)), 3, Ident_c::ExtendedIdent);}
+  void setIsoDp(uint8_t aui8_val) {setIdent( uint8_t((ident(3)& 0x1C) | (aui8_val & 0x03)), 3, Ident_c::ExtendedIdent);}
 
   /**
     set the value of the ISO11783 ident field PF
@@ -266,7 +266,7 @@ class CanPkgExt_c : public CanPkg_c
   /** combined setting of DP and PF field in identifier as 10Bit part of a 16-Bit parameter
       @param aui16_dpPf DP and PF for the PGN
     */
-  void setIsoDpPf( uint16_t aui16_dpPf ) { setIdentWord( (((ident(3)& 0x1C)<<8) | (aui16_dpPf & 0x03FF)), 1, Ident_c::ExtendedIdent);}
+  void setIsoDpPf( uint16_t aui16_dpPf ) { setIdentWord( uint16_t(((ident(3)& 0x1C)<<8) | (aui16_dpPf & 0x03FF)), 1, Ident_c::ExtendedIdent);}
 
   /**
     set the value of the ISO11783 ident field PS
@@ -278,7 +278,7 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t aui8_val){setIdent( ((ident(3)&1) | (aui8_val << 2)), 3, Ident_c::ExtendedIdent);}
+  void setIsoPri(uint8_t aui8_val){setIdent( uint8_t((ident(3)&1) | (aui8_val << 2)), 3, Ident_c::ExtendedIdent);}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
     CanPkg_c::setIdentType(Ident_c::ExtendedIdent);

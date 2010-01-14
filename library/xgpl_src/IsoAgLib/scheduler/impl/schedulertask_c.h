@@ -355,7 +355,7 @@ inline
 uint16_t
 Scheduler_Task_c::getAvgExecTime() const
 {
-  return ( mui32_callCnt != 0 )?static_cast<uint16_t>( mui32_sumTime / mui32_callCnt ):0;
+  return static_cast<uint16_t>( ( mui32_callCnt != 0 )?( mui32_sumTime / mui32_callCnt ):0 );
 }
 #ifdef DEBUG_SCHEDULER
 //!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
