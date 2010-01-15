@@ -82,17 +82,20 @@ FsManager_c::timeEvent(void)
        it_serverInstance != it_end;
        ++it_serverInstance)
     {
-      if ((*it_serverInstance)->knowsVolumes())
+      if ((*it_serverInstance)->getPropertiesSet())
       {
-        if ((*it_serverInstance)->getInitStatus() == FsServerInstance_c::unreported) {
-          (*it_communications)->notifyOnNewFileServer(*(*it_serverInstance));
-          if (it_communications + 1 == v_communications.end())
-          {
-            (*it_serverInstance)->setReported();
-          }
-        } else if (!(*it_communications)->getHasBeenNotifiedOnFileServers())
+        if ((!(*it_serverInstance)->getSupportsMultiVolumes()) || (*it_serverInstance)->knowsVolumes())
         {
-          (*it_communications)->notifyOnNewFileServer(*(*it_serverInstance));
+          if ((*it_serverInstance)->getInitStatus() == FsServerInstance_c::unreported) {
+            (*it_communications)->notifyOnNewFileServer(*(*it_serverInstance));
+            if (it_communications + 1 == v_communications.end())
+            {
+              (*it_serverInstance)->setReported();
+            }
+          } else if (!(*it_communications)->getHasBeenNotifiedOnFileServers())
+          {
+            (*it_communications)->notifyOnNewFileServer(*(*it_serverInstance));
+          }
         }
       }
     }
