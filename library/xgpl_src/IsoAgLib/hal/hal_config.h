@@ -36,8 +36,8 @@
 #define HAL_CAN_MAX_REC_OBJ 14
 
 /// define list of allowed speed settings
-#define HAL_RS232_BAUDRATE_LIST {75, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600}
-#define HAL_RS232_BITRATE_CNT 9                                          
+#define HAL_RS232_BAUDRATE_LIST {75, 600, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200}
+#define HAL_RS232_BITRATE_CNT 10
 
 
 #ifdef HAL_PATH_ISOAGLIB

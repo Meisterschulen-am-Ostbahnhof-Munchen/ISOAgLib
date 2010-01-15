@@ -196,6 +196,7 @@ set_default_values()
     CAN_BUS_CNT=1
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
+    RS232_CHANNEL_CNT=1
     RS232_INSTANCE_CNT=1
     APP_NAME=''
     PRJ_PROPRIETARY_PGN_INTERFACE=0
@@ -262,6 +263,7 @@ set_default_values()
     USE_WIN32_EXTERNAL_LIBRARY_PATH=''
     USE_MSVC_EXTERNAL_LIBRARIES=''
     APP_SRC_FILE=''
+    USE_RS232_DRIVER='none'
 }
 
 # update PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL unless contradiction with
@@ -1161,6 +1163,7 @@ END_OF_PATH
         echo_e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >&3
         echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >&3
         echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >&3
+        echo_e "#define RS232_CHANNEL_CNT $RS232_CHANNEL_CNT $ENDLINE" >&3
         echo_e "#define RS232_INSTANCE_CNT $RS232_INSTANCE_CNT $ENDLINE" >&3
     
     
@@ -2672,35 +2675,37 @@ check_after_user_configuration()
     if [ $PARAMETER_RS232_DRIVER != "UseConfigFile" ] ; then
         USE_RS232_DRIVER=$PARAMETER_RS232_DRIVER
     fi
-    case "$USE_RS232_DRIVER" in
-        (simulating)
-            case "$USE_TARGET_SYSTEM" in
-                (pc_linux | pc_win32)
-                    ;;
-                (*)
-                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                    exit 2
-                    ;;
-            esac
-            ;;
-        (sys)
-            ;;
-        (rte)
-            case "$USE_TARGET_SYSTEM" in
-                (pc_linux)
-                    ;;
-                (pc_win32 | *)
-                    printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
-                    exit 2
-                    ;;
-            esac
-            ;;
-        (*)
-            echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
-            usage
-            exit 1
-            ;;
-    esac
+    if [ $PRJ_RS232 -gt 0 ]; then
+      case "$USE_RS232_DRIVER" in
+          (simulating)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux | pc_win32)
+                      ;;
+                  (*)
+                      printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+              esac
+              ;;
+          (sys)
+              ;;
+          (rte)
+              case "$USE_TARGET_SYSTEM" in
+                  (pc_linux)
+                      ;;
+                  (pc_win32 | *)
+                      printf 'ERROR: USE_RS232_DRIVER="%s" does not fit to USE_TARGET_SYSTEM="%s". Try USE_RS232_DRIVER=sys instead.\n' "$USE_RS232_DRIVER" "$USE_TARGET_SYSTEM" >&2
+                      exit 2
+                      ;;
+              esac
+              ;;
+          (*)
+              echo_ "Unknown RS232 driver $USE_RS232_DRIVER" 1>&2
+              usage
+              exit 1
+              ;;
+      esac
+    fi
 
     : ${USE_EMBED_LIB_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}
     : ${USE_EMBED_HEADER_DIRECTORY:="library/commercial_BIOS/bios_${USE_TARGET_SYSTEM}"}

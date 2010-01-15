@@ -80,7 +80,7 @@ public:
 
   /**
     init function which initialises the BIOS RS232
-    @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
     @param ren_dataMode data mode setting of {7,8}_{N,O,E}_{1,2}
     @param ab_xonXoff use XON/XOFF sw handshake (true, false)
     @param aui16_sndBuf sending buffer size
@@ -90,7 +90,7 @@ public:
         * Err_c::badAlloc not enough memory for allocating the buffers
         * Err_c::range one of the configuration vals is not in allowed ranges
   */
-  bool init(uint16_t aui16_baudrate,
+  bool init(uint32_t aui32_baudrate,
           t_dataMode ren_dataMode,
           bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
           uint16_t aui16_sndBuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t aui16_recBuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
@@ -105,7 +105,7 @@ public:
   */
   bool isInitialized () const 
   {return 
-  (ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 
+  (ui32_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 
  #if defined(USE_RS232_CHANNEL) 
   && ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE 
  #endif
@@ -117,19 +117,19 @@ public:
 
   /**
     set the baudrate to a new value
-    @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
 
     possible errors:
         * Err_c::range the wanted baudrate is not allowed
     @return true -> setting successful
   */
-  bool setBaudrate(uint16_t aui16_baudrate);
+  bool setBaudrate(uint32_t aui32_baudrate);
 
   /**
     deliver the actual baudrate
     @return RS232 baudrate
   */
-  uint16_t baudrate()const{return ui16_baudrate;};
+  uint32_t baudrate()const{return ui32_baudrate;};
   /**
     deliver the decoding type
     @return RS232 type
@@ -424,7 +424,7 @@ private: //Private methods
 private:
   // Private attributes
   
-  uint16_t ui16_baudrate;
+  uint32_t ui32_baudrate;
   t_dataMode en_dataMode;
   bool b_xon_xoff;
   uint16_t ui16_sndBuf;

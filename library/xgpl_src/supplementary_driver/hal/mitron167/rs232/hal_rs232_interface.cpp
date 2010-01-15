@@ -131,7 +131,7 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
 
   /**
     init the RS232 interface
-    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param baudrate wanted Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
           as configured in <IsoAgLib/isoaglib_config.h>
     @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
             DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -139,12 +139,12 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
     @param bitSoftwarehandshake true -> use xon/xoff software handshake
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
-  int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake) {
+  int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake) {
     puc_rs232BufferWrite = puc_rs232BufferRead = (uchar*) puc_startBuffer;
     __HAL::serial.rx.ascii.count = 0;
     // derive preload value for baudrate
     uint16_t ui16_preLoad = 0x14; // 19200 Baud
-    switch ( wBaudrate ) {
+    switch ( baudrate ) {
       case 19200: ui16_preLoad = 0x20;   break;
       case  9600: ui16_preLoad = 0x41;   break;
       case  4800: ui16_preLoad = 0x82;   break;
@@ -204,13 +204,13 @@ bool readDataFromRs232RingBuffer( uchar* puc_item ) {
 
   /**
     set the RS232 Baudrate
-    @param wBaudrate wanted baudrate
+    @param baudrate wanted baudrate
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
-  int16_t setRs232Baudrate(uint16_t wBaudrate) {
+  int16_t setRs232Baudrate(uint32_t baudrate) {
     // change Baudrate
     uint16_t ui16_preLoad = 0x14; // 19200 Baud
-    switch ( wBaudrate ) {
+    switch ( baudrate ) {
       case 19200: ui16_preLoad = 0x20;   break;
       case  9600: ui16_preLoad = 0x41;   break;
       case  4800: ui16_preLoad = 0x82;   break;

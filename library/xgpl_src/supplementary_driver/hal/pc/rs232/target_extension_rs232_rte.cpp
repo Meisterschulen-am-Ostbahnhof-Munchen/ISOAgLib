@@ -31,26 +31,26 @@ namespace __HAL {
 /* ****** RS232 I/O BIOS functions  ******* */
 /* **************************************** */
 typedef serial_c* PointerSerial_t;
-#if RS232_INSTANCE_CNT == 1
+#if RS232_CHANNEL_CNT == 1
 #define DEF_SerialPointer(x) pc_serial
 PointerSerial_t pc_serial = NULL;
-#elif RS232_INSTANCE_CNT == 2
+#elif RS232_CHANNEL_CNT == 2
 #define DEF_SerialPointer(x) pc_serial[x]
-PointerSerial_t pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL};
-#elif RS232_INSTANCE_CNT == 3
+PointerSerial_t pc_serial[RS232_CHANNEL_CNT] = {NULL,NULL};
+#elif RS232_CHANNEL_CNT == 3
 #define DEF_SerialPointer(x) pc_serial[x]
-PointerSerial_t pc_serial[RS232_INSTANCE_CNT] = {NULL,NULL,NULL};
+PointerSerial_t pc_serial[RS232_CHANNEL_CNT] = {NULL,NULL,NULL};
 #else
 #define DEF_SerialPointer(x) pc_serial[x]
-PointerSerial_t pc_serial[RS232_INSTANCE_CNT];
+PointerSerial_t pc_serial[RS232_CHANNEL_CNT];
 #endif
 
-STL_NAMESPACE::deque<uint8_t> c_buffer[RS232_INSTANCE_CNT];
+STL_NAMESPACE::deque<uint8_t> c_buffer[RS232_CHANNEL_CNT];
 
 /** send handler which is called by RTE on each new received data -> store current fertilizer amount */
 int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *data ) {
   // ignore events from other channel than arr_serialChannels[cui32_fertilizerSerialIndex]
-  for ( int testInd = 0; testInd < RS232_INSTANCE_CNT; testInd++ )
+  for ( int testInd = 0; testInd < RS232_CHANNEL_CNT; testInd++ )
   {
     if ( para->rtd_msg->channel != testInd ) continue;
     // append received string in buffer
@@ -77,7 +77,7 @@ int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *da
 
 /**
   init the RS232 interface
-  @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+  @param baudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
         as configured in <IsoAgLib/isoaglib_config.h>
   @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
           DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -85,16 +85,16 @@ int rs232_send_handler(rtd_handler_para_t* para, uint8_t size, const uint8_t *da
   @param bitSoftwarehandshake true -> use xon/xoff software handshake
   @return HAL_NO_ERR -> o.k. else one of settings incorrect
 */
-int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
+int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   char param[30];
   uint16_t ui16_dataBit = 8;
   if ( ( bMode == 1 ) || ( bMode == 3 ) ) ui16_dataBit = 7;
   char par = 'n';
   if      ( ( bMode == 1 ) || ( bMode == 2 ) ) par = 'e';
   else if ( ( bMode == 3 ) || ( bMode == 4 ) ) par = 'o';
-  sprintf( param, "C%hd,R,E0,B%d,L%d%c%hd", aui8_channel,wBaudrate, ui16_dataBit, par, bStoppbits );
+  sprintf( param, "C%hd,R,E0,B%d,L%d%c%hd", aui8_channel,baudrate, ui16_dataBit, par, bStoppbits );
 
   if ( ! rte_is_init() ) {
 		std::string c_rteServer = HAL_PC_RTE_DEFAULT_SERVER;
@@ -118,7 +118,7 @@ int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitS
 /** close the RS232 interface. */
 int16_t close_rs232(uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
 	if ( DEF_SerialPointer(aui8_channel) == NULL ) return HAL_NOACT_ERR;
 	delete DEF_SerialPointer(aui8_channel);
 	DEF_SerialPointer(aui8_channel) = NULL;
@@ -129,13 +129,13 @@ int16_t close_rs232(uint8_t aui8_channel)
 
 /**
   set the RS232 Baudrate
-  @param wBaudrate wanted baudrate
+  @param baudrate wanted baudrate
   @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
 */
-int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
+int16_t setRs232Baudrate(uint32_t baudrate, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
-  DEF_SerialPointer(aui8_channel)->set_baud( wBaudrate );
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
+  DEF_SerialPointer(aui8_channel)->set_baud( baudrate );
   return HAL_NO_ERR;
 }
 /**
@@ -145,7 +145,7 @@ int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
 int16_t getRs232RxBufCount(uint8_t aui8_channel)
 {
   DEF_SerialPointer(aui8_channel)->poll();
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   return c_buffer[aui8_channel].size();
 }
 /**
@@ -155,7 +155,7 @@ int16_t getRs232RxBufCount(uint8_t aui8_channel)
 int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
   DEF_SerialPointer(aui8_channel)->poll();
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   return 0;
 }
 /**
@@ -165,7 +165,7 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
 */
 int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   return HAL_NO_ERR;
 }
 /**
@@ -177,7 +177,7 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
                                 void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   return HAL_NO_ERR;
 }
 /**
@@ -186,7 +186,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
 */
 int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   *Errorcode = 0;
   return HAL_NO_ERR;
 }
@@ -198,7 +198,7 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 */
 int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 {  // retrieve first char
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   if ( c_buffer[aui8_channel].empty() ) {
     // no char in receive buffer
     *pbRead = '\0';
@@ -216,7 +216,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 */
 int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   uint8_t ui8_test;
   if (! c_buffer[aui8_channel].empty())
   {
@@ -248,7 +248,7 @@ int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
 */
 int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   DEF_SerialPointer(aui8_channel)->send( 1, &bByte );
   return HAL_NO_ERR;
 }
@@ -260,7 +260,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 */
 int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   DEF_SerialPointer(aui8_channel)->send( wNumber, bpWrite );
   return HAL_NO_ERR;
 }
@@ -271,7 +271,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 */
 int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   DEF_SerialPointer(aui8_channel)->send( (const char*)pbString );
   return HAL_NO_ERR;
 }
@@ -281,7 +281,7 @@ int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 */
 void clearRs232RxBuffer(uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return;
   c_buffer[aui8_channel].clear();
 };
 

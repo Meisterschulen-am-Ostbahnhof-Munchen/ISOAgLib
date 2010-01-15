@@ -24,7 +24,7 @@ namespace __HAL
 
    /**
       init the RS232 interface
-      @param wBaudrate wanted Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+      @param baudrate wanted Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
              as configured in <IsoAgLib/isoaglib_config.h>
 
       @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
@@ -33,14 +33,14 @@ namespace __HAL
       @param bitSoftwarehandshake true -> use xon/xoff software handshake
       @return HAL_NO_ERR -> o.k. else one of settings incorrect
    */
-   int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
+   int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
    {
       uartParameter_t Parameter;
 
       // Baudrate  (see config.h)
       // UART_38400_BAUD is not supported by HAL
       // baudrate 75     is not supported by BIOS
-      switch ( wBaudrate )
+      switch ( baudrate )
       {
          case 38400: Parameter.baudrate = UART_38400_BAUD; break;
          case 19200: Parameter.baudrate = UART_19200_BAUD; break;
@@ -78,17 +78,17 @@ namespace __HAL
 
    /**
       set the RS232 Baudrate
-      @param wBaudrate wanted baudrate
+      @param baudrate wanted baudrate
       @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
    */
-   int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
+   int16_t setRs232Baudrate(uint32_t baudrate, uint8_t aui8_channel)
    {
       uint8_t Baudrate;
       
       // Baudrate  (see config.h)
       // UART_38400_BAUD is not supported by HAL
       // baudrate 75     is not supported by BIOS
-      switch ( wBaudrate )
+      switch ( baudrate )
       {
          case 38400: Baudrate = UART_38400_BAUD; break;
          case 19200: Baudrate = UART_19200_BAUD; break;

@@ -571,20 +571,6 @@
   #define CAN_INSTANCE_CNT 1
 #endif
 
-/** set the amount of RS232IO_c instanes used by IsoAgLib
-  * normaly one, but if more RS232 channels should be managed
-  * IsoAgLib can manage them seperate
-*/
-#ifndef RS232_INSTANCE_CNT
-  #define RS232_INSTANCE_CNT 1
-#else
-  #if RS232_INSTANCE_CNT < 1
-    #error "RS232_INSTANCE_CNT < 1 is not allowed"
-  #elif RS232_INSTANCE_CNT > 9
-    #error "RS232_INSTANCE_CNT > 9 is not allowed"
-  #endif
-#endif
-
 /** count of CAN ports which are managed with IsoAgLib
     - in most cases just 1
     - but if you want to bridge some other network to IsoBus
@@ -599,6 +585,32 @@
 #ifndef DEFAULT_BITRATE
   /// define DEFAULT BITRATE to default ISOBUS bitrate
   #define DEFAULT_BITRATE 250
+#endif
+
+/** set the amount of RS232IO_c channels available at the ECU
+*/
+#ifndef RS232_CHANNEL_CNT
+  #define RS232_CHANNEL_CNT 1
+#else
+  #if RS232_CHANNEL_CNT < 1
+    #error "RS232_CHANNEL_CNT < 1 is not allowed"
+  #elif RS232_CHANNEL_CNT > 9
+    #error "RS232_CHANNEL_CNT > 9 is not allowed"
+  #endif
+#endif
+
+/** set the amount of RS232IO_c instances used by IsoAgLib
+  * normaly one, but if more RS232 channels should be managed
+  * IsoAgLib can manage them seperate
+*/
+#ifndef RS232_INSTANCE_CNT
+  #define RS232_INSTANCE_CNT 1
+#else
+  #if RS232_INSTANCE_CNT < 1
+    #error "RS232_INSTANCE_CNT < 1 is not allowed"
+  #elif RS232_INSTANCE_CNT > 9
+    #error "RS232_INSTANCE_CNT > 9 is not allowed"
+  #endif
 #endif
 
 

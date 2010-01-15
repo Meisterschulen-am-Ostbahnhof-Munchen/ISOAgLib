@@ -45,7 +45,7 @@ public:
 
   /**
     init function which initialises the BIOS RS232
-    @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
     @param ren_dataMode data mode setting of {7,8}_{N,O,E}_{1,2}
     @param ab_xonXoff use XON/XOFF sw handshake (true, false)
     @param aui16_sndBuf sending buffer size
@@ -55,7 +55,7 @@ public:
         * Err_c::badAlloc not enough memory for allocating the buffers
         * Err_c::range one of the configuration vals is not in allowed ranges
   */
-  bool init(uint16_t aui16_baudrate,
+  bool init(uint32_t aui32_baudrate,
           t_dataMode ren_dataMode,
           bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
           uint16_t aui16_sndBuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t aui16_recBuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
@@ -63,26 +63,26 @@ public:
           ,uint8_t aui8_channel = 0
           #endif
           )
-  {return RS232IO_c::init(aui16_baudrate, RS232IO_c::t_dataMode(ren_dataMode), ab_xonXoff, aui16_sndBuf, aui16_recBuf
+  {return RS232IO_c::init(aui32_baudrate, RS232IO_c::t_dataMode(ren_dataMode), ab_xonXoff, aui16_sndBuf, aui16_recBuf
         #ifdef USE_RS232_CHANNEL
         ,aui8_channel
         #endif
   );};
   /**
     set the baudrate to a new value
-    @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
 
     possible errors:
         * Err_c::range the wanted baudrate is not allowed
     @return true -> setting successful
   */
-  bool setBaudrate(uint16_t aui16_baudrate) {return RS232IO_c::setBaudrate(aui16_baudrate);};
+  bool setBaudrate(uint32_t aui32_baudrate) {return RS232IO_c::setBaudrate(aui32_baudrate);};
 
   /**
     deliver the actual baudrate
     @return RS232 baudrate
   */
-  uint16_t baudrate() const {return RS232IO_c::baudrate();};
+  uint32_t baudrate() const {return RS232IO_c::baudrate();};
   /**
     deliver the decoding type
     @return RS232 type

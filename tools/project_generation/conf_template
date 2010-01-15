@@ -154,12 +154,6 @@ PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 # (Note: "sys" for pc_linux to come soon. This will be the SocketCAN interface)
 USE_CAN_DRIVER="socket_server"
 
-# Select wanted type of RS232 driver connection: "simulating" | "sys" | "rte"
-# embedded targets: "sys"
-# pc_win32 targets: "sys" | "simulating"
-# pc_linux targets: "sys" | "simulating" | "rte"
-USE_RS232_DRIVER="simulating"
-
 # Define the amount of available CAN BUSes at the ECU
 # ( default 1 )
 CAN_BUS_CNT=1
@@ -172,12 +166,6 @@ CAN_INSTANCE_CNT=1
 # ( needs to be less than or equal to CAN_INSTANCE_CNT.
 #   The CAN Instances [0..PRT_INSTANCE_CNT-1] are treated as ISOBUS then )
 PRT_INSTANCE_CNT=1
-
-# Define the amount of RS232 instances to support
-# ( all values lower than 1 are overwritten by default 1 )
-# This is especially important if your ECU has more than one RS232 channel
-# and you intend to use more than one RS232 channel at the same time.
-RS232_INSTANCE_CNT=1
 
 
 # ###############################################################
@@ -378,6 +366,22 @@ PRJ_EEPROM=1
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
 # PRJ_RS232=0
+
+# Define the amount of available RS232 channels at the ECU
+# ( default 1 )
+# RS232_CHANNEL_CNT=1
+
+# Define the amount of RS232 instances to support
+# ( all values lower than 1 are overwritten by default 1 )
+# This is especially important if your ECU has more than one RS232 channel
+# and you intend to use more than one RS232 channel at the same time.
+# RS232_INSTANCE_CNT=1
+
+# Select wanted type of RS232 driver connection: "simulating" | "sys" | "rte"
+# embedded targets: "sys"
+# pc_win32 targets: "sys" | "simulating"
+# pc_linux targets: "sys" | "simulating" | "rte"
+# USE_RS232_DRIVER="simulating"
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
 # PRJ_RS232_OVER_CAN=0

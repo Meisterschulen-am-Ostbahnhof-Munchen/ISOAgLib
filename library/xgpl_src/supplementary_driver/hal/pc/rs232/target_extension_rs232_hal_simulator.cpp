@@ -25,26 +25,38 @@
 #include <IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h>
 
 namespace __HAL {
-HANDLE hCom[RS232_INSTANCE_CNT];
-DCB oldConfig[RS232_INSTANCE_CNT];
-STL_NAMESPACE::deque<int8_t> deq_readBuff[RS232_INSTANCE_CNT];
+HANDLE hCom[RS232_CHANNEL_CNT];
+DCB oldConfig[RS232_CHANNEL_CNT];
+STL_NAMESPACE::deque<int8_t> deq_readBuff[RS232_CHANNEL_CNT];
 
 int8_t c_read;
 
-static int arr_usedPort[RS232_INSTANCE_CNT] = {
-#if RS232_INSTANCE_CNT > 0
+static int arr_usedPort[RS232_CHANNEL_CNT] = {
+#if RS232_CHANNEL_CNT > 0
 false
 #endif
-#if RS232_INSTANCE_CNT > 1
+#if RS232_CHANNEL_CNT > 1
 , false
 #endif
-#if RS232_INSTANCE_CNT > 2
+#if RS232_CHANNEL_CNT > 2
 , false
 #endif
-#if RS232_INSTANCE_CNT > 3
+#if RS232_CHANNEL_CNT > 3
 , false
 #endif
-#if RS232_INSTANCE_CNT > 4
+#if RS232_CHANNEL_CNT > 4
+, false
+#endif
+#if RS232_CHANNEL_CNT > 5
+, false
+#endif
+#if RS232_CHANNEL_CNT > 6
+, false
+#endif
+#if RS232_CHANNEL_CNT > 7
+, false
+#endif
+#if RS232_CHANNEL_CNT > 8
 , false
 #endif
 };
@@ -53,14 +65,14 @@ false
 /** close the RS232 interface. */
 int16_t close_rs232(uint8_t comport)
 {
-	if ( comport >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+	if ( comport >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
 	
 	return HAL_NO_ERR;
 }
 
 void close_rs232()
 {
-  for ( int comport = 0; comport < RS232_INSTANCE_CNT; comport++)
+  for ( int comport = 0; comport < RS232_CHANNEL_CNT; comport++)
   {
     if ( arr_usedPort[comport] )
     {
@@ -71,7 +83,7 @@ void close_rs232()
 
 /**
   init the RS232 interface
-  @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+  @param baudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
         as configured in <IsoAgLib/isoaglib_config.h>
   @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
   DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -79,9 +91,9 @@ void close_rs232()
   @param bitSoftwarehandshake true -> use xon/xoff software handshake
   @return HAL_NO_ERR -> o.k. else one of settings incorrect
  */
-int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t comport)
+int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t comport)
 {
-	if ( comport >= RS232_INSTANCE_CNT )
+	if ( comport >= RS232_CHANNEL_CNT )
 		return HAL_RANGE_ERR;
 
 	HALSimulator_c::GetHALSimulator_c().init_rs232( baudrate, bMode, bStoppbits, bitSoftwarehandshake, comport );
@@ -91,12 +103,12 @@ int16_t init_rs232(uint16_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSo
 
 /**
   set the RS232 Baudrate
-  @param wBaudrate wanted baudrate
+  @param baudrate wanted baudrate
   @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
  */
-int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t comport)
+int16_t setRs232Baudrate(uint32_t baudrate, uint8_t comport)
 {
-	if ( comport >= RS232_INSTANCE_CNT )
+	if ( comport >= RS232_CHANNEL_CNT )
 		return HAL_RANGE_ERR;
 
 	return HAL_NO_ERR;
@@ -116,7 +128,7 @@ BOOL WriteABuffer( uint8_t aui8_channel, const uint8_t * lpBuf, uint16_t dwToWri
  */
 int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
 {
-	if ( aui8_channel >= RS232_INSTANCE_CNT )
+	if ( aui8_channel >= RS232_CHANNEL_CNT )
 		return HAL_RANGE_ERR;
 
 	return WriteABuffer( aui8_channel, &bByte, 1) ? HAL_NO_ERR : HAL_NOACT_ERR;
@@ -129,7 +141,7 @@ int16_t put_rs232Char(uint8_t bByte, uint8_t aui8_channel)
  */
 int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_channel)
 {
-	if ( aui8_channel >= RS232_INSTANCE_CNT )
+	if ( aui8_channel >= RS232_CHANNEL_CNT )
 		return HAL_RANGE_ERR;
 
 	return WriteABuffer( aui8_channel, bpWrite, wNumber) ? HAL_NO_ERR : HAL_NOACT_ERR;
@@ -141,7 +153,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
  */
 int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
-	if ( aui8_channel >= RS232_INSTANCE_CNT )
+	if ( aui8_channel >= RS232_CHANNEL_CNT )
 		return HAL_RANGE_ERR;
 
 	return WriteABuffer( aui8_channel, pbString, strlen((const char*)pbString)) ? HAL_NO_ERR : HAL_NOACT_ERR;
@@ -192,7 +204,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
  */
 int16_t getRs232TxBufCount(uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: decide if RS232 TX buffer from OS should be asked */
   return 0;
 }
@@ -203,7 +215,7 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
  */
 int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -216,7 +228,7 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
                          void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -226,7 +238,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
  */
 int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return HAL_RANGE_ERR;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
 }
@@ -237,7 +249,7 @@ int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
  */
 void clearRs232RxBuffer(uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return;
   /** @todo ON REQUEST: should this be implemented? */
 };
 
@@ -246,7 +258,7 @@ void clearRs232RxBuffer(uint8_t aui8_channel)
  */
 void clearRs232TxBuffer(uint8_t aui8_channel)
 {
-  if ( aui8_channel >= RS232_INSTANCE_CNT ) return;
+  if ( aui8_channel >= RS232_CHANNEL_CNT ) return;
   /** @todo ON REQUEST: should this be implemented? */
 }
 

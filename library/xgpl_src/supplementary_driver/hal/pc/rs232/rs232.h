@@ -53,7 +53,7 @@ namespace HAL
 
   /**
     init the RS232 interface
-    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param baudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
           as configured in <IsoAgLib/isoaglib_config.h>
     @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
             DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -61,18 +61,18 @@ namespace HAL
     @param bitSoftwarehandshake true -> use xon/xoff software handshake
     @return HAL_NO_ERR -> o.k. else one of settings incorrect
   */
-  inline int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
-    {return __HAL::init_rs232(wBaudrate,bMode,bStoppbits,bitSoftwarehandshake, aui8_channel) ;};
+  inline int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
+    {return __HAL::init_rs232(baudrate,bMode,bStoppbits,bitSoftwarehandshake, aui8_channel) ;};
   /** close the RS232 interface. */
   inline int16_t close_rs232(uint8_t aui8_channel)
     {return __HAL::close_rs232(aui8_channel);};
   /**
     set the RS232 Baudrate
-    @param wBaudrate wanted baudrate
+    @param baudrate wanted baudrate
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
-  inline int16_t setRs232Baudrate(uint16_t wBaudrate, uint8_t aui8_channel)
-    {return __HAL::setRs232Baudrate(wBaudrate, aui8_channel) ;};
+  inline int16_t setRs232Baudrate(uint32_t baudrate, uint8_t aui8_channel)
+    {return __HAL::setRs232Baudrate(baudrate, aui8_channel) ;};
   /**
     get the amount of data [uint8_t] in receive buffer
     @return receive buffer data byte

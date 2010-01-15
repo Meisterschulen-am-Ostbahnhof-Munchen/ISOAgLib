@@ -57,7 +57,7 @@ namespace HAL
 
   /**
     init the RS232 interface
-    @param wBaudrate wnated Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+    @param baudrate wanted Baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
           as configured in <IsoAgLib/isoaglib_config.h>
     @param bMode one of (DATA_7_BITS_EVENPARITY = 1, DATA_8_BITS_EVENPARITY = 2,
             DATA_7_BITS_ODDPARITY = 3, DATA_8_BITS_ODDPARITY = 4, DATA_8_BITS_NOPARITY = 5)
@@ -69,16 +69,16 @@ namespace HAL
 extern uint8_t RS232_over_can_busnum;
 extern uint8_t RS232_over_can_initialized;
 
-  int16_t init_rs232(uint16_t wBaudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel);
+  int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel);
 	/** close the RS232 interface. */
   inline int16_t close_rs232(uint8_t /*aui8_channel*/)
   	{RS232_over_can_initialized = false; return HAL_NO_ERR;}
   /**
     set the RS232 Baudrate
-    @param wBaudrate wanted baudrate
+    @param baudrate wanted baudrate
     @return HAL_NO_ERR -> o.k. else baudrate setting incorrect
   */
-  inline int16_t setRs232Baudrate(uint16_t /*wBaudrate*/, uint8_t /*aui8_channel*/)
+  inline int16_t setRs232Baudrate(uint32_t /*baudrate*/, uint8_t /*aui8_channel*/)
   { return RS232_over_can_initialized ? HAL_NO_ERR : HAL_RANGE_ERR; };
   /**
     get the amount of data [uint8_t] in receive buffer

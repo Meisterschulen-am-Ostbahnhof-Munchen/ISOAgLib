@@ -51,7 +51,7 @@ namespace __IsoAgLib {
 /*******************************************/
 
 RS232IO_c::RS232IO_c( void )
-  : ui16_baudrate (BAUDERATE_CONTRUCTOR_DEFAULT_VALUE)
+  : ui32_baudrate (BAUDERATE_CONTRUCTOR_DEFAULT_VALUE)
   , en_dataMode (_8_N_1)
   , b_xon_xoff (false)
   , ui16_sndBuf (0)
@@ -76,7 +76,7 @@ RS232IO_c::~RS232IO_c(){
 
 /**
   init function which initialises the BIOS RS232
-  @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+  @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
   @param ren_dataMode data mode setting of {7,8}_{N,O,E}_{1,2}
   @param ab_xonXoff use XON/XOFF sw handshake (true, false)
   @param aui16_sndBuf sending buffer size
@@ -86,7 +86,7 @@ RS232IO_c::~RS232IO_c(){
       * Err_c::badAlloc not enough memory for allocating the buffers
       * Err_c::range one of the configuration vals is not in allowed ranges
 */
-bool RS232IO_c::init(uint16_t aui16_baudrate, t_dataMode ren_dataMode, bool ab_xonXoff,
+bool RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_xonXoff,
         uint16_t aui16_sndBuf, uint16_t aui16_recBuf
         #ifdef USE_RS232_CHANNEL
         , uint8_t aui8_channel
@@ -99,11 +99,11 @@ bool RS232IO_c::init(uint16_t aui16_baudrate, t_dataMode ren_dataMode, bool ab_x
   bool b_baudAllowed = false,
        b_dataModeAllowed = false;
 
-  // check if aui16_baudrate is one of the allowed settings
-  uint16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
+  // check if aui32_baudrate is one of the allowed settings
+  uint32_t pi32_allowed[] = HAL_RS232_BAUDRATE_LIST;
   for (uint8_t ui8_index = 0; ui8_index < HAL_RS232_BITRATE_CNT; ui8_index++)
   {
-    if (pi16_allowed[ui8_index] == aui16_baudrate)
+    if (pi32_allowed[ui8_index] == aui32_baudrate)
     { // given baudrate is in allowed list at position ui8_index
       b_baudAllowed = true; // store success state
       break; // exit search loop
@@ -118,7 +118,7 @@ bool RS232IO_c::init(uint16_t aui16_baudrate, t_dataMode ren_dataMode, bool ab_x
     b_dataModeAllowed = ((b_stopBit == 1) || (b_stopBit == 2));
   }
   // stop RS232 interface if configured before
-  if ( ui16_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE )
+  if ( ui32_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE )
   { // no more initial value
     #ifdef USE_RS232_CHANNEL
     if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ) HAL::close_rs232( ui8_channel );
@@ -130,7 +130,7 @@ bool RS232IO_c::init(uint16_t aui16_baudrate, t_dataMode ren_dataMode, bool ab_x
   // set error state if one of b_baudAllowed and b_dataModeAllowed is false
   // and init hardware if everything is accepted
   if ( ((b_baudAllowed) && (b_dataModeAllowed))
-     &&(HAL::init_rs232(aui16_baudrate, b_dataParityVal, b_stopBit, ab_xonXoff RS232_CHANNEL_CALL_PARAM_LAST) == HAL_NO_ERR)
+     &&(HAL::init_rs232(aui32_baudrate, b_dataParityVal, b_stopBit, ab_xonXoff RS232_CHANNEL_CALL_PARAM_LAST) == HAL_NO_ERR)
       )
   { // o.k.
     // store configuration values
@@ -151,7 +151,7 @@ bool RS232IO_c::init(uint16_t aui16_baudrate, t_dataMode ren_dataMode, bool ab_x
     else
     {
 	    // Only here do we store the values, as these two fields help us know whether the device is already initialized
-	    ui16_baudrate = aui16_baudrate;
+	    ui32_baudrate = aui32_baudrate;
 #ifdef USE_RS232_CHANNEL
 	    ui8_channel = aui8_channel;
 #endif
@@ -184,22 +184,22 @@ void RS232IO_c::singletonInit()
 
 /**
   set the baudrate to a new value
-  @param aui16_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
+  @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
 
   possible errors:
       * Err_c::range one of the configuration vals is not in allowed ranges
   @return true -> setting successful
 */
-bool RS232IO_c::setBaudrate(uint16_t aui16_baudrate)
+bool RS232IO_c::setBaudrate(uint32_t aui32_baudrate)
 {
   // check the configuration informations
   bool b_baudAllowed = false;
 
-  // check if aui16_baudrate is one of the allowed settings
-  uint16_t pi16_allowed[] = HAL_RS232_BAUDRATE_LIST;
+  // check if aui32_baudrate is one of the allowed settings
+  uint32_t pi32_allowed[] = HAL_RS232_BAUDRATE_LIST;
   for (uint8_t ui8_index = 0; ui8_index < HAL_RS232_BITRATE_CNT; ui8_index++)
   {
-    if (pi16_allowed[ui8_index] == aui16_baudrate)
+    if (pi32_allowed[ui8_index] == aui32_baudrate)
     { // given baudrate is in allowed list at position ui8_index
       b_baudAllowed = true; // store success state
       break; // exit search loop
@@ -207,9 +207,9 @@ bool RS232IO_c::setBaudrate(uint16_t aui16_baudrate)
   }
 
   // now set the baudrate if allowed
-  if ((b_baudAllowed) && (HAL::setRs232Baudrate(aui16_baudrate RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR))
+  if ((b_baudAllowed) && (HAL::setRs232Baudrate(aui32_baudrate RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR))
   { // everything o.k.
-    ui16_baudrate = aui16_baudrate;
+    ui32_baudrate = aui32_baudrate;
   }
   else
   { // wrong setting
