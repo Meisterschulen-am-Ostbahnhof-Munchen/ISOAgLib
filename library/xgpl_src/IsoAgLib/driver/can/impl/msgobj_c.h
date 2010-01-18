@@ -165,7 +165,7 @@ public:
     @return true -> this reference could be stored in this MsgObj_c (limited amount)
   */
 
-  bool insertFilterBox(FilterRef arc_box);
+  void insertFilterBox(FilterRef arc_box);
 
 
 
