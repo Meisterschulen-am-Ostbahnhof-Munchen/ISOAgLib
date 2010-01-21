@@ -272,8 +272,7 @@ public: // methods
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, acrc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, ((apc_mss->getStreamSize() >= 1786) ? IsoETP : IsoTP)); }
+  bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     Send an ISO 11738 (E)TP targeted multipacket message using a given data-buffer
@@ -285,20 +284,19 @@ public: // methods
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, ((aui32_dataSize >= 1786) ? IsoETP : IsoTP)); }
+  bool sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui16_dataSize Size of the complete buffer (should be in the range of [9..1785])
+    @param aui32_dataSize Size of the complete buffer (should be in the range of [9..1785])
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
+  bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
 
 
   /**
@@ -306,12 +304,12 @@ public: // methods
     Will check the size of the message and decide whether or not to use the transport protocol
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
+    @param aui32_dataSize Size of the complete buffer (should be >= 9 of course)
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+  bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     send an ISO 11783 (E)TP broadcast multipacket message using a given MultiSendStreamer
@@ -339,8 +337,8 @@ public: // methods
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoFastPacket (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
+  bool sendIsoFastPacket (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, HUGE_MEM uint8_t* rhpb_data, uint16_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
 
   /**
     Send a FastPacket targeted multipacket message using a given MultiSendStreamer
@@ -359,13 +357,13 @@ public: // methods
     Send a FastPacket broadcast multipacket message using a given data-buffer
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
+    @param aui32_dataSize Size of the complete buffer (should be >= 9 of course)
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
+  bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
 
   /**
     Send a FastPacket broadcast multipacket message using a given MultiSendStreamer
@@ -477,7 +475,7 @@ private: // Private methods
                   ( e.g. bitmap variants )
     @return true -> MultiSend_c was ready -> mask is spooled to target
   */
-  bool sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType);
+  bool sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType);
 
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t allocFpSequenceCounter() { const uint8_t cui8_returnVal = mui8_nextFpSequenceCounter;
@@ -485,7 +483,11 @@ private: // Private methods
                                      return cui8_returnVal; }
   #endif
 
-private: // Private attributes
+  static msgType_t transportProtocolByPacketSize(uint32_t ui32_size);
+private:
+  enum { minTpPacketSize = 9 };
+  enum { minEtpPacketSize = 1786 };
+  // Private attributes
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t mui8_nextFpSequenceCounter;
   #endif
@@ -496,6 +498,20 @@ private: // Private attributes
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
 };
 
+inline MultiSend_c::msgType_t MultiSend_c::transportProtocolByPacketSize(uint32_t ui32_size)
+{
+  return ui32_size >= minEtpPacketSize ? IsoETP : IsoTP;
+}
+
+inline bool MultiSend_c::sendIsoTarget(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+{
+  return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, transportProtocolByPacketSize(apc_mss->getStreamSize()));
+}
+
+inline bool MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+{
+  return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, transportProtocolByPacketSize(aui32_dataSize));
+}
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique MultiSend_c singleton instance

@@ -430,40 +430,39 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
   @return true -> MultiSend_c was ready -> mask is spooled to target
 */
 bool
-MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, int32_t ai32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
+MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   /// first check if new transfer can be started
   /// - is the sender correct?
-  if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (acrc_isoNameSender)) return false;
-
-  SendStream_c* pc_newSendStream;
-  /// - is the receiver correct?
-  if ((ren_msgType == IsoTPbroadcast) || (ren_msgType == NmeaFastPacket))
-  { // no destination-isoname checks needed for broadcast messages!
-    // Force destination to be "IsoNameUnspecified"
-    /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
-    /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (acrc_isoNameSender, IsoName_c::IsoNameUnspecified());
-  }
-  else
-  { // destination specific - so the receiver must be registered!
-    if (!getIsoMonitorInstance4Comm().existIsoMemberISOName (acrc_isoNameReceiver)) return false;
-    /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
-    /// - if not NULL is returned, it points to the newly generated stream.
-    pc_newSendStream = addSendStream (acrc_isoNameSender, acrc_isoNameReceiver);
-  }
-
-  if (pc_newSendStream)
-  {
-    pc_newSendStream->init (acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, ai32_dataSize, rpen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
-    // let this SendStream get sorted in now...
-    calcAndSetNextTriggerTime();
-    return true;
-  }
-  else
-  {
+  bool const b_existSender = getIsoMonitorInstance4Comm().existIsoMemberISOName(acrc_isoNameSender);
+  if (!b_existSender)
     return false;
+
+  IsoName_c const *p_isoNameReceiver = &acrc_isoNameReceiver;
+  // - is the receiver correct?:
+  switch (ren_msgType) {
+  case IsoTPbroadcast:
+  case NmeaFastPacket:
+    // no destination-isoname checks needed for broadcast messages!
+    // Force destination to be "IsoNameUnspecified"
+    p_isoNameReceiver = &IsoName_c::IsoNameUnspecified();
+    break;
+  default:
+    // destination specific - so the receiver must be registered!
+    bool const b_existReceiver = getIsoMonitorInstance4Comm().existIsoMemberISOName(*p_isoNameReceiver);
+    if (!b_existReceiver)
+      return false;
   }
+  /// - check if there's already a SA/DA pair active (in this case NULL is returned!)
+  /// - if not NULL is returned, it points to the newly generated stream.
+  SendStream_c * const pc_newSendStream = addSendStream(acrc_isoNameSender, *p_isoNameReceiver);
+  if (!pc_newSendStream)
+    return false;
+
+  pc_newSendStream->init(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType);
+  // let this SendStream get sorted in now...
+  calcAndSetNextTriggerTime();
+  return true;
 }
 
 
@@ -880,18 +879,18 @@ MultiSend_c::processMsg()
 }
 
 bool
-MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
 {
-  if (aui16_dataSize < 9)
+  if (aui32_dataSize < minTpPacketSize)
   {
     MultiSendPkg_c& rc_multiSendPkg = data();
     rc_multiSendPkg.setIsoPri (6);
     rc_multiSendPkg.setISONameForSA (acrc_isoNameSender);
     rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
-    rc_multiSendPkg.setLen (uint8_t (aui16_dataSize));
+    rc_multiSendPkg.setLen (uint8_t (aui32_dataSize));
     rc_multiSendPkg.setIsoPgn(ai32_pgn);
-    for (int i = 0 ; i < aui16_dataSize; i++)
-      rc_multiSendPkg.setUint8Data (i, rhpb_data[i]);
+    for (unsigned ui = 0 ; ui < aui32_dataSize; ++ui)
+      rc_multiSendPkg.setUint8Data (ui, rhpb_data[ui]);
 
     getCanInstance4Comm() << rc_multiSendPkg;
     rpen_sendSuccessNotify = SendSuccess;
@@ -899,7 +898,7 @@ MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender
   }
   else
   {
-    return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast);
+    return sendIntern(acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast);
   }
 }
 
