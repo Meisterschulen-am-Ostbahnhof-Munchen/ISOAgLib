@@ -266,6 +266,8 @@ library/xgpl_src/IsoAgLib/util/compiler_adaptation.h -text
 library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h -text
 library/xgpl_src/IsoAgLib/util/config.h -text
 library/xgpl_src/IsoAgLib/util/convert.h -text
+library/xgpl_src/IsoAgLib/util/iassert.cpp -text
+library/xgpl_src/IsoAgLib/util/iassert.h -text
 library/xgpl_src/IsoAgLib/util/impl/bitfieldwrapper_c.h -text
 library/xgpl_src/LICENSE.txt -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp -text

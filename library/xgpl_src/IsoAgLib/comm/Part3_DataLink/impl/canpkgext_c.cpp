@@ -16,10 +16,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
-#if defined (SYSTEM_PC) && defined (DEBUG)
-#  include <assert.h>
-#endif
-
+#include <IsoAgLib/util/iassert.h>
 
 #if defined(DEBUG_CAN)
 //  #include <IsoAgLib/util/impl/util_funcs.h>
@@ -107,9 +104,7 @@ const CanPkg_c& CanPkgExt_c::operator=(const CanPkg_c& acrc_right)
 */
 void CanPkgExt_c::setUint8Data( int8_t ai8_pos, uint8_t aui8_val)
 {
-#if defined (SYSTEM_PC) && defined (DEBUG)
   assert((ai8_pos >= 0) && (ai8_pos < 8));
-#endif
   msc_data.setUint8Data(ai8_pos, aui8_val);
 }
 

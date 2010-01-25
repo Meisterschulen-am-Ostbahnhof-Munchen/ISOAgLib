@@ -290,13 +290,13 @@ public: // methods
     Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui32_dataSize Size of the complete buffer (should be in the range of [9..1785])
+    @param aui16_dataSize Size of the complete buffer (should be in the range of [9..1785])
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
+  bool sendIsoBroadcast (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, IsoTPbroadcast); }
 
 
   /**
@@ -304,12 +304,12 @@ public: // methods
     Will check the size of the message and decide whether or not to use the transport protocol
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui32_dataSize Size of the complete buffer (should be >= 9 of course)
+    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
+  bool sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify);
 
   /**
     send an ISO 11783 (E)TP broadcast multipacket message using a given MultiSendStreamer
@@ -357,13 +357,13 @@ public: // methods
     Send a FastPacket broadcast multipacket message using a given data-buffer
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data
-    @param aui32_dataSize Size of the complete buffer (should be >= 9 of course)
+    @param aui16_dataSize Size of the complete buffer (should be >= 9 of course)
     @param ai32_pgn PGN of the data
     @param rpen_sendSuccessNotify Pointer to send state var, where the current state is written by MultiSend_c
     @return true -> MultiSend_c was ready -> Transfer was started
   */
-  bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
-    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
+  bool sendIsoFastPacketBroadcast (const IsoName_c& acrc_isoNameSender, HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
+    { return sendIntern (acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, NmeaFastPacket); }
 
   /**
     Send a FastPacket broadcast multipacket message using a given MultiSendStreamer
@@ -483,10 +483,16 @@ private: // Private methods
                                      return cui8_returnVal; }
   #endif
 
-  static msgType_t transportProtocolByPacketSize(uint32_t ui32_size);
+  static msgType_t protocolTypeByPacketSize(uint32_t ui32_size);
 private:
-  enum { minTpPacketSize = 9 };
-  enum { minEtpPacketSize = 1786 };
+  enum {
+    beginSinglePacketSize = 0,
+    endSinglePacketSize = 9,
+    endNmeaFastPacketSize = 224,
+    beginTpPacketSize = endSinglePacketSize,
+    endTpPacketSize = 1786,
+    beginEtpPacketSize = endTpPacketSize,
+  };
   // Private attributes
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t mui8_nextFpSequenceCounter;
@@ -498,19 +504,19 @@ private:
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
 };
 
-inline MultiSend_c::msgType_t MultiSend_c::transportProtocolByPacketSize(uint32_t ui32_size)
+inline MultiSend_c::msgType_t MultiSend_c::protocolTypeByPacketSize(uint32_t ui32_size)
 {
-  return ui32_size >= minEtpPacketSize ? IsoETP : IsoTP;
+  return ui32_size >= beginEtpPacketSize ? IsoETP : IsoTP;
 }
 
 inline bool MultiSend_c::sendIsoTarget(const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, IsoAgLib::iMultiSendStreamer_c* apc_mss, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
 {
-  return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, transportProtocolByPacketSize(apc_mss->getStreamSize()));
+  return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, NULL, apc_mss->getStreamSize(), rpen_sendSuccessNotify, ai32_pgn, apc_mss, protocolTypeByPacketSize(apc_mss->getStreamSize()));
 }
 
 inline bool MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, sendSuccess_t& rpen_sendSuccessNotify)
 {
-  return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, transportProtocolByPacketSize(aui32_dataSize));
+  return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, protocolTypeByPacketSize(aui32_dataSize));
 }
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
