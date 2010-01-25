@@ -53,6 +53,7 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -93,7 +94,8 @@
   char*  reserve_memory_heap;
 #endif
 
-
+#include <iostream>
+#include <fstream>
 
 /////////////////////////////////////////////////////////////////////////
 // Globals
