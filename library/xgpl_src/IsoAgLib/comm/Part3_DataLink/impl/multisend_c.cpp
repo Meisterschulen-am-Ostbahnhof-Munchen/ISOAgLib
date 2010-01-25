@@ -433,11 +433,11 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 bool
 MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
-  assert( aui32_dataSize >= endSinglePacketSize );
-  assert( (ren_msgType != NmeaFastPacket) || (aui32_dataSize < endNmeaFastPacketSize) );
-  assert( (ren_msgType != IsoTPbroadcast) || (aui32_dataSize < beginEtpPacketSize) );
-  assert( (ren_msgType != IsoTP) || (aui32_dataSize < endTpPacketSize) );
-  assert( (ren_msgType != IsoETP) || (aui32_dataSize >= beginEtpPacketSize) );
+  isoaglib_assert( aui32_dataSize >= endSinglePacketSize );
+  isoaglib_assert( (ren_msgType != NmeaFastPacket) || (aui32_dataSize < endNmeaFastPacketSize) );
+  isoaglib_assert( (ren_msgType != IsoTPbroadcast) || (aui32_dataSize < beginEtpPacketSize) );
+  isoaglib_assert( (ren_msgType != IsoTP) || (aui32_dataSize < endTpPacketSize) );
+  isoaglib_assert( (ren_msgType != IsoETP) || (aui32_dataSize >= beginEtpPacketSize) );
   // end of preconditions.
 
   /// first check if new transfer can be started
@@ -1012,7 +1012,7 @@ MultiSend_c::SendStream_c::sendPacketIso (bool ab_data)
 
     case NmeaFastPacket: // all other cases are wrong here
     default:
-                         assert (men_msgType != NmeaFastPacket);
+                         isoaglib_assert (men_msgType != NmeaFastPacket);
                          return;
   } // switch
   getCanInstance4Comm() << rc_multiSendPkg;
@@ -1024,7 +1024,7 @@ void
 MultiSend_c::SendStream_c::sendPacketFp()
 {
   // no-one should call this when the Stream is not set to FP-mode.
-  assert (men_msgType == NmeaFastPacket);
+  isoaglib_assert (men_msgType == NmeaFastPacket);
 
   MultiSendPkg_c& rc_multiSendPkg = mrc_multiSend.data();
 

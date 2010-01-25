@@ -1,3 +1,4 @@
+
 /*
   iassert.h: assertions
 
@@ -18,14 +19,17 @@
 
 #if defined(__GNUC__) || defined(WIN32)
 # include <assert.h>
+# define isoaglib_assert assert
 #elif defined(NDEBUG)
-#  define assert(e)
+#  define isoaglib_assert(e)
 #elif defined(__TSW_CPP__)
 /* strings are too expensive => simple assert_fail*/
 void assert_fail();
+# define isoaglib_assert(e) \
+  ((e) ? static_cast< void >(0) : assert_fail())
 #else /* support file, line and expression */
 void assert_fail(char const *pcs_file, int i_line, char const *pcs_expression);
-# define assert(e) \
+# define isoaglib_assert(e) \
   ((e) ? static_cast< void >(0) : assert_fail(__FILE__, __LINE__, #e))
 #endif
 

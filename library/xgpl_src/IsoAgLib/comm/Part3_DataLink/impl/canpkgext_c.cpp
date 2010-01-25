@@ -104,7 +104,7 @@ const CanPkg_c& CanPkgExt_c::operator=(const CanPkg_c& acrc_right)
 */
 void CanPkgExt_c::setUint8Data( int8_t ai8_pos, uint8_t aui8_val)
 {
-  assert((ai8_pos >= 0) && (ai8_pos < 8));
+  isoaglib_assert((ai8_pos >= 0) && (ai8_pos < 8));
   msc_data.setUint8Data(ai8_pos, aui8_val);
 }
 
