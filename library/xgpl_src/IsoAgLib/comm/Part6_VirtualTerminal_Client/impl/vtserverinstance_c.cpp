@@ -68,11 +68,12 @@ VtServerInstance_c::isVtActive ()
 {
   if (ms_vtStateA.lastReceived)
   {
-    // Using the time when the last package has been received and processed makes sure that no packages are being ignored,
-    // that were sent at this moment but were not processed so far (will be soon).
-    // The disadvantage this way is, that an isAlive after 3.01s could be accepted without entering the safestate -
-    // this should not be a problem because a new alive has already been received, and a safestate is not urgently necessary
-    if (((int32_t)getCanInstance4Comm().getLastProcessedCanPkgTime() - (int32_t)ms_vtStateA.lastReceived) <= 3000)
+    // Using the current time for comparison checks currently, because we don't have the information
+    // about the time when the last can-msg was processed or checked for (in case there's none).
+    // Note: Formerly here was a check using "getCanInstance4Comm().getLastProcessedCanPkgTime()",
+    //       but that is only the time when a msg was really processed - so in bus of e.g. a bus
+    //       disconnection a VT-off wouldn't be detected, which is a safety issue of course!
+    if ((System_c::getTime() - (int32_t)ms_vtStateA.lastReceived) <= 3000)
     { // comparing as int, so that in case "NOW-time > CAN-time" NO client-reload happens
       return true;
     }
