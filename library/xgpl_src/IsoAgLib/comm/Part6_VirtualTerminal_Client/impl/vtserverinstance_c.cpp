@@ -12,6 +12,8 @@
 */
 
 #include "vtserverinstance_c.h"
+// necessary for interface convert operators ("up"-cast)
+#include "../ivtserverinstance_c.h"
 
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
@@ -27,10 +29,9 @@
   #endif
 #endif
 
+
 namespace __IsoAgLib {
-  /****************************************/
- /*** VtServer Instance Implementation ***/
-/****************************************/
+
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
 */
@@ -53,12 +54,14 @@ VtServerInstance_c::VtServerInstance_c(const IsoItem_c& r_newItem, IsoName_c c_n
   ms_vtStateA.lastReceived = 0; // no vt_statusMessage received yet
 }
 
+
 /** default destructor, which initiate sending address release for all own identities
   @see VtServerInstance_c::~VtServerInstance_c
 */
 VtServerInstance_c::~VtServerInstance_c()
 {
 }
+
 
 /** call to check if at least one vt_statusMessage has arrived so we know if the terminal is there.
   @return true -> >= 1 vt_statusMessages have arrived -> terminal is there.
@@ -81,6 +84,7 @@ VtServerInstance_c::isVtActive ()
   return false;
 }
 
+
 /** process received vt status message
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
@@ -94,6 +98,7 @@ VtServerInstance_c::setLatestVtStatusData()
   ms_vtStateA.busyCodes =                  mrc_isoTerminal.data().getUint8Data (6);
   ms_vtStateA.functionBusy =               mrc_isoTerminal.data().getUint8Data (7);
 }
+
 
 /** process received language messages
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
@@ -117,12 +122,14 @@ VtServerInstance_c::setLocalSettings()
   // The other fields are reserved. (yet ;-)
 }
 
+
 void
 VtServerInstance_c::setVersion()
 {
   ms_vtCapabilitiesA.lastReceivedVersion =  mrc_isoTerminal.data().time();
   ms_vtCapabilitiesA.iso11783version =      mrc_isoTerminal.data().getUint8Data (1);
 }
+
 
 void
 VtServerInstance_c::setSoftKeyData()
@@ -134,6 +141,7 @@ VtServerInstance_c::setSoftKeyData()
   ms_vtCapabilitiesA.skPhysical =           mrc_isoTerminal.data().getUint8Data (7);
 }
 
+
 void
 VtServerInstance_c::setTextFontData()
 {
@@ -142,6 +150,7 @@ VtServerInstance_c::setTextFontData()
   ms_vtCapabilitiesA.fontSizes +=           mrc_isoTerminal.data().getUint8Data (6) << 8;
   ms_vtCapabilitiesA.fontTypes =            mrc_isoTerminal.data().getUint8Data (7);
 }
+
 
 void
 VtServerInstance_c::setHardwareData()
@@ -153,13 +162,16 @@ VtServerInstance_c::setHardwareData()
   ms_vtCapabilitiesA.hwHeight =             mrc_isoTerminal.data().getUint8Data (6) + (mrc_isoTerminal.data().getUint8Data (7) << 8);
 }
 
+
 void
 VtServerInstance_c::resetVtAlive()
 {
   ms_vtStateA.lastReceived = 0;
 }
 
-uint32_t VtServerInstance_c::getVtHardwareDimension()
+
+uint32_t
+VtServerInstance_c::getVtHardwareDimension()
 {
   return (uint32_t) (ms_vtCapabilitiesA.hwWidth);
 }
@@ -168,6 +180,27 @@ uint16_t
 VtServerInstance_c::getVtFontSizes()
 {
   return ms_vtCapabilitiesA.fontSizes;
+}
+
+
+uint8_t
+VtServerInstance_c::getVtIsoVersion()
+{
+  return ms_vtCapabilitiesA.iso11783version;
+}
+
+
+IsoAgLib::iVtServerInstance_c*
+VtServerInstance_c::toIvtServerInstancePtr_c()
+{
+  return static_cast<IsoAgLib::iVtServerInstance_c*>(this);
+}
+
+
+IsoAgLib::iVtServerInstance_c&
+VtServerInstance_c::toIvtServerInstance_c()
+{
+  return static_cast<IsoAgLib::iVtServerInstance_c&>(*this);
 }
 
 } // end namespace __IsoAgLib

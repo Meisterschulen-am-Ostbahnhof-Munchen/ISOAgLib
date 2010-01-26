@@ -17,7 +17,7 @@
 //include the declaration of the internal object
 #include "impl/vtclientservercommunication_c.h"
 #include "iisoterminal_c.h"
-#include "impl/vtserverinstance_c.h"
+#include "ivtserverinstance_c.h"
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -69,10 +69,11 @@ public:
   uint8_t getClientId() const
     { return VtClientServerCommunication_c::getClientId(); }
 
-  iIdentItem_c& getIdentItem() { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientServerCommunication_c::getIdentItem()); }
-
-  /** @todo SOON-258 Make an iVtServerInstance_c !*/
-  const __IsoAgLib::VtServerInstance_c& getVtServerInst() { return VtClientServerCommunication_c::getVtServerInst(); }
+  iIdentItem_c& getIdentItem() const { return static_cast<IsoAgLib::iIdentItem_c&>(VtClientServerCommunication_c::getIdentItem()); }
+  bool connectedToVtServer() const   { return VtClientServerCommunication_c::connectedToVtServer(); }
+  /** ATTENTION: Please assure "connectedToVtServer()" before getting this reference */
+  iVtServerInstance_c* getVtServerInstPtr() const { return (VtClientServerCommunication_c::getVtServerInstPtr() != NULL) ? VtClientServerCommunication_c::getVtServerInst().toIvtServerInstancePtr_c() : NULL; }
+  iVtServerInstance_c& getVtServerInst() const    { return VtClientServerCommunication_c::getVtServerInst().toIvtServerInstance_c(); }
 
 private:
   /** PRIVATE constructor to forbid instantiation of this interface class.

@@ -116,6 +116,7 @@ library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstanc
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtclientservercommunication_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectgraphicscontext_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectoutputlist_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtserverinstance_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.cpp -text

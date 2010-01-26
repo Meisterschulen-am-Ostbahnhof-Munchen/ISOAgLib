@@ -2635,12 +2635,6 @@ VtClientServerCommunication_c::getVtObjectPoolDimension()
   return mc_streamer.mrc_pool.getDimension();
 }
 
-/** ATTENTION: Please assure "getVtServerInstPtr() != NULL" before getting this reference */
-VtServerInstance_c&
-VtClientServerCommunication_c::getVtServerInst()
-{
-  return *mpc_vtServerInstance;
-}
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()

@@ -19,6 +19,16 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include "../ivttypes.h"
 
+// forward declarations
+namespace IsoAgLib {
+  class iVtServerInstance_c;
+}
+namespace __IsoAgLib {
+  class IsoTerminal_c;
+  class VtClientServerCommunication_c;
+}
+
+
 /** struct that stores the Language and Units information
   received from the LANGUAGE_PGN
 */
@@ -45,11 +55,8 @@ typedef struct localSettings_s{
 } localSettings_s;
 
 
-// Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
-//forward declarations
-class IsoTerminal_c;
-class VtClientServerCommunication_c;
+namespace __IsoAgLib
+{
 
 /** class for wrapping one vtserver instance */
 class VtServerInstance_c : public ClientBase
@@ -110,12 +117,13 @@ public:
   void resetVtAlive();
 
   /** getter */
-  const IsoName_c&           getIsoName()            { return mc_isoName; }
+  const IsoName_c&           getIsoName()             { return mc_isoName; }
   uint8_t                    getVtSourceAddress()     { return (mcpc_isoItem != NULL)? mcpc_isoItem->nr() : 0xfe; }
   uint32_t                   getVtHardwareDimension();
   uint16_t                   getVtFontSizes();
+  uint8_t                    getVtIsoVersion();
   vtCapabilities_s*          getVtCapabilities()      { return &ms_vtCapabilitiesA; }
-  const vtCapabilities_s*          getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
+  const vtCapabilities_s*    getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
   const IsoAgLib::vtState_s* getVtState() const       { return &ms_vtStateA; }
   localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
   const IsoItem_c*           getIsoItem()             { return mcpc_isoItem; }
@@ -131,6 +139,12 @@ public:
     ms_vtCapabilitiesA.fontSizes = aui16_fontSizes;
   }
 #endif
+
+  /** interface convert function - avoids lots of explicit static_casts */
+  IsoAgLib::iVtServerInstance_c* toIvtServerInstancePtr_c();
+
+  /** interface convert function - avoids lots of explicit static_casts */
+  IsoAgLib::iVtServerInstance_c& toIvtServerInstance_c();
 
 private:
   friend class IsoTerminal_c;
@@ -156,5 +170,5 @@ private: // attributes
   localSettings_s ms_localSettingsA;
 };
 
-}
+} // namespace __IsoAgLib
 #endif

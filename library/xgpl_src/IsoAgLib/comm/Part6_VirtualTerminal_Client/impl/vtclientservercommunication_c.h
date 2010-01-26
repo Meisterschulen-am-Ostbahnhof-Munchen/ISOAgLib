@@ -283,10 +283,11 @@ public:
   uint8_t  getUserClippedColor (uint8_t colorValue, IsoAgLib::iVtObject_c* obj, IsoAgLib::e_vtColour whichColour);
   uint8_t  getClientId() const { return mui8_clientId; }
 
-  /** ATTENTION: Please assure "getVtServerInstPtr() != NULL" before getting this reference */
-  VtServerInstance_c& getVtServerInst();
-  VtServerInstance_c* getVtServerInstPtr() { return mpc_vtServerInstance; }
-  IdentItem_c& getIdentItem()             { return mrc_wsMasterIdentItem; }
+  bool connectedToVtServer() const               { return (mpc_vtServerInstance != NULL); }
+  /** ATTENTION: Please assure "connectedToVtServer()" before getting this reference */
+  VtServerInstance_c& getVtServerInst() const    { return *mpc_vtServerInstance; }
+  VtServerInstance_c* getVtServerInstPtr() const { return mpc_vtServerInstance; }
+  IdentItem_c& getIdentItem() const              { return mrc_wsMasterIdentItem; }
 
   void notifyOnNewVtServerInstance  (VtServerInstance_c& r_newVtServerInst);
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst);
@@ -464,7 +465,7 @@ private: // attributes
 
   IsoTerminal_c& mrc_isoTerminal; // back ref.
 
-  VtServerInstance_c* mpc_vtServerInstance;  // back p.
+  VtServerInstance_c* mpc_vtServerInstance;
 
   bool mb_usingVersionLabel; // if NOT using version label, "marrp7c_versionLabel" has random values!
   char marrp7c_versionLabel [7];
