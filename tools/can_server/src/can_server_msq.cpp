@@ -116,10 +116,19 @@
 #define PRIORITY_CAN_WRITE    0
 #define PRIORITY_CAN_COMMAND  0
 
+__HAL::server_c::canBus_s::canBus_s() :
+  ui16_globalMask(0),
+  i32_can_device(0),
+  i32_sendDelay(0),
+  i_pendingMsgs(0),
+  b_deviceConnected(false),
+  ui16_busRefCnt(0),
+  logFile(LogFile_c::Null_s()())
+{
+}
 
 __HAL::server_c::server_c() :
   mb_logMode(FALSE),
-  mvec_logFile( cui32_maxCanBusCnt, LogFile_c::Null_s()() ),
   mb_monitorMode(FALSE),
   mb_inputFileMode(FALSE),
   mi32_lastPipeId(0),
@@ -128,21 +137,10 @@ __HAL::server_c::server_c() :
   mi_canReadNiceValue(0),
   mi_highPrioModeIfMin(0)
 {
-  memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
-  memset(marrui16_busRefCnt, 0, sizeof(marrui16_busRefCnt));
   memset(marri32_fileDescrWakeUpPipeForNewBusEvent, 0, sizeof(marri32_fileDescrWakeUpPipeForNewBusEvent));
 
-  for (uint32_t i=0; i<__HAL::cui32_maxCanBusCnt; i++)
-  {
-    marri32_sendDelay[i] = 0;
-    marri_pendingMsgs[i] = 0;
-    marri32_can_device[i] = 0;
-    marrb_deviceConnected[i] = false;
-  }
-
   pthread_mutex_init(&mt_protectClientList, NULL);
-
 }
 
 __HAL::client_c::client_c()
@@ -295,7 +293,7 @@ int32_t getClientTime( client_c& r_receiveClient )
 
 void dumpCanMsg(uint8_t au8_bus, uint8_t au8_msgObj, canMsg_s *ap_canMsg, __HAL::server_c *ap_server)
 {
-  if (!ap_server->mvec_logFile[au8_bus]) {
+  if (!ap_server->canBus(au8_bus).logFile) {
     bool b_error = newFileLog( ap_server, au8_bus );
     if (b_error)
       return;
@@ -304,7 +302,7 @@ void dumpCanMsg(uint8_t au8_bus, uint8_t au8_msgObj, canMsg_s *ap_canMsg, __HAL:
       au8_bus,
       au8_msgObj,
       ap_canMsg,
-      ap_server->mvec_logFile[au8_bus]->getRaw() );
+      ap_server->canBus(au8_bus).logFile->getRaw() );
 }
 
 void monitorCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg)
@@ -408,8 +406,8 @@ void releaseClient(__HAL::server_c* pc_serverData, STL_NAMESPACE::list< __HAL::c
 //  clearWriteQueue(i, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle,iter_delete->ui16_pid);
 #endif
 
-    if (iter_delete->b_initReceived[i] && (pc_serverData->marrui16_busRefCnt[i] > 0))
-      pc_serverData->marrui16_busRefCnt[i]--; // decrement bus ref count when client dropped off
+    if (iter_delete->b_initReceived[i] && (pc_serverData->canBus(i).ui16_busRefCnt > 0))
+      pc_serverData->canBus(i).ui16_busRefCnt--; // decrement bus ref count when client dropped off
   }
 
   if (iter_delete->i32_pipeHandle)
@@ -496,7 +494,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
                ||
                ( (iter->arrMsgObj[b_bus][i32_obj].ui8_bufXtd == 0)
                   && (b_xtd == 0)
-                  && ( (ui32_id & iter->marrui16_globalMask[b_bus]) == (iter->arrMsgObj[b_bus][i32_obj].ui32_filter & iter->marrui16_globalMask[b_bus]) )
+                  && ( (ui32_id & iter->canBus(b_bus).ui16_globalMask) == (iter->arrMsgObj[b_bus][i32_obj].ui32_filter & iter->canBus(b_bus).ui16_globalMask) )
                  )
                )
           )
@@ -510,7 +508,7 @@ static void enqueue_msg(uint32_t DLC, uint32_t ui32_id, uint32_t b_bus, uint8_t 
                   ||
                   ( (iter->arrMsgObj[b_bus][i32_obj].ui8_bufXtd == 0)
                      && (b_xtd == 0)
-                     && ( (ui32_id & iter->marrui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) ==  (iter->arrMsgObj[b_bus][i32_obj].ui32_filter & iter->marrui16_globalMask[b_bus] & iter->ui32_lastMask[b_bus]) )
+                     && ( (ui32_id & iter->canBus(b_bus).ui16_globalMask & iter->ui32_lastMask[b_bus]) ==  (iter->arrMsgObj[b_bus][i32_obj].ui32_filter & iter->canBus(b_bus).ui16_globalMask & iter->ui32_lastMask[b_bus]) )
                   )
                 )
              )
@@ -642,7 +640,7 @@ static void* can_write_thread_func(void* ptr)
       b_highPrioMode=false; // default to FALSE until some bus reports >= 5 pending msgs.
       for (uint8_t ui8_bus = 0; ui8_bus < __HAL::cui32_maxCanBusCnt; ui8_bus++)
       {
-        if (pc_serverData->marri_pendingMsgs[ui8_bus] >= pc_serverData->mi_highPrioModeIfMin)
+        if (pc_serverData->canBus(ui8_bus).i_pendingMsgs >= pc_serverData->mi_highPrioModeIfMin)
         {
           b_highPrioMode = true;
           break;
@@ -748,7 +746,7 @@ static void* can_write_thread_func(void* ptr)
         { // send was okay with "new send delay detected"!
           for (STL_NAMESPACE::list<__HAL::client_c>::iterator iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++)
           {
-            iter->marri32_sendDelay[msqWriteBuf.ui8_bus] = pc_serverData->marri32_sendDelay[msqWriteBuf.ui8_bus];
+            iter->marri32_sendDelay[msqWriteBuf.ui8_bus] = pc_serverData->canBus(msqWriteBuf.ui8_bus).i32_sendDelay;
           }
           i32_error = HAL_NEW_SEND_DELAY; // so it will be sent back with the ACK!
         }
@@ -802,9 +800,9 @@ static void can_read(__HAL::server_c* pc_serverData)
 
     for (channel=0; channel<__HAL::cui32_maxCanBusCnt; channel++ )
     {
-      if (isBusOpen(channel) && (pc_serverData->marri32_can_device[channel] > 0))
+      if (isBusOpen(channel) && (pc_serverData->canBus(channel).i32_can_device > 0))
       { // valid file handle => use it for select
-        FD_SET(pc_serverData->marri32_can_device[channel], &rfds);
+        FD_SET(pc_serverData->canBus(channel).i32_can_device, &rfds);
         ui8_cntOpenDevice++;
       }
     }
@@ -834,8 +832,8 @@ static void can_read(__HAL::server_c* pc_serverData)
         // get device with changes
         for (channel_with_change=0; channel_with_change<__HAL::cui32_maxCanBusCnt; channel_with_change++ ) {
           if (isBusOpen(channel_with_change)) {
-            if (FD_ISSET(pc_serverData->marri32_can_device[channel_with_change], &rfds) == 1) {
-              DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->marri32_can_device[channel_with_change], &rfds));
+            if (FD_ISSET(pc_serverData->canBus(channel_with_change).i32_can_device, &rfds) == 1) {
+              DEBUG_PRINT2("change on channel %d, FD_ISSET %d\n", channel_with_change, FD_ISSET(pc_serverData->canBus(channel_with_change).i32_can_device, &rfds));
               b_processMsg = TRUE;
               break;
             }
@@ -1049,8 +1047,8 @@ static void* command_thread_func(void* ptr)
           for (uint8_t j=0; j<__HAL::cui32_maxCanBusCnt; j++)
           {
             iter_client->arrMsgObj[j].clear();
-            if (iter_client->b_initReceived[j] && (pc_serverData->marrui16_busRefCnt[j] > 0))
-              pc_serverData->marrui16_busRefCnt[j]--; // decrement ref count only when we received the INIT command before
+            if (iter_client->b_initReceived[j] && (pc_serverData->canBus(j).ui16_busRefCnt > 0))
+              pc_serverData->canBus(j).ui16_busRefCnt--; // decrement ref count only when we received the INIT command before
           }
 
           if (iter_client->i32_pipeHandle)
@@ -1065,7 +1063,7 @@ static void* command_thread_func(void* ptr)
 
           if (s_transferBuf.s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
             i32_error = HAL_RANGE_ERR;
-          else if (!pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus])
+          else if (!pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).ui16_busRefCnt)
           { // first init command for current bus
             // open log file only once per bus
             if (pc_serverData->mb_logMode) {
@@ -1073,7 +1071,7 @@ static void* command_thread_func(void* ptr)
             }
 
             // just to get sure that we reset the number of pending write-messages
-            pc_serverData->marri_pendingMsgs[s_transferBuf.s_init.ui8_bus] = 0;
+            pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).i_pendingMsgs = 0;
 
             int16_t i16_init_rc = openBusOnCard(s_transferBuf.s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                                                 s_transferBuf.s_init.ui16_wBitrate,  // BTR0BTR1
@@ -1093,7 +1091,7 @@ static void* command_thread_func(void* ptr)
           }
 
           if (!i32_error) {
-            pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus]++;
+            pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).ui16_busRefCnt++;
             iter_client->b_initReceived[s_transferBuf.s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
             iter_client->b_busUsed[s_transferBuf.s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
           }
@@ -1114,16 +1112,16 @@ static void* command_thread_func(void* ptr)
             i32_error = HAL_RANGE_ERR;
           else
           {
-            if (iter_client->b_initReceived[s_transferBuf.s_init.ui8_bus] && (pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus] > 0))
+            if (iter_client->b_initReceived[s_transferBuf.s_init.ui8_bus] && (pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).ui16_busRefCnt > 0))
             {
-              pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus]--; // decrement ref count only when we received the INIT command before
+              pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).ui16_busRefCnt--; // decrement ref count only when we received the INIT command before
             }
 
             iter_client->b_initReceived[s_transferBuf.s_init.ui8_bus] = false; // reset flag
 
-            if (pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus] == 0)
+            if (pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).ui16_busRefCnt == 0)
             { // last connection on bus closed, so reset pending msgs...
-              pc_serverData->marri_pendingMsgs[s_transferBuf.s_init.ui8_bus] = 0;
+              pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).i_pendingMsgs = 0;
             }
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -1136,7 +1134,7 @@ static void* command_thread_func(void* ptr)
 //          clearWriteQueue(s_transferBuf.s_init.ui8_bus, COMMON_MSGOBJ_IN_QUEUE, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
   #endif
 
-            if (!pc_serverData->marrui16_busRefCnt[s_transferBuf.s_init.ui8_bus] && pc_serverData->mb_logMode) {
+            if (!pc_serverData->canBus(s_transferBuf.s_init.ui8_bus).ui16_busRefCnt && pc_serverData->mb_logMode) {
               closeFileLog(pc_serverData, s_transferBuf.s_init.ui8_bus);
             }
 
@@ -1246,7 +1244,7 @@ static void* command_thread_func(void* ptr)
             i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY;
             i32_data = iter_client->marri32_sendDelay [s_transferBuf.s_config.ui8_bus];
             if (i32_data < 0) i32_data = -i32_data; // so we always return a positive send delay!
-            else iter_client->marri32_sendDelay [s_transferBuf.s_config.ui8_bus] = -i32_data; // stamp a positive stored delay as READ by negating it!
+            else iter_client->marri32_sendDelay[s_transferBuf.s_config.ui8_bus]  = -i32_data; // stamp a positive stored delay as READ by negating it!
           }
           break;
 

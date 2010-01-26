@@ -2,6 +2,7 @@
 
 #define PRJ_USE_AUTOGEN_CONFIG config_can_server.h
 
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
 
 #define CAN_BUS_CNT 1 
 

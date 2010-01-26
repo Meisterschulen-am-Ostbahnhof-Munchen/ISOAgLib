@@ -53,6 +53,7 @@
  * the main author Achim Spangler by a.spangler@osb-ag:de                  *
  ***************************************************************************/
 
+#include <IsoAgLib/isoaglib_config.h>
 #include <cstring>
 #include <cstdio>
 #include <cctype>
@@ -95,10 +96,19 @@
 static const uint32_t scui32_selectTimeoutMax = 50000;
 static const uint32_t scui32_selectTimeoutMin = 1000;
 
+__HAL::server_c::canBus_s::canBus_s() :
+  ui16_globalMask(0),
+  i32_can_device(0),
+  i32_sendDelay(0),
+  i_pendingMsgs(0),
+  b_deviceConnected(false),
+  ui16_busRefCnt(0),
+  logFile(LogFile_c::Null_s()())
+{
+}
 
 __HAL::server_c::server_c() :
   mb_logMode(FALSE),
-  mvec_logFile( cui32_maxCanBusCnt, LogFile_c::Null_s()() ),
   mb_monitorMode(FALSE),
   mb_inputFileMode(FALSE),
   mi16_reducedLoadOnIsoBus(-1),
@@ -106,20 +116,9 @@ __HAL::server_c::server_c() :
   mi_canReadNiceValue(0),
   mi_highPrioModeIfMin(0)
 {
-  memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
-  memset(marrui16_busRefCnt, 0, sizeof(marrui16_busRefCnt));
-
-  for (uint32_t i=0; i<__HAL::cui32_maxCanBusCnt; i++)
-  {
-    marri32_sendDelay[i] = 0;
-    marri_pendingMsgs[i] = 0;
-    marri32_can_device[i] = 0;
-    marrb_deviceConnected[i] = false;
-  }
 
   pthread_mutex_init(&mt_protectClientList, NULL);
-
 }
 
 __HAL::client_c::client_c()
@@ -397,7 +396,7 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
 void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server)
 {
   size_t n_bus = ap_transferBuf->s_data.ui8_bus;
-  if (!ap_server->mvec_logFile[n_bus]) {
+  if (!ap_server->canBus(n_bus).logFile) {
     bool b_error = newFileLog( ap_server, n_bus );
     if (b_error)
       return;
@@ -407,7 +406,7 @@ void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server
       ap_transferBuf->s_data.ui8_bus,
       ap_transferBuf->s_data.ui8_obj,
       &ap_transferBuf->s_data.s_canMsg,
-      ap_server->mvec_logFile[n_bus]->getRaw());
+      ap_server->canBus(n_bus).logFile->getRaw());
 }
 
 void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
@@ -430,10 +429,10 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 
   for (uint8_t ui8_cnt=0; ui8_cnt<__HAL::cui32_maxCanBusCnt; ui8_cnt++)
   {
-    if (iter_delete->b_initReceived[ui8_cnt] && (pc_serverData->marrui16_busRefCnt[ui8_cnt] > 0))
+    if (iter_delete->b_initReceived[ui8_cnt] && (pc_serverData->canBus(ui8_cnt).ui16_busRefCnt > 0))
     {
-      pc_serverData->marrui16_busRefCnt[ui8_cnt]--; // decrement bus ref count when client dropped off
-      if (!pc_serverData->marrui16_busRefCnt[ui8_cnt])
+      pc_serverData->canBus(ui8_cnt).ui16_busRefCnt--; // decrement bus ref count when client dropped off
+      if (!pc_serverData->canBus(ui8_cnt).ui16_busRefCnt)
         closeBusOnCard(ui8_cnt, pc_serverData);
     }
   }
@@ -576,7 +575,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
         DEBUG_PRINT("COMMAND_REGISTER\n");
 
         // no need to set to 0, as everything got set to zero before!
-        // s_tmpClient.marri32_sendDelay[all-buses] = 0;
+        // s_tmpClient.canBus(all-buses).i32_sendDelay = 0;
 
         DEBUG_PRINT1 ("Client registering with startTimeClock_t from his REGISTER message as %d\n", p_writeBuf->s_startTimeClock.t_clock);
         initClientTime(*iter_client, p_writeBuf->s_startTimeClock.t_clock );
@@ -597,8 +596,8 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
         for (uint8_t j=0; j<__HAL::cui32_maxCanBusCnt; j++)
         {
           iter_client->arrMsgObj[j].clear();
-          if (iter_client->b_initReceived[j] && (pc_serverData->marrui16_busRefCnt[j] > 0))
-            pc_serverData->marrui16_busRefCnt[j]--; // decrement ref count only when we received the INIT command before
+          if (iter_client->b_initReceived[j] && (pc_serverData->canBus(j).ui16_busRefCnt > 0))
+            pc_serverData->canBus(j).ui16_busRefCnt--; // decrement ref count only when we received the INIT command before
         }
 
         releaseClient(pc_serverData, iter_client);
@@ -610,7 +609,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 
         if (p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
           i32_error = HAL_RANGE_ERR;
-        else if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus])
+        else if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt)
         { // first init command for current bus
           // open log file only once per bus
           if (pc_serverData->mb_logMode) {
@@ -618,7 +617,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           }
 
           // just to get sure that we reset the number of pending write-messages
-          pc_serverData->marri_pendingMsgs[p_writeBuf->s_init.ui8_bus] = 0;
+          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).i_pendingMsgs = 0;
 
           if (!openBusOnCard(p_writeBuf->s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                              p_writeBuf->s_init.ui16_wBitrate,  // BTR0BTR1
@@ -632,7 +631,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
         }
 
         if (!i32_error) {
-          pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus]++;
+          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt++;
           iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
           iter_client->b_busUsed[p_writeBuf->s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
         }
@@ -653,21 +652,21 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           i32_error = HAL_RANGE_ERR;
         else
         {
-          if (iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] && (pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] > 0))
+          if (iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] && (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt > 0))
           {
-            pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus]--; // decrement ref count only when we received the INIT command before
+            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt--; // decrement ref count only when we received the INIT command before
           }
 
           iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] = false; // reset flag
 
-          if (pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] == 0)
+          if (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt == 0)
           { // last connection on bus closed, so reset pending msgs...
-            pc_serverData->marri_pendingMsgs[p_writeBuf->s_init.ui8_bus] = 0;
+            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).i_pendingMsgs = 0;
             // close can device
             closeBusOnCard(p_writeBuf->s_init.ui8_bus, pc_serverData);
           }
 
-          if (!pc_serverData->marrui16_busRefCnt[p_writeBuf->s_init.ui8_bus] && pc_serverData->mb_logMode) {
+          if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt && pc_serverData->mb_logMode) {
             closeFileLog(pc_serverData, p_writeBuf->s_init.ui8_bus);
           }
 
@@ -774,9 +773,9 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           i32_error = HAL_RANGE_ERR;
         } else {
           i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY;
-          i32_data = iter_client->marri32_sendDelay [p_writeBuf->s_config.ui8_bus];
+          i32_data = iter_client->marri32_sendDelay[p_writeBuf->s_config.ui8_bus];
           if (i32_data < 0) i32_data = -i32_data; // so we always return a positive send delay!
-          else iter_client->marri32_sendDelay [p_writeBuf->s_config.ui8_bus] = -i32_data; // stamp a positive stored delay as READ by negating it!
+          else iter_client->marri32_sendDelay[p_writeBuf->s_config.ui8_bus]  = -i32_data; // stamp a positive stored delay as READ by negating it!
         }
         break;
 
@@ -825,14 +824,14 @@ void readWrite(__HAL::server_c* pc_serverData)
 
     for (uint32_t ui32=0; ui32<__HAL::cui32_maxCanBusCnt; ui32++ )
     {
-      if (pc_serverData->marri32_can_device[ui32] > 0)
+      if (pc_serverData->canBus(ui32).i32_can_device > 0)
       {
-        FD_SET(pc_serverData->marri32_can_device[ui32], &rfds);
+        FD_SET(pc_serverData->canBus(ui32).i32_can_device, &rfds);
         b_deviceHandleFound=true;
         b_handlesAvailableForSelect = true; // calling select() makes sense because we have a file handle from CAN device
       }
 
-      if (pc_serverData->marrb_deviceConnected[ui32])
+      if (pc_serverData->canBus(ui32).b_deviceConnected)
         b_deviceConnected = true;
     }
 
@@ -874,7 +873,7 @@ void readWrite(__HAL::server_c* pc_serverData)
         continue; // this bus number was not yet used => do not try to read
 
       if ( !b_deviceHandleFound ||
-           (b_deviceHandleFound && pc_serverData->marri32_can_device[ui32_cnt] && FD_ISSET(pc_serverData->marri32_can_device[ui32_cnt], &rfds)) 
+           (b_deviceHandleFound && pc_serverData->canBus(ui32_cnt).i32_can_device && FD_ISSET(pc_serverData->canBus(ui32_cnt).i32_can_device, &rfds)) 
          )
       { // do card read
         if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))

@@ -150,7 +150,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         if (ret < 0)
         {
             perror( "SIOCGIFINDEX" );
-            pc_serverData->marri32_can_device[ui8_bus] = NULL;
+            pc_serverData->canBus(ui8_bus).i32_can_device = NULL;
             return false;
         }
 
@@ -169,7 +169,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         if (baud_ret < 0)
         {
             perror( "SIOCSCANBAUDRATE" );
-            pc_serverData->marri32_can_device[ui8_bus] = NULL;
+            pc_serverData->canBus(ui8_bus).i32_can_device = NULL;
             return false;
         }
 #endif
@@ -185,7 +185,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         if (result < 0)
         {
             perror( "bind" );
-            pc_serverData->marri32_can_device[ui8_bus] = NULL;
+            pc_serverData->canBus(ui8_bus).i32_can_device = NULL;
             return false;
         }
 
@@ -202,7 +202,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
             return false;
         }
 
-        pc_serverData->marri32_can_device[ui8_bus] = m_handle;
+        pc_serverData->canBus(ui8_bus).i32_can_device = m_handle;
         canBusIsOpen[ui8_bus]  = true;
 
         return true;
@@ -215,7 +215,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData )
 {
   canBusIsOpen[ui8_bus] = false;
-  if( 0 > close( pc_serverData->marri32_can_device[ui8_bus] ) ) {
+  if( 0 > close( pc_serverData->canBus(ui8_bus).i32_can_device ) ) {
       perror( "close" );
   }
 }
@@ -246,7 +246,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     frame.data[i] = ps_canMsg->ui8_data[i];
 
   // ...and send the packet
-  int bytes_sent = send(pc_serverData->marri32_can_device[ui8_bus], &frame, sizeof(frame), 0 );
+  int bytes_sent = send(pc_serverData->canBus(ui8_bus).i32_can_device, &frame, sizeof(frame), 0 );
   if (bytes_sent < 0)
   {
     perror( "send" );
@@ -270,7 +270,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #ifdef DEBUG_CAN
-        m_clog << "readFromBus(): bus: " << (int)ui8_bus << " driverHandle: " << pc_serverData->marri32_can_device[ui8_bus] << std::endl;
+        m_clog << "readFromBus(): bus: " << (int)ui8_bus << " driverHandle: " << pc_serverData->canBus(ui8_bus).i32_can_device << std::endl;
 #endif
     if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
     {
@@ -280,12 +280,12 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
         int retval;
 
         FD_ZERO(&rfds);
-        FD_SET(pc_serverData->marri32_can_device[ui8_bus], &rfds);
+        FD_SET(pc_serverData->canBus(ui8_bus).i32_can_device, &rfds);
 
         tv.tv_sec  = 0;
         tv.tv_usec = 0;
 
-        retval = select(pc_serverData->marri32_can_device[ui8_bus]+1, &rfds, NULL, NULL, &tv);
+        retval = select(pc_serverData->canBus(ui8_bus).i32_can_device+1, &rfds, NULL, NULL, &tv);
 #ifdef DEBUG_CAN
         m_clog << "readFromBus(timeout): retval: " << retval << std::endl;
 #endif
@@ -297,7 +297,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
             return false;
         }
 
-        int status = recv(pc_serverData->marri32_can_device[ui8_bus], &frame, sizeof(frame), 0);
+        int status = recv(pc_serverData->canBus(ui8_bus).i32_can_device, &frame, sizeof(frame), 0);
 #ifdef DEBUG_CAN
         m_clog << "readFromBus(): status: " << status << std::endl;
 #endif

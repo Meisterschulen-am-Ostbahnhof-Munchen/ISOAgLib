@@ -124,7 +124,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 	
 	if (handle <= 0) {
 		printf("Failed to open CANUSB interface.\n" );
-		pc_serverData->marrb_deviceConnected[ui8_bus] = false;
+		pc_serverData->canBus(ui8_bus).b_deviceConnected = false;
 		return false;
 	}
 	else {
@@ -140,7 +140,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 			printf("Failed to get version information.\n");
 		}
 
-		pc_serverData->marrb_deviceConnected[ui8_bus] = true;
+		pc_serverData->canBus(ui8_bus).b_deviceConnected = true;
 		return true;
 	}
 }
@@ -180,7 +180,7 @@ void closeBusOnCard(uint8_t ui8_bus)
 void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData)
 {
 	closeBusOnCard(ui8_bus);
-	pc_serverData->marrb_deviceConnected[ui8_bus] = false;
+	pc_serverData->canBus(ui8_bus).b_deviceConnected = false;
 }
 
 

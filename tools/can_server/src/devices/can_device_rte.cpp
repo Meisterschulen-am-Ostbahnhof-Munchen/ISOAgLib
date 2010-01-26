@@ -170,7 +170,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     //  rteCan_c [ui8_bus]->set_set_bus_state_handler( setBusState, rteCan_c [ui8_bus] );
 
     canBusIsOpen[ui8_bus] = true;
-    pc_serverData->marrb_deviceConnected[ui8_bus] = true;
+    pc_serverData->canBus(ui8_bus).b_deviceConnected = true;
 
     return true;
   }

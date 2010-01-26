@@ -108,10 +108,8 @@ public:
   std::list<client_c> mlist_clients;
   std::string mstr_logFileBase;
   std::string mstr_inputFile;
-  uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
   // logging
   bool     mb_logMode;
-  std::vector< yasper::ptr< LogFile_c > > mvec_logFile;
   // monitor
   bool     mb_monitorMode;
   // replay
@@ -128,18 +126,39 @@ public:
   // if >0 => do not send messages with local destination address on the bus
   int16_t  mi16_reducedLoadOnIsoBus;
 
-  int32_t  marri32_can_device[cui32_maxCanBusCnt];
-  int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
-  int      marri_pendingMsgs[cui32_maxCanBusCnt];
-  bool     marrb_deviceConnected[cui32_maxCanBusCnt];
-
-  uint16_t marrui16_busRefCnt[cui32_maxCanBusCnt];
-
   pthread_mutex_t mt_protectClientList;
   bool     mb_interactive;
   int      mi_canReadNiceValue;
   int      mi_highPrioModeIfMin;
+
+  struct canBus_s {
+    uint16_t ui16_globalMask;
+    int32_t  i32_can_device;
+    int32_t  i32_sendDelay;
+    int      i_pendingMsgs;
+    bool     b_deviceConnected;
+    uint16_t ui16_busRefCnt;
+    yasper::ptr< LogFile_c > logFile;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
 };
+
+inline server_c::canBus_s &server_c::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t server_c::nCanBusses()
+{
+  return mvec_canBus.size();
+}
 
 extern std::list<int32_t> list_sendTimeStamps;
 void updatePendingMsgs(server_c* rpc_server, int8_t i8_bus);

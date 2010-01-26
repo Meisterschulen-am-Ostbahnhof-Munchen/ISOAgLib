@@ -161,7 +161,7 @@ static std::string readInputLine()
 static void enableLog( __HAL::server_c *p_server )
 {
   for (size_t n_bus = 0; n_bus < __HAL::cui32_maxCanBusCnt; ++n_bus) {
-    if (0 < p_server->marrui16_busRefCnt[n_bus]) {
+    if (0 < p_server->canBus(n_bus).ui16_busRefCnt) {
       (void)newFileLog( p_server, n_bus );
     }
   }
@@ -171,10 +171,11 @@ static void enableLog( __HAL::server_c *p_server )
 static void disableLog( __HAL::server_c *p_server )
 {
   p_server->mb_logMode = false;
-  std::generate(
-      p_server->mvec_logFile.begin(),
-      p_server->mvec_logFile.end(),
-      __HAL::LogFile_c::Null_s() );
+
+  for (size_t n_canBusses = p_server->nCanBusses(); 0 < n_canBusses; ) {
+    --n_canBusses;
+    p_server->canBus(n_canBusses).logFile = __HAL::LogFile_c::Null_s()();
+  }
 }
 
 void *readUserInput( void *ap_arg )
@@ -470,7 +471,7 @@ bool newFileLog(
     if (ap_server->mb_interactive) {
       std::cerr << "New log file " << ostr_filename.str() << "." << std::endl;
     }
-    ap_server->mvec_logFile[an_bus] = p_logFile;
+    ap_server->canBus(an_bus).logFile = p_logFile;
   }
   return b_error;
 }
@@ -481,7 +482,7 @@ void closeFileLog(
     __HAL::server_c *ap_server, /// server data
     size_t an_bus ) /// bus number
 {
-  ap_server->mvec_logFile[an_bus] = __HAL::LogFile_c::Null_s()();
+  ap_server->canBus(an_bus).logFile = __HAL::LogFile_c::Null_s()();
 }
 
 
