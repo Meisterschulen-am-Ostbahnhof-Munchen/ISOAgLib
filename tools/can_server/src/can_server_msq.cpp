@@ -135,7 +135,8 @@ __HAL::server_c::server_c() :
   mi16_reducedLoadOnIsoBus(-1),
   mb_interactive(true),
   mi_canReadNiceValue(0),
-  mi_highPrioModeIfMin(0)
+  mi_highPrioModeIfMin(0),
+  mvec_canBus()
 {
   memset(marrb_remoteDestinationAddressInUse, 0, sizeof(marrb_remoteDestinationAddressInUse));
   memset(marri32_fileDescrWakeUpPipeForNewBusEvent, 0, sizeof(marri32_fileDescrWakeUpPipeForNewBusEvent));
