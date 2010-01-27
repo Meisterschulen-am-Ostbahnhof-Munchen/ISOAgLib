@@ -160,8 +160,8 @@ static std::string readInputLine()
 
 static void enableLog( __HAL::server_c *p_server )
 {
-  for (size_t n_bus = 0; n_bus < __HAL::cui32_maxCanBusCnt; ++n_bus) {
-    if (0 < p_server->canBus(n_bus).ui16_busRefCnt) {
+  for (size_t n_bus = 0; n_bus < p_server->nCanBusses(); ++n_bus) {
+    if (0 < p_server->canBus(n_bus).mui16_busRefCnt) {
       (void)newFileLog( p_server, n_bus );
     }
   }
@@ -174,7 +174,7 @@ static void disableLog( __HAL::server_c *p_server )
 
   for (size_t n_canBusses = p_server->nCanBusses(); 0 < n_canBusses; ) {
     --n_canBusses;
-    p_server->canBus(n_canBusses).logFile = __HAL::LogFile_c::Null_s()();
+    p_server->canBus(n_canBusses).m_logFile = __HAL::LogFile_c::Null_s()();
   }
 }
 
@@ -471,7 +471,7 @@ bool newFileLog(
     if (ap_server->mb_interactive) {
       std::cerr << "New log file " << ostr_filename.str() << "." << std::endl;
     }
-    ap_server->canBus(an_bus).logFile = p_logFile;
+    ap_server->canBus(an_bus).m_logFile = p_logFile;
   }
   return b_error;
 }
@@ -482,7 +482,7 @@ void closeFileLog(
     __HAL::server_c *ap_server, /// server data
     size_t an_bus ) /// bus number
 {
-  ap_server->canBus(an_bus).logFile = __HAL::LogFile_c::Null_s()();
+  ap_server->canBus(an_bus).m_logFile = __HAL::LogFile_c::Null_s()();
 }
 
 
@@ -496,4 +496,3 @@ void dumpCanMsg (uint8_t bBusNumber, uint8_t bMsgObj, canMsg_s* ps_canMsg, FILE 
     fprintf(f_handle, "\n");
     fflush(f_handle);
 }
-

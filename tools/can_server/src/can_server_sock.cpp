@@ -97,13 +97,13 @@ static const uint32_t scui32_selectTimeoutMax = 50000;
 static const uint32_t scui32_selectTimeoutMin = 1000;
 
 __HAL::server_c::canBus_s::canBus_s() :
-  ui16_globalMask(0),
-  i32_can_device(0),
-  i32_sendDelay(0),
-  i_pendingMsgs(0),
-  b_deviceConnected(false),
-  ui16_busRefCnt(0),
-  logFile(LogFile_c::Null_s()())
+  mui16_globalMask(0),
+  mi32_can_device(0),
+  mi32_sendDelay(0),
+  mi_pendingMsgs(0),
+  mb_deviceConnected(false),
+  mui16_busRefCnt(0),
+  m_logFile(LogFile_c::Null_s()())
 {
 }
 
@@ -122,15 +122,22 @@ __HAL::server_c::server_c() :
   pthread_mutex_init(&mt_protectClientList, NULL);
 }
 
-__HAL::client_c::client_c()
-  : ui16_pid(0), i32_msecStartDeltaClientMinusServer(0)
+__HAL::client_c::canBus_s::canBus_s() :
+  mvec_msgObj(),
+  mb_busUsed(false),
+  mui16_globalMask(0),
+  mui32_globalMask(0),
+  mui32_lastMask(0),
+  mi32_sendDelay(0),
+  mb_initReceived(false)
 {
-  memset(b_busUsed, 0, sizeof(b_busUsed));
-  memset(marrui16_globalMask, 0, sizeof(marrui16_globalMask));
-  memset(ui32_globalMask, 0, sizeof(ui32_globalMask));
-  memset(ui32_lastMask, 0, sizeof(ui32_lastMask));
-  memset(marri32_sendDelay, 0, sizeof(marri32_sendDelay));
-  memset(b_initReceived, 0, sizeof(b_initReceived));
+}
+
+__HAL::client_c::client_c() :
+  ui16_pid(0),
+  i32_msecStartDeltaClientMinusServer(0),
+  mvec_canBus()
+{
 }
 
 
@@ -397,7 +404,7 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
 void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server)
 {
   size_t n_bus = ap_transferBuf->s_data.ui8_bus;
-  if (!ap_server->canBus(n_bus).logFile) {
+  if (!ap_server->canBus(n_bus).m_logFile) {
     bool b_error = newFileLog( ap_server, n_bus );
     if (b_error)
       return;
@@ -407,7 +414,7 @@ void dumpCanMsg(__HAL::transferBuf_s *ap_transferBuf, __HAL::server_c *ap_server
       ap_transferBuf->s_data.ui8_bus,
       ap_transferBuf->s_data.ui8_obj,
       &ap_transferBuf->s_data.s_canMsg,
-      ap_server->canBus(n_bus).logFile->getRaw());
+      ap_server->canBus(n_bus).m_logFile->getRaw());
 }
 
 void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
@@ -428,19 +435,19 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
   printf("Client disconnected.\n");
 #endif
 
-  for (uint8_t ui8_cnt=0; ui8_cnt<__HAL::cui32_maxCanBusCnt; ui8_cnt++)
+  for (uint8_t ui8_cnt=0; ui8_cnt < iter_delete->nCanBusses(); ui8_cnt++)
   {
-    if (iter_delete->b_initReceived[ui8_cnt] && (pc_serverData->canBus(ui8_cnt).ui16_busRefCnt > 0))
+    if (iter_delete->canBus(ui8_cnt).mb_initReceived && (pc_serverData->canBus(ui8_cnt).mui16_busRefCnt > 0))
     {
-      pc_serverData->canBus(ui8_cnt).ui16_busRefCnt--; // decrement bus ref count when client dropped off
-      if (!pc_serverData->canBus(ui8_cnt).ui16_busRefCnt)
+      pc_serverData->canBus(ui8_cnt).mui16_busRefCnt--; // decrement bus ref count when client dropped off
+      if (!pc_serverData->canBus(ui8_cnt).mui16_busRefCnt)
         closeBusOnCard(ui8_cnt, pc_serverData);
     }
   }
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  for (uint8_t k=0; k<__HAL::cui32_maxCanBusCnt; k++)
-    iter_delete->arrMsgObj[k].clear();
+  for (uint8_t k=0; k < iter_delete->nCanBusses(); k++)
+    iter_delete->canBus(k).mvec_msgObj.clear();
 #endif
 
   // erase sets iterator to next client
@@ -458,7 +465,7 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 
   for (iter = pc_serverData->mlist_clients.begin(); iter != pc_serverData->mlist_clients.end(); iter++) {
 
-    if (!iter->b_busUsed[ui8_bus])
+    if (!iter->canBus(ui8_bus).mb_busUsed)
       continue;
 
     // i32_clientID != 0 in forwarding mode during send, do not enqueue this message for sending client
@@ -467,20 +474,20 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 
     // now search for MsgObj queue on this ui8_bus, where new message from ui8_bus maps
     // start with 1 since MsgObj with id 0 is anyway planned for sending
-    const int32_t i32_maxObj = iter->arrMsgObj[ui8_bus].size();
+    const int32_t i32_maxObj = iter->canBus(ui8_bus).mvec_msgObj.size();
     for (int32_t i32_obj = 1; i32_obj < i32_maxObj; i32_obj++) {
 
-      if ( (iter->arrMsgObj[ui8_bus][i32_obj].ui8_bMsgType != RX )
-        || (iter->arrMsgObj[ui8_bus][i32_obj].ui16_size == 0     ) )
+      if ( (iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui8_bMsgType != RX )
+        || (iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui16_size == 0     ) )
       { // this MsgObj is no candidate for message receive
         continue;
       }
 
-      if (!iter->arrMsgObj[ui8_bus][i32_obj].b_canObjConfigured) {
+      if (!iter->canBus(ui8_bus).mvec_msgObj[i32_obj].b_canObjConfigured) {
         continue;
       }
 
-      if ( iter->arrMsgObj[ui8_bus][i32_obj].b_canBufferLock ) {
+      if ( iter->canBus(ui8_bus).mvec_msgObj[i32_obj].b_canBufferLock ) {
         // don't even check this MsgObj as it shall not receive messages
         DEBUG_PRINT2("lock bus %d, obj %d\n", ui8_bus, i32_obj);
         continue;
@@ -488,14 +495,14 @@ static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketS
 
       // compare received msg with filter
       if (
-          ( (iter->arrMsgObj[ui8_bus][i32_obj].ui8_bufXtd > 0)
+          ( (iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui8_bufXtd > 0)
                 && (p_sockBuf->s_data.s_canMsg.i32_msgType > 0)
-                && ( (p_sockBuf->s_data.s_canMsg.ui32_id & iter->arrMsgObj[ui8_bus][i32_obj].ui32_mask_xtd) == (iter->arrMsgObj[ui8_bus][i32_obj].ui32_filter & iter->arrMsgObj[ui8_bus][i32_obj].ui32_mask_xtd) )
+                && ( (p_sockBuf->s_data.s_canMsg.ui32_id & iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui32_mask_xtd) == (iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui32_filter & iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui32_mask_xtd) )
               )
               ||
-              ( (iter->arrMsgObj[ui8_bus][i32_obj].ui8_bufXtd == 0)
+              ( (iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui8_bufXtd == 0)
                 && (p_sockBuf->s_data.s_canMsg.i32_msgType == 0)
-                && ( (p_sockBuf->s_data.s_canMsg.ui32_id & iter->arrMsgObj[ui8_bus][i32_obj].ui16_mask_std) == (iter->arrMsgObj[ui8_bus][i32_obj].ui32_filter & iter->arrMsgObj[ui8_bus][i32_obj].ui16_mask_std) )
+                && ( (p_sockBuf->s_data.s_canMsg.ui32_id & iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui16_mask_std) == (iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui32_filter & iter->canBus(ui8_bus).mvec_msgObj[i32_obj].ui16_mask_std) )
               )
         )
         { // received msg fits actual filter
@@ -594,11 +601,11 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
       case COMMAND_DEREGISTER: {
         DEBUG_PRINT("COMMAND_DEREGISTER\n");
 
-        for (uint8_t j=0; j<__HAL::cui32_maxCanBusCnt; j++)
+        for (uint8_t j=0; j < iter_client->nCanBusses(); j++)
         {
-          iter_client->arrMsgObj[j].clear();
-          if (iter_client->b_initReceived[j] && (pc_serverData->canBus(j).ui16_busRefCnt > 0))
-            pc_serverData->canBus(j).ui16_busRefCnt--; // decrement ref count only when we received the INIT command before
+          iter_client->canBus(j).mvec_msgObj.clear();
+          if (iter_client->canBus(j).mb_initReceived && (pc_serverData->canBus(j).mui16_busRefCnt > 0))
+            pc_serverData->canBus(j).mui16_busRefCnt--; // decrement ref count only when we received the INIT command before
         }
 
         releaseClient(pc_serverData, iter_client);
@@ -610,7 +617,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 
         if (p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR)
           i32_error = HAL_RANGE_ERR;
-        else if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt)
+        else if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt)
         { // first init command for current bus
           // open log file only once per bus
           if (pc_serverData->mb_logMode) {
@@ -618,7 +625,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           }
 
           // just to get sure that we reset the number of pending write-messages
-          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).i_pendingMsgs = 0;
+          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mi_pendingMsgs = 0;
 
           if (!openBusOnCard(p_writeBuf->s_init.ui8_bus,  // 0 for CANLPT/ICAN, else 1 for first BUS
                              p_writeBuf->s_init.ui16_wBitrate,  // BTR0BTR1
@@ -632,17 +639,17 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
         }
 
         if (!i32_error) {
-          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt++;
-          iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
-          iter_client->b_busUsed[p_writeBuf->s_init.ui8_bus] = true; // when the CLOSE command is received => allow decrement of ref count
+          pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt++;
+          iter_client->canBus(p_writeBuf->s_init.ui8_bus).mb_initReceived = true; // when the CLOSE command is received => allow decrement of ref count
+          iter_client->canBus(p_writeBuf->s_init.ui8_bus).mb_busUsed = true; // when the CLOSE command is received => allow decrement of ref count
         }
         // do rest of init handling in next case statement (no break!)
 
       case COMMAND_CHG_GLOBAL_MASK:
         if (!i32_error) {
-          iter_client->marrui16_globalMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui16_wGlobMask;
-          iter_client->ui32_globalMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui32_dwGlobMask;
-          iter_client->ui32_lastMask[p_writeBuf->s_init.ui8_bus] = p_writeBuf->s_init.ui32_dwGlobMaskLastmsg;
+          iter_client->canBus(p_writeBuf->s_init.ui8_bus).mui16_globalMask = p_writeBuf->s_init.ui16_wGlobMask;
+          iter_client->canBus(p_writeBuf->s_init.ui8_bus).mui32_globalMask = p_writeBuf->s_init.ui32_dwGlobMask;
+          iter_client->canBus(p_writeBuf->s_init.ui8_bus).mui32_lastMask = p_writeBuf->s_init.ui32_dwGlobMaskLastmsg;
         }
         break;
 
@@ -653,25 +660,25 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           i32_error = HAL_RANGE_ERR;
         else
         {
-          if (iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] && (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt > 0))
+          if (iter_client->canBus(p_writeBuf->s_init.ui8_bus).mb_initReceived && (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt > 0))
           {
-            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt--; // decrement ref count only when we received the INIT command before
+            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt--; // decrement ref count only when we received the INIT command before
           }
 
-          iter_client->b_initReceived[p_writeBuf->s_init.ui8_bus] = false; // reset flag
+          iter_client->canBus(p_writeBuf->s_init.ui8_bus).mb_initReceived = false; // reset flag
 
-          if (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt == 0)
+          if (pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt == 0)
           { // last connection on bus closed, so reset pending msgs...
-            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).i_pendingMsgs = 0;
+            pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mi_pendingMsgs = 0;
             // close can device
             closeBusOnCard(p_writeBuf->s_init.ui8_bus, pc_serverData);
           }
 
-          if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).ui16_busRefCnt && pc_serverData->mb_logMode) {
+          if (!pc_serverData->canBus(p_writeBuf->s_init.ui8_bus).mui16_busRefCnt && pc_serverData->mb_logMode) {
             closeFileLog(pc_serverData, p_writeBuf->s_init.ui8_bus);
           }
 
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].clear();
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.clear();
           // i32_error will stay at 0 for "no error"
         }
       }
@@ -685,9 +692,9 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           break;
         }
 
-        if (p_writeBuf->s_config.ui8_obj >= iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].size()) {
+        if (p_writeBuf->s_config.ui8_obj >= iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.size()) {
           // add new elements in the vector with resize
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].resize(p_writeBuf->s_config.ui8_obj+1);
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.resize(p_writeBuf->s_config.ui8_obj+1);
         } else {
           // reconfigure element
         }
@@ -695,27 +702,27 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 
       case COMMAND_CHG_CONFIG:
 
-        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].size()-1 ))
+        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else
         {
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canObjConfigured = TRUE;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canObjConfigured = TRUE;
 
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui8_bufXtd = p_writeBuf->s_config.ui8_bXtd;
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui32_filter = p_writeBuf->s_config.ui32_dwId;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui8_bufXtd = p_writeBuf->s_config.ui8_bXtd;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui32_filter = p_writeBuf->s_config.ui32_dwId;
 
           if (p_writeBuf->s_config.ui8_bXtd)
-              iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui32_mask_xtd = p_writeBuf->s_config.ui32_mask;
+              iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui32_mask_xtd = p_writeBuf->s_config.ui32_mask;
           else
-              iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui16_mask_std = p_writeBuf->s_config.ui32_mask;
+              iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui16_mask_std = p_writeBuf->s_config.ui32_mask;
 
           if (p_writeBuf->ui16_command == COMMAND_CONFIG) {
 //              clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //            clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
-            iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui8_bMsgType = p_writeBuf->s_config.ui8_bMsgType;
-            iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui16_size = p_writeBuf->s_config.ui16_wNumberMsgs;
-            iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canBufferLock = false;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui8_bMsgType = p_writeBuf->s_config.ui8_bMsgType;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui16_size = p_writeBuf->s_config.ui16_wNumberMsgs;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = false;
           }
         }
         break;
@@ -724,14 +731,14 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
       case COMMAND_LOCK:
       case COMMAND_UNLOCK:
 
-        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].size()-1 ))
+        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
           if (p_writeBuf->ui16_command == COMMAND_LOCK) {
-            iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canBufferLock = TRUE;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = TRUE;
             DEBUG_PRINT2("locked buf %d, obj %d\n", p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj);
           } else {
-            iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
+            iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
             DEBUG_PRINT2("unlocked buf %d, obj %d\n", p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj);
           }
         }
@@ -740,30 +747,30 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 
       case COMMAND_QUERYLOCK:
 
-        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].size()-1 ))
+        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
           i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_QUERY_LOCK;
-          i32_data = iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canBufferLock;
+          i32_data = iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock;
         }
         break;
 
 
       case COMMAND_CLOSEOBJ:
 
-        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].size()-1 ))
+        if ((p_writeBuf->s_config.ui8_bus > HAL_CAN_MAX_BUS_NR ) || ( p_writeBuf->s_config.ui8_obj > iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.size()-1 ))
           i32_error = HAL_RANGE_ERR;
         else {
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canObjConfigured = FALSE;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canObjConfigured = FALSE;
 
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
-          iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus][p_writeBuf->s_config.ui8_obj].ui16_size = 0;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].b_canBufferLock = FALSE;
+          iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj[p_writeBuf->s_config.ui8_obj].ui16_size = 0;
  //           clearReadQueue (p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_rdHandle, iter_client->ui16_pid);
 //          clearWriteQueue(p_writeBuf->s_config.ui8_bus, p_writeBuf->s_config.ui8_obj, pc_serverData->ms_msqDataServer.i32_wrHandle, iter_client->ui16_pid);
 
           // erase element if it is the last in the vector, otherwise it can stay there
-          while (iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].back().b_canObjConfigured == FALSE)
-              iter_client->arrMsgObj[p_writeBuf->s_config.ui8_bus].pop_back();
+          while (iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.back().b_canObjConfigured == FALSE)
+              iter_client->canBus(p_writeBuf->s_config.ui8_bus).mvec_msgObj.pop_back();
         }
         break;
 
@@ -774,9 +781,9 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
           i32_error = HAL_RANGE_ERR;
         } else {
           i32_dataContent = ACKNOWLEDGE_DATA_CONTENT_SEND_DELAY;
-          i32_data = iter_client->marri32_sendDelay[p_writeBuf->s_config.ui8_bus];
+          i32_data = iter_client->canBus(p_writeBuf->s_config.ui8_bus).mi32_sendDelay;
           if (i32_data < 0) i32_data = -i32_data; // so we always return a positive send delay!
-          else iter_client->marri32_sendDelay[p_writeBuf->s_config.ui8_bus]  = -i32_data; // stamp a positive stored delay as READ by negating it!
+          else iter_client->canBus(p_writeBuf->s_config.ui8_bus).mi32_sendDelay  = -i32_data; // stamp a positive stored delay as READ by negating it!
         }
         break;
 
@@ -823,16 +830,16 @@ void readWrite(__HAL::server_c* pc_serverData)
     b_deviceHandleFound=false;
     b_deviceConnected = false;
 
-    for (uint32_t ui32=0; ui32<__HAL::cui32_maxCanBusCnt; ui32++ )
+    for (uint32_t ui32=0; ui32 < pc_serverData->nCanBusses(); ui32++ )
     {
-      if (pc_serverData->canBus(ui32).i32_can_device > 0)
+      if (pc_serverData->canBus(ui32).mi32_can_device > 0)
       {
-        FD_SET(pc_serverData->canBus(ui32).i32_can_device, &rfds);
+        FD_SET(pc_serverData->canBus(ui32).mi32_can_device, &rfds);
         b_deviceHandleFound=true;
         b_handlesAvailableForSelect = true; // calling select() makes sense because we have a file handle from CAN device
       }
 
-      if (pc_serverData->canBus(ui32).b_deviceConnected)
+      if (pc_serverData->canBus(ui32).mb_deviceConnected)
         b_deviceConnected = true;
     }
 
@@ -868,13 +875,13 @@ void readWrite(__HAL::server_c* pc_serverData)
     }
 
     // new message from can device ?
-    for (uint32_t ui32_cnt = 0; ui32_cnt < __HAL::cui32_maxCanBusCnt; ui32_cnt++ )
+    for (uint32_t ui32_cnt = 0; ui32_cnt < pc_serverData->nCanBusses(); ui32_cnt++ )
     {
       if( !isBusOpen(ui32_cnt) )
         continue; // this bus number was not yet used => do not try to read
 
       if ( !b_deviceHandleFound ||
-           (b_deviceHandleFound && pc_serverData->canBus(ui32_cnt).i32_can_device && FD_ISSET(pc_serverData->canBus(ui32_cnt).i32_can_device, &rfds)) 
+           (b_deviceHandleFound && pc_serverData->canBus(ui32_cnt).mi32_can_device && FD_ISSET(pc_serverData->canBus(ui32_cnt).mi32_can_device, &rfds)) 
          )
       { // do card read
         if (readFromBus(ui32_cnt, &(s_transferBuf.s_data.s_canMsg), pc_serverData))

@@ -257,7 +257,7 @@ typedef struct {
 } transferBuf_s;
 
 // client specific data
-struct client_c 
+struct client_c
 {
 public:
   client_c();
@@ -274,20 +274,39 @@ public:
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
   std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
 
-  bool     b_busUsed[cui32_maxCanBusCnt];
+  struct canBus_s {
+    std::vector<tMsgObj>    mvec_msgObj;
+    bool                    mb_busUsed;
+    uint16_t                mui16_globalMask;
+    uint32_t                mui32_globalMask;
+    uint32_t                mui32_lastMask;
+    int32_t                 mi32_sendDelay;
+    bool                    mb_initReceived;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
 
-  uint16_t marrui16_globalMask[cui32_maxCanBusCnt];
-  uint32_t ui32_globalMask[cui32_maxCanBusCnt];
-  uint32_t ui32_lastMask[cui32_maxCanBusCnt];
-  int32_t  marri32_sendDelay[cui32_maxCanBusCnt];
+private:
+  std::vector< canBus_s > mvec_canBus;
 
-  bool     b_initReceived[cui32_maxCanBusCnt];
-
+public:
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
   int32_t  i32_pipeHandle;
 #endif
 };
 
+inline client_c::canBus_s &client_c::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t client_c::nCanBusses()
+{
+  return mvec_canBus.size();
+}
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
 void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data);

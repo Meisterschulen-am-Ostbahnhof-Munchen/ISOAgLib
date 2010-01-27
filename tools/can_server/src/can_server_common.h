@@ -132,13 +132,13 @@ public:
   int      mi_highPrioModeIfMin;
 
   struct canBus_s {
-    uint16_t ui16_globalMask;
-    int32_t  i32_can_device;
-    int32_t  i32_sendDelay;
-    int      i_pendingMsgs;
-    bool     b_deviceConnected;
-    uint16_t ui16_busRefCnt;
-    yasper::ptr< LogFile_c > logFile;
+    uint16_t                 mui16_globalMask;
+    int32_t                  mi32_can_device;
+    int32_t                  mi32_sendDelay;
+    int                      mi_pendingMsgs;
+    bool                     mb_deviceConnected;
+    uint16_t                 mui16_busRefCnt;
+    yasper::ptr< LogFile_c > m_logFile;
     canBus_s();
   };
   canBus_s &canBus(size_t n_index);
