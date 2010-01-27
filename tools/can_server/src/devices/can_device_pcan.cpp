@@ -129,7 +129,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       if (CAN_ERR_OK == rc)
       {
         canBusIsOpen[ui8_bus] = true;
-        pc_serverData->canBus(ui8_bus).b_deviceConnected = true;
+        pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
         return true;
       }
       else {
@@ -147,8 +147,8 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     char fname[32];
     sprintf( fname, "/dev/pcan%u", PCAN_MSCAN_MINOR_BASE + ui8_bus );
 
-    pc_serverData->canBus(ui8_bus).i32_can_device = open(fname, O_RDWR | O_NONBLOCK);
-    if (pc_serverData->canBus(ui8_bus).i32_can_device == -1) {
+    pc_serverData->canBus(ui8_bus).mi32_can_device = open(fname, O_RDWR | O_NONBLOCK);
+    if (pc_serverData->canBus(ui8_bus).mi32_can_device == -1) {
       DEBUG_PRINT1("Could not open CAN bus %d\n",ui8_bus);
       return false;
     }
@@ -160,7 +160,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT1("Init Bitrate with PCAN_BTR0BTR1 wBitrate =%d\n",wBitrate*1000);
     ratix.dwBitRate = wBitrate * 1000;
     ratix.wBTR0BTR1 = 0;
-    if ((ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, PCAN_BTR0BTR1, &ratix)) < 0)
+    if ((ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_BTR0BTR1, &ratix)) < 0)
       return false;
 
     // init CanMsgType (if extended Can Msg of not)
@@ -169,11 +169,11 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     init.wBTR0BTR1    = ratix.wBTR0BTR1;
     init.ucCANMsgType = MSGTYPE_EXTENDED;  // 11 or 29 bits
     init.ucListenOnly = 0;            // listen only mode when != 0
-    if ((ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, PCAN_INIT, &init)) < 0)
+    if ((ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_INIT, &init)) < 0)
       return false;
 
     canBusIsOpen[ui8_bus] = true;
-    pc_serverData->canBus(ui8_bus).b_deviceConnected = true;
+    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
 
     return true;
 #endif
@@ -201,19 +201,19 @@ void __HAL::updatePendingMsgs(server_c* pc_serverData, int8_t i8_bus)
   { // update all buses!
     for (uint8_t ui8_bus=0; ui8_bus < cui32_maxCanBusCnt; ui8_bus++)
     {
-      if (pc_serverData->canBus(ui8_bus).i_pendingMsgs >= 5)
+      if (pc_serverData->canBus(ui8_bus).mi_pendingMsgs >= 5)
       { // we only need to update those who could change from >= 5 to < 5...
-        if ((ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
-        pc_serverData->canBus(ui8_bus).i_pendingMsgs = extstat.nPendingWrites;
-        DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->canBus(ui8_bus).i_pendingMsgs);
+        if ((ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_GET_EXT_STATUS, &extstat)) < 0) continue;
+        pc_serverData->canBus(ui8_bus).mi_pendingMsgs = extstat.nPendingWrites;
+        DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->canBus(ui8_bus).mi_pendingMsgs);
       }
     }
   }
   else
   { // update just the given bus!
-    if ((ioctl(pc_serverData->canBus(i8_bus).i32_can_device, PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
-    pc_serverData->canBus(i8_bus).i_pendingMsgs = extstat.nPendingWrites;
-    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->canBus(i8_bus).i_pendingMsgs);
+    if ((ioctl(pc_serverData->canBus(i8_bus).mi32_can_device, PCAN_GET_EXT_STATUS, &extstat)) < 0) return;
+    pc_serverData->canBus(i8_bus).mi_pendingMsgs = extstat.nPendingWrites;
+    DEBUG_PRINT1 ("peak-can's number of pending msgs is %d\n", pc_serverData->canBus(i8_bus).mi_pendingMsgs);
   }
 #endif
 }
@@ -269,7 +269,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   // should have been checked already by calling function isBusOpen:
   assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
-  ret = ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, PCAN_WRITE_MSG, &msg);
+  ret = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_WRITE_MSG, &msg);
   if (ret < 0)
   {
     perror("sendToBus ioctl");
@@ -279,7 +279,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   }
 
   updatePendingMsgs(pc_serverData, ui8_bus);
-  unsigned int i_pendingMsgs = pc_serverData->canBus(ui8_bus).i_pendingMsgs;
+  unsigned int i_pendingMsgs = pc_serverData->canBus(ui8_bus).mi_pendingMsgs;
   if ((i_pendingMsgs > 0) && (list_sendTimeStamps.size() >= (i_pendingMsgs)))
   { // something pending!
     STL_NAMESPACE::list<int32_t>::iterator pc_iter = list_sendTimeStamps.begin();
@@ -296,10 +296,10 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
       pc_iter = list_sendTimeStamps.erase (pc_iter);
     }
     // do we have a new max for this bus?
-    DEBUG_PRINT3 ("target_extension_can_server_pcan::ca_TransmitCanCard_1: SEND_DELAY WAS: %d    -- max for bus %d is: %d\n", ci_delay, ui8_bus, pc_serverData->canBus(ui8_bus).i32_sendDelay);
-    if (ci_delay > pc_serverData->canBus(ui8_bus).i32_sendDelay)
+    DEBUG_PRINT3 ("target_extension_can_server_pcan::ca_TransmitCanCard_1: SEND_DELAY WAS: %d    -- max for bus %d is: %d\n", ci_delay, ui8_bus, pc_serverData->canBus(ui8_bus).mi32_sendDelay);
+    if (ci_delay > pc_serverData->canBus(ui8_bus).mi32_sendDelay)
     { // yes we do, so set it!
-      pc_serverData->canBus(ui8_bus).i32_sendDelay = ci_delay;
+      pc_serverData->canBus(ui8_bus).mi32_sendDelay = ci_delay;
       DEBUG_PRINT ("target_extension_can_server_pcan::ca_TransmitCanCard_1: reporting back HAL_NEW_SEND_DELAY");
       return HAL_NEW_SEND_DELAY;
     }
@@ -336,7 +336,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   }
 #else
   TPCANRdMsg msgRd;
-  int ret = ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, PCAN_READ_MSG, &msgRd);
+  int ret = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, PCAN_READ_MSG, &msgRd);
   if (ret < 0)
     return false;
 

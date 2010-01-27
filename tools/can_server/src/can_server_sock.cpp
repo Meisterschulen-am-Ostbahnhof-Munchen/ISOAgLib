@@ -583,7 +583,7 @@ void handleCommand(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
         DEBUG_PRINT("COMMAND_REGISTER\n");
 
         // no need to set to 0, as everything got set to zero before!
-        // s_tmpClient.canBus(all-buses).i32_sendDelay = 0;
+        // s_tmpClient.canBus(all-buses).mi32_sendDelay = 0;
 
         DEBUG_PRINT1 ("Client registering with startTimeClock_t from his REGISTER message as %d\n", p_writeBuf->s_startTimeClock.t_clock);
         initClientTime(*iter_client, p_writeBuf->s_startTimeClock.t_clock );

@@ -146,9 +146,9 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     DEBUG_PRINT1("open( \"%s\", O_RDRWR)\n", fname);
 
-    pc_serverData->canBus(ui8_bus).i32_can_device = open(fname, O_RDWR | O_NONBLOCK);
+    pc_serverData->canBus(ui8_bus).mi32_can_device = open(fname, O_RDWR | O_NONBLOCK);
 
-    if (pc_serverData->canBus(ui8_bus).i32_can_device == -1) {
+    if (pc_serverData->canBus(ui8_bus).mi32_can_device == -1) {
       DEBUG_PRINT1("Could not open CAN bus%d\n",ui8_bus);
       return 0;
     }
@@ -159,10 +159,10 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     sprintf( buf, "i 0x%2x%2x e\n", btr0 & 0xFF, btr1 & 0xFF );     //, (extended?" e":" ") extended is not being passed in! Don't use it!
 
     DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
-    write(pc_serverData->canBus(ui8_bus).i32_can_device, buf, strlen(buf));
+    write(pc_serverData->canBus(ui8_bus).mi32_can_device, buf, strlen(buf));
 
     canBusIsOpen[ui8_bus] = true;
-    pc_serverData->canBus(ui8_bus).b_deviceConnected = true;
+    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
   }
 
   return true;
@@ -184,7 +184,7 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 bool doStatusCheck(uint8_t ui8_bus, server_c* pc_serverData)
 {
   static canStatus s_stat;
-  if (ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, CAN_GET_STATUS, &s_stat) == 0)
+  if (ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, CAN_GET_STATUS, &s_stat) == 0)
   {
     if (s_stat.errorFlag & CAN_ERR_PASSIVE)
     {
@@ -223,7 +223,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   // should have been checked already by calling function isBusOpen:
   assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
-  i_ioctlRet = ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, CAN_WRITE_MSG, &msg);
+  i_ioctlRet = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, CAN_WRITE_MSG, &msg);
 
   if (i_ioctlRet < 0) {
     perror("ioctl error during write");
@@ -232,10 +232,10 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
 #if 0
     printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
-    close(pc_serverData->canBus(ui8_bus).i32_can_device);
+    close(pc_serverData->canBus(ui8_bus).mi32_can_device);
     canBusIsOpen[ui8_bus] = false;
     openBusOnCard(ui8_bus, 250, pc_serverData);
-    ret = ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, CAN_WRITE_MSG, &msg);
+    ret = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, CAN_WRITE_MSG, &msg);
     printf("can_server: send message again on bus %d\n", ui8_bus);
 #endif
     return 0;
@@ -249,7 +249,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   canMsgA1_s msg;
 
-  if (ioctl(pc_serverData->canBus(ui8_bus).i32_can_device, CAN_READ_MSG, &msg) == 0)
+  if (ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, CAN_READ_MSG, &msg) == 0)
   {
     ps_canMsg->ui32_id = msg.id;
 
