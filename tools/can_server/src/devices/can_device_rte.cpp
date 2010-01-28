@@ -53,18 +53,19 @@
 #define CVS_REV "$Revision: 2865 $"
 #define RTE_CLIENT
 
-#include "rte_global.h"
-
-#include "can_server.h"
-#include "can_server_common.h"
 #include <assert.h>
+#include <iomanip>
+#include <iostream>
+#include <list>
 
 // RTE Includes
 #include <rte_client.h>   // be an RTE client
-#include <iostream>
-#include <iomanip.h>
 
-#include <list.h>
+
+#include "rte_global.h"
+#include "can_server.h"
+#include "can_server_common.h"
+
 
 using namespace __HAL;
 
