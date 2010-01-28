@@ -117,6 +117,10 @@ public:
   // replay
   bool     mb_inputFileMode;
   FILE*    mf_canInput;
+#ifndef WIN32
+  // daemon option
+  bool     mb_daemon;
+#endif
 
   bool     marrb_remoteDestinationAddressInUse[0x100];
 
@@ -192,6 +196,9 @@ enum OPTION_REDUCED_LOAD_ISO_BUS_NO {};
 enum OPTION_NICE_CAN_READ {};
 enum OPTION_INTERACTIVE {};
 enum OPTION_PRODUCTIVE {};
+#ifndef WIN32
+enum OPTION_DAEMON {};
+#endif
 enum OPTION_HELP {};
 
 template < typename OPTION >

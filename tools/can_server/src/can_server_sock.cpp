@@ -1075,6 +1075,9 @@ yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_REDUCED_LOAD_ISO_BUS_NO >::create(),
   Option_c< OPTION_INTERACTIVE >::create(),
   Option_c< OPTION_PRODUCTIVE >::create(),
+#ifndef WIN32
+  Option_c< OPTION_DAEMON>::create(),
+#endif
   Option_c< OPTION_HELP >::create()
 };
 

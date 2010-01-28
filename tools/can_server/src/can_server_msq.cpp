@@ -1322,6 +1322,9 @@ yasper::ptr< AOption_c > const ga_options[] = {
   Option_c< OPTION_NICE_CAN_READ >::create(),
   Option_c< OPTION_INTERACTIVE >::create(),
   Option_c< OPTION_PRODUCTIVE >::create(),
+#ifndef WIN32
+  Option_c< OPTION_DAEMON > ::create(),
+#endif
   Option_c< OPTION_HELP >::create(),
 };
 

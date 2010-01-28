@@ -99,6 +99,19 @@ void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar
   NextStep:;
   }
 
+#ifndef WIN32
+  if (ar_server.mb_daemon) {
+    // turn off interactive in daemon mode:
+    ar_server.mb_interactive = false;
+
+    // daemonize
+    if (daemon( 0, 0 ) < 0) {
+      std::cerr << "error during daemonization\n" << std::endl;
+      exit(1);
+    }
+  }
+#endif
+
   if (ar_server.mb_interactive) {
     std::cerr << "IsoAgLib CAN-Server" << std::endl;
     std::cerr << "(Run with '--help' to get help)" << std::endl << std::endl;
@@ -427,6 +440,31 @@ std::string Option_c< OPTION_PRODUCTIVE >::doGetUsage() const
 {
   return "  --productive               Set productive mode (contrarily to --interactive)\n";
 }
+
+#ifndef WIN32
+/*  WIN32 Platforms can't handle the daemonize syscall. The service aequivalent is not supported by can_server */
+template <>
+int Option_c< OPTION_DAEMON >::doCheckAndHandle(int /*argc*/, char *argv[], int ai_pos, __HAL::server_c &ar_server) const
+{
+  if (!strcmp(argv[ai_pos], "--daemon")) {
+    ar_server.mb_daemon = true;
+    return 1;
+  }
+  return 0;
+}
+
+template <>
+std::string Option_c< OPTION_DAEMON>::doGetUsage() const
+{
+  return "  --daemon                   Daemonize after startup.\n";
+}
+
+template <>
+std::string Option_c< OPTION_DAEMON>::doGetSetting(__HAL::server_c &ar_server) const
+{
+  return ar_server.mb_daemon? "Daemonized.\n" : "";
+}
+#endif
 
 template <>
 int Option_c< OPTION_HELP >::doCheckAndHandle(int /*argc*/, char *argv[], int ai_pos, __HAL::server_c &/*ar_server*/) const
