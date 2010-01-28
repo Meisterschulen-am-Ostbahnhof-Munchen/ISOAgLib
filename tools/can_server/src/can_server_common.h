@@ -54,6 +54,8 @@
 #define _CAN_SERVER_COMMON_H_
 
 #include <pthread.h>
+#include <stdio.h>
+
 #include <../../tools/libs/misc/yasper.h>
 
 namespace __HAL {
@@ -76,12 +78,12 @@ namespace __HAL {
 class LogFile_c {
 public:
   LogFile_c ( std::string const &arstr_filename )
-    : mp_file( std::fopen( arstr_filename.c_str(), "a+" ) ) {}
+    : mp_file( fopen( arstr_filename.c_str(), "a+" ) ) {}
   ~LogFile_c() {
     if (mp_file)
-      std::fclose( mp_file );
+      fclose( mp_file );
   }
-  std::FILE *getRaw() {
+  FILE *getRaw() {
     return mp_file;
   }
   struct Null_s {
@@ -90,7 +92,7 @@ public:
     }
   };
 private:
-  std::FILE *mp_file;
+  FILE *mp_file;
   // intentionally not implemented (prevent use):
   LogFile_c( LogFile_c const & );
   LogFile_c &operator= ( LogFile_c const & );
