@@ -131,6 +131,8 @@ __HAL::server_c::server_c() :
   mb_logMode(FALSE),
   mb_monitorMode(FALSE),
   mb_inputFileMode(FALSE),
+  mf_canInput(0),
+  mb_daemon(false),
   mi32_lastPipeId(0),
   mi16_reducedLoadOnIsoBus(-1),
   mb_interactive(true),
