@@ -84,6 +84,7 @@ static struct canDevice_s {
     HANDLE  mh_tEventR;
     HANDLE  mh_tEventE;
     HANDLE  m_handle;
+    bool    mb_isHandleAvailable;
     bool    mb_canBusIsOpen;
     canBus_s();
   };
@@ -110,6 +111,7 @@ canDevice_s::canBus_s::canBus_s() :
   mh_tEventR(CreateEvent(NULL,TRUE,FALSE,"R1")),
   mh_tEventE(CreateEvent(NULL,TRUE,FALSE,"E1")),
   m_handle(0),
+  mb_isHandleAvailable(false),
   mb_canBusIsOpen(false)
 {
 }
@@ -146,6 +148,7 @@ uint32_t initCardApi ()
                         &ss_canDevice.canBus(busnr).m_handle);
     // successful?
     if ( l_retval == NTCAN_SUCCESS ) {
+      ss_canDevice.canBus(busnr).mb_isHandleAvailable = true;
       // success => HW found
       printf ( "canOpen: CAN%u using netnumber %lu\n", unsigned(busnr), l_netnumber);
       busnr++;
@@ -172,6 +175,9 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
   if ( ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen )
     return true; // already initialized and files are already open
+
+  if ( !ss_canDevice.canBus(busnr).mb_isHandleAvailable )
+    return false; // not available
 
   DEBUG_PRINT1("Opening CAN BUS channel=%u\n", unsigned(ui8_bus));
 
