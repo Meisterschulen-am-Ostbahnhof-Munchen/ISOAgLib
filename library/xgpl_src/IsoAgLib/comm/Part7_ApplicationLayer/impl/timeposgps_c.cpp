@@ -1074,6 +1074,7 @@ void TimePosGps_c::isoSendDirection( void )
 
   data().setIdentType(Ident_c::ExtendedIdent);
   data().setIsoPri(2);
+  data().setLen(8);
   data().setISONameForSA(*mpc_isoNameGps);
 
   data().setIsoPgn (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
