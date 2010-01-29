@@ -29,8 +29,7 @@
 #define ON                1
 #define OFF               0
 
-//#if !defined(SYSTEM_PC_VC) && !defined(WINCE)
-#if !defined(WINCE)
+#if !defined(_MSC_VER) && !defined(WINCE)
   #include <stdint.h>
 #else
   typedef unsigned char uint8_t;

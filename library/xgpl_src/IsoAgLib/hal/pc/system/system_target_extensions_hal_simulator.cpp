@@ -311,7 +311,6 @@ void powerDown(void)
   }
 }
 
-//#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
 #if defined(USE_SENSOR_I)
 typedef void (*_counterIrqFunction)(...);
 static _counterIrqFunction _irqFuncArr[16] = {NULL, NULL, NULL, NULL, NULL, NULL,

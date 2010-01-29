@@ -309,7 +309,6 @@ void powerDown(void)
   }
 }
 
-//#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
 #if defined(USE_SENSOR_I)
 typedef void (*_counterIrqFunction)(...);
 static _counterIrqFunction _irqFuncArr[16] = {NULL, NULL, NULL, NULL, NULL, NULL,
@@ -320,7 +319,6 @@ int32_t i32_lastTime[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 /* the evaluation of the on/off-switch (D+)*/
 int16_t  getOn_offSwitch(void)
 {
-//#if !defined(SYSTEM_PC_VC) && defined(USE_SENSOR_I)
 #if defined(USE_SENSOR_I)
   // simulate digital RPM input
   uint8_t ui8_ind;
