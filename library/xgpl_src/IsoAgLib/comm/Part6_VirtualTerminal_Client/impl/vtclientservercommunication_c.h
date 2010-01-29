@@ -105,59 +105,45 @@ public:
 };
 
 
+// forward declaration
+class VtClientServerCommunication_c;
+
+
 /** helper class for low level streaming.
   This function was excluded from IsoTerminal_c,
   as some STL aware compilers don't support multiple inheritance
-  ( e.g. IAR ). So this helper construction was defined.
+  (e.g. IAR). So this helper construction was defined.
 */
-class VtClientServerCommStreamer_c : public IsoAgLib::iMultiSendStreamer_c
+class iVtObjectStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
 public:
-  VtClientServerCommStreamer_c(IsoAgLib::iIsoTerminalObjectPool_c& arc_pool) : mrc_pool (arc_pool) {}
+  iVtObjectStreamer_c (VtClientServerCommunication_c& arc_vtCSCbackRef)
+    : mrc_vtCSCbackRef (arc_vtCSCbackRef)
+  { /* nop */ }
 
-  virtual ~VtClientServerCommStreamer_c(){}
-  /** place next data to send direct into send buffer of pointed
-      stream send package - MultiSendStreamer_c will send this
-      buffer afterwards
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
+  virtual ~iVtObjectStreamer_c(){}
+
+  /// Implementation of iMultiSendStreamer_c methods
   void setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes);
-
-  /** set cache for data source to stream start
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
   void resetDataNextStreamPart();
-
-  /** save current send position in data source - neeed for resend on send problem
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
   void saveDataNextStreamPart();
-
-  /** reactivate previously stored data source position - used for resend on problem
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
   void restoreDataNextStreamPart();
+  uint32_t getStreamSize() { return mui32_size; }
 
-  /** calculate the size of the data source
-      - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
-    */
-  uint32_t getStreamSize() { return (mui32_streamSize != 0) ? mui32_streamSize : mui32_streamSizeLang; }
+  void setStreamSize(uint32_t aui32_size) { mui32_size = aui32_size; }
 
   uint8_t getFirstByte() { return 0x11; } // If ISOTerminal streams out, it's because of an Annex C. Object Pool Upload, so 0x11 can be returned ALWAYS!
 
   uint32_t mui32_objectStreamPosition;
   uint32_t mui32_objectStreamPositionStored;
-  uint32_t mui32_streamSize;
-  /// Following variable indicates if we're uploading TWO parts or not!
-  uint32_t mui32_streamSizeLang; // if 0, there's only one upload. if != 0 and the first upload finishes, this value is copied to "mui32_streamSize" and this value is set to 0!
-  /// Following variable indicated if we're uploading A USER-GIVEN SET OF OBJECTS (User triggered partial pool update)
-  IsoAgLib::iVtObject_c** mpc_userPoolUpdateObjects;
+  uint32_t mui32_size;
+  IsoAgLib::iVtObject_c*HUGE_MEM* mpc_objectsToUpload; // @todo maybe this variable can be optimized away and mpc_iterObjects be directly used...
 
   /** pointers needed by MultiSendStreamer */
   IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjects;
   IsoAgLib::iVtObject_c*HUGE_MEM* mpc_iterObjectsStored;
 
-  IsoAgLib::iIsoTerminalObjectPool_c& mrc_pool;
+  VtClientServerCommunication_c& mrc_vtCSCbackRef;
 #define ISO_VT_UPLOAD_BUFFER_SIZE 128
   uint8_t marr_uploadBuffer [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t m_uploadBufferFilled;
@@ -166,13 +152,8 @@ public:
   uint8_t marr_uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
   uint8_t m_uploadBufferFilledStored;
   uint8_t m_uploadBufferPositionStored;
-
-  int8_t mi8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
-  int8_t mi8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
-
-  uint16_t mui16_objectPoolUploadingLanguageCode;
-  uint16_t mui16_objectPoolUploadedLanguageCode;
 };
+
 
 // forward declaration
 class VtServerInstance_c;
@@ -186,6 +167,25 @@ private:
     IsoName_c mc_inputIsoName;
     uint8_t mui8_inputNumber;
     uint16_t mui16_functionUid;
+  };
+
+  struct UploadPhase_s
+  {
+    UploadPhase_s() : pc_streamer (NULL), ui32_size (0) {}
+    UploadPhase_s (IsoAgLib::iMultiSendStreamer_c* apc_streamer, uint32_t aui32_size) : pc_streamer (apc_streamer), ui32_size(aui32_size) {}
+
+    IsoAgLib::iMultiSendStreamer_c* pc_streamer;
+    uint32_t ui32_size;
+  };
+
+  enum UploadPhase_t {
+    UploadPhaseFIRSTfix = 0,
+    UploadPhaseFIRSTlang = 1,
+    UploadPhaseIVtObjectsFix = 0,
+    UploadPhaseIVtObjectsLang = 1,
+    UploadPhaseAppSpecificFix = 2,
+    UploadPhaseAppSpecificLang = 3,
+    UploadPhaseLAST = 3
   };
 
 public:
@@ -214,7 +214,7 @@ public:
   enum uploadCommandState_t {
     UploadCommandWaitingForCommandResponse,
     UploadCommandTimedOut,
-    UploadCommandWithoutResponse /*, UploadCommandFailed*/
+    UploadCommandPartialPoolUpdate // for user/language reasons
   };
 
   enum uploadPoolType_t {
@@ -428,13 +428,18 @@ private:
 
   void checkVtStateChange();
 
-  /** sends "Get Memory" to start uploading process... */
-  void startObjectPoolUploading (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects=NULL, uint16_t aui16_numOfUserPoolUpdateObjects=0);
+  void startCurrentUploadPhase();
+  void indicateUploadPhaseCompletion();
+  void indicateUploadCompletion(); // all phases completed.
+  void checkPoolPhaseRunningMultiSend(); // check for abort/retry when upload a partial object pool
+
+  // Send out Get Memory command and move on state engine to expect a Get Memory Response
+  void sendGetMemory();
+
+  void initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects=NULL, uint16_t aui16_numOfUserPoolUpdateObjects=0);
   /** sets all states to successfull uploading and call the hook function! */
   void finalizeUploading();
 
-  /** send "End of Object Pool" message */
-  void indicateObjectPoolCompletion();
   bool startUploadCommand();
   void finishUploadCommand(bool ab_TEMPORARYSOLUTION_fromTimeEvent);
   /** sets state to "OPCannotUpload"... */
@@ -455,6 +460,8 @@ private:
 private: // attributes
   /** static instance to store temporarily before push_back into list */
   static SendUpload_c msc_tempSendUpload;
+  IsoAgLib::iIsoTerminalObjectPool_c& mrc_pool;
+
   bool mb_vtAliveCurrent;
   bool mb_checkSameCommand;
 
@@ -486,6 +493,20 @@ private: // attributes
   uploadPoolState_t men_uploadPoolState;       // state only used if men_uploadType == "UploadPool"
   uploadPoolType_t men_uploadPoolType;
 
+  UploadPhase_s ms_uploadPhasesAutomatic [UploadPhaseLAST+1]; // automatic pool upload with all needed parts (lang indep, lang dep)
+  UploadPhase_t men_uploadPhaseAutomatic;
+
+  UploadPhase_s ms_uploadPhaseUser; // user triggered upload phase...
+  IsoAgLib::iVtObject_c** mppc_uploadPhaseUserObjects;
+
+public: // for iVtObjectStreamer - quick hack due to no multiple-inheritance (IAR-compiler)
+  int8_t mi8_objectPoolUploadingLanguage; // only valid if "initially uploading" or "language updating"
+  int8_t mi8_objectPoolUploadedLanguage;  // only valid if "ObjectPoolUploadedSuccessfully"
+
+  uint16_t mui16_objectPoolUploadingLanguageCode;
+  uint16_t mui16_objectPoolUploadedLanguageCode;
+
+private:
   uint32_t mui32_uploadTimestamp;
   uint32_t mui32_uploadTimeout;
 
@@ -528,12 +549,11 @@ private: // attributes
 
   STL_NAMESPACE::list<AuxAssignment_s> mlist_auxAssignments;
 
-  VtClientServerCommStreamer_c mc_streamer;
+  iVtObjectStreamer_c mc_iVtObjectStreamer;
 
   int32_t mi32_timeWsAnnounceKey;
 
   bool mb_isSlave; // @todo WS SLAVE: could be substituted by master/slave specific derived classes
-
 };
 
 }

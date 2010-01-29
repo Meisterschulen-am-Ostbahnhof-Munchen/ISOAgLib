@@ -21,7 +21,7 @@
 #include "ivttypes.h"
 #include <supplementary_driver/driver/datastreams/streaminput_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
-//#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
+#include <utility>
 
 /* *************************************** */
 /* ********** command defines ************ */
@@ -43,6 +43,7 @@ struct localSettings_s;
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
   class iStream_c;
+  class iMultiSendStreamer_c;
 /**
   @brief This class is needed to handle Terminal KeyCodes (SoftKey or Button) and Numeric Value Changes and also
   gives you the possibility to perform some action right after successfull objectpool uploading.
@@ -318,6 +319,27 @@ public:
     for Get Attribute Value command
   */
   virtual void eventAttributeValue (IsoAgLib::iVtObject_c* /*obj*/, uint8_t /*ui8_attributeValue*/, uint8_t* /*pui8_value*/) {}
+
+  /** This function enables the application to add proprietary
+   * (language independent) IOP-data to the object pool upload
+   * CAUTION: Use only if you know what you're doing,
+   *          this is not needed for standard VT-Clients!
+   * @return Size of that Objectpool (IOP)-part (including the 0x11 byte)
+   *         paired with a pointer to your iMultiSendStreamer_c instance
+   *         that handles streaming of the proprietary IOP-data.
+   */
+  virtual std::pair<uint32_t, iMultiSendStreamer_c*> getAppSpecificFixPoolData() { return std::pair<uint32_t,iMultiSendStreamer_c*>(0, NULL); }
+
+  /** This function enables the application to add proprietary
+   * (language dependent) IOP-data to the object pool upload
+   * CAUTION: Use only if you know what you're doing,
+   *          this is not needed for standard VT-Clients!
+   * @return Size of that Objectpool (IOP)-part (including the 0x11 byte)
+   *         paired with a pointer to your iMultiSendStreamer_c instance
+   *         that handles streaming of the proprietary IOP-data.
+   */
+  virtual std::pair<uint32_t, iMultiSendStreamer_c*> getAppSpecificLangPoolData (int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/) { return std::pair<uint32_t,iMultiSendStreamer_c*>(0, NULL); }
+
 private:
   /**
      hook function that gets called after recognizing an incoming

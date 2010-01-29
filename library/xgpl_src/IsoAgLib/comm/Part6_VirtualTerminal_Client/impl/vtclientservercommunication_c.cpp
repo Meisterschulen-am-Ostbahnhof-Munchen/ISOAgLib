@@ -12,8 +12,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-// LOESCHE_POOL will send DeleteVersion INSTEAD of LoadVersion
-//#define LOESCHE_POOL
 //#define GET_VERSIONS
 //#define USE_SIMPLE_AUX_RESPONSE
 
@@ -21,13 +19,9 @@
 #include "vtclientservercommunication_c.h"
 #include "../ivtclientservercommunication_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-// #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-// #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
-// #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-// #include "vttypes.h"
 #include "../ivtobjectpicturegraphic_c.h"
 //#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
   #include "../ivtobjectgraphicscontext_c.h"
@@ -38,7 +32,7 @@
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectworkingset_c.h"
 
-
+#include <IsoAgLib/util/iassert.h>
 
 #if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -163,7 +157,7 @@ void SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function
  */
 void
-VtClientServerCommStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
+iVtObjectStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, uint8_t bytes)
 {
   while ((m_uploadBufferFilled-m_uploadBufferPosition) < bytes)
   {
@@ -193,47 +187,20 @@ VtClientServerCommStreamer_c::setDataNextStreamPart (MultiSendPkg_c* mspData, ui
 /** set cache for data source to stream start
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function */
 void
-VtClientServerCommStreamer_c::resetDataNextStreamPart()
+iVtObjectStreamer_c::resetDataNextStreamPart()
 {
-  if (mpc_userPoolUpdateObjects)
-  { // user-given partial pool upload
-    mpc_iterObjects = mpc_userPoolUpdateObjects;
-  }
-  else
-  { // language pool update
-    uint8_t ui8_streamOffset;
-    if (mui32_streamSize > 0)
-    { // stream GENERAL PART - that is **INDEX 0**
-      ui8_streamOffset = 0;
-    }
-    else
-    { // stream LANGUAGE PART - that is **INDEX 1..NrOfLang**
-      const int8_t ci8_realUploadingLanguage = (mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage;
-      ui8_streamOffset = ci8_realUploadingLanguage + 1; // skip general pool
-    }
-    mpc_iterObjects = mrc_pool.getIVtObjects()[ui8_streamOffset];
-  }
+  mpc_iterObjects = mpc_objectsToUpload;
   mui32_objectStreamPosition = 0;
   m_uploadBufferPosition = 0;
   m_uploadBufferFilled = 1;
   marr_uploadBuffer [0] = 0x11; // Upload Object Pool!
-
-  // ! mui32_streamSize is constant and is initialized in "StartObjectPoolUploading"
-  // ! mrc_pool       is constant and is initialized in "StartObjectPoolUploading"
-
-  // following should not be needed to be reset, as this set by "saveDataNextStreamPart"
-  // ? mui32_objectStreamPositionStored
-  // ? mpc_iterObjectsStored;
-  // ? marr_uploadBufferStored [ISO_VT_UPLOAD_BUFFER_SIZE];
-  // ? m_uploadBufferFilledStored;
-  // ? m_uploadBufferPositionStored;
 }
 
 
 /** save current send position in data source - neeed for resend on send problem
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function */
 void
-VtClientServerCommStreamer_c::saveDataNextStreamPart()
+iVtObjectStreamer_c::saveDataNextStreamPart()
 {
   mpc_iterObjectsStored = mpc_iterObjects;
   mui32_objectStreamPositionStored = mui32_objectStreamPosition;
@@ -247,7 +214,7 @@ VtClientServerCommStreamer_c::saveDataNextStreamPart()
 /** reactivate previously stored data source position - used for resend on problem
     - implementation of the abstract IsoAgLib::MultiSendStreamer_c function */
 void
-VtClientServerCommStreamer_c::restoreDataNextStreamPart()
+iVtObjectStreamer_c::restoreDataNextStreamPart()
 {
   mpc_iterObjects = mpc_iterObjectsStored;
   mui32_objectStreamPosition = mui32_objectStreamPositionStored;
@@ -268,7 +235,7 @@ SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
 void
 VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
 {
-  mc_streamer.mrc_pool.eventStringValueAbort();
+  mrc_pool.eventStringValueAbort();
 }
 
 
@@ -310,12 +277,12 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
           return false;
         }
       }
-      mc_streamer.mrc_pool.eventStringValue (mui16_inputStringId, mui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
+      mrc_pool.eventStringValue (mui16_inputStringId, mui8_inputStringLength, arc_stream, arc_stream.getNotParsedSize(), ab_isFirstChunk, ab_isLastChunk);
       break;
     default:
       if ( ui8_streamFirstByte >= 0x60 && ui8_streamFirstByte <= 0x7F && ab_isLastChunk)
       { // a proprietary stream message has been completely received -> process it
-        mc_streamer.mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c(), ui8_streamFirstByte, arc_stream );
+        mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c(), ui8_streamFirstByte, arc_stream );
       }
       break;
   }
@@ -327,39 +294,70 @@ VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& 
 /** default constructor, which can optional set the pointer to the containing
   Scheduler_c object instance
  */
-VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId, bool ab_isSlave SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  : mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
+VtClientServerCommunication_c::VtClientServerCommunication_c(
+  IdentItem_c& r_wsMasterIdentItem,
+  IsoTerminal_c &r_isoTerminal,
+  IsoAgLib::iIsoTerminalObjectPool_c& arc_pool,
+  char* apc_versionLabel,
+  uint8_t aui8_clientId,
+  bool ab_isSlave SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  : mrc_pool (arc_pool)
+  , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , mb_checkSameCommand (true)
   , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
   , mrc_isoTerminal (r_isoTerminal)
+  , mpc_vtServerInstance (NULL)
+  , mb_usingVersionLabel (false)
+  //marrp7c_versionLabel [7] will be initialized below
+  , men_objectPoolState (OPInitial)
+  , mi8_vtLanguage (-1)
+  , men_uploadType (UploadPool)
+  , men_uploadCommandState (UploadCommandTimedOut) // dummy init value.
+  , men_uploadPoolState (UploadPoolInit) // with "UploadInit
+  , men_uploadPoolType (UploadPoolTypeCompleteInitially)
+  //ms_uploadPhases
+  , men_uploadPhaseAutomatic (UploadPhaseIVtObjectsFix)
+  , mppc_uploadPhaseUserObjects (NULL)
+  , mi8_objectPoolUploadingLanguage(0) // only valid if "initially uploading" or "language updating"
+  , mi8_objectPoolUploadedLanguage(0) // only valid if "ObjectPoolUploadedSuccessfully"
+  , mui16_objectPoolUploadingLanguageCode (0x0000)
+  , mui16_objectPoolUploadedLanguageCode (0x0000)
+  , mui32_uploadTimestamp (0)
+  , mui32_uploadTimeout (0) // will be set when needed
+  , mui8_commandParameter (0) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
+  , mui8_uploadError (0) // only valid in OPCannotBeUploaded case
+  , mui8_uploadRetry (0)
+  , men_sendSuccess (__IsoAgLib::MultiSend_c::SendSuccess)
+  , mui16_inputStringId (0xFFFF) // will be set when first chunk is received
+  , mui8_inputStringLength (0) // will be set when first chunk is received
+  , mi32_nextWsMaintenanceMsg (-1)
+  , mb_receiveFilterCreated (false)
+  , mui8_clientId (aui8_clientId)
   , mc_data (SINGLETON_VEC_KEY_PARAMETER_USE)
   , men_displayState (VtClientDisplayStateHidden)
-  , mc_streamer (arc_pool)
+  , mq_sendUpload()
+  , mlist_auxAssignments()
+  , mc_iVtObjectStreamer (*this)
   , mi32_timeWsAnnounceKey (-1) // no announce tries started yet...
   , mb_isSlave(ab_isSlave)
 {
-  mpc_vtServerInstance = NULL;
-  mi8_vtLanguage = -1;
-  mb_receiveFilterCreated = false;
-  mui8_clientId = aui8_clientId;
-
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  mc_streamer.mrc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
+  mrc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
   // now let all clients know which client they belong to
   if (mui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
-    for (uint16_t ui16_objIndex = 0; ui16_objIndex < mc_streamer.mrc_pool.getNumObjects(); ui16_objIndex++)
-      mc_streamer.mrc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (mui8_clientId);
-    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < mc_streamer.mrc_pool.getNumLang(); ui8_objLangIndex++)
-      for (uint16_t ui16_objIndex = 0; ui16_objIndex < mc_streamer.mrc_pool.getNumObjectsLang(); ui16_objIndex++)
-        mc_streamer.mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (mui8_clientId);
+    for (uint16_t ui16_objIndex = 0; ui16_objIndex < mrc_pool.getNumObjects(); ui16_objIndex++)
+      mrc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (mui8_clientId);
+    for (uint8_t ui8_objLangIndex = 0; ui8_objLangIndex < mrc_pool.getNumLang(); ui8_objLangIndex++)
+      for (uint16_t ui16_objIndex = 0; ui16_objIndex < mrc_pool.getNumObjectsLang(); ui16_objIndex++)
+        mrc_pool.getIVtObjects()[ui8_objLangIndex+1][ui16_objIndex]->setClientID (mui8_clientId);
   }
 
   if (apc_versionLabel)
   {
     const uint32_t cui_len = CNAMESPACE::strlen (apc_versionLabel);
-    if ( ((mc_streamer.mrc_pool.getNumLang() == 0) && (cui_len > 7))
-      || ((mc_streamer.mrc_pool.getNumLang()  > 0) && (cui_len > 5))
+    if ( ((mrc_pool.getNumLang() == 0) && (cui_len > 7))
+      || ((mrc_pool.getNumLang()  > 0) && (cui_len > 5))
        )
     { // too long, fail!
       getILibErrInstance().registerError (iLibErr_c::Precondition, iLibErr_c::IsoTerminal);
@@ -371,15 +369,12 @@ VtClientServerCommunication_c::VtClientServerCommunication_c (IdentItem_c& r_wsM
     for (; i<7;       i++) marrp7c_versionLabel [i] = ' '; // ASCII: Space
     mb_usingVersionLabel = true;
   }
-  else
-  {
-    mb_usingVersionLabel = false;
-  }
+  // else: default set in initialization-list
 
-  men_objectPoolState = OPInitial;      // try to upload until state == UploadedSuccessfully || CannotBeUploaded
-  men_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-  men_uploadPoolState = UploadPoolInit; // with "UploadInit
-//men_uploadPoolType = X;               // don't care as no pool is being uploaded! --> will be set in startObjectPoolUploading
+  /// ms_uploadPhases
+  ms_uploadPhasesAutomatic[0] = UploadPhase_s (&mc_iVtObjectStreamer, 0);
+  ms_uploadPhasesAutomatic[1] = UploadPhase_s (&mc_iVtObjectStreamer, 0);
+  ms_uploadPhaseUser = UploadPhase_s (&mc_iVtObjectStreamer, 0);
 }
 
 
@@ -434,34 +429,121 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
   }
 
   if (men_uploadPoolState == UploadPoolUploading)
-  { // Check if we expect an (OBJECTPOOL) UPLOAD to fail/finish?
-    switch (men_sendSuccess)
-    {
-      case __IsoAgLib::MultiSend_c::Running:
-      { // do nothing, still wait.
-      } break;
-      case __IsoAgLib::MultiSend_c::SendAborted:
-      { // aborted sending
-        /// re-send the current stream!
-        getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
-      } break;
-      case __IsoAgLib::MultiSend_c::SendSuccess:
-      { // see what part we just finished
-        if (mc_streamer.mui32_streamSize > 0)
-        { // we just finished streaming the GENERAL part, so let's see if we have a LANGUAGE part to stream?
-          mc_streamer.mui32_streamSize = 0; // indicate completion of GENERAL upload!
-          if (mc_streamer.mui32_streamSizeLang > 0)
-          { // start LANGUAGE part upload!
-            getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
-            break; // we're uploading, do not indicate pool completion ;)
-          }
-        } // else we just finished streaming the LANGUAGE part, so upload is finished now!
-        // successfully sent, so we now do have to send out the "End of Object Pool Message"
-        indicateObjectPoolCompletion(); // Send "End of Object Pool" message
-      } break;
-    } // switch
+  { // Check if we expect a partial (OBJECTPOOL) UPLOAD to fail/finish?
+    checkPoolPhaseRunningMultiSend();
   }
 }
+
+void
+VtClientServerCommunication_c::checkPoolPhaseRunningMultiSend()
+{
+  switch (men_sendSuccess)
+  {
+    case __IsoAgLib::MultiSend_c::Running:
+    { // do nothing, still wait.
+    } break;
+    case __IsoAgLib::MultiSend_c::SendAborted:
+    { // aborted sending - re-send the current stream (partial OP)
+      startCurrentUploadPhase();
+    } break;
+    case __IsoAgLib::MultiSend_c::SendSuccess:
+    { // see what part we just finished
+      indicateUploadPhaseCompletion(); // may complete the upload or switch to the next phase
+    } break;
+  } // switch
+}
+
+
+void
+VtClientServerCommunication_c::indicateUploadPhaseCompletion()
+{
+  if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
+  { // we only have one part, so we're done!
+    mc_iVtObjectStreamer.mpc_objectsToUpload = NULL; // just for proper cleanup.
+    // We don't need that pointer anymore. It can be invalid after we told the client
+    // that we're done with partial user objectpool upload/update.
+    indicateUploadCompletion(); // Send "End of Object Pool" message
+    return;
+  }
+  else
+  { // we may have multiple parts, so check that..
+    // move to next possible one.
+    if (men_uploadPoolType == UploadPoolTypeLanguageUpdate)
+      men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+2); // skip the GENERAL parts, move on directly to next LANGUAGE part!
+    else
+      men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+1);
+
+    startCurrentUploadPhase();
+  }
+}
+
+
+void
+VtClientServerCommunication_c::startCurrentUploadPhase()
+{
+  IsoAgLib::iMultiSendStreamer_c* streamer = NULL;
+  switch (men_uploadPoolType)
+  {
+    case UploadPoolTypeUserPoolUpdate:
+      streamer = ms_uploadPhaseUser.pc_streamer;
+      mc_iVtObjectStreamer.mpc_objectsToUpload = mppc_uploadPhaseUserObjects;
+      mc_iVtObjectStreamer.setStreamSize (ms_uploadPhaseUser.ui32_size);
+      break;
+
+    case UploadPoolTypeCompleteInitially:
+    case UploadPoolTypeLanguageUpdate:
+      // First, check current phase.
+      // while the current phase is n/a, move to next.
+      while ((men_uploadPhaseAutomatic <= UploadPhaseLAST) && (ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].ui32_size == 0))
+      { // prepare for the next part
+        if (men_uploadPoolType == UploadPoolTypeLanguageUpdate)
+          men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+2); // skip the GENERAL parts, move on directly to next LANGUAGE part!
+        else
+          men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+1);
+      }
+      if (men_uploadPhaseAutomatic > UploadPhaseLAST)
+      { // done with all phases!
+        indicateUploadCompletion(); // Send "End of Object Pool" message
+        return;
+      }
+      // else: start next phase
+      streamer = ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].pc_streamer;
+      // first, prepare the individual upload phases.
+      switch (men_uploadPhaseAutomatic)
+      {
+        case UploadPhaseIVtObjectsFix:
+          mc_iVtObjectStreamer.mpc_objectsToUpload = mrc_pool.getIVtObjects()[0]; // main FIX (lang. indep) iVtObject part
+          mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].ui32_size);
+          break;
+
+        case UploadPhaseIVtObjectsLang:
+        { // phase 0 & 1 use iVtObjectStreamer, so prepare for that!
+          const int8_t ci8_realUploadingLanguage = ((mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage) + 1;
+          mc_iVtObjectStreamer.mpc_objectsToUpload = mrc_pool.getIVtObjects()[ci8_realUploadingLanguage];
+          mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].ui32_size);
+        } break;
+
+        case UploadPhaseAppSpecificFix:
+          break; // nop
+        case UploadPhaseAppSpecificLang:
+          break; // nop
+
+        // no default, to catch warning on unhandled enum in case an enum-value is added.
+      }
+      break;
+    // no default, to catch warning on unhandled enum in case an enum-value is added.
+  }
+
+  // streamer set up above (with correct size, etc.)
+  isoaglib_assert (streamer);
+
+  getMultiSendInstance4Comm().sendIsoTarget(
+    mrc_wsMasterIdentItem.isoName(),
+    mpc_vtServerInstance->getIsoName(),
+    streamer,
+    ECU_TO_VT_PGN, men_sendSuccess);
+}
+
 
 void
 VtClientServerCommunication_c::timeEventPrePoolUpload()
@@ -545,10 +627,10 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       }
 #endif
       char lang1, lang2;
-      if (mc_streamer.mui16_objectPoolUploadingLanguageCode != 0x0000)
+      if (mui16_objectPoolUploadingLanguageCode != 0x0000)
       {
-        lang1 = mc_streamer.mui16_objectPoolUploadingLanguageCode >> 8;
-        lang2 = mc_streamer.mui16_objectPoolUploadingLanguageCode & 0xFF;
+        lang1 = mui16_objectPoolUploadingLanguageCode >> 8;
+        lang2 = mui16_objectPoolUploadingLanguageCode & 0xFF;
       }
       else
       {
@@ -558,17 +640,10 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 
       // Try to "Non Volatile Memory - Load Version" first!
       mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-#ifdef LOESCHE_POOL
-                            210,
-#else
                             209,
-#endif
-                        marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
+                            marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
       getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
                                             //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
-#ifdef LOESCHE_POOL
-      startObjectPoolUploading (UploadPoolTypeCompleteInitially);
-#else
       // start uploading after reception of LoadVersion Response
       men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
       men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
@@ -577,13 +652,13 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 #ifdef DEBUG
       INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-#endif
     }
     else
 #endif
     { // NO_LOAD_VERSION
       // Start uploading right now, no "LoadVersion" first
-      startObjectPoolUploading (UploadPoolTypeCompleteInitially); // no language specific upload - normal upload!
+      initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially); // no language specific upload - normal upload!
+      sendGetMemory();
     }
   }
   return false;
@@ -712,62 +787,65 @@ VtClientServerCommunication_c::timeEvent(void)
   /// FROM HERE ON THE OBJECT-POOL >>IS<< UPLOADED SUCCESSFULLY
   /// HANDLE CASE A) AND B) FROM HERE NOW
   /// A) NOW HERE THE LANGUAGE CHANGE IS HANDLED
-  if ((mc_streamer.mi8_objectPoolUploadingLanguage == -2) // indicates no update running
-       && (mi8_vtLanguage != mc_streamer.mi8_objectPoolUploadedLanguage))
+  if ((mi8_objectPoolUploadingLanguage == -2) // indicates no update running
+       && (mi8_vtLanguage != mi8_objectPoolUploadedLanguage))
   { // update languages on the fly
     setObjectPoolUploadingLanguage();
     /// NOTIFY THE APPLICATION so it can enqueue some commands that are processed BEFORE the update is done
     /// e.g. switch to a "Wait while changing language..." datamask.
-    mc_streamer.mrc_pool.eventPrepareForLanguageChange (mc_streamer.mi8_objectPoolUploadingLanguage, mc_streamer.mui16_objectPoolUploadingLanguageCode);
+    mrc_pool.eventPrepareForLanguageChange (mi8_objectPoolUploadingLanguage, mui16_objectPoolUploadingLanguageCode);
 
     sendCommandUpdateLanguagePool();
-    // we keep (mc_streamer.mi8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
+    // we keep (mi8_objectPoolUploadingLanguage != -2), so a change in between doesn't care and won't happen!!
   }
 
   /// B) NOW HERE THE RUNTIME COMMANDS ARE BEING HANDLED
   if (men_uploadType == UploadCommand)
   { // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPacketCommand"
-    switch (men_sendSuccess)
-    {
-      case __IsoAgLib::MultiSend_c::SendAborted:
-        // If aborted, retry regardless of "mui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
-        startUploadCommand();
-        break;
 
-      case __IsoAgLib::MultiSend_c::Running:
-        // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
-        mui32_uploadTimestamp = HAL::getTime();
-        break;
+    /// Handle special "command" Partial Pool Update
+    if (men_uploadCommandState == UploadCommandPartialPoolUpdate)
+    { // special "command"
+      checkPoolPhaseRunningMultiSend();
+    }
+    else
+    { // "normal" command
+      switch (men_sendSuccess)
+      {
+        case __IsoAgLib::MultiSend_c::SendAborted:
+          // If aborted, retry regardless of "mui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
+          startUploadCommand();
+          break;
 
-      case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
-      default:
-      { // successfully sent...
-        if (men_uploadCommandState == UploadCommandWithoutResponse)
-        { // no response is awaited, so we finished sending
-          finishUploadCommand(true);
-          break; // and done!
-        }
+        case __IsoAgLib::MultiSend_c::Running:
+          // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
+          mui32_uploadTimestamp = HAL::getTime();
+          break;
 
-        if (men_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
-        { // Waiting for an answer - Did it time out?
-          if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
-            men_uploadCommandState = UploadCommandTimedOut;
-        } // don't break, as "UploadCommandTimedOut" is handled right below!
+        case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
+        default:
+        { // successfully sent...
+          if (men_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
+          { // Waiting for an answer - Did it time out?
+            if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
+              men_uploadCommandState = UploadCommandTimedOut;
+          } // don't break, as "UploadCommandTimedOut" is handled right below!
 
-        // Are we in "Upload Command"-State and the last Upload failed/timed out?
-        if ((men_uploadCommandState == UploadCommandTimedOut))
-        {
-          if (mui8_uploadRetry > 0)
+          // Are we in "Upload Command"-State and the last Upload failed/timed out?
+          if ((men_uploadCommandState == UploadCommandTimedOut))
           {
-            mui8_uploadRetry--;
-            startUploadCommand();
+            if (mui8_uploadRetry > 0)
+            {
+              mui8_uploadRetry--;
+              startUploadCommand();
+            }
+            else
+            { // No more retries, simply finish this job and go Idle!
+              finishUploadCommand(true); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
+            }
           }
-          else
-          { // No more retries, simply finish this job and go Idle!
-            finishUploadCommand(true); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
-          }
+          break;
         }
-        break;
       }
     }
   } // UploadCommand
@@ -853,10 +931,10 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
   { // slave may have no WS in pool!
     if (!mb_isSlave)
     {
-      const uint8_t cui8_languages = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
+      const uint8_t cui8_languages = mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow;
       for (int i=0; i<cui8_languages; i++)
       {
-        const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
+        const uint8_t* lang = mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[i].language;
         if (mpc_vtServerInstance->getLocalSettings()->languageCode == ((lang[0] << 8) | lang[1]))
         {
           mi8_vtLanguage = i; // yes, VT's language is directly supported by this workingset
@@ -864,14 +942,14 @@ VtClientServerCommunication_c::notifyOnVtsLanguagePgn()
         }
       }
     }
-    mc_streamer.mrc_pool.eventLanguagePgn (*mpc_vtServerInstance->getLocalSettings());
+    mrc_pool.eventLanguagePgn (*mpc_vtServerInstance->getLocalSettings());
   }
 }
 
 void
 VtClientServerCommunication_c::notifyOnVtStatusMessage()
 {
-  mc_streamer.mrc_pool.eventVtStatusMsg();
+  mrc_pool.eventVtStatusMsg();
 
   // set client display state appropriately
   setVtDisplayState (true, getVtServerInst().getVtState()->saOfActiveWorkingSetMaster);
@@ -893,7 +971,7 @@ VtClientServerCommunication_c::notifyOnAuxInputStatus()
       uint16_t const cui16_inputValueAnalog = mc_data.getUint16Data (3-1);
       uint16_t const cui16_inputValueTransitions = mc_data.getUint16Data (5-1);
       uint8_t const cui8_inputValueDigital = mc_data.getUint8Data (7-1);
-      mc_streamer.mrc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
+      mrc_pool.eventAuxFunctionValue (it->mui16_functionUid, cui16_inputValueAnalog, cui16_inputValueTransitions, cui8_inputValueDigital);
     }
   }
 }
@@ -978,33 +1056,33 @@ VtClientServerCommunication_c::processMsg()
     /*** ### VT Initiated Messages ### ***/
     case 0x00: // Command: "Control Element Function", parameter "Soft Key"
     case 0x01: // Command: "Control Element Function", parameter "Button"
-      mc_streamer.mrc_pool.eventKeyCode (mc_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
+      mrc_pool.eventKeyCode (mc_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
                                          mc_data.getUint8Data (2) | (mc_data.getUint8Data (3) << 8) /* objID of key object */,
                                          mc_data.getUint8Data (4) | (mc_data.getUint8Data (5) << 8) /* objID of visible mask */,
                                          mc_data.getUint8Data (6) /* key code */,
                                          (mc_data.getUint8Data (0) != 0)/* 0 for sk, 1 for button -- matches wasButton? boolean */ );
       break;
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-      mc_streamer.mrc_pool.eventPointingEvent (mc_data.getUint8Data (1) | (mc_data.getUint8Data (2) << 8) /* X position in pixels */,
+      mrc_pool.eventPointingEvent (mc_data.getUint8Data (1) | (mc_data.getUint8Data (2) << 8) /* X position in pixels */,
                                               mc_data.getUint8Data (3) | (mc_data.getUint8Data (4) << 8) /* Y position in pixels */);
       break;
 
     case 0x03: // Command: "VT Select Input Object"
-      mc_streamer.mrc_pool.eventVtSelectInputObject(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
-						mc_data.getUint8Data (3),
-						mc_data.getUint8Data (4));
+      mrc_pool.eventVtSelectInputObject(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
+        mc_data.getUint8Data (3),
+        mc_data.getUint8Data (4));
       break;
 
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
         /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
         if (mc_data.getUint8Data (3) != 0x0)
-          mc_streamer.mrc_pool.eventVtESC(0xFFFF);
+          mrc_pool.eventVtESC(0xFFFF);
         else
-          mc_streamer.mrc_pool.eventVtESC(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8));
+          mrc_pool.eventVtESC(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8));
 
         break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-      mc_streamer.mrc_pool.eventNumericValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
+      mrc_pool.eventNumericValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
                                               mc_data.getUint8Data (4) /* 1 byte value */,
                                               uint32_t(mc_data.getUint8Data (4)) | (uint32_t(mc_data.getUint8Data (5)) << 8) | (uint32_t(mc_data.getUint8Data (6)) << 16)| (uint32_t(mc_data.getUint8Data (7)) << 24) /* 4 byte value */);
       break;
@@ -1012,7 +1090,7 @@ VtClientServerCommunication_c::processMsg()
       if (mc_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
       {
         VolatileMemory_c c_vmString (mc_data.getUint8DataConstPointer(4));
-        mc_streamer.mrc_pool.eventStringValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
+        mrc_pool.eventStringValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
                                                mc_data.getUint8Data (3) /* total number of bytes */, c_vmString,
                                                mc_data.getUint8Data (3) /* total number of bytes */, true, true);
       }
@@ -1052,10 +1130,10 @@ VtClientServerCommunication_c::processMsg()
           if (mb_usingVersionLabel)
           { // Store Version and finalize after "Store Version Response"
             char lang1, lang2;
-            if (mc_streamer.mui16_objectPoolUploadingLanguageCode != 0x0000)
+            if (mui16_objectPoolUploadingLanguageCode != 0x0000)
             {
-              lang1 = mc_streamer.mui16_objectPoolUploadingLanguageCode >> 8;
-              lang2 = mc_streamer.mui16_objectPoolUploadingLanguageCode & 0xFF;
+              lang1 = mui16_objectPoolUploadingLanguageCode >> 8;
+              lang2 = mui16_objectPoolUploadingLanguageCode & 0xFF;
             }
             else
             {
@@ -1178,14 +1256,14 @@ VtClientServerCommunication_c::processMsg()
         bool b_objectFound = false;
 
         // first check if first item is the requested one -> working is the first item list no matter what objectID it has
-        if (ui16_objID == mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
-          mc_streamer.mrc_pool.eventAttributeValue(mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][0],
+        if (ui16_objID == mrc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
+          mrc_pool.eventAttributeValue(mrc_pool.getIVtObjects()[ui8_arrIndex][0],
                                                   mc_data.getUint8Data(3),
                                                   mc_data.getUint8DataPointer()+4);
         else
         {
           // if last item of the list was reached or the requested object was found
-          while (mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
+          while (mrc_pool.getIVtObjects()[ui8_arrIndex] != NULL)
           {
             uint16_t ui16_arrBegin = 1;
             uint16_t ui16_arrMiddle;
@@ -1193,13 +1271,13 @@ VtClientServerCommunication_c::processMsg()
 
             // first item in list contains all fix objects of the pool (when language changes, these object stay the same)
             if (ui8_arrIndex == 0)
-              ui16_arrEnd = mc_streamer.mrc_pool.getNumObjects() - 1;
+              ui16_arrEnd = mrc_pool.getNumObjects() - 1;
             else
-              ui16_arrEnd = mc_streamer.mrc_pool.getNumObjectsLang() - 1;
+              ui16_arrEnd = mrc_pool.getNumObjectsLang() - 1;
 
             // if object is among these we can leave the while-loop
-            if ((ui16_objID < mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
-                || (ui16_objID > mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
+            if ((ui16_objID < mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrBegin]->getID())
+             || (ui16_objID > mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrEnd]->getID())) // range check
             {
               ui8_arrIndex++;
               continue; // try next object list, the requested object could not be found in the current list
@@ -1209,17 +1287,17 @@ VtClientServerCommunication_c::processMsg()
             {
               ui16_arrMiddle = ui16_arrBegin + ((ui16_arrEnd - ui16_arrBegin) / 2);
 
-              if (mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
+              if (mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
               {
                 b_objectFound = true;
-                mc_streamer.mrc_pool.eventAttributeValue(mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
+                mrc_pool.eventAttributeValue(mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
                                                         mc_data.getUint8Data(3),
                                                         mc_data.getUint8DataPointer()+4);
                 break;
               }
               else
               {
-                if (mc_streamer.mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
+                if (mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() > ui16_objID)
                   ui16_arrEnd = ui16_arrMiddle - 1;
                 else
                   ui16_arrBegin = ui16_arrMiddle + 1;
@@ -1243,9 +1321,10 @@ VtClientServerCommunication_c::processMsg()
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
       {
         if (mc_data.getUint8Data (2) == 0)
-        { // start uploading, there MAY BE enough memory
+        { // start uploading with all partial OPs (as init'd before Get Memory!), there MAY BE enough memory
           men_uploadPoolState = UploadPoolUploading;
-          getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
+        //men_uploadPhaseAutomatic [already initialized in "initObjectPoolUploadingPhases" to the correct starting phase]
+          startCurrentUploadPhase();
         }
         else
           vtOutOfMemory();
@@ -1305,7 +1384,8 @@ VtClientServerCommunication_c::processMsg()
           { // Not used
             // General error
             // Version label not known
-            startObjectPoolUploading (UploadPoolTypeCompleteInitially); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+            initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
+            sendGetMemory();
 #ifdef DEBUG
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -1320,7 +1400,7 @@ VtClientServerCommunication_c::processMsg()
            && mc_data.getUint8Data (0) <= 0x7F
          )
       {
-        MACRO_setStateDependantOnError( mc_streamer.mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
+        MACRO_setStateDependantOnError( mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
       }
       break;
 
@@ -1341,7 +1421,7 @@ VtClientServerCommunication_c::processMsg()
           else
             ui8_uploadCommandError = mc_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
-          mc_streamer.mrc_pool.eventCommandResponse (ui8_uploadCommandError, mc_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "mc_data.name()"
+          mrc_pool.eventCommandResponse (ui8_uploadCommandError, mc_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "mc_data.name()"
 #ifdef DEBUG
           if (ui8_uploadCommandError != 0)
           { /* error */
@@ -1375,7 +1455,7 @@ VtClientServerCommunication_c::getUserClippedColor (uint8_t colorValue, IsoAgLib
   {
     uint8_t colorDepth = mpc_vtServerInstance->getVtCapabilities()->hwGraphicType;
     if (((colorDepth == 0) && (colorValue > 1)) || ((colorDepth == 1) && (colorValue > 16)))
-      return mc_streamer.mrc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
+      return mrc_pool.convertColour (colorValue, colorDepth, obj, whichColour);
   }
   return colorValue;
 }
@@ -2217,7 +2297,7 @@ VtClientServerCommunication_c::doStop()
     // vt's not announced
     // that case should be handles by the multisend itself
   }
-  mc_streamer.mrc_pool.eventEnterSafeState();
+  mrc_pool.eventEnterSafeState();
 
   // set display state of the client to a defined state
   men_displayState = VtClientDisplayStateHidden;
@@ -2266,66 +2346,91 @@ VtClientServerCommunication_c::isVtActive()
 }
 
 
+//! initialize the streamer. calculate streams size and (if needed) request Get Memory with the complete size.
 void
-VtClientServerCommunication_c::startObjectPoolUploading (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
+VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t ren_uploadPoolType, IsoAgLib::iVtObject_c** rppc_listOfUserPoolUpdateObjects, uint16_t aui16_numOfUserPoolUpdateObjects)
 {
-  men_uploadPoolType = ren_uploadPoolType;
-
-  // calculate mask_stream size NOW (added 1 byte for "Object Pool Upload Start" Command Byte)
-  // because we can't do before we get the color-depth information (0xC7)
-  mc_streamer.mui32_streamSize = 0;
-  mc_streamer.mui32_streamSizeLang = 0;  /// Note that SizeLang is also used for UserPartialUpdates!!!!
-
   if (ren_uploadPoolType == UploadPoolTypeUserPoolUpdate)
-  {
-    // Activate User trigger Partial Pool Update
-    mc_streamer.mpc_userPoolUpdateObjects = rppc_listOfUserPoolUpdateObjects;
+  { // Activate User triggered Partial Pool Update
+    // check params first
+    if (aui16_numOfUserPoolUpdateObjects == 0)
+      return;
 
-    for (uint32_t curObject=0; curObject < aui16_numOfUserPoolUpdateObjects; curObject++)
-      mc_streamer.mui32_streamSizeLang += ((vtObject_c*)mc_streamer.mpc_userPoolUpdateObjects[curObject])->fitTerminal ();
+    /// INIT FIRST
+    ms_uploadPhaseUser.pc_streamer = &mc_iVtObjectStreamer;
+    ms_uploadPhaseUser.ui32_size = 1; // the 0x11 command-byte is always there.
+    mppc_uploadPhaseUserObjects = rppc_listOfUserPoolUpdateObjects;
+
+    /// COUNT
+    for (uint32_t curObject=0; curObject < aui16_numOfUserPoolUpdateObjects; ++curObject)
+      ms_uploadPhaseUser.ui32_size += (static_cast<vtObject_c*>(mppc_uploadPhaseUserObjects[curObject]))->fitTerminal ();
   }
   else
-  {
-    // Activate Initial/LangUpdate UPLOAD
-    mc_streamer.mpc_userPoolUpdateObjects = NULL;
+  { // *CONDITIONALLY* Calculate GENERAL Parts sizes
+    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially)
+    { // start with first phase
+      men_uploadPhaseAutomatic = UploadPhaseFIRSTfix;
 
-    // *CONDITIONALLY* Calculate GENERAL Part size (always init size to 0 above!)
-    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!ab_onlyLanguageStream)"
-    {
-      for (uint32_t curObject=0; curObject < mc_streamer.mrc_pool.getNumObjects(); curObject++)
-        mc_streamer.mui32_streamSize += ((vtObject_c*)mc_streamer.mrc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
+      /// Phase 0
+      ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].pc_streamer = &mc_iVtObjectStreamer;
+      ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size = 1; // the 0x11 command-byte is always there.
+      for (uint32_t curObject=0; curObject < mrc_pool.getNumObjects(); ++curObject)
+        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += ((vtObject_c*)mrc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
+
+      /// Phase 2
+      const std::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificFixPoolData();
+      ms_uploadPhasesAutomatic [UploadPhaseAppSpecificFix].pc_streamer = cpair_retval.second;
+      ms_uploadPhasesAutomatic [UploadPhaseAppSpecificFix].ui32_size = cpair_retval.first;
+    }
+    else
+    { // start with second phase (lang. dep that is)
+      men_uploadPhaseAutomatic = UploadPhaseFIRSTlang;
     }
 
     // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
-    if (mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
-    { // only if the objectpool has 2 or more languages, it makes sense to add the language code to the version-name
-      const int8_t ci8_realUploadingLanguage = (mc_streamer.mi8_objectPoolUploadingLanguage < 0) ? 0 : mc_streamer.mi8_objectPoolUploadingLanguage;
-      for (uint32_t curObject=0; curObject < mc_streamer.mrc_pool.getNumObjectsLang(); curObject++)
-        mc_streamer.mui32_streamSizeLang += ((vtObject_c*)mc_streamer.mrc_pool.getIVtObjects()[ci8_realUploadingLanguage+1][curObject])->fitTerminal ();
+    /// Phase 1
+    ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].pc_streamer = &mc_iVtObjectStreamer;
+    ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size = 0; // there may not always be a language part.
+    if (mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
+    {
+      const int8_t ci8_realUploadingLanguage = ((mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage) + 1;
+
+      for (uint32_t curObject=0; curObject < mrc_pool.getNumObjectsLang(); ++curObject)
+        ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size += ((vtObject_c*)mrc_pool.getIVtObjects()[ci8_realUploadingLanguage][curObject])->fitTerminal ();
+      if (ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size > 0)
+      { // only if there's at least one object being streamed up as user-partial-objectpool-update add the CMD byte for size calculation...
+        ++ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsLang].ui32_size; // add the 0x11 byte!
+      }
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
-    if (ren_uploadPoolType == UploadPoolTypeCompleteInitially) // was "if (!ab_onlyLanguageStream)"
-    { // Issue GetMemory-Command
-      mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                            192 /* 0xC0 */, 0xff, (mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) & 0xFF,
-                            ((mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) >>  8) & 0xFF,
-                            ((mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) >> 16) & 0xFF,
-                            (mc_streamer.mui32_streamSize+mc_streamer.mui32_streamSizeLang) >> 24, 0xff, 0xff);
-      getCanInstance4Comm() << mc_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
+    /// Phase 3
+    const std::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificLangPoolData(mi8_objectPoolUploadingLanguage, mui16_objectPoolUploadingLanguageCode);
+    ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].pc_streamer = cpair_retval.second;
+    ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].ui32_size = cpair_retval.first;
+  }
+  men_uploadPoolType = ren_uploadPoolType;
+}
 
-      mc_streamer.mui32_streamSize++; // add the 0x11 byte!
+
+void
+VtClientServerCommunication_c::sendGetMemory()
+{ // Issue GetMemory-Command (don't care if several 0x11s are counted from each partial object pool...)
+  uint32_t ui32_size = 0;
+  for (int i=0; i <= UploadPhaseLAST; ++i)
+  {
+    ui32_size += ms_uploadPhasesAutomatic[i].ui32_size;
+  }
+
+  mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                         192 /* 0xC0 */, 0xff,
+                         (ui32_size) & 0xFF, (ui32_size >>  8) & 0xFF, (ui32_size >> 16) & 0xFF, ui32_size >> 24,
+                         0xff, 0xff);
+  getCanInstance4Comm() << mc_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
       // Now proceed to uploading
-      men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-      mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-      mui32_uploadTimestamp = HAL::getTime();
-    }
-  }
-
-  if (mc_streamer.mui32_streamSizeLang > 0)
-  { // only if there's at least one object being streamed up as LANGUAGE specific objectpool add the CMD byte for size calculation...
-    mc_streamer.mui32_streamSizeLang++; // add the 0x11 byte!
-  }
+  men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
+  mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+  mui32_uploadTimestamp = HAL::getTime();
 }
 
 
@@ -2335,18 +2440,18 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
 {
   if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { /// Was user-pool-update
-    mc_streamer.mrc_pool.eventPartialPoolUploadedSuccessfully();
+    mrc_pool.eventPartialPoolUploadedSuccessfully();
   }
   else
   { /// Was complete initial pool or language pool update.
     /// in both cases we uploaded in one specific language!! so do the following:
-    mc_streamer.mi8_objectPoolUploadedLanguage = mc_streamer.mi8_objectPoolUploadingLanguage;
-    mc_streamer.mui16_objectPoolUploadedLanguageCode = mc_streamer.mui16_objectPoolUploadingLanguageCode;
-    mc_streamer.mi8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
-    mc_streamer.mui16_objectPoolUploadingLanguageCode = 0x0000;
+    mi8_objectPoolUploadedLanguage = mi8_objectPoolUploadingLanguage;
+    mui16_objectPoolUploadedLanguageCode = mui16_objectPoolUploadingLanguageCode;
+    mi8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
+    mui16_objectPoolUploadingLanguageCode = 0x0000;
   #ifdef DEBUG
-    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)mc_streamer.mi8_objectPoolUploadedLanguage;
-    if (mc_streamer.mi8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(mc_streamer.mui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(mc_streamer.mui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
+    INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)mi8_objectPoolUploadedLanguage;
+    if (mi8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(mui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(mui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
     INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
     if (men_uploadPoolType == UploadPoolTypeLanguageUpdate)
@@ -2361,22 +2466,34 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
       men_objectPoolState = OPUploadedSuccessfully;
       men_uploadType = UploadIdle;
     }
-    mc_streamer.mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mc_streamer.mi8_objectPoolUploadedLanguage, mc_streamer.mui16_objectPoolUploadedLanguageCode);
+    mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mi8_objectPoolUploadedLanguage, mui16_objectPoolUploadedLanguageCode);
   }
 }
 
 
 /** Send "End of Object Pool" message */
 void
-VtClientServerCommunication_c::indicateObjectPoolCompletion()
+VtClientServerCommunication_c::indicateUploadCompletion()
 {
-  // successfully sent, so now send out the "End of Object Pool Message" and wait for response!
-  mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
-                        18, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-  getCanInstance4Comm() << mc_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
-  men_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
-  mui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
-  mui32_uploadTimestamp = HAL::getTime();
+  switch (men_uploadType)
+  {
+    case UploadIdle:
+      isoaglib_assert (false); // shouldn't happen
+      break;
+
+    case UploadPool: // successfully sent complete initial pool, so now send out the "End of Object Pool Message" and wait for response!
+      mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
+                             0x12, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
+      getCanInstance4Comm() << mc_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
+      men_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
+      mui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
+      mui32_uploadTimestamp = HAL::getTime();
+      break;
+
+    case UploadCommand: // user / language updates are being sent as "command"
+      finishUploadCommand(true);
+      break;
+  }
 }
 
 
@@ -2404,27 +2521,17 @@ VtClientServerCommunication_c::startUploadCommand()
   { /// Fits into a single CAN-Pkg!
     if (actSend->vec_uploadBuffer[0] == 0x11)
     { /// Handle special case of LanguageUpdate / UserPoolUpdate
-      // There's NO response for command 0x11!
-      men_uploadCommandState = UploadCommandWithoutResponse;
+      men_uploadCommandState = UploadCommandPartialPoolUpdate; // There's NO response for command 0x11! And there may be multiple parts!
       if (actSend->ppc_vtObjects)
       { /// User triggered Partial Pool Update
-        startObjectPoolUploading (UploadPoolTypeUserPoolUpdate, actSend->ppc_vtObjects, actSend->ui16_numObjects);
+        initObjectPoolUploadingPhases (UploadPoolTypeUserPoolUpdate, actSend->ppc_vtObjects, actSend->ui16_numObjects);
       }
       else
       { /// Language Pool Update
-        // Special send object pool!
-        startObjectPoolUploading (UploadPoolTypeLanguageUpdate);
+        initObjectPoolUploadingPhases (UploadPoolTypeLanguageUpdate);
       }
-      if (mc_streamer.mui32_streamSizeLang > 0)
-      { // start LANGUAGE/USER part upload!
-        return getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(), mpc_vtServerInstance->getIsoName(), &mc_streamer, ECU_TO_VT_PGN, men_sendSuccess);
-      }
-      else
-      { // shouldn't happen, but catch case anyway!
-        // nothing was sent out, so set to success so it gets removed simply...
-        men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
-        return true;
-      }
+      startCurrentUploadPhase();
+      return true;
     }
     else
     { /// normal 8 byte package
@@ -2592,7 +2699,7 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
   if (newDisplayState != getVtDisplayState())
   {
     men_displayState = newDisplayState;
-    mc_streamer.mrc_pool.eventDisplayActivation();
+    mrc_pool.eventDisplayActivation();
   }
 }
 
@@ -2600,13 +2707,13 @@ VtClientServerCommunication_c::setVtDisplayState (bool b_isVtStatusMsg, uint8_t 
 void
 VtClientServerCommunication_c::setObjectPoolUploadingLanguage()
 {
-  mc_streamer.mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
-  mc_streamer.mui16_objectPoolUploadingLanguageCode = 0x0000;
-  if (mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
+  mi8_objectPoolUploadingLanguage = mi8_vtLanguage;
+  mui16_objectPoolUploadingLanguageCode = 0x0000;
+  if (mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().numberOfLanguagesToFollow > 0) // supporting multilanguage.
   { // only if the objectpool has 1 or more languages, it makes sense to add the language code to the version-name
-    const int8_t ci8_realUploadingLanguage = (mc_streamer.mi8_objectPoolUploadingLanguage < 0) ? 0 : mc_streamer.mi8_objectPoolUploadingLanguage;
-    const uint8_t* lang = mc_streamer.mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
-    mc_streamer.mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
+    const int8_t ci8_realUploadingLanguage = (mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage;
+    const uint8_t* lang = mrc_pool.getWorkingSetObject().get_vtObjectWorkingSet_a().languagesToFollow[ci8_realUploadingLanguage].language;
+    mui16_objectPoolUploadingLanguageCode = (lang [0] << 8) | lang[1];
   }
 }
 
@@ -2625,21 +2732,21 @@ IsoAgLib::iVtClientServerCommunication_c* VtClientServerCommunication_c::toInter
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyWidth()
 {
-  return mc_streamer.mrc_pool.getSkWidth();
+  return mrc_pool.getSkWidth();
 }
 
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolDimension()
 {
-  return mc_streamer.mrc_pool.getDimension();
+  return mrc_pool.getDimension();
 }
 
 
 uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()
 {
-  return mc_streamer.mrc_pool.getSkHeight();
+  return mrc_pool.getSkHeight();
 }
 
 
