@@ -70,6 +70,7 @@ extern "C" {
 #include "can_server.h"
 #include "../can_server_common.h"
 #include <assert.h>
+#include <vector>
 
 #define XL_HWTYPE_AUTO 1000
 
@@ -82,10 +83,42 @@ char            g_AppName[XL_MAX_LENGTH+1]  = "IsoAgLib";   //!< Application nam
 XLdriverConfig  g_xlDrvConfig;                              //!< Contains the actual hardware configuration
 int16_t gChannel = 0;
 
-XLportHandle    g_xlPortHandle[cui32_maxCanBusCnt]     ;    //!< Global porthandle (we use only one!)
-XLaccess        g_xlChannelMask[cui32_maxCanBusCnt]    ;    //!< Global channelmask (includes all founded channels)
-XLaccess        g_xlPermissionMask[cui32_maxCanBusCnt] ;    //!< Global permissionmask (includes all founded channels)
-XLaccess        g_xlInitMask[cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    XLportHandle  m_xlPortHandle;     //!< Global porthandle (we use only one!)
+    XLaccess      m_xlChannelMask;    //!< Global channelmask (includes all founded channels)
+    XLaccess      m_xlPermissionMask; //!< Global permissionmask (includes all founded channels)
+    XLaccess      m_xlInitMask;
+    bool          mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  m_xlPortHandle(XL_INVALID_PORTHANDLE),
+  m_xlChannelMask(0),
+  m_xlPermissionMask(0),
+  m_xlInitMask(0),
+  mb_canBusIsOpen(false)
+{
+}
 
 #ifdef USE_CAN_CARD_TYPE
 uint16_t gHwType = USE_CAN_CARD_TYPE;
@@ -94,8 +127,6 @@ uint16_t gHwType = USE_CAN_CARD_TYPE;
 //
 uint16_t gHwType = XL_HWTYPE_AUTO;
 #endif
-
-static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
 static void printDriverConfig( void )
 {
@@ -127,16 +158,11 @@ static void printDriverConfig( void )
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-  }
-
   #ifdef USE_CAN_CARD_TYPE
   gHwType = USE_CAN_CARD_TYPE;
   #else
@@ -149,16 +175,6 @@ uint32_t initCardApi ()
   xlStatus = xlOpenDriver();
   if (xlStatus)
     goto error;
-
-  uint32_t ind;
-  for ( ind = 0; ind < cui32_maxCanBusCnt; ind++ )
-  {
-    g_xlPortHandle[ind]     = XL_INVALID_PORTHANDLE;  //!< Global porthandle (we use only one!)
-    g_xlChannelMask[ind]    = 0;                      //!< Global channelmask (includes all founded channels)
-    g_xlPermissionMask[ind] = 0;                      //!< Global permissionmask (includes all founded channels)
-    g_xlInitMask[ind]       = 0;
-    canBusIsOpen[ind]    = false;
-  }
 
   printf("xlDriverConfig()\n");
   xlStatus = xlGetDriverConfig(&g_xlDrvConfig);
@@ -186,14 +202,14 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
   XLstatus xlStatus;
 
-  if( !canBusIsOpen[ui8_bus] ) {
+  if( !ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     int32_t i32_busInd = -1, i32_virtualBusInd = -1;
     XLaccess virtualChannelMask = 0;
 
     // select the wanted channels
-    g_xlChannelMask[ui8_bus] = g_xlInitMask[ui8_bus] = 0;
+    ss_canDevice.canBus(ui8_bus).m_xlChannelMask = ss_canDevice.canBus(ui8_bus).m_xlInitMask = 0;
     i32_busInd = -1;
     for (uint32_t i=0; i<g_xlDrvConfig.channelCount; i++)
     {
@@ -204,7 +220,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         printf( "Detect Real Channel %d\n", i32_busInd );
         if ( ui8_bus == i32_busInd )
         { // BUS found
-          g_xlChannelMask[ui8_bus] |= g_xlDrvConfig.channel[i].channelMask;
+          ss_canDevice.canBus(ui8_bus).m_xlChannelMask |= g_xlDrvConfig.channel[i].channelMask;
         }
       }
       else if ( g_xlDrvConfig.channel[i].hwType == XL_HWTYPE_VIRTUAL )
@@ -222,50 +238,88 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     // use virtualChannelMask
     if ( ( gHwType == XL_HWTYPE_AUTO ) && ( i32_busInd == -1 ) )
     { // no real CAN channels found
-      g_xlChannelMask[ui8_bus] = virtualChannelMask;
+      ss_canDevice.canBus(ui8_bus).m_xlChannelMask = virtualChannelMask;
     }
 
-    g_xlInitMask[ui8_bus] = g_xlPermissionMask[ui8_bus] = g_xlChannelMask[ui8_bus];
+    ss_canDevice.canBus(ui8_bus).m_xlInitMask = ss_canDevice.canBus(ui8_bus).m_xlPermissionMask = ss_canDevice.canBus(ui8_bus).m_xlChannelMask;
 
     // ------------------------------------
     // open ONE port including all channels
     // ------------------------------------
-    xlStatus = xlOpenPort(&g_xlPortHandle[ui8_bus], g_AppName, g_xlChannelMask[ui8_bus], &g_xlPermissionMask[ui8_bus], 256, XL_INTERFACE_VERSION, XL_BUS_TYPE_CAN);
-    printf("- OpenPort         : CM=0x%I64x, PH=0x%02X, PM=0x%I64x, %s\n", g_xlChannelMask[ui8_bus], g_xlPortHandle[ui8_bus], g_xlPermissionMask[ui8_bus], xlGetErrorString(xlStatus) );
+    xlStatus = xlOpenPort(
+        &ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+        g_AppName,
+        ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+        &ss_canDevice.canBus(ui8_bus).m_xlPermissionMask,
+        256,
+        XL_INTERFACE_VERSION,
+        XL_BUS_TYPE_CAN);
+    printf(
+        "- OpenPort         : CM=0x%I64x, PH=0x%02X, PM=0x%I64x, %s\n",
+        ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+        ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+        ss_canDevice.canBus(ui8_bus).m_xlPermissionMask,
+        xlGetErrorString(xlStatus) );
 
-    if ( (xlStatus) || (g_xlPortHandle[ui8_bus] == XL_INVALID_PORTHANDLE) )
+    if ( (xlStatus) || (ss_canDevice.canBus(ui8_bus).m_xlPortHandle == XL_INVALID_PORTHANDLE) )
         goto error;
 
     // ------------------------------------
     // if we have permission we set the
     // bus parameters (baudrate)
     // ------------------------------------
-    if (g_xlPermissionMask[ui8_bus]) {
-      xlStatus = xlCanSetChannelBitrate(g_xlPortHandle[ui8_bus], g_xlChannelMask[ui8_bus], wBitrate * 1000);
+    if (ss_canDevice.canBus(ui8_bus).m_xlPermissionMask) {
+      xlStatus = xlCanSetChannelBitrate(
+          ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+          ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+          wBitrate * 1000);
       printf("- SetChannelBitrate: baudr.=%u, %s\n",wBitrate, xlGetErrorString(xlStatus));
-      if (xlStatus) goto error;
+      if (xlStatus)
+        goto error;
     }
     else if (wBitrate) {
       printf("WARNING: No init access, bitrate ignored!\n");
     }
 
     // Disable the TX and TXRQ notifications
-    xlStatus = xlCanSetChannelMode(g_xlPortHandle[ui8_bus],g_xlChannelMask[ui8_bus],0,0);
-    if (xlStatus) goto error;
+    xlStatus = xlCanSetChannelMode(
+        ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+        ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+        0,
+        0);
+    if (xlStatus)
+      goto error;
 
-    if (canBusIsOpen[ui8_bus] == false)
+    if (ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen == false)
     { // set global mask
-      xlStatus = xlCanSetChannelAcceptance(g_xlPortHandle[ui8_bus], g_xlChannelMask[ui8_bus], 0x000, 0x000, XL_CAN_STD );
-      if (xlStatus) goto error;
-      xlStatus = xlCanSetChannelAcceptance(g_xlPortHandle[ui8_bus], g_xlChannelMask[ui8_bus], 0x000, 0x000, XL_CAN_EXT );
-      if (xlStatus) goto error;
+      xlStatus = xlCanSetChannelAcceptance(
+          ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+          ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+          0x000,
+          0x000,
+          XL_CAN_STD );
+      if (xlStatus)
+        goto error;
+      xlStatus = xlCanSetChannelAcceptance(
+          ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+          ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+          0x000,
+          0x000,
+          XL_CAN_EXT );
+      if (xlStatus)
+        goto error;
 
       // Go on bus and reset clock
-      xlStatus = xlActivateChannel(g_xlPortHandle[ui8_bus], g_xlChannelMask[ui8_bus], XL_BUS_TYPE_CAN, XL_ACTIVATE_RESET_CLOCK);
-      if (xlStatus) goto error;
+      xlStatus = xlActivateChannel(
+          ss_canDevice.canBus(ui8_bus).m_xlPortHandle,
+          ss_canDevice.canBus(ui8_bus).m_xlChannelMask,
+          XL_BUS_TYPE_CAN,
+          XL_ACTIVATE_RESET_CLOCK);
+      if (xlStatus)
+        goto error;
 
     }
-    canBusIsOpen[ui8_bus] = true;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
   }
   
@@ -275,12 +329,12 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   error:
       printf("ERROR: %s!\n", xlGetErrorString(xlStatus));
 
-      if (g_xlPortHandle[ui8_bus] != XL_INVALID_PORTHANDLE) {
-        xlClosePort(g_xlPortHandle[ui8_bus]);
-        g_xlPortHandle[ui8_bus] = XL_INVALID_PORTHANDLE;
+      if (ss_canDevice.canBus(ui8_bus).m_xlPortHandle != XL_INVALID_PORTHANDLE) {
+        xlClosePort(ss_canDevice.canBus(ui8_bus).m_xlPortHandle);
+        ss_canDevice.canBus(ui8_bus).m_xlPortHandle = XL_INVALID_PORTHANDLE;
       }
 
-      canBusIsOpen[ui8_bus] = false;
+      ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
       return false;
 }
 
@@ -315,8 +369,8 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   memcpy(xlEvent.tagData.msg.data, ps_canMsg->ui8_data, ps_canMsg->i32_len);
 
   // should have been checked already by calling function isBusOpen:
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
-  xlStatus = xlCanTransmit(g_xlPortHandle[ui8_bus], g_xlChannelMask[ui8_bus], &messageCount, &xlEvent);
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
+  xlStatus = xlCanTransmit(ss_canDevice.canBus(ui8_bus).m_xlPortHandle, ss_canDevice.canBus(ui8_bus).m_xlChannelMask, &messageCount, &xlEvent);
 
   if (xlStatus == XL_ERR_QUEUE_IS_FULL)
     return 0;
@@ -333,7 +387,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
   // try to receive a message
   msgsrx = 1; // we want to receive always only one message
-  xlStatus = xlReceive(g_xlPortHandle[ui8_bus], &msgsrx, &gpEvent);
+  xlStatus = xlReceive(ss_canDevice.canBus(ui8_bus).m_xlPortHandle, &msgsrx, &gpEvent);
   // msg from CANcardX buffer
   // this functions retrurns not only received messages
   // ACK for SENT messages is also returned!!!
@@ -360,4 +414,3 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 void addSendTimeStampToList(client_c * /*ps_client*/, int32_t /*i32_sendTimeStamp*/)
 {
 }
-

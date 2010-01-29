@@ -23,31 +23,50 @@ using namespace __HAL;
 #define LAWICEL_ADAPTER_VER_LEN 255
 #define LAWICEL_ADAPTER_BITRATE_LEN 5
 
+static struct canDevice_s {
+  struct canBus_s {
+    bool isOpen;
+    bool isValid;
+    char name[LAWICEL_ADAPTER_NAME_LEN];
+    CANHANDLE handle;
+    bool mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
 
-typedef struct {
-	bool isOpen;
-	bool isValid;
-	char name[LAWICEL_ADAPTER_NAME_LEN];
-	CANHANDLE handle;
-} adapterInfo;
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
 
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
 
-adapterInfo gAdapterInfo[cui32_maxCanBusCnt];
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
 
+canDevice_s::canBus_s::canBus_s() :
+  isOpen(false),
+  isValid(false),
+  CANHANDLE handle(0),
+  mb_canBusIsOpen(false)
+{
+  name[0] = 0;
+}
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-	return gAdapterInfo[ui8_bus].isOpen;
+	return ss_canDevice.canBus(ui8_bus).isOpen;
 }
-
 
 uint32_t initCardApi ()
 {
-	for (int i = 0; i < cui32_maxCanBusCnt; i++) {
-		gAdapterInfo[i].isOpen = false;
-		gAdapterInfo[i].isValid = false;
-	}
-
 	char szAdapter[LAWICEL_ADAPTER_NAME_LEN];
 	int numOfAdapters = canusb_getFirstAdapter(szAdapter, sizeof(szAdapter));
 	int adapterBufferCursor = 0;
@@ -56,25 +75,22 @@ uint32_t initCardApi ()
 
 		printf("Driver Configuration:\n  ChannelCount=%u\n", numOfAdapters);
 
-		gAdapterInfo[adapterBufferCursor].isValid = true;
-		strcpy_s(gAdapterInfo[adapterBufferCursor].name, sizeof(gAdapterInfo[adapterBufferCursor].name), szAdapter);
+		ss_canDevice.canBus(adapterBufferCursor).isValid = true;
+		strcpy_s(ss_canDevice.canBus(adapterBufferCursor).name, sizeof(ss_canDevice.canBus(adapterBufferCursor).name), szAdapter);
 		printf("  Channel %u : %s\n",
 			adapterBufferCursor,
-			gAdapterInfo[adapterBufferCursor].name
+			ss_canDevice.canBus(adapterBufferCursor).name
 		);
 		adapterBufferCursor++;
 
-		for (int i = 1; i < cui32_maxCanBusCnt; i++ ) {
-
-			if (numOfAdapters <= i)
-				break;
+		for (int i = 1; i < numOfAdapters; i++ ) {
 
 			if (0 < canusb_getNextAdapter(szAdapter, sizeof(szAdapter))) {
-				gAdapterInfo[adapterBufferCursor].isValid = true;
-				strcpy_s(gAdapterInfo[adapterBufferCursor].name, sizeof(gAdapterInfo[adapterBufferCursor].name), szAdapter);
+				ss_canDevice.canBus(adapterBufferCursor).isValid = true;
+				strcpy_s(ss_canDevice.canBus(adapterBufferCursor).name, sizeof(ss_canDevice.canBus(adapterBufferCursor).name), szAdapter);
 				printf("  Channel %u : %s\n",
 					adapterBufferCursor,
-					gAdapterInfo[adapterBufferCursor].name
+					ss_canDevice.canBus(adapterBufferCursor).name
 				);
 				adapterBufferCursor++;
 			}
@@ -103,7 +119,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 	unsigned long flags = 0;
 	char baudRate[LAWICEL_ADAPTER_BITRATE_LEN];
 
-	adapterInfo *info = &gAdapterInfo[ui8_bus];
+	adapterInfo *info = &ss_canDevice.canBus(ui8_bus);
 	
 	if (!info->isValid) {
 		return false;
@@ -149,7 +165,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 //void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 void closeBusOnCard(uint8_t ui8_bus)
 {
-	adapterInfo *info = &gAdapterInfo[ui8_bus];
+	adapterInfo *info = &ss_canDevice.canBus(ui8_bus);
 	
 	if (!info->isValid) {
 		return;
@@ -188,7 +204,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 	CANMsg msg;
 
-	adapterInfo *info = &gAdapterInfo[ui8_bus];
+	adapterInfo *info = &ss_canDevice.canBus(ui8_bus);
 	
 	if (!info->isValid) {
 		return false;
@@ -218,7 +234,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 	CANMsg msg;
 
-	adapterInfo *info = &gAdapterInfo[ui8_bus];
+	adapterInfo *info = &ss_canDevice.canBus(ui8_bus);
 	
 	if (!info->isValid) {
 		return 0;

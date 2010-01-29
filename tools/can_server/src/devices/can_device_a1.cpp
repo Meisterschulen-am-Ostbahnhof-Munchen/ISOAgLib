@@ -100,20 +100,42 @@ typedef struct
 } canStatus;
 
 
-static bool  canBusIsOpen[cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    bool          mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  mb_canBusIsOpen(false)
+{
+}
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-  }
-
   return 1;
 }
 
@@ -137,7 +159,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     case 500: { btr0 = 0xc0; btr1 = 0x3a;} break;
   }
 
-  if( !canBusIsOpen[ui8_bus] )
+  if( !ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen )
   {
     DEBUG_PRINT1("Opening CAN BUS ui8_bus=%d\n", ui8_bus);
 
@@ -161,7 +183,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     DEBUG_PRINT3("write( device-\"%s\"\n, \"%s\", %d)\n", fname, buf, strlen(buf));
     write(pc_serverData->canBus(ui8_bus).mi32_can_device, buf, strlen(buf));
 
-    canBusIsOpen[ui8_bus] = true;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
   }
 
@@ -172,7 +194,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //canBusIsOpen[ui8_bus] = false;
+  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
@@ -222,7 +244,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   ui32_calls++;
 
   // should have been checked already by calling function isBusOpen:
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
   i_ioctlRet = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, CAN_WRITE_MSG, &msg);
 
   if (i_ioctlRet < 0) {
@@ -233,7 +255,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 #if 0
     printf("can_server: send failed => close/reopen device on bus %d\n", ui8_bus);
     close(pc_serverData->canBus(ui8_bus).mi32_can_device);
-    canBusIsOpen[ui8_bus] = false;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
     openBusOnCard(ui8_bus, 250, pc_serverData);
     ret = ioctl(pc_serverData->canBus(ui8_bus).mi32_can_device, CAN_WRITE_MSG, &msg);
     printf("can_server: send message again on bus %d\n", ui8_bus);

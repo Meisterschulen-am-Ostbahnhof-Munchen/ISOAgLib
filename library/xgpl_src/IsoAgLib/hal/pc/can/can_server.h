@@ -137,10 +137,9 @@ namespace __HAL {
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer
 //    ( i.e. direct in the BIOS/OS call)
-static const uint32_t cui32_maxCanBusCnt = ( HAL_CAN_MAX_BUS_NR + 1 );
 static const uint8_t cui8_maxCanObj = 15;
 
-typedef struct {
+struct tMsgObj {
   bool     b_canBufferLock;
   bool     b_canObjConfigured;
   uint8_t  ui8_bufXtd;
@@ -149,7 +148,7 @@ typedef struct {
   uint32_t ui32_mask_xtd;
   uint16_t ui16_mask_std;
   uint16_t ui16_size;
-} tMsgObj;
+};
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
 
@@ -171,23 +170,23 @@ struct can_recv_data {
   can_data msg;
 };
 
-typedef struct {
+struct msqRead_s {
   long   i32_mtypePidBusObj;
   struct can_data s_canData;
-} msqRead_s;
+};
 
-typedef struct {
+struct msqWrite_s {
   long     i32_mtypePrioAnd1; // has now priority and Pid (PID is needed for clearing the queue :-()
   int16_t  ui16_pid;
   uint8_t  ui8_bus;
   uint8_t  ui8_obj;
   canMsg_s s_canMsg;
   int32_t  i32_sendTimeStamp;
-} msqWrite_s;
+};
 
 
 // message queues / process id
-typedef struct {
+struct msqData_s {
   long    i32_cmdHandle;
   int32_t i32_cmdAckHandle;
   // client read queue
@@ -196,10 +195,10 @@ typedef struct {
   int32_t i32_wrHandle;
   int32_t i32_pid;
   int32_t i32_pipeHandle;
-} msqData_s;
+};
 #endif
 
-typedef struct {
+struct transferBuf_s {
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
   long    i32_mtypePid;
 #endif
@@ -254,7 +253,7 @@ typedef struct {
     } s_data;
 #endif
   };
-} transferBuf_s;
+};
 
 // client specific data
 struct client_c
@@ -272,7 +271,6 @@ public:
 
   //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
   //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
-  std::vector<tMsgObj> arrMsgObj[cui32_maxCanBusCnt];
 
   struct canBus_s {
     std::vector<tMsgObj>    mvec_msgObj;

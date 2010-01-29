@@ -57,20 +57,42 @@
 
 using namespace __HAL;
 
-static bool  canBusIsOpen[cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    bool          mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  mb_canBusIsOpen(false)
+{
+}
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-  }
-
   return 1;
 }
 
@@ -84,7 +106,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t /* wBitrate */, server_c* /* pc_ser
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-  canBusIsOpen[ui8_bus] = true;
+  ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
   return true;
 }
 
@@ -95,7 +117,7 @@ void closeBusOnCard(uint8_t /*ui8_bus*/, server_c* /* pc_serverData */)
 #endif
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //canBusIsOpen[ui8_bus] = false;
+  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 

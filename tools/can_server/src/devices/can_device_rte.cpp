@@ -73,8 +73,43 @@ using namespace __HAL;
 // Globals
 
 
-static bool   canBusIsOpen[cui32_maxCanBusCnt];
-static can_c* rteCan_c [cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    bool          mb_canBusIsOpen;
+    can_c        *m_rteCan_c;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  ~canBus_s();
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  mb_canBusIsOpen(false),
+  m_rteCan_c(new can_c())
+{
+}
+
+canDevice_s::canBus_s::~canBus_s()
+{
+  delete m_rteCan_c;
+}
+
 static std::list<canMsg_s> l_canMsg;
 
 /*! Handler for identification reply */
@@ -99,7 +134,7 @@ static int can_receive(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t i
     return -1;
   }
 
-  if ( rteCan_c [para->rtd_msg->channel]->get_cid() == cid )
+  if ( ss_canDevice.canBus(para->rtd_msg->channel).m_rteCan_c->get_cid() == cid )
   { // echo of this rte client
     return -1;
   }
@@ -116,7 +151,7 @@ static int can_receive(rtd_handler_para_t* para, rtd_can_type_t type, uint32_t i
 }
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 
@@ -134,12 +169,6 @@ uint32_t initCardApi ()
     }
   }
 
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-    rteCan_c [i] = new can_c ();
-  }
-
   return 1;
 }
 
@@ -154,23 +183,23 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-  if( !canBusIsOpen[ui8_bus] ) {
+  if( !ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen ) {
     // Open a CAN messaging interface
-    rteCan_c [ui8_bus]->set_channel( ui8_bus );
-    rteCan_c [ui8_bus]->set_default_timeout( 60*RTE_ONE_SECOND );
-    rteCan_c [ui8_bus]->init();
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_channel( ui8_bus );
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_default_timeout( 60*RTE_ONE_SECOND );
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->init();
     // build parameter string with sprintf to handle different baudrates
     char parameterString[50];
     sprintf( parameterString, "C%d,R,B%d,E1,L0", ui8_bus, wBitrate );
-    rteCan_c [ui8_bus]->set_parameters( parameterString );
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_parameters( parameterString );
 
     // Set handler functions.
-    rteCan_c [ui8_bus]->set_acknowledge_handler( ackHdl, rteCan_c [ui8_bus]);
-    rteCan_c [ui8_bus]->set_identify_handler( ident_hdl, rteCan_c [ui8_bus]);
-    rteCan_c [ui8_bus]->set_send_handler( can_receive, rteCan_c [ui8_bus] );
-    //  rteCan_c [ui8_bus]->set_set_bus_state_handler( setBusState, rteCan_c [ui8_bus] );
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_acknowledge_handler( ackHdl, ss_canDevice.canBus(ui8_bus).m_rteCan_c);
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_identify_handler( ident_hdl, ss_canDevice.canBus(ui8_bus).m_rteCan_c);
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_send_handler( can_receive, ss_canDevice.canBus(ui8_bus).m_rteCan_c );
+    //  ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_set_bus_state_handler( setBusState, ss_canDevice.canBus(ui8_bus).m_rteCan_c );
 
-    canBusIsOpen[ui8_bus] = true;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
 
     return true;
@@ -182,7 +211,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //canBusIsOpen[ui8_bus] = false;
+  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
@@ -193,14 +222,14 @@ void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   // should have been checked already by calling function isBusOpen:
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
-  rteCan_c[ui8_bus]->set_delta (0); // NOW!
-  rteCan_c[ui8_bus]->set_count (1); // send only once
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
+  ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_delta (0); // NOW!
+  ss_canDevice.canBus(ui8_bus).m_rteCan_c->set_count (1); // send only once
 
   if (ps_canMsg->i32_msgType) {
-    rteCan_c[ui8_bus]->send (rtd_can_type_xtd_msg, ps_canMsg->ui32_id, ps_canMsg->i32_len, ps_canMsg->ui8_data);
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->send (rtd_can_type_xtd_msg, ps_canMsg->ui32_id, ps_canMsg->i32_len, ps_canMsg->ui8_data);
   } else {
-    rteCan_c[ui8_bus]->send (rtd_can_type_std_msg, ps_canMsg->ui32_id, ps_canMsg->i32_len, ps_canMsg->ui8_data);
+    ss_canDevice.canBus(ui8_bus).m_rteCan_c->send (rtd_can_type_std_msg, ps_canMsg->ui32_id, ps_canMsg->i32_len, ps_canMsg->ui8_data);
   }
 
   rte_poll();

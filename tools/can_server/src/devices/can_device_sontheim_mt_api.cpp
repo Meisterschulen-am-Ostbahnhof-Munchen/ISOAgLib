@@ -79,27 +79,48 @@ using namespace __HAL;
 // Globals
 
 // CAN Globals
-HANDLE htEventR[cui32_maxCanBusCnt];
-HANDLE htEventE[cui32_maxCanBusCnt];
-HANDLE handle[cui32_maxCanBusCnt];
-static bool  canBusIsOpen[cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    HANDLE  mh_tEventR;
+    HANDLE  mh_tEventE;
+    HANDLE  m_handle;
+    bool    mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
 
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  mh_tEventR(CreateEvent(NULL,TRUE,FALSE,"R1")),
+  mh_tEventE(CreateEvent(NULL,TRUE,FALSE,"E1")),
+  m_handle(0),
+  mb_canBusIsOpen(false)
+{
+}
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-    htEventR[i] = CreateEvent (NULL,TRUE,FALSE,"R1");
-    htEventE[i] = CreateEvent (NULL,TRUE,FALSE,"E1");
-    handle[i]   = 0;
-  }
-
   long l_netnumber_max = 26;                  // highest net number
   long l_txtimeout = 50;                      // msec
   long l_rxtimeout = 1;                       // msec
@@ -111,7 +132,7 @@ uint32_t initCardApi ()
   
   uint32_t busnr=0;
   long l_netnumber = 0;
-  for (; (l_netnumber < l_netnumber_max) && (busnr<cui32_maxCanBusCnt); l_netnumber++)
+  for (; l_netnumber < l_netnumber_max; l_netnumber++)
   {
     // open new handle
     l_retval = canOpen (l_netnumber,
@@ -122,11 +143,11 @@ uint32_t initCardApi ()
                         "c_MyFirstApplication",
                         "R1",
                         "E1",
-                        &handle[busnr]);
+                        &ss_canDevice.canBus(busnr).m_handle);
     // successful?
     if ( l_retval == NTCAN_SUCCESS ) {
       // success => HW found
-      printf ( "canOpen: CAN%d using netnumber %d\n", (unsigned int) busnr, l_netnumber);
+      printf ( "canOpen: CAN%u using netnumber %lu\n", unsigned(busnr), l_netnumber);
       busnr++;
     }
   }
@@ -149,73 +170,72 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-  if( !canBusIsOpen[ui8_bus] ) {
-    DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
-
-    long                    l_retval;
-    long                    l_baud;
-
-    switch (wBitrate) {
-      case 1000: l_baud = 0; break;
-      case 800:  l_baud = 1; break;
-      case 500:  l_baud = 2; break;
-      case 250:  l_baud = 3; break;
-      case 125:  l_baud = 4; break;
-      case 100:  l_baud = 5; break;
-      case  50:  l_baud = 6; break;
-      case  20:  l_baud = 7; break;
-      default: 
-        printf ( "invalid baud rate %dk\n(user defined baud rate not yet supported)\n", wBitrate);
-        return false;
-    }
-
-    l_retval = canSetBaudrate ( handle[ui8_bus], l_baud );
-    // successful ?
-    if ( l_retval != NTCAN_SUCCESS ) {
-      // error
-      printf ( "could not initialize CAN!\n");
-      return false;
-    }
-
-    // enable all CAN identifiers
-    l_retval = canEnableAllIds(handle[ui8_bus], true);
-    if (l_retval != NTCAN_SUCCESS) {
-      // Error handling...
-      printf ( "error in  canEnableAllIds!\n");
-      return false;       
-    }
-
-    l_retval = canSetFilterMode(handle[ui8_bus], filterMode_nofilter);
-    if (l_retval != NTCAN_SUCCESS) {
-      // Error handling...
-      printf ( "error in  canEnableAllIds!\n");
-      return false;       
-    }
-
-    CAN_IF_STATUS t_CANStatus;
-    l_retval = canStatus ( handle[ui8_bus], &t_CANStatus );
-    if ( l_retval == NTCAN_SUCCESS ) {
-      printf ( "status from card:\n");
-    //  printf ( "HW Rev. : %04X\n", t_CANStatus.w_hw_recv );
-      printf ( "FW Rev. : %04X\n", t_CANStatus.w_fw_rev );
-      printf ( "DLL Rev. : %04X\n", t_CANStatus.w_dll_rev);
-      printf ( "Drv Rev. : %04X\n", t_CANStatus.w_drv_rev);
-      printf ( "exist. Nets: %02x\n", t_CANStatus.w_netctr);
-    }
-
-    canBusIsOpen[ui8_bus] = true;
-    pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
-    return true;
-  }
-  else
+  if ( ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen )
     return true; // already initialized and files are already open
+
+  DEBUG_PRINT1("Opening CAN BUS channel=%u\n", unsigned(ui8_bus));
+
+  long                    l_retval;
+  long                    l_baud;
+
+  switch (wBitrate) {
+  case 1000: l_baud = 0; break;
+  case 800:  l_baud = 1; break;
+  case 500:  l_baud = 2; break;
+  case 250:  l_baud = 3; break;
+  case 125:  l_baud = 4; break;
+  case 100:  l_baud = 5; break;
+  case  50:  l_baud = 6; break;
+  case  20:  l_baud = 7; break;
+  default: 
+    printf ( "invalid baud rate %dk\n(user defined baud rate not yet supported)\n", wBitrate);
+    return false;
+  }
+
+  l_retval = canSetBaudrate ( ss_canDevice.canBus(ui8_bus).m_handle, l_baud );
+  // successful ?
+  if ( l_retval != NTCAN_SUCCESS ) {
+    // error
+    printf ( "could not initialize CAN!\n");
+    return false;
+  }
+
+  // enable all CAN identifiers
+  l_retval = canEnableAllIds(ss_canDevice.canBus(ui8_bus).m_handle, true);
+  if (l_retval != NTCAN_SUCCESS) {
+    // Error handling...
+    printf ( "error in  canEnableAllIds!\n");
+    return false;       
+  }
+
+  l_retval = canSetFilterMode(ss_canDevice.canBus(ui8_bus).m_handle, filterMode_nofilter);
+  if (l_retval != NTCAN_SUCCESS) {
+    // Error handling...
+    printf ( "error in  canEnableAllIds!\n");
+    return false;       
+  }
+
+  CAN_IF_STATUS t_CANStatus;
+  l_retval = canStatus ( ss_canDevice.canBus(ui8_bus).m_handle, &t_CANStatus );
+  if ( l_retval == NTCAN_SUCCESS ) {
+    printf ( "status from card:\n");
+    //  printf ( "HW Rev. : %04X\n", t_CANStatus.w_hw_recv );
+    printf ( "FW Rev. : %04X\n", t_CANStatus.w_fw_rev );
+    printf ( "DLL Rev. : %04X\n", t_CANStatus.w_dll_rev);
+    printf ( "Drv Rev. : %04X\n", t_CANStatus.w_drv_rev);
+    printf ( "exist. Nets: %02x\n", t_CANStatus.w_netctr);
+  }
+
+  ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
+  pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
+  return true;
 }
 
 
 void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //canBusIsOpen[ui8_bus] = false;
+  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
@@ -227,7 +247,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   long      l_len;
 
   l_len = 1;
-  l_retval = canRead (handle[ui8_bus],
+  l_retval = canRead (ss_canDevice.canBus(ui8_bus).m_handle,
                       &t_CANMsg[0],
                       &l_len);
   // successful ?
@@ -264,9 +284,9 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
     t_CANMsg[0].aby_data[ind] = ps_canMsg->ui8_data[ind];
 
   // should have been checked already by calling function isBusOpen:
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
   // blocked transmit
-  l_retval = canSend ( handle[ui8_bus],
+  l_retval = canSend ( ss_canDevice.canBus(ui8_bus).m_handle,
                        &t_CANMsg[0],
                        &l_len );
   if ( l_retval == NTCAN_SUCCESS ) {

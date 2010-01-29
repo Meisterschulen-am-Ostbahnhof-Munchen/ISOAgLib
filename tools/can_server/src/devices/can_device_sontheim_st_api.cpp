@@ -155,8 +155,34 @@ int  (*ca_SetFilterId_1) (int channel, int identifier);
 int  (*ca_Instruction_1) (int *data);
 #endif
 
+static struct canDevice_s {
+  struct canBus_s {
+    bool          mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
 
-static bool  canBusIsOpen[cui32_maxCanBusCnt];
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  mb_canBusIsOpen(false)
+{
+}
 
 int16_t loadDllFunctionAddresses(void)
 {
@@ -206,16 +232,11 @@ int16_t loadDllFunctionAddresses(void)
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-  }
-
   #ifdef USE_CAN_CARD_TYPE
   gHwType = USE_CAN_CARD_TYPE;
   #else
@@ -347,7 +368,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 {
   DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-  if( !canBusIsOpen[ui8_bus] ) {
+  if( !ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     if( !DLL_loaded )
@@ -509,7 +530,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
       return false;
     }
 
-    canBusIsOpen[ui8_bus] = true;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
 	return true;
   }
@@ -521,7 +542,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 void closeBusOnCard(uint8_t ui8_bus, server_c* /*pc_serverData*/)
 {
   DEBUG_PRINT1("close can bus %d\n", ui8_bus);
-  //canBusIsOpen[ui8_bus] = false;
+  //ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   // do not call close or CAN_CLOSE because COMMAND_CLOSE is received during initialization!
 }
 
@@ -616,7 +637,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   pi_transmitdata[11] = 0; // no remote
 
   // should have been checked already by calling function isBusOpen:
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
   int result = ca_TransmitCanCard_1(ui8_bus + 1 /* channel (starts from 1!) */, ps_canMsg->i32_msgType, pi_transmitdata);
   if ( result )
     return 1;

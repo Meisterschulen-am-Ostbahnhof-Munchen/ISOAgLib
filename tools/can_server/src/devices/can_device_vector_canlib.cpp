@@ -76,10 +76,42 @@ using namespace __HAL;
 // CAN Globals
 int AllCanChannelCount = 0;
 
-VportHandle gPortHandle[cui32_maxCanBusCnt];
-Vaccess gChannelMask[cui32_maxCanBusCnt];
-Vaccess gPermissionMask[cui32_maxCanBusCnt];
-Vaccess gInitMask[cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    VportHandle m_portHandle;
+    Vaccess     m_channelMask;
+    Vaccess     m_permissionMask;
+    Vaccess     m_initMask;
+    bool        mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  m_portHandle(INVALID_PORTHANDLE),
+  m_channelMask(0),
+  m_permissionMask(0),
+  m_initMask(0),
+  mb_canBusIsOpen(false)
+{
+}
 
 Vevent  gEvent;
 Vevent*  gpEvent;
@@ -92,8 +124,6 @@ uint32_t gHwType = USE_CAN_CARD_TYPE;
 uint32_t gHwType = HWTYPE_AUTO;
 #endif
 
-
-static bool  canBusIsOpen[cui32_maxCanBusCnt];
 
 static void printDriverConfig( void ) {
   int i;
@@ -113,16 +143,11 @@ static void printDriverConfig( void ) {
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-  return canBusIsOpen[ui8_bus];
+  return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-  for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-  {
-    canBusIsOpen[i] = false;
-  }
-
   #ifdef USE_CAN_CARD_TYPE
   gHwType = USE_CAN_CARD_TYPE;
   #else
@@ -133,16 +158,6 @@ uint32_t initCardApi ()
   Vstatus vErr;
   vErr = ncdOpenDriver();
   if (vErr) goto error;
-
-  uint32_t ind;
-  for ( ind = 0; ind < cui32_maxCanBusCnt; ind++ )
-  {
-    gPortHandle[ind] = INVALID_PORTHANDLE;
-    gChannelMask[ind]    = 0;
-    gPermissionMask[ind] = 0;
-    gInitMask[ind]       = 0;
-    canBusIsOpen[ind]    = false;
-  }
 
   printf("ncdDriverConfig()\n");
   vErr = ncdGetDriverConfig(&AllCanChannelCount, NULL); // get the number of channels
@@ -178,14 +193,14 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
   Vstatus vErr;
 
-  if( !canBusIsOpen[ui8_bus] ) {
+  if( !ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen ) {
     DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
     int32_t i32_busInd = -1, i32_virtualBusInd = -1;
     Vaccess virtualChannelMask = 0;
 
     // select the wanted channels
-    gChannelMask[ui8_bus] = gInitMask[ui8_bus] = 0;
+    ss_canDevice.canBus(ui8_bus).m_channelMask = ss_canDevice.canBus(ui8_bus).m_initMask = 0;
     i32_busInd = -1;
     for (int32_t i=0; i<AllCanChannelCount; i++) {
       if ( ( gDriverConfig->channel[i].hwType==gHwType                                           )
@@ -195,7 +210,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         printf( "Detect Real Channel %d\n", i32_busInd );
         if ( ui8_bus == i32_busInd )
         { // BUS found
-          gChannelMask[ui8_bus] |= gDriverConfig->channel[i].channelMask;
+          ss_canDevice.canBus(ui8_bus).m_channelMask |= gDriverConfig->channel[i].channelMask;
         }
       }
       else if ( gDriverConfig->channel[i].hwType == HWTYPE_VIRTUAL )
@@ -213,25 +228,25 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     // use virtualChannelMask
     if ( ( gHwType == HWTYPE_AUTO ) && ( i32_busInd == -1 ) )
     { // no real CAN channels found
-      gChannelMask[ui8_bus] = virtualChannelMask;
+      ss_canDevice.canBus(ui8_bus).m_channelMask = virtualChannelMask;
     }
 
-    gInitMask[ui8_bus] = gChannelMask[ui8_bus];
+    ss_canDevice.canBus(ui8_bus).m_initMask = ss_canDevice.canBus(ui8_bus).m_channelMask;
 
     // open a port
-    printf("ncdOpenPort(channelMask=%04X, initMask=%04X)\n", gChannelMask[ui8_bus], gInitMask[ui8_bus]);
-    vErr = ncdOpenPort(&gPortHandle[ui8_bus], "IsoAgLib", gChannelMask[ui8_bus], gInitMask[ui8_bus], &gPermissionMask[ui8_bus], 1024);
+    printf("ncdOpenPort(channelMask=%04X, initMask=%04X)\n", ss_canDevice.canBus(ui8_bus).m_channelMask, ss_canDevice.canBus(ui8_bus).m_initMask);
+    vErr = ncdOpenPort(&ss_canDevice.canBus(ui8_bus).m_portHandle, "IsoAgLib", ss_canDevice.canBus(ui8_bus).m_channelMask, ss_canDevice.canBus(ui8_bus).m_initMask, &ss_canDevice.canBus(ui8_bus).m_permissionMask, 1024);
     if (vErr) goto error;
 
-    printf(" portHandle=%u\n", gPortHandle[ui8_bus]);
-    if (gPortHandle[ui8_bus]==INVALID_PORTHANDLE) goto error;
+    printf(" portHandle=%u\n", ss_canDevice.canBus(ui8_bus).m_portHandle);
+    if (ss_canDevice.canBus(ui8_bus).m_portHandle==INVALID_PORTHANDLE) goto error;
 
-    printf(" permissionMask=%04X\n", gPermissionMask[ui8_bus]);
+    printf(" permissionMask=%04X\n", ss_canDevice.canBus(ui8_bus).m_permissionMask);
 
     // if permision to init
-    if (gPermissionMask[ui8_bus]) {
+    if (ss_canDevice.canBus(ui8_bus).m_permissionMask) {
       // set BUS timing
-      vErr = ncdSetChannelBitrate(gPortHandle[ui8_bus], gPermissionMask[ui8_bus], (wBitrate * 1000));
+      vErr = ncdSetChannelBitrate(ss_canDevice.canBus(ui8_bus).m_portHandle, ss_canDevice.canBus(ui8_bus).m_permissionMask, (wBitrate * 1000));
       if (vErr) goto error;
     }
     else if (wBitrate) {
@@ -239,29 +254,29 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
     }
 
     // Disable the TX and TXRQ notifications
-    vErr = ncdSetChannelMode(gPortHandle[ui8_bus],gChannelMask[ui8_bus],0,0);
+    vErr = ncdSetChannelMode(ss_canDevice.canBus(ui8_bus).m_portHandle,ss_canDevice.canBus(ui8_bus).m_channelMask,0,0);
     if (vErr) goto error;
 
-    if (canBusIsOpen[ui8_bus] == false)
+    if (ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen == false)
     { // set global mask
       VsetAcceptance acc;
       acc.mask = 0x000;
       acc.code = 0x000;
-      vErr = ncdSetChannelAcceptance(gPortHandle[ui8_bus], gChannelMask[ui8_bus], &acc);
+      vErr = ncdSetChannelAcceptance(ss_canDevice.canBus(ui8_bus).m_portHandle, ss_canDevice.canBus(ui8_bus).m_channelMask, &acc);
       if (vErr) goto error;
       acc.mask = 0x80000000;
       acc.code = 0x80000000;
-      vErr = ncdSetChannelAcceptance(gPortHandle[ui8_bus], gChannelMask[ui8_bus], &acc);
+      vErr = ncdSetChannelAcceptance(ss_canDevice.canBus(ui8_bus).m_portHandle, ss_canDevice.canBus(ui8_bus).m_channelMask, &acc);
       if (vErr) goto error;
 
       // reset clock
-      vErr = ncdResetClock(gPortHandle[ui8_bus]);
+      vErr = ncdResetClock(ss_canDevice.canBus(ui8_bus).m_portHandle);
       if (vErr) goto error;
       // Go on bus
-      vErr = ncdActivateChannel(gPortHandle[ui8_bus],gChannelMask[ui8_bus]);
+      vErr = ncdActivateChannel(ss_canDevice.canBus(ui8_bus).m_portHandle,ss_canDevice.canBus(ui8_bus).m_channelMask);
       if (vErr) goto error;
     }
-    canBusIsOpen[ui8_bus] = true;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = true;
     pc_serverData->canBus(ui8_bus).mb_deviceConnected = true;
   }
   
@@ -271,12 +286,12 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   error:
     printf("ERROR: %s!\n", ncdGetErrorString(vErr));
 
-    if (gPortHandle[ui8_bus] != INVALID_PORTHANDLE) {
-      ncdClosePort(gPortHandle[ui8_bus]);
-      gPortHandle[ui8_bus] = INVALID_PORTHANDLE;
+    if (ss_canDevice.canBus(ui8_bus).m_portHandle != INVALID_PORTHANDLE) {
+      ncdClosePort(ss_canDevice.canBus(ui8_bus).m_portHandle);
+      ss_canDevice.canBus(ui8_bus).m_portHandle = INVALID_PORTHANDLE;
     }
 
-    canBusIsOpen[ui8_bus] = false;
+    ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
     return false;
 
 }
@@ -297,10 +312,10 @@ void __HAL::updatePendingMsgs(server_c* /* pc_serverData */, int8_t /* i8_bus */
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   // should have been checked already by calling function isBusOpen:
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
-  VportHandle lPortHandle = gPortHandle[ui8_bus];
-  Vaccess lChannelMask = gChannelMask[ui8_bus];
-  Vaccess lPermissionMask = gPermissionMask[ui8_bus];
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
+  VportHandle lPortHandle = ss_canDevice.canBus(ui8_bus).m_portHandle;
+  Vaccess lChannelMask = ss_canDevice.canBus(ui8_bus).m_channelMask;
+  Vaccess lPermissionMask = ss_canDevice.canBus(ui8_bus).m_permissionMask;
 
   Vevent  lEvent = gEvent;
   Vstatus vErr;
@@ -327,7 +342,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
   Vstatus vErr;
 
-  vErr = ncdReceive1(gPortHandle[ui8_bus], &gpEvent);
+  vErr = ncdReceive1(ss_canDevice.canBus(ui8_bus).m_portHandle, &gpEvent);
   // msg from CANcardX buffer
   // this functions retrurns not only received messages
   // ACK for SENT messages is also returned!!!

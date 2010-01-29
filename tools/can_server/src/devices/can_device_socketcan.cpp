@@ -90,20 +90,42 @@ std::ofstream m_clog;
 #endif
 
 
-static bool canBusIsOpen[cui32_maxCanBusCnt];
+static struct canDevice_s {
+  struct canBus_s {
+    bool          mb_canBusIsOpen;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
+
+private:
+  std::vector< canBus_s > mvec_canBus;
+} ss_canDevice;
+
+inline canDevice_s::canBus_s &canDevice_s::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
+
+inline size_t canDevice_s::nCanBusses()
+{
+  return mvec_canBus.size();
+}
+
+canDevice_s::canBus_s::canBus_s() :
+  mb_canBusIsOpen(false)
+{
+}
 
 bool isBusOpen(uint8_t ui8_bus)
 {
-    return canBusIsOpen[ui8_bus];
+    return ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen;
 }
 
 uint32_t initCardApi ()
 {
-    for( uint32_t i=0; i<cui32_maxCanBusCnt; i++ )
-    {
-        canBusIsOpen[i] = false;
-    }
-
 #ifdef DEBUG_CAN
     m_clog.open("/tmp/vcan.log", std::ios::out|std::ios::app);
 #endif
@@ -123,7 +145,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
     DEBUG_PRINT1("init can bus %d\n", ui8_bus);
 
-    if( !canBusIsOpen[ui8_bus] ) 
+    if( !ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen ) 
     {
         DEBUG_PRINT1("Opening CAN BUS channel=%d\n", ui8_bus);
 
@@ -203,7 +225,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         }
 
         pc_serverData->canBus(ui8_bus).mi32_can_device = m_handle;
-        canBusIsOpen[ui8_bus]  = true;
+        ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen  = true;
 
         return true;
     }
@@ -214,7 +236,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
 void closeBusOnCard(uint8_t ui8_bus, server_c* pc_serverData )
 {
-  canBusIsOpen[ui8_bus] = false;
+  ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen = false;
   if( 0 > close( pc_serverData->canBus(ui8_bus).mi32_can_device ) ) {
       perror( "close" );
   }
@@ -231,9 +253,9 @@ void __HAL::updatePendingMsgs(server_c* /*pc_serverData*/, int8_t /*i8_bus*/)
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
 #ifdef DEBUG_CAN
-  m_clog << "sendToBus(): bus: " << (int)ui8_bus << " isOpen: " << canBusIsOpen[ui8_bus] << std::endl;
+  m_clog << "sendToBus(): bus: " << (int)ui8_bus << " isOpen: " << ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen << std::endl;
 #endif
-  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus]);
+  assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
   // Create the frame
   struct can_frame frame;
 
@@ -272,7 +294,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 #ifdef DEBUG_CAN
         m_clog << "readFromBus(): bus: " << (int)ui8_bus << " driverHandle: " << pc_serverData->canBus(ui8_bus).mi32_can_device << std::endl;
 #endif
-    if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && canBusIsOpen[ui8_bus])
+    if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen)
     {
         struct can_frame frame;
         fd_set rfds;       // read file descriptor
