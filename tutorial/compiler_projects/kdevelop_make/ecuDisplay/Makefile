@@ -15,7 +15,7 @@ EXTERNAL_LIBS =
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_SOCKET
+PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_MESSAGE_QUEUE
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
@@ -27,12 +27,6 @@ first: all
 SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp \
@@ -105,7 +99,14 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp
+		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
 
 SOURCES_APP = ../../../../tutorial/src/ecu_display/component_tecu.cpp \
 		../../../../tutorial/src/ecu_display/component_vtclient.cpp \
@@ -125,20 +126,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_system.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_config.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
-		../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_typedef.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_can.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_eeprom.h \
@@ -208,6 +195,20 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/driver/can/iident_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/icancustomer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/icanpkg_c.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_server.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can_target_extensions.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/can.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/errcodes.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.h \

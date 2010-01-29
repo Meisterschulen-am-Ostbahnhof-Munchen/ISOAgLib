@@ -11,8 +11,6 @@
 #define PRJ_USE_AUTOGEN_CONFIG config_can_messenger.h
 
 
-#define CAN_BUS_CNT 4 
-
 #define CAN_INSTANCE_CNT 1 
 
 #define PRT_INSTANCE_CNT 1 

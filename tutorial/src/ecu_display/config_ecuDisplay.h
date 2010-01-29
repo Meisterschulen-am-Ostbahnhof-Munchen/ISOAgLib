@@ -22,8 +22,6 @@
 // These defines are set in the conf_ecu_display_x86linux:
 
 
-#define CAN_BUS_CNT 1 
-
 #define CAN_INSTANCE_CNT 1 
 
 #define PRT_INSTANCE_CNT 1 

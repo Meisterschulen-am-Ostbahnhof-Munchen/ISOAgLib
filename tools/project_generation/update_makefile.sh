@@ -109,7 +109,6 @@ status_le1() { [ $? -le 1 ]; }
 # + USE_LITTLE_ENDIAN_CPU=1 --> most CPU types have little endian number variable representation -> number variable can be converted directly from int variable memory representation into CAN little endian string
 # + USE_CAN_DRIVER="simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator" -> select wanted driver connection for CAN
 # + USE_RS232_DRIVER="simulating"|"sys"|"rte"|"hal_simulator" -> select wanted driver connection for RS232
-# + CAN_BUS_CNT ( specify amount of available CAN channels at ECU; default 1 )
 # + CAN_INSTANCE_CNT ( specify amount of CAN channels; default 1 )
 # + PRT_INSTANCE_CNT ( specify amount of CAN channels to use for protocol; must be <= CAN_INSTANCE_CNT; default 1 )
 # + RS232_INSTANCE_CNT ( specify amount of RS232 channels; default 1 )
@@ -193,7 +192,6 @@ set_default_values()
     # no reasonable default for all targets (will be set later
     # conditionally):
     unset PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL || :
-    CAN_BUS_CNT=1
     CAN_INSTANCE_CNT=1
     PRT_INSTANCE_CNT=1
     RS232_CHANNEL_CNT=1
@@ -291,11 +289,6 @@ update_prj_system_with_enhanced_can_hal()
 check_set_correct_variables()
 {
     local CONF_DIR="$1"
-
-    if [ "$CAN_BUS_CNT" -lt "$CAN_INSTANCE_CNT" ]; then
-        echo_ "ERROR! The amount of available CAN BUS channels at ECU must be at least as high as wanted of used CAN instances"
-        exit 2
-    fi
 
     : ${ISO_AG_LIB_PATH:?"ERROR! Please specify the path to the root directory of IsoAgLib - i.e. where xgpl_src is located"}
     ISO_AG_LIB_INSIDE="../../$ISO_AG_LIB_PATH"
@@ -1160,7 +1153,6 @@ END_OF_PATH
         echo_e "$ENDLINE" >&3
     
     
-        echo_e "#define CAN_BUS_CNT $CAN_BUS_CNT $ENDLINE" >&3
         echo_e "#define CAN_INSTANCE_CNT $CAN_INSTANCE_CNT $ENDLINE" >&3
         echo_e "#define PRT_INSTANCE_CNT $PRT_INSTANCE_CNT $ENDLINE" >&3
         echo_e "#define RS232_CHANNEL_CNT $RS232_CHANNEL_CNT $ENDLINE" >&3

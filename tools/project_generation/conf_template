@@ -154,10 +154,6 @@ PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL=1
 # (Note: "sys" for pc_linux to come soon. This will be the SocketCAN interface)
 USE_CAN_DRIVER="socket_server"
 
-# Define the amount of available CAN BUSes at the ECU
-# ( default 1 )
-CAN_BUS_CNT=1
-
 # Define the amount of CAN instances to support
 # ( all values lower than 1 are overwritten by default 1 )
 CAN_INSTANCE_CNT=1

@@ -4,8 +4,6 @@
 
 #define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
 
-#define CAN_BUS_CNT 1 
-
 #define CAN_INSTANCE_CNT 1 
 
 #define PRT_INSTANCE_CNT 1 
@@ -21,8 +19,6 @@
 // #define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
 
 // #define CONFIG_DO_NOT_START_RELAIS_ON_STARTUP
-
-#define USE_RS232_OVER_CAN
 
 // Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed
 // Strong Advice: Don't activate this, as long your target has not too tight memory restrictions

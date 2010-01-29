@@ -553,15 +553,6 @@
  * objects.
  */
 /*@{*/
-/** configs according to CAN hardware
-    define amount of available CAN buses
-    - the bus number for all configuration function calls is
-      verified against this setting
-*/
-#ifndef CAN_BUS_CNT
-  #define CAN_BUS_CNT 1
-#endif
-
 /** set the amount of CanIo_c instanes managed by System_c
   * normaly one, but if more CAN BUS'es should be managed
   * System_c can manage them seperate f.e. one for IsoAgLib and the other

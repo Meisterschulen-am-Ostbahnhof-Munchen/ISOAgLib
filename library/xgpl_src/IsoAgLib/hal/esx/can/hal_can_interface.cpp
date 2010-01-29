@@ -609,11 +609,11 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   #endif
 
   #ifdef DEBUG
-  static uint8_t lastSendData[CAN_BUS_CNT][2][8];
-  static uint8_t lastSendLen[CAN_BUS_CNT][2];
-  static uint32_t lastSendIdent[CAN_BUS_CNT][2];
-  static uint8_t lastSendXtd[CAN_BUS_CNT][2];
-  static int32_t lastSendTime[CAN_BUS_CNT][2];
+  static uint8_t lastSendData[cui32_maxCanBusCnt][2][8];
+  static uint8_t lastSendLen[cui32_maxCanBusCnt][2];
+  static uint32_t lastSendIdent[cui32_maxCanBusCnt][2];
+  static uint8_t lastSendXtd[cui32_maxCanBusCnt][2];
+  static int32_t lastSendTime[cui32_maxCanBusCnt][2];
 
   if ( ( lastSendLen[aui8_busNr][aui8_msgobjNr] == pt_send->bDlc )
     && ( lastSendIdent[aui8_busNr][aui8_msgobjNr] == pt_send->dwId )
@@ -640,16 +640,16 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   lastSendXtd[aui8_busNr][aui8_msgobjNr] = pt_send->bXtd;
   lastSendTime[aui8_busNr][aui8_msgobjNr] = __HAL::get_time();
 
-  #if CAN_BUS_CNT == 1
+  #if HAL_CAN_MAX_BUS_NR == 0
   static uint16_t minFreeSendItem[1][2] = {0xFFFF, 0xFFFF};
-  #elif CAN_BUS_CNT == 2
-  static uint16_t minFreeSendItem[CAN_BUS_CNT][2] = {{0xFFFF, 0xFFFF},{0xFFFF, 0xFFFF}};
+  #elif HAL_CAN_MAX_BUS_NR == 1
+  static uint16_t minFreeSendItem[cui32_maxCanBusCnt][2] = {{0xFFFF, 0xFFFF},{0xFFFF, 0xFFFF}};
   #else
-  static uint16_t minFreeSendItem[CAN_BUS_CNT][2] = {{0xFFFF, 0xFFFF},{0xFFFF, 0xFFFF}};
+  static uint16_t minFreeSendItem[cui32_maxCanBusCnt][2] = {{0xFFFF, 0xFFFF},{0xFFFF, 0xFFFF}};
   if ( ( minFreeSendItem[0][0] == 0xFFFF ) && ( minFreeSendItem[1][0] == 0xFFFF )
     && ( minFreeSendItem[0][1] == 0xFFFF ) && ( minFreeSendItem[1][1] == 0xFFFF ))
   {
-    for ( uint16_t ind = 0; ind < CAN_BUS_CNT; ind++ )
+    for ( uint16_t ind = 0; ind < cui32_maxCanBusCnt; ind++ )
     {
       minFreeSendItem[ind][0] = minFreeSendItem[ind][1] = 0xFFFF;
     }
