@@ -56,11 +56,9 @@ typedef int HINSTANCE;
 #endif
 
 #define  STRICT
-
 #include "can_target_extensions.h"
 #include <stdlib.h>
 #include <ctype.h>
-#include <IsoAgLib/hal/system.h>
 
 #define USE_THREAD
 

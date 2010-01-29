@@ -56,11 +56,9 @@ typedef int HINSTANCE;
 #endif
 
 #define  STRICT
-
 #include "can_target_extensions.h"
 #include <stdlib.h>
 #include <ctype.h>
-#include <IsoAgLib/hal/system.h>
 
 #include <stdio.h>
 #include <conio.h>
@@ -176,7 +174,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
   if ( ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen )
     return true; // already initialized and files are already open
 
-  if ( !ss_canDevice.canBus(busnr).mb_isHandleAvailable )
+  if ( !ss_canDevice.canBus(ui8_bus).mb_isHandleAvailable )
     return false; // not available
 
   DEBUG_PRINT1("Opening CAN BUS channel=%u\n", unsigned(ui8_bus));

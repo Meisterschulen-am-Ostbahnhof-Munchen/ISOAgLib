@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="can_server_lawicel"
-	ProjectGUID="{C670B004-FAB7-406A-85E6-587F5F85C122}"
+	ProjectGUID="{5074BE9C-75C0-47F9-9306-F073C43CB85E}"
 	RootNamespace="canserver"
 	TargetFrameworkVersion="131072"
 	>
@@ -46,8 +46,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\LAWICEL\CANUSB\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\LAWICEL\CANUSB\include"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
 				StringPooling="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -137,8 +137,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;&quot;C:\Programme\LAWICEL\CANUSB\include&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;&quot;C:\Programme\LAWICEL\CANUSB\include&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -212,11 +212,11 @@
 			Filter="cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="src\can_server_common.cpp"
+				RelativePath="src\devices\can_device_lawicel.cpp"
 				>
 			</File>
 			<File
-				RelativePath="src\devices\can_device_lawicel.cpp"
+				RelativePath="src\can_server_common.cpp"
 				>
 			</File>
 			<File

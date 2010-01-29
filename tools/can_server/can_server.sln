@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "can_server_sontheim_mt_api"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "can_server_sontheim_st_api", "can_server_sontheim_st_api.vcproj", "{223550BB-27CA-4A5F-BCD8-BB405FB2275C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "can_server_lawicel", "can_server_lawicel.vcproj", "{5074BE9C-75C0-47F9-9306-F073C43CB85E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,10 @@ Global
 		{223550BB-27CA-4A5F-BCD8-BB405FB2275C}.Debug|Win32.Build.0 = Debug|Win32
 		{223550BB-27CA-4A5F-BCD8-BB405FB2275C}.Release|Win32.ActiveCfg = Release|Win32
 		{223550BB-27CA-4A5F-BCD8-BB405FB2275C}.Release|Win32.Build.0 = Release|Win32
+		{5074BE9C-75C0-47F9-9306-F073C43CB85E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5074BE9C-75C0-47F9-9306-F073C43CB85E}.Debug|Win32.Build.0 = Debug|Win32
+		{5074BE9C-75C0-47F9-9306-F073C43CB85E}.Release|Win32.ActiveCfg = Release|Win32
+		{5074BE9C-75C0-47F9-9306-F073C43CB85E}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

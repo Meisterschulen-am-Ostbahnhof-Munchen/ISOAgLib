@@ -55,6 +55,7 @@
 #include "can_server.h"
 #include "../can_server_common.h"
 #include <string.h>
+#include <iostream>
 #include <assert.h>
 
 #ifdef WIN32
