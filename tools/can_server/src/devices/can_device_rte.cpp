@@ -77,10 +77,11 @@ static struct canDevice_s {
   struct canBus_s {
     bool          mb_canBusIsOpen;
     can_c        *m_rteCan_c;
+
     canBus_s();
+    ~canBus_s();
   };
   canBus_s &canBus(size_t n_index);
-  ~canBus_s();
   size_t nCanBusses();
 
 private:
