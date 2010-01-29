@@ -75,6 +75,17 @@ class Nmea2000SendStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 };
 #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
+
+/** Class definition to be used with event processing of GPS messages et al. **/
+class MsgEventHandler_c
+{
+public:
+  MsgEventHandler_c() {}
+  virtual ~MsgEventHandler_c() {}
+  virtual void handleMsgEvent (uint32_t aui32_pgn) = 0;
+};
+
+
 class TimePosGps_c;
 typedef TimePosGps_c TimePosGPS_c; /// this typedef is only for some time to provide backward compatibility at API level
 typedef SINGLETON_DERIVED(TimePosGps_c,BaseCommon_c) SingletonTimePosGps_c;
@@ -513,6 +524,9 @@ public:
    */
   uint16_t millisecondUtcGps() const {return bit_gpsTime.msec;}
 
+  /** get the millisecond time of day for the last received position */
+  uint32_t millisecondTimeOfDay() const { return mui32_timeMillisecondOfDay; }
+
   /** deliver GPS altitude - [cm] */
   int32_t getGpsAltitudeCm( void ) const { return mi32_altitudeCm; }
 
@@ -557,6 +571,18 @@ public:
   uint16_t getGpsDirectionUpdateAge( void ) const
   { return (System_c::getTime() - mi32_lastIsoDirection); }
 
+  /** register an event handler that gets called for any incoming PGN.
+      Please look into the implementation to see for which PGNs it is
+      actually called.
+      Note: Double registration will be allowed, whereas deregistration
+            will remove all occurances. */
+  void registerMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler)
+  { mvec_msgEventHandlers.push_back (&arc_msgEventHandler); }
+
+  /** deregister all event handlers matching the parameter
+      @param arc_msgEventHandler Reference to an implementation of the
+                                 handler class of type MsgEventHandler_c */
+  void deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler);
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
@@ -603,6 +629,10 @@ private:
     */
   bool processMsg();
 
+  /** Calls all the registered handlers with the given PGN,
+      so they can get the current values via the normal getters. */
+  void notifyOnEvent (uint32_t aui32_pgn);
+
   /** send direction as detailed stream */
   void isoSendDirection( void );
 
@@ -643,6 +673,12 @@ private:
 
   /** raw GPS longitude [degree]; Long_Min < 0 --> West */
   int32_t mi32_longitudeDegree10Minus7;
+
+  /** raw millisecond time of day from the GPS message */
+  uint32_t mui32_timeMillisecondOfDay;
+  int32_t  mi32_lastMillisecondUpdate;  // time stamp of the update of this variable
+  float    mf_rapidUpdateRateFilter;
+  int32_t  mi32_rapidUpdateRateMs;
 
 
   /// General
@@ -737,6 +773,8 @@ private:
     */
   const IsoName_c* mpc_isoNameGps;
   IsoAgLib::IdentMode_t  mt_identModeGps;
+
+  STL_NAMESPACE::vector<MsgEventHandler_c*> mvec_msgEventHandlers;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

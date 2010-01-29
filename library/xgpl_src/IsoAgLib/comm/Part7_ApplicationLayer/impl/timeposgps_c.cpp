@@ -37,6 +37,8 @@
 #endif
 
 
+const float gcf_rapidUpdateFilter = 0.15f;  // 15% new, 85%old to filter the update time.
+
 
 using namespace std;
 
@@ -152,9 +154,12 @@ namespace __IsoAgLib {
       or getTimePosGpsInstance (protocolInstanceNr) in case more than one ISO11783 BUS is used for IsoAgLib
    */
   TimePosGps_c::TimePosGps_c()
-  : mc_sendGpsISOName(),
-  mpc_isoNameGps(NULL),
-  mt_identModeGps( IsoAgLib::IdentModeImplement )
+  : mf_rapidUpdateRateFilter(0.0f)
+  , mi32_rapidUpdateRateMs(0)
+  , mc_sendGpsISOName()
+  , mpc_isoNameGps(NULL)
+  , mt_identModeGps( IsoAgLib::IdentModeImplement )
+  , mvec_msgEventHandlers()
   {}
 
 
@@ -217,6 +222,8 @@ namespace __IsoAgLib {
         mi32_altitudeCm = 0;
         #endif
         b_noPosition = true;
+        mf_rapidUpdateRateFilter = 0.0f;
+        mi32_rapidUpdateRateMs = 0;
       }
       if ( (ci32_now - mi32_lastIsoDirection) >= TIMEOUT_SENDING_NODE )
       { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
@@ -230,6 +237,10 @@ namespace __IsoAgLib {
         * Then we don't have to wait for both to be silent in order to kick the mc_sendGpsISOName.
         * Naming:       Gps for Position
         *         Direction for Direction */
+      }
+      if ( mf_rapidUpdateRateFilter != 0.0f )
+      {
+        mi32_rapidUpdateRateMs = ((int32_t(mf_rapidUpdateRateFilter) + 50) / 100) * 100;   // round to the nearest 100ms
       }
     }
 
@@ -575,6 +586,36 @@ namespace __IsoAgLib {
           mi32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
           mi32_lastIsoPositionSimple = ci32_now;
           mc_sendGpsISOName = rcc_tempISOName;
+
+          // give an offset to the millisecond time of day based on a filtered message rate
+          const int32_t ci32_updateDelta = ci32_now - mi32_lastMillisecondUpdate;
+          if ( (mi32_lastMillisecondUpdate != 0) && (ci32_updateDelta < 1000) )
+          { // (don't process the first time or following lost communications)
+            if ( mf_rapidUpdateRateFilter == 0.0f )
+            { // preload the filter value with the current period
+              mf_rapidUpdateRateFilter = float(ci32_updateDelta);
+              mi32_rapidUpdateRateMs = ((ci32_updateDelta + 50) / 100) * 100;   // round to the nearest 100ms
+            }
+            else
+            {
+              mf_rapidUpdateRateFilter = (mf_rapidUpdateRateFilter * (1.0f-gcf_rapidUpdateFilter)) + 
+                                         ((ci32_now - mi32_lastMillisecondUpdate) * gcf_rapidUpdateFilter);
+            }
+          }
+          else
+          { // reset the filter for the rate
+            mf_rapidUpdateRateFilter = 0.0f;
+          }
+/** @todo ON REQUEST-259: Should we allow NMEA_GPS_POSITION_RAPID_UPDATE_PGN at all without ENABLE_NMEA_2000_MULTI_PACKET?? See below! */
+#ifdef ENABLE_NMEA_2000_MULTI_PACKET
+          // if it has been at least 1/2 an update time since the GNSS message, add the time
+          // otherwise use the same time that came from the GNSS message
+          if ( (ci32_now - mi32_lastIsoPositionStream) > (mi32_rapidUpdateRateMs / 2) )
+          {
+            mui32_timeMillisecondOfDay += mi32_rapidUpdateRateMs;
+            mi32_lastMillisecondUpdate = ci32_now;
+          }
+#endif
           if (getGnssMode() == IsoAgLib::IsoNoGps)
           { /// @todo ON REQUEST-259: Allow Rapid Update without Complete Position TP/FP before? Is is just an update or can it be standalone?
               /// for now, allow it as standalone and set GpsMethod simply to IsoGnssNull as we don't have reception info...
@@ -583,6 +624,7 @@ namespace __IsoAgLib {
             mt_gnssType = IsoAgLib::IsoGnssGps;
             #endif
           }
+          notifyOnEvent (NMEA_GPS_POSITION_RAPID_UPDATE_PGN);
         }
         else
         { // there is a sender conflict
@@ -612,6 +654,7 @@ namespace __IsoAgLib {
             IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
             c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
 #endif
+            notifyOnEvent (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
           }
           // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
         }
@@ -871,6 +914,8 @@ namespace __IsoAgLib {
         IsoAgLib::convertIstream( rc_stream, ui32_milliseconds );
         // NMEA NMEA_GPS_POSITON_DATA_PGN sends with 0.1 msec
         ui32_milliseconds /= 10;
+        mui32_timeMillisecondOfDay = ui32_milliseconds;
+        mi32_lastMillisecondUpdate = mi32_lastIsoPositionStream;
 
         const time_t t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
         tm* UtcNow = gmtime( &t_tempUnixTime );
@@ -926,6 +971,7 @@ namespace __IsoAgLib {
           else
             IsoAgLib::convertIstream( rc_stream, mvec_refStationDifferentialAge10Msec[ind] );
         }
+        notifyOnEvent (NMEA_GPS_POSITION_DATA_PGN);
         #ifdef DEBUG
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_POSITON_DATA_PGN Lat: " << mi32_latitudeDegree10Minus7
           << ", Lon: " << mi32_longitudeDegree10Minus7 << ", Alt: " << mi32_altitudeCm
@@ -960,6 +1006,7 @@ namespace __IsoAgLib {
           IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
           c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
 #endif
+          notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }
 
         #ifdef DEBUG
@@ -1549,7 +1596,39 @@ void TimePosGps_c::isoSendDirection( void )
 ///  Used for Debugging Tasks in Scheduler_c
 const char*
 TimePosGps_c::getTaskName() const
-{   return "TimePosGps_c"; }
+{
+  return "TimePosGps_c";
+}
+
+
+void
+TimePosGps_c::notifyOnEvent(uint32_t aui32_pgn)
+{
+  STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
+  for (STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end; ++iter)
+  { // call handler for each entry
+    (*iter)->handleMsgEvent (aui32_pgn);
+  }
+}
+
+
+void
+TimePosGps_c::deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler)
+{
+  STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter_end = mvec_msgEventHandlers.end();
+  for (STL_NAMESPACE::vector<MsgEventHandler_c*>::iterator iter = mvec_msgEventHandlers.begin(); iter != iter_end;)
+  {
+    if ((*iter) == &arc_msgEventHandler)
+    { // remove entry
+      iter = mvec_msgEventHandlers.erase (iter);
+    }
+    else
+    { // keep entry
+      ++iter;
+    }
+  }
+}
+
 
 } // namespace __IsoAgLib
 

@@ -27,6 +27,17 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
+
+/** Class definition to be used with event processing of GPS messages et al. **/
+class iMsgEventHandler_c : private __IsoAgLib::MsgEventHandler_c
+{
+public:
+  iMsgEventHandler_c() {}
+  virtual ~iMsgEventHandler_c() {}
+  virtual void handleMsgEvent (uint32_t aui32_pgn) = 0;
+};
+
+
 /**
   working on Base Data Msg Type 1, 2 and Calendar;
   stores, updates  and delivers all base data informations;
@@ -192,6 +203,9 @@ public:
    */
   uint16_t millisecondUtcGps() const {return TimePosGps_c::millisecondUtcGps();}
 
+  /** get the millsecond time of day for the last posiiton - 0=midnight */
+  uint32_t millisecondTimeOfDay() const { return TimePosGps_c::millisecondTimeOfDay(); }
+
   /** deliver GPS altitude - [cm] */
   int32_t getGpsAltitudeCm(void) const { return TimePosGps_c::getGpsAltitudeCm();}
 
@@ -219,6 +233,19 @@ public:
 
   /** deliver age of last gps-direction-update in milliseconds */
   uint16_t getGpsDirectionUpdateAge(void) const { return TimePosGps_c::getGpsDirectionUpdateAge(); }
+
+  /** register an event handler that gets called for any incoming PGN.
+      Please look into the implementation to see for which PGNs it is
+      actually called.
+      Note: Double registration will be allowed, whereas deregistration
+            will remove all occurances. */
+  void registerMsgEventHandler (iMsgEventHandler_c &arc_msgEvent) { TimePosGps_c::registerMsgEventHandler ((__IsoAgLib::MsgEventHandler_c &)arc_msgEvent); }
+
+  /** deregister all event handlers matching the parameter
+      @param arc_msgEventHandler Reference to an implementation of the
+                                 handler class of type iMsgEventHandler_c */
+  void deregisterMsgEventHandler (iMsgEventHandler_c &arc_msgEvent) { TimePosGps_c::deregisterMsgEventHandler ((__IsoAgLib::MsgEventHandler_c &)arc_msgEvent); }
+
 
   /* ******************************************* */
   /** \name Set Values */
