@@ -20,7 +20,10 @@
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer
 //    ( i.e. direct in the BIOS/OS call)
-#define HAL_CAN_MAX_BUS_NR 3
+// NOTE: For PC (CAN-Server) we have basically unlimited channels,
+//       hence the max. BUS number is set to some quite high value of 31.
+//       Should be really enough for everybody - just like 640kB of RAM on the PC ;-)
+#define HAL_CAN_MAX_BUS_NR 31
 
 /** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
 #ifndef FLOAT_WORD_ORDER
