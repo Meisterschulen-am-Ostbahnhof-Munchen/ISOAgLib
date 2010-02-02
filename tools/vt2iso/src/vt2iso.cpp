@@ -2236,20 +2236,18 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               return false;
             }
             char languageCode[2];
-            languageCode[0] = arrc_attributes [attrCode].getCharacterAtPos(0); // getCharacterAtPos
-            languageCode[1] = arrc_attributes [attrCode].getCharacterAtPos(1);
+            languageCode[0] = tolower (arrc_attributes [attrCode].getCharacterAtPos(0)); // getCharacterAtPos
+            languageCode[1] = tolower (arrc_attributes [attrCode].getCharacterAtPos(1));
 
             // Check for correct LanguageCode!
             int lc;
-            for (lc=0; lc<DEF_iso639entries; lc++)
+            for (lc=0; lc<DEF_iso639entries; ++lc)
             {
               if ((iso639table[lc][0] == languageCode[0]) && (iso639table[lc][1] == languageCode[1])) break;
             }
             if (lc == DEF_iso639entries)
-            {
-              // language not found!
-              std::cerr << "\n\n<language code=\"" << languageCode[0] << languageCode[1] << "\" /> is NOT conform to ISO 639 (Maybe you didn't use lower-case letters?!)! STOPPING PARSER! bye."<<std::endl<<std::endl;
-              return false;
+            { // language not found!
+              std::cerr << "\n\nWARNING: <language code=\"" << languageCode[0] << languageCode[1] << "\" /> MAY NOT be conform to ISO 639. Please make sure it is correct."<<std::endl<<std::endl;
             }
 
             tempString = str(format("'%c', '%c'") % languageCode[0] % languageCode[1]);
