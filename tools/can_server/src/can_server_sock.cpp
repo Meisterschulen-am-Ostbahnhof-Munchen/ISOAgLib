@@ -452,9 +452,21 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
     iter_delete->canBus(k).mvec_msgObj.clear();
 #endif
 
+  if (close (iter_delete->i32_commandSocket))
+  {
+    #ifdef DEBUG
+    printf("releaseClient: close i32_commandSocket=%d Fehler: %d (%s)\n", iter_delete->i32_commandSocket, errno, strerror(errno));
+    #endif
+  }
+  if (close (iter_delete->i32_dataSocket))
+  {
+    #ifdef DEBUG
+    printf("releaseClient: close i32_dataSocket=%d Fehler: %d (%s)\n", iter_delete->i32_dataSocket, errno, strerror(errno));
+    #endif
+  }
+
   // erase sets iterator to next client
   iter_delete = pc_serverData->mlist_clients.erase(iter_delete);
-
 }
 
 static void enqueue_msg(__HAL::transferBuf_s* p_sockBuf, SOCKET_TYPE i32_socketSender, __HAL::server_c* pc_serverData)
