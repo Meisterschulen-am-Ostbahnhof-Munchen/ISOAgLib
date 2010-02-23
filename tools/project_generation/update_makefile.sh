@@ -262,6 +262,7 @@ set_default_values()
     USE_MSVC_EXTERNAL_LIBRARIES=''
     APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
+    DEBUG_DEFINES=''
 }
 
 # update PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL unless contradiction with
@@ -1513,7 +1514,8 @@ create_standard_makefile()
             echo_n "BIOS_INC =" >&3
         fi
         local REPORT_VERSION_DEFINES=''
-        local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- ' -D%s' $PRJ_DEFINES)}"
+        local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- " -D'%s'" $PRJ_DEFINES)}${DEBUG_DEFINES:+$(printf -- " -D'%s'" $DEBUG_DEFINES)}"
+
         if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
             append RULE_PROJ_DEFINES ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
         fi
@@ -2181,8 +2183,10 @@ create_VCPrj()
     local INSERT_DEBUG_INTERMEDIATE_DIR=Debug
     local INSERT_DEBUG_IGNORE_EXPORT_LIB=0
     local INSERT_DEBUG_TARGET_DIR=''
-    local INSERT_DEBUG_CPP_PARAMETERS="/nologo /W3 /Gm /GX /ZI /Od ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES} /YX /FD /TP /GZ /c"
-    local INSERT_DEBUG_RSC_PARAMETERS="/l 0x407 /d \"_DEBUG\" ${INSERT_d_DEFINES}"
+    local INSERT_DEBUG_DEFINES="${DEBUG_DEFINES:+$(upper_defines_vcproj $DEBUG_DEFINES)}"
+    local INSERT_DEBUG_d_DEFINES="${DEBUG_DEFINES:+$(lower_defines_vcproj $DEBUG_DEFINES)}"
+    local INSERT_DEBUG_CPP_PARAMETERS="/nologo /W3 /Gm /GX /ZI /Od ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES}${INSERT_DEBUG_DEFINES} /YX /FD /TP /GZ /c"
+    local INSERT_DEBUG_RSC_PARAMETERS="/l 0x407 /d \"_DEBUG\" ${INSERT_d_DEFINES}${INSERT_DEBUG_d_DEFINES}"
     local INSERT_DEBUG_LINKER_PARAMETERS="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ws2_32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept ${INSERT_CAN_LIB_PATH} /libpath:\"${INSERT_STLPORT_LIB_PATH}\""
 
     local INSERT_RELEASE_USE_MFC=0
@@ -2470,6 +2474,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
                                   Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
+--debugdefgroup=GROUPNUMBER       Use group of debug defines. GROUPNUMBER can be 0, 1 or 2.
 
 "update_makefile.sh" parses the selected project configuration file and overwrites the default values for all contained settings.
 It then collects the corresponding files which can then be imported to an individual IDE.
@@ -2556,6 +2561,15 @@ check_before_user_configuration()
                     TMP_REPORTFILE="${TEMPFILE_PREFIX}report"
                     exec 5>"$TMP_REPORTFILE"
                 fi
+                ;;
+            ('--debugdefgroup=0')
+                DEBUG_DEFINES='NDEBUG'
+                ;;
+            ('--debugdefgroup=1')
+                DEBUG_DEFINES='DEBUG NDEBUG'
+                ;;
+            ('--debugdefgroup=2')
+                DEBUG_DEFINES='DEBUG DEBUG_ADDRESS_CLAIM DEBUG_CAN DEBUG_CAN_BUFFER_FILLING DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION DEBUG_EEPROM DEBUG_ELEMENTBASE DEBUG_FIFO_CAN DEBUG_FIFO_WRITE DEBUG_HAL DEBUG_HEAP_USEAGE DEBUG_LANGUAGE_AUTO_DETECT DEBUG_NETWORK_MANAGEMENT DEBUG_RECEIVE DEBUG_SCHEDULER DEBUG_SCHEDULER_EXTREME DEBUG_SENDING DEBUG_TASKS_QUEUE DEBUG_TIME_EVENTS'
                 ;;
             (-*)
                 echo_ "Unrecognized option $option'" 1>&2
