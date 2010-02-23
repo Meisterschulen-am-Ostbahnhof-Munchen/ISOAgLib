@@ -71,7 +71,7 @@ namespace __HAL {
   /**
     deliver channel number for checking/requesting of analog input
     for call of __HAL:: functions (differences mostly caused
-    by multiplexers)
+    by multiplexers) [GET_A_IN_1 .. GET_A_IN_8]
     @param channel number from interval [0..maxNo] == [0..7]
     @return according channel number for __HAL call
   */
@@ -81,7 +81,7 @@ namespace __HAL {
     deliver channel number for checking/requesting of
     ADC value at digital input
     for call of __HAL:: functions (differences mostly caused
-    by multiplexers)
+    by multiplexers) [GET_D_IN_1 .. GET_D_IN_16]
     @param ab_channel number from interval [0..maxNo]
     @return according channel number for __HAL call
   */
@@ -211,7 +211,7 @@ namespace HAL
     @return current [4000..20000] [uA] or C_RANGE on wrong input channel number
   */
   inline int16_t  getAdcCurrent(uint8_t ab_channel)
-    {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(ab_channel));
+    {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(ab_channel));
      if ( i16_temp == C_RANGE ) return C_RANGE;
      return ((i16_temp * 24) + ((i16_temp * 41)/100));};
   /**

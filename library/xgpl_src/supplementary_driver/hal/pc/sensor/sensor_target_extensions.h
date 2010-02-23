@@ -72,7 +72,7 @@ int16_t  getAnaloginMean(uint8_t bInput);          /* evaluation of the mean val
   @return according channel number for __HAL call
 */
 inline uint8_t getAnaloginCheckNr(uint8_t ab_channel)
-  {return (95 - ab_channel);};
+  {return (ab_channel);} // for simulation, directly map the channels
 /**
   deliver channel number for checking/requesting of
   ADC value at digital input
@@ -82,7 +82,7 @@ inline uint8_t getAnaloginCheckNr(uint8_t ab_channel)
   @return according channel number for __HAL call
 */
 inline uint8_t getDiginAdcCheckNr(uint8_t ab_channel)
-  {return (ab_channel < 2)?(87 - ab_channel):(33 - ab_channel);};
+  {return (ab_channel);} // for simulation, directly map the channels
 
 
 /**

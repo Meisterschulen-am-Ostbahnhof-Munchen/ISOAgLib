@@ -192,7 +192,7 @@ namespace HAL
     @return current [4000..20000] [uA] or HAL_RANGE_ERR on wrong input channel number
   */
   inline int16_t  getAdcCurrent(uint8_t ab_channel)
-    {int16_t i16_temp = __HAL::getAdc(__HAL::getDiginAdcCheckNr(ab_channel));
+    {int16_t i16_temp = __HAL::getAdc(__HAL::getAnaloginCheckNr(ab_channel));
      if ( i16_temp == HAL_RANGE_ERR ) return HAL_RANGE_ERR;
      // use 1:1 value mappgin for PC test
      // return ((i16_temp * 24) + ((i16_temp * 41)/100));};
