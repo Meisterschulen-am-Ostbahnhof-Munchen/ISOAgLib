@@ -1384,11 +1384,11 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
   switch (aui32_pgn)
   {
     case ADDRESS_CLAIM_PGN:
-      // update time of last adress claim request
-      setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
-
       if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
+        // update time of last GLOBAL adress claim request to detect dead nodes
+        setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+
         bool b_processedRequestPGN = false;
         for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();
               pc_iterItem != mvec_isoMember.end(); pc_iterItem++)
