@@ -31,6 +31,12 @@ vtObjectSoftKeyMask_c::stream(uint8_t* destMemory,
 #define MACRO_vtObjectTypeS iVtObjectSoftKeyMask_s
   MACRO_streamLocalVars;
 
+  if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId)
+      .getVtServerInst().getVtCapabilities()->skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
+  { // can't upload this SKM because it has more Keys than virtually supported
+    return 0;
+  }
+
   if (sourceOffset == 0) { // dump out constant sized stuff
     destMemory [0] = vtObject_a->ID & 0xFF;
     destMemory [1] = vtObject_a->ID >> 8;
@@ -59,7 +65,16 @@ uint32_t
 vtObjectSoftKeyMask_c::fitTerminal() const
 {
   MACRO_localVars;
-  return 6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2+vtObjectSoftKeyMask_a->numberOfMacrosToFollow*2;
+
+  if (__IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId)
+      .getVtServerInst().getVtCapabilities()->skVirtual < vtObjectSoftKeyMask_a->numberOfObjectsToFollow)
+  { // can't upload this SKM because it has more Keys than virtually supported
+    return 0;
+  }
+  else
+  { // okay, enough virtual SKs supported, so upload this SKM
+    return 6+vtObjectSoftKeyMask_a->numberOfObjectsToFollow*2+vtObjectSoftKeyMask_a->numberOfMacrosToFollow*2;
+  }
 }
 
 // Operation : setOriginSKM
