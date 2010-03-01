@@ -1891,7 +1891,7 @@ create_EdePrj()
     USE_EMBED_HEADER_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_HEADER_DIRECTORY")"
     USE_EMBED_LIB_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_LIB_DIRECTORY")"
     USE_EMBED_ILO="$(embedlib_path_for_ede "$USE_EMBED_ILO")"
-    USE_DEFINES="$(join_comma __TSW_CPP_756__ "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME" $PRJ_DEFINES)"
+    USE_DEFINES="$(join_comma __TSW_CPP_756__ "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME" $PRJ_DEFINES $DEBUG_DEFINES)"
 
     libline_for_ede() { printf -- ' -Wo %s' "$@"; }
     USE_TARGET_LIB_LINE="$(map libline_for_ede embedlib_path_for_ede $USE_EMBED_LIBS)"
@@ -2474,8 +2474,10 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
                                   Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
---debugdefgroup=GROUPNUMBER       Use group of debug defines. GROUPNUMBER can be 0, 1 or 2.
-
+--debugdefgroup=GROUPNUMBER       Use group of debug defines. GROUPNUMBER can be 0, 1 or 2;
+                                  when 0: only NDEBUG is set;
+                                  when 1: both DEBUG and NDEBUG are set;
+                                  when 2: all debug-relelated defines are set except NDEBUG.
 "update_makefile.sh" parses the selected project configuration file and overwrites the default values for all contained settings.
 It then collects the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the application source directory with the
