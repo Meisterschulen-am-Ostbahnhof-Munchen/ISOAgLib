@@ -27,15 +27,6 @@
 /* ********** command defines ************ */
 /* *************************************** */
 
-// Notice: There's no notification when a button gets released!
-//#define BUTTON_HAS_BEEN_UNLATCHED 0
-//#define BUTTON_HAS_BEEN_PRESSED 1
-//#define BUTTON_HAS_BEEN_LATCHED 1
-//#define BUTTON_IS_STILL_HELD 2
-
-//#define KEY_HAS_BEEN_RELEASED 0
-//#define KEY_HAS_BEEN_PRESSED 1
-//#define KEY_IS_STILL_HELD 2
 
 // forward declaration
 struct localSettings_s;
@@ -132,7 +123,10 @@ public:
   /**
     hook function that gets called after the ISO_Terminal_c instance
     receives a "Soft Key Activation" / "Button Activation" Message
-    @param aui8_keyActivationCode 0, 1 or 2. In case of a Latchable Button use [BUTTON_HAS_BEEN_UNLATCHED, BUTTON_HAS_BEEN_LATCHED], for Unlatchable Buttons use [BUTTON_HAS_BEEN_PRESSED, BUTTON_IS_STILL_HELD] (notice there's NO BUTTON_HAS_BEEN_RELEASED !]. For keys use one of [KEY_HAS_BEEN_RELEASED, KEY_HAS_BEEN_PRESSED, KEY_IS_STILL_HELD]
+    @param aui8_keyActivationCode 0, 1 or 2. For convenience, the following defines can be used:
+             For Latchable Buttons:   [BUTTON_HAS_BEEN_LATCHED, BUTTON_HAS_BEEN_UNLATCHED]
+             For Unlatchable Buttons: [BUTTON_HAS_BEEN_PRESSED, BUTTON_HAS_BEEN_RELEASED, BUTTON_IS_STILL_HELD]
+             For Softkeys:            [KEY_HAS_BEEN_PRESSED, KEY_HAS_BEEN_RELEASED, KEY_IS_STILL_HELD]
     @param aui16_objId ObjectID of the vtObjectButton / vtObjectSoftKey object
     @param aui16_objIdMask ObjectID of the Mask that contains the vtObjectButton / vtObjectSoftKey object
     @param aui8_keyCode KeyCode as defined in the vtObjectButton / vtObjectSoftKey object
