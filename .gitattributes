@@ -724,4 +724,3 @@ tutorial/src/ecu_display/component_vtclient_vtd/lang/en.vtl -text
 tutorial/src/ecu_display/component_vtclient_vtd/tutorialDisplay.vtp -text
 tutorial/src/ecu_display/config_ecuDisplay.h -text
 tutorial/src/ecu_display/ecu_display.cpp -text
-tutorial/src/ecu_display/version.h -text
