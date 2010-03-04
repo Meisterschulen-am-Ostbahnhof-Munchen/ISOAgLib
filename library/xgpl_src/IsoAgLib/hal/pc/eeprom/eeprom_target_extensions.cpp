@@ -125,7 +125,7 @@ int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData)
   {
     fputc (pbData[i], eepromDat);
 #ifdef DEBUG_EEPROM
-    INTERNAL_DEBUG_DEVICE << (isprint (pbData[i])) ? pbData[i] : ".";
+    INTERNAL_DEBUG_DEVICE << (isprint(pbData[i]) ? pbData[i] : '.');
 #endif
   }
 
@@ -156,7 +156,7 @@ int16_t eepromWriteByte(uint16_t wAddress,uint8_t bByte)
 {
 #ifdef DEBUG_EEPROM
   INTERNAL_DEBUG_DEVICE << "Writing byte '" << uint16_t (bByte) << "' to EEPROM address " << wAddress << " - Text: ";
-  INTERNAL_DEBUG_DEVICE <<  isprint(bByte) ? bByte : ".";
+  INTERNAL_DEBUG_DEVICE << (isprint(bByte) ? bByte : '.');
   INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   int16_t errCode = openDatFileAndSeek(wAddress);
@@ -182,7 +182,7 @@ int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
     const int16_t c = fgetc(eepromDat);
     pbByte[i] = ( c == EOF ) ? CONFIG_EEPROM_PADDING_BYTE : (const uint8_t)c;   // pad when at EOF
 #ifdef DEBUG_EEPROM
-    INTERNAL_DEBUG_DEVICE << (pbByte[i] >= 0x20) ? pbByte[i] : ".";
+    INTERNAL_DEBUG_DEVICE << ((pbByte[i] >= 0x20) ? pbByte[i] : '.');
 #endif
   }
 
