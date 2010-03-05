@@ -172,7 +172,6 @@ set_default_values()
     ISOAGLIB_INSTALL_PATH="/usr/local"
     GENERATE_FILES_ROOT_DIR="$PWD"
 
-    PRJ_SEND_DEBUG=0
     USE_FLOAT_DATA_TYPE=0
     OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED=0
     USE_LITTLE_ENDIAN_CPU=1
@@ -485,11 +484,6 @@ check_set_correct_variables()
             exit 3
             ;;
     esac
-
-    if [ "$PRJ_SEND_DEBUG" -gt "$PRJ_RS232" ]; then
-        printf 'ERROR: If DEBUG messages are wanted, then RS232 is needed. Try PRJ_RS232=%s.\n' "$PRJ_SEND_DEBUG" >&2
-        exit 2
-    fi
 }
 
 # Take the first argument as variable name and append the remaining
@@ -1325,10 +1319,11 @@ END_OF_PATH
                 fi
             fi
         fi
-    
-        if [ "$PRJ_SEND_DEBUG" -gt 0 ] ; then
-            echo_e "#ifndef DEBUG $ENDLINE\t#define DEBUG $ENDLINE#endif" >&3
+
+        if [ "$PRJ_RS232" -gt 0 ]; then
+            echo_e "#ifndef USE_RS232$ENDLINE\t#define USE_RS232 $USE_RS232$ENDLINE#endif" >&3
         fi
+    
         # write overwriteable parts of isoaglib_config.h
         echo_e "$ENDLINE// The following configuration values can be overwritten." >&3
         echo_ "// These settings are initially defined in isoaglib_config.h ." >&3
@@ -1337,19 +1332,19 @@ END_OF_PATH
     } 3>"$CONFIG_NAME"
     TMP_CONFIG1="${TEMPFILE_PREFIX}config1"
     while read -r conf_line; do
-        conf_name=$(echo_ $conf_line | sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
+        conf_name=$(echo_ $conf_line | sed 's/# *define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
         INDIV_CNT=$(grep -c $conf_name $CONFIG_NAME.bak || status_le1)
         if [ "$INDIV_CNT" -lt 1 ] ; then
-            grep -B1 "#define $conf_line" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h >> $CONFIG_NAME
-            sed "s|#define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $TMP_CONFIG1
-            #     CMDLINE=$(echo_ "sed -e 's|#define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $TMP_CONFIG1")
+            grep -B1 "# *define $conf_line" $ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h >> $CONFIG_NAME
+            sed "s|# *define $conf_name|// #define $conf_name|g" $CONFIG_NAME > $TMP_CONFIG1
+            #     CMDLINE=$(echo_ "sed -e 's|# *define $conf_name|// #define $conf_name|g' $CONFIG_NAME > $TMP_CONFIG1")
             #     echo_ $CMDLINE | sh
             cp $TMP_CONFIG1 $CONFIG_NAME
             echo_e_n "$ENDLINE" >> $CONFIG_NAME
         fi
     done <<END_OF_CONFIG_SET
-$(grep "#define CONFIG_" <$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h |
-  sed 's/#define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
+$(grep "# *define CONFIG_" <$ISO_AG_LIB_INSIDE/library/xgpl_src/IsoAgLib/isoaglib_config.h |
+  sed 's/# *define \(CONFIG_[a-zA-Z0-9_]*\).*/\1/g')
 END_OF_CONFIG_SET
     {
         echo_e "$ENDLINE// DONT REMOVE THIS AND THE FOLLOWING LINE AS THEY ARE NEEDED TO DETECT YOUR PERSONAL PROJECT ADAPTATIONS!!!" >&3

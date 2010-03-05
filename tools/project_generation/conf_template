@@ -98,10 +98,6 @@ APP_SRC_FILE="ecu_main.cpp"
 # Only valid for Linux Makefile generation currently.
 # RULE_CXXFLAGS='-pipe -O -Wall -g -Wextra -Winit-self -Wmissing-include-dirs -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith $($F PROJ_DEFINES)'
 
-# Select if Debug messages within IsoAgLib are sent via RS232
-# (you need to have PRJ_RS232 activated therefore)
-# PRJ_SEND_DEBUG=1
-
 # Select if the project shall use the float data type
 # default is FALSE as far as possible
 # (this has impact on RS232 output and GPS decode)

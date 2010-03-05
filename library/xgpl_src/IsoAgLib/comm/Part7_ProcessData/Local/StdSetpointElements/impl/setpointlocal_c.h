@@ -199,7 +199,11 @@ public:
     @see master
     @return true -> an active master setpoint exist
   */
-  bool existMaster() const {return mpc_master != mvec_register.end();};
+  bool existMaster() const {
+    // Keep this argument order for operator !=, otherwise tasking 7.5
+    // won't compile:
+    return mvec_register.end() != mpc_master;
+  }
   /**
     deliver the actual master entry
     @see existMaster
