@@ -123,7 +123,7 @@ static bool isAnythingToReadWaiting(uint8_t aui8_busNum,unsigned int aui_tmpUc, 
   long timeBeforeReading = getCurrentTime();//set time Wt = time foreseen for writing
 
 #ifdef SYSTEM_PC
-  INTERNAL_DEBUG_DEVICE << "timeBeforeReading = " << timeBeforeReading << endl;
+  INTERNAL_DEBUG_DEVICE << "timeBeforeReading = " << timeBeforeReading << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
   while(aui_tmpUc - aui_tmpAc == 1)
