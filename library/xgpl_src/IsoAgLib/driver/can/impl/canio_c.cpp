@@ -36,14 +36,16 @@
 #include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 
 #ifdef DEBUG_HEAP_USEAGE
+#  ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 static uint16_t sui16_msgObjTotal = 0;
-static uint16_t sui16_filterBoxTotal = 0;
 static uint16_t sui16_deconstructMsgObjCnt = 0;
+#  endif
+static uint16_t sui16_filterBoxTotal = 0;
 
-#ifdef MASSERT
+#  ifdef MASSERT
 extern unsigned int AllocateHeapMalloc;
 extern unsigned int DeallocateHeapMalloc;
-#endif
+#  endif
 #endif
 
 
@@ -887,8 +889,10 @@ int16_t CanIo_c::processMsg(){
   mb_runningCanProcess = true;
   mui8_processedMsgCnt = 0;
 
-#ifdef DEBUG_CAN_BUFFER_FILLING
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+#  ifdef DEBUG_CAN_BUFFER_FILLING
   bool b_detectedOverflow = false;
+#  endif
 #endif
 
 
@@ -1350,16 +1354,16 @@ int16_t CanIo_c::FilterBox2MsgObj()
   Ident_c c_tempIdent;
   ArrMsgObj::iterator pc_iterMsgObj, pc_search4MsgObjReuse = marr_msgObj.begin();
 
-#ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+#  ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
   INTERNAL_DEBUG_DEVICE << " CanIo_c::FilterBox2MsgObj "<< INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
+#  endif
 
 
 ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
 
-#ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+#  ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
   const uint16_t ui16_debugOldSize = cntMsgObj();
-#endif
+#  endif
 
   if(isFullReconfigNecessary())
   {
@@ -1369,20 +1373,20 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
         HAL::wdTriggern();
         pc_iterMsgObj->clearArrFbIdx();
     }
-#ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+#  ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
   INTERNAL_DEBUG_DEVICE << " CanIo_c::FilterBox2MsgObj  - FULL RECONFIGURATION on BUS number = "<< int(getBusNumber())
     << ", can instance = " << getSingletonVecKey() << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
+#  endif
 
   }
   else //if the full reconfiguration is not necessary, the pc_iterFilterBox start from the last FilterBox added
   {
-#ifndef WIN32
+#  ifndef WIN32
    pc_iterFilterBox = static_cast <ArrFilterBox::iterator> (&m_arrFilterBox[getMinChangedFilterBox()]);
-#else
+#  else
 	  pc_iterFilterBox = m_arrFilterBox.begin();
 	  for (uint32_t ui32_loopFilerBox = 0; ui32_loopFilerBox < getMinChangedFilterBox(); ui32_loopFilerBox++) pc_iterFilterBox++;
-#endif
+#  endif
    pc_search4MsgObjReuse = marr_msgObj.end(); // indicate that NO existing MsgObj_c is available for reuse
 
   }
@@ -1423,9 +1427,9 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
             // set filter in marr_msgObj
             // new last element to be configured after actual last element
             pc_search4MsgObjReuse->setFilter(c_tempIdent);
-            #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+#  if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
             pc_search4MsgObjReuse->setCanSingletonKey(getSingletonVecKey());
-            #endif
+#  endif
             pc_search4MsgObjReuse->insertFilterBox(pc_iterFilterBox);
             pc_search4MsgObjReuse++;
           }
@@ -1438,27 +1442,27 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
             mc_tempObj.setFilter(c_tempIdent);
             mc_tempObj.insertFilterBox(pc_iterFilterBox);
 
-            #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
+#  if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
             mc_tempObj.setCanSingletonKey(getSingletonVecKey());
-            #endif
+#  endif
             mc_tempObj.setBusNumber(mui8_busNumber);
 
-            #ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+#  ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
             INTERNAL_DEBUG_DEVICE << "create a new object with bus Number " << int(getBusNumber())
             << " , Filter = 0x"
-            #ifdef SYSTEM_PC
+#    ifdef SYSTEM_PC
             << STL_NAMESPACE::hex
-            #endif
+#    endif
             << c_tempIdent.ident() << ", can Instance = "<< getSingletonVecKey()
             << INTERNAL_DEBUG_DEVICE_ENDL;
-            #endif
+#  endif
 
             // insert obj in vector
             marr_msgObj.push_front(mc_tempObj);
             setCntMsgObj( marr_msgObj.size() );
-            #ifdef DEBUG_HEAP_USEAGE
+#  ifdef DEBUG_HEAP_USEAGE
             sui16_msgObjTotal++;
-            #endif
+#  endif
             pc_search4MsgObjReuse = marr_msgObj.end();
 
           }
@@ -1477,30 +1481,30 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
   // -> behind the last instance is NOT the list end
   if (pc_search4MsgObjReuse!= marr_msgObj.end())
   {
-    #ifdef DEBUG_HEAP_USEAGE
+#  ifdef DEBUG_HEAP_USEAGE
     const uint16_t cui16_oldSize = cntMsgObj();
-    #endif
+#  endif
     HAL::wdTriggern();
     marr_msgObj.erase(pc_search4MsgObjReuse, marr_msgObj.end());
     setCntMsgObj( marr_msgObj.size() );
-    #ifdef DEBUG_HEAP_USEAGE
+#  ifdef DEBUG_HEAP_USEAGE
     sui16_msgObjTotal -= ( cui16_oldSize - cntMsgObj() );
     sui16_deconstructMsgObjCnt += (cui16_oldSize - cntMsgObj() );
-    #endif
+#  endif
   }
 
-  #ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+#  ifdef DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
   INTERNAL_DEBUG_DEVICE << "Old number MsgObj = "
-  #ifdef SYSTEM_PC
+#  ifdef SYSTEM_PC
   << STL_NAMESPACE::dec
-  #endif
+#  endif
   << ui16_debugOldSize << ", New size = " << cntMsgObj() << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+#  endif
   if ( i16_result >= 0) i16_result = cntMsgObj();
-  #ifdef DEBUG_HEAP_USEAGE
+#  ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
     << "MsgObj: " << sui16_msgObjTotal << " -> ";
-  #endif
+#  endif
   HAL::wdTriggern();
 
   return i16_result;
@@ -1518,11 +1522,11 @@ void CanIo_c::CheckSetCntMsgObj()
 {
   // set i16_minDistance to the max possible bit difference
   // => amount of bits in data type for ident
-#ifdef NO_8BIT_CHAR_TYPE
+#  ifdef NO_8BIT_CHAR_TYPE
   int16_t i16_minDistance = sizeof(MASK_TYPE)*16;
-#else
+#  else
   int16_t i16_minDistance = sizeof(MASK_TYPE)*8;
-#endif
+#  endif
   int16_t i16_tempDist;
   // maxHALMsgObjNr() delivers also the special lastMsgObj, which cannot be used for normal receiveMsgObj
   // ==> subtract from (max - min + 1 ) again one item
@@ -1535,11 +1539,11 @@ void CanIo_c::CheckSetCntMsgObj()
   if (cntMsgObj() <= ui8_allowedSize) return;
 
   // NOW WE HAVE TO MERGE AT LEAST TWO MsgObj_c together
-#if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+#  if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
 INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERNAL_DEBUG_DEVICE_ENDL;
   printMsgObjInfo();
 
-#endif
+#  endif
 
   ArrMsgObj::iterator pc_minLeft = marr_msgObj.begin(),
           pc_minRight = marr_msgObj.begin();
@@ -1604,10 +1608,10 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
       pc_minLeft->merge(*pc_minRight);
       marr_msgObj.erase(pc_minRight);
       setCntMsgObj( marr_msgObj.size() );
-      #ifdef DEBUG_HEAP_USEAGE
+#  ifdef DEBUG_HEAP_USEAGE
       sui16_msgObjTotal--;
       sui16_deconstructMsgObjCnt++;
-      #endif
+#  endif
       // update the filters in the filters in the existing MsgObj_c to the changed mask
       for (ArrMsgObj::iterator c_iter = marr_msgObj.begin(); c_iter != marr_msgObj.end(); c_iter++)
       {
@@ -1626,21 +1630,21 @@ INTERNAL_DEBUG_DEVICE << " CanIo_c::--------------------Before Merge " << INTERN
   }
 
   // now the amount of marr_msgObj is allowed
-  #ifdef DEBUG_HEAP_USEAGE
+#  ifdef DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
     << sui16_msgObjTotal << " x MsgObj_c: Mal-Alloc: "
     <<  sizeSlistTWithMalloc( sizeof(MsgObj_c), sui16_msgObjTotal )
     << "/" << sizeSlistTWithMalloc( sizeof(MsgObj_c), 1 )
     << ", Chunk-Alloc: "
     << sizeSlistTWithChunk( sizeof(MsgObj_c), sui16_msgObjTotal )
-  #ifdef MASSERT
+#    ifdef MASSERT
     << "\r\n__mall tot:" << AllocateHeapMalloc
     << ", _mall deal tot: " << DeallocateHeapMalloc
     << INTERNAL_DEBUG_DEVICE_ENDL;
-  #else
+#    else
     << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
-  #endif
+#    endif
+#  endif
 
    HAL::wdTriggern();
 
@@ -2260,24 +2264,24 @@ void CanIo_c::printMyFilterBox(){
   for ( uint32_t i = 0; i < m_arrFilterBox.size(); i++ )
   {
     INTERNAL_DEBUG_DEVICE << "CANIO::VECTOR FilterBox :Filter: 0x"
-    #ifdef SYSTEM_PC
+#  ifdef SYSTEM_PC
         << std::hex
-    #endif
+#  endif
         << m_arrFilterBox[i].filter().ident()
         << ", Mask: 0x"
-    #ifdef SYSTEM_PC
+#  ifdef SYSTEM_PC
         << std::hex
-    #endif
+#  endif
         << m_arrFilterBox[i].mask().ident()
         << ", IdentType: "
-    #ifdef SYSTEM_PC
-      << std::dec
-      #endif
-      << m_arrFilterBox[i].identType()
-        << ", FbVecId : "
-    #ifdef SYSTEM_PC
+#  ifdef SYSTEM_PC
         << std::dec
-    #endif
+#  endif
+        << m_arrFilterBox[i].identType()
+        << ", FbVecId : "
+#  ifdef SYSTEM_PC
+        << std::dec
+#  endif
         << m_arrFilterBox[i].getFbVecIdx();
     INTERNAL_DEBUG_DEVICE  << INTERNAL_DEBUG_DEVICE_ENDL;
   }

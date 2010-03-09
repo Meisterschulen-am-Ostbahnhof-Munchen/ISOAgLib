@@ -51,7 +51,7 @@ int16_t iInitEEEditor(  uint8_t bBus,
  // BEGIN: Added by M.Wodok 6.12.04
  if (eeditor == NULL) {
    // try again with current path...
-   fopen("eeditor.dat", "r+");
+   eeditor = fopen("eeditor.dat", "r+");
  }
  // END: Added by M.Wodok 6.12.04
 

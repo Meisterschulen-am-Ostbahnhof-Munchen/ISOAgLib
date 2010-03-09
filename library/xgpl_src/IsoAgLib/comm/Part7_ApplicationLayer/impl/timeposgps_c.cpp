@@ -1477,12 +1477,15 @@ void TimePosGps_c::isoSendDirection( void )
     time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000L
                                      + (bit_calendar.timezoneHourOffsetMinus24 - 24L) * 60L * 60L  // negative offsets => increased local time
                                      + bit_calendar.timezoneMinuteOffset * 60L;
-    // if it's negative, localtime(..) would return NULL!
-    if (t_secondsSince1970Local < 0)
-      t_secondsSince1970Local = 0;
 
-    // compensate system time zone setting: call localtime() and not gmtime()
-    return localtime( &t_secondsSince1970Local );
+    for (;;){
+      // compensate system time zone setting: call localtime() and not gmtime()
+      struct ::tm *p_ret = localtime( &t_secondsSince1970Local );
+      if (p_ret)
+        return p_ret;
+      // non-negative, because otherwise localtime(..) would return NULL!
+      t_secondsSince1970Local = 0;
+    }
   }
 
   /**

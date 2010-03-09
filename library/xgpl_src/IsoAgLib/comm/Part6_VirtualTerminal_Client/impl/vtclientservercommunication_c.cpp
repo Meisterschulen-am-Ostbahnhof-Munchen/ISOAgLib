@@ -46,7 +46,6 @@
 
 
 #ifdef DEBUG_HEAP_USEAGE
-  static uint16_t sui16_lastPrintedBufferCapacity = 0;
   static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
   static uint16_t sui16_lastPrintedMaxSendUploadQueueSize = 0;
   static uint16_t sui16_sendUploadQueueSize = 0;

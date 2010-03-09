@@ -464,10 +464,16 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 }
 
 
-int16_t clearCanObjBuf(uint8_t bBusNumber, uint8_t aui8_msgObjNr)
+int16_t clearCanObjBuf(
+    uint8_t bBusNumber,
+    uint8_t
+#ifdef DEBUG_PRINT_
+    aui8_msgObjNr
+#endif
+  )
 {
 
-  DEBUG_PRINT2("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, aui8_msgObjNr);
+  DEBUG_PRINT_(("clearCanObjBuf, bus %d, obj %d\n", bBusNumber, aui8_msgObjNr));
 
   if ( ( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
