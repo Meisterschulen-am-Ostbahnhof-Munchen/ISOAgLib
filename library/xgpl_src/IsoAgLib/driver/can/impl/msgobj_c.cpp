@@ -431,49 +431,49 @@ bool MsgObj_c::msgObjUpdateTable(uint8_t aui8_busNumber, uint8_t aui8_msgObjNr)
 #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
 void MsgObj_c::printMyFilterBox(){
 
-INTERNAL_DEBUG_DEVICE << "OBJNBR = " << bit_data.ui8_msgObjNr << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "OBJNBR = " << uint16_t(bit_data.ui8_msgObjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-INTERNAL_DEBUG_DEVICE << " CAN instance = " << mi_canSingletonVecKey << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << " CAN instance = " << mi_canSingletonVecKey << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-INTERNAL_DEBUG_DEVICE << " CAN Number = " << int(bit_data.busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
-INTERNAL_DEBUG_DEVICE << "MY FILTER = "
+  INTERNAL_DEBUG_DEVICE << " CAN Number = " << int(bit_data.busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "MY FILTER = "
 #ifdef SYSTEM_PC
-<< STL_NAMESPACE::hex
+                        << STL_NAMESPACE::hex
 #endif
-<< mc_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+                        << mc_filter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
 
 
-for ( int i = 0; i < cnt_filterBox(); i++ )
+  for ( int i = 0; i < cnt_filterBox(); i++ )
   {
 
 
     INTERNAL_DEBUG_DEVICE << "    MSGOBJ::marr_filterBoxIndex : FilterBox nr: " << i;
     INTERNAL_DEBUG_DEVICE  <<  "FilterBox: 0x"
-	#ifdef SYSTEM_PC
-     << STL_NAMESPACE::hex
-	#endif
-     << getFilterBoxInstance(marr_filterBoxIndex[i]).filter().ident()
-      << ", Mask: 0x"
-	  #ifdef SYSTEM_PC
-      << STL_NAMESPACE::hex
-	  #endif
-      << getFilterBoxInstance(marr_filterBoxIndex[i]).mask().ident()
-      << ", IdentType: "
-     #ifdef SYSTEM_PC
-     << STL_NAMESPACE::dec
-     #endif
-     << getFilterBoxInstance(marr_filterBoxIndex[i]).identType()
-     << ", FilterBox index : "
-	#ifdef SYSTEM_PC
-     << STL_NAMESPACE::dec
-     #endif
-     << getFilterBoxInstance(marr_filterBoxIndex[i]).getFbVecIdx();
-   INTERNAL_DEBUG_DEVICE <<  INTERNAL_DEBUG_DEVICE_ENDL;
+#ifdef SYSTEM_PC
+                           << STL_NAMESPACE::hex
+#endif
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).filter().ident()
+                           << ", Mask: 0x"
+#ifdef SYSTEM_PC
+                           << STL_NAMESPACE::hex
+#endif
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).mask().ident()
+                           << ", IdentType: "
+#ifdef SYSTEM_PC
+                           << STL_NAMESPACE::dec
+#endif
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).identType()
+                           << ", FilterBox index : "
+#ifdef SYSTEM_PC
+                           << STL_NAMESPACE::dec
+#endif
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).getFbVecIdx();
+    INTERNAL_DEBUG_DEVICE <<  INTERNAL_DEBUG_DEVICE_ENDL;
 
   }
 
 
- INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
 }
 
 #endif //SYSTEM_WITH_ENHANCED_CAN_HAL

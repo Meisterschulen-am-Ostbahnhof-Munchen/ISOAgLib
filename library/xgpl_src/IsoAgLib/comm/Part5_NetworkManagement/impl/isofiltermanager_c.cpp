@@ -151,10 +151,10 @@ IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action,
 {
 #ifdef DEBUG_NETWORK_MANAGEMENT
   INTERNAL_DEBUG_DEVICE << "[DNN] IsoFilterManager_c: React on IsoItem (" <<
-    #ifdef SYSTEM_PC
-        "0x" << STL_NAMESPACE::hex
-    #endif //SYSTEM_PC
-  << (int)acrc_isoItem.nr() << ") modification ";
+#  ifdef SYSTEM_PC
+    "0x" << STL_NAMESPACE::hex <<
+#  endif //SYSTEM_PC
+    (int)acrc_isoItem.nr() << ") modification ";
 
        if (at_action == AddToMonitorList)      { INTERNAL_DEBUG_DEVICE << "AddToMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
   else if (at_action == ChangedAddress)        { INTERNAL_DEBUG_DEVICE << "ChangedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }

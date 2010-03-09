@@ -233,8 +233,8 @@ inline FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx );
 
   /** msgObjNr */
   struct {
-	  uint16_t ui8_msgObjNr  : 7;
-		uint16_t isLocked      : 1;
+    uint16_t ui8_msgObjNr  : 7;
+    uint16_t isLocked      : 1;
     #if 0
     uint16_t cnt_filterBox : 4;
     #endif

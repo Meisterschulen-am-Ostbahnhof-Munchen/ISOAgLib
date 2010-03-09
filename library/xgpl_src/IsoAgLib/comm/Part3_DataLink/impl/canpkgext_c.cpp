@@ -218,18 +218,28 @@ bool CanPkgExt_c::resolveAddress( AddressResolveResults_c& arc_addressResolveRes
 MessageState_t CanPkgExt_c::resolveReceivingInformation()
 {
   #ifdef DEBUG_CAN
-  INTERNAL_DEBUG_DEVICE
-      << "*-*-*-* PROCESS MESSAGE *-*-*-*--> "
-      << std::hex << ident() << std::dec << uint16_t(getLen()) << " " << std::hex
-      << " " << uint16_t(getUint8Data(0))
-      << " " << uint16_t(getUint8Data(1))
-      << " " << uint16_t(getUint8Data(2))
-      << " " << uint16_t(getUint8Data(3))
-      << " " << uint16_t(getUint8Data(4))
-      << " " << uint16_t(getUint8Data(5))
-      << " " << uint16_t(getUint8Data(6))
-      << " " << uint16_t(getUint8Data(7))
-      << INTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE <<
+    "*-*-*-* PROCESS MESSAGE *-*-*-*--> " <<
+#ifdef SYSTEM_PC
+    STL_NAMESPACE::hex <<
+#endif
+      ident() <<
+#ifdef SYSTEM_PC
+    STL_NAMESPACE::dec <<
+#endif
+    uint16_t(getLen()) << " " <<
+#ifdef SYSTEM_PC
+    STL_NAMESPACE::hex <<
+#endif
+    " " << uint16_t(getUint8Data(0)) <<
+    " " << uint16_t(getUint8Data(1)) <<
+    " " << uint16_t(getUint8Data(2)) <<
+    " " << uint16_t(getUint8Data(3)) <<
+    " " << uint16_t(getUint8Data(4)) <<
+    " " << uint16_t(getUint8Data(5)) <<
+    " " << uint16_t(getUint8Data(6)) <<
+    " " << uint16_t(getUint8Data(7)) <<
+    INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
   // resolve source address
