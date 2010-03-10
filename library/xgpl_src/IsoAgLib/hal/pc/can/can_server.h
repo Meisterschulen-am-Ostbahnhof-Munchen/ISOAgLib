@@ -16,9 +16,10 @@
 //#define DEBUG_CAN
 
 #ifdef DEBUG_CAN
+//lint –emacro( {717}, DEBUG_PRINT_ )
 #  define DEBUG_PRINT_(args) do { printf args; fflush(0); } while (0)
 #else
-#  define DEBUG_PRINT_(args) printf args
+#  define DEBUG_PRINT_(args)
 #endif
 #define DEBUG_PRINT(str) DEBUG_PRINT_((str))
 #define DEBUG_PRINT1(str,a) DEBUG_PRINT_((str,a))

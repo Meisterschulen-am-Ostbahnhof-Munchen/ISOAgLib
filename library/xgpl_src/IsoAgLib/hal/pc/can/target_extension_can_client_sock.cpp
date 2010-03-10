@@ -467,7 +467,7 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 int16_t clearCanObjBuf(
     uint8_t bBusNumber,
     uint8_t
-#ifdef DEBUG_PRINT_
+#ifdef DEBUG_CAN
     aui8_msgObjNr
 #endif
   )
