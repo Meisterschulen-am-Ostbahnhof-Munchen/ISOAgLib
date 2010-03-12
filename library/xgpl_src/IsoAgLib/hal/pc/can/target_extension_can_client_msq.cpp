@@ -75,10 +75,7 @@ int16_t can_startDriver()
   // use process id for own client id
   s_transferBuf.i32_mtypePid = msqDataClient.i32_pid;
   s_transferBuf.ui16_command = COMMAND_REGISTER;
-  // call getTime just to be sure that start up time is set
-  getTime();
-
-  s_transferBuf.s_startTimeClock.t_clock = getStartUpTime();
+  s_transferBuf.s_startTimeClock.t_clock = getStartupTime();
 
   i16_rc = send_command(&s_transferBuf, &msqDataClient);
 
