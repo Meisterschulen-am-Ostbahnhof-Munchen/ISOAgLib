@@ -53,13 +53,6 @@ namespace __HAL {
 static int32_t i32_lastReceiveTime = 0;
 static SOCKET_TYPE i32_commandSocket = 0;
 static SOCKET_TYPE i32_dataSocket = 0;
-#ifdef WIN32
-int32_t getStartUpTime()
-{
-  static int32_t st_startup4Times = timeGetTime();
-  return st_startup4Times;
-}
-#endif
 
 int32_t getPipeHandleForCanRcvEvent()
 {
@@ -228,10 +221,7 @@ int16_t can_startDriver()
 #endif
 
   s_transferBuf.ui16_command = COMMAND_REGISTER;
-  // call getTime just to be sure that start up time< is set
-  getTime();
-
-  s_transferBuf.s_startTimeClock.t_clock = getStartUpTime();
+  s_transferBuf.s_startTimeClock.t_clock = getStartupTime();
 
   int32_t i32_rc = send_command(&s_transferBuf, i32_commandSocket);
 
