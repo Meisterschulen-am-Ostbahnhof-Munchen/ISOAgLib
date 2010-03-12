@@ -10,6 +10,7 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
 #ifndef _TYPEDEF_PC_H
 #define _TYPEDEF_PC_H
 
@@ -40,6 +41,15 @@
   typedef int int32_t;
   typedef unsigned long long int uint64_t;
   typedef long int long int64_t;
+
+  typedef int           int_fast8_t;
+  typedef int           int_fast16_t;
+  typedef int           int_fast32_t;
+  typedef long long int int_fast64_t;
+  typedef unsigned int           uint_fast8_t;
+  typedef unsigned int           uint_fast16_t;
+  typedef unsigned int           uint_fast32_t;
+  typedef unsigned long long int uint_fast64_t;
 #endif
 
 typedef uint8_t boolean;
