@@ -76,7 +76,7 @@ static tSystem t_biosextSysdata = { 0,0,0,0,0,0};
 #error "LINUX_VERSION_CODE is not defined"
 #endif
 
-clock_t getStartUpTime()
+int32_t getStartupTime()
 {
 #if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
   if ( msecPerClock != (1000 / sysconf(_SC_CLK_TCK)) )
@@ -88,9 +88,9 @@ clock_t getStartUpTime()
         << INTERNAL_DEBUG_DEVICE_ENDL;
     MACRO_ISOAGLIB_ABORT();
   }
-  static clock_t st_startup4Times = times(NULL);
+  static int32_t st_startup4Times = int32_t (times(NULL));
 #else
-  static clock_t st_startup4Times = -1;
+  static int32_t st_startup4Times = int32_t (-1);
   if (st_startup4Times < 0)
   {
     timespec ts;
@@ -246,7 +246,7 @@ int32_t getTime()
   static timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
   const int32_t ci_now = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
-  return ci_now - getStartUpTime();
+  return ci_now - getStartupTime();
 #endif
 }
 #endif

@@ -61,9 +61,7 @@ bool isSystemOpened( void );
 int16_t configWatchdog();
 
 int32_t getTime();
-#if !defined( WIN32 ) && !defined( __IAR_SYSTEMS_ICC__ )
-clock_t getStartUpTime();
-#endif
+int32_t getStartupTime();
 int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
 
 int16_t  configWd(tWDConfig *tConfigArray); /* configuration of the system supervisor*/

@@ -52,13 +52,6 @@ namespace __HAL {
 static int32_t i32_lastReceiveTime = 0;
 static SOCKET_TYPE i32_commandSocket = 0;
 static SOCKET_TYPE i32_dataSocket = 0;
-#ifdef WIN32
-int32_t getStartUpTime()
-{
-  static int32_t st_startup4Times = timeGetTime();
-  return st_startup4Times;
-}
-#endif
 
 int32_t getPipeHandleForCanRcvEvent()
 {
@@ -227,10 +220,7 @@ int16_t can_startDriver()
 #endif
 
   s_transferBuf.ui16_command = COMMAND_REGISTER;
-  // call getTime just to be sure that start up time< is set
-  getTime();
-
-  s_transferBuf.s_startTimeClock.t_clock = getStartUpTime();
+  s_transferBuf.s_startTimeClock.t_clock = getStartupTime();
 
   int32_t i32_rc = send_command(&s_transferBuf, i32_commandSocket);
 
@@ -586,7 +576,9 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   ptReceive->bMsgObj = s_transferBuf.s_data.ui8_obj;
   ptReceive->bDlc = s_transferBuf.s_data.s_canMsg.i32_len;
   // prevent timestamp which is in the future! (because of 10ms clock jitter)
-  ptReceive->tReceiveTime.l1ms = (i32_lastReceiveTime > s_transferBuf.s_data.i32_sendTimeStamp) ? s_transferBuf.s_data.i32_sendTimeStamp : i32_lastReceiveTime;
+  ptReceive->tReceiveTime.l1ms = (i32_lastReceiveTime > s_transferBuf.s_data.i32_sendTimeStamp)
+                                   ? s_transferBuf.s_data.i32_sendTimeStamp
+                                   : i32_lastReceiveTime;
   ptReceive->bXtd = s_transferBuf.s_data.s_canMsg.i32_msgType;
   memcpy(ptReceive->abData, s_transferBuf.s_data.s_canMsg.ui8_data, s_transferBuf.s_data.s_canMsg.i32_len);
 
