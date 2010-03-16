@@ -1321,7 +1321,7 @@ END_OF_PATH
         fi
 
         if [ "$PRJ_RS232" -gt 0 ]; then
-            echo_e "#ifndef USE_RS232$ENDLINE\t#define USE_RS232 $USE_RS232$ENDLINE#endif" >&3
+            echo_e "#ifndef USE_RS232$ENDLINE\t#define USE_RS232 1$ENDLINE#endif" >&3
         fi
     
         # write overwriteable parts of isoaglib_config.h
