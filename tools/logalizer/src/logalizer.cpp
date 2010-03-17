@@ -2,13 +2,15 @@
 #  define SYSTEM_PC_VC
 #endif
 
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 #include <iomanip>
-#include "../../../library/xgpl_src/IsoAgLib/hal/pc/typedef.h"
-#include "../../../library/xgpl_src/IsoAgLib/isoaglib_config.h"
+#include <stdlib.h>
 
 using namespace std;
 
@@ -41,7 +43,7 @@ int i_multipacketWrap=0; // default will be set when parsing parameters
 
 char getAscii(uint8_t val) { return ((val >= 0x20) && (val < 0x7F)) ? (char(val)) : '.'; }
 
-uint8_t  canGetPrio() { return (can_id >> 26)       ; }
+uint8_t  canGetPrio() { return uint8_t(can_id >> 26); }
 uint8_t  canGetDp()   { return (can_id >> 24) & 0x03; }
 uint8_t  canGetSa()   { return (can_id      ) & 0xFF; }
 uint8_t  canGetPs()   { return (can_id >>  8) & 0xFF; }
@@ -132,15 +134,15 @@ int parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00 
 
   can_time = iA;
   can_id = iB;
-  can_bytes = parsed_count-2;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(parsed_count-2);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count >= 2) ? 0 : -1;
 }
@@ -156,15 +158,15 @@ int parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0
   int parsed_count = sscanf (line.c_str(), "r Xtd %*i %x %*i %x %x %x %x %x %x %x %x %*i   %*i %i      17920  %s ", &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8, &iA);
   can_time = iA;
   can_id = iB;
-  can_bytes = parsed_count-2;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(parsed_count-2);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count >= 2) ? 0 : -1;
 }
@@ -182,15 +184,15 @@ int parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0
 
   can_time = iA;
   can_id = iB;
-  can_bytes = parsed_count-2;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(parsed_count-2);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count >= 2) ? 0 : -1;
 }
@@ -209,15 +211,15 @@ int parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF F
 
   can_time = uint64_t (f1*1000);
   can_id = iB;
-  can_bytes = iDb;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(iDb);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count == (3+iDb)) ? 0 : -1;
 }
@@ -236,15 +238,15 @@ int parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x
 
   can_time = iB;
   can_id = iA;
-  can_bytes = iDb;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(iDb);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count == (3+iDb)) ? 0 : -1;
 }
@@ -275,15 +277,15 @@ int parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54
 
   can_time = iA;
   can_id = iB;
-  can_bytes = iDb;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(iDb);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count == (3+iDb)) ? 0 : -1;
 }
@@ -360,15 +362,15 @@ int parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 1
 
   can_time = iA;
   can_id = iB;
-  can_bytes = iDb;
-  can_data[0] = i1;
-  can_data[1] = i2;
-  can_data[2] = i3;
-  can_data[3] = i4;
-  can_data[4] = i5;
-  can_data[5] = i6;
-  can_data[6] = i7;
-  can_data[7] = i8;
+  can_bytes = uint8_t(iDb);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
 
   return (parsed_count == (3+iDb)) ? 0 : -1;
 }
@@ -765,7 +767,7 @@ void interpretePgnsTPETP()
           b_tpcts = false;
           i_tpsa = canGetSa();
           i_tpda = canGetDa();
-          i_tplengthData = (canGetData(2)<<8) | (canGetData(1));
+          i_tplengthData = uint16_t((canGetData(2)<<8) | (canGetData(1)));
           i_tpData = new uint8_t[i_tplengthData];
           break;
         case 0x14:
@@ -879,11 +881,11 @@ void interpretePgnsTPETP()
     if (b_etpStreamEnd)
     {
       if (ui32_etpembeddedPgn == 0xab00)
-        analyzeFS2Cl(i_etpsa, i_etpda, i_etplengthData, i_etpData);
+        analyzeFS2Cl(i_etpsa, i_etpda, uint16_t(i_etplengthData), i_etpData);
       else if (ui32_etpembeddedPgn == 0xaa00)
-        analyzeCl2FS(i_etpsa, i_etpda, i_etplengthData, i_etpData);
+        analyzeCl2FS(i_etpsa, i_etpda, uint16_t(i_etplengthData), i_etpData);
       else
-        analyzeRest(i_etpsa, i_etpda, i_etplengthData, i_etpData, ui32_etpembeddedPgn);
+        analyzeRest(i_etpsa, i_etpda, uint16_t(i_etplengthData), i_etpData, ui32_etpembeddedPgn);
       b_etprts = false;
       b_etpcts = false;
       i_etpsa = 0;
@@ -1282,7 +1284,7 @@ int main (int argc, char** argv)
             if (ci32_alivePeriod > 0)
             { // print out the alivePeriod-deviation!
               cout<<" deviation: ";
-              int deviation = int ((float (int32_t (cui32_delta)-ci32_alivePeriod) / ci32_alivePeriod) * 100);
+              int deviation = int ((double (int32_t (cui32_delta)-ci32_alivePeriod) / ci32_alivePeriod) * 100);
               uint8_t deviation_bias = (deviation > 0) ? '+' : '-';
               deviation = (deviation < 0) ? -deviation : deviation;
               if (deviation > 100)
@@ -1442,7 +1444,7 @@ void analyzeFS2Cl(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[])
           decodeDate(uint16_t(Data[msg_offset + 3 + loopfilename] << 8 | uint16_t(Data[msg_offset + 2 + loopfilename])));
           decodeTime(uint16_t(Data[msg_offset + 5 + loopfilename] << 8 | uint16_t(Data[msg_offset + 4 + loopfilename])));
           cout << " FileSize: " << uint32_t(Data[msg_offset + 9 + loopfilename] << 24 |Data[msg_offset + 8 + loopfilename] << 16 |Data[msg_offset + 7 + loopfilename] << 8 | uint16_t(Data[msg_offset + 6 + loopfilename]));
-          msg_offset += (filenamelength + 10);
+          msg_offset = uint16_t(msg_offset + filenamelength + 10);
         }
       }
 
