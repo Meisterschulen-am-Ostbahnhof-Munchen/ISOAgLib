@@ -16,8 +16,8 @@
 #include "util_funcs.h"
 #include <cstring>
 #include <IsoAgLib/util/config.h>
+#include <IsoAgLib/util/iassert.h>
 #include <cstdio>
-#include "../iliberr_c.h"
 
 #ifdef USE_DATASTREAMS_IO
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
@@ -900,16 +900,9 @@ int Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) cons
   */
 void Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
 {
-  if ( aui8_pos < 5 ) floatVar2LittleEndianStream( &af_val, (uint8+aui8_pos) );
-  else
-  {
-    getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-#if defined(SYSTEM_PC) && defined(DEBUG)
-    fprintf( stderr,
-            "ERROR!! Flexible8ByteString_c::setFloatData has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-    MACRO_ISOAGLIB_ABORT();
-#endif
-  }
+  isoaglib_assert( aui8_pos < 5 );
+  if ( aui8_pos < 5 )
+    floatVar2LittleEndianStream( &af_val, (uint8+aui8_pos) );
 }
 #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
 /**
@@ -930,12 +923,7 @@ void Flexible4ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
     case 1:
       numberRef2LittleEndianString( aui16_val, (uint8+1) ); break;
     default:
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible4ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      MACRO_ISOAGLIB_ABORT();
-      #endif
+      isoaglib_assert(!"wrong position.");
       break;
   };
 }
@@ -958,12 +946,7 @@ void Flexible4ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
     case 1:
       numberRef2LittleEndianString( ai16_val, (uint8+1) ); break;
     default:
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible4ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      MACRO_ISOAGLIB_ABORT();
-      #endif
+      isoaglib_assert(!"wrong position.");
       break;
   };
 }
@@ -985,12 +968,7 @@ uint16_t Flexible4ByteString_c::getUint16Data(uint8_t aui8_pos) const
     case 1:
       return convertLittleEndianStringUi16(uint8+1);
     default:
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible4ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      MACRO_ISOAGLIB_ABORT();
-      #endif
+      isoaglib_assert(!"wrong position.");
       break;
   };
   // only reach here on error
@@ -1014,12 +992,7 @@ int16_t Flexible4ByteString_c::getInt16Data(uint8_t aui8_pos) const
     case 1:
       return convertLittleEndianStringI16(uint8+1);
     default:
-      getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-      #if defined(SYSTEM_PC) && defined(DEBUG)
-      fprintf( stderr,
-        "ERROR!! Flexible4ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 2\n", aui8_pos );
-      MACRO_ISOAGLIB_ABORT();
-      #endif
+      isoaglib_assert(!"wrong position.");
       break;
   };
   // only reach here on error
@@ -1048,12 +1021,7 @@ void Flexible8ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
       if ( aui8_pos < 6 ) numberRef2LittleEndianString( aui16_val, (uint8+aui8_pos) );
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::setUint16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1080,12 +1048,7 @@ void Flexible8ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
       if ( aui8_pos < 6 ) numberRef2LittleEndianString( ai16_val, (uint8+aui8_pos) );
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::setInt16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1111,12 +1074,7 @@ uint16_t Flexible8ByteString_c::getUint16Data(uint8_t aui8_pos) const
       if ( aui8_pos < 6 ) return convertLittleEndianStringUi16(uint8+aui8_pos);
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::getUint16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1145,12 +1103,7 @@ int16_t Flexible8ByteString_c::getInt16Data(uint8_t aui8_pos) const
       if ( aui8_pos < 6 ) return convertLittleEndianStringI16(uint8+aui8_pos);
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::getInt16Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1181,12 +1134,7 @@ float Flexible8ByteString_c::getFloatData(uint8_t aui8_pos) const
       }
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-#if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-                 "ERROR!! Flexible8ByteString_c::getFloatData has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-#endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   }
@@ -1214,12 +1162,7 @@ void Flexible8ByteString_c::setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
       if ( aui8_pos < 4 ) numberRef2LittleEndianString( aui32_val, (uint8+aui8_pos) );
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::setUint32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1244,12 +1187,7 @@ void Flexible8ByteString_c::setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
       if ( aui8_pos < 4 ) numberRef2LittleEndianString( ai32_val, (uint8+aui8_pos) );
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::setInt32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1273,12 +1211,7 @@ uint32_t Flexible8ByteString_c::getUint32Data(uint8_t aui8_pos) const
       if ( aui8_pos < 4 ) return convertLittleEndianStringUi32(uint8+aui8_pos);
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::getUint32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
@@ -1305,12 +1238,7 @@ int32_t Flexible8ByteString_c::getInt32Data(uint8_t aui8_pos) const
       if ( aui8_pos < 4 ) return convertLittleEndianStringI32(uint8+aui8_pos);
       else
       {
-        getILibErrInstance().registerError(iLibErr_c::Range, iLibErr_c::Can);
-        #if defined(SYSTEM_PC) && defined(DEBUG)
-        fprintf( stderr,
-          "ERROR!! Flexible8ByteString_c::getInt32Data has been called with write position %d which is larger than the allowed 6\n", aui8_pos );
-        MACRO_ISOAGLIB_ABORT();
-        #endif
+        isoaglib_assert(!"wrong position.");
       }
       break;
   };
