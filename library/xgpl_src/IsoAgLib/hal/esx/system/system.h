@@ -27,13 +27,13 @@
 #ifndef _HAL_ESX_SYSTEM_H_
 #define _HAL_ESX_SYSTEM_H_
 
-#include <cstdio>
 #include "../config.h"
 #include "../typedef.h"
 #include "../errcodes.h"
 #include "system_target_extensions.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <cstdio>
 
 namespace __HAL {
   extern "C" {
@@ -53,11 +53,6 @@ namespace HAL
 {
   /* *********************************** */
   /** \name Global System BIOS functions */
-/*@{*/
-  inline int16_t printf(...){return 1;};
-  inline int16_t scanf(...) {return 1;};
-  using CNAMESPACE::sprintf;
-  using CNAMESPACE::sscanf;
   /**
     open the system with system specific function call
     @return error state (HAL_NO_ERR == o.k.)

@@ -20,13 +20,6 @@ namespace HAL
 {
    /* *********************************** */
    /** \name Global System BIOS functions */
-   /*@{*/
-
-   inline int16_t printf(...){return 1;};
-   inline int16_t scanf(...) {return 1;};
-   //  using CNAMESPACE::sprintf;
-   //  using CNAMESPACE::sscanf;
-
    /**
       open the system with system specific function call
 
