@@ -44,12 +44,16 @@ int16_t open_system()
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "open_micro( &t_biosextSysdata ) returns " << i16_result << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[64];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - open_micro() returns %i\r"
 , (uint16_t)__HAL::get_time()
 , (int16_t) i16_result
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 		}
 
@@ -82,12 +86,16 @@ int16_t closeSystem( void )
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "close_micro() returns " << retval << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[64];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - close_micro() returns %i\r"
 , (uint16_t)__HAL::get_time()
 , (int16_t) retval
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
   return retval;
@@ -124,8 +132,11 @@ int16_t configWatchdog()
 //<< t_watchdogConf.wUEmax_mV
 //<< " ) ) returns " << retval << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - config_wd( &t_watchdogConf( %u, %u, %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - config_wd( &t_watchdogConf( %u, %u, %u ) returns %i\r"
 , (uint16_t)__HAL::get_time()
 , (uint16_t)t_watchdogConf.wWDTime_ms
 , (uint16_t)t_watchdogConf.wUEmin_mV
@@ -133,6 +144,7 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - config_wd( &t_watchdogConf( %u, %u, %u
 , (int16_t) retval
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
 	return retval;

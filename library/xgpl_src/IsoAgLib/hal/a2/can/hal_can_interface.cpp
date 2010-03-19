@@ -33,6 +33,10 @@
 
 #define CONFIG_CAN_STD_LOAD_REC_BUF_SIZE_MIN 1
 
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 namespace __HAL {
 extern "C" {
   /** include the BIOS specific header with the part for CAN into __HAL */
@@ -400,7 +404,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   i32_cinterfLastSuccSend[aui8_busNr] = i32_now;
   i32_cinterfLastSuccReceive[aui8_busNr] = i32_now;
   // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  CNAMESPACE::memset((ui8_cinterfLastSendBufCnt[aui8_busNr]), 0xFF, 15);
+  memset((ui8_cinterfLastSendBufCnt[aui8_busNr]), 0xFF, 15);
   for (uint8_t ui8_ind = 0; ui8_ind < 15; ui8_ind++)
   {
     i32_cinterfMsgobjSuccSend[aui8_busNr][ui8_ind] = i32_now;
@@ -408,7 +412,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   }
 
   gb_cinterfBusLoadSlice[aui8_busNr] = 0;
-  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
+  memset((gwCinterfBusLoad[aui8_busNr]),0,10);
 
   // now config BUS
   //BW
@@ -566,7 +570,7 @@ int16_t can_configMsgobjLock( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab
 
   #ifdef DEBUG
   char temp[30];
-  STL_NAMESPACE::sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", ab_doLock, aui8_busNr, aui8_msgobjNr );
+  sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", ab_doLock, aui8_busNr, aui8_msgobjNr );
   __HAL::put_rs232_string( (uint8_t*)temp );
   #endif
 

@@ -16,6 +16,9 @@
 #include <cstring>
 
 
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 // #define WRITE_LOG_FILE
 
 namespace __HAL {

@@ -24,7 +24,8 @@
 #endif
 
 
-using namespace std;
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -368,7 +369,7 @@ uint16_t convertLittleEndianStringUi16( const uint8_t* apui8_src )
 {
   uint16_t ui16_temp;
 #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
-  CNAMESPACE::memcpy( &ui16_temp, apui8_src, sizeof(uint16_t) );
+  memcpy( &ui16_temp, apui8_src, sizeof(uint16_t) );
 #else
   ui16_temp = uint16_t(apui8_src[0]) | (uint16_t(apui8_src[1]) << 8);
 #endif

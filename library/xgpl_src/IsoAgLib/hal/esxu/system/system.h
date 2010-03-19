@@ -88,10 +88,14 @@ namespace HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "reset_wd()\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - reset_wd()\r"
 , (uint16_t)__HAL::get_time()
 );
+#endif
 #endif
 
     };
@@ -127,12 +131,16 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - reset_wd()\r"
 //<< " ) returns  "
 //<< retval << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_snr( %u ) returns %i\r"
 , (uint16_t)__HAL::get_time()
 , (uint16_t)*snrDat
 , (int16_t) retval );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
 	return retval;
@@ -160,12 +168,16 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 //<< " ) returns  "
 //<< retval << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_lokal_id( %u ) returns %i\r"
 , (uint16_t)__HAL::get_time()
 , (uint16_t)*Dat
 , (int16_t) retval );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
 	return retval;
@@ -184,12 +196,16 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 //<< (uint16_t) T_TASK_BASIC
 //<< " )\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - start_task_timer( %u )\r"
 , (uint16_t)__HAL::get_time()
 , (uint16_t)T_TASK_BASIC
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
     }
 
@@ -207,6 +223,9 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
 
 #if defined( DEBUG_HAL )
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) returns %i\r"
 , (uint16_t)__HAL::get_time()
@@ -217,6 +236,7 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) retur
 , (int16_t) retval
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 	return retval;
     }
@@ -231,6 +251,9 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     int16_t retval = __HAL::get_task_overload ( wHandle );
 
 #if defined( DEBUG_HAL )
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
 , (uint16_t)__HAL::get_time()
@@ -238,6 +261,7 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
 , (int16_t) retval
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
 	return retval;
@@ -253,6 +277,9 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     int16_t retval = __HAL::reset_task_overload ( wHandle );
 
 #if defined( DEBUG_HAL )
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - reset_task_overload( %u ) returns %i\r"
 , (uint16_t)__HAL::get_time()
@@ -260,6 +287,7 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - reset_task_overload( %u ) returns %i\r
 , (int16_t) retval
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
 	return retval;
@@ -277,12 +305,16 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "get_system_analogdata( &t_Sys_AnalogData ) " << ", wUE = " << t_Sys_AnalogData.wUE << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_system_analogdata(), wUE = %u\r"
 , (uint16_t)__HAL::get_time()
 , (uint16_t)t_Sys_AnalogData.wUE
 );
 HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+#endif
 #endif
 
     return t_Sys_AnalogData.wUE;
@@ -311,11 +343,15 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 //<< ") returns "
 //<< retval << "\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - get_on_off_switch() returns %i\r"
 , (uint16_t)__HAL::get_time()
 , (int16_t)retval
 );
+#endif
 #endif
 
 	return retval;
@@ -328,14 +364,18 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - get_on_off_switch() returns %i\r"
   */
   inline void stayingAlive(void)
     {__HAL::staying_alive();
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "staying_alive()\r";
 
 #if defined( DEBUG_HAL )
+//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+//<< "staying_alive()\r";
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[64];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - staying_alive()\r"
 , (uint16_t)__HAL::get_time()
 );
+#endif
 #endif
 
     };
@@ -352,10 +392,14 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - staying_alive()\r"
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "power_down()\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[64];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - power_down()\r"
 , (uint16_t)__HAL::get_time()
 );
+#endif
 #endif
 
     };
@@ -373,11 +417,15 @@ CNAMESPACE::sprintf( (char*)buf, "%u ms - power_down()\r"
 //<< (uint16_t)bitState
 //<< " )\r";
 
+#if 0
+// don't use CNAMESPACE in header, doesn't always work properly
+// maybe reactivate the statement above using getIrs232Instance(..)
 uint8_t buf[128];
 CNAMESPACE::sprintf( (char*)buf, "%u ms - set_relais( %u )\r"
 , (uint16_t)__HAL::get_time()
 , (uint16_t)bitState
 );
+#endif
 #endif
 
   };

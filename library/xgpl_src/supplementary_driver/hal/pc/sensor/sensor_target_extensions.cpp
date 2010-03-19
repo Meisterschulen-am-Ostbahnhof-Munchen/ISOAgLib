@@ -29,6 +29,10 @@
 #include <cstring>
 #include <cstdio>
 
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 namespace __HAL {
 static FILE* sensorAnalogInput[ANALOG_INPUT_MAX+1];
 static FILE* sensorDigitalInput[DIGITAL_INPUT_MAX+1];
@@ -374,7 +378,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
    *  of int32_t -> avoid memory waste
    */
   if (_pulDiginCounter[(ab_channel / 4)] == NULL)
-  { /* according 4-group of uint32_t isn´t created -> allocate */
+  { /* according 4-group of uint32_t isnï¿½t created -> allocate */
     _pulDiginCounter[(ab_channel / 4)] = (uint32_t*) malloc(4*sizeof(uint32_t));
     /* check if allocated properly and init */
     if (_pulDiginCounter[(ab_channel / 4)] == NULL) i16_errorState |= HAL_OVERFLOW_ERR;
@@ -395,11 +399,11 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, boolean ab_act
   }
 
   if (i32_prescale > 1024)
-  { /* standard BIOS frequency and period methods doesn´t fir for
+  { /* standard BIOS frequency and period methods doesnï¿½t fir for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
     if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL)
-    {  /* according 4-group of t_triggerNode isn´t created -> allocate */
+    {  /* according 4-group of t_triggerNode isnï¿½t created -> allocate */
       _pt_diginTriggerTime[(ab_channel / 4)] = (t_triggerNode*) malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL) i16_errorState |= HAL_OVERFLOW_ERR;
       else memset(_pt_diginTriggerTime[(ab_channel / 4)], 0, sizeof(t_triggerNode) * 4);
@@ -425,7 +429,7 @@ uint32_t getCounter(uint8_t ab_channel)
 /**
   reset the given counter
   @param ab_channel channel of counter
-  @return HAL_NO_ERR ; HAL_RANGE_ERR if counter for ab_channel isn´t configured properly
+  @return HAL_NO_ERR ; HAL_RANGE_ERR if counter for ab_channel isnï¿½t configured properly
 */
 int16_t resetCounter(uint8_t ab_channel)
 {

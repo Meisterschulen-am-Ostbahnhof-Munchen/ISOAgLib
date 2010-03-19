@@ -34,6 +34,10 @@
 
 #include <list>
 
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 namespace __HAL {
 extern "C" {
   /** include the BIOS specific header with the part for CAN into __HAL */
@@ -378,7 +382,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   #ifdef USE_CAN_MEASURE_BUSLOAD
    gb_cinterfBusLoadSlice[aui8_busNr] = 0;
   // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
+  memset((gwCinterfBusLoad[aui8_busNr]),0,10);
   #endif
 
   // now config BUS
@@ -618,23 +622,23 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   if ( ( lastSendLen[aui8_busNr][aui8_msgobjNr] == pt_send->bDlc )
     && ( lastSendIdent[aui8_busNr][aui8_msgobjNr] == pt_send->dwId )
     && ( lastSendXtd[aui8_busNr][aui8_msgobjNr] == pt_send->bXtd )
-    && ( STL_NAMESPACE::memcmp( lastSendData[aui8_busNr][aui8_msgobjNr], pt_send->abData, pt_send->bDlc ) == 0 ) )
+    && ( memcmp( lastSendData[aui8_busNr][aui8_msgobjNr], pt_send->abData, pt_send->bDlc ) == 0 ) )
   { // gleich
     static char temp[100];
     const int32_t ci_deltaTime = ( __HAL::get_time() - lastSendTime[aui8_busNr][aui8_msgobjNr] );
-    STL_NAMESPACE::sprintf( temp, "Same Msg at Bus %hd, MsgObj %hd, Ident: 0x%lx,  TimeDelta %ld, DLC: %hd\r\n",
+    sprintf( temp, "Same Msg at Bus %hd, MsgObj %hd, Ident: 0x%lx,  TimeDelta %ld, DLC: %hd\r\n",
       aui8_busNr, aui8_msgobjNr, pt_send->dwId,
       ci_deltaTime, pt_send->bDlc );
-    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < STL_NAMESPACE::strlen( temp ) ) __HAL::wd_triggern();
+    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
-    STL_NAMESPACE::sprintf( temp, "0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx\r\n",
+    sprintf( temp, "0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx, 0x%hx\r\n",
       pt_send->abData[0], pt_send->abData[1], pt_send->abData[2], pt_send->abData[3],
       pt_send->abData[4], pt_send->abData[5], pt_send->abData[6], pt_send->abData[7] );
-    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < STL_NAMESPACE::strlen( temp ) ) __HAL::wd_triggern();
+    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
   }
   // copy
-  STL_NAMESPACE::memcpy( lastSendData[aui8_busNr][aui8_msgobjNr], pt_send->abData, pt_send->bDlc );
+  memcpy( lastSendData[aui8_busNr][aui8_msgobjNr], pt_send->abData, pt_send->bDlc );
   lastSendLen[aui8_busNr][aui8_msgobjNr] = pt_send->bDlc;
   lastSendIdent[aui8_busNr][aui8_msgobjNr] = pt_send->dwId;
   lastSendXtd[aui8_busNr][aui8_msgobjNr] = pt_send->bXtd;
@@ -660,9 +664,9 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   {
     static char temp[100];
     minFreeSendItem[aui8_busNr][aui8_msgobjNr] = freeItems;
-    STL_NAMESPACE::sprintf( temp, "New Min Send FreeBuf Bus %hd, MsgObj %hd, Free %d\r\n",
+    sprintf( temp, "New Min Send FreeBuf Bus %hd, MsgObj %hd, Free %d\r\n",
       aui8_busNr, aui8_msgobjNr, freeItems );
-    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < STL_NAMESPACE::strlen( temp ) ) __HAL::wd_triggern();
+    while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
   }
   #endif // end of DEBUG

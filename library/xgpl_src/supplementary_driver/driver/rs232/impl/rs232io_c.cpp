@@ -26,6 +26,10 @@
   #include <cctype>
 #endif
 
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 #if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
@@ -330,7 +334,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(const char *const apc_data)
   {
-    send( (uint8_t*)(apc_data), (uint8_t)CNAMESPACE::strlen( apc_data ) );
+    send( (uint8_t*)(apc_data), (uint8_t)strlen( apc_data ) );
     return *this;
   }
 
@@ -365,7 +369,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
     int16_t i16_val (ac_data);
     char pc_data[5];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
-    CNAMESPACE::sprintf(pc_data, "%hi", i16_val);
+    sprintf(pc_data, "%hi", i16_val);
 
     return RS232IO_c::operator<<(pc_data);
   }
@@ -383,7 +387,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   {
     char pc_data[10];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
-    CNAMESPACE::sprintf(pc_data, "%hu", aui16_data);
+    sprintf(pc_data, "%hu", aui16_data);
 
     return operator<<(pc_data);
   }
@@ -400,7 +404,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   {
     char pc_data[10];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
-    CNAMESPACE::sprintf(pc_data, "%hi", ai16_data);
+    sprintf(pc_data, "%hi", ai16_data);
 
     return operator<<(pc_data);
   }
@@ -417,7 +421,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   {
     char pc_data[20];
     // sprintf print value as text to uint8_t string and terminate it with '\0'
-    CNAMESPACE::sprintf(pc_data, "%lu", aui32_data);
+    sprintf(pc_data, "%lu", aui32_data);
 
     return operator<<(pc_data);
   }
@@ -436,11 +440,11 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
     #ifdef SYSTEM_PC
     // sprintf print value as text to uint8_t string and terminate it with '\0'
     // variant for 32Bit CPU
-    CNAMESPACE::sprintf(pc_data, "%d", ai32_data);
+    sprintf(pc_data, "%d", ai32_data);
     #else
     // sprintf print value as text to uint8_t string and terminate it with '\0'
     // variant for 16Bit CPU where int has size of int16_t --> only long int has 32 Bit
-    CNAMESPACE::sprintf(pc_data, "%ld", ai32_data);
+    sprintf(pc_data, "%ld", ai32_data);
     #endif
 
     return operator<<(pc_data);
@@ -458,9 +462,9 @@ RS232IO_c& RS232IO_c::operator<<(float af_data)
 {
   char pc_data[20];
   // sprintf print value as text to uint8_t string and terminate it with '\0'
-  CNAMESPACE::sprintf(pc_data, "%f", af_data);
+  sprintf(pc_data, "%f", af_data);
   // change use float format to german
-  *(CNAMESPACE::strstr((char*)pc_data, ".")) = ',';
+  *(strstr((char*)pc_data, ".")) = ',';
 
   return operator<<(pc_data);
 }
@@ -537,7 +541,7 @@ RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::string& rc_data)
   while ( !eof() )
   {
     HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST);
-    //CNAMESPACE::strncat(pc_tempArray, (char *)&b_data, 1);
+    //strncat(pc_tempArray, (char *)&b_data, 1);
     if ((b_data == ' ' ) || (b_data == '\t' )) break;
     else rc_data.push_back( b_data );
 //      following line caused assertion
@@ -589,7 +593,7 @@ RS232IO_c& RS232IO_c::operator>>(uint8_t& b_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
   uint16_t ui16_val;
-  CNAMESPACE::sscanf(pc_token, "%hu", &ui16_val);
+  sscanf(pc_token, "%hu", &ui16_val);
   b_data = ui16_val;
   return *this;
 }
@@ -606,7 +610,7 @@ RS232IO_c& RS232IO_c::operator>>(int8_t& c_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
   int16_t i16_val;
-  CNAMESPACE::sscanf(pc_token, "%hi", &i16_val);
+  sscanf(pc_token, "%hi", &i16_val);
   c_data = i16_val;
 
   return *this;
@@ -624,7 +628,7 @@ RS232IO_c& RS232IO_c::operator>>(int8_t& c_data)
 RS232IO_c& RS232IO_c::operator>>(uint16_t& ui16_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
-  CNAMESPACE::sscanf(pc_token, "%hu", &ui16_data);
+  sscanf(pc_token, "%hu", &ui16_data);
   return *this;
 }
 
@@ -640,7 +644,7 @@ RS232IO_c& RS232IO_c::operator>>(uint16_t& ui16_data)
 RS232IO_c& RS232IO_c::operator>>(int16_t& i16_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
-  CNAMESPACE::sscanf(pc_token, "%hi", &i16_data);
+  sscanf(pc_token, "%hi", &i16_data);
   return *this;
 }
 
@@ -658,10 +662,10 @@ RS232IO_c& RS232IO_c::operator>>(uint32_t& ui32_data)
   readToken(); // it set rs232_underflow error if no data is read
   #ifdef SYSTEM_PC
   // variant for 32Bit CPU
-  CNAMESPACE::sscanf(pc_token, "%u", &ui32_data);
+  sscanf(pc_token, "%u", &ui32_data);
   #else
   // variant for 16Bit CPU where int has size of int16_t --> only long int has 32 Bit
-  CNAMESPACE::sscanf(pc_token, "%lu", &ui32_data);
+  sscanf(pc_token, "%lu", &ui32_data);
   #endif
   return *this;
 }
@@ -681,10 +685,10 @@ RS232IO_c& RS232IO_c::operator>>(int32_t& i32_data)
   readToken(); // it set rs232_underflow error if no data is read
   #ifdef SYSTEM_PC
   // variant for 32Bit CPU
-  CNAMESPACE::sscanf(pc_token, "%i", &i32_data);
+  sscanf(pc_token, "%i", &i32_data);
   #else
   // variant for 16Bit CPU where int has size of int16_t --> only long int has 32 Bit
-  CNAMESPACE::sscanf(pc_token, "%li", &i32_data);
+  sscanf(pc_token, "%li", &i32_data);
   #endif
   return *this;
 }
@@ -701,7 +705,7 @@ RS232IO_c& RS232IO_c::operator>>(int32_t& i32_data)
 RS232IO_c& RS232IO_c::operator>>(float& f_data)
 {
   readToken(); // it set rs232_underflow error if no data is read
-  CNAMESPACE::sscanf(pc_token, "%f", &f_data);
+  sscanf(pc_token, "%f", &f_data);
   return *this;
 }
 #endif

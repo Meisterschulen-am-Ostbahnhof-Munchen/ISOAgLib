@@ -29,20 +29,6 @@
 #include <cstdlib>
 #include <cstring>
 
-// Tasking C++ compiler v7.0r1
-// includes C-Lib functions in namespace
-// STL_NAMESPACE:: , if the header like <cstring> is
-// directly included into a *.cc file;
-// if a header like <cstring> is indirectly included
-// functions like memcpy are inserted into global namespace
-// ==> as in most cases the C-Headers are indirect included
-//  <IsoAgLib/util/config.h> makes CNAMESPACE to an empty
-// string for the problematic compiler
-// (this bug is solved with v8.0 - maybe also with v7.5)
-#if defined( __TSW_CPP_70__ ) || defined( __TSW_CPP_756__ )
- #undef CNAMESPACE
- #define CNAMESPACE std
-#endif
 
 namespace __HAL {
 extern "C" {
@@ -171,10 +157,10 @@ int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
   _puiDiginTimebase = 0;
 
   if (i32_prescale > 1024)
-  { /* standard BIOS frequency and period methods doesn´t fit for
+  { /* standard BIOS frequency and period methods doesnï¿½t fit for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
-    CNAMESPACE::memset(&_pt_diginTriggerTime, 0, sizeof(t_triggerNode));
+    memset(&_pt_diginTriggerTime, 0, sizeof(t_triggerNode));
   }
 
   return i16_errorState;
@@ -195,7 +181,7 @@ _prevCounter = ui16_counter;
 }
 /**
   reset the given counter
-  @return C_NO_ERR ; C_RANGE if counter if it isn´t configured properly
+  @return C_NO_ERR ; C_RANGE if counter if it isnï¿½t configured properly
 */
 int16_t resetCounter()
 {

@@ -45,6 +45,9 @@
 #endif
 
 
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 namespace __HAL {
 extern "C" {
   /** include the BIOS specific header into __HAL */
@@ -531,7 +534,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   char temp[100];
-  STL_NAMESPACE::sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
+  sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
     aui8_busNr, aui8_msgobjNr, pt_config->dwId, pt_config->wNumberMsgs );
   INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif

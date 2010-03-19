@@ -32,6 +32,10 @@
 #include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
 #include <list>
 
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 namespace __HAL {
 extern "C" {
   /** include the BIOS specific header with the part for CAN into __HAL */
@@ -376,7 +380,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
 
  #ifdef USE_CAN_MEASURE_BUSLOAD
   gb_cinterfBusLoadSlice[aui8_busNr] = 0;
-  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
+  memset((gwCinterfBusLoad[aui8_busNr]),0,10);
 #endif
 
   // now config BUS
@@ -517,7 +521,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
 
   #ifdef DEBUG_CAN_BUFFER_FILLING
   char temp[100];
-  STL_NAMESPACE::sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
+  sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
     aui8_busNr, aui8_msgobjNr, pt_config->dwId, pt_config->wNumberMsgs );
   INTERNAL_DEBUG_DEVICE << temp << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif

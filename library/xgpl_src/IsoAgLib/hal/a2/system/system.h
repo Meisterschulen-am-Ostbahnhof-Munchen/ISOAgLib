@@ -57,12 +57,6 @@ namespace HAL
   inline int16_t printf(...){return 1;};
   inline int16_t scanf(...) {return 1;};
 
-  //BW, 4/13/06, compilation error ,will clean up later
-  #if defined( DEBUG )
-  using CNAMESPACE::sprintf;
-  using CNAMESPACE::sscanf;
-  #endif
-
   /**
     open the system with system specific function call
     @return error state (HAL_NO_ERR == o.k.)

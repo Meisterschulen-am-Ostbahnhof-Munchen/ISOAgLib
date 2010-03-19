@@ -43,6 +43,9 @@ extern "C" {
 }
 
 
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 /** prescaler value for digin input channels 1_4 */
 static uint8_t _b_prescale_1_4Index;
 /** prescaler value for digin input channels 5_16 */
@@ -164,12 +167,12 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
   /* store given timebase in according 4-group */
   if (_puiDiginTimebase[(ab_channel / 4)] == NULL)
   {
-    _puiDiginTimebase[(ab_channel / 4)] = (uint16_t*)CNAMESPACE::malloc(4*sizeof(uint16_t));
+    _puiDiginTimebase[(ab_channel / 4)] = (uint16_t*)malloc(4*sizeof(uint16_t));
     /* check if allocated properly and init */
     if (_puiDiginTimebase[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
     else
     {
-      CNAMESPACE::memset(_puiDiginTimebase[(ab_channel / 4)], 0, sizeof(uint16_t) * 4);
+      memset(_puiDiginTimebase[(ab_channel / 4)], 0, sizeof(uint16_t) * 4);
       _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)] = aui16_timebase;
     }
   }
@@ -211,18 +214,18 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
 	   */
 	  if (_pulDiginCounter[(ab_channel / 4)] == NULL)
 	  { /* according 4-group of uint32_t isn't created -> allocate */
-	    _pulDiginCounter[(ab_channel / 4)] = (uint32_t*)CNAMESPACE::malloc(4*sizeof(uint32_t));
+	    _pulDiginCounter[(ab_channel / 4)] = (uint32_t*)malloc(4*sizeof(uint32_t));
 	    /* check if allocated properly and init */
 	    if (_pulDiginCounter[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-	    else CNAMESPACE::memset(_pulDiginCounter[(ab_channel / 4)], 0, sizeof(uint32_t)*4);
+	    else memset(_pulDiginCounter[(ab_channel / 4)], 0, sizeof(uint32_t)*4);
 	  }
 
     // create corresponding array elements for last trigger time
 		if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL)
     {  /* according 4-group of t_triggerNode isn't created -> allocate */
-      _pt_diginTriggerTime[(ab_channel / 4)] = (t_triggerNode*)CNAMESPACE::malloc(4*sizeof(t_triggerNode));
+      _pt_diginTriggerTime[(ab_channel / 4)] = (t_triggerNode*)malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-      else CNAMESPACE::memset(_pt_diginTriggerTime[(ab_channel / 4)], 0, sizeof(t_triggerNode) * 4);
+      else memset(_pt_diginTriggerTime[(ab_channel / 4)], 0, sizeof(t_triggerNode) * 4);
     }
   }
 

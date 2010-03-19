@@ -28,6 +28,10 @@
 #  include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
 
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 namespace __HAL {
 
 #define RPM_PRESCALER_MIN	RPM_PRESCALER_8
@@ -141,14 +145,14 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - init_digin( %u, %u, %u, NULL ) returns %i\r"
+sprintf( (char*)buf, "%u ms - init_digin( %u, %u, %u, NULL ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) ab_channel
 , (uint16_t) b_codeEdge
 , (uint16_t) b_codeActiv
 , (int16_t) ret
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 //{
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_digin( "
 //<< (uint16_t)ab_channel << ", "
@@ -178,12 +182,12 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 
 #if defined( DEBUG_HAL )
 //uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - set_digin_prescaler( %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - set_digin_prescaler( %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) _b_prescale_1_Index
 , (int16_t) i16_errorState
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "set_digin_prescaler( "
 //<< (uint16_t)_b_prescale_1_Index << " ) returns "
@@ -199,10 +203,10 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
   _puiDiginTimebase[ab_channel] = 0;
 
   if (ui32_prescale > 1024)
-  { /* standard BIOS frequency and period methods doesn´t fit for
+  { /* standard BIOS frequency and period methods doesnï¿½t fit for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
-    CNAMESPACE::memset(&_pt_diginTriggerTime[ab_channel], 0, sizeof(t_triggerNode));
+    memset(&_pt_diginTriggerTime[ab_channel], 0, sizeof(t_triggerNode));
   }
 #endif
 
@@ -213,14 +217,14 @@ int16_t configretval = config_digin_freq( ab_channel, wTime, numPulsesToAvg );
 
 #if defined( DEBUG_HAL )
 //uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - config_digin_freq( %u, %u, %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - config_digin_freq( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) ab_channel
 , (uint16_t) wTime
 , (uint16_t) numPulsesToAvg
 , (int16_t) configretval
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //	<< "config_digin_freq( "
@@ -244,14 +248,14 @@ uint32_t getCounter(uint8_t ab_channel)
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (uint16_t) ui16_counter
 , (int16_t) retval
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 #endif
 
 	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
@@ -261,7 +265,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 }
 /**
   reset the given counter
-  @return C_NO_ERR ; C_RANGE if counter if it isn´t configured properly
+  @return C_NO_ERR ; C_RANGE if counter if it isnï¿½t configured properly
 */
 int16_t resetCounter(uint8_t ab_channel)
 {
@@ -270,14 +274,14 @@ int16_t resetCounter(uint8_t ab_channel)
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (uint16_t) ui16_counter
 , (int16_t) retval
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 #endif
 
 	_pulDiginCounter[ab_channel] = 0;
@@ -298,14 +302,14 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (uint16_t) ui16_counter
 , (int16_t) retval
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 #endif
 
 	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
@@ -350,13 +354,13 @@ uint16_t getCounterFrequency(uint8_t ab_channel)
 
 #if defined( DEBUG_HAL )
 uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_digin_freq( %u, %u ) returns %i\r"
+sprintf( (char*)buf, "%u ms - get_digin_freq( %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
 , (uint16_t) ab_channel
 , (uint16_t) ui16_result
 , (int16_t) retval
 );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "get_digin_freq( " << (uint16_t) ab_channel << ", " << (uint16_t)ui16_result << " ) returns " << retval << "\r";

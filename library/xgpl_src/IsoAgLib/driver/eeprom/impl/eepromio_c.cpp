@@ -17,6 +17,11 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement//impl/isoname_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
+
+
+using namespace std; // simple version to avoid problems with using CNAMESPACE
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** C-style function, to get access to the unique EepromIo_c singleton instance */
@@ -271,7 +276,7 @@ bool EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8
         setState4BiosReturn(HAL::eepromRead (ui16_actualStart, ui16_actualSize, (uint8_t*)pb_compare));
 
         // compare actual data in EEPROM with given data
-        if (CNAMESPACE::memcmp(pb_compare, pb_data,ui16_actualSize) != 0)
+        if (memcmp(pb_compare, pb_data,ui16_actualSize) != 0)
         { // old data is different -> write new data
           if (writeInit())
           { // call BIOS function
