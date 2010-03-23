@@ -112,7 +112,9 @@ __HAL::server_c::server_c() :
   mb_monitorMode(FALSE),
   mb_inputFileMode(FALSE),
   mf_canInput(0),
+#ifndef WIN32
   mb_daemon(false),
+#endif
   mi16_reducedLoadOnIsoBus(-1),
   mb_interactive(true),
   mi_canReadNiceValue(0),
@@ -452,16 +454,28 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
     iter_delete->canBus(k).mvec_msgObj.clear();
 #endif
 
-  if (close (iter_delete->i32_commandSocket))
+  if (
+#ifdef WIN32
+      closesocket
+#else
+	  close
+#endif
+	  (iter_delete->i32_commandSocket))
   {
     #ifdef DEBUG
-    printf("releaseClient: close i32_commandSocket=%d Fehler: %d (%s)\n", iter_delete->i32_commandSocket, errno, strerror(errno));
+    printf("releaseClient: close i32_commandSocket=%d Error: %d (%s)\n", iter_delete->i32_commandSocket, errno, strerror(errno));
     #endif
   }
-  if (close (iter_delete->i32_dataSocket))
+  if (
+#ifdef WIN32
+      closesocket
+#else
+	  close
+#endif
+	  (iter_delete->i32_dataSocket))
   {
     #ifdef DEBUG
-    printf("releaseClient: close i32_dataSocket=%d Fehler: %d (%s)\n", iter_delete->i32_dataSocket, errno, strerror(errno));
+    printf("releaseClient: close i32_dataSocket=%d Error: %d (%s)\n", iter_delete->i32_dataSocket, errno, strerror(errno));
     #endif
   }
 

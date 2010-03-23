@@ -46,7 +46,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				InlineFunctionExpansion="1"
-				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;../libs/pcan/Api"
+				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;..\libs\pcan\Include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -136,7 +136,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;../libs/pcan/Api"
+				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;..\libs\pcan\Include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

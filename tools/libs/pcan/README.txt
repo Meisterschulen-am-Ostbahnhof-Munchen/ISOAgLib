@@ -11,8 +11,8 @@ Please download the driver from
 
   http://p103112.typo3server.info/fileadmin/media/files/usb.zip
 
-and place the content of 
+and place the content of
 
-  Disk/PCAN-Light
+  Disk/PCAN-Light API
 
 in this directory!
