@@ -22,13 +22,15 @@ If it's already installed in a different path, then adapt
     can_server_vector_xl.vcproj .
 
 For the LAWICEL driver download
-    http://www.canusb.com/cdm/CDM_2.04.06_WHQL_Certified_CANUSB.zip
+    http://www.canusb.com/drivers/canusbdrv018.zip
+and
+    http://www.canusb.com/cdm/CDM_2.04.06_CANUSB.zip
 
-and follow the driver installation guide
+Follow the driver installation guide
     http://www.canusb.com/documents/canusb_drinst_vcp.pdf
 When reading, particularly find out if you have to temporarily
 disconnect the PC from the Internet during installation.
-Install to
+Eventually install to
     C:\Programme\LAWICEL\CANUSB .
 If it's already installed in a different path, then adapt
     can_server_lawicel.vcproj .
