@@ -34,21 +34,33 @@ using namespace std; // simple version to avoid problems with using CNAMESPACE
 
 
 namespace __HAL {
+
+struct DigitalInputLine_s
+{
+  int32_t val;
+  int32_t freq;
+};
+
 static FILE* sensorAnalogInput[ANALOG_INPUT_MAX+1];
 static FILE* sensorDigitalInput[DIGITAL_INPUT_MAX+1];
 static bool sensorAnalogInputOpen[] = { false,false,false,false,false,false,false,false };
 static bool sensorDigitalInputOpen[] = { false,false,false,false,false,false,false,false,
                                             false,false,false,false,false,false,false,false };
 
+/// Analog
 static int32_t lastSensorAnalogInputTime[ANALOG_INPUT_MAX+1];
-static int32_t lastSensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
 static int32_t lastSensorAnalogInputVal[ANALOG_INPUT_MAX+1];
-static int32_t lastSensorDigitalInputVal[DIGITAL_INPUT_MAX+1];
 
 static int32_t next_sensorAnalogInputTime[ANALOG_INPUT_MAX+1];
-static int32_t next_sensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
 static int32_t next_sensorAnalogInputVal[ANALOG_INPUT_MAX+1];
-static int32_t next_sensorDigitalInputVal[DIGITAL_INPUT_MAX+1];
+
+/// Digital
+static int32_t lastSensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
+static DigitalInputLine_s lastSensorDigitalInputVal[DIGITAL_INPUT_MAX+1];
+
+static int32_t next_sensorDigitalInputTime[DIGITAL_INPUT_MAX+1];
+static DigitalInputLine_s next_sensorDigitalInputVal[DIGITAL_INPUT_MAX+1];
+
 
 /* *************************************** */
 /* ****** Sensor_c I BIOS functions  ******* */
@@ -120,18 +132,46 @@ void counterIrq_14(...){counterIrqFlex(3,2);}
 void counterIrq_15(...){counterIrqFlex(3,3);}
 
 
-
-
 static counterIrqFunction irqFuncArr[16] =
 {&counterIrq_0, &counterIrq_1, &counterIrq_2, &counterIrq_3, &counterIrq_4, &counterIrq_5,
  &counterIrq_6, &counterIrq_7, &counterIrq_8, &counterIrq_9, &counterIrq_10, &counterIrq_11,
  &counterIrq_12, &counterIrq_13, &counterIrq_14, &counterIrq_15};
 
 
+void
+readNewLineSimulatedDigitalValues (uint8_t bInputNumber)
+{
+  lastSensorDigitalInputTime[bInputNumber] = next_sensorDigitalInputTime[bInputNumber];
+  lastSensorDigitalInputVal[bInputNumber] = next_sensorDigitalInputVal[bInputNumber];
+  if ( feof(sensorDigitalInput[bInputNumber]) == 0 )
+  { // read next line
+    char zeile[100];
+    fgets(zeile, 99, sensorDigitalInput[bInputNumber]);
+      // default the next values to the last ones, in case not all columns are specified in the read line.
+    next_sensorDigitalInputVal[bInputNumber] = lastSensorDigitalInputVal[bInputNumber];
+    sscanf(zeile, "%u %u %u\n", &(next_sensorDigitalInputTime[bInputNumber]), &(next_sensorDigitalInputVal[bInputNumber].val), &(next_sensorDigitalInputVal[bInputNumber].freq));
+  }
+}
+
+void
+checkForNewSimulatedDigitalValues (uint8_t bInputNumber)
+{
+  if ( getTime() >= next_sensorDigitalInputTime[bInputNumber] )
+  { // save next_XX to last_XX
+    readNewLineSimulatedDigitalValues (bInputNumber);
+  }
+}
 
 
-int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pfFunctionName)(...)){
-  printf("init_digin mit Kanal %i, Modus %i, HiLo %i aufgerufen\n", bInput,bMode, bAktivhighlow);
+int16_t
+init_digin (uint8_t bInput, uint8_t bMode, uint8_t bAktivhighlow, void (*pfFunctionName)(...))
+{
+#ifdef DEBUG_SENSORS
+  printf("init_digin called with channel %i, mode %i and HiLo %i.\n", bInput, bMode, bAktivhighlow);
+#endif
+  (void)bMode;
+  (void)bAktivhighlow;
+
   // The following seems to have made problems under Visual C++
   // It shouldn't anymore with the lastest Visual Studio versions,
   // but for the case that there is a problem, the #if is kept for
@@ -162,70 +202,68 @@ int16_t  init_digin(uint8_t bInput,uint8_t bMode,uint8_t bAktivhighlow,void (*pf
 
   sensorDigitalInputOpen[bInput] = true;
   fgets(zeile, 99, sensorDigitalInput[bInput]);
-  sscanf(zeile, "%u %u\n", &(lastSensorDigitalInputTime[bInput]), &(lastSensorDigitalInputVal[bInput]));
-  if ( feof(sensorDigitalInput[bInput]) == 0 )
-  { // read next line
-    fgets(zeile, 99, sensorDigitalInput[bInput]);
-    sscanf(zeile, "%u %u\n", &(next_sensorDigitalInputTime[bInput]), &(next_sensorDigitalInputVal[bInput]));
-  }
+  sscanf(zeile, "%u %u %u\n", &(next_sensorDigitalInputTime[bInput]), &(next_sensorDigitalInputVal[bInput].val), &(next_sensorDigitalInputVal[bInput].freq));
+
+  readNewLineSimulatedDigitalValues (bInput);
 
   return HAL_NO_ERR;
 }
 
-int16_t  getDiginOnoff(uint8_t bInputNumber){
-  // printf("getDiginOnoff(%i)\n", bInputNumber);
+int16_t
+getDiginOnoff(uint8_t bInputNumber)
+{
   if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
-  if ( getTime() >= next_sensorDigitalInputTime[bInputNumber] )
-  { // save next_XX to last_XX
-    lastSensorDigitalInputTime[bInputNumber] = next_sensorDigitalInputTime[bInputNumber];
-    lastSensorDigitalInputVal[bInputNumber] = next_sensorDigitalInputVal[bInputNumber];
-    if ( feof(sensorDigitalInput[bInputNumber]) == 0 )
-    { // read next line
-      char zeile[100];
-      fgets(zeile, 99, sensorDigitalInput[bInputNumber]);
-      sscanf(zeile, "%u %u\n", &(next_sensorDigitalInputTime[bInputNumber]), &(next_sensorDigitalInputVal[bInputNumber]));
-    }
-  }
-  return (lastSensorDigitalInputVal[bInputNumber] > 0);
+  checkForNewSimulatedDigitalValues (bInputNumber);
+  return (lastSensorDigitalInputVal[bInputNumber].val > 0);
 }
 
 /// @todo HAL RETURN VALUES (SENSORS): return type would be int16_t, but returned are either HAL_CONFIG_ERR or bool.
 
-int16_t  getDiginOnoffStatic(uint8_t bInputNumber){
-  // printf("getDiginOnoffStatic(%i)\n", bInputNumber);
+int16_t
+getDiginOnoffStatic(uint8_t bInputNumber)
+{
   if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
-  if ( getTime() >= next_sensorDigitalInputTime[bInputNumber] )
-  { // save next_XX to last_XX
-    lastSensorDigitalInputTime[bInputNumber] = next_sensorDigitalInputTime[bInputNumber];
-    lastSensorDigitalInputVal[bInputNumber] = next_sensorDigitalInputVal[bInputNumber];
-    if ( feof(sensorDigitalInput[bInputNumber]) == 0 )
-    { // read next line
-      char zeile[100];
-      fgets(zeile, 99, sensorDigitalInput[bInputNumber]);
-      sscanf(zeile, "%u %u\n", &(next_sensorDigitalInputTime[bInputNumber]), &(next_sensorDigitalInputVal[bInputNumber]));
-    }
-  }
-  return (lastSensorDigitalInputVal[bInputNumber] > 0);
+  checkForNewSimulatedDigitalValues (bInputNumber);
+  return (lastSensorDigitalInputVal[bInputNumber].val > 0);
 }
-int16_t  setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
-{printf("setDiginPrescaler fuer Gruppe %d mit Prescale Modus %d aufgerufen\n",
- bGroup, bMode);return HAL_NO_ERR;};
 
-int16_t  getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
-{printf("getDiginPeriod fuer Kanal %d aufgerufen\n", bInput);
+
+int16_t
+setDiginPrescaler(uint8_t bGroup, uint8_t bMode)
+{
+#ifdef DEBUG_SENSORS
+  printf("setDiginPrescaler called for group %d with prescale mode %d.\n", bGroup, bMode);
+#endif
+  (void)bGroup;
+  (void)bMode;
+  return HAL_NO_ERR;
+}
+
+
+int16_t
+getDiginPeriod(uint8_t bInput, uint16_t *pwPeriod, uint16_t *pwImpulse)
+{
+#ifdef DEBUG_SENSORS
+  printf("getDiginPeriod called for channel %d.\n", bInput);
+#endif
   *pwPeriod = ((getTime()%10000 +bInput)) / 3;
   *pwImpulse = ((getTime()%1000 +bInput)) / 3;
   return HAL_NO_ERR;
 }
-int16_t  getDiginFreq(uint8_t bInput, uint16_t *pwFrequency)
-{ printf("getDiginFreq fuer Kanal %d aufgerufen\n", bInput);
-  *pwFrequency = ((getTime()%1000 +bInput)) / 3;
+
+
+int16_t
+getDiginFreq (uint8_t bInputNumber, uint16_t *pwFrequency)
+{
+  if ( ! sensorDigitalInputOpen[bInputNumber] ) return HAL_CONFIG_ERR;
+  checkForNewSimulatedDigitalValues (bInputNumber);
+  *pwFrequency = lastSensorDigitalInputVal[bInputNumber].freq;
   return HAL_NO_ERR;
 }
 
 /* evaluation of analog channels */
-int16_t  getAdc(uint8_t bKanalnummer){
-  // printf("getAdc(%i)\n", bKanalnummer);
+int16_t  getAdc(uint8_t bKanalnummer)
+{
   if ( bKanalnummer > DIGITAL_INPUT_MAX ) return 1000;
   else if ( getTime() >= next_sensorAnalogInputTime[bKanalnummer] )
   { // save next_XX to last_XX
@@ -240,9 +278,16 @@ int16_t  getAdc(uint8_t bKanalnummer){
   }
   return lastSensorAnalogInputVal[bKanalnummer];
 }
+
 /* initialisation of analog inputs */
-int16_t  init_analogin(uint8_t bNumber, uint8_t bType){
-  printf("init_analogin fuer Kanal %i, Typ %i aufgerufen\n", bNumber, bType);
+int16_t
+init_analogin (uint8_t bNumber, uint8_t bType)
+{
+#ifdef DEBUG_SENSORS
+  printf("init_analogin called for channel %i, type %i.\n", bNumber, bType);
+#endif
+  (void)bType;
+
   if ( sensorAnalogInputOpen[bNumber] ) fclose(sensorAnalogInput[bNumber]);
   char name[100], zeile[100];
 
@@ -277,13 +322,17 @@ int16_t  init_analogin(uint8_t bNumber, uint8_t bType){
 }
 
 /* switching between fast and slow input sampling */
-void setFastAnalogin(boolean bMode){
-  printf("setFastAnalogin mit Modus %i aufgerufen\n", bMode);
+void setFastAnalogin (boolean bMode)
+{
+#ifdef DEBUG_SENSORS
+  printf("setFastAnalogin called with mode %i.\n", bMode);
+#endif
+  (void)bMode;
 }
 
 /* evaluation of the mean value of an analog input */
-int16_t  getAnaloginMean(uint8_t bInput){
- // printf("getAnaloginMean(%i)\n", bInput);
+int16_t  getAnaloginMean(uint8_t bInput)
+{
   if ( getTime() >= next_sensorAnalogInputTime[bInput] )
   { // save next_XX to last_XX
     lastSensorAnalogInputTime[bInput] = next_sensorAnalogInputTime[bInput];
