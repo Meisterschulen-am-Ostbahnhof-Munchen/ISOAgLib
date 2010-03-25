@@ -213,7 +213,7 @@ MultiReceive_c::processMsg()
     case StreamTP:
     case StreamETP:
       return processMsgIso (ct_streamType); // bidirectional PGN, so retval is important
-    
+
     case StreamFastPacket:
       processMsgNmea();
       return true; // unidirectional PGN, so always not of interest for others (as far as currently known)
@@ -346,19 +346,13 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
           { // to allow local variables!
             ////////////////////////////
             /// DPO (Data Packet Offset)
-            if (at_streamType != StreamETP)
-            { /* this type is invalid - using Extended commands on Standard-TP PGN (or vice versa) */
-              notifyErrorConnAbort (c_isoRSI, TransferErrorWrongCommandByteForThisPgn, true);
-              return true; /* no other CAN-Customer should be interested in that one */
-            }
-
             Stream_c* pc_streamFound = getStreamIso (c_isoRSI, /* include PGN in search? */ true);
 
             if (pc_streamFound == NULL)
             {
               notifyErrorConnAbort (c_isoRSI, TransferErrorDpoForUnknownOrUnopenedStream, true); // according to Brad: ConnAbort
               #ifdef DEBUG_MULTIRECEIVE
-                INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE << "DPO for an unknown/unopened stream!!" << INTERNAL_DEBUG_DEVICE_ENDL ;
+              INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_NEWLINE << "DPO for an unknown/unopened stream!!" << INTERNAL_DEBUG_DEVICE_ENDL ;
               #endif
               return true; // all DPOs are not of interest for MultiSend or other CAN-Customers!
             }
@@ -484,7 +478,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
           #ifdef DEBUG_MULTIRECEIVE
             INTERNAL_DEBUG_DEVICE << "UNKNOWN/INVALID command with (E)TP-PGN... not passing this on to MultiSend... just discard!!" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-          notifyErrorConnAbort (c_isoRSI, TransferErrorUnknownOrInvalidCommandWithTpPgn, false);
+          notifyErrorConnAbort (c_isoRSI, TransferErrorUnknownOrInvalidCommandWithTpEtpPgn, false);
           // do not send a ConnAbort, because we don't know if Byte 6-8
           // are the PGN that we need for ConnAbort in Byte 6-8!
           return true;
@@ -527,12 +521,11 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
             #endif
           } else {
             notifyErrorConnAbort (c_isoRSI, TransferErrorWrongSequenceNumber, true /* send connAbort-Msg */);
-            tellClient (*pc_streamFound);
             #ifdef DEBUG_MULTIRECEIVE
             INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to (E)TP.DATA, but wrong sequence number, see msg before! ***" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
           }
-          removeStream (*pc_streamFound);
+          tellClientRemoveStream (*pc_streamFound); // won't be told to Broadcast streams anyway...
         }
         // further handling (send next CTS) is moved to timeEvent, so we don't get confused with CM/DATA PGNs, as they come very fast!
 
@@ -552,6 +545,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
 }
 
 
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
 /// @pre Only to be called with StreamType FP!
 void
 MultiReceive_c::processMsgNmea()
@@ -629,12 +623,14 @@ MultiReceive_c::processMsgNmea()
   }
   // else: Packet was handled okay, so we're done with processing...
 }
+#endif
 
 
 void
-MultiReceive_c::registerClientIso (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
-                                   uint32_t aui32_pgn, uint32_t aui32_pgnMask,
-                                   bool ab_alsoBroadcast, bool ab_alsoGlobalErrors)
+MultiReceive_c::registerClientIso(
+  CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
+  uint32_t aui32_pgn, uint32_t aui32_pgnMask,
+  bool ab_alsoBroadcast, bool ab_alsoGlobalErrors)
 {
   mlist_clients.push_back(
     MultiReceiveClientWrapper_s(
@@ -842,8 +838,10 @@ MultiReceive_c::processStreamDataChunk_ofMatchingClient(
   }
 
   // There must be a registered client, we can assume that here!
-  isoaglib_assert (getClient (arc_stream.getIdent()) != NULL);
-  bool b_keepIt = getClient (arc_stream.getIdent())->processPartStreamDataChunk (arc_stream, b_firstChunk, b_lastChunk);
+  // else we wouldn't have created that stream...
+  CanCustomer_c* pc_client = getClient (arc_stream.getIdent());
+  isoaglib_assert (pc_client);
+  bool b_keepIt = pc_client->processPartStreamDataChunk (arc_stream, b_firstChunk, b_lastChunk);
   if (!b_lastChunk) return false; // result doesn't care if it's not the last chunk
   return b_keepIt;
 }
@@ -1068,10 +1066,16 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     case StreamFastPacket:
-      isoaglib_assert(!"Sending a CTS shouldn't have been called for a FastPacket-stream.");
+      isoaglib_assert (!"Sending a CTS shouldn't have been called for a FastPacket-stream.");
       break;
 #endif
+
+    default:
+      isoaglib_assert (!"sendCurrentCts called with unknown StreamType-enum.");
+      break;
   }
+
+  // send message
   __IsoAgLib::getCanInstance4Comm() << mc_data;
 }
 
@@ -1079,8 +1083,15 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
 void
 MultiReceive_c::sendConnAbort (const ReceiveStreamIdentifier_c &arcc_rsi)
 {
-  if ( (arcc_rsi.getDa() == 0xFF) || (arcc_rsi.getStreamType() == StreamFastPacket) )
-  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF or FP-Streams
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+  if (arcc_rsi.getStreamType() == StreamFastPacket)
+  { // NEVER answer to FP-Streams
+    return;
+  }
+#endif
+
+  if (arcc_rsi.getDa() == 0xFF)
+  { // NEVER answer to a packet that was sent to GLOBAL ADDRESS 0xFF
     return;
   }
 
@@ -1145,10 +1156,16 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     case StreamFastPacket:
-      isoaglib_assert(!"Sending an EoMAck shouldn't have been called for a FastPacket-stream.");
+      isoaglib_assert (!"Sending an EoMAck shouldn't have been called for a FastPacket-stream.");
       break;
 #endif
+
+    default:
+      isoaglib_assert (!"sendCurrentCts called with unknown StreamType-enum.");
+      break;
   }
+
+  // send message
   __IsoAgLib::getCanInstance4Comm() << mc_data;
 }
 

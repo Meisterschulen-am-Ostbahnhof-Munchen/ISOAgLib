@@ -74,7 +74,8 @@ Stream_c::Stream_c(
 
 
 Stream_c::Stream_c (const Stream_c &rhs)
-  : SINGLETON_MEMBER_COPY_CONSTRUCTOR(rhs)
+  : StreamInput_c (rhs)
+  , SINGLETON_MEMBER_COPY_CONSTRUCTOR(rhs)
     mc_ident (rhs.mc_ident)
   , mt_streamState (rhs.mt_streamState)
   , mt_awaitStep (rhs.mt_awaitStep)

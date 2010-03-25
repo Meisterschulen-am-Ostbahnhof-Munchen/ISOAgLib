@@ -233,7 +233,7 @@ public:
     TransferErrorDpoForUnknownOrUnopenedStream = 104,
     TransferErrorDpoNotAwaitedNow = 105,
     TransferErrorAbortedBySender = 107,
-    TransferErrorUnknownOrInvalidCommandWithTpPgn = 108,
+    TransferErrorUnknownOrInvalidCommandWithTpEtpPgn = 108,
     TransferErrorWrongSequenceNumber = 109,
     TransferErrorStreamTimedOut = 110,
     TransferErrorNoStreamRunningForMultiPacketData = 111,
