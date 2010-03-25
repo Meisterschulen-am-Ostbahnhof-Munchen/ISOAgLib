@@ -20,7 +20,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 // IsoAgLib_Extension
-#include <IsoAgLib/comm/Part3_DataLink/imultireceive_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
