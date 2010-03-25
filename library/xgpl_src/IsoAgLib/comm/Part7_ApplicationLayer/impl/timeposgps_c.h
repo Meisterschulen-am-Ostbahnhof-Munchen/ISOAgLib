@@ -201,24 +201,18 @@ class TimePosGps_c : public SingletonTimePosGps_c
   /*@{*/
   #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 public:
-  //! @param ac_ident:
-  //! @param aui32_totalLen:
-  virtual bool reactOnStreamStart(const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
+  virtual bool reactOnStreamStart(const ReceiveStreamIdentifier_c& ac_ident,
                                   uint32_t aui32_totalLen);
 
-  //! @param apc_stream:
-  //! @param ab_isFirstChunk:
-  //! @param ab_isLastChunkAndACKd:
-  virtual bool processPartStreamDataChunk(IsoAgLib::iStream_c& apc_stream,
+
+  virtual bool processPartStreamDataChunk(Stream_c& apc_stream,
                                           bool ab_isFirstChunk,
                                           bool ab_isLastChunkAndACKd);
 
-  virtual void reactOnAbort (IsoAgLib::iStream_c& apc_stream);
+  virtual void reactOnAbort (Stream_c& apc_stream);
 
 private:
-  //! @param ac_ident:
-  //! @param apc_stream:
-  bool reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident, IsoAgLib::iStream_c& apc_stream);
+  bool reactOnLastChunk (const ReceiveStreamIdentifier_c& ac_ident, Stream_c& apc_stream);
   #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
 
 public:

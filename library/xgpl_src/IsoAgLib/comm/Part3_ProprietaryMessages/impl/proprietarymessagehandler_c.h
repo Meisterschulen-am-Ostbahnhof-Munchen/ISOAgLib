@@ -53,10 +53,10 @@ namespace __IsoAgLib
     virtual bool processMsg();
 
     /** overloading reactOnStreamStart to get (E)TP-messages */
-    virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
+    virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
 
-    /** overloading processPartStreamDataChunk to process (E)TP-messages */
-    virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk);
+    /** implementing processPartStreamDataChunk to process (E)TP-messages */
+    virtual bool processPartStreamDataChunk (Stream_c& apc_stream, bool ab_isFirstChunk, bool ab_isLastChunk);
 
     /** performs periodically actions,
       possible errors:

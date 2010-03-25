@@ -1,5 +1,6 @@
 /*
-  stream_c.h
+  stream_c.h - Implementation of the generic (E)TP/FP-multi-packet
+    reception functionality.
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -10,19 +11,121 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+
 #ifndef STREAM_C_H
 #define STREAM_C_H
 
-#include "../istream_c.h"
+// IsoAgLib
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <supplementary_driver/driver/datastreams/streaminput_c.h>
 
 
-
-
-
-
-// Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+  
+
+// forward declarations (for friend declaration)
+class MultiReceive_c;
+
+
+/** enum for type of stream */
+enum StreamType_t
+{
+  StreamTP              = 0, // Standard TP with Standard CommandSet
+  StreamETP             = 1  // Extended TP with Extended CommandSet
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+  ,StreamFastPacket     = 2 /// Fast-Packet addition: Check stream for Fast-Packet before proceeding anything!
+#endif
+};
+
+
+class ReceiveStreamIdentifier_c
+{
+public:
+  ReceiveStreamIdentifier_c (StreamType_t at_streamType, uint32_t aui32_pgn,
+                             uint8_t aui8_da, const IsoName_c& acrc_daIsoName,
+                             uint8_t aui8_sa, const IsoName_c& acrc_saIsoName)
+    : mt_streamType (at_streamType)
+    , ui32_pgn (aui32_pgn)
+    , ui8_da (aui8_da)
+    , ui8_sa (aui8_sa)
+    , c_daIsoName (acrc_daIsoName)
+    , c_saIsoName (acrc_saIsoName)
+  {
+  }
+
+  ReceiveStreamIdentifier_c (const ReceiveStreamIdentifier_c& ac_rsi)
+    : mt_streamType (ac_rsi.mt_streamType)
+    , ui32_pgn (ac_rsi.ui32_pgn)
+    , ui8_da (ac_rsi.ui8_da)
+    , ui8_sa (ac_rsi.ui8_sa)
+    , c_daIsoName (ac_rsi.c_daIsoName)
+    , c_saIsoName (ac_rsi.c_saIsoName)
+  {
+  }
+
+  bool match (const ReceiveStreamIdentifier_c& ac_rsi, bool ab_alsoComparePgn) const
+  {
+    return (ac_rsi.mt_streamType == mt_streamType)
+        && ( !ab_alsoComparePgn || (ac_rsi.ui32_pgn == ui32_pgn) )
+        && (ac_rsi.ui8_sa == ui8_sa)
+        && (ac_rsi.ui8_da == ui8_da);
+  }
+
+  bool operator== (const ReceiveStreamIdentifier_c& ac_rsi) const
+  {
+    return match (ac_rsi, true);
+  }
+
+  StreamType_t    getStreamType() const { return mt_streamType; }
+  uint32_t               getPgn() const { return ui32_pgn; }
+  const IsoName_c& getDaIsoName() const { return c_daIsoName; }
+  const IsoName_c& getSaIsoName() const { return c_saIsoName; }
+
+  // helper functions
+  bool isIsoTp()  { return getStreamType() == StreamTP; }
+  bool isIsoEtp() { return getStreamType() == StreamETP; }
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+  bool isNmeaFp() { return getStreamType() == StreamFastPacket; }
+#endif
+
+  // public for direct access to the CACHED addresses.
+  //! Be aware that SA/DA can CHANGE while the system is running, so
+  //! better use the IsoName normally instead. Only use the SA if you
+  //! keep your own SA list also up-to-date with the SA-Claim-Handlers!
+  uint8_t getDa() const { return ui8_da; }
+  uint8_t getSa() const { return ui8_sa; }
+
+// declaring/defining the following methods mutable as
+// A) they're only updating the cached SA/DA and
+// B) only MultiReceive is friend and can do this!
+private:
+  void setDa (uint8_t aui8_da) const { ui8_da = aui8_da; }
+  void setSa (uint8_t aui8_sa) const { ui8_sa = aui8_sa; }
+
+  friend class __IsoAgLib::MultiReceive_c;
+
+private:
+
+  /** Type of this Stream: TP/ETP/FP */
+  StreamType_t mt_streamType;
+
+  /** PGN of the stream */
+  uint32_t ui32_pgn;
+
+  /** Destination Address - mutable as it's only a CACHE for the c_daIsoName! */
+  mutable uint8_t ui8_da;
+
+  /** Source Address - mutable as it's only a CACHE for the c_daIsoName! */
+  mutable uint8_t ui8_sa;
+
+  /** Destination ISOName */
+  IsoName_c c_daIsoName;
+
+  /** Source ISOName */
+  IsoName_c c_saIsoName;
+};
+
 
 
 // T1/T2 here are the same as in "multireceive_c.h"
@@ -40,8 +143,6 @@ static const int32_t msci32_timeNever=-1;
 
 /** enum for Streaming state */
 typedef enum {
-  StreamInactive = 0,
-  StreamHold     = 1,
   StreamRunning  = 2,
   StreamFinished = 3,
   StreamFinishedJustKept = 4,
@@ -57,32 +158,31 @@ typedef enum {
 } NextComing_t;
 
 
-/** enum for type of stream */
-typedef enum {
-  StreamEcmdMASK = (1<<0),
-  StreamEpgnMASK = (1<<1),
-  StreamSpgnScmd        = 0, // Standard TP with Standard CommandSet
-  StreamSpgnEcmdINVALID = 1, // invalid, not allowed!
-  StreamEpgnScmd        = 2, // Extended TP with Standard CommandSet
-  StreamEpgnEcmd        = 3
-  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
- ,StreamFastPacket      = 4 /// Fast-Packet addition: Check stream for Fast-Packet before proceeding anything!
-  #endif
-} StreamType_t;
 
-
-
-//  +X2C Class 754 : Stream_c
-class Stream_c : public IsoAgLib::iStream_c //, public ClientBase --> for single inheritance this is now a member variable
+class Stream_c : public StreamInput_c //, public ClientBase --> for single inheritance this is now a member variable
 {
-
 public:
+  Stream_c (const ReceiveStreamIdentifier_c& ac_rsi,
+            uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA,
+            bool ab_skipCtsAwait=false);
 
-  Stream_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool ab_skipCtsAwait=false);
+  Stream_c (const Stream_c &);
 
-  Stream_c& operator= (const Stream_c&);
+  Stream_c& operator= (const Stream_c &);
 
   virtual ~Stream_c();
+
+
+    /// Former iStream_c functions!
+    virtual uint32_t getNotParsedSize()=0;
+
+    virtual uint8_t getNextNotParsed()=0;
+
+    virtual uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset)=0;
+
+    void setStreamInvalid()       { mb_streamInvalid = true; };
+    bool getStreamInvalid() const { return mb_streamInvalid; };
+
 
   bool timedOut();
 
@@ -90,6 +190,9 @@ public:
   // Sets the internal state to expect (DPO and afterwards) the calculated amount of DATA commands next
   uint8_t expectBurst(uint8_t wishingPkgs);
 
+  //! @return false -> Stream was either not in the state of awaiting Data
+  //!                  or the sequence number didn't match
+  //!         true -> Data was added to the stream.
   bool handleDataPacket (const Flexible8ByteString_c* apc_data);
 
 /// Begin Additional Abstract methods handled by StreamLinear_c/StreamChunk_c
@@ -98,37 +201,20 @@ public:
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   virtual void insertFirst6Bytes(const uint8_t* pui8_data)=0;
 #endif
-
-  //  Operation: getNotParsedSize
-//  virtual uint32_t getNotParsedSize()=0;
-
-  //  Operation: getNextNotParsed
-//  virtual uint8_t getNextNotParsed()=0;
-
-  //  Operation: getNotParsed
-//  virtual uint8_t getNotParsed(uint32_t ui32_notParsedRelativeOffset)=0;
 /// End Abstract methods handled by StreamLinear_c/StreamChunk_c
 
 
 /// Begin StreamInput_c methods
-  //  Operation: operator>>
-  //! Parameter:
-  //! @param ui8_data:
   StreamInput_c& operator>>(uint8_t& ui8_data) { ui8_data = getNextNotParsed(); return *this; };
 
-  //  Operation: eof
 //  virtual bool eof() const=0; // pass on abstract method
 /// End StreamInput_c methods
 
 
-  //  Operation: setDataPageOffset
-  //! Parameter:
-  //! @param aui32_dataPageOffset:
   bool setDataPageOffset(uint32_t aui32_dataPageOffset);
 
-  // simple getter function!
-  const IsoAgLib::ReceiveStreamIdentifier_c& getIdent() { return mc_ident; }
-  StreamType_t     getStreamType()              { return mt_streamType; };
+  const ReceiveStreamIdentifier_c& getIdent()   { return mc_ident; }
+  StreamType_t     getStreamType()              { return mc_ident.getStreamType(); };
   StreamingState_t getStreamingState ()         { return mt_streamState; };
   NextComing_t     getNextComing ()             { return mt_awaitStep; };
   uint32_t getPkgNextToWrite ()           const { return mui32_pkgNextToWrite; };
@@ -147,33 +233,29 @@ public:
   bool readyToSendCts();
 
 private:
-
   void awaitNextStep (NextComing_t at_awaitStep, int32_t ai32_timeOut);
 
 
 protected:
-
   SINGLETON_MEMBER_DEF
 
+
 private:
+  ReceiveStreamIdentifier_c mc_ident;
 
-  //  Attribute: mc_ident
-  IsoAgLib::ReceiveStreamIdentifier_c mc_ident;
-
-  //  Attribute: mt_streamState
   StreamingState_t mt_streamState;
 
-  //  Attribute: mt_awaitStep
   NextComing_t mt_awaitStep;
 
-  // Attribute mi32_delayCtsUntil
   int32_t mi32_delayCtsUntil;
 
 
 /// Byte counting stuff
 protected:
-  //  Attribute: ui32_totalSize
-  uint32_t mui32_byteTotalSize; // will be set at construction!
+  uint32_t mui32_byteTotalSize;
+
+  // Has this stream been marked invalid while parsing?
+  bool mb_streamInvalid;
 
 private:
   uint32_t mui32_byteAlreadyReceived;
@@ -186,14 +268,10 @@ private:
   uint8_t   mui8_streamFirstByte;     // will be the command that it's containing. set at the first call to processDataChunk...
   uint32_t mui32_dataPageOffset;      //  Attribute: mui32_dataPageOffset: gets set when a DPO arrives...
 
-  //  Attribute: mi32_timeoutLimit
   int32_t mi32_timeoutLimit;
+};
 
-  //  Attribute: t:StreamType
-  StreamType_t mt_streamType;
-
-  /// Don't forget to enhance the assignment-operator when adding new member-variables!
-}; // ~X2C
 
 } // end namespace __IsoAgLib
-#endif // -X2C
+
+#endif

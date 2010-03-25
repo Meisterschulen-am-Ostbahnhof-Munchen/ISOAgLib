@@ -25,12 +25,11 @@ namespace __IsoAgLib {
 //! Constructor: initializes the list and local variables
 //! create one \<list\> element including one Chunk,
 //! init mpc_iterWriteChunk, mpc_iterParsedChunk, mui32_writeCnt, mui32_parsedCnt
-StreamChunk_c::StreamChunk_c (StreamType_t at_streamType,
-                              const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi,
+StreamChunk_c::StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi,
                               uint32_t aui32_msgSize
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                              ,bool ab_skipCtsAwait)
-    : Stream_c (at_streamType, ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
+  : Stream_c (ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
 {
   /// Do NOTHING more here
   /// User HAS TO call "immediateInitAfterConstruction" **immediately** AFTER Construction!
@@ -56,7 +55,6 @@ StreamChunk_c::immediateInitAfterConstruction()
 }
 
 
-
 StreamChunk_c::StreamChunk_c( const StreamChunk_c& acrc_src )
   : Stream_c( acrc_src ),
     mlist_chunks( acrc_src.mlist_chunks ),
@@ -66,7 +64,6 @@ StreamChunk_c::StreamChunk_c( const StreamChunk_c& acrc_src )
   copyIterator (acrc_src.mlist_chunks, acrc_src.mpc_iterWriteChunk,  mlist_chunks, mpc_iterWriteChunk);
   copyIterator (acrc_src.mlist_chunks, acrc_src.mpc_iterParsedChunk, mlist_chunks, mpc_iterParsedChunk);
 }
-
 
 
 const StreamChunk_c& StreamChunk_c::operator=( const StreamChunk_c& acrc_src )

@@ -45,7 +45,7 @@ class AddressResolveResults_c
     // in contrast to IsoName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
     // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
     IsoItem_c* mpc_monitorItem;
-    
+
     //can be source or destination address
     Ident_c& mrc_ident;
     //can be source or destination address
@@ -143,6 +143,7 @@ class CanPkgExt_c : public CanPkg_c
    */
   void setFloatData( uint8_t aui8_pos, float af_val)
   { msc_data.setFloatData(aui8_pos, af_val);}
+
   /**
     simply deliver a uint8_t from a specific position with
     @param aui8_pos position of dellivered uint8_t [0..7]
@@ -236,6 +237,11 @@ class CanPkgExt_c : public CanPkg_c
     @return priority
   */
   uint8_t isoPri() const {return uint8_t(ident(3) >> 2);}
+
+  bool isPdu1() const { return (isoPf() <= 0xEF); }
+  bool isPdu2() const { return (isoPf() >= 0xF0); }
+  bool hasDa() const { return isPdu1(); }
+  uint32_t isoPurePgn() const { return ( ((ident() >> 8) & 0x3FF00) | (hasDa() ? 0 : isoPs()) ); }
 
   /**
     set the value of the ISO11783 ident field SA

@@ -12,17 +12,14 @@
 */
 
 #include "streamlinear_c.h"
-#include "chunk_c.h"
-
 
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
 
-
-  StreamLinear_c::StreamLinear_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  : Stream_c (at_streamType, ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
+StreamLinear_c::StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  : Stream_c (ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
   , mui32_parsedCnt (0)
 {
   mvecui8_buffer.reserve (aui32_msgSize); // as reactOnStreamStart told we have enough memory!
@@ -34,9 +31,6 @@ StreamLinear_c::~StreamLinear_c()
 
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-// //////////////////////////////// +X2C Operation : insert6Bytes
-//! Parameter:
-//! @param pui8_data: pointer to 6 bytes of data!
 void
 StreamLinear_c::insertFirst6Bytes(const uint8_t* pui8_data)
 {
@@ -49,9 +43,7 @@ StreamLinear_c::insertFirst6Bytes(const uint8_t* pui8_data)
 }
 #endif
 
-// //////////////////////////////// +X2C Operation : insert7Bytes
-//! Parameter:
-//! @param pui8_data: pointer to 7 bytes of data!
+
 void
 StreamLinear_c::insert7Bytes(const uint8_t* pui8_data)
 { // ~X2C
@@ -64,7 +56,6 @@ StreamLinear_c::insert7Bytes(const uint8_t* pui8_data)
   mvecui8_buffer.push_back (pui8_data[6]);
   // as ui32_recCnt is mvecui8_buffer.size(), it is automatically increased!
 } // -X2C
-
 
 
 } // end namespace __IsoAgLib

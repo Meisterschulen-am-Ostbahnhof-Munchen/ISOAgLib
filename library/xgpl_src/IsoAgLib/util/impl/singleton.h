@@ -125,9 +125,10 @@
                                                     int getSingletonVecKey() const { return c_clientBase.getSingletonVecKey(); }
   #define SINGLETON_MEMBER_ASSIGN(PAR)     c_clientBase.setSingletonKey (PAR.c_clientBase.getSingletonVecKey());
   #define SINGLETON_MEMBER_CONSTRUCTOR    c_clientBase( ai_singletonVecKey ),
+  #define SINGLETON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getSingletonVecKey() ),
   #define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ai_singletonVecKey ),
+  
   #define SINGLETON_VEC_KEY_INIT_CALL                   setSingletonKey( ai_singletonVecKey );
-
   #define SINGLETON_VEC_KEY                             getSingletonVecKey()
   #define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
 
@@ -264,10 +265,11 @@
   #define SINGLETON_MC_DATA_ASSIGN
   #define SINGLETON_MEMBER_DEF
   #define SINGLETON_MEMBER_ASSIGN(PAR)
+  #define SINGLETON_MEMBER_COPY_CONSTRUCTOR(PAR)
   #define SINGLETON_MEMBER_CONSTRUCTOR
   #define SINGLETON_PARENT_CONSTRUCTOR
-  #define SINGLETON_VEC_KEY_INIT_CALL
 
+  #define SINGLETON_VEC_KEY_INIT_CALL
   #define SINGLETON_VEC_KEY
   #define SINGLETON_VEC_KEY_WITH_COMMA
 

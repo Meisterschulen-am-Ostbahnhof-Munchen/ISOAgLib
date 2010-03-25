@@ -31,21 +31,19 @@ namespace __IsoAgLib {
 //  +X2C Class 755 : StreamChunk_c
 class StreamChunk_c : public Stream_c
 {
-
 public:
+  StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait=false);
 
-  StreamChunk_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait=false);
+  StreamChunk_c (const StreamChunk_c& acrc_src);
 
-  StreamChunk_c( const StreamChunk_c& acrc_src );
-
-  //! Important!! Call this after Construction!
-  void immediateInitAfterConstruction();
+  const StreamChunk_c& operator=( const StreamChunk_c& acrc_src );
 
   //! Destructor: deletes the list
   virtual ~StreamChunk_c();
 
-  const StreamChunk_c& operator=( const StreamChunk_c& acrc_src );
 
+  //! Important!! Call this after Construction!
+  void immediateInitAfterConstruction();
 
   //  Operation: insert
   //! Parameter:

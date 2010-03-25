@@ -171,10 +171,10 @@ namespace __IsoAgLib
             //  insert new filter
             __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter(s_tempIsoFilter);
             /** register for multi-receive */
-            getMultiReceiveInstance4Comm().registerClient (*this, rc_localIsoName,
-                                                            (apc_proprietaryclient->mui32_canFilter) >> 8,
-                                                            (apc_proprietaryclient->mui32_canMask) >> 8,
-                                                            true /* also Broadcast */);
+            getMultiReceiveInstance4Comm().registerClientIso (*this, rc_localIsoName,
+                                                              (apc_proprietaryclient->mui32_canFilter) >> 8,
+                                                              (apc_proprietaryclient->mui32_canMask) >> 8,
+                                                              true /* also Broadcast */);
           }
           // update filter and mask
           (*client_iterator).s_isoFilter = s_tempIsoFilter;
@@ -328,7 +328,7 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageHandler_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident, uint32_t /** aui32_totalLen */)
+  bool ProprietaryMessageHandler_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t /** aui32_totalLen */)
   {
     // if remote_ECU is specified and not the ident's SA is the remote_ECU -> don't react on stream
     // look in the whole list
@@ -354,13 +354,14 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageHandler_c::processPartStreamDataChunk (IsoAgLib::iStream_c& arc_stream, bool, bool ab_isLastChunk)
+  bool
+  ProprietaryMessageHandler_c::processPartStreamDataChunk (Stream_c& arc_stream, bool, bool ab_isLastChunk)
   {
     // if last byte is received
     if (ab_isLastChunk)
     {
       // get the ident from the stream
-      const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident = arc_stream.getIdent();
+      const ReceiveStreamIdentifier_c& ac_ident = arc_stream.getIdent();
       std::vector<ProprietaryMessageClientVectorIterator_t> vec_consumers;
 
       // look for the right sender

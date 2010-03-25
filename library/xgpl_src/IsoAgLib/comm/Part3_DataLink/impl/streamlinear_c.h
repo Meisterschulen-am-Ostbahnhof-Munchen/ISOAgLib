@@ -26,24 +26,19 @@
 namespace __IsoAgLib {
 
 
-
-// forward declarations
-class Chunk_c;
-
-
 //  +X2C Class 755 : StreamLinear_c
 class StreamLinear_c : public Stream_c
 {
 
 public:
 
-  StreamLinear_c (StreamType_t at_streamType, const IsoAgLib::ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
 
   virtual ~StreamLinear_c ();
 
-  //  Operation: insert
-  //! Parameter:
-  //! @param pui8_data:
+  void immediateInitAfterConstruction() const {}
+
+
   void insert7Bytes(const uint8_t* pui8_data);
 
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -64,15 +59,12 @@ public:
   inline uint8_t* getLinearBuffer();
 
   inline bool eof() const;
-	void immediateInitAfterConstruction() const {};
 
 protected:
 
 private:
-
   STL_NAMESPACE::vector<uint8_t> mvecui8_buffer; // linearBuffer
 
-  //  Attribute: mui32_parsedCnt
   uint32_t mui32_parsedCnt;
 
 }; // ~X2C

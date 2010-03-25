@@ -18,15 +18,13 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
 
-namespace IsoAgLib
-{ // forward declarations
-  class ReceiveStreamIdentifier_c;
-  class iStream_c;
-}
-
-
 // Begin Namespace __IsoAgLib
-namespace __IsoAgLib {
+namespace __IsoAgLib
+{
+  // forward declarations
+  class ReceiveStreamIdentifier_c;
+  class Stream_c;
+
 
 /** Base class for CAN customer classes
   -> FilterBox_c calls member function
@@ -79,10 +77,10 @@ public:
   /// Operation: reactOnStreamStart
   /// <!--@param ac_ident
   /// @param aui32_totalLen-->
-  virtual bool reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& /*ac_ident*/, uint32_t /*aui32_totalLen*/) { return false; }
+  virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& /*ac_ident*/, uint32_t /*aui32_totalLen*/) { return false; }
 
   //  Operation: reactOnAbort
-  virtual void reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/) {}
+  virtual void reactOnAbort (Stream_c& /*arc_stream*/) {}
 
   /// Operation: processPartStreamDataChunk
   ///
@@ -92,9 +90,9 @@ public:
   //! @return only of interest when "ab_isLastChunk==true":
   //!           true -> keep the stream (for later processing)
   //!           false -> don't keep the stream, let it be finished/removed right away.
-  virtual bool processPartStreamDataChunk (IsoAgLib::iStream_c& /*apc_stream*/, bool /*ab_isFirstChunk*/, bool /*ab_isLastChunk*/) { return false; }
+  virtual bool processPartStreamDataChunk (Stream_c& /*apc_stream*/, bool /*ab_isFirstChunk*/, bool /*ab_isLastChunk*/) { return false; }
 
-  virtual void notificationOnMultiReceiveError (const IsoAgLib::ReceiveStreamIdentifier_c& /*ac_streamIdent*/, uint8_t /*aui8_multiReceiveError*/, bool /*ab_isGlobal*/) {} // needs not to be overwritten
+  virtual void notificationOnMultiReceiveError (const ReceiveStreamIdentifier_c& /*ac_streamIdent*/, uint8_t /*aui8_multiReceiveError*/, bool /*ab_isGlobal*/) {} // needs not to be overwritten
 
 
 #if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)

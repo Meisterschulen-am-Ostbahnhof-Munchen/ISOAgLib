@@ -232,7 +232,7 @@ SendUpload_c VtClientServerCommunication_c::msc_tempSendUpload;
 
 
 void
-VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
+VtClientServerCommunication_c::reactOnAbort (Stream_c& /*arc_stream*/)
 {
   mrc_pool.eventStringValueAbort();
 }
@@ -240,10 +240,10 @@ VtClientServerCommunication_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/
 
 // handle all string values between length of 9 and 259 bytes
 bool
-VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
+VtClientServerCommunication_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen)
 {
   // if SA is not the address from the vt -> don't react on stream
-  if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName().toConstIisoName_c())) return false;
+  if ((ac_ident.getSaIsoName()) != (mpc_vtServerInstance->getIsoName())) return false;
   //handling string value >= 9 Bytes
   if (aui32_totalLen > (4 /* H.18 byte 1-4 */ + 255 /* max string length */))
     /** @todo SOON-258 Should we really ConnAbort such a stream in advance? For now don't care too much, as it shouldn't happen! */
@@ -253,7 +253,7 @@ VtClientServerCommunication_c::reactOnStreamStart (const IsoAgLib::ReceiveStream
 
 
 bool
-VtClientServerCommunication_c::processPartStreamDataChunk (IsoAgLib::iStream_c& arc_stream, bool ab_isFirstChunk, bool ab_isLastChunk)
+VtClientServerCommunication_c::processPartStreamDataChunk (Stream_c& arc_stream, bool ab_isFirstChunk, bool ab_isLastChunk)
 {
   if (arc_stream.getStreamInvalid()) return false;
 
@@ -691,7 +691,7 @@ VtClientServerCommunication_c::timeEvent(void)
 
   if (!mb_receiveFilterCreated)
   { /*** MultiReceive/IsoFilterManager Registration ***/
-    getMultiReceiveInstance4Comm().registerClient (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
+    getMultiReceiveInstance4Comm().registerClientIso (*this, getIdentItem().isoName(), VT_TO_ECU_PGN);
     getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (VT_TO_ECU_PGN << 8),       &getIdentItem().isoName(), NULL, 8));
     getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ACKNOWLEDGEMENT_PGN << 8), &getIdentItem().isoName(), NULL, 8));
 

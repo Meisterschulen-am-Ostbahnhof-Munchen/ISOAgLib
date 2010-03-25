@@ -21,7 +21,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 // IsoAgLib_Extension
 #include <IsoAgLib/comm/Part3_DataLink/imultireceive_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/istream_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
@@ -44,7 +44,7 @@ using namespace std;
 
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
 // Off-class/namespace c-style helper functions
-void getDegree10Minus7FromStream( IsoAgLib::iStream_c& rc_stream, int32_t& ri32_result )
+void getDegree10Minus7FromStream( Stream_c& rc_stream, int32_t& ri32_result )
 {
   #if SIZEOF_INT == 4
   // use 64 bit variable
@@ -66,7 +66,7 @@ void getDegree10Minus7FromStream( IsoAgLib::iStream_c& rc_stream, int32_t& ri32_
   #endif
 }
 
-void getAltitude10Minus2FromStream( IsoAgLib::iStream_c& rc_stream, int32_t& ri32_result )
+void getAltitude10Minus2FromStream( Stream_c& rc_stream, int32_t& ri32_result )
 {
   #if SIZEOF_INT == 4
   // use 64 bit variable
@@ -438,20 +438,12 @@ namespace __IsoAgLib {
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
       #ifdef ENABLE_NMEA_2000_MULTI_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF, true, false
-        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-          , false
-        #endif
-            );
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF, true, false
-        #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-        , false
-        #endif
-        );
+      getMultiReceiveInstance4Comm().registerClientIso (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF, true, false);
+      getMultiReceiveInstance4Comm().registerClientIso (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF, true, false);
 
       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF, true, false, true);
-      getMultiReceiveInstance4Comm().registerClient(*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF, true, false, true);
+      getMultiReceiveInstance4Comm().registerClientNmea (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF, true, false);
+      getMultiReceiveInstance4Comm().registerClientNmea (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF, true, false);
       #endif
       mc_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
@@ -732,6 +724,8 @@ namespace __IsoAgLib {
       setTimeUtc( ab_hour, ab_minute, ab_second, aui16_msec );
     }
   }
+
+
   /** set the calendar hour value
   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
   *  setTimeUtc().
@@ -747,6 +741,8 @@ namespace __IsoAgLib {
       setHourUtc( ab_hour);
     }
   }
+
+
   /** set the calendar minute value
   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
   *  setTimeUtc().
@@ -762,6 +758,8 @@ namespace __IsoAgLib {
       setMinuteUtc( ab_minute );
     }
   }
+
+
   /** set the calendar second value
   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
   *  setTimeUtc().
@@ -777,6 +775,8 @@ namespace __IsoAgLib {
       setSecond( ab_second );
     }
   }
+
+
   /** set the calendar millisecond value
   *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
   *  setTimeUtc().
@@ -832,10 +832,8 @@ namespace __IsoAgLib {
 */
   }
 
-  //! Parameter:
-  //! @param ac_ident:
-  //! @param aui32_totalLen:
-  bool TimePosGps_c::reactOnStreamStart (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
+
+  bool TimePosGps_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident,
                                          uint32_t /*aui32_totalLen */)
   {
     if ( ( ( ac_ident.getPgn() == NMEA_GPS_POSITION_DATA_PGN  )
@@ -850,15 +848,12 @@ namespace __IsoAgLib {
     }
   }
 
-  //! Parameter:
-  //! @param ac_ident:
-  //! @param ab_isFirstChunk:
-  //! @param ab_isLastChunkAndACKd:
-  bool TimePosGps_c::processPartStreamDataChunk (IsoAgLib::iStream_c& arc_stream,
+
+  bool TimePosGps_c::processPartStreamDataChunk (Stream_c& arc_stream,
                                           bool /*ab_isFirstChunk*/,
                                           bool ab_isLastChunkAndACKd)
   {
-    const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident = arc_stream.getIdent();
+    const ReceiveStreamIdentifier_c& ac_ident = arc_stream.getIdent();
 
     // >>>Last Chunk<<< Processing
     if (ab_isLastChunkAndACKd)
@@ -869,15 +864,15 @@ namespace __IsoAgLib {
     return false;
   }
 
-  void TimePosGps_c::reactOnAbort (IsoAgLib::iStream_c& /*arc_stream*/)
+  void TimePosGps_c::reactOnAbort (Stream_c& /*arc_stream*/)
   { // as we don't perform on-the-fly parse, there is nothing special to do
   }
 
   //! Parameter:
   //! @param ac_ident:
   //! @param apc_stream:
-  bool TimePosGps_c::reactOnLastChunk (const IsoAgLib::ReceiveStreamIdentifier_c& ac_ident,
-                                       IsoAgLib::iStream_c& rc_stream)
+  bool TimePosGps_c::reactOnLastChunk (const ReceiveStreamIdentifier_c& ac_ident,
+                                       Stream_c& rc_stream)
   { // see if it's a pool upload, string upload or whatsoever! (First byte is already read by MultiReceive!)
     IsoName_c const& rcc_tempISOName = rc_stream.getIdent().getSaIsoName();
 

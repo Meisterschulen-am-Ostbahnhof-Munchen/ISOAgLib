@@ -85,8 +85,6 @@ library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamlinear_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamlinear_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/igenericdata_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/igenericdata_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessageclient_c.cpp -text

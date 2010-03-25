@@ -55,8 +55,9 @@ namespace __IsoAgLib {
 
 
 /** struct for client definition */
-class MultiReceiveClientWrapper_s : public ClientBase {
-  public:
+class MultiReceiveClientWrapper_s : public ClientBase
+{
+public:
   MultiReceiveClientWrapper_s( CanCustomer_c& apc_client,
                                const IsoName_c& acrc_isoNameClient,
                                uint32_t aui32_pgn,
@@ -69,6 +70,15 @@ class MultiReceiveClientWrapper_s : public ClientBase {
                               SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
                              );
 
+  //! Check if this MRCW should handle the given stream
+  //! @param arcc_streamIdent The to-be-investigated stream's identifier
+  //! @return true -> this MRCW wants/has to handle this Stream
+  bool doesAcceptStream (const ReceiveStreamIdentifier_c &arcc_streamIdent);
+
+  void start();
+  void stop();
+
+public: // attributes
   CanCustomer_c* mpc_client;
   IsoName_c mc_isoName;
   uint32_t mui32_pgn;
@@ -80,6 +90,20 @@ class MultiReceiveClientWrapper_s : public ClientBase {
   bool mb_isFastPacket;
 #endif
 };
+
+
+inline
+bool
+MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &arcc_streamIdent)
+{
+  return ( ((arcc_streamIdent.getPgn() & mui32_pgnMask) == mui32_pgn) // PGN matches
+        && (!(arcc_streamIdent.getDa() == 0xFF) || (mb_alsoBroadcast)) // broadcast => alsoBroadcast
+        && (!(arcc_streamIdent.getDa() != 0xFF) || ((arcc_streamIdent.getDa() == mui8_cachedClientAddress))) // destin-spec => addresses-match
+      #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+        && ((arcc_streamIdent.getStreamType() == StreamFastPacket) == mb_isFastPacket)
+      #endif
+          );
+}
 
 
 
@@ -97,34 +121,46 @@ public:
   ~MultiReceive_c();
 
   //  Operation: processMsg
-  bool processMsg();
+  virtual bool processMsg();
+  
+  /// @pre Only to be called with StreamType TP/ETP!
+  bool processMsgIso (StreamType_t at_streamType);
+#ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+  void processMsgNmea();
+#endif
 
-  //  Operation: (de)registerClient
-  void registerClient   (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
-                         uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
-                         bool mb_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
-                         #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-                         , bool ab_isFastPacket=false
-                         #endif
-                         );
+  //! This function is only kept public for compatibility-reasons
+  //! and may be made private later on. Server-type implementation
+  //! please only use "registerClientIso/registerClientNmea" now.
+  //! @pre This combination (Client/IsoName/Pgn) is not yet registered
+  void registerClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
+                       uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                       bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
+                       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+                       , bool ab_isFastPacket=false
+                       #endif
+                      );
+
+  //! register a TP/ETP receiver
+  //! @pre This combination (Client/IsoName/Pgn) is not yet registered
+  void registerClientIso (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
+                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                          bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false);
+
+  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
+  //! register a broadcast FastPacket receiver
+  //! NOTE: Destination-Specific NMEA reception is NOT YET supported!
+  //! @pre This combination (Client/IsoName/Pgn) is not yet registered
+  void registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
+                           uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                           bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false);
+  #endif
 
   void deregisterClient (CanCustomer_c& apc_client);
   void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
 
-  //  Operation: createStream
-  //! @param at_streamType
-  //! @param ac_streamIdent
-  //! @param aui32_msgSize
-  Stream_c* createStream(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent, uint32_t aui32_msgSize);
-
-  //  Operation: getStream
-  //! Parameter:
-  //! @param ac_streamIdent
-  Stream_c* getStream(IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent
-  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-  , bool ab_fastPacket=false
-  #endif
-  );
+  //! @pre ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
+  Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize);
 
   int32_t getCtsDelay() const { return (getStreamCount() == 1) ? mi32_ctsSendDelayOneStream : mi32_ctsSendDelayMoreStreams; }
 
@@ -150,16 +186,10 @@ public:
   void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
-  void removeKeptStream(IsoAgLib::iStream_c* apc_keptStream);
+  void removeKeptStream (Stream_c* apc_keptStream);
 
   //  Operation: timeEvent
   bool timeEvent( void );
-
-  //! virtual function which allows a scheduler client to define
-  //! a minimum execution time, that should be saved after this item in the
-  //! scheduler loop - some tasks might not be able to finish any sensible
-  //! work in the default min exec time of 5msec
-  virtual uint16_t getForcedMinExecTime() const;
 
   //  Operation: init
   void init();
@@ -190,19 +220,19 @@ public:
 
   bool isAtLeastOneWithFirstByte(uint8_t firstByte);
 
-  IsoAgLib::iStream_c* getFinishedJustKeptStream (IsoAgLib::iStream_c* apc_lastKeptStream);
+  Stream_c* getFinishedJustKeptStream (Stream_c* apc_lastKeptStream);
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
 
   enum TransferError_e {
-    TransferErrorExtendedCommandOnStandardPgn = 100,
+    TransferErrorWrongCommandByteForThisPgn = 100,
     TransferErrorAlreadyRunningStream = 101,
     TransferErrorWrongPackageAmountOrMessageSize = 102,
     TransferErrorClientRejectingStream = 103,
     TransferErrorDpoForUnknownOrUnopenedStream = 104,
     TransferErrorDpoNotAwaitedNow = 105,
-    TransferErrorUnknownSafety = 107,
+    TransferErrorAbortedBySender = 107,
     TransferErrorUnknownOrInvalidCommandWithTpPgn = 108,
     TransferErrorWrongSequenceNumber = 109,
     TransferErrorStreamTimedOut = 110,
@@ -232,52 +262,58 @@ private:
   /** temp data where received data is put */
   CanPkgExt_c mc_data;
 
-  //  Operation: getStream
-  //! 
-  //! @param aui8_sa
-  //! @param aui8_da
-  //! @return NULL for "doesn't exist", otherwise valid "Stream_c*"
-  Stream_c* getStream(uint8_t aui8_sa, uint8_t aui8_da
-  #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-  , bool ab_fastPacket
-  #endif
-  );
+  Stream_c* getStreamIso (const ReceiveStreamIdentifier_c &arcc_streamIdent,
+                          bool ab_includePgnInSearch)
+  { return getStreamInternal (arcc_streamIdent, ab_includePgnInSearch); }
 
-  bool anyMultiReceiveClientRegisteredForThisDa (uint8_t ui8_da);
+  Stream_c* getStreamNmea (const ReceiveStreamIdentifier_c &arcc_streamIdent)
+  { return getStreamInternal (arcc_streamIdent, true); }
+
+  Stream_c* getStreamInternal  (const ReceiveStreamIdentifier_c &arcc_streamIdent,
+                                bool ab_includePgnInSearch);
 
   //  Operation: getClient
   //! Parameter:
   //! @param ac_streamIdent:
   //! @return NULL for "doesn't exist", otherwise valid "CanCustomer_c*"
-  CanCustomer_c* getClient (IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent);
+  CanCustomer_c* getClient (ReceiveStreamIdentifier_c ac_streamIdent);
 
   //  Operation: sendCurrentCts
   //! Parameter:
   //! @param apc_stream:
-  void sendCurrentCts(DEF_Stream_c_IMPL* apc_stream);
+  void sendCurrentCts(DEF_Stream_c_IMPL &arc_stream);
 
   bool finishStream (DEF_Stream_c_IMPL& rc_stream);
 
   //  Operation: sendEndOfMessageAck
   //! Parameter:
   //! @param apc_stream
-  void sendEndOfMessageAck(DEF_Stream_c_IMPL* apc_stream);
+  void sendEndOfMessageAck(DEF_Stream_c_IMPL &arc_stream);
 
 
+  /** @return keep it? (true=yes,keep, false=removeWhenLastChunk) */
   bool processStreamDataChunk_ofMatchingClient (Stream_c& arc_stream, bool b_lastChunk);
 
 
-  void sendConnAbort(StreamType_t at_streamType, IsoAgLib::ReceiveStreamIdentifier_c ac_streamIdent);
-  void connAbortTellClient(bool ab_sendConnAbort, Stream_c* apc_stream);
-  void connAbortTellClientRemoveStream(bool ab_sendConnAbort, Stream_c* apc_stream);
-  void removeStream(Stream_c* apc_stream);
-  void notifyError (const IsoAgLib::ReceiveStreamIdentifier_c &ac_streamIdent, TransferError_e a_error);
+  void notifyErrorConnAbort (const ReceiveStreamIdentifier_c &ac_streamIdent, TransferError_e a_error, bool ab_sendConnAbort);
+  void sendConnAbort (const ReceiveStreamIdentifier_c &arcc_rsi);
+
+  //! Will inform the client via "reactOnAbort" 
+  void tellClient (Stream_c &arc_stream);
+
+  //! Will inform the client via "reactOnAbort" and close/remove the stream from list
+  void tellClientRemoveStream (Stream_c &arc_stream);
+  
+  //! Only removes the stream from list, won't call any clients or alike
+  //! Will also remove kept-streams.
+  void removeStream (Stream_c &arc_stream);
+
 
 
 private:
   static void notifyCanCustomerOfTransferError(
       CanCustomer_c &ar_canCustomer,
-      const IsoAgLib::ReceiveStreamIdentifier_c &ac_streamIdent,
+      const ReceiveStreamIdentifier_c &ac_streamIdent,
       TransferError_e a_transferError,
       bool ab_isGlobal) {
     ar_canCustomer.notificationOnMultiReceiveError(
@@ -290,7 +326,6 @@ private:
   // attributes
 private:
   STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
-
   STL_NAMESPACE::list<MultiReceiveClientWrapper_s> mlist_clients;
 
   int32_t mi32_ctsSendDelayOneStream;

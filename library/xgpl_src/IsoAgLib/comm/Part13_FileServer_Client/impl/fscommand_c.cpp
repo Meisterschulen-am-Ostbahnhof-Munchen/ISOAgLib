@@ -34,7 +34,7 @@ bool FsCommand_c::timeEvent(void)
   if (!b_receiveFilterCreated)
   {
     // Multi-Packet
-    getMultiReceiveInstance4Comm().registerClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN);
+    getMultiReceiveInstance4Comm().registerClientIso (*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN);
 
     // Single-Packet
     IsoFilter_s tempIsoFilter (*this, 0x3FFFF00UL, (FS_TO_CLIENT_PGN << 8),
@@ -155,7 +155,8 @@ bool FsCommand_c::timeEvent(void)
 }
 
 //process packet-stream. after completion, react on message.
-bool FsCommand_c::processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, bool rb_isFirstChunk, bool rb_isLastChunkAndACKd)
+bool
+FsCommand_c::processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstChunk, bool rb_isLastChunkAndACKd)
 {
   uint16_t ui16_notParsedSize;
 
@@ -240,12 +241,12 @@ bool FsCommand_c::processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, b
 
 
 //nothing to be done, new message will be sent periodically.
-void FsCommand_c::reactOnAbort(IsoAgLib::iStream_c& /*refc_stream*/)
+void FsCommand_c::reactOnAbort (Stream_c& /*refc_stream*/)
 {
 }
 
 //initializes the buffer for a message stream
-bool FsCommand_c::reactOnStreamStart(const IsoAgLib::ReceiveStreamIdentifier_c& /*refc_ident*/, uint32_t rui32_totalLen)
+bool FsCommand_c::reactOnStreamStart(const ReceiveStreamIdentifier_c& /*refc_ident*/, uint32_t rui32_totalLen)
 {
   uint32_t ui32_tempSize = rui32_totalLen - 1;
 

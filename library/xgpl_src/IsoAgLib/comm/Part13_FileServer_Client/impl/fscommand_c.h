@@ -339,9 +339,9 @@ class FsCommand_c : Scheduler_Task_c
     bool getKeepConnectionOpen() const { return b_keepConnectionOpen; }
 
     /** MultiReceiveClient functions BEGIN **/
-    bool processPartStreamDataChunk(IsoAgLib::iStream_c& refc_stream, bool rb_isFirstChunk, bool rb_isLastChunkAndACKd);
-    void reactOnAbort(IsoAgLib::iStream_c& refc_stream);
-    bool reactOnStreamStart(const IsoAgLib::ReceiveStreamIdentifier_c& refc_ident, uint32_t rui32_totalLen);
+    bool processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstChunk, bool rb_isLastChunkAndACKd);
+    void reactOnAbort(Stream_c& refc_stream);
+    bool reactOnStreamStart(const ReceiveStreamIdentifier_c& refc_ident, uint32_t rui32_totalLen);
     /** MultiReceiveClient functions END **/
 };
 
