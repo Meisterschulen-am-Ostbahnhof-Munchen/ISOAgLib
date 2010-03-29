@@ -117,7 +117,9 @@ public:
         * Err_c::badAlloc not enough memory for allocating the buffer
     @return true -> allocating of buffer successful
   */
-  bool setRecBufferSize(uint16_t aui16_bufferSize);
+  bool setRecBufferSize(uint16_t aui16_bufferSize)
+    {return RS232IO_c::setRecBufferSize(aui16_bufferSize);};
+
   /**
     deliver the actual receive buffer size
     @return receive buffer size
