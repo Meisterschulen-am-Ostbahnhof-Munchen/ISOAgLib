@@ -69,6 +69,11 @@
 #include <sys/times.h>
 #endif
 
+// The implementation of the new "send" feature is not finished,
+// so the first parts are just commited #if'd out so they are right
+// in place if it will be continued later...
+#define ENABLE_NEW_SEND_FEATURE 0
+
 
 struct PrintSetting_s : public std::unary_function< yasper::ptr< AOption_c >, void >{
   PrintSetting_s( __HAL::server_c &ar_server ) : mr_server(ar_server) {}
@@ -200,6 +205,9 @@ void *readUserInput( void *ap_arg )
   static char const s_monitor[] = "monitor";
   static char const s_log[] = "log";
   static char const s_help[] = "help";
+#if ENABLE_NEW_SEND_FEATURE
+  static char const s_send[] = "send";
+#endif
   __HAL::server_c *pc_serverData = static_cast< __HAL::server_c * >(ap_arg);
   for (;;) {
     std::istringstream istr_inputLine( readInputLine() );
@@ -233,11 +241,48 @@ void *readUserInput( void *ap_arg )
         std::cerr << "Don't know how to disable " << s_toDisable << "." << std::endl;
         b_needHelp = true;
       }
+#if ENABLE_NEW_SEND_FEATURE
+    } else if (!s_command.compare( s_send )) {
+      std::string s_type;
+      istr_inputLine >> s_type;
+      bool b_ext = false;
+      if (!s_type.compare( "x" ) || !s_type.compare( "ext" ) || !s_type.compare( "extended" )) {
+        b_ext = true;
+      } else if (!s_type.compare( "s" ) || !s_type.compare( "std" ) || !s_type.compare( "standard" )) {
+        b_ext = false; // though already set initially
+      } else {
+        b_needHelp = true;
+      }
+      if (!b_needHelp)
+      { // parse and send the data
+        int i_id=0;
+        int i_db [8]={-1,-1,-1,-1,-1,-1,-1,-1};
+        istr_inputLine >> std::hex >> i_id >> i_db[0] >> i_db[1] >> i_db[2] >> i_db[3] >> i_db[4] >> i_db[5] >> i_db[6] >> i_db[7];
+        int i_len = 0;
+        for (int i=0; i < 8; ++i)
+        { // count databytes
+          if (i_db[i] == -1)
+            break; // no databyte at this position
+          if ((i_db[i] < 0) || (i_db[i] > 255))
+          {
+            std::cout << "ERROR: Databyte out of range. Valid range is 0..FF" << std::endl;
+            b_needHelp = true;
+            break;
+          }
+          ++i_len;
+        }
+        if (!b_needHelp)
+        { // still everything fine
+          std::cout << "Sending ID " << i_id << " with " << i_len << " databytes";
+          for (int i=0; i<i_len; ++i) std::cout << " " << i_db[i];
+          std::cout << std::endl;
+        }
+      }
+#endif
     } else if (!s_command.compare( s_help )) {
       b_needHelp = true; // set to wrongCommand to get help shown!
     } else {
-      std::cerr << "Don't know command " << s_command << "." << std::endl;
-      b_needHelp = true;
+      std::cerr << "Don't know command " << s_command << ". Use 'help' for help." << std::endl;
     }
 
     if (b_needHelp) {
@@ -248,6 +293,9 @@ void *readUserInput( void *ap_arg )
         "  " << s_disable << " " << s_log << " FILENAMEPREFIX" << std::endl <<
         "  " << s_on << " ... (see " << s_enable << " ...)" << std::endl <<
         "  " << s_off << " ... (see " << s_disable << " ...)" << std::endl <<
+#if ENABLE_NEW_SEND_FEATURE
+        "  " << s_send << " s/std/standard/x/ext/extended ID(hex) DB1 DB2 .. DBx" << std::endl <<
+#endif
         "  " << s_help << std::endl;
     }
   }
