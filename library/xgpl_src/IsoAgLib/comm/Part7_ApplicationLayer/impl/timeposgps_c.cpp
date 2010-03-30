@@ -44,7 +44,7 @@ using namespace std;
 
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
 // Off-class/namespace c-style helper functions
-void getDegree10Minus7FromStream( Stream_c& rc_stream, int32_t& ri32_result )
+void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
 {
   #if SIZEOF_INT == 4
   // use 64 bit variable
@@ -66,7 +66,7 @@ void getDegree10Minus7FromStream( Stream_c& rc_stream, int32_t& ri32_result )
   #endif
 }
 
-void getAltitude10Minus2FromStream( Stream_c& rc_stream, int32_t& ri32_result )
+void getAltitude10Minus2FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
 {
   #if SIZEOF_INT == 4
   // use 64 bit variable
