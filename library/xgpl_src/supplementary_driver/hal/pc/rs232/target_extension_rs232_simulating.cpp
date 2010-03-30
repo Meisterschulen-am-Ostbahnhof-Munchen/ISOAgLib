@@ -141,6 +141,8 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
 */
 int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
+  (void)pFunction;
+
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   printf("configRs232RxObj aufgerufen mit empfang buffersize %d \n", wBuffersize);
 //  return (pFunction!=NULL)?HAL_NO_ERR:HAL_CONFIG_ERR;
@@ -155,6 +157,9 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
                                 void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
+  (void)funktionBeforTransmit;
+  (void)funktionAfterTransmit;
+
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   printf("configRs232TxObj aufgerufen mit sende buffersize %d \n", wBuffersize);
 //  return ((funktionAfterTransmit!=NULL)&&(funktionBeforTransmit!=NULL))?HAL_NO_ERR:HAL_CONFIG_ERR;
@@ -194,6 +199,7 @@ int16_t getRs232Char(uint8_t *pbRead, uint8_t aui8_channel)
 */
 int16_t getRs232String(uint8_t *pbRead,uint8_t bLastChar, uint8_t aui8_channel)
 {
+  (void)bLastChar;
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   int32_t i32_time = getTime();
   memcpy(pbRead, ((uint8_t*)&i32_time), 4);

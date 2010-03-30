@@ -283,7 +283,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
               // --> The interrupted Stream's, or the interrupting Stream's?
               tellClientRemoveStream (*pc_streamFound);
               #ifdef DEBUG_MULTIRECEIVE
-              INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int) data().isoSa() << " " << (int)cui8_da << INTERNAL_DEBUG_DEVICE_ENDL;
+              INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to Already-Running-Stream! (RTS in between) ***" << (int)c_isoRSI.getSa() << "->" << (int)c_isoRSI.getDa() << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
               return true; // all RTSes are not of interest for MultiSend or other CAN-Customers!
             }
@@ -401,7 +401,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
             { // we do NOT take BAMs that are NOT directed to the GLOBAL (255) address
               notifyErrorConnAbort (c_isoRSI, TransferErrorBamToNonGlobalAddress, false);
               #ifdef DEBUG_MULTIRECEIVE
-              INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** BAM to NON-GLOBAL address "<< (uint16_t) cui8_da <<" ***" << INTERNAL_DEBUG_DEVICE_ENDL;
+              INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** BAM to NON-GLOBAL address "<< (uint16_t) c_isoRSI.getDa() <<" ***" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
               return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
             }
