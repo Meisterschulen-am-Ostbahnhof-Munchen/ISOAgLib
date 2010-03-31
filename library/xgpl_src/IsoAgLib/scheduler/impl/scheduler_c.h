@@ -27,10 +27,10 @@
 
 
 /** uncomment the following define for specific debugging of the new Scheduler_c */
-//#define DEBUG_SCHEDULER
+//#define DEBUG_SCHEDULER 1
 
 /** uncomment the following define if you want a documentation of each scheduled task */
-//#define DEBUG_SCHEDULER_EXTREME
+//#define DEBUG_SCHEDULER_EXTREME 1
 
 
 /// Begin Namespace __IsoAgLib
@@ -104,13 +104,13 @@ public:
 #ifdef USE_MUTUAL_EXCLUSION
 
   int releaseResource() {
-                          #ifdef DEBUG
+                          #if DEBUG_SCHEDULER
                           INTERNAL_DEBUG_DEVICE << "Released " << INTERNAL_DEBUG_DEVICE_ENDL;
                           #endif
                           return mc_protectAccess.releaseAccess();}
 
   int tryAcquireResource() {
-                #ifdef DEBUG
+                #if DEBUG_SCHEDULER
                 INTERNAL_DEBUG_DEVICE << "TRY to acquire timeEvent "  << INTERNAL_DEBUG_DEVICE_ENDL;
                 #endif
                 return mc_protectAccess.tryAcquireAccess();}
@@ -119,7 +119,7 @@ public:
   //! the calling threads is in blocking state until the unlock.
   int waitAcquireResource(){
                              forceExecStop();
-                             #ifdef DEBUG
+                             #if DEBUG_SCHEDULER
                               INTERNAL_DEBUG_DEVICE << "Wait Lock timeEvent  " << INTERNAL_DEBUG_DEVICE_ENDL;
                              #endif
                              return mc_protectAccess.waitAcquireAccess();}
@@ -186,7 +186,7 @@ private: //Private methods
   Scheduler_c() : mb_systemStarted (false) {};
 
 
-#ifdef DEBUG
+#if DEBUG_SCHEDULER
   void TraceAndAbort();
 #endif
 
@@ -231,7 +231,7 @@ private: //Private methods
 
   void setCntClient( size_t at_newSize ) { mt_clientCnt = at_newSize;}
 
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
   //!  Send debug messages with information on the
   //!  acfuracy of time behaviour.
   //!  Retrieve information about actual executed task from referenced SchedulerEntry_c.

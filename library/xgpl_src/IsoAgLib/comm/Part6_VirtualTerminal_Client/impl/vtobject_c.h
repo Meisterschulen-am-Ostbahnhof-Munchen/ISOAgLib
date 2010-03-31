@@ -13,16 +13,10 @@
 #ifndef VTOBJECT_C_H
 #define VTOBJECT_C_H
 
-// +X2C includes
 #include "../ivtobject_c.h"
 #include "vttypes.h"
-#include  <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-// ~X2C
-
-#ifdef DEBUG
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-#endif
-
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -63,15 +57,7 @@ protected:
   //  Operation: get_vtObject_a
   iVtObject_s& get_vtObject_a()
   {
-    #ifdef DEBUG
-    if (vtObject_a == NULL)
-    {
-      INTERNAL_DEBUG_DEVICE << "vtObject(s) not initialized properly. Do not used vtObjects before having called initAndRegisterIsoObjectPool(...)." << INTERNAL_DEBUG_DEVICE_ENDL;
-      #ifdef SYSTEM_PC
-      MACRO_ISOAGLIB_ABORT();
-      #endif
-    }
-    #endif
+    isoaglib_assert(vtObject_a);
     return *vtObject_a;
   }
 

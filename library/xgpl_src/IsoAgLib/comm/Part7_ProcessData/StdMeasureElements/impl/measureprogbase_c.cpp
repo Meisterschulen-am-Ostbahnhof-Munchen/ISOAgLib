@@ -17,11 +17,16 @@
 #include <algorithm>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#if DEBUG_HEAP_USEAGE
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
 static uint16_t sui16_MeasureProgBaseTotal = 0;
 static uint16_t sui16_printedMeasureProgBaseTotal = 0;
 static uint16_t sui16_deconstructMeasureProgBaseTotal = 0;
@@ -39,7 +44,7 @@ void MeasureProgBase_c::init( ProcDataBase_c *const apc_processData,
   int32_t ai32_val,
   const IsoName_c& acrc_isoName)
 { // set the dynamic list to a well defined cleared starting condition
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   static bool b_doPrint = true;
   if ( b_doPrint )
   {
@@ -121,7 +126,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   else
   {
     sui16_MeasureProgBaseTotal += mvec_measureSubprog.size();
@@ -142,7 +147,7 @@ void MeasureProgBase_c::assignFromSource( const MeasureProgBase_c& acrc_src )
 
 /** default destructor which has nothing to do */
 MeasureProgBase_c::~MeasureProgBase_c(){
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( mvec_measureSubprog.size() > 0 )
   {
     sui16_deconstructMeasureProgBaseTotal++;
@@ -179,7 +184,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   else
   { // no subprog with same type exist -> insert new one
     mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment SINGLETON_VEC_KEY_WITH_COMMA));
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_MeasureProgBaseTotal++;
 
     INTERNAL_DEBUG_DEVICE
@@ -217,7 +222,7 @@ bool MeasureProgBase_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSe
   */
 bool MeasureProgBase_c::stop(bool /*b_deleteSubProgs*/, Proc_c::type_t /* ren_type */, Proc_c::doSend_t /* ren_doSend */){
   // clear the array with all subprogs -> no trigger test is done on value set
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_MeasureProgBaseTotal -= mvec_measureSubprog.size();
 
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
@@ -299,7 +304,7 @@ int32_t MeasureProgBase_c::max(bool ab_sendRequest) const
     @param ai32_val initial measure val
   */
 void MeasureProgBase_c::initVal(int32_t ai32_val){
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {
@@ -327,7 +332,7 @@ bool MeasureProgBase_c::processMsg(){
   ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   ProcessCmd_c::CommandType_t en_command = c_pkg.mc_processCmd.getCommand();
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( ( sui16_MeasureProgBaseTotal != sui16_printedMeasureProgBaseTotal                     )
   || ( sui16_deconstructMeasureProgBaseTotal != sui16_printedDeconstructMeasureProgBaseTotal ) )
   {

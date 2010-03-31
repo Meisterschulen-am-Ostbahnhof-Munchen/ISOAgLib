@@ -37,6 +37,15 @@
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 #endif
 
+#if DEBUG_DEVPROPERTYHANDLER
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
 //define length of every attribute in deviceObject
 #define DEF_Transfer_Code 1
 #define DEF_TableID 3
@@ -176,7 +185,7 @@ DevPropertyHandler_c::processMsg()
         {
           men_uploadStep = UploadWaitForUploadInit;
           mb_receivedStructureLabel = false;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received NACK for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
@@ -186,7 +195,7 @@ DevPropertyHandler_c::processMsg()
         {
           men_uploadStep = UploadWaitForUploadInit;
           mb_receivedLocalizationLabel = false;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
             INTERNAL_DEBUG_DEVICE << "Received NACK for localization label..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
@@ -203,7 +212,7 @@ DevPropertyHandler_c::processMsg()
       if (men_uploadState == StateUploadInit && men_uploadStep == UploadWaitForVersionResponse)
       {
         mui8_versionLabel = data().getUint8Data(1);
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received version response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         startUpload();
@@ -223,7 +232,7 @@ DevPropertyHandler_c::processMsg()
         mui32_uploadTimestamp = HAL::getTime();
         mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
         men_uploadStep = UploadWaitForLocalizationLabelResponse;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received structure label response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           INTERNAL_DEBUG_DEVICE << "Wait for localization label (in processMsg)..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -236,7 +245,7 @@ DevPropertyHandler_c::processMsg()
         for (i=1; i<8; i++) marrpch_localizationLabel[i-1] = char(data().getUint8Data(i));
         mb_receivedLocalizationLabel = true;
         men_uploadStep = UploadWaitForUploadInit;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received localization response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -256,7 +265,7 @@ DevPropertyHandler_c::processMsg()
           mui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
           outOfMemory();
         }
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received response for request OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -272,7 +281,7 @@ DevPropertyHandler_c::processMsg()
           sendPoolActivatieMsg();
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
             INTERNAL_DEBUG_DEVICE << "Received positive response for OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
             INTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -281,14 +290,14 @@ DevPropertyHandler_c::processMsg()
         {
           mui8_commandParameter = procCmdPar_OPTransferRespMsg;
           outOfMemory();
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Received negative response for OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
       }
       break;
     case procCmdPar_OPActivateRespMsg:
-      #ifdef DEBUG
+      #if DEBUG_DEVPROPERTYHANDLER
       INTERNAL_DEBUG_DEVICE << "Received activate response..." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       if (men_uploadState == StateUploadPool && men_uploadStep == UploadWaitForOPActivateResponse)
@@ -305,7 +314,7 @@ DevPropertyHandler_c::processMsg()
           men_uploadStep = UploadFailed;
           men_poolState = OPCannotBeUploaded;
           mui8_commandParameter = procCmdPar_OPActivateRespMsg;
-          #if defined(DEBUG)
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << (uint16_t) data().getUint8Data(1) << INTERNAL_DEBUG_DEVICE_ENDL;
           INTERNAL_DEBUG_DEVICE << "upload failed, activate with error..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
@@ -334,7 +343,7 @@ DevPropertyHandler_c::processMsg()
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForVersionResponse;
         }
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Received delete response..." << INTERNAL_DEBUG_DEVICE_ENDL;
         INTERNAL_DEBUG_DEVICE << "Wait for version response (in processMsg)..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -349,7 +358,7 @@ DevPropertyHandler_c::processMsg()
       {
         //no matter if successful or faulty, finish upload command
         finishUploadCommandChangeDesignator();
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "ChangeDesignatorRespMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -456,7 +465,7 @@ DevPropertyHandler_c::timeEvent( void )
       mui32_uploadTimestamp = HAL::getTime();
       mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
       men_uploadStep = UploadWaitForStructureLabelResponse;
-      #ifdef DEBUG
+      #if DEBUG_DEVPROPERTYHANDLER
       INTERNAL_DEBUG_DEVICE << "Wait for structure label..." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       break;
@@ -464,7 +473,7 @@ DevPropertyHandler_c::timeEvent( void )
       if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
         /** @todo SOON-62: check when the responses could not be received, and whether simple sending of new pool could cause harm */
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "No version available..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         startUpload();
@@ -477,7 +486,7 @@ DevPropertyHandler_c::timeEvent( void )
       {
         mb_receivedStructureLabel = false;
         men_uploadStep = UploadWaitForUploadInit;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Wait for structure label timed out, go to wait for upload init..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -488,7 +497,7 @@ DevPropertyHandler_c::timeEvent( void )
       {
         mb_receivedLocalizationLabel = false;
         men_uploadStep = UploadWaitForUploadInit;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Wait for localization label timed out, go to wait for upload init..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -500,14 +509,14 @@ DevPropertyHandler_c::timeEvent( void )
         men_uploadState = StateUploadInit;
         if (!mb_receivedStructureLabel)
         {
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "get pool from taskcontroller or via default..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           getPoolForUpload();
         }
         else
         {
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "init upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           initUploading();
@@ -521,7 +530,7 @@ DevPropertyHandler_c::timeEvent( void )
           sendPoolActivatieMsg();
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
             INTERNAL_DEBUG_DEVICE << "OPActivateMsg..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
 
@@ -536,7 +545,7 @@ DevPropertyHandler_c::timeEvent( void )
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForDeleteResponse;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Wait for delete response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
@@ -548,7 +557,7 @@ DevPropertyHandler_c::timeEvent( void )
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForVersionResponse;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Wait for version response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
@@ -562,7 +571,7 @@ DevPropertyHandler_c::timeEvent( void )
         mui8_commandParameter = procCmdPar_OPDeleteRespMsg;
         mui32_uploadTimestamp = HAL::getTime();
         mui32_uploadTimeout = DEF_WaitFor_Reupload;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Upload timed out when deleting old pool, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -575,14 +584,14 @@ DevPropertyHandler_c::timeEvent( void )
         mui8_commandParameter = procCmdPar_RequestOPTransferRespMsg;
         mui32_uploadTimestamp = HAL::getTime();
         mui32_uploadTimeout = DEF_WaitFor_Reupload;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Upload timed out, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
       break;
     case UploadRetryUpload:
       startUpload();
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "UploadRetryUpload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       break;
@@ -598,7 +607,7 @@ DevPropertyHandler_c::timeEvent( void )
           mui8_commandParameter = procCmdPar_OPTransferMsg;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_WaitFor_Reupload;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Upload failed, send aborted..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         } break;
@@ -606,7 +615,7 @@ DevPropertyHandler_c::timeEvent( void )
           men_uploadStep = UploadWaitForOPTransferResponse;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_EndOfDevicePool;
-          #ifdef DEBUG
+          #if DEBUG_DEVPROPERTYHANDLER
           INTERNAL_DEBUG_DEVICE << "Upload successful, wait for transfer response..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         }
@@ -620,7 +629,7 @@ DevPropertyHandler_c::timeEvent( void )
         mui8_commandParameter = procCmdPar_OPTransferRespMsg;
         mui32_uploadTimestamp = HAL::getTime();
         mui32_uploadTimeout = DEF_WaitFor_Reupload;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Upload failed, timeout when waiting for transfer response,wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -633,7 +642,7 @@ DevPropertyHandler_c::timeEvent( void )
         mui8_commandParameter = procCmdPar_OPActivateMsg;
         mui32_uploadTimestamp = HAL::getTime();
         mui32_uploadTimeout = DEF_WaitFor_Reupload;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Upload failed when waiting for activating pool, wait for re-upload..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -641,7 +650,7 @@ DevPropertyHandler_c::timeEvent( void )
     case UploadFailed:
       if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Upload failed..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         switch (mui8_commandParameter)
@@ -873,7 +882,7 @@ DevPropertyHandler_c::initUploading()
         men_uploadState = StateIdle;
         men_poolState = OPSuccessfullyUploaded;
         men_uploadStep = UploadNone;
-        #ifdef DEBUG
+        #if DEBUG_DEVPROPERTYHANDLER
         INTERNAL_DEBUG_DEVICE << "Stop Uploading - Pool already here..." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }
@@ -982,7 +991,7 @@ DevPropertyHandler_c::startUpload()
 
   men_uploadState = StateUploadPool;
   men_uploadStep = UploadWaitForRequestOPTransferResponse;
-  #ifdef DEBUG
+  #if DEBUG_DEVPROPERTYHANDLER
   INTERNAL_DEBUG_DEVICE << "Wait for response for request OP transfer..." << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
@@ -996,7 +1005,7 @@ DevPropertyHandler_c::outOfMemory()
   getILibErrInstance().registerError( iLibErr_c::RemoteServiceOutOfMemory, iLibErr_c::TaskController );
   men_uploadStep = UploadFailed; // no timeout needed
   men_poolState = OPCannotBeUploaded;
-  #ifdef DEBUG
+  #if DEBUG_DEVPROPERTYHANDLER
   INTERNAL_DEBUG_DEVICE << "upload failed, no retry" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 }
@@ -1015,7 +1024,7 @@ DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t aui16_objectID, const
     ml_sendUpload.push_back(SendUploadBase_c (aui16_objectID, apc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
     return true;
   }
-  //DEBUG OUT
+  //DEBUG_DEVPROPERTYHANDLER OUT
   //INTERNAL_DEBUG_DEVICE << "New Designator value exceeds a length of 32 characters! Choose a shorter name!"
   return false;
 }

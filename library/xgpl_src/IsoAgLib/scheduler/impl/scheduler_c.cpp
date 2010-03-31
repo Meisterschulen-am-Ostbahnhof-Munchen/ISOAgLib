@@ -55,7 +55,7 @@
   #include <IsoAgLib/hal/hal_eeprom.h>
 #endif
 
-#if defined(DEBUG_SCHEDULER) || defined(DEBUG_HEAP_USEAGE) || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
+#if DEBUG_SCHEDULER || DEBUG_HEAP_USEAGE || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -70,7 +70,7 @@
 #endif
 
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
 static uint16_t volatile sui16_clientPointerTotal = 0;
 
 #ifdef MASSERT
@@ -255,7 +255,7 @@ bool Scheduler_c::registerClient( Scheduler_Task_c* apc_client)
   //For Client that registers at later timepoint
   if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  apc_client->getTaskName() <<  INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
 
@@ -264,7 +264,7 @@ bool Scheduler_c::registerClient( Scheduler_Task_c* apc_client)
   /// put client in taskQueue
   mc_taskQueue.push_front( SchedulerEntry_c( apc_client ) );
   setCntClient( mc_taskQueue.size() );
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_clientPointerTotal++;
   #endif
 
@@ -283,7 +283,7 @@ void Scheduler_c::unregisterClient( Scheduler_Task_c* apc_client)
     for(itc_task = mc_taskQueue.begin(); itc_task != mc_taskQueue.end();){
 
       if(itc_task->isTask(apc_client)){
-        #if defined(DEBUG_SCHEDULER) || DEBUG_TASKS_QUEUE
+        #if DEBUG_SCHEDULER || DEBUG_TASKS_QUEUE
         INTERNAL_DEBUG_DEVICE << "Scheduler_cunregisterClient() Delete from TaskList:"
         << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
@@ -301,7 +301,7 @@ void Scheduler_c::unregisterClient( Scheduler_Task_c* apc_client)
   // output client array in sync
   if ( ! mc_taskQueue.empty() )
   { // delete last element
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_clientPointerTotal--;
 
     #endif
@@ -540,7 +540,7 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
   }
 
 
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   static int32_t si32_lastTaskListTimesDebug = 0;
   /// for better debugging use > 100 or > 0 here
   if ( ( System_c::getTime() - si32_lastTaskListTimesDebug ) > 1000 ) {
@@ -565,7 +565,7 @@ int32_t
 Scheduler_c::selectCallTaskAndUpdateQueue()
 { // ~X2C
   IsoAgLib::iSystem_c::triggerWd();
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   static bool b_firstCallSelectCallTastAndUpdateQueue = true;
   if ( b_firstCallSelectCallTastAndUpdateQueue ) {
     b_firstCallSelectCallTastAndUpdateQueue = false;
@@ -582,7 +582,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
   if ( i32_idleTime <= 0 )
   { // first task in queue can be executed
     STL_NAMESPACE::list<SchedulerEntry_c>::iterator pc_execIter = mc_taskQueue.begin();
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     setDebugTimeAccuracy( *pc_execIter );
     #endif
 
@@ -595,7 +595,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     if ( pc_nextCallIter != mc_taskQueue.end() )
       i32_nextTaskTriggerTimeSpread = pc_nextCallIter->getTimeToNextTrigger( LatestRetrigger );
     if(  i32_nextTaskTriggerTimeSpread   <  pc_execIter->getForcedMinExecTime() ){
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "i32_endTime to small for " <<  pc_execIter->getTaskName() << "endTime "
       << (int) i32_nextTaskTriggerTimeSpread  << " Set to " << pc_execIter->getTaskName() << " msec " << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -614,7 +614,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     }
 
     IsoAgLib::iSystem_c::triggerWd();
-    #ifdef DEBUG_SCHEDULER_EXTREME
+    #if DEBUG_SCHEDULER_EXTREME
     INTERNAL_DEBUG_DEVICE << "Call timeevent of " <<  pc_execIter->getTaskName() << "endTime "
       << (int) i32_endTime << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -639,7 +639,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
         // --> reschedule this task _after_ the following task
         int16_t i16_avgTime = (pc_nextCallIter->getAvgExecTime() > pc_nextCallIter->getForcedMinExecTime())?pc_nextCallIter->getAvgExecTime():pc_nextCallIter->getForcedMinExecTime();
         if ( pc_nextCallIter->getExecTime() > i16_avgTime ) i16_avgTime = pc_nextCallIter->getExecTime();
-        #ifdef DEBUG_SCHEDULER
+        #if DEBUG_SCHEDULER
         INTERNAL_DEBUG_DEVICE
           << "+++++++++++++++++++++\nretrigger tie breaked task: " << pc_execIter->getTaskName() << " for time: "
           << (i16_avgTime+pc_nextCallIter->getNextTriggerTime()) << " so that task "
@@ -663,14 +663,14 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
 
 
   if ( i32_idleTime <= 0 ) return 0;
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   setDebugIdleInformation( i32_idleTime );
   #endif
 
   return i32_idleTime;
 }
 
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
 //!  Send debug messages with information on the
 //!  acfuracy of time behaviour.
 //!  Retrieve information about actual executed task from referenced SchedulerEntry_c.
@@ -815,7 +815,7 @@ bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * apc_client  ,
 /** the task involved in the operation is being executing now , the operation cannot be performed */
   if(isTaskExecuted(apc_client))
   {
-   #ifdef DEBUG
+   #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeTimePeriodAndResortTask" << INTERNAL_DEBUG_DEVICE_ENDL;
 
     TraceAndAbort();
@@ -827,7 +827,7 @@ bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * apc_client  ,
   //Now calculate Delta and nextTriggerTime for Client
   int16_t i_deltaTime = aui16_newTimePeriod - apc_client->getTimePeriod()  ;
   int32_t i32_newTriggerTime = apc_client->getNextTriggerTime() + i_deltaTime;
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) aui16_newTimePeriod
     << " Old TimePeriod: "<<  apc_client->getTimePeriod() <<" Name"
     << apc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -852,7 +852,7 @@ bool  Scheduler_c::changeRetriggerTimeAndResort(SchedulerEntry_c ac_client  , in
   /** the task involved in the operation is being executing now , the operation cannot be performed */
   if(pc_currentlyExecutedTask == &ac_client)
   {
-    #ifdef DEBUG
+    #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeRetriggerTimeAndResort" << INTERNAL_DEBUG_DEVICE_ENDL;
 
     TraceAndAbort();
@@ -888,7 +888,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * apc_client, in
   /** the task involved in the operation is being executing now , the operation cannot be performed */
   if(isTaskExecuted(apc_client))
   {
-    #ifdef DEBUG
+    #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << " Method Scheduler_c::changeRetriggerTimeAndResort" << INTERNAL_DEBUG_DEVICE_ENDL;
 
     TraceAndAbort();
@@ -922,11 +922,11 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
 {
 
 
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   printTaskList();
   #endif
 
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client:" << itc_task->getTaskName()
   << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
@@ -939,7 +939,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
 
   /// increase of RetriggerTime task should be called LATER
   if (i32_deltaRetrigger > 0) {
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "task should be called LATER for ms: " << i32_deltaRetrigger
       << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
@@ -949,14 +949,14 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     ++itc_greater;
     if ( itc_greater == mc_taskQueue.end() )
     {
-      #ifdef DEBUG_SCHEDULER
+      #if DEBUG_SCHEDULER
       printTaskList();
       #endif
       return true; ///< was already last element
     }
     else if ( *itc_task <= *itc_greater )
     { // there is no need to resort, as following item is still later
-      #ifdef DEBUG_SCHEDULER
+      #if DEBUG_SCHEDULER
       printTaskList();
       #endif
       return true;
@@ -972,7 +972,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
         mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
         // and move itc_task back from mc_spareQueue in front of itc_greater in mc_taskQueue
         mc_taskQueue.splice( itc_greater, mc_spareQueue, mc_spareQueue.begin() );
-        #ifdef DEBUG_SCHEDULER
+        #if DEBUG_SCHEDULER
         printTaskList();
         #endif
         return true;
@@ -985,13 +985,13 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
     // and move itc_task back from mc_spareQueue in front of mc_taskQueue.end() - i.e. at the end of the list
     mc_taskQueue.splice( mc_taskQueue.end(), mc_spareQueue, mc_spareQueue.begin() );
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     printTaskList();
     #endif
   }
   /// decrease of TimePeriod task should be called EARLIER
   else if (i32_deltaRetrigger < 0){
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "task should be called EARLIER for ms: " << i32_deltaRetrigger << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     ///set new NextTriggerTime to now to avoid delay of following tasks
@@ -1002,7 +1002,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     //remove to EARLIER Position
     if ( itc_task == mc_taskQueue.begin() )
     {
-      #ifdef DEBUG_SCHEDULER
+      #if DEBUG_SCHEDULER
       printTaskList();
       #endif
       return true; ///< the changed task is already at start of queue
@@ -1011,7 +1011,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     --itc_smaller;
     if ( *itc_smaller <= *itc_task )
     {
-      #ifdef DEBUG_SCHEDULER
+      #if DEBUG_SCHEDULER
       printTaskList();
       #endif
       return true; ///< the changed task is still later scheduled than the item before it
@@ -1028,7 +1028,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
         mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
         // and move itc_task back from mc_spareQueue in front of itc_smaller
         mc_taskQueue.splice( itc_smaller, mc_spareQueue, mc_spareQueue.begin() );
-        #ifdef DEBUG_SCHEDULER
+        #if DEBUG_SCHEDULER
         printTaskList();
         #endif
         return true;
@@ -1042,7 +1042,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
       mc_spareQueue.splice( mc_spareQueue.end(), mc_taskQueue, itc_task );
       // and move itc_task back from mc_spareQueue in front of itc_smaller
       mc_taskQueue.splice( itc_smaller, mc_spareQueue, mc_spareQueue.begin() );
-      #ifdef DEBUG_SCHEDULER
+      #if DEBUG_SCHEDULER
       printTaskList();
       #endif
       return true;
@@ -1055,7 +1055,7 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
     // and move itc_task back from mc_spareQueue in front (mc_taskQueue.begin())++ - i.e. at begin of list
     mc_taskQueue.splice( mc_taskQueue.begin(), mc_spareQueue, mc_spareQueue.begin() );
   } // end if shift forward
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   printTaskList();
   #endif
   return  true ;
@@ -1078,7 +1078,7 @@ bool Scheduler_c::isTaskExecuted(const Scheduler_Task_c* apc_client) const
       return false;
    };
 
-#ifdef DEBUG
+#if DEBUG_SCHEDULER
 
 /** Tracing function for debugging aim, the function performs an abort in case of SYSTEM_PC target */
 

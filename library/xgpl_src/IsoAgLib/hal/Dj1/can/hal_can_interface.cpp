@@ -31,7 +31,7 @@
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE) || defined(DEBUG_CAN_BUFFER_FILLING) || DEBUG_SENDING
+#if DEBUG_HAL || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING || DEBUG_SENDING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -164,7 +164,7 @@ namespace __HAL
     int16_t Code = __HAL::DjBios_CanOpen ( aui8_busNr, ab_baudrate, aui16_maskStd,
                                      aui32_maskExt, aui32_maskLastmsg );
 
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "GI: ";
 #endif
     if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_RATE) )
@@ -200,7 +200,7 @@ INTERNAL_DEBUG_DEVICE << "GI: ";
     int16_t Code = __HAL::DjBios_CanConfig ( aui8_busNr, aui16_maskStd,
                                           aui32_maskExt, aui32_maskLastmsg );
 
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "GM: ";
 #endif
     if ( Code == BIOS_CAN_BAD_BUS )
@@ -231,7 +231,7 @@ INTERNAL_DEBUG_DEVICE << "GM: ";
   int16_t Can_Close ( uint8_t aui8_busNr )
   {
     int16_t Code = __HAL::DjBios_CanClose ( aui8_busNr );
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "CanClose: ";
 #endif
 
@@ -291,7 +291,7 @@ INTERNAL_DEBUG_DEVICE << "CanClose: ";
     (void)__HAL::DjBios_CanObjCallback ( aui8_busNr, aui8_msgobjNr, (ab_rxtx==1)?NULL:Can_IrqRxToFifo );
 #endif
 
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "I:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
 
@@ -406,7 +406,7 @@ extern "C"
     int16_t Code = __HAL::DjBios_CanObjChangeIdent ( aui8_busNr, aui8_msgobjNr, Ident,
                                                (Type==0)?BIOS_FALSE:BIOS_TRUE);
 
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "C:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
 
@@ -442,7 +442,7 @@ INTERNAL_DEBUG_DEVICE << "C:" << uint16_t(rui8_msgobjNr) << " ";
     int16_t Code = __HAL::DjBios_CanObjLock ( rui8_busNr, rui8_msgobjNr,
                                               (rb_doLock) ? BIOS_TRUE : BIOS_FALSE );
 
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t(rui8_msgobjNr) << " " << (rb_doLock? "On" : "Off") << " ";
 #endif
 
@@ -475,7 +475,7 @@ INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t(rui8_msgobjNr) << " " << (rb_doLock
   {
     int16_t Code = __HAL::DjBios_CanObjClose ( aui8_busNr, aui8_msgobjNr );
 
-#if defined(DEBUG) && OBJECT_CONFIG
+#if DEBUG_HAL && OBJECT_CONFIG
 INTERNAL_DEBUG_DEVICE << "ObjClose:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
 
@@ -519,7 +519,7 @@ INTERNAL_DEBUG_DEVICE << "ObjClose:" << uint16_t(rui8_msgobjNr) << " ";
 
     apc_data->getData(Msg.ID, Msg.Ext, Msg.Length, Msg.Data);
 
-#if defined(DEBUG) && DEBUG_SENDING
+#if DEBUG_HAL && DEBUG_SENDING
 INTERNAL_DEBUG_DEVICE << "3:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moNr." << uint16_t(rui8_msgobjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -549,7 +549,7 @@ INTERNAL_DEBUG_DEVICE << "3:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moN
     return ( Code );
   };
 
-#if defined(DEBUG) && defined(DEBUG_RECEIVE)
+#if DEBUG_HAL && DEBUG_RECEIVE
 static uint8_t LastMsgIdentObj = 0xFF;
 #endif
   /**
@@ -573,7 +573,7 @@ static uint8_t LastMsgIdentObj = 0xFF;
     /* Get the message and leave it in the buffer */
     int16_t Code = __HAL::DjBios_CanObjRead ( aui8_busNr, aui8_msgobjNr, &Msg );
 
-#if defined(DEBUG) && defined(DEBUG_RECEIVE)
+#if DEBUG_HAL && DEBUG_RECEIVE
     INTERNAL_DEBUG_DEVICE << "RxID:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moNr." << uint16_t(rui8_msgobjNr) << " " << __HAL::DjBios_TimeGetNow() << INTERNAL_DEBUG_DEVICE_ENDL;
 
     LastMsgIdentObj = rui8_msgobjNr;
@@ -646,7 +646,7 @@ static uint8_t LastMsgIdentObj = 0xFF;
     /* Get the message and leave it in the buffer */
     int16_t Code = __HAL::DjBios_CanObjRead ( aui8_busNr, aui8_msgobjNr, &Msg );
 
-#if defined(DEBUG) && defined(DEBUG_RECEIVE)
+#if DEBUG_HAL && DEBUG_RECEIVE
     INTERNAL_DEBUG_DEVICE << "Rx:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moNr." << uint16_t(rui8_msgobjNr) << " " << Msg.Time << "  Now:" << __HAL::DjBios_TimeGetNow() << " Code:" << Code << INTERNAL_DEBUG_DEVICE_ENDL;
 
     if ( LastMsgIdentObj != rui8_msgobjNr )
@@ -728,7 +728,7 @@ static uint8_t LastMsgIdentObj = 0xFF;
     /* Clear the recieve buffer */
     int16_t Code = __HAL::DjBios_CanObjPurge ( aui8_busNr, aui8_msgobjNr );
 
-#if defined(DEBUG) && defined(DEBUG_RECEIVE)
+#if DEBUG_HAL && DEBUG_RECEIVE
 INTERNAL_DEBUG_DEVICE << "CanPurge:" << uint16_t(rui8_msgobjNr) << " ";
 #endif
     if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )

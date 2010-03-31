@@ -16,15 +16,7 @@
 #include "isoname_c.h"
 // necessary for convert operators
 #include "../iisoname_c.h"
-
-#if defined(DEBUG)
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
+#include <IsoAgLib/util/iassert.h>
 
 namespace __IsoAgLib {
 
@@ -347,23 +339,7 @@ void IsoName_c::setSerNo(uint32_t aui32_serNo)
 */
 int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) const
 {
-#if defined(DEBUG) && !defined(SYSTEM_A1) && !defined(SYSTEM_A5) && defined(SYSTEM_PC)
-  if ( apu_compare == NULL )
-  { // calling function called this function with wrong parameter
-    // - but in production version, we await, that the caller makes sure,
-    //  that the parameters are correct.
-    // So output suitable debug information in DEBUG mode and trigger than an abort() to get a clear indication on this failure.
-    // In real production version, we would have to decide on WHAT to do for this case in such a lowlevel comparison function - what return value, .....
-    INTERNAL_DEBUG_DEVICE
-      << "ERRORR!! IsoName_c::higherPriThanPar() was called with parameter == NULL!!" << INTERNAL_DEBUG_DEVICE_ENDL
-      << "The this adress was " << this << INTERNAL_DEBUG_DEVICE_ENDL
-      << "The program will be aborted now for explicit detection of this erroneous call. Fix the CALLING function - and not this function,"
-      << " as this function makes never sense when called with NULL!!"
-      << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_FLUSH;
-    MACRO_ISOAGLIB_ABORT();
-  }
-#endif
+  isoaglib_assert(apu_compare);
 
   // if one of the both comparison parameters have 0xFF in the byte 0..5, then only compare
   // device class, -instance and industry group

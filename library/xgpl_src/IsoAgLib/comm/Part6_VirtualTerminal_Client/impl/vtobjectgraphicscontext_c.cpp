@@ -21,6 +21,7 @@
 #include "../ivtobjectmacro_c.h"
 #include "isoterminal_c.h"
 #include <IsoAgLib/util/convert.h>
+#include <IsoAgLib/util/iassert.h>
 
 // Make sure not such macro is used.
 #undef MACRO_vtObjectTypeA
@@ -38,11 +39,8 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
   if (sourceOffset == 0) { // dump out constant sized stuff
     // Check precondition
     // (Not allways because we have no exception handling for 16-bit systems implemented).
-#if defined(DEBUG) && defined(SYSTEM_PC)
-    if (maxBytes < mi_totalSize) { MACRO_ISOAGLIB_ABORT(); }
-#else
-    maxBytes = maxBytes;  // Prevent from warning.
-#endif
+    isoaglib_assert(maxBytes >= mi_totalSize);
+    (void)maxBytes;
 
     uint8_t* p = destMemory;
     number2LittleEndianString( uint16_t(vtObject_a->ID), p ); p += sizeof(uint16_t);
@@ -86,10 +84,7 @@ vtObjectGraphicsContext_c::stream(uint8_t* destMemory, uint16_t maxBytes, objRan
                                     pc_vtOGC_a->transparencyColour, this, IsoAgLib::TransparencyColour );
 
     // Check postcondition
-    // (Not allways because we have no exception handling for 16-bit systems implemented).
-#if defined(DEBUG) && defined(SYSTEM_PC)
-    if ((destMemory+mi_totalSize) != p) { MACRO_ISOAGLIB_ABORT(); }
-#endif
+    isoaglib_assert((destMemory + mi_totalSize) == p);
 
     return mi_totalSize;
   }

@@ -45,7 +45,7 @@ public:
                         int i_retV = pthread_mutex_init(&m_exclusiveAccess,NULL);
                         if(i_retV != 0)
                         {
-                            #if DEBUG
+                            #if DEBUG_MUTEX
                              INTERNAL_DEBUG_DEVICE << "Error on Mutex initialization" << INTERNAL_DEBUG_DEVICE_ENDL;
                             #endif
                         }

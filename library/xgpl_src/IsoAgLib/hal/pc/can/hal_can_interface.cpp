@@ -786,7 +786,7 @@ __HAL::tCanMsgReg* IwriteCentralCanfifo(uint8_t bBus,uint8_t bOjekt,__HAL::tCanM
 
          bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,tCanregister->tArbit.dw,(void*)tCanregister);
 
-          #ifdef DEBUG
+          #if DEBUG_FIFO_WRITE
            if(!b_ret)
            {
               INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;

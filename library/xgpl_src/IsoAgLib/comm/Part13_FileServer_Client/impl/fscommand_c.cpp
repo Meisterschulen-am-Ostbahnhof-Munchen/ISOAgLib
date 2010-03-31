@@ -16,6 +16,15 @@
 #include "fsclientservercommunication_c.h"
 #include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#if DEBUG_FILESERVER
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
 
 #define NR_REQUEST_ATTEMPTS 5
 #define REQUEST_REPEAT_TIME 6500
@@ -113,7 +122,7 @@ bool FsCommand_c::timeEvent(void)
           rc_csCom.initializeVolumeResponse(IsoAgLib::fsFileserverNotResponding, false, false, false, false, false, false, false);
           break;
         default:
-#ifdef DEBUG
+#if DEBUG_FILESERVER
           EXTERNAL_DEBUG_DEVICE << "Repetition of command not defined!" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
           break;
@@ -169,7 +178,7 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstC
     ui8_recTan = refc_stream.get();
     if (ui8_recTan != ui8_tan)
     {
-#ifdef DEBUG
+#if DEBUG_FILESERVER
       EXTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       return false; // don't keep the stream, we've processed it right now, so remove it
@@ -185,7 +194,7 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstC
 
   if ( (uint32_t)(i32_offset + ui16_notParsedSize) > ui32_recBufAllocSize )
   {
-#ifdef DEBUG
+#if DEBUG_FILESERVER
     EXTERNAL_DEBUG_DEVICE << "More data than allocated! " << ui32_recBufAllocSize << " " << uint32_t(i32_offset + ui16_notParsedSize) << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -266,7 +275,7 @@ bool FsCommand_c::processMsg()
 {
   if (data().getUint8Data(1) != ui8_tan && data().getUint8Data(0) != 0x00  && data().getUint8Data(0) != 0x01)
   {
-#ifdef DEBUG
+#if DEBUG_FILESERVER
       EXTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     return true;
@@ -366,7 +375,7 @@ bool FsCommand_c::processMsg()
         ++ui8_tan;
 	      if (ui32_possition == 0)
         {
-#ifdef DEBUG
+#if DEBUG_FILESERVER
 	        STL_NAMESPACE::cerr << "exploratory seek failed: using read length of 16\n" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 	        readDirectory(ui8_fileHandle, 16, true);
@@ -563,7 +572,7 @@ bool FsCommand_c::processMsg()
       en_lastCommand = en_noCommand;
       return true;
     default:
-#ifdef DEBUG
+#if DEBUG_FILESERVER
       EXTERNAL_DEBUG_DEVICE << "got message with content: " << STL_NAMESPACE::hex << (uint32_t)data().getUint8Data(0) << STL_NAMESPACE::dec << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       return true;
@@ -1015,7 +1024,7 @@ IsoAgLib::iFsCommandErrors FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName
 }
 
 IsoAgLib::iFsCommandErrors FsCommand_c::initializeVolume(
-#ifdef DEBUG
+#if DEBUG_FILESERVER
   uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume
 #else
   uint8_t * /*pui8_pathName*/, uint32_t /*ui32_space*/, bool /*b_createVolumeUsingSpace*/, bool /*b_createNewVolume*/
@@ -1026,7 +1035,7 @@ IsoAgLib::iFsCommandErrors FsCommand_c::initializeVolume(
 
 //TODO implement this one...
 
-#ifdef DEBUG
+#if DEBUG_FILESERVER
   //EXTERNAL_DEBUG_DEVICE << "initializeVolume pathname: " << pui8_pathName << " space: " << ui32_space << " attributes: " << b_createVolumeUsingSpace << b_createNewVolume << EXTERNAL_DEBUG_DEVICE_ENDL;
   EXTERNAL_DEBUG_DEVICE << "initializeVolume pathname: NOT IMPLEMENTED" << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -1145,7 +1154,7 @@ void FsCommand_c::decodeReadFileResponse()
   if ( ((uint32_t)ui16_count + 3) > ui32_recBufAllocSize )
   {
     ui16_count = ui32_recBufAllocSize - 3;
-#ifdef DEBUG
+#if DEBUG_FILESERVER
     EXTERNAL_DEBUG_DEVICE << "message size larger then allocated buffer " << ui32_recBufAllocSize << " " << uint32_t(ui16_count + 3) << EXTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }

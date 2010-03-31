@@ -125,7 +125,7 @@ int parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00 
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
 
@@ -151,7 +151,7 @@ int parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iA, iB; // "%i* %x
@@ -175,7 +175,7 @@ int parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iB; // "%i* %x
@@ -202,7 +202,7 @@ int parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF F
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iB, iDb; // "%i* %x
@@ -229,7 +229,7 @@ int parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
 /// @todo SOON-260: handle std/ext, too...
@@ -257,7 +257,7 @@ int parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
 
@@ -300,7 +300,7 @@ int parseLogLineRte2 ()
     string line;
 
     getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
     cout << line << endl;
 #endif
 
@@ -354,7 +354,7 @@ int parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 1
 {
   string line;
   getline (ifs_in, line);
-#ifdef DEBUG
+#if DEBUG
   cout << line << endl;
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iA, iB, iDb; // "%i* %x

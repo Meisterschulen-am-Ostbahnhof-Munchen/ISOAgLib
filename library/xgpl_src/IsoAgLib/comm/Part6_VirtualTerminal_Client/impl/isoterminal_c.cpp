@@ -18,14 +18,6 @@
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
 // #include "vttypes.h"
 
-#ifdef DEBUG
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-#endif
-
 namespace __IsoAgLib {
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique IsoTerminal_c singleton instance
@@ -139,12 +131,6 @@ IsoTerminal_c::initAndRegisterIsoObjectPool (IdentItem_c& rc_identItem, IsoAgLib
   if (!rc_identItem.isMaster())
   {
     /// IdentItem must be a Master
-    #if defined (DEBUG)
-    INTERNAL_DEBUG_DEVICE << "IdentItem is not Master!" << INTERNAL_DEBUG_DEVICE_ENDL;
-    #if defined (SYSTEM_PC)
-    MACRO_ISOAGLIB_ABORT();
-    #endif
-    #endif
     return NULL;
   }
 
@@ -191,12 +177,6 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
   if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!
-    #if defined (DEBUG)
-    INTERNAL_DEBUG_DEVICE << "Wrong version label (too long!)" << INTERNAL_DEBUG_DEVICE_ENDL;
-    #if defined (SYSTEM_PC)
-    MACRO_ISOAGLIB_ABORT();
-    #endif
-    #endif
     delete pc_vtCSC;
     return NULL;
   }

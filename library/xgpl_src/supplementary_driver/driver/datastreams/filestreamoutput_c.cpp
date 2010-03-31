@@ -15,7 +15,7 @@
 #include "stdio.h"
 #include <string>
 
-#if defined(DEBUG)
+#if DEBUG_FILESTREAMOUTPUT
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -67,7 +67,7 @@ FileStreamOutput_c::close (bool b_deleteFile, bool b_sync)
     c_targetHandle.close(NULL);
   
   if (b_deleteFile) {
-    #ifdef DEBUG
+    #if DEBUG_FILESTREAMOUTPUT
     INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 #if (defined(WIN32) && defined(UNICODE)) || defined(WINCE)

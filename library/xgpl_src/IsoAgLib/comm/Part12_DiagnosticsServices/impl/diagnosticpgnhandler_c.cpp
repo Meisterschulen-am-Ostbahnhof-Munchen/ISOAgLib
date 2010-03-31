@@ -18,6 +18,15 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <algorithm>
 
+#if DEBUG_DIAGNOSTICPGN
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
+#endif
+
 // not done as private member function because of recursive-include problems.
 // IdentItem_c needs DiagnosticPgnHandler_c because of the enums.
 // Actually those enums should then just be moved out into its own file
@@ -75,7 +84,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
             ISOBUS_CERTIFICATION_PGN,
             st_sendSuccessDONTCAREFOR ) )
       { // Message successfully transmitted to multisend -> return true
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ISOBUS_CERTIFICATION " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
@@ -95,7 +104,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
             ECU_DIAGNOSTIC_PROTOCOL_PGN,
             st_sendSuccessDONTCAREFOR ) )
       { // Message successfully transmitted to multisend -> return true
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL: first byte (diag protocol id) is " << uint16_t (diagProtocolId[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
@@ -111,7 +120,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
             SOFTWARE_IDENTIFICATION_PGN,
             st_sendSuccessDONTCAREFOR ) )
       { // Message successfully transmitted to multisend -> return true
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PGN: " << mstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
@@ -127,7 +136,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
             ECU_IDENTIFICATION_INFORMATION_PGN,
             st_sendSuccessDONTCAREFOR ) )
       { // Message successfully transmitted to multisend -> return true
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN: " << mstr_EcuIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
@@ -145,7 +154,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
                                                                     ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
                                                                     st_sendSuccessDONTCAREFOR ))
       { // Message successfully transmitted to multisend -> return true
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
@@ -162,7 +171,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
                                                                     PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
                                                                     st_sendSuccessDONTCAREFOR ))
       { // Message successfully transmitted to multisend -> return true
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
@@ -187,7 +196,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
   //  (couldn't multisend or Identification not yet ready)
   __IsoAgLib::getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
 
-#ifdef DEBUG
+#if DEBUG_DIAGNOSTICPGN
   INTERNAL_DEBUG_DEVICE << "Couldn't response to RequestPGN with PGN=" << rui32_pgn << ". " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 

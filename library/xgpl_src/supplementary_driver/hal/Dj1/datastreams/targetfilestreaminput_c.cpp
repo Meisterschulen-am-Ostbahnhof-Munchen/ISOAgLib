@@ -17,7 +17,7 @@
 
 
 
-#if defined(DEBUG)
+#if DEBUG_FILESTREAMINPUT
   #ifdef SYSTEM_PC
     #include <iostream>
   #else

@@ -76,7 +76,7 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 
 		int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "get_adc( "
 << (uint16_t)__HAL::getPwmoutAdcCheckNr(aui8_channel)

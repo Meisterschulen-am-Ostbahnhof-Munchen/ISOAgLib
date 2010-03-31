@@ -122,11 +122,16 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#if DEBUG_HEAP_USEAGE
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
 static uint16_t sui16_setpointLocalTotal = 0;
 #endif
 
@@ -140,7 +145,7 @@ void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
   SetpointBase_c::init( apc_processData );
   // set mpc_registerCache to a well defined value
   mpc_registerCache = mvec_register.begin();
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_setpointLocalTotal -= ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
   #endif
   mvec_register.clear();
@@ -149,7 +154,7 @@ void SetpointLocal_c::init( ProcDataBase_c *const apc_processData )
   mb_allowedDeltaPercent = 0;
   mb_staticMaster = false;
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   INTERNAL_DEBUG_DEVICE
     << "sizeof(SetpointRegister_c) = " << sizeof(SetpointRegister_c)
     << " Bytes" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -194,7 +199,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& acrc_src )
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   else
   {
     sui16_setpointLocalTotal += ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
@@ -222,7 +227,7 @@ void SetpointLocal_c::assignFromSource( const SetpointLocal_c& acrc_src )
 
 /** default destructor which has nothing to do */
 SetpointLocal_c::~SetpointLocal_c(){
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_setpointLocalTotal -= ( mvec_register.size() * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
   INTERNAL_DEBUG_DEVICE
@@ -320,7 +325,7 @@ void SetpointLocal_c::acceptNewMaster( bool ab_accept){
           mvec_register.erase( mpc_registerCache );
           // set mpc_registerCache to valid value
           mpc_registerCache = mpc_master;
-          #ifdef DEBUG_HEAP_USEAGE
+          #if DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
           INTERNAL_DEBUG_DEVICE
@@ -351,7 +356,7 @@ void SetpointLocal_c::setMasterMeasurementVal( int32_t ai32_val)
   if (!existMaster())
   { // create register entry for master value
     mvec_register.push_front(SetpointRegister_c());
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
     INTERNAL_DEBUG_DEVICE
       << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -561,7 +566,7 @@ bool SetpointLocal_c::timeEvent( void ){
         { // pc_iter points to old handled (>3sec) item which is NOT the master -> delete it
           // and it was already handled (default time 0 after creation)
           mvec_register.erase( pc_iter);
-          #ifdef DEBUG_HEAP_USEAGE
+          #if DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
           INTERNAL_DEBUG_DEVICE
@@ -578,7 +583,7 @@ bool SetpointLocal_c::timeEvent( void ){
         { // isoName of caller not in Monitor-List or inactive since >3sec -> delete entry
           mvec_register.erase( pc_iter);
           mpc_master = mvec_register.end(); // register that no acive master defined
-          #ifdef DEBUG_HEAP_USEAGE
+          #if DEBUG_HEAP_USEAGE
           sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
           INTERNAL_DEBUG_DEVICE
@@ -665,7 +670,7 @@ void SetpointLocal_c::processSet()
     if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
       mvec_register.push_front( SetpointRegister_c( c_callerISOName));
-      #ifdef DEBUG_HEAP_USEAGE
+      #if DEBUG_HEAP_USEAGE
       sui16_setpointLocalTotal += ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
       INTERNAL_DEBUG_DEVICE
@@ -693,7 +698,7 @@ void SetpointLocal_c::processSet()
     }
     // delete the SetpointRegister_c item
     mvec_register.erase( pc_callerIter);
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_setpointLocalTotal -= ( 1 * ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) );
 
     INTERNAL_DEBUG_DEVICE

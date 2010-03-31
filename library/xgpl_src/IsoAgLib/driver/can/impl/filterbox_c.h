@@ -175,7 +175,7 @@ public:
   */
   const Ident_c& filter() const {return mc_filter;}
 
-  #ifdef DEBUG_CAN_BUFFER_FILLING
+  #if DEBUG_CAN_BUFFER_FILLING
   /** some debug messages */
   void doDebug(uint8_t aui8_busNumber);
   #endif

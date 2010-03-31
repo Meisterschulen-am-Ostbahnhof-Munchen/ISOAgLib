@@ -435,7 +435,7 @@ void monitorCanMsg (__HAL::transferBuf_s *ps_transferBuf)
 
 void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::iterator& iter_delete)
 {
-#ifdef DEBUG
+#if DEBUG_CANSERVER
   printf("Client disconnected.\n");
 #endif
 
@@ -462,7 +462,7 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 #endif
 	  (iter_delete->i32_commandSocket))
   {
-    #ifdef DEBUG
+    #if DEBUG_CANSERVER
     printf("releaseClient: close i32_commandSocket=%d Error: %d (%s)\n", iter_delete->i32_commandSocket, errno, strerror(errno));
     #endif
   }
@@ -474,7 +474,7 @@ void releaseClient(__HAL::server_c* pc_serverData, std::list<__HAL::client_c>::i
 #endif
 	  (iter_delete->i32_dataSocket))
   {
-    #ifdef DEBUG
+    #if DEBUG_CANSERVER
     printf("releaseClient: close i32_dataSocket=%d Error: %d (%s)\n", iter_delete->i32_dataSocket, errno, strerror(errno));
     #endif
   }

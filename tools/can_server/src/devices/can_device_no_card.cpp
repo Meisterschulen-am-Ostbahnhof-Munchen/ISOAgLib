@@ -110,7 +110,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t /* wBitrate */, server_c* /* pc_ser
   return true;
 }
 
-#ifdef DEBUG
+#if DEBUG_CANSERVER
 void closeBusOnCard(uint8_t ui8_bus, server_c* /* pc_serverData */)
 #else
 void closeBusOnCard(uint8_t /*ui8_bus*/, server_c* /* pc_serverData */)

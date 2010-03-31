@@ -47,7 +47,7 @@
 				Optimization="2"
 				InlineFunctionExpansion="1"
 				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\CANLIB\dll"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
+				PreprocessorDefinitions="WIN32;NDEBUG;DEBUG_CANSERVER=0;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
 				StringPooling="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
@@ -63,7 +63,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG,SYSTEM_PC_VC,PRJ_USE_AUTOGEN_CONFIG=config_canserver.h,CAN_DRIVER_SOCKET,DEBUG"
+				PreprocessorDefinitions="NDEBUG,DEBUG_CANSERVER=0,SYSTEM_PC_VC,PRJ_USE_AUTOGEN_CONFIG=config_canserver.h,CAN_DRIVER_SOCKET"
 				Culture="1031"
 			/>
 			<Tool
@@ -138,7 +138,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\src;..\..\library\xgpl_src\IsoAgLib\hal\pc\can;..\..\library\xgpl_src;..\libs\pthread\include;C:\Programme\CANLIB\dll"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
+				PreprocessorDefinitions="WIN32;_DEBUG;DEBUG_CANSERVER=1;_CONSOLE;SYSTEM_PC_VC;CAN_DRIVER_SOCKET;DEBUG;_CRT_SECURE_NO_WARNINGS;PRJ_USE_AUTOGEN_CONFIG=config_can_server.h"
 				MinimalRebuild="false"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -155,7 +155,7 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG,SYSTEM_PC_VC,PRJ_USE_AUTOGEN_CONFIG=config_canserver.h,CAN_DRIVER_SOCKET,DEBUG"
+				PreprocessorDefinitions="_DEBUG,DEBUG_CANSERVER=1,SYSTEM_PC_VC,PRJ_USE_AUTOGEN_CONFIG=config_canserver.h,CAN_DRIVER_SOCKET"
 				Culture="1031"
 			/>
 			<Tool

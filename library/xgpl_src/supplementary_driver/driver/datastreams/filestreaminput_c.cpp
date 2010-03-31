@@ -13,7 +13,7 @@
 
 #include "filestreaminput_c.h"
 
-#if defined(DEBUG)
+#if DEBUG_FILESTREAMINPUT
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -51,7 +51,7 @@ FileStreamInput_c::close(bool b_deleteFile)
 {
   c_targetHandle.close();
   if (b_deleteFile) {
-    #ifdef DEBUG
+    #if DEBUG_FILESTREAMINPUT
 	  INTERNAL_DEBUG_DEVICE << TEXT("Removing file ") << str_openedFile << TEXT(".") << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #if defined(WINCE) //use this only for CE!

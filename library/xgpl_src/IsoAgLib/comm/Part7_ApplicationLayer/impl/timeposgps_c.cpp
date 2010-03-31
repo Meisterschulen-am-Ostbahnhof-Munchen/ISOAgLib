@@ -28,7 +28,7 @@
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
-#ifdef DEBUG
+#if DEBUG_NMEA
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -393,14 +393,6 @@ namespace __IsoAgLib {
       )
     { // the application is in tractor mode but has no valid isoName
       // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
-      #ifdef DEBUG
-        INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
-                                  IdentModeTractor. Is is not allowed that the isoName ist NULL in combination\
-                                  with tractor mode." << "\n";
-      #endif
-      #if defined(DEBUG) && defined(SYSTEM_PC)
-        MACRO_ISOAGLIB_ABORT();
-      #endif
       getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
       return false;
     }
@@ -967,7 +959,7 @@ namespace __IsoAgLib {
             IsoAgLib::convertIstream( rc_stream, mvec_refStationDifferentialAge10Msec[ind] );
         }
         notifyOnEvent (NMEA_GPS_POSITION_DATA_PGN);
-        #ifdef DEBUG
+        #if DEBUG_NMEA
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_POSITON_DATA_PGN Lat: " << mi32_latitudeDegree10Minus7
           << ", Lon: " << mi32_longitudeDegree10Minus7 << ", Alt: " << mi32_altitudeCm
           << ", TotalSize: " << rc_stream.getByteTotalSize() << ", resceived: " << rc_stream.getByteAlreadyReceived()
@@ -1004,7 +996,7 @@ namespace __IsoAgLib {
           notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }
 
-        #ifdef DEBUG
+        #if DEBUG_NMEA
         INTERNAL_DEBUG_DEVICE << "process NMEA_GPS_DIRECTION_DATA_PGN: CourseOverGround: " << mui16_courseOverGroundRad10Minus4
           << ", SpeedOverGround [cm/sec]: " << mui16_speedOverGroundCmSec
           << INTERNAL_DEBUG_DEVICE_ENDL;

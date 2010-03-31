@@ -126,7 +126,7 @@ class Scheduler_Task_c : public SaClaimHandler_c {
   //! work in the default min exec time of 5msec
   virtual uint16_t getForcedMinExecTime() const;
 
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
   //  Operation: getMaxExecTime
   //!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
   inline uint16_t getMaxExecTime() const;
@@ -289,7 +289,7 @@ protected:
 
   //  Attribute: mui32_sumTime
   uint32_t mui32_sumTime;
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
   //  Attribute: mi32_sumTimingAccuracy
   //!  SUM of time between actual and next planned execution (to calc AVG)
   //!  (> 0 -> better than planned, < 0 -> worse than planned)
@@ -357,7 +357,7 @@ Scheduler_Task_c::getAvgExecTime() const
 {
   return static_cast<uint16_t>( ( mui32_callCnt != 0 )?( mui32_sumTime / mui32_callCnt ):0 );
 }
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
 //!  deliver the max exec time of this task (used only for debug based on mui16_maxTime)
 inline
 uint16_t

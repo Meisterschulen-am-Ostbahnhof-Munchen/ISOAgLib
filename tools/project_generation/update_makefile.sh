@@ -1,21 +1,16 @@
 #!/bin/sh
-# ####################################################################### #
-#                         update_makefile.sh  -
-#                          Script to create file list, configuration
-#                          headers and project files for applications
-#                          based on a feature set specifying config file
-#                            -------------------
-#   begin                 Mon Aug 02 2004
-#   copyright            : (C) 2004 - 2006 by Dipl.-Inform. Achim Spangler
-#   email                : a.spangler@osb-ag:de
-# ####################################################################### #
 
-# ####################################################################### #
-# This file contains several helper functions to create
-# project specific Makefiles based on several config variable
-# settings. The vars are used to defined the features which are
-# needed by the application
-# ####################################################################### #
+# update_makefile.sh: Script to create file list, configuration
+#   headers and project files for applications based on a feature set
+#   specifying config file
+#
+# (C) Copyright 2009 - 2010 by OSB AG and developing partners
+#
+# See the repository-log for details on the authors and file-history.
+# (Repository information can be found at <http://isoaglib.com/download>)
+#
+# Use, modification and distribution are subject to the GNU General
+# Public License. (See accompanying file LICENSE.txt)
 
 # Prologue
 POSIXLY_CORRECT=y # for the case that bash is running
@@ -63,6 +58,12 @@ echo_e_n() { printf '%b' "$*"; }
 echo_n() { printf '%s' "$*"; }
 # Compatible but slow variant as fallback:
 eval 'echo() { '$(which echo)' "$@"; }'
+
+# wrap words into lines
+wrap()
+{
+    printf '%s\n' "$@"
+}
 
 # Escapes % and \ to get a literal printf-format:
 literal_format()
@@ -262,6 +263,8 @@ set_default_values()
     APP_SRC_FILE=''
     USE_RS232_DRIVER='none'
     DEBUG_DEFINES=''
+    NDEBUG_DEFINE="$(wrap NDEBUG)"
+    COMBINED_DEFINES="$NDEBUG_DEFINE $DEBUG_DEFINES"
 }
 
 # update PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL unless contradiction with
@@ -1509,7 +1512,7 @@ create_standard_makefile()
             echo_n "BIOS_INC =" >&3
         fi
         local REPORT_VERSION_DEFINES=''
-        local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- " -D'%s'" $PRJ_DEFINES)}${DEBUG_DEFINES:+$(printf -- " -D'%s'" $DEBUG_DEFINES)}"
+        local RULE_PROJ_DEFINES="\$(\$F VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h${PRJ_DEFINES:+$(printf -- " -D'%s'" $PRJ_DEFINES)}${COMBINED_DEFINES:+$(printf -- " -D'%s'" $COMBINED_DEFINES)}"
 
         if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
             append RULE_PROJ_DEFINES ' -DSYSTEM_WITH_ENHANCED_CAN_HAL'
@@ -1886,7 +1889,7 @@ create_EdePrj()
     USE_EMBED_HEADER_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_HEADER_DIRECTORY")"
     USE_EMBED_LIB_DIRECTORY="$(isoaglib_path_for_ede "$USE_EMBED_LIB_DIRECTORY")"
     USE_EMBED_ILO="$(embedlib_path_for_ede "$USE_EMBED_ILO")"
-    USE_DEFINES="$(join_comma __TSW_CPP_756__ "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME" $PRJ_DEFINES $DEBUG_DEFINES)"
+    USE_DEFINES="$(join_comma __TSW_CPP_756__ "PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME" $PRJ_DEFINES $COMBINED_DEFINES)"
 
     libline_for_ede() { printf -- ' -Wo %s' "$@"; }
     USE_TARGET_LIB_LINE="$(map libline_for_ede embedlib_path_for_ede $USE_EMBED_LIBS)"
@@ -2469,10 +2472,11 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --big-endian-cpu                  select configuration for BIG ENDIAN CPU type
 --with-makefile-skeleton=filename define project specific MakefileSkeleton text file which is used as base for
                                   Makefiles (default: MakefileSkeleton.txt in the same directory as this script)
---debugdefgroup=GROUPNUMBER       Use group of debug defines. GROUPNUMBER can be 0, 1 or 2;
-                                  when 0: only NDEBUG is set;
-                                  when 1: both DEBUG and NDEBUG are set;
-                                  when 2: all debug-relelated defines are set except NDEBUG.
+--debugdefgroup=GROUPNUMBER       Use group of debug defines, only use for autobuilds.
+                                  GROUPNUMBER can be 0, 1 or 2;
+                                  when 0: only NDEBUG is set (release build, default);
+                                  when 1: NDEBUG and all DEBUG_... variants are set;
+                                  when 2: only all DEBUG_... variants are set;
 "update_makefile.sh" parses the selected project configuration file and overwrites the default values for all contained settings.
 It then collects the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the application source directory with the
@@ -2488,6 +2492,49 @@ EOF
 
 
 abs_dir_of(){ cd "$(dirname "$1")" && pwd; }
+
+assignments()
+{
+    local FORMAT="%s=$(literal_format $1)\n"
+    shift
+    printf "$FORMAT" "$@"
+}
+
+DEBUG_DEF_NAMES='DEBUG_ADDRESS_CLAIM
+DEBUG_CAN
+DEBUG_CANSERVER
+DEBUG_CAN_BUFFER_FILLING
+DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
+DEBUG_DEVPROPERTYHANDLER
+DEBUG_DIAGNOSTICPGN
+DEBUG_EEPROM
+DEBUG_ELEMENTBASE
+DEBUG_FIFO_CAN
+DEBUG_FIFO_WRITE
+DEBUG_FILESERVER
+DEBUG_FILESTREAMINPUT
+DEBUG_FILESTREAMOUTPUT
+DEBUG_FILTERBOX
+DEBUG_HAL
+DEBUG_HEAP_USEAGE
+DEBUG_ISOMONITOR
+DEBUG_LANGUAGE_AUTO_DETECT
+DEBUG_MSGOBJ
+DEBUG_MULTIRECEIVE
+DEBUG_MULTISEND
+DEBUG_MUTEX
+DEBUG_NETWORK_MANAGEMENT
+DEBUG_NMEA
+DEBUG_RECEIVE
+DEBUG_REGISTERERROR
+DEBUG_SCHEDULER
+DEBUG_SCHEDULER_EXTREME
+DEBUG_SENDING
+DEBUG_SENSORS
+DEBUG_SYSTEM
+DEBUG_TASKS_QUEUE
+DEBUG_TIME_EVENTS
+DEBUG_VTCOMM'
 
 check_before_user_configuration()
 {
@@ -2560,13 +2607,17 @@ check_before_user_configuration()
                 fi
                 ;;
             ('--debugdefgroup=0')
-                DEBUG_DEFINES='NDEBUG'
+                # Keep default for release build.
                 ;;
             ('--debugdefgroup=1')
-                DEBUG_DEFINES='DEBUG NDEBUG'
+                DEBUG_DEFINES="$(assignments 1 $DEBUG_DEF_NAMES)"
+                NDEBUG_DEFINE="$(wrap NDEBUG)"
+                COMBINED_DEFINES="$NDEBUG_DEFINE $DEBUG_DEFINES"
                 ;;
             ('--debugdefgroup=2')
-                DEBUG_DEFINES='DEBUG DEBUG_ADDRESS_CLAIM DEBUG_CAN DEBUG_CAN_BUFFER_FILLING DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION DEBUG_EEPROM DEBUG_ELEMENTBASE DEBUG_FIFO_CAN DEBUG_FIFO_WRITE DEBUG_HAL DEBUG_HEAP_USEAGE DEBUG_LANGUAGE_AUTO_DETECT DEBUG_NETWORK_MANAGEMENT DEBUG_RECEIVE DEBUG_SCHEDULER DEBUG_SCHEDULER_EXTREME DEBUG_SENDING DEBUG_TASKS_QUEUE DEBUG_TIME_EVENTS DEBUG_SENSORS DEBUG_MULTIRECEIVE'
+                DEBUG_DEFINES="$(assignments 1 $DEBUG_DEF_NAMES)"
+                NDEBUG_DEFINE=''
+                COMBINED_DEFINES="$NDEBUG_DEFINE $DEBUG_DEFINES"
                 ;;
             (-*)
                 echo_ "Unrecognized option $option'" 1>&2

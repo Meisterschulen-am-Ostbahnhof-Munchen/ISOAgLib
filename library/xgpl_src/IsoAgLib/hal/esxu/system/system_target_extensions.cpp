@@ -40,7 +40,7 @@ int16_t open_system()
 
 		system_is_opened = true;
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "open_micro( &t_biosextSysdata ) returns " << i16_result << "\r";
 
@@ -82,7 +82,7 @@ int16_t closeSystem( void )
   int16_t retval = close_micro();
   system_is_opened = false;
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "close_micro() returns " << retval << "\r";
 
@@ -124,7 +124,7 @@ int16_t configWatchdog()
 
   int16_t retval = config_wd( &t_watchdogConf );
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "config_wd( &t_watchdogConf( "
 //<< t_watchdogConf.wWDTime_ms << ", "

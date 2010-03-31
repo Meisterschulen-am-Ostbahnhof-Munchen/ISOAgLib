@@ -97,7 +97,7 @@ namespace HAL
     {
     int16_t retval = __HAL::set_pwm_freq(bOutput, dwFrequency);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "set_pwm_freq( "
 << (uint16_t)bOutput << ", "
@@ -118,7 +118,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
   __HAL::tOutput tOutputstatus;
   int16_t retval = __HAL::get_digout_status(aui8_channel,&tOutputstatus);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "get_digout_status( "
 << (uint16_t)aui8_channel << ", "
@@ -139,7 +139,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
     {
     int16_t retval = __HAL::set_digout(aui8_channel, wPWMValue);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "set_digout( "
 << (uint16_t)aui8_channel << ", "
@@ -163,7 +163,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
     {
     int16_t retval = __HAL::set_digout_mask(wOutputMask, wDigitalValue);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "set_digout_mask( "
 << (uint16_t)wOutputMask << ", "
@@ -185,7 +185,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 		{
 		int16_t retval = __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) );
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 << "get_adc( "
 << (uint16_t)__HAL::getPwmCurrentCheckNr(aui8_channel)

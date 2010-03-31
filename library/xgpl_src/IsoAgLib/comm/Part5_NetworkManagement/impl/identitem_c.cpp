@@ -116,7 +116,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
   if (itemState (IState_c::Active))
   { // For init again, you'd first have to stop the identity - this feature is to come somewhen (when needed)...
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
-    #if defined(DEBUG) && defined(SYSTEM_PC)
+    #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
     INTERNAL_DEBUG_DEVICE << "ERROR: Double initialization of IdentItem_c detected!!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
     MACRO_ISOAGLIB_ABORT();
     #else
@@ -149,7 +149,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     rc_eeprom.readString (p8ui8_isoNameEeprom, 8);
     mc_isoName = IsoName_c (p8ui8_isoNameEeprom);
 
-#ifdef DEBUG_NETWORK_MANAGEMENT
+#if DEBUG_NETWORK_MANAGEMENT
       INTERNAL_DEBUG_DEVICE << "Read global run state " << (int)mui8_globalRunState << " from EEPROM.";
 #endif
 
@@ -166,7 +166,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
       { // FIRST ECU power-up, try with given program parameters (eeprom is only for storage of claimed iso-name!)
         b_useParameters = true;
 
-#ifdef DEBUG_NETWORK_MANAGEMENT
+#if DEBUG_NETWORK_MANAGEMENT
       INTERNAL_DEBUG_DEVICE << " GlobalRunStateNeverClaimed" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       }
@@ -174,7 +174,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
       { // FURTHER ECU power-up, use claimed name stored in EEPROM
         // but only if not a new firmware was flashed with new ISO-Name and the EEPROM was NOT reset!
 
-#ifdef DEBUG_NETWORK_MANAGEMENT
+#if DEBUG_NETWORK_MANAGEMENT
       INTERNAL_DEBUG_DEVICE << " GlobalRunStateAlreadyClaimed" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -191,7 +191,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
       { // Illegal value in EEPROM
         b_useParameters=true;
 
-#ifdef DEBUG_NETWORK_MANAGEMENT
+#if DEBUG_NETWORK_MANAGEMENT
       INTERNAL_DEBUG_DEVICE << " Illegal value in EEPROM." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       }
@@ -199,7 +199,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
    #else
     // ERROR: Using EEPROM Address but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
-    #if defined(DEBUG) && defined(SYSTEM_PC)
+    #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
     INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c() construction but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
     MACRO_ISOAGLIB_ABORT();
     #else
@@ -512,7 +512,7 @@ bool IdentItem_c::timeEventActive( void )
       // set global run state because address claimed already
       mui8_globalRunState = GlobalRunStateAlreadyClaimed;
 
-#ifdef DEBUG_NETWORK_MANAGEMENT
+#if DEBUG_NETWORK_MANAGEMENT
       INTERNAL_DEBUG_DEVICE << "Write global run state " << (int)mui8_globalRunState << " to EEPROM." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -528,7 +528,7 @@ bool IdentItem_c::timeEventActive( void )
         #else
         // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
         getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
-        #if defined(DEBUG) && defined(SYSTEM_PC)
+        #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
         INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
         MACRO_ISOAGLIB_ABORT();
         #endif
@@ -568,7 +568,7 @@ bool IdentItem_c::timeEventActive( void )
       if (rc_foundIsoItemSameIsoName.itemState (IState_c::Local))
       { // now the ISOName is used by some other member on the BUS
         mpc_isoItem = &rc_foundIsoItemSameIsoName; // seems to be our IsoItem although it's a case that shouldn't occur!
-        #if defined(SYSTEM_PC) && defined(DEBUG)
+        #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
         INTERNAL_DEBUG_DEVICE << "ERROR: IsoName stolen by other local member, take this IsoItem then, although this shouldn't happen!" << INTERNAL_DEBUG_DEVICE_ENDL;
         MACRO_ISOAGLIB_ABORT();
         #endif
@@ -577,7 +577,7 @@ bool IdentItem_c::timeEventActive( void )
       { // now the ISOName is used by some other member on the BUS
         // ==> conflict
         setItemState (OffUnable); // withdraw from action
-        #if defined(SYSTEM_PC) && defined(DEBUG)
+        #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
         INTERNAL_DEBUG_DEVICE << "WARNING: IsoName stolen by other member on the bus (remote), so we have to shut off forever!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
       }

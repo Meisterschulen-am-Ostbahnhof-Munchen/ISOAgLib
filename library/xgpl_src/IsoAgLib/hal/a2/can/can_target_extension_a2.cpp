@@ -677,7 +677,7 @@ int16_t checkMsg()
 
     if (ui32_id >= 0x7FFFFFFF)
     {
-#ifdef DEBUG
+#if DEBUG_CAN
 //      fprintf(stderr,"!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);
 //      if( canlogDat[b_bus] )
 //        fprintf(canlogDat[b_bus], "!!Received of malformed message with undefined CAN ident: %x\n", ui32_id);

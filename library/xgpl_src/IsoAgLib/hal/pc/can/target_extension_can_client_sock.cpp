@@ -195,7 +195,7 @@ int16_t can_startDriver()
   // Initialize Winsock
   WSADATA wsaData;
   int iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
-# ifdef DEBUG_CAN
+# if DEBUG_CAN
   if (iResult != NO_ERROR)
     DEBUG_PRINT("Error at WSAStartup()\n");
 # endif
@@ -457,7 +457,7 @@ bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
 int16_t clearCanObjBuf(
     uint8_t bBusNumber,
     uint8_t
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
     aui8_msgObjNr
 #endif
   )
@@ -583,7 +583,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   memcpy(ptReceive->abData, s_transferBuf.s_data.s_canMsg.ui8_data, s_transferBuf.s_data.s_canMsg.i32_len);
 
 // would equal DEBUG_PRINT8
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
          ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
@@ -604,7 +604,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   transferBuf_s s_transferBuf;
 
 // would equal DEBUG_PRINT8
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
   printf("Senden: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
          ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
          ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
@@ -638,7 +638,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   {
     if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
     {
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
       if ((s_transferBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (s_transferBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
       {
         DEBUG_PRINT("acknowledge-error received in sendCanMsg\n");

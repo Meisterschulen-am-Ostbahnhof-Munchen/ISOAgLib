@@ -22,7 +22,7 @@
 #include <algorithm>
 
 // Debugging
-#ifdef DEBUG_MULTIRECEIVE
+#if DEBUG_MULTIRECEIVE
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -193,7 +193,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
 { // ~X2C
   // expecting data at all?
   if (mt_awaitStep != AwaitData) {
-    #ifdef DEBUG_MULTIRECEIVE
+    #if DEBUG_MULTIRECEIVE
       INTERNAL_DEBUG_DEVICE << "mt_awaitStep != AwaitData! --- mt_awaitStep ==" << mt_awaitStep << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return false;
@@ -221,7 +221,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
   }
 
   if (b_pkgNumberWrong) {
-    #ifdef DEBUG_MULTIRECEIVE
+    #if DEBUG_MULTIRECEIVE
       INTERNAL_DEBUG_DEVICE << "wrong pkg-number! ";
     #endif
     return false;
@@ -242,7 +242,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
 
   if (mui32_byteAlreadyReceived > mui32_byteTotalSize) mui32_byteAlreadyReceived = mui32_byteTotalSize; // cut any padded (0xFF) bytes...
 
-  #ifdef DEBUG_MULTIRECEIVE
+  #if DEBUG_MULTIRECEIVE
     INTERNAL_DEBUG_DEVICE << "#" << mui32_pkgNextToWrite << " ";
   #endif
 
@@ -282,12 +282,12 @@ Stream_c::setDataPageOffset (uint32_t aui32_dataPageOffset)
   if (mt_awaitStep == AwaitDpo) {
     mui32_dataPageOffset = aui32_dataPageOffset;
     awaitNextStep (AwaitData, msci32_timeOutT5);
-    #ifdef DEBUG_MULTIRECEIVE
+    #if DEBUG_MULTIRECEIVE
       INTERNAL_DEBUG_DEVICE << "DPO ";
     #endif
     return true; // was awaited!
   } else {
-    #ifdef DEBUG_MULTIRECEIVE
+    #if DEBUG_MULTIRECEIVE
       INTERNAL_DEBUG_DEVICE << "\n\n DPO was not awaited at this state (" << (uint16_t) mt_awaitStep << "), please handle as error! \n ";
     #endif
     return false; // DPO was not awaited at this state, please handle as error!

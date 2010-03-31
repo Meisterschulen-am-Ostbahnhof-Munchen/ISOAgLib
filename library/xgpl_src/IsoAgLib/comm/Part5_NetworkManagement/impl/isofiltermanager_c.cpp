@@ -149,7 +149,7 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
 void
 IsoFilterManager_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
-#ifdef DEBUG_NETWORK_MANAGEMENT
+#if DEBUG_NETWORK_MANAGEMENT
   INTERNAL_DEBUG_DEVICE << "[DNN] IsoFilterManager_c: React on IsoItem (" <<
 #  ifdef SYSTEM_PC
     "0x" << STL_NAMESPACE::hex <<

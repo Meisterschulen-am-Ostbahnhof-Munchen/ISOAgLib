@@ -105,7 +105,7 @@ public:
   //! work in the default min exec time of 5msec
   inline uint16_t getForcedMinExecTime() const;
 
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
   //  Operation: getAvgTimingAccuracy
   inline int16_t getAvgTimingAccuracy() const;
 
@@ -281,7 +281,7 @@ inline uint16_t SchedulerEntry_c::getForcedMinExecTime() const
   else return mpc_taskInstance->getForcedMinExecTime();
 }
 
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
 inline
 int16_t
 SchedulerEntry_c::getAvgTimingAccuracy() const

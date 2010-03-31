@@ -24,7 +24,7 @@
 
 #include "sensor_target_extensions.h"
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 #  include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
 
@@ -143,7 +143,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
   /* configure init channel */
   int16_t ret = init_digin(ab_channel, b_codeEdge, b_codeActiv, NULL);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - init_digin( %u, %u, %u, NULL ) returns %i\r"
 , (uint16_t) __HAL::get_time()
@@ -180,7 +180,7 @@ HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/
   /* set prescaler */
   i16_errorState = set_digin_prescaler(_b_prescale_1_Index);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - set_digin_prescaler( %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
@@ -215,7 +215,7 @@ uint16_t wTime = (uint32_t)aui16_timebase * 1000 * get_cpu_freq() >> (_b_prescal
 uint16_t numPulsesToAvg = 1;
 int16_t configretval = config_digin_freq( ab_channel, wTime, numPulsesToAvg );
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - config_digin_freq( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
@@ -246,7 +246,7 @@ uint32_t getCounter(uint8_t ab_channel)
 
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
@@ -272,7 +272,7 @@ int16_t resetCounter(uint8_t ab_channel)
 	uint16_t ui16_result = 0xFFFF, ui16_counter;
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
@@ -300,7 +300,7 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
 
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()
@@ -352,7 +352,7 @@ uint16_t getCounterFrequency(uint8_t ab_channel)
 
     int16_t retval = get_digin_freq((byte)ab_channel, &ui16_result);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 uint8_t buf[128];
 sprintf( (char*)buf, "%u ms - get_digin_freq( %u, %u ) returns %i\r"
 , (uint16_t) __HAL::get_time()

@@ -16,7 +16,7 @@
 #include "sensori_c.h"
 #include <IsoAgLib/util/config.h>
 
-#ifdef DEBUG
+#if DEBUG_SENSORS
 #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
@@ -131,7 +131,7 @@ void DigitalI_c::init(uint8_t ab_channel, Sensor_c::onoff_t ren_onoff, bool ab_s
     getSensorInstance().registerClient( this );
     // register optional pointer to handler
     if ( ab_channel < 16 ) ppc_handler[ab_channel] = apc_handler;
-    #ifdef DEBUG
+    #if DEBUG_SENSORS
     if ( apc_handler != NULL )
      INTERNAL_DEBUG_DEVICE << "DigitalI_c::init() zu Channel: " << uint16_t(ab_channel) << " mit IRQ Handler" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif

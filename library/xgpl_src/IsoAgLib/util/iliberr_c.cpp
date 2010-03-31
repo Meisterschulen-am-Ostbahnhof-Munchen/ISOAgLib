@@ -16,7 +16,7 @@
 #include <IsoAgLib/hal/hal_system.h>
 
 
-#ifdef DEBUG
+#if DEBUG_REGISTERERROR
 	#ifdef SYSTEM_PC
 		#include <iostream>
 	#else
@@ -72,7 +72,7 @@ void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t at_errType, iLibErrLoca
     errTypeAtLoc [at_errLocation].set (at_errType);
   }
 
-#ifdef DEBUG
+#if DEBUG_REGISTERERROR
   static int32_t si32_nextDebug = 0;
   static iLibErr_c::iLibErrTypes_t st_lastDebugErrType;
   static iLibErrLocations_t st_lastDebugErrLocation;

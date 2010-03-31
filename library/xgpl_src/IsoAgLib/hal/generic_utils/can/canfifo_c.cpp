@@ -20,7 +20,7 @@
 
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
 #include "canfifo_c.h"
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
 
@@ -157,7 +157,7 @@ bool iFifoIsMsgAvailable(uint8_t aui8_busNum)
 
   if(aui8_busNum > HAL_CAN_MAX_BUS_NR )
   {
-      #ifdef DEBUG
+      #if DEBUG_FIFO_CAN
       INTERNAL_DEBUG_DEVICE << "iFifoIsMsgAvailable: input parameter error "  << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return false;
@@ -186,7 +186,7 @@ bool isFifoCriticalFilled(uint8_t aui8_busNum)
 /**buffer is critically filled */
   if(ui_tmpUc > ui_tmpAc +(getBufferSize() * 2) - cui_toleranceLevel )
   {
-    #ifdef DEBUG
+    #if DEBUG_FIFO_CAN
     INTERNAL_DEBUG_DEVICE << " Can Fifo is critical filled" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     return true;
@@ -240,7 +240,7 @@ USE_NEAR_MEM fifoData_s* ps_readData = &s_canFifoInstance[aui8_busNum].p_fifoBuf
   rui32_msgId = ps_readData->dwId;
   getFifoCanIdenType(ps_readData->bXtd, r_msgtype);
 
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
 INTERNAL_DEBUG_DEVICE
         << " iFifoReadFbIdx:READER in the buffer index =" << ((s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()) << INTERNAL_DEBUG_DEVICE_ENDL;
 INTERNAL_DEBUG_DEVICE
@@ -304,7 +304,7 @@ int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData)
 
   //aref_readData = s_canFifoInstance[rui8_busNum].p_fifoBuffer[(s_canFifoInstance[rui8_busNum].ui_AckCount/2)% getBufferSize()];
 
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
   INTERNAL_DEBUG_DEVICE << "iFifoRead: READER in the buffer index = " << ((s_canFifoInstance[aui8_busNum].ui_AckCount/2)% getBufferSize()) << INTERNAL_DEBUG_DEVICE_ENDL;
 #ifdef SYSTEM_PC
   std::cout.setf( std::ios_base::hex, std::ios_base::basefield );
@@ -377,7 +377,7 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
       {
            iFifoDiscardOldMessage(aui8_busNum); //AC+=2
 
-          #ifdef DEBUG_FIFO_WRITE
+          #if DEBUG_FIFO_WRITE
             INTERNAL_DEBUG_DEVICE << "Discarded an old message " << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
            IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
@@ -385,7 +385,7 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
           //overwrite the old message
            ui_tmpAc = s_canFifoInstance[aui8_busNum].ui_AckCount;
 
-			#ifdef DEBUG_FIFO_CAN
+			#if DEBUG_FIFO_CAN
 
 			  __HAL::tSend pt_send;
 			  pt_send.bXtd = 1;
@@ -452,7 +452,7 @@ bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId,void* 
           pui8_source++;
   }
 */
-#ifdef DEBUG_FIFO_WRITE
+#if DEBUG_FIFO_WRITE
   INTERNAL_DEBUG_DEVICE << "WRITER in the buffer index = " << ((ui_tmpUc/2)% getBufferSize()) ;
   INTERNAL_DEBUG_DEVICE << ", DATA WRITTEN fbIndex = " << s_canFifoInstance[aui8_busNum].p_fifoBuffer[(ui_tmpUc/2)% getBufferSize()].i32_fbIndex ;
 

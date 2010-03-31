@@ -34,7 +34,7 @@
 
 #include <IsoAgLib/util/iassert.h>
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+#if DEBUG_VTCOMM || DEBUG_HEAP_USEAGE
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
@@ -45,7 +45,7 @@
 #endif
 
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
   static uint16_t sui16_lastPrintedMaxSendUploadQueueSize = 0;
   static uint16_t sui16_sendUploadQueueSize = 0;
@@ -420,7 +420,7 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
   { // store version was timed out
     if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
     { // we couldn't store for some reason, but don't care, finalize anyway...
-#ifdef DEBUG
+#if DEBUG_VTCOMM
       INTERNAL_DEBUG_DEVICE << "StoreVersion TimedOut!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       finalizeUploading();
@@ -557,7 +557,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
-#ifdef DEBUG
+#if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Requested first property (C2)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
@@ -571,7 +571,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
-#ifdef DEBUG
+#if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
@@ -587,7 +587,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
                           199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
     getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Hardware
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
-#ifdef DEBUG
+#if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
@@ -648,7 +648,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
       mui32_uploadTimeout = DEF_TimeOut_LoadVersion;
       mui32_uploadTimestamp = HAL::getTime();
-#ifdef DEBUG
+#if DEBUG_VTCOMM
       INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     }
@@ -670,7 +670,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 bool
 VtClientServerCommunication_c::timeEvent(void)
 {
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   if ((sui16_lastPrintedSendUploadQueueSize < sui16_sendUploadQueueSize)
   || (sui16_lastPrintedMaxSendUploadQueueSize < sui16_maxSendUploadQueueSize))
   { // MAX amount of sui16_sendUploadQueueSize or sui16_maxSendUploadQueueSize
@@ -903,7 +903,7 @@ VtClientServerCommunication_c::processMsgAck()
       case WORKING_SET_MASTER_PGN:
         /// fake NOT-alive state of VT for now!
         mpc_vtServerInstance->resetVtAlive(); // set VTalive to FALSE, so the queue will be emptied down below on the state change check.
-#ifdef DEBUG
+#if DEBUG_VTCOMM
         INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                               << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
 #endif
@@ -1027,7 +1027,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
 bool
 VtClientServerCommunication_c::processMsg()
 {
-//  #ifdef DEBUG
+//  #if DEBUG_VTCOMM
 //  INTERNAL_DEBUG_DEVICE << "Incoming Message: mc_data.isoPgn=" << mc_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)mc_data.getUint8Data (0) << "...  ";
 //  #endif
 
@@ -1193,7 +1193,7 @@ VtClientServerCommunication_c::processMsg()
     case 0xA4: // Command: "Command", parameter "Set Audio Volume Response"
     case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
 
-#ifdef DEBUG
+#if DEBUG_VTCOMM
       if (0xB2 == mc_data.getUint8Data (0))
         INTERNAL_DEBUG_DEVICE << "Received response for 'Delete Object Pool' message!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -1366,7 +1366,7 @@ VtClientServerCommunication_c::processMsg()
         if ((mc_data.getUint8Data (5) & 0x0F) == 0)
         { // Successfully loaded
           finalizeUploading ();
-#ifdef DEBUG
+#if DEBUG_VTCOMM
           INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         }
@@ -1374,7 +1374,7 @@ VtClientServerCommunication_c::processMsg()
         {
           if (mc_data.getUint8Data (5) & (1<<2))
           { // Bit 2: // Insufficient memory available
-#ifdef DEBUG
+#if DEBUG_VTCOMM
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
             vtOutOfMemory();
@@ -1385,7 +1385,7 @@ VtClientServerCommunication_c::processMsg()
             // Version label not known
             initObjectPoolUploadingPhases (UploadPoolTypeCompleteInitially); // Send out pool! send out "Get Technical Data - Get Memory Size", etc. etc.
             sendGetMemory();
-#ifdef DEBUG
+#if DEBUG_VTCOMM
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with VersionNotFound..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
           }
@@ -1421,7 +1421,7 @@ VtClientServerCommunication_c::processMsg()
             ui8_uploadCommandError = mc_data.getUint8Data (ui8_errByte-1);
           /// Inform user on success/error of this command
           mrc_pool.eventCommandResponse (ui8_uploadCommandError, mc_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "mc_data.name()"
-#ifdef DEBUG
+#if DEBUG_VTCOMM
           if (ui8_uploadCommandError != 0)
           { /* error */
             INTERNAL_DEBUG_DEVICE << ">>> Command " << (uint32_t) mui8_commandParameter<< " failed with error " << (uint32_t) ui8_uploadCommandError << "!" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1483,7 +1483,7 @@ VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c&
 bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
 {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << mq_sendUpload.size() << " -> ";
 #endif
 
@@ -1496,7 +1496,7 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 bool
 VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << mq_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -1508,7 +1508,7 @@ VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_
 bool
 VtClientServerCommunication_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size)
 {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued TP-bytes: " << mq_sendUpload.size() << " -> ";
 #endif
 
@@ -1520,7 +1520,7 @@ VtClientServerCommunication_c::sendCommand (uint8_t* apui8_buffer, uint32_t ui32
 bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectString, bool b_enableReplaceOfCmd)
 {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued stringObject-mss: " << mq_sendUpload.size() << " -> ";
 #endif
 
@@ -1643,7 +1643,7 @@ VtClientServerCommunication_c::sendCommandChangeActiveMask (uint16_t aui16_objec
 bool
 VtClientServerCommunication_c::sendCommandChangeStringValue (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd)
 {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued string-ref: " << mq_sendUpload.size() << " -> ";
 #endif
 
@@ -2050,7 +2050,7 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
 bool
 VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c* apc_object, bool b_lockMask, uint16_t ui16_lockTimeOut, bool b_enableReplaceOfCmd)
 {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "\n LOCK *** LOCK *** send lock(1)/unlock(0) message. With b_lockMask = " << b_lockMask << INTERNAL_DEBUG_DEVICE_ENDL;
   INTERNAL_DEBUG_DEVICE << "   and client sa = " << (int)dataBase().isoSa() << " and client id = " << (int)getClientId() << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -2083,7 +2083,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
 {
   if (men_objectPoolState != OPUploadedSuccessfully)
   {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "--NOT ENQUEUED - POOL NO YET COMPLETELY UPLOADED!--" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
     return false;
@@ -2129,7 +2129,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
               break;
 
             // the rest is not possible by definition, but for being sure :-)
-#ifdef DEBUG
+#if DEBUG_VTCOMM
             INTERNAL_DEBUG_DEVICE << "--INVALID COMMAND! SHOULDN'T HAPPEN!!--" << INTERNAL_DEBUG_DEVICE_ENDL;
             INTERNAL_DEBUG_DEVICE << "commandByte " << (int)ui8_offset << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -2189,13 +2189,13 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
   }
   else
     *p_queue = ar_sendUpload; // overloaded "operator="
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize++;
   if (sui16_sendUploadQueueSize > sui16_maxSendUploadQueueSize)
     sui16_maxSendUploadQueueSize = sui16_sendUploadQueueSize;
 #endif
 
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
   //dumpQueue(); /* to see all enqueued cmds after every enqueued cmd */
 #endif
@@ -2223,7 +2223,7 @@ VtClientServerCommunication_c::dumpQueue()
     {
       for (uint8_t i=0; i<=7; i++)
       {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
         INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(i_sendUpload->vec_uploadBuffer[i]);
 #endif
       }
@@ -2236,14 +2236,14 @@ VtClientServerCommunication_c::dumpQueue()
         i_sendUpload->mssObjectString->getStreamer()->setDataNextStreamPart (&msp, (unsigned char) ((i_strSize - i) > 7 ? 7 : (i_strSize-i)));
         for (uint8_t j=1; j<=7; j++)
         {
-#ifdef DEBUG
+#if DEBUG_VTCOMM
           INTERNAL_DEBUG_DEVICE << " " << (uint16_t)(msp[j]);
 #endif
         }
       }
     }
   }
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
@@ -2277,7 +2277,7 @@ VtClientServerCommunication_c::doStop()
   mi32_timeWsAnnounceKey = -1;
 
   // VT has left the system - clear all queues now, don't wait until next re-entering (for memory reasons)
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   sui16_sendUploadQueueSize -= mq_sendUpload.size();
 #endif
 #ifdef USE_LIST_FOR_FIFO
@@ -2311,7 +2311,7 @@ VtClientServerCommunication_c::checkVtStateChange()
 
   if (!b_vtAliveOld && mb_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
-#ifdef DEBUG
+#if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=========================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has entered the system, trying to receive all Properties now... ==="
@@ -2324,7 +2324,7 @@ VtClientServerCommunication_c::checkVtStateChange()
   }
   else if (b_vtAliveOld && !mb_vtAliveCurrent)
   { /// ON -> OFF  ***  Connection to VT lost
-#ifdef DEBUG
+#if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
@@ -2448,7 +2448,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     mui16_objectPoolUploadedLanguageCode = mui16_objectPoolUploadingLanguageCode;
     mi8_objectPoolUploadingLanguage = -2; // -2 indicated that the language-update while pool is up IS IDLE!
     mui16_objectPoolUploadingLanguageCode = 0x0000;
-  #ifdef DEBUG
+  #if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "===> finalizeUploading () with language: "<<(int)mi8_objectPoolUploadedLanguage;
     if (mi8_objectPoolUploadedLanguage >= 0) INTERNAL_DEBUG_DEVICE <<" ["<<uint8_t(mui16_objectPoolUploadedLanguageCode>>8) <<uint8_t(mui16_objectPoolUploadedLanguageCode&0xFF)<<"]";
     INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2459,7 +2459,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
     }
     else
     {
-  #ifdef DEBUG
+  #if DEBUG_VTCOMM
       INTERNAL_DEBUG_DEVICE << "Now men_objectPoolState = OPUploadedSuccessfully;" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
       men_objectPoolState = OPUploadedSuccessfully;
@@ -2599,7 +2599,7 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
   {
 
     //dumpQueue(); /* to see all left queued cmds after every dequeued cmd */
-    #ifdef DEBUG
+    #if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Dequeued (after success, timeout, whatever..): " << mq_sendUpload.size() <<" -> ";
     #endif
 
@@ -2609,11 +2609,11 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
     #else
     mq_sendUpload.pop();
     #endif
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_sendUploadQueueSize--;
     #endif
 
-    #ifdef DEBUG
+    #if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << mq_sendUpload.size() << "." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
@@ -2637,7 +2637,7 @@ VtClientServerCommunication_c::finishUploadCommand(bool ab_TEMPORARYSOLUTION_fro
       }
     }
   }
-#ifdef DEBUG
+#if DEBUG_VTCOMM
   else
   {
     INTERNAL_DEBUG_DEVICE << "Attempt to Dequeue while empty!" << INTERNAL_DEBUG_DEVICE_ENDL;

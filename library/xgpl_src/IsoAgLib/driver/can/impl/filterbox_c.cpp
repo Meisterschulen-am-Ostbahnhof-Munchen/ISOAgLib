@@ -16,7 +16,7 @@
 #include "canio_c.h"
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE) || defined(DEBUG_CAN_BUFFER_FILLING)
+#if DEBUG_FILTERBOX || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -187,7 +187,7 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
       break;
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
-      #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
+      #if DEBUG_CAN_BUFFER_FILLING || DEBUG_FILTERBOX
       INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
@@ -335,14 +335,14 @@ bool FilterBox_c::processMsg()
       const int32_t ci32_fifoRet = HAL::fifo_useMsgObjGet(mui8_busNumber, pc_target);
       if (ci32_fifoRet != HAL_NO_ERR)
       {
-      #ifdef DEBUG
+      #if DEBUG_FILTERBOX
          INTERNAL_DEBUG_DEVICE
         << "Central Fifo - Reading problem on bus : " << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
         IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
         return false;
       }
-      #ifdef DEBUG
+      #if DEBUG_FILTERBOX
          INTERNAL_DEBUG_DEVICE
         << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
@@ -360,7 +360,7 @@ bool FilterBox_c::processMsg()
     else
     { // dlc-check was requested but failed
 
-      #ifdef DEBUG
+      #if DEBUG_FILTERBOX
          INTERNAL_DEBUG_DEVICE
         << "DLC_ERROR on identifier : " << pc_target->ident() << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
@@ -450,7 +450,7 @@ bool FilterBox_c::processMsg()
   return false;
 }
 
-#ifdef DEBUG_CAN_BUFFER_FILLING
+#if DEBUG_CAN_BUFFER_FILLING
 /** some debug messages */
 void FilterBox_c::doDebug(uint8_t aui8_busNumber)
 {

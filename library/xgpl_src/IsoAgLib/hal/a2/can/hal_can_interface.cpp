@@ -568,7 +568,7 @@ int16_t can_configMsgobjLock( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab
 {
   if ( ( aui8_busNr >= cui32_maxCanBusCnt ) || ( aui8_msgobjNr> 14 ) ) return HAL_RANGE_ERR;
 
-  #ifdef DEBUG
+  #if DEBUG_CAN
   char temp[30];
   sprintf( temp, "Lock: %d, Bus %hd, MsgObj: %hd\r\n", ab_doLock, aui8_busNr, aui8_msgobjNr );
   __HAL::put_rs232_string( (uint8_t*)temp );

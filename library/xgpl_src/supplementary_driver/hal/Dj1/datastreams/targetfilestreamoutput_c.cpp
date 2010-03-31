@@ -28,7 +28,7 @@ namespace __HAL
   }
 }
 
-#if defined(DEBUG)
+#if DEBUG_FILESTREAMOUTPUT
   #ifdef SYSTEM_PC
     #include <iostream>
   #else

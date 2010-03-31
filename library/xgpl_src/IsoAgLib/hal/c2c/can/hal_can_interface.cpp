@@ -166,7 +166,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
 
          bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,i32_msgId,(void*)tCanregister);
 
-          #ifdef DEBUG_FIFO_WRITE
+          #if DEBUG_FIFO_WRITE
            if(!b_ret)
            {
               INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -519,7 +519,7 @@ int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgL
 
   pt_config->wPause = 0;
 
-  #ifdef DEBUG_CAN_BUFFER_FILLING
+  #if DEBUG_CAN_BUFFER_FILLING
   char temp[100];
   sprintf( temp, "Init CAN MsgObj with: Bus %hd, MsgObj: %hd, Filter: 0x%lx, FIFO-Size: %d\r\n",
     aui8_busNr, aui8_msgobjNr, pt_config->dwId, pt_config->wNumberMsgs );

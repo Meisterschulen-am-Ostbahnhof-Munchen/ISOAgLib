@@ -66,7 +66,7 @@ public:
   /** destructor of MsgObj_c instance, which closes the hardware MsgObj_c */
   ~MsgObj_c();
 
-#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+#if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 
   void printMyFilterBox();
 

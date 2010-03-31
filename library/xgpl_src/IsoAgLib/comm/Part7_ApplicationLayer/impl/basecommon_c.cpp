@@ -17,15 +17,6 @@
 #include "basecommon_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
-#if defined(DEBUG)
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
-#endif
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -101,15 +92,6 @@ bool BaseCommon_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMod
      )
   { // the application is in tractor mode but has no valid isoName
     // IMPORTANT: if we are in tractor mode we MUST have a valid isoName otherwise the configuration makes no sense
-    #ifdef DEBUG
-      INTERNAL_DEBUG_DEVICE << "CONFIG FAILURE. The config function was called with isoName == NULL and\
-                                IdentModeTractor. Is is not allowed that the isoName is NULL in combination\
-                                with tractor mode."
-                            << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
-    #if defined(DEBUG) && defined(SYSTEM_PC)
-      MACRO_ISOAGLIB_ABORT();
-    #endif
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Base );
     return false;
   }

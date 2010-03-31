@@ -168,7 +168,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
 
          bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,i32_msgId,(void*)tCanregister);
 
-          #ifdef DEBUG_FIFO_WRITE
+          #if DEBUG_FIFO_WRITE
            if(!b_ret)
            {
               INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -612,7 +612,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
   }
   #endif
 
-  #ifdef DEBUG
+  #if DEBUG_CAN
   static uint8_t lastSendData[cui32_maxCanBusCnt][2][8];
   static uint8_t lastSendLen[cui32_maxCanBusCnt][2];
   static uint32_t lastSendIdent[cui32_maxCanBusCnt][2];
@@ -669,7 +669,7 @@ int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib:
     while ( ( 1000 - __HAL::get_rs232_tx_buf_count() ) < strlen( temp ) ) __HAL::wd_triggern();
     __HAL::put_rs232_string( (uint8_t*)temp );
   }
-  #endif // end of DEBUG
+  #endif // end of DEBUG_CAN
 
 
   #ifdef USE_CAN_MEASURE_BUSLOAD

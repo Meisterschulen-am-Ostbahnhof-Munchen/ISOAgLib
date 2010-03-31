@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#if defined(DEBUG)
+#if DEBUG_SCHEDULER
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -37,7 +37,7 @@ Scheduler_Task_c::Scheduler_Task_c()
 , mi32_nextRetriggerTime( 0 )
 , mui32_callCnt( 0 )
 , mui32_sumTime( 0 )
-#ifdef DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
 , mi32_sumTimingAccuracy( 0 )
 , mi16_minTimingAccuracy( 32767 )
 , mi16_maxTimingAccuracy( -3276 )
@@ -136,7 +136,7 @@ Scheduler_Task_c::timeEventPostUpdateStatistics()
   if ( mui32_callCnt != 0 )
   {
     mui32_sumTime += mui16_approxExecTime;
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     if ( mui16_approxExecTime > mui16_maxTime ) mui16_maxTime = mui16_approxExecTime;
     if ( mui16_approxExecTime < mui16_minTime ) mui16_minTime = mui16_approxExecTime;
     const int32_t i32_tempTriggerTimeDelta = ( mi32_nextRetriggerTime - msi32_retriggerTime );
@@ -148,7 +148,7 @@ Scheduler_Task_c::timeEventPostUpdateStatistics()
   else
   { /// mui32_callCnt overflow -> reset values to get valid AVG,...
     mui32_sumTime = 0;
-    #ifdef DEBUG_SCHEDULER
+    #if DEBUG_SCHEDULER
     mui16_maxTime = 0;
     mui16_minTime = 0xFFFF;
     mi32_sumTimingAccuracy = 0;
@@ -223,7 +223,7 @@ Scheduler_Task_c::setTimePeriod
   mui16_timePeriod = aui16_timePeriod;
   //call Function to calculate new intervals
   updateEarlierAndLatestInterval();
-  #ifdef DEBUG_SCHEDULER
+  #if DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE
       << "Scheduler_Task_c::setTimePeriod( " << aui16_timePeriod << ") zu Task "
       << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;

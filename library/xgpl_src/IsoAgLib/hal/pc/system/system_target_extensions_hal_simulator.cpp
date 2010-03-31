@@ -51,7 +51,7 @@
   #include <linux/version.h>
 #endif
 
-#ifdef DEBUG
+#if DEBUG_HAL
 #define DEBUG_PRINT(str) printf(str); fflush(0)
 #define DEBUG_PRINT1(str,a) printf(str,a); fflush(0)
 #define DEBUG_PRINT2(str,a,b) printf(str,a,b); fflush(0)

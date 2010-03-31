@@ -104,7 +104,7 @@ namespace HAL
     {
     int16_t retval = __HAL::get_snr(snrDat);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "get_snr( "
 //<< (uint16_t) *snrDat
@@ -141,7 +141,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     {
     int16_t retval = __HAL::get_lokal_id(Dat);
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "getLokalId( "
 //<< (uint16_t) *Dat
@@ -170,7 +170,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     {
     __HAL::start_task_timer ( T_TASK_BASIC );
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "start_task_timer( "
 //<< (uint16_t) T_TASK_BASIC
@@ -202,7 +202,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     {
     int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 #if 0
 // don't use CNAMESPACE in header, doesn't always work properly
 // maybe reactivate the statement above using getIrs232Instance(..)
@@ -230,7 +230,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
     {
     int16_t retval = __HAL::get_task_overload ();
 
-#if defined( DEBUG_HAL )
+#if DEBUG_HAL
 #if 0
 // don't use CNAMESPACE in header, doesn't always work properly
 // maybe reactivate the statement above using getIrs232Instance(..)

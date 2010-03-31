@@ -123,7 +123,7 @@ void checkAndHandleOptionsAndStartup(int argc, char *argv[], __HAL::server_c &ar
     printSettings (ar_server);
   }
 
-#ifdef DEBUG
+#if DEBUG_CANSERVER
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
 #else

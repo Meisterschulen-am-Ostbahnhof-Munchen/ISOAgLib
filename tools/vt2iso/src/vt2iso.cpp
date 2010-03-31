@@ -910,7 +910,7 @@ signed long int vt2iso_c::getID (const char* objName, bool b_isMacro, bool b_wis
     /// only insert object if it is basic or proprietary
     if ( checkForAllowedExecution() )
     { // insert new name-id pair now!
-#ifdef DEBUG
+#if DEBUG
       std::cout << "Inserting name-ID-pair (" << str_objName << ", " << foundID << ")" << std::endl;
 #endif
       map_objNameIdTable.insert (pair<std::string, uint16_t>(str_objName, foundID));
@@ -1681,13 +1681,13 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
 
   if (getAttributeValue (n, "language")[0] != 0x00)
   { // language found, no need to auto-detection
-#ifdef DEBUG_LANGUAGE_AUTO_DETECT
+#if DEBUG_LANGUAGE_AUTO_DETECT
     std::cout << "AUTO-DETECT-LANGUAGE: language=\""<< getAttributeValue (n, "language") << "\" directly specified for ["<< searchName <<"]."<<std::endl;
 #endif
     return;
   }
 
-// #ifdef DEBUG_LANGUAGE_AUTO_DETECT
+// #if DEBUG_LANGUAGE_AUTO_DETECT
 //   std::cout << "AUTO-DETECT-LANGUAGE: searching language file for ["<<searchName<<"]... ";
 // #endif
 // language not explicitly given, check if it should be given implicitly
@@ -1735,7 +1735,7 @@ void vt2iso_c::autoDetectLanguage (DOMNode *n)
     }
   }
   ((DOMElement *)n)->setAttribute (X("language"), X(newLanguageValue.c_str()));
-#ifdef DEBUG_LANGUAGE_AUTO_DETECT
+#if DEBUG_LANGUAGE_AUTO_DETECT
   if (newLanguageValue[0] != 0x00)
     std::cout << "AUTO-DETECT-LANGUAGE: FOUND: ["<<newLanguageValue <<"] for "<<searchName<<"."<<std::endl;
 #endif
@@ -1928,7 +1928,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   }
   else
   { /// Standard ISO Object
-#if defined ( DEBUG )
+#if DEBUG
   fprintf(stderr, "  objType = %d\n", objType);
   fprintf(stderr, "  maxObjectTypes = %d\n", maxObjectTypes);
 #endif
@@ -3583,7 +3583,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   // possible: check which objects are allowed as child...
   uint64_t omcType = omcTypeTable [objType];
 
-#if defined ( DEBUG )
+#if DEBUG
   fprintf(stderr, "  omcType = %lld (0x%LX)\n", omcType, omcType);
 #endif
 
@@ -3594,7 +3594,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   else if ( pc_specialParsingPropTag && (objType >= maxObjectTypes) )
   {
     pc_specialParsingPropTag->setOmcType(omcType, &ombType, objType);
-#if defined ( DEBUG )
+#if DEBUG
   fprintf(stderr, "  reset omcType to %lld (0x%LX)\n", omcType, omcType);
 #endif
   }
@@ -3611,7 +3611,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-#if defined ( DEBUG )
+#if DEBUG
   fprintf(stderr, "  call 'processElement' for child ...\n");
 #endif
       if (!processElement (child, omcType/*, rpcc_inKey, rpcc_inButton*/))
@@ -5378,7 +5378,7 @@ void vt2iso_c::markIds (DOMNode *n)
           exit (-1);
         }
         mbitset_objIdUsed.set (id, 1);
-#ifdef DEBUG
+#if DEBUG
         std::cout << "Setting Uid" << id << " to true!"<<std::endl;
 #endif
         continue;
@@ -5395,7 +5395,7 @@ void vt2iso_c::markIds (DOMNode *n)
     { // save it in the table, so we can solve forward-references
       // (which is actually not needed for "normal" forward-references
       // but forward-references in macro-commands!)
-#ifdef DEBUG
+#if DEBUG
       std::cout << "Inserting name-ID-pair (" << name << ", " << id << ")" << std::endl;
 #endif
       map_objNameIdTable.insert (std::pair<std::string, uint16_t>(name, uint16_t(id)));
@@ -5406,7 +5406,7 @@ void vt2iso_c::markIds (DOMNode *n)
   {
     if (child->getNodeType() == DOMNode::ELEMENT_NODE)
     {
-#if defined ( DEBUG )
+#if DEBUG
       fprintf(stderr, "  call 'markIds' for child ...\n");
 #endif
       markIds (child);

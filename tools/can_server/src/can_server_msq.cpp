@@ -86,7 +86,7 @@
 #include "can_server.h"
 #include "can_server_common.h"
 
-#ifdef DEBUG
+#if DEBUG_CANSERVER
   //backtrace
   #include <unistd.h>
   #include <execinfo.h>
@@ -686,7 +686,7 @@ static void* can_write_thread_func(void* ptr)
 
     if ((pc_serverData->mi16_reducedLoadOnIsoBus == msqWriteBuf.ui8_bus) && (msqWriteBuf.s_canMsg.i32_msgType != 0))
     { // We're on ISOBUS with EXTENDED Identifier, so mark this SA as LOCAL (i.e. NOT REMOTE)
-      #ifdef DEBUG
+      #if DEBUG_CANSERVER
       if (pc_serverData->marrb_remoteDestinationAddressInUse[msqWriteBuf.s_canMsg.ui32_id & 0xFF])
       {
         DEBUG_PRINT1("Reduced ISO bus load: source address 0x%x is now LOCAL (has been REMOTE until now)\n", msqWriteBuf.s_canMsg.ui32_id & 0xFF);
@@ -903,7 +903,7 @@ static void can_read(__HAL::server_c* pc_serverData)
     { // check for new source address
       if ((pc_serverData->mi16_reducedLoadOnIsoBus == (int16_t)channel_with_change) && (s_canMsg.i32_msgType != 0))
       { // On ISOBUS, mark this SA as REMOTE
-        #ifdef DEBUG
+        #if DEBUG_CANSERVER
         if (!pc_serverData->marrb_remoteDestinationAddressInUse[s_canMsg.ui32_id & 0xFF] && ((s_canMsg.ui32_id & 0xFF) != 0xFE)) // skip 0xFE source address
         { // new, unknown source address
           DEBUG_PRINT1("Reduced ISO bus load: new source address 0x%x is now marked as REMOTE (was LOCAL before).\n", s_canMsg.ui32_id & 0xFF);
@@ -1283,7 +1283,7 @@ static void* command_thread_func(void* ptr)
 
 /////////////////////////////////////////////////////////////////////////
 
-#ifdef DEBUG
+#if DEBUG_CANSERVER
 void print_trace (void)
 {
     void * array[100];
@@ -1351,7 +1351,7 @@ int main(int argc, char *argv[])
     std::cerr << "error creating queues\n" << std::endl;
     exit(1);
   }
-#ifdef DEBUG
+#if DEBUG_CANSERVER
   reserve_memory_heap = new char[4096];
   signal(11,segfaulthand);
 #endif

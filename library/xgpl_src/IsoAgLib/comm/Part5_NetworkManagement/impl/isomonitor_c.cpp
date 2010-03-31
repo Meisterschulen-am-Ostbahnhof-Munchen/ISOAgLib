@@ -23,7 +23,7 @@
   #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #endif
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
+#if DEBUG_ISOMONITOR || DEBUG_HEAP_USEAGE
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -38,7 +38,7 @@
  */
 #define SA_REQUEST_PERIOD_MSEC 60000
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
 static uint16_t sui16_isoItemTotal = 0;
 #endif
 
@@ -87,7 +87,7 @@ void IsoMonitor_c::init( void )
   if (checkAlreadyClosed())
   {
     mc_data.setSingletonKey( getSingletonVecKey() );
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_isoItemTotal -= mvec_isoMember.size();
     #endif
     mvec_isoMember.clear();
@@ -277,7 +277,7 @@ bool IsoMonitor_c::timeEvent( void )
         if ( pc_iter->itemState( IState_c::PossiblyOffline) )
         { // it's too late the second time -> remove it
           Vec_ISOIterator pc_iterDelete = pc_iter;
-          #ifdef DEBUG_HEAP_USEAGE
+          #if DEBUG_HEAP_USEAGE
           sui16_isoItemTotal--;
 
           INTERNAL_DEBUG_DEVICE
@@ -579,7 +579,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& acrc_isoName,
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
     getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *pc_result);
   }
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   sui16_isoItemTotal++;
 
   INTERNAL_DEBUG_DEVICE
@@ -897,7 +897,7 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
     mvec_isoMember.erase(mpc_isoMemberCache);
     // immediately reset cache, because it may have gotten invalid due to the erase!!
     mpc_isoMemberCache = mvec_isoMember.begin();
-    #ifdef DEBUG_HEAP_USEAGE
+    #if DEBUG_HEAP_USEAGE
     sui16_isoItemTotal--;
 
     INTERNAL_DEBUG_DEVICE
@@ -1098,7 +1098,7 @@ bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
   // now send own SA in case at least one local ident has yet claimed adress
   if (b_sendOwnSa)
   {
-    #ifdef DEBUG_CAN
+    #if DEBUG_ISOMONITOR
     INTERNAL_DEBUG_DEVICE << "Send checking SA request (sendRequestForClaimedAddress())" << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     const uint8_t cui8_localCnt = localIsoMemberCnt();

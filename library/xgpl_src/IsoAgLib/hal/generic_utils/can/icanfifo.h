@@ -57,7 +57,7 @@ void iFifoPopMessage(uint8_t aui8_busNumber);
 
 int32_t fifo_useMsgObjGet(uint8_t aui8_busNumber,__IsoAgLib::CanPkg_c* apc_data);
 
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
 void printIrqTable(uint8_t aui8_busNumber);
 #endif
 

@@ -13,9 +13,9 @@
 #ifndef _PC_HAL_CAN_CAN_SERVER_H_
 #define _PC_HAL_CAN_CAN_SERVER_H_
 
-//#define DEBUG_CAN
+//#define DEBUG_CAN 1
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
 //lint –emacro( {717}, DEBUG_PRINT_ )
 #  define DEBUG_PRINT_(args) do { printf args; fflush(0); } while (0)
 #else

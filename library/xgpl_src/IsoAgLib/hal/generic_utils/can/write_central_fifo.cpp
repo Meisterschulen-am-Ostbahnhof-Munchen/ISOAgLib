@@ -45,7 +45,7 @@ static uint8_t minReceiveObjNr[cui32_maxNbrCan];
 
 bool isIrqTable(uint8_t aui8_busNum, uint8_t aui8_objNum)
 {
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
   if(aui8_busNum > HAL_CAN_MAX_BUS_NR || aui8_objNum - minReceiveObjNr[aui8_busNum] >= cui8_numMsbObj)
   {
     // range error
@@ -73,7 +73,7 @@ void setIrqMinReceiveObjNr(uint8_t aui8_busNum,uint8_t aui8_minObjNr)
 /** free the table related a busNum */
 void freeIrqTable(uint8_t aui8_busNum)
 {
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
   if(aui8_busNum > HAL_CAN_MAX_BUS_NR )
   {
     // range error
@@ -166,7 +166,7 @@ void findFilterBox(uint8_t aui8_busNum, uint8_t aui8_objNr,uint32_t rui32_msgId,
 }
 
 
-#ifdef DEBUG
+#if DEBUG_FIFO_CAN
 void printIrqTable(uint8_t rui8_busNum)
 {
 

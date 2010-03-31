@@ -410,7 +410,7 @@ class CanIo_c : public SingletonCanIo_c {
   FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx) {return m_arrFilterBox[ai32_fbIdx];};
 
 
-  #if defined(DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION) && !defined(SYSTEM_WITH_ENHANCED_CAN_HAL)
+  #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION && !defined(SYSTEM_WITH_ENHANCED_CAN_HAL)
   void printMsgObjInfo();
   #endif
 
@@ -528,7 +528,7 @@ class CanIo_c : public SingletonCanIo_c {
     */
   bool baseCanInit(uint16_t aui16_bitrate);
 
-#ifdef DEBUG
+#if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
   void doDebug(uint8_t ui8_busNr, uint8_t ui8_sendObjNr);
 #endif
 
@@ -569,7 +569,7 @@ class CanIo_c : public SingletonCanIo_c {
 /** return a reference of a FilterBox instance */
 
 
- #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+ #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
  void printMyFilterBox();
  #endif
   /** temp filer box to avoid new/delete for each insert of a filterBox

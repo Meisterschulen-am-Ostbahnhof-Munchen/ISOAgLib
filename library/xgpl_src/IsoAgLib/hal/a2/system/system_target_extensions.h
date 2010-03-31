@@ -26,7 +26,7 @@
 #include "../typedef.h"
 #include "../errcodes.h"
 
-#if defined( DEBUG )
+#if DEBUG_HAL
 #include <supplementary_driver/driver/rs232/irs232io_c.h>	    //BW, 4/12/06
 #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>  //BW, 4/12/06
 #endif

@@ -207,7 +207,7 @@ namespace HAL
   {
 //jtm      int16_t retval = __HAL::get_lokal_id(Dat);
 //jtm
-//jtm    #if defined( DEBUG_HAL )
+//jtm    #if DEBUG_HAL
 //jtm    //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //jtm    //<< "getLokalId( "
 //jtm    //<< (uint16_t) *Dat
@@ -234,7 +234,7 @@ namespace HAL
   {
 //jtm      __HAL::start_task_timer ( T_TASK_BASIC );
 //jtm
-//jtm  #if defined( DEBUG_HAL )
+//jtm  #if DEBUG_HAL
 //jtm  //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //jtm  //<< "start_task_timer( "
 //jtm  //<< (uint16_t) T_TASK_BASIC
@@ -263,7 +263,7 @@ namespace HAL
   {
 //jtm      int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
 //jtm
-//jtm  #if defined( DEBUG_HAL )
+//jtm  #if DEBUG_HAL
 //jtm  uint8_t buf[128];
 //jtm  CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) returns %i\r"
 //jtm  , (uint16_t)__HAL::get_time()
@@ -287,7 +287,7 @@ namespace HAL
 //jtm      {
 //jtm      int16_t retval = __HAL::get_task_overload ();
 //jtm
-//jtm  #if defined( DEBUG_HAL )
+//jtm  #if DEBUG_HAL
 //jtm  uint8_t buf[128];
 //jtm  CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
 //jtm  , (uint16_t)__HAL::get_time()

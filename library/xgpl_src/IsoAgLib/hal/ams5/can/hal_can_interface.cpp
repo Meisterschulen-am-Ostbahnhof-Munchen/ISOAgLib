@@ -116,7 +116,7 @@ void IwriteCentralCanfifo(uint8_t aui8_busNr,uint8_t aui8_ObjNr, canSlotMBox_t *
     // function getIrqData
     bool b_ret = HAL::iFifoWrite(aui8_busNr,i32_fbIndex,i32_msgId,(void*)tCanregister,aui8_bXtd);
 
-    #ifdef DEBUG_FIFO_WRITE
+    #if DEBUG_FIFO_WRITE
     if(!b_ret)
     {
        INTERNAL_DEBUG_DEVICE << "Fifo FULL" << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -314,7 +314,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
          AMSBIOS::can_getBusErrorState(aui8_busNr, &gt_cinterfaceBusErrorState);
          return gt_cinterfaceBusErrorState.lastSuccTx;
 
-         // for debug with bios sourcecode #define DEBUG_RXTX in ams_can.cpp module
+         // for debug with bios sourcecode #define DEBUG_RXTX 1 in ams_can.cpp module
          // return AMSBIOS::canLastSuccRxTx[aui8_busNr][aui8_msgobjNr];
       }
    }
@@ -341,7 +341,7 @@ void getIrqData(void* inputData, HAL::fifoData_s* destination,uint8_t aui8_bXtd)
            return true;
       else return false;
 
-      // for debug with bios sourcecode #define DEBUG_RXTX in ams_can.cpp module
+      // for debug with bios sourcecode #define DEBUG_RXTX 1 in ams_can.cpp module
       // and use AMSBIOS::canLastSuccRxTx[rui8_busNr][rui8_msgobjNr];
    }
 

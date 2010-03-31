@@ -12,7 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#if defined(DEBUG)
+#if DEBUG_SCHEDULER
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -37,7 +37,7 @@ namespace __IsoAgLib {
 bool
 SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
 {
-  #ifdef DEBUG
+  #if DEBUG_SCHEDULER
   if ( mpc_taskInstance == NULL )
   {
     #ifdef SYSTEM_PC
@@ -54,7 +54,7 @@ SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
   /// so Client keep old nextRetriggerTime and stay as FIRST in TaskQueue
   if (cb_result) mpc_taskInstance->timeEventPostUpdateStatistics();
 
-  #if defined (DEBUG) && defined( DEBUG_SCHEDULER)
+  #if DEBUG_SCHEDULER
     if (!cb_result) {
         INTERNAL_DEBUG_DEVICE << mpc_taskInstance->getTaskName() << ".timeEvent() returned false."
         << INTERNAL_DEBUG_DEVICE_ENDL;

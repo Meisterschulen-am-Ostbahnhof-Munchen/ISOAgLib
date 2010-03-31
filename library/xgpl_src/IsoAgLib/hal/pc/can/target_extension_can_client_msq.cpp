@@ -56,7 +56,7 @@ int16_t can_startDriver()
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
 
   DEBUG_PRINT("can_startDriver called\n");
-#ifdef DEBUG
+#if DEBUG_CAN
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   printf("SYSTEM_WITH_ENHANCED_CAN_HAL is defined !\n");
 #else
@@ -487,7 +487,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   ptReceive->bXtd = pc_data->b_xtd;
   memcpy(ptReceive->abData, pc_data->pb_data, pc_data->b_dlc);
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
   printf("Empfang: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptReceive->dwId,
          ptReceive->abData[0], ptReceive->abData[1], ptReceive->abData[2],
          ptReceive->abData[3], ptReceive->abData[4], ptReceive->abData[5],
@@ -508,7 +508,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   msqWrite_s msqWriteBuf;
   transferBuf_s s_transferBuf;
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
   printf("Senden: %x  %hx %hx %hx %hx %hx %hx %hx %hx\n", ptSend->dwId,
          ptSend->abData[0], ptSend->abData[1], ptSend->abData[2],
          ptSend->abData[3], ptSend->abData[4], ptSend->abData[5],
@@ -540,7 +540,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
   {
     if (s_transferBuf.s_acknowledge.i32_dataContent == ACKNOWLEDGE_DATA_CONTENT_ERROR_VALUE)
     {
-#ifdef DEBUG
+#if DEBUG_CAN
       if ((s_transferBuf.s_acknowledge.i32_data != HAL_NO_ERR) && (s_transferBuf.s_acknowledge.i32_data != HAL_NEW_SEND_DELAY)) // == i32_error
       {
         printf("acknowledge-error received in sendCanMsg\n");

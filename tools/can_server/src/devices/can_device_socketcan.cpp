@@ -85,7 +85,7 @@ typedef uint32_t can_baudrate_t;
 #define SIOCSCANBAUDRATE	(SIOCDEVPRIVATE+0)
 #endif
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
 std::ofstream m_clog;
 #endif
 
@@ -126,7 +126,7 @@ bool isBusOpen(uint8_t ui8_bus)
 
 uint32_t initCardApi ()
 {
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
     m_clog.open("/tmp/vcan.log", std::ios::out|std::ios::app);
 #endif
 
@@ -154,7 +154,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
 
         // Create a socket for talking to the CAN Bus
         int m_handle = socket(PF_CAN, SOCK_RAW, CAN_RAW);
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "Init(): bus: " << (int)ui8_bus << "fname: " << fname << "m_handle: " << m_handle << std::endl;
 #endif
         if (m_handle < 0)
@@ -166,7 +166,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         struct ifreq ifr;
         strncpy(ifr.ifr_name, fname, IFNAMSIZ);
         int ret = ioctl(m_handle, SIOCGIFINDEX, &ifr);
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "Init(): ret: " << ret << std::endl;
 #endif
         if (ret < 0)
@@ -185,7 +185,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         can_baudrate_t *baudrate = (can_baudrate_t *)&ifr_baudrate.ifr_ifru;
         *baudrate = wBitrate * 1000; 
         int baud_ret = ioctl(m_handle, SIOCSCANBAUDRATE, &ifr_baudrate);
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "Init(): baud_ret: " << baud_ret << std::endl;
 #endif
         if (baud_ret < 0)
@@ -201,7 +201,7 @@ bool openBusOnCard(uint8_t ui8_bus, uint32_t wBitrate, server_c* pc_serverData)
         addr.can_ifindex = ifr.ifr_ifindex;
         int result = bind( m_handle, (struct sockaddr*)&addr, sizeof(addr) );
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "Init(): result: " << result << std::endl;
 #endif
         if (result < 0)
@@ -252,7 +252,7 @@ void __HAL::updatePendingMsgs(server_c* /*pc_serverData*/, int8_t /*i8_bus*/)
 //          0 on error
 int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
   m_clog << "sendToBus(): bus: " << (int)ui8_bus << " isOpen: " << ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen << std::endl;
 #endif
   assert((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen);
@@ -272,13 +272,13 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
   if (bytes_sent < 0)
   {
     perror( "send" );
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
     m_clog << "sendToBus(): error, bytes_sent: " << bytes_sent << std::endl;
 #endif
     return 0;
   }
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
   char buf[200];
   m_clog << "sendToBus(): bytes_sent: " << bytes_sent << std::endl;
   sprintf(buf,"sendToBus(): %X,%X,%d,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X",
@@ -291,7 +291,7 @@ int16_t sendToBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 
 bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
 {
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "readFromBus(): bus: " << (int)ui8_bus << " driverHandle: " << pc_serverData->canBus(ui8_bus).mi32_can_device << std::endl;
 #endif
     if ((ui8_bus <= HAL_CAN_MAX_BUS_NR) && ss_canDevice.canBus(ui8_bus).mb_canBusIsOpen)
@@ -308,7 +308,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
         tv.tv_usec = 0;
 
         retval = select(pc_serverData->canBus(ui8_bus).mi32_can_device+1, &rfds, NULL, NULL, &tv);
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "readFromBus(timeout): retval: " << retval << std::endl;
 #endif
         if (retval <= 0)     // -1 on error, 0 on no data within timeout
@@ -320,7 +320,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
         }
 
         int status = recv(pc_serverData->canBus(ui8_bus).mi32_can_device, &frame, sizeof(frame), 0);
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         m_clog << "readFromBus(): status: " << status << std::endl;
 #endif
         if (status <= 0) {
@@ -338,7 +338,7 @@ bool readFromBus(uint8_t ui8_bus, canMsg_s* ps_canMsg, server_c* pc_serverData)
         if ((frame.can_id & CAN_EFF_FLAG) == CAN_EFF_FLAG)
             ps_canMsg->i32_msgType = 1;
 
-#ifdef DEBUG_CAN
+#if DEBUG_CAN
         char buf[200];
         m_clog << "readFromBus(): bytes recv: " << status << std::endl;
         sprintf(buf,"readFromBus(): %X,%X,%d,%02X,%02X,%02X,%02X,%02X,%02X,%02X,%02X",

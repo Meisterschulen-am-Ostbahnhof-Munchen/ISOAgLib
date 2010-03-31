@@ -17,7 +17,7 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/hal/hal_system.h>
 
-#if defined(DEBUG) || defined(DEBUG_CAN_BUFFER_FILLING)
+#if DEBUG_MSGOBJ || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -102,7 +102,7 @@ MsgObj_c::~MsgObj_c()
 bool MsgObj_c::merge(MsgObj_c& acrc_right)
 {
 
-#ifdef DEBUG
+#if DEBUG_MSGOBJ
   INTERNAL_DEBUG_DEVICE << "MERGE : right OBJ filter = 0x"
   #ifdef SYSTEM_PC
   << STL_NAMESPACE::hex
@@ -115,7 +115,7 @@ bool MsgObj_c::merge(MsgObj_c& acrc_right)
   mc_filter.ident_bitAnd(acrc_right.filter());
 
 
-  #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+  #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
     INTERNAL_DEBUG_DEVICE << "existing FilterBox in merge " << INTERNAL_DEBUG_DEVICE_ENDL;
     printMyFilterBox();
   #endif
@@ -169,7 +169,7 @@ void MsgObj_c::insertFilterBox(FilterRef arc_box)
 
 
     {
-      #if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+      #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
       INTERNAL_DEBUG_DEVICE << "Reject try to insert the same FilterBox a second time"
         << (*arc_box).getFbVecIdx() << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
@@ -177,7 +177,7 @@ void MsgObj_c::insertFilterBox(FilterRef arc_box)
     }
   }
   marr_filterBoxIndex.push_back( (*arc_box).getFbVecIdx() );
- #ifdef DEBUG
+ #if DEBUG_MSGOBJ
   INTERNAL_DEBUG_DEVICE << "Inserted the index"
         << (*arc_box).getFbVecIdx() << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -262,7 +262,7 @@ bool MsgObj_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_msgNr)
       break;
     case HAL_CONFIG_ERR:
       /* BUS not initialized, undefined msg type, CAN-BIOS memory error */
-      #if defined(DEBUG_CAN_BUFFER_FILLING) || defined(DEBUG)
+      #if DEBUG_CAN_BUFFER_FILLING || DEBUG_MSGOBJ
       INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory for CAN buffer" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       getILibErrInstance().registerError( iLibErr_c::HwConfig, iLibErr_c::Can );
@@ -371,7 +371,7 @@ bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* c
   {
     //Bad allocation
 
-#ifdef DEBUG
+#if DEBUG_MSGOBJ
     INTERNAL_DEBUG_DEVICE << "\r\nALARM Not enough memory , malloc failed" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -428,7 +428,7 @@ bool MsgObj_c::msgObjUpdateTable(uint8_t aui8_busNumber, uint8_t aui8_msgObjNr)
   }
 
 
-#if defined( DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION )
+#if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 void MsgObj_c::printMyFilterBox(){
 
   INTERNAL_DEBUG_DEVICE << "OBJNBR = " << uint16_t(bit_data.ui8_msgObjNr) << INTERNAL_DEBUG_DEVICE_ENDL;

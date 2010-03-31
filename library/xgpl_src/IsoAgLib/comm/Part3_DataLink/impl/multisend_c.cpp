@@ -21,7 +21,7 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 
-#ifdef DEBUG
+#if DEBUG_MULTISEND || DEBUG_HEAP_USEAGE
   #ifdef SYSTEM_PC
     #include <iostream>
   #else
@@ -31,7 +31,7 @@
 
 #include <IsoAgLib/util/iassert.h>
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   static uint16_t sui16_lastPrintedBufferCapacity = 0;
 #endif
 
@@ -90,7 +90,7 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
 
   mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
@@ -134,7 +134,7 @@ void SendUploadBase_c::set (uint16_t aui16_objId, const char* apc_string, uint16
 
   mui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
     sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
@@ -393,7 +393,7 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
     }
     else // use this finished one because it would be deleted anyway...
     {
-      #ifdef DEBUG
+      #if DEBUG_MULTISEND
       INTERNAL_DEBUG_DEVICE << "Using Stream from list which is already finished but not yet kicked from MultiSend_c::timeEvent()."<< INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return pc_foundStream;
@@ -515,7 +515,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
            aui8_pkgCnt = (ui8_freeCnt - 2);
 
         if (aui8_pkgCnt == 0)        {
-            #if defined( DEBUG )
+            #if DEBUG_MULTISEND
             INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- pkgCnt == 0;" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
         }
@@ -581,7 +581,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
             }
             else
             { // ISO Target
-              #if defined( DEBUG )
+              #if DEBUG_MULTISEND
               INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after complete Sending now awaiting EOMACK!" << INTERNAL_DEBUG_DEVICE_ENDL;
               #endif
               switchToState (AwaitEndofmsgack, 1250);
@@ -592,7 +592,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
           if (isCompleteBurst())
           { // wait for CTS for next part of transfer
             switchToState (AwaitCts, 1250);
-            #if defined( DEBUG )
+            #if DEBUG_MULTISEND
             INTERNAL_DEBUG_DEVICE << "MultiSend_c::timeEvent --- after Sending now awaiting CTS!" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
             return false; // stream not yet finished!
@@ -660,7 +660,7 @@ MultiSend_c::timeEvent()
         (pc_iter->timeHasCome() && (pc_iter->timeEvent (cui8_pkgCntForEach))) )
     { // SendStream finished
       pc_iter = mlist_sendStream.erase (pc_iter);
-      #ifdef DEBUG
+      #if DEBUG_MULTISEND
       INTERNAL_DEBUG_DEVICE << "Kicked SendStream because it finished (abort or success)!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
     }
@@ -809,7 +809,7 @@ MultiSend_c::SendStream_c::processMsg()
           mui8_packetsSentInThisBurst = 0;
 
           // now receiver wants to receive new data
-          #if defined( DEBUG )
+          #if DEBUG_MULTISEND
           INTERNAL_DEBUG_DEVICE << "Start To Send Next Data Block" << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
           switchToState (SendData, 5); // we'll have to trigger that we want to
@@ -822,7 +822,7 @@ MultiSend_c::SendStream_c::processMsg()
     case scui8_eCM_EndofMsgACK:
       if (men_sendState == AwaitEndofmsgack)
       {
-        #if defined( DEBUG )
+        #if DEBUG_MULTISEND
         INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- EOMACK received!" << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
         // Notify sender that it finished!
@@ -844,7 +844,7 @@ MultiSend_c::SendStream_c::processMsg()
 #endif
       // break left out intentionally (see "// else:" right above
     case scui8_CM_ConnAbort:
-      #if defined( DEBUG )
+      #if DEBUG_MULTISEND
       INTERNAL_DEBUG_DEVICE << "MultiSend_c::processMsg --- ConnAbort received!" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       *mpen_sendSuccessNotify = SendAborted; // will be kicked out after next timeEvent!

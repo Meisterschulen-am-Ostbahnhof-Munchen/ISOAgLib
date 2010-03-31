@@ -21,16 +21,16 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 
-#ifdef DEBUG
-  #include <supplementary_driver/driver/rs232/irs232io_c.h>
-#endif
-
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#if DEBUG_HEAP_USEAGE
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
 static uint16_t sui16_localProcPointerTotal = 0;
 static uint16_t sui16_remoteProcPointerTotal = 0;
 
@@ -204,7 +204,7 @@ bool Process_c::timeEvent( void ){
   mc_devPropertyHandler.timeEvent();
 #endif
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( ( c_arrClientC1.capacity() != sui16_localProcPointerTotal )
     || ( c_arrClientC2.capacity() != sui16_remoteProcPointerTotal ) )
   {

@@ -89,11 +89,16 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 
-#if defined(DEBUG) || defined(DEBUG_HEAP_USEAGE)
-  #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#if DEBUG_HEAP_USEAGE
+  #ifdef SYSTEM_PC
+    #include <iostream>
+  #else
+    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+  #endif
+  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-#ifdef DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
 static uint16_t sui16_MeasureProgLocalTotal = 0;
 static uint16_t sui16_lastPrintedMeasureProgLocalTotal = 0;
 static uint16_t sui16_deconstructMeasureProgLocalTotal = 0;
@@ -130,7 +135,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
   { // first element added without success
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   else
   {
     sui16_MeasureProgLocalTotal++;
@@ -149,7 +154,7 @@ void ManageMeasureProgLocal_c::init( ProcDataBase_c *const apc_processData )
   ProcessElementBase_c::set( apc_processData );
   // as init() can be also called to re-init (bring this instance to well
   // defined starting condition, clearthe measure-prog array
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_MeasureProgLocalTotal -= mvecc_prog.size();
   sui16_deconstructMeasureProgLocalTotal += mvecc_prog.size();
   #endif
@@ -178,7 +183,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
   { // not all items copied
     getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Process );
   }
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   else
   {
     sui16_MeasureProgLocalTotal += vec_prog().size();
@@ -221,7 +226,7 @@ void ManageMeasureProgLocal_c::assignFromSource( const ManageMeasureProgLocal_c&
 
 ManageMeasureProgLocal_c::~ManageMeasureProgLocal_c()
 {
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_MeasureProgLocalTotal -= vec_prog().size();
   sui16_deconstructMeasureProgLocalTotal += mvecc_prog.size();
 
@@ -261,7 +266,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
   const IsoName_c *pc_callerISOName;
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )
     || ( sui16_printedDeconstructMeasureProgLocalTotal != sui16_deconstructMeasureProgLocalTotal  ) )
   {
@@ -326,7 +331,7 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
             // reset mpc_progCache
             mpc_progCache = vec_prog().begin();
 
-            #ifdef DEBUG_HEAP_USEAGE
+            #if DEBUG_HEAP_USEAGE
             sui16_MeasureProgLocalTotal--;
             sui16_deconstructMeasureProgLocalTotal++;
 
@@ -394,7 +399,7 @@ void ManageMeasureProgLocal_c::processProg()
       if (!updateProgCache(c_callerISOName, false))return;
     }
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   // first real access - print size now if this current size not yet printed
   // ( this is needed, as ManageMeasureProgLocal_c::init causes too much
   //   prints in too small time )
@@ -485,7 +490,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
     mpc_progCache = vec_prog().begin();
   }
 
-  #ifdef DEBUG_HEAP_USEAGE
+  #if DEBUG_HEAP_USEAGE
   sui16_MeasureProgLocalTotal++;
 
   if ( ( sui16_lastPrintedMeasureProgLocalTotal != sui16_MeasureProgLocalTotal  )

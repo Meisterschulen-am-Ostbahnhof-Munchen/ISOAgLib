@@ -14,7 +14,7 @@
 
 #include "system_c.h"
 
-#ifdef DEBUG
+#if DEBUG_SYSTEM
 	#ifdef SYSTEM_PC
 		#include <iostream>
 	#else
@@ -68,7 +68,7 @@ bool System_c::init( bool ab_forceReinit, IsoAgLib::SystemPowerdownStrategy_t at
 
     if ( ci_err != HAL_NO_ERR)
     {
-		#ifdef DEBUG
+		#if DEBUG_SYSTEM
 		INTERNAL_DEBUG_DEVICE
         << "Fehler bei Systemstart: " << ci_err << INTERNAL_DEBUG_DEVICE_ENDL;
 		#endif
