@@ -1029,9 +1029,15 @@ MultiSend_c::SendStream_c::sendPacketFp()
   MultiSendPkg_c& rc_multiSendPkg = mrc_multiSend.data();
 
   // For fast packet, the PGN itself tells us that the message is a fast packet message.
-  // Since this is a non-destination specific PGN, we do NOT need to "setIsoPs(...)" !
+  /// Since we currently only need/support broadcast FP-PGNs, we do NOT need to "setIsoPs(...)" !
   rc_multiSendPkg.setIsoPgn (mui32_pgn);
-  rc_multiSendPkg.setIsoPri (6);
+  /// @todo ON REQUEST-690 The FP-Messages can have different priorities,
+  /// so the calling code must be able to specify the priority.
+  /// Now setting the Priority to 3 as it's the default priority
+  /// for the currently only NMEA message being sent out, so regard
+  /// this is hard-coded workaround for the current situation.
+  /// (This PGN is NMEA_GPS_POSITION_DATA_PGN)
+  rc_multiSendPkg.setIsoPri (3);
   rc_multiSendPkg.setISONameForSA (mc_isoNameSender);
   rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
   rc_multiSendPkg.setLen (8);
