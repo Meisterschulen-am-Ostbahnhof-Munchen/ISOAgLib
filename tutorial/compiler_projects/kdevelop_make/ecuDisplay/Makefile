@@ -15,7 +15,7 @@ EXTERNAL_LIBS =
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_MESSAGE_QUEUE
+PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -D'NDEBUG' -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_MESSAGE_QUEUE
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
@@ -27,6 +27,7 @@ first: all
 SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/util/iliberr_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/util_funcs.cpp \
+		../../../../library/xgpl_src/IsoAgLib/util/iassert.cpp \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/ischedulertask_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/scheduler_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulertask_c.cpp \
@@ -86,6 +87,7 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputboolean_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectpolygon_c.cpp \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.cpp \
@@ -123,6 +125,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/util/config.h \
 		../../../../library/xgpl_src/IsoAgLib/util/compiler_adaptation_unicode.h \
 		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
+		../../../../library/xgpl_src/IsoAgLib/util/iassert.h \
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_system.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_config.h \
@@ -133,8 +136,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/scheduler/ischeduler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/istream_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultireceive_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisend_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h \
@@ -162,6 +163,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectinputstring_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectoutputstring_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectalarmmask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtserverinstance_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectmacro_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectarchedbargraph_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobjectcontainer_c.h \
@@ -244,6 +246,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputstring_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputstring_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectalarmmask_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectmacro_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectarchedbargraph_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectcontainer_c.h \
@@ -257,7 +260,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputnumber_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectoutputlist_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtserverinstance_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectsoftkeymask_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobject_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectkey_c.h \

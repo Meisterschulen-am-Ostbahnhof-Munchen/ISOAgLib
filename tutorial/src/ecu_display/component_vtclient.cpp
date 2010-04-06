@@ -10,8 +10,9 @@
 
 #include "component_vtclient_pool/tutorialDisplay_derived-cpp.h"
 
-extern IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display;
+extern IsoAgLibTutorialDisplay::TutorialDisplay_c *p_display;
 
+namespace {
 
 /*
  * Normally the application class could directly derive from "iDisplay_c",
@@ -19,8 +20,35 @@ extern IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display;
  * which is bad on some exotic embedded compilers, so we let the events be
  * forwarded from the "static tutorialPool" to our "TutorialDisplay_c" "p_display".
  */
-static IsoAgLibTutorialDisplay::iDisplayImplementation_c sc_display;
+IsoAgLibTutorialDisplay::iDisplayImplementation_c sc_display;
 
+inline uint8_t depth1Colour(uint8_t aui8_colorValue)
+{
+  switch (aui8_colorValue) {
+  case 19: return 15;
+  case 20: return 9;
+  case 40: return 10;
+  case 42: return 3;
+  case 209: return 8;
+  case 222: return 1;
+  case 229: return 7;
+  default:;    
+  }
+  return aui8_colorValue;
+}
+
+inline uint8_t depth0Colour(uint8_t aui8_colorValue)
+{
+  switch (aui8_colorValue) {
+  case 3: return 1;
+  default:;    
+  }
+  return aui8_colorValue;
+}
+
+} //namespace
+
+namespace IsoAgLibTutorialDisplay {
 
 /*
  * Tutorial Display implementation
@@ -29,25 +57,25 @@ static IsoAgLibTutorialDisplay::iDisplayImplementation_c sc_display;
  * Here the main work is done of this component
  *
  * */
-IsoAgLibTutorialDisplay::TutorialDisplay_c::TutorialDisplay_c()
+TutorialDisplay_c::TutorialDisplay_c()
   : mp_srcHandle( 0 )
   , mui_activeMaskId( 0xFFFF ) // use 0xFFFF as default because it's not a valid Mask-ID.
 {}
 
 
-IsoAgLibTutorialDisplay::TutorialDisplay_c::~TutorialDisplay_c()
+TutorialDisplay_c::~TutorialDisplay_c()
 {}
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::init( IsoAgLib::iIdentItem_c& ar_ident )
+TutorialDisplay_c::init( IsoAgLib::iIdentItem_c& ar_ident )
 {
   mp_srcHandle = IsoAgLib::getIisoTerminalInstance().initAndRegisterIsoObjectPool( ar_ident, *this, NULL );
 }
 
 
-IsoAgLibTutorialDisplay::iDisplay_c*
-IsoAgLibTutorialDisplay::TutorialDisplay_c::getDisplayHandler()
+iDisplay_c*
+TutorialDisplay_c::getDisplayHandler()
 {
   return &sc_display;
 }
@@ -62,7 +90,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::getDisplayHandler()
  */
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::eventObjectPoolUploadedSuccessfully( bool /* ab_wasLanguageUpdate */, int8_t /* ai8_languageIndex */, uint16_t /* aui16_languageCode */ )
+TutorialDisplay_c::eventObjectPoolUploadedSuccessfully( bool /* ab_wasLanguageUpdate */, int8_t /* ai8_languageIndex */, uint16_t /* aui16_languageCode */ )
 {
   setMetaInfo();
   iVtObjectwsTutorialDisplay.changeActiveMask( &iVtObjectdmAbout, false, false ); /* make sure about the mask */
@@ -71,7 +99,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::eventObjectPoolUploadedSuccessfully(
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::eventVtStatusMsg()
+TutorialDisplay_c::eventVtStatusMsg()
 {
   //! This function is needed to keep track of the active mask
   //! as it is changed via Macros in this somponent's objectpool.
@@ -94,7 +122,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::eventVtStatusMsg()
  */
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::maskChanged( uint16_t aui_activeMaskId )
+TutorialDisplay_c::maskChanged( uint16_t aui_activeMaskId )
 {
   // keep track of the current mask to avoid unnecessary updates to objects in hidden masks.
   mui_activeMaskId = aui_activeMaskId;
@@ -102,7 +130,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::maskChanged( uint16_t aui_activeMask
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::setMetaInfo()
+TutorialDisplay_c::setMetaInfo()
 {
   iVtObjectosIsoaglibVersion.setValueCopy( IsoAgLibTutorial::scp_isoaglibVersion, true );
   iVtObjectosTutorialVersion.setValueCopy( IsoAgLibTutorial::scp_tutorialVersion, true );
@@ -118,15 +146,15 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::setMetaInfo()
  *
  * */
 
-void IsoAgLibTutorialDisplay::iDisplayImplementation_c::handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon ) { p_display->handleNewPosValues( aui_lat, aui_lon); } 
-void IsoAgLibTutorialDisplay::iDisplayImplementation_c::handleNewTimeValues( uint8_t aui_h, uint8_t aui_m, uint8_t aui_s ) { p_display->handleNewTimeValues( aui_h, aui_m, aui_s ); }
-void IsoAgLibTutorialDisplay::iDisplayImplementation_c::handleNewGeneralValues( bool ab_keySwitch, uint8_t aui_maxPower ) { p_display->handleNewGeneralValues( ab_keySwitch, aui_maxPower ); }
-void IsoAgLibTutorialDisplay::iDisplayImplementation_c::handleNewMoveValues( int16_t ai_speedReal, int16_t ai_speedTheor, uint32_t aui_distReal, uint32_t aui_distTheor ) { p_display->handleNewMoveValues( ai_speedReal, ai_speedTheor, aui_distReal, aui_distTheor ); }
-void IsoAgLibTutorialDisplay::iDisplayImplementation_c::handleNewPto( int32_t ai_ptoFront, bool ab_frontEngaged, int32_t ai_ptoRear, bool ab_rearEngaged ) { p_display->handleNewPto( ai_ptoFront, ab_frontEngaged, ai_ptoRear, ab_rearEngaged ); }
+void iDisplayImplementation_c::handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon ) { p_display->handleNewPosValues( aui_lat, aui_lon); } 
+void iDisplayImplementation_c::handleNewTimeValues( uint8_t aui_h, uint8_t aui_m, uint8_t aui_s ) { p_display->handleNewTimeValues( aui_h, aui_m, aui_s ); }
+void iDisplayImplementation_c::handleNewGeneralValues( bool ab_keySwitch, uint8_t aui_maxPower ) { p_display->handleNewGeneralValues( ab_keySwitch, aui_maxPower ); }
+void iDisplayImplementation_c::handleNewMoveValues( int16_t ai_speedReal, int16_t ai_speedTheor, uint32_t aui_distReal, uint32_t aui_distTheor ) { p_display->handleNewMoveValues( ai_speedReal, ai_speedTheor, aui_distReal, aui_distTheor ); }
+void iDisplayImplementation_c::handleNewPto( int32_t ai_ptoFront, bool ab_frontEngaged, int32_t ai_ptoRear, bool ab_rearEngaged ) { p_display->handleNewPto( ai_ptoFront, ab_frontEngaged, ai_ptoRear, ab_rearEngaged ); }
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon )
+TutorialDisplay_c::handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon )
 {
   if ( mui_activeMaskId == iVtObjectIDdmTimePos ) {
     iVtObjectnvLat.setValue( aui_lat, false, true );
@@ -136,7 +164,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewPosValues( uint32_t aui_lat
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewTimeValues( uint8_t aui_h, uint8_t aui_m, uint8_t aui_s )
+TutorialDisplay_c::handleNewTimeValues( uint8_t aui_h, uint8_t aui_m, uint8_t aui_s )
 {
   if ( mui_activeMaskId == iVtObjectIDdmAbout ) {
     iVtObjectnvHr.setValue( aui_h, false, true );
@@ -147,7 +175,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewTimeValues( uint8_t aui_h, 
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewGeneralValues( bool ab_keySwitch, uint8_t aui_maxPower )
+TutorialDisplay_c::handleNewGeneralValues( bool ab_keySwitch, uint8_t aui_maxPower )
 {
   if ( mui_activeMaskId == iVtObjectIDdmTecu ) {
     iVtObjectopKeySwitch.setValue(( ab_keySwitch ? &iVtObjectelStateGreen : &iVtObjectelStateRed ) , false, true );
@@ -157,7 +185,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewGeneralValues( bool ab_keyS
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewMoveValues( int16_t ai_speedReal, int16_t ai_speedTheor, uint32_t aui_distReal, uint32_t aui_distTheor )
+TutorialDisplay_c::handleNewMoveValues( int16_t ai_speedReal, int16_t ai_speedTheor, uint32_t aui_distReal, uint32_t aui_distTheor )
 {
   if ( mui_activeMaskId == iVtObjectIDdmTecu ) {
     iVtObjectnvSpeedReal.setValue( ai_speedReal, false, true );
@@ -169,7 +197,7 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewMoveValues( int16_t ai_spee
 
 
 void
-IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewPto( int32_t ai_ptoFront, bool ab_frontEngaged, int32_t ai_ptoRear, bool ab_rearEngaged )
+TutorialDisplay_c::handleNewPto( int32_t ai_ptoFront, bool ab_frontEngaged, int32_t ai_ptoRear, bool ab_rearEngaged )
 {
   if ( mui_activeMaskId == iVtObjectIDdmTecu ) {
     iVtObjectnvPtoFront.setValue( ai_ptoFront, false, true );
@@ -178,5 +206,31 @@ IsoAgLibTutorialDisplay::TutorialDisplay_c::handleNewPto( int32_t ai_ptoFront, b
     iVtObjectopPtoRearEngaged.setValue( ab_rearEngaged ? &iVtObjectelStateGreen : &iVtObjectelStateRed, false, true );
   }
 }
+
+
+/* Convert "bad" colors before handing over to default color
+ * mapping. */
+uint8_t TutorialDisplay_c::convertColour(
+    uint8_t aui8_colorValue,
+    uint8_t aui8_colorDepth,
+    IsoAgLib::iVtObject_c *p_obj,
+    IsoAgLib::e_vtColour ae_whichColour)
+{
+  uint8_t const cui8_convertedColorStage1 = aui8_colorDepth > 1 ?
+    aui8_colorValue :
+    depth1Colour(aui8_colorValue);
+
+  uint8_t const cui8_convertedColorStage2 = aui8_colorDepth > 0 ?
+    cui8_convertedColorStage1 :
+    depth0Colour(cui8_convertedColorStage1);
+
+  return convertColourDefault(
+      cui8_convertedColorStage2,
+      aui8_colorDepth,
+      p_obj,
+      ae_whichColour);
+}
+
+} //namespace IsoAgLibTutorialDisplay
 
 /* eof tutorialDisplay_c */

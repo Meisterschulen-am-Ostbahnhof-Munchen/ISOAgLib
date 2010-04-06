@@ -46,12 +46,13 @@ namespace IsoAgLibTutorialDisplay {
       iDisplay_c* getDisplayHandler();
 
       /* iObjectPool_tutorialDisplay_c */
-      void eventKeyCode( uint8_t , uint16_t , uint16_t , uint8_t , bool ) { /* not used in this simple tutorial */ }
-      void eventStringValue( uint16_t , uint8_t , StreamInput_c& , uint8_t, bool , bool ) { /* not used in this simple tutorial */ }
-      void eventNumericValue( uint16_t, uint8_t, uint32_t ) { /* not used in this simple tutorial */ }
-      void eventVtStatusMsg();
-      void eventObjectPoolUploadedSuccessfully( bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode );
-      void eventEnterSafeState() { /* not used in this simple tutorial */ }
+      virtual void eventKeyCode( uint8_t , uint16_t , uint16_t , uint8_t , bool ) { /* not used in this simple tutorial */ }
+      virtual void eventStringValue( uint16_t , uint8_t , StreamInput_c& , uint8_t, bool , bool ) { /* not used in this simple tutorial */ }
+      virtual void eventNumericValue( uint16_t, uint8_t, uint32_t ) { /* not used in this simple tutorial */ }
+      virtual void eventVtStatusMsg();
+      virtual void eventObjectPoolUploadedSuccessfully( bool ab_wasLanguageUpdate, int8_t ai8_languageIndex, uint16_t aui16_languageCode );
+      virtual void eventEnterSafeState() { /* not used in this simple tutorial */ }
+      virtual uint8_t convertColour(uint8_t aui8_colorValue, uint8_t aui8_colorDepth, IsoAgLib::iVtObject_c *p_obj, IsoAgLib::e_vtColour ae_whichColour);
 
       /* iDisplayImplementation_c */
       virtual void handleNewPosValues( uint32_t aui_lat, uint32_t aui_lon );

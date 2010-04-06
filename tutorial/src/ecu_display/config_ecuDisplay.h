@@ -26,6 +26,8 @@
 
 #define PRT_INSTANCE_CNT 1 
 
+#define RS232_CHANNEL_CNT 1 
+
 #define RS232_INSTANCE_CNT 1 
 
 // Decide if the CPU stores number variables in BIG or LITTLE endian byte order in memory.

@@ -103,6 +103,7 @@ library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.cpp 
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectgraphicscontext_c.cpp -text

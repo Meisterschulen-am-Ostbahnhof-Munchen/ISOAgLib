@@ -291,6 +291,11 @@ public:
 
    virtual ~iIsoTerminalObjectPool_c() {}
 
+  /** Default implementation for convertColour which can also be used
+   *  by custom color conversion implementations.
+   */
+   static uint8_t convertColourDefault(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c *obj, IsoAgLib::e_vtColour whichColour);
+
   /**
     hook function that gets called every time a color-value
     has to be adapted to VT's color-depth (as it violates the color-range!).
@@ -304,13 +309,11 @@ public:
     @param obj Reference to the object that's color's to be converted, use it for distinguishing a little more...-->
     @param whichColour Type of colour: BackgroundColour, LineColour, NeedleColour, etc. (See IsoAgLib::e_vtColour)
   */
-  virtual uint8_t convertColour(uint8_t /* colorValue */, uint8_t /* colorDepth */, IsoAgLib::iVtObject_c* /* obj */, IsoAgLib::e_vtColour whichColour)
+  virtual uint8_t convertColour(uint8_t colorValue, uint8_t colorDepth, IsoAgLib::iVtObject_c * obj, IsoAgLib::e_vtColour whichColour)
   {
-    if ((whichColour == BackgroundColour) || (whichColour == TransparencyColour))
-      return 1; /* white - std. background/transparency colour */
-    else
-      return 0; /* black - std. drawing colour */
-  };
+    return convertColourDefault(colorValue, colorDepth, obj, whichColour);
+  }
+
   /**
     hook function that gets called immediately after recognizing the success of a command-response message
     for Get Attribute Value command
