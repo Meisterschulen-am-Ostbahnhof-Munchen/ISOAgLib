@@ -44,7 +44,7 @@ inline void getFifoCanIdenType(bool b_isExt, __IsoAgLib::Ident_c::identType_t& r
 static inline long getCurrentTime()
 {
 
-#if defined (SYSTEM_ESX) || defined(SYSTEM_ESXu) || defined(SYSTEM_C2C) || defined(SYSTEM_IMI) || defined(SYSTEM_PM167)
+#if defined (SYSTEM_ESX) || defined(SYSTEM_ESXu) || defined(SYSTEM_C2C)
  __HAL::tTime l_retTime;
 
   __HAL::get_time_ext(&l_retTime);

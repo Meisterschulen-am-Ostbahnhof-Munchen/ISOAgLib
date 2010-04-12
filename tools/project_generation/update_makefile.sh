@@ -377,7 +377,7 @@ check_set_correct_variables()
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/pc"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/pc"
         ;;
-       (ams5|a2|c2c|Dj1|ees|esx|esxu|imi|pm167|p1mc|src9)
+       (ams5|a2|c2c|Dj1|ees|esx|esxu|p1mc|src9)
         HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/$USE_TARGET_SYSTEM"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/$USE_TARGET_SYSTEM"
@@ -409,7 +409,7 @@ check_set_correct_variables()
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
             IDE_NAME="KDevelop, make"
             ;;
-        (esx|esxu|c2c|imi|pm167)
+        (esx|esxu|c2c)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
             IDE_NAME="Tasking EDE"
             ;;
@@ -1843,8 +1843,6 @@ create_EdePrj()
                 (Dj1) printf 'djbiosmvt.lib' ;;
                 (esx) printf 'C756/Xos20l.lib Module/Xma20l.lib' ;;
                 (esxu) printf 'Mos10l.lib' ;;
-                (imi) printf 'adis10l.lib' ;;
-                (pm167) printf 'mios1s.lib' ;;
             esac;)}
     # if no setting in the config file -> derive based on target
     : ${USE_EMBED_BIOS_SRC:=$(
@@ -1853,8 +1851,6 @@ create_EdePrj()
                 (Dj1) printf 'DjBiosMVT.h' ;;
                 (esx) printf 'Xos20go.asm Xos20err.c xos20esx.h XOS20EEC.H XOS20EEC.OBJ' ;;
                 (esxu) printf 'MOS10ERR.C  MOS10ERR.H  MOS10GO.ASM MOS10OSY.H' ;;
-                (imi) printf 'adis10go_cs.asm adis10.h Xos20eec.h XOS20EEC.OBJ' ;;
-                (pm167) printf 'mios1.h mx1_0go.asm Xos20eec.h  XOS20EEC.OBJ Xos20err.c  Xos20err.h' ;;
             esac;)}
 
     # if no setting in the config file -> derive based on target
@@ -1864,8 +1860,6 @@ create_EdePrj()
                 (Dj1) printf 'MiniVT.ilo' ;;
                 (esx) printf 'Xos20lcs.ilo' ;;
                 (esxu) printf 'MOS10L.ILO' ;;
-                (imi) printf 'adis10s_cs.ilo' ;;
-                (pm167) printf 'mx1_0s.ilo' ;;
             esac;)}
 
     path_for_ede()
@@ -2427,7 +2421,7 @@ create_buildfiles()
         (ams5)
             create_ams5_workspace $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        (esx | esxu | c2c | imi | pm167 | Dj1 | mitron167)
+        (esx | esxu | c2c | Dj1)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (*)
@@ -2463,7 +2457,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
-                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"imi"|"pm167"|"Dj1"|"mitron167"|"p1mc"|"src9"|"ams5")
+                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"Dj1"|"p1mc"|"src9"|"ams5")
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -2656,7 +2650,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | imi | p1mc | pm167 | Dj1 | mitron167 | ees | src9 | ams5)
+        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | Dj1 | ees | src9 | ams5)
             ;;
         (*)
             if [ -z $USE_HAL_PATH ] ; then 

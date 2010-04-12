@@ -232,11 +232,6 @@ library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.cpp -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/can/write_central_fifo.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_emulated.h -text
 library/xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_pthread.h -text
-library/xgpl_src/IsoAgLib/hal/mitron167/can/hal_can_interface.h -text
-library/xgpl_src/IsoAgLib/hal/mitron167/eeprom/eeprom.h -text
-library/xgpl_src/IsoAgLib/hal/mitron167/errcodes.h -text
-library/xgpl_src/IsoAgLib/hal/mitron167/system/time_clock.c -text
-library/xgpl_src/IsoAgLib/hal/mitron167/typedef.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/can/hal_can_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/p1mc/can/hal_can_interface.h -text

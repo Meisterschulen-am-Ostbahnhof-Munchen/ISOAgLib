@@ -70,8 +70,7 @@ namespace HAL
   };
 
   /**
-    configure the watchdog of the system with the
-    settings of configImi
+    configure the watchdog of the system
     @return error state (HAL_NO_ERR == o.k.)
       or DATA_CHANGED on new values -> need call of wdReset to use new settings
     @see wdReset

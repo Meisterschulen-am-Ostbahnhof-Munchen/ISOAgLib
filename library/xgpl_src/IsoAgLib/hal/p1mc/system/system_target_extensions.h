@@ -50,8 +50,7 @@ int16_t open_system();
 int16_t closeSystem( void );
 
 /**
-  configure the watchdog of the system with the
-  settings of configImi
+  configure the watchdog of the system
   @return error state (C_NO_ERR == o.k.)
     or DATA_CHANGED on new values -> need call of wdReset to use new settings
   @see wdReset

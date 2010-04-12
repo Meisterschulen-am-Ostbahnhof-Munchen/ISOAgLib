@@ -18,7 +18,4 @@ Valid directory-names for the available HALs are:
  - bios_Dj1
  - bios_esx
  - bios_esxu
- - bios_imi
- - bios_mitron167
- - bios_pm167
  - bios_p1mc
