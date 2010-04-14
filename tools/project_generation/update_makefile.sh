@@ -377,7 +377,7 @@ check_set_correct_variables()
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/pc"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/pc"
         ;;
-       (a2|c2c|Dj1|ees|esx|esxu|p1mc|src9)
+       (a2|c2c|Dj1|esx|esxu|p1mc|src9)
         HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/$USE_TARGET_SYSTEM"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/$USE_TARGET_SYSTEM"
@@ -2603,7 +2603,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | Dj1 | ees | src9)
+        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | Dj1 | src9)
             ;;
         (*)
             if [ -z $USE_HAL_PATH ] ; then 
