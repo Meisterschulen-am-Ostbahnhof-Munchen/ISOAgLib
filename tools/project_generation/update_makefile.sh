@@ -377,7 +377,7 @@ check_set_correct_variables()
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/pc"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/pc"
         ;;
-       (ams5|a2|c2c|Dj1|ees|esx|esxu|p1mc|src9)
+       (a2|c2c|Dj1|ees|esx|esxu|p1mc|src9)
         HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/$USE_TARGET_SYSTEM"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/$USE_TARGET_SYSTEM"
@@ -429,10 +429,11 @@ check_set_correct_variables()
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
             IDE_NAME="KDevelop, make"
             ;;
-        (ams5)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/ams5"
-            IDE_NAME="IAR Embedded Workbench IDE"
-            ;;
+# AMS5 generation needs to be taken out into the proprietary HAL's project generation, which is TBD
+#        (ams5)
+#            GENERATE_FILES_ROOT_DIR="$CONF_DIR/ams5"
+#            IDE_NAME="IAR Embedded Workbench IDE"
+#            ;;
         (*)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/proprietary_hal"
             IDE_NAME="Proprietary - Filelist only"
@@ -2330,55 +2331,6 @@ create_library_makefile()
 }
 
 
-create_ams5_workspace()
-{
-    DEV_PRJ_DIR="$1/$PROJECT"
-
-    local INSERT_NEW_CC_INCLUDE_PATHS="$(
-        for EACH_PATH in library library/xgpl_src ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH; do
-            printf '          <state>$PROJ_DIR$\\%s</state>\n' \
-                "$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/$EACH_PATH")"
-        done)"
-
-    local INSERT_CC_DEFINES="$({
-          printf -- 'PRJ_USE_AUTOGEN_CONFIG=config_%s.h\n' "$PROJECT"
-          for EACH_DEF in ${PRJ_DEFINES:-}; do
-              echo_ "$EACH_DEF"
-          done
-
-          if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
-              printf -- 'SYSTEM_WITH_ENHANCED_CAN_HAL'
-          fi
-          
-          case "$USE_CAN_DRIVER" in
-              (msq_server)
-                  printf -- 'CAN_DRIVER_MESSAGE_QUEUE'
-                  ;;
-              (socket_server|socket_server_hal_simulator)
-                  printf -- 'CAN_DRIVER_SOCKET'
-                  ;;
-          esac
-      } | while read -r DEFINE; do
-          printf '          <state>%s</state>\n' "$DEFINE"
-      done)"
-
-    local INSERT_FILES="$({
-            grep -E '\.(cpp|c)$' <$1/$PROJECT/$FILELIST_COMBINED_PURE;
-            cd "$DEV_PRJ_DIR" && find "$ISO_AG_LIB_INSIDE/$USE_EMBED_LIB_DIRECTORY" -iname '*.cpp'
-        } |
-        while read -r EACH_SOURCE_FILE; do
-            printf '  <file>\n    <name>$PROJ_DIR$/%s</name>\n  </file>\n' "$EACH_SOURCE_FILE"
-        done)"
-
-    local TEMPLATE_DIR="$(abs_dir_of "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/.")"
-    local EXTENSION
-    for EXTENSION in ewd ewp eww xcl; do
-        local SOURCE="$TEMPLATE_DIR/update_makefile_ams5_${EXTENSION}.txt"
-        local DESTINATION="${PROJECT}/${PROJECT}.${EXTENSION}"
-        expand_template "$SOURCE" >"$DESTINATION"
-    done
-}
-
 create_buildfiles()
 {
     local CONF_DIR="$1"
@@ -2418,9 +2370,10 @@ create_buildfiles()
         (src9)
             create_library_makefile $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
-        (ams5)
-            create_ams5_workspace $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
-            ;;
+# AMS5 generation needs to be taken out into the proprietary HAL's project generation, which is TBD
+#        (ams5)
+#            create_ams5_workspace $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+#            ;;
         (esx | esxu | c2c | Dj1)
             create_EdePrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
@@ -2457,7 +2410,7 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
-                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"Dj1"|"p1mc"|"src9"|"ams5")
+                                  --> ("pc_linux"|"pc_win32"|"esx"|"esxu"|"c2c"|"Dj1"|"p1mc"|"src9")
 --pc-can-driver=CAN_DRIVER        produce the project definition files for the selected CAN_DRIVER if the project shall run on PC
                                   --> ("simulating"|"sys"|"msq_server"|"socket_server"|"socket_server_hal_simulator")
 --pc-rs232-driver=RS232_DRIVER    produce the project definition files for the selected RS232_DRIVER if the project shall run on PC
@@ -2650,7 +2603,7 @@ check_after_user_configuration()
         USE_TARGET_SYSTEM=$PARAMETER_TARGET_SYSTEM
     fi
     case "$USE_TARGET_SYSTEM" in
-        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | Dj1 | ees | src9 | ams5)
+        (pc_linux | pc_win32 | esx | esxu | c2c | p1mc | Dj1 | ees | src9)
             ;;
         (*)
             if [ -z $USE_HAL_PATH ] ; then 

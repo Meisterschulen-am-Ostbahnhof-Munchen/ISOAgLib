@@ -115,7 +115,7 @@ APP_SRC_FILE="ecu_main.cpp"
 
 # Select type of target system:
 #   Host:        "pc_linux" | "pc_win32"
-#   Embedded:    "ams5" | "a2" | "c2c" | "Dj1" | "ees" | "esx" | "esxu" | "p1mc"
+#   Embedded:    "a2" | "c2c" | "Dj1" | "ees" | "esx" | "esxu" | "p1mc"
 #   Proprietary:  any other name than the above ones
 USE_TARGET_SYSTEM="pc_win32"
 
