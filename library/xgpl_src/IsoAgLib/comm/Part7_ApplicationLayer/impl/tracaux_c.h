@@ -376,7 +376,7 @@ namespace __IsoAgLib {
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
-  /** dummy implementation */
+
   virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 
   private:
@@ -421,11 +421,19 @@ namespace __IsoAgLib {
       */
     void isoSendEstimatedMeasured();
 
+    enum SendCommand_e { CommandSent, CommandNotSent };
+
     /** send command messages (only tractor mode)
         @pre client has already claimed an address
         @see CanIo_c::operator<<
       */
     void isoSendCommand();
+
+    /** send one command message (only tractor mode)
+        @pre client has already claimed an address
+        @see CanIo_c::operator<<
+      */
+    SendCommand_e isoSendCommand(uint32_t aui32_pgn);
 
     /** set flag for the command part
         @param valveNumber  auxiliary marr_valve number (range from 0 to 15)
@@ -441,6 +449,18 @@ namespace __IsoAgLib {
         @param valveNumber  auxiliary marr_valve number (range from 0 to 15)
       */
     void activateEstimated(const uint8_t valveNumber) {marr_auxFlag[valveNumber].ui8_estimatedActivated = true;}
+
+    /** Send one estimated flow.
+     */
+    void isoSendEstimated(uint32_t aui32_pgn);
+
+    /** Send one measured flow.
+     */
+    void isoSendMeasured(uint32_t aui32_pgn);
+
+    /** Prepare sending estimated or measured flow.
+     */
+    void prepareSendingEstimatedMeasured();
 
   private:
     /** auxiliary valves are numbered beginning with 0 and increase in sequence to the maximum number of auxiliary

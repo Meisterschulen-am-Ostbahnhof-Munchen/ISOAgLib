@@ -107,16 +107,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mi16_engine = NO_VAL_16S;
 
     // un-/register to PGN
-    if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
-    { // a change from Implement mode to Tractor mode occured
-      // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
-      getIsoRequestPgnInstance4Comm().registerPGN (*this, LANGUAGE_PGN); // request for language
-    }
-
-    if (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
-    { // a change from Tractor mode to Implement mode occured
-      // unregister from request for pgn, because in implement mode no request should be answered
-      getIsoRequestPgnInstance4Comm().unregisterPGN (*this, LANGUAGE_PGN);
+    if (t_oldMode == at_identMode)
+      ; // no change, still the same mode
+    else if (at_identMode == IsoAgLib::IdentModeTractor) {
+      // a change from Implement mode to Tractor mode occured
+      RegisterPgn_s s_register = this;
+      if (canSendLanguage())
+        s_register(LANGUAGE_PGN);
+      if (canSendFrontHitchState())
+        s_register(FRONT_HITCH_STATE_PGN);
+      if (canSendRearHitchState())
+        s_register(REAR_HITCH_STATE_PGN);
+    } else {
+      // a change from Tractor mode to Implement mode occured
+      UnregisterPgn_s s_unregister = this;
+      if (canSendLanguage())
+        s_unregister(LANGUAGE_PGN);
+      if (canSendFrontHitchState())
+        s_unregister(FRONT_HITCH_STATE_PGN);
+      if (canSendRearHitchState())
+        s_unregister(REAR_HITCH_STATE_PGN);
     }
 
     mi32_lastIsoPositionSimple = 0;
@@ -304,24 +314,46 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, ISOItem_c* apc_isoItemSender, ISOItem_c* apc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn
-    if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
+    if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )
+      return false;
 
-    // call TracGeneral_c function to send language of Tractor-ECU
-    // sendLanguage checks if this item (identified by ISOName)
-    // is configured to send language
-    sendLanguage();
-    return true;
-  };
+    bool b_processed = true;
+    switch (aui32_pgn) {
+    default:
+      b_processed = false;
+      break;
+    case LANGUAGE_PGN:
+      // call TracGeneral_c function to send language of Tractor-ECU
+      // sendLanguage checks if this item (identified by ISOName)
+      // is configured to send language
+      sendLanguage();
+      break;
+    case FRONT_HITCH_STATE_PGN:
+      b_processed = HitchStateSent == sendFrontHitchState();
+      break;
+    case REAR_HITCH_STATE_PGN:
+      b_processed = HitchStateSent == sendRearHitchState();
+      break;
+    }
+    return b_processed;
+  }
 
   /** send front hitch and rear hitch data msg
       @see  CanIo_c::operator<<
     */
   void TracGeneral_c::sendMessage()
-  { //check for isoName and if address claim has yet occured, because this function can also bo called
+  {
+    (void)sendFrontHitchState();
+    (void)sendRearHitchState();
+  }
+
+  TracGeneral_c::SendHitchState_e TracGeneral_c::prepareSendingHitchState()
+  {
+    //check for isoName and if address claim has yet occured, because this function can also bo called
     //independent from timeEvent() function
     if ( (getISOName() == NULL) ||
          (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
-      return;
+      return HitchStateNotSent;
 
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -329,140 +361,155 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setLen(8);
 
     setSelectedDataSourceISOName( *getISOName() );
-    CanIo_c& c_can = getCanInstance4Comm();
+    return HitchStateSent;
+  }
+
+  TracGeneral_c::SendHitchState_e TracGeneral_c::sendFrontHitchState()
+  {
+    if ( !canSendFrontHitchState() )
+      return HitchStateNotSent;
+
+    SendHitchState_e const e_sending = prepareSendingHitchState();
+    if (HitchStateNotSent == e_sending)
+      return e_sending;
+    data().setIsoPgn(FRONT_HITCH_STATE_PGN);
 
     uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
-
-    if ( (mui16_suppressMask & FRONT_HITCH_STATE_PGN_DISABLE_MASK) == 0 )
-    {
-      data().setIsoPgn(FRONT_HITCH_STATE_PGN);
-
-      ui8_temp |= mt_frontHitchPosLimitStatus << 3;
-      switch (hitchFront()) {
-        case ERROR_VAL_8:
-          data().setUint8Data(0, hitchFront());
-          ui8_temp |= ( IsoAgLib::IsoError << 6 );
-          data().setUint8Data(1, ui8_temp);
-          break;
-        case NO_VAL_8:
-          data().setUint8Data(0, hitchFront());
-          ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
-          data().setUint8Data(1, ui8_temp);
-          break;
-        default:
-          data().setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
-          if ((hitchFront() & 0x80) != 0)
-          {
-            ui8_temp |= IsoAgLib::IsoActive << 6;
-            data().setUint8Data(1, ui8_temp ); // work
-          }
-          else
-          {
-            ui8_temp |= IsoAgLib::IsoInactive << 6;
-            data().setUint8Data(1, ui8_temp);
-          }
-          break;
+    ui8_temp |= mt_frontHitchPosLimitStatus << 3;
+    switch (hitchFront()) {
+    case ERROR_VAL_8:
+      data().setUint8Data(0, hitchFront());
+      ui8_temp |= ( IsoAgLib::IsoError << 6 );
+      data().setUint8Data(1, ui8_temp);
+      break;
+    case NO_VAL_8:
+      data().setUint8Data(0, hitchFront());
+      ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
+      data().setUint8Data(1, ui8_temp);
+      break;
+    default:
+      data().setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
+      if ((hitchFront() & 0x80) != 0)
+      {
+        ui8_temp |= IsoAgLib::IsoActive << 6;
+        data().setUint8Data(1, ui8_temp ); // work
       }
-      data().setUint8Data(2, mui8_frontLinkForce);
-      data().setUint8Data(3, mui16_frontDraft& 0xFF);
-      data().setUint8Data(4, (mui16_frontDraft >> 8) );
-
-      /* Reserved Bytes */
-      data().setUint8Data(5, 0xFF );
-      data().setUint16Data(6, 0xFFFF );
-
-      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-      // then it sends the data
-      c_can << data();
-    }
-    if ( (mui16_suppressMask & REAR_HITCH_STATE_PGN_DISABLE_MASK) == 0)
-    {
-      data().setIsoPgn(REAR_HITCH_STATE_PGN);
-      ui8_temp = 0x7;  /* Pre-load the reserved bits */
-      ui8_temp = mt_rearHitchPosLimitStatus << 3;
-      switch (hitchRear()) {
-        case ERROR_VAL_8:
-          data().setUint8Data(0, hitchRear());
-          ui8_temp |= ( IsoAgLib::IsoError << 6 );
-          data().setUint8Data(1, ui8_temp);
-          break;
-        case NO_VAL_8:
-          data().setUint8Data(0, hitchRear());
-          ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
-          data().setUint8Data(1, ui8_temp);
-          break;
-        default:
-          data().setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
-          if ((hitchRear() & 0x80) != 0)
-          {
-            ui8_temp |= IsoAgLib::IsoActive << 6;
-            data().setUint8Data(1, ui8_temp ); // work
-          }
-          else
-          {
-            ui8_temp |= IsoAgLib::IsoInactive << 6;
-            data().setUint8Data(1, ui8_temp);
-          }
-          break;
+      else
+      {
+        ui8_temp |= IsoAgLib::IsoInactive << 6;
+        data().setUint8Data(1, ui8_temp);
       }
-      data().setUint8Data(2, mui8_rearLinkForce);
-      data().setUint8Data(3, (mui16_rearDraft& 0xFF) );
-      data().setUint8Data(4, mui16_rearDraft >> 8);
-
-      /* Reserved Bytes */
-      data().setUint8Data(5, 0xFF );
-      data().setUint16Data(6, 0xFFFF );
-
-      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-      // then it sends the data
-      c_can << data();
+      break;
     }
+    data().setUint8Data(2, mui8_frontLinkForce);
+    data().setUint8Data(3, mui16_frontDraft& 0xFF);
+    data().setUint8Data(4, (mui16_frontDraft >> 8) );
+
+    /* Reserved Bytes */
+    data().setUint8Data(5, 0xFF );
+    data().setUint16Data(6, 0xFFFF );
+
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return HitchStateSent;
+  }
+
+  TracGeneral_c::SendHitchState_e TracGeneral_c::sendRearHitchState()
+  {
+    if ( !canSendRearHitchState() )
+      return HitchStateNotSent;
+
+    SendHitchState_e const e_sending = prepareSendingHitchState();
+    if (HitchStateNotSent == e_sending)
+      return e_sending;
+    data().setIsoPgn(REAR_HITCH_STATE_PGN);
+    uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
+    ui8_temp = mt_rearHitchPosLimitStatus << 3;
+    switch (hitchRear()) {
+    case ERROR_VAL_8:
+      data().setUint8Data(0, hitchRear());
+      ui8_temp |= ( IsoAgLib::IsoError << 6 );
+      data().setUint8Data(1, ui8_temp);
+      break;
+    case NO_VAL_8:
+      data().setUint8Data(0, hitchRear());
+      ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
+      data().setUint8Data(1, ui8_temp);
+      break;
+    default:
+      data().setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
+      if ((hitchRear() & 0x80) != 0)
+      {
+        ui8_temp |= IsoAgLib::IsoActive << 6;
+        data().setUint8Data(1, ui8_temp ); // work
+      }
+      else
+      {
+        ui8_temp |= IsoAgLib::IsoInactive << 6;
+        data().setUint8Data(1, ui8_temp);
+      }
+      break;
+    }
+    data().setUint8Data(2, mui8_rearLinkForce);
+    data().setUint8Data(3, (mui16_rearDraft& 0xFF) );
+    data().setUint8Data(4, mui16_rearDraft >> 8);
+
+    /* Reserved Bytes */
+    data().setUint8Data(5, 0xFF );
+    data().setUint16Data(6, 0xFFFF );
+
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return HitchStateSent;
   }
 
   /** send iso language data msg
       @see  TracGeneral_c::processMsgRequestPGN
       @see  CanIo_c::operator<<
     */
-  void TracGeneral_c::sendLanguage()
+  TracGeneral_c::SendLanguage_e TracGeneral_c::sendLanguage()
   {
     //language is only send in tractor mode
-    if ( checkMode(IsoAgLib::IdentModeImplement) ) return;
+    if ( checkMode(IsoAgLib::IdentModeImplement) )
+      return LanguageNotSent;
 
-    if ( (mui16_suppressMask & LANGUAGE_PGN_DISABLE_MASK) != 0) return;
+    if ( !canSendLanguage() )
+      return LanguageNotSent;
 
     if (  !mb_languageVtReceived
-       || ( getISOName() == NULL ) // shouldn't be NULL as we're in tractor-mode
-       || ( getISOName()->isUnspecified()  )
-       || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
-       )
+          || ( getISOName() == NULL ) // shouldn't be NULL as we're in tractor-mode
+          || ( getISOName()->isUnspecified()  )
+          || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
+      )
     { //if VT has up to now not send the language command there is no sense to send it
-      return;
-    } else
-    {
-      data().setISONameForSA( *getISOName() );
-      data().setIdentType(Ident_c::ExtendedIdent);
-      data().setIsoPri(6);
-      data().setLen(8);
-
-      setSelectedDataSourceISOName( *getISOName() );
-      CanIo_c& c_can = getCanInstance4Comm();
-      data().setIsoPgn(LANGUAGE_PGN);
-      //Bytes 1,2: language command
-      data().setUint16Data(0, (mp8ui8_languageVt[0] | (mp8ui8_languageVt[1] << 8)) );
-      //Byte 3: number format; Bit 1-4: reserved, Bit 5,6: time format, Bit 7,8: decimal symbol
-      data().setUint8Data(2, mp8ui8_languageVt[2]);
-      //Byte 4: date format
-      data().setUint8Data(3, mp8ui8_languageVt[3]);
-      //Byte 5: units of measure; Bit 1,2: mass units, Bit 3,4: volume units, Bit 5,6: area units, Bit 7,8: distance units
-      data().setUint8Data(4, mp8ui8_languageVt[4]);
-      //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
-      data().setUint8Data(5, mp8ui8_languageVt[5]);
-      //Bytes 7,8: reserved
-      data().setUint8Data(6, mp8ui8_languageVt[6] | (mp8ui8_languageVt[7] << 8));
-      data().setUint8Data(7, 0xFF);
-
-      c_can << data();
+      return LanguageNotSent;
     }
+    data().setISONameForSA( *getISOName() );
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(6);
+    data().setLen(8);
+
+    setSelectedDataSourceISOName( *getISOName() );
+    CanIo_c& c_can = getCanInstance4Comm();
+    data().setIsoPgn(LANGUAGE_PGN);
+    //Bytes 1,2: language command
+    data().setUint16Data(0, (mp8ui8_languageVt[0] | (mp8ui8_languageVt[1] << 8)) );
+    //Byte 3: number format; Bit 1-4: reserved, Bit 5,6: time format, Bit 7,8: decimal symbol
+    data().setUint8Data(2, mp8ui8_languageVt[2]);
+    //Byte 4: date format
+    data().setUint8Data(3, mp8ui8_languageVt[3]);
+    //Byte 5: units of measure; Bit 1,2: mass units, Bit 3,4: volume units, Bit 5,6: area units, Bit 7,8: distance units
+    data().setUint8Data(4, mp8ui8_languageVt[4]);
+    //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
+    data().setUint8Data(5, mp8ui8_languageVt[5]);
+    //Bytes 7,8: reserved
+    data().setUint8Data(6, mp8ui8_languageVt[6] | (mp8ui8_languageVt[7] << 8));
+    data().setUint8Data(7, 0xFF);
+
+    c_can << data();
+    return LanguageSent;
   }
 
  /** force maintain power from tractor

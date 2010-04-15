@@ -56,12 +56,15 @@ IsoRequestPgn_c::~IsoRequestPgn_c ()
 
 /** adds the PGN to the list */
 bool
-IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister)
+IsoRequestPgn_c::registerPGN(
+    IsoRequestPgnHandler_c &r_PGNHandler,
+    const uint32_t cui32_pgnToRegister,
+    uint32_t aui32_pgnMask)
 {
-  if (checkIfAlreadyRegistered (r_PGNHandler, cui32_pgnToRegister))
+  if (checkIfAlreadyRegistered (r_PGNHandler, cui32_pgnToRegister, aui32_pgnMask))
     return false; // false could also mean that the PGN - client pair is already inserted in list
 
-  PGN_s s_pgnToRegister = {cui32_pgnToRegister, &r_PGNHandler};
+  PGN_s s_pgnToRegister(&r_PGNHandler, cui32_pgnToRegister, aui32_pgnMask);
   m_registeredClientsWithPGN.push_back (s_pgnToRegister);
 
   return true; // PGN - client pair didn't exist, so it was added
@@ -88,8 +91,12 @@ IsoRequestPgn_c::registerPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint8_
 
 /** remove PGN from the list */
 void
-IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgnToRegister)
+IsoRequestPgn_c::unregisterPGN(
+    IsoRequestPgnHandler_c &r_PGNHandler,
+    const uint32_t cui32_pgnToRegister,
+    uint32_t aui32_pgnMask)
 {
+  PGN_s const cs_lookFor(&r_PGNHandler, cui32_pgnToRegister, aui32_pgnMask);
   for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
        regPGN_it != m_registeredClientsWithPGN.end();
       )
@@ -103,7 +110,7 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint
     }
     else
     { // only the cui32_pgnToRegister will be deleted
-      if ((regPGN_it->p_handler == &r_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgnToRegister))
+      if (cs_lookFor == *regPGN_it)
       {
         m_registeredClientsWithPGN.erase (regPGN_it); // after erase, the iterator points to the next (if available) vector item
         break; // the PGN is unique for the RequestPGNHandler, so we can leave the loop
@@ -129,18 +136,17 @@ IsoRequestPgn_c::unregisterPGN (IsoRequestPgnHandler_c &r_PGNHandler, const uint
 
 /** before adding any further PGN - RequestPGNHandler pair, check if not already existing */
 bool
-IsoRequestPgn_c::checkIfAlreadyRegistered (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgn)
+IsoRequestPgn_c::checkIfAlreadyRegistered(
+    IsoRequestPgnHandler_c &r_PGNHandler,
+    const uint32_t cui32_pgn,
+    uint32_t aui32_pgnMask)
 {
-  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it=m_registeredClientsWithPGN.begin();
-       regPGN_it != m_registeredClientsWithPGN.end();
-       regPGN_it++
-      )
-  {
-    if ((regPGN_it->p_handler == &r_PGNHandler) && (regPGN_it->ui32_pgn == cui32_pgn))
-      return true;
-  }
-  // no match was found before
-  return false;
+  PGN_s const cs_lookFor(&r_PGNHandler, cui32_pgn, aui32_pgnMask);
+  bool const bc_found = m_registeredClientsWithPGN.end() != std::find(
+      m_registeredClientsWithPGN.begin(),
+      m_registeredClientsWithPGN.end(),
+      cs_lookFor);
+  return bc_found;
 };
 
 
@@ -162,13 +168,17 @@ IsoRequestPgn_c::processMsg ()
   /// it can still request ANY PGNs according to Mike - so no special check done here!
   /// 1. Distribute to all clients
   bool b_processedByAnyClient = false;
-  for (STL_NAMESPACE::vector<PGN_s>::iterator regPGN_it = m_registeredClientsWithPGN.begin();
-        regPGN_it != m_registeredClientsWithPGN.end(); regPGN_it++)
-  { // let all local regPGN_it process this request
-    bool const cb_set = (regPGN_it->ui32_pgn == mui32_requestedPGN) &&
-      regPGN_it->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA);
+  for (STL_NAMESPACE::vector<PGN_s>::iterator it_pgn = m_registeredClientsWithPGN.begin();;) {
+    it_pgn = std::find_if(
+        it_pgn,
+        m_registeredClientsWithPGN.end(),
+        DoesMatchPgn_s(mui32_requestedPGN));
+    if (it_pgn == m_registeredClientsWithPGN.end())
+      break;
+    bool const cb_set = it_pgn->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA);
     if (cb_set)
       b_processedByAnyClient = true;
+    ++it_pgn;
   }
 
   /// 2. Check if we have to send a NACK as nobody could answer it

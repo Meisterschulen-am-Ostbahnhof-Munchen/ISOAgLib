@@ -261,7 +261,7 @@ namespace __IsoAgLib {
 
 
   virtual const char* getTaskName() const;
-  /** dummy implementation */
+
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
   private:
@@ -304,6 +304,36 @@ namespace __IsoAgLib {
         @see  CanIo_c::operator<<
       */
     void sendMovingTracMode( );
+
+    /** Can ground based speed/distance be sent?
+     */
+    bool canSendGroundBasedSpeedDist();
+
+    enum SendMessage_e { MessageSent, MessageNotSent };
+
+    /** Send ground based speed/distance.
+     */
+    SendMessage_e sendGroundBasedSpeedDist();
+
+    /** Can wheel based speed/distance be sent?
+     */
+    bool canSendWheelBasedSpeedDist();
+
+    /** Send wheel based speed/distance.
+     */
+    SendMessage_e sendWheelBasedSpeedDist();
+
+    /** Can selected speed distance be sent?
+     */
+    bool canSendSelectedSpeed();
+
+    /** Send selected speed distance.
+     */
+    SendMessage_e sendSelectedSpeed();
+
+    /** Prepare sending any message.
+     */
+    void prepareSending();
 
   private:
     // Private attributes
@@ -371,6 +401,18 @@ namespace __IsoAgLib {
     /** indicates the speed source that is currently being reported in the machine speed parameter */
     IsoAgLib::IsoSpeedSourceFlag_t mt_selectedSpeedSource;
   };
+
+  inline bool TracMove_c::canSendGroundBasedSpeedDist() {
+    return 0 == (GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK & mui16_suppressMask);
+  }
+
+  inline bool TracMove_c::canSendWheelBasedSpeedDist() {
+    return 0 == (WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK & mui16_suppressMask);
+  }
+
+  inline bool TracMove_c::canSendSelectedSpeed() {
+    return 0 == (SELECTED_SPEED_MESSAGE_DISABLE_MASK & mui16_suppressMask);
+  }
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique Base_c singleton instance

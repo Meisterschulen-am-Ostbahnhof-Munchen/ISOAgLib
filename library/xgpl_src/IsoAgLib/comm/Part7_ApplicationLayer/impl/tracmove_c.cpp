@@ -26,6 +26,7 @@
 #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
 #endif
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 using namespace std;
 
@@ -84,6 +85,9 @@ void TracMove_c::singletonInit()
     */
   bool TracMove_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
+    //store old mode to decide to register or unregister to request for pgn
+    IsoAgLib::IdentMode_t t_oldMode = getMode();
+
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
@@ -96,6 +100,31 @@ void TracMove_c::singletonInit()
     else
     { // check with long period for timeout after loss of sending node
       setTimePeriod( (uint16_t) 1000 );
+    }
+
+    // un-/register to PGN
+    if (t_oldMode == at_identMode)
+      ; // no change, still the same mode
+    else if (at_identMode == IsoAgLib::IdentModeTractor) {
+      // a change from Implement mode to Tractor mode occured
+      // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
+      RegisterPgn_s s_register = this;
+      if (canSendGroundBasedSpeedDist())
+        s_register(GROUND_BASED_SPEED_DIST_PGN);
+      if (canSendWheelBasedSpeedDist())
+        s_register(WHEEL_BASED_SPEED_DIST_PGN);
+      if (canSendSelectedSpeed())
+        s_register(SELECTED_SPEED_MESSAGE);
+    } else {
+      // a change from Tractor mode to Implement mode occured
+      // unregister from request for pgn, because in implement mode no request should be answered
+      UnregisterPgn_s s_unregister = this;
+      if (canSendGroundBasedSpeedDist())
+        s_unregister(GROUND_BASED_SPEED_DIST_PGN);
+      if (canSendWheelBasedSpeedDist())
+        s_unregister(WHEEL_BASED_SPEED_DIST_PGN);
+      if (canSendSelectedSpeed())
+        s_unregister(SELECTED_SPEED_MESSAGE);
     }
 
     // set distance value to NO_VAL codes
@@ -465,18 +494,10 @@ void TracMove_c::singletonInit()
     return true;
   }
 
-  /** send moving data with ground&theor speed&dist
-      @pre  function is only called in tractor mode and only from timeEventTracMode
-      @see  CanIo_c::operator<<
-    */
-  void TracMove_c::sendMovingTracMode( )
-  { // there is no need to check for address claim because this is already done in the timeEvent
+  void TracMove_c::prepareSending()
+  {
+    // there is no need to check for address claim because this is already done in the timeEvent
     // function of base class BaseCommon_c
-
-    #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-    TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
-    #endif
-    CanIo_c& c_can = getCanInstance4Comm();
 
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
@@ -489,76 +510,119 @@ void TracMove_c::singletonInit()
     #endif
 
     setSelectedDataSourceISOName(*getISOName());
+  }
+
+  TracMove_c::SendMessage_e TracMove_c::sendGroundBasedSpeedDist()
+  {
+    if (!canSendGroundBasedSpeedDist())
+      return MessageNotSent;
+    prepareSending();
+    data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
+    data().setUint16Data( 0, __IsoAgLib::abs(mi32_speedReal));
+    data().setUint32Data(2, mui32_distReal);
+
     uint8_t b_val8 = 0;
+    b_val8 |= mt_directionReal;
+    data().setUint8Data(7, b_val8);
+    //reserved fields
+    data().setUint8Data(6, 0xFF);
 
-    if ( (mui16_suppressMask & GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK) == 0 )
-    {
-      data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
-	  data().setUint16Data( 0, __IsoAgLib::abs(mi32_speedReal));
-      data().setUint32Data(2, mui32_distReal);
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return MessageSent;
+  }
 
-      b_val8 |= mt_directionReal;
-      data().setUint8Data(7, b_val8);
-      //reserved fields
-      data().setUint8Data(6, 0xFF);
+  TracMove_c::SendMessage_e TracMove_c::sendWheelBasedSpeedDist()
+  {
+    if (!canSendWheelBasedSpeedDist())
+      return MessageNotSent;
+    prepareSending();
+    data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
+    data().setUint16Data(0, __IsoAgLib::abs(mi32_speedTheor));
+    data().setUint32Data(2, mui32_distTheor);
 
-      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-      // then it sends the data
-      c_can << data();
-    }
-    if ( (mui16_suppressMask & WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK) == 0 )
-    {
-      data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
-	  data().setUint16Data(0, __IsoAgLib::abs(mi32_speedTheor));
-      data().setUint32Data(2, mui32_distTheor);
+    uint8_t b_val8 = 0;
+    //data().setUint8Data(7, b_val8);
+#if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
+    TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
+    // additionally scan for key switch and maximum power time
+    data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
+    b_val8 |= (c_tracgeneral.keySwitch() << 2);
+#endif
+    b_val8 |= (mt_operatorDirectionReversed << 6);
+    b_val8 |= (mt_startStopState << 4);
+    b_val8 |= mt_directionTheor;
+    data().setUint8Data(7, b_val8);
 
-      b_val8 = 0;
-      //data().setUint8Data(7, b_val8);
-      #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
-      // additionally scan for key switch and maximum power time
-      data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
-      b_val8 |= (c_tracgeneral.keySwitch() << 2);
-      #endif
-      b_val8 |= (mt_operatorDirectionReversed << 6);
-      b_val8 |= (mt_startStopState << 4);
-      b_val8 |= mt_directionTheor;
-      data().setUint8Data(7, b_val8);
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return MessageSent;
+  }
 
-      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-      // then it sends the data
-      c_can << data();
-    }
-    if ( (mui16_suppressMask & SELECTED_SPEED_MESSAGE_DISABLE_MASK) == 0 )
-    {
-      data().setIsoPgn(SELECTED_SPEED_MESSAGE);
-      uint8_t ui8_temp = 0;
+  TracMove_c::SendMessage_e TracMove_c::sendSelectedSpeed()
+  {
+    if (!canSendSelectedSpeed())
+      return MessageNotSent;
+    prepareSending();
+    data().setIsoPgn(SELECTED_SPEED_MESSAGE);
+    uint8_t ui8_temp = 0;
 
 	  data().setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
-      data().setUint32Data(2, mui32_selectedDistance);
-      ui8_temp |= (mt_selectedSpeedLimitStatus << 5);
-      ui8_temp |= (mt_selectedSpeedSource      << 2);
-      ui8_temp |= (mt_selectedDirection        << 0);
-      data().setUint8Data(7, ui8_temp);
-      //reserved fields
-      data().setUint8Data(6, 0xFF);
+    data().setUint32Data(2, mui32_selectedDistance);
+    ui8_temp |= (mt_selectedSpeedLimitStatus << 5);
+    ui8_temp |= (mt_selectedSpeedSource      << 2);
+    ui8_temp |= (mt_selectedDirection        << 0);
+    data().setUint8Data(7, ui8_temp);
+    //reserved fields
+    data().setUint8Data(6, 0xFF);
 
-      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-      // then it sends the data
-      c_can << data();
-    }
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return MessageSent;
   }
+
+  /** send moving data with ground&theor speed&dist
+      @pre  function is only called in tractor mode and only from timeEventTracMode
+      @see  CanIo_c::operator<<
+    */
+  void TracMove_c::sendMovingTracMode( )
+  {
+    (void)sendGroundBasedSpeedDist();
+    (void)sendWheelBasedSpeedDist();
+    (void)sendSelectedSpeed();
+  }
+
+
 ///  Used for Debugging Tasks in Scheduler_c
 const char*
 TracMove_c::getTaskName() const
 {   return "TracMove_c"; }
 
-/** dummy implementation
-    @todo SOON-135: add answering of requestPGN in case this object is configured for sending of these information
-           - verify this also for the other TracFoo classes
-  */
-bool TracMove_c::processMsgRequestPGN (uint32_t /* aui32_pgn */, IsoItem_c* /* apc_isoItemSender */, IsoItem_c* /* apc_isoItemReceiver */)
+bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
 {
-  return false;
+  // check if we are allowed to send a request for pgn
+  if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )
+    return false;
+
+  bool b_processed = true;
+  switch (aui32_pgn) {
+  default:
+    b_processed = false;
+    break;
+  case GROUND_BASED_SPEED_DIST_PGN:
+    sendGroundBasedSpeedDist();
+    break;
+  case WHEEL_BASED_SPEED_DIST_PGN:
+    sendWheelBasedSpeedDist();
+    break;
+  case SELECTED_SPEED_MESSAGE:
+    sendSelectedSpeed();
+    break;
+  }
+  return b_processed;
 }
 
 } // End Namespace __IsoAglib

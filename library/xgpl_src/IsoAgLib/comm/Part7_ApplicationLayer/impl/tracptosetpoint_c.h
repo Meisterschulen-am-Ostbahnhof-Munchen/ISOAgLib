@@ -174,7 +174,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     ///  Used for Debugging Tasks in Scheduler_c
     virtual const char* getTaskName() const;
-    /** dummy implementation */
+
     virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
     IsoAgLib::IsoActiveFlag_t rearPtoEconomyMode() const {return mt_rearPtoEconomyMode;}

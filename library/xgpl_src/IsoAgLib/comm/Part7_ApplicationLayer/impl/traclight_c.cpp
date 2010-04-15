@@ -18,6 +18,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 using namespace std;
 
@@ -64,6 +65,8 @@ namespace __IsoAgLib {
   {
     //call init for handling which is base data independent
     BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
+    isoaglib_assert(IdentModeImplement == getMode());
+    RegisterPgn_s(this)(LIGHTING_COMMAND_PGN);
   };
 
   /** config the TracLight_c object after init -> set pointer to isoName, set implementMode,
@@ -86,16 +89,17 @@ namespace __IsoAgLib {
       setTimePeriod( (uint16_t) 1000   );
     }
 
-    if ( at_identMode == IsoAgLib::IdentModeImplement )
-    { // a change from Tractor mode to Implement mode occured
-      // create FilterBox_c for REQUEST_PGN_MSG_PGN, LIGHTING_DATA_PGN
-      getIsoRequestPgnInstance4Comm().registerPGN (*this, LIGHTING_DATA_PGN); // request for lighting information
-    }
-
-    if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
-    {  // a change from Implement mode to Tractor mode occured
-      // unregister from request for pgn, because in implement mode no request should be answered
-      getIsoRequestPgnInstance4Comm().unregisterPGN (*this, LIGHTING_DATA_PGN);
+    // un-/register to PGN
+    if (t_oldMode == at_identMode)
+      ; // no change, still the same mode
+    else if (at_identMode == IsoAgLib::IdentModeTractor) {
+      // a change from Implement mode to Tractor mode occured
+      UnregisterPgn_s(this)(LIGHTING_DATA_PGN);
+      RegisterPgn_s(this)(LIGHTING_COMMAND_PGN);
+    } else {
+      // a change from Tractor mode to Implement mode occured
+      UnregisterPgn_s(this)(LIGHTING_COMMAND_PGN);
+      RegisterPgn_s(this)(LIGHTING_DATA_PGN);
     }
 
     // set configure values
@@ -139,12 +143,24 @@ namespace __IsoAgLib {
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
-
+    bool b_processed = true;
     // call TracLight_c function to send lighting information
     // sendMessage checks if this item (identified by ISOName)
     // is configured to send lighting information
-    sendMessage();
-    return true;
+    switch (aui32_pgn) {
+    default:
+      b_processed = false;
+      break;
+    case LIGHTING_DATA_PGN:
+      mb_cmdWait4Response = true;
+      b_processed = MessageSent == sendLightingData();
+      break;
+    case LIGHTING_COMMAND_PGN:
+      mb_changeNeedBeSend = true;
+      b_processed = MessageSent == sendLightingCommand();
+      break;
+    }
+    return b_processed;
   }
 
   /** find out if a particular implement has responded to a command from the tractor
@@ -678,120 +694,134 @@ namespace __IsoAgLib {
     return true;
   }
 
-  /** send light update; there is a difference between implement and tractor mode
-      @see  TracLight_c::processMsgRequestPGN
-      @see  CanIo_c::operator<<
-    */
-  void TracLight_c::sendMessage()
-  { // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
+  TracLight_c::SendMessage_e TracLight_c::helpSendMessage()
+  {
+    // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
     // function of base class BaseCommon_c
-
-    CanIo_c& c_can = getCanInstance4Comm();
-    const int32_t ci32_now = getLastRetriggerTime();
-
-    if ( checkMode(IsoAgLib::IdentModeImplement) )
-    { // precondition checks for sending as implement
-      if (!mb_cmdWait4Response) return;
-
-      // getISOName() might report NULL at least during init time
-      if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
-        return;
-
-      data().setIsoPgn(LIGHTING_DATA_PGN);
-      //reset flag because msg will now be send
-      mb_cmdWait4Response = false;
-    }
-    else
-    { // tractor mode
-      if ( ( ci32_now - marr_timeStamp[m_index] ) <= 1000 )
-      { // WE ARE NOT ALLOWED TO SEND - EVEN IF REQUESTED
-        return;
-      }
-      else if ( (!mb_changeNeedBeSend) && ( (ci32_now - marr_timeStamp[(m_index+9)%10]) < 900 ) ) // (m_index+9)%10 -> youngest entry in array marr_timeStamp[];
-      { // to send requested (i.e. no change occured) or not yet time to repeat last command
-        return;
-      }
-      mb_changeNeedBeSend = false;
-      // now it's evident, that we have to send a command
-      data().setIsoPgn(LIGHTING_COMMAND_PGN);
-      setSelectedDataSourceISOName(*getISOName());
-    }
-
-    //set different priority for tractor and implemnt
-    if (checkMode(IsoAgLib::IdentModeTractor))
-      data().setIsoPri(3);
-    else //implement mode
-       data().setIsoPri(6);
 
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setISONameForSA( *getISOName() );
     data().setLen(8);
 
     uint16_t ui16_temp = 0;
-    ui16_temp = (mt_cmd.daytimeRunning <<  0) +
-                (mt_cmd.alternateHead  <<  2) +
-                (mt_cmd.lowBeamHead    <<  4) +
-                (mt_cmd.highBeamHead   <<  6) +
-                (mt_cmd.frontFog       <<  8) +
-                (mt_cmd.beacon         << 10) +
-                (mt_cmd.rightTurn      << 12) +
-                (mt_cmd.leftTurn       << 14);
+    ui16_temp =
+      (mt_cmd.daytimeRunning <<  0) +
+      (mt_cmd.alternateHead  <<  2) +
+      (mt_cmd.lowBeamHead    <<  4) +
+      (mt_cmd.highBeamHead   <<  6) +
+      (mt_cmd.frontFog       <<  8) +
+      (mt_cmd.beacon         << 10) +
+      (mt_cmd.rightTurn      << 12) +
+      (mt_cmd.leftTurn       << 14);
     data().setUint16Data(0, ui16_temp);
     ui16_temp = 0;
-    ui16_temp = (mt_cmd.backUpLightAlarmHorn <<  0) +
-                (mt_cmd.centerStop           <<  2) +
-                (mt_cmd.rightStop            <<  4) +
-                (mt_cmd.leftStop             <<  6) +
-                (mt_cmd.implClearance        <<  8) +
-                (mt_cmd.tracClearance        << 10) +
-                (mt_cmd.implMarker           << 12) +
-                (mt_cmd.tracMarker           << 14);
+    ui16_temp =
+      (mt_cmd.backUpLightAlarmHorn <<  0) +
+      (mt_cmd.centerStop           <<  2) +
+      (mt_cmd.rightStop            <<  4) +
+      (mt_cmd.leftStop             <<  6) +
+      (mt_cmd.implClearance        <<  8) +
+      (mt_cmd.tracClearance        << 10) +
+      (mt_cmd.implMarker           << 12) +
+      (mt_cmd.tracMarker           << 14);
     data().setUint16Data(2, ui16_temp);
     ui16_temp = 0;
-    ui16_temp = (mt_cmd.rearFog       <<  0) +
-                (mt_cmd.undersideWork <<  2) +
-                (mt_cmd.rearLowWork   <<  4) +
-                (mt_cmd.rearHighWork  <<  6) +
-                (mt_cmd.sideLowWork   <<  8) +
-                (mt_cmd.sideHighWork  << 10) +
-                (mt_cmd.frontLowWork  << 12) +
-                (mt_cmd.frontHighWork << 14);
+    ui16_temp =
+      (mt_cmd.rearFog       <<  0) +
+      (mt_cmd.undersideWork <<  2) +
+      (mt_cmd.rearLowWork   <<  4) +
+      (mt_cmd.rearHighWork  <<  6) +
+      (mt_cmd.sideLowWork   <<  8) +
+      (mt_cmd.sideHighWork  << 10) +
+      (mt_cmd.frontLowWork  << 12) +
+      (mt_cmd.frontHighWork << 14);
     data().setUint16Data(4, ui16_temp);
-
-    if (checkMode(IsoAgLib::IdentModeTractor)) //tractor
-    {
-      ui16_temp = 0;
-      ui16_temp = (mt_cmd.implOEMOpt2          <<  0) +
-                  (mt_cmd.implOEMOpt1          <<  2) +
-                  (mt_cmd.implRightForwardWork <<  4) +
-                  (mt_cmd.implLeftForwardWork  <<  6) +
-                  (mt_cmd.dataMsgReq           <<  8) +
-                  (mt_cmd.implRightFacingWork  << 10) +
-                  (mt_cmd.implLeftFacingWork   << 12) +
-                  (mt_cmd.implRearWork         << 14);
-      data().setUint16Data(6, ui16_temp);
-      //overwrite the eldest time event with latest time event
-      marr_timeStamp[m_index] = ci32_now;
-
-      //set m_index to the eldest time event
-      m_index = (m_index + 1) % 10;
-    } else //implement
-    {
-      ui16_temp = 0;
-      ui16_temp = (mt_cmd.implOEMOpt2          <<  0) +
-                  (mt_cmd.implOEMOpt1          <<  2) +
-                  (mt_cmd.implRightForwardWork <<  4) +
-                  (mt_cmd.implLeftForwardWork  <<  6) +
-                  (0                          <<  8) +    //reserved field in lighting data
-                  (mt_cmd.implRightFacingWork  << 10) +
-                  (mt_cmd.implLeftFacingWork   << 12) +
-                  (mt_cmd.implRearWork         << 14);
-      data().setUint16Data(6, ui16_temp);
-    }
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    c_can << data();
+    getCanInstance4Comm() << data();
+    return MessageSent;
+  }
+
+  TracLight_c::SendMessage_e TracLight_c::sendLightingData()
+  { // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
+    // function of base class BaseCommon_c
+
+    // precondition checks for sending as implement
+    if (!mb_cmdWait4Response) return MessageNotSent;
+
+    // getISOName() might report NULL at least during init time
+    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+      return MessageNotSent;
+
+    data().setIsoPgn(LIGHTING_DATA_PGN);
+    //reset flag because msg will now be send
+    mb_cmdWait4Response = false;
+
+    data().setIsoPri(6);
+
+    uint16_t ui16_temp = 0;
+    ui16_temp =
+      (mt_cmd.implOEMOpt2          <<  0) +
+      (mt_cmd.implOEMOpt1          <<  2) +
+      (mt_cmd.implRightForwardWork <<  4) +
+      (mt_cmd.implLeftForwardWork  <<  6) +
+      (0                          <<  8) +    //reserved field in lighting data
+      (mt_cmd.implRightFacingWork  << 10) +
+      (mt_cmd.implLeftFacingWork   << 12) +
+      (mt_cmd.implRearWork         << 14);
+    data().setUint16Data(6, ui16_temp);
+
+    return helpSendMessage();
+  }
+
+  TracLight_c::SendMessage_e TracLight_c::sendLightingCommand()
+  {
+    int32_t const ci32_now = getLastRetriggerTime();
+
+    // tractor mode
+    if ( ( ci32_now - marr_timeStamp[m_index] ) <= 1000 )
+    { // WE ARE NOT ALLOWED TO SEND - EVEN IF REQUESTED
+      return MessageNotSent;
+    }
+    else if ( (!mb_changeNeedBeSend) && ( (ci32_now - marr_timeStamp[(m_index+9)%10]) < 900 ) ) // (m_index+9)%10 -> youngest entry in array marr_timeStamp[];
+    { // to send requested (i.e. no change occured) or not yet time to repeat last command
+      return MessageNotSent;
+    }
+    mb_changeNeedBeSend = false;
+    // now it's evident, that we have to send a command
+    data().setIsoPgn(LIGHTING_COMMAND_PGN);
+    setSelectedDataSourceISOName(*getISOName());
+
+    data().setIsoPri(3);
+    uint16_t ui16_temp = 0;
+    ui16_temp =
+      (mt_cmd.implOEMOpt2          <<  0) +
+      (mt_cmd.implOEMOpt1          <<  2) +
+      (mt_cmd.implRightForwardWork <<  4) +
+      (mt_cmd.implLeftForwardWork  <<  6) +
+      (mt_cmd.dataMsgReq           <<  8) +
+      (mt_cmd.implRightFacingWork  << 10) +
+      (mt_cmd.implLeftFacingWork   << 12) +
+      (mt_cmd.implRearWork         << 14);
+    data().setUint16Data(6, ui16_temp);
+    //overwrite the eldest time event with latest time event
+    marr_timeStamp[m_index] = ci32_now;
+
+    //set m_index to the eldest time event
+    m_index = (m_index + 1) % 10;
+
+    return helpSendMessage();
+  }
+
+  /** send light update; there is a difference between implement and tractor mode
+      @see  TracLight_c::processMsgRequestPGN
+      @see  CanIo_c::operator<<
+    */
+  void TracLight_c::sendMessage()
+  {
+    bool const b_isTractor = checkMode(IsoAgLib::IdentModeTractor);
+    return (void)(b_isTractor ? sendLightingCommand() : sendLightingData());
   }
 
 

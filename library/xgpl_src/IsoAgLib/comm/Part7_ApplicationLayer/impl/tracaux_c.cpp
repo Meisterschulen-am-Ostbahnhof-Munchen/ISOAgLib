@@ -17,6 +17,14 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "tracaux_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#include <IsoAgLib/util/iassert.h>
+
+namespace {
+
+uint32_t const gcui32_pgnMask16consecutive = 0x3FFF0uL;
+
+} //namespace
 
 using namespace std;
 
@@ -70,13 +78,16 @@ namespace __IsoAgLib {
       @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracAux_c::config_base(const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask)
+  bool TracAux_c::config_base(const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t rui16_suppressMask)
   {
+    //store old mode to decide to register or unregister to request for pgn
+    IsoAgLib::IdentMode_t t_oldMode = getMode();
+
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
-    if ( !BaseCommon_c::config_base (rpc_isoName, rt_identMode, rui16_suppressMask) ) return false;
+    if ( !BaseCommon_c::config_base (rpc_isoName, at_identMode, rui16_suppressMask) ) return false;
 
-    if ( rt_identMode == IsoAgLib::IdentModeImplement )
+    if ( at_identMode == IsoAgLib::IdentModeImplement )
     {
       // set Time Period in ms for Scheduler_c
       setTimePeriod( (uint16_t) 100 );
@@ -85,6 +96,23 @@ namespace __IsoAgLib {
     { //IdentModeTractor
       // set Time Period in ms for Scheduler_c
       setTimePeriod( (uint16_t) 1000 );
+    }
+
+    // un-/register to PGN
+    if (t_oldMode == at_identMode)
+      ; // no change, still the same mode
+    else if (at_identMode == IsoAgLib::IdentModeTractor) {
+      // a change from Implement mode to Tractor mode occured
+      RegisterPgn_s reg_s(this);
+      reg_s(AUX_VALVE_0_ESTIMATED_FLOW, gcui32_pgnMask16consecutive);
+      reg_s(AUX_VALVE_0_MEASURED_FLOW, gcui32_pgnMask16consecutive);
+      reg_s(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
+    } else {
+      // a change from Tractor mode to Implement mode occured
+      UnregisterPgn_s unreg_s(this);
+      unreg_s(AUX_VALVE_0_ESTIMATED_FLOW, gcui32_pgnMask16consecutive);
+      unreg_s(AUX_VALVE_0_MEASURED_FLOW, gcui32_pgnMask16consecutive);
+      unreg_s(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
     }
 
     // set configure values
@@ -300,68 +328,112 @@ namespace __IsoAgLib {
     return true;
   }
 
+  void TracAux_c::prepareSendingEstimatedMeasured()
+  {
+    setSelectedDataSourceISOName(*getISOName());
+
+    data().setISONameForSA( *getISOName() );
+    data().setIdentType(Ident_c::ExtendedIdent);
+    data().setIsoPri(3);
+    data().setLen(8);    
+  }
+
+  void TracAux_c::isoSendEstimated(uint32_t aui32_pgn)
+  {
+    isoaglib_assert(AUX_VALVE_0_ESTIMATED_FLOW <= aui32_pgn);
+    isoaglib_assert(aui32_pgn <= AUX_VALVE_15_ESTIMATED_FLOW);
+    prepareSendingEstimatedMeasured();
+    data().setIsoPgn(aui32_pgn);
+    IsoAuxValveData_t &rt_valve = marr_valve[aui32_pgn - AUX_VALVE_0_ESTIMATED_FLOW];
+    data().setUint8Data(0, rt_valve.ui8_extendPortEstFlow);
+    data().setUint8Data(1, rt_valve.ui8_retractPortEstFlow);
+    uint8_t ui8_temp = 0;
+    ui8_temp |= rt_valve.ui8_estValveState;
+    ui8_temp |= (rt_valve.ui8_estFailSaveMode << 6);
+    data().setUint8Data(2, ui8_temp);
+    ui8_temp = 0;
+    ui8_temp |= (rt_valve.ui8_estValveLimitStatus << 5);
+    data().setUint8Data(3, ui8_temp );
+    // Reserved fields
+    data().setUint32Data(4, 0xFFFFFFFF);
+
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+  }
+
+  void TracAux_c::isoSendMeasured(uint32_t aui32_pgn)
+  {
+    isoaglib_assert(AUX_VALVE_0_MEASURED_FLOW <= aui32_pgn);
+    isoaglib_assert(aui32_pgn <= AUX_VALVE_15_MEASURED_FLOW);
+    prepareSendingEstimatedMeasured();
+
+    data().setIsoPgn(aui32_pgn);
+    IsoAuxValveData_t &rt_valve = marr_valve[aui32_pgn - AUX_VALVE_0_MEASURED_FLOW];
+    data().setUint8Data(0, rt_valve.ui8_extendPortMeasuredFlow);
+    data().setUint8Data(1, rt_valve.ui8_retractPortMeasuredFlow);
+    data().setUint8Data(2, rt_valve.ui16_extendPortPressure & 0xFF);
+    data().setUint8Data(3, rt_valve.ui16_extendPortPressure >> 8);
+    data().setUint8Data(4, rt_valve.ui16_retractPortPressure & 0xFF);
+    data().setUint8Data(5, rt_valve.ui16_retractPortPressure >> 8);
+    data().setUint8Data(6, rt_valve.ui8_returnPortPressure);
+    uint8_t ui8_temp = 0;
+    ui8_temp |= (rt_valve.ui8_measuredValveLimitStatus << 5);
+    data().setUint8Data(7, ui8_temp);
+    // Reserved fields
+
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+  }
+
   /** send estimated and measured messages (only tractor mode)
       @pre client has already claimed an address
       @see CanIo_c::operator<<
     */
   void TracAux_c::isoSendEstimatedMeasured()
-  { // there is no need to check for address claim because this is already done in the timeEvent
+  {
+    // there is no need to check for address claim because this is already done in the timeEvent
     // function of base class BaseCommon_c
+    for (int i = 0; i < nrOfValves; ++i) {
+      if (marr_auxFlag[i].ui8_estimatedActivated)
+        isoSendEstimated(AUX_VALVE_0_ESTIMATED_FLOW + i);
+      if (marr_auxFlag[i].ui8_measuredActivated)
+        isoSendMeasured(AUX_VALVE_0_MEASURED_FLOW + i);
+    }
+  }
 
-    CanIo_c& c_can = getCanInstance4Comm();
-    setSelectedDataSourceISOName(*getISOName());
+  TracAux_c::SendCommand_e TracAux_c::isoSendCommand(uint32_t aui32_pgn)
+  {
+    isoaglib_assert(AUX_VALVE_0_COMMAND <= aui32_pgn);
+    isoaglib_assert(aui32_pgn <= AUX_VALVE_15_COMMAND);
+    // as BaseCommon_c timeEvent() checks only for adr claimed state in TractorMode, we have to perform those checks here,
+    // as we reach this function mostly for ImplementMode, where getISOName() might report NULL at least during init time
+    if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
+      return CommandNotSent;
 
     data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setLen(8);
 
-    for (int i = 0; i < nrOfValves; i++)
-    {
-      if (marr_auxFlag[i].ui8_estimatedActivated)
-      {
-        uint8_t ui8_temp;
-        data().setIsoPgn(AUX_VALVE_0_ESTIMATED_FLOW | i);
+    data().setIsoPgn(aui32_pgn);
 
-        data().setUint8Data(0, marr_valve[i].ui8_extendPortEstFlow);
-        data().setUint8Data(1, marr_valve[i].ui8_retractPortEstFlow);
-        ui8_temp = 0;
-        ui8_temp |= marr_valve[i].ui8_estValveState;
-        ui8_temp |= (marr_valve[i].ui8_estFailSaveMode << 6);
-        data().setUint8Data(2, ui8_temp);
-        ui8_temp = 0;
-        ui8_temp |= (marr_valve[i].ui8_estValveLimitStatus << 5);
-        data().setUint8Data(3, ui8_temp );
-        // Reserved fields
-        data().setUint32Data(4, 0xFFFFFFFF);
+    IsoAuxValveData_t &rt_valve = marr_valve[aui32_pgn - AUX_VALVE_0_COMMAND];
+    data().setUint8Data(0, rt_valve.ui8_cmdPortFlow);
+    uint8_t ui8_temp = 0;
+    ui8_temp |= rt_valve.ui8_cmdValveState;
+    ui8_temp |= (rt_valve.ui8_cmdFailSaveMode << 6);
+    data().setUint8Data(2, ui8_temp);
+    // Reserved fields
+    data().setUint8Data(1, 0xFF);
+    data().setUint32Data(3, 0xFFFFFFFF);
+    data().setUint8Data(7, 0xFF);
 
-        // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-        // then it sends the data
-        c_can << data();
-      }
-
-      if (marr_auxFlag[i].ui8_measuredActivated)
-      {
-        uint8_t ui8_temp;
-        data().setIsoPgn(AUX_VALVE_0_MEASURED_FLOW | i);
-
-        data().setUint8Data(0, marr_valve[i].ui8_extendPortMeasuredFlow);
-        data().setUint8Data(1, marr_valve[i].ui8_retractPortMeasuredFlow);
-        data().setUint8Data(2, marr_valve[i].ui16_extendPortPressure & 0xFF);
-        data().setUint8Data(3, marr_valve[i].ui16_extendPortPressure >> 8);
-        data().setUint8Data(4, marr_valve[i].ui16_retractPortPressure & 0xFF);
-        data().setUint8Data(5, marr_valve[i].ui16_retractPortPressure >> 8);
-        data().setUint8Data(6, marr_valve[i].ui8_returnPortPressure);
-        ui8_temp = 0;
-        ui8_temp |= (marr_valve[i].ui8_measuredValveLimitStatus << 5);
-        data().setUint8Data(7, ui8_temp);
-        // Reserved fields
-
-        // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-        // then it sends the data
-        c_can << data();
-      }
-    }
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return CommandSent;
   }
 
   /** send command messages (only implement mode)
@@ -778,12 +850,38 @@ const char*
 TracAux_c::getTaskName() const
 {   return "TracAux_c"; }
 
-/** dummy implementation
-    @todo SOON-135: add answering of requestPGN in case this object is configured for sending of these information
-           - verify this also for the other TracFoo classes
-  */
-bool TracAux_c::processMsgRequestPGN (uint32_t /*rui32_pgn*/, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* /*rpc_isoItemReceiver*/)
+bool TracAux_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
 {
+  // check if we are allowed to send a request for pgn
+  if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )
+    return false;
+
+  bool const cb_matchEstimated = IsoRequestPgn_c::doMatchPgns(
+      aui32_pgn,
+      AUX_VALVE_0_ESTIMATED_FLOW,
+      gcui32_pgnMask16consecutive);
+  if (cb_matchEstimated) {
+    isoSendEstimated(aui32_pgn);
+    return true;
+  }
+
+  bool const cb_matchMeasured = IsoRequestPgn_c::doMatchPgns(
+      aui32_pgn,
+      AUX_VALVE_0_MEASURED_FLOW,
+      gcui32_pgnMask16consecutive);
+  if (cb_matchMeasured) {
+    isoSendMeasured(aui32_pgn);
+    return true;
+  }
+
+  bool const cb_matchCommand = IsoRequestPgn_c::doMatchPgns(
+      aui32_pgn,
+      AUX_VALVE_0_COMMAND,
+      gcui32_pgnMask16consecutive);
+  if (cb_matchCommand) {
+    return CommandSent == isoSendCommand(aui32_pgn);
+  }
+
   return false;
 }
 

@@ -252,6 +252,20 @@ typedef struct {
       */
     void sendMessage();
 
+    enum SendMessage_e { MessageSent, MessageNotSent };
+
+    /** Help method sendMessage.
+     */
+    SendMessage_e helpSendMessage();
+
+    /** Send lighting data message.
+     */
+    SendMessage_e sendLightingData();
+
+    /** Send lighting command message.
+     */
+    SendMessage_e sendLightingCommand();
+
   private:
     // Private attributes
     /** remember if we received a command, which have to be responded */

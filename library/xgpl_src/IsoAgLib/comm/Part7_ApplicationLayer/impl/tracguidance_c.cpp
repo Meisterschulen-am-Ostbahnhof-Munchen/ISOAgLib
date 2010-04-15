@@ -17,6 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "tracguidancecommand_c.h"
 #include "tracguidance_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 using namespace std;
 
@@ -72,6 +73,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   bool TracGuidance_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
+    IsoAgLib::IdentMode_t const ct_oldMode = getMode();
     //call config for handling which is base data independent
     //if something went wrong leave function before something is configured
     if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
@@ -85,6 +87,16 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     mt_steeringInputPosStatus = IsoAgLib::IsoNotAvailableSteerPos ;
     mt_steeringSystemReadiness = IsoAgLib::IsoNotAvailableSteerReadiness ;
     mt_mechanicalSystemLogout = IsoAgLib::IsoNotAvailable ;
+
+    // un-/register to PGN
+    if (ct_oldMode == at_identMode)
+      ; // no change, still the same mode
+    else if (at_identMode == IsoAgLib::IdentModeTractor)
+      // a change from Implement mode to Tractor mode occured
+      RegisterPgn_s(this)(GUIDANCE_MACHINE_STATUS);
+    else
+      // a change from Tractor mode to Implement mode occured
+      UnregisterPgn_s(this)(GUIDANCE_MACHINE_STATUS);
 
     return true;
   }
@@ -199,13 +211,15 @@ const char*
 TracGuidance_c::getTaskName() const
 {   return "TracGuidance_c"; }
 
-/** dummy implementation
-    @todo SOON-135: add answering of requestPGN in case this object is configured for sending of these information
-           - verify this also for the other TracFoo classes
-  */
-bool TracGuidance_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/)
+bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
 {
-  return false;
+  bool const b_allowed = BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver);
+  if (!b_allowed)
+    return false;
+  if (GUIDANCE_MACHINE_STATUS != aui32_pgn)
+    return false;
+  isoSendMessageTracMode();
+  return true;
 }
 
 }// End Namespace __IsoAglib

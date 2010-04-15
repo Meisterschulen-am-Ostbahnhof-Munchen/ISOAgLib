@@ -260,11 +260,13 @@ public: // Public methods
   const uint8_t* getVtLanguage()   const { return mp8ui8_languageVt; }
   const uint8_t* getTecuLanguage() const { return mp8ui8_languageTecu; }
 
+  enum SendLanguage_e { LanguageSent, LanguageNotSent };
+
   /** send iso language data msg
       @see  TracGeneral_c::processMsgRequestPGN
       @see  CanIo_c::operator<<
     */
-  void sendLanguage();
+  enum SendLanguage_e sendLanguage();
 
   ///  Used for Debugging Tasks in Scheduler_c
   virtual const char* getTaskName() const;
@@ -316,6 +318,23 @@ private:
 
   /** update map of maintain power data, update maintain power boolean */
   void updateMaintainPowerRequest();
+
+  bool canSendFrontHitchState();
+
+  enum SendHitchState_e { HitchStateSent, HitchStateNotSent };
+
+  /** Send front hitch date message. */
+  SendHitchState_e sendFrontHitchState();
+
+  bool canSendRearHitchState();
+
+  /** Send rear hitch date message. */
+  SendHitchState_e sendRearHitchState();
+
+  /** Prepare sending any hitch date message. */
+  SendHitchState_e prepareSendingHitchState();
+
+  bool canSendLanguage();
 
 private:
   // Private attributes
@@ -385,6 +404,18 @@ private:
   /** bit field with indicated state for tractor*/
   indicatedStateImpl_t mt_implState;
 };
+
+inline bool TracGeneral_c::canSendFrontHitchState() {
+  return 0 == (FRONT_HITCH_STATE_PGN_DISABLE_MASK & mui16_suppressMask);
+}
+
+inline bool TracGeneral_c::canSendRearHitchState() {
+  return 0 == (REAR_HITCH_STATE_PGN_DISABLE_MASK & mui16_suppressMask);
+}
+
+inline bool TracGeneral_c::canSendLanguage() {
+  return 0 == (LANGUAGE_PGN_DISABLE_MASK & mui16_suppressMask);
+}
 
   #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique TracGeneral_c singleton instance

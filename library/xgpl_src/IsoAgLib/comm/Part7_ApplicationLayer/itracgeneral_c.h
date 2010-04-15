@@ -174,7 +174,7 @@ namespace IsoAgLib {
   const uint8_t* getTecuLanguage() const { return TracGeneral_c::getTecuLanguage();}
 
   /** send iso language data msg*/
-  void sendLanguage() { TracGeneral_c::sendLanguage();}
+  void sendLanguage() { (void)TracGeneral_c::sendLanguage();}
 
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage() { return TracGeneral_c::sendRequestUpdateLanguage(); }
