@@ -16,6 +16,7 @@
 
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <algorithm>
 
 
 namespace __IsoAgLib {
