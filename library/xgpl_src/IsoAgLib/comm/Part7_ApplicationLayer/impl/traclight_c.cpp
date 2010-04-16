@@ -65,7 +65,7 @@ namespace __IsoAgLib {
   {
     //call init for handling which is base data independent
     BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
-    isoaglib_assert(IdentModeImplement == getMode());
+    isoaglib_assert(IsoAgLib::IdentModeImplement == getMode());
     RegisterPgn_s(this)(LIGHTING_COMMAND_PGN);
   };
 
