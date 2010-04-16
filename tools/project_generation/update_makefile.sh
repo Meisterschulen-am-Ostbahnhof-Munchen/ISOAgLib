@@ -377,7 +377,7 @@ check_set_correct_variables()
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/pc"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/pc"
         ;;
-       (a2|c2c|Dj1|esx|esxu|p1mc|src9)
+       (c2c|Dj1|esx|esxu|p1mc|src9)
         HAL_FIND_PATH="$ISO_AG_LIB_PATH/library/xgpl_src"
         HAL_PREFIX_ISOAGLIB="IsoAgLib/hal/$USE_TARGET_SYSTEM"
         HAL_PREFIX_SUPPLEMENTARY="supplementary_driver/hal/$USE_TARGET_SYSTEM"
