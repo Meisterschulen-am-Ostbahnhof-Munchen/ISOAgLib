@@ -57,7 +57,7 @@ private:
 
   struct DoesMatchPgn_s {
     bool operator()(PGN_s const &rcs_pgn) {
-      return doMatchPgns(rcs_pgn.mui32_pgnMask, rcs_pgn.ui32_pgn, mui32_pgn);
+      return doMatchPgns(mui32_pgn, rcs_pgn.ui32_pgn, rcs_pgn.mui32_pgnMask);
     }
     DoesMatchPgn_s(uint32_t aui32_pgn) : mui32_pgn(aui32_pgn) {}
   private:

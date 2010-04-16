@@ -255,10 +255,13 @@ bool Scheduler_c::registerClient( Scheduler_Task_c* apc_client)
   //For Client that registers at later timepoint
   if ( System_c::getTime() > si32_taskStartTime ) si32_taskStartTime = System_c::getTime();;
 
+# if 0 // Dont't call virtual method getTaskName here, otherwise it
+       // will be called indirectly by iSchedulerTask_c's construcor
+       // when the vtable is not yet complete.
   #if DEBUG_SCHEDULER
   INTERNAL_DEBUG_DEVICE << "RegisteredClient: "<<  apc_client->getTaskName() <<  INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-
+# endif
 
   apc_client->startTaskTiming(si32_taskStartTime);
   /// put client in taskQueue

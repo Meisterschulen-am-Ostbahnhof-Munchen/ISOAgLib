@@ -16,6 +16,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/util/iassert.h>
 #include <algorithm>
 
 #if DEBUG_DIAGNOSTICPGN
@@ -190,6 +191,9 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       }
       return true;
 #endif
+  default:
+    isoaglib_assert(!"Not registered for this PGN.");
+    break;
   }
 
   // something wrong happend - answer with CannotRespondNow
