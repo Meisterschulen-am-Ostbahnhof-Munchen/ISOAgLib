@@ -69,7 +69,7 @@ public:
 
   /** Do two PGNs match for a given PGN mask?
    */
-  static bool doMatchPgns(
+  static inline bool doMatchPgns(
       uint32_t aui32_pgnA,
       uint32_t aui32_pgnB,
       uint32_t aui32_pgnMask = mscui32_pgnDefaultMask);
