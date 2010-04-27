@@ -176,6 +176,9 @@ private: // Private methods
   /** check mb_alreadyClosed to decide if close() can be called */
   bool checkAlreadyClosed( void ) const { return mb_alreadyClosed; }
 
+  virtual bool processInvalidMsg() { return false; }
+
+  virtual bool isNetworkMgmt() const { return false; }
 
 private: // Private attributes
   /// holds all registered clients with PGN(s)

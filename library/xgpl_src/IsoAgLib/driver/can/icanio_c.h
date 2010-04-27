@@ -189,43 +189,6 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
         * Err_c::badAlloc on not enough memory for new FilterBox
           instance or for new configured MsgObj_c's
     @see IsoAgLib::iCANCustomer
-    @param ar_schedulerTask reference to IsoAgLib::iSchedulerTask_c  which needs
-           filtered messages (-> on received msg call
-           ar_customer.processMsg())
-    @param at_mask individual mask for this filter box
-    @param at_filter individual filter
-    @param ab_reconfigImmediate true -> all Filter objects are reconfigured
-           to according CAN hardware MsgObj after creating this filter
-    @param at_identType ident type of the created ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
-    @return true -> inserting and if wanted reconfiguration are
-          performed without errors
-    @exception badAlloc
-  */
-   inline bool insertFilter(IsoAgLib::iSchedulerTask_c& ar_schedulerTask, MASK_TYPE at_mask,
-       MASK_TYPE at_filter, bool ab_reconfigImmediate = true,
-                     const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return NULL != CanIo_c::insertFilter
-    (static_cast<CanCustomer_c&>(ar_schedulerTask),
-       at_mask, at_filter, ab_reconfigImmediate, at_identType);
-
-  };
-
-
-  /**
-    create a Filter Box with specified at_mask/at_filter
-    on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
-    ab_reconfigImmediate == true -> useful for
-    avoiding unneeded reconfiguration during
-    sequence of FilterBox_c insertions;
-    by ar_customer iCanIo_c (FilterBox_c) can start direct processing
-    of received data in dedicated customer object (no search);
-    uses BIOS functions
-
-    possible errors:
-        * Err_c::badAlloc on not enough memory for new FilterBox
-          instance or for new configured MsgObj_c's
-    @see IsoAgLib::iCANCustomer
     @param ar_customer reference to IsoAgLib::iCanCustomer_c  which needs
            filtered messages (-> on received msg call
            ar_customer.processMsg())
@@ -242,12 +205,15 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
    inline bool insertFilter(IsoAgLib::iCanCustomer_c& ar_customer, MASK_TYPE at_mask,
        MASK_TYPE at_filter, bool ab_reconfigImmediate = true,
                      const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return NULL != CanIo_c::insertFilter
-    (static_cast<CanCustomer_c&>(ar_customer),
-       at_mask, at_filter, ab_reconfigImmediate, at_identType);
-
+  {
+    CanCustomer_c &rc_customer = ar_customer;
+    return NULL != CanIo_c::insertFilter(
+        rc_customer,
+        at_mask,
+        at_filter,
+        ab_reconfigImmediate,
+        at_identType);
   };
-
 
 /**
     Create a Standard Iso Filter Box.It calls internally the CanIo_c::insertFilter.
@@ -265,33 +231,13 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
 
   bool insertStandardIsoFilter(IsoAgLib::iCanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate)
   {
-     if( CanIo_c::insertStandardIsoFilter(static_cast<CanCustomer_c&>(ar_customer),aui32_pgn,ab_reconfigImmediate) != NULL)
-       return true;
-      else
-     return false;
-  };
-
-/**
-    Create a Standard Iso Filter Box.It calls internally the CanIo_c::insertFilter.
-    @see IsoAgLib::iSchedulerTask
-    @param ar_schedulerTask reference to IsoAgLib::iSchedulerTask_c  which needs
-           filtered messages (-> on received msg call
-           ar_customer.processMsg())
-    @param aui32_pgn PGN
-    @param ab_reconfigImmediate true -> all Filter objects are reconfigured
-           to according CAN hardware MsgObj after creating this filter
-    @return true -> inserting and if wanted reconfiguration are
-          performed without errors
-    @exception badAlloc
-*/
-
- bool insertStandardIsoFilter(IsoAgLib::iSchedulerTask_c& ar_schedulerTask, uint32_t aui32_pgn,bool ab_reconfigImmediate)
-  {
-     if( CanIo_c::insertStandardIsoFilter(static_cast<CanCustomer_c&>(ar_schedulerTask),aui32_pgn,ab_reconfigImmediate) != NULL)
-       return true;
-      else
-     return false;
-  };
+    CanCustomer_c &rc_customer = ar_customer;
+    bool const cb_result = NULL != CanIo_c::insertStandardIsoFilter(
+        rc_customer,
+        aui32_pgn,
+        ab_reconfigImmediate);
+    return cb_result;
+  }
 
   /**
     reconfigure the MsgObj after insert/delete of FilterBox
@@ -309,32 +255,21 @@ class iCanIo_c : private __IsoAgLib::CanIo_c {
   */
 
 
-   bool deleteFilter(const IsoAgLib::iCanCustomer_c& ar_customer,
+  bool deleteFilter(const IsoAgLib::iCanCustomer_c& ar_customer,
       MASK_TYPE aui32_mask, MASK_TYPE aui32_filter,
       const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return CanIo_c::deleteFilter(static_cast<const CanCustomer_c &>(ar_customer), aui32_mask, aui32_filter, at_identType);};
+  {
+    CanCustomer_c const &crc_customer = ar_customer;
+    return CanIo_c::deleteFilter(
+        crc_customer,
+        aui32_mask,
+        aui32_filter,
+        at_identType);
+  }
 
 
   bool deleteAllFiltersForCustomer (const IsoAgLib::iCanCustomer_c& ar_customer)
   { return CanIo_c::deleteAllFiltersForCustomer (ar_customer); }
-
-
- /**
-    delete a FilerBox definition
-    @param ar_schedulerTask reference to the processing class ( the same filter setting can be registered by different consuming classes )
-    @param aui32_mask individual mask for this filter box
-    @param aui32_filter individual filter
-    @param at_identType ident type of the deleted ident: standard 11bit or extended 29bit
-        (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
-    @return true -> FilterBox_c found and deleted
-  */
-
-
-   bool deleteFilter(const IsoAgLib::iSchedulerTask_c& ar_schedulerTask,
-      MASK_TYPE aui32_mask, MASK_TYPE aui32_filter,
-      const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
-  {return CanIo_c::deleteFilter(static_cast<const CanCustomer_c &>(ar_schedulerTask), aui32_mask, aui32_filter, at_identType);};
-
 
 
   /**

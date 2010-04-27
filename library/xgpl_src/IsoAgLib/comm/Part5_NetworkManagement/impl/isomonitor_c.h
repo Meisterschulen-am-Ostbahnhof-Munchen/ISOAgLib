@@ -276,7 +276,7 @@ public:
   /** deregister a SaClaimHandler */
   void deregisterSaClaimHandler (SaClaimHandler_c* apc_client);
 
-  void broadcastIsoItemModification2Clients( IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
+  void broadcastIsoItemModification2Clients( SaClaimHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
 
   /**
     deliver member item with given isoName
@@ -383,7 +383,7 @@ public:
   */
   uint8_t getSlaveCount (IsoItem_c* apc_masterItem);
 
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
   ///  Operation: // Function for Debugging in Scheduler_c
   virtual const char* getTaskName() const;
@@ -399,6 +399,7 @@ public:
     */
   void setDiagnosticMode( const IsoName_c& acrc_serviceTool = IsoName_c::IsoNameUnspecified());
 protected: // Protected methods
+
   /** process system msg with informations which are
     important for managing of members
     (this function is only called if NO conflict is detected)
@@ -445,7 +446,56 @@ private:
   */
   void singletonInit();
 
-private: // Private attributes
+  virtual bool processPartStreamDataChunk(
+      Stream_c &apc_stream,
+      bool ab_isFirstChunk,
+      bool ab_isLastChunk)
+  {
+    return mt_customer.processPartStreamDataChunkDefault(
+        apc_stream,
+        ab_isFirstChunk,
+        ab_isLastChunk);
+  }
+
+  virtual void reactOnAbort(Stream_c &arc_stream)
+  {
+    mt_customer.reactOnAbortDefault(arc_stream);
+  }
+
+  virtual void notificationOnMultiReceiveError(
+      ReceiveStreamIdentifier_c const &ac_streamIdent,
+      uint8_t aui8_multiReceiveError,
+      bool ab_isGlobal)
+  {
+    mt_customer.notificationOnMultiReceiveErrorDefault(
+        ac_streamIdent,
+        aui8_multiReceiveError,
+        ab_isGlobal);
+  }
+
+  virtual bool processInvalidMsg(){
+    return false;
+  }
+
+  virtual bool reactOnStreamStart(
+      ReceiveStreamIdentifier_c const &ac_ident,
+      uint32_t aui32_totalLen)
+  {
+    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
+  }
+
+  virtual uint16_t getForcedMinExecTime() const
+  {
+    return getForcedMinExecTimeDefault();
+  }
+
+private:
+  friend class CanCustomerProxy_c< IsoMonitor_c >;
+  typedef CanCustomerProxy_c< IsoMonitor_c > Customer_t;
+  friend class IsoRequestPgnHandlerProxy_c< IsoMonitor_c >;
+  typedef IsoRequestPgnHandlerProxy_c< IsoMonitor_c > Handler_t;
+
+  // Private attributes
   friend class IsoAgLib::iIsoMonitor_c;
 
   /** Cache pointer to speedup access to first active
@@ -476,6 +526,8 @@ private: // Private attributes
   /** flag to indicate service / diagnostic mode, where only connections to a dedicated ECU
      should be maintained */
   IsoName_c mc_serviceTool;
+  Handler_t mt_handler;
+  Customer_t mt_customer;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

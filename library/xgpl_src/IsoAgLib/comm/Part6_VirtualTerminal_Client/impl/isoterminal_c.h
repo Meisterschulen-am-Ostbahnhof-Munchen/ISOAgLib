@@ -102,6 +102,11 @@ public:
  virtual const char* getTaskName() const;
 
 private:
+  friend class CanCustomerProxy_c< IsoTerminal_c >;
+  typedef CanCustomerProxy_c< IsoTerminal_c > Customer_t;
+  friend class SaClaimHandlerProxy_c< IsoTerminal_c >;
+  typedef SaClaimHandlerProxy_c< IsoTerminal_c > Handler_t;
+
   friend class SINGLETON_DERIVED(IsoTerminal_c, Scheduler_Task_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of IsoTerminal_c within application
@@ -119,7 +124,54 @@ private:
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  virtual void reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem);
+  virtual void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem);
+
+  virtual bool processInvalidMsg(){
+    return false;
+  }
+
+  virtual bool isNetworkMgmt() const {
+    return false;
+  }
+
+  virtual bool reactOnStreamStart(
+      ReceiveStreamIdentifier_c const &ac_ident,
+      uint32_t aui32_totalLen)
+  {
+    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
+  }
+
+  virtual void reactOnAbort(Stream_c &arc_stream)
+  {
+    mt_customer.reactOnAbortDefault(arc_stream);
+  }
+
+  virtual bool processPartStreamDataChunk(
+      Stream_c &apc_stream,
+      bool ab_isFirstChunk,
+      bool ab_isLastChunk)
+  {
+    return mt_customer.processPartStreamDataChunkDefault(
+        apc_stream,
+        ab_isFirstChunk,
+        ab_isLastChunk);
+  }
+
+  virtual void notificationOnMultiReceiveError(
+      ReceiveStreamIdentifier_c const &ac_streamIdent,
+      uint8_t aui8_multiReceiveError,
+      bool ab_isGlobal)
+  {
+    mt_customer.notificationOnMultiReceiveErrorDefault(
+        ac_streamIdent,
+        aui8_multiReceiveError,
+        ab_isGlobal);
+  }
+
+  virtual uint16_t getForcedMinExecTime() const
+  {
+    return getForcedMinExecTimeDefault();
+  }
 
   // helper function to shield removal access to vtCSC-list
   void deregisterIsoObjectPoolInd (uint8_t aui8_index);
@@ -136,6 +188,8 @@ private: // attributes
   STL_NAMESPACE::list<VtServerInstance_c> ml_vtServerInst;
 
   STL_NAMESPACE::vector<VtClientServerCommunication_c*> mvec_vtClientServerComm;
+  Handler_t mt_handler;
+  Customer_t mt_customer;
 };
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

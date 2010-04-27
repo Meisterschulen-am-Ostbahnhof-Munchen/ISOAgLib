@@ -103,16 +103,16 @@ namespace __IsoAgLib {
       ; // no change, still the same mode
     else if (at_identMode == IsoAgLib::IdentModeTractor) {
       // a change from Implement mode to Tractor mode occured
-      RegisterPgn_s reg_s(this);
-      reg_s(AUX_VALVE_0_ESTIMATED_FLOW, gcui32_pgnMask16consecutive);
-      reg_s(AUX_VALVE_0_MEASURED_FLOW, gcui32_pgnMask16consecutive);
-      reg_s(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
+      RegisterPgn_s s_register = getRegisterPgn();
+      s_register(AUX_VALVE_0_ESTIMATED_FLOW, gcui32_pgnMask16consecutive);
+      s_register(AUX_VALVE_0_MEASURED_FLOW, gcui32_pgnMask16consecutive);
+      s_register(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
     } else {
       // a change from Tractor mode to Implement mode occured
-      UnregisterPgn_s unreg_s(this);
-      unreg_s(AUX_VALVE_0_ESTIMATED_FLOW, gcui32_pgnMask16consecutive);
-      unreg_s(AUX_VALVE_0_MEASURED_FLOW, gcui32_pgnMask16consecutive);
-      unreg_s(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
+      UnregisterPgn_s s_unregister = getUnregisterPgn();
+      s_unregister(AUX_VALVE_0_ESTIMATED_FLOW, gcui32_pgnMask16consecutive);
+      s_unregister(AUX_VALVE_0_MEASURED_FLOW, gcui32_pgnMask16consecutive);
+      s_unregister(AUX_VALVE_0_COMMAND, gcui32_pgnMask16consecutive);
     }
 
     // set configure values

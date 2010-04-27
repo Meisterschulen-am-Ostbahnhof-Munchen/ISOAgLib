@@ -22,20 +22,6 @@
 
 namespace __IsoAgLib {
 
-
-/**
-  process a message -> the specialized/derived version of this virtual
-  function is called during processing of received CAN telegrams in CanIo_c::processMsg
-  <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
-  @see __IsoAgLib::CanIo_c::processMsg
-  @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-*/
-bool CanCustomer_c::processMsg()
-{ // dummy function - just to allow classes to (indirectly) derive from
-  // CanCustomer_c without the need to implement this function
-  return false;
-}
-
 /**
   virtual function which delivers a pointer to the CANCustomer
   specific CanPkgExt_c instance

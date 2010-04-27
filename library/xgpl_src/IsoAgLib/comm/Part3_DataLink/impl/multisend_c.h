@@ -256,7 +256,7 @@ public: // methods
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
 
   /**
@@ -431,7 +431,13 @@ protected: // methods
   virtual void updateEarlierAndLatestInterval();
 
 
-private: // Private methods
+private:
+  friend class CanCustomerProxy_c< MultiSend_c >;
+  typedef CanCustomerProxy_c< MultiSend_c > Customer_t;
+  friend class SaClaimHandlerProxy_c< MultiSend_c >;
+  typedef SaClaimHandlerProxy_c< MultiSend_c > Handler_t;
+
+  // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, Scheduler_Task_c);
   friend class iMultiSend_c;
   friend class SendStream_c;
@@ -483,6 +489,53 @@ private: // Private methods
                                      return cui8_returnVal; }
   #endif
 
+  virtual bool processInvalidMsg() {
+    return false;
+  }
+
+  virtual bool processPartStreamDataChunk(
+      Stream_c &apc_stream,
+      bool ab_isFirstChunk,
+      bool ab_isLastChunk)
+  {
+    return mt_customer.processPartStreamDataChunkDefault(
+        apc_stream,
+        ab_isFirstChunk,
+        ab_isLastChunk);
+  }
+
+  virtual void reactOnAbort(Stream_c &arc_stream)
+  {
+    mt_customer.reactOnAbortDefault(arc_stream);
+  }
+
+  virtual bool reactOnStreamStart(
+      ReceiveStreamIdentifier_c const &ac_ident,
+      uint32_t aui32_totalLen)
+  {
+    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
+  }
+
+  virtual bool isNetworkMgmt() const {
+    return false;
+  }
+
+  virtual void notificationOnMultiReceiveError(
+      ReceiveStreamIdentifier_c const &ac_streamIdent,
+      uint8_t aui8_multiReceiveError,
+      bool ab_isGlobal)
+  {
+    mt_customer.notificationOnMultiReceiveErrorDefault(
+        ac_streamIdent,
+        aui8_multiReceiveError,
+        ab_isGlobal);
+  }
+
+  virtual uint16_t getForcedMinExecTime() const
+  {
+    return getForcedMinExecTimeDefault();
+  }
+
   static msgType_t protocolTypeByPacketSize(uint32_t ui32_size);
 private:
   enum {
@@ -502,6 +555,8 @@ private:
   MultiSendPkg_c mc_data;
 
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
+  Handler_t mt_handler;
+  Customer_t mt_customer;
 };
 
 inline MultiSend_c::msgType_t MultiSend_c::protocolTypeByPacketSize(uint32_t ui32_size)

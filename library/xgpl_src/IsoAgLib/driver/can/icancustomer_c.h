@@ -49,16 +49,16 @@ public:
     function is called during processing of received CAN telegrams in CanIo_c::processMsg
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool processMsg() { return CanCustomer_c::processMsg();}
+  virtual bool processMsg() { return processMsgDefault(); }
 
  /**
     process a message -> the specialized/derived version of this virtual
     function can be called during processing of received CAN telegrams in CanIo_c::processMsg
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool processInvalidMsg() { return CanCustomer_c::processInvalidMsg(); }
+  virtual bool processInvalidMsg() { return false; }
 
-  virtual bool isNetworkMgmt() const { return CanCustomer_c::isNetworkMgmt(); }
+  virtual bool isNetworkMgmt() const { return false; }
 
 
 private:

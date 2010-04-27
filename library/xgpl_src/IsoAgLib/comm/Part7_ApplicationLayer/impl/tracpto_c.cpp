@@ -91,23 +91,19 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     // set the timestamps to 0
     mt_ptoFront.i32_lastPto = mt_ptoRear.i32_lastPto = 0;
 
-    if (   (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
-        || (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
-       )
-    { // a change from Implement to Tractor mode or a change from Tractor to Implement mode occured
-      const uint8_t pgnCount = 2;
-      const uint32_t pgnArray[pgnCount] = {FRONT_PTO_STATE_PGN, REAR_PTO_STATE_PGN};
-
-      if (t_oldMode == IsoAgLib::IdentModeImplement){
-        // register to request for pgn
-        // create FilterBox_c for REQUEST_PGN_MSG_PGN, FRONT_PTO_STATE_PGN
-        getIsoRequestPgnInstance4Comm().registerPGN (*this, pgnCount, pgnArray); // request for front pto state
-      }
-      else {
-        // unregister from request for pgn, because in implement mode no requests should be answered
-        getIsoRequestPgnInstance4Comm().unregisterPGN (*this, pgnCount, pgnArray);
-      }
-
+    // un-/register to PGN
+    if (t_oldMode == at_identMode)
+      ; // no change, still the same mode
+    else if (at_identMode == IsoAgLib::IdentModeTractor) {
+      // a change from Implement mode to Tractor mode occured
+      RegisterPgn_s s_register = getRegisterPgn();
+      s_register(FRONT_PTO_STATE_PGN);
+      s_register(REAR_PTO_STATE_PGN);
+    } else {
+      // a change from Tractor mode to Implement mode occured
+      UnregisterPgn_s s_unregister = getUnregisterPgn();
+      s_unregister(FRONT_PTO_STATE_PGN);
+      s_unregister(REAR_PTO_STATE_PGN);
     }
 
     mt_ptoFront.t_ptoEngaged = mt_ptoRear.t_ptoEngaged
@@ -211,7 +207,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         setUpdateTime( pt_ptoData->i32_lastPto );
 
         //msg from Tractor received do tell Scheduler_c next call not until  3000ms
-        getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,data().time() + TIMEOUT_TRACTOR_DATA);
+        changeRetriggerTimeAndResort(data().time() + TIMEOUT_TRACTOR_DATA);
       }
 
       else

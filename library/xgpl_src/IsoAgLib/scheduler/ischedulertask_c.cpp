@@ -26,9 +26,9 @@ namespace IsoAgLib {
 
 iSchedulerTask_c::iSchedulerTask_c(int ai_key):mi_key(ai_key)
 {
-  if (Scheduler_Task_c::checkAlreadyClosed())
+  if (checkAlreadyClosed())
   { // avoid another call
-    Scheduler_Task_c::clearAlreadyClosed();
+    clearAlreadyClosed();
 
     // register in Scheduler_c to get time-events
     __IsoAgLib::getSchedulerInstance4Comm().registerClient(this);
@@ -39,9 +39,9 @@ iSchedulerTask_c::iSchedulerTask_c(int ai_key):mi_key(ai_key)
 iSchedulerTask_c:: ~iSchedulerTask_c()
 {
 
-  if (!Scheduler_Task_c::checkAlreadyClosed())
+  if (!checkAlreadyClosed())
   { // avoid another call
-    Scheduler_Task_c::setAlreadyClosed();
+    setAlreadyClosed();
 
     // deregister in Scheduler_c
     __IsoAgLib::getSchedulerInstance4Comm().unregisterClient(this);
@@ -56,7 +56,7 @@ iSchedulerTask_c:: ~iSchedulerTask_c()
 //! @param t_retriggerType: Bit-OR combination of [earliest|standard|latest]
 int32_t iSchedulerTask_c::getTimeToNextTrigger(__IsoAgLib::retriggerType_t t_retriggerType) const
 {
-  return Scheduler_Task_c::getTimeToNextTrigger(t_retriggerType);
+  return getTimeToNextTriggerDefault(t_retriggerType);
 }
 
 
@@ -66,7 +66,7 @@ int32_t iSchedulerTask_c::getTimeToNextTrigger(__IsoAgLib::retriggerType_t t_ret
 //! work in the default min exec time of 5msec
 uint16_t iSchedulerTask_c::getForcedMinExecTime() const
 {
-  return Scheduler_Task_c::getForcedMinExecTime();
+  return getForcedMinExecTimeDefault();
 }
 
 
@@ -76,35 +76,8 @@ uint16_t iSchedulerTask_c::getForcedMinExecTime() const
 //! can be overloaded by Childclass for special condition
 void iSchedulerTask_c::updateEarlierAndLatestInterval()
 {
-  return Scheduler_Task_c::updateEarlierAndLatestInterval();
+  return updateEarlierAndLatestIntervalDefault();
 }
-/**
-  process a message -> the specialized/derived version of this virtual
-  function is called during processing of received CAN telegrams in CanIo_c::processMsg
-  <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
-  @see __IsoAgLib::CanIo_c::processMsg
-*/
-bool iSchedulerTask_c::processMsg()
-{
-  return CanCustomer_c::processMsg();
-}
-
-/**
-  process a message -> the specialized/derived version of this virtual
-  function can be called during processing of received CAN telegrams in CanIo_c::processMsg
-  <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
-  @see __IsoAgLib::CanIo_c::processMsg
-*/
-bool iSchedulerTask_c::processInvalidMsg()
-{
-  return CanCustomer_c::processInvalidMsg();
-}
-
-bool iSchedulerTask_c::isNetworkMgmt() const
-{
-  return CanCustomer_c::isNetworkMgmt();
-}
-
 
 /**
   virtual function which delivers a pointer to the iCANCustomer

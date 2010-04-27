@@ -329,7 +329,7 @@ MultiSend_c::init(void)
     mc_data.setSingletonKey( getSingletonVecKey() );
 
     // register to get ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( &mt_handler );
 
     #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     mui8_nextFpSequenceCounter = 0;
@@ -355,7 +355,7 @@ void MultiSend_c::close()
     getSchedulerInstance4Comm().unregisterClient( this );
 
     // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( &mt_handler );
   }
 }
 
@@ -621,7 +621,10 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
   getMultiSendInstance (protocolInstanceNr) in case more than one
   ISO11783 BUS is used for IsoAgLib
   */
- MultiSend_c::MultiSend_c() {};
+MultiSend_c::MultiSend_c() :
+  mt_handler(*this),
+  mt_customer(*this)
+{}
 
 
 /**
@@ -958,24 +961,24 @@ MultiSend_c::SendStream_c::abortSend()
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-MultiSend_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+MultiSend_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
-    case AddToMonitorList:
+    case SaClaimHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
-    case RemoveFromMonitorList:
+    case SaClaimHandler_c::RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }

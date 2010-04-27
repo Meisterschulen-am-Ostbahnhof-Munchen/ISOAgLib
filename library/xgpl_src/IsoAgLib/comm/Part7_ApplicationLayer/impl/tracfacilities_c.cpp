@@ -100,13 +100,13 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
       // create FilterBox_c for REQUEST_PGN_MSG_PGN, REQUIRED_TRACTOR_FACILITIES_PGN
-      getIsoRequestPgnInstance4Comm().registerPGN (*this, TRACTOR_FACILITIES_PGN); // request for certificate
+      getRegisterPgn()(TRACTOR_FACILITIES_PGN); // request for certificate
     }
 
     if (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
     {  // a change from Tractor mode to Implement mode occured
       // unregister from request for pgn, because in implement mode no request should be answered
-      getIsoRequestPgnInstance4Comm().unregisterPGN (*this, TRACTOR_FACILITIES_PGN);
+      getUnregisterPgn()(TRACTOR_FACILITIES_PGN);
     }
 
     /// init all value in facilitiesBitData_t with default Not Available

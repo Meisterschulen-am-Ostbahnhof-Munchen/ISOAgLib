@@ -37,7 +37,7 @@ namespace __IsoAgLib {
   typedef enum retriggerType_en { StandardRetrigger = 1, EarliestRetrigger = 2, LatestRetrigger = 4 } retriggerType_t;
 
 
-class Scheduler_Task_c : public SaClaimHandler_c {
+class Scheduler_Task_c {
  public:
 
   //Constructor
@@ -96,7 +96,10 @@ class Scheduler_Task_c : public SaClaimHandler_c {
   //!  @return <0 -> too late, =0 -> trigger now, >0 -> wait
   //! Parameter:
   //! @param t_retriggerType: Bit-OR combination of [earliest|standard|latest]
-  virtual int32_t getTimeToNextTrigger(retriggerType_t t_retriggerType= StandardRetrigger) const;
+  virtual int32_t getTimeToNextTrigger(retriggerType_t t_retriggerType= StandardRetrigger) const {
+    return getTimeToNextTriggerDefault(t_retriggerType);
+  };
+
 
   //  Operation: getTimePeriod
   inline uint16_t getTimePeriod() const;
@@ -124,7 +127,10 @@ class Scheduler_Task_c : public SaClaimHandler_c {
   //! a minimum execution time, that should be saved after this item in the
   //! scheduler loop - some tasks might not be able to finish any sensible
   //! work in the default min exec time of 5msec
-  virtual uint16_t getForcedMinExecTime() const;
+  virtual uint16_t getForcedMinExecTime() const = 0;
+
+  // Default implementation for method getForcedMinExecTime.
+  uint16_t getForcedMinExecTimeDefault() const;
 
 #if DEBUG_SCHEDULER
   //  Operation: getMaxExecTime
@@ -194,13 +200,6 @@ class Scheduler_Task_c : public SaClaimHandler_c {
   //!  Virtual Destructor - just to avoid compiler warnings
   virtual ~Scheduler_Task_c();
 
-
-
-  /** End Integrate Publics Implementation for Timescheduling */
-
-  /** Start Integrate Protected Implementation for Timescheduling */
-protected:
-
   //  Operation: setTimePeriod
   //!  Set client specific time period between calls of timeEvent.
   //!  Each from Scheduler_Task_c derived class must set at its INIT
@@ -210,6 +209,17 @@ protected:
   //! @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
   void setTimePeriod(uint16_t aui16_timePeriod);
 
+  // Default implementation for method getTimeToNextTrigger
+  int32_t getTimeToNextTriggerDefault(retriggerType_t t_retriggerType = StandardRetrigger) const;
+
+  // Default implementation for method updateEarlierAndLatestInterval
+  void updateEarlierAndLatestIntervalDefault();
+
+  /** End Integrate Publics Implementation for Timescheduling */
+
+  /** Start Integrate Protected Implementation for Timescheduling */
+protected:
+
   //! Deliver the max Jitter in ms that uses the
   //! Scheduler for earlier oder later call of a task
   inline uint16_t getMaxRetriggerJitter() const;
@@ -218,7 +228,9 @@ protected:
   //! ui16_laterInterval that will be used by
   //! getTimeToNextTrigger(retriggerType_t)
   //! can be overloaded by Childclass for special condition
-  virtual void updateEarlierAndLatestInterval();
+  virtual void updateEarlierAndLatestInterval() {
+    updateEarlierAndLatestIntervalDefault();
+  }
 
   //! Operation: setEarlierInterval
   //! Set lowest time interval that can be handled by the application. The time period of a task is within the range
@@ -327,6 +339,54 @@ protected:
   /** End Integrate private Implementation for Timescheduling */
 
 };
+
+/** Proxy for Scheduler_Task_c.
+  * Having such a proxy as component is an alternative to subclassing
+  * Scheduler_Task_c directly.
+  */
+template < typename OWNER_T >
+class SchedulerTaskProxy_c : public Scheduler_Task_c {
+public:
+  typedef OWNER_T Owner_t;
+
+  SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+  virtual ~SchedulerTaskProxy_c() {}
+
+private:
+  virtual bool timeEvent() {
+    return mrt_owner.timeEvent();
+  }
+
+  virtual void close() {
+    mrt_owner.close();
+  }
+
+  virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
+    return mrt_owner.getTimeToNextTrigger(e_retriggerType);
+  }
+
+  virtual const char *getTaskName() const {
+    return mrt_owner.getTaskName();
+  }
+
+  virtual void updateEarlierAndLatestInterval() {
+    mrt_owner.updateEarlierAndLatestInterval();
+  }
+
+  virtual uint16_t getForcedMinExecTime() const {
+    return mrt_owner.getForcedMinExecTime();
+  }
+
+  // SchedulerTaskProxy_c shall not be copyable. Otherwise the
+  // reference to the containing object would become invalid.
+  SchedulerTaskProxy_c(SchedulerTaskProxy_c const &);
+
+  SchedulerTaskProxy_c &operator=(SchedulerTaskProxy_c const &);
+
+  Owner_t &mrt_owner;
+};
+
 
 /** Start Integrate inline functions Implementation for Timescheduling */
 

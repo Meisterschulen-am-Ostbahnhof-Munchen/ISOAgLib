@@ -262,7 +262,7 @@ public:
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /**
     process TC status messages:
@@ -357,6 +357,49 @@ private: // Private methods
   /** checks if proprietary DDI's can be summed up in groups */
   ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
+  virtual bool processInvalidMsg() {
+    return false;
+  }
+
+  virtual bool reactOnStreamStart(
+      ReceiveStreamIdentifier_c const &ac_ident,
+      uint32_t aui32_totalLen)
+  {
+    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
+  }
+
+  virtual void reactOnAbort(Stream_c &arc_stream)
+  {
+    mt_customer.reactOnAbortDefault(arc_stream);
+  }
+
+  virtual bool processPartStreamDataChunk(
+      Stream_c &apc_stream,
+      bool ab_isFirstChunk,
+      bool ab_isLastChunk)
+  {
+    return mt_customer.processPartStreamDataChunkDefault(
+        apc_stream,
+        ab_isFirstChunk,
+        ab_isLastChunk);
+  }
+
+  virtual void notificationOnMultiReceiveError(
+      ReceiveStreamIdentifier_c const &ac_streamIdent,
+      uint8_t aui8_multiReceiveError,
+      bool ab_isGlobal)
+  {
+    mt_customer.notificationOnMultiReceiveErrorDefault(
+        ac_streamIdent,
+        aui8_multiReceiveError,
+        ab_isGlobal);
+  }
+
+  virtual uint16_t getForcedMinExecTime() const
+  {
+    return getForcedMinExecTimeDefault();
+  }
+
 private: // Private attributes
   /**
     initialize directly after the singleton instance is created.
@@ -364,6 +407,10 @@ private: // Private attributes
     users please use init(...) instead.
   */
   void singletonInit() { init(); };
+
+  friend class CanCustomerProxy_c< Process_c >;
+  typedef CanCustomerProxy_c< Process_c > Customer_t;
+  typedef SaClaimHandlerProxy_c< Process_c > Handler_t;
 
   friend class SINGLETON_DERIVED(Process_c,Scheduler_Task_c);
   friend class IsoAgLib::iProcess_c;
@@ -373,7 +420,10 @@ private: // Private attributes
     NEVER instantiate a variable of type Process_c within application
     only access Process_c via getProcessInstance() or getProcessInstance( int riLbsBusNr ) in case more than one ISO11783 BUS is used for IsoAgLib
     */
-  Process_c() {};
+  Process_c() :
+    mt_handler(*this),
+    mt_customer(*this)
+  {};
 
   /** msg object for CAN I/O */
   ProcessPkg_c mc_data;
@@ -400,7 +450,8 @@ private: // Private attributes
       which shall be called when a TC status message arrives
   */
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
-
+  Handler_t mt_handler;
+  Customer_t mt_customer;
 };
 
 

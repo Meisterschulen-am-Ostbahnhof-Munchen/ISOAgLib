@@ -65,7 +65,18 @@ public:
   virtual const char* getTaskName() const;
 
 
-private: // Private methods
+private:
+  virtual uint16_t getForcedMinExecTime() const
+  {
+    return getForcedMinExecTimeDefault();
+  }
+
+  friend class CanCustomerProxy_c< IsoFilterManager_c >;
+  typedef CanCustomerProxy_c< IsoFilterManager_c > Customer_t;
+  friend class SaClaimHandlerProxy_c< IsoFilterManager_c >;
+  typedef SaClaimHandlerProxy_c< IsoFilterManager_c > Handler_t;
+
+  // Private methods
 
   /** initialize directly after the singleton instance is created.
       this is called from singleton.h and should NOT be called from the user again.
@@ -76,7 +87,7 @@ private: // Private methods
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
 private: // Private attributes
   /// holds all
@@ -86,6 +97,7 @@ private: // Private attributes
   friend class SINGLETON_DERIVED (IsoFilterManager_c,Scheduler_Task_c);
 
   bool mb_alreadyInitialized;
+  Handler_t mt_handler;
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

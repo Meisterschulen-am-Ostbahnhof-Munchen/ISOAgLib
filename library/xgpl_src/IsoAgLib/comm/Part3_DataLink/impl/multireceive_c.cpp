@@ -124,6 +124,8 @@ MultiReceive_c::MultiReceive_c()
   , mi32_ctsSendDelayMoreStreams (CONFIG_MULTI_RECEIVE_CTS_DELAY_AT_MULTI_STREAMS) // data -> cts
   , mi32_retriggerDelayForFirstCts (100)
   , mi32_timePeriodForActiveStreams (100)
+  , mt_handler(*this)
+  , mt_customer(*this)
 {
 }
 
@@ -1189,13 +1191,13 @@ MultiReceive_c::init()
     // register in Scheduler_c to get timeEvents
     getSchedulerInstance4Comm().registerClient( this );
     // register to get ISO monitor list changes
-    getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+    getIsoMonitorInstance4Comm().registerSaClaimHandler( &mt_handler );
 
     // insert receive filters for broadcasted TP
-    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().insertFilter (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
+    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
     getCanInstance4Comm().reconfigureMsgObj();
 
     setTimePeriod (5000); // nothing to do per default!
@@ -1213,13 +1215,13 @@ MultiReceive_c::close( void )
     // deregister in Scheduler_c to get no more timeEvents
     getSchedulerInstance4Comm().unregisterClient( this );
     // deregister to get no more IsoMonitorList changes
-    getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
+    getIsoMonitorInstance4Comm().deregisterSaClaimHandler( &mt_handler );
 
     // remove receive filters for broadcasted TP
-    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
 
     mlist_streams.clear();
     mlist_clients.clear();
@@ -1339,28 +1341,28 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+MultiReceive_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
-    case AddToMonitorList:
+    case SaClaimHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
-    case RemoveFromMonitorList:
+    case SaClaimHandler_c::RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.)
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }
@@ -1370,7 +1372,7 @@ MultiReceive_c::reactOnIsoItemModification (IsoItemModification_t at_action, Iso
       break;
   }
 
-  if ((at_action == AddToMonitorList) || (at_action == ChangedAddress) || (at_action == LostAddress) || (at_action == ReclaimedAddress))
+  if ((at_action == SaClaimHandler_c::AddToMonitorList) || (at_action == SaClaimHandler_c::ChangedAddress) || (at_action == SaClaimHandler_c::LostAddress) || (at_action == SaClaimHandler_c::ReclaimedAddress))
   {
     /// If we're LostAddress, then we automatically have 0xFE now as SA...
     const uint8_t cui8_nr = acrc_isoItem.nr();

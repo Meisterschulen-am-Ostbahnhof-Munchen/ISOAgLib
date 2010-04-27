@@ -27,7 +27,7 @@ namespace __IsoAgLib {
 /** Handler class which can be used to react on all actions depending on address-claims.
  *  Actions that can take place are listed in the class-embdedded enum.
  */
-class SaClaimHandler_c : public IsoRequestPgnHandler_c
+class SaClaimHandler_c
 {
 public:
 
@@ -48,7 +48,44 @@ public:
      <!-- @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
       @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)-->
      */
-   virtual void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/) {}
+  virtual void reactOnIsoItemModification(
+      IsoItemModification_t at_action,
+      IsoItem_c const &acrc_isoItem) = 0;
+
+  void reactOnIsoItemModificationDefault(
+      IsoItemModification_t /*at_action*/,
+      IsoItem_c const &/*acrc_isoItem*/)
+  {}
+};
+
+/** Proxy for SaClaimHandler_c.
+  * Having such a proxy as component is an alternative to subclassing
+  * SaClaimHandler_c directly.
+  */
+template < typename OWNER_T >
+class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+public:
+  typedef OWNER_T Owner_t;
+
+  SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+  virtual ~SaClaimHandlerProxy_c() {}
+
+private:
+  virtual void reactOnIsoItemModification(
+      IsoItemModification_t at_action,
+      IsoItem_c const &acrc_isoItem)
+  {
+    mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+  }
+
+  // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+  // reference to the containing object would become invalid.
+  SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+
+  SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+
+  Owner_t &mrt_owner;
 };
 
 }

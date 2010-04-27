@@ -59,7 +59,7 @@ Scheduler_Task_c::Scheduler_Task_c()
 //! Parameter:
 //! @param t_retriggerType: Bit-OR combination of [earliest|standard|latest]
 int32_t
-Scheduler_Task_c::getTimeToNextTrigger(retriggerType_t t_retriggerType) const
+Scheduler_Task_c::getTimeToNextTriggerDefault(retriggerType_t t_retriggerType) const
 {
 
   int32_t i32_now = System_c::getTime();
@@ -246,7 +246,7 @@ Scheduler_Task_c::getStdTimeToNextTrigger() const
 //! getTimeToNextTrigger(retriggerType_t)
 //! can be overloaded by Childclass for special condition
 void
-Scheduler_Task_c::updateEarlierAndLatestInterval(){
+Scheduler_Task_c::updateEarlierAndLatestIntervalDefault(){
   mui16_earlierInterval = ( ( getTimePeriod() * 3) / 4);
   mui16_latestInterval   =  ( getTimePeriod() / 2) ;
 }
@@ -263,7 +263,7 @@ Scheduler_Task_c::~Scheduler_Task_c()
 //! a minimum execution time, that should be saved after this item in the
 //! scheduler loop - some tasks might not be able to finish any sensible
 //! work in the default min exec time of 5msec
-uint16_t Scheduler_Task_c::getForcedMinExecTime() const
+uint16_t Scheduler_Task_c::getForcedMinExecTimeDefault() const
 {
 
   return 5;

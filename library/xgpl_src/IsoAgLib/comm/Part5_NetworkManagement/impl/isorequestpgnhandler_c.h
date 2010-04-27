@@ -28,13 +28,64 @@ class IsoItem_c;
 
   @author Dipl.-Inf.(FH) Martina Winkler
 */
-class IsoRequestPgnHandler_c : public CanCustomer_c
+class IsoRequestPgnHandler_c
 {
 
 public:
   virtual ~IsoRequestPgnHandler_c() {};
   // IsoItem_c is intentionally not const, because the internal IsoAgLib classes are allowed to e.g. use sendSaClaim().
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/) { return false; }
+  virtual bool processMsgRequestPGN(
+      uint32_t aui32_pgn,
+      IsoItem_c *apc_isoItemSender,
+      IsoItem_c *apc_isoItemReceiver)
+  {
+    return processMsgRequestPGNDefault(
+        aui32_pgn,
+        apc_isoItemSender,
+        apc_isoItemReceiver);
+  }
+
+  bool processMsgRequestPGNDefault(
+      uint32_t /*aui32_pgn*/,
+      IsoItem_c */*apc_isoItemSender*/,
+      IsoItem_c */*apc_isoItemReceiver*/)
+  {
+    return false;
+  }
+};
+
+/** Proxy for IsoRequestPgnHandler_c.
+  * Having such a proxy as component is an alternative to subclassing
+  * IsoRequestPgnHandler_c directly.
+  */
+template < typename OWNER_T >
+class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
+public:
+  typedef OWNER_T Owner_t;
+
+  IsoRequestPgnHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+  virtual ~IsoRequestPgnHandlerProxy_c() {}
+
+private:
+  virtual bool processMsgRequestPGN(
+      uint32_t aui32_pgn,
+      IsoItem_c *apc_isoItemSender,
+      IsoItem_c *apc_isoItemReceiver)
+  {
+    return mrt_owner.processMsgRequestPGN(
+        aui32_pgn,
+        apc_isoItemSender,
+        apc_isoItemReceiver);
+  }
+
+  // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+  // the reference to the containing object would become invalid.
+  IsoRequestPgnHandlerProxy_c(IsoRequestPgnHandlerProxy_c const &);
+
+  IsoRequestPgnHandlerProxy_c &operator=(IsoRequestPgnHandlerProxy_c const &);
+
+  Owner_t &mrt_owner;
 };
 
 }

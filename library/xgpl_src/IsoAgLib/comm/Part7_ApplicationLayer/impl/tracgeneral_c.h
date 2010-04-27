@@ -336,6 +336,10 @@ private:
 
   bool canSendLanguage();
 
+  virtual bool processInvalidMsg() { return false; }
+
+  virtual bool isNetworkMgmt() const { return false; }
+
 private:
   // Private attributes
   /** engine speed */

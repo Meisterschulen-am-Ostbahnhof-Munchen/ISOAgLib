@@ -63,8 +63,12 @@ namespace __IsoAgLib {
 /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance
   <!--@param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)-->
 */
-IsoMonitor_c::IsoMonitor_c()
-  : SingletonIsoMonitor_c(), mvec_isoMember(), mc_serviceTool( IsoName_c::IsoNameUnspecified() )
+IsoMonitor_c::IsoMonitor_c() :
+  SingletonIsoMonitor_c(),
+  mvec_isoMember(),
+  mc_serviceTool( IsoName_c::IsoNameUnspecified() ),
+  mt_handler(*this),
+  mt_customer(*this)
 {
   // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
@@ -112,18 +116,18 @@ void IsoMonitor_c::init( void )
     bool b_configure = false;
 
     // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
-    getIsoRequestPgnInstance4Comm().registerPGN (*this, ADDRESS_CLAIM_PGN);
+    getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, ADDRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
-    getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MASTER_PGN);
-    getIsoRequestPgnInstance4Comm().registerPGN (*this, WORKING_SET_MEMBER_PGN);
+    getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MASTER_PGN);
+    getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    if( getCanInstance4Comm().insertStandardIsoFilter(*this, ((ADDRESS_CLAIM_PGN)+0xFF), false))
+    if( getCanInstance4Comm().insertStandardIsoFilter(mt_customer, ((ADDRESS_CLAIM_PGN)+0xFF), false))
       b_configure = true;
 #ifdef USE_WORKING_SET
-    if (getCanInstance4Comm().insertStandardIsoFilter(*this, (WORKING_SET_MASTER_PGN), false))
+    if (getCanInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MASTER_PGN), false))
       b_configure = true;
-    if (getCanInstance4Comm().insertStandardIsoFilter(*this, (WORKING_SET_MEMBER_PGN), false))
+    if (getCanInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MEMBER_PGN), false))
       b_configure = true;
 #endif
 
@@ -159,16 +163,16 @@ void IsoMonitor_c::close( void )
     mvec_saClaimHandler.clear();
     mvec_isoMember.clear();
 
-    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, ADDRESS_CLAIM_PGN);
+    getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, ADDRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
-    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MASTER_PGN);
-    getIsoRequestPgnInstance4Comm().unregisterPGN (*this, WORKING_SET_MEMBER_PGN);
+    getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MASTER_PGN);
+    getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8), Ident_c::ExtendedIdent);
 #ifdef USE_WORKING_SET
-    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
+    getCanInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
 #endif
   }
 }
@@ -777,7 +781,7 @@ void IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
   // now: trigger suitable SaClaimHandler_c calls for all already known IsoNames in the list
   for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); iter++)
   { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
-    apc_client->reactOnIsoItemModification (AddToMonitorList, *iter);
+    apc_client->reactOnIsoItemModification (SaClaimHandler_c::AddToMonitorList, *iter);
   }
 }
 
@@ -798,7 +802,7 @@ IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
 
 
 /** this function is used to broadcast an ISO monitor list change to all registered clients */
-void IsoMonitor_c::broadcastIsoItemModification2Clients( IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
+void IsoMonitor_c::broadcastIsoItemModification2Clients( SaClaimHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
 {
   for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client

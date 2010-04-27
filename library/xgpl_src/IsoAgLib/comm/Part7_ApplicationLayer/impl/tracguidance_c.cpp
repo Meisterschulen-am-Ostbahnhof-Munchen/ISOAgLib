@@ -93,10 +93,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       ; // no change, still the same mode
     else if (at_identMode == IsoAgLib::IdentModeTractor)
       // a change from Implement mode to Tractor mode occured
-      RegisterPgn_s(this)(GUIDANCE_MACHINE_STATUS);
+      getRegisterPgn()(GUIDANCE_MACHINE_STATUS);
     else
       // a change from Tractor mode to Implement mode occured
-      UnregisterPgn_s(this)(GUIDANCE_MACHINE_STATUS);
+      getUnregisterPgn()(GUIDANCE_MACHINE_STATUS);
 
     return true;
   }

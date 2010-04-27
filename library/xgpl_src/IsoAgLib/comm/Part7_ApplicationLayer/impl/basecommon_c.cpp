@@ -48,7 +48,7 @@ void BaseCommon_c::close( )
     // avoid another call
     setAlreadyClosed();
     // unregister from timeEvent() call by Scheduler_c
-    getSchedulerInstance4Comm().unregisterClient( this );
+    unregisterClient();
   }
 };
 
@@ -62,7 +62,7 @@ void BaseCommon_c::close( )
   */
 void BaseCommon_c::init_base (const IsoName_c* apc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode)
 {
-  getSchedulerInstance4Comm().registerClient( this );
+  registerClient();
   mc_data.setSingletonKey( ai_singletonVecKey );
 
   if (checkAlreadyClosed())

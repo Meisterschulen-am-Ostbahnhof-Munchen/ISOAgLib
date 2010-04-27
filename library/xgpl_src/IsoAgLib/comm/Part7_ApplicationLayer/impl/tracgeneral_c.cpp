@@ -111,7 +111,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       ; // no change, still the same mode
     else if (at_identMode == IsoAgLib::IdentModeTractor) {
       // a change from Implement mode to Tractor mode occured
-      RegisterPgn_s s_register = this;
+      RegisterPgn_s s_register = getRegisterPgn();
       if (canSendLanguage())
         s_register(LANGUAGE_PGN);
       if (canSendFrontHitchState())
@@ -120,7 +120,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         s_register(REAR_HITCH_STATE_PGN);
     } else {
       // a change from Tractor mode to Implement mode occured
-      UnregisterPgn_s s_unregister = this;
+      UnregisterPgn_s s_unregister = getUnregisterPgn();
       if (canSendLanguage())
         s_unregister(LANGUAGE_PGN);
       if (canSendFrontHitchState())

@@ -66,7 +66,7 @@ namespace __IsoAgLib {
     //call init for handling which is base data independent
     BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
     isoaglib_assert(IsoAgLib::IdentModeImplement == getMode());
-    RegisterPgn_s(this)(LIGHTING_COMMAND_PGN);
+    getRegisterPgn()(LIGHTING_COMMAND_PGN);
   };
 
   /** config the TracLight_c object after init -> set pointer to isoName, set implementMode,
@@ -94,12 +94,12 @@ namespace __IsoAgLib {
       ; // no change, still the same mode
     else if (at_identMode == IsoAgLib::IdentModeTractor) {
       // a change from Implement mode to Tractor mode occured
-      UnregisterPgn_s(this)(LIGHTING_DATA_PGN);
-      RegisterPgn_s(this)(LIGHTING_COMMAND_PGN);
+      getUnregisterPgn()(LIGHTING_DATA_PGN);
+      getRegisterPgn()(LIGHTING_COMMAND_PGN);
     } else {
       // a change from Tractor mode to Implement mode occured
-      UnregisterPgn_s(this)(LIGHTING_COMMAND_PGN);
-      RegisterPgn_s(this)(LIGHTING_DATA_PGN);
+      getUnregisterPgn()(LIGHTING_COMMAND_PGN);
+      getRegisterPgn()(LIGHTING_DATA_PGN);
     }
 
     // set configure values

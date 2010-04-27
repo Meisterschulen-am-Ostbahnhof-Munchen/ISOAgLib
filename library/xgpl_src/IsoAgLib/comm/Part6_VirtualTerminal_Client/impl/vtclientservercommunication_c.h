@@ -454,6 +454,10 @@ private:
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
+  virtual bool processInvalidMsg() { return false; }
+
+  virtual bool isNetworkMgmt() const { return false; }
+
   /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
   SINGLETON_PAR_DOT_DEF(mc_data)
 

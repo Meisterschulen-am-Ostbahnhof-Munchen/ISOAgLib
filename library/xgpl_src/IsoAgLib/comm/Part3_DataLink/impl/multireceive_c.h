@@ -183,7 +183,7 @@ public:
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /// Use to remove a "kept"-stream after it is gotten by "getFinishedJustKeptStream" and processed.
   void removeKeptStream (Stream_c* apc_keptStream);
@@ -250,6 +250,11 @@ public:
 protected:
 
 private:
+  friend class CanCustomerProxy_c< MultiReceive_c >;
+  typedef CanCustomerProxy_c< MultiReceive_c > Customer_t;
+  friend class SaClaimHandlerProxy_c< MultiReceive_c >;
+  typedef SaClaimHandlerProxy_c< MultiReceive_c > Handler_t;
+
   friend class SINGLETON_DERIVED(MultiReceive_c,Scheduler_Task_c);
 
   /**
@@ -308,7 +313,52 @@ private:
   //! Will also remove kept-streams.
   void removeStream (Stream_c &arc_stream);
 
+  virtual bool processInvalidMsg(){
+    return false;
+  }
 
+  virtual bool reactOnStreamStart(
+      ReceiveStreamIdentifier_c const &ac_ident,
+      uint32_t aui32_totalLen)
+  {
+    return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
+  }
+
+  virtual bool isNetworkMgmt() const {
+    return false;
+  }
+
+  virtual void reactOnAbort(Stream_c &arc_stream)
+  {
+    mt_customer.reactOnAbortDefault(arc_stream);
+  }
+
+  virtual bool processPartStreamDataChunk(
+      Stream_c &apc_stream,
+      bool ab_isFirstChunk,
+      bool ab_isLastChunk)
+  {
+    return mt_customer.processPartStreamDataChunkDefault(
+        apc_stream,
+        ab_isFirstChunk,
+        ab_isLastChunk);
+  }
+
+  virtual void notificationOnMultiReceiveError(
+      ReceiveStreamIdentifier_c const &ac_streamIdent,
+      uint8_t aui8_multiReceiveError,
+      bool ab_isGlobal)
+  {
+    mt_customer.notificationOnMultiReceiveErrorDefault(
+        ac_streamIdent,
+        aui8_multiReceiveError,
+        ab_isGlobal);
+  }
+
+  virtual uint16_t getForcedMinExecTime() const
+  {
+    return getForcedMinExecTimeDefault();
+  }
 
 private:
   static void notifyCanCustomerOfTransferError(
@@ -322,7 +372,6 @@ private:
         ab_isGlobal);
   }
 
-
   // attributes
 private:
   STL_NAMESPACE::list<DEF_Stream_c_IMPL> mlist_streams;
@@ -334,6 +383,8 @@ private:
   // soon obsolete - only used for the current "bad" management of multiple streams with one schedulertask.
   int32_t mi32_retriggerDelayForFirstCts;
   int32_t mi32_timePeriodForActiveStreams;
+  Handler_t mt_handler;
+  Customer_t mt_customer;
 }; // ~X2C
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

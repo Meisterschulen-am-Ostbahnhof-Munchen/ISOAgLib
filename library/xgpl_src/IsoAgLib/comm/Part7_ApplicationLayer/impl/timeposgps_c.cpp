@@ -343,13 +343,13 @@ namespace __IsoAgLib {
 
     if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
-      getIsoRequestPgnInstance4Comm().registerPGN (*this, TIME_DATE_PGN); // request for time and date
+      getRegisterPgn()(TIME_DATE_PGN); // request for time and date
     }
 
     if (t_oldMode == IsoAgLib::IdentModeTractor && at_identMode == IsoAgLib::IdentModeImplement)
     {  // a change from Tractor mode to Implement mode occured
       // unregister from request for pgn, because in implement mode no request should be answered
-      getIsoRequestPgnInstance4Comm().unregisterPGN (*this, TIME_DATE_PGN);
+      getUnregisterPgn()(TIME_DATE_PGN);
     }
 
     /// Set date to NO_VAL, i.e. 01.01.0000

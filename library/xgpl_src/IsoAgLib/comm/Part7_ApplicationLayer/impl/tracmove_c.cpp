@@ -108,7 +108,7 @@ void TracMove_c::singletonInit()
     else if (at_identMode == IsoAgLib::IdentModeTractor) {
       // a change from Implement mode to Tractor mode occured
       // create FilterBox_c for REQUEST_PGN_MSG_PGN, LANGUAGE_PGN
-      RegisterPgn_s s_register = this;
+      RegisterPgn_s s_register = getRegisterPgn();
       if (canSendGroundBasedSpeedDist())
         s_register(GROUND_BASED_SPEED_DIST_PGN);
       if (canSendWheelBasedSpeedDist())
@@ -118,7 +118,7 @@ void TracMove_c::singletonInit()
     } else {
       // a change from Tractor mode to Implement mode occured
       // unregister from request for pgn, because in implement mode no request should be answered
-      UnregisterPgn_s s_unregister = this;
+      UnregisterPgn_s s_unregister = getUnregisterPgn();
       if (canSendGroundBasedSpeedDist())
         s_unregister(GROUND_BASED_SPEED_DIST_PGN);
       if (canSendWheelBasedSpeedDist())

@@ -14,17 +14,19 @@
 #define BASE_COMMON_H
 
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib
 {
 
-  class BaseCommon_c : public Scheduler_Task_c
+  class BaseCommon_c : public CanCustomer_c
   {
   public:
 
@@ -42,17 +44,58 @@ namespace __IsoAgLib
     void init() {}
 
     /** constructor */
-    BaseCommon_c() : mui16_suppressMask(0),
-		                 mt_identMode(IsoAgLib::IdentModeImplement),
-                     mi32_lastMsgReceived(0),
-                     mpc_isoName(NULL),
-                     mc_selectedDataSourceISOName()
-                   {}
+    BaseCommon_c() :
+      mui16_suppressMask(0),
+      mt_identMode(IsoAgLib::IdentModeImplement),
+      mb_filterCreated(false),
+      mi32_lastMsgReceived(0),
+      mpc_isoName(NULL),
+      mc_selectedDataSourceISOName(),
+      //mc_data,
+      mt_task(*this),
+      mt_handler(*this)
+    {}
+
+    BaseCommon_c(BaseCommon_c const &arc_from) :
+      CanCustomer_c(),
+      mui16_suppressMask(arc_from.mui16_suppressMask),
+      mt_identMode(arc_from.mt_identMode),
+      mb_filterCreated(arc_from.mb_filterCreated),
+      mi32_lastMsgReceived(arc_from.mi32_lastMsgReceived),
+      mpc_isoName(arc_from.mpc_isoName),
+      mc_selectedDataSourceISOName(arc_from.mc_selectedDataSourceISOName),
+      //mc_data,
+      mt_task(*this),
+      mt_handler(*this)
+    {}
+
+    BaseCommon_c &operator=(BaseCommon_c const &arc_from)
+    {
+      mui16_suppressMask = arc_from.mui16_suppressMask;
+      mt_identMode = arc_from.mt_identMode;
+      mb_filterCreated = arc_from.mb_filterCreated;
+      mi32_lastMsgReceived = arc_from.mi32_lastMsgReceived;
+      mpc_isoName = arc_from.mpc_isoName;
+      mc_selectedDataSourceISOName = arc_from.mc_selectedDataSourceISOName;
+      //mc_data;
+      //mt_task;
+      //mt_handler;
+      return *this;
+    }
+
     /** destructor */
     ~BaseCommon_c() {};
 
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-    void close( );
+    virtual void close( );
+
+    bool registerClient() {
+      return getSchedulerInstance4Comm().registerClient(&mt_task);
+    }
+
+    void unregisterClient() {
+      getSchedulerInstance4Comm().unregisterClient(&mt_task);
+    }
 
     /** initialise element which can't be done during construct;
         above all create the needed FilterBox_c instances
@@ -94,7 +137,7 @@ namespace __IsoAgLib
         @see CanIo_c::operator<<
         @return true -> all planned activities performed in allowed time
       */
-    virtual bool timeEvent(void);
+    virtual bool timeEvent();
 
     /** send a PGN request */
     bool sendPgnRequest(uint32_t ui32_requestedPGN);
@@ -163,10 +206,61 @@ namespace __IsoAgLib
     SINGLETON_PAR_DOT_DEF(mc_data)
 
   protected:
+    RegisterPgn_s getRegisterPgn() {
+      return RegisterPgn_s(&mt_handler);
+    }
+
+    UnregisterPgn_s getUnregisterPgn(){
+      return UnregisterPgn_s(&mt_handler);
+    }
+
+    void setTimePeriod(uint16_t aui16_timePeriod) {
+      return mt_task.setTimePeriod(aui16_timePeriod);
+    }
+
+    bool checkAlreadyClosed() const {
+      return mt_task.checkAlreadyClosed();
+    }
+
+    bool changeTimePeriodAndResortTask(uint16_t aui16_newTimePeriod ) {
+      return getSchedulerInstance4Comm().changeTimePeriodAndResortTask(
+          &mt_task,
+          aui16_newTimePeriod);
+    }
+
+    bool changeRetriggerTimeAndResort(
+        int32_t ai32_newRetriggerTime,
+        int16_t ai16_newTimePeriod = -1) {
+      return getSchedulerInstance4Comm().changeRetriggerTimeAndResort(
+          &mt_task,
+          ai32_newRetriggerTime,
+          ai16_newTimePeriod);
+    }
+
+    int16_t getAvailableExecTime() {
+      return mt_task.getAvailableExecTime();
+    }
+
+    int32_t getLastRetriggerTime() const {
+      return mt_task.getLastRetriggerTime();
+    }
+
+    void setAlreadyClosed() {
+      mt_task.setAlreadyClosed();
+    }
+
+    void clearAlreadyClosed() {
+      mt_task.clearAlreadyClosed();
+    }
+
     /** flags that disable PGNs individually */
     uint16_t mui16_suppressMask;
 
   private:
+    friend class SchedulerTaskProxy_c< BaseCommon_c >;
+    typedef SchedulerTaskProxy_c< BaseCommon_c > Task_t;
+    friend class IsoRequestPgnHandlerProxy_c< BaseCommon_c >;
+    typedef IsoRequestPgnHandlerProxy_c< BaseCommon_c > Handler_t;
 
     // private methods
     /** check if filter boxes shall be created - create only ISO filters based
@@ -178,6 +272,24 @@ namespace __IsoAgLib
     /** set sender of a msg */
     void setISOName(const IsoName_c* isoName) {mpc_isoName = isoName;}
 
+    virtual void updateEarlierAndLatestInterval() {
+      mt_task.updateEarlierAndLatestIntervalDefault();
+    }
+
+    virtual uint16_t getForcedMinExecTime() const {
+      return mt_task.getForcedMinExecTimeDefault();
+    }
+
+    virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
+      return mt_task.getTimeToNextTriggerDefault(e_retriggerType);
+    }
+
+    virtual char const *getTaskName() const = 0;
+
+    virtual bool processMsgRequestPGN(
+        uint32_t aui32_pgn,
+        IsoItem_c *apc_isoItemSender,
+        IsoItem_c *apc_isoItemReceiver) = 0;
 
     // private attributes
     /** can be implement mode or tractor mode */
@@ -199,6 +311,9 @@ namespace __IsoAgLib
 
     /** temp data where received data is put */
     CanPkgExt_c mc_data;
+
+    SchedulerTaskProxy_c< BaseCommon_c > mt_task;
+    Handler_t mt_handler;
   };
 
 }// end namespace __IsoAgLib
