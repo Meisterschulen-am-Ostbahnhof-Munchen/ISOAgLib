@@ -71,10 +71,31 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-  friend class CanCustomerProxy_c< IsoFilterManager_c >;
-  typedef CanCustomerProxy_c< IsoFilterManager_c > Customer_t;
-  friend class SaClaimHandlerProxy_c< IsoFilterManager_c >;
-  typedef SaClaimHandlerProxy_c< IsoFilterManager_c > Handler_t;
+  class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+  public:
+    typedef IsoFilterManager_c Owner_t;
+
+    SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~SaClaimHandlerProxy_c() {}
+
+  private:
+    virtual void reactOnIsoItemModification(
+        IsoItemModification_t at_action,
+        IsoItem_c const &acrc_isoItem)
+    {
+      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+    }
+
+    // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+
+    SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef SaClaimHandlerProxy_c Handler_t;
 
   // Private methods
 

@@ -51,11 +51,6 @@ public:
   virtual void reactOnIsoItemModification(
       IsoItemModification_t at_action,
       IsoItem_c const &acrc_isoItem) = 0;
-
-  void reactOnIsoItemModificationDefault(
-      IsoItemModification_t /*at_action*/,
-      IsoItem_c const &/*acrc_isoItem*/)
-  {}
 };
 
 /** Proxy for SaClaimHandler_c.

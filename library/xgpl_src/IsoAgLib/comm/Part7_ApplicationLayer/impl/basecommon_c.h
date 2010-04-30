@@ -51,51 +51,16 @@ namespace __IsoAgLib
       mi32_lastMsgReceived(0),
       mpc_isoName(NULL),
       mc_selectedDataSourceISOName(),
-      //mc_data,
+      mc_data(),
       mt_task(*this),
       mt_handler(*this)
     {}
-
-    BaseCommon_c(BaseCommon_c const &arc_from) :
-      CanCustomer_c(),
-      mui16_suppressMask(arc_from.mui16_suppressMask),
-      mt_identMode(arc_from.mt_identMode),
-      mb_filterCreated(arc_from.mb_filterCreated),
-      mi32_lastMsgReceived(arc_from.mi32_lastMsgReceived),
-      mpc_isoName(arc_from.mpc_isoName),
-      mc_selectedDataSourceISOName(arc_from.mc_selectedDataSourceISOName),
-      //mc_data,
-      mt_task(*this),
-      mt_handler(*this)
-    {}
-
-    BaseCommon_c &operator=(BaseCommon_c const &arc_from)
-    {
-      mui16_suppressMask = arc_from.mui16_suppressMask;
-      mt_identMode = arc_from.mt_identMode;
-      mb_filterCreated = arc_from.mb_filterCreated;
-      mi32_lastMsgReceived = arc_from.mi32_lastMsgReceived;
-      mpc_isoName = arc_from.mpc_isoName;
-      mc_selectedDataSourceISOName = arc_from.mc_selectedDataSourceISOName;
-      //mc_data;
-      //mt_task;
-      //mt_handler;
-      return *this;
-    }
 
     /** destructor */
-    ~BaseCommon_c() {};
+    ~BaseCommon_c() {}
 
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
     virtual void close( );
-
-    bool registerClient() {
-      return getSchedulerInstance4Comm().registerClient(&mt_task);
-    }
-
-    void unregisterClient() {
-      getSchedulerInstance4Comm().unregisterClient(&mt_task);
-    }
 
     /** initialise element which can't be done during construct;
         above all create the needed FilterBox_c instances
@@ -119,7 +84,7 @@ namespace __IsoAgLib
      /** deliver reference to data pkg
          @return reference to the member CanPkg, which encapsulates the CAN send structure
         */
-    CanPkgExt_c& data() {return mc_data;};
+    CanPkgExt_c& data() {return mc_data;}
 
     /**
       virtual function which delivers a pointer to the CANCustomer
@@ -257,10 +222,83 @@ namespace __IsoAgLib
     uint16_t mui16_suppressMask;
 
   private:
-    friend class SchedulerTaskProxy_c< BaseCommon_c >;
-    typedef SchedulerTaskProxy_c< BaseCommon_c > Task_t;
-    friend class IsoRequestPgnHandlerProxy_c< BaseCommon_c >;
-    typedef IsoRequestPgnHandlerProxy_c< BaseCommon_c > Handler_t;
+    // BaseCommon_c shall not be copyable.
+    BaseCommon_c(BaseCommon_c const &arc_from);
+    BaseCommon_c &operator=(BaseCommon_c const &arc_from);
+
+    class SchedulerTaskProxy_c : public Scheduler_Task_c {
+    public:
+      typedef BaseCommon_c Owner_t;
+
+      SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+      virtual ~SchedulerTaskProxy_c() {}
+
+      using Scheduler_Task_c::setTimePeriod;
+
+    private:
+      virtual bool timeEvent() {
+        return mrt_owner.timeEvent();
+      }
+
+      virtual void close() {
+        mrt_owner.close();
+      }
+
+      virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
+        return mrt_owner.getTimeToNextTrigger(e_retriggerType);
+      }
+
+      virtual const char *getTaskName() const {
+        return mrt_owner.getTaskName();
+      }
+
+      virtual void updateEarlierAndLatestInterval() {
+        mrt_owner.updateEarlierAndLatestInterval();
+      }
+
+      virtual uint16_t getForcedMinExecTime() const {
+        return mrt_owner.getForcedMinExecTime();
+      }
+
+      // SchedulerTaskProxy_c shall not be copyable. Otherwise the
+      // reference to the containing object would become invalid.
+      SchedulerTaskProxy_c(SchedulerTaskProxy_c const &);
+
+      SchedulerTaskProxy_c &operator=(SchedulerTaskProxy_c const &);
+
+      Owner_t &mrt_owner;
+    };
+    typedef SchedulerTaskProxy_c Task_t;
+    class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
+    public:
+      typedef BaseCommon_c Owner_t;
+
+      IsoRequestPgnHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+      virtual ~IsoRequestPgnHandlerProxy_c() {}
+
+    private:
+      virtual bool processMsgRequestPGN(
+          uint32_t aui32_pgn,
+          IsoItem_c *apc_isoItemSender,
+          IsoItem_c *apc_isoItemReceiver)
+      {
+        return mrt_owner.processMsgRequestPGN(
+            aui32_pgn,
+            apc_isoItemSender,
+            apc_isoItemReceiver);
+      }
+
+      // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+      // the reference to the containing object would become invalid.
+      IsoRequestPgnHandlerProxy_c(IsoRequestPgnHandlerProxy_c const &);
+
+      IsoRequestPgnHandlerProxy_c &operator=(IsoRequestPgnHandlerProxy_c const &);
+
+      Owner_t &mrt_owner;
+    };
+    typedef IsoRequestPgnHandlerProxy_c Handler_t;
 
     // private methods
     /** check if filter boxes shall be created - create only ISO filters based
@@ -312,7 +350,7 @@ namespace __IsoAgLib
     /** temp data where received data is put */
     CanPkgExt_c mc_data;
 
-    SchedulerTaskProxy_c< BaseCommon_c > mt_task;
+    Task_t mt_task;
     Handler_t mt_handler;
   };
 

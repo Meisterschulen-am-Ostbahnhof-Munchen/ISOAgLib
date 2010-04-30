@@ -432,10 +432,106 @@ protected: // methods
 
 
 private:
-  friend class CanCustomerProxy_c< MultiSend_c >;
-  typedef CanCustomerProxy_c< MultiSend_c > Customer_t;
-  friend class SaClaimHandlerProxy_c< MultiSend_c >;
-  typedef SaClaimHandlerProxy_c< MultiSend_c > Handler_t;
+  class CanCustomerProxy_c : public CanCustomer_c {
+  public:
+    typedef MultiSend_c Owner_t;
+
+    CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~CanCustomerProxy_c() {}
+
+  private:
+    virtual CanPkgExt_c& dataBase() {
+      return mrt_owner.dataBase();
+    }
+
+    virtual bool processMsg() {
+      return mrt_owner.processMsg();
+    }
+
+    virtual bool processInvalidMsg() {
+      return mrt_owner.processInvalidMsg();
+    }
+
+    virtual bool isNetworkMgmt() const {
+      return mrt_owner.isNetworkMgmt();
+    }
+
+    virtual bool reactOnStreamStart(
+        ReceiveStreamIdentifier_c const &ac_ident,
+        uint32_t aui32_totalLen)
+    {
+      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
+    }
+
+    virtual void reactOnAbort(Stream_c &arc_stream)
+    {
+      mrt_owner.reactOnAbort(arc_stream);
+    }
+
+    virtual bool processPartStreamDataChunk(
+        Stream_c &apc_stream,
+        bool ab_isFirstChunk,
+        bool ab_isLastChunk)
+    {
+      return mrt_owner.processPartStreamDataChunk(
+          apc_stream,
+          ab_isFirstChunk,
+          ab_isLastChunk);
+    }
+
+    virtual void notificationOnMultiReceiveError(
+        ReceiveStreamIdentifier_c const &ac_streamIdent,
+        uint8_t aui8_multiReceiveError,
+        bool ab_isGlobal)
+    {
+      mrt_owner.notificationOnMultiReceiveError(
+          ac_streamIdent,
+          aui8_multiReceiveError,
+          ab_isGlobal);
+    }
+
+#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
+    virtual bool isProprietaryMessageOnStandardizedCan() const
+    {
+      return mrt_owner.isProprietaryMessageOnStandardizedCan();
+    }
+#endif
+
+    // CanCustomerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    CanCustomerProxy_c(CanCustomerProxy_c const &);
+
+    CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef CanCustomerProxy_c Customer_t;
+  class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+  public:
+    typedef MultiSend_c Owner_t;
+
+    SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~SaClaimHandlerProxy_c() {}
+
+  private:
+    virtual void reactOnIsoItemModification(
+        IsoItemModification_t at_action,
+        IsoItem_c const &acrc_isoItem)
+    {
+      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+    }
+
+    // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+
+    SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef SaClaimHandlerProxy_c Handler_t;
 
   // Private methods
   friend class SINGLETON_DERIVED(MultiSend_c, Scheduler_Task_c);

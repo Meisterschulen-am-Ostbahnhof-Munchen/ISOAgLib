@@ -127,7 +127,9 @@ class Scheduler_Task_c {
   //! a minimum execution time, that should be saved after this item in the
   //! scheduler loop - some tasks might not be able to finish any sensible
   //! work in the default min exec time of 5msec
-  virtual uint16_t getForcedMinExecTime() const = 0;
+  virtual uint16_t getForcedMinExecTime() const {
+    return getForcedMinExecTimeDefault();
+  }
 
   // Default implementation for method getForcedMinExecTime.
   uint16_t getForcedMinExecTimeDefault() const;
@@ -200,15 +202,6 @@ class Scheduler_Task_c {
   //!  Virtual Destructor - just to avoid compiler warnings
   virtual ~Scheduler_Task_c();
 
-  //  Operation: setTimePeriod
-  //!  Set client specific time period between calls of timeEvent.
-  //!  Each from Scheduler_Task_c derived class must set at its INIT
-  //!  or can use it to set other Time Period in timeEvent()
-  //!  Do NOT call from outside (e.g. processMsg)
-  //! Parameter:
-  //! @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
-  void setTimePeriod(uint16_t aui16_timePeriod);
-
   // Default implementation for method getTimeToNextTrigger
   int32_t getTimeToNextTriggerDefault(retriggerType_t t_retriggerType = StandardRetrigger) const;
 
@@ -219,6 +212,15 @@ class Scheduler_Task_c {
 
   /** Start Integrate Protected Implementation for Timescheduling */
 protected:
+
+  //  Operation: setTimePeriod
+  //!  Set client specific time period between calls of timeEvent.
+  //!  Each from Scheduler_Task_c derived class must set at its INIT
+  //!  or can use it to set other Time Period in timeEvent()
+  //!  Do NOT call from outside (e.g. processMsg)
+  //! Parameter:
+  //! @param aui16_timePeriod: needed time between calls of timeEvent in [msec]
+  void setTimePeriod(uint16_t aui16_timePeriod);
 
   //! Deliver the max Jitter in ms that uses the
   //! Scheduler for earlier oder later call of a task
@@ -352,6 +354,8 @@ public:
   SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
   virtual ~SchedulerTaskProxy_c() {}
+
+  using Scheduler_Task_c::setTimePeriod;
 
 private:
   virtual bool timeEvent() {

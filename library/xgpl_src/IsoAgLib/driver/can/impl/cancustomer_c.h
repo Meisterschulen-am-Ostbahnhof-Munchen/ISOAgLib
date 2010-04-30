@@ -43,10 +43,10 @@ public:
     virtual function which delivers a pointer to the CANCustomer
     specific CanPkgExt_c instance
   */
-  virtual CanPkgExt_c& dataBase();
+  virtual CanPkgExt_c& dataBase() = 0;
 
   /** virtual destructor */
-  virtual ~CanCustomer_c();
+  virtual ~CanCustomer_c() {}
 
 
 /// SINGLE-PACKET METHODS
@@ -164,7 +164,7 @@ public:
   virtual ~CanCustomerProxy_c() {}
 
 private:
-  virtual CanPkgExt_c& dataBase() {
+  virtual CanPkgExt_c &dataBase() {
     return mrt_owner.dataBase();
   }
 

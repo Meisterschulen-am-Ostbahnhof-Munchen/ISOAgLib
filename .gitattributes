@@ -161,7 +161,6 @@ library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h -text
 library/xgpl_src/IsoAgLib/driver/can/icanio_c.h -text
-library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp -text
 library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp -text
 library/xgpl_src/IsoAgLib/hal/Dj1/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/Dj1/can/hal_can_interface.cpp -text

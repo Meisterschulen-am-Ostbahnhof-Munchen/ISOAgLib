@@ -446,6 +446,7 @@ private:
   */
   void singletonInit();
 
+private:
   virtual bool processPartStreamDataChunk(
       Stream_c &apc_stream,
       bool ab_isFirstChunk,
@@ -489,11 +490,110 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-private:
-  friend class CanCustomerProxy_c< IsoMonitor_c >;
-  typedef CanCustomerProxy_c< IsoMonitor_c > Customer_t;
-  friend class IsoRequestPgnHandlerProxy_c< IsoMonitor_c >;
-  typedef IsoRequestPgnHandlerProxy_c< IsoMonitor_c > Handler_t;
+  class CanCustomerProxy_c : public CanCustomer_c {
+  public:
+    typedef IsoMonitor_c Owner_t;
+
+    CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~CanCustomerProxy_c() {}
+
+  private:
+    virtual CanPkgExt_c& dataBase() {
+      return mrt_owner.dataBase();
+    }
+
+    virtual bool processMsg() {
+      return mrt_owner.processMsg();
+    }
+
+    virtual bool processInvalidMsg() {
+      return mrt_owner.processInvalidMsg();
+    }
+
+    virtual bool isNetworkMgmt() const {
+      return mrt_owner.isNetworkMgmt();
+    }
+
+    virtual bool reactOnStreamStart(
+        ReceiveStreamIdentifier_c const &ac_ident,
+        uint32_t aui32_totalLen)
+    {
+      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
+    }
+
+    virtual void reactOnAbort(Stream_c &arc_stream)
+    {
+      mrt_owner.reactOnAbort(arc_stream);
+    }
+
+    virtual bool processPartStreamDataChunk(
+        Stream_c &apc_stream,
+        bool ab_isFirstChunk,
+        bool ab_isLastChunk)
+    {
+      return mrt_owner.processPartStreamDataChunk(
+          apc_stream,
+          ab_isFirstChunk,
+          ab_isLastChunk);
+    }
+
+    virtual void notificationOnMultiReceiveError(
+        ReceiveStreamIdentifier_c const &ac_streamIdent,
+        uint8_t aui8_multiReceiveError,
+        bool ab_isGlobal)
+    {
+      mrt_owner.notificationOnMultiReceiveError(
+          ac_streamIdent,
+          aui8_multiReceiveError,
+          ab_isGlobal);
+    }
+
+#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
+    virtual bool isProprietaryMessageOnStandardizedCan() const
+    {
+      return mrt_owner.isProprietaryMessageOnStandardizedCan();
+    }
+#endif
+
+    // CanCustomerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    CanCustomerProxy_c(CanCustomerProxy_c const &);
+
+    CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef CanCustomerProxy_c Customer_t;
+  class IsoRequestPgnHandlerProxy_c : public IsoRequestPgnHandler_c {
+  public:
+    typedef IsoMonitor_c Owner_t;
+
+    IsoRequestPgnHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~IsoRequestPgnHandlerProxy_c() {}
+
+  private:
+    virtual bool processMsgRequestPGN(
+        uint32_t aui32_pgn,
+        IsoItem_c *apc_isoItemSender,
+        IsoItem_c *apc_isoItemReceiver)
+    {
+      return mrt_owner.processMsgRequestPGN(
+          aui32_pgn,
+          apc_isoItemSender,
+          apc_isoItemReceiver);
+    }
+
+    // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+    // the reference to the containing object would become invalid.
+    IsoRequestPgnHandlerProxy_c(IsoRequestPgnHandlerProxy_c const &);
+
+    IsoRequestPgnHandlerProxy_c &operator=(IsoRequestPgnHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef IsoRequestPgnHandlerProxy_c Handler_t;
 
   // Private attributes
   friend class IsoAgLib::iIsoMonitor_c;
