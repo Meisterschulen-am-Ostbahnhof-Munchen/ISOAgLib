@@ -154,7 +154,8 @@ void Scheduler_c::closeCommunication( void ) {
   for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator iter = mc_taskQueue.begin(); ! mc_taskQueue.empty(); iter = mc_taskQueue.begin())
   { // call close for each registered client
     iter->close();
-    mc_taskQueue.erase(iter);
+    // SchedulerEntry_c's close-method will/needs to
+    // take care of unregistering here at the Scheduler.
   }
   setCntClient( 0 );
 }
@@ -165,14 +166,6 @@ void Scheduler_c::closeCommunication( void ) {
 void Scheduler_c::close( void )
 { // call close for each registered client system
   closeCommunication();
-  // as soon as all communicating IsoAgLib clients are closed, CanIo_c can be closed
-  getCanInstance4Comm().close();
-  #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
-  { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
-    getCanInstance( ind ).close();
-  }
-  #endif
   // last but not least close System
   getSystemInstance().close();
 }
