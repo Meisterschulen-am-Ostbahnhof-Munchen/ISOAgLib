@@ -262,7 +262,7 @@ public:
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   /**
     process TC status messages:
@@ -483,13 +483,13 @@ private: // Private attributes
     Owner_t &mrt_owner;
   };
   typedef CanCustomerProxy_c Customer_t;
-  class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+  class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
     typedef Process_c Owner_t;
 
-    SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    virtual ~SaClaimHandlerProxy_c() {}
+    virtual ~ControlFunctionStateHandlerProxy_c() {}
 
   private:
     virtual void reactOnIsoItemModification(
@@ -499,15 +499,15 @@ private: // Private attributes
       mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
     }
 
-    // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
-    SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
 
-    SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
 
     Owner_t &mrt_owner;
   };
-  typedef SaClaimHandlerProxy_c Handler_t;
+  typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
   friend class SINGLETON_DERIVED(Process_c,Scheduler_Task_c);
   friend class IsoAgLib::iProcess_c;

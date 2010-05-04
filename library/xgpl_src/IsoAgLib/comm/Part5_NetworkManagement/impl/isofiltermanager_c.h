@@ -37,7 +37,7 @@ typedef SINGLETON_DERIVED(IsoFilterManager_c, Scheduler_Task_c) SingletonIsoFilt
 /** this object manages ISO-Filters - those may contain references
     to ISOName's and are initelligent self-adapting can-filters
     @short Manager for handling of inserting/adapting FilterBox_c-instances
-    @see __IsoAgLib::SaClaimHandler_c
+    @see __IsoAgLib::ControlFunctionStateHandler_c
     @author Dipl.-Inf. Martin Wodok */
 class IsoFilterManager_c : public SingletonIsoFilterManager_c
 {
@@ -71,13 +71,13 @@ private:
     return getForcedMinExecTimeDefault();
   }
 
-  class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+  class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
   public:
     typedef IsoFilterManager_c Owner_t;
 
-    SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    virtual ~SaClaimHandlerProxy_c() {}
+    virtual ~ControlFunctionStateHandlerProxy_c() {}
 
   private:
     virtual void reactOnIsoItemModification(
@@ -87,15 +87,15 @@ private:
       mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
     }
 
-    // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
-    SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
 
-    SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
 
     Owner_t &mrt_owner;
   };
-  typedef SaClaimHandlerProxy_c Handler_t;
+  typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
   // Private methods
 
@@ -108,7 +108,7 @@ private:
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
-  void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+  void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
 private: // Private attributes
   /// holds all

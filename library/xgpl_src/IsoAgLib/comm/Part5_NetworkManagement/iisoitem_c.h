@@ -43,6 +43,7 @@ private:
   friend class iCanPkgExt_c;
   friend class IsoItem_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
+  friend class iControlFunctionStateHandler_c;
 
 public:
   /** deliver the ISOName code of this item

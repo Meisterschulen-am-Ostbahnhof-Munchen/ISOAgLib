@@ -49,7 +49,7 @@ namespace __IsoAgLib
       getSchedulerInstance4Comm().registerClient( this );
       mc_data.setSingletonKey( getSingletonVecKey() );
       // register to get ISO monitor list changes
-      __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( this );
+      __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( this );
       mb_hardTiming = false;
       setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
       clearAlreadyClosed();
@@ -67,7 +67,7 @@ namespace __IsoAgLib
       // unregister from timeEvent() call by Scheduler_c
       getSchedulerInstance4Comm().unregisterClient( this );
       // unregister ISO monitor list changes
-      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( this );
+      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( this );
     }
   }
 

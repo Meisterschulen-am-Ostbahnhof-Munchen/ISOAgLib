@@ -581,7 +581,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& acrc_isoName,
   if (ab_announceAddition)
   { // immediately announce addition.
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
-    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *pc_result);
+    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *pc_result);
   }
 #if DEBUG_HEAP_USEAGE
   sui16_isoItemTotal++;
@@ -768,29 +768,29 @@ bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bo
 }
 
 
-/** register an SaClaimHandler_c */
-void IsoMonitor_c::registerSaClaimHandler( SaClaimHandler_c* apc_client )
+/** register an ControlFunctionStateHandler_c */
+void IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c* apc_client )
 {
-  for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
     if ( *iter == apc_client ) return; // already in multimap -> don't insert again
   }
   // if this position is reached, a new item must be inserted
   mvec_saClaimHandler.push_back( apc_client );
 
-  // now: trigger suitable SaClaimHandler_c calls for all already known IsoNames in the list
+  // now: trigger suitable ControlFunctionStateHandler_c calls for all already known IsoNames in the list
   for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); iter++)
-  { // inform this SaClaimHandler_c on existance of the ISONAME node at iter
-    apc_client->reactOnIsoItemModification (SaClaimHandler_c::AddToMonitorList, *iter);
+  { // inform this ControlFunctionStateHandler_c on existance of the ISONAME node at iter
+    apc_client->reactOnIsoItemModification (ControlFunctionStateHandler_c::AddToMonitorList, *iter);
   }
 }
 
 
-/** deregister an SaClaimHandler */
+/** deregister an ControlFunctionStateHandler */
 void
-IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
+IsoMonitor_c::deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c* apc_client)
 {
-  for ( SaClaimHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  for ( ControlFunctionStateHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
     if ( *iter == apc_client )
     {
@@ -802,9 +802,9 @@ IsoMonitor_c::deregisterSaClaimHandler (SaClaimHandler_c* apc_client)
 
 
 /** this function is used to broadcast an ISO monitor list change to all registered clients */
-void IsoMonitor_c::broadcastIsoItemModification2Clients( SaClaimHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
+void IsoMonitor_c::broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const
 {
-  for ( SaClaimHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
+  for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // call the handler function of the client
     (*iter)->reactOnIsoItemModification (at_isoItemModification, acrc_isoItem);
   }

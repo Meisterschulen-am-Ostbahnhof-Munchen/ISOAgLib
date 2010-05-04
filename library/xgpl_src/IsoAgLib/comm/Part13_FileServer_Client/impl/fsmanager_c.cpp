@@ -148,9 +148,9 @@ FsServerInstance_c *FsManager_c::getFileServerBySA(uint8_t ui8_SA)
   *   @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
   *   @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
   */
-void FsManager_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+void FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
-  if (at_action == SaClaimHandler_c::AddToMonitorList) {
+  if (at_action == ControlFunctionStateHandler_c::AddToMonitorList) {
     FsServerInstance_c *pc_fsInstance;
 
     // we only care for fileservers
@@ -166,7 +166,7 @@ void FsManager_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModificat
     //request properties and mark for fileserver without properties.
     requestFsProperties(*pc_fsInstance);
     b_fileserverWituoutProperties = true;
-  } else if (at_action == SaClaimHandler_c::RemoveFromMonitorList) {
+  } else if (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList) {
     // we only care for fileservers
     if (acrc_isoItem.isoName().getEcuType() != ISOName_c::ecuTypeFileServerOrPrinter)
     {
@@ -222,7 +222,7 @@ FsManager_c::singletonInit()
   // register in Scheduler_c to get time-events
   getSchedulerInstance4Comm().registerClient(this);
   // register to get ISO monitor list changes
-  getIsoMonitorInstance4Comm().registerSaClaimHandler(this);
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(this);
 
   // register Filter in CANIO_c
   bool b_atLeastOneFilterAdded=false;
@@ -289,7 +289,7 @@ FsManager_c::close()
   // deregister in Scheduler_c
   getSchedulerInstance4Comm().unregisterClient(this);
   // deregister in ISOMonitor_c
-  getIsoMonitorInstance4Comm().deregisterSaClaimHandler(this);
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(this);
 
   getCanInstance4Comm().deleteFilter(*this,
                                     (0x3FF0000UL),

@@ -20,14 +20,18 @@
 /* ********** include headers ************ */
 /* *************************************** */
 
-namespace __IsoAgLib {
+namespace IsoAgLib
+{
+class iControlFunctionStateHandler_c;
+}
 
-
+namespace __IsoAgLib
+{
 
 /** Handler class which can be used to react on all actions depending on address-claims.
  *  Actions that can take place are listed in the class-embdedded enum.
  */
-class SaClaimHandler_c
+class ControlFunctionStateHandler_c
 {
 public:
 
@@ -41,8 +45,8 @@ public:
     RemoveFromMonitorList    /// No more Address-Claims (after requests) --> Node removed from IsoMonitor
   } IsoItemModification_t;
 
-   SaClaimHandler_c() {}
-   virtual ~SaClaimHandler_c() {}
+   ControlFunctionStateHandler_c() {}
+   virtual ~ControlFunctionStateHandler_c() {}
 
    /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
      <!-- @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
@@ -53,18 +57,22 @@ public:
       IsoItem_c const &acrc_isoItem) = 0;
 };
 
-/** Proxy for SaClaimHandler_c.
+/** For backward compatibility.
+  */
+typedef ControlFunctionStateHandler_c SaClaimHandler;
+
+/** Proxy for ControlFunctionStateHandler_c.
   * Having such a proxy as component is an alternative to subclassing
-  * SaClaimHandler_c directly.
+  * ControlFunctionStateHandler_c directly.
   */
 template < typename OWNER_T >
-class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
 public:
   typedef OWNER_T Owner_t;
 
-  SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+  ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-  virtual ~SaClaimHandlerProxy_c() {}
+  virtual ~ControlFunctionStateHandlerProxy_c() {}
 
 private:
   virtual void reactOnIsoItemModification(
@@ -74,11 +82,11 @@ private:
     mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
   }
 
-  // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+  // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
   // reference to the containing object would become invalid.
-  SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+  ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
 
-  SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+  ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
 
   Owner_t &mrt_owner;
 };

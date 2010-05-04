@@ -92,7 +92,7 @@ MultiReceiveClientWrapper_s::start()
 {
   if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName (mc_isoName, true)) // it needs to have claimed an address
     mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName (mc_isoName).nr();
-  // else: With the SaClaimHandler, it's fine if the address is set/changed later
+  // else: With the ControlFunctionStateHandler, it's fine if the address is set/changed later
 
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
@@ -1191,7 +1191,7 @@ MultiReceive_c::init()
     // register in Scheduler_c to get timeEvents
     getSchedulerInstance4Comm().registerClient( this );
     // register to get ISO monitor list changes
-    getIsoMonitorInstance4Comm().registerSaClaimHandler( &mt_handler );
+    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
 
     // insert receive filters for broadcasted TP
     getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
@@ -1215,7 +1215,7 @@ MultiReceive_c::close( void )
     // deregister in Scheduler_c to get no more timeEvents
     getSchedulerInstance4Comm().unregisterClient( this );
     // deregister to get no more IsoMonitorList changes
-    getIsoMonitorInstance4Comm().deregisterSaClaimHandler( &mt_handler );
+    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
 
     // remove receive filters for broadcasted TP
     getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
@@ -1341,11 +1341,11 @@ MultiReceive_c::getMaxStreamCompletion1000 (bool b_checkFirstByte, uint8_t ui8_r
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-MultiReceive_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
-    case SaClaimHandler_c::AddToMonitorList:
+    case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
         getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
@@ -1355,7 +1355,7 @@ MultiReceive_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModificatio
       }
       break;
 
-    case SaClaimHandler_c::RemoveFromMonitorList:
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.)
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
@@ -1372,7 +1372,7 @@ MultiReceive_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModificatio
       break;
   }
 
-  if ((at_action == SaClaimHandler_c::AddToMonitorList) || (at_action == SaClaimHandler_c::ChangedAddress) || (at_action == SaClaimHandler_c::LostAddress) || (at_action == SaClaimHandler_c::ReclaimedAddress))
+  if ((at_action == ControlFunctionStateHandler_c::AddToMonitorList) || (at_action == ControlFunctionStateHandler_c::ChangedAddress) || (at_action == ControlFunctionStateHandler_c::LostAddress) || (at_action == ControlFunctionStateHandler_c::ReclaimedAddress))
   {
     /// If we're LostAddress, then we automatically have 0xFE now as SA...
     const uint8_t cui8_nr = acrc_isoItem.nr();

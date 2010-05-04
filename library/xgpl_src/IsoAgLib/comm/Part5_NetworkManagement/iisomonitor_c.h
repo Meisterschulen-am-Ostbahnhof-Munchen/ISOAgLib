@@ -18,6 +18,8 @@
 /* *************************************** */
 #include "impl/isomonitor_c.h"
 #include "iisoitem_c.h"
+#include <IsoAgLib/comm/Part5_NetworkManagement/icontrolfunctionstatehandler_c.h>
+
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -182,6 +184,16 @@ public:
     */
   void setDiagnosticMode( const iIsoName_c& acrc_serviceTool = iIsoName_c::iIsoNameUnspecified())
   { IsoMonitor_c::setDiagnosticMode( acrc_serviceTool );}
+
+  /** register a ControlFunctionStateHandler_c */
+  void registerControlFunctionStateHandler(iControlFunctionStateHandler_c *apc_handler) {
+    IsoMonitor_c::registerControlFunctionStateHandler( apc_handler );
+  }
+
+  /** deregister a ControlFunctionStateHandler */
+  void deregisterControlFunctionStateHandler(iControlFunctionStateHandler_c *apc_handler){
+    IsoMonitor_c::deregisterControlFunctionStateHandler( apc_handler );
+  }
 
 private:
   /** allow getIisoMonitorInstance() access to shielded base class.

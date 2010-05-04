@@ -124,7 +124,7 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& acrc_src)
 IsoItem_c::~IsoItem_c()
 { // first inform SA-Claim handlers on SA-Loss
   /// @todo SOON-240 We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
-  getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::RemoveFromMonitorList, *this);
+  getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::RemoveFromMonitorList, *this);
 #ifdef USE_WORKING_SET
   if (mpvec_slaveIsoNames)
     delete mpvec_slaveIsoNames;
@@ -145,18 +145,18 @@ IsoItem_c::changeAddressAndBroadcast (uint8_t aui8_newAddress)
   if (b_adrBefore && !b_adrAfter)
   { // address lost
     setItemState (IState_c::AddressLost);
-    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::LostAddress, *this);
+    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::LostAddress, *this);
   }
   else if (!b_adrBefore && b_adrAfter)
   { // reclaimed address
     setItemState (IState_c::ClaimedAddress);
-    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::ReclaimedAddress, *this);
+    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::ReclaimedAddress, *this);
   }
   else if (b_adrBefore && b_adrAfter)
   { // changed address
     if (ui8_adrBefore != nr())
     { // only act on a real Change
-      getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::ChangedAddress, *this);
+      getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::ChangedAddress, *this);
     }
   }
   // else /*if*/ (!b_adrBefore && !b_adrAfter)
@@ -336,7 +336,7 @@ bool IsoItem_c::timeEvent( void )
           mb_repeatClaim = false;
         }
         // now inform the ISO monitor list change clients on NEW client use
-        getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (SaClaimHandler_c::AddToMonitorList, *this);
+        getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *this);
       }
     }
   }

@@ -62,7 +62,7 @@ void IsoFilterManager_c::close( void )
     setAlreadyClosed();
 
       // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
   }
 }
 
@@ -83,7 +83,7 @@ IsoFilterManager_c::init()
     // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
     // register to get IsoMonitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
   }
 }
 
@@ -148,23 +148,40 @@ IsoFilterManager_c::removeIsoFilter (const IsoFilter_s& arcs_isoFilter)
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
    */
 void
-IsoFilterManager_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
 #if DEBUG_NETWORK_MANAGEMENT
-  INTERNAL_DEBUG_DEVICE << "[DNN] IsoFilterManager_c: React on IsoItem (" <<
+  INTERNAL_DEBUG_DEVICE
+    << "[DNN] IsoFilterManager_c: React on IsoItem ("
 #  ifdef SYSTEM_PC
-    "0x" << STL_NAMESPACE::hex <<
+    << "0x" << STL_NAMESPACE::hex
 #  endif //SYSTEM_PC
-    (int)acrc_isoItem.nr() << ") modification ";
-
-       if (at_action == SaClaimHandler_c::AddToMonitorList)      { INTERNAL_DEBUG_DEVICE << "AddToMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
-  else if (at_action == SaClaimHandler_c::ChangedAddress)        { INTERNAL_DEBUG_DEVICE << "ChangedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
-  else if (at_action == SaClaimHandler_c::LostAddress)           { INTERNAL_DEBUG_DEVICE << "LostAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
-  else if (at_action == SaClaimHandler_c::ReclaimedAddress)      { INTERNAL_DEBUG_DEVICE << "ReclaimedAddress" << INTERNAL_DEBUG_DEVICE_ENDL; }
-  else if (at_action == SaClaimHandler_c::RemoveFromMonitorList) { INTERNAL_DEBUG_DEVICE << "RemoveFromMonitorList" << INTERNAL_DEBUG_DEVICE_ENDL; }
+    << int(acrc_isoItem.nr()) << ") modification "
+#  ifdef SYSTEM_PC
+    << STL_NAMESPACE::dec
+#  endif //SYSTEM_PC
+    ;
+  {
+    const char *pcch_action;
+    switch (at_action) {
+    case ControlFunctionStateHandler_c::AddToMonitorList:
+      pcch_action = "AddToMonitorList"; break;
+    case ControlFunctionStateHandler_c::ChangedAddress:
+      pcch_action = "ChangedAddress"; break;
+    case ControlFunctionStateHandler_c::LostAddress:
+      pcch_action = "LostAddress"; break;
+    case ControlFunctionStateHandler_c::ReclaimedAddress:
+      pcch_action = "ReclaimedAddress"; break;
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
+      pcch_action = "RemoveFromMonitorList"; break;
+    default:
+      pcch_action = "?";
+    }
+    INTERNAL_DEBUG_DEVICE << pcch_action << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
 #endif //DEBUG_NETWORK_MANAGEMENT
 
-  if ((at_action == SaClaimHandler_c::AddToMonitorList) || (at_action == SaClaimHandler_c::ReclaimedAddress))
+  if ((at_action == ControlFunctionStateHandler_c::AddToMonitorList) || (at_action == ControlFunctionStateHandler_c::ReclaimedAddress))
   {
     bool b_reconfig = false;
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
@@ -179,7 +196,7 @@ IsoFilterManager_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModific
     if (b_reconfig)
       getCanInstance4Comm().reconfigureMsgObj();
   }
-  else if (at_action == SaClaimHandler_c::ChangedAddress)
+  else if (at_action == ControlFunctionStateHandler_c::ChangedAddress)
   {
     bool b_reconfig = false;
     for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();

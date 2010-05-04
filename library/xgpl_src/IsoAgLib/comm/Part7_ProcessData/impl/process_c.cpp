@@ -74,7 +74,7 @@ void Process_c::init()
   getSchedulerInstance4Comm().registerClient( this );
   mi32_lastFilterBoxTime = 0;
   mb_needCallOfCheckCreateRemoteReceiveFilter = false;
-  __IsoAgLib::getIsoMonitorInstance4Comm().registerSaClaimHandler( &mt_handler );
+  __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
     #ifdef USE_PROC_DATA_DESCRIPTION_POOL
     mc_devPropertyHandler.init(&mc_data);
     #endif
@@ -107,7 +107,7 @@ void Process_c::close( void ) {
     getSchedulerInstance4Comm().unregisterClient( this );
 
     // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterSaClaimHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
   }
 };
 
@@ -734,11 +734,11 @@ bool Process_c::checkCreateRemoteReceiveFilter()
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-Process_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   switch (at_action)
   {
-    case SaClaimHandler_c::AddToMonitorList:
+    case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
         getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (mt_customer, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent), true);
@@ -749,7 +749,7 @@ Process_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t a
       }
       break;
 
-    case SaClaimHandler_c::RemoveFromMonitorList:
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent));

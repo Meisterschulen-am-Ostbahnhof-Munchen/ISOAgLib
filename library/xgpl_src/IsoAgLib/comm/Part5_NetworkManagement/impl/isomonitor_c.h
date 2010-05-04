@@ -37,10 +37,10 @@ namespace IsoAgLib { class iIsoMonitor_c;}
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** type of map which is used to store SaClaimHandler_c clients corresponding to a IsoName_c reference */
-typedef STL_NAMESPACE::vector<SaClaimHandler_c*> SaClaimHandlerVector_t;
-typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::iterator SaClaimHandlerVectorIterator_t;
-typedef STL_NAMESPACE::vector<SaClaimHandler_c*>::const_iterator SaClaimHandlerVectorConstIterator_t;
+/** type of map which is used to store ControlFunctionStateHandler_c clients corresponding to a IsoName_c reference */
+typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*> ControlFunctionStateHandlerVector_t;
+typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::iterator ControlFunctionStateHandlerVectorIterator_t;
+typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::const_iterator ControlFunctionStateHandlerVectorConstIterator_t;
 
 class IsoMonitor_c;
 typedef SINGLETON_DERIVED_CLIENT1(IsoMonitor_c, Scheduler_Task_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
@@ -270,13 +270,13 @@ public:
      */
   bool existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress = false);
 
-  /** register a SaClaimHandler_c */
-  void registerSaClaimHandler (SaClaimHandler_c* apc_client);
+  /** register a ControlFunctionStateHandler_c */
+  void registerControlFunctionStateHandler (ControlFunctionStateHandler_c* apc_client);
 
-  /** deregister a SaClaimHandler */
-  void deregisterSaClaimHandler (SaClaimHandler_c* apc_client);
+  /** deregister a ControlFunctionStateHandler */
+  void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c* apc_client);
 
-  void broadcastIsoItemModification2Clients( SaClaimHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
+  void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
 
   /**
     deliver member item with given isoName
@@ -619,9 +619,9 @@ private:
 
   /** cache pointer to speed serial of access to the same ISOItem */
   Vec_ISOIterator mpc_isoMemberCache;
-  /** map of SaClaimHandler_c clients that want to be informed on monitor list changes */
+  /** map of ControlFunctionStateHandler_c clients that want to be informed on monitor list changes */
 
-  SaClaimHandlerVector_t mvec_saClaimHandler;
+  ControlFunctionStateHandlerVector_t mvec_saClaimHandler;
 
   /** flag to indicate service / diagnostic mode, where only connections to a dedicated ECU
      should be maintained */

@@ -87,7 +87,7 @@ IsoTerminal_c::init()
     // register in Scheduler_c to get time-events
     getSchedulerInstance4Comm().registerClient(this);
     // register to get ISO monitor list changes
-    getIsoMonitorInstance4Comm().registerSaClaimHandler(&mt_handler);
+    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(&mt_handler);
 
     // register Filter in CanIo_c
     bool b_atLeastOneFilterAdded = NULL != getCanInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
@@ -111,7 +111,7 @@ IsoTerminal_c::close()
     // deregister in Scheduler_c
     getSchedulerInstance4Comm().unregisterClient(this);
     // deregister in IsoMonitor_c
-    getIsoMonitorInstance4Comm().deregisterSaClaimHandler(&mt_handler);
+    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(&mt_handler);
 
     getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
@@ -349,7 +349,7 @@ IsoTerminal_c::sendCommandForDEBUG(IsoAgLib::iIdentItem_c& mrc_wsMasterIdentItem
  * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
  */
 void
-IsoTerminal_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+IsoTerminal_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   // we only care for the VTs
   if (acrc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeVirtualTerminal) return;
@@ -358,7 +358,7 @@ IsoTerminal_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification
 
   switch (at_action)
   {
-    case SaClaimHandler_c::AddToMonitorList:
+    case ControlFunctionStateHandler_c::AddToMonitorList:
       { ///! Attention: This function is also called from "init()", not only from ISOMonitor!
         for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
         { // check if newly added VtServerInstance is already in our list
@@ -384,7 +384,7 @@ IsoTerminal_c::reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification
         }
       } break;
 
-    case SaClaimHandler_c::RemoveFromMonitorList:
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:
       for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
       { // check if lost VtServerInstance is in our list
         if (lit_vtServerInst->getIsoItem())
