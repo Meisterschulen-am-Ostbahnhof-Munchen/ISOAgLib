@@ -61,7 +61,7 @@ public:
 
 /** For backward compatibility.
   */
-typedef ControlFunctionStateHandler_c SaClaimHandler;
+typedef ControlFunctionStateHandler_c SaClaimHandler_c;
 
 /** Proxy for ControlFunctionStateHandler_c.
   * Having such a proxy as component is an alternative to subclassing
