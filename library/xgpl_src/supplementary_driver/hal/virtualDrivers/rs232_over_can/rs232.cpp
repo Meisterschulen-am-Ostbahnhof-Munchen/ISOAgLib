@@ -45,20 +45,16 @@ uint16_t BigBufLen = 0;
 
 uint16_t RS232_over_can_CANID = 0x7F0;
 
-int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
+int16_t init_rs232 (uint32_t baudrate, uint8_t bMode, uint8_t bStoppbits, bool bitSoftwarehandshake, uint8_t aui8_channel)
 {
-	RS232_over_can_initialized = true;
-	return HAL_NO_ERR;
+  (void) baudrate;
+  (void) bMode;
+  (void) bStoppbits;
+  (void) bitSoftwarehandshake;
+  (void) aui8_channel;
 
-//	if( !RS232_over_can_initialized )
-//	{
-////    getIcanInstance(RS232_over_can_busnum).init( RS232_over_can_busnum, 250 );
-//	getIcanInstance(RS232_over_can_busnum);
-//	if( getLbsErrInstance().good( iLibErr_c::Can ) )
-//		RS232_over_can_initialized = true;
-//	}
-//
-//	return RS232_over_can_initialized ? C_NO_ERR : C_RANGE;
+  RS232_over_can_initialized = true;
+  return HAL_NO_ERR;
 };
 
 /**
@@ -138,6 +134,6 @@ send '\0' terminated string on RS232
 */
 int16_t put_rs232String(const uint8_t *pbString, uint8_t aui8_channel)
 {
-	return put_rs232NChar((uint8_t*)pbString, strlen( (char*)pbString ), aui8_channel);
+	return put_rs232NChar (pbString, strlen( (char*)pbString ), aui8_channel);
 };
 }
