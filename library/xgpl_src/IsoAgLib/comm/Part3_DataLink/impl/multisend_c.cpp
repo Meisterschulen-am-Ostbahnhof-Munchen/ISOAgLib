@@ -329,7 +329,7 @@ MultiSend_c::init(void)
     mc_data.setSingletonKey( getSingletonVecKey() );
 
     // register to get ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
     #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     mui8_nextFpSequenceCounter = 0;
@@ -355,7 +355,7 @@ void MultiSend_c::close()
     getSchedulerInstance4Comm().unregisterClient( this );
 
     // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
   }
 }
 

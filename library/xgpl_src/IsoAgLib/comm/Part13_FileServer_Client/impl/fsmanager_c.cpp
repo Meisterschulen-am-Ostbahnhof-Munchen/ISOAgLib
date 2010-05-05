@@ -222,7 +222,7 @@ FsManager_c::singletonInit()
   // register in Scheduler_c to get time-events
   getSchedulerInstance4Comm().registerClient(this);
   // register to get ISO monitor list changes
-  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(this);
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(&this);
 
   // register Filter in CANIO_c
   bool b_atLeastOneFilterAdded=false;
@@ -289,7 +289,7 @@ FsManager_c::close()
   // deregister in Scheduler_c
   getSchedulerInstance4Comm().unregisterClient(this);
   // deregister in ISOMonitor_c
-  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(this);
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(&this);
 
   getCanInstance4Comm().deleteFilter(*this,
                                     (0x3FF0000UL),

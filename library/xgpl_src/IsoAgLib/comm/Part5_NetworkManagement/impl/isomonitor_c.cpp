@@ -769,30 +769,30 @@ bool IsoMonitor_c::existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bo
 
 
 /** register an ControlFunctionStateHandler_c */
-void IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c* apc_client )
+void IsoMonitor_c::registerControlFunctionStateHandler( ControlFunctionStateHandler_c & arc_client )
 {
   for ( ControlFunctionStateHandlerVectorConstIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
-    if ( *iter == apc_client ) return; // already in multimap -> don't insert again
+    if ( *iter == &arc_client ) return; // already in multimap -> don't insert again
   }
   // if this position is reached, a new item must be inserted
-  mvec_saClaimHandler.push_back( apc_client );
+  mvec_saClaimHandler.push_back( &arc_client );
 
   // now: trigger suitable ControlFunctionStateHandler_c calls for all already known IsoNames in the list
   for ( Vec_ISOIteratorConst iter = mvec_isoMember.begin(); iter != mvec_isoMember.end(); iter++)
   { // inform this ControlFunctionStateHandler_c on existance of the ISONAME node at iter
-    apc_client->reactOnIsoItemModification (ControlFunctionStateHandler_c::AddToMonitorList, *iter);
+    arc_client.reactOnIsoItemModification (ControlFunctionStateHandler_c::AddToMonitorList, *iter);
   }
 }
 
 
 /** deregister an ControlFunctionStateHandler */
 void
-IsoMonitor_c::deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c* apc_client)
+IsoMonitor_c::deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client)
 {
   for ( ControlFunctionStateHandlerVectorIterator_t iter = mvec_saClaimHandler.begin(); iter != mvec_saClaimHandler.end(); iter++ )
   { // check if it points to the same client
-    if ( *iter == apc_client )
+    if ( *iter == &arc_client )
     {
       mvec_saClaimHandler.erase (iter); // in multimap -> so delete it
       break;

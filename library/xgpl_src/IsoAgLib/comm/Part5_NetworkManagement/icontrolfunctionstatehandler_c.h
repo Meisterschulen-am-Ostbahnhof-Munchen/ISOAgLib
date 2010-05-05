@@ -23,29 +23,32 @@ namespace IsoAgLib
 class iControlFunctionStateHandler_c : private __IsoAgLib::ControlFunctionStateHandler_c {
 
 public:
-  using __IsoAgLib::ControlFunctionStateHandler_c::IsoItemAction_en;
+  using __IsoAgLib::ControlFunctionStateHandler_c::iIsoItemAction_e;
   using __IsoAgLib::ControlFunctionStateHandler_c::AddToMonitorList;
   using __IsoAgLib::ControlFunctionStateHandler_c::ChangedAddress;
   using __IsoAgLib::ControlFunctionStateHandler_c::LostAddress;
   using __IsoAgLib::ControlFunctionStateHandler_c::ReclaimedAddress;
   using __IsoAgLib::ControlFunctionStateHandler_c::RemoveFromMonitorList;
+  /* For backwards compatibility only: */
+  using __IsoAgLib::ControlFunctionStateHandler_c::IsoItemModification_t;
 
   virtual ~iControlFunctionStateHandler_c() {}
 
 private:
   // Enable iIsoMonitor_c to recognize that iControlFunctionStateHandler_c is
   // derived from ControlFunctionStateHandler_c:
-  friend struct iIsoMonitor_c;
+  friend class iIsoMonitor_c;
 
   /** Notice about control function state change
     */
   virtual void onIControlFunctionStateChange(
-      IsoItemAction_en ae_action, //< What happened?
+      iIsoItemAction_e ae_action, //< What happened?
       iIsoItem_c const &acrc_iIsoItem //< Who is it happened?
     ) = 0;
 
+  // Don't override; for IsoAgLib internal use only:
   virtual void reactOnIsoItemModification(
-      IsoItemAction_en ae_action,
+      iIsoItemAction_e ae_action,
       __IsoAgLib::IsoItem_c const &acrc_isoItem)
   {
     onIControlFunctionStateChange(ae_action, static_cast< IsoAgLib::iIsoItem_c const & >(acrc_isoItem));

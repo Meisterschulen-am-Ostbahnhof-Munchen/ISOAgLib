@@ -87,7 +87,7 @@ IsoTerminal_c::init()
     // register in Scheduler_c to get time-events
     getSchedulerInstance4Comm().registerClient(this);
     // register to get ISO monitor list changes
-    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(&mt_handler);
+    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
     // register Filter in CanIo_c
     bool b_atLeastOneFilterAdded = NULL != getCanInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
@@ -111,7 +111,7 @@ IsoTerminal_c::close()
     // deregister in Scheduler_c
     getSchedulerInstance4Comm().unregisterClient(this);
     // deregister in IsoMonitor_c
-    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(&mt_handler);
+    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
 
     getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
     getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);

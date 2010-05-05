@@ -1191,7 +1191,7 @@ MultiReceive_c::init()
     // register in Scheduler_c to get timeEvents
     getSchedulerInstance4Comm().registerClient( this );
     // register to get ISO monitor list changes
-    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
+    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
     // insert receive filters for broadcasted TP
     getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
@@ -1215,7 +1215,7 @@ MultiReceive_c::close( void )
     // deregister in Scheduler_c to get no more timeEvents
     getSchedulerInstance4Comm().unregisterClient( this );
     // deregister to get no more IsoMonitorList changes
-    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
+    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
     // remove receive filters for broadcasted TP
     getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);

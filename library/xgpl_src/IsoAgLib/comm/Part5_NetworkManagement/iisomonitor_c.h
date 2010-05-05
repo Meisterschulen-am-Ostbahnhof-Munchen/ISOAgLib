@@ -185,14 +185,24 @@ public:
   void setDiagnosticMode( const iIsoName_c& acrc_serviceTool = iIsoName_c::iIsoNameUnspecified())
   { IsoMonitor_c::setDiagnosticMode( acrc_serviceTool );}
 
-  /** register a ControlFunctionStateHandler_c */
-  void registerControlFunctionStateHandler(iControlFunctionStateHandler_c *apc_handler) {
-    IsoMonitor_c::registerControlFunctionStateHandler( apc_handler );
+  /** register an iControlFunctionStateHandler_c */
+  void registerControlFunctionStateHandler(iControlFunctionStateHandler_c &arc_handler) {
+    IsoMonitor_c::registerControlFunctionStateHandler( arc_handler );
   }
 
-  /** deregister a ControlFunctionStateHandler */
-  void deregisterControlFunctionStateHandler(iControlFunctionStateHandler_c *apc_handler){
-    IsoMonitor_c::deregisterControlFunctionStateHandler( apc_handler );
+  /* For backwards compatibility only: */
+  void registerSaClaimHandler(iControlFunctionStateHandler_c *apc_handler) {
+    registerControlFunctionStateHandler( *apc_handler );
+  }
+
+  /** deregister an iControlFunctionStateHandler */
+  void deregisterControlFunctionStateHandler(iControlFunctionStateHandler_c &arc_handler) {
+    IsoMonitor_c::deregisterControlFunctionStateHandler( arc_handler );
+  }
+
+  /* For backwards compatibility only: */
+  void deregisterControlFunctionStateHandler(iControlFunctionStateHandler_c *apc_handler) {
+    deregisterControlFunctionStateHandler( *apc_handler );
   }
 
 private:

@@ -271,10 +271,10 @@ public:
   bool existLocalIsoMemberISOName (const IsoName_c& acrc_isoName, bool ab_forceClaimedAddress = false);
 
   /** register a ControlFunctionStateHandler_c */
-  void registerControlFunctionStateHandler (ControlFunctionStateHandler_c* apc_client);
+  void registerControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
 
   /** deregister a ControlFunctionStateHandler */
-  void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c* apc_client);
+  void deregisterControlFunctionStateHandler (ControlFunctionStateHandler_c & arc_client);
 
   void broadcastIsoItemModification2Clients( ControlFunctionStateHandler_c::IsoItemModification_t at_isoItemModification, IsoItem_c const& acrc_isoItem ) const;
 

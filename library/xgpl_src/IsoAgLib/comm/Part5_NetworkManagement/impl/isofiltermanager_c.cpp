@@ -62,7 +62,7 @@ void IsoFilterManager_c::close( void )
     setAlreadyClosed();
 
       // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
   }
 }
 
@@ -83,7 +83,7 @@ IsoFilterManager_c::init()
     // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
     // register to get IsoMonitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
   }
 }
 

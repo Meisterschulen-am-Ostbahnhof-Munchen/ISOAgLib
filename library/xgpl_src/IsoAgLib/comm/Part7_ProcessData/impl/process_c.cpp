@@ -74,7 +74,7 @@ void Process_c::init()
   getSchedulerInstance4Comm().registerClient( this );
   mi32_lastFilterBoxTime = 0;
   mb_needCallOfCheckCreateRemoteReceiveFilter = false;
-  __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( &mt_handler );
+  __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
     #ifdef USE_PROC_DATA_DESCRIPTION_POOL
     mc_devPropertyHandler.init(&mc_data);
     #endif
@@ -107,7 +107,7 @@ void Process_c::close( void ) {
     getSchedulerInstance4Comm().unregisterClient( this );
 
     // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( &mt_handler );
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
   }
 };
 
