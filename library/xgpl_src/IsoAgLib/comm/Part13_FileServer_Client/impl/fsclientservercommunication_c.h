@@ -13,14 +13,15 @@
 #ifndef FSCLIETSERVERCOMMUNICATION_C_H
 #define FSCLIETSERVERCOMMUNICATION_C_H
 
+// ISOAgLib
+#include <IsoAgLib/scheduler/ischedulertask_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 
-#include "../ifsclient_c.h"
-
-#include <IsoAgLib/scheduler/ischedulertask_c.h>
-
+// own
 #include "fsserverinstance_c.h"
 #include "fscommand_c.h"
+#include "../ifsclient_c.h"
+
 
 namespace IsoAgLib {
   class iFsClientServerCommunication_c;
@@ -35,49 +36,12 @@ namespace __IsoAgLib {
   */
 class FsClientServerCommunication_c
 {
-  private:
-    /**
-      * The whitelist of fileserver-properties that are desired for this client server communication.
-      * Only fileservers of that type will be forwarded to the iFsClient (c_fsClient).
-      */
-    IsoAgLib::iFsWhitelistList v_fsWhitelist;
-    /** The fileserver client for the client-server communication */
-    IsoAgLib::iFsClient_c &c_fsClient;
-    /**
-      * The fileserver for the client-server communication. Has to be
-      * registered using the void requestFsConnection(FsServerInstance_c &rc_FileServer) function.
-      */
-    FsServerInstance_c *c_fileServer;
-    /**
-      * The fileserver client's IdentItem_c.
-      */
-    IdentItem_c &c_identItem;
-    /**
-      * Indicates if the FsClientServerCommunication_c object has been notified on fileservers
-      * yet. If no notification has been done so far, all existing fileservers have to be reported to
-      * the object.
-      */
-    bool b_notifiedOnFileservers;
-    /**
-      * The current directory of the used fileserver.
-      */
-    uint8_t *pui8_currentDirectory;
-    /**
-      * The pointer to the FsRequest_c object used for the CAN-BUS communication between the fileserver client and fileserver.
-      */
-    FsCommand_c *pc_commandHandler;
-    /**
-      * Flag indication if the registration process of a fileserver has been done successfully. This means that the current
-      * directory as well as the existing volumes of the fileserver have been requested successfully.
-      */
-    bool b_finishedRegistering;
-
   public:
-
-    /**
-      *
+    /** getFileserver()
+      * @pre There's a Fileserver/FsCommand set. (pc_commandHandler != NULL)
+      *      (This is done when the Application is connecting to a FileServer)
       */
-    FsServerInstance_c *getFileserver() { return c_fileServer; }
+    FsServerInstance_c &getFileserver() { return pc_commandHandler->getFileserver(); }
 
     /**
       * Get method to request the current directory of the used fileserver.
@@ -90,13 +54,14 @@ class FsClientServerCommunication_c
       * considered to have been successfull, if the current directory and all volumes of the fileserver have been set.
       * @return true if filerserver registered with success, false else.
       */
-    bool finishedRegistering() { return b_finishedRegistering; }
+    bool finishedRegistering() { return mb_finishedRegistering; }
 
     /**
       * Method used to get the used fileserver's existing volumes.
-      * @return std::vector<struct ::fsDirectory *> the volumes of the used fileserver.
+      * @pre This instance must be connected to a FileServer!
+      * @return IsoAgLib::iFsDirList the volumes of the used fileserver.
       */
-    IsoAgLib::iFsDirList getFsVolumes() { return c_fileServer->getFsVolumes();}
+    IsoAgLib::iFsDirList getFsVolumes() { return pc_commandHandler->getFileserver().getFsVolumes(); }
 
     /** constructor to init client-server communication without fileserver*/
     FsClientServerCommunication_c(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_fsClient, IsoAgLib::iFsWhitelistList v_fsWhitelist);
@@ -115,30 +80,24 @@ class FsClientServerCommunication_c
     const IsoAgLib::iFsClient_c &getFsClient() { return c_fsClient; }
 
     /**
-      * method used to indicate if this FsClientServerCommunication_c object has been notified on fileservers yet.
-      * @return true if fileserver has been reported yet, false else.
+      * Method called by FsManager_c to notify FsClientServerCommunication_c on usable fileserver,
+      * meaning the the properties/volumes have been queried already.
+      * Information is passed directly to iFsClient_c implementation.
       */
-    bool getHasBeenNotifiedOnFileServers() { return b_notifiedOnFileservers; }
+    void notifyOnUsableFileServer (FsServerInstance_c &rc_fsServerInstance);
 
     /**
-      * Method called by FsManager_c to notify FsClientServerCommunication_c on new fileserver. Information is passed
-      * directly to iFsClient_c implementation.
-      * @return true if freported to iFsClient, false else
+      * Method called by FsManager_c to notify all FsClientServerCommunication_c that
+      * some fileserver has gone offline. Information is passed to the iFsClient_c
+      * implementation as well.
       */
-    bool notifyOnNewFileServer(FsServerInstance_c &rc_fsServerInstance);
-
-    /**
-      * Method called by FsManager_c to notify FsClientServerCommunication_c that it's used fileserver
-      * has gone ofline. Information is passed to the iFsClient_c implementation as well.
-      * @return true if freported to iFsClient, false else
-      */
-    bool notifyOnFileServerOffline(FsServerInstance_c &rc_fsServerInstance);
+    void notifyOnOfflineFileServer (FsServerInstance_c &rc_fsServerInstance);
 
     /**
       * Method called to request conncetion to specified fileserver
       * @param rc_FileServer The fileserver for the requested connection.
       */
-    void requestFsConnection(FsServerInstance_c &rc_FileServer);
+    void requestFsConnection (FsServerInstance_c &rc_FileServer);
 
     /// FileServer access functions as defined in iFsClientServerCommunication_c
     IsoAgLib::iFsCommandErrors getFileServerProperties();
@@ -220,9 +179,42 @@ class FsClientServerCommunication_c
                                    bool b_hidden,
                                    bool b_readOnly);
     /// FileServer access response functions END
+
+    void notifyOnFsReady();
+
+  private:
+    /**
+      * The whitelist of fileserver-properties that are desired for this client server communication.
+      * Only fileservers of that type will be forwarded to the iFsClient (c_fsClient).
+      */
+    IsoAgLib::iFsWhitelistList v_fsWhitelist;
+
+    /** The fileserver client for the client-server communication */
+    IsoAgLib::iFsClient_c &c_fsClient;
+
+    /**
+      * The fileserver client's IdentItem_c.
+      */
+    IdentItem_c &c_identItem;
+
+    /**
+      * The current directory of the used fileserver.
+      */
+    uint8_t *pui8_currentDirectory;
+
+    /**
+      * The pointer to the FsRequest_c object used for the CAN-BUS communication between the fileserver client and fileserver.
+      */
+    FsCommand_c *pc_commandHandler;
+
+    /**
+      * Flag indication if the registration process to a fileserver has been done successfully. This means that the current
+      * directory as well as the existing volumes of the fileserver have been requested successfully.
+      */
+    bool mb_finishedRegistering;
 };
 
-//End namespace
-}
+
+} // __IsoAgLib
 
 #endif

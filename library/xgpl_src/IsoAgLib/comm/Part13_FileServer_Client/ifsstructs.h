@@ -10,8 +10,14 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef IFSSTRCUTS_H
-#define IFSSTRCUTS_H
+#ifndef IFSSTRUCTS_H
+#define IFSSTRUCTS_H
+
+#include <IsoAgLib/hal/hal_typedef.h>
+
+// STL
+#include <vector>
+
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -39,6 +45,7 @@ typedef STL_NAMESPACE::vector<iFsDirectoryPtr> iFsDirList;
 
 struct iFsWhitelist_c
 {
+  /// @todo Extend by flag for long-filename (and probably Case(in)sensitive names)
   bool b_requestRemoveableMedium;
   int32_t i32_requestedManufacturer;
   uint8_t ui8_minSimultaniouslyOpenFiles;

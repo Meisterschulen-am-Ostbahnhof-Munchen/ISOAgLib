@@ -58,12 +58,15 @@ namespace __IsoAgLib {
 class MultiReceiveClientWrapper_s : public ClientBase
 {
 public:
+  /// @param acrc_isoNameSender ".isUnspecified()" to receive Multipacket from anybody
+  ///                           ".isSpecified()" to receive Multipacket only from that sender
   MultiReceiveClientWrapper_s( CanCustomer_c& apc_client,
                                const IsoName_c& acrc_isoNameClient,
                                uint32_t aui32_pgn,
                                uint32_t aui32_pgnMask,
                                bool ab_alsoBroadcast,
-                               bool ab_alsoGlobalErrors
+                               bool ab_alsoGlobalErrors,
+                               const IsoName_c& acrc_isoNameSender
                               #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                               ,bool ab_isFastPacket
                               #endif
@@ -86,6 +89,7 @@ public: // attributes
   uint8_t mui8_cachedClientAddress; // kinda "cached" (normally clients register for receiving multi-packages to their own SA)
   bool mb_alsoBroadcast;
   bool mb_alsoGlobalErrors;
+  IsoName_c mc_isoNameSender;
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   bool mb_isFastPacket;
 #endif
@@ -99,6 +103,7 @@ MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &
   return ( ((arcc_streamIdent.getPgn() & mui32_pgnMask) == mui32_pgn) // PGN matches
         && (!(arcc_streamIdent.getDa() == 0xFF) || (mb_alsoBroadcast)) // broadcast => alsoBroadcast
         && (!(arcc_streamIdent.getDa() != 0xFF) || ((arcc_streamIdent.getDa() == mui8_cachedClientAddress))) // destin-spec => addresses-match
+        && (!mc_isoNameSender.isSpecified() || (mc_isoNameSender == arcc_streamIdent.getSaIsoName())) // filter for senders? => sender has to match the filter
       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
         && ((arcc_streamIdent.getStreamType() == StreamFastPacket) == mb_isFastPacket)
       #endif
@@ -122,30 +127,18 @@ public:
 
   //  Operation: processMsg
   virtual bool processMsg();
-  
+
   /// @pre Only to be called with StreamType TP/ETP!
   bool processMsgIso (StreamType_t at_streamType);
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   void processMsgNmea();
 #endif
 
-  //! This function is only kept public for compatibility-reasons
-  //! and may be made private later on. Server-type implementation
-  //! please only use "registerClientIso/registerClientNmea" now.
-  //! @pre This combination (Client/IsoName/Pgn) is not yet registered
-  void registerClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
-                       uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
-                       bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false
-                       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-                       , bool ab_isFastPacket=false
-                       #endif
-                      );
-
   //! register a TP/ETP receiver
   //! @pre This combination (Client/IsoName/Pgn) is not yet registered
   void registerClientIso (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
                           uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
-                          bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false);
+                          bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false, const IsoName_c* apcc_isoNameSender=NULL);
 
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   //! register a broadcast FastPacket receiver
@@ -157,7 +150,7 @@ public:
   #endif
 
   void deregisterClient (CanCustomer_c& apc_client);
-  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask);
+  void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask, const IsoName_c* apcc_isoNameSender=NULL);
 
   //! @pre ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
   Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize);

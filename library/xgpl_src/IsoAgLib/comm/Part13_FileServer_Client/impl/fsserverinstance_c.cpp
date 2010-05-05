@@ -11,11 +11,64 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+// own
 #include "fsserverinstance_c.h"
 #include "../ifsserverinstance_c.h"
+#include "fsmanager_c.h"
+
+// ISOAgLib
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <IsoAgLib/util/iassert.h>
+
 
 namespace __IsoAgLib
 {
+
+FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_c &ref_fsManager)
+  : c_fsManager(ref_fsManager)
+  , pc_newItem(pref_newItem)
+  , en_busy(busy_none)
+  , ui8_nrOpenFiles(0)
+  , i32_lastTime(-1)
+  , ui8_versionNumber(0)
+  , ui8_maximumNrFiles(0)
+  , ui8_capabilities(0)
+  , v_volumes()
+  , men_state(offline)
+  , ms_receiveFilter (*this, 0x3FFFF00UL, (FS_TO_GLOBAL_PGN << 8),
+                      NULL,
+                      &pref_newItem.isoName(),
+                      8, Ident_c::ExtendedIdent)
+{
+  isoaglib_assert (!getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager)).existIsoFilter (ms_receiveFilter));
+  getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))
+    .insertIsoFilter (ms_receiveFilter, true);
+#if DEBUG_FILESERVER
+  EXTERNAL_DEBUG_DEVICE << "Fileserver created offline (received Address Claim)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+}
+
+
+FsServerInstance_c::~FsServerInstance_c()
+{
+  IsoAgLib::iFsDirectoryPtr ps_tmpDir;
+
+  while (!v_volumes.empty())
+  {
+    ps_tmpDir = v_volumes.back();
+    v_volumes.pop_back();
+    if (ps_tmpDir->pui8_filename != NULL)
+      delete [] ps_tmpDir->pui8_filename;
+    delete ps_tmpDir;
+  }
+
+  getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))
+    .removeIsoFilter (ms_receiveFilter);
+#if DEBUG_FILESERVER
+  EXTERNAL_DEBUG_DEVICE << "Fileserver destroyed (stopped Address Claim)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+}
+
 
 void FsServerInstance_c::setVolumes(IsoAgLib::iFsDirList v_inVolumes)
 {
@@ -45,31 +98,14 @@ void FsServerInstance_c::setVolumes(IsoAgLib::iFsDirList v_inVolumes)
 
     v_volumes.push_back(ps_newDir);
   }
-
-  en_initStatus = unreported;
 }
 
-FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, const FsManager_c &ref_fsManager) : c_fsManager(ref_fsManager), pc_newItem(pref_newItem)
-{
-  i32_lastTime = -1;
-  i32_propertiesReqeusted = -1;
-  b_propertiesSet = false;
-  en_initStatus = online;
-}
 
-void FsServerInstance_c::updateServerStatus(uint8_t rui8_busy, uint8_t rui8_nrOpenFiles, int32_t ri32_lastTime)
-{
-  en_busy = FsServerInstance_c::FsState_en(rui8_busy);
-  ui8_nrOpenFiles = rui8_nrOpenFiles;
-  i32_lastTime = ri32_lastTime;
-}
-
-void FsServerInstance_c::setFsProperties(uint8_t rui8_versionNumber, uint8_t rui8_maximumNrFiles, bool rb_isMultivolumes)
+void FsServerInstance_c::setFsProperties(uint8_t rui8_versionNumber, uint8_t rui8_maximumNrFiles, uint8_t rui8_capabilities)
 {
   ui8_versionNumber = rui8_versionNumber;
   ui8_maximumNrFiles = rui8_maximumNrFiles;
-  b_isMultivolumes = rb_isMultivolumes;
-  b_propertiesSet = true;
+  ui8_capabilities = rui8_capabilities;
 }
 
 /** explicit conversion to reference of interface class type */
@@ -78,18 +114,115 @@ IsoAgLib::iFsServerInstance_c* FsServerInstance_c::toInterfacePointer()
   return static_cast<IsoAgLib::iFsServerInstance_c*>(this);
 }
 
-FsServerInstance_c::~FsServerInstance_c()
-{
-  IsoAgLib::iFsDirectoryPtr ps_tmpDir;
 
-  while (!v_volumes.empty())
+bool
+FsServerInstance_c::processMsg()
+{
+  // we only registered for one kind of message,
+  // and that is FS_TO_GLOBAL
+
+  if (getState() == unusable)
+    return true;
+
+  switch (data().getUint8Data(0))
   {
-    ps_tmpDir = v_volumes.back();
-    v_volumes.pop_back();
-    if (ps_tmpDir->pui8_filename != NULL)
-      delete [] ps_tmpDir->pui8_filename;
-    delete ps_tmpDir;
+    // FS Status
+    case 0x00:
+      switch (getState())
+      {
+        case FsServerInstance_c::offline:
+          // FS comes (back) online!
+          setState (online);
+          break;
+
+        default:
+          // nothing to do if we weren't offline
+          break;
+      }
+      en_busy = FsBusy_en(data().getUint8Data(1));
+      ui8_nrOpenFiles = data().getUint8Data(2);
+      i32_lastTime = data().time();
+      break;
+  }
+
+  return true;
+}
+
+
+void
+FsServerInstance_c::timeEvent()
+{
+  // if we're offline,
+  switch (getState())
+  {
+    case offline:    // nothing to do until we're going online (by FS Stat Msg)
+    case unusable:   // nothing to do if we're in an error-state. We're just unusable then.
+      return;
+
+    case online:
+    case usable:
+      if (getLastTime() != -1 && (uint32_t)(HAL::getTime () - getLastTime()) > uint32_t(6000))
+      { // FS Status timeout
+        setState (offline);
+      }
+      break;
   }
 }
+
+void
+FsServerInstance_c::setState (FsState_en aen_newState)
+{
+  // Store old state for later change-detection
+  FsState_en en_oldState = men_state;
+
+  // Set new state
+  men_state = aen_newState;
+
+#if DEBUG_FILESERVER
+  switch (en_oldState)
+  {
+    case offline:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver was offline ==> ";
+      break;
+    case online:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver was online ==> ";
+      break;
+    case usable:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver was usable ==> ";
+      break;
+    case unusable:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver was unusable ==> ";
+      break;
+    default:
+      isoaglib_assert(!"FS-Client: FsServerInstance_c: Was currently in an invalid state!");
+      break;
+  }
+  switch (aen_newState)
+  {
+    case offline:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver dropped offline (>6s loss of FS Status Message)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      break;
+    case online:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver got online (first reception of FS Status Message)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      break;
+    case usable:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver got usable (clients do now know of this FS and can use it)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      break;
+    case unusable:
+      EXTERNAL_DEBUG_DEVICE << "Fileserver encountered an error and is unusable." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      break;
+    default:
+      isoaglib_assert(!"FS-Client: FsServerInstance_c: Trying to set to invalid state!");
+      break;
+  }
+#endif
+
+  /// Propagate state change (if it is a change) to FsManager_c
+  if (aen_newState != en_oldState)
+  { // let all FsCSC know that the FS has changed its state...
+    c_fsManager.notifyOnFileserverStateChange (*this, en_oldState);
+  }
+}
+
 
 }

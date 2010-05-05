@@ -13,21 +13,22 @@
 #ifndef FSMANAGER_C_H
 #define FSMANAGER_C_H
 
+// ISOAgLib
+#include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
+
+// own
 #include "fsserverinstance_c.h"
 #include "fsclientservercommunication_c.h"
+#include "fscommand_c.h"
+#include "../ifsclient_c.h"
 
+// STL
 #include <vector>
 #include <list>
 
-#include <IsoAgLib/hal/hal_typedef.h>
-
-#include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
-
-#include "fsserverinstance_c.h"
-#include "fscommand_c.h"
-#include "../ifsclient_c.h"
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -40,12 +41,31 @@ class FsManager_c : public SingletonFsManager_c
 {
   public:
 
-/**
-  * Get a Fileserver by its source address.
-  * @param ui8_SA the source address of the fileserver
-  * @return FsServerInstance_c the fileserver with the desired source address, or NULL of no fileserver is found.
-  */
-    FsServerInstance_c *getFileServerBySA(uint8_t ui8_SA);
+  class SaClaimHandlerProxy_c : public SaClaimHandler_c {
+  public:
+    typedef FsManager_c Owner_t;
+
+    SaClaimHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~SaClaimHandlerProxy_c() {}
+
+  private:
+    virtual void reactOnIsoItemModification(
+        IsoItemModification_t at_action,
+        IsoItem_c const &acrc_isoItem)
+    {
+      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+    }
+
+    // SaClaimHandlerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    SaClaimHandlerProxy_c(SaClaimHandlerProxy_c const &);
+
+    SaClaimHandlerProxy_c &operator=(SaClaimHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef SaClaimHandlerProxy_c Handler_t;
 
     /** function used to destroy the FsManager_c object */
     void close();
@@ -79,21 +99,13 @@ class FsManager_c : public SingletonFsManager_c
      <!-- @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
       @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)-->
      */
-   virtual void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+   virtual void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   private:
     friend class SINGLETON_DERIVED(FsManager_c,Scheduler_Task_c);
 
     /** constructor is private, so singleton has to be used */
     FsManager_c();
-
-/**
-  * requests the properties for a fileserver according to ISO-Standard. If no fileserver client managed by the manager has a valid
-  * source address this request can't be performed.
-  * @param rui8_SA the source address of the desired fileserver
-  * @return true if request was performed, flase if reqeust cannot be performed.
-  */
-    bool requestFsProperties(FsServerInstance_c &pc_fsInstance);
 
     /**
       * initialize directly after the singleton instance is created.
@@ -102,31 +114,33 @@ class FsManager_c : public SingletonFsManager_c
       */
     void singletonInit();
 
+  public:
     /**
-      * Vector of registered FsClientServerCommunication_c
+      * A FsServerInstance_c will notify the Manager
+      * that it has its state changed.
       */
+    void notifyOnFileserverStateChange(
+      FsServerInstance_c &rc_fileserver,
+      FsServerInstance_c::FsState_en aen_oldState);
+
+  private:
+    // member variable instead of multiple inheritance
+    Handler_t mc_saClaimHandler;
+
+    /**
+     * Vector of registered FsClientServerCommunication_c
+     */
     std::vector<FsClientServerCommunication_c *> v_communications;
 
     /**
-      * Vector of known FsServerInstance_c
-      */
+     * Vector of known FsServerInstance_c
+     */
     std::vector<FsServerInstance_c *> v_serverInstances;
 
     /**
-      * Vector of FsCommand_c* requesting properties for not-online FsServerInstance_cS
-      */
-    std::list<FsCommand_c *> l_commands;
-
-    /**
-      * boolean used to save it fileserveinstances without requested properties exist
-      */
-    bool b_fileserverWituoutProperties;
-
-    /**
-      * Deregister a fileserver from all client server communications that use it.
-      * @param rc_fileserver the filerserver that shall be removed
-      */
-    void removeFileserverFromUsingClients(FsServerInstance_c &rc_fileserver);
+     * Vector of FsCommand_c* requesting properties for not-online FsServerInstance_cS
+     */
+    std::list<FsCommand_c *> l_initializingCommands;
 };
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

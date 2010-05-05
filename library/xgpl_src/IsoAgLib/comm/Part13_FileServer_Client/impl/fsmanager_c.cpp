@@ -10,11 +10,18 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+// own
 #include "fsmanager_c.h"
 
+// ISOAgLib
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/util/iassert.h>
+
+// STL
 #include <iterator>
+#include <algorithm>
+
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -27,191 +34,89 @@ namespace __IsoAgLib {
 bool
 FsManager_c::timeEvent(void)
 {
-
-  bool b_fsPropertiesRequested = false;
-
   STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_end = v_serverInstances.end();
   for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
        it_serverInstance != it_end;
        ++it_serverInstance)
   {
-    // check if FsServerInstance to delete is in list
-    if ((*it_serverInstance)->getLastTime() != -1 && (uint32_t)(HAL::getTime () - (uint32_t)(*it_serverInstance)->getLastTime()) > (uint32_t)6000)
-    {
-      (*it_serverInstance)->setOffline();
-      removeFileserverFromUsingClients(*(*it_serverInstance));
-      requestFsProperties(*(*it_serverInstance));
-      b_fsPropertiesRequested = true;
-    } else if ((*it_serverInstance)->getLastTime() != -1 &&
-               (*it_serverInstance)->getInitStatus() == FsServerInstance_c::removed) {
-      delete (*it_serverInstance);
-      v_serverInstances.erase(it_serverInstance);
-    } else if (b_fileserverWituoutProperties) {
-      if (!(*it_serverInstance)->getPropertiesSet()) {
-        b_fsPropertiesRequested = true;
-        if ((*it_serverInstance)->getPropertiesReqeusted() == -1)
-        {
-          if (requestFsProperties(*(*it_serverInstance)))
-            (*it_serverInstance)->setPropertiesReqeusted();
-        }
-        else if ((uint32_t)(HAL::getTime () - (uint32_t)(*it_serverInstance)->getPropertiesReqeusted()) > (uint32_t)12000
-                   && (*it_serverInstance)->getLastTime() == -1)
-        {
-          (*it_serverInstance)->setOffline();
-          removeFileserverFromUsingClients(*(*it_serverInstance));
-          requestFsProperties(*(*it_serverInstance));
-        }
-        else if ((uint32_t)(HAL::getTime () - (uint32_t)(*it_serverInstance)->getPropertiesReqeusted()) > (uint32_t)6000)
-        {
-          if (requestFsProperties(*(*it_serverInstance)))
-            (*it_serverInstance)->setPropertiesReqeusted();
-        }
-      }
-    }
+    (*it_serverInstance)->timeEvent();
   }
 
-  b_fileserverWituoutProperties = b_fsPropertiesRequested;
-
-  //look for clientservercom with unreported fileservers...
-
-  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-       it_communications != v_communications.end();
-       ++it_communications)
+  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = l_initializingCommands.begin();
+       it_command != l_initializingCommands.end(); )
   {
-    for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
-       it_serverInstance != it_end;
-       ++it_serverInstance)
+    isoaglib_assert (*it_command);
+    switch ((*it_command)->getFileserver().getState())
     {
-      if ((*it_serverInstance)->getPropertiesSet())
-      {
-        if ((!(*it_serverInstance)->getSupportsMultiVolumes()) || (*it_serverInstance)->knowsVolumes())
-        {
-          if ((*it_serverInstance)->getInitStatus() == FsServerInstance_c::unreported) {
-            (*it_communications)->notifyOnNewFileServer(*(*it_serverInstance));
-            if (it_communications + 1 == v_communications.end())
-            {
-              (*it_serverInstance)->setReported();
-            }
-          } else if (!(*it_communications)->getHasBeenNotifiedOnFileServers())
-          {
-            (*it_communications)->notifyOnNewFileServer(*(*it_serverInstance));
-          }
-        }
-      }
-    }
-  }
+      case FsServerInstance_c::offline:
+      case FsServerInstance_c::online:
+        // In these cases wait until initialization is complete
+        ++it_command;
+        break;
 
-  //delete commands for fileservers whoes properties have been requested or who have been removed.
-  for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = l_commands.begin();
-       it_command != l_commands.end();
-       )
-  {
-    if ((*it_command) && (*it_command)->getFileserver().getInitStatus() == FsServerInstance_c::used)
-    {
-      delete (*it_command);
-      it_command = l_commands.erase(it_command);
-      continue;
-    } else if ((*it_command) && (*it_command)->getFileserver().getInitStatus() == FsServerInstance_c::removed)
-    {
-      (*it_command)->getFileserver().resetLastTime();
-      delete (*it_command);
-      it_command = l_commands.erase(it_command);
-      continue;
+      case FsServerInstance_c::usable:
+      case FsServerInstance_c::unusable:
+        // Finished the initialization one way or another
+        delete (*it_command);
+        it_command = l_initializingCommands.erase(it_command);
+        break;
     }
-    ++it_command;
   }
 
   return true;
 }
 
-/**
-  * Get a Fileserver by its source address.
-  * @param ui8_SA the source address of the fileserver
-  * @return FsServerInstance_c the fileserver with the desired source address, or NULL of no fileserver is found.
-  */
-FsServerInstance_c *FsManager_c::getFileServerBySA(uint8_t ui8_SA)
-{
 
-  for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
-       it_serverInstance != v_serverInstances.end();
-       ++it_serverInstance)
+void
+FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+{
+  // we only care for fileservers
+  if (acrc_isoItem.isoName().getEcuType() != ISOName_c::ecuTypeFileServerOrPrinter)
+    return;
+
+  if (at_action == ControlFunctionStateHandler_c::AddToMonitorList)
   {
-    if (ui8_SA == (*it_serverInstance)->getIsoItem().nr())
-    {
-      return (*it_serverInstance);
-    }
+    FsServerInstance_c *pc_fsInstance = new FsServerInstance_c (acrc_isoItem, *this);
+    v_serverInstances.push_back (pc_fsInstance);
   }
-  return NULL;
-}
-
-/** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
-  *   @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-  *   @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
-  */
-void FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
-{
-  if (at_action == ControlFunctionStateHandler_c::AddToMonitorList) {
-    FsServerInstance_c *pc_fsInstance;
-
-    // we only care for fileservers
-    if (acrc_isoItem.isoName().getEcuType() != ISOName_c::ecuTypeFileServerOrPrinter)
-    {
-      return;
-    }
-
-    pc_fsInstance = new FsServerInstance_c(acrc_isoItem, *this);
-
-    v_serverInstances.push_back(pc_fsInstance);
-
-    //request properties and mark for fileserver without properties.
-    requestFsProperties(*pc_fsInstance);
-    b_fileserverWituoutProperties = true;
-  } else if (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList) {
-    // we only care for fileservers
-    if (acrc_isoItem.isoName().getEcuType() != ISOName_c::ecuTypeFileServerOrPrinter)
-    {
-      return;
-    }
-
+  else if (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList)
+  {
     for (STL_NAMESPACE::vector<FsServerInstance_c *>::iterator it_serverInstance = v_serverInstances.begin();
          it_serverInstance != v_serverInstances.end();
          ++it_serverInstance)
     {
       // check if FsServerInstance to delete is in list
       if (acrc_isoItem.isoName() == (*it_serverInstance)->getIsoItem().isoName())
-      {
-        (*it_serverInstance)->setRemoved();
-        return;
+      { // There should only be one instance for an IsoName!
+        // In all cases simply remove associated entries from l_initializingCommands
+        for (STL_NAMESPACE::list<FsCommand_c *>::iterator it_command = l_initializingCommands.begin();
+             it_command != l_initializingCommands.end(); )
+        {
+          if (&(*it_command)->getFileserver() == (*it_serverInstance))
+          { // yep, command is connected to this FileServer.
+            delete (*it_command);
+            it_command = l_initializingCommands.erase(it_command);
+            // normally we could break the for loop here, too.
+          }
+          else
+          { // search next command
+            ++it_command;
+          }
+        }
+
+        // Set the FS to offline before removing,
+        // so that any necessary cleanup will be done correctly
+        (*it_serverInstance)->setState (FsServerInstance_c::offline);
+        // now delete the instance
+        delete (*it_serverInstance);
+        // and remove it from the list of instances.
+        (void) v_serverInstances.erase (it_serverInstance);
+        break;
       }
     }
   }
 }
 
-/**
-  * requests the properties for a fileserver according to ISO-Standard. If no fileserver client managed by the manager has a valid
-  * source address this request can't be performed.
-  * @param rui8_SA the source address of the desired fileserver
-  * @return true if request was performed, flase if reqeust cannot be performed.
-  */
-bool FsManager_c::requestFsProperties(FsServerInstance_c &pc_fsInstance)
-{
-  CANPkgExt_c canpkgext;
-
-  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-       it_communications != v_communications.end();
-       ++it_communications)
-  {
-    if ((*it_communications)->getClientIdentItem().isClaimedAddress())
-    {
-      FsCommand_c *pc_command = new FsCommand_c(*(*it_communications), pc_fsInstance);
-      pc_command->initFileserver();
-      l_commands.push_back(pc_command);
-      return true;
-    }
-  }
-
-  return false;
-}
 
 /**
   * Initializes the fileserver manager. The manager is registered to the time-scheduler, the SAClaimHandler.
@@ -222,21 +127,7 @@ FsManager_c::singletonInit()
   // register in Scheduler_c to get time-events
   getSchedulerInstance4Comm().registerClient(this);
   // register to get ISO monitor list changes
-  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(&this);
-
-  // register Filter in CANIO_c
-  bool b_atLeastOneFilterAdded=false;
-
-  b_atLeastOneFilterAdded |= (
-                      getCanInstance4Comm().insertFilter (*this,
-                                                         (0x3FF0000UL),
-                                                         ((static_cast<MASK_TYPE>(FS_TO_CLIENT_PGN)<<8)),
-                                                         false,
-                                                         Ident_c::ExtendedIdent, 8)
-                            != NULL);
-
-  if (b_atLeastOneFilterAdded)
-    getCanInstance4Comm().reconfigureMsgObj();
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
 }
 
 const char* FsManager_c::getTaskName() const
@@ -250,8 +141,13 @@ FsManager_c::~FsManager_c()
 }
 
 FsManager_c::FsManager_c()
+  : mc_saClaimHandler(*this)
+  , v_communications()
+  , v_serverInstances()
+  , l_initializingCommands()
 {
 }
+
 
 /**
   * initFsClient registers a new fileserver client. If the client has already been registered, it does not re-register
@@ -261,7 +157,8 @@ FsManager_c::FsManager_c()
   * @return a new FsClientServerCommunication_c* if the client has not been registered yet. If the fileserver has been registered,
   * the original FsClientServerCommunication_c is returned.
   */
-FsClientServerCommunication_c *FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, IsoAgLib::iFsWhitelistList v_fsWhitelist)
+FsClientServerCommunication_c *
+FsManager_c::initFsClient(IdentItem_c &rc_identItem, IsoAgLib::iFsClient_c &rc_Client, IsoAgLib::iFsWhitelistList v_fsWhitelist)
 {
   FsClientServerCommunication_c *c_fscscClient = NULL;
 
@@ -282,6 +179,15 @@ FsClientServerCommunication_c *FsManager_c::initFsClient(IdentItem_c &rc_identIt
   return c_fscscClient;
 }
 
+
+// helper struct for the ::close function
+struct delete_object
+{
+  template <typename T>
+  void operator()(T *ptr){ delete ptr; }
+};
+
+
 /** function used to destroy the object FsManager_c */
 void
 FsManager_c::close()
@@ -289,27 +195,60 @@ FsManager_c::close()
   // deregister in Scheduler_c
   getSchedulerInstance4Comm().unregisterClient(this);
   // deregister in ISOMonitor_c
-  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(&this);
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
 
-  getCanInstance4Comm().deleteFilter(*this,
-                                    (0x3FF0000UL),
-                                    ((static_cast<MASK_TYPE>(FS_TO_CLIENT_PGN)<<8 )),
-                                    Ident_c::ExtendedIdent);
-
-  v_communications.clear();
-  v_serverInstances.clear();
+  std::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
+  std::for_each( v_communications.begin(), v_communications.end(), delete_object());
+  std::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
 }
 
-void FsManager_c::removeFileserverFromUsingClients(FsServerInstance_c &rc_fileserver)
+
+void
+FsManager_c::notifyOnFileserverStateChange(
+  FsServerInstance_c &rc_fileserver,
+  FsServerInstance_c::FsState_en aen_oldState)
 {
-  for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
-       it_communications != v_communications.end();
-       ++it_communications)
+  switch (rc_fileserver.getState())
   {
-    if ((*it_communications)->getFileserver()->getInitStatus() == FsServerInstance_c::offline)
-    {
-      (*it_communications)->notifyOnFileServerOffline(rc_fileserver);
-    }
+    case FsServerInstance_c::offline:
+      if (aen_oldState != FsServerInstance_c::usable)
+        // don't care about offline-dropping if the FS wasn't
+        // announced as usable before at all..
+        break;
+
+      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+          it_communications != v_communications.end();
+          ++it_communications)
+      {
+        (*it_communications)->notifyOnOfflineFileServer (rc_fileserver);
+      }
+      break;
+
+    case FsServerInstance_c::online:
+      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+          it_communications != v_communications.end();
+          ++it_communications)
+      {
+        FsCommand_c *pc_command = new FsCommand_c(*(*it_communications), rc_fileserver);
+
+        l_initializingCommands.push_back(pc_command);
+        return;
+      }
+      break;
+
+    case FsServerInstance_c::usable:
+      for (STL_NAMESPACE::vector<FsClientServerCommunication_c *>::iterator it_communications = v_communications.begin();
+           it_communications != v_communications.end();
+           ++it_communications)
+      {
+        (*it_communications)->notifyOnUsableFileServer (rc_fileserver);
+      }
+      // now possibly some FsCSC(s) have connected itself to this FS
+      break;
+
+    case FsServerInstance_c::unusable:
+      // no action currently
+      break;
   }
 }
 

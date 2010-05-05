@@ -31,7 +31,7 @@ namespace IsoAgLib
   * implementing class once all requested values have been reported.
   *
   * Requests are always done using the FsClientServerCommunication_c object for the implementing class. Responses are received
-  * directly by the implementing class via the *Response methods.
+  * directly by the implementing class via the Response methods.
   */
 class iFsClient_c
 {
@@ -57,8 +57,9 @@ class iFsClient_c
 
     /**
       * Method called once the client's fileserver has gone offline.
+      * @return OBSOLETE - Return value isn't used anymore.
       */
-    virtual bool notifyOnFileServerOffline(iFsServerInstance_c &/*rc_fsServerInstance*/) { return true; }
+    virtual bool notifyOnOfflineFileServer(iFsServerInstance_c &/*rc_fsServerInstance*/) { return true; }
 
     /**
       * methods that are called once the requested information has been received.

@@ -133,6 +133,7 @@
   #define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
 
 
+  #define getForeignInstance4Comm(PAR)      PAR.getSingletonVecKey()
   #define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
   #define getSchedulerInstance4Comm()       getSchedulerInstance( getSingletonVecKey() )
   #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getSingletonVecKey() )
@@ -273,6 +274,7 @@
   #define SINGLETON_VEC_KEY
   #define SINGLETON_VEC_KEY_WITH_COMMA
 
+  #define getForeignInstance4Comm(PAR)
   #define getCanInstance4Comm()             getCanInstance()
   #define getSchedulerInstance4Comm()       getSchedulerInstance()
   #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance()

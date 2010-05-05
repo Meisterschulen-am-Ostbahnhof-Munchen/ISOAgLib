@@ -66,13 +66,14 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s(
     uint32_t aui32_pgn,
     uint32_t aui32_pgnMask,
     bool ab_alsoBroadcast,
-    bool ab_alsoGlobalErrors
+    bool ab_alsoGlobalErrors,
+    const IsoName_c& acrc_isoNameSender
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     ,bool ab_isFastPacket
     #endif
     SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
   ) 
-  : SINGLETON_PARENT_CONSTRUCTOR 
+  : SINGLETON_PARENT_CONSTRUCTOR
     mpc_client(&arc_client)
   , mc_isoName (acrc_isoNameClient)
   , mui32_pgn(aui32_pgn)
@@ -80,6 +81,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s(
   , mui8_cachedClientAddress(0xFE)
   , mb_alsoBroadcast (ab_alsoBroadcast)
   , mb_alsoGlobalErrors (ab_alsoGlobalErrors)
+  , mc_isoNameSender (acrc_isoNameSender)
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   , mb_isFastPacket (ab_isFastPacket) // means the PGN has to be "insertFilter"/"removeFilter"ed
   #endif
@@ -632,16 +634,22 @@ void
 MultiReceive_c::registerClientIso(
   CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
   uint32_t aui32_pgn, uint32_t aui32_pgnMask,
-  bool ab_alsoBroadcast, bool ab_alsoGlobalErrors)
+  bool ab_alsoBroadcast, bool ab_alsoGlobalErrors,
+  const IsoName_c* apcc_isoNameSender)
 {
+  IsoName_c isoNameSender;
+  if (apcc_isoNameSender) isoNameSender = *apcc_isoNameSender;
+  else /* no name ---- */ isoNameSender.setUnspecified();
+
   mlist_clients.push_back(
     MultiReceiveClientWrapper_s(
-      arc_client, 
-      acrc_isoName, 
-      aui32_pgn, 
-      aui32_pgnMask, 
-      ab_alsoBroadcast, 
-      ab_alsoGlobalErrors
+      arc_client,
+      acrc_isoName,
+      aui32_pgn,
+      aui32_pgnMask,
+      ab_alsoBroadcast,
+      ab_alsoGlobalErrors,
+      isoNameSender
       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       , false
       #endif
@@ -657,6 +665,14 @@ MultiReceive_c::registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& 
                                     uint32_t aui32_pgn, uint32_t aui32_pgnMask,
                                     bool ab_alsoBroadcast, bool ab_alsoGlobalErrors)
 {
+  IsoName_c isoNameSender;
+#if 0
+  if (apcc_isoNameSender) isoNameSender = *apcc_isoNameSender;
+  else /* no name ---- */ isoNameSender.setUnspecified();
+#endif
+  // currently filtering on the sender is not supported for NMEA FP!
+  isoNameSender.setUnspecified();
+
   mlist_clients.push_back(
     MultiReceiveClientWrapper_s(
       arc_client,
@@ -665,6 +681,7 @@ MultiReceive_c::registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& 
       aui32_pgnMask,
       ab_alsoBroadcast,
       ab_alsoGlobalErrors,
+      isoNameSender
       true
       SINGLETON_VEC_KEY_WITH_COMMA));
 
@@ -709,8 +726,12 @@ MultiReceive_c::deregisterClient (CanCustomer_c& arc_client)
 // Operation: deregisterClient
 void
 MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
-                                 uint32_t aui32_pgn, uint32_t aui32_pgnMask)
+                                 uint32_t aui32_pgn, uint32_t aui32_pgnMask, const IsoName_c* apcc_isoNameSender)
 {
+  IsoName_c isoNameSender;
+  if (apcc_isoNameSender) isoNameSender = *apcc_isoNameSender;
+  else /* no name ---- */ isoNameSender.setUnspecified();
+
   // first of all remove all streams that are for this client with this filter/mask/isoname tuple
   for (STL_NAMESPACE::list<DEF_Stream_c_IMPL>::iterator pc_iter = mlist_streams.begin(); pc_iter != mlist_streams.end(); )
   {
@@ -729,6 +750,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acr
         && (i_list_clients->mc_isoName == acrc_isoName)
         && (i_list_clients->mui32_pgn == aui32_pgn)
         && (i_list_clients->mui32_pgnMask == aui32_pgnMask)
+        && (i_list_clients->mc_isoNameSender == isoNameSender)
          )
       { // remove stream (do not call any callbacks, as deregister is likely called in the client's destructor
         // @todo 178 maybe call connection abort, maybe also do abort?

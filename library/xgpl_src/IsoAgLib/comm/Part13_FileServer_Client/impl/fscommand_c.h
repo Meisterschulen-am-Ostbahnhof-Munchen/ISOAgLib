@@ -13,119 +13,71 @@
 #ifndef FSCOMMAND_C_H
 #define FSCOMMAND_C_H
 
-#include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
-
-//Fileserver includes
+// own
 #include "fsserverinstance_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
-#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
+
+// ISOAgLib
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
+#include <IsoAgLib/scheduler/impl/schedulertask_c.h>
+#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+
 
 namespace __IsoAgLib
 {
-
+// forward declarations
 class FsClientServerCommunication_c;
 
 /**
   * Class responsible to send and receive commands to and from a fileserver. It also takes care about the commands used by
   * the fileserver as they can differ according to the version of the standard implemented by the fileserver.
   */
-class FsCommand_c : Scheduler_Task_c
+class FsCommand_c : CanCustomer_c
 {
+  public:
+    FsCommand_c(
+      FsClientServerCommunication_c &rc_inCsCom,
+      FsServerInstance_c &rc_inFilerserver);
+
+    ~FsCommand_c();
+
+  class SchedulerTaskProxy_c : public Scheduler_Task_c {
+  public:
+    typedef FsCommand_c Owner_t;
+
+    SchedulerTaskProxy_c(Owner_t &art_owner) : mrt_owner(art_owner)
+    {
+      // explicitly set the time-period
+      setTimePeriod (100); // currently use Scheduler_Task's default
+    }
+
+    virtual ~SchedulerTaskProxy_c() {}
+
   private:
-    /** the TAN counter for the fileserver communication. **/
-    uint8_t ui8_tan;
-    /** the version of the standard used by the fileserver **/
-    int8_t i8_fsVersion;
-    /** the reference to the fsclientservercommunication. responses will be directed to this. **/
-    FsClientServerCommunication_c &rc_csCom;
-    /** the reference to the used fileserver **/
-    FsServerInstance_c &rc_filerserver;
+    virtual bool timeEvent() { return mrt_owner.timeEvent(); }
+    virtual void close() {}
+    virtual const char *getTaskName() const { return "FsCommand_c\n"; }
 
-    /** open file maintenance message **/
-    /** number of opened files **/
-    uint8_t ui8_nrOpenFiles;
-    /** keep connection open even after all files are closed **/
-    bool b_keepConnectionOpen;
-    /** when has the last alive been sent? **/
-    int32_t i32_lastAliveSent;
-    /** buffer containing the standard maintenance message, content equal for all clients! **/
-    static uint8_t pui8_maintenanceBuffer[8];
+    // SchedulerTaskProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    SchedulerTaskProxy_c(SchedulerTaskProxy_c const &);
 
-    /** send information **/
-    CANPkgExt_c c_data;
-    /** send package length **/
-    uint8_t ui8_packetLength;
-    /** buffer containing the sent message. **/
-    uint8_t pui8_sendBuffer[256];
-    /** buffer used for multi-receive messages **/
-    uint8_t *pui8_receiveBuffer;
-    uint32_t ui32_recBufAllocSize;
-    uint8_t ui8_recTan;
-    /** has a response for the sent message been received? **/
-    bool b_receivedResponse;
-    /** when has the last request been sent? time to resend? **/
-    int32_t i32_lastrequestAttempt;
-    /** how many times has the request been sent? **/
-    uint8_t ui8_requestAttempts;
-    /** status of a sent multi-message **/
-    MultiSend_c::sendSuccess_t en_sendSuccessNotify;
+    SchedulerTaskProxy_c &operator=(SchedulerTaskProxy_c const &);
 
-    /** recieve information **/
-    uint8_t ui8_errorCode;
+    Owner_t &mrt_owner;
+  };
+  typedef SchedulerTaskProxy_c Task_t;
 
-    /** currentDirectory information **/
-    uint8_t *pui8_currentDirectory;
-    uint16_t ui16_curDirAllocSize;
-
-    /** file handle information **/
-    uint8_t ui8_fileHandle;
-
-    /** open file information **/
-    /** file to be opend. important as return for change current directory **/
-    uint8_t *pui8_fileName;
-    uint16_t ui16_fileNameAllocSize;
-    /** flags used to open file **/
-    uint8_t ui8_flags;
-    /** attributes of opend file returned after open. **/
-    bool b_archive;
-    bool b_system;
-    bool b_caseSensitive;
-    bool b_removable;
-    bool b_longFilenames;
-    bool b_isDirectory;
-    bool b_isVolume;
-    bool b_hidden;
-    bool b_readOnly;
-
-    /** seek file information **/
-    uint8_t ui8_possitionMode;
-    int32_t i32_offset;
-    uint32_t ui32_possition;
-
-    /** read file information */
-    uint16_t ui16_count;
-    bool b_reportHiddenFiles;
-    uint8_t *pui8_data;
-    uint16_t ui16_dataAllocSize;
-    IsoAgLib::iFsDirList v_dirData;
-    bool b_readDirectory;
-
-    /** set file attributes commands **/
-    uint8_t ui8_hiddenAtt;
-    uint8_t ui8_readOnlyAtt;
-
-    /** file date time information **/
-    uint16_t ui16_date;
-    uint16_t ui16_time;
-
-    /** filter information **/
-    bool b_receiveFilterCreated;
+  private:
+    // forbid copy construction
+    FsCommand_c(const FsCommand_c& );
 
     /** function used to send a request. depending on the size of the request single of multi packet send is selected. **/
-    void sendRequest();
+    enum RequestType_en { RequestInitial, RequestRetry };
+    void sendRequest (RequestType_en);
+
     /** decodes a given attribute and saves the decoded values in the corresponding member variables **/
     void decodeAttributes(uint8_t ui8_attributes);
 
@@ -143,7 +95,7 @@ class FsCommand_c : Scheduler_Task_c
 
     /** clean up when done **/
     void clearDirectoryList();
-    void doneCleanUp();
+    void doCleanUp();
 
     /** internal read file use for read file and read directory **/
     IsoAgLib::iFsCommandErrors readFile(uint8_t ui8_inFileHandle, uint16_t ui16_count, bool b_reportHiddenFiles);
@@ -173,29 +125,29 @@ class FsCommand_c : Scheduler_Task_c
     /** is the command busy, meaning waiting for a response? **/
     bool isBusy() { return !b_receivedResponse; }
 
-    /** time evnet function. If no response received, resend request periodically. **/
+    /** time event function. If no response received, resend request periodically. **/
     bool timeEvent(void);
+
+    /** send the current command out via 8 Byte CAN */
+    void sendSinglePacket();
+
+    /** send the current command out via TP/ETP.
+        In case it coulnd't be sent out right now
+        set "mb_retryMultiPacketSend=true" so the timeEvent()
+        will retry until it could be started... */
+    void sendMultiPacketTry();
 
     /**
       * functions used when receiving information.
       */
-    CANPkgExt_c& dataBase(){return c_data;}
-    CANPkgExt_c& data(){return c_data;}
+    CANPkgExt_c& dataBase() { return c_data; }
+    CANPkgExt_c& data() { return c_data; }
 
     /**
       * process received messages. decodes the received responses and forwards it by calling the XXXResponse methods of the
       * FsClientServerCommunication_c.
       */
     bool processMsg();
-
-    /**
-      * Implemented function of ElementBase_c.
-      */
-    void close();
-    /**
-      * Implemented method of ElementBase_c.
-      */
-    const char *getTaskName() const { return "FsCommand_c\n"; }
 
     /**
       * Method called by FsClientServerCommunciation_c. After the response of get current directory, the fileserver is considered to
@@ -310,21 +262,14 @@ class FsCommand_c : Scheduler_Task_c
     IsoAgLib::iFsCommandErrors initializeVolume(uint8_t *pui8_pathName, uint32_t ui32_space, bool b_createVolumeUsingSpace, bool b_createNewVolume);
 
     /**
-      * Constructor of a FsCommand_c. FsClientServerCommunication_c and FsServerInstance_c have to be provided. Sets
-      * the TAN for the communication to the fileserver to 0, the number of open files as well.
-      */
-    FsCommand_c(FsClientServerCommunication_c &rc_inCsCom, FsServerInstance_c &rc_inFilerserver);
-
-    ~FsCommand_c();
-
-    /**
       * Starts the initialisation process for a fileserver.
       */
-    void initFileserver();
+    void requestProperties();
+
     /**
       * returns the fileserver of the FsCommand_c.
       */
-    FsServerInstance_c &getFileserver() { return rc_filerserver; }
+    FsServerInstance_c &getFileserver() { return rc_fileserver; }
 
     /**
       * set connection state to keep open even after all files have been closed
@@ -343,8 +288,114 @@ class FsCommand_c : Scheduler_Task_c
     void reactOnAbort(Stream_c& refc_stream);
     bool reactOnStreamStart(const ReceiveStreamIdentifier_c& refc_ident, uint32_t rui32_totalLen);
     /** MultiReceiveClient functions END **/
+
+  private:
+    // member variable instead of multiple inheritance
+    Task_t mc_schedulerTask;
+    /** the TAN counter for the fileserver communication. **/
+    uint8_t ui8_tan;
+    /** the reference to the fsclientservercommunication. responses will be directed to this. **/
+    FsClientServerCommunication_c &rc_csCom;
+    /** the reference to the used fileserver **/
+    FsServerInstance_c &rc_fileserver;
+
+    /** open file maintenance message **/
+    /** number of opened files **/
+    uint8_t ui8_nrOpenFiles;
+    /** keep connection open even after all files are closed **/
+    bool b_keepConnectionOpen;
+    /** when has the last alive been sent? **/
+    int32_t i32_lastAliveSent;
+    /** buffer containing the standard maintenance message, content equal for all clients! **/
+    static uint8_t pui8_maintenanceBuffer[8];
+
+    /** send information **/
+    CANPkgExt_c c_data;
+    /** send package length **/
+    uint8_t ui8_packetLength;
+    /** buffer containing the sent message. **/
+    uint8_t pui8_sendBuffer[256];
+    /** buffer used for multi-receive messages **/
+    uint8_t *pui8_receiveBuffer;
+    uint32_t ui32_recBufAllocSize;
+    uint8_t ui8_recTan;
+    /** has a response for the sent message been received? **/
+    bool b_receivedResponse;
+    /** when has the last request been sent? time to resend? **/
+    int32_t i32_lastrequestAttempt;
+    /** how many times has the request been sent? **/
+    uint8_t ui8_requestAttempts;
+    /** status of a sent multi-message **/
+    MultiSend_c::sendSuccess_t en_sendSuccessNotify;
+
+    /** recieve information **/
+    uint8_t ui8_errorCode;
+
+    /** currentDirectory information **/
+    uint8_t *pui8_currentDirectory;
+    uint16_t ui16_curDirAllocSize;
+
+    /** file handle information **/
+    uint8_t ui8_fileHandle;
+
+    /** open file information **/
+    /** file to be opend. important as return for change current directory **/
+    uint8_t *pui8_fileName;
+    uint16_t ui16_fileNameAllocSize;
+    /** flags used to open file **/
+    uint8_t ui8_flags;
+    /** attributes of opend file returned after open. **/
+    bool b_archive;
+    bool b_system;
+    bool b_caseSensitive;
+    bool b_removable;
+    bool b_longFilenames;
+    bool b_isDirectory;
+    bool b_isVolume;
+    bool b_hidden;
+    bool b_readOnly;
+
+    /** seek file information **/
+    uint8_t ui8_possitionMode;
+    int32_t i32_offset;
+    uint32_t ui32_possition;
+
+    /** read file information */
+    uint16_t ui16_count;
+    bool b_reportHiddenFiles;
+    uint8_t *pui8_data;
+    uint16_t ui16_dataAllocSize;
+    IsoAgLib::iFsDirList v_dirData;
+    bool b_readDirectory;
+
+    /** set file attributes commands **/
+    uint8_t ui8_hiddenAtt;
+    uint8_t ui8_readOnlyAtt;
+
+    /** file date time information **/
+    uint16_t ui16_date;
+    uint16_t ui16_time;
+
+    /** filter information **/
+    bool b_receiveFilterCreated;
+
+    /// FS Initial Query Part (Properties/Volumes)
+    bool mb_initialQueryStarted;
+
+    /// Is this instance for Initializing the FsInstance_c
+    /// (call callbacks and do initialization procedure then)
+    /// or is it for normal Application-triggered operation?
+    bool mb_initializingFileserver;
+
+    /// Indicate if a MultiSend was started and it
+    /// needs to be waited for the Success/Abort.
+    bool mb_waitForMultiSendFinish;
+
+    /// If the MultiPacketSend couldn't be started
+    /// it needs to be retried in the timeEvent()
+    bool mb_retryMultiPacketSend;
 };
 
-}
+} // __IsoAgLib
 
 #endif
