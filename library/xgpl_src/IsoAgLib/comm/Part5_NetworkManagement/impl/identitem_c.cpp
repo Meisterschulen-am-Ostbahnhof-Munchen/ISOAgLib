@@ -257,9 +257,6 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
                                                                   IState_c::PreAddressClaim |
                                                                   IState_c::Local)), ai_singletonVecKey);
     getIsoMonitorInstance4Comm().registerClient (this);
-    getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
-
-    updateLastIsoSaRequestForThisItem();
   }
 }
 
@@ -426,6 +423,10 @@ bool IdentItem_c::timeEvent( void )
   */
 bool IdentItem_c::timeEventPreAddressClaim( void )
 {
+  bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
+  if (cb_sent)
+    updateLastIsoSaRequestForThisItem();
+
   bool b_isoNameSuccessfulUnified = false;
   // check if isoName is unique and change if needed (to avoid adress conflict on Scheduler_c BUS) and allowed!
 
