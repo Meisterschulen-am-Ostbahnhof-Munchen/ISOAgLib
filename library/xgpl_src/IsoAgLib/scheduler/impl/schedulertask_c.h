@@ -53,7 +53,17 @@ class Scheduler_Task_c {
     * Call is wrapped by SchedulerEntry_c for Update of timestamps
     * @return true -> all planned activities performed in available time
     */
-  virtual bool timeEvent( void ) = 0;
+
+  /** This method has to be overridden so that IsoAgLib's scheduler
+    * calls it periodically once the object has been registered at
+    * IsoAgLib's scheduler (it's typically done that way:
+    * getSchedulerInstance4Comm().registerClient(this)).
+    * 
+    * \return Status.
+    * \retval false The activities could not be performed in the available time.
+    * \retval true The activities could be performed in the available time.
+    */
+  virtual bool timeEvent() = 0;
 
 
   /** this function is used by IsoAgLib components

@@ -25,17 +25,10 @@
 namespace IsoAgLib {
 
 
-
-
-/**
-  Central class for all other IsoAgLib classes.
-  Only define one instance of iSchedulerTask_c per
-  thread, and the other classes are
-  instanziated as members of this iSchedulerTask_c class.
-  The member objects represent the different scopes of functions of IsoAgLib.
-  @author Dipl.-Inform. Achim Spangler
-  @short central manager object for all hardware independent IsoAgLib objects.
-*/
+/** Abstract base class for tasks to be scheduled by IsoAgLib. Its
+  * subclasses have to provide some methods including timeEvent, that
+  * will be called periodically.
+  */
 class iSchedulerTask_c : private __IsoAgLib::Scheduler_Task_c {
 public:
 
@@ -55,18 +48,16 @@ public:
   virtual int32_t getTimeToNextTrigger(__IsoAgLib::retriggerType_t t_retriggerType= __IsoAgLib::StandardRetrigger) const;
 
 
-
-  /** this function is used by IsoAgLib components
-    * to perform periodic timed tasks.
-    * The central function Scheduler_c::timeEvent()
-    * calls the timeEvent() function of all
-    * IsoAgLib subsystem classes which are derived
-    * from Scheduler_Task_c and which registered
-    * in the list of Scheduler_c during init
-    * Call is wrapped by SchedulerEntry_c for Update of timestamps
-    * @return true -> all planned activities performed in available time
+  /** This method has to be overridden so that IsoAgLib's scheduler
+    * calls it periodically. (There's no need to register at the
+    * scheduler, because this is done implicitly by iSchedulerTask_c's
+    * constructor.)
+    * 
+    * \return Status.
+    * \retval false The activities could not be performed in the available time.
+    * \retval true The activities could be performed in the available time.
     */
-  virtual bool timeEvent( void ) = 0;
+  virtual bool timeEvent() = 0;
 
 
  /** Method getTimePeriod */
