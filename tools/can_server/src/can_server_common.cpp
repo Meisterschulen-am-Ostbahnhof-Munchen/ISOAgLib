@@ -282,7 +282,8 @@ void *readUserInput( void *ap_arg )
     } else if (!s_command.compare( s_help )) {
       b_needHelp = true; // set to wrongCommand to get help shown!
     } else {
-      std::cerr << "Don't know command " << s_command << ". Use 'help' for help." << std::endl;
+      if (!s_command.empty())
+        std::cerr << "Don't know command '" << s_command << "'. Use 'help' to get a list of commands." << std::endl;
     }
 
     if (b_needHelp) {
@@ -308,7 +309,7 @@ void usage() {
     << "IsoAgLib CAN-Server - Virtual Host CAN-Bus." << std::endl << std::endl
     << "Usage: can_server [OPTIONS]" << std::endl << std::endl
     << "Note: When running in Interactive mode (default)" << std::endl
-    << "      type 'help' for a list of interactive commands)" << std::endl << std::endl
+    << "      type 'help' for a list of interactive commands." << std::endl << std::endl
     << "Options:" << std::endl;
   for (yasper::ptr< AOption_c > const *p_opt = gp_optionsBegin; p_opt < gp_optionsEnd; ++p_opt) {
     std::cout << (*p_opt)->getUsage();
@@ -456,7 +457,7 @@ int Option_c< OPTION_INTERACTIVE >::doCheckAndHandle(int /*argc*/, char *argv[],
 template <>
 std::string Option_c< OPTION_INTERACTIVE >::doGetSetting(__HAL::server_c &ar_server) const
 {
-  return ar_server.mb_interactive ? "Interactive mode set\n" : "";
+  return ar_server.mb_interactive ? "Interactive mode set\n(Type 'help' for a list of interactive commands)\n" : "";
 }
 
 template <>
