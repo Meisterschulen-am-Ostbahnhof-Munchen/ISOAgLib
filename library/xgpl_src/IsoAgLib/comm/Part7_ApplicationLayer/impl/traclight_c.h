@@ -141,7 +141,7 @@ typedef struct {
     bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
     /** destructor for TracLight_c which has nothing to do */
-    virtual ~TracLight_c() { BaseCommon_c::close();};
+    virtual ~TracLight_c() { BaseCommon_c::close(); }
 
     /** set a lighting command in tractor mode or set a response on a lighting command in implement mode
         @param t_command  command to set
@@ -152,7 +152,7 @@ typedef struct {
     /** get the number of responses from implements to a command from the tractor
         @return number of responding implements to a command
       */
-    int getCount() const {return mmap_data.size();};
+    int getCount() const {return mmap_data.size(); }
 
     /** get the status of a light of a special implement
         possible errors:

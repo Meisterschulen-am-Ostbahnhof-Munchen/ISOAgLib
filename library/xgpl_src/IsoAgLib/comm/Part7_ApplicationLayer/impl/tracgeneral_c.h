@@ -84,14 +84,14 @@ public: // Public methods
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
-      @param apc_isoName pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
+      @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
   virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
   /** destructor for TracGeneral_c which has nothing to do */
-  virtual ~TracGeneral_c() { BaseCommon_c::close();};
+  virtual ~TracGeneral_c() { BaseCommon_c::close(); }
 
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
@@ -403,7 +403,7 @@ private:
   bool mb_maintainActuatorPower;
 
   /** stores for each requesting implement (sourceAddress) a bit field with all indicated state*/
-  STL_NAMESPACE::map<uint8_t, indicatedStateImpl_t> mmap_indicatedState; // access mmap_data[sourceAdr].
+  STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t > mmap_indicatedState; // access mmap_data[isoName].
 
   /** bit field with indicated state for tractor*/
   indicatedStateImpl_t mt_implState;

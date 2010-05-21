@@ -20,7 +20,9 @@
 #include "tracpto_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
-#define TIMEOUT_MAINTENANCE_PGN 2000
+namespace {
+  int32_t const sci32_timeoutMaintenancePgn = 2000;
+}
 
 using namespace std;
 
@@ -258,7 +260,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         break;
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
       {
-        indicatedStateImpl_t& rt_indicateData = mmap_indicatedState[data().isoSa()];
+        indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[data().getISONameForSA()];
 
         if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
           rt_indicateData.b_maintainEcuPower = true;
@@ -589,11 +591,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if (mmap_indicatedState.empty()) return;
 
     int32_t i32_now = HAL::getTime();
-    for (STL_NAMESPACE::map<uint8_t, indicatedStateImpl_t>::iterator iter = mmap_indicatedState.begin();
+    for (STL_NAMESPACE::map< IsoName_c, indicatedStateImpl_t >::iterator iter = mmap_indicatedState.begin();
          iter != mmap_indicatedState.end();
         )
     {
-      if ((iter->second.i32_lastMaintainPowerRequest + TIMEOUT_MAINTENANCE_PGN) < i32_now)
+      if ((iter->second.i32_lastMaintainPowerRequest + sci32_timeoutMaintenancePgn) < i32_now)
         mmap_indicatedState.erase(iter++);
       else
       {
@@ -627,8 +629,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if (IsoAgLib::IsoActive != at_val)
     {
       // IsoInactive, IsoError and IsoNotAvailable
-      uint8_t ui8_nr = getIsoMonitorInstance4Comm().isoMemberISOName(*getISOName(), true).nr();
-      indicatedStateImpl_t& rt_indicateData = mmap_indicatedState[ui8_nr];
+      indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[*getISOName()];
       rt_indicateData.b_maintainEcuPower = true;
       rt_indicateData.b_maintainActuatorPower = true;
       rt_indicateData.i32_lastMaintainPowerRequest = mi32_lastMaintainPowerRequest = HAL::getTime();

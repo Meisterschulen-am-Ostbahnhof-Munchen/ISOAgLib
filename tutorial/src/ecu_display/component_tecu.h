@@ -71,6 +71,8 @@ namespace IsoAgLibTutorialDisplay {
       void checkGeneralUpdate( bool ab_force = false );
 
       std::vector<iDisplay_c*> mvec_display;
+      uint8_t mui8_countdownMaintainPower;
+      IsoAgLib::iIdentItem_c *mpc_ident;
   };
 }
 #endif
