@@ -639,6 +639,205 @@ void interpretePgnAcknowledge()
 {
 }
 
+void interpreteWheelBasedSpeedDist()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+	  // Wheel-based implement speed
+	  std::cout << std::dec << "WBISp: " << ((canGetData(1) << 8) | canGetData(0)) * 0.001 << " m/s ";
+
+	  // Wheel-based distance
+	  std::cout << "WBIDs: " << (uint32_t((canGetData(5) << 24) | (canGetData(4) << 16) | (canGetData(3) << 8) | canGetData(2) )) * 0.001 << " m ";
+
+	  // Maximum time of tractor power
+	  std::cout << "MaxTimeTP: " << uint16_t(canGetData(6)) << " min ";
+
+	  // Operator direction reversed
+	  switch (canGetData(7) >> 6) {
+		  case 0x0: cout << "Operator direction: NotReversed "; break;
+		  case 0x1: cout << "Operator direction: Reversed "; break;
+		  case 0x2: cout << "Operator direction: Error "; break;
+		  case 0x3: cout << "Operator direction: Not available "; break;
+	  }
+	  
+	  // Start/Stop state
+	  switch ((canGetData(7) >> 4) & 0x03) {
+		case 0x0: cout << "St/Sp state: stop "; break;
+		case 0x1: cout << "St/Sp state: start "; break;
+		case 0x2: cout << "St/Sp state: error "; break;
+		case 0x3: cout << "St/Sp state: n/a "; break;
+	  }
+	  
+	  // Key switch state
+	  switch ((canGetData(7) >> 2) & 0x03) {
+		case 0x0: cout << "Key sws: off "; break;
+		case 0x1: cout << "Key sws: not off "; break;
+		case 0x2: cout << "Key sws: error "; break;
+		case 0x3: cout << "Key sws: n/a "; break;
+	  }
+
+	  // Ground based direction
+	  switch (canGetData(7) & 0x03) {
+		case 0x0: cout << "WB Dir: Reverse "; break;
+		case 0x1: cout << "WB Dir: Forward "; break;
+		case 0x2: cout << "WB Dir: Error "; break;
+		case 0x3: cout << "WB Dir: N/A "; break;
+	  }
+  }
+}
+
+void interpreteGroundBasedSpeedDist()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+	  // Wheel-based implement speed
+	  std::cout << std::dec << "GBISp: " << ((canGetData(1) << 8) | canGetData(0)) * 0.001 << " m/s ";
+
+	  // Wheel-based distance
+	  std::cout << "GBIDs: " << (uint32_t((canGetData(5) << 24) | (canGetData(4) << 16) | (canGetData(3) << 8) | canGetData(2) )) * 0.001 << " m ";
+
+	  // Byte 7 reserved.
+
+	  // Bit 8 to 3 reserved
+
+	  // Ground based direction
+	  switch (canGetData(7) & 0x03) {
+		case 0x0: cout << "GB Dir: Reverse "; break;
+		case 0x1: cout << "GB Dir: Forward "; break;
+		case 0x2: cout << "GB Dir: Error "; break;
+		case 0x3: cout << "GB Dir: N/A "; break;
+	  }
+  }
+}
+
+void interpreteRearPTOstate()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+	  // Rear PTO output shaft speed
+	  std::cout << std::dec << "Rear PTO output shaft speed: " << ((canGetData(1) << 8) | canGetData(0)) * 0.125 << " 1/min ";
+
+	  // Rear PTO output shaft speed setpoint
+	  std::cout << std::dec << "Rear PTO output shaft speed setpoint: " << ((canGetData(3) << 8) | canGetData(2)) * 0.125 << " 1/min ";
+
+	  // Rear PTO engagement
+	  switch (canGetData(4) >> 6) {
+		  case 0x0: cout << "RPTO eng: disen "; break;
+		  case 0x1: cout << "RPTO eng: en "; break;
+		  case 0x2: cout << "RPTO eng: Error "; break;
+		  case 0x3: cout << "RPTO eng: n/a "; break;
+	  }
+	  
+	  // Rear PTO mode
+	  switch ((canGetData(4) >> 4) & 0x03) {
+		case 0x0: cout << "RPTO mod: 540 "; break;
+		case 0x1: cout << "RPTO mod: 1000 "; break;
+		case 0x2: cout << "RPTO mod: Error "; break;
+		case 0x3: cout << "RPTO mod: n/a "; break;
+	  }
+	  
+	  // Rear PTO economy mode
+	  switch ((canGetData(4) >> 2) & 0x03) {
+		case 0x0: cout << "RPTO ec mod: disen "; break;
+		case 0x1: cout << "RPTO ec mod: en "; break;
+		case 0x2: cout << "RPTO ec mod: error "; break;
+		case 0x3: cout << "RPTO ec mod: n/a "; break;
+	  }
+
+	  // Rear PTO mode request status
+	  switch (canGetData(4) & 0x03) {
+		case 0x0: cout << "RPTO mod rq st: disen "; break;
+		case 0x1: cout << "RPTO mod rq st: en "; break;
+		case 0x2: cout << "RPTO mod rq st: Error "; break;
+		case 0x3: cout << "RPTO mod rq st: N/A "; break;
+	  }
+
+	  // Rear PTO engagement
+	  switch (canGetData(4) >> 6) {
+		  case 0x0: cout << "RPTO eng: disen "; break;
+		  case 0x1: cout << "RPTO eng: en "; break;
+		  case 0x2: cout << "RPTO eng: Error "; break;
+		  case 0x3: cout << "RPTO eng: n/a "; break;
+	  }
+	  
+	  // Rear PTO mode request status
+	  switch ((canGetData(4) >> 4) & 0x03) {
+		case 0x0: cout << "RPTO mod rq st: disen "; break;
+		case 0x1: cout << "RPTO mod rq st: en "; break;
+		case 0x2: cout << "RPTO mod rq st: Error "; break;
+		case 0x3: cout << "RPTO mod rq st: n/a "; break;
+	  }
+	  
+	  // Rear PTO shaft speed limit status
+	  switch ((canGetData(4) >> 1) & 0x07) {
+		case 0x0: cout << "RPTO shaft speed limit status: no limit "; break;
+		case 0x1: cout << "RPTO shaft speed limit status: op limit "; break;
+		case 0x2: cout << "RPTO shaft speed limit status: lim high "; break;
+		case 0x3: cout << "RPTO shaft speed limit status: lim low "; break;
+		case 0x4: cout << "RPTO shaft speed limit status: reserved "; break;
+		case 0x5: cout << "RPTO shaft speed limit status: reserved "; break;
+		case 0x6: cout << "RPTO shaft speed limit status: nr fault "; break;
+		case 0x7: cout << "RPTO shaft speed limit status: n/a "; break;
+	  }
+
+	  // Bits 1 is reserved
+	  // Bytes 7 and 8 are reserved
+  }
+}
+
+void interpreteRearHitch()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+	  // Rear hitch position in %
+	  std::cout << std::dec << "RearHitchPos: " << canGetData(0) * 0.4 << "% ";
+
+	  // Rear hith in-work indication.
+	  switch (canGetData(1) >> 6) {
+		  case 0x0: cout << "RH in-wo ind: out-of-work "; break;
+		  case 0x1: cout << "RH in-wo ind: in-work "; break;
+		  case 0x2: cout << "RH in-wo ind: error "; break;
+		  case 0x3: cout << "RH in-wo ind: n/a "; break;
+	  }
+	  
+	  // Rear hitch position limit status
+	  switch ((canGetData(1) >> 3) & 0x07) {
+		case 0x0: cout << "RH pos lim st: no limit "; break;
+		case 0x1: cout << "RH pos lim st: op limit "; break;
+		case 0x2: cout << "RH pos lim st: lim high "; break;
+		case 0x3: cout << "RH pos lim st: lim low "; break;
+		case 0x4: cout << "RH pos lim st: reserved "; break;
+		case 0x5: cout << "RH pos lim st: reserved "; break;
+		case 0x6: cout << "RH pos lim st: nr fault "; break;
+		case 0x7: cout << "RH pos lim st: n/a "; break;
+	  }
+
+	  // Rear nominal lover link force
+	  std::cout << std::dec << "Rear nom low link force: " << int8_t(canGetData(2)) * 0.8 << "% ";
+
+	  // Rear draft
+	  std::cout << std::dec << "Rear draft: " << ((canGetData(4) << 8) | canGetData(3)) * 10 - 320000 << "N ";
+
+	  // Bits 6 to 8 are reserved
+  }
+}
+
 void interpretePgnLanguage()
 {
   if (canGetBytes() != 8)
@@ -733,6 +932,267 @@ void interpretePgnLanguage()
   }
 }
 
+void interpreteLightningCommand()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+    // Tractor high-beam head lights
+    switch ((canGetData(0) >> 6) & 0x3) {
+	  case 0x0: cout << "Tractor high-beam head lights: deactivate "; break;
+	  case 0x1: cout << "Tractor high-beam head lights: activate "; break;
+	  case 0x2: cout << "Tractor high-beam head lights: reserve "; break;
+	  case 0x3: cout << "Tractor high-beam head lights: don't care "; break;
+    }
+    // Tractor low-beam head lights
+    switch ((canGetData(0) >> 4) & 0x3) {
+	  case 0x0: cout << "Tractor low-beam head lights: deactivate "; break;
+	  case 0x1: cout << "Tractor low-beam head lights: activate "; break;
+	  case 0x2: cout << "Tractor low-beam head lights: reserve "; break;
+	  case 0x3: cout << "Tractor low-beam head lights: don't care "; break;
+    }
+    // Tractor alternate head lights
+    switch ((canGetData(0) >> 2) & 0x3) {
+	  case 0x0: cout << "Tractor alternate head lights: deactivate "; break;
+	  case 0x1: cout << "Tractor alternate head lights: activate "; break;
+	  case 0x2: cout << "Tractor alternate head lights: reserve "; break;
+	  case 0x3: cout << "Tractor alternate head lights: don't care "; break;
+    }
+    // Daytime running lights
+    switch ((canGetData(0) >> 0) & 0x3) {
+	  case 0x0: cout << "Daytime running lights: deactivate "; break;
+	  case 0x1: cout << "Daytime running lights: activate "; break;
+	  case 0x2: cout << "Daytime running lights: reserve "; break;
+	  case 0x3: cout << "Daytime running lights: don't care "; break;
+    }
+
+	
+    // Left-turn signal lights
+    switch ((canGetData(1) >> 6) & 0x3) {
+	  case 0x0: cout << "Left-turn signal lights: deactivate "; break;
+	  case 0x1: cout << "Left-turn signal lights: activate "; break;
+	  case 0x2: cout << "Left-turn signal lights: reserve "; break;
+	  case 0x3: cout << "Left-turn signal lights: don't care "; break;
+    }
+    // Right-turn signal lights
+    switch ((canGetData(1) >> 4) & 0x3) {
+	  case 0x0: cout << "Right-turn signal lights: deactivate "; break;
+	  case 0x1: cout << "Right-turn signal lights: activate "; break;
+	  case 0x2: cout << "Right-turn signal lights: reserve "; break;
+	  case 0x3: cout << "Right-turn signal lights: don't care "; break;
+    }
+    // Beacon lights
+    switch ((canGetData(1) >> 2) & 0x3) {
+	  case 0x0: cout << "Beacon lights: deactivate "; break;
+	  case 0x1: cout << "Beacon lights: activate "; break;
+	  case 0x2: cout << "Beacon lights: reserve "; break;
+	  case 0x3: cout << "Beacon lights: don't care "; break;
+    }
+    // Front fog lights
+    switch ((canGetData(1) >> 0) & 0x3) {
+	  case 0x0: cout << "Front fog: deactivate "; break;
+	  case 0x1: cout << "Front fog: activate "; break;
+	  case 0x2: cout << "Front fog: reserve "; break;
+	  case 0x3: cout << "Front fog: don't care "; break;
+    }
+
+	
+    // Left stop lights
+    switch ((canGetData(2) >> 6) & 0x3) {
+	  case 0x0: cout << "Left stop lights: deactivate "; break;
+	  case 0x1: cout << "Left stop lights: activate "; break;
+	  case 0x2: cout << "Left stop lights: reserve "; break;
+	  case 0x3: cout << "Left stop lights: don't care "; break;
+    }
+    // Right stop lights
+    switch ((canGetData(2) >> 4) & 0x3) {
+	  case 0x0: cout << "Right stop lights: deactivate "; break;
+	  case 0x1: cout << "Right stop lights: activate "; break;
+	  case 0x2: cout << "Right stop lights: reserve "; break;
+	  case 0x3: cout << "Right stop lights: don't care "; break;
+    }
+    // Center stop lights
+    switch ((canGetData(2) >> 2) & 0x3) {
+	  case 0x0: cout << "Center stop lights: deactivate "; break;
+	  case 0x1: cout << "Center stop lights: activate "; break;
+	  case 0x2: cout << "Center stop lights: reserve "; break;
+	  case 0x3: cout << "Center stop lights: don't care "; break;
+    }
+    // Back up light and alarm horn
+    switch ((canGetData(2) >> 0) & 0x3) {
+	  case 0x0: cout << "Back up light and alarm horn: deactivate "; break;
+	  case 0x1: cout << "Back up light and alarm horn: activate "; break;
+	  case 0x2: cout << "Back up light and alarm horn: reserve "; break;
+	  case 0x3: cout << "Back up light and alarm horn: don't care "; break;
+    }
+
+	
+    // Tractor marker lights
+    switch ((canGetData(3) >> 6) & 0x3) {
+	  case 0x0: cout << "Tractor marker lights: deactivate "; break;
+	  case 0x1: cout << "Tractor marker lights: activate "; break;
+	  case 0x2: cout << "Tractor marker lights: reserve "; break;
+	  case 0x3: cout << "Tractor marker lights: don't care "; break;
+    }
+    // Implement marker lights
+    switch ((canGetData(3) >> 4) & 0x3) {
+	  case 0x0: cout << "Implement marker lights: deactivate "; break;
+	  case 0x1: cout << "Implement marker lights: activate "; break;
+	  case 0x2: cout << "Implement marker lights: reserve "; break;
+	  case 0x3: cout << "Implement marker lights: don't care "; break;
+    }
+    // Tractor clearance lights
+    switch ((canGetData(3) >> 2) & 0x3) {
+	  case 0x0: cout << "Tractor clearance lights: deactivate "; break;
+	  case 0x1: cout << "Tractor clearance lights: activate "; break;
+	  case 0x2: cout << "Tractor clearance lights: reserve "; break;
+	  case 0x3: cout << "Tractor clearance lights: don't care "; break;
+    }
+    // Implement clearance lights
+    switch ((canGetData(3) >> 0) & 0x3) {
+	  case 0x0: cout << "Implement clearance lights: deactivate "; break;
+	  case 0x1: cout << "Implement clearance lights: activate "; break;
+	  case 0x2: cout << "Implement clearance lights: reserve "; break;
+	  case 0x3: cout << "Implement clearance lights: don't care "; break;
+    }
+
+	
+    // Tractor rear hight mounted work lights
+    switch ((canGetData(4) >> 6) & 0x3) {
+	  case 0x0: cout << "Tractor rear hight mounted work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor rear hight mounted work lights: activate "; break;
+	  case 0x2: cout << "Tractor rear hight mounted work lights: reserve "; break;
+	  case 0x3: cout << "Tractor rear hight mounted work lights: don't care "; break;
+    }
+    // Tractor rear low mounted work lights
+    switch ((canGetData(4) >> 4) & 0x3) {
+	  case 0x0: cout << "Tractor rear low mounted work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor rear low mounted work lights: activate "; break;
+	  case 0x2: cout << "Tractor rear low mounted work lights: reserve "; break;
+	  case 0x3: cout << "Tractor rear low mounted work lights: don't care "; break;
+    }
+    // Tractor underside work lights
+    switch ((canGetData(4) >> 2) & 0x3) {
+	  case 0x0: cout << "Tractor underside work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor underside work lights: activate "; break;
+	  case 0x2: cout << "Tractor underside work lights: reserve "; break;
+	  case 0x3: cout << "Tractor underside work lights: don't care "; break;
+    }
+    // Rear fog light 
+    switch ((canGetData(4) >> 0) & 0x3) {
+	  case 0x0: cout << "Rear fog light: deactivate "; break;
+	  case 0x1: cout << "Rear fog light: activate "; break;
+	  case 0x2: cout << "Rear fog light: reserve "; break;
+	  case 0x3: cout << "Rear fog light: don't care "; break;
+    }
+
+	
+    // Tractor front high-mounted work lights
+    switch ((canGetData(5) >> 6) & 0x3) {
+	  case 0x0: cout << "Tractor front high-mounted work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor front high-mounted work lights: activate "; break;
+	  case 0x2: cout << "Tractor front high-mounted work lights: reserve "; break;
+	  case 0x3: cout << "Tractor front high-mounted work lights: don't care "; break;
+    }
+    // Tractor front low-mounted work lights
+    switch ((canGetData(5) >> 4) & 0x3) {
+	  case 0x0: cout << "Tractor front low-mounted work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor front low-mounted work lights: activate "; break;
+	  case 0x2: cout << "Tractor front low-mounted work lights: reserve "; break;
+	  case 0x3: cout << "Tractor front low-mounted work lights: don't care "; break;
+    }
+    // Tractor side high-mounted work lights
+    switch ((canGetData(5) >> 2) & 0x3) {
+	  case 0x0: cout << "Tractor side high-mounted work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor side high-mounted work lights: activate "; break;
+	  case 0x2: cout << "Tractor side high-mounted work lights: reserve "; break;
+	  case 0x3: cout << "Tractor side high-mounted work lights: don't care "; break;
+    }
+    // Tractor side low-mounted work lights
+    switch ((canGetData(5) >> 0) & 0x3) {
+	  case 0x0: cout << "Tractor side low-mounted work lights: deactivate "; break;
+	  case 0x1: cout << "Tractor side low-mounted work lights: activate "; break;
+	  case 0x2: cout << "Tractor side low-mounted work lights: reserve "; break;
+	  case 0x3: cout << "Tractor side low-mounted work lights: don't care "; break;
+    }
+
+	
+    // Implement left forward work lights
+    switch ((canGetData(6) >> 6) & 0x3) {
+	  case 0x0: cout << "Implement left forward work lights: deactivate "; break;
+	  case 0x1: cout << "Implement left forward work lights: activate "; break;
+	  case 0x2: cout << "Implement left forward work lights: reserve "; break;
+	  case 0x3: cout << "Implement left forward work lights: don't care "; break;
+    }
+    // Implement right forward work lights
+    switch ((canGetData(6) >> 4) & 0x3) {
+	  case 0x0: cout << "Implement right forward work lights: deactivate "; break;
+	  case 0x1: cout << "Implement right forward work lights: activate "; break;
+	  case 0x2: cout << "Implement right forward work lights: reserve "; break;
+	  case 0x3: cout << "Implement right forward work lights: don't care "; break;
+    }
+    // Implement OEM option 1 light
+    switch ((canGetData(6) >> 2) & 0x3) {
+	  case 0x0: cout << "Implement OEM option 1 light: deactivate "; break;
+	  case 0x1: cout << "Implement OEM option 1 light: activate "; break;
+	  case 0x2: cout << "Implement OEM option 1 light: reserve "; break;
+	  case 0x3: cout << "Implement OEM option 1 light: don't care "; break;
+    }
+    // Implement OEM option 2 light
+    switch ((canGetData(6) >> 0) & 0x3) {
+	  case 0x0: cout << "Implement OEM option 2 light: deactivate "; break;
+	  case 0x1: cout << "Implement OEM option 2 light: activate "; break;
+	  case 0x2: cout << "Implement OEM option 2 light: reserve "; break;
+	  case 0x3: cout << "Implement OEM option 2 light: don't care "; break;
+    }
+
+	
+    // Implement rear work lights
+    switch ((canGetData(7) >> 6) & 0x3) {
+	  case 0x0: cout << "Implement rear work lights: deactivate "; break;
+	  case 0x1: cout << "Implement rear work lights: activate "; break;
+	  case 0x2: cout << "Implement rear work lights: reserve "; break;
+	  case 0x3: cout << "Implement rear work lights: don't care "; break;
+    }
+    // Implement left-facing work lights
+    switch ((canGetData(7) >> 4) & 0x3) {
+	  case 0x0: cout << "Implement left-facing work lights: deactivate "; break;
+	  case 0x1: cout << "Implement left-facing work lights: activate "; break;
+	  case 0x2: cout << "Implement left-facing work lights: reserve "; break;
+	  case 0x3: cout << "Implement left-facing work lights: don't care "; break;
+    }
+    // Implement right-facing work lights
+    switch ((canGetData(7) >> 2) & 0x3) {
+	  case 0x0: cout << "Implement right-facing work lights: deactivate "; break;
+	  case 0x1: cout << "Implement right-facing work lights: activate "; break;
+	  case 0x2: cout << "Implement right-facing work lights: reserve "; break;
+	  case 0x3: cout << "Implement right-facing work lights: don't care "; break;
+    }
+    // Lighting data message request
+    switch ((canGetData(7) >> 0) & 0x3) {
+	  case 0x0: cout << "Lighting data message request: deactivate "; break;
+	  case 0x1: cout << "Lighting data message request: activate "; break;
+	  case 0x2: cout << "Lighting data message request: reserve "; break;
+	  case 0x3: cout << "Lighting data message request: don't care "; break;
+    }
+  }
+}
+
+void interpreteEngineSpeedMsg()
+{
+  if (canGetBytes() != 8)
+  {
+    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+  }
+  else
+  {
+    // Engine speed
+    cout << "Engine speed:" << (((canGetData(4) << 8) | canGetData(3)) * 0.125) << " ";
+  }
+}
 
 void interpretePgnsCl2FS()
 {
@@ -923,17 +1383,18 @@ void interpretePgnData (uint32_t rui32_pgn)
     case WORKING_SET_MASTER_PGN:         break;
     case LANGUAGE_PGN:                   interpretePgnLanguage(); break;
     case LIGHTING_DATA_PGN:              break;
-    case LIGHTING_COMMAND_PGN:           break;
+    case LIGHTING_COMMAND_PGN:           interpreteLightningCommand(); break;
     case HITCH_PTO_COMMANDS:             break;
-    case REAR_PTO_STATE_PGN:             break;
+    case REAR_PTO_STATE_PGN:             interpreteRearPTOstate(); break;
     case FRONT_PTO_STATE_PGN:            break;
-    case REAR_HITCH_STATE_PGN:           break;
+    case REAR_HITCH_STATE_PGN:           interpreteRearHitch(); break;
     case FRONT_HITCH_STATE_PGN:          break;
     case MAINTAIN_POWER_REQUEST_PGN:     break;
-    case WHEEL_BASED_SPEED_DIST_PGN:     break;
-    case GROUND_BASED_SPEED_DIST_PGN:    break;
+    case WHEEL_BASED_SPEED_DIST_PGN:     interpreteWheelBasedSpeedDist(); break;
+    case GROUND_BASED_SPEED_DIST_PGN:    interpreteGroundBasedSpeedDist(); break;
     case SELECTED_SPEED_CMD:             break;
     case SELECTED_SPEED_MESSAGE:         break;
+    case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: interpreteEngineSpeedMsg(); break;
     case SOFTWARE_IDENTIFICATION_PGN:    break;
     case TIME_DATE_PGN:                  break;
     case PROPRIETARY_B_PGN:              break;
@@ -977,29 +1438,30 @@ void interpretePgn (uint32_t rui32_pgn)
     case ADDRESS_CLAIM_PGN:              cout << "ADDRESS_CLAIM     "; break;
     case PROPRIETARY_A_PGN:              cout << "PROPRIETARY_A     "; break;
     case PROPRIETARY_A2_PGN:             cout << "PROPRIETARY_A2    "; break;
-    case WORKING_SET_MEMBER_PGN:         cout << "WORKING_SET_MEMBER"; break;
-    case WORKING_SET_MASTER_PGN:         cout << "WORKING_SET_MASTER"; break;
+    case WORKING_SET_MEMBER_PGN:         cout << "WORKING_SET_MEMBER "; break;
+    case WORKING_SET_MASTER_PGN:         cout << "WORKING_SET_MASTER "; break;
     case LANGUAGE_PGN:                   cout << "LANGUAGE          "; break;
     case LIGHTING_DATA_PGN:              cout << "LIGHTING_DATA     "; break;
     case LIGHTING_COMMAND_PGN:           cout << "LIGHTING_COMMAND  "; break;
-    case HITCH_PTO_COMMANDS:             cout << "HITCH_PTO_COMMANDS"; break;
+    case HITCH_PTO_COMMANDS:             cout << "HITCH_PTO_COMMANDS "; break;
     case REAR_PTO_STATE_PGN:             cout << "REAR_PTO_STATE    "; break;
     case FRONT_PTO_STATE_PGN:            cout << "FRONT_PTO_STATE   "; break;
     case REAR_HITCH_STATE_PGN:           cout << "REAR_HITCH_STATE  "; break;
     case FRONT_HITCH_STATE_PGN:          cout << "FRONT_HITCH_STATE "; break;
     case MAINTAIN_POWER_REQUEST_PGN:     cout << "MAINTAIN_POWER_REQ"; break;
-    case WHEEL_BASED_SPEED_DIST_PGN:     cout << "WHEEL_BASED_SPEED_DIST"; break;
-    case GROUND_BASED_SPEED_DIST_PGN:    cout << "GROUND_BASED_SPEED_DIST"; break;
-    case SELECTED_SPEED_CMD:             cout << "SELECTED_SPEED_CMD"; break;
-    case SELECTED_SPEED_MESSAGE:         cout << "SELECTED_SPEED_MESSAGE"; break;
-    case SOFTWARE_IDENTIFICATION_PGN:    cout << "SOFTWARE_IDENTIFICATION"; break;
+    case WHEEL_BASED_SPEED_DIST_PGN:     cout << "WHEEL_BASED_SPEED_DIST "; break;
+    case GROUND_BASED_SPEED_DIST_PGN:    cout << "GROUND_BASED_SPEED_DIST "; break;
+    case SELECTED_SPEED_CMD:             cout << "SELECTED_SPEED_CMD "; break;
+    case SELECTED_SPEED_MESSAGE:         cout << "SELECTED_SPEED_MESSAGE "; break;
+    case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: cout << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
+    case SOFTWARE_IDENTIFICATION_PGN:    cout << "SOFTWARE_IDENTIFICATION "; break;
     case TIME_DATE_PGN:                  cout << "TIME_DATE         "; break;
-    case PROPRIETARY_B_PGN:              cout << "PROPRIETARY_B(1of)"; break;
-    case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: cout << "NMEA_GPS_POSITION_RAPID_UPDATE"; break;
-    case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE"; break;
-    case NMEA_GPS_POSITION_DATA_PGN:     cout << "NMEA_GPS_POSITION_DATA"; break;
-    case NMEA_GPS_DIRECTION_DATA_PGN:    cout << "NMEA_GPS_DIRECTION_DATA"; break;
-    case 129542: /* 0x1Fa06 */           cout << "GNSS Pseudorange Noise Statistics"; break;
+    case PROPRIETARY_B_PGN:              cout << "PROPRIETARY_B(1of) "; break;
+    case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: cout << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
+    case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
+    case NMEA_GPS_POSITION_DATA_PGN:     cout << "NMEA_GPS_POSITION_DATA "; break;
+    case NMEA_GPS_DIRECTION_DATA_PGN:    cout << "NMEA_GPS_DIRECTION_DATA "; break;
+    case 129542: /* 0x1Fa06 */           cout << "GNSS Pseudorange Noise Statistics "; break;
     default:                             cout << "                  "; break;
         /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
