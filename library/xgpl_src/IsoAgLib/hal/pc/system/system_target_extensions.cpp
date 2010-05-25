@@ -34,12 +34,8 @@
   #ifndef WINCE
     #include <conio.h>
   #endif
-  #if defined( _MSC_VER )
-    #include <windows.h>
-    #include <MMSYSTEM.H>
-  #else
-    #include <time.h>
-  #endif
+  #include <windows.h>
+  #include <MMSYSTEM.H>
 #else
   #include <fcntl.h>
   #include <sys/time.h>
@@ -101,17 +97,14 @@ int32_t getStartupTime()
   return st_startup4Times;
 }
 #else // WIN32
-  #if defined( _MSC_VER )
-  // VC++ with native Win32 API provides very accurate
-  // msec timer - use that
   int32_t getStartupTime()
   { // returns time in msec
+    // VC++ and mingw with native Win32 API provides very accurate
+    // msec timer - use that
+    // in case of mingw compiler error link winmm.lib (add -lwinmm).
     static int32_t st_startup4Times = timeGetTime();
     return st_startup4Times;
   }
-  #endif
-  // MinGW doesn't need getStartupTime() AS IT SEEMS RIGHT NOW.
-  // Building MinGW executables is currently not supported.
 #endif
 
 
@@ -185,24 +178,13 @@ int16_t configWatchdog()
 }
 
 #ifdef WIN32
-  #if defined( _MSC_VER )
-  // VC++ with native Win32 API provides very accurate
+  // VC++ and mingw with native Win32 API provides very accurate
   // msec timer - use that
   int32_t getTime()
   { // returns time in msec
+    // in case of mingw compiler error link winmm.lib (add -lwinmm).
     return timeGetTime() - getStartupTime();
   }
-  #else
-  // MinGW has neither simple access to timeGetTime()
-  // nor to gettimeofday()
-  // - but beware: at least in LINUX clock() measures
-  //   only the times of the EXE in CPU core
-  int32_t getTime()
-  { // returns time in msec
-    return (clock()/(CLOCKS_PER_SEC/1000));
-  }
-  // Building MinGW executables is currently not supported.
-  #endif
 #else
 
 

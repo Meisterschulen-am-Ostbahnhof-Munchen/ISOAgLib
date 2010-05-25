@@ -13,13 +13,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#ifdef __MINGW32__
-#warning "error: Building MinGW executables is not supported."
-#error "Building MinGW executables is not supported."
-[---] /* Prevent from compiling further. (Some old compilers keep
-       * trying despite the #error directive above.) */
-#endif
-
 #include "compiler_adaptation_unicode.h" // defines TCHAR etc.
 
 /* ******************************************** */
