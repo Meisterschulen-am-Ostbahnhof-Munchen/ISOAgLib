@@ -12,14 +12,12 @@
 #include <IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h>
 
 IsoAgLibTutorialDisplay::TutorialDisplayTecu_c::TutorialDisplayTecu_c() :
-  mui8_countdownMaintainPower(0),
-  mpc_ident(0)
+  mui8_countdownMaintainPower(0)
 {}
 
 IsoAgLibTutorialDisplay::TutorialDisplayTecu_c::~TutorialDisplayTecu_c() {}
 
 void IsoAgLibTutorialDisplay::TutorialDisplayTecu_c::init( IsoAgLib::iIdentItem_c* ap_ident ) {
-  mpc_ident = ap_ident;
   IsoAgLib::getITracGeneralInstance().config( &( ap_ident->isoName() ), IsoAgLib::IdentModeImplement );
   IsoAgLib::getITracMoveInstance().config( &( ap_ident->isoName() ), IsoAgLib::IdentModeImplement );
   IsoAgLib::getITracPtoInstance().config( &( ap_ident->isoName() ), IsoAgLib::IdentModeImplement );
