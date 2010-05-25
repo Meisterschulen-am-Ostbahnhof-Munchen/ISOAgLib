@@ -105,6 +105,19 @@ namespace IsoAgLib {
       */
   void setMaintainPowerForImplInWork(IsoAgLib::IsoImplWorkFlag_t at_val) { TracGeneral_c::setMaintainPowerForImplInWork(at_val);}
   /*@}*/
+  //Update language values.
+  void updateLanguage(char aac_language[2]) { TracGeneral_c::updateLanguage(aac_language);}
+  void updateDecimalSymbol(uint8_t aui8_decimalSymbol) { TracGeneral_c::updateDecimalSymbol(aui8_decimalSymbol);}
+  void updateDateFormat(uint8_t aui8_dateFormat) { TracGeneral_c::updateDateFormat(aui8_dateFormat);}
+  void updateTimeFormat(uint8_t aui8_timeFormat) { TracGeneral_c::updateTimeFormat(aui8_timeFormat);}
+  void updateDistanceUnit(uint8_t aui8_distanceUnit) { TracGeneral_c::updateDistanceUnit(aui8_distanceUnit);}
+  void updateAreaUnit(uint8_t aui8_areaUnit) { TracGeneral_c::updateAreaUnit(aui8_areaUnit);}
+  void updateVolumeUnit(uint8_t aui8_volumeUnit) { TracGeneral_c::updateVolumeUnit(aui8_volumeUnit);}
+  void updateMassUnit(uint8_t aui8_massUnit) { TracGeneral_c::updateMassUnit(aui8_massUnit);}
+  void updateTemperatureUnit(uint8_t aui8_temperatureUnit) { TracGeneral_c::updateTemperatureUnit(aui8_temperatureUnit);}
+  void updatePressureUnit(uint8_t aui8_pressureUnit) { TracGeneral_c::updatePressureUnit(aui8_pressureUnit);}
+  void updateForceUnit(uint8_t aui8_forceUnit) { TracGeneral_c::updateForceUnit(aui8_forceUnit);}
+  void updateUnitSystem(uint8_t aui8_unitSystem) { TracGeneral_c::updateUnitSystem(aui8_unitSystem);}
 
   /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */

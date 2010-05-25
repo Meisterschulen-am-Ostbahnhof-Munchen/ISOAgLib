@@ -126,6 +126,11 @@ namespace IsoAgLib {
   {TracMove_c::setSelectedSpeedSource(t_val);}
   /*@}*/
 
+  /**
+    * Has to be set as has to be sent to bus -> 1 bit is 0.125 rpm
+    */
+  void setEngineSpeed(const uint16_t aui16_engineSpeed) { TracMove_c::setEngineSpeed(aui16_engineSpeed); }
+
   /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */
   /*@{*/

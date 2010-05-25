@@ -583,6 +583,34 @@ void TracMove_c::singletonInit()
     getCanInstance4Comm() << data();
     return MessageSent;
   }
+  
+  TracMove_c::SendMessage_e TracMove_c::sendEngineSpeed()
+  {
+    if (!canSendEngineSpeed())
+      return MessageNotSent;
+    
+    data().setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
+
+    // TODO unimplemented Engine Torque mode
+    data().setUint16Data(0, 0xFF);
+    // TODO Driver's demand engine - Percentage torque
+    data().setUint8Data(1, 0xFF);
+    // TODO Actual Engine - Percentage torque
+    data().setUint8Data(2, 0xFF);
+    // Engine speed
+    data().setUint16Data(3, mui16_engineSpeed);
+    // Source adresse of controlling deice for engine.
+    data().setUint8Data(5, 0xFF);
+    // Engine starter mode
+    data().setUint8Data(6, 0xFF);
+    // Engine demand
+    data().setUint8Data(7, 0xFF);
+
+    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
+    // then it sends the data
+    getCanInstance4Comm() << data();
+    return MessageSent;
+  }
 
   /** send moving data with ground&theor speed&dist
       @pre  function is only called in tractor mode and only from timeEventTracMode
@@ -593,6 +621,7 @@ void TracMove_c::singletonInit()
     (void)sendGroundBasedSpeedDist();
     (void)sendWheelBasedSpeedDist();
     (void)sendSelectedSpeed();
+	(void)sendEngineSpeed();
   }
 
 

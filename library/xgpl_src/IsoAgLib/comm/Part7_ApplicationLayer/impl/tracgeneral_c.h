@@ -105,14 +105,14 @@ public: // Public methods
   /*@{*/
   /**
   set rear hitch
-  @param ab_val uint8_t value to store as position of rear hitch [%]
+  @param ab_val uint8_t value to store as position of rear hitch [%] highest bit is used to indicate active/inactive.
    */
   void setHitchRear(uint8_t ab_val)
   { mui8_hitchRear = ab_val;}
 
   /**
   set front hitch
-  @param ab_val uint8_t value to store as position of front hitch [%]
+  @param ab_val uint8_t value to store as position of front hitch [%] highest bit is used to indicate active/inactive.
    */
   void setHitchFront(uint8_t ab_val)
   { mui8_hitchFront = ab_val;}
@@ -173,6 +173,19 @@ public: // Public methods
     */
   void setRearHitchPosLimitStatus(const IsoAgLib::IsoLimitFlag_t at_val) {mt_rearHitchPosLimitStatus = at_val;}
   /*@}*/
+  //Update language values.
+  void updateLanguage(char aac_language[2]);
+  void updateDecimalSymbol(uint8_t aui8_decimalSymbol);
+  void updateDateFormat(uint8_t aui8_dateFormat);
+  void updateTimeFormat(uint8_t aui8_timeFormat);
+  void updateDistanceUnit(uint8_t aui8_distanceUnit);
+  void updateAreaUnit(uint8_t aui8_areaUnit);
+  void updateVolumeUnit(uint8_t aui8_volumeUnit);
+  void updateMassUnit(uint8_t aui8_massUnit);
+  void updateTemperatureUnit(uint8_t aui8_temperatureUnit);
+  void updatePressureUnit(uint8_t aui8_pressureUnit);
+  void updateForceUnit(uint8_t aui8_forceUnit);
+  void updateUnitSystem(uint8_t aui8_unitSystem);
 
   /* ****************************************************** */
   /** \name Retrieve Values which are sent from other ECUs  */
@@ -290,7 +303,7 @@ private:
       only access TracGeneral_c via getTracGeneralInstance() or getTracGeneralInstance( int riLbsBusNr )
       in case more than one BUS is used for IsoAgLib
     */
-  TracGeneral_c() {};
+  TracGeneral_c();
 
   /** check if filter boxes shall be created - create only filters based
       on active local idents which has already claimed an address

@@ -23,9 +23,10 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-#define GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK       0x0001LU
-#define WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK        0x0002LU
-#define SELECTED_SPEED_MESSAGE_DISABLE_MASK            0x0004LU
+#define GROUND_BASED_SPEED_DIST_PGN_DISABLE_MASK             0x0001LU
+#define WHEEL_BASED_SPEED_DIST_PGN_DISABLE_MASK              0x0002LU
+#define SELECTED_SPEED_MESSAGE_DISABLE_MASK                  0x0004LU
+#define ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE_DISABLE_MASK  0x0008LU 
 
   class TracMove_c;
   typedef SINGLETON_DERIVED(TracMove_c,BaseCommon_c) SingletonTracMove_c;
@@ -145,6 +146,8 @@ namespace __IsoAgLib {
         @param t_val  limit status
       */
     void setSelectedSpeedLimitStatus(const IsoAgLib::IsoLimitFlag_t t_val) {mt_selectedSpeedLimitStatus = t_val;}
+
+    void setEngineSpeed(const uint16_t aui16_engineSpeed) { mui16_engineSpeed = aui16_engineSpeed; }
     /*@}*/
 
 
@@ -272,7 +275,7 @@ namespace __IsoAgLib {
         NEVER instantiate a variable of type TracMove_c within application
         only access TracMove_c via getTracMoveInstance() or getTracMoveInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
       */
-    TracMove_c() {}
+    TracMove_c() : mui16_engineSpeed(0) {}
 
     /** check if filter boxes shall be created - create only filters based
         on active local idents which has already claimed an address
@@ -327,9 +330,17 @@ namespace __IsoAgLib {
      */
     bool canSendSelectedSpeed();
 
+    /** Can selected engine speed be sent?
+     */
+    bool canSendEngineSpeed();
+    
     /** Send selected speed distance.
      */
     SendMessage_e sendSelectedSpeed();
+    
+    /** Send engine speed distance.
+     */
+    SendMessage_e sendEngineSpeed();
 
     /** Prepare sending any message.
      */
@@ -400,6 +411,8 @@ namespace __IsoAgLib {
 
     /** indicates the speed source that is currently being reported in the machine speed parameter */
     IsoAgLib::IsoSpeedSourceFlag_t mt_selectedSpeedSource;
+
+    uint16_t mui16_engineSpeed;
   };
 
   inline bool TracMove_c::canSendGroundBasedSpeedDist() {
@@ -412,6 +425,10 @@ namespace __IsoAgLib {
 
   inline bool TracMove_c::canSendSelectedSpeed() {
     return 0 == (SELECTED_SPEED_MESSAGE_DISABLE_MASK & mui16_suppressMask);
+  }
+
+  inline bool TracMove_c::canSendEngineSpeed() {
+    return 0 == (ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE_DISABLE_MASK & mui16_suppressMask);
   }
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
