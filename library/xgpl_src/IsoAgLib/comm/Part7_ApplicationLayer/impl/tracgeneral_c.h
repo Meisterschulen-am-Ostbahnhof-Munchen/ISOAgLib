@@ -420,6 +420,9 @@ private:
 
   /** bit field with indicated state for tractor*/
   indicatedStateImpl_t mt_implState;
+
+  /** should a new language pgn changed command be sent? */
+  bool mb_languagePgnChanged;
 };
 
 inline bool TracGeneral_c::canSendFrontHitchState() {

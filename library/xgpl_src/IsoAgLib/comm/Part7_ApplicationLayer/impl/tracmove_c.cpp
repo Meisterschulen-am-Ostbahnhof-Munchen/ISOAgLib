@@ -569,7 +569,7 @@ void TracMove_c::singletonInit()
     data().setIsoPgn(SELECTED_SPEED_MESSAGE);
     uint8_t ui8_temp = 0;
 
-	  data().setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
+    data().setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
     data().setUint32Data(2, mui32_selectedDistance);
     ui8_temp |= (mt_selectedSpeedLimitStatus << 5);
     ui8_temp |= (mt_selectedSpeedSource      << 2);
@@ -621,7 +621,7 @@ void TracMove_c::singletonInit()
     (void)sendGroundBasedSpeedDist();
     (void)sendWheelBasedSpeedDist();
     (void)sendSelectedSpeed();
-	(void)sendEngineSpeed();
+  (void)sendEngineSpeed();
   }
 
 

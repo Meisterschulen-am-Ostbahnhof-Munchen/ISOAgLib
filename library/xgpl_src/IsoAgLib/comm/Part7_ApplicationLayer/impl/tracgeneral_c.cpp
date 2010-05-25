@@ -46,6 +46,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   #endif
   
   TracGeneral_c::TracGeneral_c()
+   : mb_languagePgnChanged(false)
   {
     mp8ui8_languageTecu[0] = 0; // OK
     mp8ui8_languageTecu[1] = 0;  //OK
@@ -206,6 +207,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     sendMessage();
 
     updateMaintainPowerRequest();
+
+    if (mb_languagePgnChanged)
+    {
+      sendLanguage();
+      mb_languagePgnChanged = false;
+    }
 
     return true;
   }
@@ -502,7 +509,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       )
     { //if VT has up to now not send the language command there is no sense to send it
       return LanguageNotSent;
-    }data().setISONameForSA( *getISOName() );
+    }
+    data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
     data().setLen(8);
@@ -521,18 +529,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
     data().setUint8Data(5, mp8ui8_languageVt[5]);
     //Bytes 7,8: reserved
-    data().setUint8Data(6, mp8ui8_languageVt[6] | (mp8ui8_languageVt[7] << 8));
+    data().setUint8Data(6, 0xFF);
     data().setUint8Data(7, 0xFF);
 
     c_can << data();*/
-	if ( ( getISOName() == NULL ) // shouldn't be NULL as we're in tractor-mode
+    if ( ( getISOName() == NULL ) // shouldn't be NULL as we're in tractor-mode
           || ( getISOName()->isUnspecified()  )
           || !getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)
       )
     { //if VT has up to now not send the language command there is no sense to send it
       return LanguageNotSent;
     }
-	data().setISONameForSA( *getISOName() );
+    data().setISONameForSA( *getISOName() );
     data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
     data().setLen(8);
@@ -551,7 +559,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
     data().setUint8Data(5, mp8ui8_languageTecu[5]);
     //Bytes 7,8: reserved
-    data().setUint8Data(6, mp8ui8_languageTecu[6] | (mp8ui8_languageTecu[7] << 8));
+    data().setUint8Data(6, 0xFF);
     data().setUint8Data(7, 0xFF);
 
     c_can << data();
@@ -692,83 +700,83 @@ TracGeneral_c::updateLanguage(char aac_language[2])
 {
   mp8ui8_languageTecu[0] = aac_language[0];
   mp8ui8_languageTecu[1] = aac_language[1];
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateDecimalSymbol(uint8_t aui8_decimalSymbol)
 {
   mp8ui8_languageTecu[2] = ((aui8_decimalSymbol & 0x3) << 6) | (mp8ui8_languageTecu[2] & 0x3F);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void TracGeneral_c::updateDateFormat(uint8_t aui8_dateFormat)
 {
   mp8ui8_languageTecu[3] = aui8_dateFormat;
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateTimeFormat(uint8_t aui8_timeFormat)
 {
   mp8ui8_languageTecu[2] = ((aui8_timeFormat & 0x3) << 4) | (mp8ui8_languageTecu[2] & 0xCF);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateDistanceUnit(uint8_t aui8_distanceUnit)
 {
   mp8ui8_languageTecu[4] = ((aui8_distanceUnit & 0x3) << 6) | (mp8ui8_languageTecu[4] & 0x3F);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateAreaUnit(uint8_t aui8_areaUnit)
 {
   mp8ui8_languageTecu[4] = ((aui8_areaUnit & 0x3) << 4) | (mp8ui8_languageTecu[4] & 0xCF);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateVolumeUnit(uint8_t aui8_volumeUnit)
 {
-  mp8ui8_languageTecu[4] = ((aui8_volumeUnit & 0x3) << 2) | (mp8ui8_languageTecu[4] & 0xFF3);
-  sendLanguage();
+  mp8ui8_languageTecu[4] = ((aui8_volumeUnit & 0x3) << 2) | (mp8ui8_languageTecu[4] & 0xF3);
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateMassUnit(uint8_t aui8_massUnit)
 {
   mp8ui8_languageTecu[4] = (aui8_massUnit & 0x3) | (mp8ui8_languageTecu[4] & 0xFC);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateTemperatureUnit(uint8_t aui8_temperatureUnit)
 {
   mp8ui8_languageTecu[5] = ((aui8_temperatureUnit & 0x3) << 6) | (mp8ui8_languageTecu[5] & 0x3F);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updatePressureUnit(uint8_t aui8_pressureUnit)
 {
   mp8ui8_languageTecu[5] = ((aui8_pressureUnit & 0x3) << 4) | (mp8ui8_languageTecu[5] & 0xCF);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateForceUnit(uint8_t aui8_forceUnit)
 {
-  mp8ui8_languageTecu[5] = ((aui8_forceUnit & 0x3) << 2) | (mp8ui8_languageTecu[5] & 0xFF3);
-  sendLanguage();
+  mp8ui8_languageTecu[5] = ((aui8_forceUnit & 0x3) << 2) | (mp8ui8_languageTecu[5] & 0xF3);
+  mb_languagePgnChanged = true;
 }
 
 void
 TracGeneral_c::updateUnitSystem(uint8_t aui8_unitSystem)
 {
   mp8ui8_languageTecu[5] = (aui8_unitSystem & 0x3) | (mp8ui8_languageTecu[5] & 0xFC);
-  sendLanguage();
+  mb_languagePgnChanged = true;
 }
 
 ///  Used for Debugging Tasks in Scheduler_c

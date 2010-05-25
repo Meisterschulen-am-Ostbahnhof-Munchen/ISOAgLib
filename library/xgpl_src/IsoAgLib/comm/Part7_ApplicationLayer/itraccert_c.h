@@ -52,9 +52,9 @@ namespace IsoAgLib {
     /** \name Set Values for periodic send on BUS  */
   /*@{*/
 
-	#if 0
-	// This part is moved to the diagnostic PGN handling under Part_12
-	
+  #if 0
+  // This part is moved to the diagnostic PGN handling under Part_12
+  
   /** set certification reference number assigned by certification lab
       @param ui16_val  certification reference number
     */
@@ -130,7 +130,7 @@ namespace IsoAgLib {
   void setPSReceiver(const IsoAgLib::IsoCertTypeFlag_t t_val) {TracCert_c::setPSReceiver(t_val);}
 
 #endif
-	
+
   /*@}*/
 
   /* ****************************************************** */

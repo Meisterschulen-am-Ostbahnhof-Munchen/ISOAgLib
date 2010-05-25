@@ -100,9 +100,9 @@ class TracCert_c : public SingletonTracCert_c
 
   /** destructor for TracGuidance_c which has nothing to do */
   virtual ~TracCert_c() { BaseCommon_c::close();}
-	
+  
 #if 0
-		// This part is moved to the diagnostic PGN handling under Part_12
+    // This part is moved to the diagnostic PGN handling under Part_12
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
   /** send guidance data

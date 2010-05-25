@@ -73,9 +73,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   bool TracCert_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   {
-		if (at_identMode == IsoAgLib::IdentModeTractor)
-			return false; // This part is now handled in Part12_Diagnostic
-			
+    if (at_identMode == IsoAgLib::IdentModeTractor)
+      return false; // This part is now handled in Part12_Diagnostic
+      
 #if 0
     //store old mode to decide to register or unregister from request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
@@ -86,7 +86,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( !BaseCommon_c::config_base (apc_isoName, at_identMode, aui16_suppressMask) ) return false;
 
 #if 0
-		// This part is moved to the diagnostic PGN handling under Part_12
+    // This part is moved to the diagnostic PGN handling under Part_12
     if (t_oldMode == IsoAgLib::IdentModeImplement && at_identMode == IsoAgLib::IdentModeTractor)
     {  // a change from Implement mode to Tractor mode occured
       // create FilterBox_c for REQUEST_PGN_MSG_PGN, ISOBUS_CERTIFICATION_PGN
@@ -133,7 +133,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   }
 
 #if 0
-	// This part is moved to the diagnostic PGN handling under Part_12
+  // This part is moved to the diagnostic PGN handling under Part_12
   bool TracCert_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
   {
     // check if we are allowed to send a request for pgn

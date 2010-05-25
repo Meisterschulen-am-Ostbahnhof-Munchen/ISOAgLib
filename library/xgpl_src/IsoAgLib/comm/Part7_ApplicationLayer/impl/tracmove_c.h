@@ -94,25 +94,25 @@ namespace __IsoAgLib {
         @param ai32_val value to store as real radar measured speed
       */
     void setSpeedReal(const int32_t& ai32_val)
-			{mi32_speedReal = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mi32_selectedSpeed = ai32_val;}
+      {mi32_speedReal = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mi32_selectedSpeed = ai32_val;}
 
     /** set the value of theoretical speed (calculated from gear)
         @param ai32_val value to store as theoretical gear calculated speed
       */
     void setSpeedTheor(const int32_t& ai32_val)
-			{mi32_speedTheor = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mi32_selectedSpeed = ai32_val;}
+      {mi32_speedTheor = ai32_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mi32_selectedSpeed = ai32_val;}
 
     /** set measured signal indicating either forward or reverse as the real (radar measured) direction of travel
         @return  direction of travel
       */
     void setDirectionReal(IsoAgLib::IsoDirectionFlag_t t_val)
-			{mt_directionReal = t_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mt_selectedDirection = t_val;}
+      {mt_directionReal = t_val; if(mt_selectedSpeedSource == IsoAgLib::IsoGroundBasedSpeed) mt_selectedDirection = t_val;}
 
     /** set measured signal indicating either forward or reverse as the theoretical (gear calculated) direction of travel
         @return  direction of travel
       */
     void setDirectionTheor(IsoAgLib::IsoDirectionFlag_t t_val)
-			{mt_directionTheor = t_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mt_selectedDirection = t_val;}
+      {mt_directionTheor = t_val; if(mt_selectedSpeedSource == IsoAgLib::IsoWheelBasedSpeed) mt_selectedDirection = t_val;}
 
     /** set parameter which indicates whetcher the reported direction is reversed from the perspective of the operator
         @param at_val  indicates direction (IsoInactive = not reversed; IsoActive = reversed)
