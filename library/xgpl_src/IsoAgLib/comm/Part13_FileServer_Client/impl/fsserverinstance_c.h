@@ -84,7 +84,7 @@ class FsServerInstance_c : public CanCustomer_c
 
     /** The fileServer Properties */
     /** fileserver's version number*/
-    uint8_t ui8_versionNumber;
+    FsVersion_en e_versionNumber;
     /** fileservers maximum number of simultaniously open files. */
     uint8_t ui8_maximumNrFiles;
     /** does fileserver support multiple volumes? etc. etc... */
@@ -152,7 +152,7 @@ class FsServerInstance_c : public CanCustomer_c
     /**
       * sets the fileservers properties as defined in the ISO-11783 standard
       */
-    void setFsProperties(uint8_t rui8_versionNumber, uint8_t rui8_maximumNrFiles, uint8_t rui8_capabilities);
+    void setFsProperties(FsVersion_en re_versionNumber, uint8_t rui8_maximumNrFiles, uint8_t rui8_capabilities);
 
     uint8_t getMaxNrOpenFiles() { return ui8_maximumNrFiles; }
     /**
@@ -166,7 +166,7 @@ class FsServerInstance_c : public CanCustomer_c
     /** gets the version of the ISO-standard used by the fileserver
       * @return number of standard used as defined in Part 13 Filserver
       */
-   uint8_t getStandardVersion() { return ui8_versionNumber; }
+   FsVersion_en getStandardVersion() { return e_versionNumber; }
 
     /**
       * get the fileserver's busy status. the values are described in the corresponding enum.

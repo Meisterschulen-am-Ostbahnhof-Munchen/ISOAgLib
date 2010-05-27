@@ -88,11 +88,6 @@ class FsCommand_c : CanCustomer_c
     void decodeReadFileResponse();
     void decodeReadDirectoryResponse();
 
-    /** draft version of "getFileAttributes" **/
-    void getFileAttributesDIS(uint8_t ui8_fileHandle);
-    void setFileAttributesDIS(uint8_t ui8_fileHandle);
-    void getFileDateTimeDIS(uint8_t ui8_fileHandle);
-
     /** clean up when done **/
     void clearDirectoryList();
     void doCleanUp();
@@ -108,17 +103,18 @@ class FsCommand_c : CanCustomer_c
       en_getCurrentDirectory = 0x10,
       en_changeCurrentDirectory = 0x11,
       en_openFile = 0x20,
-      en_seekFile,
-      en_readFile,
-      en_writeFile,
-      en_closeFile,
+      en_seekFile = 0x21,
+      en_readFile = 0x22,
+      en_writeFile = 0x23,
+      en_closeFile = 0x24,
       en_moveFile = 0x30,
-      en_deleteFile,
-      en_getFileAttributes,
-      en_setFileAttributes,
-      en_getFileDateTime,
+      en_deleteFile = 0x31,
+      en_getFileAttributes = 0x32,
+      en_setFileAttributes = 0x33,
+      en_getFileDateTime = 0x34,
       en_initializeVolume = 0x40
-    } en_lastCommand;
+    };
+    commandtype_en en_lastCommand;
 
   public:
 

@@ -30,7 +30,7 @@ FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_
   , en_busy(busy_none)
   , ui8_nrOpenFiles(0)
   , i32_lastTime(-1)
-  , ui8_versionNumber(0)
+  , e_versionNumber(FsVersionDIS)
   , ui8_maximumNrFiles(0)
   , ui8_capabilities(0)
   , v_volumes()
@@ -101,9 +101,9 @@ void FsServerInstance_c::setVolumes(IsoAgLib::iFsDirList v_inVolumes)
 }
 
 
-void FsServerInstance_c::setFsProperties(uint8_t rui8_versionNumber, uint8_t rui8_maximumNrFiles, uint8_t rui8_capabilities)
+void FsServerInstance_c::setFsProperties(FsVersion_en re_versionNumber, uint8_t rui8_maximumNrFiles, uint8_t rui8_capabilities)
 {
-  ui8_versionNumber = rui8_versionNumber;
+  e_versionNumber = re_versionNumber;
   ui8_maximumNrFiles = rui8_maximumNrFiles;
   ui8_capabilities = rui8_capabilities;
 }

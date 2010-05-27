@@ -371,8 +371,7 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstC
     b_receivedResponse = true;
     switch ( refc_stream.getFirstByte() )
     {
-      //get current directroy
-      case 0x10:
+      case en_getCurrentDirectory:
         decodeGetCurrentDirectoryResponse();
         rc_csCom.getCurrentDirectoryResponse(IsoAgLib::iFsError(ui8_errorCode), pui8_currentDirectory);
         i32_offset = 0;
@@ -383,8 +382,8 @@ FsCommand_c::processPartStreamDataChunk (Stream_c& refc_stream, bool rb_isFirstC
         rc_csCom.notifyOnFsReady();
 
         return false; // don't keep the stream, we've processed it right now, so remove it
-      //read file response
-      case 0x22:
+
+      case en_readFile:
         en_lastCommand = en_noCommand;
         if ( b_readDirectory )
         {
@@ -441,7 +440,7 @@ FsCommand_c::reactOnStreamStart(const ReceiveStreamIdentifier_c& /*refc_ident*/,
 bool
 FsCommand_c::processMsg()
 {
-  if (data().getUint8Data(1) != ui8_tan && data().getUint8Data(0) != 0x01)
+  if (data().getUint8Data(1) != ui8_tan && data().getUint8Data(0) != en_requestProperties)
   {
 #if DEBUG_FILESERVER
       EXTERNAL_DEBUG_DEVICE << "TAN does not match expected one!" << EXTERNAL_DEBUG_DEVICE_ENDL;
@@ -451,17 +450,17 @@ FsCommand_c::processMsg()
 
   switch (data().getUint8Data(0))
   {
-    // Get Fileserver Properties Response
-    case 0x01:
+    case en_requestProperties:
       if (mb_initializingFileserver)
       {
-        const uint8_t cui8_versionNumber = data().getUint8Data(1);
+        const FsServerInstance_c::FsVersion_en ce_versionNumber =
+          FsServerInstance_c::FsVersion_en(data().getUint8Data(1));
         const uint8_t cui8_maxSimOpenFiles = data().getUint8Data(2);
         const uint8_t cui8_fsCapabilities = data().getUint8Data(3);
         // Check if that FS is okay for us to operate...
-        if (cui8_versionNumber >= FsServerInstance_c::FsVersionFDIS) // currently only don't support DIS fileservers...
+        if (ce_versionNumber >= FsServerInstance_c::FsVersionFDIS) // currently only don't support DIS fileservers...
         { // supported FileServer.
-          getFileserver().setFsProperties (cui8_versionNumber, cui8_maxSimOpenFiles, cui8_fsCapabilities);
+          getFileserver().setFsProperties (ce_versionNumber, cui8_maxSimOpenFiles, cui8_fsCapabilities);
           b_receivedResponse = true;
           ++ui8_tan;
           openFile((uint8_t *)"\\\\", false, false, false, true, false, true);
@@ -475,15 +474,14 @@ FsCommand_c::processMsg()
       // else: not initializing, ignore such a message
       return true;
 
-    //change current directory
-    case 0x11:
+    case en_changeCurrentDirectory:
       rc_csCom.changeCurrentDirectoryResponse(IsoAgLib::iFsError(data().getUint8Data(2)), pui8_fileName);
       b_receivedResponse = true;
       ++ui8_tan;
       en_lastCommand = en_noCommand;
       return true;
-    //open file
-    case 0x20:
+
+    case en_openFile:
       decodeOpenFileResponse();
 
       if (ui8_errorCode == IsoAgLib::fsSuccess)
@@ -495,54 +493,12 @@ FsCommand_c::processMsg()
         return true;
       }
 
-      if (en_lastCommand == en_getFileAttributes && ui8_errorCode && (pui8_fileName == NULL))
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(ui8_errorCode), false, false, false, false, false, false, false);
-      }
-      else if (en_lastCommand == en_setFileAttributes && ui8_errorCode && (pui8_fileName == NULL))
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(ui8_errorCode));
-      }
-      else if (en_lastCommand == en_getFileDateTime && ui8_errorCode && (pui8_fileName == NULL))
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.getFileDateTimeResponse(IsoAgLib::iFsError(ui8_errorCode), 0, 0, 0, 0, 0, 0);
-      }
-      else if ((en_lastCommand == en_getFileAttributes ||
-                en_lastCommand == en_setFileAttributes ||
-                en_lastCommand == en_getFileDateTime) &&
-                ui8_errorCode && pui8_fileName)
-      {
-        openFile(pui8_fileName, false, true, false, false, false, true);
-
-        if (pui8_fileName != NULL)
-          delete [] pui8_fileName;
-        pui8_fileName = (uint8_t *)NULL;
-      }
-      /// @todo #854 probably remove support for DIS/FDIS FileServers?
-      else if (en_lastCommand == en_getFileAttributes)
-      {
-        getFileAttributesDIS(ui8_fileHandle);
-      }
-      else if (en_lastCommand == en_setFileAttributes)
-      {
-        setFileAttributesDIS(ui8_fileHandle);
-      }
-      else if (en_lastCommand == en_getFileDateTime)
-      {
-        getFileDateTimeDIS(ui8_fileHandle);
-      }
-      else
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.openFileResponse(IsoAgLib::iFsError(ui8_errorCode), ui8_fileHandle, b_caseSensitive, b_removable, b_longFilenames, b_isDirectory,  b_isVolume, b_hidden, b_readOnly);
-      }
+      en_lastCommand = en_noCommand;
+      rc_csCom.openFileResponse(IsoAgLib::iFsError(ui8_errorCode), ui8_fileHandle, b_caseSensitive, b_removable, b_longFilenames, b_isDirectory,  b_isVolume, b_hidden, b_readOnly);
 
       return true;
-    //seek file
-    case 0x21:
+
+    case en_seekFile:
       // in case of "isBeingInitialized" two Seek commands are being executed!
       //init case get volumes or real external seek file?
       if (mb_initializingFileserver && ui8_possitionMode == 0)
@@ -577,8 +533,7 @@ FsCommand_c::processMsg()
 
       return true;
 
-    //read file
-    case 0x22:
+    case en_readFile:
       if (6 > ui32_recBufAllocSize)
       {
         if ( pui8_receiveBuffer != NULL )
@@ -611,17 +566,16 @@ FsCommand_c::processMsg()
       }
 
       return true;
-    //write file
-    case 0x23:
+
+    case en_writeFile:
       rc_csCom.writeFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)), (data().getUint8Data(3) | data().getUint8Data(4) << 0x08));
       b_receivedResponse = true;
       ++ui8_tan;
       en_lastCommand = en_noCommand;
 
       return true;
-    //close file
-    case 0x24:
-      /// @todo #854 probably remove support for DIS/FDIS FileServers?
+
+    case en_closeFile:
       ui8_errorCode = data().getUint8Data(2);
       b_receivedResponse = true;
       ++ui8_tan;
@@ -637,94 +591,41 @@ FsCommand_c::processMsg()
         return true;
       }
 
-      if (en_lastCommand == en_getFileAttributes)
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
-      }
-      else if (en_lastCommand == en_setFileAttributes)
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
-      }
-      else if (en_lastCommand == en_getFileDateTime)
-      {
-        en_lastCommand = en_noCommand;
-
-        rc_csCom.getFileDateTimeResponse(IsoAgLib::iFsError(data().getUint8Data(2)), (uint16_t)(1980 + ((ui16_date >> 9) & 0x7F)), (ui16_date >> 5) & 0xF, (ui16_date) & 0x1F, (ui16_time >> 11) & 0x1F, (ui16_time >> 5) & 0x3F, 2 * ((ui16_time) & 0x1F));
-      }
-      else
-      {
-        en_lastCommand = en_noCommand;
-        rc_csCom.closeFileResponse(IsoAgLib::iFsError(ui8_errorCode));
-      }
+      en_lastCommand = en_noCommand;
+      rc_csCom.closeFileResponse(IsoAgLib::iFsError(ui8_errorCode));
 
       return true;
-    //move file
-    case 0x30:
+
+    case en_moveFile:
       b_receivedResponse = true;
       ++ui8_tan;
-
-      /// @todo #854 probably remove support for DIS/FDIS FileServers?
-      if (en_lastCommand == en_moveFile)
-        rc_csCom.moveFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
-      else if (en_lastCommand == en_deleteFile)
-        rc_csCom.deleteFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
-
+      rc_csCom.moveFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
       en_lastCommand = en_noCommand;
       return true;
-    //delete file
-    case 0x31:
-      ++ui8_tan;
-      /// @todo #854 probably remove support for DIS/FDIS FileServers?
-      if (en_lastCommand == en_deleteFile)
-      {
-        b_receivedResponse = true;
-        en_lastCommand = en_noCommand;
-        rc_csCom.deleteFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
-      }
-      else if (en_lastCommand == en_getFileAttributes)
-      {
-        decodeAttributes(data().getUint8Data(3));
-        closeFile(ui8_fileHandle);
-      }
-      return true;
-    //get file attributes
-    case 0x32:
-      ++ui8_tan;
-      /// @todo #854 probably remove support for DIS/FDIS FileServers?
-      if (en_lastCommand == en_getFileAttributes)
-      {
-        b_receivedResponse = true;
-        decodeAttributes(data().getUint8Data(3));
-        rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
-        en_lastCommand = en_noCommand;
-      }
-      else if (en_lastCommand == en_setFileAttributes)
-      {
-        closeFile(ui8_fileHandle);
-      }
-      return true;
-    //set file attributes
-    case 0x33:
-      ++ui8_tan;
-      /// @todo #854 probably remove support for DIS/FDIS FileServers?
-      if (en_lastCommand == en_setFileAttributes)
-      {
-        b_receivedResponse = true;
 
-        rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
-        en_lastCommand = en_noCommand;
-      }
-      else if (en_lastCommand == en_getFileDateTime)
-      {
-        ui16_date = data().getUint8Data(3) | (data().getUint8Data(4) << 8);
-        ui16_time = data().getUint8Data(5) | (data().getUint8Data(6) << 8);
-        closeFile(ui8_fileHandle);
-      }
+    case en_deleteFile:
+      ++ui8_tan;
+      b_receivedResponse = true;
+      en_lastCommand = en_noCommand;
+      rc_csCom.deleteFileResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
       return true;
-    //get file date and time.
-    case 0x34:
+
+    case en_getFileAttributes:
+      ++ui8_tan;
+      b_receivedResponse = true;
+      decodeAttributes(data().getUint8Data(3));
+      rc_csCom.getFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)), b_caseSensitive, b_removable, b_longFilenames, b_isDirectory, b_isVolume, b_hidden, b_readOnly);
+      en_lastCommand = en_noCommand;
+      return true;
+
+    case en_setFileAttributes:
+      ++ui8_tan;
+      b_receivedResponse = true;
+      rc_csCom.setFileAttributesResponse(IsoAgLib::iFsError(data().getUint8Data(2)));
+      en_lastCommand = en_noCommand;
+      return true;
+
+    case en_getFileDateTime:
       b_receivedResponse = true;
       ++ui8_tan;
 
@@ -734,8 +635,8 @@ FsCommand_c::processMsg()
       rc_csCom.getFileDateTimeResponse(IsoAgLib::iFsError(data().getUint8Data(2)), (uint16_t)(1980 + ((ui16_date >> 9) & 0x7F)), (ui16_date >> 5) & 0xF, (ui16_date) & 0x1F, (ui16_time >> 11) & 0x1F, (ui16_time >> 5) & 0x3F, 2 * ((ui16_time) & 0x1F));
       en_lastCommand = en_noCommand;
       return true;
-    //init volume
-    case 0x40:
+
+    case en_initializeVolume:
       b_receivedResponse = true;
       ++ui8_tan;
 
@@ -831,7 +732,7 @@ FsCommand_c::requestProperties()
 {
   en_lastCommand = en_requestProperties;
 
-  pui8_sendBuffer[0] = 0x01;
+  pui8_sendBuffer[0] = en_requestProperties;
   pui8_sendBuffer[1] = 0xFF;
   pui8_sendBuffer[2] = 0xFF;
   pui8_sendBuffer[3] = 0xFF;
@@ -863,7 +764,7 @@ FsCommand_c::getCurrentDirectory()
 {
   en_lastCommand = en_getCurrentDirectory;
 
-  pui8_sendBuffer[0] = 0x10;
+  pui8_sendBuffer[0] = en_getCurrentDirectory;
   pui8_sendBuffer[1] = ui8_tan;
   pui8_sendBuffer[2] = 0xFF;
   pui8_sendBuffer[3] = 0xFF;
@@ -898,14 +799,10 @@ FsCommand_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
   for (uint16_t i = 0; i < ui16_length; ++i)
     pui8_fileName[i] = pui8_newDirectory[i];
 
-  pui8_sendBuffer[ui8_bufferPosition++] = 0x11;
+  pui8_sendBuffer[ui8_bufferPosition++] = en_changeCurrentDirectory;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_length;
-
-  if (getFileserver().getStandardVersion() == 1)
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
-  else if (getFileserver().getStandardVersion() != 0)
-    return IsoAgLib::fsWrongFsVersion;
+  pui8_sendBuffer[ui8_bufferPosition++] = (0xFFu & ui16_length);
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
 
   for (uint16_t i = 0; i < ui16_length; ++i)
     pui8_sendBuffer[ui8_bufferPosition + i] = pui8_fileName[i];
@@ -935,7 +832,7 @@ FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExclusive, bool b_ope
   pui8_fileName[ui16_length] = 0;
   uint8_t ui8_bufferPosition = 0;
 
-  pui8_sendBuffer[ui8_bufferPosition++] = 0x20;
+  pui8_sendBuffer[ui8_bufferPosition++] = en_openFile;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
 
   ui8_flags = 0x0;
@@ -974,22 +871,17 @@ FsCommand_c::openFile(uint8_t *pui8_inFileName, bool b_openExclusive, bool b_ope
   }
 
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_flags;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_length;
+  pui8_sendBuffer[ui8_bufferPosition++] = (0xFFu & ui16_length);
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 1)
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
-  else if (getFileserver().getStandardVersion() != 0)
-    return IsoAgLib::fsWrongFsVersion;
-
-  for (uint8_t i = 0; (i < ui16_length) || (5 + i < 8); ++i)
+  for (uint16_t i = 0; (i < ui16_length) || (5 + i < 8); ++i)
   {
     if (i < ui16_length)
     {
       pui8_fileName[i] = pui8_inFileName[i];
       pui8_sendBuffer[ui8_bufferPosition + i] = pui8_fileName[i];
     }
-    else if (getFileserver().getStandardVersion() == 1 && (i >= ui16_length))
+    else
       pui8_sendBuffer[ui8_bufferPosition + i] = 0xff;
   }
 
@@ -1011,7 +903,7 @@ FsCommand_c::seekFile(uint8_t ui8_inFileHandle, uint8_t ui8_inPossitionMode, int
   ui8_possitionMode = ui8_inPossitionMode;
   i32_offset = i32_inOffset;
 
-  pui8_sendBuffer[0] = 0x21;
+  pui8_sendBuffer[0] = en_seekFile;
   pui8_sendBuffer[1] = ui8_tan;
   pui8_sendBuffer[2] = ui8_fileHandle;
   pui8_sendBuffer[3] = ui8_possitionMode;
@@ -1051,7 +943,7 @@ FsCommand_c::writeFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, uint8_t 
 
   ui8_fileHandle = ui8_inFileHandle;
 
-  pui8_sendBuffer[0] = 0x23;
+  pui8_sendBuffer[0] = en_writeFile;
   pui8_sendBuffer[1] = ui8_tan;
   pui8_sendBuffer[2] = ui8_fileHandle;
   pui8_sendBuffer[3] = ui16_inCount;
@@ -1077,7 +969,7 @@ FsCommand_c::closeFile(uint8_t ui8_inFileHandle)
 
   ui8_fileHandle = ui8_inFileHandle;
 
-  pui8_sendBuffer[0] = 0x24;
+  pui8_sendBuffer[0] = en_closeFile;
   pui8_sendBuffer[1] = ui8_tan;
   pui8_sendBuffer[2] = ui8_fileHandle;
   pui8_sendBuffer[3] = 0xFF;
@@ -1100,7 +992,7 @@ FsCommand_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_r
 
   en_lastCommand = en_moveFile;
 
-  pui8_sendBuffer[ui8_bufferPosition++] = 0x30;
+  pui8_sendBuffer[ui8_bufferPosition++] = en_moveFile;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
 
   uint8_t ui8_fileHandleMode = 0x00;
@@ -1117,12 +1009,10 @@ FsCommand_c::moveFile(uint8_t *pui8_sourceName, uint8_t *pui8_destName, bool b_r
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
   uint16_t ui16_destLength = CNAMESPACE::strlen((const char *)pui8_destName);
 
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength;
-  if (getFileserver().getStandardVersion() == 1)
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength >> 0x08;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_destLength;
-  if (getFileserver().getStandardVersion() == 1)
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_destLength >> 0x08;
+  pui8_sendBuffer[ui8_bufferPosition++] = (0xFFu & ui16_srcLength);
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength >> 0x08;
+  pui8_sendBuffer[ui8_bufferPosition++] = (0xFFu & ui16_destLength);
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_destLength >> 0x08;
 
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[ui8_bufferPosition + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
@@ -1144,12 +1034,7 @@ FsCommand_c::deleteFile (uint8_t *pui8_sourceName, bool b_recursive, bool b_forc
 
   en_lastCommand = en_deleteFile;
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 0)
-    pui8_sendBuffer[ui8_bufferPosition++] = 0x30;
-  else if (getFileserver().getStandardVersion() == 1)
-    pui8_sendBuffer[ui8_bufferPosition++] = 0x31;
-
+  pui8_sendBuffer[ui8_bufferPosition++] = en_deleteFile;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
 
   uint8_t ui8_fileHandleMode = 0x00;
@@ -1163,16 +1048,8 @@ FsCommand_c::deleteFile (uint8_t *pui8_sourceName, bool b_recursive, bool b_forc
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
-  if (getFileserver().getStandardVersion() == 0)
-  {
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength;
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength >> 0x08;
-  }
-  else if (getFileserver().getStandardVersion() == 1)
-  {
-    pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength;
-    pui8_sendBuffer[ui8_bufferPosition++] = 0x00;
-  }
+  pui8_sendBuffer[ui8_bufferPosition++] = (0xFFu & ui16_srcLength);
+  pui8_sendBuffer[ui8_bufferPosition++] = ui16_srcLength >> 8;
 
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[ui8_bufferPosition + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
@@ -1183,17 +1060,12 @@ FsCommand_c::deleteFile (uint8_t *pui8_sourceName, bool b_recursive, bool b_forc
   return IsoAgLib::fsCommandNoError;
 }
 
-
 IsoAgLib::iFsCommandErrors
 FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
 {
   en_lastCommand = en_getFileAttributes;
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 0)
-    return openFile(pui8_sourceName, false, true, false, true, false, false);
-
-  pui8_sendBuffer[0] = 0x32;
+  pui8_sendBuffer[0] = en_getFileAttributes;
   pui8_sendBuffer[1] = ui8_tan;
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
@@ -1217,11 +1089,7 @@ FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_t  ui8_inHiddenAt
   ui8_hiddenAtt = ui8_inHiddenAtt;
   ui8_readOnlyAtt = ui8_inReadOnlyAtt;
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 0)
-    return openFile(pui8_sourceName, false, true, false, true, false, false);
-
-  pui8_sendBuffer[0] = 0x33;
+  pui8_sendBuffer[0] = en_setFileAttributes;
   pui8_sendBuffer[1] = ui8_tan;
 
   pui8_sendBuffer[2] = 0xF0 | ui8_hiddenAtt << 2 | ui8_readOnlyAtt;
@@ -1246,11 +1114,7 @@ FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
 {
   en_lastCommand = en_getFileDateTime;
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 0)
-    return openFile(pui8_sourceName, false, true, false, true, false, false);
-
-  pui8_sendBuffer[0] = 0x34;
+  pui8_sendBuffer[0] = en_getFileDateTime;
   pui8_sendBuffer[1] = ui8_tan;
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
@@ -1290,31 +1154,13 @@ IsoAgLib::iFsCommandErrors FsCommand_c::initializeVolume(
 void
 FsCommand_c::decodeAttributes(uint8_t ui8_attributes)
 {
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 1)
-  {
-    b_caseSensitive = ui8_attributes & 0x80;
-    b_removable = !(ui8_attributes & 0x40);
-    b_longFilenames = ui8_attributes & 0x20;
-    b_isDirectory = ui8_attributes & 0x10;
-    b_isVolume = ui8_attributes & 0x8;
-    b_hidden = ui8_attributes & 0x2;
-    b_readOnly = ui8_attributes & 0x1;
-  }
-  else if (getFileserver().getStandardVersion() == 0)
-  {
-    b_removable = !(ui8_attributes & 0x40);
-    b_archive = ui8_attributes & 0x20;
-    b_isDirectory = ui8_attributes & 0x10;
-    b_system = ui8_attributes & 0x04;
-    b_hidden = ui8_attributes & 0x2;
-    b_readOnly = ui8_attributes & 0x1;
-
-    //set other values with default values
-    b_caseSensitive = false;
-    b_longFilenames = false;
-    b_isVolume = false;
-  }
+  b_caseSensitive = ui8_attributes & 0x80;
+  b_removable = !(ui8_attributes & 0x40);
+  b_longFilenames = ui8_attributes & 0x20;
+  b_isDirectory = ui8_attributes & 0x10;
+  b_isVolume = ui8_attributes & 0x8;
+  b_hidden = ui8_attributes & 0x2;
+  b_readOnly = ui8_attributes & 0x1;
 }
 
 
@@ -1326,23 +1172,8 @@ FsCommand_c::decodeGetCurrentDirectoryResponse()
 
   ui8_errorCode = pui8_receiveBuffer[0];
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 0)
-  {
-    ui16_length = pui8_receiveBuffer[9];
-    pui8_receivePointer = &pui8_receiveBuffer[10];
-  }
-  else if (getFileserver().getStandardVersion() == 1)
-  {
-    ui16_length = pui8_receiveBuffer[9] | (pui8_receiveBuffer[10] << 8);
-    pui8_receivePointer = &pui8_receiveBuffer[11];
-  }
-  else
-  {
-    ui16_length = 0;
-    pui8_receivePointer = (uint8_t *)NULL;
-    ui8_errorCode = IsoAgLib::fsFileserverVersionNotSupported;
-  }
+  ui16_length = pui8_receiveBuffer[9] | (pui8_receiveBuffer[10] << 8);
+  pui8_receivePointer = &pui8_receiveBuffer[11];
 
   b_receivedResponse = true;
   ++ui8_tan;
@@ -1483,68 +1314,6 @@ FsCommand_c::decodeReadDirectoryResponse()
 
 
 void
-FsCommand_c::getFileAttributesDIS(uint8_t ui8_inFileHandle)
-{
-  ui8_fileHandle = ui8_inFileHandle;
-
-  pui8_sendBuffer[0] = 0x31;
-  pui8_sendBuffer[1] = ui8_tan;
-  pui8_sendBuffer[2] = ui8_fileHandle;
-  pui8_sendBuffer[3] = 0xFF;
-  pui8_sendBuffer[4] = 0xFF;
-  pui8_sendBuffer[5] = 0xFF;
-  pui8_sendBuffer[6] = 0xFF;
-  pui8_sendBuffer[7] = 0xFF;
-
-  ui8_packetLength = 8;
-
-  sendRequest (RequestInitial);
-}
-
-
-/// @todo #854 probably remove support for DIS/FDIS FileServers?
-void
-FsCommand_c::setFileAttributesDIS(uint8_t ui8_inFileHandle)
-{
-  ui8_fileHandle = ui8_inFileHandle;
-
-  pui8_sendBuffer[0] = 0x32;
-  pui8_sendBuffer[1] = ui8_tan;
-  pui8_sendBuffer[2] = ui8_fileHandle;
-  pui8_sendBuffer[3] = 0xF0 | ui8_hiddenAtt << 3 | ui8_readOnlyAtt;
-  pui8_sendBuffer[4] = 0xFF;
-  pui8_sendBuffer[5] = 0xFF;
-  pui8_sendBuffer[6] = 0xFF;
-  pui8_sendBuffer[7] = 0xFF;
-
-  ui8_packetLength = 8;
-
-  sendRequest (RequestInitial);
-}
-
-
-/// @todo #854 probably remove support for DIS/FDIS FileServers?
-void
-FsCommand_c::getFileDateTimeDIS(uint8_t ui8_inFileHandle)
-{
-  ui8_fileHandle = ui8_inFileHandle;
-
-  pui8_sendBuffer[0] = 0x33;
-  pui8_sendBuffer[1] = ui8_tan;
-  pui8_sendBuffer[2] = ui8_fileHandle;
-  pui8_sendBuffer[3] = 0xFF;
-  pui8_sendBuffer[4] = 0xFF;
-  pui8_sendBuffer[5] = 0xFF;
-  pui8_sendBuffer[6] = 0xFF;
-  pui8_sendBuffer[7] = 0xFF;
-
-  ui8_packetLength = 8;
-
-  sendRequest (RequestInitial);
-}
-
-
-void
 FsCommand_c::clearDirectoryList()
 {
   IsoAgLib::iFsDirectoryPtr ps_tmpDir;
@@ -1605,21 +1374,13 @@ FsCommand_c::readFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, bool b_in
   b_reportHiddenFiles = b_inReportHiddenFiles;
   uint8_t ui8_bufferPosition = 0;
 
-  pui8_sendBuffer[ui8_bufferPosition++] = 0x22;
+  pui8_sendBuffer[ui8_bufferPosition++] = en_readFile;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_fileHandle;
   pui8_sendBuffer[ui8_bufferPosition++] = ui16_count;
   pui8_sendBuffer[ui8_bufferPosition++] = ui16_count >> 8;
 
-  /// @todo #854 probably remove support for DIS/FDIS FileServers?
-  if (getFileserver().getStandardVersion() == 1)
-  {
-    pui8_sendBuffer[ui8_bufferPosition++] = b_inReportHiddenFiles;
-  }
-  else if (getFileserver().getStandardVersion() != 0)
-  {
-    return IsoAgLib::fsWrongFsVersion;
-  }
+  pui8_sendBuffer[ui8_bufferPosition++] = b_inReportHiddenFiles;
 
   while (ui8_bufferPosition < 8)
     pui8_sendBuffer[ui8_bufferPosition++] = 0xFF;
