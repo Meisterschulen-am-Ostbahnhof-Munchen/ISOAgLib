@@ -764,24 +764,24 @@ void interpreteRearPTOstate()
 		case 0x3: cout << "RPTO mod rq st: N/A "; break;
 	  }
 
-	  // Rear PTO engagement
-	  switch (canGetData(4) >> 6) {
-		  case 0x0: cout << "RPTO eng: disen "; break;
-		  case 0x1: cout << "RPTO eng: en "; break;
-		  case 0x2: cout << "RPTO eng: Error "; break;
-		  case 0x3: cout << "RPTO eng: n/a "; break;
+	  // Rear PTO mode
+	  switch (canGetData(5) >> 6) {
+		  case 0x0: cout << "RPTO mode: external request "; break;
+		  case 0x1: cout << "RPTO mode: controll override "; break;
+		  case 0x2: cout << "RPTO mode: Error "; break;
+		  case 0x3: cout << "RPTO mode: n/a "; break;
 	  }
 	  
-	  // Rear PTO mode request status
-	  switch ((canGetData(4) >> 4) & 0x03) {
-		case 0x0: cout << "RPTO mod rq st: disen "; break;
-		case 0x1: cout << "RPTO mod rq st: en "; break;
-		case 0x2: cout << "RPTO mod rq st: Error "; break;
-		case 0x3: cout << "RPTO mod rq st: n/a "; break;
+	  // Rear PTO Economy mode request status
+	  switch ((canGetData(5) >> 4) & 0x03) {
+		case 0x0: cout << "RPTO economy mode request status: external request "; break;
+		case 0x1: cout << "RPTO economy mode request status: controll override "; break;
+		case 0x2: cout << "RPTO economy mode request status: Error "; break;
+		case 0x3: cout << "RPTO economy mode request status: n/a "; break;
 	  }
 	  
 	  // Rear PTO shaft speed limit status
-	  switch ((canGetData(4) >> 1) & 0x07) {
+	  switch ((canGetData(5) >> 1) & 0x07) {
 		case 0x0: cout << "RPTO shaft speed limit status: no limit "; break;
 		case 0x1: cout << "RPTO shaft speed limit status: op limit "; break;
 		case 0x2: cout << "RPTO shaft speed limit status: lim high "; break;
@@ -932,7 +932,7 @@ void interpretePgnLanguage()
   }
 }
 
-void interpreteLightningCommand()
+void interpreteLightingCommand()
 {
   if (canGetBytes() != 8)
   {
@@ -1383,7 +1383,7 @@ void interpretePgnData (uint32_t rui32_pgn)
     case WORKING_SET_MASTER_PGN:         break;
     case LANGUAGE_PGN:                   interpretePgnLanguage(); break;
     case LIGHTING_DATA_PGN:              break;
-    case LIGHTING_COMMAND_PGN:           interpreteLightningCommand(); break;
+    case LIGHTING_COMMAND_PGN:           interpreteLightingCommand(); break;
     case HITCH_PTO_COMMANDS:             break;
     case REAR_PTO_STATE_PGN:             interpreteRearPTOstate(); break;
     case FRONT_PTO_STATE_PGN:            break;
