@@ -100,11 +100,9 @@ class TracCert_c : public SingletonTracCert_c
 
   /** destructor for TracGuidance_c which has nothing to do */
   virtual ~TracCert_c() { BaseCommon_c::close();}
-  
+
 #if 0
     // This part is moved to the diagnostic PGN handling under Part_12
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
-
   /** send guidance data
     @see  TracCert_c::processMsgRequestPGN
     @see  CanIo_c::operator<<
@@ -327,6 +325,11 @@ class TracCert_c : public SingletonTracCert_c
       @see  CanPkgExt_c::resolveSendingInformation()
     */
   virtual bool processMsg();
+
+  /** Do not longer want to process a request for
+    * ISOBUS_CERTIFICATION_PGN, because this functionality is moved to
+    * the diagnostic PGN handling under Part_12. */
+  bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/) { return false; }
 
  private:
     // Private attributes
