@@ -93,7 +93,6 @@ include Makefile.incl
 APP_NAME=vt2iso
 
 OUTDIR = obj
-EXEC = ../../bin/x86linux
 OBJS = ${OUTDIR}/vt2iso.o ${OUTDIR}/vt2isoimagebase_c.o ${OUTDIR}/vt2isoimagefreeimage_c.o ${OUTDIR}/vt2iso-defines.o ${OUTDIR}/vt2iso-globals.o
 myLIBRARY_NAMES = ${LIBRARY_NAMES} ../libs/freeimage/libfreeimage.a -lpthread
 SRC = src
@@ -105,8 +104,8 @@ makedir:
 
 ${APP_NAME}: ${OBJS}
 	${LINK} ${PLATFORM_LIB_LINK_OPTIONS} ${OBJS} -o $@ ${LIBRARY_SEARCH_PATHS} ${myLIBRARY_NAMES} ${EXTRA_LINK_OPTIONS}
-	${CP} ${APP_NAME} ${EXEC}/${APP_NAME}
-	${STRIP} ${EXEC}/${APP_NAME}
+	${CP} ${APP_NAME} ${APP_NAME}
+	${STRIP} ${APP_NAME}
 
 $(OUTDIR)/vt2iso.o: ${SRC}/vt2iso.cpp ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoimagefreeimage_c.h
 	${CC} ${INCLUDES} ${CMP} -o $(OUTDIR)/vt2iso.o ${SRC}/vt2iso.cpp

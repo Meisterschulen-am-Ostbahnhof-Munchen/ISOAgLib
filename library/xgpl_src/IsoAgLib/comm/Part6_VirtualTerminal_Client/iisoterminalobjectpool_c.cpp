@@ -38,7 +38,7 @@ namespace IsoAgLib
 uint8_t iIsoTerminalObjectPool_c::convertColourDefault(
     uint8_t colorValue,
     uint8_t colorDepth,
-    IsoAgLib::iVtObject_c */*obj*/,
+    IsoAgLib::iVtObject_c * /*obj*/,
     IsoAgLib::e_vtColour /*whichColour*/)
 {
   unsigned const cu_fittingDepth =

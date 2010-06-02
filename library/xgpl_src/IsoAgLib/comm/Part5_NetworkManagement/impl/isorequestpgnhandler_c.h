@@ -47,8 +47,8 @@ public:
 
   bool processMsgRequestPGNDefault(
       uint32_t /*aui32_pgn*/,
-      IsoItem_c */*apc_isoItemSender*/,
-      IsoItem_c */*apc_isoItemReceiver*/)
+      IsoItem_c * /*apc_isoItemSender*/,
+      IsoItem_c * /*apc_isoItemReceiver*/)
   {
     return false;
   }

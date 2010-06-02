@@ -99,7 +99,7 @@ class iFsClient_c
       * IMPORTANT: the content of th file has to be copied to the applications memory as it can be changed by the library.
       */
 
-    virtual void readFileResponse(iFsError /*ui8_errorCode*/, uint16_t /*ui16_dataLength*/, uint8_t */*pui8_data*/) {}
+    virtual void readFileResponse(iFsError /*ui8_errorCode*/, uint16_t /*ui16_dataLength*/, uint8_t * /*pui8_data*/) {}
     /**
       * After the call to read a file, this function is used to receive the successstatus of the command if the file was a directory.
       * The content of the file is returned.

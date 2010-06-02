@@ -104,7 +104,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="echo &quot;Copying can_server_sontheim_st_api.exe to ..\..\bin\win32!&quot;&#x0D;&#x0A;copy Release\can_server_sontheim_st_api.exe ..\..\bin\win32&#x0D;&#x0A;"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration

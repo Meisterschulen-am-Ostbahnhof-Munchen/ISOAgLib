@@ -150,7 +150,7 @@
 				Name="VCLinkerTool"
 				IgnoreImportLibrary="false"
 				AdditionalDependencies="User32.lib Gdi32.lib Ws2_32.lib Xerces-c_2.lib freeimage.lib Advapi32.lib $(NOINHERIT)"
-				OutputFile="$(OutDir)\vt2iso.exe"
+				OutputFile="Release\vt2iso.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="&quot;..\libs\xerces-c\xerces-c_2_5_0-windows_nt-msvc_60\lib&quot;;..\libs\freeimage"
@@ -181,7 +181,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\vt2iso.exe ..\..\bin\win32"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>

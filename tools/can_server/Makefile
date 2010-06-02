@@ -109,7 +109,7 @@ OBJ_DIR = objects_$(1)
 OBJECTS = $(patsubst %.cpp,$(call OBJ_DIR,$(1))/%.o,$(notdir $(2)))
 DEPS = $(patsubst %.o,%.d,$(call OBJECTS,$(1),$(2)))
 EXEC_DIR := $(ISOAGLIB_PATH)/bin/x86linux
-PRE_EXEC = $(addprefix $(ISOAGLIB_PATH)/bin/x86linux/,$(1))
+PRE_EXEC = $(addprefix ,$(1))
 TARGETS := $(call PRE_EXEC,can_server_msq_no_card can_server_socket_no_card can_server_msq_pcan can_server_socket_pcan can_server_msq_socketcan can_server_socket_socketcan can_server_msq_rte can_server_socket_rte)
 
 # Rules

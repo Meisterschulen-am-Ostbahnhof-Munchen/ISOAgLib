@@ -86,7 +86,6 @@ IS_WIN32 = $(and $(call IS_X86,$(1)),$(filter MINGW32_NT%,$(1)))
 SYSTEM := $(shell uname -a)
 OSDIRPART := $(if $(call IS_X86LINUX,$(SYSTEM)),x86linux,$(if $(call IS_WIN32,$(SYSTEM)),win32,anyos))
 OBJ_DIR := objects_$(OSDIRPART)
-EXEC :=	$(ISOAGLIB)/bin/$(OSDIRPART)
 SOURCES := \
 	src/proc2iso.cpp \
 	$(ISOAGLIBRARY)/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.cpp \
@@ -95,7 +94,7 @@ SOURCES := \
 OBJS := $(call OBJECTS,$(SOURCES))
 myLIBRARY_NAMES = $(LIBRARY_NAMES) -lpthread
 
-all: $(EXEC)/$(APP_NAME) $(EXEC)/proc2iso.xsd
+all: $(APP_NAME) proc2iso.xsd
 
 ## Dependencies will not be calculated. Use this ``force'' as
 ## prerequisite to force compilation.
@@ -104,10 +103,10 @@ all: $(EXEC)/$(APP_NAME) $(EXEC)/proc2iso.xsd
 $(OBJ_DIR):
 	-mkdir -p $(OBJ_DIR)
 
-$(EXEC)/$(APP_NAME): $(OBJS)
+$(APP_NAME): $(OBJS)
 	$(LINK) $(PLATFORM_LIB_LINK_OPTIONS) $(OBJS) -o $@ $(LIBRARY_SEARCH_PATHS) $(myLIBRARY_NAMES) $(EXTRA_LINK_OPTIONS)
 
-$(EXEC)/proc2iso.xsd: bin/proc2iso.xsd
+proc2iso.xsd: bin/proc2iso.xsd
 	cp -p $< $@
 
 define OBJECT_RULE
@@ -122,4 +121,4 @@ clean:
 	-rmdir $(OBJ_DIR)
 
 distclean: clean 
-	-rm -f $(EXEC)/$(APP_NAME)
+	-rm -f $(APP_NAME)
