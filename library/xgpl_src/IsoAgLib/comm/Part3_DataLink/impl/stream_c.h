@@ -79,32 +79,16 @@ public:
 
   bool operator< (const ReceiveStreamIdentifier_c& ac_rsi) const
   {
-    if (mt_streamType < ac_rsi.mt_streamType)
-      return true;
-    if (mt_streamType > ac_rsi.mt_streamType)
-      return false;
-    // else: (mt_streamType == ac_rsi.mt_streamType)
-    // check next lower prio member
-    if (ui32_pgn < ac_rsi.ui32_pgn)
-      return true;
-    if (ui32_pgn > ac_rsi.ui32_pgn)
-      return false;
-    // else: (ui32_pgn == ac_rsi.ui32_pgn)
-    // check next lower prio member
-    if (c_daIsoName < ac_rsi.c_daIsoName)
-      return true;
-    if (ac_rsi.c_daIsoName < c_daIsoName)
-      return false;
-    // else: (c_daIsoName == ac_rsi.c_daIsoName)
-    // check next lower prio member
-    if (c_saIsoName < ac_rsi.c_saIsoName)
-      return true;
-  /* omit the check, will continue to return false anyway... */
-  //if (ac_rsi.c_saIsoName < c_saIsoName)
-  //  return false;
-    // else: (c_saIsoName == ac_rsi.c_saIsoName)
-    return false;
-    
+    if      (mt_streamType != ac_rsi.mt_streamType)
+      return mt_streamType <  ac_rsi.mt_streamType;
+    else if   (ui32_pgn    != ac_rsi.ui32_pgn)
+      return   ui32_pgn    <  ac_rsi.ui32_pgn;
+    else if   (c_daIsoName != ac_rsi.c_daIsoName)
+      return   c_daIsoName <  ac_rsi.c_daIsoName;
+    else if   (c_saIsoName != ac_rsi.c_saIsoName)
+      return   c_saIsoName <  ac_rsi.c_saIsoName;
+    else
+      return false; // all fields equal
   }
 
   StreamType_t    getStreamType() const { return mt_streamType; }
