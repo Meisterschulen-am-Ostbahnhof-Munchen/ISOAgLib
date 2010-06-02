@@ -114,7 +114,6 @@ public:
   void setSoftKeyData();
   void setTextFontData();
   void setHardwareData();
-  void resetVtAlive();
 
   /** getter */
   const IsoName_c&           getIsoName()             { return mc_isoName; }

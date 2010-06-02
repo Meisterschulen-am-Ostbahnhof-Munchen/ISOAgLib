@@ -163,13 +163,6 @@ VtServerInstance_c::setHardwareData()
 }
 
 
-void
-VtServerInstance_c::resetVtAlive()
-{
-  ms_vtStateA.lastReceived = 0;
-}
-
-
 uint32_t
 VtServerInstance_c::getVtHardwareDimension()
 {

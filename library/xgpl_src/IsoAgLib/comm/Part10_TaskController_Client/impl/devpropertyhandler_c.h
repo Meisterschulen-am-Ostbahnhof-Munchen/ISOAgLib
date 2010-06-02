@@ -58,6 +58,18 @@ public:
 };
 
 
+class SendUploadDevProp_c : public SendUploadBase_c
+{
+public:
+  SendUploadDevProp_c() : SendUploadBase_c() {}
+
+  SendUploadDevProp_c (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+    { set(aui16_objId, apc_string, overrideSendLength, ui8_cmdByte); }
+
+  void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte);
+};
+
+
 class MultiSendPkg_c;
 class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 {
@@ -214,10 +226,9 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     uint32_t mui32_uploadTimestamp;
     uint32_t mui32_uploadTimeout;
 
-    uint8_t mui8_uploadRetry;
     uint8_t mui8_commandParameter;
 
-    STL_NAMESPACE::list<SendUploadBase_c>  ml_sendUpload;
+    STL_NAMESPACE::list<SendUploadDevProp_c>  ml_sendUpload;
 
     MultiSend_c::sendSuccess_t men_sendSuccess;
 

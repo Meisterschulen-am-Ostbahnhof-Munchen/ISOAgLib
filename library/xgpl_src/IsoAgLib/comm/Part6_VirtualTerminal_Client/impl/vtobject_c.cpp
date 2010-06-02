@@ -330,7 +330,7 @@ vtObject_c::able (uint8_t enOrDis, bool b_updateObject, bool b_enableReplaceOfCm
   return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (0xA1 /* Command: Command --- Parameter: Enable/Disable Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
                                                           enOrDis,
-                                                          0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                                                          0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
 } // -X2C
 
 // //////////////////////////////// +X2C Operation 218 : select
@@ -339,7 +339,7 @@ vtObject_c::select(uint8_t selectOrActivate)
 { // ~X2C
   return __IsoAgLib::getIsoTerminalInstance4Comm().getClientByID (s_properties.clientId).sendCommand (0xA2 /* Command: Command --- Parameter: Select Input Object */,
                                                           vtObject_a->ID & 0xFF, vtObject_a->ID >> 8,
-                                                          selectOrActivate, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, true);
+                                                          selectOrActivate, 0xFF, 0xFF, 0xFF, 0xFF, true);
 } // -X2C
 
 } // end of namespace __IsoAgLib

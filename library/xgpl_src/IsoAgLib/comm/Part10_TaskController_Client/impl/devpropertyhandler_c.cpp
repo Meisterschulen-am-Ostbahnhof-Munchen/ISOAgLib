@@ -79,12 +79,45 @@ uint8_t getLabelOffset (const HUGE_MEM uint8_t* pc_Array)
 
 namespace __IsoAgLib {
 
-#define DEF_TimeOut_GetVersion 5000
 #define DEF_TimeOut_OPTransfer 10000
 #define DEF_TimeOut_EndOfDevicePool 10000
 #define DEF_WaitFor_Reupload 5000
 #define DEF_TimeOut_ChangeDesignatorValue 1500
 #define DEF_TimeOut_NormalCommand 1500
+
+void
+SendUploadDevProp_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+{
+  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
+  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
+
+  /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.clear();
+  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
+
+  vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
+  vec_uploadBuffer.push_back (aui16_objId & 0xFF);
+  vec_uploadBuffer.push_back (aui16_objId >> 8);
+  vec_uploadBuffer.push_back (strLen & 0xFF);
+  vec_uploadBuffer.push_back (strLen >> 8);
+  int i=0;
+  for (; i < strLen; i++) {
+    vec_uploadBuffer.push_back (*apc_string);
+    apc_string++;
+  }
+  for (; i < 3; i++) {
+    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
+    vec_uploadBuffer.push_back (0xFF);
+  }
+
+  #if DEBUG_HEAP_USEAGE
+  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
+  {
+    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
+    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+  #endif
+}
 
 //define helper class LanguageLabel_c
 //===================================================================
@@ -152,7 +185,7 @@ DevPropertyHandler_c::DevPropertyHandler_c()
      mb_setToDefault(false), mb_tcAliveNew(false), mb_receivedStructureLabel(false), mb_receivedLocalizationLabel(false),
      mpc_data(NULL), mui8_tcSourceAddress(0), mui8_versionLabel(0), mpc_devDefaultDeviceDescription(NULL), mpc_devPoolForUpload(NULL),
      mpc_wsMasterIdentItem(NULL), men_poolState(OPNotRegistered), men_uploadState(StateIdle), men_uploadStep(UploadStart),
-     men_uploadCommand(UploadCommandWaitingForCommandResponse), mui32_uploadTimestamp(0), mui32_uploadTimeout(0), mui8_uploadRetry(0),
+     men_uploadCommand(UploadCommandWaitingForCommandResponse), mui32_uploadTimestamp(0), mui32_uploadTimeout(0),
      mui8_commandParameter(0), men_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess), mi32_timeWsAnnounceKey(-1)
 {}
 
@@ -721,22 +754,15 @@ DevPropertyHandler_c::timeEvent( void )
     }
     // last Upload failed?
     if (men_uploadCommand == UploadCommandTimedOut)
-    {
-      if (mui8_uploadRetry > 0) {
-        mui8_uploadRetry--;
-        startUploadCommandChangeDesignator();
-      } else {
-        // No more retries, simply finish this job and go Idle!
-        //finishUploadCommandChangeDesignator(); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
-      }
+    { // Retry (endlessly)...
+      startUploadCommandChangeDesignator();
     }
   } // UploadCommand
 
   // ### Is a) no Upload running and b) some Upload to do?
   if ((men_uploadState == StateIdle) && !ml_sendUpload.empty()) {
-    // Set Retry & Start Uploading
-    mui8_uploadRetry = (*(ml_sendUpload.begin())).ui8_retryCount;
-    startUploadCommandChangeDesignator ();
+    // Start Uploading
+    startUploadCommandChangeDesignator();
   }
 
   return true;
@@ -1021,7 +1047,7 @@ DevPropertyHandler_c::sendCommandChangeDesignator(uint16_t aui16_objectID, const
   uint8_t strLen = (CNAMESPACE::strlen(apc_newString) < stringLength) ? CNAMESPACE::strlen(apc_newString) : stringLength;
   if (CNAMESPACE::strlen(apc_newString) <= 32)
   {
-    ml_sendUpload.push_back(SendUploadBase_c (aui16_objectID, apc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
+    ml_sendUpload.push_back (SendUploadDevProp_c (aui16_objectID, apc_newString, strLen, procCmdPar_ChangeDesignatorMsg));
     return true;
   }
   //DEBUG_DEVPROPERTYHANDLER OUT
@@ -1040,10 +1066,10 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   men_uploadState = StateUploadCommand;
 
   // Get first element from queue
-  SendUploadBase_c* actSend = &ml_sendUpload.front();
+  SendUploadDevProp_c* actSend = &ml_sendUpload.front();
 
   // Set time-out values
-  mui32_uploadTimeout = actSend->getUploadTimeout();
+  mui32_uploadTimeout = 1500; // time-out 1,5s for answer to change designator.
   mui32_uploadTimestamp = HAL::getTime();
 
   if ((actSend->vec_uploadBuffer.size() < 9)) {

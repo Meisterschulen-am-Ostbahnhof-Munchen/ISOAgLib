@@ -114,34 +114,60 @@ void SendUpload_c::set (vtObjectString_c* apc_objectString)
   ppc_vtObjects = NULL;
 
   mssObjectString = apc_objectString;
-
-  if (mssObjectString->getStreamer()->getStreamSize() < 9)
-    ui8_retryCount = DEF_Retries_NormalCommands;
-  else
-    ui8_retryCount = DEF_Retries_TPCommands;
-
-  setUploadTimeout( DEF_TimeOut_ChangeStringValue );
 }
 
-void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
-{ SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, aui32_timeout);
+void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
+{
+  SendUploadBase_c::set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
   mssObjectString = NULL;
   ppc_vtObjects = NULL; /// Use BUFFER - NOT MultiSendStreamer!
   ui16_numObjects = 0;
 }
-void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+
+void SendUpload_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
-  SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, aui32_timeout );
+  SendUploadBase_c::set( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8 );
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = rppc_vtObjects;
   ui16_numObjects = aui16_numObjects;
 }
-void SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
+
+void SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength)
 {
-  SendUploadBase_c::set( aui16_objId, apc_string, overrideSendLength, ui8_cmdByte );
+  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
+  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
+
+  /// Use BUFFER - NOT MultiSendStreamer!
+  vec_uploadBuffer.clear();
+  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
+
+  vec_uploadBuffer.push_back (179);
+  vec_uploadBuffer.push_back (aui16_objId & 0xFF);
+  vec_uploadBuffer.push_back (aui16_objId >> 8);
+  vec_uploadBuffer.push_back (strLen & 0xFF);
+  vec_uploadBuffer.push_back (strLen >> 8);
+  int i=0;
+  for (; i < strLen; i++) {
+    vec_uploadBuffer.push_back (*apc_string);
+    apc_string++;
+  }
+  for (; i < 3; i++) {
+    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
+    vec_uploadBuffer.push_back (0xFF);
+  }
+
+#if DEBUG_HEAP_USEAGE
+  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
+  {
+    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
+    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+#endif
+
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
 }
+
 void SendUpload_c::set (uint8_t* apui8_buffer, uint32_t bufferSize)
 {
   SendUploadBase_c::set (apui8_buffer, bufferSize);
@@ -308,14 +334,15 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mpc_vtServerInstance (NULL)
   , mb_usingVersionLabel (false)
   //marrp7c_versionLabel [7] will be initialized below
-  , men_objectPoolState (OPInitial)
+  , men_objectPoolState (OPInitial) // dummy init value, will be set when VT (re)enters to OPInitial anyway!
   , mi8_vtLanguage (-1)
-  , men_uploadType (UploadPool)
-  , men_uploadCommandState (UploadCommandTimedOut) // dummy init value.
-  , men_uploadPoolState (UploadPoolInit) // with "UploadInit
-  , men_uploadPoolType (UploadPoolTypeCompleteInitially)
-  //ms_uploadPhases
+  , men_uploadType (UploadIdle) // dummy init value
+  , men_uploadCommandState (UploadCommandWithAwaitingResponse) // dummy init value.
+  , men_uploadPoolState (UploadPoolInit) // dummy init value, will be set when VT (re)enters to UploadInit anyway
+  , men_uploadPoolType (UploadPoolTypeCompleteInitially) // dummy init value, will be set when (up)load is started
+  //ms_uploadPhasesAutomatic[..] // will be corrently initialized in the body!
   , men_uploadPhaseAutomatic (UploadPhaseIVtObjectsFix)
+  , ms_uploadPhaseUser() // will be corrently initialized in the body!
   , mppc_uploadPhaseUserObjects (NULL)
   , mi8_objectPoolUploadingLanguage(0) // only valid if "initially uploading" or "language updating"
   , mi8_objectPoolUploadedLanguage(0) // only valid if "ObjectPoolUploadedSuccessfully"
@@ -325,7 +352,6 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mui32_uploadTimeout (0) // will be set when needed
   , mui8_commandParameter (0) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   , mui8_uploadError (0) // only valid in OPCannotBeUploaded case
-  , mui8_uploadRetry (0)
   , men_sendSuccess (__IsoAgLib::MultiSend_c::SendSuccess)
   , mui16_inputStringId (0xFFFF) // will be set when first chunk is received
   , mui8_inputStringLength (0) // will be set when first chunk is received
@@ -338,6 +364,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mlist_auxAssignments()
   , mc_iVtObjectStreamer (*this)
   , mi32_timeWsAnnounceKey (-1) // no announce tries started yet...
+  , mi32_fakeVtOffUntil (-1) // no faking initially
   , mb_isSlave(ab_isSlave)
 {
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
@@ -405,14 +432,14 @@ VtClientServerCommunication_c::timeEventUploadPoolTimeoutCheck()
 {
   /// Do TIME-OUT Checks ALWAYS!
   if ((men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)
-       || (men_uploadPoolState == UploadPoolWaitingForMemoryResponse)
-       || (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
+   || (men_uploadPoolState == UploadPoolWaitingForMemoryResponse)
+   || (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
   { // waiting for initial stuff was timed out
     if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
     {
       men_uploadPoolState = UploadPoolFailed;
       mui32_uploadTimestamp = HAL::getTime();
-      mui32_uploadTimeout = DEF_WaitFor_Reupload; // wait 5 secs for possible reuploading...
+      mui32_uploadTimeout = DEF_WaitFor_Reupload; // wait X secs for possible reuploading...
     }
   }
 
@@ -462,7 +489,6 @@ VtClientServerCommunication_c::indicateUploadPhaseCompletion()
     // We don't need that pointer anymore. It can be invalid after we told the client
     // that we're done with partial user objectpool upload/update.
     indicateUploadCompletion(); // Send "End of Object Pool" message
-    return;
   }
   else
   { // we may have multiple parts, so check that..
@@ -599,7 +625,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
 {
   // Do MAIN-Phase a) at INIT and b) <timeout> seconds after FAIL
   if (((men_uploadPoolState == UploadPoolFailed) && (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp)))
-        || (men_uploadPoolState == UploadPoolInit))
+    || (men_uploadPoolState == UploadPoolInit))
   {
     // Take the version that's been set up NOW and try to load/upload it.
     setObjectPoolUploadingLanguage();
@@ -646,7 +672,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       // start uploading after reception of LoadVersion Response
       men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
       men_uploadPoolType = UploadPoolTypeCompleteInitially; // need to set this, so that eventObjectPoolUploadedSucessfully is getting called (also after load, not only after upload)
-      mui32_uploadTimeout = DEF_TimeOut_LoadVersion;
+      mui32_uploadTimeout = DEF_TimeOut_VersionLabel;
       mui32_uploadTimestamp = HAL::getTime();
 #if DEBUG_VTCOMM
       INTERNAL_DEBUG_DEVICE << "Trying Load Version (D1) for Version ["<<marrp7c_versionLabel [0]<< marrp7c_versionLabel [1]<< marrp7c_versionLabel [2]<< marrp7c_versionLabel [3]<< marrp7c_versionLabel [4]<< lang1<< lang2<<"]..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -705,7 +731,7 @@ VtClientServerCommunication_c::timeEvent(void)
   // VT Alive checks
   // Will trigger "doStart" / "doStop"
   // doStart will also take care for announcing the working-set
-  checkVtStateChange();
+  checkAndHandleVtStateChange();
 
   // Do nothing if there's no VT active
   if (!isVtActive()) return true;
@@ -803,56 +829,47 @@ VtClientServerCommunication_c::timeEvent(void)
   { // NO Response/timeOut for (C.2.3 Object Pool Transfer Message) "UploadObjectPool" - Only for "UploadMultiPacketCommand"
 
     /// Handle special "command" Partial Pool Update
-    if (men_uploadCommandState == UploadCommandPartialPoolUpdate)
-    { // special "command"
+    switch (men_uploadCommandState)
+    {
+    case UploadCommandPartialPoolUpdate:
+      // special "command"
       checkPoolPhaseRunningMultiSend();
-    }
-    else
-    { // "normal" command
+      break;
+
+    case UploadCommandWithAwaitingResponse:
+      // "normal" command
       switch (men_sendSuccess)
       {
-        case __IsoAgLib::MultiSend_c::SendAborted:
-          // If aborted, retry regardless of "mui8_uploadRetry", as it was a multisend problem, not a problem of the command itself!
-          startUploadCommand();
-          break;
+      case __IsoAgLib::MultiSend_c::SendAborted:
+        /// Note: The behavior of what to do seems to be not really specified in ISO11783-3.
+        // If aborted, retry regardless of any application-logic-retry, as it was a multisend problem, not a problem of the command itself!
+        startUploadCommand();
+        break;
 
-        case __IsoAgLib::MultiSend_c::Running:
-          // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
-          mui32_uploadTimestamp = HAL::getTime();
-          break;
+      case __IsoAgLib::MultiSend_c::Running:
+        // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
+        mui32_uploadTimestamp = HAL::getTime();
+        break;
 
-        case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
-        default:
-        { // successfully sent...
-          if (men_uploadCommandState == UploadCommandWaitingForCommandResponse) // won't reach here when "Running", as timestamp is getting get to now above!
-          { // Waiting for an answer - Did it time out?
-            if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
-              men_uploadCommandState = UploadCommandTimedOut;
-          } // don't break, as "UploadCommandTimedOut" is handled right below!
-
-          // Are we in "Upload Command"-State and the last Upload failed/timed out?
-          if ((men_uploadCommandState == UploadCommandTimedOut))
-          {
-            if (mui8_uploadRetry > 0)
-            {
-              mui8_uploadRetry--;
-              startUploadCommand();
-            }
-            else
-            { // No more retries, simply finish this job and go Idle!
-              finishUploadCommand(true); // will pop the SendUpload, as it can't be correctly sent after <retry> times. too bad.
-            }
-          }
-          break;
-        }
-      }
-    }
+      case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
+        // won't reach here when "Running", as timestamp is getting get to now above!
+        // Waiting for an answer now... Did it time out?
+        if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
+        { // Time-Out! in "Upload Command"-State
+          // No retries, No continue.
+          // It's the safest thing to just reconnect to the VT.
+          // So let's get disconnected (can't do this actively)
+          fakeVtOffPeriod (6000); // fake the VT 6 seconds off!
+          return true; // quit, as we're probably not anymore in the connected state!
+        } // else: no time-out, wait on...
+        break;
+      } // switch send success
+    } // switch upload state
   } // UploadCommand
 
   // Is a) no Upload running and b) some Upload to do?
   if ((men_uploadType == UploadIdle) && !mq_sendUpload.empty())
-  { // Set Retry & Start Uploading
-    mui8_uploadRetry = (*(mq_sendUpload.begin())).ui8_retryCount;
+  { // Start Uploading
     startUploadCommand();
   }
   return true;
@@ -901,14 +918,15 @@ VtClientServerCommunication_c::processMsgAck()
       case ECU_TO_VT_PGN:
       case WORKING_SET_MEMBER_PGN:
       case WORKING_SET_MASTER_PGN:
-        /// fake NOT-alive state of VT for now!
-        mpc_vtServerInstance->resetVtAlive(); // set VTalive to FALSE, so the queue will be emptied down below on the state change check.
 #if DEBUG_VTCOMM
         INTERNAL_DEBUG_DEVICE << "\n==========================================================================================="
                               << "\n=== VT NACKed "<<cui32_pgn<<", starting all over again -> faking VT loss in the following: ===";
 #endif
         mrc_wsMasterIdentItem.getIsoItem()->sendSaClaim(); // optional, but better do this: Repeat address claim!
-        checkVtStateChange(); // will also notify application by "eventEnterSafeState"
+        /// passing "true": fake NOT-alive state of VT for now!
+        fakeVtOffPeriod(1000); // arbitrary time-span > 0 so checkAndHandle..() will call doStop!
+        checkAndHandleVtStateChange(); // will also notify application via "eventEnterSafeState"
+        fakeVtOffStop(); // enough faking, let it get restart asap in the timeEvent!
         break;
     } // switch
   }
@@ -1145,7 +1163,7 @@ VtClientServerCommunication_c::processMsg()
 
             // Now wait for response
             men_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
-            mui32_uploadTimeout = DEF_TimeOut_StoreVersion;
+            mui32_uploadTimeout = DEF_TimeOut_VersionLabel;
             mui32_uploadTimestamp = HAL::getTime();
           }
           else
@@ -1161,7 +1179,7 @@ VtClientServerCommunication_c::processMsg()
           mui8_uploadError = mc_data.getUint8Data (2);
         }
       }
-      else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWaitingForCommandResponse))
+      else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWithAwaitingResponse))
       { /// *** LANGUAGE POOL UPDATE ***
         MACRO_setStateDependantOnError(2)
         finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
@@ -1481,26 +1499,26 @@ VtClientServerCommunication_c::notifyOnVtServerInstanceLoss (VtServerInstance_c&
   @returns true if there was place in the SendUpload-Buffer (should always be the case now)
  */
 bool
-VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd)
+VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd)
 {
 #if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued 9-bytes: " << mq_sendUpload.size() << " -> ";
 #endif
 
-  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, ui32_timeout);
+  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9);
 
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
 
 /** @returns true if there was place in the SendUpload-Buffer (should always be the case now) */
 bool
-VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+VtClientServerCommunication_c::sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
 {
 #if DEBUG_VTCOMM
   INTERNAL_DEBUG_DEVICE << "Enqueued 8-bytes: " << mq_sendUpload.size() << " -> " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
-  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, ui32_timeout, rppc_vtObjects, aui16_numObjects);
+  msc_tempSendUpload.set (byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, rppc_vtObjects, aui16_numObjects);
 
   return queueOrReplace (msc_tempSendUpload, b_enableReplaceOfCmd);
 }
@@ -1538,7 +1556,7 @@ VtClientServerCommunication_c::sendCommandChangePriority (IsoAgLib::iVtObject_c*
     return sendCommand (176 /* Command: Command --- Parameter: Change Priority */,
                         apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         newPriority, 0xFF, 0xFF, 0xFF, 0xFF,
-                        DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                        b_enableReplaceOfCmd);
   }
   else
     return false;
@@ -1552,7 +1570,7 @@ VtClientServerCommunication_c::sendCommandChangeEndPoint (IsoAgLib::iVtObject_c*
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       newLineAttributes,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1563,21 +1581,21 @@ VtClientServerCommunication_c::sendCommandControlAudioDevice (uint8_t aui8_repet
                       aui16_frequency & 0xFF, aui16_frequency >> 8,
                       aui16_onTime & 0xFF, aui16_onTime >> 8,
                       aui16_offTime & 0xFF, aui16_offTime >> 8,
-                      DEF_TimeOut_NormalCommand, false); // don't care for enable-same command stuff
+                      false); // don't care for enable-same command stuff
 }
 
 bool
 VtClientServerCommunication_c::sendCommandSetAudioVolume (uint8_t aui8_volume)
 {
   return sendCommand (164 /* Command: Command --- Parameter: Set Audio Volume */,
-                      aui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, false); // don't care for enableReplaceOfCommand parameter actually
+                      aui8_volume, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // don't care for enableReplaceOfCommand parameter actually
 }
 
 bool
 VtClientServerCommunication_c::sendCommandDeleteObjectPool()
 {
   return sendCommand (178 /* Command: Command --- Parameter: Delete Object Pool */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, true); // don't care for enableReplaceOfCommand parameter actually
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, true); // don't care for enableReplaceOfCommand parameter actually
 }
 
 bool
@@ -1585,9 +1603,9 @@ VtClientServerCommunication_c::sendCommandUpdateLanguagePool()
 {
   /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false) // replaces COULD happen if user-triggered sequences are there.
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false) // replaces COULD happen if user-triggered sequences are there.
       && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false); // replaces COULD happen if user-triggered sequences are there.
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // replaces COULD happen if user-triggered sequences are there.
 }
 
 bool
@@ -1595,9 +1613,9 @@ VtClientServerCommunication_c::sendCommandUpdateObjectPool (IsoAgLib::iVtObject_
 {
   /// Enqueue a fake command which will trigger the language object pool update to be multi-sent out. using 0x11 here, as this is the command then and won't be used
   return sendCommand (0x11 /* Command: Object Pool Transfer --- Parameter: Object Pool Transfer */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false, rppc_vtObjects, aui16_numObjects) // replaces COULD happen if user-triggered sequences are there.
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false, rppc_vtObjects, aui16_numObjects) // replaces COULD happen if user-triggered sequences are there.
       && sendCommand (0x12 /* Command: Object Pool Transfer --- Parameter: Object Pool Ready */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_EndOfObjectPool, false); // replaces COULD happen if user-triggered sequences are there.
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, false); // replaces COULD happen if user-triggered sequences are there.
 }
 
 
@@ -1608,7 +1626,7 @@ VtClientServerCommunication_c::sendCommandChangeNumericValue (uint16_t aui16_obj
   return sendCommand (168 /* Command: Command --- Parameter: Change Numeric Value */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       0xFF, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1617,7 +1635,7 @@ VtClientServerCommunication_c::sendCommandChangeAttribute (uint16_t aui16_object
   return sendCommand (175 /* Command: Command --- Parameter: Change Attribute */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       attrId, byte1, byte2, byte3, byte4,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1628,7 +1646,7 @@ VtClientServerCommunication_c::sendCommandChangeSoftKeyMask (uint16_t aui16_obje
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newSoftKeyMask & 0xFF, newSoftKeyMask >> 8,
                       0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1637,7 +1655,7 @@ VtClientServerCommunication_c::sendCommandChangeActiveMask (uint16_t aui16_objec
   return sendCommand (173 /* Command: Command --- Parameter: Change Active Mask */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       maskId & 0xFF, maskId >> 8,
-                      0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
 }
 
 bool
@@ -1660,7 +1678,7 @@ VtClientServerCommunication_c::sendCommandChangeChildPosition (uint16_t aui16_ob
                       aui16_childObjectUid & 0xFF, aui16_childObjectUid >> 8,
                       x & 0xFF, x >> 8,
                       y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 //! should only be called with valid values ranging -127..0..128 (according to ISO!!!)
@@ -1671,7 +1689,7 @@ VtClientServerCommunication_c::sendCommandChangeChildLocation (uint16_t aui16_ob
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       aui16_childObjectUid & 0xFF, aui16_childObjectUid >> 8,
                       dx+127, dy+127, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1680,7 +1698,7 @@ VtClientServerCommunication_c::sendCommandChangeBackgroundColour (uint16_t aui16
   return sendCommand (167 /* Command: Command --- Parameter: Change Background Color */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newColour, 0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1691,7 +1709,7 @@ VtClientServerCommunication_c::sendCommandChangeSize (uint16_t aui16_objectUid,u
                       newWidth & 0xFF, newWidth >> 8,
                       newHeight & 0xFF, newHeight >> 8,
                       0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1703,7 +1721,7 @@ VtClientServerCommunication_c::sendCommandChangeFillAttributes (uint16_t aui16_o
                       (newFillType == 3) ? newFillPatternObject->getID() & 0xFF : 0xFF,
                       (newFillType == 3) ? newFillPatternObject->getID() >> 8 : 0xFF,
                       0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1712,7 +1730,7 @@ VtClientServerCommunication_c::sendCommandChangeFontAttributes (uint16_t aui16_o
   return sendCommand (170 /* Command: Command --- Parameter: Change FontAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newFontColour, newFontSize, newFontType, newFontStyle, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1721,7 +1739,7 @@ VtClientServerCommunication_c::sendCommandChangeLineAttributes (uint16_t aui16_o
   return sendCommand (171 /* Command: Command --- Parameter: Change LineAttributes */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       newLineColour, newLineWidth, newLineArt & 0xFF, newLineArt >> 8, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 /////////////
 #ifdef USE_ISO_TERMINAL_GRAPHICCONTEXT
@@ -1737,7 +1755,7 @@ VtClientServerCommunication_c::sendCommandSetGraphicsCursor(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setGraphicsCursorCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
+                      b_enableReplaceOfCmd );
 }
 
 bool
@@ -1748,7 +1766,7 @@ VtClientServerCommunication_c::sendCommandSetForegroundColour(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setForegroundColourCmdID,
                       newValue, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1759,7 +1777,7 @@ VtClientServerCommunication_c::sendCommandSetBackgroundColour(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setBackgroundColourCmdID,
                       newValue, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1770,7 +1788,7 @@ VtClientServerCommunication_c::sendCommandSetGCLineAttributes(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setLineAttributeCmdID,
                       newLineAttributes->getID() & 0xFF, newLineAttributes->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1781,7 +1799,7 @@ VtClientServerCommunication_c::sendCommandSetGCFillAttributes(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setFillAttributeCmdID,
                       newFillAttributes->getID() & 0xFF, newFillAttributes->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1792,7 +1810,7 @@ VtClientServerCommunication_c::sendCommandSetGCFontAttributes(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_setFontAttributeCmdID,
                       newFontAttributes->getID() & 0xFF, newFontAttributes->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1805,7 +1823,7 @@ VtClientServerCommunication_c::sendCommandEraseRectangle(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_eraseRectangleCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1816,7 +1834,7 @@ VtClientServerCommunication_c::sendCommandDrawPoint(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawPointCmdID,
                       0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1829,7 +1847,7 @@ VtClientServerCommunication_c::sendCommandDrawLine(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawLineCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1842,7 +1860,7 @@ VtClientServerCommunication_c::sendCommandDrawRectangle(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawRectangleCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1855,7 +1873,7 @@ VtClientServerCommunication_c::sendCommandDrawClosedEllipse(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawClosedEllipseCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 /// @todo OPTIMIZATION Revision4 Better struct for array of x/y pairs!
@@ -1877,7 +1895,7 @@ VtClientServerCommunication_c::sendCommandDrawPolygon(
                         apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         vtObjectGraphicsContext_c::e_drawPolygonCmdID,
                         x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                        DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
+                        b_enableReplaceOfCmd );
   }
 
   // send a polygon with more than one point
@@ -1921,7 +1939,7 @@ VtClientServerCommunication_c::sendCommandDrawText(
                         apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                         vtObjectGraphicsContext_c::e_drawTextCmdID,
                         ui8_textType, ui8_numOfCharacters, a, b,
-                        DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd );
+                        b_enableReplaceOfCmd );
   }
 
   uint8_t *pui8_buffer = new uint8_t[6+ui8_numOfCharacters];
@@ -1951,7 +1969,7 @@ VtClientServerCommunication_c::sendCommandPanViewport(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_panViewportCmdID,
                       x & 0xFF, x >> 8, y & 0xFF, y >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1963,7 +1981,7 @@ VtClientServerCommunication_c::sendCommandZoomViewport(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_zoomViewportCmdID,
                       zoom, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -1997,7 +2015,7 @@ IsoAgLib::iVtObject_c* apc_object, uint16_t newWidth, uint16_t newHeight, bool b
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_changeViewportSizeCmdID,
                       newWidth & 0xFF, newWidth >> 8, newHeight & 0xFF, newHeight >> 8,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -2008,7 +2026,7 @@ VtClientServerCommunication_c::sendCommandDrawVtObject(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_drawVTObjectCmdID,
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -2019,7 +2037,7 @@ VtClientServerCommunication_c::sendCommandCopyCanvas2PictureGraphic(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_copyCanvasToPictureGraphicCmdID,
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -2030,7 +2048,7 @@ VtClientServerCommunication_c::sendCommandCopyViewport2PictureGraphic(
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       vtObjectGraphicsContext_c::e_copyViewportToPictureGraphicCmdID,
                       pc_VtObject->getID() & 0xFF, pc_VtObject->getID() >> 8, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 // ########## END Graphics Context ##########
 #endif
@@ -2043,7 +2061,7 @@ VtClientServerCommunication_c::sendCommandGetAttributeValue( IsoAgLib::iVtObject
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8,
                       cui8_attrID,
                       0xFF, 0xFF, 0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 #endif
 
@@ -2059,7 +2077,7 @@ VtClientServerCommunication_c::sendCommandLockUnlockMask( IsoAgLib::iVtObject_c*
                       apc_object->getID() & 0xFF, apc_object->getID() >> 8, /* object id of the data mask to lock */
                       ui16_lockTimeOut & 0xFF, ui16_lockTimeOut >> 8, /* lock timeout on ms or zero for no timeout */
                       0xFF, 0xFF,
-                      DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      b_enableReplaceOfCmd);
 }
 
 bool
@@ -2068,14 +2086,14 @@ VtClientServerCommunication_c::sendCommandHideShow (uint16_t aui16_objectUid, ui
   return sendCommand (160 /* Command: Command --- Parameter: Hide/Show Object */,
                       aui16_objectUid & 0xFF, aui16_objectUid >> 8,
                       b_hideOrShow,
-                      0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
 }
 
 bool
 VtClientServerCommunication_c::sendCommandEsc (bool b_enableReplaceOfCmd)
 {
   return sendCommand (146 /* Command: Command --- Parameter: ESC */,
-                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, DEF_TimeOut_NormalCommand, b_enableReplaceOfCmd);
+                      0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, b_enableReplaceOfCmd);
 }
 
 bool
@@ -2122,8 +2140,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
         {
           uint8_t ui8_offset = (ar_sendUpload.vec_uploadBuffer[0]);
           if ( (ui8_offset<scui8_cmdCompareTableMin) || (ui8_offset > scui8_cmdCompareTableMax))
-          {
-              // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
+          { // only 0x12 is possible, but no need to override, it shouldn't occur anyway!
             if ((ui8_offset == 0x12) ||
                 ((ui8_offset >= 0x60) && (ui8_offset <= 0x7F)) ) /// no checking for Proprietary commands (we don't need the replace-feature here!)
               break;
@@ -2135,7 +2152,7 @@ VtClientServerCommunication_c::queueOrReplace (SendUpload_c& ar_sendUpload, bool
 #endif
             return false;
           }
-          //get bitmask for the corresponding command
+          // get bitmask for the corresponding command
           uint8_t ui8_bitmask = scpui8_cmdCompareTable [ui8_offset-scui8_cmdCompareTableMin];
           if (!(ui8_bitmask & (1<<0)))
           { // go Check for overwrite...
@@ -2257,16 +2274,9 @@ VtClientServerCommunication_c::doStart()
 
   mi32_nextWsMaintenanceMsg = 0; // send out ws maintenance message immediately after ws has been announced.
 
-  if (men_objectPoolState == OPInitial)
-  { // no object pool
-    men_uploadType = UploadPool;
-  }
-  else
-  { // "OP<was>UploadedSuccessfully" || "OPCannotBeUploaded" (on the previous VT: try probably other VT now)
-    men_objectPoolState = OPInitial; // try (re-)uploading, not caring if it was successfully or not on the last vt!
-    men_uploadType = UploadPool;          // Start Pool Uploading sequence!!
-    men_uploadPoolState = UploadPoolInit; // with "UploadInit
-  }
+  men_objectPoolState = OPInitial; // try (re-)uploading, not caring if it was successfully or not on the last vt!
+  men_uploadType = UploadPool;          // Start Pool Uploading sequence!!
+  men_uploadPoolState = UploadPoolInit; // with "UploadInit
 }
 
 
@@ -2304,10 +2314,12 @@ VtClientServerCommunication_c::doStop()
 
 
 void
-VtClientServerCommunication_c::checkVtStateChange()
+VtClientServerCommunication_c::checkAndHandleVtStateChange()
 {
+  const bool cb_fakeVtOff = ((mi32_fakeVtOffUntil >= 0) && (HAL::getTime() < mi32_fakeVtOffUntil));
+
   bool b_vtAliveOld = mb_vtAliveCurrent;
-  mb_vtAliveCurrent = isVtActive();
+  mb_vtAliveCurrent = !cb_fakeVtOff && isVtActive();
 
   if (!b_vtAliveOld && mb_vtAliveCurrent)
   { /// OFF --> ON  ***  VT has (re-)entered the system
@@ -2328,6 +2340,7 @@ VtClientServerCommunication_c::checkVtStateChange()
     INTERNAL_DEBUG_DEVICE
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== VT has left the system, clearing queues --> eventEnterSafeState called ==="
+      << INTERNAL_DEBUG_DEVICE_NEWLINE << (cb_fakeVtOff ? "=== (as it was forced to)                                                  ===" : "")
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=== time: " << HAL::getTime() << " ==="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << "=============================================================================="
       << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -2426,9 +2439,9 @@ VtClientServerCommunication_c::sendGetMemory()
                          0xff, 0xff);
   getCanInstance4Comm() << mc_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
-      // Now proceed to uploading
+  // Now proceed to uploading
   men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
-  mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
+  mui32_uploadTimeout = DEF_TimeOut_GetMemory;
   mui32_uploadTimestamp = HAL::getTime();
 }
 
@@ -2485,7 +2498,7 @@ VtClientServerCommunication_c::indicateUploadCompletion()
                              0x12, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
       getCanInstance4Comm() << mc_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
       men_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
-      mui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait 10 seconds for terminal to initialize pool!
+      mui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait X seconds for terminal to initialize pool!
       mui32_uploadTimestamp = HAL::getTime();
       break;
 
@@ -2496,28 +2509,28 @@ VtClientServerCommunication_c::indicateUploadCompletion()
 }
 
 
-// only being called if there IS a mq_sendUpload.front()
+// only being called if there IS a msq_sendUpload.front()
 bool
 VtClientServerCommunication_c::startUploadCommand()
 {
-  /** @todo SOON-258 Up to now, none cares for the return code. implement error handling in case multisend couldn't be started? */
+  /** @todo SOON-258 Up to now, noone cares for the return code. implement error handling in case multisend couldn't be started? */
   // Set new state
   men_uploadType = UploadCommand;
-  // along with UploadCommand ALWAYS set "men_sendSuccess", not only for Multipacket!
-  men_uploadCommandState = UploadCommandWaitingForCommandResponse;
+  // along with UploadCommand ALWAYS set "men_sendSuccess", not only for Multipacket,
+  // because we will generally check for timeout or not in the successfully-sent case.
+  men_uploadCommandState = UploadCommandWithAwaitingResponse;
 
   // Get first element from queue
   SendUpload_c* actSend = &mq_sendUpload.front();
 
-  // Set time-out values
-  mui32_uploadTimeout = actSend->getUploadTimeout();
-  mui32_uploadTimestamp = HAL::getTime();
-
    /// Use Multi or Single CAN-Pkgs?
   //////////////////////////////////
 
+  bool b_return = false;
+
   if ((actSend->mssObjectString == NULL) && (actSend->vec_uploadBuffer.size() < 9))
   { /// Fits into a single CAN-Pkg!
+
     if (actSend->vec_uploadBuffer[0] == 0x11)
     { /// Handle special case of LanguageUpdate / UserPoolUpdate
       men_uploadCommandState = UploadCommandPartialPoolUpdate; // There's NO response for command 0x11! And there may be multiple parts!
@@ -2530,7 +2543,7 @@ VtClientServerCommunication_c::startUploadCommand()
         initObjectPoolUploadingPhases (UploadPoolTypeLanguageUpdate);
       }
       startCurrentUploadPhase();
-      return true;
+      b_return = true;
     }
     else
     { /// normal 8 byte package
@@ -2545,7 +2558,7 @@ VtClientServerCommunication_c::startUploadCommand()
       mui8_commandParameter = actSend->vec_uploadBuffer [0];
 
       men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
-      return true;
+      b_return = true;
     }
   }
   else if ((actSend->mssObjectString != NULL) && (actSend->mssObjectString->getStreamer()->getStreamSize() < 9))
@@ -2562,31 +2575,37 @@ VtClientServerCommunication_c::startUploadCommand()
     mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
     men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
-    return true;
+    b_return = true;
   }
   else if (actSend->mssObjectString == NULL)
   { /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
     // Save first byte for Response-Checking!
     mui8_commandParameter = actSend->vec_uploadBuffer [0]; // Save first byte for Response-Checking!
 
-    return getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
-                                                      mpc_vtServerInstance->getIsoName(),
-                                                      &actSend->vec_uploadBuffer.front(),
-                                                      actSend->vec_uploadBuffer.size(),
-                                                      ECU_TO_VT_PGN,
-                                                      men_sendSuccess);
+    b_return = getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
+      mpc_vtServerInstance->getIsoName(), &actSend->vec_uploadBuffer.front(),
+      actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, men_sendSuccess);
   }
   else
   {
     // Save first byte for Response-Checking!
     mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    return getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
-                                                      mpc_vtServerInstance->getIsoName(),
-                                                      (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
-                                                      ECU_TO_VT_PGN,
-                                                      men_sendSuccess);
+    b_return = getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
+      mpc_vtServerInstance->getIsoName(), (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
+      ECU_TO_VT_PGN, men_sendSuccess);
   }
+
+  // Set time-out values
+  mui32_uploadTimestamp = HAL::getTime();
+  mui32_uploadTimeout =
+    (men_uploadCommandState == UploadCommandPartialPoolUpdate)
+      ? -1 /* There's no timeout (hence no valid "mui8_commandParameter"), so just reset the variable - but actually it wouldn't need to be set at all. */
+      : ((mui8_commandParameter >= 0xD0) && (mui8_commandParameter <= 0xD2)) ? DEF_TimeOut_VersionLabel
+                                          : (mui8_commandParameter == 0x12)  ? DEF_TimeOut_EndOfObjectPool
+                                             /* default: sending Annex F. */ : DEF_TimeOut_NormalCommand;
+
+  return b_return;
 }
 
 

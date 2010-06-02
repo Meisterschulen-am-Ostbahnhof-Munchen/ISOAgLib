@@ -63,13 +63,6 @@ namespace __IsoAgLib {
 
 
 
-/** @todo SOON-178 remove any IsoTerminal dependant stuff from MultiSend!!! */
-#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_TimeOut_ChangeChildPosition 1500 /* 1,5 seconds are stated in F.1 (page 96) */
-#define DEF_Retries_TPCommands 2
-#define DEF_Retries_NormalCommands 2
-
 /** This is mostly used for debugging now... */
 void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
 {
@@ -86,10 +79,6 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
     vec_uploadBuffer.push_back (0xFF);
   }
 
-  ui8_retryCount = 0; // hacked, no retry here!!!
-
-  mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
-
   #if DEBUG_HEAP_USEAGE
   if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
   {
@@ -98,57 +87,12 @@ void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)
   }
   #endif
 }
-
-
-/**
-  >>StringUpload<< Constructors ( Copy and Reference! )
-*/
-void SendUploadBase_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte)
-{
-  // if string is shorter than length, it's okay to send - if it's longer, we'll clip - as client will REJECT THE STRING (FINAL ISO 11783 SAYS: "String Too Long")
-  uint16_t strLen = (CNAMESPACE::strlen(apc_string) < overrideSendLength) ? CNAMESPACE::strlen(apc_string) : overrideSendLength;
-
-  /// Use BUFFER - NOT MultiSendStreamer!
-  vec_uploadBuffer.clear();
-  vec_uploadBuffer.reserve (((5+strLen) < 8) ? 8 : (5+strLen)); // DO NOT USED an UploadBuffer < 8 as ECU->VT ALWAYS has 8 BYTES!
-
-  vec_uploadBuffer.push_back (ui8_cmdByte ); /* Default of ui8_cmdByte is: Command: Command --- Parameter: Change String Value (TP) */
-  vec_uploadBuffer.push_back (aui16_objId & 0xFF);
-  vec_uploadBuffer.push_back (aui16_objId >> 8);
-  vec_uploadBuffer.push_back (strLen & 0xFF);
-  vec_uploadBuffer.push_back (strLen >> 8);
-  int i=0;
-  for (; i < strLen; i++) {
-    vec_uploadBuffer.push_back (*apc_string);
-    apc_string++;
-  }
-  for (; i < 3; i++) {
-    // at least 3 bytes from the string have to be written, if not, fill with 0xFF, so the pkg-len is 8!
-    vec_uploadBuffer.push_back (0xFF);
-  }
-
-  if ((5+strLen) < 9)
-    ui8_retryCount = DEF_Retries_NormalCommands;
-  else
-    ui8_retryCount = DEF_Retries_TPCommands;
-
-  mui32_uploadTimeout = DEF_TimeOut_ChangeStringValue;
-
-  #if DEBUG_HEAP_USEAGE
-  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
-  {
-    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
-}
-
 
 
 /**
   Constructor used for "normal" 8-byte CAN-Pkgs!
 */
-void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout)
+void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)
 {
   vec_uploadBuffer.clear();
   vec_uploadBuffer.reserve (8);
@@ -161,18 +105,14 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte6);
   vec_uploadBuffer.push_back (byte7);
   vec_uploadBuffer.push_back (byte8);
-
-  ui8_retryCount = DEF_Retries_NormalCommands;
-  mui32_uploadTimeout = aui32_timeout;
 }
-
 
 /**
   Constructor used for "ChangeChildPosition" >> 9 <<-byte CAN-Pkgs!
   -- Parameter "timeOut" only there as else the signature would be the same compared to 8byte+timeOut constructor!
   -- simply always pass "DEF_TimeOut_ChangeChildPosition"
 */
-void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
+void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
 {
   /// Use BUFFER - NOT MultiSendStreamer!
   vec_uploadBuffer.clear();
@@ -187,25 +127,17 @@ void SendUploadBase_c::set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t
   vec_uploadBuffer.push_back (byte7);
   vec_uploadBuffer.push_back (byte8);
   vec_uploadBuffer.push_back (byte9);
-
-  ui8_retryCount = DEF_Retries_TPCommands;
-  mui32_uploadTimeout = aui32_timeout;
 }
-
 
 const SendUploadBase_c& SendUploadBase_c::operator= (const SendUploadBase_c& r_source)
 {
   vec_uploadBuffer = r_source.vec_uploadBuffer;
-  ui8_retryCount = r_source.ui8_retryCount;
-  mui32_uploadTimeout = r_source.mui32_uploadTimeout;
   return r_source;
 }
 
 
 SendUploadBase_c::SendUploadBase_c (const SendUploadBase_c& r_source)
   : vec_uploadBuffer (r_source.vec_uploadBuffer)
-  , ui8_retryCount (r_source.ui8_retryCount)
-  , mui32_uploadTimeout (r_source.mui32_uploadTimeout)
 {}
 
 

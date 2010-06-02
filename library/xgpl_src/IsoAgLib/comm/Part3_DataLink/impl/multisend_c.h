@@ -32,13 +32,6 @@
 #include <functional>
 
 
-// forward declarations
-namespace IsoAgLib {
-class iMultiSend_c;
-class iMultiSendStreamer_c;
-}
-
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -48,39 +41,28 @@ class vtObjectString_c;
 
 class SendUploadBase_c {
 public:
-  /**
-    StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands)
-  */
-  SendUploadBase_c () : ui8_retryCount(0), mui32_uploadTimeout(0) {};
-  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
-    {set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, aui32_timeout);};
-  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout)
-    {set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, aui32_timeout);};
-  SendUploadBase_c (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/)
-    {set(aui16_objId, apc_string, overrideSendLength, ui8_cmdByte);};
+  SendUploadBase_c () : vec_uploadBuffer() {}
+
+  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9)
+    { set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9); }
+
+  SendUploadBase_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8)
+    {set(byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8); }
+
   SendUploadBase_c (const SendUploadBase_c& r_source);
+
   SendUploadBase_c (uint8_t* apui8_buffer, uint32_t bufferSize)
-  {set(apui8_buffer, bufferSize);}
+    { set(apui8_buffer, bufferSize); }
+
   const SendUploadBase_c& operator= (const SendUploadBase_c& r_source);
 
-  int32_t getUploadTimeout() const { return mui32_uploadTimeout;}
-  void setUploadTimeout( int32_t ai32_uploadTimeout ) { mui32_uploadTimeout = ai32_uploadTimeout;}
-
-  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout);
-  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout);
-  void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8);
   void set (uint8_t* apui8_buffer, uint32_t bufferSize);
 
-
-  /// Use either an MultiSendStreamer or a direct ui8-Buffer
+  /// Use either a MultiSendStreamer or a direct ui8-Buffer
   STL_NAMESPACE::vector<uint8_t> vec_uploadBuffer;  // don't use malloc_alloc for uint8_t values - here the 8byte overhead per malloc item are VERY big
   // ==> chunk allocation which can be shared among instances is alot better
-
-  /// Retry some times?
-  uint8_t ui8_retryCount;
- private:
-  /// TimeOut value (relative to the time the Upload was started!
-  uint32_t mui32_uploadTimeout;
 };
 
 

@@ -130,7 +130,6 @@ vtObjectInputList_c::setItem(uint8_t aui8_index, IsoAgLib::iVtObject_c* apc_obje
                                                    hi,
                                                    0xFF,
                                                    0xFF,
-                                                   DEF_TimeOut_NormalCommand /* timeout value */,
                                                    b_enableReplaceOfCmd
                                                    );
 }

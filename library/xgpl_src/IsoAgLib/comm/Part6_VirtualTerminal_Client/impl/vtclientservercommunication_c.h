@@ -14,15 +14,15 @@
 #ifndef VT_CLIENT_SERVER_COMMUNICATION_H
 #define VT_CLIENT_SERVER_COMMUNICATION_H
 
-#define DEF_TimeOut_NormalCommand 1500       /* 1,5 seconds are stated in F.1 (page 96) */
+/// The following timeouts are ISOAgLib-proprietary values.
+/// In 11783-6 there are no real timeouts specified, yet
+/// ISOAgLib has to react on the case of a non-responding VT
+/// (either at Upload, Load or normal command)
+#define DEF_TimeOut_NormalCommand 10000
+#define DEF_TimeOut_GetMemory 10000
 #define DEF_TimeOut_EndOfObjectPool 60000
-#define DEF_TimeOut_StoreVersion 60000
-#define DEF_TimeOut_LoadVersion 60000
+#define DEF_TimeOut_VersionLabel 60000
 #define DEF_WaitFor_Reupload 5000
-#define DEF_WaitFor_FreeUpload 1000
-#define DEF_Retries_NormalCommands 2
-#define DEF_Retries_TPCommands 2
-#define DEF_TimeOut_ChangeStringValue 1500   /* 1,5 seconds are stated in F.1 (page 96) */
 
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminalpkg_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
@@ -56,29 +56,22 @@ public:
   SendUpload_c (vtObjectString_c* apc_objectString)
     {set(apc_objectString);}
 
-  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout)
-    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, byte9, aui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
-    , ppc_vtObjects (NULL)
-    {}
-  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
-    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8, aui32_timeout ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+  SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
+    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (rppc_vtObjects)
     , ui16_numObjects (aui16_numObjects)
     {}
-  SendUpload_c (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/)
-    : SendUploadBase_c( aui16_objId, apc_string, overrideSendLength, ui8_cmdByte ), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
-    , ppc_vtObjects (NULL)
-    {}
-  SendUpload_c (uint8_t* apui8_buffer, uint32_t bufferSize)
+
+    SendUpload_c (uint8_t* apui8_buffer, uint32_t bufferSize)
     : SendUploadBase_c (apui8_buffer, bufferSize)
     , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (NULL)
     {}
 
   void set (vtObjectString_c* apc_objectString);
-  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t aui32_timeout);
-  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t aui32_timeout, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
-  void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength, uint8_t ui8_cmdByte = 179 /*is standard case for VT Change String Value (TP)*/);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9);
+  void set (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects);
+  void set (uint16_t aui16_objId, const char* apc_string, uint16_t overrideSendLength);
   void set (uint8_t* apui8_buffer, uint32_t bufferSize);
 
   SendUpload_c (const SendUpload_c& r_source)
@@ -212,9 +205,8 @@ public:
   }; /* completely uploaded is now detected by "OPUploadedSuccessfully" */
 
   enum uploadCommandState_t {
-    UploadCommandWaitingForCommandResponse,
-    UploadCommandTimedOut,
-    UploadCommandPartialPoolUpdate // for user/language reasons
+    UploadCommandWithAwaitingResponse,
+    UploadCommandPartialPoolUpdate // for e.g. user/language reasons
   };
 
   enum uploadPoolType_t {
@@ -293,8 +285,8 @@ public:
   void notifyOnVtServerInstanceLoss (VtServerInstance_c& r_oldVtServerInst);
 
   /** sendCommand... methods */
-  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, uint32_t ui32_timeout, bool b_enableReplaceOfCmd=true);
-  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint32_t ui32_timeout, bool b_enableReplaceOfCmd=true, IsoAgLib::iVtObject_c** rppc_vtObjects=NULL, uint16_t aui16_numObjects=0);
+  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, uint8_t byte9, bool b_enableReplaceOfCmd=true);
+  bool sendCommand (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, bool b_enableReplaceOfCmd=true, IsoAgLib::iVtObject_c** rppc_vtObjects=NULL, uint16_t aui16_numObjects=0);
   bool sendCommand (uint8_t* apui8_buffer, uint32_t ui32_size);
 
   bool sendCommandChangeNumericValue (IsoAgLib::iVtObject_c* apc_object, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true)
@@ -309,7 +301,7 @@ public:
   {
     return sendCommandChangeSoftKeyMask(apc_object->getID(), maskType, newSoftKeyMaskID, b_enableReplaceOfCmd);
   };
-  bool sendCommandChangeStringValue  (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true) // no response, no timeout... it's that simple...
+  bool sendCommandChangeStringValue (IsoAgLib::iVtObject_c* apc_object, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true)
   {
     return sendCommandChangeStringValue(apc_object->getID(), apc_newValue, overrideSendLength, b_enableReplaceOfCmd);
   };
@@ -317,7 +309,7 @@ public:
   {
     return sendCommandChangeActiveMask( apc_object->getID(), apc_mask->getID(), b_enableReplaceOfCmd );
   }
-  bool sendCommandChangeStringValue  (IsoAgLib::iVtObjectString_c* apc_objectstring, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
+  bool sendCommandChangeStringValue (IsoAgLib::iVtObjectString_c* apc_objectstring, bool b_enableReplaceOfCmd=true);
 
   bool sendCommandChangeChildPosition (IsoAgLib::iVtObject_c* apc_object, IsoAgLib::iVtObject_c* apc_childObject, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true)
   {
@@ -359,7 +351,7 @@ public:
   bool sendCommandChangeAttribute    (uint16_t aui16_objectUid, uint8_t attrId, uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeSoftKeyMask  (uint16_t aui16_objectUid, uint8_t maskType, uint16_t newSoftKeyMaskID, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeActiveMask   (uint16_t aui16_objectUid, uint16_t maskId, bool b_enableReplaceOfCmd=true);
-  bool sendCommandChangeStringValue  (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true); // no response, no timeout... it's that simple...
+  bool sendCommandChangeStringValue  (uint16_t aui16_objectUid, const char* apc_newValue, uint16_t overrideSendLength, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeChildPosition (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t x, int16_t y, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeChildLocation (uint16_t aui16_objectUid, uint16_t aui16_childObjectUid, int16_t dx, int16_t dy, bool b_enableReplaceOfCmd=true);
   bool sendCommandChangeBackgroundColour (uint16_t aui16_objectUid, uint8_t newColour,  bool b_enableReplaceOfCmd=true);
@@ -426,7 +418,11 @@ private:
   void doStart();
   void doStop();
 
-  void checkVtStateChange();
+  //! @param ai32_fakeOffTimeDurationMs The number of ms the VT is faked
+  //!                                   from now on to be offline.
+  void fakeVtOffPeriod (int32_t ai32_fakeOffTimeDurationMs) { mi32_fakeVtOffUntil = HAL::getTime() + ai32_fakeOffTimeDurationMs; }
+  void fakeVtOffStop() { mi32_fakeVtOffUntil = -1; }
+  void checkAndHandleVtStateChange();
 
   void startCurrentUploadPhase();
   void indicateUploadPhaseCompletion();
@@ -516,7 +512,6 @@ private:
 
   uint8_t mui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   uint8_t mui8_uploadError;
-  uint8_t mui8_uploadRetry;
 
   MultiSend_c::sendSuccess_t men_sendSuccess;
 
@@ -556,6 +551,8 @@ private:
   iVtObjectStreamer_c mc_iVtObjectStreamer;
 
   int32_t mi32_timeWsAnnounceKey;
+
+  int32_t mi32_fakeVtOffUntil;
 
   bool mb_isSlave; // @todo WS SLAVE: could be substituted by master/slave specific derived classes
 };
