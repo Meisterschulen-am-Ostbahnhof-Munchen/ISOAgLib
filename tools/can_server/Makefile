@@ -95,7 +95,7 @@ CLFLAGS   := -pthread
 GCC_VERSION := $(shell $(CXX) -dumpversion)
 EXTRA_CFLAGS := $(if $(findstring ^2.,^$(GCC_VERSION).),,-Wextra -Winit-self -Wmissing-include-dirs)
 INCPATH  := -I. -Isrc -I$(ISOAGLIB_PATH)/library/xgpl_src/IsoAgLib/hal/pc/can -I$(ISOAGLIB_PATH)/library/xgpl_src
-COMPILERFLAGS = -pipe -O0 $(CLFLAGS) -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith -DPRJ_USE_AUTOGEN_CONFIG=config_can_server.h -DSYSTEM_WITH_ENHANCED_CAN_HAL $(INCPATH) $(1)
+COMPILERFLAGS = -pipe -O $(CLFLAGS) -Wall -g $(EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith -DPRJ_USE_AUTOGEN_CONFIG=config_can_server.h -DSYSTEM_WITH_ENHANCED_CAN_HAL $(INCPATH) $(1)
 
 CFLAGS = $(call COMPILERFLAGS,) $(1)
 CXXFLAGS = $(call COMPILERFLAGS,) $(1)
