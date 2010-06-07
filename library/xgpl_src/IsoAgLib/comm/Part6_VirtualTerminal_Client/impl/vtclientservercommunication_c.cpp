@@ -156,14 +156,6 @@ void SendUpload_c::set (uint16_t aui16_objId, const char* apc_string, uint16_t o
     vec_uploadBuffer.push_back (0xFF);
   }
 
-#if DEBUG_HEAP_USEAGE
-  if ( vec_uploadBuffer.capacity() != sui16_lastPrintedBufferCapacity )
-  {
-    sui16_lastPrintedBufferCapacity = vec_uploadBuffer.capacity();
-    INTERNAL_DEBUG_DEVICE << "IsoTerminal_c Buffer-Capa: " << sui16_lastPrintedBufferCapacity << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-#endif
-
   mssObjectString = NULL;  /// Use BUFFER - NOT MultiSendStreamer!
   ppc_vtObjects = NULL;
 }
