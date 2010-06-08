@@ -104,7 +104,6 @@ makedir:
 
 ${APP_NAME}: ${OBJS}
 	${LINK} ${PLATFORM_LIB_LINK_OPTIONS} ${OBJS} -o $@ ${LIBRARY_SEARCH_PATHS} ${myLIBRARY_NAMES} ${EXTRA_LINK_OPTIONS}
-	${CP} ${APP_NAME} ${APP_NAME}
 	${STRIP} ${APP_NAME}
 
 $(OUTDIR)/vt2iso.o: ${SRC}/vt2iso.cpp ${SRC}/vt2isoimagebase_c.h ${SRC}/vt2isoimagefreeimage_c.h
