@@ -8,12 +8,25 @@
 //                      if the corresponding value in isoaglib_config.h changed
 
 
-#define PRJ_USE_AUTOGEN_CONFIG config_can_messenger.h
+// These defines are needed for inclusion of the correct HAL modules:
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+#define HAL_PATH_ISOAGLIB_SYSTEM IsoAgLib/hal/pc/system
+#define HAL_PATH_ISOAGLIB_CAN IsoAgLib/hal/pc/can
+#define HAL_PATH_ISOAGLIB_EEPROM IsoAgLib/hal/pc/eeprom
+#define HAL_PATH_SUPPLEMENTARY_RS232 supplementary_driver/hal/pc/rs232
+#define HAL_PATH_SUPPLEMENTARY_ACTOR supplementary_driver/hal/pc/actor
+#define HAL_PATH_SUPPLEMENTARY_SENSOR supplementary_driver/hal/pc/sensor
+#define HAL_PATH_SUPPLEMENTARY_DATASTREAMS supplementary_driver/hal/pc/datastreams
+
+
+// These defines are set in the conf_can_messenger_socket_win32:
 
 
 #define CAN_INSTANCE_CNT 1 
 
 #define PRT_INSTANCE_CNT 1 
+
+#define RS232_CHANNEL_CNT 1 
 
 #define RS232_INSTANCE_CNT 1 
 
@@ -53,6 +66,9 @@
 #endif
 #ifndef USE_ISO_11783 
 	#define USE_ISO_11783 
+#endif
+#ifndef USE_RS232
+	#define USE_RS232 1
 #endif
 
 // The following configuration values can be overwritten.
