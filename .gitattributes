@@ -260,6 +260,13 @@ tools/can_server/can_server_sontheim_mt_api.vcproj -text
 tools/can_server/can_server_sontheim_st_api.vcproj -text
 tools/can_server/can_server_vector.vcproj -text
 tools/can_server/can_server_vector_xl.vcproj -text
+tools/can_server/cmake/can_server_lawicel/CMakeLists.txt -text
+tools/can_server/cmake/can_server_msq_no_card/CMakeLists.txt -text
+tools/can_server/cmake/can_server_pcan/CMakeLists.txt -text
+tools/can_server/cmake/can_server_socket_no_card/CMakeLists.txt -text
+tools/can_server/cmake/can_server_sontheim_mt_api/CMakeLists.txt -text
+tools/can_server/cmake/can_server_sontheim_st_api/CMakeLists.txt -text
+tools/can_server/cmake/can_server_vector/CMakeLists.txt -text
 tools/can_server/src/can_server_common.cpp -text
 tools/can_server/src/can_server_common.h -text
 tools/can_server/src/can_server_msq.cpp -text
@@ -533,6 +540,7 @@ tools/libs/pthread/lib/pthreadVSE2.lib -text
 tools/libs/xerces-c/README.txt -text
 tools/logalizer/Makefile -text
 tools/logalizer/README.txt -text
+tools/logalizer/cmake/CMakeLists.txt -text
 tools/logalizer/logalizer.vcproj -text
 tools/logalizer/src/logalizer.cpp -text
 tools/proc2iso/AUTHORS -text
@@ -547,6 +555,7 @@ tools/proc2iso/bin/Proc2Iso.exe -text
 tools/proc2iso/bin/proc2iso.cmd -text
 tools/proc2iso/bin/proc2iso.xsd -text
 tools/proc2iso/bin/xerces-c_2_5_0.dll -text
+tools/proc2iso/cmake/CMakeLists.txt -text
 tools/proc2iso/config.guess -text
 tools/proc2iso/config.h.in -text
 tools/proc2iso/config.sub -text
@@ -573,6 +582,7 @@ tools/project_generation/update_makefile_qmake_stub.pro -text
 tools/project_generation/update_makefile_vc6_prj_base.dsp eol=crlf
 tools/vt2iso/Makefile -text
 tools/vt2iso/Makefile.incl -text
+tools/vt2iso/cmake/CMakeLists.txt -text
 tools/vt2iso/doc/ISO-VirtualTerminal-Objects.txt -text
 tools/vt2iso/doc/vt2iso.xsd -text
 tools/vt2iso/src/specialparsingbase_c.h -text
