@@ -8,7 +8,7 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-project(CAN_SERVER_PCAN)
+project(CAN_SERVER_SOCKET_SOCKETCAN)
 
 add_definitions(
   -DPRJ_USE_AUTOGEN_CONFIG=config_can_server.h
@@ -42,15 +42,15 @@ if(WIN32)
   link_directories(
     ../../../../tools/libs/pthread/lib
     ../../../libs/pcan/Win32/VC_LIB)
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 Pcan_usb.lib)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32)
 else()
   set(ISOAGLIB_ADDITIONAL_LIBRARIES rt)
 endif(WIN32)
 
 add_executable(
-  can_server_pcan
+  can_server_socket_socketcan
   ../../src/can_server_common.cpp
   ../../src/can_server_sock.cpp
-  ../../src/devices/can_device_pcan.cpp)
+  ../../src/devices/can_device_socketcan.cpp)
 
-target_link_libraries(can_server_pcan ${ISOAGLIB_ADDITIONAL_LIBRARIES})
+target_link_libraries(can_server_socket_socketcan ${ISOAGLIB_ADDITIONAL_LIBRARIES})

@@ -8,12 +8,12 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-project(CAN_SERVER_VECTOR)
+project(CAN_SERVER_MSQ_PCAN)
 
 add_definitions(
   -DPRJ_USE_AUTOGEN_CONFIG=config_can_server.h
   -DSYSTEM_WITH_ENHANCED_CAN_HAL
-  -DCAN_DRIVER_SOCKET)
+  -DCAN_DRIVER_MESSAGE_QUEUE)
 
 if(WIN32)
   add_definitions(-DSYSTEM_PC_VC)
@@ -35,22 +35,23 @@ include_directories(
 if(WIN32)
   include_directories(
     ../../../../tools/libs/pthread/include
-    "C:/Programme/CANLIB/dll")
+    ../../../libs/pcan/Include)
 
   find_package(Threads REQUIRED)
   message(STATUS "(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})")
   link_directories(
     ../../../../tools/libs/pthread/lib
-    "C:/Programme/CANLIB/dll")
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 vcandm32)
+    ../../../libs/pcan/Win32/VC_LIB)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32 Pcan_usb)
 else()
   set(ISOAGLIB_ADDITIONAL_LIBRARIES rt)
 endif(WIN32)
 
 add_executable(
-  can_server_vector
+  can_server_msq_pcan
   ../../src/can_server_common.cpp
-  ../../src/can_server_sock.cpp
-  ../../src/devices/can_device_vector_canlib.cpp)
+  ../../src/can_server_msq.cpp
+  ../../src/devices/can_device_pcan.cpp
+  ../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp)
 
-target_link_libraries(can_server_vector ${ISOAGLIB_ADDITIONAL_LIBRARIES})
+target_link_libraries(can_server_msq_pcan ${ISOAGLIB_ADDITIONAL_LIBRARIES})

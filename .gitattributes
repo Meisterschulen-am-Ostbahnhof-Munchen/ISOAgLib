@@ -262,8 +262,11 @@ tools/can_server/can_server_vector.vcproj -text
 tools/can_server/can_server_vector_xl.vcproj -text
 tools/can_server/cmake/can_server_lawicel/CMakeLists.txt -text
 tools/can_server/cmake/can_server_msq_no_card/CMakeLists.txt -text
-tools/can_server/cmake/can_server_pcan/CMakeLists.txt -text
+tools/can_server/cmake/can_server_msq_pcan/CMakeLists.txt -text
+tools/can_server/cmake/can_server_msq_socketcan/CMakeLists.txt -text
 tools/can_server/cmake/can_server_socket_no_card/CMakeLists.txt -text
+tools/can_server/cmake/can_server_socket_pcan/CMakeLists.txt -text
+tools/can_server/cmake/can_server_socket_socketcan/CMakeLists.txt -text
 tools/can_server/cmake/can_server_sontheim_mt_api/CMakeLists.txt -text
 tools/can_server/cmake/can_server_sontheim_st_api/CMakeLists.txt -text
 tools/can_server/cmake/can_server_vector/CMakeLists.txt -text
