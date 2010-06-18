@@ -1,7 +1,3 @@
-#ifdef WIN32
-#  define SYSTEM_PC_VC
-#endif
-
 #define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/isoaglib_config.h>

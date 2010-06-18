@@ -54,7 +54,7 @@
 #include "vt2iso-defines.hpp"
 #include "vt2iso.hpp"
 
-#ifndef SYSTEM_PC_VC
+#ifndef WIN32
 #include <stdint.h>
 #else
   typedef unsigned char uint8_t;

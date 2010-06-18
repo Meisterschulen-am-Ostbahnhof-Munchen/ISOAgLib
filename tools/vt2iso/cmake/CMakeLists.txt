@@ -16,9 +16,7 @@ add_definitions(
   -DHAL_PATH_ISOAGLIB=IsoAgLib/hal/pc
   -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
   -DUSE_FREE_IMAGE_LIB
-  -DOPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
-  -DHAL_PATH_ISOAGLIB_SYSTEM=IsoAgLib/hal/pc/system
-  -DSYSTEM_PC_VC)
+  -DHAL_PATH_ISOAGLIB_SYSTEM=IsoAgLib/hal/pc/system)
 
 include_directories(
   ../../../library/xgpl_src
@@ -41,7 +39,7 @@ find_package(Boost REQUIRED)
 
 add_executable(
   vt2iso
-	../src/vt2iso.cpp
+  ../src/vt2iso.cpp
   ../src/vt2iso-defines.cpp
   ../src/vt2iso-globals.cpp
   ../src/vt2iso.cpp

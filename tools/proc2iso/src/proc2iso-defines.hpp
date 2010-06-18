@@ -26,17 +26,18 @@
  * along with IsoAgLib; if not, write to the Free Software Foundation,     *
  * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
  ***************************************************************************/
-#ifndef SYSTEM_PC_VC
-	#include <stdint.h>
+
+#ifndef WIN32
+#include <stdint.h>
 #else
-	typedef unsigned char uint8_t;
-	typedef signed char int8_t;
-	typedef unsigned short uint16_t;
-	typedef short int16_t;
-	typedef unsigned int uint32_t;
-	typedef int int32_t;
-	typedef unsigned long long int uint64_t;
-	typedef long int long int64_t;
+typedef unsigned char uint8_t;
+typedef signed char int8_t;
+typedef unsigned short uint16_t;
+typedef short int16_t;
+typedef unsigned int uint32_t;
+typedef int int32_t;
+typedef unsigned long long int uint64_t;
+typedef long int long int64_t;
 #endif
 
 #define stringLength 256

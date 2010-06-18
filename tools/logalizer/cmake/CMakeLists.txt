@@ -15,6 +15,6 @@ include_directories(
 
 add_executable(
   logalizer
-	../src/logalizer.cpp)
+  ../src/logalizer.cpp)
 
 target_link_libraries(logalizer)

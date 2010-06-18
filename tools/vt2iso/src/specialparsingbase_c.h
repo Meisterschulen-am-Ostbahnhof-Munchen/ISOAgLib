@@ -51,7 +51,7 @@
 #include <xercesc/parsers/XercesDOMParser.hpp>
 #include <xercesc/util/XMLUni.hpp>
 
-#ifndef SYSTEM_PC_VC
+#ifndef WIN32
 #include <stdint.h>
 #else
   typedef unsigned char uint8_t;

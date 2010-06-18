@@ -42,13 +42,9 @@
 
 #include <string>
 
-#ifndef SYSTEM_PC_VC
+#ifndef WIN32
 #include <stdint.h>
 #include <xercesc/parsers/AbstractDOMParser.hpp>
-
-
-
-
 #else
   typedef unsigned char uint8_t;
   typedef signed char int8_t;
