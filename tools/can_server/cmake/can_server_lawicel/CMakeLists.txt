@@ -33,7 +33,6 @@ if(WIN32)
     ../../../../tools/libs/pthread/include
     "C:/Programme/LAWICEL/CANUSB/include")
   find_package(Threads REQUIRED)
-  message(STATUS "(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})")
   link_directories(
     ../../../../tools/libs/pthread/lib
     "C:/Programme/LAWICEL/CANUSB/libs/Microsoft")

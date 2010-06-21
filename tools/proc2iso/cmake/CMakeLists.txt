@@ -22,7 +22,6 @@ include_directories(
   ../../../library/xgpl_src)
 
 if(WIN32)
-  # TODO check this:
   include_directories(
     ../../libs/boost/boost_1_38_0
     ../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/include)

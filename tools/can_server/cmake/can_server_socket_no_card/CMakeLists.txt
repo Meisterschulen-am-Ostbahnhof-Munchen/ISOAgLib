@@ -31,7 +31,6 @@ include_directories(
 if(WIN32)
   include_directories(../../../../tools/libs/pthread/include)
   find_package(Threads REQUIRED)
-  message(STATUS "(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})")
   link_directories("../../../../tools/libs/pthread/lib")
   set(ISOAGLIB_ADDITIONAL_LIBRARIES odbc32 odbccp32 winmm pthreadVC2 ws2_32)
 else()

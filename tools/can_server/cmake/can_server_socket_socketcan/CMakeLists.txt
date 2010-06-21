@@ -34,7 +34,6 @@ if(WIN32)
     ../../../libs/pcan/Include)
 
   find_package(Threads REQUIRED)
-  message(STATUS "(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})")
   link_directories(
     ../../../../tools/libs/pthread/lib
     ../../../libs/pcan/Win32/VC_LIB)

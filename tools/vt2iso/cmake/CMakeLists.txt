@@ -20,20 +20,21 @@ add_definitions(
 
 include_directories(
   ../../../library/xgpl_src
-  ../src)
+  ../src
+  ../../libs/freeimage)
 
 if(WIN32)
   include_directories(
     ../../libs/boost/boost_1_38_0
-    ../../libs/freeimage
     ../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/include)
   link_directories(
     ../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/lib
     ../../libs/freeimage)
   set(ISOAGLIB_ADDITIONAL_LIBRARIES User32 Gdi32 Ws2_32 xerces-c_2 Advapi32)
 else()
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES xerces-c)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES xerces-c freeimage)
 endif(WIN32)
+
 
 find_package(Boost REQUIRED)
 
