@@ -270,6 +270,7 @@ tools/can_server/cmake/can_server_socket_socketcan/CMakeLists.txt -text
 tools/can_server/cmake/can_server_sontheim_mt_api/CMakeLists.txt -text
 tools/can_server/cmake/can_server_sontheim_st_api/CMakeLists.txt -text
 tools/can_server/cmake/can_server_vector/CMakeLists.txt -text
+tools/can_server/cmake/can_server_vector_xl/CMakeLists.txt -text
 tools/can_server/src/can_server_common.cpp -text
 tools/can_server/src/can_server_common.h -text
 tools/can_server/src/can_server_msq.cpp -text

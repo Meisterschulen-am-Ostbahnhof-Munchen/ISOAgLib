@@ -32,7 +32,9 @@ if(WIN32)
     ../../libs/freeimage)
   set(ISOAGLIB_ADDITIONAL_LIBRARIES User32 Gdi32 Ws2_32 xerces-c_2 Advapi32)
 else()
-  set(ISOAGLIB_ADDITIONAL_LIBRARIES xerces-c freeimage)
+  link_directories(
+    ../../libs/freeimage)
+  set(ISOAGLIB_ADDITIONAL_LIBRARIES xerces-c)
 endif(WIN32)
 
 
