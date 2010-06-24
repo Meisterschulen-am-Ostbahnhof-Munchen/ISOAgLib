@@ -1470,6 +1470,14 @@ shortcut_makefile()
 #END_OF_MAKEFILE
 }
 
+omit_or_printf()
+{
+    [ 1 -lt $# ] || return
+    FORMAT="$1"
+    shift
+    printf -- "$FORMAT" "$@"
+}
+
 create_standard_makefile()
 {
     MakefileName="Makefile"
@@ -1614,6 +1622,33 @@ EOF
     done
 
     shortcut_makefile "$MakefileNameLong" "Makefile"
+
+    # In addition generate a CMakeLists.txt file:
+
+    : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CMakeLists.txt}
+    local INSERT_CMAKE_PROJECT="$PROJECT"
+    local INSERT_CMAKE_DEFINITIONS="$(omit_or_printf '\n  -D%s' $(
+        echo_ PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
+             echo_ SYSTEM_WITH_ENHANCED_CAN_HAL
+        fi
+        case "$USE_CAN_DRIVER" in
+            (msq_server)
+                echo_ CAN_DRIVER_MESSAGE_QUEUE
+                ;;
+            (socket_server|socket_server_hal_simulator)
+                echo_ CAN_DRIVER_SOCKET
+                ;;
+        esac;))"
+
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
+
+    local INSERT_CMAKE_LINK_DIRECTORIES="${USE_LINUX_EXTERNAL_LIBRARY_PATH:-}"
+    local INSERT_CMAKE_ADD_EXECUTABLE="$(
+        omit_or_printf '\n  %s' "$PROJECT" $(
+            cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c' || status_le1))"
+    INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
+    expand_template "$CMAKE_SKELETON_FILE" >CMakeLists.txt
 }
 
 create_pure_application_makefile()

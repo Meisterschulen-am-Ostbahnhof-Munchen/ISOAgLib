@@ -38,7 +38,6 @@ if(WIN32)
     "C:/Programme/XL Driver Library/bin")
 
   find_package(Threads REQUIRED)
-  message(STATUS "(CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})")
   link_directories(
     ../../../../tools/libs/pthread/lib
     "C:/Programme/XL Driver Library/bin")
