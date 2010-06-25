@@ -267,10 +267,8 @@ public: // Public methods
     * for implement in work state was requested */
   IsoAgLib::IsoImplWorkFlag_t maintainPowerForImplInWork() const {return IsoAgLib::IsoImplWorkFlag_t(mt_implState.inWork);}
 
-  bool isVtLanguageReceived()   const { return mb_languageVtReceived; }
   bool isTecuLanguageReceived() const { return mb_languageTecuReceived; }
 
-  const uint8_t* getVtLanguage()   const { return mp8ui8_languageVt; }
   const uint8_t* getTecuLanguage() const { return mp8ui8_languageTecu; }
 
   enum SendLanguage_e { LanguageSent, LanguageNotSent };
@@ -365,14 +363,8 @@ private:
   uint8_t mui8_hitchRear;
 
 
-  /** VT language information */
-  uint8_t mp8ui8_languageVt[8];
-
   /** TECU language information */
   uint8_t mp8ui8_languageTecu[8];
-
-  /** VT language reception information */
-  bool mb_languageVtReceived;
 
   /** TECU language reception information */
   bool mb_languageTecuReceived;

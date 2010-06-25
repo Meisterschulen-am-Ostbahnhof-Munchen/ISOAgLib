@@ -180,10 +180,8 @@ namespace IsoAgLib {
     */
   IsoAgLib::IsoLimitFlag_t rearHitchPosLimitStatus()const {return TracGeneral_c::rearHitchPosLimitStatus();}
 
-  bool isVtLanguageReceived()   const { return TracGeneral_c::isVtLanguageReceived();}
   bool isTecuLanguageReceived() const { return TracGeneral_c::isTecuLanguageReceived();}
 
-  const uint8_t* getVtLanguage()   const { return TracGeneral_c::getVtLanguage();}
   const uint8_t* getTecuLanguage() const { return TracGeneral_c::getTecuLanguage();}
 
   /** send iso language data msg*/

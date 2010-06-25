@@ -305,26 +305,42 @@ IsoTerminal_c::processMsg()
         }
       }
     }
-    return true; // CHANGED! - VT_TO_GLOBAL is NOT of interest for anyone else anymore as we're handlign Aux Assignment here now!
+    return true;
   }
 
 
   /// -->LANGUAGE_PGN<-- ///
   if ((data().isoPgn() & 0x3FFFF) == LANGUAGE_PGN)
   {
-      // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
+    VtServerInstance_c* pc_server = NULL;
+    // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
     for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
     {
       if (lit_vtServerInst->getVtSourceAddress() == data().isoSa())
-        lit_vtServerInst->setLocalSettings();
+      {
+        pc_server = &(*lit_vtServerInst);
+        break;
+      }
     }
 
-    for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+    if (pc_server != NULL)
     {
-      if (mvec_vtClientServerComm[ui8_index])
-        mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn(); /// @todo OPTIMIZATION: Only notify those vtCSCs which are connected to this VT!
+      pc_server->setLocalSettings();
+
+      // notify all connected vtCSCs
+      for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
+      {
+        if (mvec_vtClientServerComm[ui8_index]
+            &&
+            mvec_vtClientServerComm[ui8_index]->connectedToVtServer()
+            &&
+            (mvec_vtClientServerComm[ui8_index]->getVtServerInstPtr() == pc_server)
+          )
+          mvec_vtClientServerComm[ui8_index]->notifyOnVtsLanguagePgn();
+      }
     }
-    return false;
+    // else: Language PGN from non-VtServerInstance - ignore
+    return true;
   }
 
   return false; /** shouldn't reach here as all filters are handled and returned above */

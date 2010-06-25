@@ -15,6 +15,8 @@
 #include "filterbox_c.h"
 #include "canio_c.h"
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
+#include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_FILTERBOX || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
@@ -25,8 +27,6 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-//#include <IsoAgLib/hal/generic_utils/can/canfifo_c.h>
-#include <IsoAgLib/hal/generic_utils/can/icanfifo.h>
 
 namespace __IsoAgLib {
 
@@ -65,7 +65,7 @@ FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
     mui8_busNumber(acrc_src.mui8_busNumber),
     mi32_fbVecIdx(acrc_src.mi32_fbVecIdx)
 #if ((defined( USE_ISO_11783)) \
-		    && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+     && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
     , mb_performIsobusResolve(acrc_src.mb_performIsobusResolve)
   #endif
 {}
@@ -236,6 +236,9 @@ void FilterBox_c::set (const Ident_c& acrc_mask,
                        CanCustomer_c* apc_customer,
                        int8_t ai8_dlcForce)
 {
+  // actually "apc_customer" should've rather been a reference!
+  isoaglib_assert (apc_customer);
+
   mc_filter = acrc_filter;
   mc_mask = acrc_mask;
 
@@ -271,7 +274,6 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) 
     @return                true -> no more cancustomers exist, whole filterbox can be deleted
   */
 bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
-
 {
   for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
         pc_iter != mvec_customer.end(); pc_iter++)
@@ -315,23 +317,19 @@ bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 */
 bool FilterBox_c::processMsg()
 {
-  for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = mvec_customer.begin(); c_customerIterator != mvec_customer.end(); c_customerIterator++ )
+  bool b_result = false;
+
+  for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = mvec_customer.begin();
+        c_customerIterator != mvec_customer.end();
+        ++c_customerIterator )
   {
-    if (c_customerIterator->pc_customer == NULL)
-    { // pointer to CanCustomer_c  wasn't set
-      // -> don't know who wants to process the msg
-      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
-      return false;
-    }
-    // ####################################################
-    // from here on the c_customerIterator has a valid pointer
-    // ####################################################
+    isoaglib_assert (c_customerIterator->pc_customer);
 
     CanPkgExt_c* pc_target = &(c_customerIterator->pc_customer->dataBase());
+
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       HAL::can_useMsgobjGet(mui8_busNumber, 0xFF, pc_target);
     #else
-
       const int32_t ci32_fifoRet = HAL::fifo_useMsgObjGet(mui8_busNumber, pc_target);
       if (ci32_fifoRet != HAL_NO_ERR)
       {
@@ -340,32 +338,30 @@ bool FilterBox_c::processMsg()
         << "Central Fifo - Reading problem on bus : " << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
         IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
-        return false;
+        return b_result;
       }
       #if DEBUG_FILTERBOX
          INTERNAL_DEBUG_DEVICE
         << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-
     #endif
 
-    const int8_t ci8_vecCurstomerDlcForce = c_customerIterator->i8_dlcForce;
+    const int8_t ci8_vecCustomerDlcForce = c_customerIterator->i8_dlcForce;
     const int8_t ci8_targetLen = pc_target->getLen();
 
     /// Check DataLengthCode (DLC) if required
-    if ((ci8_vecCurstomerDlcForce < 0) || (ci8_vecCurstomerDlcForce == ci8_targetLen))
+    if ((ci8_vecCustomerDlcForce < 0) || (ci8_vecCustomerDlcForce == ci8_targetLen))
     { // either no dlc-check requested or dlc matches the check!
       pc_target->mst_msgState = DlcValid;
     }
     else
     { // dlc-check was requested but failed
+      pc_target->mst_msgState = (ci8_targetLen < ci8_vecCustomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
 
       #if DEBUG_FILTERBOX
          INTERNAL_DEBUG_DEVICE
         << "DLC_ERROR on identifier : " << pc_target->ident() << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-
-      pc_target->mst_msgState = (ci8_targetLen < ci8_vecCurstomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
     }
 
     #ifdef USE_ISO_11783
@@ -385,29 +381,31 @@ bool FilterBox_c::processMsg()
       // add address-resolving result to dlc-check result!
       pc_target->mst_msgState = static_cast<MessageState_t>(pc_target->mst_msgState | pc_target->resolveReceivingInformation());
 
-      // call customer's processMsg function, to let it
-      // process the received CAN msg
-      pc_target->string2Flags();
-
       if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrInvalid)
         || ((pc_target->mst_msgState & DlcValidationMask) != DlcValid)
          )
-      {
+      { // AdrInvalid || !DlcValid
         #ifdef PROCESS_INVALID_PACKETS
+        pc_target->string2Flags();
         if (c_customerIterator->pc_customer->processInvalidMsg() )
         { // customer indicated, that it processed the content of the received message
           // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          return true;
+          b_result = true;
         }
         #endif
       }
-      else if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrValid) || (c_customerIterator->pc_customer->isNetworkMgmt()) )
-      { // is either valid or OnlyNetworkMgmt with a CANCustomer which is of type NetworkMgmt
-        if ( c_customerIterator->pc_customer->processMsg() )
-        { // customer indicated, that it processed the content of the received message
-          //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          return true;
+      else
+      { // !AdrInvalid && DlcValid
+        if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrValid) || (c_customerIterator->pc_customer->isNetworkMgmt()) )
+        { // is either [AdrValid] or [OnlyNetworkMgmt with NwMan-Customer]
+          pc_target->string2Flags();
+          if ( c_customerIterator->pc_customer->processMsg() )
+          { // customer indicated, that it processed the content of the received message
+            //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
+            b_result = true;
+          }
         }
+        // else: OnlyNetworkMgmt but no NwMan-Customer - discard message
       }
     }
       #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
@@ -422,32 +420,30 @@ bool FilterBox_c::processMsg()
      // OR there is a proprietary message CAN channel - and this FilterBox_c object is dedicated to the proprietary CAN channel (by being at "else" block)
      // OR there can be a mixture of ISO 11783 and proprietary messages on one channel - and the currently handled message is not ISO 11783 (by being at "else" block)
     {
-      // call customer's processMsg function, to let it
-      // process the received CAN msg
-      pc_target->string2Flags();
-
       if ((pc_target->mst_msgState & DlcValidationMask) != DlcValid)
       {
         #ifdef PROCESS_INVALID_PACKETS
+        pc_target->string2Flags();
         if (c_customerIterator->pc_customer->processInvalidMsg() )
         { // customer indicated, that it processed the content of the received message
           // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          return true;
+          b_result = true;
         }
         #endif
       }
       else
       {
+        pc_target->string2Flags();
         if ( c_customerIterator->pc_customer->processMsg() )
         { // customer indicated, that it processed the content of the received message
           //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          return true;
+          b_result = true;
         }
       }
     }
     #endif
   }
-  return false;
+  return b_result;
 }
 
 #if DEBUG_CAN_BUFFER_FILLING

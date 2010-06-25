@@ -79,11 +79,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   {
     if ( checkAlreadyClosed() )
     {
-      // *************************************************************************************************
-      // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
-      mb_languageVtReceived = false;
       mb_languageTecuReceived = false;
-      // *************************************************************************************************
     }
 
     //call init for handling which is base data independent
@@ -277,6 +273,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         }
         b_result = true;
         break;
+
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
       {
         indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[data().getISONameForSA()];
@@ -302,32 +299,18 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         b_result = true;
         break;
       }
-      // **********************************************************
-      // Added by Martin Wodok for LANGUAGE_PGN:
+
       case LANGUAGE_PGN:
-        IsoName_c::ecuType_t ecuType = data().getISONameForSA().getEcuType();
-        switch (ecuType)
-        {
-          case IsoName_c::ecuTypeVirtualTerminal: // SA = 0x26
-            mb_languageVtReceived = true;
-            for (int i=0; i<8; i++)
-            {
-              mp8ui8_languageVt[i] = data().getUint8Data(i);
-            }
-            break;
-          case IsoName_c::ecuTypeTractorECU: // SA = 0xF0
-            mb_languageTecuReceived = true;
-            for (int i=0; i<8; i++)
-            {
-              mp8ui8_languageTecu[i] = data().getUint8Data(i);
-            }
-            break;
-          default: // don't care for other language pgns...
-            break;
+        if (data().getISONameForSA().getEcuType() == IsoName_c::ecuTypeTractorECU)
+        { // only from nodes that indicate "TractorECU"
+          mb_languageTecuReceived = true;
+          for (int i=0; i<8; i++)
+          {
+            mp8ui8_languageTecu[i] = data().getUint8Data(i);
+          }
         }
-        b_result = false; // so that IsoTerminal_c can also receive the LANGUAGE_PGN
+        b_result = true;
         break;
-      // **********************************************************
     }
     return b_result;
   }
