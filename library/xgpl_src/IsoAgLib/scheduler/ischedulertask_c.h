@@ -33,7 +33,7 @@ class iSchedulerTask_c : private __IsoAgLib::Scheduler_Task_c {
 public:
 
   /** Constructor */
-  iSchedulerTask_c(int ai_key = 0);
+  iSchedulerTask_c();
 
   /** Destructor */
   ~iSchedulerTask_c();
@@ -73,7 +73,7 @@ public:
       @param  ai16_newTimePeriod otpional -> New Period will set for the Client by Scheduler_c
   */
   bool  changeRetriggerTime(int32_t i32_nextRetriggerTime, int16_t ai16_newTimePeriod = -1)
-    { return __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort( this, i32_nextRetriggerTime, ai16_newTimePeriod );}
+    { return __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort( this, i32_nextRetriggerTime, ai16_newTimePeriod );}
 
   /** clear mb_alreadyClosed so that close() can be called one time */
   void clearAlreadyClosed( void ) { Scheduler_Task_c::clearAlreadyClosed(); }
@@ -139,22 +139,7 @@ public:
   //! can be overloaded by Childclass for special condition
   virtual void updateEarlierAndLatestInterval();
 
- /**
-    virtual function which delivers a pointer to the iCANCustomer
-    specific iCanPkgExt_c instance.
-    Default implementation of this function "borrows" the CanPkgExt_c instance of the corresponding
-    IsoMonitor_c singleton class.
-    This function has only to be overloaded by a derived class, if the application wants to use a special
-    derived version from iCanPkgExt_c for special sting2flags() and flags2string() functionality.
-  */
-  virtual iCanPkgExt_c& iDataBase();
-
-  /** return the protocol instance */
-
-  int getSingletonVecKey() const { return mi_key;}
-
 protected:
-
   /**  Operation: setTimePeriod
     * Set client specific time period between calls of timeEvent.
     * Each from Scheduler_Task_c derived class must set at its INIT
@@ -183,18 +168,13 @@ protected:
 
   private:
 
-  /**protocol instance */
-  int mi_key;
-
   /** gives to iCanio_c the permission to look inside the container, useful for
    the casting between canCustomer_c and iSchedulerTask_c */
   friend class iCanIo_c;
   friend struct iIsoFilter_s;
   friend class iMultiReceive_c;
   friend class iScheduler_c;
-
 };
-
 
 }
 

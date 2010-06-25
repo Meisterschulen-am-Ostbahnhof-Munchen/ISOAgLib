@@ -50,6 +50,9 @@ CanPkgExt_c& IsoTerminal_c::dataBase()
 /** default constructor
  */
 IsoTerminal_c::IsoTerminal_c() :
+  mc_data(), /* to be set later on when it's being set from Singleton-Template construct */
+  ml_vtServerInst(),
+  mvec_vtClientServerComm(),
   mt_handler(*this),
   mt_customer(*this)
 {
@@ -68,6 +71,8 @@ IsoTerminal_c::~IsoTerminal_c()
 void
 IsoTerminal_c::singletonInit()
 {
+  mc_data.setSingletonKey( getSingletonVecKey() );
+
   // clear state of b_alreadyClosed, so that close() is called one time
   setAlreadyClosed();
 
@@ -85,7 +90,7 @@ IsoTerminal_c::init()
     clearAlreadyClosed();
 
     // register in Scheduler_c to get time-events
-    getSchedulerInstance4Comm().registerClient(this);
+    getSchedulerInstance().registerClient(this);
     // register to get ISO monitor list changes
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
@@ -109,7 +114,7 @@ IsoTerminal_c::close()
     setAlreadyClosed();
 
     // deregister in Scheduler_c
-    getSchedulerInstance4Comm().unregisterClient(this);
+    getSchedulerInstance().unregisterClient(this);
     // deregister in IsoMonitor_c
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
 

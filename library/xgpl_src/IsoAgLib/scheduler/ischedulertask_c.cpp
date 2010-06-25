@@ -24,14 +24,14 @@ namespace IsoAgLib {
 
 /** Costructor for iSchedulerTask_c */
 
-iSchedulerTask_c::iSchedulerTask_c(int ai_key):mi_key(ai_key)
+iSchedulerTask_c::iSchedulerTask_c()
 {
   if (checkAlreadyClosed())
   { // avoid another call
     clearAlreadyClosed();
 
     // register in Scheduler_c to get time-events
-    __IsoAgLib::getSchedulerInstance4Comm().registerClient(this);
+    __IsoAgLib::getSchedulerInstance().registerClient(this);
   }
 };
 
@@ -44,7 +44,7 @@ iSchedulerTask_c:: ~iSchedulerTask_c()
     setAlreadyClosed();
 
     // deregister in Scheduler_c
-    __IsoAgLib::getSchedulerInstance4Comm().unregisterClient(this);
+    __IsoAgLib::getSchedulerInstance().unregisterClient(this);
   }
 };
 
@@ -77,19 +77,6 @@ uint16_t iSchedulerTask_c::getForcedMinExecTime() const
 void iSchedulerTask_c::updateEarlierAndLatestInterval()
 {
   return updateEarlierAndLatestIntervalDefault();
-}
-
-/**
-  virtual function which delivers a pointer to the iCANCustomer
-  specific iCanPkgExt_c instance.
-  Default implementation of this function "borrows" the CanPkgExt_c instance of the corresponding
-  IsoMonitor_c singleton class.
-  This function has only to be overloaded by a derived class, if the application wants to use a special
-  derived version from iCanPkgExt_c for special sting2flags() and flags2string() functionality.
-*/
-iCanPkgExt_c& iSchedulerTask_c::iDataBase()
-{
-  return static_cast<iCanPkgExt_c&>(__IsoAgLib::getIsoMonitorInstance4Comm().dataBase());
 }
 
 

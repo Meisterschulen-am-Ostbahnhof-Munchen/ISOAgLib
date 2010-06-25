@@ -79,6 +79,7 @@ IsoMonitor_c::IsoMonitor_c() :
 */
 void IsoMonitor_c::singletonInit()
 {
+  mc_data.setSingletonKey( getSingletonVecKey() );
   setAlreadyClosed(); // so init() will init ;-) (but only once!)
   // "init();" moved to systemStartup() in Scheduler_c to avoid circular dependencies
 }
@@ -90,7 +91,6 @@ void IsoMonitor_c::init( void )
   // only init if closed (constructor "closes" it so it gets init'ed initially!
   if (checkAlreadyClosed())
   {
-    mc_data.setSingletonKey( getSingletonVecKey() );
     #if DEBUG_HEAP_USEAGE
     sui16_isoItemTotal -= mvec_isoMember.size();
     #endif
@@ -109,7 +109,7 @@ void IsoMonitor_c::init( void )
     /// timeEvent will change to longer Period after Start
     setTimePeriod( (uint16_t) 125   );
     // register in Scheduler_c to be triggered fopr timeEvent
-    getSchedulerInstance4Comm().registerClient( this );
+    getSchedulerInstance().registerClient( this );
 
     mpc_activeLocalMember = NULL;
 
@@ -155,7 +155,7 @@ void IsoMonitor_c::close( void )
     {
       (*c_arrClientC1.begin())->close();
     }
-    getSchedulerInstance4Comm().unregisterClient( this );
+    getSchedulerInstance().unregisterClient( this );
 
     // Explicitly clear the saClaimHandler-list BEFORE clearing the ISOItems.
     // else the ISOItems would notify the saClaimHandlers on their loss

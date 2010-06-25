@@ -34,6 +34,7 @@ namespace __IsoAgLib
   */
   void ProprietaryMessageHandler_c::singletonInit()
   {
+    mc_data.setSingletonKey( getSingletonVecKey() );
     setAlreadyClosed();
     init();
   }
@@ -46,8 +47,7 @@ namespace __IsoAgLib
   {
     if (checkAlreadyClosed())
     {
-      getSchedulerInstance4Comm().registerClient( this );
-      mc_data.setSingletonKey( getSingletonVecKey() );
+      getSchedulerInstance().registerClient( this );
       // register to get ISO monitor list changes
       __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( *this );
       mb_hardTiming = false;
@@ -65,7 +65,7 @@ namespace __IsoAgLib
       // avoid another call
       setAlreadyClosed();
       // unregister from timeEvent() call by Scheduler_c
-      getSchedulerInstance4Comm().unregisterClient( this );
+      getSchedulerInstance().unregisterClient( this );
       // unregister ISO monitor list changes
       __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( *this );
     }

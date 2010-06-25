@@ -391,7 +391,7 @@ public:
   /// Function notify Scheduler_c to set new retriggerTime
   /// will be called from IdentItem_c and registerClient
   /// IsoMonitor_c.timeEvent() should be called in 50 ms
-  void changeRetriggerTime() { getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 );};
+  void changeRetriggerTime() { getSchedulerInstance().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 );};
 
 
   /** command switching to and from special service / diagnostic mode.

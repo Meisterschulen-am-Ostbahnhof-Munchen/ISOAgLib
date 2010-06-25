@@ -125,7 +125,7 @@ void
 FsManager_c::singletonInit()
 {
   // register in Scheduler_c to get time-events
-  getSchedulerInstance4Comm().registerClient(this);
+  getSchedulerInstance().registerClient(this);
   // register to get ISO monitor list changes
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
 }
@@ -193,7 +193,7 @@ void
 FsManager_c::close()
 {
   // deregister in Scheduler_c
-  getSchedulerInstance4Comm().unregisterClient(this);
+  getSchedulerInstance().unregisterClient(this);
   // deregister in ISOMonitor_c
   getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
 

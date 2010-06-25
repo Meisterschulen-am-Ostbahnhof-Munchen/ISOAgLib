@@ -406,7 +406,10 @@ private: // Private attributes
     this is called from singleton.h and should NOT be called from the user again.
     users please use init(...) instead.
   */
-  void singletonInit() { init(); };
+  void singletonInit() {
+    mc_data.setSingletonKey( getSingletonVecKey() );
+    init();
+  }
 
   class CanCustomerProxy_c : public CanCustomer_c {
   public:

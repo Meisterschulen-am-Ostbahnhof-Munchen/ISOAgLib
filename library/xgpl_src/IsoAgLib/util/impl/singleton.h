@@ -127,7 +127,7 @@
   #define SINGLETON_MEMBER_CONSTRUCTOR    c_clientBase( ai_singletonVecKey ),
   #define SINGLETON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getSingletonVecKey() ),
   #define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ai_singletonVecKey ),
-  
+
   #define SINGLETON_VEC_KEY_INIT_CALL                   setSingletonKey( ai_singletonVecKey );
   #define SINGLETON_VEC_KEY                             getSingletonVecKey()
   #define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
@@ -135,7 +135,6 @@
 
   #define getForeignInstance4Comm(PAR)      PAR.getSingletonVecKey()
   #define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
-  #define getSchedulerInstance4Comm()       getSchedulerInstance( getSingletonVecKey() )
   #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getSingletonVecKey() )
   #define getTracGeneralInstance4Comm()     getTracGeneralInstance( getSingletonVecKey() )
   #define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance( getSingletonVecKey() )
@@ -276,7 +275,6 @@
 
   #define getForeignInstance4Comm(PAR)
   #define getCanInstance4Comm()             getCanInstance()
-  #define getSchedulerInstance4Comm()       getSchedulerInstance()
   #define getTimePosGpsInstance4Comm()      getTimePosGpsInstance()
   #define getTracGeneralInstance4Comm()     getTracGeneralInstance()
   #define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance()

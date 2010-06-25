@@ -609,10 +609,10 @@ IsoItem_c* IsoItem_c::getMaster()
   // check if called for a master isoItem_c
   if ( isMaster() ) return this;
 
-  uint8_t ui8_numberOfMembers = getIsoMonitorInstance().isoMemberCnt(true);
+  uint8_t ui8_numberOfMembers = getIsoMonitorInstance4Comm().isoMemberCnt(true);
   for ( uint8_t ui8_index = 0; ui8_index < ui8_numberOfMembers; ui8_index++)
   {
-    IsoItem_c& refc_isoItem = getIsoMonitorInstance().isoMemberInd(ui8_index, true);
+    IsoItem_c& refc_isoItem = getIsoMonitorInstance4Comm().isoMemberInd(ui8_index, true);
     if ( refc_isoItem.isMaster() )
     {
       STL_NAMESPACE::vector<IsoName_c>* mpvec_slaveIsoNamesTmp = refc_isoItem.getVectorOfClients();

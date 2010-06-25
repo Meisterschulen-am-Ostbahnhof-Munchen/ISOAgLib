@@ -100,6 +100,8 @@ class FsServerInstance_c : public CanCustomer_c
     IsoFilter_s ms_receiveFilter;
 
   public:
+    FsManager_c& getFsManager() { return c_fsManager; }
+
     /**
       * Get the fileserver's state. The values are described in the corresponding enum.
       */

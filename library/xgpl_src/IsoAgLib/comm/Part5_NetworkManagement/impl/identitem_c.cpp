@@ -125,7 +125,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
   }
 
   // Do start up the complete system first (if not yet done - call is idempotent!, so okay to do here!)
-  getSchedulerInstance4Comm().startSystem();
+  getSchedulerInstance().startSystem();
 
   // set all other member variables depending on the EEPROM-Address parameter/member variable
   mui16_eepromAdr = aui16_eepromAdr;

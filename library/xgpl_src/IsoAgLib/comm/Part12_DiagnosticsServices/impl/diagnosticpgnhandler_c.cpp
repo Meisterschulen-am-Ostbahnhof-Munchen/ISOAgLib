@@ -78,7 +78,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
   {
     case ISOBUS_CERTIFICATION_PGN:
       if (mb_certificationIsSet &&
-          __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket(
+          __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
             mrc_identItem.isoName(),
             m_certification,
             8,
@@ -98,7 +98,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF// Reserved bytes according to the standard
       };
 
-      if (__IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket(
+      if (__IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
             mrc_identItem.isoName(),
             diagProtocolId,
             8,
@@ -114,7 +114,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
 
     case SOFTWARE_IDENTIFICATION_PGN:
       if (!mstr_SwIdentification.empty() &&
-          __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket(
+          __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
             mrc_identItem.isoName(),
             ( uint8_t* ) mstr_SwIdentification.c_str(),
             mstr_SwIdentification.size(),
@@ -130,7 +130,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
 
     case ECU_IDENTIFICATION_INFORMATION_PGN:
       if (!mstr_EcuIdentification.empty() &&
-           __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket(
+           __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
             mrc_identItem.isoName(),
             ( uint8_t* ) mstr_EcuIdentification.c_str(),
             mstr_EcuIdentification.size(),
@@ -149,7 +149,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       static const uint8_t activeTroubleCodes[6] = {
         0xFF,0xFF,0x00,0x00,0x00
       };
-      if ( __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
+      if ( __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
                                                                     activeTroubleCodes,
                                                                     6,
                                                                     ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
@@ -166,7 +166,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, __IsoAgL
       static const uint8_t previouslyActiveTroubleCodes[6] = {
         0xFF,0xFF,0x00,0x00,0x00
       };
-      if ( __IsoAgLib::getMultiSendInstance().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
+      if ( __IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
                                                                     previouslyActiveTroubleCodes,
                                                                     6,
                                                                     PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,

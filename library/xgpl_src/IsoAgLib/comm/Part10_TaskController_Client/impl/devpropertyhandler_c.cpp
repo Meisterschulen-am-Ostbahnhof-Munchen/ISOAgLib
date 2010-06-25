@@ -281,7 +281,7 @@ DevPropertyHandler_c::processMsg()
         if (data().getUint8Data(1) == 0)
         {
           men_uploadStep = UploadUploading;
-          getMultiSendInstance().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
+          getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
             getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
             this, PROCESS_DATA_PGN, men_sendSuccess);
         }
@@ -1077,7 +1077,7 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
   else
   {
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
-    getMultiSendInstance().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
+    getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
       getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
       &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, men_sendSuccess);
     men_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;

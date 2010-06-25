@@ -296,15 +296,9 @@ private: // Private attributes
   STL_NAMESPACE::list<SchedulerEntry_c> mc_spareQueue;
 };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique Scheduler_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  Scheduler_c& getSchedulerInstance( uint8_t aui8_instance = 0 );
-#else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
   Scheduler_c& getSchedulerInstance( void );
-#endif
+
 }
 
 #endif

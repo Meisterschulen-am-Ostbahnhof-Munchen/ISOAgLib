@@ -83,22 +83,13 @@ extern unsigned int DeallocateHeapMalloc;
 /* import some namespaces for easy access */
 /* ************************************** */
 namespace __IsoAgLib {
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique Scheduler_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  Scheduler_c& getSchedulerInstance( uint8_t aui8_instance )
-  { // if > 1 singleton instance is used, no static reference can be used
-    return Scheduler_c::instance( aui8_instance );
-  }
-#else
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
   Scheduler_c& getSchedulerInstance( void )
   {
-     static Scheduler_c& c_lbs = Scheduler_c::instance();
-    return c_lbs;
+    static Scheduler_c& c_scheduler = Scheduler_c::instance();
+    return c_scheduler;
   }
-#endif
+
 
 /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
 int32_t Scheduler_c::mi32_lastTimeEventTime = 0;
@@ -176,42 +167,85 @@ void Scheduler_c::startSystem()
   if (!mb_systemStarted)
   {
     mb_systemStarted = true;
+    /// 1.) Init REAL Singletons
     // NOW INIT ONCE the core singleton classes that correspond to the compile time
     // configured features of the IsoAgLib
     getILibErrInstance().init();
-    getIsoMonitorInstance4Comm().init();
-    getIsoFilterManagerInstance4Comm().init();
 
+    /// 2.) Init Multipletons (multi protocol)
+#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT == 1)
+    getIsoMonitorInstance().init();
+    getIsoFilterManagerInstance().init();
 #ifdef DEF_Stream_IMPL
-    getMultiReceiveInstance4Comm().init();
-    getMultiSendInstance4Comm().init();
+    getMultiReceiveInstance().init();
+    getMultiSendInstance().init();
 #endif
 #ifdef USE_PROCESS
-    getProcessInstance4Comm().init();
+    getProcessInstance().init();
 #endif
 #ifdef USE_TRACTOR_GENERAL
-    getTracGeneralInstance4Comm().init();
+    getTracGeneralInstance().init();
 #endif
 #ifdef USE_TRACTOR_FACILITIES
-    getTracFacilitiesInstance4Comm().init();
+    getTracFacilitiesInstance().init();
 #endif
 #ifdef USE_TRACTOR_MOVE
-    getTracMoveInstance4Comm().init();
+    getTracMoveInstance().init();
 #endif
 #ifdef USE_TRACTOR_PTO
-    getTracPtoInstance4Comm().init();
+    getTracPtoInstance().init();
 #endif
 #ifdef USE_TRACTOR_LIGHT
-    getTracLightInstance4Comm().init();
+    getTracLightInstance().init();
 #endif
 #ifdef USE_TRACTOR_AUX
-    getTracAuxInstance4Comm().init();
+    getTracAuxInstance().init();
 #endif
 #ifdef USE_TIME_GPS
-    getTimePosGpsInstance4Comm().init();
+    getTimePosGpsInstance().init();
 #endif
 #ifdef USE_ISO_TERMINAL
     getIsoTerminalInstance().init();
+#endif
+
+#else
+
+    for ( int ind = 0; ind < PRT_INSTANCE_CNT; ++ind )
+    {
+      getIsoMonitorInstance( ind ).init();
+      getIsoFilterManagerInstance( ind ).init();
+#ifdef DEF_Stream_IMPL
+      getMultiReceiveInstance( ind ).init();
+      getMultiSendInstance( ind ).init();
+#endif
+#ifdef USE_PROCESS
+      getProcessInstance( ind ).init();
+#endif
+#ifdef USE_TRACTOR_GENERAL
+      getTracGeneralInstance( ind ).init();
+#endif
+#ifdef USE_TRACTOR_FACILITIES
+      getTracFacilitiesInstance( ind ).init();
+#endif
+#ifdef USE_TRACTOR_MOVE
+      getTracMoveInstance( ind ).init();
+#endif
+#ifdef USE_TRACTOR_PTO
+      getTracPtoInstance( ind ).init();
+#endif
+#ifdef USE_TRACTOR_LIGHT
+      getTracLightInstance( ind ).init();
+#endif
+#ifdef USE_TRACTOR_AUX
+      getTracAuxInstance( ind ).init();
+#endif
+#ifdef USE_TIME_GPS
+      getTimePosGpsInstance( ind ).init();
+#endif
+#ifdef USE_ISO_TERMINAL
+      getIsoTerminalInstance( ind ).init();
+#endif
+    }
 #endif
   }
 }
@@ -916,8 +950,6 @@ bool Scheduler_c::changeRetriggerTimeAndResort(Scheduler_Task_c * apc_client, in
 /// @param  ai16_newTimePeriod optional -> New Period will set for the Client by Scheduler_c
 bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntry_c>::iterator itc_task, int32_t ai32_newRetriggerTime, int16_t ai16_newTimePeriod)
 {
-
-
   #if DEBUG_SCHEDULER
   printTaskList();
   #endif

@@ -505,7 +505,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_functions, "    IsoAgLib::iVtObject_c* HUGE_MEM * pc_objList = %sall_iVtObjectLists [i_listIndex];\n", mstr_namespacePrefix.c_str());
     fprintf (partFile_functions, "    while (i_objCount)\n");
     fprintf (partFile_functions, "    {\n");
-    fprintf (partFile_functions, "      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs);\n");
+    fprintf (partFile_functions, "      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n");
     fprintf (partFile_functions, "      ++pc_objList;\n");
     fprintf (partFile_functions, "      ++pps_sROMs;\n");
     fprintf (partFile_functions, "      --i_objCount;\n");

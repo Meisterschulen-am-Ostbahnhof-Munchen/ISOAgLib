@@ -215,9 +215,11 @@ struct RegisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
     getIsoRequestPgnInstance4Comm().registerPGN(*mcp_handler, aui32_pgn, aui32_pgnMask);
   }
-  RegisterPgn_s(IsoRequestPgnHandler_c *apc_handler) :
+  RegisterPgn_s(IsoRequestPgnHandler_c *apc_handler SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) :
+    SINGLETON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:
+  SINGLETON_MEMBER_DEF
   IsoRequestPgnHandler_c *const mcp_handler;
 };
 
@@ -228,9 +230,11 @@ struct UnregisterPgn_s : public std::binary_function< uint32_t, uint32_t, void >
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
     getIsoRequestPgnInstance4Comm().unregisterPGN(*mcp_handler, aui32_pgn, aui32_pgnMask);
   }
-  UnregisterPgn_s(IsoRequestPgnHandler_c *apc_handler) :
-      mcp_handler(apc_handler) {}
+  UnregisterPgn_s(IsoRequestPgnHandler_c *apc_handler SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) :
+    SINGLETON_MEMBER_CONSTRUCTOR
+    mcp_handler(apc_handler) {}
 private:
+  SINGLETON_MEMBER_DEF
   IsoRequestPgnHandler_c *const mcp_handler;
 };
 

@@ -790,7 +790,7 @@ MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent,
   // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
   // this is yet to optimize because we can detect exactly how long to sleep, etc.etc.
   /// THIS IS ALWAYS CALLED FROM ::processMsg, so we can't use setTimePeriod() here
-  __IsoAgLib::getSchedulerInstance4Comm().changeRetriggerTimeAndResort(this, HAL::getTime()+mi32_retriggerDelayForFirstCts, mi32_timePeriodForActiveStreams);
+  __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime()+mi32_retriggerDelayForFirstCts, mi32_timePeriodForActiveStreams);
 
   return &mlist_streams.back();
 }
@@ -1198,6 +1198,7 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
 void
 MultiReceive_c::singletonInit()
 {
+  mc_data.setSingletonKey( getSingletonVecKey() );
   setAlreadyClosed(); // so init() will perform once!
   init();
 }
@@ -1211,7 +1212,7 @@ MultiReceive_c::init()
     // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
     // register in Scheduler_c to get timeEvents
-    getSchedulerInstance4Comm().registerClient( this );
+    getSchedulerInstance().registerClient( this );
     // register to get ISO monitor list changes
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
@@ -1235,7 +1236,7 @@ MultiReceive_c::close( void )
     // avoid another call
     setAlreadyClosed();
     // deregister in Scheduler_c to get no more timeEvents
-    getSchedulerInstance4Comm().unregisterClient( this );
+    getSchedulerInstance().unregisterClient( this );
     // deregister to get no more IsoMonitorList changes
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
@@ -1370,10 +1371,10 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIt
     case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
@@ -1381,10 +1382,10 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIt
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.)
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }

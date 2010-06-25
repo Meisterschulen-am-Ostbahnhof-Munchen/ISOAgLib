@@ -39,6 +39,7 @@ FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_
                       NULL,
                       &pref_newItem.isoName(),
                       8, Ident_c::ExtendedIdent)
+  , c_data (getForeignInstance4Comm (ref_fsManager))
 {
   isoaglib_assert (!getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager)).existIsoFilter (ms_receiveFilter));
   getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))

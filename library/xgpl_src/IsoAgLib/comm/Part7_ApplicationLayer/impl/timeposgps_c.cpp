@@ -635,8 +635,7 @@ namespace __IsoAgLib {
              )
           {
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-            IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
-            c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
+            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
 #endif
             notifyOnEvent (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
           }
@@ -990,8 +989,7 @@ namespace __IsoAgLib {
           mui16_speedOverGroundCmSec = ui16_newSOG;
           mi32_lastIsoDirection = data().time();
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-          IsoAgLib::iTracMove_c& c_tracmove = IsoAgLib::getITracMoveInstance();
-          c_tracmove.updateSpeed(IsoAgLib::GpsBasedSpeed);
+          getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
 #endif
           notifyOnEvent (NMEA_GPS_DIRECTION_DATA_PGN);
         }

@@ -57,7 +57,7 @@ class Scheduler_Task_c {
   /** This method has to be overridden so that IsoAgLib's scheduler
     * calls it periodically once the object has been registered at
     * IsoAgLib's scheduler (it's typically done that way:
-    * getSchedulerInstance4Comm().registerClient(this)).
+    * getSchedulerInstance().registerClient(this)).
     * 
     * \return Status.
     * \retval false The activities could not be performed in the available time.

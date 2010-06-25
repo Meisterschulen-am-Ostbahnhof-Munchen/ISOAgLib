@@ -184,8 +184,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     data().setLen(8);
 
     data().setISONameForSA( *getISOName() );
-    if ( getIsoMonitorInstance4Comm().existIsoMemberNr( getTracGuidanceCommandInstance().getCommander() ) )
-      data().setISONameForDA( getIsoMonitorInstance4Comm().isoMemberNr( getTracGuidanceCommandInstance().getCommander() ).isoName() );
+    if ( getIsoMonitorInstance4Comm().existIsoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ) )
+      data().setISONameForDA( getIsoMonitorInstance4Comm().isoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ).isoName() );
     else
       data().setISONameForDA( IsoName_c::IsoNameUnspecified() );
 

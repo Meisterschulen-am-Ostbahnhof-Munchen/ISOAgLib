@@ -71,7 +71,7 @@ void Process_c::init()
 { // clear state of b_alreadyClosed, so that close() is called one time
   clearAlreadyClosed();
   // first register in Scheduler_c
-  getSchedulerInstance4Comm().registerClient( this );
+  getSchedulerInstance().registerClient( this );
   mi32_lastFilterBoxTime = 0;
   mb_needCallOfCheckCreateRemoteReceiveFilter = false;
   __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
@@ -83,8 +83,6 @@ void Process_c::init()
   mpc_processWsmTaskMsgHandler = NULL;
 
   mpc_processDataChangeHandler = NULL;
-
-  mc_data.setSingletonKey( getSingletonVecKey() );
 
   // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
   const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
@@ -104,7 +102,7 @@ void Process_c::close( void ) {
     // avoid another call
     setAlreadyClosed();
     // unregister from Scheduler_c
-    getSchedulerInstance4Comm().unregisterClient( this );
+    getSchedulerInstance().unregisterClient( this );
 
     // unregister ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );

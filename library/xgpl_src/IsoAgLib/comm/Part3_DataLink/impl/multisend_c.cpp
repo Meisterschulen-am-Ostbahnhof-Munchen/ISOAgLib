@@ -240,6 +240,7 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
 void
 MultiSend_c::singletonInit()
 {
+  mc_data.setSingletonKey( getSingletonVecKey() );
   setAlreadyClosed(); // so init() will init ;-)
   init();
 };
@@ -257,8 +258,7 @@ MultiSend_c::init(void)
     clearAlreadyClosed();
 
     // first register in Scheduler_c
-    getSchedulerInstance4Comm().registerClient( this );
-    mc_data.setSingletonKey( getSingletonVecKey() );
+    getSchedulerInstance().registerClient( this );
 
     // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
@@ -284,7 +284,7 @@ void MultiSend_c::close()
     setAlreadyClosed();
 
     // unregister from Scheduler_c
-    getSchedulerInstance4Comm().unregisterClient( this );
+    getSchedulerInstance().unregisterClient( this );
 
     // unregister ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
@@ -865,7 +865,7 @@ MultiSend_c::calcAndSetNextTriggerTime()
   { // no SendStreams needs to come to action, so idle around
     i32_nextRetriggerNeeded = System_c::getTime() + 5000;
   }
-  getSchedulerInstance4Comm().changeRetriggerTimeAndResort (this, i32_nextRetriggerNeeded); // no need to change the period, as we don't use it - we always calculate the next trigger time!
+  getSchedulerInstance().changeRetriggerTimeAndResort (this, i32_nextRetriggerNeeded); // no need to change the period, as we don't use it - we always calculate the next trigger time!
 }
 
 
@@ -900,8 +900,8 @@ MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemM
     case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
@@ -909,8 +909,8 @@ MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemM
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }

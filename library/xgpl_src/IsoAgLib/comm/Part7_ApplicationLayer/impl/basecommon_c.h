@@ -172,11 +172,11 @@ namespace __IsoAgLib
 
   protected:
     RegisterPgn_s getRegisterPgn() {
-      return RegisterPgn_s(&mt_handler);
+      return RegisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
     }
 
     UnregisterPgn_s getUnregisterPgn(){
-      return UnregisterPgn_s(&mt_handler);
+      return UnregisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
     }
 
     void setTimePeriod(uint16_t aui16_timePeriod) {
@@ -188,7 +188,7 @@ namespace __IsoAgLib
     }
 
     bool changeTimePeriodAndResortTask(uint16_t aui16_newTimePeriod ) {
-      return getSchedulerInstance4Comm().changeTimePeriodAndResortTask(
+      return getSchedulerInstance().changeTimePeriodAndResortTask(
           &mt_task,
           aui16_newTimePeriod);
     }
@@ -196,7 +196,7 @@ namespace __IsoAgLib
     bool changeRetriggerTimeAndResort(
         int32_t ai32_newRetriggerTime,
         int16_t ai16_newTimePeriod = -1) {
-      return getSchedulerInstance4Comm().changeRetriggerTimeAndResort(
+      return getSchedulerInstance().changeRetriggerTimeAndResort(
           &mt_task,
           ai32_newRetriggerTime,
           ai16_newTimePeriod);

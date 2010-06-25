@@ -164,7 +164,7 @@ void TracGuidanceCommand_c::isoSendMessageImplMode( )
   data().setIsoPri(3);
   data().setLen(8);
 
-  data().setISONameForDA( getTracGuidanceInstance().getSelectedDataSourceISONameConst() );
+  data().setISONameForDA( getTracGuidanceInstance4Comm().getSelectedDataSourceISONameConst() );
   data().setISONameForSA( *getISOName() );
   data().setIsoPgn(GUIDANCE_SYSTEM_CMD);
   data().setUint16Data(0, mmap_commanders[mui8_commanderSa].ui16_curvatureCmd);

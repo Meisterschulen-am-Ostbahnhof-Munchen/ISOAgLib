@@ -53,7 +53,7 @@ FsCommand_c::FsCommand_c(
   , ui8_nrOpenFiles( 0 )
   , b_keepConnectionOpen( false )
   , i32_lastAliveSent( -1 )
-  , c_data()
+  , c_data( getForeignInstance4Comm (rc_inFileserver.getFsManager() )
   , ui8_packetLength(0)
   , pui8_receiveBuffer( NULL )
   , ui32_recBufAllocSize( 0 )
@@ -98,7 +98,7 @@ FsCommand_c::FsCommand_c(
   , mb_retryMultiPacketSend( false)
 {
   // Scheduler
-  getSchedulerInstance4Comm().registerClient (&mc_schedulerTask);
+  getSchedulerInstance().registerClient (&mc_schedulerTask);
 
 #if DEBUG_FILESERVER
   EXTERNAL_DEBUG_DEVICE << "FsCommand created!" << EXTERNAL_DEBUG_DEVICE_ENDL;
@@ -129,7 +129,7 @@ FsCommand_c::~FsCommand_c()
   }
 
   // Scheduler
-  getSchedulerInstance4Comm().unregisterClient (&mc_schedulerTask);
+  getSchedulerInstance().unregisterClient (&mc_schedulerTask);
 
 #if DEBUG_FILESERVER
   EXTERNAL_DEBUG_DEVICE << "FsCommand destroyed!" << EXTERNAL_DEBUG_DEVICE_ENDL;

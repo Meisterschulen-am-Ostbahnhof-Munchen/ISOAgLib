@@ -584,7 +584,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   FilterBox_c* tempFilterBox_c = getFilterBox(c_newMask, c_newFilter);
 
   if (tempFilterBox_c != NULL)
-  { //cancustomer does not exist -> insert
+  { // filterbox with mask/filter found
     #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
     INTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
@@ -693,19 +693,9 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
 #endif
 
 
-    if (b_oldSize >= cntFilter())
-    { // dynamic array didn't grow -> alloc error
-      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Can );
-      return NULL; // exit the function
-    }
     #if DEBUG_HEAP_USEAGE
-    else
-    {
-      sui16_filterBoxTotal++;
-    }
+    sui16_filterBoxTotal++;
     #endif
-
-
   }
 
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -965,21 +955,22 @@ uint32_t ui32_msgNbr = 0;
           #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
           HAL::can_stateMsgobjOverflow(mui8_busNumber, i32_ident );
 
-          #if DEBUG_CAN_BUFFER_FILLING
-          if ( ! b_detectedOverflow )
-          {
-            INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
-              << uint16_t(ui32_msgNbr) << " at BUS: " << uint16_t(mui8_busNumber)
-              << " with Ident: " << i32_ident
-              << INTERNAL_DEBUG_DEVICE_ENDL;
-          }
-          b_detectedOverflow = true;
-	  #endif
+            #if DEBUG_CAN_BUFFER_FILLING
+            if ( ! b_detectedOverflow )
+            {
+              INTERNAL_DEBUG_DEVICE << "\r\nALARM!!!!!! CAN Buffer Overflow at MsgObj: "
+                << uint16_t(ui32_msgNbr) << " at BUS: " << uint16_t(mui8_busNumber)
+                << " with Ident: " << i32_ident
+                << INTERNAL_DEBUG_DEVICE_ENDL;
+            }
+            b_detectedOverflow = true;
+            #endif
           #endif
           b_forceProcessAll = true;
           break;
         case HAL_UNKNOWN_ERR:
-        //no message to read
+        // no message to read
+        // don't process message below, keep "to_be_processed == false"
         break;
         default:
          to_be_processed = true;
@@ -987,12 +978,10 @@ uint32_t ui32_msgNbr = 0;
         break;
       }
 
-
-      if(to_be_processed) //found a message to be processed
-      {
+      if (to_be_processed)
+      { // found a message to be processed
         /**
         * Possible cases :
-        * - i32_retVal = HAL_UNKNOWN_ERR -> nothing to read
         * - i32_fbIdx = -1 --> a reconfiguration was ongoing at the reception of the message, so the suitable FB should be found here
         *                     among all created FB
         * - i32_fbIdx > = m_arrFilterBox.size() --> the FilterBox that wanted the message has been canceled, so discard the message
@@ -1011,8 +1000,8 @@ uint32_t ui32_msgNbr = 0;
             << i32_ident << INTERNAL_DEBUG_DEVICE_ENDL;
         }
   #endif
-        if(mi32_lastProcessedCanPkgTime > mi32_endLastReconfigTime ) // the message has not arrived before the last reconfiguration,check on all the FB
-        {
+        if (mi32_lastProcessedCanPkgTime > mi32_endLastReconfigTime )
+        { // the message has not arrived before the last reconfiguration,check on all the FB
 #endif
           if(i32_fbIdx >= 0 && i32_fbIdx < static_cast<int32_t>(m_arrFilterBox.size()))
           {
