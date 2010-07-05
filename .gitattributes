@@ -64,7 +64,6 @@ library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessage
 library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessagehandler_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/impl/proprietarymessagehandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/iproprietarymessageclient_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part3_ProprietaryMessages/iproprietarymessagehandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/icontrolfunctionstatehandler_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h -text
 library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h -text

@@ -63,8 +63,15 @@ namespace __IsoAgLib
   bool ProprietaryMessageClient_c::defineReceiveFilter( uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c& acrc_rremoteECU, const IdentItem_c* apc_localIdent)
   {
     // require a minimum mask, so that no other messages could be retrieved, but only PROP A/A2/B
-    if ( ( ((aui32_mask & 0x2FF0000) == 0x2FF0000) && ((aui32_filter & 0x2FF0000) == 0x0EF0000) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
-         ( ((aui32_mask & 0x3FF0000) == 0x3FF0000) && ((aui32_filter & 0x3FF0000) == 0x0FF0000) )    /** Proprietary B */
+    if ( ( (aui32_mask == scui32_noMask) &&
+           (aui32_filter == scui32_noFilter) &&
+           (acrc_rremoteECU == screfc_noIsoName) &&
+           (apc_localIdent == spc_nolocalIdent)
+         )
+         ||
+         ( ( ((aui32_mask & 0x2FF0000) == 0x2FF0000) && ((aui32_filter & 0x2FF0000) == 0x0EF0000) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
+           ( ((aui32_mask & 0x3FF0000) == 0x3FF0000) && ((aui32_filter & 0x3FF0000) == 0x0FF0000) )    /** Proprietary B */
+         )
        )
     {
       /** set actual values for filter, mask, remote and local ident */
@@ -74,7 +81,7 @@ namespace __IsoAgLib
       mpc_localIdent = apc_localIdent;
 
       /** force an update */
-      getProprietaryMessageHandlerInstance4Comm().triggerClientDataUpdate(this);
+      getProprietaryMessageHandlerInstance4Comm().triggerClientDataUpdate (*this);
       return(true);
     }
     return(false);
@@ -110,6 +117,26 @@ namespace __IsoAgLib
     mui32_sendPeriodicMsec = aui32_sendPeriodMsec;
     // notify scheduler to re-thing his scheduling after we've changed something now
     getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation (this);
+  }
+
+
+  IsoFilter_s
+  ProprietaryMessageClient_c::getCurrentFilter()
+  {
+    const IsoName_c& rc_localIsoName = (
+                                        (mpc_localIdent == NULL)
+                                        ||
+                                        (((mui32_canFilter & 0x3FF0000) >> 8) == PROPRIETARY_B_PGN)
+                                       )
+                                        ? IsoName_c::IsoNameUnspecified() // if we have no IdentItem, we have no IsoName
+                                        : mpc_localIdent->isoName();
+
+    // create new IsoFilter
+    return IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(*this),
+                        mui32_canMask,
+                        mui32_canFilter,
+                        &rc_localIsoName,
+                        &mc_isonameRemoteECU);
   }
 
 };

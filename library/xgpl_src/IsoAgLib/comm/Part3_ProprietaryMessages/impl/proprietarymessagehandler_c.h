@@ -97,11 +97,15 @@ namespace __IsoAgLib
     /** Function for Debugging in Scheduler_c */
     virtual const char* getTaskName() const;
 
-    /** force an update of the CAN receive filter, as new data has been set in an already
-        registered client.
-        @return true, when the client has been found, so that an update has been performed
+    /** force an update of the CAN receive filter (if possible), as initial or
+        new data has been set in an already registered client.
+        @param arc_proprietaryclient the registered client.
+        @param ab_forceFilterRemoval true => force removal of the filter for now
+                                     (without changing it to "NoFilter" in the client!)
     */
-    bool triggerClientDataUpdate(ProprietaryMessageClient_c* client);
+    void triggerClientDataUpdate(
+      ProprietaryMessageClient_c &arc_proprietaryclient,
+      bool ab_forceFilterRemoval);
 
     /** send the data in
             ProprietaryMessageClient_c::ms_sendData

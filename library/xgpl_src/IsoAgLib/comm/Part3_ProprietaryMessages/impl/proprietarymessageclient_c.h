@@ -123,6 +123,10 @@ namespace __IsoAgLib
         return( mui32_nextSendTimeStamp );
       }
 
+      //! Attention: Current filter may not be valid in case the
+      //! address wasn't/isn't claimed!
+      IsoFilter_s getCurrentFilter();
+
     /// Using the singletonVecKey from mpc_localIdent (-->IdentItem_c)
     SINGLETON_PAR_ARR_DEF(mpc_localIdent)
 

@@ -91,7 +91,8 @@ namespace __IsoAgLib
     // look in the whole list
     for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     { // client is registered
-      if ( (*client_iterator).pc_client ==  apc_proprietaryclient ) return;
+      if ( (*client_iterator).pc_client ==  apc_proprietaryclient )
+        return;
     }
     /* define receive filter with "no"-values
     scui32_noFilter marks the whole filter as "not set"*/
@@ -105,7 +106,7 @@ namespace __IsoAgLib
   void ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
   {
     /* define receive filter with "no"-values*/
-    apc_proprietaryclient->defineReceiveFilter(scui32_noMask, scui32_noFilter, screfc_noIsoName, spc_nolocalIdent);
+    apc_proprietaryclient->defineReceiveFilter (scui32_noMask, scui32_noFilter, screfc_noIsoName, spc_nolocalIdent);
     // look in the whole list
     for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     {
@@ -119,39 +120,41 @@ namespace __IsoAgLib
   }
 
 
-  /** force an update of the CAN receive filter, as new data has been set in an already
-      registered client.
-      @return true, when the client has been found, so that an update has been performed
-    */
-  bool ProprietaryMessageHandler_c::triggerClientDataUpdate(ProprietaryMessageClient_c* apc_proprietaryclient)
+  void
+  ProprietaryMessageHandler_c::triggerClientDataUpdate(
+    ProprietaryMessageClient_c &arc_proprietaryclient,
+    bool ab_forceFilterRemoval)
   {
+    // default for "ab_forceFilterRemoval"
+    IsoFilter_s s_newIsoFilter (scui32_noMask, scui32_noFilter, screfc_noIsoName, spc_nolocalIdent);
+
+    if (ab_forceFilterRemoval)
+    { // keep default "s_newIsoFilter" from above.
+    }
+    else
+    { // check if client's filter is valid and can be retrieved
+      if ( (arc_proprietaryclient.mpc_localIdent != NULL ) && (!arc_proprietaryclient.mpc_localIdent->isClaimedAddress()) )
+      { // client not yet ready
+        // don't need to reconfigure, will be configured at
+        // the next action anyway (like AddToMonitorList/ReclaimedAddress)
+        return false;
+      }
+      else
+      { // client has a valid filter, so use it!
+        s_newIsoFilter = arc_proprietaryclient.getCurrentFilter();
+      }
+    }
+
     // look in the whole list
-    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
+    for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin();
+          client_iterator != mvec_proprietaryclient.end();
+          ++client_iterator )
     {
       // if client is found in the list
-      if ( (*client_iterator).pc_client == apc_proprietaryclient )
+      if ( (*client_iterator).pc_client == &arc_proprietaryclient )
       {
-        if ( (apc_proprietaryclient->mpc_localIdent != NULL ) && (!apc_proprietaryclient->mpc_localIdent->isClaimedAddress()) )
-        { // client not yet ready
-          return false;
-        }
-        const IsoName_c& rc_localIsoName = (
-                                            (apc_proprietaryclient->mpc_localIdent == NULL) 
-                                            || 
-                                            (((apc_proprietaryclient->mui32_canFilter & 0x3FF0000) >> 8) == PROPRIETARY_B_PGN) 
-                                           )
-                                            ? IsoName_c::IsoNameUnspecified() // if we have no IdentItem, we have no IsoName
-                                            : apc_proprietaryclient->mpc_localIdent->isoName();
-
-        // create new IsoFilter
-        IsoFilter_s s_tempIsoFilter(static_cast<__IsoAgLib::CanCustomer_c&>(*this),
-                                                apc_proprietaryclient->mui32_canMask,
-                                                apc_proprietaryclient->mui32_canFilter,
-                                                &rc_localIsoName,
-                                                &apc_proprietaryclient->mc_isonameRemoteECU);
-
         // Have the filter settings changed?
-        if ( (*client_iterator).s_isoFilter != s_tempIsoFilter)
+        if ( (*client_iterator).s_isoFilter != s_newIsoFilter)
         {
           /// ## if old filter is not equal to "no filter"
           if ((*client_iterator).s_isoFilter.getFilter() != scui32_noFilter)
@@ -161,70 +164,69 @@ namespace __IsoAgLib
             /** deregister at multi-receive */
             getMultiReceiveInstance4Comm().deregisterClient (*this,
                                                              (*client_iterator).s_isoFilter.getIsoNameDa(),
-                                                             (*client_iterator).s_isoFilter.getFilter(),
-                                                             (*client_iterator).s_isoFilter.getMask());
+                                                             (*client_iterator).s_isoFilter.getFilter() >> 8,
+                                                             (*client_iterator).s_isoFilter.getMask() >> 8);
           }
 
           /// ## if new filter is not equal to "no filter"
-          if (apc_proprietaryclient->mui32_canFilter != scui32_noFilter)
+          if (s_newIsoFilter.getFilter() != scui32_noFilter)
           {
             //  insert new filter
-            __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter(s_tempIsoFilter);
+            __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter (s_newIsoFilter);
             /** register for multi-receive */
-            getMultiReceiveInstance4Comm().registerClientIso (*this, rc_localIsoName,
-                                                              (apc_proprietaryclient->mui32_canFilter) >> 8,
-                                                              (apc_proprietaryclient->mui32_canMask) >> 8,
+            getMultiReceiveInstance4Comm().registerClientIso (*this,
+                                                              s_newIsoFilter.getIsoNameDa(),
+                                                              s_newIsoFilter.getFilter() >> 8,
+                                                              s_newIsoFilter.getMask() >> 8,
                                                               true /* also Broadcast */);
           }
           // update filter and mask
-          (*client_iterator).s_isoFilter = s_tempIsoFilter;
+          (*client_iterator).s_isoFilter = s_newIsoFilter;
           // update has performed
           return true;
         }
+        // else: filters are equal, no need to update.
       }
     }
     return false;
   }
 
-  /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
-   * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
-   * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
-   */
+
   void
   ProprietaryMessageHandler_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
   {
-    if ((at_action == AddToMonitorList) || (at_action == ChangedAddress) || (at_action == ReclaimedAddress))
+    switch (at_action)
     {
-      // look in the whole list
-      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
+    case AddToMonitorList: // a "defineReceiveFilter" could have occurred after RemoveFromMonitorList, so re-check!
+    case ReclaimedAddress: // a "defineReceiveFilter" could have occurred after LostAddress, so re-check!
+    case RemoveFromMonitorList:  // when removed, force filters to "NoFilter" in "triggerClientDataUpdate
+      for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin();
+            client_iterator != mvec_proprietaryclient.end();
+            ++client_iterator )
       {
         // look for the ident (if Proprietary B messages no ident is there)
         if ( (*client_iterator).pc_client->mpc_localIdent)
         {
-          // whether the client has claimed address
-          if ( (*client_iterator).pc_client->mpc_localIdent->isClaimedAddress() )
+          // address has claimed -> isoItem
+          if ( (*client_iterator).pc_client->mpc_localIdent->getIsoItem() == &acrc_isoItem )
           {
-            // address has claimed -> isoItem
-            if ( (*client_iterator).pc_client->mpc_localIdent->getIsoItem() == &acrc_isoItem )
-            {
-              // insertFilter now
-              triggerClientDataUpdate( (*client_iterator).pc_client );
-            }
+            // insert/update filter now
+            triggerClientDataUpdate(
+              *((*client_iterator).pc_client),
+              (at_action == RemoveFromMonitorList)); // Remove? -> true (=forceFilterRemoval)
           }
         }
       }
-    }
-    /// @todo SOON-177 Check if we should react on LostAddress and/or RemoveFromMonitorList and maybe we don't need to react on SA changes above (ReclaimedAddress and ChangedAddress)
+      break;
+
+    case ChangedAddress: // nothing could have happened in between
+    case LostAddress: // nothing to be done, filters anyway not active.
+      // nothing to do, because the filters are registered with ISONAME anyway.
+      break;
+    } // switch
   }
 
 
-  /** send the data in
-          ProprietaryMessageClient_c::ms_sendData
-      the data can be accessed directly by
-          iProprietaryMessageHandler_c as its a friend of ProprietaryMessageClient_c
-      the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_c) will be
-      used to control repeated sending
-    */
   void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c& client)
   {
     /** get a CAN instance */
@@ -429,12 +431,6 @@ namespace __IsoAgLib
   }
 
 
-  /** process received moving msg and store updated value for later reading access;
-      called by FilterBox_c::processMsg after receiving a msg
-      process message can work with the received data. method has to be overloaded by the application
-      proprietaryMessageHandler is deciding whether Mask and Ident are ok
-      @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-    */
   bool ProprietaryMessageHandler_c::processMsg()
   {
     // look in the whole list
@@ -474,31 +470,22 @@ namespace __IsoAgLib
   }
 
 
-  //! Function set mui16_earlierInterval and
-  //! ui16_laterInterval that will be used by
-  //! getTimeToNextTrigger(retriggerType_t)
-  //! can be overloaded by Childclass for special condition
   void ProprietaryMessageHandler_c::updateEarlierAndLatestInterval()
   {
     if (mb_hardTiming)
     {
-      mui16_earlierInterval
- = 0; //( ( getTimePeriod() * 3) / 4);
+      mui16_earlierInterval = 0; //( ( getTimePeriod() * 3) / 4);
       mui16_latestInterval = ( getTimePeriod() / 2);
       if (mui16_latestInterval > 20) mui16_latestInterval = 20; // allow max. 20ms latest-jitter if we have hard-timing enabled!
     }
     else
     {
-      mui16_earlierInterval
- = ( ( getTimePeriod() * 3) / 4);
+      mui16_earlierInterval = ( ( getTimePeriod() * 3) / 4);
       mui16_latestInterval = ( getTimePeriod() / 2);
     }
   }
 
 
-  /** functions with periodically actions
-    @return true -> all activities performed
-  */
   bool ProprietaryMessageHandler_c::timeEvent()
   {
     ProprietaryMessageClient_c* pc_nextClient = NULL;
