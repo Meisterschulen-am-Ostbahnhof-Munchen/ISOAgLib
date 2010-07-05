@@ -23,15 +23,12 @@ include_directories(
 
 if(WIN32)
   include_directories(
-    ../../libs/boost/boost_1_38_0
     ../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/include)
   link_directories("../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/lib")
   set(ISOAGLIB_ADDITIONAL_LIBRARIES User32 Gdi32 Ws2_32 xerces-c_2 Advapi32)
 else()
   set(ISOAGLIB_ADDITIONAL_LIBRARIES xerces-c)
 endif(WIN32)
-
-find_package(Boost REQUIRED)
 
 add_executable(
   proc2iso

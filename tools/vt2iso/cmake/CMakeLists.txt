@@ -24,8 +24,9 @@ include_directories(
   ../../libs/freeimage)
 
 if(WIN32)
+  set(BOOST_ROOT "../../libs/boost/boost_1_38_0")
   include_directories(
-    ../../libs/boost/boost_1_38_0
+    ${BOOST_ROOT}
     ../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/include)
   link_directories(
     ../../libs/xerces-c/xerces-c_2_5_0-windows_nt-msvc_60/lib
