@@ -1545,17 +1545,23 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
       std::cerr << "Loading failed!"<<std::endl;
       return false;
     }
+    if (ui_picBufferSize < c_Bitmap.getWidth() * c_Bitmap.getHeight())
+    {
+      delete[] picBuffer;
+      picBuffer = new unsigned char[c_Bitmap.getWidth() * c_Bitmap.getHeight()];
+      ui_picBufferSize = c_Bitmap.getWidth() * c_Bitmap.getHeight();
+    }
     // Decode bitmap to buffer!
     switch (actDepth)
     {
       case 0: // 1 bit colour (monochrome) = 2 colours (black/white)
-        c_Bitmap.write1BitBitmap( picBuffer );
+        c_Bitmap.write1BitBitmap( picBuffer, c_Bitmap.getWidth() * c_Bitmap.getHeight() );
         break;
         case 1: // 4 bit colour = 16 colours
-          c_Bitmap.write4BitBitmap( picBuffer );
+          c_Bitmap.write4BitBitmap( picBuffer, c_Bitmap.getWidth() * c_Bitmap.getHeight() );
           break;
           case 2: // 8 bit colour = 256 colours
-            c_Bitmap.write8BitBitmap( picBuffer );
+            c_Bitmap.write8BitBitmap( picBuffer, c_Bitmap.getWidth() * c_Bitmap.getHeight() );
             break;
     } // switch
 
@@ -4180,11 +4186,14 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , mb_verbose (false)
   , mb_acceptUnknownAttributes(false)
   , mb_silentMode(false)
+  , ui_picBufferSize(1200*1600)
   , b_hasUnknownAttributes(false)
   , b_hasMoreThan6SoftKeys(false)
   , m_errorOccurred(false)
   , parser(NULL)
-{}
+{
+  picBuffer = new unsigned char[1200*1600];
+}
 
 vt2iso_c::~vt2iso_c()
 {
