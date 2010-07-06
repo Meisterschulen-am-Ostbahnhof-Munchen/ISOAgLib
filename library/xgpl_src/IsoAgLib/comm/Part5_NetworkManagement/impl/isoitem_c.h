@@ -210,12 +210,14 @@ public:
   */
   bool timeEvent( void );
 
-  /** process received CAN pkg to update data and react if needed
-    * update settings for remote members (e.g. change of SA)
-    * react on adress claims or request for adress claims for local items
-    @return true -> a reaction on the received/processed msg was sent
+  /** process received ADDRESS_CLAIMED message to update data and react
+      if needed and (e.g. change of SA, reclaim current address)
+      Note: The parameters are needed here because the actual CAN package
+            may already be rewritten to (due to e.g. sending an AC, etc.)
+    @param ai32_pkgTime Original message timestamp.
+    @param aui8_pkgSa Original message source address.
   */
-  bool processMsg();
+  void processAddressClaimed (int32_t ai32_pkgTime, uint8_t aui8_pkgSa);
 
   /** send a SA claim message
    * - needed to respond on request for claimed SA fomr other nodes

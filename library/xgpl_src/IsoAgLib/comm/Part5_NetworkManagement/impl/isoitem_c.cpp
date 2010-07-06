@@ -402,47 +402,35 @@ bool IsoItem_c::timeEvent( void )
 }
 
 
-/** process received CAN pkg to update data and react if needed
-  * update settings for remote members (e.g. change of SA)
-  * react on adress claims or request for adress claims for local items
-  @return true -> a reaction on the received/processed msg was sent
-*/
-bool IsoItem_c::processMsg()
+void
+IsoItem_c::processAddressClaimed(
+  int32_t ai32_pkgTime,
+  uint8_t aui8_pkgSa)
 {
-  bool b_result = false;
-  IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
-  int32_t i32_pkgTime = c_pkg.time(),
-      i32_now = Scheduler_Task_c::getLastRetriggerTime();
+  int32_t i32_now = Scheduler_Task_c::getLastRetriggerTime();
   /// @todo SOON-240 what is the sense of the check below?
-  if ((i32_now - i32_pkgTime) > 100) updateTime(i32_now);
-  else updateTime(i32_pkgTime);
+  if ((i32_now - ai32_pkgTime) > 100) updateTime(i32_now);
+  else updateTime(ai32_pkgTime);
 
-  switch ((c_pkg.isoPgn() & 0x3FF00))
-  {
-    case ADDRESS_CLAIM_PGN: // adress claim
-      // check if this item is local
-      if ( itemState(IState_c::Local ) )
-      { // IsoItem_c::processMsg() is only called for local item, when
-        // this item has higher PRIO, so that we shall reject the SA steal
-        // by resending OUR SA CLAIM
-        c_pkg.setMonitorItemForSA( this );
-        c_pkg.setIsoPri(6);
-        c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
-        c_pkg.setIsoPs(255); // global information
-          // set NAME to CANPkg
-        c_pkg.setDataUnion(outputNameUnion());
-          // now IsoSystemPkg_c has right data -> send
-        getCanInstance4Comm() << c_pkg;
-      }
-      else
-      { // remote item
-        changeAddressAndBroadcast (c_pkg.isoSa());
-      }
-      b_result = true;
-    break;
-  } // end switch
-
-  return b_result;
+  // check if this item is local
+  if ( itemState(IState_c::Local ) )
+  { // IsoItem_c::processMsg() is only called for local item, when
+    // this item has higher PRIO, so that we shall reject the SA steal
+    // by resending OUR SA CLAIM
+    IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+    c_pkg.setMonitorItemForSA( this );
+    c_pkg.setIsoPri(6);
+    c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
+    c_pkg.setIsoPs(255); // global information
+      // set NAME to CANPkg
+    c_pkg.setDataUnion(outputNameUnion());
+      // now IsoSystemPkg_c has right data -> send
+    getCanInstance4Comm() << c_pkg;
+  }
+  else
+  { // remote item
+    changeAddressAndBroadcast (aui8_pkgSa);
+  }
 }
 
 

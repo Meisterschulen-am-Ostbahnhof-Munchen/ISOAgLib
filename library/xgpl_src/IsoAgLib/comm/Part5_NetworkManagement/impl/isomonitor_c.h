@@ -393,13 +393,17 @@ public:
   /// IsoMonitor_c.timeEvent() should be called in 50 ms
   void changeRetriggerTime() { getSchedulerInstance().changeRetriggerTimeAndResort(this,System_c::getTime() + 50 );};
 
-
   /** command switching to and from special service / diagnostic mode.
       setting the flag mc_serviceTool controls appropriate handling
     */
   void setDiagnosticMode( const IsoName_c& acrc_serviceTool = IsoName_c::IsoNameUnspecified());
-protected: // Protected methods
 
+#ifdef DEBUG_ISOMONITOR
+  void debugPrintNameTable();
+#endif
+
+
+protected: // Protected methods
   /** process system msg with informations which are
     important for managing of members
     (this function is only called if NO conflict is detected)
