@@ -498,6 +498,7 @@ tools/libs/boost/boost_1_38_0/boost/type_traits/remove_reference.hpp -text
 tools/libs/boost/boost_1_38_0/boost/type_traits/type_with_alignment.hpp -text
 tools/libs/boost/boost_1_38_0/boost/utility/base_from_member.hpp -text
 tools/libs/boost/boost_1_38_0/boost/utility/compare_pointees.hpp -text
+tools/libs/boost/boost_1_38_0/boost/version.hpp -text
 tools/libs/freeimage/FreeImage.dll -text
 tools/libs/freeimage/FreeImage.h -text
 tools/libs/freeimage/FreeImage.lib -text
