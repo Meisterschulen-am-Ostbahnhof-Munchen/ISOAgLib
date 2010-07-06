@@ -30,6 +30,13 @@
 
 namespace __IsoAgLib
 {
+  ProprietaryMessageHandler_c::ProprietaryMessageHandler_c()
+    : mt_handler(*this)
+    , mt_customer(*this)
+  { // nop
+  }
+
+
   /** initialize directly after the singleton instance is created.
   */
   void ProprietaryMessageHandler_c::singletonInit()
@@ -49,7 +56,7 @@ namespace __IsoAgLib
     {
       getSchedulerInstance().registerClient( this );
       // register to get ISO monitor list changes
-      __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( *this );
+      __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
       mb_hardTiming = false;
       setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
       clearAlreadyClosed();
@@ -67,7 +74,7 @@ namespace __IsoAgLib
       // unregister from timeEvent() call by Scheduler_c
       getSchedulerInstance().unregisterClient( this );
       // unregister ISO monitor list changes
-      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( *this );
+      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
     }
   }
 
@@ -96,7 +103,7 @@ namespace __IsoAgLib
     }
     /* define receive filter with "no"-values
     scui32_noFilter marks the whole filter as "not set"*/
-    IsoFilter_s s_tempIsoFilter(static_cast<__IsoAgLib::CanCustomer_c&>(*this), scui32_noMask, scui32_noFilter, NULL, NULL);
+    IsoFilter_s s_tempIsoFilter(mt_customer, scui32_noMask, scui32_noFilter, NULL, NULL);
     ClientNode_t t_tempClientNode (apc_proprietaryclient, s_tempIsoFilter);
     // push back new client
     mvec_proprietaryclient.push_back (t_tempClientNode);
@@ -126,7 +133,7 @@ namespace __IsoAgLib
     bool ab_forceFilterRemoval)
   {
     // default for "ab_forceFilterRemoval"
-    IsoFilter_s s_newIsoFilter (scui32_noMask, scui32_noFilter, screfc_noIsoName, spc_nolocalIdent);
+    IsoFilter_s s_newIsoFilter (mt_customer, scui32_noMask, scui32_noFilter, NULL, NULL);
 
     if (ab_forceFilterRemoval)
     { // keep default "s_newIsoFilter" from above.
@@ -137,11 +144,11 @@ namespace __IsoAgLib
       { // client not yet ready
         // don't need to reconfigure, will be configured at
         // the next action anyway (like AddToMonitorList/ReclaimedAddress)
-        return false;
+        return;
       }
       else
       { // client has a valid filter, so use it!
-        s_newIsoFilter = arc_proprietaryclient.getCurrentFilter();
+        s_newIsoFilter = arc_proprietaryclient.getCurrentFilter (mt_customer);
       }
     }
 
@@ -162,7 +169,7 @@ namespace __IsoAgLib
             /** delete filter */
             __IsoAgLib::getIsoFilterManagerInstance4Comm().removeIsoFilter ((*client_iterator).s_isoFilter);
             /** deregister at multi-receive */
-            getMultiReceiveInstance4Comm().deregisterClient (*this,
+            getMultiReceiveInstance4Comm().deregisterClient (mt_customer,
                                                              (*client_iterator).s_isoFilter.getIsoNameDa(),
                                                              (*client_iterator).s_isoFilter.getFilter() >> 8,
                                                              (*client_iterator).s_isoFilter.getMask() >> 8);
@@ -174,7 +181,7 @@ namespace __IsoAgLib
             //  insert new filter
             __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter (s_newIsoFilter);
             /** register for multi-receive */
-            getMultiReceiveInstance4Comm().registerClientIso (*this,
+            getMultiReceiveInstance4Comm().registerClientIso (mt_customer,
                                                               s_newIsoFilter.getIsoNameDa(),
                                                               s_newIsoFilter.getFilter() >> 8,
                                                               s_newIsoFilter.getMask() >> 8,
@@ -182,24 +189,25 @@ namespace __IsoAgLib
           }
           // update filter and mask
           (*client_iterator).s_isoFilter = s_newIsoFilter;
-          // update has performed
-          return true;
+          // update was performed
+          return;
         }
         // else: filters are equal, no need to update.
-      }
-    }
-    return false;
+      } // if (client found)
+    } // for
   }
 
 
   void
-  ProprietaryMessageHandler_c::reactOnIsoItemModification (IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
+  ProprietaryMessageHandler_c::reactOnIsoItemModification(
+    ControlFunctionStateHandler_c::IsoItemModification_t at_action,
+    IsoItem_c const& acrc_isoItem)
   {
     switch (at_action)
     {
-    case AddToMonitorList: // a "defineReceiveFilter" could have occurred after RemoveFromMonitorList, so re-check!
-    case ReclaimedAddress: // a "defineReceiveFilter" could have occurred after LostAddress, so re-check!
-    case RemoveFromMonitorList:  // when removed, force filters to "NoFilter" in "triggerClientDataUpdate
+    case ControlFunctionStateHandler_c::AddToMonitorList: // a "defineReceiveFilter" could have occurred after RemoveFromMonitorList, so re-check!
+    case ControlFunctionStateHandler_c::ReclaimedAddress: // a "defineReceiveFilter" could have occurred after LostAddress, so re-check!
+    case ControlFunctionStateHandler_c::RemoveFromMonitorList:  // when removed, force filters to "NoFilter" in "triggerClientDataUpdate
       for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin();
             client_iterator != mvec_proprietaryclient.end();
             ++client_iterator )
@@ -213,14 +221,14 @@ namespace __IsoAgLib
             // insert/update filter now
             triggerClientDataUpdate(
               *((*client_iterator).pc_client),
-              (at_action == RemoveFromMonitorList)); // Remove? -> true (=forceFilterRemoval)
+              (at_action == ControlFunctionStateHandler_c::RemoveFromMonitorList)); // Remove? -> true (=forceFilterRemoval)
           }
         }
       }
       break;
 
-    case ChangedAddress: // nothing could have happened in between
-    case LostAddress: // nothing to be done, filters anyway not active.
+    case ControlFunctionStateHandler_c::ChangedAddress: // nothing could have happened in between
+    case ControlFunctionStateHandler_c::LostAddress: // nothing to be done, filters anyway not active.
       // nothing to do, because the filters are registered with ISONAME anyway.
       break;
     } // switch
@@ -338,13 +346,13 @@ namespace __IsoAgLib
     {
       if ( ( (ac_ident.getPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) ==  (*client_iterator).pc_client->mui32_canFilter )
       { // PGN check okay, if unspecified there is no special request
-        if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU.toIisoName_c() == ac_ident.getSaIsoName() )))
+        if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == ac_ident.getSaIsoName() )))
         { // SA check okay
           if ( (ac_ident.getDaIsoName() == screfc_noIsoName.toConstIisoName_c()) /* msg addressed to global => OKAY */
                 ||
                 ( (*client_iterator).pc_client->mpc_localIdent == NULL) /* we have no identity => OKAY */
                 ||
-                ( (*client_iterator).pc_client->mpc_localIdent->isoName().toConstIisoName_c() == ac_ident.getDaIsoName() ) /* we have an identity and it's addressed to us => OAKY */
+                ( (*client_iterator).pc_client->mpc_localIdent->isoName() == ac_ident.getDaIsoName() ) /* we have an identity and it's addressed to us => OAKY */
               )
           { // DA check okay
             return true; // accept this stream!
@@ -372,13 +380,13 @@ namespace __IsoAgLib
         // check to process the information
         if ( ( (ac_ident.getPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) ==  (*client_iterator).pc_client->mui32_canFilter )
         { // PGN check okay, if unspecified there is no special request
-          if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU.toConstIisoName_c() == ac_ident.getSaIsoName())))
+          if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == ac_ident.getSaIsoName())))
           { // SA check okay
             if ( (ac_ident.getDaIsoName() == screfc_noIsoName.toConstIisoName_c()) /* msg addressed to global => OKAY */
                 ||
                 ((*client_iterator).pc_client->mpc_localIdent == NULL) /* we have no identity => OKAY */
                 ||
-                ((*client_iterator).pc_client->mpc_localIdent->isoName().toConstIisoName_c() == ac_ident.getDaIsoName() ) /* we have an identity and it's addressed to us => OAKY */
+                ((*client_iterator).pc_client->mpc_localIdent->isoName() == ac_ident.getDaIsoName() ) /* we have an identity and it's addressed to us => OAKY */
               )
             { // DA check okay
               if ( ( (ac_ident.getPgn() >> 8 ) & 0x00FF ) < 0xF0 )

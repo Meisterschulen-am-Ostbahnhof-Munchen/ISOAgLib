@@ -38,13 +38,6 @@ struct iIsoFilter_s : private __IsoAgLib::IsoFilter_s
       ai8_dlcForce, at_identType) {}
 
 
-  iIsoFilter_s (iSchedulerTask_c& arc_schedulerTask, uint32_t aui32_mask, uint32_t aui32_filter, const iIsoName_c* apc_isoNameDa = NULL, const iIsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, iIdent_c::identType_t at_identType=iIdent_c::ExtendedIdent)
-    : IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(arc_schedulerTask),
-      aui32_mask, aui32_filter,
-      apc_isoNameDa, apc_isoNameSa,
-      ai8_dlcForce, at_identType) {}
-
-
   uint32_t          getMask()      const { return IsoFilter_s::getMask(); }
   uint32_t          getFilter()    const { return IsoFilter_s::getFilter(); }
   const iIsoName_c& getIsoNameDa() const { return static_cast<const iIsoName_c&>(IsoFilter_s::getIsoNameDa()); }

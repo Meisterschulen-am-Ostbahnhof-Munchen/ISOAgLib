@@ -14,8 +14,9 @@
 #ifndef PROPRIETARYMESSAGECLIENT_H
 #define PROPRIETARYMESSAGECLIENT_H
 
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include "../igenericdata_c.h"
@@ -125,7 +126,7 @@ namespace __IsoAgLib
 
       //! Attention: Current filter may not be valid in case the
       //! address wasn't/isn't claimed!
-      IsoFilter_s getCurrentFilter();
+      IsoFilter_s getCurrentFilter (CanCustomer_c &);
 
     /// Using the singletonVecKey from mpc_localIdent (-->IdentItem_c)
     SINGLETON_PAR_ARR_DEF(mpc_localIdent)

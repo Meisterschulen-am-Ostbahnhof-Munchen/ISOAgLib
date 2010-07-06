@@ -16,6 +16,7 @@
 
 #include "proprietarymessageclient_c.h"
 
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
@@ -39,6 +40,8 @@ namespace __IsoAgLib
   class ProprietaryMessageHandler_c : public SingletonProprietaryMessageHandler_c
   {
   public:
+    ProprietaryMessageHandler_c();
+
     /** default destructor which does just close() everything */
     virtual ~ProprietaryMessageHandler_c();
 
@@ -92,7 +95,7 @@ namespace __IsoAgLib
      * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
      * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
      */
-    void reactOnIsoItemModification (IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
+    void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
     /** Function for Debugging in Scheduler_c */
     virtual const char* getTaskName() const;
@@ -152,6 +155,112 @@ namespace __IsoAgLib
     void updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient);
 
   private:
+private:
+  class CanCustomerProxy_c : public CanCustomer_c {
+  public:
+    typedef ProprietaryMessageHandler_c Owner_t;
+
+    CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~CanCustomerProxy_c() {}
+
+  private:
+    virtual CanPkgExt_c& dataBase() {
+      return mrt_owner.dataBase();
+    }
+
+    virtual bool processMsg() {
+      return mrt_owner.processMsg();
+    }
+
+    virtual bool processInvalidMsg() {
+      return true; // nop - return mrt_owner.processInvalidMsg();
+    }
+
+    virtual bool isNetworkMgmt() const {
+      return false; // nop - return mrt_owner.isNetworkMgmt();
+    }
+
+    virtual bool reactOnStreamStart(
+        ReceiveStreamIdentifier_c const &ac_ident,
+        uint32_t aui32_totalLen)
+    {
+      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
+    }
+
+    virtual void reactOnAbort(Stream_c &arc_stream)
+    {
+      (void)arc_stream;
+      // nop - mrt_owner.reactOnAbort(arc_stream);
+    }
+
+    virtual bool processPartStreamDataChunk(
+        Stream_c &apc_stream,
+        bool ab_isFirstChunk,
+        bool ab_isLastChunk)
+    {
+      return mrt_owner.processPartStreamDataChunk(
+          apc_stream,
+          ab_isFirstChunk,
+          ab_isLastChunk);
+    }
+
+    virtual void notificationOnMultiReceiveError(
+        ReceiveStreamIdentifier_c const &ac_streamIdent,
+        uint8_t aui8_multiReceiveError,
+        bool ab_isGlobal)
+    {
+      (void)ac_streamIdent;
+      (void)aui8_multiReceiveError;
+      (void)ab_isGlobal;
+      // nop - mrt_owner.notificationOnMultiReceiveError(
+      //     ac_streamIdent,
+      //     aui8_multiReceiveError,
+      //     ab_isGlobal);
+    }
+
+#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
+    virtual bool isProprietaryMessageOnStandardizedCan() const
+    {
+      return mrt_owner.isProprietaryMessageOnStandardizedCan();
+    }
+#endif
+
+    // CanCustomerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    CanCustomerProxy_c(CanCustomerProxy_c const &);
+
+    CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef CanCustomerProxy_c Customer_t;
+  class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
+  public:
+    typedef ProprietaryMessageHandler_c Owner_t;
+
+    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    virtual ~ControlFunctionStateHandlerProxy_c() {}
+
+  private:
+    virtual void reactOnIsoItemModification(
+        IsoItemModification_t at_action,
+        IsoItem_c const &acrc_isoItem)
+    {
+      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+    }
+
+    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
+    // reference to the containing object would become invalid.
+    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
+
+    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  };
+  typedef ControlFunctionStateHandlerProxy_c Handler_t;
+
     friend class SINGLETON_DERIVED(IsoMonitor_c,Scheduler_Task_c);
 
     /** temp data where received and to be sent data is put */
@@ -163,6 +272,9 @@ namespace __IsoAgLib
     ProprietaryMessageClientVector_t mvec_proprietaryclient;
 
     bool mb_hardTiming;
+
+    Handler_t mt_handler;
+    Customer_t mt_customer;
   };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

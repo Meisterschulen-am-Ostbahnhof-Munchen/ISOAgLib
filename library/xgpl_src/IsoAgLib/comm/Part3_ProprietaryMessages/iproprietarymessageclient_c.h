@@ -22,6 +22,11 @@
 // Begin Namespace IsoAgLib
 namespace IsoAgLib
 {
+  /** initialization parameter for local ident */
+  static const iIdentItem_c* spc_nolocalIdent = NULL;
+
+  /** initialization parameter for IsoName */
+  static const iIsoName_c& srcc_noIsoName = iIsoName_c::iIsoNameUnspecified();
 
   /** Handler for a specific registered proprietary PGN */
   class iProprietaryMessageClient_c : private __IsoAgLib::ProprietaryMessageClient_c
@@ -31,7 +36,11 @@ namespace IsoAgLib
         so that each succeeding setup call will be reflected there by call of
     */
     iProprietaryMessageClient_c()
-    : ProprietaryMessageClient_c() {}
+    : ProprietaryMessageClient_c()
+    {
+      (void)srcc_noIsoName;
+      (void)spc_nolocalIdent;
+    }
 
     /** Constructor of the API class registers the new instance immediatly at ProprietaryMessageHandler_c
         so that each succeeding setup call will be reflected there by call of

@@ -81,7 +81,7 @@ namespace __IsoAgLib
       mpc_localIdent = apc_localIdent;
 
       /** force an update */
-      getProprietaryMessageHandlerInstance4Comm().triggerClientDataUpdate (*this);
+      getProprietaryMessageHandlerInstance4Comm().triggerClientDataUpdate (*this, false);
       return(true);
     }
     return(false);
@@ -121,7 +121,7 @@ namespace __IsoAgLib
 
 
   IsoFilter_s
-  ProprietaryMessageClient_c::getCurrentFilter()
+  ProprietaryMessageClient_c::getCurrentFilter (CanCustomer_c &arc_customer)
   {
     const IsoName_c& rc_localIsoName = (
                                         (mpc_localIdent == NULL)
@@ -132,7 +132,7 @@ namespace __IsoAgLib
                                         : mpc_localIdent->isoName();
 
     // create new IsoFilter
-    return IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(*this),
+    return IsoFilter_s (arc_customer,
                         mui32_canMask,
                         mui32_canFilter,
                         &rc_localIsoName,
