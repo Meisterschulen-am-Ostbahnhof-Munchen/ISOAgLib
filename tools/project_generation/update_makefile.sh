@@ -1478,6 +1478,30 @@ omit_or_printf()
     printf -- "$FORMAT" "$@"
 }
 
+print_cmake_definitions()
+{
+    omit_or_printf '\n  -D%s' $(
+        echo_ PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES
+        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
+             echo_ SYSTEM_WITH_ENHANCED_CAN_HAL
+        fi
+        case "$USE_CAN_DRIVER" in
+            (msq_server)
+                echo_ CAN_DRIVER_MESSAGE_QUEUE
+                ;;
+            (socket_server|socket_server_hal_simulator)
+                echo_ CAN_DRIVER_SOCKET
+                ;;
+        esac
+
+        # NDEBUG and/or DEBUG will be defined later according to CMake
+        # build type, so omit them here:
+        sed 's| \?\<N\?DEBUG\>||g' <<EOF
+$COMBINED_DEFINES
+EOF
+    )
+}
+
 create_standard_makefile()
 {
     MakefileName="Makefile"
@@ -1627,27 +1651,14 @@ EOF
 
     : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CMakeLists.txt}
     local INSERT_CMAKE_PROJECT="$PROJECT"
-    local INSERT_CMAKE_DEFINITIONS="$(omit_or_printf '\n  -D%s' $(
-        echo_ PRJ_USE_AUTOGEN_CONFIG=config_$PROJECT.h $PRJ_DEFINES
-        if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ]; then
-             echo_ SYSTEM_WITH_ENHANCED_CAN_HAL
-        fi
-        case "$USE_CAN_DRIVER" in
-            (msq_server)
-                echo_ CAN_DRIVER_MESSAGE_QUEUE
-                ;;
-            (socket_server|socket_server_hal_simulator)
-                echo_ CAN_DRIVER_SOCKET
-                ;;
-        esac;))"
-
+    local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
     local INSERT_CMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
 
     local INSERT_CMAKE_LINK_DIRECTORIES="${USE_LINUX_EXTERNAL_LIBRARY_PATH:-}"
     local INSERT_CMAKE_ADD_EXECUTABLE="$(
         omit_or_printf '\n  %s' "$PROJECT" $(
             cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c' || status_le1))"
-    INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
+    local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
     expand_template "$CMAKE_SKELETON_FILE" >CMakeLists.txt
 }
 
@@ -2277,6 +2288,21 @@ $(cat "$DEV_PRJ_DIR/$PROJECT_FILE_NAME")
 EOF
     cd "$DEV_PRJ_DIR"
     # org test
+
+    # In addition generate a CMakeLists.txt file:
+
+    : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CMakeLists.txt}
+    local INSERT_CMAKE_PROJECT="$PROJECT"
+    local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
+    local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
+    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_WIN32_EXTERNAL_INCLUDE_PATH)"
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
+    local INSERT_CMAKE_LINK_DIRECTORIES="${USE_WIN32_EXTERNAL_LIBRARY_PATH:-}"
+    local INSERT_CMAKE_ADD_EXECUTABLE="$(
+        omit_or_printf '\n  %s' "$PROJECT" $(
+            grep -E '\.cc|\.cpp|\.c' <"$DspPrjFilelist" || status_le1))"
+    local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32)"
+    expand_template "$CMAKE_SKELETON_FILE" >CMakeLists.txt
 }
 
 create_library_makefile()
@@ -2479,7 +2505,7 @@ assignments()
 {
     local FORMAT="%s=$(literal_format $1)\n"
     shift
-    printf "$FORMAT" "$@"
+    printf -- "$FORMAT" "$@"
 }
 
 DEBUG_DEF_NAMES='DEBUG_ADDRESS_CLAIM
