@@ -1527,12 +1527,14 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
 void
 IsoMonitor_c::debugPrintNameTable()
 {
-  std::cout << "IsoMonitor-NAME/SA-Table - Time:" << HAL::getTime() << std::endl;
+  INTERNAL_DEBUG_DEVICE << "IsoMonitor-NAME/SA-Table - Time:" << HAL::getTime() << INTERNAL_DEBUG_DEVICE_ENDL;
   for (mpc_isoMemberCache = mvec_isoMember.begin();
        mpc_isoMemberCache != mvec_isoMember.end();
        mpc_isoMemberCache++)
   {
-    std::cout << "   NAME (LE as on CAN): " << std::hex << std::setfill('0')
+    INTERNAL_DEBUG_DEVICE << "   NAME (LE as on CAN): " 
+#ifdef SYSTEM_PC
+        << std::hex << std::setfill('0')
         << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
         << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
         << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
@@ -1544,6 +1546,19 @@ IsoMonitor_c::debugPrintNameTable()
         << " --> SA: "
         << std::setw(2) << int (mpc_isoMemberCache->nr())
         << std::dec << std::endl;
+#else
+        int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
+        int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
+        << " --> SA: "
+        << int (mpc_isoMemberCache->nr())
+        << std::endl;
+#endif
   }
 }
 #endif
