@@ -97,6 +97,7 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
   #ifdef SYSTEM_PC
     #include <iostream>
+    #include <iomanip>
   #else
     #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #endif
@@ -1204,6 +1205,10 @@ bool IsoMonitor_c::processMsg()
   IsoItem_c *pc_itemSameSa = NULL,
             *pc_itemSameISOName = NULL;
 
+#if DEBUG_ISOMONITOR
+  std::cout << std::endl << "IsoMonitor_c::processMsg()-BEGIN" << std::endl;
+  debugPrintNameTable();
+#endif
 
   // decide whether the message should be processed
   if ( mc_serviceTool.isSpecified() )
@@ -1227,6 +1232,7 @@ bool IsoMonitor_c::processMsg()
       b_processed = true;
       const IsoName_c cc_dataIsoName (data().isoName());
       const uint8_t cui8_sa = data().isoSa();
+      const int32_t ci32_time = data().time();
 
       if ( existIsoMemberISOName (cc_dataIsoName) )
       {
@@ -1294,7 +1300,7 @@ bool IsoMonitor_c::processMsg()
             else
             { // let local IsoItem_c process the conflicting adr claim
               // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
-              pc_itemSameSa->processMsg();
+              pc_itemSameSa->processAddressClaimed (ci32_time, cui8_sa);
               insertIsoMember (cc_dataIsoName, 0xFE, IState_c::AddressLost, NULL, true);
               /// ATTENTION: We insert the IsoName WITHOUT a valid Address. (and even notify the registered clients about it!)
               /// But this may also happen anyway if you register your handler at a later time -
@@ -1341,13 +1347,13 @@ bool IsoMonitor_c::processMsg()
           /// Change SA of existing remote node. Just check before if it steals a SA from someone
           if (NULL == pc_itemSameSa)
           { // (A9) Existing remote node took a fresh SA. The way it should be. Just change its address.
-            pc_itemSameISOName->processMsg();
+            pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
           }
           else
           { // Existing remote node took an already existing SA.
             if (pc_itemSameSa == pc_itemSameISOName)
             { // (A1) Existing remote node reclaimed its SA, so it's just a repeated address-claim.
-              pc_itemSameISOName->processMsg(); // only call to update the timestamp basically
+              pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // only call to update the timestamp basically
             }
             else if (pc_itemSameSa->itemState(IState_c::Local))
             { // (A5) Existing remote node steals SA from Local node!
@@ -1375,19 +1381,19 @@ bool IsoMonitor_c::processMsg()
                     pc_itemSameSa->getIdentItem()->goOffline(false); // false: we couldn't get a new address for this item!
                   }
                 }
-                pc_itemSameISOName->processMsg();
+                pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa);
               }
               else
               { // let local IsoItem_c process the conflicting adr claim
                 // --> the IsoItem_c::processMsg() will send an ADR CLAIM to indicate the higher prio
-                pc_itemSameSa->processMsg();
+                pc_itemSameSa->processAddressClaimed (ci32_time, cui8_sa);
                 pc_itemSameISOName->giveUpAddressAndBroadcast();
               }
             }
             else
             { // (A3) Existing remote node steals other remote node's SA
               pc_itemSameSa->giveUpAddressAndBroadcast();
-              pc_itemSameISOName->processMsg(); // will set the new SA and do broadcasting
+              pc_itemSameISOName->processAddressClaimed (ci32_time, cui8_sa); // will set the new SA and do broadcasting
             }
           }
         }
@@ -1457,6 +1463,11 @@ bool IsoMonitor_c::processMsg()
     default:
       break;
   } // end switch for NON-DESTINATION pgn
+
+#if DEBUG_ISOMONITOR
+  std::cout << "IsoMonitor_c::processMsg()-END" << std::endl;
+  debugPrintNameTable();
+#endif
 
   return b_processed; // return if msg was processed by IsoMonitor_c
 }
@@ -1590,6 +1601,46 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
     }
   }
 }
+
+#if DEBUG_ISOMONITOR
+void
+IsoMonitor_c::debugPrintNameTable()
+{
+  INTERNAL_DEBUG_DEVICE << "IsoMonitor-NAME/SA-Table - Time:" << HAL::getTime() << INTERNAL_DEBUG_DEVICE_ENDL;
+  for (mpc_isoMemberCache = mvec_isoMember.begin();
+       mpc_isoMemberCache != mvec_isoMember.end();
+       mpc_isoMemberCache++)
+  {
+    INTERNAL_DEBUG_DEVICE << "   NAME (LE as on CAN): " 
+#ifdef SYSTEM_PC
+        << std::hex << std::setfill('0')
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
+        << std::setw(2) << int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
+        << " --> SA: "
+        << std::setw(2) << int (mpc_isoMemberCache->nr())
+        << std::dec << std::endl;
+#else
+        << int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
+        << " --> SA: "
+        << int (mpc_isoMemberCache->nr())
+        << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+  }
+}
+#endif
 
 
 } // end of namespace __IsoAgLib
