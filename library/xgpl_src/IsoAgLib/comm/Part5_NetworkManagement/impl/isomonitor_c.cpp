@@ -1127,7 +1127,7 @@ bool IsoMonitor_c::processMsg()
             *pc_itemSameISOName = NULL;
 
 #if DEBUG_ISOMONITOR
-  std::cout << std::endl << "IsoMonitor_c::processMsg()-BEGIN" << std::endl;
+  INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL << "IsoMonitor_c::processMsg()-BEGIN" << INTERNAL_DEBUG_DEVICE_ENDL;
   debugPrintNameTable();
 #endif
 
@@ -1386,7 +1386,7 @@ bool IsoMonitor_c::processMsg()
   } // end switch for NON-DESTINATION pgn
 
 #if DEBUG_ISOMONITOR
-  std::cout << "IsoMonitor_c::processMsg()-END" << std::endl;
+  INTERNAL_DEBUG_DEVICE << "IsoMonitor_c::processMsg()-END" << INTERNAL_DEBUG_DEVICE_ENDL;
   debugPrintNameTable();
 #endif
 
