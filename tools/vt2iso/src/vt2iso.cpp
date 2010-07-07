@@ -1548,20 +1548,20 @@ bool vt2iso_c::openDecodePrintOut (const std::list<Path_s>& rcl_stdBitmapPath, u
     if (ui_picBufferSize < c_Bitmap.getWidth() * c_Bitmap.getHeight())
     {
       delete[] picBuffer;
-      picBuffer = new unsigned char[c_Bitmap.getWidth() * c_Bitmap.getHeight()];
       ui_picBufferSize = c_Bitmap.getWidth() * c_Bitmap.getHeight();
+      picBuffer = new unsigned char[ui_picBufferSize];
     }
     // Decode bitmap to buffer!
     switch (actDepth)
     {
       case 0: // 1 bit colour (monochrome) = 2 colours (black/white)
-        c_Bitmap.write1BitBitmap( picBuffer, c_Bitmap.getWidth() * c_Bitmap.getHeight() );
+        c_Bitmap.write1BitBitmap( picBuffer, ui_picBufferSize );
         break;
         case 1: // 4 bit colour = 16 colours
-          c_Bitmap.write4BitBitmap( picBuffer, c_Bitmap.getWidth() * c_Bitmap.getHeight() );
+          c_Bitmap.write4BitBitmap( picBuffer, ui_picBufferSize );
           break;
           case 2: // 8 bit colour = 256 colours
-            c_Bitmap.write8BitBitmap( picBuffer, c_Bitmap.getWidth() * c_Bitmap.getHeight() );
+            c_Bitmap.write8BitBitmap( picBuffer, ui_picBufferSize );
             break;
     } // switch
 
