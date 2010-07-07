@@ -1547,17 +1547,17 @@ IsoMonitor_c::debugPrintNameTable()
         << std::setw(2) << int (mpc_isoMemberCache->nr())
         << std::dec << std::endl;
 #else
-        int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
-        int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[0]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[1]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[2]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[3]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[4]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[5]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[6]) << " "
+        << int(mpc_isoMemberCache->isoName().outputString()[7]) << " "
         << " --> SA: "
         << int (mpc_isoMemberCache->nr())
-        << std::endl;
+        << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
   }
 }
