@@ -410,7 +410,8 @@ private:
   language_s arrs_language [DEF_iso639entries];
 
   // Assuming an 8 bit per pixel bitmap.
-  unsigned char picBuffer [1600*1200];
+  unsigned char *picBuffer;
+  unsigned int ui_picBufferSize;
 
   std::string mstr_namespaceDeclarationBegin;       // namespace BLA {
   std::string mstr_namespaceDeclarationEnd;         // }

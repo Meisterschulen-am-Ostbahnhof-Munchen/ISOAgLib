@@ -102,11 +102,11 @@ class Vt2IsoImageBase_c
 	unsigned int get8BitPixel( unsigned int aui_x, unsigned int aui_y );
 
 	/** write the Bitmap to the given buffer and return amount of written Bytes */
-	unsigned int write1BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize = ( 480 * 480 ) );
+	unsigned int write1BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize);
 	/** write the Bitmap to the given buffer and return amount of written Bytes */
-	unsigned int write4BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize = ( 480 * 480 ) );
+	unsigned int write4BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize);
 	/** write the Bitmap to the given buffer and return amount of written Bytes and -1 if palette did not match */
-	int write8BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize = ( 480 * 480 ) );
+	int write8BitBitmap( unsigned char* pui_bitmap, unsigned int aui_maxSize);
 	unsigned int objRawBitmapBytes [3];
 	bool b_isInvalidPalette;
 
