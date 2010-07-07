@@ -4192,7 +4192,7 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , m_errorOccurred(false)
   , parser(NULL)
 {
-  picBuffer = new unsigned char[1200*1600];
+  picBuffer = new unsigned char[ui_picBufferSize];
 }
 
 vt2iso_c::~vt2iso_c()
