@@ -398,7 +398,7 @@ public:
     */
   void setDiagnosticMode( const IsoName_c& acrc_serviceTool = IsoName_c::IsoNameUnspecified());
 
-#ifdef DEBUG_ISOMONITOR
+#if DEBUG_ISOMONITOR
   void debugPrintNameTable();
 #endif
 
