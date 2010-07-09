@@ -1,3 +1,16 @@
+/*
+  config_can_messenger_msq.h
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 // File: config_can_messenger_msq.h
 // IMPORTANT: Never change the first block of this header manually!!!
 //            All manual changes are overwritten by the next call of "update_makefile.sh conf_can_messenger_msq_x86linux" 

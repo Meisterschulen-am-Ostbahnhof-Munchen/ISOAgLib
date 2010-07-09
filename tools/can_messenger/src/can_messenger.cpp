@@ -1,10 +1,16 @@
-/**
- * can_server_messenger.cpp
- * Martin Wodok <m.wodok@osb-ag.de>
- *
- * Testtool to inject CAN packages in a running can_server_bus.
- * 
- */
+/*
+  can_messenger.cpp: Testtool to inject CAN packages in a running
+    can_server_bus.
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
