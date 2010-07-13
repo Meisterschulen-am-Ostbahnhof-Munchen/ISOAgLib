@@ -2448,7 +2448,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
   } 
   else if (mb_isSlave)
   {
-    mc_streamer.mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mc_streamer.mi8_objectPoolUploadedLanguage, mc_streamer.mui16_objectPoolUploadedLanguageCode);
+    mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mc_streamer.mi8_objectPoolUploadedLanguage, mc_streamer.mui16_objectPoolUploadedLanguageCode);
   }    
   else
   { /// Was complete initial pool or language pool update.
