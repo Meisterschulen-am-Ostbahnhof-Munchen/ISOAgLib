@@ -362,7 +362,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
   // now let all clients know which client they belong to
-  if (mui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
+  if ( (mui8_clientId > 0) && !mb_isSlave ) // the iVtObjects are initialised with 0 as default index, but slaves might not have the vt-objects
   {
     for (uint16_t ui16_objIndex = 0; ui16_objIndex < mrc_pool.getNumObjects(); ui16_objIndex++)
       mrc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (mui8_clientId);
