@@ -173,6 +173,10 @@ public:
 #ifdef USE_WORKING_SET
   /// For checking if the WS-Announce is completed use the
   bool isWsAnnounced (int32_t ai32_timeAnnounceStarted) { return IsoItem_c::isWsAnnounced (ai32_timeAnnounceStarted); }
+  /** get master of this isoItem
+      @return  this if master himself; get master if client; NULL if standalone
+    */
+  iIsoItem_c* getMaster() { return ( IsoItem_c::getMaster() == NULL)? NULL : &IsoItem_c::getMaster()->toIisoItem_c();}
 #endif
 };
 
