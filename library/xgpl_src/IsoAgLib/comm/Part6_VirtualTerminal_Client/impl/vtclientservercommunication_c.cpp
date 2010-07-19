@@ -362,7 +362,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
   mrc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
   // now let all clients know which client they belong to
-  if ( (mui8_clientId > 0) && !mb_isSlave ) // the iVtObjects are initialised with 0 as default index, but slaves might not have the vt-objects
+  if (mui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {
     for (uint16_t ui16_objIndex = 0; ui16_objIndex < mrc_pool.getNumObjects(); ui16_objIndex++)
       mrc_pool.getIVtObjects()[0][ui16_objIndex]->setClientID (mui8_clientId);
@@ -1130,13 +1130,13 @@ VtClientServerCommunication_c::processMsg()
     /***************************************************/
     /*** ### ECU Initiated Messages (=Responses) ### ***/
     case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
-      if (((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForEOOResponse)) || mb_isSlave )
+      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
       { /// *** INITIAL POOL UPLOAD ***
         if (mc_data.getUint8Data (1) == 0)
         { /// NO Error with UPLOADING pool
 // Added this preprocessor so storing of object pools can be prevented for development purposes
 #ifndef NO_STORE_VERSION
-          if (mb_usingVersionLabel && !mb_isSlave)
+          if (mb_usingVersionLabel)
           { // Store Version and finalize after "Store Version Response"
             char lang1, lang2;
             if (mui16_objectPoolUploadingLanguageCode != 0x0000)
@@ -1171,7 +1171,7 @@ VtClientServerCommunication_c::processMsg()
           mui8_uploadError = mc_data.getUint8Data (2);
         }
       }
-      else if (((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWithAwaitingResponse)) || mb_isSlave)
+      else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWithAwaitingResponse))
       { /// *** LANGUAGE POOL UPDATE ***
         MACRO_setStateDependantOnError(2)
         finalizeUploading(); // indicate that the language specific objects have been updated. also the user will get notified.
@@ -1371,7 +1371,7 @@ VtClientServerCommunication_c::processMsg()
       }
       break;
     case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
-      if (((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse)) || mb_isSlave)
+      if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse))
       {
         if ((mc_data.getUint8Data (5) & 0x0F) == 0)
         { // Successfully loaded
@@ -1380,7 +1380,7 @@ VtClientServerCommunication_c::processMsg()
           INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) without error..." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         }
-        else if (!mb_isSlave)
+        else
         {
           if (mc_data.getUint8Data (5) & (1<<2))
           { // Bit 2: // Insufficient memory available
@@ -2445,11 +2445,7 @@ VtClientServerCommunication_c::finalizeUploading() //bool ab_wasLanguageUpdate)
   if (men_uploadPoolType == UploadPoolTypeUserPoolUpdate)
   { /// Was user-pool-update
     mrc_pool.eventPartialPoolUploadedSuccessfully();
-  } 
-  else if (mb_isSlave)
-  {
-    mrc_pool.eventObjectPoolUploadedSuccessfully ((men_uploadPoolType == UploadPoolTypeLanguageUpdate), mi8_objectPoolUploadedLanguage, mui16_objectPoolUploadedLanguageCode);
-  }    
+  }
   else
   { /// Was complete initial pool or language pool update.
     /// in both cases we uploaded in one specific language!! so do the following:
