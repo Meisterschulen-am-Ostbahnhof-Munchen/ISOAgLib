@@ -5486,6 +5486,7 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
         std::string local_attrValue;
 
         processNestedNodesInProjectFile(child, l_stdBitmapPath, std::string("Bitmaps"), std::string("Bitmap"), std::string("Path"));
+        processNestedNodesInProjectFile(child, l_fixedBitmapPath, std::string("Bitmaps"), std::string("FixedBitmap"), std::string("Path"));
 
         // vec_xmlFiles needs some post processing, done after loop
         processNestedNodesInProjectFile(child, vec_xmlFiles, std::string("Files"), std::string("File"), std::string("FilePath"));
