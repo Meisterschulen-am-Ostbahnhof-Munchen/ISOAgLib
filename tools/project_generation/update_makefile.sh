@@ -600,7 +600,10 @@ driver_and_hal_features()
       " -path '*/hal/hal_can.h' -o " \
       " -path '*/hal/hal_config.h' -o " \
       " -path '*/hal/hal_typedef.h' -o " \
+      " -path '*/hal/generic_utils/system*' -o " \
       " -path '*/driver/system*' " >&3
+    # For now, simply copying all generic_utils/system files
+    # as it doesn't matter as it's just about headers...
 
     printf '%s' \
       " -path '*${HAL_PATH_ISOAGLIB_CAN}/can*.h'  -o " \
@@ -1426,6 +1429,7 @@ generate_interface_filelist()
     TMP_INTERNAL_FILELIST="${TEMPFILE_PREFIX}internal_filelist"
     grep    "/impl/" <"$MakefileFilelistLibraryHdr" > "$TMP_INTERNAL_FILELIST"
     grep    "/hal/"  <"$MakefileFilelistLibraryHdr" >> "$TMP_INTERNAL_FILELIST"
+
     grep -v "/impl/" <"$MakefileFilelistLibraryHdr" | grep -v ".cpp" > "$TMP_INTERFACE_FILELIST"
     grep -E "driver/*/i*.h" < "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST" || status_le1
     
@@ -1440,10 +1444,13 @@ generate_interface_filelist()
             -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
             -e 's|\.\./||g' < "$INTERFACE_FILE" |
         while read -r BASE_NAME; do
+          ## Filter out non-ISOAgLib includes (like pthread, ...)
+          if [ "$BASE_NAME" != "pthread.h" ]; then
             expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
                 ! grep -q -F "/$BASE_NAME" <"$TMP_INTERFACE_FILELIST" &&
                 grep -F "$BASE_NAME" <"$TMP_INTERNAL_FILELIST" >>"$TMP_INTERFACE_FILELIST" ||
                 status_le1
+          fi
         done
     done <"$TMP_INTERFACE_FILELIST"
 }
