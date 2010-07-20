@@ -623,8 +623,9 @@ comm_features()
 # Write to FD3 what's needed for finding DRIVER features.
 driver_features()
 {
-    printf '%s' " -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*'  -o \( -path '*/hal/"$HAL_PATH"/system*' -not -path '*hal_simulator*' \) -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h'" >&3
-
+    printf '%s' " -path '*/hal/"$HAL_PATH"/can/can*.h'  -o  -path '*/hal/"$HAL_PATH"/can/hal_can*' -o -path '*/hal/can.h' -o -path '*/driver/system*'  -o \( -path '*/hal/"$HAL_PATH"/system*' -not -path '*hal_simulator*' \) -o -path '*/hal/system.h' -o -path '*/hal/"$HAL_PATH"/errcodes.h' -o -path '*/hal/"$HAL_PATH"/config.h' -o -path '*/hal/generic_utils/system*'" >&3
+    # Added the forgotten mutex-include-headers from "hal/generic_utils/system"
+    # They don't disturb when not used, so it's okay to add them always anyway.
 
     echo_ "IsoAgLib's Project-Generator running..."
     echo_
@@ -1452,10 +1453,13 @@ generate_interface_filelist()
             -e 's|.*xgpl_src/IsoAgLib/\(.*\)|\1|g' \
             -e 's|\.\./||g' < "$INTERFACE_FILE" |
         while read -r BASE_NAME; do
+          ## Filter out all non-ISOAgLib includes (like pthread, ...)
+          if [ "$BASE_NAME" != "pthread.h" ]; then
             expr \( "$BASE_NAME" : '.*\.h' \) >/dev/null &&
                 ! grep -q -F "/$BASE_NAME" <"$TMP_INTERFACE_FILELIST" &&
                 grep -F "$BASE_NAME" <"$TMP_INTERNAL_FILELIST" >>"$TMP_INTERFACE_FILELIST" ||
                 status_le1
+          fi
         done
     done <"$TMP_INTERFACE_FILELIST"
 }
