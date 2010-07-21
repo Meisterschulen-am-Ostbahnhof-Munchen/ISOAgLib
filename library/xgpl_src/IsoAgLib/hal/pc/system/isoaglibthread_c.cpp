@@ -11,7 +11,11 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
+#include <IsoAgLib/isoaglib_config.h>
+
+
 #ifdef USE_MUTUAL_EXCLUSION
+
 
 #include "isoaglibthread_c.h"
 

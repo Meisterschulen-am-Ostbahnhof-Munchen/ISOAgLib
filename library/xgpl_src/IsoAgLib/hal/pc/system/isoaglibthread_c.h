@@ -14,12 +14,13 @@
 #ifndef ISOAGLIBTHREAD_C_H
 #define ISOAGLIBTHREAD_C_H
 
+// IsoAgLib
+#include <IsoAgLib/isoaglib_config.h>
+
+
 // This feature (ISOAgLib in a thread) is only enabled if Mutual-Exclusion is enabled, too.
 #ifdef USE_MUTUAL_EXCLUSION
 
-
-// IsoAgLib
-#include <IsoAgLib/isoaglib_config.h>
 
 // system
 #include <pthread.h>
