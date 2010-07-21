@@ -31,6 +31,7 @@
 #include "../typedef.h"
 #include "../errcodes.h"
 #include "system_target_extensions.h"
+#include "isoaglibthread_c.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/hal/pc/can/can_typedef.h>
