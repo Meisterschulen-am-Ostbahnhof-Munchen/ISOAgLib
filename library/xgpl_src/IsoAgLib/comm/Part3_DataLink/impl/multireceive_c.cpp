@@ -99,8 +99,8 @@ MultiReceiveClientWrapper_s::start()
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    if (!getCanInstance4Comm().existFilter (getMultiReceiveInstance4Comm(), (mui32_pgnMask << 8), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent))
-      getCanInstance4Comm().insertFilter (getMultiReceiveInstance4Comm(), (mui32_pgnMask << 8), (mui32_pgn << 8), true, Ident_c::ExtendedIdent, 8);
+    if (!getCanInstance4Comm().existFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent))
+      getCanInstance4Comm().insertFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), true, Ident_c::ExtendedIdent, 8);
   }
   #endif
 }
@@ -112,7 +112,7 @@ MultiReceiveClientWrapper_s::stop()
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    __IsoAgLib::getCanInstance4Comm().deleteFilter (getMultiReceiveInstance4Comm(), (mui32_pgnMask), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent);
+    __IsoAgLib::getCanInstance4Comm().deleteFilter (*mpc_client, (mui32_pgnMask), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent);
   }
   #endif
 }
@@ -681,7 +681,7 @@ MultiReceive_c::registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& 
       aui32_pgnMask,
       ab_alsoBroadcast,
       ab_alsoGlobalErrors,
-      isoNameSender
+      isoNameSender,
       true
       SINGLETON_VEC_KEY_WITH_COMMA));
 
