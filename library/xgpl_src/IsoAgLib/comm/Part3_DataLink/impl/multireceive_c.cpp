@@ -604,7 +604,7 @@ MultiReceive_c::processMsgNmea()
     { // else: no stream open and wrong packeted number (non-start "0") comes in.
       notifyErrorConnAbort (c_fpRSI, TransferErrorFastPacketFrameButNoOpenStream, false);
       #if DEBUG_MULTIRECEIVE
-      INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** FastPacket-Frame "<<(uint16_t)ui8_counterFrame<<", but no open stream! ignoring that... ***" << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** FastPacket-Frame "<<(uint16_t)cui8_counterFrame<<", but no open stream! ignoring that... ***" << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
       return;
     }
