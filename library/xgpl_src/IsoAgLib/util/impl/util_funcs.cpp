@@ -30,23 +30,19 @@ using namespace std; // simple version to avoid problems with using CNAMESPACE
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** convert receive multistream into an unsigned variable */
+
 uint8_t convertLittleEndianStringUi8( const uint8_t* apui8_src )
 {
   return apui8_src[0];
 }
 
 
-/**
-  translate BCD to normal value
-*/
 uint8_t bcd2dec(uint8_t ab_bcd)
 {
  return ((ab_bcd >> 4) * 10) + (ab_bcd & 0xF);
 }
-/**
-  translate normal value to BCD
-*/
+
+
 uint8_t dec2bcd(uint8_t ab_dec)
 {
   const uint8_t ui8_v10 = ab_dec / 10;
@@ -55,16 +51,7 @@ uint8_t dec2bcd(uint8_t ab_dec)
   return ui8_result;
 }
 
-/**
-  calculate res = (mul_1 / div_1) * (mul_2 / div_2) with 4 uint8_t
-  integers without overflow problems caused by (mul_1 * mul_2)
-  and without rounding errors by (mul_1 / div_1) * (mul_2 / div_2)
-  @param ai32_mul_1 first factor for multiplication
-  @param ai32_div_1 first divisor for first factor
-  @param ai32_mul_2 second factor for multiplication
-  @param ai32_div_2 second divisor for first factor
-  @return result as int32_t value
-*/
+
 int32_t mul1Div1Mul2Div2(int32_t ai32_mul_1, int32_t ai32_div_1, int32_t ai32_mul_2, int32_t ai32_div_2)
 {
   if ((ai32_mul_1 == 0) || (ai32_mul_2 == 0) || (ai32_div_1 == 0) || (ai32_div_2 == 0)) return 0;
@@ -75,14 +62,7 @@ int32_t mul1Div1Mul2Div2(int32_t ai32_mul_1, int32_t ai32_div_1, int32_t ai32_mu
   return i32_result;
 }
 
-/**
-  copy 4 uint8_t data string into pointer to float value;
-  use e.g. to access uint8_t memory representation of
-  int32_t value as float value;
-  often needed for CanPkg_c formating
-  @param pvFrom source data string
-  @param pf_to target float value
-*/
+
 void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
 {
 #ifdef NO_8BIT_CHAR_TYPE
@@ -131,14 +111,8 @@ void littleEndianStream2FloatVar(const void *const pvFrom, float *const pf_to)
   #endif
 #endif // NO_8BIT_CHAR_TYPE
 }
-/**
-  copy float value to 4 uint8_t data string into pointer;
-  use e.g. to access uint8_t memory representation of
-  float value as int32_t value;
-  often needed for CanPkg_c formating
-  @param pf_from source float value
-  @param pvTo target data string
-*/
+
+
 void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
 {
 #ifdef NO_8BIT_CHAR_TYPE
@@ -187,15 +161,7 @@ void floatVar2LittleEndianStream(const float *const pf_from, void *const pvTo)
 #endif // NO_8BIT_CHAR_TYPE
 }
 
-/** calculate the total allocated HEAP for:
-  - slist<T> with given size of T
-  - add the overhead per node for slist<T> ( pointer to next item )
-  - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
-  - add the overhead for alignment based on SIZEOF_INT
-  @param aui16_sizeT sizeof(T) -> size of the stored class
-  @param aui16_cnt amount of items ( default: 1 )
-  @return amount of corresponding byte in heap
-*/
+
 uint16_t sizeSlistTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 { // size calculated from: stored class size + pointer to next item + block pointers in MALLOC HEAP structure
   const uint16_t unalignedItemSize = ( aui16_sizeT + 3 * sizeof(void*) );
@@ -206,15 +172,7 @@ uint16_t sizeSlistTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_cnt )
   return ( alignedItemSize * aui16_cnt );
 }
 
-/** calculate the total allocated HEAP for:
-  - list<T> with given size of T
-  - add the overhead per node for list<T> ( TWO pointer to next and prev item )
-  - add the overhead for malloc_alloc Allocator which calls malloc for each single node ( HEAP block pointer )
-  - add the overhead for alignment based on SIZEOF_INT
-  @param aui16_sizeT sizeof(T) -> size of the stored class
-  @param aui16_cnt amount of items ( default: 1 )
-  @return amount of corresponding byte in heap
-*/
+
 uint16_t sizeListTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 { // size calculated from: stored class size + pointer to next+prev item + block pointers in MALLOC HEAP structure
   const uint16_t unalignedItemSize = ( aui16_sizeT + 4 * sizeof(void*) );
@@ -224,14 +182,8 @@ uint16_t sizeListTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 
   return ( alignedItemSize * aui16_cnt );
 }
-/** calculate the total allocated HEAP for:
-  - vector<T> with given size of T
-  - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
-  - add the overhead for alignment based on SIZEOF_INT
-  @param aui16_sizeT sizeof(T) -> size of the stored class
-  @param aui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
-  @return amount of corresponding byte in heap
-*/
+
+
 uint16_t sizeVectorTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_capacity )
 { // size calculated from: stored class size + block pointers in MALLOC HEAP structure
   const uint16_t sizeWithoutAlignment = (aui16_capacity * aui16_sizeT) + ( 2 * sizeof(void*) );
@@ -240,9 +192,10 @@ uint16_t sizeVectorTWithMalloc( uint16_t aui16_sizeT, uint16_t aui16_capacity )
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
+
 static const uint16_t targetChunkSize = 40;
 
-/** get chunked size */
+
 uint16_t getChunkedSize( uint16_t aui16_cnt )
 {
   const uint16_t chunkCnt =
@@ -253,16 +206,6 @@ uint16_t getChunkedSize( uint16_t aui16_cnt )
 }
 
 
-/** calculate the total allocated HEAP for:
-  - slist<T> with given size of T
-  - add the overhead per node for slist<T> ( pointer to next item )
-  - add the overhead caused by allocation large chunks of each 40 items
-  - add overhead for linking the HEAP block by the lowloevel malloc
-  - add the overhead for alignment based on SIZEOF_INT
-  @param aui16_sizeT sizeof(T) -> size of the stored class
-  @param aui16_cnt amount of items ( default: 1 )
-  @return amount of corresponding byte in heap
-*/
 uint16_t sizeSlistTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 { // amount of allocated items - multiple of targetChunkSize
   const unsigned int chunkCnt = getChunkedSize(aui16_cnt);
@@ -274,16 +217,7 @@ uint16_t sizeSlistTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_cnt )
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
-/** calculate the total allocated HEAP for:
-  - list<T> with given size of T
-  - add the overhead per node for slist<T> ( pointers to next+prev item )
-  - add the overhead caused by allocation large chunks of each 40 items
-  - add overhead for linking the HEAP block by the lowloevel malloc
-  - add the overhead for alignment based on SIZEOF_INT
-  @param aui16_sizeT sizeof(T) -> size of the stored class
-  @param aui16_cnt amount of items ( default: 1 )
-  @return amount of corresponding byte in heap
-*/
+
 uint16_t sizeListTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_cnt )
 { // amount of allocated items - multiple of targetChunkSize
   const unsigned int chunkCnt = getChunkedSize(aui16_cnt);
@@ -294,14 +228,8 @@ uint16_t sizeListTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_cnt )
   const uint16_t alignmentBase = ( ( 2 * SIZEOF_INT ) - 1 );
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
-/** calculate the total allocated HEAP for:
-  - vector<T> with given size of T
-  - add the overhead for malloc_alloc Allocator which calls malloc for each vector instance ( HEAP block pointer )
-  - add the overhead for alignment based on SIZEOF_INT
-  @param aui16_sizeT sizeof(T) -> size of the stored class
-  @param aui16_capacity reserved space for vector<T> ( >= amount of currently stored items )
-  @return amount of corresponding byte in heap
-*/
+
+
 uint16_t sizeVectorTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_capacity )
 { // amount of allocated items - multiple of targetChunkSize
   const unsigned int chunkCnt = getChunkedSize(aui16_capacity);
@@ -312,12 +240,8 @@ uint16_t sizeVectorTWithChunk( uint16_t aui16_sizeT, uint16_t aui16_capacity )
   return (sizeWithoutAlignment + alignmentBase) & (unsigned int)~alignmentBase;
 }
 
+
 #ifdef USE_DATASTREAMS_IO
-/** convert receive multistream (encoded in Little Endian)
- * into an unsigned 16-bit variable
- * @pre rc_stream needs to hold at least 2 bytes
- *      Attention: No checks are performed on the stream!
- **/
 uint16_t convertIstreamUi16( StreamInput_c& rc_stream )
 {
   uint16_t ui16_temp;
@@ -333,11 +257,7 @@ uint16_t convertIstreamUi16( StreamInput_c& rc_stream )
   return ui16_temp;
 };
 
-/** convert receive multistream (encoded in Little Endian)
- * into an unsigned 32-bit variable
- * @pre rc_stream needs to hold at least 4 bytes
- *      Attention: No checks are performed on the stream!
- */
+
 uint32_t convertIstreamUi32( StreamInput_c& rc_stream )
 {
   uint32_t ui32_temp;
@@ -364,7 +284,6 @@ uint32_t convertIstreamUi32( StreamInput_c& rc_stream )
 #endif
 
 
-/** convert receive multistream into an unsigned variable */
 uint16_t convertLittleEndianStringUi16( const uint8_t* apui8_src )
 {
   uint16_t ui16_temp;
@@ -376,7 +295,7 @@ uint16_t convertLittleEndianStringUi16( const uint8_t* apui8_src )
   return ui16_temp;
 }
 
-/** convert receive multistream into an unsigned variable */
+
 int16_t convertLittleEndianStringI16( const uint8_t* apui8_src )
 {
   int16_t i16_temp;
@@ -387,7 +306,8 @@ int16_t convertLittleEndianStringI16( const uint8_t* apui8_src )
 #endif
   return i16_temp;
 }
-/** convert receive multistream into an unsigned variable */
+
+
 uint32_t convertLittleEndianStringUi32( const uint8_t* apui8_src )
 {
   uint32_t ui32_temp;
@@ -402,7 +322,8 @@ uint32_t convertLittleEndianStringUi32( const uint8_t* apui8_src )
 #endif
   return ui32_temp;
 }
-/** convert receive multistream into an unsigned variable */
+
+
 int32_t convertLittleEndianStringI32( const uint8_t* apui8_src )
 {
   int32_t i32_temp;
@@ -417,7 +338,8 @@ int32_t convertLittleEndianStringI32( const uint8_t* apui8_src )
 #endif
   return i32_temp;
 }
-/** convert receive multistream into a float variable */
+
+
 float convertLittleEndianStringFloat( const uint8_t* apui8_src )
 {
   float f_temp;
@@ -497,6 +419,7 @@ void bigEndianHexNumberText2CanStringUint8( const char* ac_src, uint8_t* pui8_ta
   sscanf( ac_src, "%2x",  &temp );
   pui8_target[0] = ( temp & 0xFF );
 }
+
 /** convert big endian textual unsigned int 16Bit number representation into little endian uint8_t string of specified size */
 void bigEndianHexNumberText2CanStringUint16( const char* ac_src, uint8_t* pui8_target )
 {
@@ -646,7 +569,7 @@ void Flexible4ByteString_c::setFlexible4DataValueInd(uint8_t aui8_ind, const Fle
 {
 #ifdef NO_8BIT_CHAR_TYPE
   for (uint8_t index = 0; index < 4; index++)
-    uint8[index] = ac_value.uint8[aui8_ind+index];
+    uint8[index] = ac_value.uint8[(aui8_ind<<2)+index];
 #else
   uint32[0] = ac_value.uint32[aui8_ind];
 #endif
@@ -674,17 +597,15 @@ Flexible8ByteString_c::Flexible8ByteString_c( const Flexible8ByteString_c& acrc_
 Flexible4ByteString_c::Flexible4ByteString_c( const uint8_t* apui8_srcStream )
 { if (apui8_srcStream != NULL) memcpy(uint8, apui8_srcStream, 4 );
 #ifndef NO_8BIT_CHAR_TYPE
-  else uint32[0] = 0UL;
+  else uint32[0] = ~0UL;
 #else
   else
     for (uint8_t index = 0; index < 4; index++)
-      uint8[index] = 0;
+      uint8[index] = ~0U;
 #endif
 };
 
-/** constructor for INIT directly from a flexible positioned Stream.
-    IMPORTANT: this works also when the string starts at ODD position!
-*/
+
 Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* apui8_srcStream )
 {
   if (apui8_srcStream != NULL) memcpy(uint8, apui8_srcStream, 8 );
@@ -692,58 +613,53 @@ Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* apui8_srcStream )
   {
 #ifdef NO_8BIT_CHAR_TYPE
     for (uint8_t index = 0; index < 8; index++)
-      uint8[index] = 0;
+      uint8[index] = ~0U;
 #else
     #if (SIZEOF_INT < 4) || defined( __IAR_SYSTEMS_ICC__ )
-    uint32[0] = uint32[1] = 0UL;
+    uint32[0] = uint32[1] = ~0UL;
     #else
-    uint64[0] = 0ULL;
+    uint64[0] = ~0ULL;
     #endif
 #endif
   }
 };
 
-/** set this object from a optionally odd addressed string */
-void Flexible4ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len )
-{
-  if ((apui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 5) )
-  { // source is defined and the wanted length is in allowed range
-    const unsigned int cui_useLen = ((aui8_len+aui8_offset)<4)?(aui8_len+aui8_offset):(4-aui8_offset);
-    memcpy(uint8+aui8_offset, apui8_srcStream, cui_useLen );
-  }
-};
-/** copy contents of this object to a optionally odd addressed string */
-void Flexible4ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len ) const
-{
-  if ((pui8_targetStream != NULL ) && (aui8_len > 0) && (aui8_offset< 5))
-  { // target is defined and the wanted length is in allowed range
-    const unsigned int cui_useLen = ((aui8_len+aui8_offset)<4)?(aui8_len+aui8_offset):(4-aui8_offset);
-    memcpy(pui8_targetStream, uint8+aui8_offset, cui_useLen );
-  }
-};
 
-/** set this object from a optionally odd addressed string */
-void Flexible8ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len )
+void
+Flexible4ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len )
 {
-  if ((apui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 9))
-  { // source is defined and the wanted length is in allowed range
-    const uint8_t cui8_useLen = ((aui8_len+aui8_offset)<8)?(aui8_len+aui8_offset):(8-aui8_offset);
-    memcpy(uint8+aui8_offset, apui8_srcStream, cui8_useLen );
-  }
-};
-/** copy contents of this object to a optionally odd addressed string */
-void Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_srcStream, uint8_t aui8_len ) const
+  isoaglib_assert ( (apui8_srcStream != NULL) && ((aui8_len+aui8_offset)<=4) );
+  memcpy (uint8+aui8_offset, apui8_srcStream, aui8_len);
+}
+
+
+void
+Flexible4ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len ) const
 {
-  if ((pui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 9))
-  { // source is defined and the wanted length is in allowed range
-    const uint8_t cui8_useLen = ((aui8_len+aui8_offset)<8)?(aui8_len+aui8_offset):(8-aui8_offset);
-    memcpy(pui8_srcStream, uint8+aui8_offset, cui8_useLen );
-  }
-};
+  isoaglib_assert ( (apui8_srcStream != NULL) && ((aui8_len+aui8_offset)<=4) );
+  memcpy (pui8_targetStream, uint8+aui8_offset, aui8_len);
+}
+
+
+void
+Flexible8ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len )
+{
+  isoaglib_assert ( (apui8_srcStream != NULL) && ((aui8_len+aui8_offset)<=8) );
+  memcpy (uint8+aui8_offset, apui8_srcStream, aui8_len);
+}
+
+
+void
+Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_srcStream, uint8_t aui8_len ) const
+{
+  isoaglib_assert ( (apui8_srcStream != NULL) && ((aui8_len+aui8_offset)<=8) );
+  memcpy (pui8_srcStream, uint8+aui8_offset, aui8_len);
+}
+
 
 #if   SIZEOF_INT < 4
-/** assignment */
-const Flexible8ByteString_c& Flexible8ByteString_c::operator=( const Flexible8ByteString_c& acrc_src )
+const Flexible8ByteString_c &
+Flexible8ByteString_c::operator=( const Flexible8ByteString_c& acrc_src )
 {
 #ifdef NO_8BIT_CHAR_TYPE
   for (uint8_t index = 0; index < 8; index++)
@@ -753,501 +669,353 @@ const Flexible8ByteString_c& Flexible8ByteString_c::operator=( const Flexible8By
   uint32[0] = acrc_src.uint32[0];
 #endif
   return *this;
-};
+}
 
 
-/** compare for EQUAL */
-bool Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) const
+bool
+Flexible8ByteString_c::operator==( const Flexible8ByteString_c& acrc_cmp ) const
 {
 #ifdef NO_8BIT_CHAR_TYPE
   for (uint8_t index = 0; index < 8; index++)
-	if ( uint8[index] != acrc_cmp.uint8[index] )
-	  return false;
+    if ( uint8[index] != acrc_cmp.uint8[index] )
+      return false;
 
   return true;
 #else
   return ( ( uint32[1] == acrc_cmp.uint32[1] )
         && ( uint32[0] == acrc_cmp.uint32[0] ) );
 #endif
-};
-/** compare for DIFFERENT */
-bool Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) const
+}
+
+
+bool
+Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) const
 {
 #ifdef NO_8BIT_CHAR_TYPE
   for (uint8_t index = 0; index < 8; index++)
-	if ( uint8[index] != acrc_cmp.uint8[index] )
-	  return true;
+    if ( uint8[index] != acrc_cmp.uint8[index] )
+      return true;
 
   return false;
 #else
   return ( ( uint32[1] != acrc_cmp.uint32[1] )
-        && ( uint32[0] != acrc_cmp.uint32[0] ) );
+        || ( uint32[0] != acrc_cmp.uint32[0] ) );
 #endif
-};
+}
 #endif // end SIZEOF_INT < 4
 
 
 #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
-/** compare for LOWER */
-bool Flexible4ByteString_c::operator<( const Flexible4ByteString_c& acrc_cmp ) const
+bool
+Flexible4ByteString_c::operator<( const Flexible4ByteString_c& acrc_cmp ) const
 {
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
-    for ( int ind = 3; ind >= 0; ind-- )
-    { if (uint8[ind] >= acrc_cmp.uint8[ind]) return false;}
-    // if reach here - all comparisons lead to EQUAL
-    return true;
+  for ( int ind = 3; ind >= 0; ind-- )
+  {
+    if (uint8[ind] != acrc_cmp.uint8[ind])
+      return (uint8[ind] < acrc_cmp.uint8[ind]);
+  }
+  // if reached here - all comparisons led to EQUAL
+  return false;
 }
-/** compare for LARGER */
-bool Flexible4ByteString_c::operator>( const Flexible4ByteString_c& acrc_cmp ) const
+
+
+bool
+Flexible4ByteString_c::operator>( const Flexible4ByteString_c& acrc_cmp ) const
 {
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
-    for ( int ind = 3; ind >= 0; ind-- )
-    { if (uint8[ind] <= acrc_cmp.uint8[ind]) return false;}
-    // if reach here - all comparisons lead to EQUAL
-    return true;
-};
+  for ( int ind = 3; ind >= 0; ind-- )
+  {
+    if (uint8[ind] != acrc_cmp.uint8[ind])
+      return (uint8[ind] > acrc_cmp.uint8[ind]);
+  }
+  // if reached here - all comparisons led to EQUAL
+  return false;
+}
 
-/** compare with:
-  @return 0 == equal;
-          +1 == this item has higher value than par;
-          -1 == this item has lower value than par */
-int Flexible4ByteString_c::compare( const Flexible4ByteString_c& acrc_cmp ) const
+
+int
+Flexible4ByteString_c::compare( const Flexible4ByteString_c& acrc_cmp ) const
 {
   // important for BIG ENDIAN systems:
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
-    for ( int ind = 3; ind >= 0; ind-- )
-    { if      (uint8[ind] < acrc_cmp.uint8[ind]) return -1;
-      else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;}
-    // if reach here - all comparisons lead to EQUAL
-    return 0;
-};
-
+  for ( int ind = 3; ind >= 0; ind-- )
+  {
+    if      (uint8[ind] < acrc_cmp.uint8[ind]) return -1;
+    else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;
+    // else: equal, compare next byte
+  }
+  // if reached here - all comparisons led to EQUAL
+  return 0;
+}
 #endif // end !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
 
-#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
-/** compare for LOWER */
-bool Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) const
-{
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
-  // important for BIG ENDIAN systems:
-  // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
-  // --> the decision has to be derived byte-by-byte from last to first byte
-    for ( int ind = 7; ind >= 0; ind-- )
-    { if (uint8[ind] >= acrc_cmp.uint8[ind]) return false;}
-    // if reach here - all comparisons lead to EQUAL
-    return true;
-  #else
-  if ( uint32[1] >= acrc_cmp.uint32[1] ) return false;
-  if ( uint32[0] >= acrc_cmp.uint32[0] ) return false;
-  return true;
-  #endif
-};
-/** compare for LARGER */
-bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) const
-{
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
-  // important for BIG ENDIAN systems:
-  // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
-  // --> the decision has to be derived byte-by-byte from last to first byte
-    for ( int ind = 7; ind >= 0; ind-- )
-    { if (uint8[ind] <= acrc_cmp.uint8[ind]) return false;}
-    // if reach here - all comparisons lead to EQUAL
-    return true;
-  #else
-  if ( uint32[1] <= acrc_cmp.uint32[1] ) return false;
-  if ( uint32[0] <= acrc_cmp.uint32[0] ) return false;
-  return true;
-  #endif
-};
-/** compare with:
-  @return 0 == equal;
-          +1 == this item has higher value than par;
-          -1 == this item has lower value than par */
-int Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) const
-{
-  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
-  // important for BIG ENDIAN systems:
-  // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
-  // --> the decision has to be derived byte-by-byte from last to first byte
-    for ( int ind = 7; ind >= 0; ind-- )
-    { if      (uint8[ind] < acrc_cmp.uint8[ind]) return -1;
-      else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;}
-    // if reach here - all comparisons lead to EQUAL
-    return 0;
-  #elif SIZEOF_INT < 4
-    if      (uint32[1] < acrc_cmp.uint32[1]) return -1;
-    else if (uint32[1] > acrc_cmp.uint32[1]) return +1;
-    if      (uint32[0] < acrc_cmp.uint32[0]) return -1;
-    else if (uint32[0] > acrc_cmp.uint32[0]) return +1;
-    return 0;
-  #endif
-};
 
+#if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
+bool
+Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) const
+{
+  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
+  // important for BIG ENDIAN systems:
+  // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
+  // --> the decision has to be derived byte-by-byte from last to first byte
+  for ( int ind = 7; ind >= 0; ind-- )
+  {
+    if (uint8[ind] != acrc_cmp.uint8[ind])
+      return (uint8[ind] < acrc_cmp.uint8[ind]);
+  }
+  // if reached here - all comparisons led to EQUAL
+  return false;
+  #else
+  if (uint32[1] != acrc_cmp.uint32[1])
+    return (uint32[1] < acrc_cmp.uint32[1]);
+  else
+    return (uint32[0] < acrc_cmp.uint32[0]);
+  #endif
+}
+
+
+bool
+Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) const
+{
+  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
+  // important for BIG ENDIAN systems:
+  // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
+  // --> the decision has to be derived byte-by-byte from last to first byte
+  for ( int ind = 7; ind >= 0; ind-- )
+  {
+    if (uint8[ind] != acrc_cmp.uint8[ind])
+      return (uint8[ind] > acrc_cmp.uint8[ind]);
+  }
+  // if reached here - all comparisons led to EQUAL
+  return false;
+  #else
+  if (uint32[1] != acrc_cmp.uint32[1])
+    return (uint32[1] > acrc_cmp.uint32[1]);
+  else
+    return (uint32[0] > acrc_cmp.uint32[0]);
+  #endif
+}
+
+
+int
+Flexible8ByteString_c::compare( const Flexible8ByteString_c& acrc_cmp ) const
+{
+  #if !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || defined(NO_8BIT_CHAR_TYPE)
+  // important for BIG ENDIAN systems:
+  // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
+  // --> the decision has to be derived byte-by-byte from last to first byte
+  for ( int ind = 7; ind >= 0; ind-- )
+  {
+    if      (uint8[ind] < acrc_cmp.uint8[ind]) return -1;
+    else if (uint8[ind] > acrc_cmp.uint8[ind]) return +1;
+    // else: equal, compare next byte
+  }
+  // if reached here - all comparisons led to EQUAL
+  return 0;
+  #elif SIZEOF_INT < 4
+  if      (uint32[1] < acrc_cmp.uint32[1]) return -1;
+  else if (uint32[1] > acrc_cmp.uint32[1]) return +1;
+  if      (uint32[0] < acrc_cmp.uint32[0]) return -1;
+  else if (uint32[0] > acrc_cmp.uint32[0]) return +1;
+  return 0;
+  #else
+  #error "Shouldn't reach here as this function would be unimplemented..."
+  #endif
+};
 #endif // end !defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) || SIZEOF_INT < 4
 
-/**
-  set a float value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-  as the string is ordered in LittleEndian order,
-  identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos Byte position [0..4]
-  @param af_val float value to set
-  */
-void Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
+
+void
+Flexible8ByteString_c::setFloatData(uint8_t aui8_pos, const float af_val)
 {
-  isoaglib_assert( aui8_pos < 5 );
-  if ( aui8_pos < 5 )
-    floatVar2LittleEndianStream( &af_val, (uint8+aui8_pos) );
+  isoaglib_assert (aui8_pos <= 4);
+  floatVar2LittleEndianStream( &af_val, (uint8+aui8_pos) );
 }
+
+
 #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && !defined(NO_8BIT_CHAR_TYPE)
-/**
-  set an uint16_t value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 2
-  @param aui8_pos Byte position [0..2]
-  @param aui16_val uint16_t value to set
-*/
-void Flexible4ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
+void
+Flexible4ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
 {
+  isoaglib_assert (aui8_pos <= 2);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint16_t*/ uint16[0] = aui16_val; break;
     case 2: /* Byte2 -> 2nd uint16_t*/ uint16[1] = aui16_val; break;
-    case 1:
-      numberRef2LittleEndianString( aui16_val, (uint8+1) ); break;
-    default:
-      isoaglib_assert(!"wrong position.");
-      break;
+    default: numberRef2LittleEndianString( aui16_val, (uint8+1) ); break;
   };
 }
 
-/**
-  set an int16_t value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 2
-  @param aui8_pos Byte position [0..2]
-  @param ai16_val int16_t value to set
-*/
-void Flexible4ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
+
+void
+Flexible4ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
 {
+  isoaglib_assert (aui8_pos <= 2);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint16_t*/ int16[0] = ai16_val; break;
     case 2: /* Byte2 -> 2nd  int16_t*/ int16[1] = ai16_val; break;
-    case 1:
-      numberRef2LittleEndianString( ai16_val, (uint8+1) ); break;
-    default:
-      isoaglib_assert(!"wrong position.");
-      break;
+    default: numberRef2LittleEndianString( ai16_val, (uint8+1) ); break;
   };
 }
 
-/**
-  simply deliver a uint16_t from a specific starting position with.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  @param aui8_pos position of delivered uint16_t [0..6]
-  @return uint16_t balue in CAN data string at pos (aui8_pos, aui8_pos+1) read Low/High order
-*/
-uint16_t Flexible4ByteString_c::getUint16Data(uint8_t aui8_pos) const
+
+uint16_t
+Flexible4ByteString_c::getUint16Data(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 2);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint16_t*/ return uint16[0];
     case 2: /* Byte2 -> 2nd uint16_t*/ return uint16[1];
-    case 1:
-      return convertLittleEndianStringUi16(uint8+1);
-    default:
-      isoaglib_assert(!"wrong position.");
-      break;
+    default: return convertLittleEndianStringUi16(uint8+1);
   };
-  // only reach here on error
-  return 0;
 }
 
-/**
-  simply deliver a int16_t from a specific starting position with.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  @param aui8_pos position of delivered int16_t [0..6]
-  @return int16_t balue in CAN data string at pos (aui8_pos, aui8_pos+1) read Low/High order
-*/
-int16_t Flexible4ByteString_c::getInt16Data(uint8_t aui8_pos) const
+
+int16_t
+Flexible4ByteString_c::getInt16Data(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 2);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint16_t*/ return int16[0];
     case 2: /* Byte2 -> 2nd uint16_t*/ return int16[1];
-    case 1:
-      return convertLittleEndianStringI16(uint8+1);
-    default:
-      isoaglib_assert(!"wrong position.");
-      break;
+    default: return convertLittleEndianStringI16(uint8+1);
   };
-  // only reach here on error
-  return 0;
 }
 
 
-/**
-  set an uint16_t value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos Byte position [0..6]
-  @param aui16_val uint16_t value to set
-*/
-void Flexible8ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
+void
+Flexible8ByteString_c::setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
 {
+  isoaglib_assert (aui8_pos <= 6);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint16_t*/ uint16[0] = aui16_val; break;
     case 2: /* Byte2 -> 2nd uint16_t*/ uint16[1] = aui16_val; break;
     case 4: /* Byte4 -> 3rd uint16_t*/ uint16[2] = aui16_val; break;
     case 6: /* Byte6 -> 4th uint16_t*/ uint16[3] = aui16_val; break;
-    default:
-      if ( aui8_pos < 6 ) numberRef2LittleEndianString( aui16_val, (uint8+aui8_pos) );
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: numberRef2LittleEndianString( aui16_val, (uint8+aui8_pos) ); break;
   };
 }
 
-/**
-  set an int16_t value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos Byte position [0..6]
-  @param ai16_val int16_t value to set
-*/
-void Flexible8ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
+
+void
+Flexible8ByteString_c::setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
 {
+  isoaglib_assert (aui8_pos <= 6);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st int16_t*/ int16[0] = ai16_val; break;
     case 2: /* Byte2 -> 2nd int16_t*/ int16[1] = ai16_val; break;
     case 4: /* Byte4 -> 3rd int16_t*/ int16[2] = ai16_val; break;
     case 6: /* Byte6 -> 4th int16_t*/ int16[3] = ai16_val; break;
-    default:
-      if ( aui8_pos < 6 ) numberRef2LittleEndianString( ai16_val, (uint8+aui8_pos) );
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: numberRef2LittleEndianString( ai16_val, (uint8+aui8_pos) ); break;
   };
 }
-/**
-  simply deliver a uint16_t from a specific starting position with.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos position of delivered uint16_t [0..6]
-  @return uint16_t balue in CAN data string at pos (aui8_pos, aui8_pos+1) read Low/High order
-*/
-uint16_t Flexible8ByteString_c::getUint16Data(uint8_t aui8_pos) const
+
+
+uint16_t
+Flexible8ByteString_c::getUint16Data(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 6);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint16_t*/ return uint16[0];
     case 2: /* Byte2 -> 2nd uint16_t*/ return uint16[1];
     case 4: /* Byte4 -> 3rd uint16_t*/ return uint16[2];
     case 6: /* Byte6 -> 4th uint16_t*/ return uint16[3];
-    default:
-      if ( aui8_pos < 6 ) return convertLittleEndianStringUi16(uint8+aui8_pos);
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: return convertLittleEndianStringUi16(uint8+aui8_pos);
   };
-  // only reach here on error
-  return 0;
 }
 
-/**
-  simply deliver a int16_t from a specific starting position with.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos position of delivered int16_t [0..6]
-  @return int16_t balue in CAN data string at pos (aui8_pos, aui8_pos+1) read Low/High order
-*/
-int16_t Flexible8ByteString_c::getInt16Data(uint8_t aui8_pos) const
+
+int16_t
+Flexible8ByteString_c::getInt16Data(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 6);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st int16_t*/ return int16[0];
     case 2: /* Byte2 -> 2nd int16_t*/ return int16[1];
     case 4: /* Byte4 -> 3rd int16_t*/ return int16[2];
     case 6: /* Byte6 -> 4th int16_t*/ return int16[3];
-    default:
-      if ( aui8_pos < 6 ) return convertLittleEndianStringI16(uint8+aui8_pos);
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: return convertLittleEndianStringI16(uint8+aui8_pos);
   };
-  // only reach here on error
-  return 0;
 }
 
 
-/**
-    simply deliver a float from a specific position with.
-    IMPORTANT: position 0 matches to the least significant byte,
-    as the string is ordered in LittleEndian order,
-    identic to the order which is used for CAN messages
-    @param aui8_pos position of delivered uint8_t [0..4]
-    @return float value in CAN data string at pos aui8_pos
-*/
-float Flexible8ByteString_c::getFloatData(uint8_t aui8_pos) const
+float
+Flexible8ByteString_c::getFloatData(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 4);
   float f;
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st float*/ littleEndianStream2FloatVar(&uint32[0], &f); return f;
     case 4: /* Byte4 -> 2nd float*/ littleEndianStream2FloatVar(&uint32[1], &f); return f;
-    default:
-      if ( aui8_pos < 4 ) {
-        littleEndianStream2FloatVar(uint8+aui8_pos, &f);
-        return f;
-      }
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: littleEndianStream2FloatVar(uint8+aui8_pos, &f); return f;
   }
-  // only reach here on error
-  return 0;
 }
 
 
-/**
-  set an uint32_t value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos Byte position [0..4]
-  @param aui32_val uint32_t value to set
-*/
-void Flexible8ByteString_c::setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
+void
+Flexible8ByteString_c::setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
 {
+  isoaglib_assert (aui8_pos <= 4);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint32_t*/ uint32[0] = aui32_val; break;
     case 4: /* Byte4 -> 2nd uint32_t*/ uint32[1] = aui32_val; break;
-    default:
-      if ( aui8_pos < 4 ) numberRef2LittleEndianString( aui32_val, (uint8+aui8_pos) );
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: numberRef2LittleEndianString( aui32_val, (uint8+aui8_pos) ); break;
   };
 }
 
-/**
-  set an int32_t value at specified position in string.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos Byte position [0..4]
-  @param ai32_val int32_t value to set
-*/
-void Flexible8ByteString_c::setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
+
+void
+Flexible8ByteString_c::setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
 {
+  isoaglib_assert (aui8_pos <= 4);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st int32_t*/ int32[0] = ai32_val; break;
     case 4: /* Byte4 -> 2nd int32_t*/ int32[1] = ai32_val; break;
-    default:
-      if ( aui8_pos < 4 ) numberRef2LittleEndianString( ai32_val, (uint8+aui8_pos) );
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: numberRef2LittleEndianString( ai32_val, (uint8+aui8_pos) ); break;
   };
 }
-/**
-  simply deliver a uint32_t from a specific starting position with.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos position of delivered uint32_t [0..4]
-  @return uint32_t balue in CAN data string at pos (aui8_pos, aui8_pos+1) read Low/High order
-*/
-uint32_t Flexible8ByteString_c::getUint32Data(uint8_t aui8_pos) const
+
+
+uint32_t
+Flexible8ByteString_c::getUint32Data(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 4);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st uint32_t*/ return uint32[0];
     case 4: /* Byte4 -> 2nd uint32_t*/ return uint32[1];
-    default:
-      if ( aui8_pos < 4 ) return convertLittleEndianStringUi32(uint8+aui8_pos);
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: return convertLittleEndianStringUi32(uint8+aui8_pos);
   };
-  // only reach here on error
-  return 0;
 }
 
-/**
-  simply deliver a int32_t from a specific starting position with.
-  IMPORTANT: position 0 matches to the least significant byte,
-              as the string is ordered in LittleEndian order,
-              identic to the order which is used for CAN messages
-  Possible Error: <iLibErr_c::Range, iLibErr_c::Can> when aui8_pos > 6
-  @param aui8_pos position of delivered int32_t [0..4]
-  @return int32_t balue in CAN data string at pos (aui8_pos, aui8_pos+1) read Low/High order
-*/
-int32_t Flexible8ByteString_c::getInt32Data(uint8_t aui8_pos) const
+
+int32_t
+Flexible8ByteString_c::getInt32Data(uint8_t aui8_pos) const
 {
+  isoaglib_assert (aui8_pos <= 4);
   switch ( aui8_pos )
   {
     case 0: /* Byte0 -> 1st int32_t*/ return int32[0];
     case 4: /* Byte4 -> 2nd int32_t*/ return int32[1];
-    default:
-      if ( aui8_pos < 4 ) return convertLittleEndianStringI32(uint8+aui8_pos);
-      else
-      {
-        isoaglib_assert(!"wrong position.");
-      }
-      break;
+    default: return convertLittleEndianStringI32(uint8+aui8_pos);
   };
-  // only reach here on error
-  return 0;
 }
-
-
 #endif // end OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 
 

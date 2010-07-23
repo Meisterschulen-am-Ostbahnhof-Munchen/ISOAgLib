@@ -1193,9 +1193,7 @@ bool IsoMonitor_c::processMsg()
           if (pc_itemSameSa->itemState(IState_c::Local))
           { /// New remote node steals SA from Local node!
             // --> change address if it has lower PRIO
-            int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar (cc_dataIsoName.outputUnion());
-            // "ci8_higherPrio" can't be 0 because we have "NULL == pc_itemSameISOName", so we can't have the identical IsoName
-            if (ci8_higherPrio < 0)
+            if (pc_itemSameSa->isoName() < cc_dataIsoName)
             { // the LOCAL item has lower PRIO
               if (pc_itemSameSa->itemState(IState_c::AddressClaim))
               { // the LOCAL item was still in AddressClaim (250ms) phase
@@ -1279,14 +1277,12 @@ bool IsoMonitor_c::processMsg()
             else if (pc_itemSameSa->itemState(IState_c::Local))
             { // (A5) Existing remote node steals SA from Local node!
               // --> change address if it has lower PRIO
-              int8_t const ci8_higherPrio = pc_itemSameSa->isoName().higherPriThanPar (cc_dataIsoName.outputUnion());
-              // "ci8_higherPrio" can't be 0 because we have "NULL == pc_itemSameISOName", so we can't have the identical IsoName
-              if (ci8_higherPrio < 0)
+              if (pc_itemSameSa->isoName() < cc_dataIsoName)
               { // the LOCAL item has lower PRIO
                 if (pc_itemSameSa->itemState(IState_c::AddressClaim))
                 { // the LOCAL item was still in AddressClaim (250ms) phase
                   pc_itemSameSa->setNr (unifyIsoSa (pc_itemSameSa, true));
-                // No need to broadcast anything, we didn't yet even call AddToMonitorList...
+                  // No need to broadcast anything, we didn't yet even call AddToMonitorList...
                   pc_itemSameSa->sendAddressClaim (false); // false: Address-Claim due to SA-change on conflict **while 250ms-phase** , so we can skip the "AddressClaim"-phase!
                 }
                 else

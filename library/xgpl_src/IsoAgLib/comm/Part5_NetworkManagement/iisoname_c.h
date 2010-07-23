@@ -122,7 +122,11 @@ public:
   const iIsoName_c& operator=(const iIsoName_c& acrc_src)
     { return IsoName_c::operator=( acrc_src ).toConstIisoName_c();}
 
-  /** compare two iIsoName_c values with operator< */
+  /** compare two iIsoName_c values with operator<
+      NOTE: The NAMEs are being compared based on the PRIORITY
+            and not on the numeric value.
+      NOTE: A NAME has a lower priority if it has a higher numeric value!
+  */
   bool operator<( const iIsoName_c& rc_right ) const
     { return IsoName_c::operator < (rc_right);}
 

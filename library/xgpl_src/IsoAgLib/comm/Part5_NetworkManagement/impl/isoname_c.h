@@ -18,6 +18,8 @@
 /* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/util/iassert.h>
+
 
 namespace IsoAgLib {
   class iIsoName_c;
@@ -35,12 +37,10 @@ class IsoName_c {
 private:
 public:
   /** constant for default parameters and initialization, where the device type is not yet spcified.
-      the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
   static const IsoName_c& IsoNameUnspecified();
 
   /** constant for not yet spcified process data ident -> <device class, device class instance> := <0x0,0xF>
-      the instantiation of this constant variable is located in the module cancustomer_c.cpp
     */
   static const IsoName_c& IsoNameInitialProcessData();
 
@@ -49,22 +49,22 @@ public:
     @param aui8_devClass     initial DEVCLASS (device type)
     @param aui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
   */
-  explicit IsoName_c( uint8_t aui8_devClass, uint8_t aui8_devClassInst=0xF )
+  inline explicit IsoName_c( uint8_t aui8_devClass, uint8_t aui8_devClassInst=0xF )
   { set( true, 2, aui8_devClass, aui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ); }
 
   /** constructor which can read in initial data from uint8_t string
     @param apb_src 64bit input data string, mustn't be NULL.
                    (if NULL, currently all fields are set to 0, but future behaviour is not defined.)
   */
-  IsoName_c(const uint8_t* apb_src);
+  inline IsoName_c(const uint8_t* apb_src);
 
   /** (default) constructor which will set the IsoName to Unspecified */
-  IsoName_c();
+  inline IsoName_c();
 
   /** constructor which can read in initial data from uint8_t string
     @param apu_src 64bit input data string
   */
-  IsoName_c(const Flexible8ByteString_c* apu_src);
+  inline IsoName_c(const Flexible8ByteString_c* apu_src);
 
   /** constructor which format data string from series of input flags
     @param ab_selfConf true -> indicate sefl configuring ECU
@@ -79,20 +79,16 @@ public:
     @param ab_funcInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  IsoName_c(bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
-        uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0);
+  inline IsoName_c(bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
+                   uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0);
+
   /** copy constructor for ISOName
     @param acrc_src source IsoName_c instance
   */
-  IsoName_c(const IsoName_c& acrc_src);
-
-  /** assign constructor for ISOName
-    @param acrc_src source IsoName_c object
-  */
-  const IsoName_c& operator=(const IsoName_c& acrc_src);
+  inline IsoName_c(const IsoName_c& acrc_src);
 
   /** default destructor */
-  ~IsoName_c();
+  inline ~IsoName_c();
 
   /** set data string with all flags with one call
     @param ab_selfConf true -> indicate sefl configuring ECU
@@ -113,14 +109,22 @@ public:
   /** set device class & instance with two seperate parameters */
   void set( uint8_t aui8_devClass, uint8_t aui8_devClassInst );
 
-  /** set this instance to indicator for unspecified value */
-  void setUnspecified( void ) { setDevClass( 0x7F ); setDevClassInst( 0xF );}
+  /** set this instance to indicator for unspecified value
+      NOTE: The "unspecified" value is the one also used
+            in Part 6 when needing an "empty" NAME for
+            unassignment of an aux assignment.
+            So we use it here, too. (Although technically
+            we'd need another flag to indicate unspecified,
+            but this "empty" NAME is not one that would be
+            certified on the BUS, so it's fine for
+            production area usage.*/
+  void setUnspecified( void ) { mu_data = IsoNameUnspecified().mu_data; }
 
   /** check if this instance has specified value (different from default) */
-  bool isSpecified( void ) const { return ( ( devClass() != 0x7F ) || ( devClassInst() != 0xF ) );}
+  bool isSpecified( void ) const { return (mu_data != IsoNameUnspecified().mu_data); }
 
   /** check if this instance has unspecified value (match default) */
-  bool isUnspecified( void ) const { return ( ( devClass() == 0x7F ) && ( devClassInst() == 0xF ) );}
+  bool isUnspecified( void ) const { return (mu_data == IsoNameUnspecified().mu_data); }
 
   /** IsoAgLib-specific enum for often used types of "functions" of IsoNames */
   enum ecuType_t {
@@ -149,132 +153,133 @@ public:
   /** get self config mode
     @return self configuration adress state
   */
-  bool selfConf() const;
+  inline bool selfConf() const;
 
   /** get industry group code
     @return industry group of device
   */
-  uint8_t indGroup() const;
+  inline uint8_t indGroup() const;
 
   /** get device class instance number
     @return:device class instance number
   */
-  uint8_t devClassInst() const;
+  inline uint8_t devClassInst() const;
 
   /** get device class code
     @return:device class
   */
-  uint8_t devClass() const;
+  inline uint8_t devClass() const;
 
   /** get function code
     @return function code
   */
-  uint8_t func() const;
+  inline uint8_t func() const;
 
   /** get function instance code
     @return function instance code
   */
-  uint8_t funcInst() const;
+  inline uint8_t funcInst() const;
 
   /** get ECU instance code
     @return ECU instance code
   */
-  uint8_t ecuInst() const;
+  inline uint8_t ecuInst() const;
 
   /** get manufactor code
     @return manufactor code
   */
-  uint16_t manufCode() const;
+  inline uint16_t manufCode() const;
 
   /** get serial number
     @return serial number
   */
-  uint32_t serNo() const;
+  inline uint32_t serNo() const;
 
   /** set the NAME data from 8 uint8_t string
-    @param apb_src pointer to 8byte source string
+    @param apb_src pointer to 8byte source string, mustn't be NULL!
   */
-  void inputString(const uint8_t* apb_src);
+  inline void inputString(const uint8_t* apb_src);
 
   /** set the NAME data from 8 uint8_t string
-    @param apu_src pointer to 8byte source string
+    @param apu_src pointer to 8byte source string, mustn't be NULL!
   */
-  void inputUnion(const Flexible8ByteString_c* apu_src);
+  inline void inputUnion(const Flexible8ByteString_c* apu_src);
 
   /** set self config mode
     @param ab_selfConf true -> indicate sefl configuring ECU
   */
-  void setSelfConf(bool ab_selfConf);
+  inline void setSelfConf(bool ab_selfConf);
 
   /** set industry group code
     @param aui8_indGroup industry group of device (2 for agriculture)
   */
-  void setIndGroup(uint8_t aui8_indGroup);
+  inline void setIndGroup(uint8_t aui8_indGroup);
 
   /** set device class instance number
     @param aui8_devClassInst instance number of ECU with same devClass in the network
   */
-  void setDevClassInst(uint8_t aui8_devClassInst);
+  inline void setDevClassInst(uint8_t aui8_devClassInst);
 
   /** set device class code
     @param aui8_devClass device class of ECU
   */
-  void setDevClass(uint8_t aui8_devClass);
+  inline void setDevClass(uint8_t aui8_devClass);
 
   /** set function code
     @param ab_func function of the ECU (usual 25 for network interconnect)
   */
-  void setFunc(uint8_t ab_func);
+  inline void setFunc(uint8_t ab_func);
 
   /** set function instance code
     @param ab_funcInst instance number of ECU with same function and device class
         (default 0 - normally)
   */
-  void setFuncInst(uint8_t ab_funcInst);
+  inline void setFuncInst(uint8_t ab_funcInst);
 
   /** set ECU instance code
     @param ab_ecuInst instance number of ECU with same function, device class and function instance
         (default 0 - normally)
   */
-  void setEcuInst(uint8_t ab_ecuInst);
+  inline void setEcuInst(uint8_t ab_ecuInst);
 
   /** set manufactor code
     @param aui16_manufCode code of manufactor (11bit)
   */
-  void setManufCode(uint16_t aui16_manufCode);
+  inline void setManufCode(uint16_t aui16_manufCode);
 
   /** set serial number (Identity Number)
     @param aui32_serNo serial no of specific device (21bit)
   */
-  void setSerNo(uint32_t aui32_serNo);
-
-  /** check if this NAME has higher prio
-    than the given NAME 8-uint8_t string
-    @param apu_compare
-    @return 0 == equal; -1 == this has lower prio than par; +1 == this item has higher prio than par
-  */
-  int8_t higherPriThanPar(const Flexible8ByteString_c* apu_compare) const;
+  inline void setSerNo(uint32_t aui32_serNo);
 
   /** Check if all Non-Instance fields of both ISONames match
     @return true if equal, false if one non-inst field differs!
   */
   bool isEqualRegardingNonInstFields (const IsoName_c& acrc_isoName) const;
 
+  /** assignment operator */
+  inline const IsoName_c& operator=(const IsoName_c& acrc_src)
+    { mu_data = acrc_src.mu_data; return acrc_src; }
+
   /** compare two IsoName_c values with operator== */
-  bool operator==( const IsoName_c& rc_right ) const
-    { return (higherPriThanPar( rc_right.outputUnion() ) == 0);}
+  inline bool operator==( const IsoName_c& rc_right ) const
+    { return (mu_data == rc_right.mu_data); }
 
   /** compare two IsoName_c values with operator!= */
-  bool operator!=( const IsoName_c& rc_right ) const
-    { return (higherPriThanPar( rc_right.outputUnion() ) != 0);}
+  inline bool operator!=( const IsoName_c& rc_right ) const
+    { return operator!= (rc_right.mu_data); }
 
   /** compare IsoName_c value and Flexible8ByteString_c with operator!= */
-  bool operator!=( const Flexible8ByteString_c& acrc_right ) const
-    { return (higherPriThanPar( &acrc_right ) != 0);}
+  inline bool operator!=( const Flexible8ByteString_c& acrc_right ) const
+    { return (mu_data != acrc_right); }
 
-  /** compare two IsoName_c values with operator< */
-  bool operator<( const IsoName_c& rc_right ) const
-    { return (higherPriThanPar( rc_right.outputUnion() ) == -1);}
+  /** compare two IsoName_c values with operator<
+      NOTE: The NAMEs are being compared based on the PRIORITY
+            and not on the numeric value.
+      NOTE: A NAME has a lower priority if it has a higher numeric value!
+  */
+  inline bool operator<( const IsoName_c& rc_right ) const
+    { return (mu_data > rc_right.mu_data); }
 
   /** convert function */
   IsoAgLib::iIsoName_c& toIisoName_c();
@@ -289,6 +294,218 @@ private:
 
 /** this typedef is only for some time to provide backward compatibility at API level */
 typedef IsoName_c ISOName_c;
+
+
+inline
+bool
+IsoName_c::selfConf() const
+{
+  return ( mu_data[7] >> 7) != 0;
+}
+
+
+inline
+uint8_t
+IsoName_c::indGroup() const
+{
+  return ((mu_data[7] >> 4) & 0x7) ;
+}
+
+
+inline
+uint8_t
+IsoName_c::devClassInst() const
+{
+  return (mu_data[7] & 0xF);
+}
+
+
+inline
+uint8_t
+IsoName_c::devClass() const
+{
+  return (mu_data[6] >> 1);
+}
+
+
+inline
+uint8_t
+IsoName_c::func() const
+{
+  return mu_data[5];
+}
+
+
+inline
+uint8_t
+IsoName_c::funcInst() const
+{
+  return (mu_data[4] >> 3);
+}
+
+
+inline
+uint8_t
+IsoName_c::ecuInst() const
+{
+  return (mu_data[4] & 0x7);
+}
+
+
+inline
+uint16_t
+IsoName_c::manufCode() const
+{
+  return ((mu_data[3] << 3) | (mu_data[2] >> 5));
+}
+
+
+inline
+uint32_t
+IsoName_c::serNo() const
+{
+  return ((static_cast<uint32_t>(mu_data[2] & 0x1F) << 16) | (static_cast<uint32_t>(mu_data[1]) << 8) | mu_data[0]);
+}
+
+
+inline
+void
+IsoName_c::inputString (const uint8_t* apb_src)
+{
+  isoaglib_assert (NULL != apb_src);
+  mu_data.setDataFromString( apb_src );
+}
+
+
+inline
+void
+IsoName_c::inputUnion (const Flexible8ByteString_c* apu_src)
+{
+  isoaglib_assert (NULL != apu_src);
+  mu_data = *apu_src;
+}
+
+
+inline
+void
+IsoName_c::setSelfConf (bool ab_selfConf)
+{
+  mu_data.setUint8Data( 7, ((mu_data[7] & 0x7F) | (ab_selfConf << 7)) );
+}
+
+
+inline
+void
+IsoName_c::setIndGroup (uint8_t aui8_indGroup)
+{
+  mu_data.setUint8Data( 7, ((mu_data[7] & 0x8F) | ((aui8_indGroup & 0x7) << 4)) );
+}
+
+
+inline
+void
+IsoName_c::setDevClassInst (uint8_t aui8_devClassInst)
+{
+  mu_data.setUint8Data( 7, ((mu_data[7] & 0xF0) | (aui8_devClassInst)) );
+}
+
+
+inline
+void
+IsoName_c::setDevClass (uint8_t aui8_devClass)
+{
+  mu_data.setUint8Data( 6, ((0 /* reserved bit set to zero!*/) | (aui8_devClass << 1)) );
+/* old version, which would be right if the reserved bit would have been set somewhere else.
+  pb_data[6] = ((pb_data[6] & 0x1) | (aui8_devClass << 1));
+*/
+}
+
+
+inline
+void
+IsoName_c::setFunc (uint8_t ab_func)
+{
+  mu_data.setUint8Data( 5, ab_func );
+}
+
+
+inline
+void
+IsoName_c::setFuncInst (uint8_t ab_funcInst)
+{
+  mu_data.setUint8Data( 4, ((mu_data[4] & 0x7) | (ab_funcInst << 3)) );
+}
+
+
+inline
+void
+IsoName_c::setEcuInst (uint8_t ab_ecuInst)
+{
+  mu_data.setUint8Data( 4, ((mu_data[4] & 0xF8) | (ab_ecuInst & 0x7)) );
+}
+
+
+inline
+void
+IsoName_c::setManufCode (uint16_t aui16_manufCode)
+{
+  mu_data.setUint8Data( 3, (aui16_manufCode >> 3) );
+  mu_data.setUint8Data( 2, ((mu_data[2] & 0x1F) | ((aui16_manufCode & 0x7) << 5)) );
+}
+
+
+inline
+void
+IsoName_c::setSerNo (uint32_t aui32_serNo)
+{
+  mu_data.setUint16Data( 0, uint16_t(aui32_serNo & 0xFFFFU) );
+  mu_data.setUint8Data( 2, ( (mu_data[2] & 0xE0) | ((aui32_serNo >> 16) & 0x1F) ) );
+}
+
+
+inline
+IsoName_c::IsoName_c (const uint8_t* apb_src)
+  : mu_data (apb_src)
+{
+}
+
+
+inline
+IsoName_c::IsoName_c()
+  : mu_data() // initializes to UNSPECIFIED already
+{
+}
+
+
+inline
+IsoName_c::IsoName_c (const Flexible8ByteString_c* apu_src)
+  : mu_data (*apu_src)
+{
+}
+
+
+inline
+IsoName_c::IsoName_c (bool ab_selfConf, uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
+                      uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t ab_funcInst, uint8_t ab_ecuInst)
+  : mu_data() // initializes to UNSPECIFIED
+{
+  set (ab_selfConf, aui8_indGroup, aui8_devClass, aui8_devClassInst,
+       ab_func, aui16_manufCode, aui32_serNo, ab_funcInst, ab_ecuInst);
+}
+
+
+inline
+IsoName_c::IsoName_c (const IsoName_c& acrc_src)
+  : mu_data (acrc_src.mu_data)
+{ // simply copy data string
+}
+
+
+inline
+IsoName_c::~IsoName_c()
+{
+}
+
 
 }
 #endif
