@@ -2305,6 +2305,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
       unsigned int deXactualHeight(0);
       unsigned int stdRawBitmapBytes [3];
       unsigned int fixNr(0);
+      unsigned int fixBitmapCounter(0);
       unsigned int objBitmapOptions(0);
       unsigned int deXwidth=0;
       if (objType == otPicturegraphic)
@@ -2358,6 +2359,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         //////////////////////////////////////////////////////
         /// ### +BEGIN+ -- SECOND -- process "fixed" bitmaps
         fixNr = 0;
+        fixBitmapCounter = 0;
         unsigned int fiXactualWidth [maxFixedBitmaps];
         unsigned int fiXactualHeight [maxFixedBitmaps];
         unsigned int fixRawBitmapBytes [maxFixedBitmaps] [3];
@@ -2400,7 +2402,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           bool firstEntry=true;
           for (unsigned int i=0; i<fixNr; i++)
           {
-            for (int actDepth=0; actDepth<2; actDepth++)
+            for (int actDepth=0; actDepth<3; actDepth++)
             {
               // was this depth generated for this special bitmap?
               if (fixRawBitmapBytes[i] [actDepth] > 0)
@@ -2409,6 +2411,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
                 unsigned int options = (fixBitmapOptions[i] & 0x3) | ( (fixBitmapOptions[i] & (uint64_t(1)<<(2+actDepth))) ? (uint64_t(1)<<2) : 0 );
                 fprintf (partFile_attributes, "{iVtObject%s_aRawBitmap%dFixed%d, %d, %d, %d, (%d << 6) | %d}", m_objName.c_str(), actDepth, i, fixRawBitmapBytes[i] [actDepth], fiXactualWidth[i], fiXactualHeight[i], actDepth, options);
 
+                fixBitmapCounter++;
                 firstEntry = false;
               }
             }
@@ -3511,10 +3514,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           else
             fprintf (partFile_attributes, ", %d,iVtObject%s_aRawBitmap%d", stdRawBitmapBytes [actDepth], m_objName.c_str(), actDepth);
         }
-        if (fixNr == 0)
+        if (fixBitmapCounter == 0)
           fprintf (partFile_attributes, ", 0,NULL");
         else
-          fprintf (partFile_attributes, ", %d,iVtObject%s_aFixedBitmaps", fixNr, m_objName.c_str());
+          fprintf (partFile_attributes, ", %d,iVtObject%s_aFixedBitmaps", fixBitmapCounter, m_objName.c_str());
       }
       if (objHasArrayPoints)
       {
