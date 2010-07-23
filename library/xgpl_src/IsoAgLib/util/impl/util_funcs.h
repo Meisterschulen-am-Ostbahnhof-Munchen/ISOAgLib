@@ -624,7 +624,7 @@ class Flexible8ByteString_c {
   /** set this object from a optionally odd addressed string */
   void setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len = 8 );
   /** copy contents of this object to a optionally odd addressed string */
-  void getDataToString( uint8_t aui8_offset, uint8_t* pui8_srcStream, uint8_t aui8_len = 8 ) const;
+  void getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len = 8 ) const;
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
   const uint8_t* getUint8DataConstPointer( uint8_t aui8_positionOffset ) const

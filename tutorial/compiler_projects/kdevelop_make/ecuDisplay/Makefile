@@ -15,7 +15,7 @@ EXTERNAL_LIBS =
 -include versions.mk
 
 
-PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -D'NDEBUG' -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_MESSAGE_QUEUE
+PROJ_DEFINES = $(VERSION_DEFINES) -DPRJ_USE_AUTOGEN_CONFIG=config_ecuDisplay.h -D'USE_MUTUAL_EXCLUSION' -D'ENABLE_MULTIPACKET_VARIANT_FAST_PACKET' -D'NDEBUG' -DSYSTEM_WITH_ENHANCED_CAN_HAL -DCAN_DRIVER_MESSAGE_QUEUE
 
 ####### Definition of compiler binary prefix corresponding to selected target
 COMPILER_BINARY_PRE = 
@@ -99,13 +99,13 @@ SOURCES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver/datas
 		../../../../library/xgpl_src/IsoAgLib/driver/system/impl/system_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canio_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.cpp \
-		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/filterbox_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/ident_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom_target_extensions.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.cpp \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/isoaglibthread_c.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/can/hal_can_interface.cpp
@@ -127,6 +127,8 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/util/iutil_funcs.h \
 		../../../../library/xgpl_src/IsoAgLib/util/iassert.h \
 		../../../../library/xgpl_src/IsoAgLib/util/convert.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_emulated.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/generic_utils/system/mutex_pthread.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_system.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_config.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/hal_typedef.h \
@@ -137,11 +139,11 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/isoaglib_config.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part3_DataLink/imultisend_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/istate_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/icontrolfunctionstatehandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/iisofiltermanager_c.h \
@@ -201,6 +203,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_rs232.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/pc_eeditor_can.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/eeprom/eeprom.h \
+		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/isoaglibthread_c.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/system/system_target_extensions.h \
 		../../../../library/xgpl_src/IsoAgLib/hal/pc/config.h \
@@ -230,6 +233,7 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/istate_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h \
+		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectellipse_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtobjectinputboolean_c.h \
@@ -274,7 +278,6 @@ INSTALL_FILES_LIBRARY = ../../../../library/xgpl_src/supplementary_driver/driver
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/cancustomer_c.h \
 		../../../../library/xgpl_src/IsoAgLib/driver/can/impl/canpkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/util/impl/singleton_container.h \
-		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h \
 		../../../../library/xgpl_src/IsoAgLib/scheduler/impl/schedulerentry_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isosystempkg_c.h \
 		../../../../library/xgpl_src/IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h \

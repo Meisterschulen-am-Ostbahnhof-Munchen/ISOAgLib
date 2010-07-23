@@ -636,7 +636,7 @@ Flexible4ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* ap
 void
 Flexible4ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len ) const
 {
-  isoaglib_assert ( (apui8_srcStream != NULL) && ((aui8_len+aui8_offset)<=4) );
+  isoaglib_assert ( (pui8_targetStream != NULL) && ((aui8_len+aui8_offset)<=4) );
   memcpy (pui8_targetStream, uint8+aui8_offset, aui8_len);
 }
 
@@ -650,10 +650,10 @@ Flexible8ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* ap
 
 
 void
-Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_srcStream, uint8_t aui8_len ) const
+Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len ) const
 {
-  isoaglib_assert ( (apui8_srcStream != NULL) && ((aui8_len+aui8_offset)<=8) );
-  memcpy (pui8_srcStream, uint8+aui8_offset, aui8_len);
+  isoaglib_assert ( (pui8_targetStream != NULL) && ((aui8_len+aui8_offset)<=8) );
+  memcpy (pui8_targetStream, uint8+aui8_offset, aui8_len);
 }
 
 
