@@ -705,7 +705,7 @@ void Flexible4ByteString_c::setFlexible4DataValueInd(uint8_t aui8_ind, const Fle
 {
 #ifdef NO_8BIT_CHAR_TYPE
   for (uint8_t index = 0; index < 4; index++)
-    uint8[index] = ac_value.uint8[aui8_ind+index];
+    uint8[index] = ac_value.uint8[(aui8_ind<<2)+index];
 #else
   uint32[0] = ac_value.uint32[aui8_ind];
 #endif
@@ -765,18 +765,18 @@ Flexible8ByteString_c::Flexible8ByteString_c( const uint8_t* apui8_srcStream )
 /** set this object from a optionally odd addressed string */
 void Flexible4ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len )
 {
-  if ((apui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 5) )
+  if ((apui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 4) )
   { // source is defined and the wanted length is in allowed range
-    const unsigned int cui_useLen = ((aui8_len+aui8_offset)<4)?(aui8_len+aui8_offset):(4-aui8_offset);
+    const unsigned int cui_useLen = ((aui8_len+aui8_offset)<=4)?(aui8_len):(4-aui8_offset);
     CNAMESPACE::memcpy(uint8+aui8_offset, apui8_srcStream, cui_useLen );
   }
 };
 /** copy contents of this object to a optionally odd addressed string */
 void Flexible4ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_targetStream, uint8_t aui8_len ) const
 {
-  if ((pui8_targetStream != NULL ) && (aui8_len > 0) && (aui8_offset< 5))
+  if ((pui8_targetStream != NULL ) && (aui8_len > 0) && (aui8_offset< 4))
   { // target is defined and the wanted length is in allowed range
-    const unsigned int cui_useLen = ((aui8_len+aui8_offset)<4)?(aui8_len+aui8_offset):(4-aui8_offset);
+    const unsigned int cui_useLen = ((aui8_len+aui8_offset)<=4)?(aui8_len):(4-aui8_offset);
     CNAMESPACE::memcpy(pui8_targetStream, uint8+aui8_offset, cui_useLen );
   }
 };
@@ -784,18 +784,18 @@ void Flexible4ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_
 /** set this object from a optionally odd addressed string */
 void Flexible8ByteString_c::setDataFromString( uint8_t aui8_offset, const uint8_t* apui8_srcStream, uint8_t aui8_len )
 {
-  if ((apui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 9))
+  if ((apui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 8))
   { // source is defined and the wanted length is in allowed range
-    const uint8_t cui8_useLen = ((aui8_len+aui8_offset)<8)?(aui8_len+aui8_offset):(8-aui8_offset);
+    const uint8_t cui8_useLen = ((aui8_len+aui8_offset)<=8)?(aui8_len):(8-aui8_offset);
     CNAMESPACE::memcpy(uint8+aui8_offset, apui8_srcStream, cui8_useLen );
   }
 };
 /** copy contents of this object to a optionally odd addressed string */
 void Flexible8ByteString_c::getDataToString( uint8_t aui8_offset, uint8_t* pui8_srcStream, uint8_t aui8_len ) const
 {
-  if ((pui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 9))
+  if ((pui8_srcStream != NULL ) && (aui8_len > 0) && (aui8_offset< 8))
   { // source is defined and the wanted length is in allowed range
-    const uint8_t cui8_useLen = ((aui8_len+aui8_offset)<8)?(aui8_len+aui8_offset):(8-aui8_offset);
+    const uint8_t cui8_useLen = ((aui8_len+aui8_offset)<=8)?(aui8_len):(8-aui8_offset);
     CNAMESPACE::memcpy(pui8_srcStream, uint8+aui8_offset, cui8_useLen );
   }
 };
@@ -840,7 +840,7 @@ bool Flexible8ByteString_c::operator!=( const Flexible8ByteString_c& acrc_cmp ) 
   return false;
 #else
   return ( ( uint32[1] != acrc_cmp.uint32[1] )
-        && ( uint32[0] != acrc_cmp.uint32[0] ) );
+        || ( uint32[0] != acrc_cmp.uint32[0] ) );
 #endif
 };
 #endif // end SIZEOF_INT < 4
@@ -854,9 +854,12 @@ bool Flexible4ByteString_c::operator<( const Flexible4ByteString_c& acrc_cmp ) c
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 3; ind >= 0; ind-- )
-    { if (uint8[ind] >= acrc_cmp.uint8[ind]) return false;}
+    {
+      if (uint8[ind] != acrc_cmp.uint8[ind])
+        return (uint8[ind] < acrc_cmp.uint8[ind]);
+    }
     // if reach here - all comparisons lead to EQUAL
-    return true;
+    return false;
 }
 /** compare for LARGER */
 bool Flexible4ByteString_c::operator>( const Flexible4ByteString_c& acrc_cmp ) const
@@ -865,9 +868,12 @@ bool Flexible4ByteString_c::operator>( const Flexible4ByteString_c& acrc_cmp ) c
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 3; ind >= 0; ind-- )
-    { if (uint8[ind] <= acrc_cmp.uint8[ind]) return false;}
+    {
+      if (uint8[ind] != acrc_cmp.uint8[ind])
+        return (uint8[ind] > acrc_cmp.uint8[ind]);
+    }
     // if reach here - all comparisons lead to EQUAL
-    return true;
+    return false;
 };
 
 /** compare with:
@@ -897,13 +903,17 @@ bool Flexible8ByteString_c::operator<( const Flexible8ByteString_c& acrc_cmp ) c
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 7; ind >= 0; ind-- )
-    { if (uint8[ind] >= acrc_cmp.uint8[ind]) return false;}
+    {
+      if (uint8[ind] != acrc_cmp.uint8[ind])
+        return (uint8[ind] < acrc_cmp.uint8[ind]);
+    }
     // if reach here - all comparisons lead to EQUAL
-    return true;
+    return false;
   #else
-  if ( uint32[1] >= acrc_cmp.uint32[1] ) return false;
-  if ( uint32[0] >= acrc_cmp.uint32[0] ) return false;
-  return true;
+  if (uint32[1] != acrc_cmp.uint32[1])
+    return (uint32[1] < acrc_cmp.uint32[1]);
+  else
+    return (uint32[0] < acrc_cmp.uint32[0]);
   #endif
 };
 /** compare for LARGER */
@@ -914,13 +924,17 @@ bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) c
   // the bytes are ordered as communicated by CAN -> i.e. in LittleEndian order
   // --> the decision has to be derived byte-by-byte from last to first byte
     for ( int ind = 7; ind >= 0; ind-- )
-    { if (uint8[ind] <= acrc_cmp.uint8[ind]) return false;}
+    {
+      if (uint8[ind] != acrc_cmp.uint8[ind])
+        return (uint8[ind] > acrc_cmp.uint8[ind]);
+    }
     // if reach here - all comparisons lead to EQUAL
-    return true;
+    return false
   #else
-  if ( uint32[1] <= acrc_cmp.uint32[1] ) return false;
-  if ( uint32[0] <= acrc_cmp.uint32[0] ) return false;
-  return true;
+  if (uint32[1] != acrc_cmp.uint32[1])
+    return (uint32[1] > acrc_cmp.uint32[1]);
+  else
+    return (uint32[0] > acrc_cmp.uint32[0]);
   #endif
 };
 /** compare with:

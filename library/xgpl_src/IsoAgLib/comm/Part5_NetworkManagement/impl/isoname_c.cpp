@@ -434,33 +434,7 @@ int8_t IsoName_c::higherPriThanPar(const Flexible8ByteString_c* apu_compare) con
   }
 #endif
 
-  // if one of the both comparison parameters have 0xFF in the byte 0..5, then only compare
-  // device class, -instance and industry group
-  #if defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN) && SIZEOF_INT >= 4
-  static const uint64_t cui64_lazyEvaluationIndicator = 0x000000FFFFFFFFFFULL;
-  if ( ( (       mu_data.uint64[0] & cui64_lazyEvaluationIndicator ) == cui64_lazyEvaluationIndicator )
-    || ( ( apu_compare->uint64[0] & cui64_lazyEvaluationIndicator ) == cui64_lazyEvaluationIndicator ) )
-  #else
-  static const uint8_t lazyEvaluationIndicator[] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
-  if ( ( CNAMESPACE::memcmp( mu_data.uint8, lazyEvaluationIndicator, 5 ) == 0 ) || ( CNAMESPACE::memcmp( apu_compare->uint8, lazyEvaluationIndicator, 5 ) == 0 ) )
-  #endif
-  { // perform only lazy evaluation
-    // compare device class instance and industry group
-    if ( (mu_data.uint8[7] & 0x7F) > (apu_compare->uint8[7] & 0x7F) ) return -1;
-    else if ( (mu_data.uint8[7] & 0x7F) < (apu_compare->uint8[7] & 0x7F) ) return +1;
-    // compare device class
-    if ( (mu_data.uint8[6] >> 1) > (apu_compare->uint8[6] >> 1) ) return -1;
-    else if ( (mu_data.uint8[6] >> 1) < (apu_compare->uint8[6] >> 1) ) return +1;
-    // check if one part has a NOT spefified FUNCTION ( == 0xFF as default value ), as then
-    // both sides should be regarded as equal for lazy evaluation
-    if ( ( mu_data.uint8[5] == 0xFF ) || ( apu_compare->uint8[5] == 0xFF ) ) return 0;
-    // compare Function as both have a non-default value
-    if ( (mu_data.uint8[5]) > (apu_compare->uint8[5]) ) return -1;
-    else if ( (mu_data.uint8[5]) < (apu_compare->uint8[5]) ) return +1;
-    // if still here -> both should be regarded as equal for this compare level
-    return 0;
-  }
-  // we reach here only, when the full ISONAME has to be compared
+  // full ISONAME has to be compared
   // -> Flexible8ByteString_c::compare returns +1 when VALUE of mu_data is LARGER
   // ==> priority is HIGHER when VALUE IS LOWER --> multiply by -1
   return (-1 * mu_data.compare( *apu_compare ));
