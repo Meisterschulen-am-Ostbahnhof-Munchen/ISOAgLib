@@ -1,42 +1,16 @@
-/***************************************************************************
-                          vt2iso-defines.h
-                             -------------------
-    begin                : Mon Mar 31 2003
-    copyright            : (C) 2003 - 2004 by Dipl.-Inf. Martin Wodok
-    email                : m.wodok@osb-ag:de
-    type                 : Header
-    $LastChangedDate: 2004-10-01 13:51:42 +0200 (Fri, 01 Oct 2004) $
-    $LastChangedRevision: 426 $
- ***************************************************************************/
+/*
+  vt2iso-defines.hpp
 
-/***************************************************************************
- *                                                                         *
- * This file is part of the "IsoAgLib", an object oriented program library *
- * to serve as a software layer between application specific program and   *
- * communication protocol details. By providing simple function calls for  *
- * jobs like starting a measuring program for a process data value on a    *
- * remote ECU, the main program has not to deal with single CAN telegram   *
- * formatting. This way communication problems between ECU's which use     *
- * this library should be prevented.                                       *
- * Everybody and every company is invited to use this library to make a    *
- * working plug and play standard out of the printed protocol standard.    *
- *                                                                         *
- * Copyright (C) 2000 - 2004 Dipl.-Inform. Achim Spangler                  *
- *                                                                         *
- * The IsoAgLib is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU General Public License as published          *
- * by the Free Software Foundation; either version 2 of the License, or    *
- * (at your option) any later version.                                     *
- *                                                                         *
- * This library is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
- * General Public License for more details.                                *
- *                                                                         *
- * You should have received a copy of the GNU General Public License       *
- * along with IsoAgLib; if not, write to the Free Software Foundation,     *
- * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
- ***************************************************************************/
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
 #ifndef VT2ISODEFINES_H
 #define VT2ISODEFINES_H
 
