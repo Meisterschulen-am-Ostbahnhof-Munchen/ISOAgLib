@@ -249,7 +249,7 @@ public:
 
   signed long int idOrName_toi (const char* apc_string, bool ab_isMacro);
 
-  void defaultAttributes (unsigned int a_objType);
+  void defaultAndConvertAttributes (unsigned int a_objType);
 
   void setParseModeWorkingSet (bool ab_parseOnlyWorkingSet) { mb_parseOnlyWorkingSet = ab_parseOnlyWorkingSet; }
   bool isParseModeWorkingSet() { return mb_parseOnlyWorkingSet;}

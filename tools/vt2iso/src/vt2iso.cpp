@@ -1128,7 +1128,7 @@ vt2iso_c::init (
   return true;
 }
 
-void vt2iso_c::defaultAttributes (unsigned int a_objType)
+void vt2iso_c::defaultAndConvertAttributes (unsigned int a_objType)
 {
   arrc_attributes[attrSelectable].setIfNotGiven("yes");
   arrc_attributes[attrSoft_key_mask].setIfNotGiven("NULL");
@@ -1140,11 +1140,96 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   arrc_attributes[attrFont_style].setIfNotGiven("none");
   arrc_attributes[attrVariable_reference].setIfNotGivenOrNull("NULL");
   arrc_attributes[attrTarget_value_variable_reference].setIfNotGivenOrNull("NULL");
-  arrc_attributes[attrEnabled].setIfNotGiven("yes");
   arrc_attributes[attrScale].setIfNotGiven("1");
   arrc_attributes[attrRle].setIfNotGiven("auto");
   arrc_attributes[attrLine_suppression].setIfNotGiven("none");
-  arrc_attributes[attrOptions].setIfNotGiven("none");
+
+  switch (a_objType)
+  { // Check for special handling on Input Objects (options, enabled, option2, etc..)
+  case otInputboolean:
+    arrc_attributes[attrEnabled].setIfNotGiven("yes");
+    break;
+
+  case otInputstring:
+    arrc_attributes[attrOptions].setIfNotGiven("none");
+    arrc_attributes[attrEnabled].setIfNotGiven("yes");
+    break;
+
+  case otInputnumber:
+    arrc_attributes[attrOptions].setIfNotGiven("none");
+    /// Convert (old v2) attrEnabled to attrInputObjectOptions (in case someone is still
+    /// using enabled="..")
+    if (!arrc_attributes[attrEnabled].isGiven() && !arrc_attributes[attrInputObjectOptions].isGiven())
+    { // none of both set, so default to options2="enabled" (aka inputobject_options="..")
+      arrc_attributes[attrInputObjectOptions].set ("enabled");
+    }
+    else
+    { // One or both set, so if enabled set, merge it to attrInputObjectOptions
+      // note: if conflicting values for the "enabled" state are set, this is ignored
+      if (arrc_attributes [attrEnabled].isGiven())
+      { // old enabled=".." given...
+        const signed int retEnabled = booltoi (arrc_attributes [attrEnabled].get().c_str());
+        if (retEnabled == -1)
+        {
+          std::cerr << "Error in booltoi() from 'enabled=\"" << arrc_attributes [attrEnabled].get() << "\"'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          clean_exit();
+          exit (-1);
+        }
+        if (retEnabled == 1)
+        { // merge over to attrInputObjectOptions
+          if (arrc_attributes[attrInputObjectOptions].get().length() > 0)
+            arrc_attributes[attrInputObjectOptions].pushBack ('+');
+          arrc_attributes[attrInputObjectOptions].set (arrc_attributes[attrInputObjectOptions].get() + "enabled");
+        }
+        arrc_attributes[attrInputObjectOptions].setIfNotGiven("none");
+        // for clearness, unset the "enabled" flag, because it's already converted and hence obsolete.
+        arrc_attributes [attrEnabled].clear();
+      }
+      // else: enabled not set, no need to merge.
+    }
+    // from now on "attrEnabled" can be ignored for otInputlist, only "attrInputObjectOptions" needs to be checked.
+    // (attrEnabled got merged into attrInputObjectOptions)
+    break;
+
+  case otInputlist:
+    /// Convert (old v2) attrEnabled to attrOptions (as vt-designer always
+    /// writes out options=".." regardless of version 2 or 4).
+    if (!arrc_attributes[attrEnabled].isGiven() && !arrc_attributes[attrOptions].isGiven())
+    { // None of both set, so default to options="enabled"
+      arrc_attributes[attrOptions].set ("enabled");
+    }
+    else
+    { // One or both set, so if enabled set, merge it to attrOptions
+      // note: if conflicting values for the "enabled" state are set, this is ignored
+      if (arrc_attributes [attrEnabled].isGiven())
+      { // old enabled=".." given...
+        const signed int retEnabled = booltoi (arrc_attributes [attrEnabled].get().c_str()); 
+        if (retEnabled == -1)
+        {
+          std::cerr << "Error in booltoi() from 'enabled=\"" << arrc_attributes [attrEnabled].get() << "\"'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          clean_exit();
+          exit (-1);
+        }
+        if (retEnabled == 1)
+        { // merge over to attrOptions
+          if (arrc_attributes[attrOptions].get().length() > 0)
+            arrc_attributes[attrOptions].pushBack ('+');
+          arrc_attributes[attrOptions].set (arrc_attributes[attrOptions].get() + "enabled");
+        }
+        arrc_attributes[attrOptions].setIfNotGiven("none");
+        // for clearness, unset the "enabled" flag, because it's already converted and hence obsolete.
+        arrc_attributes [attrEnabled].clear();
+      }
+      // else: enabled not set, no need to merge.
+    }
+    // from now on "attrEnabled" can be ignored for otInputlist, only "attrOptions" needs to be checked.
+    // (attrEnabled got merged into attrOptions)
+    break;
+
+  default:
+    arrc_attributes[attrOptions].setIfNotGiven("none");
+    break;
+  }
 
   if (a_objType == otButton)
   {
@@ -1171,11 +1256,6 @@ void vt2iso_c::defaultAttributes (unsigned int a_objType)
   if (a_objType != otGraphicsContext)
   {
     arrc_attributes[attrBackground_colour].setIfNotGiven("white");
-  }
-
-  if (a_objType == otInputnumber)
-  {
-    arrc_attributes[attrInputObjectOptions].setIfNotGiven("enabled");
   }
 }
 
@@ -1959,7 +2039,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
     }
 
     // set all non-set attributes to default values (as long as sensible, like bg_colour etc.)
-    defaultAttributes (objType);
+    defaultAndConvertAttributes (objType);
 
     // get a new ID for this object if not yet done
     signed long int checkObjID = getID (m_objName.c_str(), (objType == otMacro), is_objID, objID);
@@ -2372,7 +2452,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cerr << "\n\nCOULDN'T getAttributesFromNode!"<<std::endl<<std::endl;
               return false; // false: DON'T read name= and id=
             }
-            // no defaultAttributes() needed here...
+            // no defaultAndConvertAttributes() needed here...
 
             c_Bitmap.resetLengths();
             if (!checkForFileOrFile148 ("fixedbitmap"))
@@ -2785,7 +2865,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           if (objChildObjects > 6)
           {
             if(!mb_silentMode)
-              std::cout << "THE <softkeymask> OBJECT '" << m_objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks mit more than 6 Softkeys as they don't have to!!!!"<<std::endl<<std::endl;
+              std::cout << "THE <softkeymask> OBJECT '" << m_objName << "' has more than 6 SoftKeys! Please be aware that maybe not all VTs handle SoftKeyMasks with more than 6 Softkeys as they don't have to!!!!"<<std::endl<<std::endl;
             b_hasMoreThan6SoftKeys = true;
           }
           break;
@@ -2844,9 +2924,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if (!arrc_attributes [attrValue].isGiven())
           { // no value given
-            if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrLength].isGiven() && arrc_attributes [attrEnabled].isGiven()))
+            if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven() && arrc_attributes [attrFont_attributes].isGiven() && arrc_attributes [attrLength].isGiven()))
             {
-              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= AND enabled= ATTRIBUTES FOR THE <inputstring> OBJECT '" << m_objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye."<<std::endl<<std::endl;
+              std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <inputstring> OBJECT '" << m_objName << "' IF NO VALUE IS GIVEN! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
           /// @todo ON REQUEST: MAYBE WARN/FAIL HERE WHEN NO LANGUAGE IS GIVEN BUT NO ENTRY IS DEFINED????????
@@ -2884,25 +2964,20 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int retEnabled = booltoi( arrc_attributes [attrEnabled].get().c_str());
           signed int retHorJustification = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
-          if (retHorJustification == -1 || retHorJustification == -1)
-          {
-            if (retHorJustification == -1)
-              std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-            else
-              std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-            return false;
-          }
           signed int retVertJustification = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
-          if (retVertJustification == -1 || retVertJustification == -1)
-          {
-            if (retVertJustification == -1)
-              std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-            else
-              std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          signed int retJustification = retHorJustification | (retVertJustification << 2);
+          if (retEnabled == -1) {
+            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
-          signed int retJustification = retHorJustification;
-          retJustification |= retVertJustification << 2;
+          if (retHorJustification == -1) {
+            std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
+          if (retVertJustification == -1) {
+            std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
           if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
@@ -2938,36 +3013,29 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           { // place "L" for type specifier
             fprintf (partFile_attributes, ", %sL", arrc_attributes [attrOffset].get().c_str());
           }
+          // note that the enabled=".." attribute is converted into the
+          // inputobject_options attribute in defaultAndConvertAttributes(..) already.
           signed int retInputOption = inputobjectoptiontoi (arrc_attributes [attrInputObjectOptions].get().c_str());
           signed int retFormat = formattoi (arrc_attributes [attrFormat].get().c_str());
           signed int retHorJust = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
-          if ((retInputOption == -1) || (retFormat == -1) || (retHorJust == -1))
-          {
-            if (retInputOption == -1)
-              std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye.<<std::endl<<std::endl";
-
-            if (retFormat == -1)
-              std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-
-            if (retHorJust == -1)
-              std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
+          signed int retJust = retHorJust | (retVertJust << 2);
+          if (retInputOption == -1) {
+            std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
-          signed int retVertJust = verticaljustificationtoi (arrc_attributes  [attrVertical_justification].get().c_str());
-          if ((retInputOption == -1) || (retFormat == -1) || (retVertJust == -1))
-          {
-            if (retInputOption == -1)
-              std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-
-            if (retFormat == -1)
-              std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-
-            if (retVertJust == -1)
-              std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+          if (retFormat == -1) {
+            std::cerr << "Error in formattoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
-          signed int retJust = retHorJust;
-          retJust |= retVertJust << 2;
+          if (retHorJust == -1) {
+            std::cerr << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
+          if (retVertJust == -1) {
+            std::cerr << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
 
           fprintf (partFile_attributes, ", %s, %s, %d, %d, %d", arrc_attributes  [attrScale].get().c_str(), arrc_attributes [attrNumber_of_decimals].get().c_str(), (unsigned int)retFormat, (unsigned int)retJust, (unsigned int)retInputOption);
           break;
@@ -2982,21 +3050,16 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           arrc_attributes [attrValue].setIfNotGiven ("0");
 
-          signed int retEnabled = booltoi ( arrc_attributes [attrEnabled].get().c_str());
+          // note that the enabled=".." attribute is converted into the
+          // options attribute in defaultAndConvertAttributes(..) already.
           signed int retOptions = inputobjectoptiontoi (arrc_attributes [attrOptions].get().c_str());
-          if (retEnabled == -1)
-          {
-            std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
-            return false;
-          }
           if (retOptions == -1)
           {
             std::cerr << "Error in itoinputobjectoptions() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
 
-          uint8_t ui8_options = retEnabled | retOptions;
-          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", arrc_attributes  [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), arrc_attributes  [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), ui8_options);
+          fprintf (partFile_attributes, ", %s, %s, %s, %s, %d", arrc_attributes  [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), arrc_attributes  [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), retOptions);
           break;
         }
 
