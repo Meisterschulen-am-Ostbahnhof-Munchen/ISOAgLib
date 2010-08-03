@@ -89,8 +89,8 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../impl/procdatalocalbase_c.h"
-#include "../../SimpleSetpointElements/impl/simplemanagesetpointlocal_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpointElements/impl/simplemanagesetpointlocal_c.h>
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {

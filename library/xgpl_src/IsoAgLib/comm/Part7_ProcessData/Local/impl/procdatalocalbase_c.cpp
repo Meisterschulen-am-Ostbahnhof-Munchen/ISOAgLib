@@ -117,8 +117,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "procdatalocalbase_c.h"
-#include "../../impl/process_c.h"
-#include "../../processdatachangehandler_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 
 #ifdef USE_EEPROM_IO
   #include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>

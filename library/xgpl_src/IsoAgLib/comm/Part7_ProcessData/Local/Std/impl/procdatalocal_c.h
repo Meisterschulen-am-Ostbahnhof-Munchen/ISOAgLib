@@ -117,9 +117,9 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../impl/procdatalocalbase_c.h"
-#include "../../StdMeasureElements/impl/managemeasureproglocal_c.h"
-#include "../../StdSetpointElements/impl/setpointlocal_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/impl/managemeasureproglocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Local/StdSetpointElements/impl/setpointlocal_c.h>
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {

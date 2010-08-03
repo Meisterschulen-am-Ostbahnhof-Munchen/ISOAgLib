@@ -18,7 +18,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
-#include "../../impl/proc_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 // Begin Namespace __IsoAgLib

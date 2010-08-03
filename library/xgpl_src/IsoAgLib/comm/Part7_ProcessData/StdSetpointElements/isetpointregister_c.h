@@ -18,7 +18,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/setpointregister_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 #include "../iprocesscmd_c.h"
 

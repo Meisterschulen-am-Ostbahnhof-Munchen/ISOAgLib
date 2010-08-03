@@ -89,7 +89,7 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../impl/procdataremotebase_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h>
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {

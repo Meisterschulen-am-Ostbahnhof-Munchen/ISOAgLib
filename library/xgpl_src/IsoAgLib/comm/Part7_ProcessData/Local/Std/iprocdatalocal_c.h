@@ -59,10 +59,10 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/procdatalocal_c.h"
-#include "../StdMeasureElements/imeasureproglocal_c.h"
-#include "../StdSetpointElements/isetpointlocal_c.h"
-#include "../../proc_c.h"
-#include "../../iprocesscmd_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/imeasureproglocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Local/StdSetpointElements/isetpointlocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

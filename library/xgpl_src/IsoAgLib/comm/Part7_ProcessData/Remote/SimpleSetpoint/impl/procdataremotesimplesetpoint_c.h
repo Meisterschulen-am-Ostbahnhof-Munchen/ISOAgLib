@@ -89,9 +89,9 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../impl/procdataremotebase_c.h"
-#include "../../SimpleSetpointElements/impl/simplemanagesetpointremote_c.h"
-#include "../../StdMeasureElements/impl/measureprogremote_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/SimpleSetpointElements/impl/simplemanagesetpointremote_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/StdMeasureElements/impl/measureprogremote_c.h>
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {

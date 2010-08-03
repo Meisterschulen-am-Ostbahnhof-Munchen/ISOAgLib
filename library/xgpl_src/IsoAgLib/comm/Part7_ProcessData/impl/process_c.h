@@ -23,10 +23,10 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include "../Local/impl/procdatalocalbase_c.h"
-#include "../Remote/impl/procdataremotebase_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h>
 #include "processpkg_c.h"
-#include "../processdatachangehandler_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h>
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>

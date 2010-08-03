@@ -119,8 +119,8 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../../impl/processelementbase_c.h"
-#include "../../../impl/proc_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h>
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {

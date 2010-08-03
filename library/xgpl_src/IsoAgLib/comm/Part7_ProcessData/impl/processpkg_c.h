@@ -23,7 +23,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "processcmd_c.h"
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include "../elementddi_s.h"
+#include <IsoAgLib/comm/Part7_ProcessData/elementddi_s.h>
 
 namespace __IsoAgLib {
 

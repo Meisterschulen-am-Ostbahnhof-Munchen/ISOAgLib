@@ -12,8 +12,8 @@
 */
 
 #include "measureprogbase_c.h"
-#include "../../impl/process_c.h"
-#include "../../processdatachangehandler_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 #include <algorithm>
 #include <IsoAgLib/util/impl/util_funcs.h>
 

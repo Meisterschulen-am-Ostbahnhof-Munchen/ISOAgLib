@@ -85,7 +85,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "managemeasureproglocal_c.h"
-#include "../../../impl/process_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 

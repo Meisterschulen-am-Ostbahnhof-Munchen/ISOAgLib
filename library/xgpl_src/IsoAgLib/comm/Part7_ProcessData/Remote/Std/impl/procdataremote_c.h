@@ -89,9 +89,9 @@
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include "../../impl/procdataremotebase_c.h"
-#include "../../StdSetpointElements/impl/setpointremote_c.h"
-#include "../../StdMeasureElements/impl/measureprogremote_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/impl/setpointremote_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/StdMeasureElements/impl/measureprogremote_c.h>
 
 // forward declarations for friend declarations below...
 // needed for iProcess_c::addDDI2ExistingProcData()

@@ -18,7 +18,7 @@
 #include "procdatabase_c.h"
 #include "process_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include "../Remote/Std/impl/procdataremote_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/impl/procdataremote_c.h>
 
 namespace __IsoAgLib {
 

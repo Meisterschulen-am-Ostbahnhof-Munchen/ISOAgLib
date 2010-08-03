@@ -86,9 +86,9 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "setpointremote_c.h"
-#include "../../../impl/process_c.h"
-#include "../../../impl/processcmd_c.h"
-#include "../../../processdatachangehandler_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 namespace __IsoAgLib {

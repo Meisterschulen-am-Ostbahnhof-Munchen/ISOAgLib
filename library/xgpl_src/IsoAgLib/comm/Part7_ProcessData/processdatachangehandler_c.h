@@ -15,7 +15,7 @@
 #ifndef PROCESSDATACHANGEHANDLER_H
 #define PROCESSDATACHANGEHANDLER_H
 
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 
 
 // predeclare __IsoAgLib_c::ProcDataBase_c

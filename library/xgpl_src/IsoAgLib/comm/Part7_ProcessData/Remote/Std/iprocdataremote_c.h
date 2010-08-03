@@ -59,8 +59,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/procdataremote_c.h"
-#include "../StdSetpointElements/isetpointremote_c.h"
-#include "../StdMeasureElements/imeasureprogremote_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/StdSetpointElements/isetpointremote_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/Remote/StdMeasureElements/imeasureprogremote_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

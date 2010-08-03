@@ -59,8 +59,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/procdatalocalsimplemeasure_c.h"
-#include "../StdSetpointElements/isetpointlocal_c.h"
-#include "../../iprocesscmd_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Local/StdSetpointElements/isetpointlocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

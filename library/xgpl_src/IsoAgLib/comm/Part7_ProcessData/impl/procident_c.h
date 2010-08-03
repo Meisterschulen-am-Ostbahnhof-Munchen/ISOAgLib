@@ -21,7 +21,7 @@
 
 #include <IsoAgLib/util/impl/singleton.h>
 #include "processcmd_c.h"
-#include "../elementddi_s.h"
+#include <IsoAgLib/comm/Part7_ProcessData/elementddi_s.h>
 #include <list>
 
 // Begin Namespace __IsoAgLib

@@ -16,8 +16,8 @@
 /* *************************************** */
 #include "setpointbase_c.h"
 #include "setpointregister_c.h"
-#include "../../impl/process_c.h"
-#include "../../impl/processcmd_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h>
 
 namespace __IsoAgLib {
 

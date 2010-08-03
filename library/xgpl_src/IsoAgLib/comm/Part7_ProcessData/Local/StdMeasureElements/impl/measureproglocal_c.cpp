@@ -86,10 +86,10 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "measureproglocal_c.h"
-#include "../../../impl/process_c.h"
-#include "../../../processdatachangehandler_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
-//#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
+
 
 namespace __IsoAgLib {
 

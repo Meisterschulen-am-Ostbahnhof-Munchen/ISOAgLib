@@ -59,10 +59,10 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/procdatalocalsimplesetpointsimplemeasure_c.h"
-#include "../SimpleSetpointElements/isimplemanagesetpointlocal_c.h"
-#include "../../proc_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
-#include "../../iprocesscmd_c.h"
+#include <IsoAgLib/comm/Part7_ProcessData/Local/SimpleSetpointElements/isimplemanagesetpointlocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
