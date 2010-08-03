@@ -53,7 +53,7 @@ FsCommand_c::FsCommand_c(
   , ui8_nrOpenFiles( 0 )
   , b_keepConnectionOpen( false )
   , i32_lastAliveSent( -1 )
-  , c_data( getForeignInstance4Comm (rc_inFileserver.getFsManager() )
+  , c_data( getForeignInstance4Comm (rc_inFileserver.getFsManager()) )
   , ui8_packetLength(0)
   , pui8_receiveBuffer( NULL )
   , ui32_recBufAllocSize( 0 )
