@@ -1,9 +1,6 @@
 * text=auto !eol
 /CONTRIBUTIONS.txt -text
 /LICENSE.txt -text
-bin/update_makefile.sh -text
-bin/win32/README.txt -text
-bin/x86linux/README.txt -text
 doc/DoxyfileAll -text
 doc/DoxyfileApi -text
 doc/doxylog_categorizer.pl -text
