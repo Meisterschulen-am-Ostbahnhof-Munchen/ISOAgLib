@@ -122,6 +122,8 @@ FORCE:
 install_library: \$(INSTALL_FILES_LIBRARY)
 	mkdir -p \$(INSTALL_PATH)/lib;
 	@for INSTITEM in \$(INSTALL_FILES_LIBRARY); do \\
+${TAB}ITEM=\`echo \$\$INSTITEM | grep xgpl_src\`; \\
+${TAB}if [ "\$\$ITEM" != "" ]; then \\
 ${TAB}SEARCH=\$(ISOAGLIB_PATH)/library/xgpl_src; \\
 ${TAB}REPLACE=\$(INSTALL_PATH)/include; \\
 ${TAB}#echo "Search \$\$SEARCH -> replace \$\$REPLACE"; \\
@@ -131,6 +133,7 @@ ${TAB}DEST_PATH=\`dirname \$\$VAR_TEST\`; \\
 ${TAB}#echo "DestPath \$\$DEST_PATH" ; \\
 ${TAB}mkdir -p \$\$DEST_PATH; \\
 ${TAB}install -m 0644 \$\$INSTITEM \$\$DEST_PATH; \\
+${TAB}fi; \
 	done && \\
 	install -m 0644 _PROJECT_CONFIG_REPLACE_ \$(INSTALL_PATH)/include; \\
 	install -m 0644 \$(OBJ_DIR_LIBRARY)/libisoaglib.a \$(INSTALL_PATH)/lib/; \\
