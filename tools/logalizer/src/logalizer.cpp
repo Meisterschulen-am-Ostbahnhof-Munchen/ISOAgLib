@@ -78,7 +78,8 @@ typedef enum {
   logTypeA1ASCII,
   logTypeTrc,
   logTypeJohnDeere,
-  logTypeRte2
+  logTypeRte2,
+  logTypeJrf
 } logType_t;
 
 logType_t logType;
@@ -105,9 +106,12 @@ void exit_with_usage(const char* progname)
   cout << "          4 -> A1ASCII"<<endl;
   cout << "          5 -> PCANView"<<endl;
   cout << "          6 -> JohnDeere"<<endl;
+  cout << "          7 -> rte2"<<endl;
+  cout << "          8 -> JRF (.jrf)"<<endl;
   cout << endl;
   cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << endl;
   cout << endl;
+#ifdef WIN32
   cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
   cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
   cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<endl;
@@ -118,6 +122,18 @@ void exit_with_usage(const char* progname)
   cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
   cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<endl;
   cout << "            ...'    17920  ....... '"<<endl;
+  cout << "JRF:        '101.5647,484910721,255,255,255,255,255,255,255,255'"<<endl;
+#else
+  cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
+  cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
+  cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<endl;
+  cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<endl;
+  cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<endl;
+  cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<endl;
+  cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
+  cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<endl;
+  cout << "JRF:        '101.5647,484910721,255,255,255,255,255,255,255,255'"<<endl;
+#endif
 
   exit(0);
 }
@@ -382,6 +398,32 @@ int parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 1
   can_data[7] = uint8_t(i8);
 
   return (parsed_count == (3+iDb)) ? 0 : -1;
+}
+
+
+int parseLogLineJrf() // "101.5647,484910721,255,255,255,255,255,255,255,255"
+{
+  string line;
+  getline (ifs_in, line);
+#if DEBUG
+  cout << line << endl;
+#endif
+  int i1, i2, i3, i4, i5, i6, i7, i8, iB;
+  float fA;
+  int parsed_count = sscanf (line.c_str(), "%f,%i,%i,%i,%i,%i,%i,%i,%i,%i", &fA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+  can_time = uint64_t (fA*1000);
+  can_id = iB;
+  can_bytes = uint8_t(parsed_count-2);
+  can_data[0] = uint8_t(i1);
+  can_data[1] = uint8_t(i2);
+  can_data[2] = uint8_t(i3);
+  can_data[3] = uint8_t(i4);
+  can_data[4] = uint8_t(i5);
+  can_data[5] = uint8_t(i6);
+  can_data[6] = uint8_t(i7);
+  can_data[7] = uint8_t(i8);
+
+  return (parsed_count >= 2) ? 0 : -1;
 }
 
 
@@ -1521,6 +1563,7 @@ int parseLogLine()
     case logTypeTrc:       i_result = parseLogLineTrc();         break;
     case logTypeJohnDeere: i_result = parseLogLineJohnDeere();   break;
     case logTypeRte2:      i_result = parseLogLineRte2();        break;
+    case logTypeJrf:       i_result = parseLogLineJrf();         break;
     default:               exit_with_error("Unknown Log-Type!"); return false; // return just to satisfy compiler. exit_with_error will exit anyway ;)
   }
   if (i_result == 0) // no error
@@ -1708,7 +1751,7 @@ void setup()
 
 int main (int argc, char** argv)
 {
-  cerr << "ISOBUS-Logalizer (c) 2007-2009 by Martin Wodok et al., OSB AG." << endl << endl;
+  cerr << "ISOBUS-Logalizer (c) 2007-2010 OSB AG." << endl << endl;
 
   if (argc < 2)
     exit_with_usage(argv[0]);
