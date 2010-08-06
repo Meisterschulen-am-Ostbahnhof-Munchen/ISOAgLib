@@ -1,10 +1,10 @@
-####### Some Standard Rules
+###### Some Standard Rules
+
 SUBLIBS  = ${INSERT_SUBLIBS}
 CC       = \$(COMPILER_BINARY_PRE)gcc
 CXX      = \$(COMPILER_BINARY_PRE)g++
+LINK     = \$(COMPILER_BINARY_PRE)g++
 STRIP    = \$(COMPILER_BINARY_PRE)strip
-LEX      = flex
-YACC     = yacc
 
 GCC_MAJOR    := \$(shell \$(CXX) -dumpversion 2>&1 | cut -d'.' -f1)
 ifneq (\$(GCC_MAJOR),2)
@@ -12,15 +12,11 @@ ifneq (\$(GCC_MAJOR),2)
 else
 endif
 
-CFLAGS   = ${INSERT_CXXFLAGS}
+CFLAGS   = ${INSERT_CFLAGS}
 CXXFLAGS = ${INSERT_CXXFLAGS}
-
-LEXFLAGS =
-YACCFLAGS= -d
-INCPATH  = ${INSERT_INCPATH}
-LINK     = \$(COMPILER_BINARY_PRE)g++
 LFLAGS   = ${INSERT_LFLAGS}
 LIBS     = ${INSERT_LIBS}
+INCPATH  = ${INSERT_INCPATH}
 AR       = ar cqs
 RANLIB   =
 TAR      = tar -cf
@@ -39,16 +35,18 @@ MKDIR    = mkdir -p
 
 ####### Output directory
 
-OBJ_DIR_LIBRARY  = objects_library
-OBJ_DIR_APP  = objects_app
+OBJ_DIR_LIBRARY = objects_library
+OBJ_DIR_APP = objects_app
+OBJ_DIR_APP_C = objects_app_c
 
 ####### Build Rules for Library Part
 
 OBJECTS_LIBRARY = \$(patsubst %.cpp,\$(OBJ_DIR_LIBRARY)/%.o,\$(notdir \$(SOURCES_LIBRARY)))
 DEPS_LIBRARY := \$(patsubst %.o,%.d,\$(OBJECTS_LIBRARY))
 
-# \$(OBJ_DIR_LIBRARY)/%.d :
-# 	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM -MT \$(patsubst %.d,%.o,\$@)  \$(filter %/\$(patsubst \$(OBJ_DIR)/%.d,%,\$@).cpp,\$(SOURCES)) > \$@
+\$(DEPS_LIBRARY): | \$(OBJ_DIR_LIBRARY)
+\$(OBJ_DIR_LIBRARY):
+	mkdir \$(OBJ_DIR_LIBRARY)
 
 \$(OBJ_DIR_LIBRARY)/%.d :
 	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.d,%,\$@).cpp,\$(SOURCES_LIBRARY)) 2>/dev/null | \\
@@ -59,20 +57,29 @@ include \$(DEPS_LIBRARY)
 ####### Build Rules for Application Part
 
 OBJECTS_APP = \$(patsubst %.cpp,\$(OBJ_DIR_APP)/%.o,\$(notdir \$(SOURCES_APP)))
+OBJECTS_APP_C = \$(patsubst %.c,\$(OBJ_DIR_APP_C)/%.o,\$(notdir \$(SOURCES_APP_C)))
 DEPS_APP := \$(patsubst %.o,%.d,\$(OBJECTS_APP))
+DEPS_APP_C := \$(patsubst %.o,%.d,\$(OBJECTS_APP_C))
 
-# \$(OBJ_DIR_APP)/%.d :
-# 	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM -MT \$(patsubst %.d,%.o,\$@)  \$(filter %/\$(patsubst \$(OBJ_DIR)/%.d,%,\$@).cpp,\$(SOURCES)) > \$@
+\$(DEPS_APP): | \$(OBJ_DIR_APP)
+\$(OBJ_DIR_APP):
+	mkdir \$(OBJ_DIR_APP)
+
+\$(DEPS_APP_C): | \$(OBJ_DIR_APP_C)
+\$(OBJ_DIR_APP_C):
+	mkdir \$(OBJ_DIR_APP_C)
 
 \$(OBJ_DIR_APP)/%.d :
 	\$(CXX) -c ${INSERT_CPP_PARAMETERS} -MM \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.d,%,\$@).cpp,\$(SOURCES_APP)) 2>/dev/null | \\
 	perl -p -e 's!^([^:]+:)!\$(OBJ_DIR_APP)/\$\$1!' > \$@
 
-include \$(DEPS_APP)
+\$(OBJ_DIR_APP_C)/%.d :
+	\$(CC) -c ${INSERT_C_PARAMETERS} -MM \$(filter %/\$(patsubst \$(OBJ_DIR_APP_C)/%.d,%,\$@).c,\$(SOURCES_APP_C)) 2>/dev/null | \\
+	perl -p -e 's!^([^:]+:)!\$(OBJ_DIR_APP_C)/\$\$1!' > \$@
+
+include \$(DEPS_APP) \$(DEPS_APP_C)
 
 ####### Implicit rules
-
-.SUFFIXES: .c .o .cpp .cc .cxx .C
 
 \$(OBJ_DIR_LIBRARY)/%.o : \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.d,%,\$@).cpp,\$(SOURCES_LIBRARY)) \$(OBJ_DIR_LIBRARY)/%.d
 	\$(CXX) ${INSERT_CPP_PARAMETERS}  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_LIBRARY)/%.o,%,\$@).cpp,\$(SOURCES_LIBRARY))
@@ -80,8 +87,12 @@ include \$(DEPS_APP)
 \$(OBJ_DIR_APP)/%.o : \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.d,%,\$@).cpp,\$(SOURCES_APP)) \$(OBJ_DIR_APP)/%.d
 	\$(CXX) ${INSERT_CPP_PARAMETERS}  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_APP)/%.o,%,\$@).cpp,\$(SOURCES_APP))
 
+\$(OBJ_DIR_APP_C)/%.o : \$(filter %/\$(patsubst \$(OBJ_DIR_APP_C)/%.d,%,\$@).c,\$(SOURCES_APP_C)) \$(OBJ_DIR_APP_C)/%.d
+	\$(CC) ${INSERT_C_PARAMETERS}  -o \$@ -c \$(filter %/\$(patsubst \$(OBJ_DIR_APP_C)/%.o,%,\$@).c,\$(SOURCES_APP_C))
+
 ####### Build rules
-deps : \$(DEPS_LIBRARY) \$(DEPS_APP)
+
+deps : \$(DEPS_LIBRARY) \$(DEPS_APP) \$(DEPS_APP_C)
 
 static_library:  \$(OBJECTS_LIBRARY)
 	-\$(DEL_FILE) \$(OBJ_DIR_LIBRARY)/libisoaglib.a
@@ -93,30 +104,21 @@ dynamic_library:  \$(OBJECTS_LIBRARY)
 
 
 all: Makefile static_library dynamic_library  \$(TARGET)
-\$(TARGET):  \$(OBJECTS_APP) static_library dynamic_library
-	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o \$(TARGET)_static \$(OBJECTS_APP) \$(OBJ_DIR_LIBRARY)/libisoaglib.a ${INSERT_LINKER_PARAMETERS_2}
-	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o \$(TARGET)_dynamic \$(OBJECTS_APP) \$(OBJ_DIR_LIBRARY)/libisoaglib.so ${INSERT_LINKER_PARAMETERS_2}
+\$(TARGET):  \$(OBJECTS_APP) \$(OBJECTS_APP_C) static_library dynamic_library
+	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o \$(TARGET)_static \$(OBJECTS_APP) \$(OBJECTS_APP_C) \$(OBJ_DIR_LIBRARY)/libisoaglib.a ${INSERT_LINKER_PARAMETERS_2}
+	\$(LINK) ${INSERT_LINKER_PARAMETERS_1} -o \$(TARGET)_dynamic \$(OBJECTS_APP) \$(OBJECTS_APP_C) \$(OBJ_DIR_LIBRARY)/libisoaglib.so ${INSERT_LINKER_PARAMETERS_2}
 	-\$(DEL_FILE) \$(TARGET)
 	ln -s \$(TARGET)_static \$(TARGET)
 
-yaccclean:
-lexclean:
 clean:
-	-\$(DEL_FILE) \$(OBJECTS_LIBRARY) \$(DEPS_LIBRARY) \$(OBJECTS_APP) \$(DEPS_APP)
+	-\$(DEL_FILE) \$(OBJECTS_LIBRARY) \$(DEPS_LIBRARY) \$(OBJECTS_APP) \$(OBJECTS_APP_C) \$(DEPS_APP) \$(DEPS_APP_C)
 	-\$(DEL_FILE) \$(OBJ_DIR_LIBRARY)/libisoaglib.a \$(OBJ_DIR_LIBRARY)/libisoaglib.so
 	-\$(DEL_FILE) *~ core *.core
-
 
 ####### Sub-libraries
 
 distclean: clean
 	-\$(DEL_FILE) \$(TARGET)_static \$(TARGET)_dynamic \$(TARGET)
-
-
-FORCE:
-
-####### Compile
-
 
 ####### Install
 install_library: \$(INSTALL_FILES_LIBRARY)
@@ -158,6 +160,4 @@ ${TAB}rm -f \$\$VAR_TEST; \\
 	rm \$(INSTALL_PATH)/lib/libisoaglib.a; \\
 	rm \$(INSTALL_PATH)/lib/libisoaglib.so; \\
 	echo Finished uninstalling includes/libraries from directory \\"\$(INSTALL_PATH)\\"
-
-uninstall:
 

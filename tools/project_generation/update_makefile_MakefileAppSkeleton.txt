@@ -1,16 +1,13 @@
 ####### Some Standard Rules
+
 SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
-STRIP	 = $(COMPILER_BINARY_PRE)strip
-LEX      = flex
-YACC     = yacc
-CFLAGS   = -pipe -O -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
-CXXFLAGS = -pipe -O -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
-LEXFLAGS =
-YACCFLAGS= -d
-INCPATH  = -I. -I$(ISOAGLIB_INSTALL_PATH)/include $(APP_INC) $(BIOS_INC)
 LINK     = $(COMPILER_BINARY_PRE)g++
+STRIP	 = $(COMPILER_BINARY_PRE)strip
+CFLAGS   = -pipe -O -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Wpointer-arith $(PROJ_DEFINES)
+CXXFLAGS = -pipe -O -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith $(PROJ_DEFINES)
+INCPATH  = -I. -I$(ISOAGLIB_INSTALL_PATH)/include $(APP_INC) $(BIOS_INC)
 LFLAGS   = $(LIBPATH)
 LIBS     = $(BIOS_LIB) $(SUBLIBS) $(EXTERNAL_LIBS)
 AR       = ar cqs
@@ -32,57 +29,57 @@ MKDIR    = mkdir -p
 ####### Output directory
 
 OBJ_DIR_APP  = objects_app
+OBJ_DIR_APP_C  = objects_app_c
 
 ####### Build Rules for Application Part
 
 OBJECTS_APP = $(patsubst %.cpp,$(OBJ_DIR_APP)/%.o,$(notdir $(SOURCES_APP)))
+OBJECTS_APP_C = $(patsubst %.c,$(OBJ_DIR_APP_C)/%.o,$(notdir $(SOURCES_APP_C)))
 DEPS_APP := $(patsubst %.o,%.d,$(OBJECTS_APP))
+DEPS_APP_C := $(patsubst %.o,%.d,$(OBJECTS_APP_C))
 
-# $(OBJ_DIR_APP)/%.d :
-# 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM -MT $(patsubst %.d,%.o,$@)  $(filter %/$(patsubst $(OBJ_DIR)/%.d,%,$@).cpp,$(SOURCES)) > $@
+$(DEPS_APP): | $(OBJ_DIR_APP)
+$(OBJ_DIR_APP):
+        mkdir $(OBJ_DIR_APP)
+
+$(DEPS_APP_C): | $(OBJ_DIR_APP_C)
+$(OBJ_DIR_APP_C):
+        mkdir $(OBJ_DIR_APP_C)
 
 $(OBJ_DIR_APP)/%.d :
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCES_APP)) 2>/dev/null | \
 	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_APP)/$$1!' > $@
 
-include $(DEPS_APP)
+$(OBJ_DIR_APP_C)/%.d :
+	$(CC) -c $(CFLAGS) $(INCPATH) -MM $(filter %/$(patsubst $(OBJ_DIR_APP_C)/%.d,%,$@).c,$(SOURCES_APP_C)) 2>/dev/null | \
+	perl -p -e 's!^([^:]+:)!$(OBJ_DIR_APP_C)/$$1!' > $@
+
+include $(DEPS_APP) $(DEPS_APP_C)
 
 ####### Implicit rules
-
-.SUFFIXES: .c .o .cpp .cc .cxx .C
 
 $(OBJ_DIR_APP)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP)/%.d,%,$@).cpp,$(SOURCES_APP)) $(OBJ_DIR_APP)/%.d
 	$(CXX) $(CXXFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_APP)/%.o,%,$@).cpp,$(SOURCES_APP))
 
+$(OBJ_DIR_APP_C)/%.o : $(filter %/$(patsubst $(OBJ_DIR_APP_C)/%.d,%,$@).c,$(SOURCES_APP_C)) $(OBJ_DIR_APP_C)/%.d
+	$(CC) $(CFLAGS) $(INCPATH)  -o $@ -c $(filter %/$(patsubst $(OBJ_DIR_APP_C)/%.o,%,$@).c,$(SOURCES_APP_C))
+
 ####### Build rules
-deps : $(DEPS_APP)
+deps : $(DEPS_APP) $(DEPS_APP_C)
 
 all: Makefile $(TARGET)
-$(TARGET):  $(OBJECTS_APP)
-	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) -static -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
-	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
+$(TARGET):  $(OBJECTS_APP) $(OBJECTS_APP_C)
+	$(LINK) $(LFLAGS) -o $(TARGET)_static $(OBJECTS_APP) $(OBJECTS_APP_C) -static -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
+	$(LINK) $(LFLAGS) -o $(TARGET)_dynamic $(OBJECTS_APP) $(OBJECTS_APP_C) -L$(ISOAGLIB_INSTALL_PATH)/lib -lisoaglib $(LIBS)
 	rm -f $(TARGET)
 	ln -s $(TARGET)_static $(TARGET)
 
-yaccclean:
-lexclean:
 clean:
-	-$(DEL_FILE) $(OBJECTS_APP) $(DEPS_APP)
+	-$(DEL_FILE) $(OBJECTS_APP) $(OBJECTS_APP_C) $(DEPS_APP) $(DEPS_APP_C)
 	-$(DEL_FILE) *~ core *.core
-
 
 ####### Sub-libraries
 
 distclean: clean
 	-$(DEL_FILE) $(TARGET)_static $(TARGET)_dynamic $(TARGET)
-
-
-FORCE:
-
-####### Compile
-
-
-####### Install
-
-uninstall:
 

@@ -1590,16 +1590,20 @@ create_standard_makefile()
         printf 'SOURCES_LIBRARY =' >&3
         list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistLibrary" >&3
         printf '\n\nSOURCES_APP =' >&3
-        list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp|\.c' "$MakefileFilelistApp" >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '\.cc|\.cpp' "$MakefileFilelistApp" >&3
+        printf '\n\nSOURCES_APP_C =' >&3
+        list_source_files ' %s' ' \\\n\t\t%s' '\.c |\.c$' "$MakefileFilelistApp" >&3
         printf '\n\nHEADERS_APP =' >&3
         list_source_files ' %s' ' \\\n\t\t%s' '\.h|\.hpp|\.hh' "$MakefileFilelistAppHdr" >&3
         printf '\n\n' >&3
 
         local REPORT_ISOAGLIB_PATH="$ISO_AG_LIB_INSIDE"
         define_insert_and_report EXTRA_CFLAGS '-Wextra -Winit-self -Wmissing-include-dirs'
+        define_insert_and_report CFLAGS "${RULE_CFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Wpointer-arith \$(\$F PROJ_DEFINES)}"
         define_insert_and_report CXXFLAGS "${RULE_CXXFLAGS:--pipe -O -Wall -g \$(\$F EXTRA_CFLAGS) -fno-builtin -fno-exceptions -Wshadow -Wcast-qual -Wcast-align -Woverloaded-virtual -Wpointer-arith \$(\$F PROJ_DEFINES)}"
         define_insert_and_report INCPATH '-I. -I$($F ISOAGLIB_PATH)/library -I$($F ISOAGLIB_PATH)/library/xgpl_src $($F APP_INC) $($F BIOS_INC)'
         define_insert_and_report CPP_PARAMETERS '$($F CXXFLAGS) $($F INCPATH)'
+        define_insert_and_report C_PARAMETERS '$($F CFLAGS) $($F INCPATH)'
         local RULE_LFLAGS=$(
             case "$USE_CAN_DRIVER" in
                 (msq_server|socket_server|socket_server_hal_simulator)
@@ -1799,7 +1803,6 @@ create_makefile()
     # go to project dir - below config dir
     DEV_PRJ_DIR="$1/$PROJECT"
     cd $DEV_PRJ_DIR
-    mkdir -p "objects_library" "objects_app"
     MakefileFilelistLibrary="$1/$PROJECT/$FILELIST_LIBRARY_PURE"
     MakefileFilelistLibraryHdr="$1/$PROJECT/$FILELIST_LIBRARY_HDR"
 
