@@ -112,7 +112,7 @@ MultiReceiveClientWrapper_s::stop()
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    __IsoAgLib::getCanInstance4Comm().deleteFilter (*mpc_client, (mui32_pgnMask), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent);
+    __IsoAgLib::getCanInstance4Comm().deleteFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent);
   }
   #endif
 }
