@@ -494,7 +494,9 @@ private: // attributes
   uploadPoolType_t men_uploadPoolType;
 
   UploadPhase_s ms_uploadPhasesAutomatic [UploadPhaseLAST+1]; // automatic pool upload with all needed parts (lang indep, lang dep)
-  UploadPhase_t men_uploadPhaseAutomatic;
+  unsigned int mui_uploadPhaseAutomatic; // not of type "UploadPhase_t",
+  // because we're doing arithmetics with it and can go out-of-bounds,
+  // which results in undefined behavior (mostly only in -O2, so beware)
 
   UploadPhase_s ms_uploadPhaseUser; // user triggered upload phase...
   IsoAgLib::iVtObject_c** mppc_uploadPhaseUserObjects;

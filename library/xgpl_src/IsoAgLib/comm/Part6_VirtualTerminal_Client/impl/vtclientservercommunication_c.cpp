@@ -333,7 +333,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , men_uploadPoolState (UploadPoolInit) // dummy init value, will be set when VT (re)enters to UploadInit anyway
   , men_uploadPoolType (UploadPoolTypeCompleteInitially) // dummy init value, will be set when (up)load is started
   //ms_uploadPhasesAutomatic[..] // will be corrently initialized in the body!
-  , men_uploadPhaseAutomatic (UploadPhaseIVtObjectsFix)
+  , mui_uploadPhaseAutomatic (UploadPhaseIVtObjectsFix)
   , ms_uploadPhaseUser() // will be corrently initialized in the body!
   , mppc_uploadPhaseUserObjects (NULL)
   , mi8_objectPoolUploadingLanguage(0) // only valid if "initially uploading" or "language updating"
@@ -486,9 +486,9 @@ VtClientServerCommunication_c::indicateUploadPhaseCompletion()
   { // we may have multiple parts, so check that..
     // move to next possible one.
     if (men_uploadPoolType == UploadPoolTypeLanguageUpdate)
-      men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+2); // skip the GENERAL parts, move on directly to next LANGUAGE part!
+      mui_uploadPhaseAutomatic += 2; // skip the GENERAL parts, move on directly to next LANGUAGE part!
     else
-      men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+1);
+      mui_uploadPhaseAutomatic += 1;
 
     startCurrentUploadPhase();
   }
@@ -511,33 +511,33 @@ VtClientServerCommunication_c::startCurrentUploadPhase()
     case UploadPoolTypeLanguageUpdate:
       // First, check current phase.
       // while the current phase is n/a, move to next.
-      while ((men_uploadPhaseAutomatic <= UploadPhaseLAST) && (ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].ui32_size == 0))
+      while ((mui_uploadPhaseAutomatic <= UploadPhaseLAST) && (ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].ui32_size == 0))
       { // prepare for the next part
         if (men_uploadPoolType == UploadPoolTypeLanguageUpdate)
-          men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+2); // skip the GENERAL parts, move on directly to next LANGUAGE part!
+          mui_uploadPhaseAutomatic += 2; // skip the GENERAL parts, move on directly to next LANGUAGE part!
         else
-          men_uploadPhaseAutomatic = UploadPhase_t (men_uploadPhaseAutomatic+1);
+          mui_uploadPhaseAutomatic += 1;
       }
-      if (men_uploadPhaseAutomatic > UploadPhaseLAST)
+      if (mui_uploadPhaseAutomatic > UploadPhaseLAST)
       { // done with all phases!
         indicateUploadCompletion(); // Send "End of Object Pool" message
         return;
       }
       // else: start next phase
-      streamer = ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].pc_streamer;
+      streamer = ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].pc_streamer;
       // first, prepare the individual upload phases.
-      switch (men_uploadPhaseAutomatic)
+      switch (UploadPhase_t (mui_uploadPhaseAutomatic)) // allowed cast, we're in enum-bounds!
       {
         case UploadPhaseIVtObjectsFix:
           mc_iVtObjectStreamer.mpc_objectsToUpload = mrc_pool.getIVtObjects()[0]; // main FIX (lang. indep) iVtObject part
-          mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].ui32_size);
+          mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].ui32_size);
           break;
 
         case UploadPhaseIVtObjectsLang:
         { // phase 0 & 1 use iVtObjectStreamer, so prepare for that!
           const int8_t ci8_realUploadingLanguage = ((mi8_objectPoolUploadingLanguage < 0) ? 0 : mi8_objectPoolUploadingLanguage) + 1;
           mc_iVtObjectStreamer.mpc_objectsToUpload = mrc_pool.getIVtObjects()[ci8_realUploadingLanguage];
-          mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [men_uploadPhaseAutomatic].ui32_size);
+          mc_iVtObjectStreamer.setStreamSize (ms_uploadPhasesAutomatic [mui_uploadPhaseAutomatic].ui32_size);
         } break;
 
         case UploadPhaseAppSpecificFix:
@@ -2373,7 +2373,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
   { // *CONDITIONALLY* Calculate GENERAL Parts sizes
     if (ren_uploadPoolType == UploadPoolTypeCompleteInitially)
     { // start with first phase
-      men_uploadPhaseAutomatic = UploadPhaseFIRSTfix;
+      mui_uploadPhaseAutomatic = UploadPhaseFIRSTfix;
 
       /// Phase 0
       ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].pc_streamer = &mc_iVtObjectStreamer;
@@ -2388,7 +2388,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
     }
     else
     { // start with second phase (lang. dep that is)
-      men_uploadPhaseAutomatic = UploadPhaseFIRSTlang;
+      mui_uploadPhaseAutomatic = UploadPhaseFIRSTlang;
     }
 
     // *ALWAYS* Calculate LANGUAGE Part size (if objectpool has multilanguage!)
