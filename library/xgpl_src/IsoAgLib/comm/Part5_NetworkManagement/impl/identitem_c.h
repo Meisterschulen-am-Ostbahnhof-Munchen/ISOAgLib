@@ -20,6 +20,7 @@
 #include "isoname_c.h"
 #include "isoitem_c.h"
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
+#include <IsoAgLib/driver/system/isystem_c.h>
 
 
 // Begin Namespace __IsoAgLib

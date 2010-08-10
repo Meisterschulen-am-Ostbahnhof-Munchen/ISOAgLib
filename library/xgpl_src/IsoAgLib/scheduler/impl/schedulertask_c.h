@@ -12,17 +12,15 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#ifndef ELEMENT_BASE_H
-#define ELEMENT_BASE_H
+#ifndef SCHEDULERTASK_C_H
+#define SCHEDULERTASK_C_H
 
 
 /* *************************************** */
 /* ********** include headers ************ */
 /* *************************************** */
-#include <IsoAgLib/isoaglib_config.h>
-#include <IsoAgLib/driver/can/impl/cancustomer_c.h>
-#include <IsoAgLib/driver/system/isystem_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -11,6 +11,10 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
+#include "schedulertask_c.h"
+
+#include <IsoAgLib/driver/system/impl/system_c.h>
+
 #if DEBUG_SCHEDULER
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -20,10 +24,6 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-
-#include "schedulertask_c.h"
-
-#define DEF_CONSOLIDATION_LIMIT_FOR_DELAY_1MSEC 3
 
 namespace __IsoAgLib {
 
