@@ -141,7 +141,7 @@ namespace __IsoAgLib
     void singletonInit();
 
     /** Call updateSchedulingInformation() if client's nextTriggering has been changed */
-    void updateSchedulingInformation(ProprietaryMessageClient_c* client);
+    void updateSchedulingInformation();
 
   protected:
     //! Function set ui16_earlierInterval and

@@ -96,7 +96,7 @@ namespace __IsoAgLib
     if (mui32_sendPeriodicMsec != 0)
     { // periodic sending is requested
       mui32_nextSendTimeStamp = HAL::getTime() + mui32_sendPeriodicMsec;
-      getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation (this);
+      getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation();
     }
   }
 
@@ -124,7 +124,7 @@ namespace __IsoAgLib
     // set time period in msec
     mui32_sendPeriodicMsec = aui32_sendPeriodMsec;
     // notify scheduler to re-thing his scheduling after we've changed something now
-    getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation (this);
+    getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation();
   }
 
 

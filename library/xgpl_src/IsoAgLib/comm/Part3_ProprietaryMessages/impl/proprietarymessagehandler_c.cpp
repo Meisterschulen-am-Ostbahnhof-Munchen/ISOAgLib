@@ -294,7 +294,7 @@ namespace __IsoAgLib
     { // we have a client requesting to send up next...
       mb_hardTiming = true;
       if (ab_fromTimeEvent)
-      { // can't set fix retrigger time, so setting the timePeriodpc_nextClient
+      { // can't set fix retrigger time, so setting the timePeriod
         // (Note: retrigger isn't needed/allowed from timeEvent)
         int32_t i32_idleTimeSpread = pc_nextClient->mui32_nextSendTimeStamp - HAL::getTime();
         if (i32_idleTimeSpread < 0) i32_idleTimeSpread = 0;
@@ -314,7 +314,7 @@ namespace __IsoAgLib
 
 
   /** Call updateSchedulingInformation() if client's nextTriggering has been changed */
-  void ProprietaryMessageHandler_c::updateSchedulingInformation(ProprietaryMessageClient_c* /*client*/)
+  void ProprietaryMessageHandler_c::updateSchedulingInformation()
   {
     ProprietaryMessageClient_c* pc_nextClient = NULL;
 
