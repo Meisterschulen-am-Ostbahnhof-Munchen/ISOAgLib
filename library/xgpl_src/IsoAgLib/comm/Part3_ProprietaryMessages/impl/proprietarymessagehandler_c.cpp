@@ -285,24 +285,25 @@ namespace __IsoAgLib
                                                   rc_sendData.getIdent() >> 8,
                                                   client.men_sendSuccess);
     }
-    /** see if we have to repeat the send somewhen and have to adjust our timeInterval accordingly? */
-    if (client.mui32_sendPeriodicMsec != 0)
-    { // periodic sending is requested
-      /* saving the time stamp of this client */
-      client.mui32_nextSendTimeStamp = HAL::getTime() + client.mui32_sendPeriodicMsec;
-      updateSchedulingInformation (&client);
-    }
   }
 
 
-  void ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient)
+  void ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent)
   {
     if (pc_nextClient != NULL)
     { // we have a client requesting to send up next...
-      int32_t i32_idleTimeSpread = pc_nextClient->mui32_nextSendTimeStamp - HAL::getTime();
-      if (i32_idleTimeSpread < 0) i32_idleTimeSpread = 0;
       mb_hardTiming = true;
-      setTimePeriod (i32_idleTimeSpread);
+      if (ab_fromTimeEvent)
+      { // can't set fix retrigger time, so setting the timePeriodpc_nextClient
+        // (Note: retrigger isn't needed/allowed from timeEvent)
+        int32_t i32_idleTimeSpread = pc_nextClient->mui32_nextSendTimeStamp - HAL::getTime();
+        if (i32_idleTimeSpread < 0) i32_idleTimeSpread = 0;
+        setTimePeriod (i32_idleTimeSpread);
+      }
+      else
+      { // from outside, so set the nextSendTimeStamp needs to be retriggered
+        getSchedulerInstance().changeRetriggerTimeAndResort (this, pc_nextClient->mui32_nextSendTimeStamp);
+      }
     }
     else
     {
@@ -334,7 +335,7 @@ namespace __IsoAgLib
         }
       }
     }
-    updateTimePeriod (pc_nextClient);
+    updateTimePeriod (pc_nextClient, false);
   }
 
 
@@ -525,7 +526,7 @@ namespace __IsoAgLib
       }
     }
 
-    updateTimePeriod (pc_nextClient);
+    updateTimePeriod (pc_nextClient, true);
 
     return (true);
   }

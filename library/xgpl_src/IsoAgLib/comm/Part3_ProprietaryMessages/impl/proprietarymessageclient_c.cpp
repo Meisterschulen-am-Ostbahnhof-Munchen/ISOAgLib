@@ -91,6 +91,13 @@ namespace __IsoAgLib
   void ProprietaryMessageClient_c::sendDataToHandler()
   {
     getProprietaryMessageHandlerInstance4Comm().sendData(*this);
+    // See if we have to repeat the send somewhen, if so, let the
+    // Handler know it so it can adjust its timeInterval accordingly.
+    if (mui32_sendPeriodicMsec != 0)
+    { // periodic sending is requested
+      mui32_nextSendTimeStamp = HAL::getTime() + mui32_sendPeriodicMsec;
+      getProprietaryMessageHandlerInstance4Comm().updateSchedulingInformation (this);
+    }
   }
 
   /** set time period in milliseconds for repeated send of the data that has been stored in c_sendData()
@@ -109,7 +116,8 @@ namespace __IsoAgLib
       }
       else
       { // no periodic sending was activated before, so just set the time to the next one!
-        /* saving the time stamp of this client */
+        /// Currently the next message is not being sent out immediately,
+        /// an explicit call to "sendDataToHandler" would be needed.
         mui32_nextSendTimeStamp = HAL::getTime() + mui32_sendPeriodicMsec;
       }
     }

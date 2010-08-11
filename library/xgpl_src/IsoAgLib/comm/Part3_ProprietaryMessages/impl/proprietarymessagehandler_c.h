@@ -114,8 +114,7 @@ namespace __IsoAgLib
             ProprietaryMessageClient_c::ms_sendData
         the data can be accessed directly by
            iProprietaryMessageHandler_c as its a friend of ProprietaryMessageClient_c
-        the variable ui32_sendPeriodicMSec (in ProprietaryMessageClient_c) will be
-        used to control repeated sending
+        Repeated sending will NOT be handled here (anymore)
      */
     void sendData(ProprietaryMessageClient_c& client);
 
@@ -152,7 +151,7 @@ namespace __IsoAgLib
     virtual void updateEarlierAndLatestInterval();
 
   private:
-    void updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient);
+    void updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent);
 
   private:
 private:
