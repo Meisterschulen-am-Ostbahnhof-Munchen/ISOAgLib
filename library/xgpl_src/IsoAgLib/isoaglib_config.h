@@ -813,9 +813,12 @@
 #define PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN     0x00FECBLU
 #define DIAGNOSTIC_DATA_CLEAR_PGN                          0x00FECCLU
 
-#define TIME_DATE_PGN               0x00FEE6LU
+#define TIME_DATE_PGN                                      0x00FEE6LU
+#define SAE_J1939_71_VEHECLE_DIRECTION_SPEED               0x00FEE8LU
+#define SAE_J1939_71_VEHECLE_POSITION                      0x00FEF3LU
 // PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
 #define PROPRIETARY_B_PGN           0x00FF00LU
+#define SAE_J1939_PropB_PDU2        0x00FFFFLU
 
 
 // <NMEA 2000 GPS Messages>

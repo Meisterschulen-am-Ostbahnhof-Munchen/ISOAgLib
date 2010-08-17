@@ -165,12 +165,16 @@ namespace __IsoAgLib
     void setSelectedDataSourceISOName(const IsoName_c& ac_dataSourceISOName){mc_selectedDataSourceISOName = ac_dataSourceISOName;}
 
     /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
-    static const uint16_t TIMEOUT_SENDING_NODE = 3000;
+    static const uint16_t TIMEOUT_SENDING_NODE_NMEA = 3000;
+    static const uint16_t TIMEOUT_SENDING_NODE_J1939 = 5000;
 
     /// Using the singletonVecKey from mc_data (-->CanPkgExt_c)
     SINGLETON_PAR_DOT_DEF(mc_data)
 
   protected:
+    static void setGPSTimeOut( uint16_t aui16_timeout) { mui16_gpsTimeOut = aui16_timeout; }
+    static uint16_t getGPSTimeOut( ) { return mui16_gpsTimeOut; }
+    
     RegisterPgn_s getRegisterPgn() {
       return RegisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
     }
@@ -352,6 +356,13 @@ namespace __IsoAgLib
 
     Task_t mt_task;
     Handler_t mt_handler;
+    
+    /**
+      * There are two timeout times for GPS-Positions and Speed
+      * NMEA is 3 seconds, J1939 is 5 seconds.
+      * So make timeout configurabel.
+      */
+    static uint16_t mui16_gpsTimeOut;
   };
 
 }// end namespace __IsoAgLib

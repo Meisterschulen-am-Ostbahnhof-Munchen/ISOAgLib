@@ -182,7 +182,7 @@ namespace __IsoAgLib {
     // check for different base data types whether the previously
     if ( ( checkMode(IsoAgLib::IdentModeImplement)      )
       && ( getSelectedDataSourceISOName().isSpecified() )
-      && ( (lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE) || (yearUtc() == 0) ) // yearUtc means ERROR and NOT year0/1900/1970/whatever...
+      && ( (lastedTimeSinceUpdate() >= getGPSTimeOut( )) || (yearUtc() == 0) ) // yearUtc means ERROR and NOT year0/1900/1970/whatever...
        )
     { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
       getSelectedDataSourceISOName().setUnspecified();
@@ -207,10 +207,10 @@ namespace __IsoAgLib {
       // and we were already receiving sometimes in past GPS data
       bool b_noPosition = false;
       if (
-          ( (ci32_now - mi32_lastIsoPositionSimple) >= TIMEOUT_SENDING_NODE )
+          ( (ci32_now - mi32_lastIsoPositionSimple) >= getGPSTimeOut( ) )
           #ifdef ENABLE_NMEA_2000_MULTI_PACKET
           &&
-          ( (ci32_now - mi32_lastIsoPositionStream) >= TIMEOUT_SENDING_NODE )
+          ( (ci32_now - mi32_lastIsoPositionStream) >= getGPSTimeOut( ) )
           #endif
         )
       { // the previously sending node didn't send POSITION information for 3 seconds -> give other items a chance
@@ -225,7 +225,7 @@ namespace __IsoAgLib {
         mf_rapidUpdateRateFilter = 0.0f;
         mi32_rapidUpdateRateMs = 0;
       }
-      if ( (ci32_now - mi32_lastIsoDirection) >= TIMEOUT_SENDING_NODE )
+      if ( (ci32_now - mi32_lastIsoDirection) >= getGPSTimeOut( ) )
       { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
         mui16_speedOverGroundCmSec = mui16_courseOverGroundRad10Minus4 = 0xFFFF;
 
@@ -268,6 +268,8 @@ namespace __IsoAgLib {
 
       c_can.insertStandardIsoFilter(*this,TIME_DATE_PGN,false);
       c_can.insertStandardIsoFilter(*this,NMEA_GPS_POSITION_RAPID_UPDATE_PGN,false);
+      c_can.insertStandardIsoFilter(*this,SAE_J1939_71_VEHECLE_POSITION,false);
+      c_can.insertStandardIsoFilter(*this,SAE_J1939_71_VEHECLE_DIRECTION_SPEED,false);
       c_can.insertStandardIsoFilter(*this,NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN,true);
 
     }
@@ -550,6 +552,7 @@ namespace __IsoAgLib {
           { // only fetch the date, as this information might not be defined by GPS
             setDateUtc((data().getUint8Data(5) + 1985), data().getUint8Data(3), (data().getUint8Data(4) / 4));
           }
+          setGPSTimeOut( TIMEOUT_SENDING_NODE_NMEA );
           // take local timezone offset in all cases
           bit_calendar.timezoneMinuteOffset = data().getUint8Data(6);
           bit_calendar.timezoneHourOffsetMinus24 = data().getUint8Data(7);
@@ -564,16 +567,29 @@ namespace __IsoAgLib {
         return true;
 
       case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:
+      case SAE_J1939_71_VEHECLE_POSITION:
         if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
-          mi32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
-          mi32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
+          if (data().isoPgn() == SAE_J1939_71_VEHECLE_POSITION)
+          {
+            mi32_latitudeDegree10Minus7  = data().getUint32Data( 0 ) - 2100000000; // 210 / 0.0000001
+            mi32_longitudeDegree10Minus7 = data().getUint32Data( 4 ) - 2100000000; // 210 / 0.0000001
+
+            setGPSTimeOut( TIMEOUT_SENDING_NODE_J1939 );
+          }
+          else
+          {
+            mi32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
+            mi32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
+
+            setGPSTimeOut( TIMEOUT_SENDING_NODE_NMEA );
+          }
           mi32_lastIsoPositionSimple = ci32_now;
           mc_sendGpsISOName = rcc_tempISOName;
 
           // give an offset to the millisecond time of day based on a filtered message rate
           const int32_t ci32_updateDelta = ci32_now - mi32_lastMillisecondUpdate;
-          if ( (mi32_lastMillisecondUpdate != 0) && (ci32_updateDelta < 1000) )
+          if ( (data().isoPgn() == NMEA_GPS_POSITION_RAPID_UPDATE_PGN) && (mi32_lastMillisecondUpdate != 0) && (ci32_updateDelta < 1000) )
           { // (don't process the first time or following lost communications)
             if ( mf_rapidUpdateRateFilter == 0.0f )
             { // preload the filter value with the current period
@@ -586,7 +602,7 @@ namespace __IsoAgLib {
                                          ((ci32_now - mi32_lastMillisecondUpdate) * gcf_rapidUpdateFilter);
             }
           }
-          else
+          else if (data().isoPgn() == NMEA_GPS_POSITION_RAPID_UPDATE_PGN)
           { // reset the filter for the rate
             mf_rapidUpdateRateFilter = 0.0f;
           }
@@ -608,7 +624,43 @@ namespace __IsoAgLib {
             mt_gnssType = IsoAgLib::IsoGnssGps;
             #endif
           }
-          notifyOnEvent (NMEA_GPS_POSITION_RAPID_UPDATE_PGN);
+
+          notifyOnEvent (data().isoPgn());
+        }
+        else
+        { // there is a sender conflict
+          getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
+        }
+        return true;
+
+      case SAE_J1939_71_VEHECLE_DIRECTION_SPEED:
+        if ( checkParseReceivedGps( rcc_tempISOName ) )
+        { // sender is allowed to send
+          // Here we get degrees as fraction of 128, and have to change to rad 10^-4
+          // -> / 128 * MATH_PI / 180 * 10000 
+#define MATH_PI 3.14159265
+          mui16_courseOverGroundRad10Minus4 = static_cast<uint16_t>( static_cast<double>(data().getUint16Data( 0 ) ) * MATH_PI * 125 / 288 );
+          // [256 one bit is 1/256 km/h] [* 1000 * 100 / 60 / 60 -> we get km/h but want cm/sec]
+          mui16_speedOverGroundCmSec        = (data().getUint16Data( 2 ) * 125) / ( 128 * 9 ); 
+          // always update values to know if the information is there or not!
+
+          // set last time (also always, because if the sender's sending it's sending so we can't send!!
+          mi32_lastIsoDirection = ci32_now;
+          mc_sendGpsISOName = rcc_tempISOName;
+
+          setGPSTimeOut(TIMEOUT_SENDING_NODE_J1939);
+
+          /// @todo ON REQUEST-259: check for the REAL max, 62855 is a little bigger than 62831 or alike that could be calculated. but anyway...
+          if ( (mui16_courseOverGroundRad10Minus4 <= (62855))
+            && (mui16_speedOverGroundCmSec        <= (65532))
+             )
+          {
+#if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
+            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
+#endif
+            notifyOnEvent (SAE_J1939_71_VEHECLE_DIRECTION_SPEED);
+          }
+          // else: Regard this as NO (valid) COG/SOG, so it's just like nothing meaningful got received!
         }
         else
         { // there is a sender conflict
@@ -624,6 +676,8 @@ namespace __IsoAgLib {
           mui16_courseOverGroundRad10Minus4 = data().getUint16Data( 2 );
           mui16_speedOverGroundCmSec        = data().getUint16Data( 4 );
           // always update values to know if the information is there or not!
+
+          setGPSTimeOut(TIMEOUT_SENDING_NODE_NMEA);
 
           // set last time (also always, because if the sender's sending it's sending so we can't send!!
           mi32_lastIsoDirection = ci32_now;
@@ -889,6 +943,7 @@ namespace __IsoAgLib {
     {
       case NMEA_GPS_POSITION_DATA_PGN: // 0x01F805LU -> 129029
       {
+        setGPSTimeOut( TIMEOUT_SENDING_NODE_NMEA );
         mi32_lastIsoPositionStream = data().time();
         // fetch sequence number from Byte1
         IsoAgLib::convertIstream( rc_stream, mui8_positionSequenceID );
@@ -968,6 +1023,7 @@ namespace __IsoAgLib {
       break;
 
       case NMEA_GPS_DIRECTION_DATA_PGN: // 0x01FE11LU - 130577 with Heading and Speed
+        setGPSTimeOut( TIMEOUT_SENDING_NODE_NMEA );
         uint8_t ui8_dummy;
         uint16_t ui16_newCOG, ui16_newSOG;
         IsoAgLib::convertIstream( rc_stream, ui8_dummy ); //ui8_dataModeAndHeadingReference ); //ui8_dataModeAndHeadingReferenceDUMMY &= 0x3F;
