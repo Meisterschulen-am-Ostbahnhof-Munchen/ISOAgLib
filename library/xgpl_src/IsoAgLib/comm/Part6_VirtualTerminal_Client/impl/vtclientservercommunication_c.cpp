@@ -1049,6 +1049,12 @@ VtClientServerCommunication_c::processMsg()
   // for right now, if it's NOT an ACKNOWLEDGE_PGN,
   // it must be VT_TO_ECU addressed to us as defined by the IsoFilter
 
+  // cache the CAN-Packet data bytes, because they could be overwritten
+  // if some event-handler sends out another CAN-Packet
+  uint8_t arrui8_canData[8];
+  const uint8_t cui8_dataLen = mc_data.getLen();
+  mc_data.getDataToString (arrui8_canData);
+
   uint8_t ui8_uploadCommandError; // who is interested in the errorCode anyway?
   uint8_t ui8_errByte=0; // from 1-8, or 0 for NO errorHandling, as NO user command (was intern command like C0/C2/C3/C7/etc.)
 
@@ -1059,66 +1065,62 @@ VtClientServerCommunication_c::processMsg()
   if (!isVtActive()) return true;
 
   /// process all VT_TO_ECU addressed to us
-  switch (mc_data.getUint8Data (0))
+  switch (arrui8_canData [0])
   {
     /*************************************/
     /*** ### VT Initiated Messages ### ***/
     case 0x00: // Command: "Control Element Function", parameter "Soft Key"
     case 0x01: // Command: "Control Element Function", parameter "Button"
-      mrc_pool.eventKeyCode (mc_data.getUint8Data (1) /* key activation code (pressed, released, held) */,
-                                         mc_data.getUint8Data (2) | (mc_data.getUint8Data (3) << 8) /* objID of key object */,
-                                         mc_data.getUint8Data (4) | (mc_data.getUint8Data (5) << 8) /* objID of visible mask */,
-                                         mc_data.getUint8Data (6) /* key code */,
-                                         (mc_data.getUint8Data (0) != 0)/* 0 for sk, 1 for button -- matches wasButton? boolean */ );
+      mrc_pool.eventKeyCode(
+          arrui8_canData [1] /* key activation code (pressed, released, held) */,
+          arrui8_canData [2] | (arrui8_canData [3] << 8) /* objID of key object */,
+          arrui8_canData [4] | (arrui8_canData [5] << 8) /* objID of visible mask */,
+          arrui8_canData [6] /* key code */,
+          (arrui8_canData [0] != 0)/* 0 for sk, 1 for button -- matches wasButton? boolean */ );
       break;
     case 0x02: // Command: "Control Element Function", parameter "Pointing Event"
-      mrc_pool.eventPointingEvent (mc_data.getUint8Data (1) | (mc_data.getUint8Data (2) << 8) /* X position in pixels */,
-                                              mc_data.getUint8Data (3) | (mc_data.getUint8Data (4) << 8) /* Y position in pixels */);
+      mrc_pool.eventPointingEvent(
+          arrui8_canData [1] | (arrui8_canData [2] << 8) /* X position in pixels */,
+          arrui8_canData [3] | (arrui8_canData [4] << 8) /* Y position in pixels */);
       break;
 
     case 0x03: // Command: "VT Select Input Object"
-      mrc_pool.eventVtSelectInputObject(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
-        mc_data.getUint8Data (3),
-        mc_data.getUint8Data (4));
+      mrc_pool.eventVtSelectInputObject(
+          uint16_t(arrui8_canData [1]) | (uint16_t(arrui8_canData [2]) << 8) /* objID */,
+          arrui8_canData [3],
+          arrui8_canData [4]);
       break;
 
     case 0x04: // Command: "Control Element Function", parameter "VT ESC"
         /// if no error occured, that ESC is for an opened input dialog!!! Do not handle here!!!
-        if (mc_data.getUint8Data (3) != 0x0)
+        if (arrui8_canData [3] != 0x0)
           mrc_pool.eventVtESC(0xFFFF);
         else
-          mrc_pool.eventVtESC(uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8));
+          mrc_pool.eventVtESC(uint16_t(arrui8_canData [1]) | (uint16_t(arrui8_canData [2]) << 8));
 
         break;
     case 0x05: // Command: "Control Element Function", parameter "VT Change Numeric Value"
-      mrc_pool.eventNumericValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
-                                              mc_data.getUint8Data (4) /* 1 byte value */,
-                                              uint32_t(mc_data.getUint8Data (4)) | (uint32_t(mc_data.getUint8Data (5)) << 8) | (uint32_t(mc_data.getUint8Data (6)) << 16)| (uint32_t(mc_data.getUint8Data (7)) << 24) /* 4 byte value */);
+      mrc_pool.eventNumericValue(
+          uint16_t(arrui8_canData [1]) | (uint16_t(arrui8_canData [2]) << 8) /* objID */,
+          arrui8_canData [4] /* 1 byte value */,
+          uint32_t(arrui8_canData [4]) | (uint32_t(arrui8_canData [5]) << 8) | (uint32_t(arrui8_canData [6]) << 16)| (uint32_t(arrui8_canData [7]) << 24) /* 4 byte value */);
       break;
     case 0x08:  // Command: "Control Element Function", parameter "VT Input String Value"
-      if (mc_data.getUint8Data (3) <= 4) //within a 8 byte long cmd can be only a 4 char long string
+      if (arrui8_canData [3] <= 4) //within a 8 byte long cmd can be only a 4 char long string
       {
-        VolatileMemory_c c_vmString (mc_data.getUint8DataConstPointer(4));
-        mrc_pool.eventStringValue (uint16_t(mc_data.getUint8Data (1)) | (uint16_t(mc_data.getUint8Data (2)) << 8) /* objID */,
-                                               mc_data.getUint8Data (3) /* total number of bytes */, c_vmString,
-                                               mc_data.getUint8Data (3) /* total number of bytes */, true, true);
+        VolatileMemory_c c_vmString (&(arrui8_canData[4]));
+        mrc_pool.eventStringValue(
+            uint16_t(arrui8_canData [1]) | (uint16_t(arrui8_canData [2]) << 8) /* objID */,
+            arrui8_canData [3] /* total number of bytes */, c_vmString,
+            arrui8_canData [3] /* total number of bytes */, true, true);
       }
       break;
     case 0x09:  // Command: "Command", parameter "Display Activation"
-
     {
-      uint8_t arrui8_canData[8];
-      uint8_t ui8_dataLen = mc_data.getLen();
-
-      // cache the Data Bytes HERE
-      mc_data.getDataToString(arrui8_canData);
-
-
-      setVtDisplayState (false, mc_data.getUint8Data (1));
-
+      setVtDisplayState (false, arrui8_canData [1]);
 
       // replace PGN, DA, SA , Data and send back as answer
-      mc_data.setDataFromString(arrui8_canData,ui8_dataLen);
+      mc_data.setDataFromString (arrui8_canData, cui8_dataLen);
 
       mc_data.setIsoPgn (ECU_TO_VT_PGN);
       mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
@@ -1132,7 +1134,7 @@ VtClientServerCommunication_c::processMsg()
     case 0x12: // Command: "End of Object Pool Transfer", parameter "Object Pool Ready Response"
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForEOOResponse))
       { /// *** INITIAL POOL UPLOAD ***
-        if (mc_data.getUint8Data (1) == 0)
+        if (arrui8_canData [1] == 0)
         { /// NO Error with UPLOADING pool
 // Added this preprocessor so storing of object pools can be prevented for development purposes
 #ifndef NO_STORE_VERSION
@@ -1168,7 +1170,7 @@ VtClientServerCommunication_c::processMsg()
         {
           men_uploadPoolState = UploadPoolFailed; // errorcode in mui8_uploadError;
           men_objectPoolState = OPCannotBeUploaded;
-          mui8_uploadError = mc_data.getUint8Data (2);
+          mui8_uploadError = arrui8_canData [2];
         }
       }
       else if ((men_uploadType == UploadCommand) && (men_uploadCommandState == UploadCommandWithAwaitingResponse))
@@ -1204,7 +1206,7 @@ VtClientServerCommunication_c::processMsg()
     case 0xB2: // Command: "Command", parameter "Delete Object Pool Response"
 
 #if DEBUG_VTCOMM
-      if (0xB2 == mc_data.getUint8Data (0))
+      if (0xB2 == arrui8_canData [0])
         INTERNAL_DEBUG_DEVICE << "Received response for 'Delete Object Pool' message!" << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
       MACRO_setStateDependantOnError (2)
@@ -1250,14 +1252,14 @@ VtClientServerCommunication_c::processMsg()
       MACRO_setStateDependantOnError (7)
       #ifdef USE_ISO_TERMINAL_GETATTRIBUTES
       // client requested any attribute value for an object in the pool -> create ram struct if not yet existing
-      if ((mc_data.getUint8Data (1) == 0xFF) && (mc_data.getUint8Data (2) == 0xFF)) // object id is set to 0xFFFF to indicate error response
+      if ((arrui8_canData [1] == 0xFF) && (arrui8_canData [2] == 0xFF)) // object id is set to 0xFFFF to indicate error response
       {
         /// what to do if attribute value request returns error response???
       }
       else
       {
         // first store object ID for later use
-        uint16_t ui16_objID = mc_data.getUint8Data(1) | (mc_data.getUint8Data (2) << 8);
+        uint16_t ui16_objID = arrui8_canData[1] | (arrui8_canData [2] << 8);
 
         /// search for suitable iVtObject in all object lists of the client (pointer array to all fix and language dependent iVtObjects)
 
@@ -1266,9 +1268,10 @@ VtClientServerCommunication_c::processMsg()
 
         // first check if first item is the requested one -> working is the first item list no matter what objectID it has
         if (ui16_objID == mrc_pool.getIVtObjects()[ui8_arrIndex][0]->getID())
-          mrc_pool.eventAttributeValue(mrc_pool.getIVtObjects()[ui8_arrIndex][0],
-                                                  mc_data.getUint8Data(3),
-                                                  mc_data.getUint8DataPointer()+4);
+          mrc_pool.eventAttributeValue(
+              mrc_pool.getIVtObjects()[ui8_arrIndex][0],
+              arrui8_canData[3],
+              &(arrui8_canData[4]));
         else
         {
           // if last item of the list was reached or the requested object was found
@@ -1299,9 +1302,10 @@ VtClientServerCommunication_c::processMsg()
               if (mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle]->getID() == ui16_objID) // objID found?
               {
                 b_objectFound = true;
-                mrc_pool.eventAttributeValue(mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
-                                                        mc_data.getUint8Data(3),
-                                                        mc_data.getUint8DataPointer()+4);
+                mrc_pool.eventAttributeValue(
+                    mrc_pool.getIVtObjects()[ui8_arrIndex][ui16_arrMiddle],
+                    arrui8_canData[3],
+                    &(arrui8_canData[4]));
                 break;
               }
               else
@@ -1329,7 +1333,7 @@ VtClientServerCommunication_c::processMsg()
       mpc_vtServerInstance->setVersion();
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForMemoryResponse))
       {
-        if (mc_data.getUint8Data (2) == 0)
+        if (arrui8_canData [2] == 0)
         { // start uploading with all partial OPs (as init'd before Get Memory!), there MAY BE enough memory
           men_uploadPoolState = UploadPoolUploading;
         //men_uploadPhaseAutomatic [already initialized in "initObjectPoolUploadingPhases" to the correct starting phase]
@@ -1351,7 +1355,7 @@ VtClientServerCommunication_c::processMsg()
     case 0xD0: // Command: "Non Volatile Memory", parameter "Store Version Response"
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForStoreVersionResponse))
       {
-        switch (mc_data.getUint8Data (5) & 0x0F)
+        switch (arrui8_canData [5] & 0x0F)
         {
           case 0: // Successfully stored
           case 1: // Not used
@@ -1373,7 +1377,7 @@ VtClientServerCommunication_c::processMsg()
     case 0xD1: // Command: "Non Volatile Memory", parameter "Load Version Response"
       if ((men_uploadType == UploadPool) && (men_uploadPoolState == UploadPoolWaitingForLoadVersionResponse))
       {
-        if ((mc_data.getUint8Data (5) & 0x0F) == 0)
+        if ((arrui8_canData [5] & 0x0F) == 0)
         { // Successfully loaded
           finalizeUploading ();
 #if DEBUG_VTCOMM
@@ -1382,7 +1386,7 @@ VtClientServerCommunication_c::processMsg()
         }
         else
         {
-          if (mc_data.getUint8Data (5) & (1<<2))
+          if (arrui8_canData [5] & (1<<2))
           { // Bit 2: // Insufficient memory available
 #if DEBUG_VTCOMM
             INTERNAL_DEBUG_DEVICE << "Received Load Version Response (D1) with error OutOfMem..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1405,8 +1409,8 @@ VtClientServerCommunication_c::processMsg()
 
     default:
       // handle proprietary messages from an AGCO VT
-      if (    mc_data.getUint8Data (0) >= 0x60
-           && mc_data.getUint8Data (0) <= 0x7F
+      if (    arrui8_canData [0] >= 0x60
+           && arrui8_canData [0] <= 0x7F
          )
       {
         MACRO_setStateDependantOnError( mrc_pool.eventProprietaryCommand( mpc_vtServerInstance->getIsoName().toConstIisoName_c() ) )
@@ -1422,15 +1426,15 @@ VtClientServerCommunication_c::processMsg()
     { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
       if (men_sendSuccess == __IsoAgLib::MultiSend_c::SendSuccess)
       { /// Our command was successfully sent & responded to, so remove it from the queue
-        if (mui8_commandParameter == mc_data.getUint8Data (0))
+        if (mui8_commandParameter == arrui8_canData [0])
         { /* okay, right response for our current command! */
           // special treatment for Get Attribute Value command -> error byte is also being used as value byte for successful response
-          if ((mui8_commandParameter == 0xB9) && (mc_data.getUint16Data (2-1) != 0xFFFF))
+          if ((mui8_commandParameter == 0xB9) && ((uint16_t(arrui8_canData [2-1]) | uint16_t(arrui8_canData[2-1+1])<<8) != 0xFFFF))
             ui8_uploadCommandError = 0;
           else
-            ui8_uploadCommandError = mc_data.getUint8Data (ui8_errByte-1);
+            ui8_uploadCommandError = arrui8_canData [ui8_errByte-1];
           /// Inform user on success/error of this command
-          mrc_pool.eventCommandResponse (ui8_uploadCommandError, mc_data.getUint8DataConstPointer()); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "mc_data.name()"
+          mrc_pool.eventCommandResponse (ui8_uploadCommandError, &(arrui8_canData[0])); // pass "ui8_uploadCommandError" in case it's only important if it's an error or not. get Cmd and all databytes from "mc_data.name()"
 #if DEBUG_VTCOMM
           if (ui8_uploadCommandError != 0)
           { /* error */
