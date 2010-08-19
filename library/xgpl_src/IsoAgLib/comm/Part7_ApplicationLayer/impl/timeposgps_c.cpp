@@ -156,6 +156,7 @@ namespace __IsoAgLib {
   TimePosGps_c::TimePosGps_c()
   : mf_rapidUpdateRateFilter(0.0f)
   , mi32_rapidUpdateRateMs(0)
+  , mi32_altitudeCm(0x7FFFFFFF)
   , mc_sendGpsISOName()
   , mpc_isoNameGps(NULL)
   , mt_identModeGps( IsoAgLib::IdentModeImplement )
@@ -639,9 +640,11 @@ namespace __IsoAgLib {
           // Here we get degrees as fraction of 128, and have to change to rad 10^-4
           // -> / 128 * MATH_PI / 180 * 10000 
 #define MATH_PI 3.14159265
-          mui16_courseOverGroundRad10Minus4 = static_cast<uint16_t>( static_cast<double>(data().getUint16Data( 0 ) ) * MATH_PI * 125 / 288 );
+          mui16_courseOverGroundRad10Minus4 = static_cast<uint16_t>( static_cast<double>(data().getUint16Data( 0 ) ) * MATH_PI * 125.0 / 288.0 );
           // [256 one bit is 1/256 km/h] [* 1000 * 100 / 60 / 60 -> we get km/h but want cm/sec]
-          mui16_speedOverGroundCmSec        = (data().getUint16Data( 2 ) * 125) / ( 128 * 9 ); 
+          mui16_speedOverGroundCmSec        = static_cast<uint16_t>( static_cast<double>( data().getUint16Data( 2 ) * 125 ) / static_cast<double>( 128 * 9 ) );
+          // we are getting speed from here as well:
+          mi32_altitudeCm = static_cast<int32_t>( ( static_cast<double>( data().getUint16Data( 6 ) ) * 0.125 - 2500.0 ) * 100.0 );
           // always update values to know if the information is there or not!
 
           // set last time (also always, because if the sender's sending it's sending so we can't send!!
