@@ -45,96 +45,96 @@
 #include <IsoAgLib/hal/generic_utils/can/write_central_fifo.h>
 
 
-namespace HAL{
+namespace HAL {
 
-/**
-* Number of canfifo buffer elements.
-* The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,
-* otherwise the overflow of the UC and AC counter can lead to loss of data between producer and consumer.
-*/
+  /**
+  * Number of canfifo buffer elements.
+  * The number of buffer elements should be 2^N where N must be less than  TARGET_WORDSIZE -1,
+  * otherwise the overflow of the UC and AC counter can lead to loss of data between producer and consumer.
+  */
 #define TARGET_WORDSIZE (SIZEOF_INT * 8)
 
 #if CAN_FIFO_EXPONENT_BUFFER_SIZE >= (TARGET_WORDSIZE - 1)
 #error CAN_FIFO_EXPONENT_BUFFER_SIZE must be less than  TARGET_WORDSIZE -1
 #endif
 
-extern "C" {
+  extern "C" {
 
-/**
-* Exponent of the 2^N operation,used  to determine the BufferSize
-*/
-const uint32_t cui32_maxNbrCan = (HAL_CAN_MAX_BUS_NR + 1  );
-const unsigned int uic_expBufferSize = CAN_FIFO_EXPONENT_BUFFER_SIZE;
+    /**
+    * Exponent of the 2^N operation,used  to determine the BufferSize
+    */
+    const uint32_t cui32_maxNbrCan = ( HAL_CAN_MAX_BUS_NR + 1 );
+    const unsigned int uic_expBufferSize = CAN_FIFO_EXPONENT_BUFFER_SIZE;
 
-/** When during the reconfiguration only a number of place less than cui_toleranceLevel
-* are free in the CAN FIFO , then the FIFO is considered in critical Filled level and the
-* Canio_c::processMsg is called to free the CAN FIFO buffer */
+    /** When during the reconfiguration only a number of place less than cui_toleranceLevel
+    * are free in the CAN FIFO , then the FIFO is considered in critical Filled level and the
+    * Canio_c::processMsg is called to free the CAN FIFO buffer */
 
-const unsigned int cui_toleranceLevel = CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL;
+    const unsigned int cui_toleranceLevel = CAN_FIFO_CRITICAL_FILLING_TOLERANCE_LEVEL;
 
 
-const unsigned int uic_bufferSize = 1 << uic_expBufferSize;
+    const unsigned int uic_bufferSize = 1 << uic_expBufferSize;
 
 
 #ifdef SYSTEM_PC
-using namespace std;
+    using namespace std;
 #endif
 
-/**
-* Fifo non-blocking buffer
-*/
+    /**
+    * Fifo non-blocking buffer
+    */
 
-typedef struct {
+    typedef struct {
 
-volatile unsigned int ui_AckCount;   /*!< \brief Last buffer element read by the consumer (AC)*/
-volatile unsigned int ui_UpdCount;   /*!< \brief Last buffer element written by the productor (UC)*/
+      volatile unsigned int ui_AckCount;   /*!< \brief Last buffer element read by the consumer (AC)*/
+      volatile unsigned int ui_UpdCount;   /*!< \brief Last buffer element written by the productor (UC)*/
 
-fifoData_s p_fifoBuffer[uic_bufferSize];  /*!< \brief Buffer shared between productor and consumer */
+      fifoData_s p_fifoBuffer[uic_bufferSize];  /*!< \brief Buffer shared between productor and consumer */
 
-bool b_Reading; /*!< \brief the consumer is reading */
+      bool b_Reading; /*!< \brief the consumer is reading */
 
-} iFifo_s;
-
-
-
-/*!\brief Purpose :Interface for a read access to the non-blocking buffer.
-*/
-} //end extern C
-
-/**
- The consumer does below actions:
- - check whether there is anything to read (buffer not wide)
- - if something to read, gets the data
- - increment AC position counter. This operation must be atomic.
- .
- @param aui8_busNum
- @param ar_readData after the call,it contains the read data
- @return false if nothing to read.
-*/
-int32_t iFifoRead(uint8_t aui8_busNum,fifoData_s& ar_readData);
-
-/**
- The productor does the below actions:
- - before writing, checks whether the buffer is full;
- - then gives to UC an odd value,which means "I'm writing".
-   This assignement must be an atomic operation .
- - it writes the data to the buffer;
- - then gives to the UC an even value, which means "I have finished to write".
-   Again this assignement must be an atomic operation
- .
-  @param aui8_busNum
-  @param ai32_fbIdx
-  @param ai32_msgId
-  @param irqData
-  @param aui8_bXtd (default:1)
-  @return false whether the buffer is full and productor should wait.
-*/
-bool iFifoWrite(uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId, void* irqData,uint8_t aui8_bXtd=1);
+    } iFifo_s;
 
 
-void iFifoDiscardOldMessage(uint8_t aui8_busNum);
-bool isConsumerReading(uint8_t aui8_busNum);
-bool iFifoIsMsgAvailable(uint8_t aui8_busNum);
+
+    /*!\brief Purpose :Interface for a read access to the non-blocking buffer.
+    */
+  } //end extern C
+
+  /**
+   The consumer does below actions:
+   - check whether there is anything to read (buffer not wide)
+   - if something to read, gets the data
+   - increment AC position counter. This operation must be atomic.
+   .
+   @param aui8_busNum
+   @param ar_readData after the call,it contains the read data
+   @return false if nothing to read.
+  */
+  int32_t iFifoRead( uint8_t aui8_busNum,fifoData_s& ar_readData );
+
+  /**
+   The productor does the below actions:
+   - before writing, checks whether the buffer is full;
+   - then gives to UC an odd value,which means "I'm writing".
+     This assignement must be an atomic operation .
+   - it writes the data to the buffer;
+   - then gives to the UC an even value, which means "I have finished to write".
+     Again this assignement must be an atomic operation
+   .
+    @param aui8_busNum
+    @param ai32_fbIdx
+    @param ai32_msgId
+    @param irqData
+    @param aui8_bXtd (default:1)
+    @return false whether the buffer is full and productor should wait.
+  */
+  bool iFifoWrite( uint8_t aui8_busNum,int32_t ai32_fbIdx,int32_t ai32_msgId, void* irqData,uint8_t aui8_bXtd=1 );
+
+
+  void iFifoDiscardOldMessage( uint8_t aui8_busNum );
+  bool isConsumerReading( uint8_t aui8_busNum );
+  bool iFifoIsMsgAvailable( uint8_t aui8_busNum );
 
 } // __HAL
 

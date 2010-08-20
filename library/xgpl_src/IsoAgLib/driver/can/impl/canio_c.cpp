@@ -904,16 +904,14 @@ uint32_t ui32_msgNbr = 0;
 
       System_c::triggerWd();
 
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-      // read the FbIdx and the mi32_lastProcessedCanPkgTime (used for the reconfigure)
-      i32_retVal = HAL::iFifoReadFbIdx(mui8_busNumber, i32_fbIdx, mi32_lastProcessedCanPkgTime, i32_ident,identType);
-
-    #else
+    #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       uint8_t ui8_identType = 0;
       i32_retVal = HAL::can_useNextMsgobjNumber(mui8_busNumber, ui32_msgNbr, i32_ident, ui8_identType, mi32_lastProcessedCanPkgTime);
       identType = static_cast<Ident_c::identType_t>(ui8_identType);
       i32_fbIdx = ui32_msgNbr-minReceiveObjNr();
-
+    #else
+      // read the FbIdx and the mi32_lastProcessedCanPkgTime (used for the reconfigure)
+      i32_retVal = HAL::iFifoReadFbIdx(mui8_busNumber, i32_fbIdx, mi32_lastProcessedCanPkgTime, i32_ident,identType);
     #endif
 
 

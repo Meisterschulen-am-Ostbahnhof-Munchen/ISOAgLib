@@ -31,53 +31,65 @@
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_esxu/mos10osy.h>
+#include <commercial_BIOS/bios_esxu/mos10osy.h>
   }
 }
-
 #include <IsoAgLib/hal/esxu/config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
 
 #include "hal_can_interface.h"
 
-/**
-   namespace with layer of inline (cost NO overhead -> compiler replaces
-   inline function with call to orig BIOS function)
-   functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
-   --> simply replace the call to the corresponding BIOS function in this header
-       for adaptation to new platform
- */
-namespace HAL
-{
+#include "../../hal_can.h"
+
+namespace HAL {
   /* *********************************************************** */
   /** \name CAN BIOS functions for global status checking per BUS */
-/*@{*/
-
+  /*@{*/
 
   /**
     test if the CAN BUS is in WARN state
     @param aui8_busNr number of the BUS to check (default 0)
     @return true == CAN BUS is in WARN state, else normal operation
   */
-  inline bool can_stateGlobalWarn(uint8_t aui8_busNr = 0)
-    {return __HAL::can_stateGlobalWarn(aui8_busNr);};
+  inline bool can_stateGlobalWarn( uint8_t aui8_busNr ) {
+    return __HAL::can_stateGlobalWarn( aui8_busNr );
+  };
 
   /**
     test if the CAN BUS is in OFF state
     @param aui8_busNr number of the BUS to check (default 0)
     @return true == CAN BUS is in OFF state, else normal operation
   */
-  inline bool can_stateGlobalOff(uint8_t aui8_busNr = 0)
-    {return __HAL::can_stateGlobalOff(aui8_busNr);};
+  inline bool can_stateGlobalOff( uint8_t aui8_busNr ) {
+    return __HAL::can_stateGlobalOff( aui8_busNr );
+  };
 
-   /**
-    deliver the baudrate of the CAN BUS in [kbaud]
-    @param aui8_busNr number of the BUS to check (default 0)
-    @return BUS load of the last second [kbaud]
+#ifdef USE_CAN_MEASURE_BUSLOAD
+  /**
+   deliver the baudrate of the CAN BUS in [kbaud]
+   @param aui8_busNr number of the BUS to check (default 0)
+   @return BUS load of the last second [kbaud]
   */
-  inline int32_t can_stateGlobalBusload(uint8_t aui8_busNr = 0)
-    {return __HAL::can_stateGlobalBusload(aui8_busNr);};
+  inline int32_t can_stateGlobalBusload( uint8_t aui8_busNr ) {
+    return __HAL::can_stateGlobalBusload( aui8_busNr );
+  };
+#endif
+
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+  inline int32_t can_getMaxSendDelay( uint8_t aui8_busNr ) {
+    return __HAL::can_getMaxSendDelay();
+  }
+#endif
+
+#if defined SYSTEM_WITH_ENHANCED_CAN_HAL
+//int16_t can_useMsgobjGet( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, __IsoAgLib::CanPkg_c* rpc_data )
+#warning can_useMsgobjGet is not implemented for this platform
+//void can_useMsgobjPopFront( uint8_t rui8_busNr, uint8_t rui8_msgobjNr )
+#warning can_useMsgobjPopFront is not implemented for this platform
+//int32_t can_useNextMsgobjNumber( uint8_t aui8_busNr, uint32_t& reflIdent, uint32_t& refui32_msgId, uint8_t& refui8_msgtype, int32_t& i32_rcvTime )
+#warning can_useNextMsgobjNumber not implemented for this plaform
+#endif
 
   /**
     check if a send try on this BUS caused an Bit1Error
@@ -87,24 +99,28 @@ namespace HAL
         @param aui8_busNr number of the BUS to check
         @return true -> Bit1Err occured
   */
-  inline bool can_stateGlobalBit1err(uint8_t aui8_busNr = 0)
-    {return __HAL::can_stateGlobalBit1err(aui8_busNr);};
+  inline bool can_stateGlobalBit1err( uint8_t aui8_busNr ) {
+    return __HAL::can_stateGlobalBit1err( aui8_busNr );
+  };
 
   /*@}*/
 
   /* ******************************************************************* */
   /** \name CAN BIOS functions for status checking of one specific MsgObj */
-/*@{*/
+  /*@{*/
 
-/**
-    test if buffer of a MsgObj is full (e.g. no more
-    msg can be put into buffer (important for TX objects))
-    @param aui8_busNr number of the BUS to check
-    @param aui8_msgobjNr number of the MsgObj to check
-    @return true -> buffer is full -> no further can_send allowed
-  */
-  inline bool can_stateMsgobjOverflow(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_stateMsgobjOverflow(aui8_busNr, aui8_msgobjNr);};
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  /**
+      test if buffer of a MsgObj is full (e.g. no more
+      msg can be put into buffer (important for TX objects))
+      @param aui8_busNr number of the BUS to check
+      @param aui8_msgobjNr number of the MsgObj to check
+      @return true -> buffer is full -> no further can_send allowed
+    */
+  inline bool can_stateMsgobjOverflow( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    return __HAL::can_stateMsgobjOverflow( aui8_busNr, aui8_msgobjNr );
+  };
+#endif
 
   /**
     deliver amount of messages in buffer
@@ -115,8 +131,9 @@ namespace HAL
       C_CONFIG == BUS not initialised
       C_RANGE == wrong BUS or MsgObj number
   */
-  inline uint16_t can_stateMsgobjBuffercnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_stateMsgobjBuffercnt(aui8_busNr, aui8_msgobjNr);};
+  inline uint16_t can_stateMsgobjBuffercnt( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    return __HAL::can_stateMsgobjBuffercnt( aui8_busNr, aui8_msgobjNr );
+  };
 
   /**
     deliver amount of messages which can be placed in buffer
@@ -127,15 +144,15 @@ namespace HAL
       C_CONFIG == BUS not initialised
       C_RANGE == wrong BUS or MsgObj number
   */
-  inline int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_stateMsgobjFreecnt(aui8_busNr, aui8_msgobjNr);};
-
+  inline int16_t can_stateMsgobjFreecnt( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    return __HAL::can_stateMsgobjFreecnt( aui8_busNr, aui8_msgobjNr );
+  };
 
   /*@}*/
 
   /* ************************************************************ */
   /** \name CAN BIOS functions for configuration of global CAN BUS */
-/*@{*/
+  /*@{*/
 
   /**
     init CAN BUS with given baudrate and masks
@@ -149,10 +166,11 @@ namespace HAL
             C_RANGE == wrong BUS nr or wrong baudrate;
             C_WARN == BUS previously initialised - no problem if only masks had to be changed
   */
-  inline int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd,
-        uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
-    {return __HAL::can_configGlobalInit(aui8_busNr, ab_baudrate, aui16_maskStd,
-        aui32_maskExt, aui32_maskLastmsg);};
+  inline int16_t can_configGlobalInit( uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd,
+                                       uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg ) {
+    return __HAL::can_configGlobalInit( aui8_busNr, ab_baudrate, aui16_maskStd,
+                                        aui32_maskExt, aui32_maskLastmsg );
+  };
 
   /**
     set the global masks
@@ -164,8 +182,9 @@ namespace HAL
     @return C_NO_ERR == no error;
             C_RANGE == wrong BUS nr
   */
-  inline int16_t can_configGlobalMask(uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
-    {return __HAL::can_configGlobalMask(aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg);};
+  inline int16_t can_configGlobalMask( uint8_t aui8_busNr, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg ) {
+    return __HAL::can_configGlobalMask( aui8_busNr, aui16_maskStd, aui32_maskExt, aui32_maskLastmsg );
+  };
 
   /**
     close CAN BUS
@@ -175,20 +194,21 @@ namespace HAL
             C_RANGE == wrong BUS nr;
             C_CONFIG == BUS previously not initialised
   */
-  inline int16_t can_configGlobalClose(uint8_t aui8_busNr)
-    {return __HAL::can_configGlobalClose(aui8_busNr);};
-
+  inline int16_t can_configGlobalClose( uint8_t aui8_busNr ) {
+    return __HAL::can_configGlobalClose( aui8_busNr );
+  };
 
   /** wait until specified timeout or until next CAN message receive
    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
    */
-  inline bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
-  { return __HAL::can_waitUntilCanReceiveOrTimeout( aui16_timeoutInterval );};
+  inline bool can_waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval ) {
+    return __HAL::can_waitUntilCanReceiveOrTimeout( aui16_timeoutInterval );
+  };
   /*@}*/
 
   /* ***************************************************************** */
   /** \name CAN BIOS functions for configuration of one specific MsgObj */
-/*@{*/
+  /*@{*/
 
   /**
     config a MsgObj
@@ -204,12 +224,18 @@ namespace HAL
             C_CONFIG == BUS not initialised or error during buffer allocation
             C_RANGE == wrong BUS or MsgObj number
   */
-  inline int16_t can_configMsgobjInit(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx)
-    {return __HAL::can_configMsgobjInit(aui8_busNr, aui8_msgobjNr, arc_ident, ab_rxtx);};
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  inline int16_t can_configMsgobjInit( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx ) {
+    return __HAL::can_configMsgobjInit( aui8_busNr, aui8_msgobjNr, arc_ident, ab_rxtx );
+  };
+#else
+#warning SYSTEM_WITH_ENHANCED_CAN_HAL not implemented for this platform!
+// int16_t can_configMsgobjInit( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::Ident_c& arc_ident, __IsoAgLib::Ident_c& arc_mask, uint8_t ab_rxtx );
+#endif
 
-
-  inline int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uint16_t aui16_minSend)
-    {return __HAL::can_configMsgobjSendpause(aui8_busNr, aui8_msgobjNr, aui16_minSend);};
+  inline int16_t can_configMsgobjSendpause( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uint16_t aui16_minSend ) {
+    return __HAL::can_configMsgobjSendpause( aui8_busNr, aui8_msgobjNr, aui16_minSend );
+  };
 
   /**
     close a MsgObj
@@ -219,14 +245,15 @@ namespace HAL
             C_CONFIG == BUS not initialised, MsgObj previously not used or buffer memory not freed
             C_RANGE == wrong BUS or MsgObj number
   */
-  inline int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_configMsgobjClose(aui8_busNr, aui8_msgobjNr);};
+  inline int16_t can_configMsgobjClose( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    return __HAL::can_configMsgobjClose( aui8_busNr, aui8_msgobjNr );
+  };
 
   /*@}*/
 
   /* ****************************************************** */
   /** \name CAN BIOS functions for use of on specific MsgObj */
-/*@{*/
+  /*@{*/
 
   /**
     send a message via a MsgObj;
@@ -244,11 +271,9 @@ namespace HAL
             C_OVERFLOW == send buffer overflowed
             C_RANGE == wrong BUS or MsgObj number
   */
-  inline int16_t can_useMsgobjSend(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data)
-    {return __HAL::can_useMsgobjSend(aui8_busNr, aui8_msgobjNr, apc_data);};
-
-
-
+  inline int16_t can_useMsgobjSend( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data ) {
+    return __HAL::can_useMsgobjSend( aui8_busNr, aui8_msgobjNr, apc_data );
+  };
 
   /**
     clear th buffer of a MsgObj (e.g. to stop sending retries)
@@ -258,11 +283,16 @@ namespace HAL
             C_CONFIG == BUS not initialised
             C_RANGE == wrong BUS or MsgObj number
   */
-  inline int16_t can_useMsgobjClear(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
-    {return __HAL::can_useMsgobjClear(aui8_busNr, aui8_msgobjNr);};
+  inline int16_t can_useMsgobjClear( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    return __HAL::can_useMsgobjClear( aui8_busNr, aui8_msgobjNr );
+  };
 
-  inline int32_t can_getMaxSendDelay(uint8_t aui8_busNr)
-  {return __HAL::can_getMaxSendDelay(); }
+#ifdef USE_CAN_SEND_DELAY_MEASUREMENT
+  inline int32_t can_getMaxSendDelay( uint8_t aui8_busNr ) {
+    return __HAL::can_getMaxSendDelay();
+  }
+#endif
   /*@}*/
 }
+
 #endif

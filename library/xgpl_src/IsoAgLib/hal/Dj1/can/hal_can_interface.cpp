@@ -32,29 +32,27 @@
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 
 #if DEBUG_HAL || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING || DEBUG_SENDING
-  #ifdef SYSTEM_PC
-    #include <iostream>
-  #else
-    #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
-  #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
+#ifdef SYSTEM_PC
+#include <iostream>
+#else
+#include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
+#endif
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 //  #include <compilerswitches.h>
 #endif
 
 
 
-namespace __HAL
-{
-  extern "C"
-  {
+namespace __HAL {
+  extern "C" {
     /** include the BIOS specific header with the part for CAN into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
+#include <commercial_BIOS/bios_Dj1/DjBios1.h>
   }
 
   uint16_t MessageRxLostCounter = 0;
 
-  static enum_Bool Can_IrqRxToFifo (ubyte BusNum, ubyte ObjNum, struct_CanMsg *Msg );
+  static enum_Bool Can_IrqRxToFifo( ubyte BusNum, ubyte ObjNum, struct_CanMsg *Msg );
 
 
   /**
@@ -64,27 +62,22 @@ namespace __HAL
       @param aui8_msgobjNr number of the MsgObj to check
       @return elapse_time  number of ms since last message on object
   */
-  int32_t Can_TxObjElapseTime ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-  {
-    int32_t LastTime = __HAL::DjBios_CanObjTxTimeStamp ( aui8_busNr, aui8_msgobjNr );
+  int32_t Can_TxObjElapseTime( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    int32_t LastTime = __HAL::DjBios_CanObjTxTimeStamp( aui8_busNr, aui8_msgobjNr );
     int32_t Now = __HAL::DjBios_TimeGetNow();
 
     /* If there is nothing in the Queue waiting to be sent, the time must be
        zero.  This is really a time that the message has been waiting in
        the queue */
-    if ( DjBios_CanObjBufCount(aui8_busNr, aui8_msgobjNr) > 0 )
-    {
-      if ( Now >= LastTime )
-      {
+    if ( DjBios_CanObjBufCount( aui8_busNr, aui8_msgobjNr ) > 0 ) {
+      if ( Now >= LastTime ) {
         return ( Now - LastTime );
       } /* end if() */
-      else
-      {
+      else {
         return ( 0x7FFFFF );   /* if times are invalid, use a very large time */
       } /* end else() */
     }
-    else
-    {
+    else {
       return ( 0 );
     }
   } /* end RxObjElapseTime() */
@@ -99,18 +92,15 @@ namespace __HAL
       HAL_CONFIG_ERR == BUS not initialised
       HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  uint16_t Can_ObjBufferCount ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-  {
-    uint16_t Count = __HAL::DjBios_CanObjBufCount ( aui8_busNr, aui8_msgobjNr );
+  uint16_t Can_ObjBufferCount( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    uint16_t Count = __HAL::DjBios_CanObjBufCount( aui8_busNr, aui8_msgobjNr );
 
-    if ( (Count == (uint16_t)BIOS_CAN_BAD_BUS) ||
-         (Count == (uint16_t)BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Count == ( uint16_t )BIOS_CAN_BAD_BUS ) ||
+        ( Count == ( uint16_t )BIOS_CAN_BAD_OBJ ) ) {
       Count = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( (Count == (uint16_t)BIOS_CAN_QUEUE_INIT_ERR) ||
-              (Count == (uint16_t)BIOS_CAN_NO_INIT) )
-    {
+    else if (( Count == ( uint16_t )BIOS_CAN_QUEUE_INIT_ERR ) ||
+             ( Count == ( uint16_t )BIOS_CAN_NO_INIT ) ) {
       Count = HAL_CONFIG_ERR;
     } /* end if() */
 
@@ -128,17 +118,14 @@ namespace __HAL
       HAL_CONFIG_ERR == BUS not initialised
       HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjBufferSpace ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-  {
-    uint16_t Count = __HAL::DjBios_CanObjBufSpace ( aui8_busNr, aui8_msgobjNr );
+  int16_t Can_ObjBufferSpace( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    uint16_t Count = __HAL::DjBios_CanObjBufSpace( aui8_busNr, aui8_msgobjNr );
 
-    if ( Count == (uint16_t)BIOS_CAN_BAD_BUS || Count == (uint16_t)BIOS_CAN_BAD_OBJ )
-    {
+    if ( Count == ( uint16_t )BIOS_CAN_BAD_BUS || Count == ( uint16_t )BIOS_CAN_BAD_OBJ ) {
       Count = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( (Count == (uint16_t)BIOS_CAN_QUEUE_INIT_ERR) ||
-              (Count == (uint16_t)BIOS_CAN_NO_INIT) )
-    {
+    else if (( Count == ( uint16_t )BIOS_CAN_QUEUE_INIT_ERR ) ||
+             ( Count == ( uint16_t )BIOS_CAN_NO_INIT ) ) {
       Count = HAL_CONFIG_ERR;
     } /* end if() */
 
@@ -158,25 +145,21 @@ namespace __HAL
             HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
             HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
   */
-  int16_t Can_GlobalInit  ( uint8_t aui8_busNr, uint16_t ab_baudrate,
-              uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg )
-  {
-    int16_t Code = __HAL::DjBios_CanOpen ( aui8_busNr, ab_baudrate, aui16_maskStd,
-                                     aui32_maskExt, aui32_maskLastmsg );
+  int16_t Can_GlobalInit( uint8_t aui8_busNr, uint16_t ab_baudrate,
+                          uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg ) {
+    int16_t Code = __HAL::DjBios_CanOpen( aui8_busNr, ab_baudrate, aui16_maskStd,
+                                          aui32_maskExt, aui32_maskLastmsg );
 
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "GI: ";
+    INTERNAL_DEBUG_DEVICE << "GI: ";
 #endif
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_RATE) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_RATE ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_INIT_CHANGE )
-    {
+    else if ( Code == BIOS_CAN_INIT_CHANGE ) {
       Code = HAL_WARN_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -194,25 +177,21 @@ INTERNAL_DEBUG_DEVICE << "GI: ";
     @return HAL_NO_ERR == no error
             HAL_RANGE_ERR == wrong BUS number
   */
-  int16_t Can_GlobalMask ( uint8_t aui8_busNr, uint16_t aui16_maskStd,
-                           uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg )
-  {
-    int16_t Code = __HAL::DjBios_CanConfig ( aui8_busNr, aui16_maskStd,
-                                          aui32_maskExt, aui32_maskLastmsg );
+  int16_t Can_GlobalMask( uint8_t aui8_busNr, uint16_t aui16_maskStd,
+                          uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg ) {
+    int16_t Code = __HAL::DjBios_CanConfig( aui8_busNr, aui16_maskStd,
+                                            aui32_maskExt, aui32_maskLastmsg );
 
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "GM: ";
+    INTERNAL_DEBUG_DEVICE << "GM: ";
 #endif
-    if ( Code == BIOS_CAN_BAD_BUS )
-    {
+    if ( Code == BIOS_CAN_BAD_BUS ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_NO_INIT )
-    {
+    else if ( Code == BIOS_CAN_NO_INIT ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -228,23 +207,19 @@ INTERNAL_DEBUG_DEVICE << "GM: ";
             HAL_RANGE_ERR == wrong BUS number
             HAL_CONFIG_ERR == BUS previously not initialised
   */
-  int16_t Can_Close ( uint8_t aui8_busNr )
-  {
-    int16_t Code = __HAL::DjBios_CanClose ( aui8_busNr );
+  int16_t Can_Close( uint8_t aui8_busNr ) {
+    int16_t Code = __HAL::DjBios_CanClose( aui8_busNr );
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "CanClose: ";
+    INTERNAL_DEBUG_DEVICE << "CanClose: ";
 #endif
 
-    if ( Code == BIOS_CAN_BAD_BUS )
-    {
+    if ( Code == BIOS_CAN_BAD_BUS ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_NO_INIT )
-    {
+    else if ( Code == BIOS_CAN_NO_INIT ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -266,9 +241,8 @@ INTERNAL_DEBUG_DEVICE << "CanClose: ";
             HAL_CONFIG_ERR == BUS not initialised or error during buffer allocation
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjectInit ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
-                            __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx )
-  {
+  int16_t Can_ObjectInit( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                          __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx ) {
 
 //  if (arc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
 //    pt_config->bXtd = DEFAULT_IDENT_TYPE;
@@ -280,35 +254,31 @@ INTERNAL_DEBUG_DEVICE << "CanClose: ";
     uint8_t  Type  = arc_ident.identType();
 
 #if 0
-    int16_t Code = __HAL::DjBios_CanObjConfig ( aui8_busNr, aui8_msgobjNr, Ident,
-                                         (Type==0)?BIOS_FALSE:BIOS_TRUE, (ab_rxtx==1)?BIOS_TRUE:BIOS_FALSE,
-                                         (ab_rxtx==1)?CONFIG_CAN_SEND_BUFFER_SIZE:CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN );
+    int16_t Code = __HAL::DjBios_CanObjConfig( aui8_busNr, aui8_msgobjNr, Ident,
+                   ( Type==0 )?BIOS_FALSE:BIOS_TRUE, ( ab_rxtx==1 )?BIOS_TRUE:BIOS_FALSE,
+                   ( ab_rxtx==1 )?CONFIG_CAN_SEND_BUFFER_SIZE:CONFIG_CAN_HIGH_LOAD_REC_BUF_SIZE_MIN );
 #else
-    int16_t Code = __HAL::DjBios_CanObjConfig ( aui8_busNr, aui8_msgobjNr, Ident,
-                                         (Type==0)?BIOS_FALSE:BIOS_TRUE, (ab_rxtx==1)?BIOS_TRUE:BIOS_FALSE,
-                                          (ab_rxtx==1)?CONFIG_CAN_SEND_BUFFER_SIZE:0 );
+    int16_t Code = __HAL::DjBios_CanObjConfig( aui8_busNr, aui8_msgobjNr, Ident,
+                   ( Type==0 )?BIOS_FALSE:BIOS_TRUE, ( ab_rxtx==1 )?BIOS_TRUE:BIOS_FALSE,
+                   ( ab_rxtx==1 )?CONFIG_CAN_SEND_BUFFER_SIZE:0 );
 
-    (void)__HAL::DjBios_CanObjCallback ( aui8_busNr, aui8_msgobjNr, (ab_rxtx==1)?NULL:Can_IrqRxToFifo );
+    ( void )__HAL::DjBios_CanObjCallback( aui8_busNr, aui8_msgobjNr, ( ab_rxtx==1 )?NULL:Can_IrqRxToFifo );
 #endif
 
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "I:" << uint16_t(rui8_msgobjNr) << " ";
+    INTERNAL_DEBUG_DEVICE << "I:" << uint16_t( rui8_msgobjNr ) << " ";
 #endif
 
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_QUEUE_INIT_ERR) || (Code == BIOS_CAN_NO_INIT) )
-    {
+    else if (( Code == BIOS_CAN_QUEUE_INIT_ERR ) || ( Code == BIOS_CAN_NO_INIT ) ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_OBJ_BUSY )
-    {
+    else if ( Code == BIOS_CAN_OBJ_BUSY ) {
       Code = HAL_BUSY_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -330,26 +300,22 @@ INTERNAL_DEBUG_DEVICE << "I:" << uint16_t(rui8_msgobjNr) << " ";
                   significant impact on the performance of the system.
 
   ******************************************************************************/
-  static enum_Bool Can_IrqRxToFifo (ubyte BusNum, ubyte ObjNum, struct_CanMsg *Msg )
-  {
+  static enum_Bool Can_IrqRxToFifo( ubyte BusNum, ubyte ObjNum, struct_CanMsg *Msg ) {
     int32_t i32_fbIndex = -1; /** initialization value*/
 
     /** if the irQTable is not valid, maybe there is a reconfiguration,
     * so put all the received message in the FIFO
     */
-    if ( HAL::isIrqTable ( BusNum, ObjNum ) )
-    {
+    if ( HAL::isIrqTable( BusNum, ObjNum ) ) {
       /** BIOS objects starts from 1 */
-      HAL::findFilterBox ( BusNum, ObjNum, Msg->ID, &i32_fbIndex );
+      HAL::findFilterBox( BusNum, ObjNum, Msg->ID, &i32_fbIndex );
 
-      if ( i32_fbIndex == -1 )
-      { /** message discarded, no FB interested **/
+      if ( i32_fbIndex == -1 ) { /** message discarded, no FB interested **/
         return ( BIOS_FALSE );  /** exit don't write in the central fifo **/
       }
     } /* end if() */
 
-    if ( !HAL::iFifoWrite ( BusNum, i32_fbIndex, Msg->ID, (void*)Msg ) )
-    {
+    if ( !HAL::iFifoWrite( BusNum, i32_fbIndex, Msg->ID, ( void* )Msg ) ) {
       MessageRxLostCounter++;
     } /* end if() */
 
@@ -358,34 +324,32 @@ INTERNAL_DEBUG_DEVICE << "I:" << uint16_t(rui8_msgobjNr) << " ";
   } /* end Can_IrqRxToFifo() */
 
 
-extern "C"
-{
-  /******************************************************************************
-  Function name : getIrqData
-           Type : PUBLIC
+  extern "C" {
+    /******************************************************************************
+    Function name : getIrqData
+             Type : PUBLIC
 
-  Description   :
+    Description   :
 
-  Notes :
+    Notes :
 
-  ******************************************************************************/
-  void getIrqData ( void *inputData, NEAR_MEM HAL::fifoData_s *destination, uint8_t aui8_bXtd )
-  {
-    struct_CanMsg *MsgPtr = (struct_CanMsg *)inputData;
+    ******************************************************************************/
+    void getIrqData( void *inputData, NEAR_MEM HAL::fifoData_s *destination, uint8_t aui8_bXtd ) {
+      struct_CanMsg *MsgPtr = ( struct_CanMsg * )inputData;
 
-    destination->bXtd = MsgPtr->Ext ? 1 : 0;
-    destination->bDlc = MsgPtr->Length;
-    destination->abData[0] = MsgPtr->Data[0];
-    destination->abData[1] = MsgPtr->Data[1];
-    destination->abData[2] = MsgPtr->Data[2];
-    destination->abData[3] = MsgPtr->Data[3];
-    destination->abData[4] = MsgPtr->Data[4];
-    destination->abData[5] = MsgPtr->Data[5];
-    destination->abData[6] = MsgPtr->Data[6];
-    destination->abData[7] = MsgPtr->Data[7];
+      destination->bXtd = MsgPtr->Ext ? 1 : 0;
+      destination->bDlc = MsgPtr->Length;
+      destination->abData[0] = MsgPtr->Data[0];
+      destination->abData[1] = MsgPtr->Data[1];
+      destination->abData[2] = MsgPtr->Data[2];
+      destination->abData[3] = MsgPtr->Data[3];
+      destination->abData[4] = MsgPtr->Data[4];
+      destination->abData[5] = MsgPtr->Data[5];
+      destination->abData[6] = MsgPtr->Data[6];
+      destination->abData[7] = MsgPtr->Data[7];
 
-  } /* end getIrqData() */
-}
+    } /* end getIrqData() */
+  }
 
 
   /**
@@ -398,28 +362,24 @@ extern "C"
             HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjectChange ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
-                                              __IsoAgLib::Ident_c& arc_ident )
-  {
+  int16_t Can_ObjectChange( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                            __IsoAgLib::Ident_c& arc_ident ) {
     uint32_t Ident = arc_ident.ident();
     uint8_t  Type  = arc_ident.identType();
-    int16_t Code = __HAL::DjBios_CanObjChangeIdent ( aui8_busNr, aui8_msgobjNr, Ident,
-                                               (Type==0)?BIOS_FALSE:BIOS_TRUE);
+    int16_t Code = __HAL::DjBios_CanObjChangeIdent( aui8_busNr, aui8_msgobjNr, Ident,
+                   ( Type==0 )?BIOS_FALSE:BIOS_TRUE );
 
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "C:" << uint16_t(rui8_msgobjNr) << " ";
+    INTERNAL_DEBUG_DEVICE << "C:" << uint16_t( rui8_msgobjNr ) << " ";
 #endif
 
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_NO_INIT )
-    {
+    else if ( Code == BIOS_CAN_NO_INIT ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -437,25 +397,21 @@ INTERNAL_DEBUG_DEVICE << "C:" << uint16_t(rui8_msgobjNr) << " ";
             HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjectLock ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock )
-  {
-    int16_t Code = __HAL::DjBios_CanObjLock ( rui8_busNr, rui8_msgobjNr,
-                                              (rb_doLock) ? BIOS_TRUE : BIOS_FALSE );
+  int16_t Can_ObjectLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock ) {
+    int16_t Code = __HAL::DjBios_CanObjLock( rui8_busNr, rui8_msgobjNr,
+                   ( rb_doLock ) ? BIOS_TRUE : BIOS_FALSE );
 
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t(rui8_msgobjNr) << " " << (rb_doLock? "On" : "Off") << " ";
+    INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t( rui8_msgobjNr ) << " " << ( rb_doLock? "On" : "Off" ) << " ";
 #endif
 
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_NO_INIT )
-    {
+    else if ( Code == BIOS_CAN_NO_INIT ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -471,24 +427,20 @@ INTERNAL_DEBUG_DEVICE << "Lock:" << uint16_t(rui8_msgobjNr) << " " << (rb_doLock
             HAL_CONFIG_ERR == BUS not initialised, MsgObj previously not used or buffer memory not freed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjClose ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-  {
-    int16_t Code = __HAL::DjBios_CanObjClose ( aui8_busNr, aui8_msgobjNr );
+  int16_t Can_ObjClose( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
+    int16_t Code = __HAL::DjBios_CanObjClose( aui8_busNr, aui8_msgobjNr );
 
 #if DEBUG_HAL && OBJECT_CONFIG
-INTERNAL_DEBUG_DEVICE << "ObjClose:" << uint16_t(rui8_msgobjNr) << " ";
+    INTERNAL_DEBUG_DEVICE << "ObjClose:" << uint16_t( rui8_msgobjNr ) << " ";
 #endif
 
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_NO_INIT) || (Code == BIOS_CAN_QUEUE_INIT_ERR) )
-    {
+    else if (( Code == BIOS_CAN_NO_INIT ) || ( Code == BIOS_CAN_QUEUE_INIT_ERR ) ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -512,37 +464,31 @@ INTERNAL_DEBUG_DEVICE << "ObjClose:" << uint16_t(rui8_msgobjNr) << " ";
             HAL_OVERFLOW_ERR == send buffer overflowed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_ObjSend ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
-                                             __IsoAgLib::CanPkg_c* apc_data )
-  {
+  int16_t Can_ObjSend( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                       __IsoAgLib::CanPkg_c* apc_data ) {
     static struct_CanMsg Msg;
 
-    apc_data->getData(Msg.ID, Msg.Ext, Msg.Length, Msg.Data);
+    apc_data->getData( Msg.ID, Msg.Ext, Msg.Length, Msg.Data );
 
 #if DEBUG_HAL && DEBUG_SENDING
-INTERNAL_DEBUG_DEVICE << "3:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moNr." << uint16_t(rui8_msgobjNr) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "3:" << Msg.ID << " " << uint16_t( Msg.Data[0] ) << " moNr." << uint16_t( rui8_msgobjNr ) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
-    int16_t Code = __HAL::DjBios_CanObjSend ( aui8_busNr, aui8_msgobjNr, &Msg );
+    int16_t Code = __HAL::DjBios_CanObjSend( aui8_busNr, aui8_msgobjNr, &Msg );
 
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_Q_FULL )
-    {
+    else if ( Code == BIOS_CAN_Q_FULL ) {
       Code = HAL_OVERFLOW_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_BUS_OFF )
-    {
+    else if ( Code == BIOS_CAN_BUS_OFF ) {
       Code = HAL_NOACT_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_NO_INIT) || (Code == BIOS_CAN_OBJ_MISMATCH) )
-    {
+    else if (( Code == BIOS_CAN_NO_INIT ) || ( Code == BIOS_CAN_OBJ_MISMATCH ) ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -550,7 +496,7 @@ INTERNAL_DEBUG_DEVICE << "3:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moN
   };
 
 #if DEBUG_HAL && DEBUG_RECEIVE
-static uint8_t LastMsgIdentObj = 0xFF;
+  static uint8_t LastMsgIdentObj = 0xFF;
 #endif
   /**
     get the ident of a received message to decide about the further
@@ -565,54 +511,46 @@ static uint8_t LastMsgIdentObj = 0xFF;
             HAL_RANGE_ERR    == wrong BUS or MsgObj number
             HAL_WARN_ERR     == BUS WARN or no received message
   */
-  int32_t Can_ReadObjRxIdent ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
-                                                          int32_t &reflIdent )
-  {
+  int32_t Can_ReadObjRxIdent( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                              int32_t &reflIdent ) {
     static struct_CanMsg Msg;
 
     /* Get the message and leave it in the buffer */
-    int16_t Code = __HAL::DjBios_CanObjRead ( aui8_busNr, aui8_msgobjNr, &Msg );
+    int16_t Code = __HAL::DjBios_CanObjRead( aui8_busNr, aui8_msgobjNr, &Msg );
 
 #if DEBUG_HAL && DEBUG_RECEIVE
-    INTERNAL_DEBUG_DEVICE << "RxID:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moNr." << uint16_t(rui8_msgobjNr) << " " << __HAL::DjBios_TimeGetNow() << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "RxID:" << Msg.ID << " " << uint16_t( Msg.Data[0] ) << " moNr." << uint16_t( rui8_msgobjNr ) << " " << __HAL::DjBios_TimeGetNow() << INTERNAL_DEBUG_DEVICE_ENDL;
 
     LastMsgIdentObj = rui8_msgobjNr;
 #endif
 
 
-    if ( (Code == BIOS_CAN_NO_ERR) ||
-         (Code == BIOS_CAN_Q_OVERFLOW) ||
-         (Code == BIOS_CAN_BUS_WARN) )
-    {
+    if (( Code == BIOS_CAN_NO_ERR ) ||
+        ( Code == BIOS_CAN_Q_OVERFLOW ) ||
+        ( Code == BIOS_CAN_BUS_WARN ) ) {
       /* return just the ID field */
       reflIdent = Msg.ID;
     } /* end if() */
 
-    if ( (Code == BIOS_CAN_BAD_BUS) ||
-         (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) ||
+        ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_Q_OVERFLOW )
-    {
+    else if ( Code == BIOS_CAN_Q_OVERFLOW ) {
       Code = HAL_OVERFLOW_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_BUS_WARN) ||
-              (Code == BIOS_CAN_NO_MSG) )
-    {
+    else if (( Code == BIOS_CAN_BUS_WARN ) ||
+             ( Code == BIOS_CAN_NO_MSG ) ) {
       Code = HAL_WARN_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_BUS_OFF )
-    {
+    else if ( Code == BIOS_CAN_BUS_OFF ) {
       Code = HAL_NOACT_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_NO_INIT) ||
-              (Code == BIOS_CAN_OBJ_MISMATCH) )
-    {
+    else if (( Code == BIOS_CAN_NO_INIT ) ||
+             ( Code == BIOS_CAN_OBJ_MISMATCH ) ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -639,47 +577,43 @@ static uint8_t LastMsgIdentObj = 0xFF;
             HAL_RANGE_ERR    == wrong BUS or MsgObj number
             HAL_WARN_ERR     == BUS WARN or no received message
   */
-  int16_t Can_ReadObjRx ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data )
-  {
+  int16_t Can_ReadObjRx( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::CanPkg_c* apc_data ) {
     static struct_CanMsg Msg;
 
     /* Get the message and leave it in the buffer */
-    int16_t Code = __HAL::DjBios_CanObjRead ( aui8_busNr, aui8_msgobjNr, &Msg );
+    int16_t Code = __HAL::DjBios_CanObjRead( aui8_busNr, aui8_msgobjNr, &Msg );
 
 #if DEBUG_HAL && DEBUG_RECEIVE
-    INTERNAL_DEBUG_DEVICE << "Rx:" << Msg.ID << " " << uint16_t(Msg.Data[0]) << " moNr." << uint16_t(rui8_msgobjNr) << " " << Msg.Time << "  Now:" << __HAL::DjBios_TimeGetNow() << " Code:" << Code << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "Rx:" << Msg.ID << " " << uint16_t( Msg.Data[0] ) << " moNr." << uint16_t( rui8_msgobjNr ) << " " << Msg.Time << "  Now:" << __HAL::DjBios_TimeGetNow() << " Code:" << Code << INTERNAL_DEBUG_DEVICE_ENDL;
 
-    if ( LastMsgIdentObj != rui8_msgobjNr )
-    {
+    if ( LastMsgIdentObj != rui8_msgobjNr ) {
       INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_ENDL "-- rui8_msgobjNr Change -- " << INTERNAL_DEBUG_DEVICE_ENDL;
     } /* end if() */
 #endif
     /* return Message values */
 
-    if ( (Code == BIOS_CAN_NO_ERR) ||
-         (Code == BIOS_CAN_Q_OVERFLOW) ||
-         (Code == BIOS_CAN_BUS_WARN) )
-    {
+    if (( Code == BIOS_CAN_NO_ERR ) ||
+        ( Code == BIOS_CAN_Q_OVERFLOW ) ||
+        ( Code == BIOS_CAN_BUS_WARN ) ) {
       /* load the message */
       // apc_data->setTime(Msg.Time);
       // CanPkg_c::setTime changed to static
-      __IsoAgLib::CanPkg_c::setTime(Msg.Time);
+      __IsoAgLib::CanPkg_c::setTime( Msg.Time );
 
       __IsoAgLib::Ident_c::identType_t idType;
-      idType = (Msg.Ext == 1) ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent;
+      idType = ( Msg.Ext == 1 ) ? __IsoAgLib::Ident_c::ExtendedIdent : __IsoAgLib::Ident_c::StandardIdent;
 
       // apc_data->setIdent(Msg.ID, idType);
       // CanPkg_c::setIdent changed to static member function
-      __IsoAgLib::CanPkg_c::setIdent(Msg.ID, idType);
+      __IsoAgLib::CanPkg_c::setIdent( Msg.ID, idType );
 
 // IsoAgLib Update 28Sept      apc_data->setDataString(Msg.Data, Msg.Length);
-      apc_data->setDataFromString(Msg.Data, Msg.Length);
+      apc_data->setDataFromString( Msg.Data, Msg.Length );
     } /* end if() */
-    else
-    {
+    else {
       /* load the message -- clear all of the data */
-      __IsoAgLib::CANPkg_c::setTime ( __HAL::DjBios_TimeGetNow() );
-      __IsoAgLib::CANPkg_c::setIdent ( 0, __IsoAgLib::Ident_c::ExtendedIdent );
+      __IsoAgLib::CANPkg_c::setTime( __HAL::DjBios_TimeGetNow() );
+      __IsoAgLib::CANPkg_c::setIdent( 0, __IsoAgLib::Ident_c::ExtendedIdent );
 
       Msg.Data[0] = 0xFF;
       Msg.Data[1] = 0xFF;
@@ -691,24 +625,19 @@ static uint8_t LastMsgIdentObj = 0xFF;
       Msg.Data[7] = 0xFF;
       apc_data->setDataFromString( Msg.Data, 8 );
     } /* end else() */
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_Q_OVERFLOW )
-    {
+    else if ( Code == BIOS_CAN_Q_OVERFLOW ) {
       Code = HAL_OVERFLOW_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_BUS_OFF) || (Code == BIOS_CAN_NO_MSG) )
-    {
+    else if (( Code == BIOS_CAN_BUS_OFF ) || ( Code == BIOS_CAN_NO_MSG ) ) {
       Code = HAL_NOACT_ERR;
     } /* end if() */
-    else if ( (Code == BIOS_CAN_NO_INIT) || (Code == BIOS_CAN_OBJ_MISMATCH) )
-    {
+    else if (( Code == BIOS_CAN_NO_INIT ) || ( Code == BIOS_CAN_OBJ_MISMATCH ) ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
@@ -723,32 +652,27 @@ static uint8_t LastMsgIdentObj = 0xFF;
             HAL_CONFIG_ERR == BUS not initialised
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  int16_t Can_PurgeObj ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-  {
+  int16_t Can_PurgeObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
     /* Clear the recieve buffer */
-    int16_t Code = __HAL::DjBios_CanObjPurge ( aui8_busNr, aui8_msgobjNr );
+    int16_t Code = __HAL::DjBios_CanObjPurge( aui8_busNr, aui8_msgobjNr );
 
 #if DEBUG_HAL && DEBUG_RECEIVE
-INTERNAL_DEBUG_DEVICE << "CanPurge:" << uint16_t(rui8_msgobjNr) << " ";
+    INTERNAL_DEBUG_DEVICE << "CanPurge:" << uint16_t( rui8_msgobjNr ) << " ";
 #endif
-    if ( (Code == BIOS_CAN_BAD_BUS) || (Code == BIOS_CAN_BAD_OBJ) )
-    {
+    if (( Code == BIOS_CAN_BAD_BUS ) || ( Code == BIOS_CAN_BAD_OBJ ) ) {
       Code = HAL_RANGE_ERR;
     } /* end if() */
-    else if ( Code == BIOS_CAN_NO_INIT )
-    {
+    else if ( Code == BIOS_CAN_NO_INIT ) {
       Code = HAL_CONFIG_ERR;
     } /* end if() */
-    else
-    {
+    else {
       Code = HAL_NO_ERR;
     } /* end else() */
 
     return ( Code );
   }
 
-  int32_t can_getMaxSendDelay ( uint8_t aui8_busNr )
-  {
+  int32_t can_getMaxSendDelay( uint8_t aui8_busNr ) {
     /* Clear the recieve buffer */
     int32_t Code = 0;
     return ( Code );

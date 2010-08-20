@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/Dj1/eeprom/eeprom.h
+/** \file IsoAgLib/hal/Dj1/eeprom/eeprom.cpp
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -24,31 +24,24 @@
 */
 /* ************************************************************ */
 
-#ifndef _HAL_DJ1_EEPROM_H_
-#define _HAL_DJ1_EEPROM_H_
-
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
-
-namespace __HAL
-{
-  extern "C"
-  {
+namespace __HAL {
+  extern "C" {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_Dj1/DjBios1.h>
+#include <commercial_BIOS/bios_Dj1/DjBios1.h>
   }
 }
 
+#ifndef __EEPROM_DJ1_H__
+#define __EEPROM_DJ1_H__
+
 /**
-   namespace with layer of inline (cost NO overhead -> compiler replaces
-   inline function with call to orig BIOS function)
+   namespace with layer of (cost NO overhead -> compiler replaces
+   function with call to orig BIOS function)
    functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
    --> simply replace the call to the corresponding BIOS function in this header
        for adaption to new platform
  */
-namespace HAL
-{
+namespace HAL {
   /* *************************** */
   /** \name EEPROM BIOS functions */
 
@@ -56,8 +49,7 @@ namespace HAL
    deliver the EEPROM size
      @return EEPROM size in bytes
   */
-  inline int16_t getEepromSize ( void )
-  {
+  inline int16_t getEepromSize( void ) {
     return ( __HAL::DjBios_EepromGetSize() );
   };
 
@@ -69,8 +61,7 @@ namespace HAL
   // MSCHMIDT - I think this is actually supposed to say size in bytes instead
   // MSCHMIDT - of size in kbyte.  get_eeprom_segment_size() returns size in
   // MSCHMIDT - bytes.
-  inline int16_t getEepromSegmentSize ( void )
-  {
+  inline int16_t getEepromSegmentSize( void ) {
     return ( __HAL::DjBios_EepromGetSegmentSize() );
   };
 
@@ -84,32 +75,26 @@ namespace HAL
                            HAL_RANGE_ERR == Bad address or number of bytes
                            HAL_BUSY_ERR == Write in progress
   */
-  inline int16_t eepromRead ( uint16_t wAddress, uint16_t wNumber, uint8_t *pbByte )
-  {
+  inline int16_t eepromRead( uint16_t wAddress, uint16_t wNumber, uint8_t *pbByte ) {
     int16_t RetStatus;
 
-    switch ( __HAL::DjBios_EepromRead ( wAddress, wNumber, pbByte) )
-    {
-      case __HAL::BIOS_EE_NO_ERR:
-      {
-        RetStatus = HAL_NO_ERR;
-        break;
-      }
-      case __HAL::BIOS_EE_BUSY:
-      {
-        RetStatus = HAL_BUSY_ERR;
-        break;
-      }
-      case __HAL::BIOS_EE_BAD_ADDR:
-      {
-        RetStatus = HAL_RANGE_ERR;
-        break;
-      }
-      default:
-      {
-        RetStatus = HAL_UNKNOWN_ERR;
-        break;
-      }
+    switch ( __HAL::DjBios_EepromRead( wAddress, wNumber, pbByte ) ) {
+      case __HAL::BIOS_EE_NO_ERR: {
+          RetStatus = HAL_NO_ERR;
+          break;
+        }
+      case __HAL::BIOS_EE_BUSY: {
+          RetStatus = HAL_BUSY_ERR;
+          break;
+        }
+      case __HAL::BIOS_EE_BAD_ADDR: {
+          RetStatus = HAL_RANGE_ERR;
+          break;
+        }
+      default: {
+          RetStatus = HAL_UNKNOWN_ERR;
+          break;
+        }
     } /* end switch() */
 
     return ( RetStatus );
@@ -123,32 +108,26 @@ namespace HAL
       @param pbData pointer to uint8_t string which should be written into EEPROM
       @return error state (HAL_NO_ERR == o.k.)
   */
-  inline int16_t eepromWrite ( uint16_t wAddress, uint16_t wNumber, const uint8_t *pbData )
-  {
+  inline int16_t eepromWrite( uint16_t wAddress, uint16_t wNumber, const uint8_t *pbData ) {
     int16_t RetStatus;
 
-    switch ( __HAL::DjBios_EepromWriteDirect ( wAddress, wNumber, pbData) )
-    {
-      case __HAL::BIOS_EE_NO_ERR:
-      {
-        RetStatus = HAL_NO_ERR;
-        break;
-      }
-      case __HAL::BIOS_EE_BUSY:
-      {
-        RetStatus = HAL_BUSY_ERR;
-        break;
-      }
-      case __HAL::BIOS_EE_BAD_ADDR:
-      {
-        RetStatus = HAL_RANGE_ERR;
-        break;
-      }
-      default:
-      {
-        RetStatus = HAL_UNKNOWN_ERR;
-        break;
-      }
+    switch ( __HAL::DjBios_EepromWriteDirect( wAddress, wNumber, pbData ) ) {
+      case __HAL::BIOS_EE_NO_ERR: {
+          RetStatus = HAL_NO_ERR;
+          break;
+        }
+      case __HAL::BIOS_EE_BUSY: {
+          RetStatus = HAL_BUSY_ERR;
+          break;
+        }
+      case __HAL::BIOS_EE_BAD_ADDR: {
+          RetStatus = HAL_RANGE_ERR;
+          break;
+        }
+      default: {
+          RetStatus = HAL_UNKNOWN_ERR;
+          break;
+        }
     } /* end switch() */
 
     return ( RetStatus );
@@ -161,8 +140,7 @@ namespace HAL
     @param bitMode sets write protection OFF or ON
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t eepromWp ( bool bitMode )
-  {
+  inline int16_t eepromWp( bool bitMode ) {
     /* Write Protect is not used for this hardware platform */
     return HAL_NO_ERR;
   };
@@ -172,9 +150,8 @@ namespace HAL
     check if EEPROM is ready for actions
     @return EE_READY -> ready
   */
-  inline int16_t eepromReady ( void )
-  {
-    return ( (__HAL::DjBios_EepromStatus() == __HAL::BIOS_EE_NO_ERR) ? EE_READY : HAL_BUSY_ERR );
+  inline int16_t eepromReady( void ) {
+    return (( __HAL::DjBios_EepromStatus() == __HAL::BIOS_EE_NO_ERR ) ? EE_READY : HAL_BUSY_ERR );
   };
 
 
@@ -193,14 +170,13 @@ namespace HAL
       @param iNumberMsgsTransmit size of CAN send buffer size
       @return HAL_NO_ERR if no error occured
   */
-  inline int16_t InitEEEditor(  uint8_t bBus,
-                       int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan,
-                       uint32_t dwReceiveCanId, uint8_t bUseExtendedCAN,
-                       int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit)
-  {
-    return __HAL::iInitEEEditor(bBus, iObjNrReceiveCan, iObjNrTransmitCan,
-                                       dwReceiveCanId, bUseExtendedCAN,
-                                       iNumberMsgsReceive, iNumberMsgsTransmit);
+  inline int16_t InitEEEditor( uint8_t bBus,
+                               int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan,
+                               uint32_t dwReceiveCanId, uint8_t bUseExtendedCAN,
+                               int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit ) {
+    return __HAL::iInitEEEditor( bBus, iObjNrReceiveCan, iObjNrTransmitCan,
+                                 dwReceiveCanId, bUseExtendedCAN,
+                                 iNumberMsgsReceive, iNumberMsgsTransmit );
   };
 
 
@@ -208,8 +184,7 @@ namespace HAL
     periodic call to the CAN EEEditor, to process editor msg
     @return true -> EEPROM write msg recieved, and EEPROM values changed
   */
-  inline int16_t ProcessCANEEEditorMsg()
-  {
+  inline int16_t ProcessCANEEEditorMsg() {
     return __HAL::iCallCanEEMonitor();
   };
 
@@ -221,12 +196,11 @@ namespace HAL
     periodic call to the RS232 EEEditor, to process editor msg
     @return true -> EEPROM write msg recieved, and EEPROM values changed
   */
-  inline int16_t ProcessRS232EEEditorMsg()
-  {
+  inline int16_t ProcessRS232EEEditorMsg() {
     return __HAL::iCallRs232EEMonitor();
   };
 #endif
 
 } /* namespace HAL */
 
-#endif  /* _HAL_DJ1_EEPROM_H_ -- This must be the last line of the file */
+#endif // #define __EEPROM_DJ1_H__

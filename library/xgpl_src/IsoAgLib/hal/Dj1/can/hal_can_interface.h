@@ -29,19 +29,21 @@
 #include "../typedef.h"
 
 
-namespace __IsoAgLib { class Ident_c; class CanPkg_c; }
+namespace __IsoAgLib {
+  class Ident_c;
+  class CanPkg_c;
+}
 
-namespace __HAL 
-{
+namespace __HAL {
 
   /**
-    Get the Elaped time since the last recieved message for the given 
+    Get the Elaped time since the last recieved message for the given
     message object
       @param aui8_busNr number of the BUS to check
       @param aui8_msgobjNr number of the MsgObj to check
       @return elapse_time  number of ms since last message on object
   */
-  extern int32_t Can_TxObjElapseTime ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
+  extern int32_t Can_TxObjElapseTime( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
 
 
   /**
@@ -53,7 +55,7 @@ namespace __HAL
       HAL_CONFIG_ERR == BUS not initialised
       HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern uint16_t Can_ObjBufferCount ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
+  extern uint16_t Can_ObjBufferCount( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
 
 
   /**
@@ -65,7 +67,7 @@ namespace __HAL
       HAL_CONFIG_ERR == BUS not initialised
       HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_ObjBufferSpace ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
+  extern int16_t Can_ObjBufferSpace( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
 
 
   /**
@@ -80,8 +82,8 @@ namespace __HAL
             HAL_RANGE_ERR == wrong BUS nr or wrong baudrate;
             HAL_WARN_ERR == BUS previously initialised - no problem if only masks had to be changed
   */
-  extern int16_t Can_GlobalInit  ( uint8_t aui8_busNr, uint16_t ab_baudrate, 
-              uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
+  extern int16_t Can_GlobalInit( uint8_t aui8_busNr, uint16_t ab_baudrate,
+                                   uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
 
 
   /**
@@ -94,8 +96,8 @@ namespace __HAL
     @return HAL_NO_ERR == no error
             HAL_RANGE_ERR == wrong BUS number
   */
-  extern int16_t Can_GlobalMask ( uint8_t aui8_busNr, uint16_t aui16_maskStd, 
-                           uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
+  extern int16_t Can_GlobalMask( uint8_t aui8_busNr, uint16_t aui16_maskStd,
+                                   uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg );
 
 
   /**
@@ -106,7 +108,7 @@ namespace __HAL
             HAL_RANGE_ERR == wrong BUS number
             HAL_CONFIG_ERR == BUS previously not initialised
   */
-  extern int16_t Can_Close ( uint8_t aui8_busNr );
+  extern int16_t Can_Close( uint8_t aui8_busNr );
 
 
   /**
@@ -124,8 +126,8 @@ namespace __HAL
             HAL_CONFIG_ERR == BUS not initialised or error during buffer allocation
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_ObjectInit ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
-                               __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx );
+  extern int16_t Can_ObjectInit( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                                   __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx );
 
 
   /**
@@ -139,8 +141,8 @@ namespace __HAL
             HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_ObjectChange ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
-                                             __IsoAgLib::Ident_c& arc_ident );
+  extern int16_t Can_ObjectChange( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                                     __IsoAgLib::Ident_c& arc_ident );
 
 
   /**
@@ -152,7 +154,7 @@ namespace __HAL
             HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_ObjectLock ( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
+  extern int16_t Can_ObjectLock( uint8_t rui8_busNr, uint8_t rui8_msgobjNr, bool rb_doLock );
 
 
   /**
@@ -163,7 +165,7 @@ namespace __HAL
             HAL_CONFIG_ERR == BUS not initialised, MsgObj previously not used or buffer memory not freed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_ObjClose ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
+  extern int16_t Can_ObjClose( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
 
 
   /**
@@ -182,8 +184,8 @@ namespace __HAL
             HAL_OVERFLOW_ERR == send buffer overflowed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_ObjSend ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
-                                               __IsoAgLib::CanPkg_c* apc_data );
+  extern int16_t Can_ObjSend( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                                __IsoAgLib::CanPkg_c* apc_data );
 
 
   /**
@@ -199,8 +201,8 @@ namespace __HAL
             HAL_RANGE_ERR    == wrong BUS or MsgObj number
             HAL_WARN_ERR     == BUS WARN or no received message
   */
-  extern int32_t Can_ReadObjRxIdent ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
-                                                          int32_t &reflIdent );
+  extern int32_t Can_ReadObjRxIdent( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                                       int32_t &reflIdent );
 
 
   /**
@@ -222,8 +224,8 @@ namespace __HAL
             HAL_RANGE_ERR    == wrong BUS or MsgObj number
             HAL_WARN_ERR     == BUS WARN or no received message
   */
-  extern int16_t Can_ReadObjRx ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, 
-                                              __IsoAgLib::CanPkg_c* apc_data );
+  extern int16_t Can_ReadObjRx( uint8_t aui8_busNr, uint8_t aui8_msgobjNr,
+                                  __IsoAgLib::CanPkg_c* apc_data );
 
 
   /**
@@ -234,9 +236,9 @@ namespace __HAL
             HAL_CONFIG_ERR == BUS not initialised
             HAL_RANGE_ERR == wrong BUS or MsgObj number
   */
-  extern int16_t Can_PurgeObj ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
+  extern int16_t Can_PurgeObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr );
 
-  int32_t can_getMaxSendDelay ( uint8_t aui8_busNr );
+  int32_t can_getMaxSendDelay( uint8_t aui8_busNr );
 
 } /* end namespace __HAL */
 

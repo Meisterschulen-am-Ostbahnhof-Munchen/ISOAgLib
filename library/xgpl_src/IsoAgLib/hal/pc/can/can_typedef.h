@@ -18,82 +18,77 @@
 
 namespace __HAL {
 
-/** Funktionszeiger Fehlerreaktion auf Can Bus Fehler*/
-typedef uint16_t (*tCAN_ERR_FUNC)(uint8_t,uint16_t);
+  /** Funktionszeiger Fehlerreaktion auf Can Bus Fehler*/
+  typedef uint16_t ( *tCAN_ERR_FUNC )( uint8_t,uint16_t );
 
-/** Datenstruktur im CAN Register (16 Byte) */
-typedef struct
-{
-  tBw   tMessageCtrl;
-  tDw   tArbit;
-  tBw   tCfg_D0;
-  tDw   tD1_D4;
-  tDw   tD5_D7;
-} tCanMsgReg;
+  /** Datenstruktur im CAN Register (16 Byte) */
+  typedef struct {
+    tBw   tMessageCtrl;
+    tDw   tArbit;
+    tBw   tCfg_D0;
+    tDw   tD1_D4;
+    tDw   tD5_D7;
+  } tCanMsgReg;
 
-/** Funktionszeiger =Funktion nach Sende- Empfangsinterrupt
- * uint8_t bBusNumber, uint8_t bMsgObj [0..13],
- * tCanMsgReg * ptCanMsgObj = Adresse Nachrichtenobjekt Can Register */
- typedef tCanMsgReg * (*tIRQ_FUNCTION)(uint8_t,uint8_t,tCanMsgReg *);
-
+  /** Funktionszeiger =Funktion nach Sende- Empfangsinterrupt
+   * uint8_t bBusNumber, uint8_t bMsgObj [0..13],
+   * tCanMsgReg * ptCanMsgObj = Adresse Nachrichtenobjekt Can Register */
+  typedef tCanMsgReg * ( *tIRQ_FUNCTION )( uint8_t,uint8_t,tCanMsgReg * );
 
 
-/** Datenstruktur fuer CAN status */
-typedef struct
-{
-  tIRQ_FUNCTION pfwBusOff;
-  tIRQ_FUNCTION pfwBusWarn;
-  tTime tLastErrorTime;
-  uint32_t dwGlobMask;
-  uint16_t wGlobMask;
-  uint32_t dwLastMsgObjMask;
-  uint16_t wBitrate;
-  uint16_t wCtrlStatusReg;
-  uint16_t wBittimingReg;
-} tCanBusStatus;
 
-/** Message Objekt Datenstruktur fuer CAN Botschaft *
- * Struktur Sende/Empfang Daten allgemein fuer Anwender (14 Byte) */
-typedef struct
-{
-  uint32_t dwId;                          /** Identifier */
-  uint8_t bXtd;                           /** Laenge Bit Identifier */
-  uint8_t bDlc;                           /** Anzahl der empfangenen Daten */
-  uint8_t abData[8];                      /** Datenpuffer */
-} tSend;
+  /** Datenstruktur fuer CAN status */
+  typedef struct {
+    tIRQ_FUNCTION pfwBusOff;
+    tIRQ_FUNCTION pfwBusWarn;
+    tTime tLastErrorTime;
+    uint32_t dwGlobMask;
+    uint16_t wGlobMask;
+    uint32_t dwLastMsgObjMask;
+    uint16_t wBitrate;
+    uint16_t wCtrlStatusReg;
+    uint16_t wBittimingReg;
+  } tCanBusStatus;
+
+  /** Message Objekt Datenstruktur fuer CAN Botschaft *
+   * Struktur Sende/Empfang Daten allgemein fuer Anwender (14 Byte) */
+  typedef struct {
+    uint32_t dwId;                          /** Identifier */
+    uint8_t bXtd;                           /** Laenge Bit Identifier */
+    uint8_t bDlc;                           /** Anzahl der empfangenen Daten */
+    uint8_t abData[8];                      /** Datenpuffer */
+  } tSend;
 
 
-/** Struktur empfange Daten allgemein (20 Byte) */
-typedef struct
-{
-  uint32_t dwId;                          /** Identifier */
-  uint8_t bXtd;                           /** Laenge Bit Identifier */
-  uint8_t bDlc;                           /** Anzahl der empfangenen Daten */
-  uint8_t abData[8];                      /** Datenpuffer */
-  tTime tReceiveTime;             /** Zeitpunkt Empfang */
+  /** Struktur empfange Daten allgemein (20 Byte) */
+  typedef struct {
+    uint32_t dwId;                          /** Identifier */
+    uint8_t bXtd;                           /** Laenge Bit Identifier */
+    uint8_t bDlc;                           /** Anzahl der empfangenen Daten */
+    uint8_t abData[8];                      /** Datenpuffer */
+    tTime tReceiveTime;             /** Zeitpunkt Empfang */
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  uint8_t bMsgObj;
+    uint8_t bMsgObj;
 #endif
-  
-} tReceive;
+
+  } tReceive;
 
 
-typedef struct                  /** Struktur Konfigurierung von Nachrichtenobjekten allgemein (16 Byte) */
-{
-  uint32_t dwId;                          /** Identifier */
-  uint8_t bXtd;                           /** Laenge Bit Identifier */
-  uint8_t bMsgType;                       /** Typ Nachrichtenobjekt */
-  uint16_t wNumberMsgs;                    /** Groesse Ringpuffer in Nachrichtenobjekten */
-  uint8_t bTimeStamped;                   /** Zeitstempel Empfang aktualisieren */
-  uint16_t wPause;                         /** Pausenzeit fuer verzoegertes Senden */
-  tIRQ_FUNCTION pfIrqFunction;         /** Funktionszeiger fuer "Anwenderdefinierte" Fkt nach
+  typedef struct {                /** Struktur Konfigurierung von Nachrichtenobjekten allgemein (16 Byte) */
+    uint32_t dwId;                          /** Identifier */
+    uint8_t bXtd;                           /** Laenge Bit Identifier */
+    uint8_t bMsgType;                       /** Typ Nachrichtenobjekt */
+    uint16_t wNumberMsgs;                    /** Groesse Ringpuffer in Nachrichtenobjekten */
+    uint8_t bTimeStamped;                   /** Zeitstempel Empfang aktualisieren */
+    uint16_t wPause;                         /** Pausenzeit fuer verzoegertes Senden */
+    tIRQ_FUNCTION pfIrqFunction;         /** Funktionszeiger fuer "Anwenderdefinierte" Fkt nach
                                        * Can HW Interrupt*/
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  uint32_t mask;
+    uint32_t mask;
 #endif
-  
-} tCanObjConfig;
+
+  } tCanObjConfig;
 
 } // end namespace __HAL
 #endif

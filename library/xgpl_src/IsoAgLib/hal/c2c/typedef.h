@@ -14,9 +14,9 @@
 #define TYPEDEF_C2C_H
 
 #if defined(__TSW_CPP__)
- #include <cstddef>
- #include <cstring>
- typedef unsigned int size_t;
+#include <cstddef>
+#include <cstring>
+typedef unsigned int size_t;
 #endif
 
 typedef unsigned char uint8_t;

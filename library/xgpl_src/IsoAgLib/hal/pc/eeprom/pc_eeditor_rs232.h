@@ -15,9 +15,9 @@
 #define PC_EEDITOR_RS232_H
 
 #include "../typedef.h"
-  /* PROTOTYPES */
+/* PROTOTYPES */
 namespace __HAL {
-  int16_t iCallRs232EEMonitor(void);
+  int16_t iCallRs232EEMonitor( void );
 } // end namespace __HAL
 
 #endif

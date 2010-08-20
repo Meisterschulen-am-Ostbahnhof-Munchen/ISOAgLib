@@ -17,54 +17,54 @@
 #define _HAL_MUTEX_EMULATED_H_
 
 
-namespace HAL
-{
+namespace HAL {
 
 #ifdef USE_MUTUAL_EXCLUSION
-/**
- * Class for a mutual exclusive use of a resource
- * @short Class for a mutual exclusive use of a resource.
-*/
+  /**
+   * Class for a mutual exclusive use of a resource
+   * @short Class for a mutual exclusive use of a resource.
+  */
 
-class ExclusiveAccess_c {
-public:
+  class ExclusiveAccess_c {
+    public:
 
-  ExclusiveAccess_c() {// init the Mutex
-                        mi_exclusiveAccess = 0; //unlocked
-                      }
+      ExclusiveAccess_c() {// init the Mutex
+        mi_exclusiveAccess = 0; //unlocked
+      }
 
-  ~ExclusiveAccess_c() {// destroy the Mutex
-                            }
+      ~ExclusiveAccess_c() {// destroy the Mutex
+      }
 
-  int  waitAcquireAccess() {
-                              while(mi_exclusiveAccess == 1) //if locked, wait until unlocked
-                              {
-                                wdTriggern();
-                               }
-                              // we reachonly here, if unlocked
-                              mi_exclusiveAccess = 1;
+      int  waitAcquireAccess() {
+        while ( mi_exclusiveAccess == 1 ) { //if locked, wait until unlocked
+          wdTriggern();
+        }
+        // we reachonly here, if unlocked
+        mi_exclusiveAccess = 1;
 
-                              return 0;
-                            }
+        return 0;
+      }
 
-  int  tryAcquireAccess(){
-                            if(mi_exclusiveAccess == 0) //if unlocked , lock it
-                            {
-                                mi_exclusiveAccess = 1;
-                                return 0;
-                            }
-                            else //if locked return
-                             return 1; //was locked
-}
+      int  tryAcquireAccess() {
+        if ( mi_exclusiveAccess == 0 ) { //if unlocked , lock it
+          mi_exclusiveAccess = 1;
+          return 0;
+        }
+        else //if locked return
+          return 1; //was locked
+      }
 
-  int releaseAccess(){ mi_exclusiveAccess = 0; return 0;}
+      int releaseAccess() {
+        mi_exclusiveAccess = 0;
+        return 0;
+      }
 
 
-private:
+    private:
 
-  volatile int mi_exclusiveAccess; // 1 = locked, 0 = unlocked
+      volatile int mi_exclusiveAccess; // 1 = locked, 0 = unlocked
 
-};//end class ExclusiveAccess_c
+  };//end class ExclusiveAccess_c
 
 #endif
 

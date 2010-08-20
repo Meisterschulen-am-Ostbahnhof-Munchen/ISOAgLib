@@ -27,34 +27,34 @@
 #include "../errcodes.h"
 namespace __HAL {
 
-/* ******************************************** */
-/** \name General BIOS Extenders                */
-/*@{*/
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t open_system( void );
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t closeSystem( void );
-/** check if open_System() has already been called */
-bool isSystemOpened( void );
+  /* ******************************************** */
+  /** \name General BIOS Extenders                */
+  /*@{*/
+  /**
+    open the system with system specific function call
+    @return error state (C_NO_ERR == o.k.)
+  */
+  int16_t open_system( void );
+  /**
+    close the system with system specific function call
+    @return error state (C_NO_ERR == o.k.)
+  */
+  int16_t closeSystem( void );
+  /** check if open_System() has already been called */
+  bool isSystemOpened( void );
 
-/** trigger the watchdog */
-void wdTriggern(void);
+  /** trigger the watchdog */
+  void wdTriggern( void );
 
-/**
-  configure the watchdog of the system with the
-  settings of configEsx
-  @return error state (C_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
-int16_t configWatchdog( void );
-/*@}*/
+  /**
+    configure the watchdog of the system with the
+    settings of configEsx
+    @return error state (C_NO_ERR == o.k.)
+      or DATA_CHANGED on new values -> need call of wdReset to use new settings
+    @see wdReset
+  */
+  int16_t configWatchdog( void );
+  /*@}*/
 }
 
 #endif

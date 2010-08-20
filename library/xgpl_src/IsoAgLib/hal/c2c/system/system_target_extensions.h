@@ -15,7 +15,7 @@
 
 /** \file IsoAgLib/hal/c2c/system/system_target_extensions.h
  * A module targetExtensions should be used
- * for all methods, which can't be simply 
+ * for all methods, which can't be simply
  * mapped from ECU standard BIOS to the needs of
  * IsoAgLib by mostly renaming and reordering of functions, parameters
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
@@ -28,31 +28,31 @@
 #include "../errcodes.h"
 namespace __HAL {
 
-/* ******************************************** */
-/** \name General BIOS Extenders                */
-/*@{*/
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t open_system( void );
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
-int16_t closeSystem( void );
-/** check if open_System() has already been called */
-bool isSystemOpened( void );
+  /* ******************************************** */
+  /** \name General BIOS Extenders                */
+  /*@{*/
+  /**
+    open the system with system specific function call
+    @return error state (C_NO_ERR == o.k.)
+  */
+  int16_t open_system( void );
+  /**
+    close the system with system specific function call
+    @return error state (C_NO_ERR == o.k.)
+  */
+  int16_t closeSystem( void );
+  /** check if open_System() has already been called */
+  bool isSystemOpened( void );
 
-/**
-  configure the watchdog of the system with the
-  settings of configC2C
-  @return error state (C_NO_ERR == o.k.)
-    or DATA_CHANGED on new values -> need call of wdReset to use new settings
-  @see wdReset
-*/
-int16_t configWatchdog( void );
-/*@}*/
+  /**
+    configure the watchdog of the system with the
+    settings of configC2C
+    @return error state (C_NO_ERR == o.k.)
+      or DATA_CHANGED on new values -> need call of wdReset to use new settings
+    @see wdReset
+  */
+  int16_t configWatchdog( void );
+  /*@}*/
 }
 
 #endif

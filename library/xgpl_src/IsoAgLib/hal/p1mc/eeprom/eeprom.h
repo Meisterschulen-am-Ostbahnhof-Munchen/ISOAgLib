@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/p1mc/eeprom/eeprom.h
+/** \file IsoAgLib/hal/p1mc/eeprom/eeprom.cpp
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -24,17 +24,14 @@
 */
 /* ************************************************************ */
 
-#ifndef _HAL_P1MC_EEPROM_H_
-#define _HAL_P1MC_EEPROM_H_
-
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
-
 namespace __HAL {
   extern "C" {
   }
 }
+
+#ifndef __EEPROM_P1MC_H__
+#define __EEPROM_P1MC_H__
+
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
    inline function with call to orig BIOS function)
@@ -162,4 +159,5 @@ namespace HAL {
 #endif
 
 }
-#endif
+
+#endif // #define __EEPROM_P1MC_H__

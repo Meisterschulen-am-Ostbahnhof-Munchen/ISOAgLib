@@ -50,7 +50,7 @@
 
 // basic period of task manager (scheduler)= const * 500 us = 1 ms
 #if !defined( T_TASK_BASIC )
-	#define T_TASK_BASIC 2
+#define T_TASK_BASIC 2
 #endif
 /* Initialisierung Watchdog 0 */
 /* Initialize Watchdog 0 */
