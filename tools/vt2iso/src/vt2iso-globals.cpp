@@ -170,12 +170,22 @@ bool itocolourdepth(uint8_t ui8_options, std::string& c_outputText)
 }
 
 
-signed int fonttypetoi (const char* text_fonttype)
+signed int fonttypetoi (const char* text_fonttype, unsigned int aui_revision)
 {
   int l;
   for (l=0; l<maxFonttypeTable; l++) {
     if (strncmp (text_fonttype, fonttypeTable [l], stringLength) == 0) {
-      if (l == maxFonttypeTable-1) return 0xFF;
+      if ( (l == maxFonttypeTable-1) && ( aui_revision == 4) ) return 0xFF;
+      if ( ( aui_revision != 4) && l > 1)
+      {
+        std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED FOR VERSION NOT 4! STOPPING PARSER! bye.\n\n";
+        return -1;
+      }
+      if ( l == 6 )
+      {
+        std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED! STOPPING PARSER! bye.\n\n";
+        return -1;
+      }
       return l;
     }
   }
@@ -184,6 +194,11 @@ signed int fonttypetoi (const char* text_fonttype)
   int i_fontType = strtol(text_fonttype, &p_checkChar, 10);
   if (*p_checkChar == '\0')
   {
+    if ( ( aui_revision != 4) && i_fontType > 1)
+    {
+      std::cout << "INVALID FONT TYPE '" << text_fonttype << "' ENCOUNTERED FOR VERSION NOT 4! STOPPING PARSER! bye.\n\n";
+      return -1;
+    }
     if (((i_fontType >= 0) && (i_fontType <= 5)) || (i_fontType == 7) || (i_fontType == 255))
       return i_fontType;
   }
@@ -297,8 +312,11 @@ signed int horizontaljustificationtoi (const char *text_horiz)
 }
 
 signed int
-verticaljustificationtoi (const char *text_vert)
+verticaljustificationtoi (const char *text_vert, unsigned int aui_revision)
 {
+  if (aui_revision == 2)
+    return 0x00; // version 2 does not support vertical justification -> set to 0x00.
+  
   int l;
   for (l=0; l<maxVerticalJustificationTable; l++)
   {
@@ -331,7 +349,7 @@ bool itoverticaljustification(unsigned int ui_index, string& c_outputText)
   return false;
 }
 
-signed int stringoptionstoi (const char *text_options)
+signed int stringoptionstoi (const char *text_options, unsigned int aui_revision)
 {
   int l, retval=0;
 
@@ -355,7 +373,7 @@ signed int stringoptionstoi (const char *text_options)
     }
   }
 
-  return retval;
+  return (aui_revision == 4) ? retval : (retval & 0x03);
 }
 
 bool itostringoptions(uint8_t ui8_options, std::string& c_outputText)
@@ -363,7 +381,7 @@ bool itostringoptions(uint8_t ui8_options, std::string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxStringOptionsTable, &stringOptionsTable[0][0]);
 }
 
-signed int inputnumberoptionstoi (const char *text_options)
+signed int inputnumberoptionstoi (const char *text_options, unsigned int aui_revision)
 {
   int l, retval=0;
 
@@ -386,7 +404,7 @@ signed int inputnumberoptionstoi (const char *text_options)
       return -1;
     }
   }
-  return retval;
+  return (aui_revision == 4) ? retval : (retval & 0x07);
 }
 
 bool itoinputnumberoptions(uint8_t ui8_options, std::string& c_outputText)
@@ -395,7 +413,7 @@ bool itoinputnumberoptions(uint8_t ui8_options, std::string& c_outputText)
 }
 
 
-signed int numberoptionstoi (const char *text_options)
+signed int numberoptionstoi (const char *text_options, unsigned int aui_revision)
 {
   int l, retval=0;
 
@@ -418,7 +436,7 @@ signed int numberoptionstoi (const char *text_options)
       return -1;
     }
   }
-  return retval;
+  return (aui_revision == 4) ? retval : (retval & 0x07);
 }
 
 bool itonumberoptions(uint8_t ui8_options, std::string& c_outputText)
@@ -975,7 +993,7 @@ bool itogcoptions(uint8_t ui8_options, string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxGCOptions, &GCOptionsTable[0][0]);
 }
 
-signed int inputobjectoptiontoi (const char *text_inputobjectoptions)
+signed int inputobjectoptiontoi (const char *text_inputobjectoptions, unsigned int aui_revision)
 {
   int l, retval=0;
 
@@ -999,7 +1017,7 @@ signed int inputobjectoptiontoi (const char *text_inputobjectoptions)
     }
   }
 
-  return retval;
+  return (aui_revision == 4)? retval : (retval & 0x01);
 }
 
 bool itoinputobjectoptions(uint8_t ui8_options, string& c_outputText)
@@ -1007,7 +1025,7 @@ bool itoinputobjectoptions(uint8_t ui8_options, string& c_outputText)
   return itogeneraloption(ui8_options, c_outputText, maxInputObjectOptionsTable, &inputobjectOptionsTable[0][0]);
 }
 
-signed int buttonoptiontoi (const char *text_buttonoptions)
+signed int buttonoptiontoi (const char *text_buttonoptions, unsigned int aui_revision)
 {
   int l, retval=0;
 
@@ -1031,7 +1049,8 @@ signed int buttonoptiontoi (const char *text_buttonoptions)
     }
   }
 
-  return retval;
+  // versions 2 and 3 only allow latchable, rest has to be set to 1
+  return ( aui_revision == 4 )? retval : (retval & 0x03);
 }
 
 bool itobuttonoptions(uint8_t ui8_options, string& c_outputText)

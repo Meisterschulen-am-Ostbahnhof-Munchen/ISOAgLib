@@ -2892,9 +2892,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             return false;
           if (colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()) == -1)
             return false;
-          if (buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+          // we set version 4 if no version set, else we use information from vtp-file.
+          if (buttonoptiontoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str(), buttonoptiontoi (arrc_attributes [attrOptions].get().c_str()));
+          fprintf (partFile_attributes, ", %s, %s, %d, %d, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), colourtoi ( arrc_attributes [attrBorder_colour].get().c_str()), arrc_attributes [attrKey_code].get().c_str(), buttonoptiontoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2));
           fprintf (partFile_defines, "static const unsigned int vtKeyCode%s =  %d;\n", m_objName.c_str(), arrc_attributes  [attrKey_code].getIntValue()); // like in otKey
           break;
 
@@ -2964,7 +2965,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           signed int retEnabled = booltoi( arrc_attributes [attrEnabled].get().c_str());
           signed int retHorJustification = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
-          signed int retVertJustification = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
+          signed int retVertJustification = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2); // we set version 4 if no version set, else we use information from vtp-file.
           signed int retJustification = retHorJustification | (retVertJustification << 2);
           if (retEnabled == -1) {
             std::cerr << "Error in booltoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -2980,10 +2981,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
-          if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+          if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %s, %d, %s, %d, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), getObjectReferencePrefixed (attrInput_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJustification, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled );
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %s, %d, %s, %d, %s, %s, %d", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), getObjectReferencePrefixed (attrInput_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJustification, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str(), (unsigned int)retEnabled );
           break;
         }
 
@@ -3000,10 +3001,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           arrc_attributes [attrValue].setIfNotGiven ("0");
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
-          if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+          if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL, %sUL, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str());
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL, %sUL, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrMin_value].get().c_str(), arrc_attributes [attrMax_value].get().c_str());
 
           if ( arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // != NULL
           { // contains already a number type specifier
@@ -3015,10 +3016,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           }
           // note that the enabled=".." attribute is converted into the
           // inputobject_options attribute in defaultAndConvertAttributes(..) already.
-          signed int retInputOption = inputobjectoptiontoi (arrc_attributes [attrInputObjectOptions].get().c_str());
+          signed int retInputOption = inputobjectoptiontoi (arrc_attributes [attrInputObjectOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2);
           signed int retFormat = formattoi (arrc_attributes [attrFormat].get().c_str());
           signed int retHorJust = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
-          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
+          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2); // we set version 4 if no version set, else we use information from vtp-file.
           signed int retJust = retHorJust | (retVertJust << 2);
           if (retInputOption == -1) {
             std::cerr << "Error in inputobjectoptiontoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -3052,7 +3053,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
           // note that the enabled=".." attribute is converted into the
           // options attribute in defaultAndConvertAttributes(..) already.
-          signed int retOptions = inputobjectoptiontoi (arrc_attributes [attrOptions].get().c_str());
+          signed int retOptions = inputobjectoptiontoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2);
           if (retOptions == -1)
           {
             std::cerr << "Error in itoinputobjectoptions() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -3065,6 +3066,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
 
         case otOutputlist:
         {
+          if (mb_isObjectPoolVersion && (mi_objectPoolVersion == 2))
+          {
+            std::cerr << "YOU ARE NOT ALLOWED TO USE OUTPUTLISTS IN A POOL FOR VERSION 2 VTs! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
           if (!(arrc_attributes [attrWidth].isGiven() && arrc_attributes [attrHeight].isGiven()))
           {
             std::cerr << "YOU NEED TO SPECIFY THE width= AND height= ATTRIBUTES FOR THE <outputlist> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -3119,7 +3125,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
-          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
+          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2); // we set version 4 if no version set, else we use information from vtp-file.
           if (retVertJust == -1)
           {
             std::cout << "Error in verticaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -3129,10 +3135,10 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           retJust |= retVertJust << 2;
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
-          if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+          if (stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2) == -1)
             return false;
 
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %d, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJust, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str());
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %d, %s, %s", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed (attrFont_attributes).c_str(), stringoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2), arrc_attributes [attrVariable_reference].get().c_str(), (unsigned int)retJust, arrc_attributes [attrLength].get().c_str(), arrc_attributes [attrValue].get().c_str());
           break;
         }
 
@@ -3147,9 +3153,9 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           arrc_attributes [attrValue].setIfNotGiven ("0");
           if (colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()) == -1)
             return false;
-          if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()) == -1)
+          if (inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2) == -1)
             return false;
-          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str()), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str());
+          fprintf (partFile_attributes, ", %s, %s, %d, %s, %d, %s, %sUL", arrc_attributes [attrWidth].get().c_str(), arrc_attributes [attrHeight].get().c_str(), colourtoi ( arrc_attributes [attrBackground_colour].get().c_str()), getObjectReferencePrefixed(attrFont_attributes).c_str(), inputnumberoptionstoi (arrc_attributes [attrOptions].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2), arrc_attributes [attrVariable_reference].get().c_str(), arrc_attributes [attrValue].get().c_str());
           if (arrc_attributes [attrOffset].get().find("L") != std::string::npos ) // not found
           { // offset has already type indication -> don't add additional "L"
             fprintf (partFile_attributes, ", %s", arrc_attributes [attrOffset].get().c_str());
@@ -3169,7 +3175,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cout << "Error in horizontaljustificationtoi() from object <" << m_nodeName << "> '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
-          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str());
+          signed int retVertJust = verticaljustificationtoi (arrc_attributes [attrVertical_justification].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2); // we set version 4 if no version set, else we use information from vtp-file.
           if ((retFormat == -1) || (retVertJust == -1))
           {
             if (retFormat == -1)
@@ -3360,8 +3366,16 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
         {
           if (!arrc_attributes [attrFont_type].isGiven())
           {
-            std::cout << "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << m_objName << "'! \n \
+            if (mb_isObjectPoolVersion && ( mi_objectPoolVersion == 4 ) )
+            {
+              std::cout << "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << m_objName << "'! \n \
                 VALID VALUES ARE latin1, latin2, latin4, latin5, latin7, latin9 or proprietary! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            }
+            else
+            {
+              std::cout << "INFORMATION: WITH THAT VERSION OF VT2ISO YOU NEED TO SPECIFY THE font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << m_objName << "'! \n \
+                VALID VALUES ARE latin1, latin9 or proprietary! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            }
             return false;
           }
 
@@ -3370,7 +3384,7 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             std::cout << "YOU NEED TO SPECIFY THE font_colour= AND font_size= AND font_type= ATTRIBUTE FOR THE <fontattributes> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
             return false;
           }
-          signed int ret = fonttypetoi (arrc_attributes [attrFont_type].get().c_str());
+          signed int ret = fonttypetoi (arrc_attributes [attrFont_type].get().c_str(), mb_isObjectPoolVersion?mi_objectPoolVersion:2);
           signed int retFontSize = fontsizetoi (arrc_attributes [attrFont_size].get().c_str());
           if ((ret == -1) || (retFontSize == -1))
           {
@@ -3490,6 +3504,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
           break;
 
         case otGraphicsContext:
+          if (mb_isObjectPoolVersion && (mi_objectPoolVersion != 4))
+          {
+            std::cerr << "YOU ARE NOT ALLOWED TO USE GRAPHICAL CONTEXT OBJECTS IN A POOL FOR VERSION 2 and 3 VTs! STOPPING PARSER! bye."<<std::endl<<std::endl;
+            return false;
+          }
           if (!arrc_attributes [attrViewportWidth].isGiven() || !arrc_attributes [attrViewportHeight].isGiven())
           {
             std::cout << "YOU NEED TO SPECIFY THE viewport_width= and viewport_height= ATTRIBUTE FOR THE <graphicscontext> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
@@ -4216,10 +4235,12 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , opDimension(0)
   , skWidth(0)
   , skHeight(0)
+  , mi_objectPoolVersion(0xFFFF)
   , is_opDimension(false)
   , is_opAdditionallyRequiredObjects(false)
   , is_skWidth(false)
   , is_skHeight(false)
+  , mb_isObjectPoolVersion(false)
   , b_externalize(false)
   , mb_parseOnlyWorkingSet(false)
   , mb_verbose (false)
@@ -5603,6 +5624,25 @@ vt2iso_c::processProjectFile(const std::string& pch_fileName)
             {
               skHeight = StringToInt(local_attrValue);
               is_skHeight = true;
+            }
+          }
+        }
+
+        /// read object-pool settings
+        if (strcmp (XMLString::transcode(child->getNodeName()), "iso11783") == 0)
+        {
+          for (int i=0;i<nSize;++i)
+          {
+            DOMAttr *pAttributeNode = (DOMAttr*) pAttributes->item(i);
+            utf16convert (pAttributeNode->getName(), local_attrName);
+            utf16convert (pAttributeNode->getValue(), local_attrValue);
+            if (local_attrName.compare("version") == 0)
+            {
+              mi_objectPoolVersion = StringToInt(local_attrValue);
+              if ((mi_objectPoolVersion != 2) && (mi_objectPoolVersion != 4))
+                errorOccurred = true;
+              else
+                mb_isObjectPoolVersion = true;
             }
           }
         }
