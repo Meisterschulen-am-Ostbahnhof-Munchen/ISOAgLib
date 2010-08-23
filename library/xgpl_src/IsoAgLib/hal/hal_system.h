@@ -1,7 +1,6 @@
 /*
-  hal_system.h: include dependent on used target (defined in
-    IsoAgLib/isoaglib_config.h) the suitable HAL specific header for
-    central system functions
+  hal_system.h: include dependent on used target (defined via HAL-paths 
+    the suitable HAL specific header for central system functions
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -15,15 +14,15 @@
 
 /* ************************************************************ */
 /** \file IsoAgLib/hal/hal_system.h
-  * include dependent on used target (defined in
-   IsoAgLib/isoaglib_config.h) the suitable HAL
-  specific header for central system functions.
+   include dependent on used target (defined via HAL-paths)
+   the suitable HAL specific header for central system functions.
 */
 /* ************************************************************ */
 #ifndef _HAL_INDEPENDENT_SYSTEM_H_
 #define _HAL_INDEPENDENT_SYSTEM_H_
 
 #include <IsoAgLib/isoaglib_config.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 #ifdef HAL_PATH_ISOAGLIB_SYSTEM
 
