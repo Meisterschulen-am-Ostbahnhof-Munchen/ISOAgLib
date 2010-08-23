@@ -929,7 +929,7 @@ bool Flexible8ByteString_c::operator>( const Flexible8ByteString_c& acrc_cmp ) c
         return (uint8[ind] > acrc_cmp.uint8[ind]);
     }
     // if reach here - all comparisons lead to EQUAL
-    return false
+    return false;
   #else
   if (uint32[1] != acrc_cmp.uint32[1])
     return (uint32[1] > acrc_cmp.uint32[1]);
