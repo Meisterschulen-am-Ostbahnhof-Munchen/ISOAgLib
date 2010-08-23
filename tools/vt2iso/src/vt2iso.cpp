@@ -4235,7 +4235,7 @@ vt2iso_c::vt2iso_c(const std::string& arstr_poolIdent)
   , opDimension(0)
   , skWidth(0)
   , skHeight(0)
-  , mi_objectPoolVersion(0xFFFF)
+  , mi_objectPoolVersion(0x02) // only version 2 vts are on the market at the moment.
   , is_opDimension(false)
   , is_opAdditionallyRequiredObjects(false)
   , is_skWidth(false)
