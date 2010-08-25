@@ -61,6 +61,177 @@ To get more information about ISOAgLib in general, please visit <a href="http://
 
 \section Changes Changes
 
+\subsection Change_R 2.2.0 to 2.2.1
+
+General Enhancement/Changes/Cleanups:
+- Introduced an internal AutoBuildSystem which builds various application(variant)s to ensure correct compilation/linking on all Tutorial ECUs.
+- Change in philosophy: Calls to functions with invalid value (like NULL pointer where not allowed) won't be caught during runtime anymore, behavior is undefined!
+  * Enable debugging, then you will get ISOAgLib's assertions during runtime.
+  * This is the same behavior as for example the standard-library - a memcpy with NULL pointer(s) will also crash.
+- Internally no longer check size after push_front, push_back, because push-operations will crash when out-of-memory anyway.
+- Shortened/Unified commentary blocks at the beginning of each file.
+- Replaced slist by list for simplicity, because slist is not STL-standard.
+- Some left-over system-dependent code moved out of generic ISOAgLib files into the HALs/Compiler-Adaptation.
+- General directory structure cleanup.
+- Removed obsolete file "eeprom_adr.h".
+- Last DIN comments cleaned up ;-)
+- DEFINEs:
+ * Now "#if" is preferred instead of "#ifdef".
+ * SYSTEM_PC_VC: Replaced SYSTEM_PC_VC with _MSC_VER.
+ * PC_OS_Linux / PC_OS_Win32: Removed those defines. Were used only in seldom places anyway. Replaced by WIN32 logic, because those defines were built on _WIN32.
+ * Moved HAL_PC_RTE_DEFAULT_SERVER to hal/pc/config.h
+ * Not undefining USE_EEPROM_IO in case a HAL doesn't provide EEPROM. PRJ_EEPROM needs to be disabled in the config file instead.
+ * Removed #ifdef SYSTEM_MITRON167 regarding CNAMESPACE from "can/impl/ident_c.h". Should better be in compiler_adaptation anyway.
+ * Removed #ifndef SYSTEM_PM167 regarding missing getBatteryVoltage/getExternalSensorPowerVoltagefrom "driver/system/impl/system_c.h".
+ * DEBUG is globally replaced by several more specific defines DEBUG_<module> - so DEBUG can be used for the application now without disturbing ISOAgLib Debug output.
+- Inheritance hierarchy is simplified with regard to cancustomer, scheduler, isorequesthandler, saclaimhandler.
+- Shutdown stabilized (scheduler, receive-filters for MultiReceive), should not crash anymore.
+- API enhanced by control function state change handler (formerly internal SA claim handler)
+- TP/ETP: Filtering now considers sender-node.
+- Stabilized for multiple clients, multiple servers and when the server is offline.
+- Dealing properly with multiple ISOBUS instances.
+- Class IsoAgLibThread_c introduced.
+- Flexible4ByteString_c fixed particularly with regard to comparisions.
+- Assertions preferred to error signaling in util functions. If program behaves strange, simply disable "NDEBUG" to enable assertions.
+
+VT-Client:
+- Change: Default color conversion done by brightness rather than by type now.
+- Change: Switched from 2 command-retries after 1.5s to no retry and completely reconnecting after 10s without command-response.
+- Bugfix: enterSafeState was not called when no messages were read anymore at all. This is fixed now.
+- Bugfix: Appropriate reconnection after NACK.
+- Bugfix: Sending CAN-packets from the event-handlers will no longer disturb the further internal processing.
+- Added access for the iVtServerInstance_c in the VT-Client Interface.
+- Added method "bool connectedToVtServer()" in (i)VtClientServerCommunication_c to check if a connection to a VT-Server is established.
+- Allow Application to add additional IOP-data to the Objectpool(-Upload) for optimizing special cases.
+- Structural cleanup of Upload-Sequence.
+- Don't upload SKMs with too much SKs (regarding the VT's #virtualSKs)
+  * SKM-objects with more SKs than the amount of VT's supported virtual SKs are not uploaded to the VT.
+  * The application needs to ensure that a >6 SK SKM is not initially connected to a datamask, because this would lead to a dangling reference during upload and a pool-rejection.
+  * To be correct, construct the objectpool as following:
+    Only connect <= 6 SK SKMs in Data-/Alarm-Masks. Only put additional >6 SK SKMs loose into the objectpool and change the associated SKM in the DM/AM during runtime.
+- Added "getSkPhysical()" and "getSkVirtual()" to "iVtServerInstance_c".
+- Added BUTTON_HAS_BEEN_RELEASED define, which was strangely missing.
+- Language-PGN processed only once now, it was called twice before although only being on the bus once.
+- Added missing features for operating the VT-Client as Slave.
+- Deal with InputList's attributes, even if they vary from v2 to v4.
+- Include paths <IsoAgLib/····> preferred to "../../····" to avoid too long paths in case ISOAgLib is placed deep in the filesystem.
+
+vt2iso:
+- Bugfix: Properly outputs the objects' initialization.
+- Writing out proper external declaration using namespaces. (Only had an effect when using namespaces).
+- Gives informative output on some more errors.
+- Allows any language-code to be used in the working-set (because they may be extended in the standard).
+- Allows picture graphics bigger than 480*480.
+- Supports FixedBitmap for VTP-files.
+
+CAN:
+- Bugfix: CAN Msg Receive (Windows): CAN-HAL used other startup-time than SYSTEM-HAL.
+  This did cause time-stamps of received CAN messages to appear in future when compared to time-stamps from System's getTime().
+- Bugfix: Leave R-bit intact when setting the prio, also getDp() will now return 2 bits (EDP+DP) instead of only DP.
+- Removed CAN-send-pause-setting. Now always bursting out all messages (because send-pause can't be set for different types of messages).
+- Removed obsolete define CAN_BUS_CNT, because it was left in use only in some DEBUG parts of ESX (and A2). (Use HAL_CAN_MAX_BUS_NR instead!)
+
+Data Link:
+- Allowing TP/ETP to run in parallel now, because this is needed in Server-side implementations.
+- Forbid TP/ETP (MultiReceive_c/MultiSend_c) to be used in the application, because it's too low-level for the application. (Removed iMultiSend_c)
+
+Network Management:
+- Bugfix: Nodes were incorrectly thrown out because dest.spec. Req4AC was treated like glob. Req4AC.
+- Bugfix: Address-Claim sequence (sendRequestForClaimedAddress) will not be started before the scheduler-loop anymore.
+- Bugfix: React properly if AC has been stolen from known remote node (avoid that incoming and outcoming messages confuse each others).
+- API extended by method iIsoItem_c::getMaster(..).
+- Class IsoName_c: new value for unspecified name (all 64bits are 1s now), adapted constructor and conversions accordingly.
+
+ProprietaryPGN:
+- [Bugfix] [Part 3 PropMsg] [Send-Interval was not properly set internally]
+
+- Calling Handler::updateTimePeriod only worked properly from Handler::timeEvent
+- Now it also works when being called Handler::updateSchedulerInformation,
+  it retriggers instead of setTimePeriod.
+- Handler::sendDate will now only send the data, not do anymore rescheduling.
+
+Logalizer:
+- Added new CAN-Format JRF.
+
+Platforms:
+- PC
+  * Debug Output cleaned up.
+  * Increased Number of available CAN-Channels to 32.
+  * Simulating Sensor HAL: Added frequency to ditigal simulation-files
+- ESX
+  * Bugfix: Analog-Current-Measurement fixed, had wrong channel mapping (Didn't ever work!).
+  * Bugfix: Wrong channel mapping was used (Digital instead of Analog), although Current measurement works on Analog inputs just as Voltage measurement.
+
+update_makefile.sh:
+- Bugfix: File collecting for Sensor-part was missing an "-o" in the find statement - Effect was that project couldn't be linked.
+- Bugfix: USE_RS232 to be set automatically when PRJ_RS232 is set.
+- Added generation of IAR embedded Workbench IDE file and dependent files.
+- SYSTEM_XYZ define will not be generated by update_makefile anymore (removed USE_SYSTEM_DEFINE). It is now defined by the according hal/<platform>/config.h
+- Allow proprietary HALs to be used, even from an outside directory. Added USE_HAL_PATH for that reason.
+- From now on, HAL_PATH_ISOAGLIB_<SYSTEM/CAN/EEPROM> and HAL_PATH_SUPPLEMENTARY_<RS232/ACTOR/SENSOR/DATASTREAMS> will be written to the config_<project>.h file (instead of the SYSTEM_XYZ define)
+- Even less auto-feature adjusting (with Warning) now. Will "exit 2" with an Error instead.
+- Files in the "hal/" directories are now named hal_<module>.h to differentiate them from the hal/<target>/<module>/<module>.h files.
+- typedef.h moved into hal/ directory with the new name hal_typedef.h
+- Interface-Filelist will now simply collect all ".h" headers (from the "hal" dirs) from the general filelist. (Some few too much headers wouldn't mind)
+- Generated Makefile is now again the Makefile itself, not a linking shortcut.
+- Now auto-checking for the available HAL-modules (bail out if the mandatory ones are not available, and detect which ones of the supplementaries are available)
+- Not anymore generating the "config_header__"-files.
+- Added Option for debug-definition group, mostly used for autobuild-system.
+- Generates files (CMakeLists.txt) to be used by CMake to build for Linux or Win32.
+- Maps USE_MUTUAL_EXCLUSION option properly to source file list.
+- Now C-files can be built just as well as C++ files.
+
+Tutorial:
+- Added ESX/C2C/ESXµ conf_files for ready-to-go projects.
+
+CAN-Server/Devices:
+- Bugfix: CAN-Server-Socket now properly closes handles on releaseClient.
+- Added new device driver LAWICEL CANUSB [Windows] for CAN-Server.
+- Removed hard-coded restriction to 4 channels, now more channels are possible.
+- Added daemonize option "--daemonize" for linux version. The interactive flag is turned off with this option. 
+
+HAL:
+- Restructuring: HAL now included by one path per module, not via SYSTEM_XYZ define anymore
+- Replaced #ifdef/#include-chains by a generic expression using HAL_SUBDIR, so a new HAL doesn't need "yet another entry in the include-#ifdef-chain".
+- Removed "#ifndef STL_NAMESPACE   #define STL_NAMESPACE std   #endif" from config.h files because that's really the job of compiler_adaptation.h
+- RS232-over-CAN:
+ * rs232_over_can module renamed to standard module-naming (rs232.h) and placed in its own directory.
+ * PRJ_RS232_OVER_CAN does not implicitly enable PRJ_RS232. (conf_template comment adapted)
+ * USE_RS232_OVER_CAN (from generated config_<project>.h) removed, not needed anymore with the new mechanism.
+- IsoAgLib configuration (include-files):
+ * Reordered/cleaned up structure of include-dependencies of the files like "isoaglib_config.h/compiler_adaptation.h/hal_config.h/config.h:
+ * Only "isoaglib_config.h" should be included, hal_config.h and compiler_adaptation.h needn't be included directly.
+- HALs for EES, AMS5, A2, PM167, IMI and Mitron167 have been removed.
+
+RS232:
+- Allowing bitrates up to 115200 bit/s now.
+- Added RS232 channel number -> Adapted conf_template.
+
+TC-Client:
+- Adapted message-parsing from DIS/FDIS to IS.
+
+FS-Client:
+- Bugfix: Fixed memory-leaks, hangups and slow TP-reception. Overall structural cleanup and enhancements.
+- Bugfix: Fixed counter overrun; fixed path length encoding for delete command; removed DIS support and cleaned up.
+- Bugfix: setFileAttributes response is detected correctly.
+- Change: Now also detect single-volume systems (that don't have a volume listing).
+
+GPS:
+- Bugfix: Fixed COG_SOG_RAPID_UPDATE message's length. (Wasn't always sent out with a DLC of 8 - depended on the CAN-packet before)
+- TimePosGps_c: Added Message-EventHandler and estimated time for Rapid Updates
+- Corrected priority for NMEA_GPS_POSITION_DATA_PGN
+
+Tractor:
+- Don't NACK if tractor data is requested.
+- ISO-NAMEs preferred to source addresses.
+- Send and store language PGN.
+- API can now set and send engine speed.
+- API method processMsg indicates properly if a message has been processed.
+- Removed one overall VT-language in favor of
+  * future compatibility (there may be multiple VTs)
+  * separating VT-Client functionality from Tractor-functionality.
+
+
 \subsection Change_Q 2.1.2 to 2.2.0
  Repository restructuring:
  - All tools (including can_server) can now be found in the "tools" directory. Added the logalizer (can-log analyzer) tool.
