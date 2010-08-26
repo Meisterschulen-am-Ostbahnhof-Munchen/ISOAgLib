@@ -57,8 +57,8 @@ namespace HAL {
     return __HAL::configWatchdog();
   };
 
-  inline void wdReset( void ) {
-    __HAL::reset_wd();
+  inline int16_t wdReset( void ) {
+    return __HAL::reset_wd();
 #if DEBUG_HAL
 //IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 //<< "reset_wd()\r";
