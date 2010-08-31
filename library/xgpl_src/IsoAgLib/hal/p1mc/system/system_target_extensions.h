@@ -35,44 +35,44 @@
 
 namespace __HAL {
 
-  /* ******************************************** */
-  /** \name General BIOS Extenders                */
-  /*@{*/
-  /**
-    open the system with system specific function call
-    @return error state (C_NO_ERR == o.k.)
-  */
-  int16_t open_system();
-  /**
-    close the system with system specific function call
-    @return error state (C_NO_ERR == o.k.)
-  */
-  int16_t closeSystem( void );
+/* ******************************************** */
+/** \name General BIOS Extenders                */
+/*@{*/
+/**
+  open the system with system specific function call
+  @return error state (C_NO_ERR == o.k.)
+*/
+int16_t open_system();
+/**
+  close the system with system specific function call
+  @return error state (C_NO_ERR == o.k.)
+*/
+int16_t closeSystem( void );
 
-  /**
-    configure the watchdog of the system
-    @return error state (C_NO_ERR == o.k.)
-      or DATA_CHANGED on new values -> need call of wdReset to use new settings
-    @see wdReset
-  */
-  int16_t configWatchdog();
-  /*@}*/
+/**
+  configure the watchdog of the system
+  @return error state (C_NO_ERR == o.k.)
+    or DATA_CHANGED on new values -> need call of wdReset to use new settings
+  @see wdReset
+*/
+int16_t configWatchdog();
+/*@}*/
 
-  int32_t getTime( void );
+int32_t getTime(void);
 
-  int16_t  getSnr( uint8_t *snrDat );
+int16_t  getSnr(uint8_t *snrDat);
 
-  void  start_task_timer( void );
+void  start_task_timer ( void );
 
-  void  stayingAlive( void );
+void  stayingAlive(void);
 
-  void  powerDown( void );
+void  powerDown(void);
 
-  void  setRelais( bool bitState );
+void  setRelais(bool bitState);
 
-  int16_t  __getAdcUbat();
+int16_t  __getAdcUbat();
 
-  int16_t  getAdc_u85();
+int16_t  getAdc_u85();
 
 //int16_t getEepromSize(void);
 

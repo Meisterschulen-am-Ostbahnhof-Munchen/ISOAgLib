@@ -17,8 +17,8 @@
 
 namespace HAL {
 
-  /* --- GLOBAL DEFINES CONSTANTS --- */
-  /* Cause */
+/* --- GLOBAL DEFINES CONSTANTS --- */
+/* Cause */
 #define HAL_NO_ERR         ((int16_t) 0 )
 #define HAL_UNKNOWN_ERR    ((int16_t)-1 )
 #define HAL_WARN_ERR       ((int16_t)-2 )
@@ -41,8 +41,6 @@ namespace HAL {
 #define HAL_DIGOUT_OVERVOLT    ((int16_t)-24 )
 
 #define HAL_NEW_SEND_DELAY     ((int16_t)-25 )
-
-#define EE_READY               0
 
 } // end namespace __HAL
 #endif

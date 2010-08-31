@@ -36,18 +36,19 @@
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/hal/pc/can/can_typedef.h>
 
+
 /** decide if HAL for PC shall use simulated sensor input for U_BAT and
     reference voltage monitoring - but in this case the sensor package
-  of IsoAgLib must be installed */
+		of IsoAgLib must be installed */
 #define USE_SENSOR_FOR_SYSTEM_MONITORING 0
 
 #if USE_SENSOR_FOR_SYSTEM_MONITORING
-#include <supplementary_driver/hal/pc/sensor/sensor_target_extensions.h>
+	#include <supplementary_driver/hal/pc/sensor/sensor_target_extensions.h>
 #endif
 
 #include <cstdio>
 
-#include "../../hal_system.h"
+
 
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
@@ -56,92 +57,134 @@
    --> simply replace the call to the corresponding BIOS function in this header
        for adaptation to new platform
  */
-namespace HAL {
-  inline int16_t  open_system() {
-    return __HAL::open_system();
-  }
+namespace HAL
+{
+  /**
+    open the system with system specific function call
+    @return error state (HAL_NO_ERR == o.k.)
+  */
+  inline int16_t  open_system()
+  {
+      return __HAL::open_system();
+  };
+  /**
+    close the system with system specific function call
+    @return error state (HAL_NO_ERR == o.k.)
+  */
+  inline int16_t  closeSystem()
+  {
+      return __HAL::closeSystem();
+  };
+  /** check if open_System() has already been called */
+  inline bool isSystemOpened( void ) { return __HAL::isSystemOpened();};
 
-  inline int16_t  closeSystem() {
-    return __HAL::closeSystem();
-  }
+  /**
+    configure the watchdog of the system with the
+    settings of configEsx
+    @return error state (HAL_NO_ERR == o.k.)
+      or DATA_CHANGED on new values -> need call of wdReset to use new settings
+    @see wdReset
+  */
+  inline int16_t configWatchdog()
+    {return __HAL::configWatchdog();};
 
-  inline bool isSystemOpened( void ) {
-    return __HAL::isSystemOpened();
-  }
+  /**
+    reset the watchdog to use new configured watchdog settings
+    @see configWd
+  */
+  inline int16_t  wdReset(void)
+    {return __HAL::wdReset();};
 
-  inline int16_t configWatchdog() {
-    return __HAL::configWatchdog();
-  }
+  /** trigger the watchdog */
+  inline void wdTriggern(void)
+    {__HAL::wdTriggern();};
 
-  inline int16_t  wdReset( void ) {
-    return __HAL::wdReset();
-  }
+  /**
+    get the system time in [ms]
+    @return [ms] since start of the system
+  */
+  inline int32_t getTime(void)
+    {return __HAL::getTime();};
 
-  inline void wdTriggern( void ) {
-    __HAL::wdTriggern();
-  }
+  inline int16_t getSnr(uint8_t *snrDat)
+    {return __HAL::getSnr(snrDat);};
 
-  inline int32_t getTime( void ) {
-    return __HAL::getTime();
-  }
-
-  inline int16_t getSnr( uint8_t *snrDat ) {
-    return __HAL::getSnr( snrDat );
-  }
-
-  inline int32_t getSerialNr( int16_t* pi16_errCode ) {
+  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  {
     uint8_t uint8 [6];
-    int16_t errCode = __HAL::getSnr( uint8 );
-    if ( pi16_errCode ) *pi16_errCode = errCode;
+    int16_t errCode = __HAL::getSnr(uint8);
+    if (pi16_errCode) *pi16_errCode = errCode;
     // ESX Serial number is coded in BCD. As we only get 21 bits,
     // we can take only a part of the information transmitted here.
     //  - uint8[0] is the year of construction -> 7 bits
     //  - uint8[2] and uint8[3] a contract numering -> 14 bits
-    return ( __IsoAgLib::bcd2dec( uint8[2] ) * 100 + __IsoAgLib::bcd2dec( uint8[3] ) ) + ( __IsoAgLib::bcd2dec( uint8[0] ) << 14 );
-  }
+    return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
+  };
 
-  inline void startTaskTimer( void ) {
-    __HAL::startTaskTimer();
-  }
+  /**
+    start the Task Timer -> time between calls of Task Manager
+  */
+  inline void startTaskTimer ( void )
+    {__HAL::startTaskTimer ();};
 
-  inline int16_t  getOn_offSwitch( void ) {
-#if defined(NO_CAN_EN_CHECK)
-    return ON;
-#else
-    return __HAL::getOn_offSwitch();
-#endif
-  }
+  /**
+    check if D+/CAN_EN is active
+    (if NO_CAN_EN_CHECK is defined this function return always return ON)
+    @return ON(1) or OFF(0)
+  */
+  inline int16_t  getOn_offSwitch(void)
+  {
+    #if defined(NO_CAN_EN_CHECK)
+      return ON;
+    #else
+      return __HAL::getOn_offSwitch();
+    #endif
+  };
 
+  /**
+    get the main power voltage
+    @return voltage of power [mV]
+  */
   inline int16_t  getAdcUbat( void )
-#if USE_SENSOR_FOR_SYSTEM_MONITORING
-  {return( 33 * __HAL::getAdc( GET_U_C ) );
-  }
-#else
-  {return 13500;
-  }
-#endif
-
+	#if USE_SENSOR_FOR_SYSTEM_MONITORING
+    {return (33 * __HAL::getAdc(GET_U_C));};
+	#else
+		{return 13500;};
+	#endif
+  /**
+    get the voltage of the external reference 8.5Volt for work of external sensors
+    @return voltage at external reference [mV]
+  */
   inline int16_t  getAdc_u85( void )
-#if USE_SENSOR_FOR_SYSTEM_MONITORING
-  {int16_t i16_temp = __HAL::getAdc( GET_U_EXT_8_5_V );
-    return (( i16_temp * 14 ) + (( i16_temp * 67 )/100 ) );
-  }
-#else
-  {return 8500;
-  }
-#endif
+	#if USE_SENSOR_FOR_SYSTEM_MONITORING
+    {int16_t i16_temp = __HAL::getAdc(GET_U_EXT_8_5_V);
+     return ((i16_temp * 14) + ((i16_temp * 67)/100));};
+	#else
+	{return 8500;};
+	#endif
 
-  inline void stayingAlive( void ) {
-    __HAL::stayingAlive();
-  }
+  /**
+    activate the power selfholding to perform system
+    stop (f.e. store values) actions after loss of CAN_EN
+  */
+  inline void stayingAlive(void)
+    {__HAL::stayingAlive();};
 
-  inline void powerDown( void ) {
-    __HAL::powerDown();
-  }
+  /**
+    shut off the whole system (set power down)
+  */
+  inline void powerDown(void)
+    {__HAL::powerDown();};
 
-  inline void setRelais( bool bitState ) {
-    __HAL::setRelais( bitState );
-  }
+  /**
+    switch relais on or off
+    @param bitState true -> Relais ON
+  */
+  inline void setRelais(bool bitState)
+  {__HAL::setRelais(bitState);};
+
+/*@}*/
+
 } //end HAL
 
 #ifdef USE_MUTUAL_EXCLUSION

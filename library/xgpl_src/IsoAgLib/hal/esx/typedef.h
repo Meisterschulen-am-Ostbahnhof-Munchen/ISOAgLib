@@ -16,10 +16,10 @@
 // for Tasking 7.x EDE these includes have to be included FIRST
 // because they are included by the broken stl-headers into global namespace
 #if defined(__TSW_CPP__)
-#include <cstdlib>
-#include <cstddef>
-#include <cstring>
-typedef unsigned int size_t;
+ #include <cstdlib>
+ #include <cstddef>
+ #include <cstring>
+ typedef unsigned int size_t;
 #endif
 
 typedef unsigned char uint8_t;
@@ -32,7 +32,6 @@ typedef long int32_t;
 
 
 #ifdef HANDLE_FAST_DATATYPE_AS_STRICT
-
 /**  SIZEOF_INT = 2 */
 /* Signed.  */
 typedef signed char     int_fast8_t;
@@ -45,11 +44,9 @@ typedef unsigned char           uint_fast8_t;
 typedef unsigned int            uint_fast16_t;
 typedef unsigned long           uint_fast32_t;
 //typedef unsigned long long int  uint_fast64_t;
-#endif // end  HANDLE_FAST_DATATYPE_AS_STRICT
 
+#endif // end HANDLE_FAST_DATATYPE_AS_STRICT
 
-// NOTE: The C2C can NOT compile this because it does NOT understand what a long long is.
-//       At least this was the case with Tasking version 7.5 r 6.
 //typedef unsigned long long int uint64_t;
 //typedef long long int int64_t;
 

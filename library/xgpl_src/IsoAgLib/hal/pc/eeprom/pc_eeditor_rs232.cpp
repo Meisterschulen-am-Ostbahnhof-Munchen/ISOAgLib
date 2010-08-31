@@ -19,8 +19,9 @@
 
 namespace __HAL {
 
-  int16_t iCallRs232EEMonitor( void ) {
-    printf( "iCallRs232EEMonitor())\n" );
-    return HAL_NO_ERR;
-  }
+int16_t iCallRs232EEMonitor(void)
+{
+  printf("iCallRs232EEMonitor())\n");
+  return HAL_NO_ERR;
+}
 } // end namespace __HAL

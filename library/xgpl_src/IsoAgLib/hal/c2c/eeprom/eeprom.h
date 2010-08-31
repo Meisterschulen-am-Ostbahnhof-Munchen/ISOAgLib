@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/c2c/eeprom/eeprom.cpp
+/** \file IsoAgLib/hal/c2c/eeprom/eeprom.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -24,18 +24,19 @@
 */
 /* ************************************************************ */
 
-#include "../../hal_eeprom.h"
+#ifndef _HAL_C2C_EEPROM_H_
+#define _HAL_C2C_EEPROM_H_
+
+#include "../config.h"
+#include "../typedef.h"
+#include "../errcodes.h"
 
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
-#include <commercial_BIOS/bios_c2c/c2c10osy.h>
+    #include <commercial_BIOS/bios_c2c/c2c10osy.h>
   }
 }
-
-#ifndef __EEPROM_C2C_H__
-#define __EEPROM_C2C_H__
-
 /**
    namespace with layer of inline (cost NO overhead -> compiler replaces
    inline function with call to orig BIOS function)
@@ -43,18 +44,18 @@ namespace __HAL {
    --> simply replace the call to the corresponding BIOS function in this header
        for adaptation to new platform
  */
-namespace HAL {
+namespace HAL
+{
   /* *************************** */
   /** \name EEPROM BIOS functions */
-  /*@{*/
+/*@{*/
 
   /**
    deliver the EEPROM size in uint8_t -> mult C2C BIOS value with 1024
    @return EEPROM size in byte
   */
-  inline int16_t getEepromSize( void ) {
-    return ( 1024 * __HAL::get_eeprom_size() );
-  };
+  inline int16_t getEepromSize(void)
+    {return (1024 * __HAL::get_eeprom_size());};
 
   /**
    deliver the EEPROM segment size in kbyte
@@ -63,9 +64,8 @@ namespace HAL {
   // MSCHMIDT - I think this is actually supposed to say size in bytes instead
   // MSCHMIDT - of size in kbyte.  get_eeprom_segment_size() returns size in
   // MSCHMIDT - bytes.
-  inline int16_t getEepromSegmentSize( void ) {
-    return __HAL::get_eeprom_segment_size();
-  };
+  inline int16_t getEepromSegmentSize(void)
+    {return __HAL::get_eeprom_segment_size();};
 
   /**
     read amount of uint8_t in uint8_t string variable
@@ -74,9 +74,8 @@ namespace HAL {
     @param pbByte pointer to uint8_t string, where data is inserted
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t eepromRead( uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte ) {
-    return __HAL::eeprom_read( wAddress, wNumber, pbByte );
-  };
+  inline int16_t eepromRead(uint16_t wAddress,uint16_t wNumber,uint8_t *pbByte)
+    {return __HAL::eeprom_read(wAddress, wNumber, pbByte);};
 
   /**
     write amount of uint8_t from string into EEPROM from given start adress
@@ -85,9 +84,8 @@ namespace HAL {
     @param pbData pointer to uint8_t string which should be written into EEPROM
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t eepromWrite( uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData ) {
-    return __HAL::eeprom_write( wAddress, wNumber, const_cast<uint8_t *>( pbData ) );
-  };
+  inline int16_t eepromWrite(uint16_t wAddress,uint16_t wNumber,const uint8_t *pbData)
+    {return __HAL::eeprom_write(wAddress, wNumber, const_cast<uint8_t *>(pbData));};
 
   /**
     set or unset set write protection of EEPROM, should be called before
@@ -95,17 +93,15 @@ namespace HAL {
     @param bitMode sets write protection OFF or ON
     @return error state (C_NO_ERR == o.k.)
   */
-  inline int16_t eepromWp( bool bitMode ) {
-    return HAL_NO_ERR;
-  };
+  inline int16_t eepromWp(bool bitMode)
+    {return HAL_NO_ERR;};
 
   /**
     check if EEPROM is ready for actions
     @return EE_READY -> ready
   */
-  inline int16_t eepromReady( void ) {
-    return EE_READY;
-  };
+  inline int16_t eepromReady(void)
+    {return EE_READY;};
 // MSCHMIDT - Should really implement a target extension for the c2c in eeprom_target_extensions.cc
 // MSCHMIDT - (see C:\DEV\IsoAgLib\lgpl_src\IsoAgLib\hal\pc\eeprom\eeprom_target_extensions.cc)
 // MSCHMIDT - /* get the status of eeprom*/
@@ -115,12 +111,12 @@ namespace HAL {
 // MSCHMIDT - }
 
 
-  /*@}*/
+ /*@}*/
 
 #ifdef USE_CAN_EEPROM_EDITOR
   /* ********************************* */
   /** \name CAN EEPROM Editor functions */
-  /*@{*/
+/*@{*/
 
   /**
     initialize the CAN EEPROM editor module
@@ -133,38 +129,35 @@ namespace HAL {
     @param iNumberMsgsTransmit size of CAN send buffer size
     @return HAL_NO_ERR if no error occured
   */
-  inline int16_t InitEEEditor( uint8_t bBus,
-                               int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan,
-                               uint32_t dwReceiveCanId, uint8_t bUseExtendedCAN,
-                               int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit ) {
-    return __HAL::iInitEEEditor( bBus, iObjNrReceiveCan, iObjNrTransmitCan,
-                                 dwReceiveCanId, bUseExtendedCAN, iNumberMsgsReceive, iNumberMsgsTransmit );
+  inline int16_t InitEEEditor(  uint8_t bBus,
+                       int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan,
+                       uint32_t dwReceiveCanId, uint8_t bUseExtendedCAN,
+                       int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit)
+  {return __HAL::iInitEEEditor(bBus, iObjNrReceiveCan, iObjNrTransmitCan,
+          dwReceiveCanId, bUseExtendedCAN, iNumberMsgsReceive, iNumberMsgsTransmit);
   };
 
   /**
     periodic call to the CAN EEEditor, to process editor msg
     @return true -> EEPROM write msg recieved, and EEPROM values changed
   */
-  inline int16_t ProcessCANEEEditorMsg() {
-    return __HAL::iCallCanEEMonitor();
-  };
+  inline int16_t ProcessCANEEEditorMsg()
+  {return __HAL::iCallCanEEMonitor();};
 
-  /*@}*/
+ /*@}*/
 #elif defined(USE_RS232_EEPROM_EDITOR)
   /* *********************************** */
   /** \name RS232 EEPROM Editor functions */
-  /*@{*/
+/*@{*/
 
   /**
     periodic call to the RS232 EEEditor, to process editor msg
     @return true -> EEPROM write msg recieved, and EEPROM values changed
   */
-  inline int16_t ProcessRS232EEEditorMsg() {
-    return __HAL::iCallRs232EEMonitor();
-  };
+  inline int16_t ProcessRS232EEEditorMsg()
+  {return __HAL::iCallRs232EEMonitor();};
   /*@}*/
 #endif
 
 }
-
-#endif //#define __EEPROM_C2C_H__
+#endif

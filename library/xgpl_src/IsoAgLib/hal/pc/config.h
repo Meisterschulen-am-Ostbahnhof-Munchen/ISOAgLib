@@ -27,22 +27,22 @@
 
 /** define uint16_t order of float: WORD_LO_HI, BYTE_HI_LO, WORD_HI_LO */
 #ifndef FLOAT_WORD_ORDER
-#if defined(SYSTEM_A5) || defined(SYSTEM_MCC)
-#define FLOAT_WORD_ORDER BYTE_HI_LO
-#elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
-#define FLOAT_WORD_ORDER WORD_LO_HI
-#endif
+  #if defined(SYSTEM_A5) || defined(SYSTEM_MCC)
+    #define FLOAT_WORD_ORDER BYTE_HI_LO
+  #elif defined(OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN)
+    #define FLOAT_WORD_ORDER WORD_LO_HI
+  #endif
 #endif
 
 #if (!defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN ) && !defined( OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN ) )
 #  ifdef SYSTEM_A1
-/* we know that this cpu is little endian */
+   /* we know that this cpu is little endian */
 #    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 #  elif defined(SYSTEM_A5)
-/* we know that this cpu is little endian */
+   /* we know that this cpu is little endian */
 #    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_BIG_ENDIAN
 #  elif defined(WIN32)
-/* we know that the Microsoft Visual C++ platform is little endian */
+   /* we know that the Microsoft Visual C++ platform is little endian */
 #    define OPTIMIZE_NUMBER_CONVERSIONS_FOR_LITTLE_ENDIAN
 #  endif
 #endif
@@ -74,7 +74,7 @@
 #define MAX_EEPROM_WRITE_TRY_CYCLE_CNT 5
 
 #ifndef HAL_PC_RTE_DEFAULT_SERVER
-#define HAL_PC_RTE_DEFAULT_SERVER "rte4"
+  #define HAL_PC_RTE_DEFAULT_SERVER "rte4"
 #endif
 
 // basic period of task manager (scheduler)= const * 500 us = 1 ms

@@ -15,12 +15,12 @@
 #define PC_EEDITOR_CAN_H
 #include "../typedef.h"
 
-/* PROTOTYPES */
+  /* PROTOTYPES */
 namespace __HAL {
-  int16_t iInitEEEditor( uint8_t bBus,
-                         int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan,
-                         uint32_t dwReceiveCanId, uint8_t bCanType,
-                         int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit );
-  int16_t iCallCanEEMonitor( void );
+  int16_t iInitEEEditor(  uint8_t bBus,
+                       int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan, 
+                       uint32_t dwReceiveCanId, uint8_t bCanType,
+                       int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit);
+  int16_t iCallCanEEMonitor(void);
 } // end namespace __HAL
 #endif

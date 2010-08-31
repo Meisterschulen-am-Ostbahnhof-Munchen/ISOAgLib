@@ -69,7 +69,7 @@
 
 // socket specific defines
 #ifndef CAN_SERVER_CHANNEL
-#define CAN_SERVER_CHANNEL 0
+	#define CAN_SERVER_CHANNEL 0
 #endif
 
 #define COMMAND_TRANSFER_PORT (36798 + (CAN_SERVER_CHANNEL)*2)
@@ -85,40 +85,40 @@
 
 #include "can_target_extensions.h"
 
-// USE_UNIX_SOCKET to use /tmp/can_server.sock.<command_port> and /tmp/can_server.sock.<data_port> instead of real sockets
+// USE_UNIX_SOCKET to use /tmp/can_server.sock.<command_port> and /tmp/can_server.sock.<data_port> instead of real sockets 
 // => no loopback network configuration necessary
 //#define USE_UNIX_SOCKET
 
 #ifdef WIN32
-// Note: winsock2.h is included in compiler_adaptations.h for WinCE.
-#ifndef WINCE
-#include <winsock2.h> //needed for canserver
-#include <windows.h>  //also needed!
-#endif
+  // Note: winsock2.h is included in compiler_adaptations.h for WinCE.
+  #ifndef WINCE
+    #include <winsock2.h> //needed for canserver
+    #include <windows.h>  //also needed!
+  #endif
 #else
-#include <sys/time.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/socket.h>
-#include <unistd.h>
+  #include <sys/time.h>
+  #include <sys/types.h>
+  #include <sys/time.h>
+  #include <sys/socket.h>
+  #include <unistd.h>
 #endif
 
 #ifdef USE_UNIX_SOCKET
-#define SOCKET_TYPE_INET_OR_UNIX AF_UNIX
-#define SOCKET_PATH "/tmp/can_server.sock"
+  #define SOCKET_TYPE_INET_OR_UNIX AF_UNIX
+  #define SOCKET_PATH "/tmp/can_server.sock"
 #else
-#define SOCKET_TYPE_INET_OR_UNIX AF_INET
+  #define SOCKET_TYPE_INET_OR_UNIX AF_INET
 #endif
 
 #ifdef CAN_DRIVER_SOCKET
-#define CAN_SERVER_HOST "127.0.0.1"
+  #define CAN_SERVER_HOST "127.0.0.1"
 #endif
 
 #ifdef WIN32
-typedef SOCKET SOCKET_TYPE;
+  typedef SOCKET SOCKET_TYPE;
 #else
-typedef int    SOCKET_TYPE;
-#define INVALID_SOCKET -1
+  typedef int    SOCKET_TYPE;
+  #define INVALID_SOCKET -1
 #endif
 
 
@@ -135,187 +135,190 @@ namespace __HAL {
 // IsoAgLib counting for BUS-NR and MsgObj starts both in C-Style with 0
 // -> all needed offsets shall be added at the lowest possible layer
 //    ( i.e. direct in the BIOS/OS call)
-  static const uint8_t cui8_maxCanObj = 15;
+static const uint8_t cui8_maxCanObj = 15;
 
-  struct tMsgObj {
-    bool     b_canBufferLock;
-    bool     b_canObjConfigured;
-    uint8_t  ui8_bufXtd;
-    uint8_t  ui8_bMsgType;
-    uint32_t ui32_filter;
-    uint32_t ui32_mask_xtd;
-    uint16_t ui16_mask_std;
-    uint16_t ui16_size;
-  };
+struct tMsgObj {
+  bool     b_canBufferLock;
+  bool     b_canObjConfigured;
+  uint8_t  ui8_bufXtd;
+  uint8_t  ui8_bMsgType;
+  uint32_t ui32_filter;
+  uint32_t ui32_mask_xtd;
+  uint16_t ui16_mask_std;
+  uint16_t ui16_size;
+};
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
 
-  struct can_data {
-    int32_t i32_time;
-    int32_t i32_ident;
-    uint8_t b_dlc;
-    uint8_t b_xtd;
-    uint8_t pb_data[8];
+struct can_data {
+  int32_t i32_time;
+  int32_t i32_ident;
+  uint8_t b_dlc;
+  uint8_t b_xtd;
+  uint8_t pb_data[8];
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-    uint8_t bMsgObj;
+  uint8_t bMsgObj;
 #endif
 
-  };
+};
 
-  struct can_recv_data {
-    uint32_t b_bus;
-    can_data msg;
-  };
+struct can_recv_data {
+  uint32_t b_bus;
+  can_data msg;
+};
 
-  struct msqRead_s {
-    long   i32_mtypePidBusObj;
-    struct can_data s_canData;
-  };
+struct msqRead_s {
+  long   i32_mtypePidBusObj;
+  struct can_data s_canData;
+};
 
-  struct msqWrite_s {
-    long     i32_mtypePrioAnd1; // has now priority and Pid (PID is needed for clearing the queue :-()
-    int16_t  ui16_pid;
-    uint8_t  ui8_bus;
-    uint8_t  ui8_obj;
-    canMsg_s s_canMsg;
-    int32_t  i32_sendTimeStamp;
-  };
+struct msqWrite_s {
+  long     i32_mtypePrioAnd1; // has now priority and Pid (PID is needed for clearing the queue :-()
+  int16_t  ui16_pid;
+  uint8_t  ui8_bus;
+  uint8_t  ui8_obj;
+  canMsg_s s_canMsg;
+  int32_t  i32_sendTimeStamp;
+};
 
 
 // message queues / process id
-  struct msqData_s {
-    long    i32_cmdHandle;
-    int32_t i32_cmdAckHandle;
-    // client read queue
-    int32_t i32_rdHandle;
-    // client write queue
-    int32_t i32_wrHandle;
-    int32_t i32_pid;
-    int32_t i32_pipeHandle;
-  };
+struct msqData_s {
+  long    i32_cmdHandle;
+  int32_t i32_cmdAckHandle;
+  // client read queue
+  int32_t i32_rdHandle;
+  // client write queue
+  int32_t i32_wrHandle;
+  int32_t i32_pid;
+  int32_t i32_pipeHandle;
+};
 #endif
 
-  struct transferBuf_s {
+struct transferBuf_s {
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
-    long    i32_mtypePid;
+  long    i32_mtypePid;
 #endif
-    uint16_t ui16_command;
-    union {
-      struct {
-        clock_t t_clock;
-        int32_t i32_fill1;
-        int32_t i32_fill2;
-        int32_t i32_fill3;
-      } s_startTimeClock;
-      struct {
-        int32_t i32_dataContent; // set to DATA_CONTENT_xxx
-        int32_t i32_data; // depends on dataContent
-        int32_t i32_fill2;
-        int32_t i32_fill3;
-      } s_acknowledge;
-      struct {
-        // byte 0-3
-        uint8_t  ui8_bus;
-        uint8_t  ui8_obj;
-        uint8_t  ui8_bXtd;
-        uint8_t  ui8_bMsgType;
-        // byte 4-7
-        uint32_t ui32_dwId;
-        // byte 8-11
-        uint16_t ui16_wNumberMsgs;
-        uint16_t ui16_queryLockResult;
-        // byte 12-15
-        // always ui32_mask even if it is only used with SYSTEM_WITH_ENHANCED_CAN_HAL -> avoid preprocessor
-        uint32_t ui32_mask;
-      } s_config;
-      struct {
-        // byte 0-3
-        uint8_t  ui8_bus;
-        uint8_t  ui8_fill1;
-        uint16_t ui16_wGlobMask;
-        // byte 4-7
-        uint32_t ui32_dwGlobMask;
-        // byte 8-11
-        uint32_t ui32_dwGlobMaskLastmsg;
-        // byte 12-15
-        uint16_t ui16_wBitrate;
-        uint16_t ui16_fill2;
-      } s_init;
+  uint16_t ui16_command;
+  union {
+    struct {
+      clock_t t_clock;
+      int32_t i32_fill1;
+      int32_t i32_fill2;
+      int32_t i32_fill3;
+    } s_startTimeClock;
+    struct {
+      int32_t i32_dataContent; // set to DATA_CONTENT_xxx
+      int32_t i32_data; // depends on dataContent
+      int32_t i32_fill2;
+      int32_t i32_fill3;
+    } s_acknowledge;
+    struct {
+      // byte 0-3
+      uint8_t  ui8_bus;
+      uint8_t  ui8_obj;
+      uint8_t  ui8_bXtd;
+      uint8_t  ui8_bMsgType;
+      // byte 4-7
+      uint32_t ui32_dwId;
+      // byte 8-11
+      uint16_t ui16_wNumberMsgs;
+      uint16_t ui16_queryLockResult;
+      // byte 12-15
+      // always ui32_mask even if it is only used with SYSTEM_WITH_ENHANCED_CAN_HAL -> avoid preprocessor
+      uint32_t ui32_mask;
+    } s_config;
+    struct {
+      // byte 0-3
+      uint8_t  ui8_bus;
+      uint8_t  ui8_fill1;
+      uint16_t ui16_wGlobMask;
+      // byte 4-7
+      uint32_t ui32_dwGlobMask;
+      // byte 8-11
+      uint32_t ui32_dwGlobMaskLastmsg;
+      // byte 12-15
+      uint16_t ui16_wBitrate;
+      uint16_t ui16_fill2;
+    } s_init;
 #ifdef CAN_DRIVER_SOCKET
-      struct {
-        struct canMsg_s s_canMsg;
-        uint8_t  ui8_bus;
-        uint8_t  ui8_obj;
-        int32_t  i32_sendTimeStamp;
-      } s_data;
+    struct {
+      struct canMsg_s s_canMsg;
+      uint8_t  ui8_bus;
+      uint8_t  ui8_obj;
+      int32_t  i32_sendTimeStamp;
+    } s_data;
 #endif
-    };
   };
+};
 
 // client specific data
-  struct client_c {
+struct client_c
+{
 public:
-    client_c();
+  client_c();
 
 #ifdef CAN_DRIVER_SOCKET
-    SOCKET_TYPE  i32_commandSocket;
-    SOCKET_TYPE  i32_dataSocket;
+  SOCKET_TYPE  i32_commandSocket;
+  SOCKET_TYPE  i32_dataSocket;
 #endif
 
-    uint16_t ui16_pid;
-    int32_t  i32_msecStartDeltaClientMinusServer;
+  uint16_t ui16_pid;
+  int32_t  i32_msecStartDeltaClientMinusServer;
 
-    //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
-    //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
+  //typedef STL_NAMESPACE::vector<tMsgObj> ArrMsgObj;
+  //ArrMsgObj arrMsgObj[cui32_maxCanBusCnt];
 
-    struct canBus_s {
-      std::vector<tMsgObj>    mvec_msgObj;
-      bool                    mb_busUsed;
-      uint16_t                mui16_globalMask;
-      uint32_t                mui32_globalMask;
-      uint32_t                mui32_lastMask;
-      int32_t                 mi32_sendDelay;
-      bool                    mb_initReceived;
-      canBus_s();
-    };
-    canBus_s &canBus( size_t n_index );
-    size_t nCanBusses();
+  struct canBus_s {
+    std::vector<tMsgObj>    mvec_msgObj;
+    bool                    mb_busUsed;
+    uint16_t                mui16_globalMask;
+    uint32_t                mui32_globalMask;
+    uint32_t                mui32_lastMask;
+    int32_t                 mi32_sendDelay;
+    bool                    mb_initReceived;
+    canBus_s();
+  };
+  canBus_s &canBus(size_t n_index);
+  size_t nCanBusses();
 
 private:
-    std::vector< canBus_s > mvec_canBus;
+  std::vector< canBus_s > mvec_canBus;
 
 public:
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
-    int32_t  i32_pipeHandle;
+  int32_t  i32_pipeHandle;
 #endif
-  };
+};
 
-  inline client_c::canBus_s &client_c::canBus( size_t n_index ) {
-    if ( mvec_canBus.size() <= n_index )
-      mvec_canBus.resize( n_index + 1 );
-    return mvec_canBus[n_index];
-  }
+inline client_c::canBus_s &client_c::canBus(size_t n_index)
+{
+  if (mvec_canBus.size() <= n_index)
+    mvec_canBus.resize(n_index + 1);
+  return mvec_canBus[n_index];
+}
 
-  inline size_t client_c::nCanBusses() {
-    return mvec_canBus.size();
-  }
+inline size_t client_c::nCanBusses()
+{
+  return mvec_canBus.size();
+}
 
 #ifdef CAN_DRIVER_MESSAGE_QUEUE
-  void send_command_ack( int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data );
+void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai32_dataContent, int32_t ai32_data);
 
-  int32_t send_command( transferBuf_s* ps_transferBuf, msqData_s* p_msqDataClient );
+int32_t send_command(transferBuf_s* ps_transferBuf, msqData_s* p_msqDataClient);
 
-  int16_t createMsqs( msqData_s& msqData );
+int16_t createMsqs(msqData_s& msqData);
 
-  int32_t assembleRead_mtype( uint16_t ui16_pid, uint8_t bus, uint8_t obj );
-  int32_t assembleWrite_mtype( bool ab_prio );
+int32_t assembleRead_mtype (uint16_t ui16_pid, uint8_t bus, uint8_t obj);
+int32_t assembleWrite_mtype(bool ab_prio);
 
-  uint16_t disassembleRead_client_id( int32_t i32_mtype );
-  uint16_t disassembleWrite_client_id( int32_t i32_mtype );
+uint16_t disassembleRead_client_id (int32_t i32_mtype);
+uint16_t disassembleWrite_client_id(int32_t i32_mtype);
 
-  void clearReadQueue( uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, uint16_t ui16_pID );
-  void clearWriteQueue( bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pID );
+void clearReadQueue (uint8_t bBusNumber, uint8_t bMsgObj, int32_t i32_msqHandle, uint16_t ui16_pID);
+void clearWriteQueue(bool ab_prio, int32_t i32_msqHandle, uint16_t ui16_pID);
 #endif
 
 } // end namespace
