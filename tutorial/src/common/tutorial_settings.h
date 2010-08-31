@@ -9,7 +9,7 @@ namespace IsoAgLibTutorial {
   /* channel number and baud rate of the internam bus (used in tutorial tecu and internal can) */
   static const unsigned char scui_internalBusNumber = 1;
 
-  static const char scp_isoaglibVersion[] = { '2','.','2','.','0' };
+  static const char scp_isoaglibVersion[] = { '2','.','2','.','1' };
   static const char scp_tutorialVersion[] = { '1','.','0','.','0' };
 
   /* proprietary can timing */
