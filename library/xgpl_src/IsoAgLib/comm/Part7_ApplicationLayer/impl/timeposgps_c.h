@@ -263,9 +263,6 @@ public:
   /** deliver GPS Course Over Ground [1x10E-4rad] */
   void setGpsCourseRad10Minus4( uint16_t aui16_newVal ) { mui16_courseOverGroundRad10Minus4 = aui16_newVal; };
 
-  /** set GPS altitude - [cm] */
-  void setGpsAltitudeCm( int32_t ai32_newVal ) { mi32_altitudeCm = ai32_newVal; }
-
   #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
   /** set the GPS time in UTC timezone.
    *  When no remote system is sending the 11783-7 PGN with date & time, the new UTC time is also set with
@@ -310,6 +307,9 @@ public:
    *  @param ab_millisecond actual calendar second value
    */
   void setMillisecondUtcGps(uint16_t aui16_millisecond);
+
+  /** set GPS altitude - [cm] */
+  void setGpsAltitudeCm( int32_t ai32_newVal ) { mi32_altitudeCm = ai32_newVal; }
 
   /** set GPS receive qualitiy */
   void setGnssMode( IsoAgLib::IsoGnssMethod_t at_newVal );
@@ -490,13 +490,13 @@ public:
   /** deliver GPS receive qualitiy - also needed to see if we have valid GPS-positioning!!! */
   IsoAgLib::IsoGnssMethod_t getGnssMode( void ) const { return mt_gnssMethod; }
 
-  bool isPositionStreamToSend() const
-  { return isPositionSimpleToSend() && (mi32_altitudeCm != 0x7FFFFFFF); }
 
-  /** deliver GPS altitude - [cm] */
-  int32_t getGpsAltitudeCm( void ) const { return mi32_altitudeCm; }
+
+
 
   #ifdef ENABLE_NMEA_2000_MULTI_PACKET
+  bool isPositionStreamToSend() const
+  { return isPositionSimpleToSend() && (mi32_altitudeCm != 0x7FFFFFFF); }
 
   /** get the GPS UTC hour value
     @return actual GPS UTC hour value
@@ -520,6 +520,9 @@ public:
 
   /** get the millisecond time of day for the last received position */
   uint32_t millisecondTimeOfDay() const { return mui32_timeMillisecondOfDay; }
+
+  /** deliver GPS altitude - [cm] */
+  int32_t getGpsAltitudeCm( void ) const { return mi32_altitudeCm; }
 
   /** deliver GPS Geodial Separation - [cm] */
   int32_t getGpsGeoidalSeparationCm ( void ) const { return mi32_geoidalSeparationCm; }
@@ -712,9 +715,6 @@ private:
   /** GNSS Method and Quality - not only in ENABLE_NMEA_2000_MULTI_PACKET as we need to know if GPS inf. is valid! */
   IsoAgLib::IsoGnssMethod_t mt_gnssMethod;
 
-  /** GPS altitude - [cm] */
-  int32_t mi32_altitudeCm;
-
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
   /** GPS time in UTC */
   struct {
@@ -726,6 +726,9 @@ private:
 
   /** last time of ISO GPS msg [msec] */
   int32_t mi32_lastIsoPositionStream;
+
+  /** GPS altitude - [cm] */
+  int32_t mi32_altitudeCm;
 
   /** GNSS Type */
   IsoAgLib::IsoGnssType_t mt_gnssType;

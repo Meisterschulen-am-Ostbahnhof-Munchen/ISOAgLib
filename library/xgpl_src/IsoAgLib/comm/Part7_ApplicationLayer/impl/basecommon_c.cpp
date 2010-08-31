@@ -20,8 +20,6 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-uint16_t BaseCommon_c::mui16_gpsTimeOut = TIMEOUT_SENDING_NODE_NMEA;
-  
 /** initialize directly after the singleton instance is created.
     this is called from singleton.h and should NOT be called from the user again.
     users please use init(...) instead.
@@ -146,7 +144,7 @@ bool BaseCommon_c::timeEvent()
   // check for different base data types whether the previously
   // sending node stopped sending -> other nodes can now step in
   if (  checkMode(IsoAgLib::IdentModeImplement)
-        &&(lastedTimeSinceUpdate() >= getGPSTimeOut( ) )
+        &&(lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE )
         && (mc_selectedDataSourceISOName.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
     mc_selectedDataSourceISOName.setUnspecified();

@@ -410,7 +410,7 @@ int parseLogLineJrf() // "101.5647,484910721,255,255,255,255,255,255,255,255"
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iB;
   float fA;
-  int parsed_count = sscanf (line.c_str(), "%f,%x,%i,%i,%i,%i,%i,%i,%i,%i", &fA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+  int parsed_count = sscanf (line.c_str(), "%f,%i,%i,%i,%i,%i,%i,%i,%i,%i", &fA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
   can_time = uint64_t (fA*1000);
   can_id = iB;
   can_bytes = uint8_t(parsed_count-2);
@@ -1256,52 +1256,6 @@ void interpreteEngineSpeedMsg()
   }
 }
 
-void interpreteJ1939_71VehicleSpeed()
-{
-  if (canGetBytes() != 8)
-  {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
-  }
-  else
-  {
-    // Vehicle speed
-    // J1939-71
-    // 2 bytes Compass bearing 1/128 deg/bit, 0 offset, range 0 to 501.99deg
-    // 2 bytes Naviagion based vehicle speed 1/256 km/h per bit, 0 offset, datarange 0 to 250.996 km/h
-    // 2 bytes pitch 1/128 deg/bit, -200 deg offset, -200 to 301.99 deg
-    // 2 bytes altitude 0.125 m/bit, -2500 m offset, -2500 to 5531.875 m
-    cout << "Compass bearing:" << (static_cast<double>( (static_cast<uint16_t>(canGetData(1)) << 8) | static_cast<uint16_t>(canGetData(0)) ) / 128) << "° "
-         << "Naviagion based vehicle speed:" << static_cast<double>( (static_cast<uint16_t>(canGetData(3)) << 8) | static_cast<uint16_t>(canGetData(2)) ) / 256 << " km/h "
-         << "pitch:" << (static_cast<double>( (static_cast<uint16_t>(canGetData(5)) << 8) | static_cast<uint16_t>(canGetData(4)) ) / 128) - 200 << "° "
-         << "altitude:" << (static_cast<double>( (static_cast<uint16_t>(canGetData(7)) << 8) | static_cast<uint16_t>(canGetData(6)) ) * 0.125 ) - 2500 << " m ";
-  }
-}
-
-void interpreteJ1939_71VehiclePosition()
-{
-  if (canGetBytes() != 8)
-  {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
-  }
-  else
-  {
-    // Vehicle position
-    // J1939-71
-    // 4 bytes Latitude  10^-7 deg/bit, -210 deg offset range from 10^-7 deg/bit, -210 deg offset
-    // 4 bytes Longitude 10^-7 deg/bit, -210 deg offset range from 10^-7 deg/bit, -210 deg offset
-    cout << "Latitude: " << (static_cast<uint32_t>( (static_cast<uint32_t>(canGetData(3)) << 24) 
-                                                     | (static_cast<uint32_t>(canGetData(2)) << 16) 
-                                                     | (static_cast<uint32_t>(canGetData(1)) << 8) 
-                                                     |  static_cast<uint32_t>(canGetData(0))
-                                                     ) * 0.0000001) - 210 << "° "
-         << "Longitude: " << (static_cast<uint32_t>( (static_cast<uint32_t>(canGetData(7)) << 24) 
-                                                     | (static_cast<uint32_t>(canGetData(6)) << 16) 
-                                                     | (static_cast<uint32_t>(canGetData(5)) << 8) 
-                                                     |  static_cast<uint32_t>(canGetData(4))
-                                                     ) * 0.0000001) - 210 << "° ";
-  }
-}
-
 void interpretePgnsCl2FS()
 {
   analyzeCl2FS(canGetSa(), canGetDa(), 8, can_data);
@@ -1514,15 +1468,12 @@ void interpretePgnData (uint32_t rui32_pgn)
     case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: interpreteEngineSpeedMsg(); break;
     case SOFTWARE_IDENTIFICATION_PGN:    break;
     case TIME_DATE_PGN:                  break;
-    case SAE_J1939_71_VEHECLE_DIRECTION_SPEED: interpreteJ1939_71VehicleSpeed(); break;
-    case SAE_J1939_71_VEHECLE_POSITION:        interpreteJ1939_71VehiclePosition(); break;
     case PROPRIETARY_B_PGN:              break;
     case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: break;
     case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  break;
     case NMEA_GPS_POSITION_DATA_PGN:     break;
     case NMEA_GPS_DIRECTION_DATA_PGN:    break;
     case 129542: /* 0x1Fa06 */           break;
-    case SAE_J1939_PropB_PDU2:           break;
     default:                             break;
         /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
@@ -1576,16 +1527,13 @@ void interpretePgn (uint32_t rui32_pgn)
     case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: cout << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
     case SOFTWARE_IDENTIFICATION_PGN:    cout << "SOFTWARE_IDENTIFICATION "; break;
     case TIME_DATE_PGN:                  cout << "TIME_DATE         "; break;
-    case SAE_J1939_71_VEHECLE_DIRECTION_SPEED: cout << "SAE_J1939_71_VEHECLE_DIRECTION_SPEED "; break;
-    case SAE_J1939_71_VEHECLE_POSITION: cout << "SAE_J1939_71_VEHECLE_POSITION "; break;
     case PROPRIETARY_B_PGN:              cout << "PROPRIETARY_B(1of) "; break;
     case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: cout << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
     case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
     case NMEA_GPS_POSITION_DATA_PGN:     cout << "NMEA_GPS_POSITION_DATA "; break;
     case NMEA_GPS_DIRECTION_DATA_PGN:    cout << "NMEA_GPS_DIRECTION_DATA "; break;
-    case SAE_J1939_PropB_PDU2:           cout << "SAE_J1939_PropB_PDU2 "; break;
     case 129542: /* 0x1Fa06 */           cout << "GNSS Pseudorange Noise Statistics "; break;
-    default:                             cout << std::hex << "0x" << rui32_pgn << std::dec; break;
+    default:                             cout << "                  "; break;
         /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
 #define AUX_VALVE_1_ESTIMATED_FLOW  0x00FE11LU
