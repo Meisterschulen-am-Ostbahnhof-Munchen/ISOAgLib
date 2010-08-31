@@ -1166,7 +1166,6 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
 
   // set send MsgObj ID
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
-  uint32_t i32_now = HAL::getTime();
 
   #if 0
   if ( mui8_busNumber == 1 ) {
@@ -1182,24 +1181,17 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
   {  // perform wait loop
     // trigger the watchdog
     HAL::wdTriggern();
-    
-    /**
-      * redmine ticket 69.
-      * we wait for 10 ms if the send-queue is opening for this one package.
-      * if we cannot send out the message within 10 ms we assume that the bus is
-      * in an error situation (bus-off or bus-pasive) and no messages can be sent out.
-      * In that case we clear the send buffer and try to insert the most recent message.
-      **/
-    if ( ( HAL::getTime() - i32_now ) > 10 )
-    {
+    // exit loop, if CAN BUS is OFF and exit function
+    if (HAL::can_stateGlobalOff(mui8_busNumber))
+    { /** @todo SOON-69: check whether HAL::can_stateGlobalOff() detects all possible reasons that can block the send queue from emptying by sending of queued messages on CAN BUS */
       // clear MsgObj CAN queue
       #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
       INTERNAL_DEBUG_DEVICE
-       << "CanIo_c::operator<< can package could not be passed to can-hardware for 10 seconds. Emptying queue and inserting new package. Error-Bus: " << uint16_t(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+       << "CanIo_c::operator<< BUS OFF BUS Nr: " << uint16_t(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
 
       HAL::can_useMsgobjClear(mui8_busNumber,ui8_sendObjNr);
-      break;
+      return *this;
     }
   }
   // it's time to trigger the watchdog
