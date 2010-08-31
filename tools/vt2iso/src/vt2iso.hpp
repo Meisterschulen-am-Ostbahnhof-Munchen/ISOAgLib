@@ -358,13 +358,11 @@ private:
   unsigned int opDimension;
   unsigned int skWidth;
   unsigned int skHeight;
-  unsigned int mi_objectPoolVersion;
   std::string opAdditionallyRequiredObjects;
   bool is_opDimension;
   bool is_opAdditionallyRequiredObjects;
   bool is_skWidth;
   bool is_skHeight;
-  bool mb_isObjectPoolVersion;
 
   bool b_externalize;
   bool mb_parseOnlyWorkingSet;
