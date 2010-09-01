@@ -1,16 +1,3 @@
-Win32 Installation Instructions
-===============================
-There's already a ready to run version of proc2iso.exe present in .\bin that can 
-be used.
-
-However, the easiest way to compile proc2iso directly from the sources is using 
-the included Dev-C++ project file (proc2iso.dev). Therefore you need to have the
-additional packages xerces (2.5.0.122) and freeimage added to your Dev-C++ 
-installation. The already compiled version was created using this development
-environment and therefore ONLY works correctly with the xerces-c_2_5_0.dll that 
-is included within this package.
-
-
 Parsing device descriptions using proc2iso.exe
 ==============================================
 proc2iso.exe needs a specified xml schema file as parameter. You can use the 
@@ -29,8 +16,9 @@ proc2iso.exe might not work (so just use the batch file)!
 
 Further Information
 ===================
-Please also take a closer look at the INSTALL file for further information on 
-the proc2iso setup.
+proc2iso needs to be adapted/enhanced in the near future, so the current state
+is not optimal, but working. It will be cleaned up when work on proc2iso
+continues (there are many obsolete files in this folder like "configure", etc.
+- just ignore them for now)
 
-
-Last updated 2008-02-14.
+Last updated 2010-09-01
