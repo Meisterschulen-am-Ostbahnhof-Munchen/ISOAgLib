@@ -45,7 +45,7 @@ FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_
   getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))
     .insertIsoFilter (ms_receiveFilter, true);
 #if DEBUG_FILESERVER
-  EXTERNAL_DEBUG_DEVICE << "Fileserver created offline (received Address Claim)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Fileserver created offline (received Address Claim)." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
 
@@ -66,7 +66,7 @@ FsServerInstance_c::~FsServerInstance_c()
   getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))
     .removeIsoFilter (ms_receiveFilter);
 #if DEBUG_FILESERVER
-  EXTERNAL_DEBUG_DEVICE << "Fileserver destroyed (stopped Address Claim)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+  INTERNAL_DEBUG_DEVICE << "Fileserver destroyed (stopped Address Claim)." << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 }
 
@@ -183,16 +183,16 @@ FsServerInstance_c::setState (FsState_en aen_newState)
   switch (en_oldState)
   {
     case offline:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver was offline ==> ";
+      INTERNAL_DEBUG_DEVICE << "Fileserver was offline ==> ";
       break;
     case online:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver was online ==> ";
+      INTERNAL_DEBUG_DEVICE << "Fileserver was online ==> ";
       break;
     case usable:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver was usable ==> ";
+      INTERNAL_DEBUG_DEVICE << "Fileserver was usable ==> ";
       break;
     case unusable:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver was unusable ==> ";
+      INTERNAL_DEBUG_DEVICE << "Fileserver was unusable ==> ";
       break;
     default:
       isoaglib_assert(!"FS-Client: FsServerInstance_c: Was currently in an invalid state!");
@@ -201,16 +201,16 @@ FsServerInstance_c::setState (FsState_en aen_newState)
   switch (aen_newState)
   {
     case offline:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver dropped offline (>6s loss of FS Status Message)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Fileserver dropped offline (>6s loss of FS Status Message)." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     case online:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver got online (first reception of FS Status Message)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Fileserver got online (first reception of FS Status Message)." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     case usable:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver got usable (clients do now know of this FS and can use it)." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Fileserver got usable (clients do now know of this FS and can use it)." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     case unusable:
-      EXTERNAL_DEBUG_DEVICE << "Fileserver encountered an error and is unusable." << EXTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Fileserver encountered an error and is unusable." << INTERNAL_DEBUG_DEVICE_ENDL;
       break;
     default:
       isoaglib_assert(!"FS-Client: FsServerInstance_c: Trying to set to invalid state!");
