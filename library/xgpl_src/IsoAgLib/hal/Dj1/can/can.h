@@ -139,28 +139,6 @@ namespace HAL
 
 
   /**
-    check if a send MsgObj can't send msgs from buffer to the
-    BUS (detecetd by comparing the inactive time with
-    CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
-    @param aui8_busNr number of the BUS to check
-    @param aui8_msgobjNr number of the MsgObj to check
-    @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
-  */
-
-
-  inline bool can_stateMsgobjSendproblem ( uint8_t aui8_busNr, uint8_t aui8_msgobjNr )
-  {
-   return (
-              (
-                (__HAL::DjBios_CanGetTxDelay(aui8_busNr) > CONFIG_CAN_MAX_SEND_WAIT_TIME) &&
-                (__HAL::DjBios_CanObjBufCount(aui8_busNr, aui8_msgobjNr) > 0 )
-              )
-
-           );
-  };
-
-
-  /**
     test if buffer of a MsgObj is full (e.g. no more
     msg can be put into buffer (important for TX objects))
     @param aui8_busNr number of the BUS to check

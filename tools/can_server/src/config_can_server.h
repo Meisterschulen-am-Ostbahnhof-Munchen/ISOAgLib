@@ -145,9 +145,6 @@
 /// define bitrate to use after fallbcack /ref CONFIG_CAN_MAX_CAN_ERR_TIME_BEFORE_SLOWERING
 // #define CONFIG_CAN_FALLBACK_BITRATE 125
 
-/// BUS OFF if CAN send lasts longer then defined
-// #define CONFIG_CAN_MAX_SEND_WAIT_TIME 200
-
 /// BUS problem, if no message received in this time
 // #define CONFIG_CAN_MAX_CAN_IDLE 3000
 

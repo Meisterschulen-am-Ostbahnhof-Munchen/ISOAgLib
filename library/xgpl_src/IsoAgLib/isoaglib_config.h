@@ -312,15 +312,6 @@
   /// --> discard send-queue and continue without sending.
 #  define CONFIG_CAN_BLOCK_TIME 10
 #endif
-/** NOTE: The following define is subject to be removed/moved!!
-    define max wait time between call of sendCan to
-    successfull send of the msg,
-    longer wait time is regarded of evidence for BUS OFF
-*/
-#ifndef CONFIG_CAN_MAX_SEND_WAIT_TIME
-  /// BUS OFF if CAN send lasts longer then defined
-#  define CONFIG_CAN_MAX_SEND_WAIT_TIME 200
-#endif
 
 /** define interval for detection of incoming message loss.
     -> should normally NOT be changed by the user/app.

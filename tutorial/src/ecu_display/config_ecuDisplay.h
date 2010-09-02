@@ -151,9 +151,6 @@
 /// define default max number for CAN Msg-Obj used for IsoAgLib
 // #define CONFIG_CAN_DEFAULT_MAX_OBJ_NR 13
 
-/// BUS OFF if CAN send lasts longer then defined
-// #define CONFIG_CAN_MAX_SEND_WAIT_TIME 200
-
 /// YES | NO for EEPROM editor access via CAN
 // #define CONFIG_EEPROM_USE_CAN_EDITOR_YN NO
 

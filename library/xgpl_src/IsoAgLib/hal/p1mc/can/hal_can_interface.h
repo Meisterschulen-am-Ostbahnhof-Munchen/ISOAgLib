@@ -109,16 +109,6 @@ bool can_stateGlobalBit1err(uint8_t rui8_busNr = 0);
 int32_t can_stateMsgobjTxok(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
 
 /**
-  check if a send MsgObj can't send msgs from buffer to the
-  BUS (detecetd by comparing the inactive time with
-  CONFIG_CAN_MAX_SEND_WAIT_TIME (defined in isoaglib_config)
-  @param rui8_busNr number of the BUS to check
-  @param rui8_msgobjNr number of the MsgObj to check
-  @return true -> longer than CONFIG_CAN_MAX_SEND_WAIT_TIME no msg sent on BUS
-*/
-bool can_stateMsgobjSendproblem(uint8_t rui8_busNr, uint8_t rui8_msgobjNr);
-
-/**
   test if buffer of a MsgObj is full (e.g. no more
   msg can be put into buffer (important for TX objects))
   @param rui8_busNr number of the BUS to check
