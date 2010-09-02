@@ -1113,15 +1113,8 @@ uint32_t ui32_msgNbr = 0;
   return mui8_processedMsgCnt;
 }
 
-/** function for sending data out of CanPkgExt_c (uses BIOS function)
-  if send buffer is full a local loop waits till buffer has enough space
-  (every 100ms the watchdog is triggered, to avoid watchdog reset)
-
-  possible errors:
-      * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
-      * Err_c::range on undef BUS or BIOS send obj nr
-      * Err_c::can_warn on physical CAN-BUS problems
-      * Err_c::can_off on physical CAN-BUS off state
+/** function for sending resolved data out of CanPkgExt_c
+  @see operator<<(CanPkg_c &) for more sending details
   @param acrc_src CanPkgExt_c which holds the to be sent data
   @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
 */
@@ -1151,8 +1144,9 @@ CanIo_c& CanIo_c::operator<<(CanPkgExt_c& acrc_src)
 }
 
 /** function for sending data out of CanPkg_c (uses BIOS function)
-  if send buffer is full a local loop waits till buffer has enough space
-  (every 100ms the watchdog is triggered, to avoid watchdog reset)
+  If send buffer is full a local loop waits for max. CONFIG_CAN_BLOCK_TIME ms
+  till buffer has enough space. If msg still couldn't be sent, it is assumed
+  that the bus is in a problematic state and the send buffer is cleared.
 
   possible errors:
       * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
@@ -1168,32 +1162,33 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
 
   // set send MsgObj ID
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
-
-  #if 0
-  if ( mui8_busNumber == 1 ) {
-    INTERNAL_DEBUG_DEVICE
-      << "CanIo_c::operator<< mit MIN MsgObj Nr: " << uint16_t( ui8_sendObjNr )
-      << "Xtd: " << acrc_src.identType()
-      << "\n\r";
-  }
-  #endif
+  uint32_t i32_now = HAL::getTime();
 
   // wait till Msg can be placed in send buffer
   while ( HAL::can_stateMsgobjFreecnt( mui8_busNumber, ui8_sendObjNr ) < 1 )
   {  // perform wait loop
     // trigger the watchdog
     HAL::wdTriggern();
-    // exit loop, if CAN BUS is OFF and exit function
-    if (HAL::can_stateGlobalOff(mui8_busNumber))
-    { /** @todo SOON-69: check whether HAL::can_stateGlobalOff() detects all possible reasons that can block the send queue from emptying by sending of queued messages on CAN BUS */
+    
+    /**
+      * redmine ticket 69.
+      * we wait for CONFIG_CAN_BLOCK_TIME ms if the send-queue is opening for this one package.
+      * if we cannot send out the message within 10 ms we assume that the bus is
+      * in an error situation (bus-off or bus-pasive) and no messages can be sent out.
+      * In that case we clear the send buffer and try to insert the most recent message.
+      **/
+    if ( ( HAL::getTime() - i32_now ) > CONFIG_CAN_BLOCK_TIME )
+    {
       // clear MsgObj CAN queue
       #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
       INTERNAL_DEBUG_DEVICE
-       << "CanIo_c::operator<< BUS OFF BUS Nr: " << uint16_t(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
+       << "CanIo_c::operator<< can package could not be passed to can-hardware for 10 seconds. Emptying queue and inserting new package. Error-Bus: " << uint16_t(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-
+      // typically we're in BUS-WARN here, so the messages won't get sent out,
+      // that's why we overflow the send-buffer...
+      getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
       HAL::can_useMsgobjClear(mui8_busNumber,ui8_sendObjNr);
-      return *this;
+      break;
     }
   }
   // it's time to trigger the watchdog
@@ -1236,6 +1231,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
       break;
     case HAL_OVERFLOW_ERR:
       // overflow of send buffer
+      // With the current max-10ms-block strategy this case shouldn't be reached anymore.
       getILibErrInstance().registerError( iLibErr_c::CanOverflow, iLibErr_c::Can );
       break;
     case HAL_RANGE_ERR:

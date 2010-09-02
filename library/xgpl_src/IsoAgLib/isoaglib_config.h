@@ -305,14 +305,15 @@
 
 
 /* ******************************************************** */
-/**
- * \name Config detection of CAN BUS off
- * -> IsoAgLib must detect BUS OFF and interprete it as result
- * of differing CAN baudrates ==> IsoAgLib can switch baudrate
- * to fallback speed.
- */
 /*@{*/
-/** define max wait time between call of sendCan to
+#ifndef CONFIG_CAN_BLOCK_TIME
+  /// BUS problem (not connected, blocked, off, ...)
+  /// if CAN send lasts longer than defined
+  /// --> discard send-queue and continue without sending.
+#  define CONFIG_CAN_BLOCK_TIME 10
+#endif
+/** NOTE: The following define is subject to be removed/moved!!
+    define max wait time between call of sendCan to
     successfull send of the msg,
     longer wait time is regarded of evidence for BUS OFF
 */
