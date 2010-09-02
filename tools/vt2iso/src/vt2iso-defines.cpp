@@ -422,15 +422,15 @@ char fontstyleTable [maxFontstyleTable] [stringLength+1] = {
 };
 
 char fonttypeTable [maxFonttypeTable] [stringLength+1] = {
-  "latin1",
-  "latin9",
-  "latin2",
-  "reserved",
-  "latin4",
-  "latin5",
-  "reserved",
-  "latin7",
-  "proprietary"
+  "latin1", // 0
+  "latin9", // 1
+  "latin2", // 2
+  "reserved", // 3
+  "latin4", // 4
+  "latin5", // 5
+  "reserved", // 6
+  "latin7", // 7
+  "proprietary" // 0xFF
 };
 
 char truthTable [maxTruthTable] [stringLength+1] = {
