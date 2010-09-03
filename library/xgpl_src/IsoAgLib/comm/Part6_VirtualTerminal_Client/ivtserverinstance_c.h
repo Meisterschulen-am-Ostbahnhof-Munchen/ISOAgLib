@@ -36,8 +36,8 @@ public:
   uint32_t          getVtHardwareDimension() const { return VtServerInstance_c::getVtHardwareDimension(); }
   uint16_t          getVtFontSizes() const { return VtServerInstance_c::getVtFontSizes(); }
   uint8_t           getVtIsoVersion() const { return VtServerInstance_c::getVtIsoVersion(); }
-  uint8_t           getSkPhysical() const { return getVtCapabilities()->skPhysical; }
-  uint8_t           getSkVirtual() const { return getVtCapabilities()->skVirtual; }
+  uint8_t           getSkPhysical() const { return getConstVtCapabilities()->skPhysical; }
+  uint8_t           getSkVirtual() const { return getConstVtCapabilities()->skVirtual; }
   const vtState_s*  getVtState() const { return VtServerInstance_c::getVtState(); }
   const iIsoItem_c* getIsoItem() const { return (VtServerInstance_c::getIsoItem() != NULL) ? &(VtServerInstance_c::getIsoItem()->toConstIisoItem_c()) : NULL; }
 

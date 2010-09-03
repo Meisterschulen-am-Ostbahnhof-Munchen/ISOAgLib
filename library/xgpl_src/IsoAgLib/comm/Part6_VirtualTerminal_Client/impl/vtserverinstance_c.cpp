@@ -67,7 +67,7 @@ VtServerInstance_c::~VtServerInstance_c()
   @return true -> >= 1 vt_statusMessages have arrived -> terminal is there.
 */
 bool
-VtServerInstance_c::isVtActive ()
+VtServerInstance_c::isVtActive () const
 {
   if (ms_vtStateA.lastReceived)
   {
@@ -164,20 +164,20 @@ VtServerInstance_c::setHardwareData()
 
 
 uint32_t
-VtServerInstance_c::getVtHardwareDimension()
+VtServerInstance_c::getVtHardwareDimension() const
 {
   return (uint32_t) (ms_vtCapabilitiesA.hwWidth);
 }
 
 uint16_t
-VtServerInstance_c::getVtFontSizes()
+VtServerInstance_c::getVtFontSizes() const
 {
   return ms_vtCapabilitiesA.fontSizes;
 }
 
 
 uint8_t
-VtServerInstance_c::getVtIsoVersion()
+VtServerInstance_c::getVtIsoVersion() const
 {
   return ms_vtCapabilitiesA.iso11783version;
 }

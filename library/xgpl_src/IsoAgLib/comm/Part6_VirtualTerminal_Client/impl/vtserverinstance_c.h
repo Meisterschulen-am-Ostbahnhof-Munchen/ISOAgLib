@@ -105,7 +105,7 @@ public:
   /** check if there's already been at least one vt_statusMessage in the last 3 seconds
     @return true if at least one vt_statusMessage - false if there's not yet been one or the last one is more than 3 seconds old
   */
-  bool isVtActive();
+  bool isVtActive() const;
 
   /** setter */
   void setLatestVtStatusData();
@@ -116,16 +116,16 @@ public:
   void setHardwareData();
 
   /** getter */
-  const IsoName_c&           getIsoName()             { return mc_isoName; }
-  uint8_t                    getVtSourceAddress()     { return (mcpc_isoItem != NULL)? mcpc_isoItem->nr() : 0xfe; }
-  uint32_t                   getVtHardwareDimension();
-  uint16_t                   getVtFontSizes();
-  uint8_t                    getVtIsoVersion();
+  const IsoName_c&           getIsoName()             const { return mc_isoName; }
+  uint8_t                    getVtSourceAddress()     const { return (mcpc_isoItem != NULL)? mcpc_isoItem->nr() : 0xfe; }
+  uint32_t                   getVtHardwareDimension() const;
+  uint16_t                   getVtFontSizes()         const;
+  uint8_t                    getVtIsoVersion()        const ;
   vtCapabilities_s*          getVtCapabilities()      { return &ms_vtCapabilitiesA; }
   const vtCapabilities_s*    getConstVtCapabilities() const  { return &ms_vtCapabilitiesA; }
-  const IsoAgLib::vtState_s* getVtState() const       { return &ms_vtStateA; }
+  const IsoAgLib::vtState_s* getVtState()             const  { return &ms_vtStateA; }
   localSettings_s*           getLocalSettings()       { return &ms_localSettingsA; }
-  const IsoItem_c*           getIsoItem()             { return mcpc_isoItem; }
+  const IsoItem_c*           getIsoItem()             const { return mcpc_isoItem; }
 
 // the following define should be globally defined in the project settings...
 #ifdef FAKE_VT_PROPERTIES
