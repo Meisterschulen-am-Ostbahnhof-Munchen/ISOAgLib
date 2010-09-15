@@ -173,8 +173,8 @@ namespace __IsoAgLib
     SINGLETON_PAR_DOT_DEF(mc_data)
 
   protected:
-    static void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
-    static uint16_t getTimeOut( ) { return mui16_timeOut; }
+    void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
+    uint16_t getTimeOut( ) { return mui16_timeOut; }
 
     RegisterPgn_s getRegisterPgn() {
       return RegisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
