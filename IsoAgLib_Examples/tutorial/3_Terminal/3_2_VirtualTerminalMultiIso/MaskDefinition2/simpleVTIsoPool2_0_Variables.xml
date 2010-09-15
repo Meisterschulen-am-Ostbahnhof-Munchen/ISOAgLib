@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<objectpool dimension='200' std_bitmap_path='bitmaps/standard' fix_bitmap_path='bitmaps/vario'>
+
+<!-- Working Set -->
+  <workingset name='imiIsoMaskupload_2' background_colour='white' selectable='yes' active_mask='MainMask_2'>
+    <outputstring name='opsWS1' value='IsoAgLib' pos_x='0' pos_y='0' width='60' height='8' background_colour='white'  font_attributes='FontAttributesSKM6x8_2'
+       options='autowrap' />
+    <outputstring name='opsWS2' value='Tutorial 3.2' pos_x='0' pos_y='8' width='60' height='16' background_colour='white' font_attributes='FontAttributesSKM6x8_2'
+       options='autowrap' />
+
+    <language code="en" />
+    <language code="de" />
+    <language code="it" />
+    <!--language code="ru" /-->
+  </workingset>
+
+<!-- Variables -->
+  <container name='containerInAllMasks_2' width='200' height='30'>
+    <rectangle name='rect1' pos_x='5' pos_y='5' width='190' height='15' line_attributes='LineAttributesDotted_2'/>
+    <!-- file1='simpleBitmapManuellSchwarzWeiss' -->
+    <!-- file4='' tells to disable 16 bit output! -->
+    <picturegraphic name='BigLogo_2' pos_x='0' pos_y='0' width='100' transparency_colour='white' options='transparent+flashing'
+                   format='8bit' rle='auto' file='simpleBitmap.bmp' file4='' >
+      <fixedbitmap format='4bit' rle='auto' file='simpleBitmap240.bmp' file1='' />
+    </picturegraphic>
+    <line name='leine_2' pos_x='0' pos_y='27' width='200' height='1' line_attributes='LineAttributesNormal_2' />
+  </container>
+
+  <outputstring name='OutStrLang' language="en" value='My Engl String' pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_2' horizontal_justification='left' />
+  <outputstring name='OutStrLang' language="it" value='Me Ital String' pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_2' horizontal_justification='left' />
+  <outputstring name='OutStrLang' language="de" value='Mein Deu String' pos_x='0' pos_y='12' width='60' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_2' horizontal_justification='left' />
+
+  <!-- Output Number Field declaration -->
+  <numbervariable name='VarOutNumVal' value='45' />  <!-- width/height in Pixls     offset from Value -->
+  <outputnumber name='OutNumVal' value='45' pos_x='4' pos_y='27' width='30' height='8' offset='-10' scale='1' block_col='9' block_font='FontAttributes_2_Normal6x8LangDep' background_colour='white' number_of_decimals='1' format='fixed' font_attributes='FontAttributesNormal6x8_2' horizontal_justification='left' />
+
+<!--  Input String Field declaration -->
+  <inputstring name='InpString' pos_x='74' pos_y='55' width='90' height='8'
+               background_colour='white' font_attributes='FontAttributesNormal6x8R_2'
+             options='autowrap' horizontal_justification='left' length='20' value="Klick to Input" enabled='true'/>
+
+ <!--  Input Number Field declaration -->
+  <inputnumber name='InpNumVal' width='36' height='8' offset='0' scale='1'
+               background_colour='white' number_of_decimals='0' format='fixed'
+               font_attributes='FontAttributesNormal6x8R_2' horizontal_justification='left'
+               enabled='yes' min_value='0' max_value='999999' />
+
+  <outputnumber name= 'frstLstElem' value='6398' width='24' height='8' font_attributes='FontAttributesNormal6x8_2' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
+  <outputnumber name= 'scndLstElem' value='8743' width='24' height='8' font_attributes='FontAttributesNormal6x8_2' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
+  <outputnumber name= 'thrdLstElem' value='3948' width='24' height='8' font_attributes='FontAttributesNormal6x8_2' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
+  <outputnumber name= 'frthLstElem' value='9467' width='24' height='8' font_attributes='FontAttributesNormal6x8_2' offset='0' scale='1.0' number_of_decimals='0' format='fixed' />
+
+  <!--  Input List Field declaration -->
+  <inputlist name='InputNumList' width='24' height='8' number_of_items='4'>
+    <include_object name='frstLstElem' width='66' height='8' font_attributes='FontAttributesNormal6x8_2' length='5'/>
+    <include_object name='scndLstElem' width='66' height='8' font_attributes='FontAttributesNormal6x8_2' length='5'/>
+    <include_object name='thrdLstElem' width='66' height='8' font_attributes='FontAttributesNormal6x8_2' length='5'/>
+    <include_object name='frthLstElem' width='66' height='8' font_attributes='FontAttributesNormal6x8_2' length='5'/>
+  </inputlist>
+
+  <!--  Buttons declarations -->
+  <button name='Btn1' background_colour='white' pos_x='4' pos_y='110' width='60' height='30' latchable='no' key_code='1' >
+    <outputstring name='btn1' pos_x='0' pos_y='7' width='52' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_Button60x30_2'
+                  value='Button1' horizontal_justification='middle' />
+  </button>
+
+  <button name='Btn2' background_colour='white' pos_x='70' pos_y='110' width='60' height='30' latchable='no' key_code='2' >
+    <outputstring name='btn2' pos_x='0' pos_y='7' width='52' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_Button60x30_2'
+                  value='Button2' horizontal_justification='middle' />
+  </button>
+
+  <button name='Btn3' background_colour='white' pos_x='136' pos_y='110' width='60' height='30' latchable='no' key_code='3' >
+    <outputstring name='btn3' pos_x='0' pos_y='7' width='52' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_Button60x30_2'
+                  value='Button3' horizontal_justification='middle' />
+  </button>
+  <!--#####################################################################/-->
+
+<!-- Softkeys Declaratoinen -->
+  <key name='KeyReset_2' background_colour='white' key_code='4' >
+    <outputstring name='OutStrSoftKey' language="en+de+it" value='Reset' pos_x='0' pos_y='12' width='60' height='8'
+                  background_colour='white' font_attributes='FontAttributesSKM6x8_2' horizontal_justification='middle' />
+  </key>
+
+  <key name='KeyMove_2' background_colour='white' key_code='5' >
+    <outputstring name='ops1' pos_x='0' pos_y='12' width='60' height='8'  background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='Move' horizontal_justification='middle' />
+  </key>
+
+  <key name='KeyLogo_2' background_colour='white' key_code='6' >
+    <outputstring name='ops2' pos_x='0' pos_y='12' width='60' height='8' background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='Logo' horizontal_justification='middle' />
+  </key>
+
+  <key name='KeyChangeLang_2' background_colour='white' key_code='7' >
+    <outputstring name='ops3' pos_x='0' pos_y='12' width='60' height='8' background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='AE -&gt; BE' horizontal_justification='middle' />
+  </key>
+
+  <key name='KeyChangeCol_2' background_colour='white' key_code='8' >
+    <outputstring name='ops4' pos_x='0' pos_y='8' width='60' height='8' background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='Change' horizontal_justification='middle' />
+    <outputstring name='ops5' pos_x='0' pos_y='16' width='60' height='8' background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='Colour' horizontal_justification='middle' />
+  </key>
+
+  <key name='KeyForbidden_2' background_colour='white' key_code='9' >
+    <outputstring name='ops6' pos_x='0' pos_y='12' width='60' height='8' background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='Forbidden!' horizontal_justification='middle' />
+  </key>
+
+  <key name='KeyChangeMask_2' background_colour='white' key_code='10' >
+    <outputstring name='ops7' pos_x='0' pos_y='0' width='60' height='32' background_colour='white'
+                  font_attributes='FontAttributesSKM6x8_2' value='Change to other Mask' horizontal_justification='middle' options="autowrap"/>
+  </key>
+
+  <button name='KeyBackMask' background_colour='white' pos_x='0' pos_y='0' width='60' height='30' latchable='no' key_code='11' >
+    <outputstring name='ops8' pos_x='0' pos_y='7' width='52' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_Button60x30_2'
+                  value='Back' horizontal_justification='middle' />
+  </button>
+
+  <button name='KeyNextMask' background_colour='white' pos_x='0' pos_y='0' width='60' height='30' latchable='no' key_code='12' >
+    <outputstring name='ops9' pos_x='0' pos_y='7' width='52' height='8' background_colour='white' font_attributes='FontAttributesNormal6x8_Button60x30_2'
+                  value='Next' horizontal_justification='middle' />
+  </button>
+
+
+
+  <ellipse name="dEllipse_2" line_attributes="LineAttributes_Normal_2" width="64" height="32" ellipse_type="closedsegment" start_angle="0" end_angle="100" fill_attributes="FillAttributes_2" />
+
+  <polygon name="dPolygon_2" width="41" height="35" line_attributes="LineAttributes_Normal_2" polygon_type="convex">
+    <point pos_x="00" pos_y="20" />
+    <point pos_x="10" pos_y="10" />
+    <point pos_x="10" pos_y="20" />
+    <point pos_x="00" pos_y="10" />
+    <point pos_x="10" pos_y="10" />
+    <point pos_x="05" pos_y="00" />
+    <point pos_x="00" pos_y="10" />
+    <point pos_x="00" pos_y="20" />
+    <point pos_x="10" pos_y="20" />
+  </polygon>
+</objectpool>

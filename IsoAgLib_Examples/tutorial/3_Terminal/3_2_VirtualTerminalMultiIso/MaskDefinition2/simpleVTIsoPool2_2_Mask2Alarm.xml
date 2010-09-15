@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<objectpool>
+
+  <alarmmask name='ForbiddenAlarmMask_2' background_colour='white' acoustic_signal='medium' priority='low' >
+    <include_object pos_x='0' pos_y='0' name='containerInAllMasks_2' />
+
+    <container name='alarm1contentscontainer_2' pos_x='0' pos_y='30' width='200' height='170'>
+<!-- so we have relative values beginning with (0,0) when changing the upper stuff later on -->
+      <outputstring name='ops23' value="ALARM"                         pos_x='0' pos_y='12'  width='200' height='16' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal12x16_2' />
+      <outputstring name='ops24' value="I told you it is forbidden!"   pos_x='0' pos_y='40'  width='200' height='8' background_colour='white' horizontal_justification='left' font_attributes='FontAttributesNormal6x8_2' />
+      <outputstring name='ops25' value="(Press ESC to go back...)"     pos_x='0' pos_y='55'  width='200' height='8' background_colour='white' horizontal_justification='right' font_attributes='FontAttributesNormal6x8_2' />
+    </container>
+  </alarmmask>
+</objectpool>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+
+<objectpool>
+
+  <alarmmask name='ForbiddenAlarmMask' background_colour='white' soft_key_mask='softkeysAlarm' acoustic_signal='medium' priority='low' >
+    <include_object pos_x='0' pos_y='0' name='containerInAllMasks' />
+
+    <container name='alarm1contentscontainer' pos_x='0' pos_y='30' width='200' height='170'>
+<!-- so we have relative values beginning with (0,0) when changing the upper stuff later on -->
+
+      <outputstring value="ALARM"                         pos_x='0' pos_y='12'  width='200' height='16' background_colour='white' horizontal_justification='middle' font_attributes='FontAttributesNormal12x16' />
+      <outputstring value="I told you it is forbidden!"   pos_x='0' pos_y='40'  width='200' height='8' background_colour='white' horizontal_justification='left' font_attributes='FontAttributesNormal6x8' />
+      <outputstring value="(Press ESC to go back...)"     pos_x='0' pos_y='55'  width='200' height='8' background_colour='white' horizontal_justification='right' font_attributes='FontAttributesNormal6x8' />
+
+    </container>
+  </alarmmask>
+
+
+<!-- Soft Key Masks -->
+  <softkeymask name='softkeysAlarm' background_colour='white'>
+
+  </softkeymask>
+
+</objectpool>

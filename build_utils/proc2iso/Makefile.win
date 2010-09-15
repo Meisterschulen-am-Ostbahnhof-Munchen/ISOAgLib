@@ -1,0 +1,36 @@
+# Project: Proc2Iso
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = src/proc2iso.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.o $(RES)
+LINKOBJ  = src/proc2iso.o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.o $(RES)
+LIBS =  -L"C:/Development/Dev-Cpp/lib" -L"C:/Programme/Dev-Cpp/xerces-c_2_5_0/lib" -lfreeimage -lkernel32 -luser32 -lxerces-c_2 -Wl --enable-runtime-pseudo-reloc  
+INCS =  -I"C:/Development/Dev-Cpp/include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/VtServer/IsoAgLib/xgpl_src" 
+CXXINCS =  -I"C:/Development/Dev-Cpp/include/c++/3.3.1"  -I"C:/Development/Dev-Cpp/include/c++/3.3.1/mingw32"  -I"C:/Development/Dev-Cpp/include/c++/3.3.1/backward"  -I"C:/Development/Dev-Cpp/lib/gcc-lib/mingw32/3.3.1/include"  -I"C:/Development/Dev-Cpp/include"  -I"C:/Programme/Dev-Cpp/xerces-c_2_5_0/include"  -I"C:/Projekte_Subversion/VtServer/IsoAgLib/xgpl_src" 
+BIN  = Proc2Iso.exe
+CXXFLAGS = $(CXXINCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC  
+CFLAGS = $(INCS) -DUSE_FREE_IMAGE_LIB -DXERCES_TMPLSINC -D__GNUWIN32__  -fexpensive-optimizations  -O3 -DNDEBUG -DPLATFORM_WIN32 -D_CRTDBG_MAP_ALLOC  -DPROJ_XMLPARSER  -DPROJ_XMLUTIL  -DPROJ_PARSERS  -DPROJ_SAX4C  -DPROJ_SAX2  -DPROJ_DOM  -DPROJ_VALIDATORS -DXML_SINGLEDLL  -DWIN32  -D_WINDOWS  -DXML_USE_WIN32_TRANSCODER  -DXML_USE_WIN32_MSGLOADER  -DXML_USE_NETACCESSOR_WINSOCK -fpermissive -w -DSYSTEM_PC  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before Proc2Iso.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "Proc2Iso.exe" $(LIBS)
+
+src/proc2iso.o: src/proc2iso.cpp
+	$(CPP) -c src/proc2iso.cpp -o src/proc2iso.o $(CXXFLAGS)
+
+../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o: ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp
+	$(CPP) -c ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.cpp -o ../../xgpl_src/IsoAgLib/comm/SystemMgmt/ISO11783/impl/isoname_c.o $(CXXFLAGS)
+
+../../xgpl_src/IsoAgLib/util/impl/util_funcs.o: ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp
+	$(CPP) -c ../../xgpl_src/IsoAgLib/util/impl/util_funcs.cpp -o ../../xgpl_src/IsoAgLib/util/impl/util_funcs.o $(CXXFLAGS)
