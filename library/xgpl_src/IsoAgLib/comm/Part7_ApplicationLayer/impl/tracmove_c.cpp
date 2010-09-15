@@ -285,7 +285,7 @@ void TracMove_c::singletonInit()
             //decide if ground based speed is actually the best available speed
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::GroundBasedSpeed )
-                || ( testTimeOutdatedSpeed >= TIMEOUT_SENDING_NODE && testTimeOutdatedSpeed < 4000 )
+                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000) )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
@@ -295,7 +295,7 @@ void TracMove_c::singletonInit()
             //if ground based dist and direction is actually the best available
             if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::GroundBasedDistDirec )
-                || ( testTimeOutdatedDist >= TIMEOUT_SENDING_NODE && testTimeOutdatedDist < 4000 )
+                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000) )
                  )
                )
             { // distance information is usable and the current selected distance is at least not better or outdated
@@ -321,7 +321,7 @@ void TracMove_c::singletonInit()
             #endif
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::WheelBasedSpeed )
-                || ( testTimeOutdatedSpeed >= TIMEOUT_SENDING_NODE && testTimeOutdatedSpeed < 4000 )
+                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000) )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
@@ -329,7 +329,7 @@ void TracMove_c::singletonInit()
             }
             if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
-                || ( testTimeOutdatedDist >= TIMEOUT_SENDING_NODE && testTimeOutdatedDist < 4000 )
+                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000) )
                  )
                )
             { // distance information is usable and the current selected distance is at least not better or outdated

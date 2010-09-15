@@ -17,6 +17,7 @@
 #include "basecommon_c.h"
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -144,7 +145,7 @@ bool BaseCommon_c::timeEvent()
   // check for different base data types whether the previously
   // sending node stopped sending -> other nodes can now step in
   if (  checkMode(IsoAgLib::IdentModeImplement)
-        &&(lastedTimeSinceUpdate() >= TIMEOUT_SENDING_NODE )
+        &&(lastedTimeSinceUpdate() >= getTimeOut( ) )
         && (mc_selectedDataSourceISOName.isSpecified())    )
   { // the previously sending node didn't send the information for 3 seconds -> give other items a chance
     mc_selectedDataSourceISOName.setUnspecified();

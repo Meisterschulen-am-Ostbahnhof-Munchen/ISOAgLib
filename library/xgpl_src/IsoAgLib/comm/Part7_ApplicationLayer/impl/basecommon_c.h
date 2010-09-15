@@ -53,7 +53,8 @@ namespace __IsoAgLib
       mc_selectedDataSourceISOName(),
       mc_data(),
       mt_task(*this),
-      mt_handler(*this)
+      mt_handler(*this),
+      mui16_timeOut(TIMEOUT_SENDING_NODE_NMEA)
     {}
 
     /** destructor */
@@ -164,13 +165,17 @@ namespace __IsoAgLib
     /** set IsoName of data source (e.g. tractor, terminal) which sends commands exclusively */
     void setSelectedDataSourceISOName(const IsoName_c& ac_dataSourceISOName){mc_selectedDataSourceISOName = ac_dataSourceISOName;}
 
-    /** if a message is not send after 3 seconds it is expected that the sending node stopped sending */
-    static const uint16_t TIMEOUT_SENDING_NODE = 3000;
+    /** if a message is not sent after 3 or 5 seconds it is expected that the sending node stopped sending */
+    static const uint16_t TIMEOUT_SENDING_NODE_NMEA = 3000;
+    static const uint16_t TIMEOUT_SENDING_NODE_J1939 = 5000;
 
     /// Using the singletonVecKey from mc_data (-->CanPkgExt_c)
     SINGLETON_PAR_DOT_DEF(mc_data)
 
   protected:
+    static void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
+    static uint16_t getTimeOut( ) { return mui16_timeOut; }
+
     RegisterPgn_s getRegisterPgn() {
       return RegisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
     }
@@ -352,6 +357,13 @@ namespace __IsoAgLib
 
     Task_t mt_task;
     Handler_t mt_handler;
+
+    /**
+      * There are two timeout times for GPS-Positions and Speed
+      * NMEA is 3 seconds, J1939 is 5 seconds.
+      * So make timeout configurable.
+      */
+    uint16_t mui16_timeOut;
   };
 
 }// end namespace __IsoAgLib

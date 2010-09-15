@@ -806,6 +806,8 @@
 #define DIAGNOSTIC_DATA_CLEAR_PGN                          0x00FECCLU
 
 #define TIME_DATE_PGN               0x00FEE6LU
+#define VEHICLE_DIRECTION_SPEED     0x00FEE8LU
+#define VEHICLE_POSITION            0x00FEF3LU
 // PROPRIETARY_B_PGN ranges from 0x00FF00 to 0x00FFFF !
 #define PROPRIETARY_B_PGN           0x00FF00LU
 
@@ -817,7 +819,7 @@
 #define NMEA_GPS_POSITION_DATA_PGN                0x01F805LU
 #define NMEA_GPS_TIME_DATE_PGN                    0x01F809LU
 #define NMEA_GPS_DIRECTION_DATA_PGN               0x01FE11LU
-
+#define NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS    0x01FA06LU
 
 
 
