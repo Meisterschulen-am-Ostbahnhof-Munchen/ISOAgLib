@@ -59,18 +59,28 @@ namespace IsoAgLibTutorialDisplay {
  * */
 TutorialDisplay_c::TutorialDisplay_c()
   : mp_srcHandle( 0 )
+  , mp_srcIdent( 0 )
   , mui_activeMaskId( 0xFFFF ) // use 0xFFFF as default because it's not a valid Mask-ID.
 {}
 
 
 TutorialDisplay_c::~TutorialDisplay_c()
-{}
+{
+  if (mp_srcIdent)
+  { // registered, so we need to deregister
+    IsoAgLib::getIisoTerminalInstance().deregisterIsoObjectPool( *mp_srcIdent );
+  }
+}
 
 
 void
 TutorialDisplay_c::init( IsoAgLib::iIdentItem_c& ar_ident )
 {
   mp_srcHandle = IsoAgLib::getIisoTerminalInstance().initAndRegisterIsoObjectPool( ar_ident, *this, NULL );
+  if (mp_srcHandle)
+  { // registering succeeded, store IdentItem for deregistration
+    mp_srcIdent = &ar_ident;
+  }
 }
 
 

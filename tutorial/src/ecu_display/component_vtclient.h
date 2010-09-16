@@ -63,6 +63,7 @@ namespace IsoAgLibTutorialDisplay {
 
     private:
       IsoAgLib::iVtClientServerCommunication_c* mp_srcHandle;
+      IsoAgLib::iIdentItem_c* mp_srcIdent;
 
       uint16_t mui_activeMaskId;
   };
