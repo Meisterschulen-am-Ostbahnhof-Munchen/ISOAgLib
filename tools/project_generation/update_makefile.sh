@@ -627,6 +627,9 @@ driver_and_hal_features()
         (socket_server_hal_simulator)
             printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_client_sock_hal_simulator.*'" >&4
             ;;
+        (sys)
+            printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_CAN}/target_extension_can_socketcan.*'" >&4
+            ;;
     esac
 
     # add the standard driver directory sources for CAN
@@ -2708,8 +2711,8 @@ check_after_user_configuration()
             ;;
         (sys)
             case "$USE_TARGET_SYSTEM" in
-                (pc_linux | pc_win32 )
-                    echo_ "A selection of sys CAN_DRIVER is only applicable for embedded targets." 1>&2
+                (pc_win32 )
+                    echo_ "The sys CAN_DRIVER is not available for the Windows target." 1>&2
                     usage
                     exit 1
                     ;;

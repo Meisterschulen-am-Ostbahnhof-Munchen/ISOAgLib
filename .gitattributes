@@ -186,6 +186,7 @@ library/xgpl_src/IsoAgLib/hal/pc/can/msq_helper.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_msq.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_client_sock_hal_simulator.cpp -text
+library/xgpl_src/IsoAgLib/hal/pc/can/target_extension_can_socketcan.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.cpp -text
 library/xgpl_src/IsoAgLib/hal/pc/hal_simulator/hal_simulator_c.h -text
 library/xgpl_src/IsoAgLib/hal/pc/system/isoaglibthread_c.cpp -text
