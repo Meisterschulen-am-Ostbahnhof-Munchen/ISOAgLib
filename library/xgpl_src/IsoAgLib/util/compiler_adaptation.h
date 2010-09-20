@@ -28,7 +28,7 @@
    version for Tasking 7.56.
    The most problematic case is the mangled version of
    the class name for Process_c, which is derived from
-   SINGLETON_CLIENT2(Process_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c )
+   SINGLETON_CLIENT2_KEY(Process_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c )
    --> the last ProcIdent_c would be cut down to some number which
        can't be resolved for link-recompile-stage
    --> if on any other change of names, the Tasking 7.56 results in link

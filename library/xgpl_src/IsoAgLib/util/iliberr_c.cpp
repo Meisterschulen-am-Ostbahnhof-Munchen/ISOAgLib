@@ -53,14 +53,18 @@ bool iLibErr_c::init( void )
 iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 { }
 
-/** copy constructor which sets the error value to the err value of the source */
-iLibErr_c::iLibErr_c(const iLibErr_c& acrc_src)
-{
-  for (int i=0; i<AllErrLocations; i++)
-  { // copy all IsoaglibBitset for all locations!
-    errTypeAtLoc [i] = acrc_src.errTypeAtLoc [i];
+struct UpdateErrorObserver_s : public std::unary_function< iErrorObserver_c *, void > {
+  void operator()(iErrorObserver_c *pc_errorObserver) {
+    pc_errorObserver->error(mt_errorType, mt_errLocation);
   }
-}
+  UpdateErrorObserver_s(
+      iErrorObserver_c::ErrorType_t at_errorType,
+      iErrorObserver_c::ErrorLocation_t at_errLocation) :
+    mt_errorType(at_errorType),
+    mt_errLocation(at_errLocation) {}
+  iErrorObserver_c::ErrorType_t mt_errorType;
+  iErrorObserver_c::ErrorLocation_t mt_errLocation;
+};
 
 /** register an error
   * @param at_errType type of occured error
@@ -71,6 +75,8 @@ void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t at_errType, iLibErrLoca
   if ((at_errLocation != AllErrLocations) && (at_errType != AllErrTypes)) {
     errTypeAtLoc [at_errLocation].set (at_errType);
   }
+
+  std::for_each(c_arrClientC1.begin(), c_arrClientC1.end(), UpdateErrorObserver_s(at_errType, at_errLocation));
 
 #if DEBUG_REGISTERERROR
   static int32_t si32_nextDebug = 0;
@@ -88,7 +94,6 @@ void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t at_errType, iLibErrLoca
   }
 #endif
 }
-
 
 /**
   clear specific error information of a special location

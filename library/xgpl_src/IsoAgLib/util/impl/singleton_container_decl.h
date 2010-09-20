@@ -10,7 +10,7 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-  #if defined( GET_CL_DECL ) && defined( GET_K_DECL )
+#if defined( GET_CL_DECL )
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
@@ -19,6 +19,7 @@
     * this function is called within the destructor of the client instance
     */
   void gluemacs( unregister, GET_CL_DECL() )( GET_CL_DECL()* pc_client );
+#  if defined(GET_K_DECL)
   /** check if an instance is registered with the given Key
     * the instantiating class must have a operator==( K )
     * @param at_key key value to identify the searched entry
@@ -34,20 +35,21 @@
     * @return instance of the searched client instance
     */
   GET_CL_DECL()& gluemacs( get, GET_CL_DECL() ) ( GET_K_DECL() at_key );
+#  endif
 
   /** vector with pointers to registered client instances */
-	#ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
+#  ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
   STL_NAMESPACE::vector<GET_CL_DECL()*,MALLOC_TEMPLATE(GET_CL_DECL()*) > gluemacs( c_arrClient, GET_CL_DECL() );
   typedef typename STL_NAMESPACE::vector<GET_CL_DECL()*,MALLOC_TEMPLATE(GET_CL_DECL()*) >::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
 
-	#else
+#  else
   STL_NAMESPACE::vector<GET_CL_DECL()*> gluemacs( c_arrClient, GET_CL_DECL() );
   typedef typename STL_NAMESPACE::vector<GET_CL_DECL()*>::iterator gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t);
-	#endif
+#  endif
 
   gluemacs( gluemacs( cacheType, GET_CL_DECL() ), _t) gluemacs( pc_searchCache, GET_CL_DECL() );
 #endif
-#if defined( GET_CL_DEF ) && defined( GET_K_DEF )
+#if defined( GET_CL_DEF )
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
@@ -86,6 +88,7 @@ template<TEMPLATE_DECL> void CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( unregister, 
   }
 }
 
+#  if defined(GET_K_DEF)
 /** check if an instance is registered with the given Key
   * the instantiating class must have a operator==( K )
   * @param at_key key value to identify the searched entry
@@ -124,5 +127,6 @@ template<TEMPLATE_DECL> GET_CL_DEF()& CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( get
   // cache points now to searched item OR to default beginning
   return **gluemacs( pc_searchCache, GET_CL_DEF() );
 }
+#  endif
 
 #endif

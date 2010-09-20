@@ -39,7 +39,8 @@ namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 class Process_c;
-typedef SINGLETON_DERIVED_CLIENT2(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
+typedef SINGLETON_DERIVED_CLIENT2(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcDataRemoteBase_c) SingletonProcess_c;
+//old: typedef SINGLETON_DERIVED_CLIENT2_KEY(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
 
 /**
   Central managing instance for all process data

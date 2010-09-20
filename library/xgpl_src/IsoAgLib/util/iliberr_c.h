@@ -68,7 +68,9 @@ template <unsigned N> class IsoaglibBitset {
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
   class iLibErr_c;
-  typedef SINGLETON( iLibErr_c ) SingletonILibErr_c;
+  class iErrorObserver_c;
+  typedef SINGLETON_CLIENT1( iLibErr_c, iErrorObserver_c ) SingletonILibErr_c;
+  // old: typedef SINGLETON_CLIENT1_KEY( iLibErr_c, iErrorObserver_c, int ) SingletonILibErr_c;
 
   /** C-style function, to get access to the unique iLibErr_c singleton instance */
   iLibErr_c& getILibErrInstance( void );
@@ -145,6 +147,17 @@ public:
     * @param at_errLocation location of error
     */
   void registerError( iLibErrTypes_t at_errType, iLibErrLocations_t at_errLocation );
+
+  /** Attach an error observer.
+    * \param The observer to be attached.
+    * \return Success truth.
+    */
+  bool registerObserver( iErrorObserver_c &arc_observer );
+
+  /** Detach an error observer.
+    * \param The observer to be detached.
+    */
+  void deregisterObserver( iErrorObserver_c &arc_observer );
 
   /**
     clear all error information
@@ -240,6 +253,31 @@ private:
 
   IsoaglibBitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
 };
+
+class iErrorObserver_c {
+public:
+  typedef iLibErr_c::iLibErrTypes_en ErrorType_t;
+  typedef iLibErr_c::iLibErrLocations_en ErrorLocation_t;
+
+  virtual ~iErrorObserver_c() {}
+  void error( ErrorType_t at_errorType, ErrorLocation_t at_errorLocation ) {
+    onError( at_errorType, at_errorLocation );
+  }
+
+private:
+  virtual void onError( ErrorType_t at_errorType, ErrorLocation_t at_errorLocation ) = 0;    
+};
+
+inline bool iLibErr_c::registerObserver( iErrorObserver_c &arc_observer )
+{
+  return registerC1( &arc_observer );
+}
+
+inline void iLibErr_c::deregisterObserver( iErrorObserver_c &arc_observer )
+{
+  unregisterC1( &arc_observer );
+}
+
 
 } // end of namespace IsoAgLib
 
