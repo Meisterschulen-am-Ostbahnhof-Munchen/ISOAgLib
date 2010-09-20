@@ -122,7 +122,7 @@ void exit_with_usage(const char* progname)
   cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
   cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<endl;
   cout << "            ...'    17920  ....... '"<<endl;
-  cout << "JRF:        '101.5647,484910721,255,255,255,255,255,255,255,255'"<<endl;
+  cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<endl;
 #else
   cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
   cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
@@ -132,7 +132,7 @@ void exit_with_usage(const char* progname)
   cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<endl;
   cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
   cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<endl;
-  cout << "JRF:        '101.5647,484910721,255,255,255,255,255,255,255,255'"<<endl;
+  cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<endl;
 #endif
 
   exit(0);
@@ -401,7 +401,7 @@ int parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 1
 }
 
 
-int parseLogLineJrf() // "101.5647,484910721,255,255,255,255,255,255,255,255"
+int parseLogLineJrf() // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
 {
   string line;
   getline (ifs_in, line);
@@ -410,7 +410,7 @@ int parseLogLineJrf() // "101.5647,484910721,255,255,255,255,255,255,255,255"
 #endif
   int i1, i2, i3, i4, i5, i6, i7, i8, iB;
   float fA;
-  int parsed_count = sscanf (line.c_str(), "%f,%x,%i,%i,%i,%i,%i,%i,%i,%i", &fA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+  int parsed_count = sscanf (line.c_str(), "%f,%x,%x,%x,%x,%x,%x,%x,%x,%x", &fA, &iB, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
   can_time = uint64_t (fA*1000);
   can_id = iB;
   can_bytes = uint8_t(parsed_count-2);
