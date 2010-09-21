@@ -14,6 +14,7 @@
 #include "iliberr_c.h"
 #include "config.h"
 #include <IsoAgLib/hal/hal_system.h>
+#include <algorithm>
 
 
 #if DEBUG_REGISTERERROR
@@ -53,7 +54,7 @@ bool iLibErr_c::init( void )
 iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 { }
 
-struct UpdateErrorObserver_s : public std::unary_function< iErrorObserver_c *, void > {
+struct UpdateErrorObserver_s : public STL_NAMESPACE::unary_function< iErrorObserver_c *, void > {
   void operator()(iErrorObserver_c *pc_errorObserver) {
     pc_errorObserver->error(mt_errorType, mt_errLocation);
   }
@@ -76,7 +77,7 @@ void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t at_errType, iLibErrLoca
     errTypeAtLoc [at_errLocation].set (at_errType);
   }
 
-  std::for_each(c_arrClientC1.begin(), c_arrClientC1.end(), UpdateErrorObserver_s(at_errType, at_errLocation));
+  STL_NAMESPACE::for_each(c_arrClientC1.begin(), c_arrClientC1.end(), UpdateErrorObserver_s(at_errType, at_errLocation));
 
 #if DEBUG_REGISTERERROR
   static int32_t si32_nextDebug = 0;
