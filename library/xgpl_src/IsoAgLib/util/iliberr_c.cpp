@@ -15,7 +15,7 @@
 #include "config.h"
 #include <IsoAgLib/hal/hal_system.h>
 #include <algorithm>
-
+#include <functional>
 
 #if DEBUG_REGISTERERROR
 	#ifdef SYSTEM_PC
