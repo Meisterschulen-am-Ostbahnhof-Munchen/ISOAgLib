@@ -21,6 +21,8 @@
 // This feature (ISOAgLib in a thread) is only enabled if Mutual-Exclusion is enabled, too.
 #ifdef USE_MUTUAL_EXCLUSION
 
+// IsoAgLib
+#include <IsoAgLib/hal/hal_system.h>
 
 // system
 #include <pthread.h>
