@@ -13,9 +13,7 @@
 
 /*  TODO:
  *  @todo SocketCAN: think about implementation of global mask setup
- *  @todo SocketCAN: get rid of ugly debug print macros
- *  @todo SocketCAN: test with linux < 2.6.0
- *  @todo SocketCAN: implement getBusStatus function
+ *  @todo SocketCAN: implement netlink interface
  *  */
 
 #include <net/if.h>
@@ -36,27 +34,13 @@
 #define AF_CAN PF_CAN
 #endif
 
-
-/* prior to 2.5.x versions of socket theres a specific ioctrl for
- * setting the baudrate abailable. */
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-typedef uint32_t can_baudrate_t;
-#define SIOCSCANBAUDRATE (SIOCDEVPRIVATE+0)
-#endif
-
-//#define DEBUG_CAN 1
 #if DEBUG_CAN
-#  define DEBUG_PRINT_(args) do { printf args; fflush(0); } while (0)
+#define DEBUG_PRINT(...) \
+            fprintf(stderr, "%s(%d): ", __FUNCTION__, __LINE__ ); \
+            fprintf(stderr, __VA_ARGS__)
 #else
-#  define DEBUG_PRINT_(args)
+#  define DEBUG_PRINT(...)
 #endif
-
-#define DEBUG_PRINT(str) DEBUG_PRINT_((str))
-#define DEBUG_PRINT1(str,a) DEBUG_PRINT_((str,a))
-#define DEBUG_PRINT2(str,a,b) DEBUG_PRINT_((str,a,b))
-#define DEBUG_PRINT3(str,a,b,c) DEBUG_PRINT_((str,a,b,c))
-#define DEBUG_PRINT4(str,a,b,c,d) DEBUG_PRINT_((str,a,b,c,d))
-
 
 namespace __HAL {
 
@@ -125,11 +109,11 @@ namespace __HAL {
       @param bBusNumber channel number: results in interface name can<number>
       @param wGlobMask unused
       @param dwGlobMaskLastmsg unused
-      @param wBitrate bitrate to set for channel
+      @param wBitrate bitrate to set for channel: not yet implemented
   */
-  int16_t init_can( uint8_t bBusNumber, uint16_t wGlobMask, uint32_t dwGlobMask, uint32_t dwGlobMaskLastmsg, uint16_t wBitrate ) {
+  int16_t init_can( uint8_t bBusNumber, uint16_t wGlobMask, uint32_t dwGlobMask, uint32_t dwGlobMaskLastmsg, uint16_t ) {
 
-    DEBUG_PRINT2( "init_can bus: %d bitrate: %d\n", bBusNumber, wBitrate );
+    DEBUG_PRINT( "init_can bus: %d\n", bBusNumber );
 
     // argument check
     if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
@@ -138,9 +122,7 @@ namespace __HAL {
 
     if ( ! gsvec_canBus[ bBusNumber ].mb_busUsed ) {
 
-      ( void )wBitrate; // not used for Kernel >= 2.6.
-
-      DEBUG_PRINT1( "init_can bus: %d\n", bBusNumber );
+      DEBUG_PRINT( "init_can bus: %d\n", bBusNumber );
 
       char fname[32];
       sprintf( fname, "can%u", bBusNumber );
@@ -152,7 +134,7 @@ namespace __HAL {
         return HAL_CONFIG_ERR;
       }
 
-      DEBUG_PRINT3( "init_can: bus: %d fname: %s m_handle: %x\n", bBusNumber, fname, m_handle );
+      DEBUG_PRINT( "init_can: bus: %d fname: %s m_handle: %x\n", bBusNumber, fname, m_handle );
 
       // get the interface
       struct ifreq ifr;
@@ -165,22 +147,6 @@ namespace __HAL {
         return HAL_CONFIG_ERR;
       }
 
-// Setting of Bitrate not possible in >= 2.6. Kernel version
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0)
-      // Set the baudrate.  Must be set before first use
-      struct ifreq ifr_baudrate;   // Use different structure for setting the baud rate as the ioctls
-      // overwrite the structure
-      strcpy( ifr_baudrate.ifr_name, fname );
-      can_baudrate_t *baudrate = ( can_baudrate_t * ) & ifr_baudrate.ifr_ifru;
-      *baudrate = wBitrate * 1000;
-      int baud_ret = ioctl( m_handle, SIOCSCANBAUDRATE, &ifr_baudrate );
-      DEBUG_PRINT1( "init_can: baud_ret: %d ", baud_ret );
-      if ( baud_ret < 0 ) {
-        perror( "SIOCSCANBAUDRATE" );
-        setHandleForBus( bBusNumber, 0 );
-        return HAL_CONFIG_ERR;
-      }
-#endif
       // bind to the socket
       struct sockaddr_can addr;
       addr.can_family = AF_CAN;
@@ -253,7 +219,7 @@ namespace __HAL {
    */
   int16_t closeCan( uint8_t bBusNumber ) {
 
-    DEBUG_PRINT1( "closeCan bus: %d\n", bBusNumber );
+    DEBUG_PRINT( "closeCan bus: %d\n", bBusNumber );
 
     // argument check
     if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
@@ -284,7 +250,7 @@ namespace __HAL {
     */
   int16_t getCanBusStatus( uint8_t bBusNumber, tCanBusStatus* /* ptStatus */ ) {
     ( void )bBusNumber;
-    DEBUG_PRINT1( "getCanBusStatus bus: %d\n", bBusNumber );
+    DEBUG_PRINT( "getCanBusStatus bus: %d\n", bBusNumber );
     return HAL_NO_ERR;
   }
 
@@ -292,7 +258,7 @@ namespace __HAL {
   /** configure a msg object (in this enh.can-hal-case FilterBox!) - data is used during rx for consistency checks only */
   int16_t configCanObj( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptConfig ) {
 
-    DEBUG_PRINT2( "configCanObj bus: %d obj: %d\n", bBusNumber, bMsgObj );
+    DEBUG_PRINT( "configCanObj bus: %d obj: %d\n", bBusNumber, bMsgObj );
 
     if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
       return HAL_RANGE_ERR;
@@ -317,7 +283,7 @@ namespace __HAL {
 
   /** close a msg object - data is used during rx for consistency checks only */
   int16_t closeCanObj( uint8_t bBusNumber, uint8_t bMsgObj ) {
-    DEBUG_PRINT2( "closeCanObj bus: %d obj: %d\n", bBusNumber, bMsgObj );
+    DEBUG_PRINT( "closeCanObj bus: %d obj: %d\n", bBusNumber, bMsgObj );
 
     if (( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
@@ -338,7 +304,7 @@ namespace __HAL {
   /** reconfigure a msg object - data is used during rx for consistency checks only */
   int16_t chgCanObjId( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32_t mask, uint8_t bXtd ) {
 
-    DEBUG_PRINT2( "chgCanObjId bus: %d obj: %d\n", bBusNumber, bMsgObj );
+    DEBUG_PRINT( "chgCanObjId bus: %d obj: %d\n", bBusNumber, bMsgObj );
     if (( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
 
     gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].b_canObjConfigured = TRUE;
@@ -360,7 +326,7 @@ namespace __HAL {
             HAL_RANGE_ERR == wrong BUS or MsgObj number
          */
   int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock ) {
-    DEBUG_PRINT3( "lockCanObj bus: %d obj: %d lock: %d\n", aui8_busNr, aui8_msgobjNr, ab_doLock );
+    DEBUG_PRINT( "lockCanObj bus: %d obj: %d lock: %d\n", aui8_busNr, aui8_msgobjNr, ab_doLock );
 
     if (( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) {
       return HAL_RANGE_ERR;
@@ -378,7 +344,7 @@ namespace __HAL {
     @return true -> MsgObj is currently locked
   */
   bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
-    DEBUG_PRINT2( "getCanMsgObjLocked bus: %d obj: %d\n", aui8_busNr, aui8_msgobjNr );
+    DEBUG_PRINT( "getCanMsgObjLocked bus: %d obj: %d\n", aui8_busNr, aui8_msgobjNr );
 
     if (( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
 
@@ -392,11 +358,8 @@ namespace __HAL {
     @param aui8_msgobjNr number of the MsgObj to check
   */
   int16_t clearCanObjBuf( uint8_t bBusNumber, uint8_t aui8_msgObjNr ) {
-#if DEBUG_CAN
-    DEBUG_PRINT2( "clearCanObjBuf bus: %d obj: %d\n", bBusNumber, aui8_msgObjNr );
-#else
     ( void )aui8_msgObjNr;
-#endif
+    DEBUG_PRINT( "clearCanObjBuf bus: %d obj: %d\n", bBusNumber, aui8_msgObjNr );
 
     if (( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) {
       return HAL_RANGE_ERR;
@@ -416,7 +379,7 @@ namespace __HAL {
   }
 
   int16_t getCanMsgBufCount( uint8_t bBusNumber, uint8_t bMsgObj ) {
-    DEBUG_PRINT2( "getCanMsgBufCount %d %d\n", bBusNumber, bMsgObj );
+    DEBUG_PRINT( "getCanMsgBufCount %d %d\n", bBusNumber, bMsgObj );
     if ( gsvec_canBus[ bBusNumber ].mvec_msgObj.size() >= bMsgObj ) {
       return 1; /*  TODO */
     }
@@ -598,11 +561,11 @@ namespace __HAL {
     memcpy( ptReceive->abData, frame.data, frame.can_dlc );
 
 #if DEBUG_CAN
-    DEBUG_PRINT2( "%012ld rx: %02x#", getTime(), ptReceive->dwId );
+    DEBUG_PRINT( "%012ld rx: %02x#", getTime(), ptReceive->dwId );
     for ( unsigned i = 0; i < frame.can_dlc; ++i ) {
-      DEBUG_PRINT1( "%02x", ptReceive->abData[ i ] );
+      fprintf( stderr, "%02x", ptReceive->abData[ i ] );
     }
-    DEBUG_PRINT( "\n" );
+    fprintf( stderr, "\n" );
 #endif
 
     return HAL_NO_ERR;
@@ -612,14 +575,14 @@ namespace __HAL {
 
   int16_t sendCanMsg( uint8_t bBusNumber, uint8_t, tSend* ptSend ) {
 
-    DEBUG_PRINT1( "sendCanMsg bus: %d\n", bBusNumber );
+    DEBUG_PRINT( "sendCanMsg bus: %d\n", bBusNumber );
 
 #if DEBUG_CAN
-    DEBUG_PRINT2( "%012ld tx: %x#", getTime(), ptSend->dwId );
+    DEBUG_PRINT( "%012ld tx: %x#", getTime(), ptSend->dwId );
     for ( unsigned i = 0; i < ptSend->bDlc; ++i ) {
-      DEBUG_PRINT1( "%02x", ptSend->abData[ i ] );
+      fprintf( stderr, "%02x", ptSend->abData[ i ] );
     }
-    DEBUG_PRINT( "\n" );
+    fprintf( stderr, "\n" );
 #endif
 
     static struct can_frame frame;
