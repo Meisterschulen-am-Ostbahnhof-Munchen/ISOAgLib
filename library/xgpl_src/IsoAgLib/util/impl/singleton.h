@@ -49,7 +49,7 @@
     * from PRT_INSTANCE_CNT
     */
 #  if IS_KEY_FOR_SINGLETON_CONTAINER
-#  define SINGLETON_CLIENT1_KEY( CLASS, CLIENT1, KEY1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1>
+#    define SINGLETON_CLIENT1_KEY( CLASS, CLIENT1, KEY1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1>
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -108,7 +108,7 @@
 #    define SINGLETON_DERIVED_CLIENT3( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonDerivedVecCont3<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
 #  else//IS_KEY_FOR_SINGLETON_CONTAINER
-#  define SINGLETON_CLIENT1( CLASS, CLIENT1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1>
+#    define SINGLETON_CLIENT1( CLASS, CLIENT1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1>
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during

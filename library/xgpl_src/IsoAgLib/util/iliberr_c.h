@@ -149,13 +149,13 @@ public:
   void registerError( iLibErrTypes_t at_errType, iLibErrLocations_t at_errLocation );
 
   /** Attach an error observer.
-    * \param The observer to be attached.
-    * \return Success truth.
+    * @param The observer to be attached.
+    * @return Success truth.
     */
   bool registerObserver( iErrorObserver_c &arc_observer );
 
   /** Detach an error observer.
-    * \param The observer to be detached.
+    * @param The observer to be detached.
     */
   void deregisterObserver( iErrorObserver_c &arc_observer );
 
