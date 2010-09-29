@@ -930,36 +930,33 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
             //test if attrWS_identity_number is composed from a function or from an hexadecimal number
             bool b_test = checkifnumber(vecstr_attrString [attrWS_identity_number].c_str());
 
-            if (b_test) {
-
-            //alle Attribute zum Workingset_mastername zusammensetzen
-            c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
-                          stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
-                          stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
-                          stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
-                          stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
-                          stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
-                          stringtonumber(vecstr_attrString [attrWS_identity_number].c_str(), 21, attrWS_identity_number),
-                          stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
-                          stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
+            if (b_test)
+            { //alle Attribute zum Workingset_mastername zusammensetzen
+              c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
+                            stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
+                            stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
+                            stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
+                            stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
+                            stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
+                            stringtonumber(vecstr_attrString [attrWS_identity_number].c_str(), 21, attrWS_identity_number),
+                            stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
+                            stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
             }
             else
-            {
-            //alle Attribute zum Workingset_mastername zusammensetzen
-                  c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
-                                stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
-                                stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
-                                stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
-                                stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
-                                stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
-                                0,
-                                stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
-                                stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
-
+            { //alle Attribute zum Workingset_mastername zusammensetzen
+              c_isoname.set(booltoi(vecstr_attrString [attrSelf_conf].c_str()),
+                            stringtonumber(vecstr_attrString [attrIndustry_group].c_str(), 3, attrIndustry_group),
+                            stringtonumber(vecstr_attrString [attrDevice_class].c_str(), 7, attrDevice_class),
+                            stringtonumber(vecstr_attrString [attrDevice_class_instance].c_str(), 4, attrDevice_class_instance),
+                            stringtonumber(vecstr_attrString [attrFunction].c_str(), 8, attrFunction),
+                            stringtonumber(vecstr_attrString [attrManufacturer_code].c_str(), 11, attrManufacturer_code),
+                            0,
+                            stringtonumber(vecstr_attrString [attrFunc_Inst].c_str(), 5, attrFunc_Inst),
+                            stringtonumber(vecstr_attrString [attrECU_Inst].c_str(), 3, attrECU_Inst));
             }
           }
           else
-          {
+          { // MasterNAME given
             for (i=0; i<vecstr_attrString[attrWorkingset_mastername].size(); i++)
             {
               vecstr_attrString[attrWorkingset_mastername][i] = tolower(vecstr_attrString[attrWorkingset_mastername][i]);
@@ -1002,6 +999,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
             }
             c_isoname.inputString(pui8_tempName);
           }
+          /// Now c_isoname is put together - one way or the other!
 
           languageCmdCode[0] = vecstr_attrString[attrLocalization_label][0];
           languageCmdCode[1] = vecstr_attrString[attrLocalization_label][1];
@@ -1089,6 +1087,17 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
           fprintf(partFileA, "%s", buffer.str().c_str());
           buffer.str("");
           bool b_test = checkifnumber(vecstr_attrString [attrWS_identity_number].c_str());
+
+          if (b_test)
+            fprintf (partFileB, "IsoAgLib::iIsoName_c c_myIsoName (%s, 0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x);\n\n",
+                  c_isoname.selfConf() ? "true" : "false", c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(),
+                  c_isoname.func(), c_isoname.manufCode(), c_isoname.serNo(), c_isoname.funcInst(), c_isoname.ecuInst());
+          else
+            fprintf (partFileB, "IsoAgLib::iIsoName_c c_myIsoName (%s, 0x%x, 0x%x, %d, 0x%x, 0x%x, %s, 0x%x, 0x%x);\n\n",
+                  c_isoname.selfConf() ? "true" : "false", c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(),
+                  c_isoname.func(), c_isoname.manufCode(), vecstr_attrString [attrWS_identity_number].c_str(), c_isoname.funcInst(), c_isoname.ecuInst());
+#if 0
+          /// This is the old version where we've been writing out an iIdentItem_c.
           if (b_test)
             fprintf(partFileB, "IsoAgLib::iIdentItem_c c_myIdent(0x%x, 0x%x, %d, 0x%x, 0x%x, 0x%x, 0x%x, 0x%x, %d,%d,%s\n #ifdef USE_WORKING_SET \n , 0, NULL\n #endif\n);\n\n",
                   c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
@@ -1099,6 +1108,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
                     c_isoname.indGroup(), c_isoname.devClass(), c_isoname.devClassInst(), c_isoname.func(),
                     c_isoname.manufCode(), vecstr_attrString [attrWS_identity_number].c_str(), atoi(vecstr_attrString[attrWanted_SA].c_str()), stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1),
                     c_isoname.funcInst(), c_isoname.ecuInst(),c_isoname.selfConf()? "true" : "false");
+#endif
         }
         break;
 
@@ -1362,8 +1372,7 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
 
         b_dpdCombination = FALSE;
 
-        fprintf(partFileB, "c_myIdent.isoName(), &c_myIdent.isoName(), %s",
-                vecstr_constructor[1].c_str());
+        fprintf(partFileB, "c_myIsoName, &c_myIsoName, %s", vecstr_constructor[1].c_str());
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf(partFileB, "\n#endif\n");
