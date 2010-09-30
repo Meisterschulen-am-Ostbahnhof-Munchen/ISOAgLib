@@ -14,8 +14,9 @@
 
 /* include headers for the needed drivers */
 #include <IsoAgLib/driver/system/isystem_c.h>
-#include <IsoAgLib/driver/can/icanio_c.h>
-#include <IsoAgLib/driver/can/icanpkg_c.h>
+#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
+#include <IsoAgLib/scheduler/ischeduler_c.h>
 
 #ifdef WIN32
 #include <windows.h>
@@ -158,6 +159,7 @@ void cmdline_c::usage_and_exit (int ai_errorCode) const
 
 
 using namespace IsoAgLib;
+using namespace __IsoAgLib;
 
 int main( int argc, char *argv[] )
 {
@@ -171,16 +173,19 @@ int main( int argc, char *argv[] )
   for (int i=0; i<params.i_databytes; i++) printf (" %02x", params.pui8_databytes[i]);
   printf ("\n");
 
-  // Initialize CAN-Bus
-  getIcanInstance().init (params.i_channel); // CAN-Bus (with defaulting 250 kbit)
+  // Initialize ISOAgLib
+  getISchedulerInstance().init();
 
-  iCanPkg_c pkg;
+  // Initialize CAN-Bus
+  getCanInstance().init (params.i_channel, 250, Ident_c::ExtendedIdent); // CAN-Bus (with defaulting 250 kbit)
+
+  CanPkg_c pkg;
 
   pkg.setIdent(params.i_id, (params.b_ext ? iIdent_c::ExtendedIdent : iIdent_c::StandardIdent));
   pkg.setDataFromString(0, params.pui8_databytes, params.i_databytes);
 
   for( int i = 0; i < params.i_repeat; ++i ) {
-    getIcanInstance() << pkg;
+    getCanInstance() << pkg;
     if( params.i_period && ( 1 != params.i_repeat ) ) {
 #ifdef WIN32
       Sleep ( params.i_period ); // won't be too accurate though due to bad Windows Sleep-capability.
