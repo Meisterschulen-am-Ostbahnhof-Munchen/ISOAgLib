@@ -19,28 +19,13 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique SensorI_c singleton instance */
 SensorI_c& getSensorInstance( void ) { return SensorI_c::instance();};
 
-/**
-  initialisation for the sensor input management which sets the allowed number
-  ranges for analog,digital,counter input channels.
-  As the constructor is often not called for static instances, the init function
-  is used by the Singleton base class, to set the unique instance in a well defined
-  initial state
 
-  possible errors:
-      * iLibErr_c::Range given limits are not possible
-  @param ab_digitalFirst smallest allowed digital input channel number (DIGITAL_INPUT_MIN)
-  @param ab_digitalLast greatest allowed digital input channel number (DIGITAL_INPUT_MAX)
-  @param ab_analogFirst smallest allowed analog input channel number (ANALOG_INPUT_MIN)
-  @param ab_analogLast greatest allowed analog input channel number (ANALOG_INPUT_MAX)
-  @param ab_counterFirst smallest allowed counter input channel number (COUNTER_INPUT_MIN)
-  @param ab_counterLast greatest allowed counter input channel number (COUNTER_INPUT_MAX)
-  @see isoaglib_config.h
-*/
-void SensorI_c::init(uint8_t ab_digitalFirst, uint8_t ab_digitalLast, uint8_t ab_analogFirst, uint8_t ab_analogLast,
-           uint8_t ab_counterFirst, uint8_t ab_counterLast)
+void
+SensorI_c::init(
+  uint8_t ab_digitalFirst, uint8_t ab_digitalLast,
+  uint8_t ab_analogFirst,  uint8_t ab_analogLast,
+  uint8_t ab_counterFirst, uint8_t ab_counterLast)
 { // store the channel limits for dig and analog
-  // verify that System is int
-  getSystemInstance().init();
   setDigitalLimits(ab_digitalFirst, ab_digitalLast);
   setAnalogLimits(ab_analogFirst, ab_analogLast);
   setCounterLimits(ab_counterFirst, ab_counterLast);

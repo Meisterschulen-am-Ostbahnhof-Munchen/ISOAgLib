@@ -286,7 +286,8 @@ public:
   const iIsoName_c& getISONameForDA() { return CanPkgExt_c::getISONameForDA().toConstIisoName_c(); }
 
 private:
-  friend class iCanIo_c;
+  friend class iIsoBus_c;
+  friend class iProprietaryBus_c;
   friend class iCanCustomer_c;
   friend class iSchedulerTask_c;
 };

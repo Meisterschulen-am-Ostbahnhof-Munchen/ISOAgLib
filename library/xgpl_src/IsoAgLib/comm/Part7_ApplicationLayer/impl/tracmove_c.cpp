@@ -14,14 +14,14 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include "tracmove_c.h"
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
 #endif
-#include "tracmove_c.h"
-
 #include <IsoAgLib/util/impl/util_funcs.h>
+
 
 #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
@@ -52,30 +52,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   };
   #endif
 
-/** initialize directly after the singleton instance is created.
-  this is called from singleton.h and should NOT be called from the user again.
-  users please use init(...) instead.
-*/
-void TracMove_c::singletonInit()
-{ // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
-  // singleton vec key - this key value is NOT available at construction time!!!
-  BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
-}
-
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  void TracMove_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
-  {
-    //call init for handling which is base data independent
-    BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
-  };
 
   /** config the TracMove_c object after init -> set pointer to isoName and
       config send/receive of a moving msg type
@@ -187,7 +163,7 @@ void TracMove_c::singletonInit()
   void TracMove_c::checkCreateReceiveFilter()
   {
     IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CanIo_c &c_can = getCanInstance4Comm();
+    IsoBus_c &c_can = getIsoBusInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -285,7 +261,7 @@ void TracMove_c::singletonInit()
             //decide if ground based speed is actually the best available speed
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::GroundBasedSpeed )
-                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000) )
+                || ( (testTimeOutdatedSpeed >= getTimeOut()) && (testTimeOutdatedSpeed < (getTimeOut()+1000u)) )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
@@ -295,7 +271,7 @@ void TracMove_c::singletonInit()
             //if ground based dist and direction is actually the best available
             if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::GroundBasedDistDirec )
-                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000) )
+                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000u) )
                  )
                )
             { // distance information is usable and the current selected distance is at least not better or outdated
@@ -321,7 +297,7 @@ void TracMove_c::singletonInit()
             #endif
             if ( ( b_usableSpeed ) &&
                  ( ( mt_speedSource <= IsoAgLib::WheelBasedSpeed )
-                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000) )
+                || ( testTimeOutdatedSpeed >= getTimeOut() && testTimeOutdatedSpeed < (getTimeOut()+1000u) )
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
@@ -329,7 +305,7 @@ void TracMove_c::singletonInit()
             }
             if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
-                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000) )
+                || ( testTimeOutdatedDist >= getTimeOut() && testTimeOutdatedDist < (getTimeOut()+1000u) )
                  )
                )
             { // distance information is usable and the current selected distance is at least not better or outdated
@@ -529,7 +505,7 @@ void TracMove_c::singletonInit()
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
 
@@ -557,7 +533,7 @@ void TracMove_c::singletonInit()
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
 
@@ -580,10 +556,10 @@ void TracMove_c::singletonInit()
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
-  
+
   TracMove_c::SendMessage_e TracMove_c::sendEngineSpeed()
   {
     if (!canSendEngineSpeed())
@@ -608,7 +584,7 @@ void TracMove_c::singletonInit()
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
 
@@ -625,10 +601,11 @@ void TracMove_c::singletonInit()
   }
 
 
-///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
 const char*
 TracMove_c::getTaskName() const
-{   return "TracMove_c"; }
+{ return "TracMove_c"; }
+#endif
 
 bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
 {

@@ -57,8 +57,9 @@ class FsCommand_c : CanCustomer_c
 
   private:
     virtual bool timeEvent() { return mrt_owner.timeEvent(); }
-    virtual void close() {}
+#if DEBUG_SCHEDULER
     virtual const char *getTaskName() const { return "FsCommand_c\n"; }
+#endif
 
     // SchedulerTaskProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.

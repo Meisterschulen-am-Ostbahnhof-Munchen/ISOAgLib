@@ -12,7 +12,7 @@
 */
 #include "isofilterbox_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 
 namespace __IsoAgLib {
 
@@ -83,10 +83,9 @@ IsoFilterBox_c::updateOnAdd()
       else return false; // can't create the filter - IsoName not claimed on the bus!
     }
 
-    mpc_filterBox = getCanInstance4Comm().insertFilter (*ms_isoFilter.mpc_canCustomer,
-                                                        c_mask.ident(), c_filter.ident(),
-                                                        false, c_filter.identType(),
-                                                        ms_isoFilter.mi8_dlcForce);
+    mpc_filterBox = getIsoBusInstance4Comm().insertFilter (*ms_isoFilter.mpc_canCustomer,
+                                                           c_mask.ident(), c_filter.ident(),
+                                                           false, ms_isoFilter.mi8_dlcForce);
     mc_adaptedIdentMask = c_mask;
     mc_adaptedIdentFilter = c_filter;
     return true;
@@ -106,10 +105,9 @@ IsoFilterBox_c::updateOnRemove (const IsoName_c* apc_isoName)
          ||
          (ms_isoFilter.mc_isoNameDa == *apc_isoName) )
     {
-      getCanInstance4Comm().deleteFilter (*ms_isoFilter.mpc_canCustomer,
-                                           mc_adaptedIdentMask.ident(),
-                                           mc_adaptedIdentFilter.ident(),
-                                           ms_isoFilter.mc_identMask.identType());
+      getIsoBusInstance4Comm().deleteFilter (*ms_isoFilter.mpc_canCustomer,
+                                             mc_adaptedIdentMask.ident(),
+                                             mc_adaptedIdentFilter.ident());
       mpc_filterBox = NULL;
     }
   }

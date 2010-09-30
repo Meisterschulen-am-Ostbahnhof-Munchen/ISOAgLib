@@ -48,8 +48,7 @@ public:
   /** initialisation for IsoFilterManager_c */
   void init();
 
-  /** default destructor which has nothing to do */
-  ~IsoFilterManager_c ();
+  ~IsoFilterManager_c () {}
 
   bool existIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
@@ -61,8 +60,10 @@ public:
   IsoFilterManager_c (void);
 
   virtual bool timeEvent( void );
-  virtual void close( void );
+  void close( void );
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
 
 private:
@@ -99,11 +100,6 @@ private:
 
   // Private methods
 
-  /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead. */
-  void singletonInit ();
-
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
    * @param acrc_isoItem reference to the (const) IsoItem which is changed (by existance or state)
@@ -111,13 +107,10 @@ private:
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
 private: // Private attributes
-  /// holds all
-
   IsoFilterBox_vec mvec_isoFilterBox;
 
   friend class SINGLETON_DERIVED (IsoFilterManager_c,Scheduler_Task_c);
 
-  bool mb_alreadyInitialized;
   Handler_t mt_handler;
 };
 

@@ -16,7 +16,7 @@
 
 // IsoAgLib
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include <IsoAgLib/util/iassert.h>
@@ -99,8 +99,8 @@ MultiReceiveClientWrapper_s::start()
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    if (!getCanInstance4Comm().existFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent))
-      getCanInstance4Comm().insertFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), true, Ident_c::ExtendedIdent, 8);
+    if (!getIsoBusInstance4Comm().existFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8)))
+      getIsoBusInstance4Comm().insertFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), true, 8);
   }
   #endif
 }
@@ -112,7 +112,7 @@ MultiReceiveClientWrapper_s::stop()
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    __IsoAgLib::getCanInstance4Comm().deleteFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), __IsoAgLib::Ident_c::ExtendedIdent);
+    __IsoAgLib::getIsoBusInstance4Comm().deleteFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8));
   }
   #endif
 }
@@ -129,13 +129,6 @@ MultiReceive_c::MultiReceive_c()
   , mt_handler(*this)
   , mt_customer(*this)
 {
-}
-
-
-// d'tor
-MultiReceive_c::~MultiReceive_c()
-{
-  close();
 }
 
 
@@ -1100,7 +1093,7 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
   }
 
   // send message
-  __IsoAgLib::getCanInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
 }
 
 
@@ -1126,7 +1119,7 @@ MultiReceive_c::sendConnAbort (const ReceiveStreamIdentifier_c &arcc_rsi)
   #if DEBUG_MULTIRECEIVE
   INTERNAL_DEBUG_DEVICE << "Sending out ConnAbort!" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-  __IsoAgLib::getCanInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
 }
 
 
@@ -1190,17 +1183,7 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
   }
 
   // send message
-  __IsoAgLib::getCanInstance4Comm() << mc_data;
-}
-
-
-
-void
-MultiReceive_c::singletonInit()
-{
-  mc_data.setSingletonKey( getSingletonVecKey() );
-  setAlreadyClosed(); // so init() will perform once!
-  init();
+  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
 }
 
 
@@ -1209,19 +1192,18 @@ MultiReceive_c::init()
 {
   if ( checkAlreadyClosed() )
   {
-    // clear state of b_alreadyClosed, so that close() is called one time
     clearAlreadyClosed();
-    // register in Scheduler_c to get timeEvents
+    mc_data.setSingletonKey( getSingletonVecKey() );
+
     getSchedulerInstance().registerClient( this );
-    // register to get ISO monitor list changes
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
     // insert receive filters for broadcasted TP
-    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, false, __IsoAgLib::Ident_c::ExtendedIdent, 8);
-    getCanInstance4Comm().reconfigureMsgObj();
+    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, false, 8);
+    getIsoBusInstance4Comm().reconfigureMsgObj();
 
     setTimePeriod (5000); // nothing to do per default!
   }
@@ -1232,19 +1214,17 @@ void
 MultiReceive_c::close( void )
 {
   if ( ! checkAlreadyClosed() )
-  {
-    // avoid another call
+  { // avoid another call
     setAlreadyClosed();
-    // deregister in Scheduler_c to get no more timeEvents
+
     getSchedulerInstance().unregisterClient( this );
-    // deregister to get no more IsoMonitorList changes
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
     // remove receive filters for broadcasted TP
-    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, __IsoAgLib::Ident_c::ExtendedIdent);
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8);
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8);
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8);
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8);
 
     mlist_streams.clear();
     mlist_clients.clear();
@@ -1423,11 +1403,11 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIt
 }
 
 
-///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
 const char*
 MultiReceive_c::getTaskName() const
 { return "MultiReceive_c"; }
-
+#endif
 
 
 } // end namespace __IsoAgLib

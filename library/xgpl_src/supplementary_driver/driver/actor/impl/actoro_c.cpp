@@ -22,25 +22,13 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique ActorO_c singleton instance */
 ActorO_c& getActorInstance( void ) { return ActorO_c::instance();};
 
-/**
-  initialisation for the actor output management which sets the allowed number
-  ranges for digital ouput channels.
-  As the constructor is often not called for static instances, the init function
-  is used by the Singleton base class, to set the unique instance in a well defined
-  initial state
 
-  possible errors:
-      * Err_c::range given limits are not possible
-  @param ab_digitalFirst smallest allowed digital output channel number (DIGITAL_OUTPUT_MIN)
-  @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
-  @see masterHeader
-*/
-void ActorO_c::init(uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
+void
+ActorO_c::init (uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
 { // store the channel limits for dig and analog
-  // verify that System is int
-  getSystemInstance().init();
   setDigitalLimits(ab_digitalFirst, ab_digitalLast);
 }
+
 
 /** destructor for the actor output manager object */
 ActorO_c::~ActorO_c(){

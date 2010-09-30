@@ -72,7 +72,7 @@ public:
         _8_O_1 = 0x41, _8_O_2 = 0x42, _8_N_1 = 0x51, _8_N_2 = 0x52};
 
   /** destructor has nothing to destruct */
-  ~RS232IO_c();
+  ~RS232IO_c() {}
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ RS232 managing operations ++++
@@ -113,7 +113,7 @@ public:
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void ){};
+  void close( void );
 
   /**
     set the baudrate to a new value
@@ -407,13 +407,6 @@ private: //Private methods
     * ---> DEFAULT VALUES FOR RS2332 NOT YET INITIALIZED!!!! <---
     */
   RS232IO_c( void );
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
   /**
     read a token (eat whitespace in front of, end stop before next whitespace or at end og buf)

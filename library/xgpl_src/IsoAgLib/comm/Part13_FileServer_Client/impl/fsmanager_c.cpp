@@ -118,27 +118,24 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemM
 }
 
 
-/**
-  * Initializes the fileserver manager. The manager is registered to the time-scheduler, the SAClaimHandler.
-  */
 void
-FsManager_c::singletonInit()
+FsManager_c::init()
 {
-  // register in Scheduler_c to get time-events
-  getSchedulerInstance().registerClient(this);
-  // register to get ISO monitor list changes
-  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
+  if (checkAlreadyClosed())
+  {
+    clearAlreadyClosed();
+
+    getSchedulerInstance().registerClient(this);
+    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
+  }
 }
 
+
+#if DEBUG_SCHEDULER
 const char* FsManager_c::getTaskName() const
-{
-  return "FsManager_c\n";
-}
+{ return "FsManager_c\n"; }
+#endif
 
-FsManager_c::~FsManager_c()
-{
-  close();
-}
 
 FsManager_c::FsManager_c()
   : mc_saClaimHandler(*this)
@@ -188,18 +185,20 @@ struct delete_object
 };
 
 
-/** function used to destroy the object FsManager_c */
 void
 FsManager_c::close()
 {
-  // deregister in Scheduler_c
-  getSchedulerInstance().unregisterClient(this);
-  // deregister in ISOMonitor_c
-  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
+  if (!checkAlreadyClosed ())
+  {
+    setAlreadyClosed();
 
-  std::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
-  std::for_each( v_communications.begin(), v_communications.end(), delete_object());
-  std::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
+    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
+    getSchedulerInstance().unregisterClient(this);
+
+    std::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
+    std::for_each( v_communications.begin(), v_communications.end(), delete_object());
+    std::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
+  }
 }
 
 

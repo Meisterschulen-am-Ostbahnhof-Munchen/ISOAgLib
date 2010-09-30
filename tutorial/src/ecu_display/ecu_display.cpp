@@ -13,8 +13,10 @@
 #include "component_timepos.h"
 
 // IsoAgLib
-#include <IsoAgLib/driver/can/icanio_c.h>
+#include <IsoAgLib/comm/iisobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
+
 
 IsoAgLib::iIdentItem_c* p_ident;
 IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display;
@@ -46,7 +48,7 @@ bool ecuMain() {
     return false;
   }
 
-  if ( ! IsoAgLib::getIcanInstance().init( IsoAgLibTutorial::scui_isoBusNumber ) ) {
+  if ( ! IsoAgLib::getIIsoBusInstance().init (IsoAgLibTutorial::scui_isoBusNumber) ) {
     return false;
   }
 
@@ -78,6 +80,10 @@ bool ecuMain() {
       .setBit (IsoAgLib::CertificationMinEcu),
     8); // dummy reference number
 
+  if ( ! IsoAgLib::getIisoMonitorInstance().registerIdentItem( *p_ident ) ) {
+    return false;
+  }
+
   p_display->init( *p_ident );
   p_tecu->init( p_ident );
   p_timepos->init( p_ident );
@@ -97,7 +103,12 @@ bool ecuShutdown() {
   delete p_display;
   delete p_tecu;
   delete p_timepos;
+
+  IsoAgLib::getIisoMonitorInstance().deregisterIdentItem( *p_ident );
+
   delete p_ident;
+
+  IsoAgLib::getIIsoBusInstance().close();
 
   return true;
 }

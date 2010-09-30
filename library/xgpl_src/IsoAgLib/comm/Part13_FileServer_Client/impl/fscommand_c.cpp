@@ -17,7 +17,7 @@
 #include "fsclientservercommunication_c.h"
 
 // ISOAgLib
-#include <IsoAgLib/driver/can/icanio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 
@@ -309,7 +309,7 @@ FsCommand_c::timeEvent(void)
                               pui8_maintenanceBuffer[3], pui8_maintenanceBuffer[4], pui8_maintenanceBuffer[5],
                               pui8_maintenanceBuffer[6], pui8_maintenanceBuffer[7]);
 
-      getCanInstance4Comm() << canpkgext;
+      getIsoBusInstance4Comm() << canpkgext;
       i32_lastAliveSent = HAL::getTime();
     }
   }
@@ -709,7 +709,7 @@ FsCommand_c::sendSinglePacket()
     pui8_sendBuffer[0], pui8_sendBuffer[1], pui8_sendBuffer[2], pui8_sendBuffer[3],
     pui8_sendBuffer[4], pui8_sendBuffer[5], pui8_sendBuffer[6], pui8_sendBuffer[7]);
 
-  getCanInstance4Comm() << data();
+  getIsoBusInstance4Comm() << data();
 }
 
 

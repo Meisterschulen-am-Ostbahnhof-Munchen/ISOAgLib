@@ -74,6 +74,15 @@ public:
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
+  /** register a properly set-up IdentItem.
+      @return false in case the IdentItem couldn't be properly activated
+  */
+  bool registerIdentItem( IdentItem_c& arc_item );
+
+  /** deregister a registered IdentItem
+  */
+  void deregisterIdentItem( IdentItem_c& arc_item );
+
   /** performs periodically actions,
     possible errors:
       * partial error caused by one of the memberItems
@@ -83,8 +92,7 @@ public:
 
   virtual bool isNetworkMgmt() const { return true; }
 
-  /** default destructor which has nothing to do */
-  virtual ~IsoMonitor_c();
+  virtual ~IsoMonitor_c() {}
 
   /** deliver reference to data pkg
     @return reference to the CAN communication member object mc_data (IsoSystemPkg_c)
@@ -396,8 +404,9 @@ public:
 
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
-  ///  Operation: // Function for Debugging in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
   /// Function notify Scheduler_c to set new retriggerTime
   /// will be called from IdentItem_c and registerClient
@@ -429,22 +438,6 @@ protected: // Protected methods
   virtual void updateEarlierAndLatestInterval();
 
 private:
-  friend class IdentItem_c;
-  /** register pointer to a new client
-    * this function is called within construction of new client instance
-   */
-  bool registerClient( IdentItem_c* pc_client)
-  {
-    /// IsoMonitor_c.timeEvent() should be called from Scheduler_c in 50 ms
-    changeRetriggerTime();
-    return registerC1 ( pc_client );
-  }
-
-  /** register pointer to a new client
-   * this function is called within construction of new client instance
-     */
-  void unregisterClient( IdentItem_c* pc_client) { mpc_activeLocalMember = NULL; unregisterC1 ( pc_client ); }
-
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
      */
@@ -454,12 +447,6 @@ private:
 
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
   IsoMonitor_c( void );
-
-  /** initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
 private:
   virtual bool processPartStreamDataChunk(
@@ -563,13 +550,6 @@ private:
           aui8_multiReceiveError,
           ab_isGlobal);
     }
-
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
 
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.

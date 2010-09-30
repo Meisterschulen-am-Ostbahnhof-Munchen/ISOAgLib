@@ -70,16 +70,11 @@ namespace IsoAgLib {
 class iScheduler_c : private __IsoAgLib::Scheduler_c {
 public:
   /** initialisation for the central IsoAgLib object */
-  void init() { Scheduler_c::init(); }
+  void init( IsoAgLib::iErrorObserver_c *apc_observer = NULL ) { Scheduler_c::init( apc_observer ); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
   void close() { Scheduler_c::close(); }
-
-  /** simply close communicating clients */
-  void closeCommunication() { Scheduler_c::closeCommunication(); }
-
-  void startSystem() { Scheduler_c::startSystem(); }
 
 
 /** Return values of the timeEvent function */
@@ -115,6 +110,11 @@ public:
             #endif
               };
 
+  /** wait until specified timeout or until next CAN message receive
+    *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+    */
+  bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
+  { return Scheduler_c::waitUntilCanReceiveOrTimeout( aui16_timeoutInterval ); }
 
 #ifdef USE_MUTUAL_EXCLUSION
 /**
@@ -160,7 +160,7 @@ public:
     * is WITHIN execution in the main task. This way, the IsoAgLib is leaved by iScheduler_c::timeEvent()
     * in a guaranteed WELL DEFINED and VALID state.
     */
-  void forceExecStop( void ) {Scheduler_c::forceExecStop();}
+  void forceExecStop( void ) { Scheduler_c::forceExecStop(); }
 
   /** register pointer to a new client
     * this function is called within construction of new client instance

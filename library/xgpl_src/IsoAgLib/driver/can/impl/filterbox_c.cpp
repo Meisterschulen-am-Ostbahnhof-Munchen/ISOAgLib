@@ -30,25 +30,20 @@
 
 namespace __IsoAgLib {
 
-/**
-  default constructor without parameter values for creating an instance
-  with default start state (init variables)
-
-   @exception badAlloc
-*/
+FilterBox_c* FilterBox_c::mspc_currentlyProcessedFilterBox = NULL;
+int FilterBox_c::msi_processMsgLoopIndex = -1; // not used if "mspc_currentlyProcessedFilterBox==NULL" though.
+int FilterBox_c::msi_processMsgLoopSize = -1; // not used if "mspc_currentlyProcessedFilterBox==NULL" though.
 
 FilterBox_c::FilterBox_c()
-  :
-    mc_filter(0, Ident_c::StandardIdent),
-    mc_mask(0, Ident_c::StandardIdent),
-    mvec_customer(),
-    mui8_filterBoxNr(IdleState),
-    mui8_busNumber(IdleState),
-    mi32_fbVecIdx(-1)
-#if ((defined( USE_ISO_11783)) \
-     && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , mb_performIsobusResolve(true)
-  #endif
+  : mc_filter(0, Ident_c::StandardIdent)
+  , mc_mask(0, Ident_c::StandardIdent)
+  , mvec_customer()
+  , mui8_filterBoxNr(IdleState)
+  , mui8_busNumber(IdleState)
+  , mi32_fbVecIdx(-1)
+#if ((defined( USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
+  , mb_performIsobusResolve(true)
+#endif
 {}
 
 /**
@@ -58,16 +53,15 @@ FilterBox_c::FilterBox_c()
    @exception badAlloc
 */
 FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
-  : mc_filter(acrc_src.mc_filter),
-    mc_mask(acrc_src.mc_mask),
-    mvec_customer(acrc_src.mvec_customer),
-    mui8_filterBoxNr(acrc_src.mui8_filterBoxNr),
-    mui8_busNumber(acrc_src.mui8_busNumber),
-    mi32_fbVecIdx(acrc_src.mi32_fbVecIdx)
-#if ((defined( USE_ISO_11783)) \
-     && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    , mb_performIsobusResolve(acrc_src.mb_performIsobusResolve)
-  #endif
+  : mc_filter(acrc_src.mc_filter)
+  , mc_mask(acrc_src.mc_mask)
+  , mvec_customer(acrc_src.mvec_customer)
+  , mui8_filterBoxNr(acrc_src.mui8_filterBoxNr)
+  , mui8_busNumber(acrc_src.mui8_busNumber)
+  , mi32_fbVecIdx(acrc_src.mi32_fbVecIdx)
+#if ((defined( USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
+  , mb_performIsobusResolve(acrc_src.mb_performIsobusResolve)
+#endif
 {}
 
 /**
@@ -136,8 +130,7 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   mui8_busNumber = aui8_busNumber;
   mui8_filterBoxNr = aui8_FilterBoxNr;
 
-#if ((defined(USE_ISO_11783)) \
-     && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+#if ((defined(USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
   // we have either compiled forISO, OR there is at least one internal / proprietary CAN channel
 
   // when we are communicating on the standardized CAN channel, and ISO is used, the default shall be true
@@ -156,21 +149,7 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   }
   #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
 
-  #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  for ( STL_NAMESPACE::vector<CustomerLen_s>::const_iterator iter = mvec_customer.begin(); iter != mvec_customer.end(); iter++ )
-  {
-    if ( iter->pc_customer->isProprietaryMessageOnStandardizedCan() )
-    { // at least one CanCustomer_c  uses a proprietary protocol at a normal ISOBUS CanIo_c instance
-      mb_performIsobusResolve = false;
-    }
-    else
-    { // this FilterBox_c has at least one CanCustomer_c  which performs real ISOBUS
-      // --> set mb_performIsobusResolve to default TRUE
-      mb_performIsobusResolve = true;
-      break;
-    }
-  }
-  #endif
+  /// @todo Allow proprietary messages (standard-ident) on ISOBUS - set mb_performIsobusResolve accordingly (and maybe do something else)
 
   #endif // end of #ifdef for usage of mb_performIsobusResolve
 
@@ -243,7 +222,7 @@ void FilterBox_c::set (const Ident_c& acrc_mask,
   mc_mask = acrc_mask;
 
   STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
-  for (; pc_iter != mvec_customer.end(); pc_iter++)
+  for (; pc_iter != mvec_customer.end(); ++pc_iter)
   {
     if (apc_customer == pc_iter->pc_customer)
     { // overwrite the DLC of the one found!
@@ -254,6 +233,10 @@ void FilterBox_c::set (const Ident_c& acrc_mask,
   if (pc_iter == mvec_customer.end())
   { // push back new
     mvec_customer.push_back (CustomerLen_s (apc_customer, ai8_dlcForce));
+    /// Currently "msi_processMsgLoopIndex" is not being adapted,
+    /// because if a Message triggers Customer A and B, and Customer A
+    /// inserts a filter for that same message for Customer C,
+    /// we do NOT want Customer C to be called immediately.
   }
 };
 
@@ -261,7 +244,7 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) 
 
 {
   STL_NAMESPACE::vector<CustomerLen_s>::const_iterator pc_iter;
-  for(pc_iter = mvec_customer.begin(); pc_iter != mvec_customer.end(); pc_iter++)
+  for(pc_iter = mvec_customer.begin(); pc_iter != mvec_customer.end(); ++pc_iter)
     if( &ar_customer == pc_iter->pc_customer)
       return true;
 
@@ -273,17 +256,29 @@ bool FilterBox_c::equalCustomer( const __IsoAgLib::CanCustomer_c& ar_customer ) 
     @param  ar_customer  CANCustomer to delete
     @return                true -> no more cancustomers exist, whole filterbox can be deleted
   */
-bool FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
+bool
+FilterBox_c::deleteFilter( const __IsoAgLib::CanCustomer_c& ar_customer)
 {
+  int deleteIndex = 0;
   for (STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
-        pc_iter != mvec_customer.end(); pc_iter++)
+       pc_iter != mvec_customer.end();)
   {
     if (&ar_customer == pc_iter->pc_customer)
     { // the to-be-deleted customer is found and now pointed by pc_iter
       mvec_customer.erase(pc_iter);
+      // in case we're currently in the processing loop for this FilterBox
+      if (mspc_currentlyProcessedFilterBox == this)
+      { // we need to adapt the LoopSize and maybe LoopIndex
+        if (deleteIndex <= msi_processMsgLoopIndex)
+          --msi_processMsgLoopIndex;
+        --msi_processMsgLoopSize;
+      }
       break;
     }
+    ++deleteIndex;
+    ++pc_iter;
   }
+
   if ( mvec_customer.empty() )
   { // the last customer has been removed
     #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -319,13 +314,20 @@ bool FilterBox_c::processMsg()
 {
   bool b_result = false;
 
-  for ( STL_NAMESPACE::vector<CustomerLen_s>::iterator c_customerIterator = mvec_customer.begin();
-        c_customerIterator != mvec_customer.end();
-        ++c_customerIterator )
+  //! We need to FIRST get the number of entries and then DON'T USE iterators,
+  //! because the number may increase and the iterators may get invalid in case
+  //! a Filter is inserted IN THIS filterbox (pushed back!)
+  mspc_currentlyProcessedFilterBox = this;
+  msi_processMsgLoopSize = mvec_customer.size();
+  for (msi_processMsgLoopIndex = 0;
+       msi_processMsgLoopIndex < msi_processMsgLoopSize;
+       ++msi_processMsgLoopIndex)
   {
-    isoaglib_assert (c_customerIterator->pc_customer);
+    const int8_t ci8_vecCustomerDlcForce = mvec_customer[msi_processMsgLoopIndex].i8_dlcForce;
+    CanCustomer_c* pc_customer = mvec_customer[msi_processMsgLoopIndex].pc_customer;
+    isoaglib_assert (pc_customer);
 
-    CanPkgExt_c* pc_target = &(c_customerIterator->pc_customer->dataBase());
+    CanPkgExt_c* pc_target = &(pc_customer->dataBase());
 
     #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
       HAL::can_useMsgobjGet(mui8_busNumber, 0xFF, pc_target);
@@ -338,7 +340,7 @@ bool FilterBox_c::processMsg()
         << "Central Fifo - Reading problem on bus : " << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
         IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
-        return b_result;
+        break; // so that "msi_processMsgLoopIndex = -1" will be done before returning.
       }
       #if DEBUG_FILTERBOX
          INTERNAL_DEBUG_DEVICE
@@ -346,7 +348,6 @@ bool FilterBox_c::processMsg()
       #endif
     #endif
 
-    const int8_t ci8_vecCustomerDlcForce = c_customerIterator->i8_dlcForce;
     const int8_t ci8_targetLen = pc_target->getLen();
 
     /// Check DataLengthCode (DLC) if required
@@ -366,16 +367,11 @@ bool FilterBox_c::processMsg()
 
     #ifdef USE_ISO_11783
     // this is a compile where at least one CAN channel uses ISO 11783 protocol (i.e. this is not a pure proprietary CAN project)
-      #if ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL))
+      #if (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT)
       // there is either a proprietary CAN channel in addition to the ISO 11783 channel, or some proprietary messages
       // have to be handled at the ISO 11783 BUS (e.g. some bootloader messages are sent on ISOBUS)
-        #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-        // we have to decide based on the individual CANCustomer, whether it is a real ISOBUS message
-    if ( ( mb_performIsobusResolve ) && ( !c_customerIterator->pc_customer->isProprietaryMessageOnStandardizedCan() ) )
-        #else
         // the decision whether a FilterBox_c has to perform SA resolve is derived for _all_ messages which are routed through this FilterBox_c object
     if ( mb_performIsobusResolve )
-        #endif // end ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
       #endif // end combination check of whether the flag based decision on resolving has to be performed
     { // this block is only used for ISOBUS messages
       // add address-resolving result to dlc-check result!
@@ -396,10 +392,10 @@ bool FilterBox_c::processMsg()
       }
       else
       { // !AdrInvalid && DlcValid
-        if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrValid) || (c_customerIterator->pc_customer->isNetworkMgmt()) )
+        if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrValid) || (pc_customer->isNetworkMgmt()) )
         { // is either [AdrValid] or [OnlyNetworkMgmt with NwMan-Customer]
           pc_target->string2Flags();
-          if ( c_customerIterator->pc_customer->processMsg() )
+          if ( pc_customer->processMsg() )
           { // customer indicated, that it processed the content of the received message
             //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
             b_result = true;
@@ -408,14 +404,12 @@ bool FilterBox_c::processMsg()
         // else: OnlyNetworkMgmt but no NwMan-Customer - discard message
       }
     }
-      #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
+      #if ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT )
       // the project uses at least on one of the CAN BUSes ISO 11783 OR proprietary messages are handled at least on one CAN channel
     else
       #endif
     #endif // end of #ifdef USE_ISO_11783
-    #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) \
-     ||  defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) \
-     || !defined(USE_ISO_11783) )
+    #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || !defined(USE_ISO_11783) )
      // either this project does NOT use ISO 11783 at all,
      // OR there is a proprietary message CAN channel - and this FilterBox_c object is dedicated to the proprietary CAN channel (by being at "else" block)
      // OR there can be a mixture of ISO 11783 and proprietary messages on one channel - and the currently handled message is not ISO 11783 (by being at "else" block)
@@ -424,7 +418,7 @@ bool FilterBox_c::processMsg()
       {
         #ifdef PROCESS_INVALID_PACKETS
         pc_target->string2Flags();
-        if (c_customerIterator->pc_customer->processInvalidMsg() )
+        if (pc_customer->processInvalidMsg() )
         { // customer indicated, that it processed the content of the received message
           // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           b_result = true;
@@ -434,7 +428,7 @@ bool FilterBox_c::processMsg()
       else
       {
         pc_target->string2Flags();
-        if ( c_customerIterator->pc_customer->processMsg() )
+        if ( pc_customer->processMsg() )
         { // customer indicated, that it processed the content of the received message
           //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
           b_result = true;
@@ -443,6 +437,7 @@ bool FilterBox_c::processMsg()
     }
     #endif
   }
+  mspc_currentlyProcessedFilterBox = NULL; // indicate that we're not anymore in the loop!
   return b_result;
 }
 

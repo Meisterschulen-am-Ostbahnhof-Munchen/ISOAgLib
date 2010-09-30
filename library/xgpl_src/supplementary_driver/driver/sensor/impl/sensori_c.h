@@ -57,14 +57,15 @@ public:
     @param ab_analogLast greatest allowed analog input channel number (ANALOG_INPUT_MAX)
     @param ab_counterFirst smallest allowed counter input channel number (COUNTER_INPUT_MIN)
     @param ab_counterLast greatest allowed counter input channel number (COUNTER_INPUT_MAX)
-    @see masterHeader
+    @see isoaglib_config.h
   */
   void init(uint8_t ab_digitalFirst = DIGITAL_INPUT_MIN, uint8_t ab_digitalLast = DIGITAL_INPUT_MAX,
-           uint8_t ab_analogFirst = ANALOG_INPUT_MIN, uint8_t ab_analogLast = ANALOG_INPUT_MAX,
-           uint8_t ab_counterFirst = COUNTER_INPUT_MIN, uint8_t ab_counterLast = COUNTER_INPUT_MAX);
+            uint8_t ab_analogFirst = ANALOG_INPUT_MIN,   uint8_t ab_analogLast = ANALOG_INPUT_MAX,
+            uint8_t ab_counterFirst = COUNTER_INPUT_MIN, uint8_t ab_counterLast = COUNTER_INPUT_MAX);
+
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void ){};
+  void close( void ){}
 
   /** destructor for the sensor input manager object */
   ~SensorI_c();
@@ -194,7 +195,6 @@ private:
     * NEVER define instance of SensorI_c within application
     */
   SensorI_c( void ) { };
-	void singletonInit() { init();};
 
   /** register a pointer to an external analog input object
     * @param apc_object const pointer to new AnalogI_c instance,

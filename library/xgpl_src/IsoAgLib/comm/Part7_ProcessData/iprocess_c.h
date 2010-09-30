@@ -75,9 +75,6 @@ namespace IsoAgLib {
 */
 class iProcess_c : private __IsoAgLib::Process_c  {
 public:
-  /** initialisation for Process_c
-  */
-  void init( void ) { Process_c::init();};
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )

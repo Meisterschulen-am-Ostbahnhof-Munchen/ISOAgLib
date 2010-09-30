@@ -199,11 +199,9 @@ set_default_values()
     APP_NAME=''
     PRJ_PROPRIETARY_PGN_INTERFACE=0
     PRJ_ISO11783=0
-    PRJ_ISO11783=0
     PRJ_ISO_TERMINAL=0
     PRJ_ISO_FILESERVER_CLIENT=0
     PRJ_ISO_TERMINAL=0
-    PRJ_ISO_FILESERVER_CLIENT=0
     PRJ_ISO_TERMINAL_LAYOUT_MANAGER=0
     PRJ_RS232_OVER_CAN=0
     PRJ_MULTIPACKET_STREAM_CHUNK=1
@@ -577,7 +575,7 @@ comm_features()
         fi
     fi
     if [ "$PRJ_ISO11783" -gt 0 ]; then
-        printf '%s' " -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'" >&3
+        printf '%s' " -o -path '*/i*isobus_c.*' -o -path '*i*proprietarybus_c.*' -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'" >&3
         if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ]; then
             printf '%s' " -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'" >&3
         else
@@ -1322,6 +1320,9 @@ END_OF_PATH
                     echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE#endif" >&3
                 fi
             fi
+            if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ] ; then
+                echo_e "#ifndef USE_ISO_FILESERVER_CLIENT $ENDLINE\t#define USE_ISO_FILESERVER_CLIENT $ENDLINE#endif" >&3
+            fi
             if [ "$PRJ_MULTIPACKET" -gt 0 ] ; then
                 if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ] ; then
                     echo_e "#ifndef DEF_Stream_IMPL   $ENDLINE\t#define DEF_Stream_IMPL   StreamChunk   $ENDLINE#endif" >&3
@@ -1336,7 +1337,15 @@ END_OF_PATH
         if [ "$PRJ_RS232" -gt 0 ]; then
             echo_e "#ifndef USE_RS232$ENDLINE\t#define USE_RS232 1$ENDLINE#endif" >&3
         fi
-    
+ 
+        if [ "$PRJ_ACTOR" -gt 0 ]; then
+            echo_e "#ifndef USE_ACTOR$ENDLINE\t#define USE_ACTOR$ENDLINE#endif" >&3
+        fi
+ 
+        if [ "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
+            echo_e "#ifndef USE_SENSOR$ENDLINE\t#define USE_SENSOR$ENDLINE#endif" >&3
+        fi
+
         # write overwriteable parts of isoaglib_config.h
         echo_e "$ENDLINE// The following configuration values can be overwritten." >&3
         echo_ "// These settings are initially defined in isoaglib_config.h ." >&3

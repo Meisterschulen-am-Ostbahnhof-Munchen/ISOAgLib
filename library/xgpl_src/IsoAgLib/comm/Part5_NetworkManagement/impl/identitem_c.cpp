@@ -27,19 +27,19 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
+
 namespace __IsoAgLib {
 
-/** A) default constructor:  will not do anything, create a not-yet-initialized identity. use "init" afterwards!
-  * B) EEPROM address given: will read WantedSA/ISOName from EEPROM and start address claim for this identity
-  * @param aui16_eepromAdr Address of EEPROM where the following 10 bytes have to be stored stored:
-                            8 byte ISO-Name stored in LITTLE ENDIAN
-                            1 byte preferred/last-used SA (0xFE for no preference)
-                            1 byte flags, set to 0x00 initially (so the ISO-Name has a chance to change some of its
-                                  instance(s) to avoid ISO-Name-conflicts on the bus BEFORE doing its initial address-claim
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance, defaults to 0 at construction time!
-  */
-IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
-  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey)
+
+IdentItem_c::~IdentItem_c()
+{
+  isoaglib_assert (mpc_diagnosticPgnHandler);
+  delete mpc_diagnosticPgnHandler;
+}
+
+
+IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr)
+  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, -1) // using an INVALID SingletonVecKey as it will be initialized later!
   , mpc_isoItem (NULL)
   , mui16_eepromAdr (aui16_eepromAdr)
   , mui8_globalRunState (GlobalRunStateNeverClaimed)
@@ -48,72 +48,59 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr, int ai_singletonVecKey)
   , mpvec_slaveIsoNames (NULL)
 #endif
   , i32_lastIsoSaRequestForThisItem(-1)
+  , mb_readyForActivation( false )
+
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
-  init (NULL, 0xFF, aui16_eepromAdr,
+
+  init (NULL, 0xFF, aui16_eepromAdr
 #ifdef USE_WORKING_SET
-        -1, NULL, // -1 indicates we're no working-set!
+        ,-1, NULL // -1 indicates we're no working-set!
 #endif
-        ai_singletonVecKey);
+      );
 }
 
 
-
-/** constructor for ISO identity, which starts address claim for this identity
-    @param aui8_indGroup        select the industry group, 2 == agriculture
-    @param aui8_devClass	device class identifier
-    @param aui8_devClassInst    instance of device class
-    @param ab_func              function code of the member (25 = network interconnect)
-    @param aui16_manufCode      11bit manufactor code
-    @param aui32_serNo          21bit serial number
-    @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
-                                SA for self conf ISO device) (default 254 for no special wish)
-    @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
-                                (default 0xFFFF for NO EEPROM store)
-    @param ab_funcInst          function instance of this member (default 0)
-    @param ab_ecuInst           ECU instance of this member (default 0)
-    @param ab_selfConf          true -> this member as a self configurable source adress
-    @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
-    @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
-                                IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
-  */
-IdentItem_c::IdentItem_c (uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
+IdentItem_c::IdentItem_c(
+  uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
   uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
-  uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf,
+  uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf
   #ifdef USE_WORKING_SET
-  int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
+  ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
   #endif
-  int ai_singletonVecKey)
-  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, ai_singletonVecKey) /// needs to be init'ed, so double "init()" can be detected!
+)
+  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, -1) // using an INVALID SingletonVecKey as it will be initialized later!
   , mpc_isoItem (NULL)
+  , mui16_eepromAdr (0xFFFF)
   , mui8_globalRunState (GlobalRunStateNeverClaimed)
   , mpc_diagnosticPgnHandler(NULL)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
+  , i32_lastIsoSaRequestForThisItem(-1)
+  , mb_readyForActivation( false )
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
+
   init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
-        aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
+        aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf
         #ifdef USE_WORKING_SET
-        ai8_slaveCount, apc_slaveIsoNameList,
+        ,ai8_slaveCount, apc_slaveIsoNameList
         #endif
-        ai_singletonVecKey);
+       );
 }
 
 
 // private
-void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
+void
+IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr
   #ifdef USE_WORKING_SET
-  int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
+  ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
   #endif
-  int ai_singletonVecKey)
+  )
 {
-  /// Check if Item was already ACTIVE (detect double init()-call!)
-  if (itemState (IState_c::Active))
+  /// Check if Item was already properly initialized
+  if (mb_readyForActivation)
   { // For init again, you'd first have to stop the identity - this feature is to come somewhen (when needed)...
     getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::System );
     #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
@@ -124,14 +111,11 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     #endif
   }
 
-  // Do start up the complete system first (if not yet done - call is idempotent!, so okay to do here!)
-  getSchedulerInstance().startSystem();
-
   // set all other member variables depending on the EEPROM-Address parameter/member variable
   mui16_eepromAdr = aui16_eepromAdr;
 
-  /// Default to SetActive=TRUE. This'll be just set FALSE when initialization is postponed by the user!
-  bool b_setActive = true;
+  /// Default to true for now. This'll be just set FALSE when initialization is postponed by the user!
+  mb_readyForActivation = true;
 
   bool b_useParameters;
   if (aui16_eepromAdr == 0xFFFF)
@@ -214,7 +198,7 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     if (apc_isoNameParam == NULL)
     { /// NO Parameter-IsoName is given AND NO EEPROM address given, so initialize this IdentItem empty to be initialized later with "init"
       mc_isoName.setUnspecified();
-      b_setActive = false; // only case where we don't start the address-claim procedure!
+      mb_readyForActivation = false; // only case where we don't start the address-claim procedure!
     }
     else
     { /// Parameter-IsoName is given and should be used: use it!
@@ -250,64 +234,75 @@ void IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, u
     }
   }
 #endif
+}
 
-  if (b_setActive)
+
+bool
+IdentItem_c::activate (int ai_singletonVecKey)
+{
+  if (mb_readyForActivation)
   { /// Set Item to ACTIVE
-    BaseItem_c::set (System_c::getTime(), (IState_c::itemState_t (IState_c::Active |
-                                                                  IState_c::PreAddressClaim |
-                                                                  IState_c::Local)), ai_singletonVecKey);
-    getIsoMonitorInstance4Comm().registerClient (this);
+    BaseItem_c::set(
+      System_c::getTime(),
+      (IState_c::itemState_t (IState_c::Active |
+                              IState_c::PreAddressClaim |
+                              IState_c::Local)),
+      ai_singletonVecKey);
+
+    // The Diagnostics Handler needs to be created on Construction!
+    isoaglib_assert (mpc_diagnosticPgnHandler);
+    mpc_diagnosticPgnHandler->init();
+    return true;
+  }
+  else
+  { /// Item wasn't properly initialized - can't activate
+    return false;
   }
 }
 
 
-/** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
-    @param aui8_indGroup        select the industry group, 2 == agriculture
-    @param aui8_devClass	device class identifier
-    @param aui8_devClassInst	device class instance 
-    @param ab_func              function code of the member (25 = network interconnect)
-    @param aui16_manufCode      11bit manufactor code
-    @param aui32_serNo          21bit serial number
-    @param aui8_preferredSa      preferred source adress (SA) of the ISO item (fixed SA or last time
-                                SA for self conf ISO device) (default 254 for no special wish)
-    @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
-                                (default 0xFFFF for NO EEPROM store)
-    @param ab_funcInst          function instance of this member (default 0)
-    @param ab_ecuInst           ECU instance of this member (default 0)
-    @param ab_selfConf          true -> this member as a self configurable source adress
-    @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                in case an address claim for the slave devices shall be sent by this ECU, they
-                                must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
-    @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
-                                IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (DEFAULTS HERE TO -1 which will NOT modify the instance set construction time!!)
-  */
-void IdentItem_c::init(
+void
+IdentItem_c::deactivate()
+{ // delete the corresponding IsoItem_c instance in the respective monitoring list
+  // and set state to Off (explicitly requested)
+  goOffline (true);
+
+  mpc_diagnosticPgnHandler->close();
+
+  // if we have a list of slaves, then
+#ifdef USE_WORKING_SET
+  if (mpvec_slaveIsoNames)
+  { // delete list of slaves, too.
+    delete mpvec_slaveIsoNames;
+    mpvec_slaveIsoNames = NULL;
+  }
+#endif
+}
+
+
+void
+IdentItem_c::init(
   uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-  uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr, uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf,
+  uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr, uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf
   #ifdef USE_WORKING_SET
-  int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
+  ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
   #endif
-  int ai_singletonVecKey)
+  )
 {
   // temporary to assemble the single parameters to one IsoName so it gets better handled in the following function call
   IsoName_c c_isoNameParam (ab_selfConf, aui8_indGroup, aui8_devClass, aui8_devClassInst,
                             ab_func, aui16_manufCode, aui32_serNo, ab_funcInst, ab_ecuInst);
 
-  init (&c_isoNameParam, aui8_preferredSa, aui16_eepromAdr,
+  init (&c_isoNameParam, aui8_preferredSa, aui16_eepromAdr
         #ifdef USE_WORKING_SET
-        ai8_slaveCount, apc_slaveIsoNameList,
+        ,ai8_slaveCount, apc_slaveIsoNameList
         #endif
-        ai_singletonVecKey);
+       );
 }
 
 
-
-/** restart SA claim procedure.
-    When ISONAME conflict gets detected between creation of corresponding IsoItem_c and sending of SA-Claim,
-    a complete restart of IdentItem_c life cycle beginning with PreAddressClaim.
-  */
-void IdentItem_c::restartWithPreAddressClaim( void )
+void
+IdentItem_c::restartWithPreAddressClaim( void )
 {
   if (mpc_isoItem != NULL)
   { // item is online
@@ -319,12 +314,8 @@ void IdentItem_c::restartWithPreAddressClaim( void )
 }
 
 
-/** Go Offline by:
-  * + reset IdentItem::IState_c to IState_c::Off / OffUnable 
-  * + remove pointed IsoItem_c node and the respective pointer
- * @param ab_explicitlyOffByUser ("Off" if explicitly called by user (true), "OffUnable" if we are unable to keep a claimed address (false))
-  */
-void IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
+void
+IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 {
   if (mpc_isoItem != NULL)
   { // item is online
@@ -343,45 +334,8 @@ void IdentItem_c::goOffline (bool ab_explicitlyOffByUser)
 }
 
 
-/** default destructor which has nothing to do */
-IdentItem_c::~IdentItem_c()
-{
-  close();
-  delete mpc_diagnosticPgnHandler;
-}
-
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown
-  * -> IdentItem_c::close() send address release for identities
-  */
-void IdentItem_c::close( void )
-{ // delete the corresponding IsoItem_c instance in the respective monitoring list
-  // and set state to Off (explicitly requested)
-  goOffline (true);
-  // unregister in IsoMonitor_c
-  getIsoMonitorInstance4Comm().unregisterClient( this );
-  // if we have a list of slaves, then
-#ifdef USE_WORKING_SET
-  if (mpvec_slaveIsoNames)
-  { // delete list of slaves, too.
-    delete mpvec_slaveIsoNames;
-    mpvec_slaveIsoNames = NULL;
-  }
-#endif
-}
-
-
-
-/** periodically called functions do perform
-    time dependent actions
-
-    possible errors:
-        * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-    @see Scheduler_c::timeEvent()
-    @see IsoMonitor_c::timeEvent()
-    @see System_c::getTime()
-    @return true -> all planned activities performed
-  */
-bool IdentItem_c::timeEvent( void )
+bool
+IdentItem_c::timeEvent( void )
 {
   if (NULL != getIsoItem())
   { // If we have an IsoItem, see if it went off..
@@ -409,19 +363,8 @@ bool IdentItem_c::timeEvent( void )
 }
 
 
-/** periodically called functions do perform
-    time dependent actions in prepare address claim state
-    -> unify ISOName (Device Class / Device Class Instance)
-    -> insert item in appropriate monitor lists and initiate address claim
-
-    possible errors:
-        * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-    @see Scheduler_c::timeEvent
-    @see SystemMgmt_c::timeEvent
-    @see System_c::getTime
-    @return true -> all planned activities performed
-  */
-bool IdentItem_c::timeEventPreAddressClaim( void )
+bool
+IdentItem_c::timeEventPreAddressClaim( void )
 {
   bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
   if (cb_sent)
@@ -459,18 +402,8 @@ bool IdentItem_c::timeEventPreAddressClaim( void )
 }
 
 
-/** periodically called functions do perform
-    time dependent actions in active (address claim/claimed address) state
-    -> call timeEvent for corresponding items in MemberMonitor/ISOMonitor
-    -> initiate repeated address claim with changed Nr / ISOName if conflict with other item occured
-
-    possible errors:
-        * dependant memory error in SystemMgmt_c caused by inserting item in monitor list
-    @see Scheduler_c::timeEvent
-    @see SystemMgmt_c::timeEvent
-    @see System_c::getTime
-  */
-bool IdentItem_c::timeEventActive( void )
+bool
+IdentItem_c::timeEventActive( void )
 {
   #ifdef CHANGE_DEV_CLASS_INST_ON_CONFLICT
   // only change dev class inst and repeated address claim on adress conflicts, if following define
@@ -494,8 +427,6 @@ bool IdentItem_c::timeEventActive( void )
   }
   else
   #endif
-
-  bool b_configure = false;
 
   /// If we're in Activetimeevent, we always do have a valid mpc_isoItem!
   if (mpc_isoItem->itemState(IState_c::Local))
@@ -585,19 +516,12 @@ bool IdentItem_c::timeEventActive( void )
     }
   }
 
-  if (b_configure) {
-    getCanInstance4Comm().reconfigureMsgObj();
-  }
-
   return true;
 }
 
 
-/** check if given number is equal to member number of this item
-    @param aui8_nr compared number
-    @return true -> this item has same number
-  */
-bool IdentItem_c::equalNr(uint8_t aui8_nr)
+bool
+IdentItem_c::equalNr(uint8_t aui8_nr)
 {
   bool b_result = false;
 

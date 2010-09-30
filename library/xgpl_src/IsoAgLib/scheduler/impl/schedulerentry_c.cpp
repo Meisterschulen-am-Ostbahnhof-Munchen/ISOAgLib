@@ -54,12 +54,14 @@ SchedulerEntry_c::timeEventExec(int32_t ai32_demandedExecEnd)
   /// so Client keep old nextRetriggerTime and stay as FIRST in TaskQueue
   if (cb_result) mpc_taskInstance->timeEventPostUpdateStatistics();
 
-  #if DEBUG_SCHEDULER
-    if (!cb_result) {
-        INTERNAL_DEBUG_DEVICE << mpc_taskInstance->getTaskName() << ".timeEvent() returned false."
-        << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
-  #endif
+#if DEBUG_SCHEDULER
+  if (!cb_result) {
+    if (mpc_taskInstance->getTaskName() == NULL)
+      INTERNAL_DEBUG_DEVICE << "Unnamed SchedulerEntry's timeEvent() returned false." << INTERNAL_DEBUG_DEVICE_ENDL;
+    else
+      INTERNAL_DEBUG_DEVICE << mpc_taskInstance->getTaskName() << ".timeEvent() returned false." << INTERNAL_DEBUG_DEVICE_ENDL;
+  }
+#endif
   return cb_result;
 }
 

@@ -14,7 +14,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "tracguidancecommand_c.h"
 #include "tracguidance_c.h"
@@ -40,30 +40,6 @@ TracGuidanceCommand_c& getTracGuidanceCommandInstance( void )
   return c_lbsTracGuidanceCommand;
 };
 #endif
-
-    /** initialize directly after the singleton instance is created.
-        this is called from singleton.h and should NOT be called from the user again.
-        users please use init(...) instead.
-      */
-      void TracGuidanceCommand_c::singletonInit()
-      { // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
-        // singleton vec key - this key value is NOT available at construction time!!!
-        BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
-      }
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  void TracGuidanceCommand_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
-  {
-    //call init for handling which is base data independent
-    BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
-  };
 
 /** config the TracGuidance_c object after init -> set pointer to isoName and
     config send/receive of a moving msg type
@@ -93,7 +69,7 @@ bool TracGuidanceCommand_c::config_base (const IsoName_c* apc_isoName, IsoAgLib:
 void TracGuidanceCommand_c::checkCreateReceiveFilter( )
 {
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  CanIo_c &c_can = getCanInstance4Comm();
+  IsoBus_c &c_can = getIsoBusInstance4Comm();
 
   if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
   { // check if needed receive filters for ISO are active
@@ -102,7 +78,7 @@ void TracGuidanceCommand_c::checkCreateReceiveFilter( )
     // create FilterBox_c for PGN GUIDANCE_MACHINE_STATUS, PF 254 - mask for DP, PF and PS
     // mask: (0x3FF00 << 8) filter: (GUIDANCE_MACHINE_STATUS << 8)
     c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FF00) << 8),
-                      (static_cast<MASK_TYPE>(GUIDANCE_SYSTEM_CMD) << 8), true, Ident_c::ExtendedIdent);
+                      (static_cast<MASK_TYPE>(GUIDANCE_SYSTEM_CMD) << 8), true);
   }
 }
 
@@ -157,7 +133,7 @@ void TracGuidanceCommand_c::isoSendMessageImplMode( )
   if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
     return;
 
-  CanIo_c& c_can = getCanInstance4Comm();
+  IsoBus_c& c_can = getIsoBusInstance4Comm();
 
   // retrieve the actual dynamic sender no of the member with the registered isoName
   data().setIdentType(Ident_c::ExtendedIdent);
@@ -238,10 +214,11 @@ CurvatureCommander_s* TracGuidanceCommand_c::getCommanderDataByIndex( uint8_t ui
   return ps_commander;
 }
 
-///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
 const char*
 TracGuidanceCommand_c::getTaskName() const
-{   return "TracGuidanceCommand_c"; }
+{ return "TracGuidanceCommand_c"; }
+#endif
 
 /** dummy implementation
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information

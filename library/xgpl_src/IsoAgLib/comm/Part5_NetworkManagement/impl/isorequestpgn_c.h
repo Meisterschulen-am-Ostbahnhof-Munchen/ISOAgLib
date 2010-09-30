@@ -90,8 +90,7 @@ public:
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close (void);
 
-  /** default destructor which has nothing to do */
-  virtual ~IsoRequestPgn_c ();
+  virtual ~IsoRequestPgn_c () {}
 
   /** deliver reference to data pkg
       @return reference to the CAN communication member object mc_data (CanPkgExt_c)
@@ -146,8 +145,9 @@ public:
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
   void answerRequestPGNwithACK (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackCode) { sendAcknowledgePGN (arc_isoItemSender, aui8_ackCode); }
 
-  ///  Operation:  Funktion for Debugging in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
 
 protected: // Protected methods
@@ -158,11 +158,6 @@ protected: // Protected methods
 private: // Private methods
   /** constructor for IsoRequestPgn_c */
   IsoRequestPgn_c (void);
-
-  /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead. */
-  void singletonInit ();
 
   void sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType);
 

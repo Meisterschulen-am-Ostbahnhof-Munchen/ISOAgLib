@@ -65,8 +65,10 @@ RS232IO_c::RS232IO_c( void )
   #endif
 {};
 
-/** destructor has nothing to destruct */
-RS232IO_c::~RS232IO_c(){
+
+void
+RS232IO_c::close()
+{
   #ifdef USE_RS232_CHANNEL
   if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ) HAL::close_rs232( ui8_channel );
   #else
@@ -74,30 +76,15 @@ RS232IO_c::~RS232IO_c(){
   #endif
 }
 
-// ++++++++++++++++++++++++++++++++++++
-// ++++ RS232 managing operations ++++
-// ++++++++++++++++++++++++++++++++++++
 
-/**
-  init function which initialises the BIOS RS232
-  @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
-  @param ren_dataMode data mode setting of {7,8}_{N,O,E}_{1,2}
-  @param ab_xonXoff use XON/XOFF sw handshake (true, false)
-  @param aui16_sndBuf sending buffer size
-  @param aui16_recBuf recieving buffer size
-
-  possible errors:
-      * Err_c::badAlloc not enough memory for allocating the buffers
-      * Err_c::range one of the configuration vals is not in allowed ranges
-*/
-bool RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_xonXoff,
+bool
+RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_xonXoff,
         uint16_t aui16_sndBuf, uint16_t aui16_recBuf
         #ifdef USE_RS232_CHANNEL
         , uint8_t aui8_channel
         #endif
         )
 {
-  
   bool b_result;
   // check the configuration informations
   bool b_baudAllowed = false,
@@ -138,30 +125,26 @@ bool RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_x
       )
   { // o.k.
     // store configuration values
-    
     en_dataMode = ren_dataMode;
     b_xon_xoff = ab_xonXoff;
     ui16_sndBuf = aui16_sndBuf;
     ui16_recBuf = aui16_recBuf;
-    
 
     b_result = true;
     // now init buffers
     if (HAL::configRs232TxObj(ui16_sndBuf, NULL, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
     if (HAL::configRs232RxObj(ui16_recBuf, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
 
-    if (!b_result) 
-	    getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
+    if (!b_result)
+      getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
     else
     {
-	    // Only here do we store the values, as these two fields help us know whether the device is already initialized
-	    ui32_baudrate = aui32_baudrate;
+      // Only here do we store the values, as these two fields help us know whether the device is already initialized
+      ui32_baudrate = aui32_baudrate;
 #ifdef USE_RS232_CHANNEL
-	    ui8_channel = aui8_channel;
+      ui8_channel = aui8_channel;
 #endif
     }
-
-
   }
   else
   { //wrong values given
@@ -169,21 +152,8 @@ bool RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_x
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Rs232 ); // something is still wrong
   }
 
-  
   return b_result;
 }
-
-
-/**
-  initialize directly after the singleton instance is created.
-  this is called from singleton.h and should NOT be called from the user again.
-  users please use init(...) instead.
-*/
-void RS232IO_c::singletonInit()
-{
-  // verify that System is int
-  getSystemInstance().init();
-};
 
 
 /**

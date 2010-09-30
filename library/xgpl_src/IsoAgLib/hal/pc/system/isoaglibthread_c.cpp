@@ -21,7 +21,7 @@
 
 // ISOAgLib
 #include <IsoAgLib/scheduler/ischeduler_c.h>
-#include <IsoAgLib/driver/can/icanio_c.h>
+#include <IsoAgLib/comm/iisobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
 
 // system (we know we're on PC!)
@@ -45,7 +45,7 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
 #endif
     if (cb_wasRunning)
     { /// was already running before insertion
-      if (aui8_busNr == __IsoAgLib::getCanInstance().getBusNumber())
+      if (aui8_busNr == IsoAgLib::getIIsoBusInstance().getBusNumber())
       { // same setup
         return startSuccess;
       }
@@ -60,13 +60,13 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
       // we don't need to mutex :-)
 
 #ifdef DEBUG_THREAD
-      std::cout << "IsoAgLibThread_c::start - Init CAN & Start THREAD for key " << key << "." << std::endl;
+      std::cout << "IsoAgLibThread_c::start - Init ISOAgLib-core and -CAN/ISOBUS & Start THREAD for key " << key << "." << std::endl;
 #endif
 
       // @todo NOTE that a REstart is not yet possible, because
       //       close() does not really enable a REstart!
-      IsoAgLib::getISchedulerInstance().startSystem();
-      IsoAgLib::getIcanInstance().init (aui8_busNr, 250);
+      IsoAgLib::getISchedulerInstance().init();
+      IsoAgLib::getIIsoBusInstance().init (aui8_busNr);
 
       mb_requestThreadToStop = false;
       pthread_create (&mthread_core, NULL, thread_core, (void *)this);
@@ -99,6 +99,7 @@ IsoAgLibThread_c::stop (void *key)
       mb_requestThreadToStop = true;
       pthread_join (mthread_core, NULL);
       // Thread is not running now anymore...
+      IsoAgLib::getIIsoBusInstance().close();
       IsoAgLib::getISchedulerInstance().close();
       // Last one closed the door.
     }
@@ -130,7 +131,7 @@ IsoAgLibThread_c::thread_core (void* thread_param)
       }
 
       // Now do sleep...
-      IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout (i32_sleepTime);
+      IsoAgLib::getISchedulerInstance().waitUntilCanReceiveOrTimeout (i32_sleepTime);
     }
   }
 

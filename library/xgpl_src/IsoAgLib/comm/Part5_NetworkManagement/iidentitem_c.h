@@ -57,13 +57,12 @@ class iProprietaryMessageClient_c;
 class iIdentItem_c : private __IsoAgLib::IdentItem_c  {
 public:
   /**
-    default constructor, which can optionally start address claim for this identity, if enough information
-    is provided with the parameters (at least apc_isoName, apb_name
+    default constructor, which can optionally start address claim for this identity,
+    if enough information is provided (EEPROM-address)
     @param aui16_saEepromAdr
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
   */
-  iIdentItem_c (uint16_t aui16_saEepromAdr = 0xFFFF, int ai_singletonVecKey = 0)
-    : IdentItem_c (aui16_saEepromAdr, ai_singletonVecKey) {}
+  iIdentItem_c (uint16_t aui16_saEepromAdr = 0xFFFF)
+    : IdentItem_c (aui16_saEepromAdr) {}
 
 
   /**
@@ -86,22 +85,20 @@ public:
                                 must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
     @param apc_slaveIsoNameList pointer to list of iIsoName_c values, where the slave devices are defined.
                                 IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
   */
-  iIdentItem_c (
+  iIdentItem_c(
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func,
     uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t aui8_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF,
-    uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
+    uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true
     #ifdef USE_WORKING_SET
-    int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL,
+    ,int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL
     #endif
-    int ai_singletonVecKey = 0)
-    : IdentItem_c (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
-                   aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
+  ) : IdentItem_c (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
+                   aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf
                  #ifdef USE_WORKING_SET
-                   ai8_slaveCount, apc_slaveIsoNameList,
+                   ,ai8_slaveCount, apc_slaveIsoNameList
                  #endif
-                   ai_singletonVecKey) {}
+                  ) {}
 
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
       @param aui8_indGroup        select the industry group, 2 == agriculture
@@ -122,33 +119,27 @@ public:
                                   must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
       @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-      @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
   void init(
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
+    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true
     #ifdef USE_WORKING_SET
-    int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL,
+    ,int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL
     #endif
-    int ai_singletonVecKey = 0)
+    )
   { IdentItem_c::init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode,
-                       aui32_serNo, aui8_preferredSa, aui16_saEepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf,
+                       aui32_serNo, aui8_preferredSa, aui16_saEepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf
                        #ifdef USE_WORKING_SET
-                       ai8_slaveCount, apc_slaveIsoNameList,
+                       ,ai8_slaveCount, apc_slaveIsoNameList
                        #endif
-                       ai_singletonVecKey);
+                       );
   }
-
 
 
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
     */
   iIsoItem_c* getIsoItem( void ) const { return static_cast<iIsoItem_c*>(IdentItem_c::getIsoItem()); }
-
-  /** perform stop actions at end of lifetime of a local ident
-    */
-  void close( void ) { IdentItem_c::close();}
 
   /** check if the ident has claimed address */
   bool isClaimedAddress( void ) const { return IdentItem_c::isClaimedAddress(); }
@@ -214,6 +205,7 @@ public:
   SINGLETON_PAR_BASE_DEF(IdentItem_c)
 
 private:
+  friend class iIsoMonitor_c;
   friend class iFsManager_c;
   friend class iIsoTerminal_c;
   friend class iVtClientServerCommunication_c;
@@ -225,5 +217,5 @@ private:
   friend class __IsoAgLib::ProprietaryMessageClient_c;
 };
 
-}// End Namespace IsoAgLib
+} // IsoAgLib
 #endif

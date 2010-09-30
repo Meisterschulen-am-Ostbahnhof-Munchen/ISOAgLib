@@ -87,6 +87,9 @@ public:
   DiagnosticPgnHandler_c (IdentItem_c&);
   virtual ~DiagnosticPgnHandler_c();
 
+  void init();
+  void close();
+
   virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/);
 
 

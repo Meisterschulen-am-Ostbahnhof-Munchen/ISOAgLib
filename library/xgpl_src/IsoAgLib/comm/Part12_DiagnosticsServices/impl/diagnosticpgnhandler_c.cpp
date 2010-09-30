@@ -46,6 +46,17 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
     mb_certificationIsSet ( false )
 {
   STL_NAMESPACE::memset ( m_certification,0,sizeof ( uint8_t ) *8 );
+}
+
+
+DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
+{
+}
+
+
+void
+DiagnosticPgnHandler_c::init()
+{
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
@@ -56,7 +67,8 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
 }
 
 
-DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
+void
+DiagnosticPgnHandler_c::close()
 {
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, SOFTWARE_IDENTIFICATION_PGN );
   __IsoAgLib::getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );

@@ -37,52 +37,31 @@ namespace __IsoAgLib
   }
 
 
-  /** initialize directly after the singleton instance is created.
-  */
-  void ProprietaryMessageHandler_c::singletonInit()
-  {
-    mc_data.setSingletonKey( getSingletonVecKey() );
-    setAlreadyClosed();
-    init();
-  }
-
-  /**
-      die Parameter in init(##### const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode #####) werden
-      wahrscheinlich nicht gebraucht
-    */
   void ProprietaryMessageHandler_c::init()
   {
     if (checkAlreadyClosed())
     {
+      clearAlreadyClosed();
+      mc_data.setSingletonKey( getSingletonVecKey() );
+
       getSchedulerInstance().registerClient( this );
-      // register to get ISO monitor list changes
       __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+
       mb_hardTiming = false;
       setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
-      clearAlreadyClosed();
     }
   }
 
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
-  void ProprietaryMessageHandler_c::close( )
+
+  void ProprietaryMessageHandler_c::close()
   {
-    if ( ! checkAlreadyClosed() )
-    {
-      // avoid another call
+    if (!checkAlreadyClosed())
+    { // avoid another call
       setAlreadyClosed();
-      // unregister from timeEvent() call by Scheduler_c
-      getSchedulerInstance().unregisterClient( this );
-      // unregister ISO monitor list changes
-      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-    }
-  }
 
-  /** DESTRUCTOR
-    */
-  ProprietaryMessageHandler_c::~ProprietaryMessageHandler_c()
-  {
-    close();
+      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+      getSchedulerInstance().unregisterClient( this );
+    }
   }
 
   /** register the proprietary message client pointer in an internal list of all clients.
@@ -237,15 +216,14 @@ namespace __IsoAgLib
 
   void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c& client)
   {
-    /** get a CAN instance */
-    CanIo_c& c_can = getCanInstance4Comm();
-
     /** get data from client */
     IsoAgLib::iGenericData_c& rc_sendData = client.getDataSend();
 
     /** length <= 8 Bytes */
     if (rc_sendData.getLen() <= 8)
     { /** single packet */
+      IsoBus_c& c_isobus = getIsoBusInstance4Comm();
+
       /** sets the saved ident */
       mc_data.setIdent (rc_sendData.getIdent(), Ident_c::ExtendedIdent);
 
@@ -271,7 +249,7 @@ namespace __IsoAgLib
       /** set data */
       mc_data.setDataFromString (rc_sendData.getDataStream(), rc_sendData.getLen());
       /** sending */
-      c_can << mc_data;
+      c_isobus << mc_data;
     }
     else
     { /** multi-packet */
@@ -432,12 +410,10 @@ namespace __IsoAgLib
   }
 
 
-  /**  Operation:  Function for Debugging in Scheduler_c
-  */
+#if DEBUG_SCHEDULER
   const char* ProprietaryMessageHandler_c::getTaskName() const
-  {
-    return "ProprietaryMessageHandler_c()";
-  }
+  { return "ProprietaryMessageHandler_c()"; }
+#endif
 
 
   bool ProprietaryMessageHandler_c::processMsg()

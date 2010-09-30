@@ -14,14 +14,14 @@
 #include "isorequestpgnhandler_c.h"
 #include "isomonitor_c.h"
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <algorithm>
 
 
 namespace __IsoAgLib {
 
-/** initialisation for IsoRequestPgn_c */
+
 void
 IsoRequestPgn_c::init (void)
 {
@@ -31,31 +31,24 @@ IsoRequestPgn_c::init (void)
     // clear state of mb_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
 
-    getCanInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
+    getIsoBusInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
   }
 }
 
 
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
 void
 IsoRequestPgn_c::close (void)
 {
   if (!checkAlreadyClosed ())
   {
+    // avoid another call
     setAlreadyClosed();
-    getCanInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8), Ident_c::ExtendedIdent);
+
+    getIsoBusInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8));
   }
-};
-
-
-/** default destructor which has nothing to do */
-IsoRequestPgn_c::~IsoRequestPgn_c ()
-{
-  close();
 }
 
 
-/** adds the PGN to the list */
 bool
 IsoRequestPgn_c::registerPGN(
     IsoRequestPgnHandler_c &r_PGNHandler,
@@ -219,7 +212,7 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
   data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
   data().setLen (8);
 
-  __IsoAgLib::getCanInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
 }
 
 
@@ -256,22 +249,11 @@ IsoRequestPgn_c::IsoRequestPgn_c ()
 }
 
 
-/** initialize directly after the singleton instance is created.
-  * this is called from singleton.h and should NOT be called from the user again.
-  * users please use init(...) instead. */
-void
-IsoRequestPgn_c::singletonInit ()
-{
-  setAlreadyClosed (); // so init() will init ;-) (but only once!)
-  init();
-};
-
-// Funktion for Debugging in Scheduler_c
+#if DEBUG_SCHEDULER
 const char*
 IsoRequestPgn_c::getTaskName() const
-{
-  return "IsoRequestPgn_c";
-}
+{ return "IsoRequestPgn_c"; }
+#endif
 
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

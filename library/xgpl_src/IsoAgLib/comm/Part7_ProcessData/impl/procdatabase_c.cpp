@@ -17,7 +17,7 @@
 /* *************************************** */
 #include "procdatabase_c.h"
 #include "process_c.h"
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/impl/procdataremote_c.h>
 
 namespace __IsoAgLib {
@@ -151,7 +151,7 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t
   getProcessPkg().setData( ai32_val );
 
   // send the msg
-  getCanInstance4Comm() << getProcessPkg();
+  getIsoBusInstance4Comm() << getProcessPkg();
   // check for any error during send resolve, ...
   if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
   { // good

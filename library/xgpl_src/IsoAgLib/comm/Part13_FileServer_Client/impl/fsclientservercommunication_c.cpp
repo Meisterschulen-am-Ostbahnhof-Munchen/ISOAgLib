@@ -17,11 +17,11 @@
 #include "fsmanager_c.h"
 
 // ISOAgLib
-#include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-#include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/streamlinear_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 // own interfaces
 #include "../ifsclientservercommunication_c.h"

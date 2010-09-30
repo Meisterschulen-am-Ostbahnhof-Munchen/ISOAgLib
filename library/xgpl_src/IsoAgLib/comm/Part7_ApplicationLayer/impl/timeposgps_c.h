@@ -106,12 +106,6 @@ class TimePosGps_c : public SingletonTimePosGps_c
   /** \name Management Functions for class TimePosGps_c  */
   /*@{*/
 
-  /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-    void singletonInit();
-
   /** functions with actions, which must be performed periodically
       -> called periodically by Scheduler_c
       ==> sends base msg if configured in the needed rates
@@ -124,15 +118,9 @@ class TimePosGps_c : public SingletonTimePosGps_c
     */
   virtual bool timeEvent(  );
 
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
+  // from BaseCommon_c
+  virtual void init_specialized();
+
   /** config the Base_c object after init -> set pointer to isoName and
       config send/receive of different base msg types
       @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -141,8 +129,7 @@ class TimePosGps_c : public SingletonTimePosGps_c
     */
   bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
-  /** destructor for Base_c which has nothing to do */
-  virtual ~TimePosGps_c() { BaseCommon_c::close();}
+  virtual ~TimePosGps_c() {}
 
   /** process a message request for PGN
       @param aui32_pgn PGN
@@ -575,8 +562,9 @@ public:
                                  handler class of type MsgEventHandler_c */
   void deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler);
 
-  ///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
 
 private:

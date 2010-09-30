@@ -18,6 +18,7 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
+#include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/hal/hal_system.h>
 #ifdef USE_CAN_EEPROM_EDITOR
   #include <IsoAgLib/hal/hal_eeprom.h>
@@ -67,30 +68,6 @@ namespace __IsoAgLib {
   }
 #endif
 
-/*******************************************/
-/** definition of public element functions */
-/*******************************************/
-
-bool CanIo_c::msb_sendPrioritized=false;
-
-void
-CanIo_c::singletonInit()
-{
-  /// Settings taken form constructor
-  mui8_busNumber = 0xFF;
-
-  /// Default to NO maximum send delay detection
-  mi32_maxSendDelay = -1;
-
-  mt_filterBoxCnt = 0;
-  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  mt_msgObjCnt = 0;
-  #endif
-
-
-  /// singletonInit stuff
-  init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR, CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
-}
 
 /** Initialize the CAN hardware, and instantiate one msg object for
   sending of messages. Do configuration for BUS number, sending bitrate,
@@ -98,19 +75,12 @@ CanIo_c::singletonInit()
   called by specified constructor or external functions;
   wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
 
-  If even the aui8_busNumber parameter has the default value 0xFF,
-  then the configuration settings of a previous init call are not
-  changed. In this case, the CAN BUS is only reset with the old settings.
-  This is enabled by the default value 0xFF for aui8_busNumber, which is
-  changed to CONFIG_CAN_DEFAULT_BUS_NUMBER for the first call of init() after the constructor.
-  In all other cases, the special value 0xFF is indicator for empty parameter list.
-
   possible errors:
       * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
       * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
       * Err_c::busy on already used sending Msg-Obj
-  @param aui8_busNumber optional number of the CAN bus
-  @param aui16_bitrate optional bitrate (default by define in isoaglib_config.h)
+  @param aui8_busNumber number of the CAN bus
+  @param aui16_bitrate bitrate (default by define in isoaglib_config.h)
   @param ren_identType optional length of the ident
     (S (11bit), E (29bit), B
     (send both standard and extended ident msg) (default by define in isoaglib_config.h)
@@ -119,184 +89,81 @@ CanIo_c::singletonInit()
   @param aui8_maxObjNr optional maximum number for hardware CAN message object
     (default by define in isoaglib_config.h)
   @return true -> correct initialisation without errors
+  @pre CAN is closed / not yet initialized
   @see HAL::can_configGlobalInit
   @see HAL::can_configMsgobjInit
   @see Ident_c::t_identType
 */
-  bool CanIo_c::init(uint8_t aui8_busNumber, uint16_t aui16_bitrate,
-                  Ident_c::identType_t ren_identType,
-                  uint8_t aui8_minObjNr,
-                  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-                  uint8_t aui8_maxObjNr
-                  #else
-                  // this parameter is NOT needed with SYSTEM_WITH_ENHANCED_CAN_HAL
-                  uint8_t /*aui8_maxObjNr*/
-                  #endif
-                  )
-{ // first make shure that the base system is initialized
-  getSystemInstance().init();
-  mb_runningCanProcess = false;
-  // if FilterBox_c instances were created before the CAN_IO was
-  // explicitly initialized, we must call reconfigureMsgObj NOW
-  bool b_callReconfigureMsgObj = false;
-
-  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  initMinChangedFilterBox();
-  #endif
-
-  #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-  static bool firstDefaultInitCallStart = true;
-  if ( firstDefaultInitCallStart ) {
-    firstDefaultInitCallStart = false;
-    INTERNAL_DEBUG_DEVICE
-        << "Start CanIo_c::init() mit BUS: " << int(aui8_busNumber)
-        << ", Bitrate: " << int(aui16_bitrate) << INTERNAL_DEBUG_DEVICE_ENDL;
-  }
-  #endif
-
-  if ( ( aui8_busNumber != 0xFF ) || ( aui8_busNumber != mui8_busNumber ) )
-  { // this is the first call of init after constructor,
-    // or at least the BUS Number parameter is different from
-    // default value -> interprete as explicit call which can
-    // override old setting
-
-    // close CAN Bus, if mui8_busNumber is valid at the
-    // moment (this can be a reconfig after a default
-    // config)
-    if ( mui8_busNumber <= HAL_CAN_MAX_BUS_NR )
-    {
-      #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-      for (uint8_t i = 0; i < cntFilter(); i++)
-        m_arrFilterBox[i].closeHAL();
-      #endif
-      HAL::can_configGlobalClose(mui8_busNumber);
-    }
-
-    /* ************************************* */
-    /* *****set initial attribute values**** */
-    /* ************************************* */
-    // set t_mask to clear values
-    men_identType = DEFAULT_CONFIG_IDENT_TYPE;
-
-    // set object vars to 0 detect forgotten init call
-    mui8_busNumber = 0;
-    setMinHALMsgObjNr(0);
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    setMaxHALMsgObjNr(0);
-    #endif
-    mui16_bitrate = 0;
-    mi32_canErrStart = 0;
-    mi32_canErrEnd = 0;
-
-    mi32_endLastReconfigTime = 0;
-    mi32_lastProcessedCanPkgTime = 0;
-    mui8_processedMsgCnt = 0;
-    mc_maskStd.set(0x7FF, Ident_c::StandardIdent);
-    mc_maskExt.set(0x1FFFFFFF, Ident_c::ExtendedIdent);
-    mc_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
-
-    // check if some FilterBox_c instances were already created, so that
-    // we must call reconfigureMsgObj NOW
-    if ( ! m_arrFilterBox.empty() )
-    {
-      b_callReconfigureMsgObj = true;
-      #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-        INTERNAL_DEBUG_DEVICE
-        #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-          << "Call reconfigureMsgObj as some FilterBox_c instances are already created"
-        #else
-          << "there were already some FilterBox_c instances, that should be reactivated with fresh initialized CAN"
-        #endif
-          << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-    }
-  }
-  if ( aui8_busNumber == 0xFF )
-  { // called with default value -> do nothing till called with normal parameter
-    #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-    static bool firstDefaultInitCallEnd = true;
-    if ( ! firstDefaultInitCallEnd ) {
-      firstDefaultInitCallEnd = false;
-      INTERNAL_DEBUG_DEVICE
-          << "Ende CanIo_c::init() mit Default Werten bei spc_instance == "
-          << INTERNAL_DEBUG_DEVICE_ENDL;
-    }
-    #endif
+bool
+CanIo_c::init(
+  uint8_t aui8_busNumber, uint16_t aui16_bitrate, Ident_c::identType_t ren_identType,
+  uint8_t aui8_minObjNr, uint8_t aui8_maxObjNr)
+{
+  // check preconditions
+  if (mui8_busNumber != 0xFF)
+  { // don't allow a re-init of the bus, app has to close bus first.
     return false;
   }
-  else
-  {
-    /* ****************************** */
-    /* *****check input parameter**** */
-    /* ****************************** */
-    // check aui8_minObjNr, aui8_maxObjNr and aui8_busNumber
-    if (
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-          (aui8_minObjNr > HAL_CAN_MAX_SEND_OBJ)
-        ||(aui8_maxObjNr > HAL_CAN_MAX_SEND_OBJ)
-      #if HAL_CAN_MIN_SEND_OBJ > 0
-        ||(aui8_minObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
-        ||(aui8_maxObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
-      #endif
-        ||
-    #else
-        #if HAL_CAN_MIN_SEND_OBJ > 0
-        (aui8_minObjNr < HAL_CAN_MIN_SEND_OBJ)
-        ||
-        #endif
-    #endif
-        (aui8_busNumber > HAL_CAN_MAX_BUS_NR)
-        )
-    { // one of the range tests not passed
-      getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
-      #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-      INTERNAL_DEBUG_DEVICE
-          << "Ende CanIo_c::init() mit falschen Parametern" << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-      return false; // exit function with error information
-    }
 
-    /* ******************************************************* */
-    /* ****implementing of function with passed parameters**** */
-    /* ******************************************************* */
-
-    /** set min and max allowed obj numbers (important for multithreading
-        where each threads manages only a portion of all objects)
-    */
-    setMinHALMsgObjNr(aui8_minObjNr);
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    setMaxHALMsgObjNr(aui8_maxObjNr);
-    #endif
-    // store given BUS number: if default value 0xFF is given, use
-    // the default defined value
-    mui8_busNumber = (aui8_busNumber != 0xFF)?aui8_busNumber:CONFIG_CAN_DEFAULT_BUS_NUMBER;
-    // store wanted CAN identifier type
-    men_identType = ren_identType;
+  /* ****************************** */
+  /* *****check input parameter**** */
+  /* ****************************** */
+  // check aui8_minObjNr, aui8_maxObjNr and aui8_busNumber
+  if (
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+      (aui8_minObjNr > HAL_CAN_MAX_SEND_OBJ)
+      ||(aui8_maxObjNr > HAL_CAN_MAX_SEND_OBJ)
+#if HAL_CAN_MIN_SEND_OBJ > 0
+      ||(aui8_minObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
+      ||(aui8_maxObjNr < HAL_CAN_MIN_SEND_OBJ) // use this comparison only for (HAL_CAN_MIN_SEND_OBJ > 0), else it gives a warning!
+#endif
+      ||
+#else
+#if HAL_CAN_MIN_SEND_OBJ > 0
+      (aui8_minObjNr < HAL_CAN_MIN_SEND_OBJ)
+      ||
+#endif
+#endif
+      (aui8_busNumber > HAL_CAN_MAX_BUS_NR)
+     )
+  { // one of the range tests not passed
+    getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
+    return false;
   }
-  #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
-  INTERNAL_DEBUG_DEVICE
-      << "Ende CanIo_c::init()" << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
 
-  // even for call of init without parameter the base can init
-  // should be repeated
-  // check and store bitrate, config CAN and send object(s)
-  const bool b_result = baseCanInit(aui16_bitrate);
+#ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
+  (void) aui8_maxObjNr;
+#endif
 
-  if ( b_callReconfigureMsgObj )
-  {
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    reconfigureMsgObj();
-    #else
-    for (uint8_t i = 0; i < cntFilter(); i++)
-      m_arrFilterBox[i].configCan(mui8_busNumber, i + minReceiveObjNr() );
-    #endif
-  }
-  return b_result;
+  mb_runningCanProcess = false;
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  initMinChangedFilterBox();
+#endif
+
+  mi32_endLastReconfigTime = 0;
+  mi32_lastProcessedCanPkgTime = 0;
+  mui8_processedMsgCnt = 0;
+  mc_maskStd.set(0x7FF, Ident_c::StandardIdent);
+  mc_maskExt.set(0x1FFFFFFF, Ident_c::ExtendedIdent);
+  mc_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
+
+  /** set min and max allowed obj numbers (important for multithreading
+      where each threads manages only a portion of all objects)
+  */
+  setMinHALMsgObjNr(aui8_minObjNr);
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  setMaxHALMsgObjNr(aui8_maxObjNr);
+#endif
+  mui8_busNumber = aui8_busNumber;
+  men_identType = ren_identType;
+
+  return baseCanInit (aui16_bitrate);
 }
 
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-void CanIo_c::close( void )
+
+void
+CanIo_c::close( void )
 {
   if ( mui8_busNumber == 0xFF )
   { // CAN already closed -> don't call HAL close again
@@ -324,41 +191,43 @@ void CanIo_c::close( void )
       getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Can );
       break;
   }
-  #if DEBUG_HEAP_USEAGE
+#if DEBUG_HEAP_USEAGE
   sui16_filterBoxTotal -= cntFilter();
-    #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-    sui16_msgObjTotal -= cntMsgObj();
-    #endif
-  #endif
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  sui16_msgObjTotal -= cntMsgObj();
+#endif
+#endif
+
+  // Clear Filters
   m_arrFilterBox.clear();
   setCntFilter( 0 );
-  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  // Clear MsgObjs
   marr_msgObj.clear();
   setCntMsgObj( 0 );
-  #endif
+#endif
+
+  // indicated closed instance
   mui8_busNumber = 0xFF;
 }
 
 
 /** periodically called function which does
-  periodically needed actions; f.e. trigger watch
-  dog and start processing received messages
-  AND call init if mui16_bitrate is still set to 0 -> no CAN init performed
+  periodically needed actions like trigger watch-dog
+  and start processing received messages
   @return true -> time events was performed
 */
-bool CanIo_c::timeEvent( void ){
-  // check if init was called
-  if ( (mui16_bitrate == 0) || ( mui8_busNumber > HAL_CAN_MAX_BUS_NR ) )
-  { // this can't be the case after correct call of init
-    init(0xFF, DEFAULT_BITRATE, DEFAULT_CONFIG_IDENT_TYPE, CONFIG_CAN_DEFAULT_MIN_OBJ_NR
-         , CONFIG_CAN_DEFAULT_MAX_OBJ_NR ); // call with default values
-  }
-  // if still not ready, CanIo_c is not yet initialised complete -> do nothing
+bool
+CanIo_c::timeEvent( void )
+{
+  // if not ready, CanIo_c is not yet initialised complete -> do nothing
   if ( (mui16_bitrate == 0) || ( mui8_busNumber > HAL_CAN_MAX_BUS_NR ) ) return false;
 
   // start process of all received msg
   return (processMsg() >= 0);
 }
+
 
 #ifdef USE_CAN_MEASURE_BUSLOAD
 /** deliver actual BUS load in baud
@@ -392,7 +261,7 @@ uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t /*ren_identType*/)
   <!--@param ren_identType type of searched ident: standard 11bit or extended 29bit
     (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)-->
 */
-void CanIo_c::sendCanClearbuf(Ident_c::identType_t /*ren_identType*/)
+void CanIo_c::sendCanClearbuf()
 {
   uint8_t ui8_sendObjNr = minHALMsgObjNr();
 
@@ -488,45 +357,6 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   return b_identDefFound;
 }
 
-/**
-  Create a Standard Iso Filter Box.
-  @see __IsoAgLib::CANCustomer
-  @see __IsoAgLib::CanIo_c::insertFilter
-  @param ar_customer reference to __IsoAgLib::CanCustomer_c which needs filtered
-      messages (-> on received msg call ar_customer.processMsg())
-  @param aui32_pgn PGN
-  @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
-  @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
-  @exception badAlloc
-**/
-FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate)
-{
-  int8_t i8_dataLen = 0;
-
-    switch(aui32_pgn)
-    {
-      case REQUEST_PGN_MSG_PGN:
-      case (REQUEST_PGN_MSG_PGN | 0xFF): //xxeaffxx
-        i8_dataLen = 3;
-        break;
-
-      case ACKNOWLEDGEMENT_PGN: /**variable data len : see ISO/CD ISO-11783-12 */
-      case CLIENT_TO_FS_PGN:    /** variable data len : see ISO-11783 -13 */
-      case FS_TO_CLIENT_PGN:    /** variable data len : see ISO-11783 -13 */
-      case PROPRIETARY_A_PGN: /** multipacket supported, data len 0..1785 bytes*/
-      case PROPRIETARY_A2_PGN: /** multipacket supported, data len 0..1785 bytes*/
-      case SOFTWARE_IDENTIFICATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
-      case ECU_IDENTIFICATION_INFORMATION_PGN: /** variable data len: see ISO/CD ISO-11783-12 */
-      case PROPRIETARY_B_PGN: /** variable data len: see SAE J1939 71 */
-        i8_dataLen = -1;
-        break;
-
-      default:i8_dataLen= 8;
-      break;
-    }
-
-    return insertFilter(ar_customer,(0x3FFFF00UL),MASK_TYPE(static_cast<MASK_TYPE>(aui32_pgn) << 8),ab_reconfigImmediate,Ident_c::ExtendedIdent,i8_dataLen);
-}
 
 /** create a Filter Box with specified at_mask/at_filter
   on ui8_busNr of object; reconfig HW CAN MsgObj_c only if
@@ -557,12 +387,7 @@ FilterBox_c*  CanIo_c::insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_cus
 */
 FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c & ar_customer,
                                   uint32_t aui32_mask, uint32_t aui32_filter,
-                                  #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
                                   bool ab_reconfigImmediate,
-                                  #else
-                                  // this parameter is NOT needed with SYSTEM_WITH_ENHANCED_CAN_HAL
-                                  bool /*ab_reconfigImmediate*/,
-                                  #endif
                                   const Ident_c::identType_t at_identType,
                                   int8_t ai8_dlcForce)
 
@@ -708,8 +533,10 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
       reconfigureMsgObj();
     } // if (ab_configImmediate)
   }
-
- #endif
+  #else
+  // don't care what the parameter was, we don't have to reconfig here!
+  (void) ab_reconfigImmediate;
+  #endif
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 INTERNAL_DEBUG_DEVICE << "end CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -1113,51 +940,11 @@ uint32_t ui32_msgNbr = 0;
   return mui8_processedMsgCnt;
 }
 
-/** function for sending resolved data out of CanPkgExt_c
-  @see operator<<(CanPkg_c &) for more sending details
-  @param acrc_src CanPkgExt_c which holds the to be sent data
-  @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
-*/
-CanIo_c& CanIo_c::operator<<(CanPkgExt_c& acrc_src)
-{
-  if ( ! isReady2Send() ) return *this;
-  //check if source and destination address are valid
-#if ((defined(USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-  // when ISO is compiled, we must make sure, that the ISO specific
-  // resolving is only used for extended ident messages
-  #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  if ( ( mb_canChannelCouldSendIso                           )
-    && ( acrc_src.identType() == Ident_c::ExtendedIdent     )
-    && ( ! acrc_src.isProprietaryMessageOnStandardizedCan() ) )
-  #else
-  if ( ( mb_canChannelCouldSendIso ) && ( acrc_src.identType() == Ident_c::ExtendedIdent ) )
-  #endif // end of ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-  #endif
-  {
-    if ( ! acrc_src.resolveSendingInformation() )
-    { // preconditions for correct sending are not fullfilled -> set error state
-      getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
-      return *this;
-    }
-  }
-  return CanIo_c::operator<<( static_cast<CanPkg_c&>(acrc_src) );
-}
 
-/** function for sending data out of CanPkg_c (uses BIOS function)
-  If send buffer is full a local loop waits for max. CONFIG_CAN_BLOCK_TIME ms
-  till buffer has enough space. If msg still couldn't be sent, it is assumed
-  that the bus is in a problematic state and the send buffer is cleared.
-
-  possible errors:
-      * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
-      * Err_c::range on undef BUS or BIOS send obj nr
-      * Err_c::can_warn on physical CAN-BUS problems
-      * Err_c::can_off on physical CAN-BUS off state
-  @param acrc_src CanPkg_c which holds the to be sent data
-  @return reference to this CanIo_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
-*/
 CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
 { // immediately return if CAN is not yet configured for send
+  // this is not a valid case! --> assert!!
+  isoaglib_assert (isReady2Send());
   if ( ! isReady2Send() ) return *this;
 
   // set send MsgObj ID
@@ -1169,7 +956,7 @@ CanIo_c& CanIo_c::operator<<(CanPkg_c& acrc_src)
   {  // perform wait loop
     // trigger the watchdog
     HAL::wdTriggern();
-    
+
     /**
       * redmine ticket 69.
       * we wait for CONFIG_CAN_BLOCK_TIME ms if the send-queue is opening for this one package.
@@ -1991,15 +1778,13 @@ CanIo_c::CanIo_c( void ) :
     marr_msgObj(),
     mc_tempObj(),
     mc_lastMsgObj(),
-    mt_msgObjCnt(),
+    mt_msgObjCnt(0),
     mi32_minChangedFilterBox(0),
   #endif
     m_arrFilterBox(),
     mt_filterBoxCnt(0),
     mc_tempFilterBox(),
-    mi32_maxSendDelay(0),
-    mi32_canErrStart(0),
-    mi32_canErrEnd(0),
+    mi32_maxSendDelay(-1),
     mi32_lastCanCheck(0),
     mi32_lastProcessedCanPkgTime(0),
     mui16_bitrate(0),
@@ -2008,7 +1793,7 @@ CanIo_c::CanIo_c( void ) :
     mc_maskExt(),
     mc_maskLastmsg(),
     men_identType(Ident_c::StandardIdent),
-    mui8_busNumber(0),
+    mui8_busNumber(0xFF),
     mui8_minmsgObjLimit(0),
     mui8_minReceiveObjNr(0),
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
@@ -2016,16 +1801,11 @@ CanIo_c::CanIo_c( void ) :
   #endif
     mui8_processedMsgCnt(0),
     mb_runningCanProcess(false)
-  #if ((defined( USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-    ,mb_canChannelCouldSendIso(false)
-  #endif
 {}
 
 
-/** perform bas init for CAN with set of speed and init of send object(s)
-  @param aui16_bitrate wanted CAN bitrate
-*/
-bool CanIo_c::baseCanInit(uint16_t aui16_bitrate)
+bool
+CanIo_c::baseCanInit (uint16_t aui16_bitrate)
 {
   HAL::wdTriggern();
   // check if aui16_bitrate is one of the allowed settings
@@ -2151,20 +1931,11 @@ bool CanIo_c::baseCanInit(uint16_t aui16_bitrate)
       break;
   }
 
-
-  #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL) )
-    if ( getSingletonVecKey() >= PRT_INSTANCE_CNT ) mb_canChannelCouldSendIso = false;
-    else mb_canChannelCouldSendIso = true;
-  #endif
-
   // return true -> must be set according success
   return b_configSuccess;
 }
 
-/** check for can send conflict error and stop send retry on error
-  (thus avoid BUS OFF)
-  @return true -> there was send error and send retry stopped
-*/
+
 bool CanIo_c::stopSendRetryOnErr()
 {
   bool b_result = false;
@@ -2195,14 +1966,6 @@ void CanIo_c::setMaxSendDelay (int32_t ai32_maxSendDelay)
   mi32_maxSendDelay = ai32_maxSendDelay;
 }
 
-
-/** set this client to have send-priority
-  @param ab_sendPrioritized enable (true) or disable (false) sending in Prioritized Mode
- */
-void CanIo_c::setSendPriority(bool ab_sendPrioritized)
-{ // set send MsgObj ID
-  msb_sendPrioritized = ab_sendPrioritized;
-}
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION && !defined(SYSTEM_WITH_ENHANCED_CAN_HAL)
 void CanIo_c::printMsgObjInfo()

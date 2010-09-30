@@ -67,9 +67,13 @@ class FsManager_c : public SingletonFsManager_c
   };
   typedef SaClaimHandlerProxy_c Handler_t;
 
-    /** function used to destroy the FsManager_c object */
-    void close();
-    virtual ~FsManager_c();
+  /** initialisation for FsManager_c */
+  void init();
+
+  /** function used to close the FsManager_c object */
+  void close();
+
+  virtual ~FsManager_c() {}
 
 /**
   * performe periodic tasks:
@@ -78,10 +82,11 @@ class FsManager_c : public SingletonFsManager_c
   * is deleted.
   * @return true if all tasks where performed correctly
   */
-    bool timeEvent(void);
+  bool timeEvent(void);
 
-    /**  Used for Debugging Tasks in FsManager_c */
-    const char* getTaskName() const;
+#if DEBUG_SCHEDULER
+  const char* getTaskName() const;
+#endif
 
 /**
   * initFsClient registers a new fileserver client. If the client has already been registered, it does not re-register
@@ -106,13 +111,6 @@ class FsManager_c : public SingletonFsManager_c
 
     /** constructor is private, so singleton has to be used */
     FsManager_c();
-
-    /**
-      * initialize directly after the singleton instance is created.
-      * this is called from singleton.h and should NOT be called from the user again.
-      * users please use init(...) instead.
-      */
-    void singletonInit();
 
   public:
     /**

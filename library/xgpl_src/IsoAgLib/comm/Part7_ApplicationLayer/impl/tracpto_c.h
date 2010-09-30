@@ -69,22 +69,6 @@ typedef struct
     /** \name Management Functions for class TracPTO_c  */
     /*@{*/
 
-    /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-    void singletonInit();
-
-
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracPTO_c object after init -> set pointer to isoName and
         config send/receive of different base msg types
         @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -93,8 +77,7 @@ typedef struct
       */
     virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_IdentMode, uint16_t aui16_suppressMask = 0);
 
-    /** destructor for Base_c which has nothing to do */
-    virtual ~TracPTO_c() { BaseCommon_c::close();};
+    virtual ~TracPTO_c() {}
     /*@}*/
 
     /* ******************************************* */
@@ -365,13 +348,12 @@ typedef struct
     /** get present limit status of rear pto shaft speed
         @return  present limit status
       */
+    IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return static_cast<IsoAgLib::IsoLimitFlag_t>(mt_ptoRear.t_ptoShaftSpeedLimitStatus);}
 
-    ///  Operation: getTaskName
+#if DEBUG_SCHEDULER
     virtual const char* getTaskName() const;
-
-
- IsoAgLib::IsoLimitFlag_t rearPtoShaftSpeedLimitStatus() const {return static_cast<IsoAgLib::IsoLimitFlag_t>(mt_ptoRear.t_ptoShaftSpeedLimitStatus);}
-    /*@}*/
+#endif
+ /*@}*/
 
   private:
     // Private methods

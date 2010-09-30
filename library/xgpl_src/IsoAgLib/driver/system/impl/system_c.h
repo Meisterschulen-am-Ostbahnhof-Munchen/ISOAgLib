@@ -63,11 +63,8 @@ public:
     * the call of System_c::close() stimulates final shutdown of power
     */
   static void close( void );
-  /**
-    destructor which shuts down the hardware (f.e. power off)
-    (calls BIOS function)
-  */
-  ~System_c( void ) { close();};
+
+  ~System_c( void ) {}
 
   /**
     init the hardware watchdog
@@ -134,13 +131,6 @@ private:
     * NEVER define instance of System_c within application
     */
   System_c( void ) {};
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
 // Private attributes
 };

@@ -50,6 +50,12 @@ bool iLibErr_c::init( void )
   return true;
 }
 
+void
+iLibErr_c::close()
+{
+}
+
+
 /** default constructor which sets the error value to noErr */
 iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
 { }

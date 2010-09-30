@@ -38,23 +38,6 @@ void EepromIo_c::init()
   mui16_rPosition = mui16_wPosition = 0;
 }
 
-/** destructor has nothing to destruct */
-EepromIo_c::~EepromIo_c(){
-}
-
-
-/**
-  initialize directly after the singleton instance is created.
-  this is called from singleton.h and should NOT be called from the user again.
-  users please use init(...) instead.
-*/
-void EepromIo_c::singletonInit()
-{
-  // verify that System is int
-  getSystemInstance().init();
-  init();
-};
-
 // ++++++++++++++++++++++++++++++++++++
 // ++++ EEPROM managing operations ++++
 // ++++++++++++++++++++++++++++++++++++

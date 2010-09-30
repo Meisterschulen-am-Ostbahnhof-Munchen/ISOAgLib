@@ -14,9 +14,10 @@
 #include "isoterminal_c.h"
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
-// #include "vttypes.h"
+#include <IsoAgLib/util/iassert.h>
+
 
 namespace __IsoAgLib {
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
@@ -60,47 +61,24 @@ IsoTerminal_c::IsoTerminal_c() :
 }
 
 
-/** default destructor
-*/
-IsoTerminal_c::~IsoTerminal_c()
-{
-  close();
-}
-
-
-void
-IsoTerminal_c::singletonInit()
-{
-  mc_data.setSingletonKey( getSingletonVecKey() );
-
-  // clear state of b_alreadyClosed, so that close() is called one time
-  setAlreadyClosed();
-
-  // call real init() code...
-  init();
-}
-
-
-/** initialise element which can't be done during construct */
 void
 IsoTerminal_c::init()
 {
   if (checkAlreadyClosed())
   { // avoid another call
     clearAlreadyClosed();
+    mc_data.setSingletonKey( getSingletonVecKey() );
 
-    // register in Scheduler_c to get time-events
     getSchedulerInstance().registerClient(this);
-    // register to get ISO monitor list changes
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
-    // register Filter in CanIo_c
-    bool b_atLeastOneFilterAdded = NULL != getCanInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
-    bool const cb_set = NULL != getCanInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
+    // register ISO Filters
+    bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
+    bool const cb_set = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
     if (cb_set)
       b_atLeastOneFilterAdded = true;
 
-    if (b_atLeastOneFilterAdded) getCanInstance4Comm().reconfigureMsgObj();
+    if (b_atLeastOneFilterAdded) getIsoBusInstance4Comm().reconfigureMsgObj();
   }
 }
 
@@ -113,21 +91,20 @@ IsoTerminal_c::close()
   { // avoid another call
     setAlreadyClosed();
 
-    // deregister in Scheduler_c
-    getSchedulerInstance().unregisterClient(this);
+    // Detect still registered IsoObjectPools at least in DEBUG mode!
+    isoaglib_assert (getClientCount() == 0);
+
+    // remove all registered VtServer-instances
+    ml_vtServerInst.clear();
+
+    // deregister ISO Filters
+    getIsoBusInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8));
+    getIsoBusInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (LANGUAGE_PGN << 8));
+
     // deregister in IsoMonitor_c
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
-
-    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (static_cast<MASK_TYPE>(VT_TO_GLOBAL_PGN) << 8),    Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (static_cast<MASK_TYPE>(LANGUAGE_PGN) << 8),        Ident_c::ExtendedIdent);
-
-    for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
-    {
-      if (mvec_vtClientServerComm[ui8_index])
-      {
-        deregisterIsoObjectPoolInd (ui8_index);
-      }
-    }
+    // deregister in Scheduler_c
+    getSchedulerInstance().unregisterClient(this);
   }
 }
 
@@ -200,7 +177,6 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
 }
 
 
-/** De-Register the registered object pool and versionLabel string (if one was copied) */
 bool
 IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
 {
@@ -215,7 +191,8 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
     {
       if (&r_identItem == &mvec_vtClientServerComm[ui8_index]->getIdentItem())
       {
-        deregisterIsoObjectPoolInd (ui8_index);
+        delete mvec_vtClientServerComm[ui8_index];
+        mvec_vtClientServerComm[ui8_index] = NULL;
         break;
       }
     }
@@ -228,14 +205,17 @@ IsoTerminal_c::deregisterIsoObjectPool (IdentItem_c& r_identItem)
 }
 
 
-void
-IsoTerminal_c::deregisterIsoObjectPoolInd (uint8_t aui8_index)
+uint16_t
+IsoTerminal_c::getClientCount()
 {
-  delete mvec_vtClientServerComm[aui8_index];
-  mvec_vtClientServerComm[aui8_index] = NULL;
+  uint16_t ui16_count = 0;
+  for (uint8_t ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ++ui8_index)
+  {
+    if (mvec_vtClientServerComm[ui8_index])
+      ++ui16_count;
+  }
+  return ui16_count;
 }
-
-
 
 
 /** periodically event
@@ -458,10 +438,12 @@ IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidt
   }
 }
 #endif
-///  Used for Debugging Tasks in Scheduler_c
+
+#if DEBUG_SCHEDULER
 const char*
 IsoTerminal_c::getTaskName() const
 { return "IsoTerminal_c()"; }
+#endif
 
 
 } // end namespace __IsoAgLib

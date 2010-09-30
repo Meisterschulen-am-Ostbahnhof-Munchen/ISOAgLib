@@ -216,13 +216,17 @@ private:
   /** BUS Number for systems with more than one BUS */
   uint8_t mui8_busNumber;
 
-
   int32_t mi32_fbVecIdx;
 
-#if ((defined(USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
+  /** Indicate if FilterBox is iterating through the customers in "processMsg" */
+  static FilterBox_c* mspc_currentlyProcessedFilterBox;
+  static int msi_processMsgLoopIndex; /// "< 0" indicates Loop ==> need to adapt at delete operations
+  static int msi_processMsgLoopSize;  /// used if in Loop mode, need to be adapted at remove/add, too.
+
+#if ((defined(USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
   /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
   bool mb_performIsobusResolve;
-  #endif
+#endif
 };
 }
 #endif

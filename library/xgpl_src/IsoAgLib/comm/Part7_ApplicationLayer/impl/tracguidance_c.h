@@ -34,21 +34,6 @@ typedef SINGLETON_DERIVED(TracGuidance_c,BaseCommon_c) SingletonTracGuidance_c;
   {
   public:// Public methods
 
-    /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-    void singletonInit();
-
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracGuidance_c object after init -> set pointer to isoName and
         config send/receive of a guidance msg type
         @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -56,8 +41,7 @@ typedef SINGLETON_DERIVED(TracGuidance_c,BaseCommon_c) SingletonTracGuidance_c;
       */
     virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
-    /** destructor for TracGuidance_c which has nothing to do */
-    virtual ~TracGuidance_c() { BaseCommon_c::close();}
+    virtual ~TracGuidance_c() {}
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
@@ -117,8 +101,9 @@ typedef SINGLETON_DERIVED(TracGuidance_c,BaseCommon_c) SingletonTracGuidance_c;
     IsoAgLib::IsoActiveFlag_t mechanicalSystemLogout() const { return mt_mechanicalSystemLogout;}
     /*@}*/
 
-  ///  Used for Debugging Tasks in Scheduler_c
-  virtual const char* getTaskName() const;
+#if DEBUG_SCHEDULER
+    virtual const char* getTaskName() const;
+#endif
 
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 

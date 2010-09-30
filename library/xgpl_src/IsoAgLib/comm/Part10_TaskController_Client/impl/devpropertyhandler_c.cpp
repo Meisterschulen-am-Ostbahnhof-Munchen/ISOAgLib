@@ -19,18 +19,18 @@
   #include _devproperty_handler_source
 #else
 
-#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
-#include <IsoAgLib/util/impl/singleton.h>
-#include <supplementary_driver/driver/rs232/irs232io_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
+#include <IsoAgLib/util/impl/singleton.h>
+#include <supplementary_driver/driver/rs232/irs232io_c.h>
 
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
@@ -253,7 +253,7 @@ DevPropertyHandler_c::processMsg()
         // send Request Localization Label message
         mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                           procCmdPar_RequestLocalizationLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-        getCanInstance4Comm() << *mpc_data;
+        getIsoBusInstance4Comm() << *mpc_data;
         mui32_uploadTimestamp = HAL::getTime();
         mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
         men_uploadStep = UploadWaitForLocalizationLabelResponse;
@@ -353,7 +353,7 @@ DevPropertyHandler_c::processMsg()
         {
           mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *mpc_data;
+          getIsoBusInstance4Comm() << *mpc_data;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForVersionResponse;
@@ -363,7 +363,7 @@ DevPropertyHandler_c::processMsg()
           /** @todo SOON-62: if the pool couldn't be deleted: fail upload or just ignore it??? */
           mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *mpc_data;
+          getIsoBusInstance4Comm() << *mpc_data;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForVersionResponse;
@@ -486,7 +486,7 @@ DevPropertyHandler_c::timeEvent( void )
       //first of all: get the structure label (if available)
       mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             procCmdPar_RequestStructureLabelMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-      getCanInstance4Comm() << *mpc_data;
+      getIsoBusInstance4Comm() << *mpc_data;
       mui32_uploadTimestamp = HAL::getTime();
       mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
       men_uploadStep = UploadWaitForStructureLabelResponse;
@@ -566,7 +566,7 @@ DevPropertyHandler_c::timeEvent( void )
         {
           mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                                   procCmdPar_OPDeleteMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *mpc_data;
+          getIsoBusInstance4Comm() << *mpc_data;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForDeleteResponse;
@@ -578,7 +578,7 @@ DevPropertyHandler_c::timeEvent( void )
         {
           mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                                 procCmdPar_RequestVersionMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-          getCanInstance4Comm() << *mpc_data;
+          getIsoBusInstance4Comm() << *mpc_data;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
           men_uploadStep = UploadWaitForVersionResponse;
@@ -692,7 +692,7 @@ DevPropertyHandler_c::timeEvent( void )
           case procCmdPar_OPDeleteRespMsg:
             mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                                   procCmdPar_OPDeleteMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-            getCanInstance4Comm() << *mpc_data;
+            getIsoBusInstance4Comm() << *mpc_data;
             mui32_uploadTimestamp = HAL::getTime();
             mui32_uploadTimeout = DEF_TimeOut_NormalCommand;
             men_uploadStep = UploadWaitForDeleteResponse;
@@ -841,7 +841,7 @@ DevPropertyHandler_c::sendWorkingSetTaskMsg(int32_t i32_currentTime)
     mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                             0x0F, 0x00, 0x00, 0x00, mui8_lastTcState, 0x00, 0x00, 0x00);
 
-    getCanInstance4Comm() << *mpc_data;
+    getIsoBusInstance4Comm() << *mpc_data;
   }
 }
 
@@ -1003,7 +1003,7 @@ DevPropertyHandler_c::startUpload()
                           (ui32_byteStreamLength >> 16) & 0xff,
                           (ui32_byteStreamLength >> 24) & 0xff,
                           0xff, 0xff, 0xff);
-  getCanInstance4Comm() << *mpc_data;
+  getIsoBusInstance4Comm() << *mpc_data;
   mui32_uploadTimestamp = HAL::getTime();
   mui32_uploadTimeout = DEF_TimeOut_OPTransfer;
 
@@ -1071,7 +1071,7 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
                           actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
                           actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
                           actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-    getCanInstance4Comm() << *mpc_data;
+    getIsoBusInstance4Comm() << *mpc_data;
     men_uploadCommand = UploadCommandWaitingForCommandResponse;
   }
   else
@@ -1168,7 +1168,7 @@ DevPropertyHandler_c::sendPoolActivatieMsg()
 {
   mpc_data->setExtCanPkg8 (3, 0, 203, mui8_tcSourceAddress, mpc_wsMasterIdentItem->getIsoItem()->nr(),
                            procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-  getCanInstance4Comm() << *mpc_data;
+  getIsoBusInstance4Comm() << *mpc_data;
 }
 
 };

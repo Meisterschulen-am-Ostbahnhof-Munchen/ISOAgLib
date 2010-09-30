@@ -109,13 +109,13 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 		while( numLeft )
 			{
 	#if ( CAN_INSTANCE_CNT > 1 )
-			IsoAgLib::iCanIo_c& c_can = IsoAgLib::getIcanInstance(RS232_over_can_busnum);
+			__IsoAgLib::CanIo_c& c_can = IsoAgLib::getCanInstance(RS232_over_can_busnum);
 	#else
-			IsoAgLib::iCanIo_c& c_can = IsoAgLib::getIcanInstance();
+			__IsoAgLib::CanIo_c& c_can = IsoAgLib::getCanInstance();
 	#endif
 			const uint8_t cui8_len = (numLeft < 8 ? numLeft : 8);
 
-			IsoAgLib::iCanPkg_c c_sendData;
+			__IsoAgLib::CanPkg_c c_sendData;
 			c_sendData.setIdent( RS232_over_can_CANID+aui8_channel, __IsoAgLib::Ident_c::StandardIdent );
 			c_sendData.setDataFromString( &bpWrite[wNumber-numLeft], cui8_len );
 			c_can << c_sendData;

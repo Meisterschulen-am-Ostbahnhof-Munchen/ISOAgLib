@@ -28,14 +28,6 @@ class iScheduler_c;
   */
 class iIsoTerminal_c : private __IsoAgLib::IsoTerminal_c {
 public:
-  // Public methods
-  /**
-    initialise element which can't be done during construct
-
-    possible errors:
-  */
-  void init ()
-  { IsoTerminal_c::init(); }
 
   /**
     register given object pool for uploading when possible.

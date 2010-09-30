@@ -17,7 +17,7 @@
 #include "isosystempkg_c.h"
 #include "isomonitor_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 
 
 #if DEBUG_ADDRESS_CLAIM
@@ -227,7 +227,7 @@ void IsoItem_c::set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t au
 /// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
 void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 {
-  CanIo_c& c_can = getCanInstance4Comm();
+  IsoBus_c& c_isobus = getIsoBusInstance4Comm();
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
   IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
 
@@ -258,7 +258,7 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
   // set NAME to CANPkg
   c_pkg.setDataUnion( outputNameUnion() );
   // now IsoSystemPkg_c has right data -> send
-  c_can << c_pkg;
+  c_isobus << c_pkg;
   // update timestamp
   updateTime();
 
@@ -275,7 +275,7 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 */
 bool IsoItem_c::timeEvent( void )
 {
-  CanIo_c& c_can = getCanInstance4Comm();
+  IsoBus_c& c_isobus = getIsoBusInstance4Comm();
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
 
   int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
@@ -319,7 +319,7 @@ bool IsoItem_c::timeEvent( void )
   { // item in address claim mode (time between send of claim and
     // check if there is a CAN send conflict during send of adress claim
     // final acceptance of adr claim (wait for possible contention)
-    if (c_can.stopSendRetryOnErr())
+    if (c_isobus.stopSendRetryOnErr())
     { // item was in address claim state and send of claim caused error
       setItemState(IState_c::PreAddressClaim);
     }
@@ -376,7 +376,7 @@ bool IsoItem_c::timeEvent( void )
         { // Really send it out on the bus now!
           c_pkg.setIsoPri (7);
           c_pkg.setMonitorItemForSA (this);
-          c_can << c_pkg;
+          c_isobus << c_pkg;
           updateTime();
 
           // did we send the last message of the announce sequence?
@@ -425,7 +425,7 @@ IsoItem_c::processAddressClaimed(
       // set NAME to CANPkg
     c_pkg.setDataUnion(outputNameUnion());
       // now IsoSystemPkg_c has right data -> send
-    getCanInstance4Comm() << c_pkg;
+    getIsoBusInstance4Comm() << c_pkg;
   }
   else
   { // remote item
@@ -457,7 +457,7 @@ bool IsoItem_c::sendSaClaim()
   // set NAME to CANPkg
   c_pkg.setDataUnion(outputNameUnion());
   // now IsoSystemPkg_c has right data -> send
-  getCanInstance4Comm() << c_pkg;
+  getIsoBusInstance4Comm() << c_pkg;
   return true;
 }
 

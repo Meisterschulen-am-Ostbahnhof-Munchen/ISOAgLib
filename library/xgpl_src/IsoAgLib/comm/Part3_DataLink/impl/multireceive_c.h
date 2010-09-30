@@ -124,8 +124,7 @@ class MultiReceive_c : public SingletonMultiReceive_c
 
 public:
   MultiReceive_c();
-  //  Operation: ~MultiReceive_c
-  ~MultiReceive_c();
+  ~MultiReceive_c() {}
 
   //  Operation: processMsg
   virtual bool processMsg();
@@ -217,8 +216,9 @@ public:
 
   Stream_c* getFinishedJustKeptStream (Stream_c* apc_lastKeptStream);
 
-  ///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
   enum TransferError_e {
     TransferErrorWrongCommandByteForThisPgn = 100,
@@ -304,13 +304,6 @@ private:
           ab_isGlobal);
     }
 
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
-
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
     CanCustomerProxy_c(CanCustomerProxy_c const &);
@@ -347,13 +340,6 @@ private:
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
   friend class SINGLETON_DERIVED(MultiReceive_c,Scheduler_Task_c);
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
   /** temp data where received data is put */
   CanPkgExt_c mc_data;

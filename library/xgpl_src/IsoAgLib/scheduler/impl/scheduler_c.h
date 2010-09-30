@@ -14,22 +14,25 @@
 #ifndef SCHEDULER_H
 #define SCHEDULER_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
+
+namespace IsoAgLib
+{ // forward declarations
+  class iErrorObserver_c;
+}
+
+// IsoAgLib
+#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/scheduler/impl/schedulerentry_c.h>
 
+// STL
 #include <list>
 
 
-/** uncomment the following define for specific debugging of the new Scheduler_c */
 //#define DEBUG_SCHEDULER 1
-
-/** uncomment the following define if you want a documentation of each scheduled task */
 //#define DEBUG_SCHEDULER_EXTREME 1
 
 
@@ -49,19 +52,16 @@ typedef SINGLETON(Scheduler_c) SingletonScheduler_c;
 class Scheduler_c : public SingletonScheduler_c {
 public:
 
-  /** initialisation for the central IsoAgLib object */
-  void init();
+  /** Initialisation for the central IsoAgLib object
+      @param apc_observer Optional pointer to an error-handler
+   */
+  void init( IsoAgLib::iErrorObserver_c *apc_observer = NULL );
 
-  /** destructor for Scheduler_c */
-  ~Scheduler_c() { close(); }
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
+  /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
-  /** simply close communicating clients */
-  void closeCommunication();
 
-  void startSystem();
+  ~Scheduler_c() {}
+
 
   /**
     call the timeEvent for CanIo_c and all communication classes (derived from Scheduler_Task_c) which
@@ -76,13 +76,20 @@ public:
   */
   int32_t timeEvent( int32_t ai32_demandedExecEndScheduler = -1);
 
+  /** wait until specified timeout or until next CAN message receive
+   *  @return true -> there are CAN messages waiting for process. else: return due to timeout
+   */
+  bool waitUntilCanReceiveOrTimeout( uint16_t aui16_timeoutInterval )
+  { return CanIo_c::waitUntilCanReceiveOrTimeout( aui16_timeoutInterval ); }
+
+
   /** deliver the global execution time event for the central IsoAgLib Scheduler_c.
       This end time is defined by the application which calls Scheduler_c::timeEvent().
       This is different from the individual end time, which has to be regarded by each
       individual task!
     */
-  static int32_t getCentralSchedulerExecEndTime() { return mi32_demandedExecEndScheduler;}
-  static int16_t getCentralSchedulerAvailableExecTime();
+  int32_t getCentralSchedulerExecEndTime() { return mi32_demandedExecEndScheduler;}
+  int16_t getCentralSchedulerAvailableExecTime();
 
 
   /**
@@ -99,10 +106,9 @@ public:
     * is WITHIN execution in the main task. This way, the IsoAgLib is leaved by Scheduler_c::timeEvent()
     * in a guaranteed WELL DEFINED and VALID state.
     */
-  static void forceExecStop( void ) {mb_execStopForced = true;mi32_demandedExecEndScheduler = 0;}
+  void forceExecStop( void ) { mb_execStopForced = true; mi32_demandedExecEndScheduler = 0; }
 
 #ifdef USE_MUTUAL_EXCLUSION
-
   int releaseResource() {
                           #if DEBUG_SCHEDULER
                           INTERNAL_DEBUG_DEVICE << "Released " << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -115,7 +121,7 @@ public:
                 #endif
                 return mc_protectAccess.tryAcquireAccess();}
 
- //! Lock the resource to prevent other threads to use it. If the resource is already locked,
+  //! Lock the resource to prevent other threads to use it. If the resource is already locked,
   //! the calling threads is in blocking state until the unlock.
   int waitAcquireResource(){
                              forceExecStop();
@@ -130,10 +136,10 @@ public:
     * detect, if another task forced immediated stop of timeEvent
     * @return true -> immediate stop is forced
     */
-  static bool isExecStopForced( void ) { return mb_execStopForced;}
+  bool isExecStopForced( void ) { return mb_execStopForced; }
 
   /** get last timestamp of Scheduler_c::timeEvent trigger */
-  static int32_t getLastTimeEventTrigger( void ) { return mi32_lastTimeEventTime;}
+  int32_t getLastTimeEventTrigger( void ) { return mi32_lastTimeEventTime;}
 
   /** handler function for access to undefined client.
     * the base Singleton calls this function, if it detects an error
@@ -183,19 +189,13 @@ public:
 private: //Private methods
   friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
-  Scheduler_c() : mb_systemStarted (false) {};
+  Scheduler_c();
+
 
 
 #if DEBUG_SCHEDULER
   void TraceAndAbort();
 #endif
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
   /** deliver available time for time event of SCHEDULER only
     * @param ai16_awaitedExecTime optional awaited execution time of planned next step
@@ -260,19 +260,18 @@ private: //Private methods
 
 private: // Private attributes
 
-#ifdef USE_MUTUAL_EXCLUSION
-  /** Attribute for the exclusive access of the IsoAgLib for threads */
-  HAL::ExclusiveAccess_c mc_protectAccess;
-#endif
+  /** registered Error-Observer. Stored to be able to
+      automatically deregister at close(). */
+  IsoAgLib::iErrorObserver_c *mpc_registeredErrorObserver;
 
  /** pointer to the currently executed task */
   SchedulerEntry_c * pc_currentlyExecutedTask;
 
   /** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
-  static int32_t mi32_lastTimeEventTime;
+  int32_t mi32_lastTimeEventTime;
 
   /** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
-  static int32_t mi32_demandedExecEndScheduler;
+  int32_t mi32_demandedExecEndScheduler;
 
   /** average execution time for Scheduler_c::timeEvent */
   int32_t mi32_averageExecTime;
@@ -280,11 +279,8 @@ private: // Private attributes
   /** execution time of last call of CanIo_c::timeEvent() */
   int16_t mi16_canExecTime;
 
-  /** was system started already? */
-  bool mb_systemStarted;
-
   /** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
-  static bool mb_execStopForced;
+  bool mb_execStopForced;
 
   /** constant for minimum time for CAN processing */
   static const int ci32_minCanProcessingTime = 10;
@@ -294,6 +290,14 @@ private: // Private attributes
   STL_NAMESPACE::list<SchedulerEntry_c> mc_taskQueue;
   size_t mt_clientCnt;
   STL_NAMESPACE::list<SchedulerEntry_c> mc_spareQueue;
+
+#ifdef USE_MUTUAL_EXCLUSION
+  /** Attribute for the exclusive access of the IsoAgLib for threads */
+  HAL::ExclusiveAccess_c mc_protectAccess;
+#endif
+
+  /** was system started already? */
+  bool mb_systemStarted;
 };
 
   /** C-style function, to get access to the unique Scheduler_c singleton instance */

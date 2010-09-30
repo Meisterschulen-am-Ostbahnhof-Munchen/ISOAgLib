@@ -17,16 +17,15 @@
 
 #include "timeposgps_c.h"
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-// IsoAgLib_Extension
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisendpkg_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
 #include <IsoAgLib/util/iutil_funcs.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 #if DEBUG_NMEA
   #ifdef SYSTEM_PC
@@ -261,7 +260,7 @@ namespace __IsoAgLib {
   void TimePosGps_c::checkCreateReceiveFilter( )
   {
     IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CanIo_c &c_can = getCanInstance4Comm();
+    IsoBus_c &c_can = getIsoBusInstance4Comm();
 
     if ( ( ! checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -278,29 +277,10 @@ namespace __IsoAgLib {
     }
   }
 
-  /** initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void TimePosGps_c::singletonInit()
-  { // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
-    // singleton vec key - this key value is NOT available at construction time!!!
-    BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
-  }
 
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  void TimePosGps_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
+  void
+  TimePosGps_c::init_specialized()
   {
-    BaseCommon_c::init_base( apc_isoName, getSingletonVecKey(), at_identMode );
-
     mpc_isoNameGps = NULL;
     // set the GPS mode always to non-sending
     configGps( NULL, IsoAgLib::IdentModeImplement );
@@ -1128,7 +1108,7 @@ namespace __IsoAgLib {
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
 
     // update time
     mi32_lastIsoPositionSimple = getLastRetriggerTime();
@@ -1189,10 +1169,10 @@ void TimePosGps_c::isoSendDirection( void )
 
   // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
   // then it sends the data
-  getCanInstance4Comm() << data();
+  getIsoBusInstance4Comm() << data();
 
   // update time
-  mi32_lastIsoDirection = Scheduler_c::getLastTimeEventTrigger();
+  mi32_lastIsoDirection = getSchedulerInstance().getLastTimeEventTrigger();
 }
 
 
@@ -1358,7 +1338,7 @@ void TimePosGps_c::isoSendDirection( void )
 
       // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
-      getCanInstance4Comm() << data();
+      getIsoBusInstance4Comm() << data();
 
       // update time
       setUpdateTime(getLastRetriggerTime() );
@@ -1652,12 +1632,11 @@ void TimePosGps_c::isoSendDirection( void )
     return localtime( &t_secondsSince1970 );
   }
 
-///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
 const char*
 TimePosGps_c::getTaskName() const
-{
-  return "TimePosGps_c";
-}
+{ return "TimePosGps_c"; }
+#endif
 
 
 void

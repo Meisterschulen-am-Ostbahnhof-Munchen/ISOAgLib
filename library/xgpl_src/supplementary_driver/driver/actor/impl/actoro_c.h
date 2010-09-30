@@ -54,7 +54,7 @@ public:
   void init(uint8_t ab_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t ab_digitalLast = DIGITAL_OUTPUT_MAX);
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void ){};
+  void close( void ){}
   /**
     set the limits for digital output channels (first setting can be done by constructor parameters)
 
@@ -101,7 +101,6 @@ private:
     * NEVER define instance of ActorO_c within application
     */
   ActorO_c( void ) { };
-	void singletonInit() {init();};
 
   /** register pointer to a new client
     * this function is called within construction of new client instance

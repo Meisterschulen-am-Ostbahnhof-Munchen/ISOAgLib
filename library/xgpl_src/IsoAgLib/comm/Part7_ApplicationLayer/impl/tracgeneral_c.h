@@ -66,22 +66,6 @@ public: // Public methods
   /** \name Management Functions for class TracGeneral_c  */
   /*@{*/
 
-     /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-    void singletonInit();
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  virtual void init_base (const IsoName_c* apc_isoName, int ai_singletonVecKey = NULL, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
-
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
       @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -90,8 +74,7 @@ public: // Public methods
     */
   virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
-  /** destructor for TracGeneral_c which has nothing to do */
-  virtual ~TracGeneral_c() { BaseCommon_c::close(); }
+  virtual ~TracGeneral_c() {}
 
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 
@@ -279,8 +262,9 @@ public: // Public methods
     */
   enum SendLanguage_e sendLanguage();
 
-  ///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
 
   /** force maintain power from tractor

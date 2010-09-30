@@ -210,7 +210,8 @@ public:
     { CanPkg_c::getDataToString (aui8_positionOffset, pui8_targetData, aui8_maxSize); }
 
 private:
-  friend class iCanIo_c;
+  friend class iIsoBus_c;
+  friend class iProprietaryBus_c;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

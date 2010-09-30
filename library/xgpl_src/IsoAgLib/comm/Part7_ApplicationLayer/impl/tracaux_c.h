@@ -107,22 +107,6 @@ namespace __IsoAgLib {
     /** \name Management Functions for class TracAux_c  */
     /*@{*/
 
-    /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-    void singletonInit();
-
-
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param rpc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param rt_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t rt_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracAux_c object after init -> set pointer to isoName and
         config send/receive of different base msg types
         @param rpc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -131,8 +115,7 @@ namespace __IsoAgLib {
       */
     virtual bool config_base (const IsoName_c* rpc_isoName, IsoAgLib::IdentMode_t rt_identMode, uint16_t rui16_suppressMask = 0);
 
-    /** destructor for TracAux_c which has nothing to do */
-    virtual ~TracAux_c() { BaseCommon_c::close();};
+    virtual ~TracAux_c() {}
 
     /*@}*/
 
@@ -374,8 +357,9 @@ namespace __IsoAgLib {
     {return IsoAgLib::IsoLimitFlag_t (marr_valve[valveNumber].ui8_measuredValveLimitStatus);}
     /*@}*/
 
-  ///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
   virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
 

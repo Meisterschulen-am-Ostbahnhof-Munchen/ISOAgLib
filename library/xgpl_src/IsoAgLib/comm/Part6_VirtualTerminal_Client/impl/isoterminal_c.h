@@ -41,10 +41,7 @@ typedef SINGLETON_DERIVED(IsoTerminal_c,Scheduler_Task_c) SingletonIsoTerminal_c
 /** central IsoAgLib terminal management object */
 class IsoTerminal_c : public SingletonIsoTerminal_c {
 public:
-  /** default destructor
-  @see IsoTerminal_c::~IsoTerminal_c
-  */
-  virtual ~IsoTerminal_c();
+  virtual ~IsoTerminal_c() {}
 
   /** initialise element which can't be done during construct and registerIsoObjectPool
     possible errors:
@@ -98,10 +95,13 @@ public:
   void fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidth, uint16_t aui16_skHeight, uint8_t aui16_colorDepth, uint16_t aui16_fontSizes);
 #endif
 
- ///  Used for Debugging Tasks in Scheduler_c
- virtual const char* getTaskName() const;
+#if DEBUG_SCHEDULER
+  virtual const char* getTaskName() const;
+#endif
 
 private:
+  uint16_t getClientCount();
+
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
     typedef IsoTerminal_c Owner_t;
@@ -161,13 +161,6 @@ private:
           ab_isGlobal);
     }
 
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
-
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
     CanCustomerProxy_c(CanCustomerProxy_c const &);
@@ -208,13 +201,6 @@ private:
     * NEVER define instance of IsoTerminal_c within application
     */
   IsoTerminal_c();
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
@@ -268,9 +254,6 @@ private:
   {
     return getForcedMinExecTimeDefault();
   }
-
-  // helper function to shield removal access to vtCSC-list
-  void deregisterIsoObjectPoolInd (uint8_t aui8_index);
 
   VtClientServerCommunication_c* initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, bool ab_isSlave);
 

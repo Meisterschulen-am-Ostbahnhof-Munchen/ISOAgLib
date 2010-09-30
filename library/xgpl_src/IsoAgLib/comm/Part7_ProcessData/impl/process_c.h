@@ -83,8 +83,7 @@ public:
     */
   void close( void );
 
-  /** default destructor which has nothing to do */
-  virtual ~Process_c();
+  virtual ~Process_c() {}
 
   /**
     deliver reference to data pkg
@@ -288,10 +287,9 @@ public:
   */
   bool processWorkingSetTaskMsg(uint8_t /* ui8_tcStatus */, const IsoName_c& /* rc_isoName */);
 
-
-  ///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
-
+#endif
 
   /** set the pointer to the handler class (used for callback when TC status message is processed)
     * @param apc_processDataChangeHandler pointer to handler class of application
@@ -402,15 +400,6 @@ private: // Private methods
   }
 
 private: // Private attributes
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit() {
-    mc_data.setSingletonKey( getSingletonVecKey() );
-    init();
-  }
 
   class CanCustomerProxy_c : public CanCustomer_c {
   public:
@@ -470,13 +459,6 @@ private: // Private attributes
           aui8_multiReceiveError,
           ab_isGlobal);
     }
-
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
 
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.

@@ -15,7 +15,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "tracfacilities_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
@@ -51,30 +51,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
   }
-
-  /** initialize directly after the singleton instance is created.
-        this is called from singleton.h and should NOT be called from the user again.
-        users please use init(...) instead.
-      */
-      void TracFacilities_c::singletonInit()
-      { // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
-        // singleton vec key - this key value is NOT available at construction time!!!
-        BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
-      }
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  void TracFacilities_c::init_base (const IsoName_c* apc_isoName, int /*ai_singletonVecKey*/, IsoAgLib::IdentMode_t at_identMode)
-  {
-    //call init for handling which is base data independent
-    BaseCommon_c::init_base (apc_isoName, getSingletonVecKey(), at_identMode);
-  };
 
   /** config the TracFacilities_c object after init -> set pointer to isoName and
       config send/receive of a moving msg type
@@ -122,7 +98,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   void TracFacilities_c::checkCreateReceiveFilter( )
   {
     IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CanIo_c &c_can = getCanInstance4Comm();
+    IsoBus_c &c_can = getIsoBusInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -183,7 +159,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {// there is no need to check for address claim because this is already done in the processMsgRequestPGN;
    // this function is only be called on request!!
 
-    CanIo_c& c_can = getCanInstance4Comm();
+    IsoBus_c& c_can = getIsoBusInstance4Comm();
 
     data().setISONameForSA( *getISOName() );
     setSelectedDataSourceISOName(*getISOName());
@@ -243,9 +219,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     return true;
   }
 
-///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
 const char*
 TracFacilities_c::getTaskName() const
-{   return "TracFacilities_c"; }
+{ return "TracFacilities_c"; }
+#endif
 
 }// End Namespace __IsoAglib

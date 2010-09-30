@@ -17,8 +17,8 @@
 #include "multisend_c.h"
 
 #include <IsoAgLib/driver/system/impl/system_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 
 #if DEBUG_MULTISEND || DEBUG_HEAP_USEAGE
@@ -236,31 +236,16 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
 }
 
 
-
-void
-MultiSend_c::singletonInit()
-{
-  mc_data.setSingletonKey( getSingletonVecKey() );
-  setAlreadyClosed(); // so init() will init ;-)
-  init();
-};
-
-
-
 /** initialisation for MultiSend_c */
 void
 MultiSend_c::init(void)
-{ // clear state of b_alreadyClosed, so that close() is called one time
-  // only init if closed (constructor "closes" it so it gets init'ed initially!
+{
   if (checkAlreadyClosed())
   {
-    // clear state of b_alreadyClosed, so that close() is called one time AND no more init()s are performed!
     clearAlreadyClosed();
+    mc_data.setSingletonKey( getSingletonVecKey() );
 
-    // first register in Scheduler_c
     getSchedulerInstance().registerClient( this );
-
-    // register to get ISO monitor list changes
     __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
     #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
@@ -283,11 +268,16 @@ void MultiSend_c::close()
     // avoid another call
     setAlreadyClosed();
 
-    // unregister from Scheduler_c
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
     getSchedulerInstance().unregisterClient( this );
 
-    // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+    /// For right now, we do gracefully kill all interrupted stream,
+    /// but normally the modules should abort thier own sending when they
+    /// get stopped... @todo Check that some day, for now it's okay though.
+    mlist_sendStream.clear();
+
+    // if not empty, some modules have not properly closed down its send-streams!
+    isoaglib_assert (mlist_sendStream.empty());
   }
 }
 
@@ -342,26 +332,6 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
 
 
 
-
-
-
-/**
-  internal function to send a ISO target multipacket message
-  @param acrc_isoNameSender dynamic member no of sender
-  @param acrc_isoNameReceiver dynamic member no of receiver
-  @param rhpb_data HUGE_MEM pointer to the data
-  @param aui32_dataSize size of the complete mask
-  @param ai32_pgn PGN to use for the upload
-  @param rpen_sendSuccessNotify -> pointer to send state var, where the current state
-          is written by MultiSend_c
-  @param apc_mss allow active build of data stream parts for upload by deriving data source class
-                 from IsoAgLib::iMultiSendStreamer_c, which defines virtual functions to control the
-                 retrieve of data to send. This is especially important for ISO_Terminal,
-                 which assembles the data pool dependent on the terminal capabilities during upload
-                 ( e.g. bitmap variants )
-  @param ren_msgType
-  @return true -> MultiSend_c was ready -> mask is spooled to target
-*/
 bool
 MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
@@ -438,7 +408,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
       if (men_msgType == NmeaFastPacket)
       {
-        uint8_t ui8_freeCnt = getCanInstance4Comm().sendCanFreecnt(Ident_c::ExtendedIdent);
+        uint8_t ui8_freeCnt = getIsoBusInstance4Comm().sendCanFreecnt();
 
         // send only as much pkg as fits in send buffer (with spare of 2 for other use)
         if (ui8_freeCnt < 2)
@@ -482,7 +452,7 @@ MultiSend_c::SendStream_c::timeEvent (uint8_t aui8_pkgCnt)
         }
         else
         { // IsoTP || IsoETP
-          const uint8_t cui8_freeCnt = getCanInstance4Comm().sendCanFreecnt(Ident_c::ExtendedIdent);
+          const uint8_t cui8_freeCnt = getIsoBusInstance4Comm().sendCanFreecnt();
           if (aui8_pkgCnt == 0) aui8_pkgCnt = 1;
           // send only as much pkg as fits in send buffer (with spare of 2 for other use)
           if (cui8_freeCnt < 2)
@@ -833,7 +803,7 @@ MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender
     for (unsigned ui = 0 ; ui < aui16_dataSize; ++ui)
       rc_multiSendPkg.setUint8Data (ui, rhpb_data[ui]);
 
-    getCanInstance4Comm() << rc_multiSendPkg;
+    getIsoBusInstance4Comm() << rc_multiSendPkg;
     rpen_sendSuccessNotify = SendSuccess;
     return true;
   }
@@ -950,7 +920,7 @@ MultiSend_c::SendStream_c::sendPacketIso (bool ab_data)
                          isoaglib_assert (men_msgType != NmeaFastPacket);
                          return;
   } // switch
-  getCanInstance4Comm() << rc_multiSendPkg;
+  getIsoBusInstance4Comm() << rc_multiSendPkg;
 }
 
 
@@ -977,7 +947,7 @@ MultiSend_c::SendStream_c::sendPacketFp()
   rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
   rc_multiSendPkg.setLen (8);
 
-  getCanInstance4Comm() << rc_multiSendPkg;
+  getIsoBusInstance4Comm() << rc_multiSendPkg;
 }
 #endif
 
@@ -1017,10 +987,12 @@ MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& ac
   /// we can use the same place in the stl-list without remove/insert!
 }
 
-///  Used for Debugging Tasks in Scheduler_c
+
+#if DEBUG_SCHEDULER
 const char*
 MultiSend_c::getTaskName() const
 { return "MultiSend_c()"; }
+#endif
 
 
 } // end namespace __IsoAgLib

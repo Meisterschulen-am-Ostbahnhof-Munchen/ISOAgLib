@@ -42,21 +42,6 @@ namespace __IsoAgLib {
   {
   public:// Public methods
 
-    /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-    void singletonInit();
-
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
     /** config the TracMove_c object after init -> set pointer to isoName and
         config send/receive of a moving msg type
         @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -74,8 +59,7 @@ namespace __IsoAgLib {
       */
     void updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc);
 
-    /** destructor for TracMove_c which has nothing to do */
-    virtual ~TracMove_c() { BaseCommon_c::close();}
+    virtual ~TracMove_c() {}
 
     /* ******************************************* */
     /** \name Set Values for periodic send on BUS  */
@@ -263,7 +247,9 @@ namespace __IsoAgLib {
     IsoAgLib::IsoSpeedSourceFlag_t selectedSpeedSource() const {return mt_selectedSpeedSource;}
 
 
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
   virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
 

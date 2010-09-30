@@ -68,7 +68,8 @@ private:
   */
   virtual __IsoAgLib::CanPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CanPkgExt_c&>(iDataBase()); }
 
-  friend class iCanIo_c;
+  friend class iIsoBus_c;
+  friend class iProprietaryBus_c;
   friend struct iIsoFilter_s;
   friend class iMultiReceive_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;

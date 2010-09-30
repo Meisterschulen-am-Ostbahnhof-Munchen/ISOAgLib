@@ -142,6 +142,9 @@ public:
     @return true -> everything without errors initialised
   */
   bool init( void );
+
+  void close();
+
   /** register an error
     * @param at_errType type of occured error
     * @param at_errLocation location of error
@@ -243,13 +246,6 @@ private:
 
   /** copy constructor which sets the error value to the err value of the source */
   iLibErr_c(const iLibErr_c& acrc_src);
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit() { init(); };
 
   IsoaglibBitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
 };

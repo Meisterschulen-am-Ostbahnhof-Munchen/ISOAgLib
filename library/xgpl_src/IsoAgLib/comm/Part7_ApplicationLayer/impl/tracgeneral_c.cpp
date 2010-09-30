@@ -14,11 +14,11 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include "tracgeneral_c.h"
 #include "tracpto_c.h"
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 namespace {
   int32_t const sci32_timeoutMaintenancePgn = 2000;
@@ -44,9 +44,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return c_lbsTracGeneral;
   };
   #endif
-  
+
   TracGeneral_c::TracGeneral_c()
-   : mb_languagePgnChanged(false)
+    : mb_languageTecuReceived (false)
+    , mb_languagePgnChanged (false)
   {
     mp8ui8_languageTecu[0] = 0; // OK
     mp8ui8_languageTecu[1] = 0;  //OK
@@ -57,34 +58,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     mp8ui8_languageTecu[6] = 0xFF; //OK
     mp8ui8_languageTecu[7] = 0xFF; //OK
   }
-
- /** initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void TracGeneral_c::singletonInit()
-  { // singletonInit is called, AFTER the initializing instance() function has assigned a suitable
-    // singleton vec key - this key value is NOT available at construction time!!!
-    BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY);
-  }
-
-  /** initialise element which can't be done during construct;
-      above all create the needed FilterBox_c instances
-      possible errors:
-        * dependant error in CANIO_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-      @param apc_isoName optional pointer to the ISOName variable of the ersponsible member instance (pointer enables automatic value update if var val is changed)
-      @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-    */
-  void TracGeneral_c::init_base (const ISOName_c* apc_isoName, int , IsoAgLib::IdentMode_t at_identMode)
-  {
-    if ( checkAlreadyClosed() )
-    {
-      mb_languageTecuReceived = false;
-    }
-
-    //call init for handling which is base data independent
-    BaseCommon_c::init_base (apc_isoName, at_identMode);
-  };
 
   /** config the TracGeneral_c object after init -> set pointer to isoName and
       config send/receive of different general base msg types
@@ -164,7 +137,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
   void TracGeneral_c::checkCreateReceiveFilter( )
   {
     ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-    CANIO_c &c_can = getCanInstance4Comm();
+    IsoBus_c &c_can = getIsoBusInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
@@ -415,7 +388,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
     return HitchStateSent;
   }
 
@@ -465,7 +438,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
     return HitchStateSent;
   }
 
@@ -499,7 +472,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setLen(8);
 
     setSelectedDataSourceISOName( *getISOName() );
-    CanIo_c& c_can = getCanInstance4Comm();
+    IsoBus_c& c_can = getIsoBusInstance4Comm();
     data().setIsoPgn(LANGUAGE_PGN);
     //Bytes 1,2: language command
     data().setUint16Data(0, (mp8ui8_languageVt[0] | (mp8ui8_languageVt[1] << 8)) );
@@ -529,7 +502,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     data().setLen(8);
 
     setSelectedDataSourceISOName( *getISOName() );
-    CanIo_c& c_can = getCanInstance4Comm();
+    IsoBus_c& c_can = getIsoBusInstance4Comm();
     data().setIsoPgn(LANGUAGE_PGN);
     //Bytes 1,2: language command
     data().setUint16Data(0, (mp8ui8_languageTecu[0] | (mp8ui8_languageTecu[1] << 8)) );
@@ -605,7 +578,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     // CanIo_c::operator<< retrieves the information with the help of CanPkg_c::getData
     // then it sends the data
-    getCanInstance4Comm() << data();
+    getIsoBusInstance4Comm() << data();
   }
 
   /** force a request for pgn for language information */
@@ -762,9 +735,12 @@ TracGeneral_c::updateUnitSystem(uint8_t aui8_unitSystem)
   mb_languagePgnChanged = true;
 }
 
-///  Used for Debugging Tasks in Scheduler_c
+
+#if DEBUG_SCHEDULER
 const char*
 TracGeneral_c::getTaskName() const
-{   return "TracGeneral_c"; }
+{ return "TracGeneral_c"; }
+#endif
+
 
 } // End Namespace __IsoAgLib

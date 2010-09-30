@@ -16,8 +16,8 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "process_c.h"
-#include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
 
@@ -66,33 +66,38 @@ namespace __IsoAgLib {
   };
 #endif
 
-/** initialise element which can't be done during construct */
-void Process_c::init()
-{ // clear state of b_alreadyClosed, so that close() is called one time
-  clearAlreadyClosed();
-  // first register in Scheduler_c
-  getSchedulerInstance().registerClient( this );
-  mi32_lastFilterBoxTime = 0;
-  mb_needCallOfCheckCreateRemoteReceiveFilter = false;
-  __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
-    #ifdef USE_PROC_DATA_DESCRIPTION_POOL
-    mc_devPropertyHandler.init(&mc_data);
-    #endif
-  mpc_tcISOName = NULL;
-  mui8_lastTcStatus = 0;
-  mpc_processWsmTaskMsgHandler = NULL;
 
-  mpc_processDataChangeHandler = NULL;
+void
+Process_c::init()
+{
+  if (checkAlreadyClosed())
+  {
+    clearAlreadyClosed();
+    mc_data.setSingletonKey( getSingletonVecKey() );
 
-  // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
-  const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
-  if (!getCanInstance4Comm().existFilter( mt_customer, (0x3FFFF00UL), cui32_filter, Ident_c::ExtendedIdent))
-  { // create FilterBox
-    getCanInstance4Comm().insertFilter( mt_customer, (0x3FFFF00UL), cui32_filter, true, Ident_c::ExtendedIdent);
+    getSchedulerInstance().registerClient( this );
+    mi32_lastFilterBoxTime = 0;
+    mb_needCallOfCheckCreateRemoteReceiveFilter = false;
+    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+      #ifdef USE_PROC_DATA_DESCRIPTION_POOL
+      mc_devPropertyHandler.init(&mc_data);
+      #endif
+    mpc_tcISOName = NULL;
+    mui8_lastTcStatus = 0;
+    mpc_processWsmTaskMsgHandler = NULL;
+
+    mpc_processDataChangeHandler = NULL;
+
+    // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
+    const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
+    if (!getIsoBusInstance4Comm().existFilter( mt_customer, (0x3FFFF00UL), cui32_filter))
+    { // create FilterBox
+      getIsoBusInstance4Comm().insertFilter( mt_customer, (0x3FFFF00UL), cui32_filter, true);
+    }
+
+    //  start with 200 msec timer period
+    Scheduler_Task_c::setTimePeriod(200);
   }
-
-  //  start with 200 msec timer period
-  Scheduler_Task_c::setTimePeriod(200);
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
@@ -108,11 +113,6 @@ void Process_c::close( void ) {
     __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
   }
 };
-
-/** default destructor which has nothing to do */
-Process_c::~Process_c(){
-  close();
-}
 
 
 /** handler function for access to undefined client.
@@ -849,10 +849,12 @@ bool Process_c::processWorkingSetTaskMsg(uint8_t ui8_tcStatus, const IsoName_c& 
   return TRUE;
 }
 
-///  Used for Debugging Tasks in Scheduler_c
+
+#if DEBUG_SCHEDULER
 const char*
 Process_c::getTaskName() const
 { return "Process_c"; }
+#endif
 
 
 //! Function set ui16_earlierInterval and

@@ -51,24 +51,13 @@ class Scheduler_Task_c {
     * Call is wrapped by SchedulerEntry_c for Update of timestamps
     * @return true -> all planned activities performed in available time
     */
-
-  /** This method has to be overridden so that IsoAgLib's scheduler
-    * calls it periodically once the object has been registered at
-    * IsoAgLib's scheduler (it's typically done that way:
-    * getSchedulerInstance().registerClient(this)).
-    * 
-    * \return Status.
-    * \retval false The activities could not be performed in the available time.
-    * \retval true The activities could be performed in the available time.
-    */
   virtual bool timeEvent() = 0;
 
-
-  /** this function is used by IsoAgLib components
-    * to close all their ressources.
-    * this enables a coordinated shutdown by Scheduler_c
-    */
-  virtual void close( void ) = 0;
+  /// NOTE: The following "alreadyClosed" stuff should not be part of
+  ///       Scheduler_Task_c but rather be a base class for all
+  ///       IsoAgLib-subsystems. Just for now didn't want to put it
+  ///       into singleton.h, because that's not really 100% dedicated
+  ///       to Singletons only...
 
   /** clear mb_alreadyClosed so that close() can be called one time */
   void clearAlreadyClosed( void ) { mb_alreadyClosed = false; }
@@ -123,8 +112,10 @@ class Scheduler_Task_c {
   //! @param rint32_StartTaskTime: individual time offset, to avoid concurring tasks (if starting at same time with same period, the scheduler has every round a time problem)
   void startTaskTiming(int32_t rint32_StartTaskTime);
 
+#if DEBUG_SCHEDULER
   ///  Used for Debugging Tasks in Scheduler_c
-  virtual const char* getTaskName() const = 0;
+  virtual const char* getTaskName() const { return NULL; }
+#endif
 
   //  Operation: getAvgExecTime
   //!  this function is used for debug tests to get the AVG of exec time. This function uses the debug vars mui32_sumTime, mui32_callCnt
@@ -370,17 +361,15 @@ private:
     return mrt_owner.timeEvent();
   }
 
-  virtual void close() {
-    mrt_owner.close();
-  }
-
   virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
     return mrt_owner.getTimeToNextTrigger(e_retriggerType);
   }
 
+#if DEBUG_SCHEDULER
   virtual const char *getTaskName() const {
     return mrt_owner.getTaskName();
   }
+#endif
 
   virtual void updateEarlierAndLatestInterval() {
     mrt_owner.updateEarlierAndLatestInterval();
@@ -472,20 +461,6 @@ Scheduler_Task_c::getMaxTimingAccuracy() const
   return mi16_maxTimingAccuracy;
 }
 #endif
-//!  This static function can be called by the central Task-Scheduler or by RegisterInterrupts_c to force rapid stop of activities,
-//!  so that a very important other task can be started.
-//!  This function sets the msi32_demandedExecEnd to 0 which commands the derived class timeEvent function to return activity as soon as possible
-//!  (without comprising the well defined internal state of the Sub-System).
-//!  By static accessibility the caller doesn't need to know, which derived ElementBase instance is working at the moment,
-//!  as all derived classes shares the same
-//!  static timestamps.
-inline
-void
-Scheduler_Task_c::forceExecStop()
-{
-  // the value 0 is telling timeEvent() and all called functions that an immediated stop is needed
-  msi32_demandedExecEnd = 0;
-}
 
 inline
 int32_t

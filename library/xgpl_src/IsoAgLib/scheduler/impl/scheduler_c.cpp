@@ -16,39 +16,14 @@
 #include "scheduler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
-#ifdef USE_PROCESS
-  #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+#include <IsoAgLib/util/iassert.h>
+#ifdef USE_ACTOR
+  #include <supplementary_driver/driver/actor/impl/actoro_c.h>
 #endif
-#ifdef USE_TRACTOR_GENERAL
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
-#endif
-#ifdef USE_TRACTOR_MOVE
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
-#endif
-#ifdef USE_TRACTOR_PTO
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h>
-#endif
-#ifdef USE_TRACTOR_FACILITIES
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.h>
-#endif
-#ifdef USE_TRACTOR_LIGHT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/traclight_c.h>
-#endif
-#ifdef USE_TRACTOR_AUX
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracaux_c.h>
-#endif
-#ifdef USE_TIME_GPS
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
-#endif
-#ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
-#endif
-#ifdef DEF_Stream_IMPL
-  #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-  #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#ifdef USE_SENSOR
+  #include <supplementary_driver/driver/sensor/impl/sensori_c.h>
 #endif
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
@@ -62,7 +37,6 @@
   #else
     #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
   #endif
-  #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
 #if defined(TEST_TIMING) && defined(SYSTEM_PC)
@@ -91,170 +65,111 @@ namespace __IsoAgLib {
   }
 
 
-/** timestamp where last timeEvent was called -> can be used to synchronise distributed timeEvent activities */
-int32_t Scheduler_c::mi32_lastTimeEventTime = 0;
-
-/** commanded timestamp, where Scheduler_c::timeEvent MUST return action to caller */
-int32_t Scheduler_c::mi32_demandedExecEndScheduler = 0;
-
-/** flag to detect, if other interrupting task forced immediated stop of Scheduler_c::timeEvent() */
-bool Scheduler_c::mb_execStopForced = false;
-
-/**
-  initialize directly after the singleton instance is created.
-  this is called from singleton.h and should NOT be called from the user again.
-  users please use init(...) instead.
-*/
-void Scheduler_c::singletonInit()
-{ // static variables:
-  mi32_lastTimeEventTime = 0;
-  mi32_demandedExecEndScheduler = 0;
-  mb_execStopForced = false;
-
-
-  init();
-};
-
-/** initialisation for the central IsoAgLib object */
-void Scheduler_c::init( void )
-{ // set attributes to valid initial state
-  mb_execStopForced = false;
-  mi16_canExecTime = 0;
-  mi32_averageExecTime = 0;
-  mi32_demandedExecEndScheduler = 0;
-  mi32_lastTimeEventTime = 0;
-
-
-  // clear the scheduler queues
-  while ( !mc_taskQueue.empty() ) mc_taskQueue.pop_front();
-  setCntClient( 0 );
-
-  pc_currentlyExecutedTask = NULL;
-}
-
-/** simply close communicating clients */
-void Scheduler_c::closeCommunication( void ) {
-  // as soon as all communicating IsoAgLib clients are closed, CanIo_c can be closed
-  getCanInstance4Comm().close();
-  #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )
-  { // process msg of other BUS ( other CAN is always at position 1 (independent from CAN BUS at controller!!)
-    getCanInstance( ind ).close();
-  }
-  #endif
-  for ( STL_NAMESPACE::list<SchedulerEntry_c>::iterator iter = mc_taskQueue.begin(); ! mc_taskQueue.empty(); iter = mc_taskQueue.begin())
-  { // call close for each registered client
-    iter->close();
-    // SchedulerEntry_c's close-method will/needs to
-    // take care of unregistering here at the Scheduler.
-  }
-  setCntClient( 0 );
-}
-
-
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown
-  */
-void Scheduler_c::close( void )
-{ // call close for each registered client system
-  closeCommunication();
-  // last but not least close System
-  getSystemInstance().close();
-}
-
-
-void Scheduler_c::startSystem()
+Scheduler_c::Scheduler_c()
+  : mpc_registeredErrorObserver( NULL )
+  , pc_currentlyExecutedTask( NULL )
+  , mi32_lastTimeEventTime( 0 )
+  , mi32_demandedExecEndScheduler( 0 )
+  , mi32_averageExecTime( 0 )
+  , mi16_canExecTime( 0 )
+  , mb_execStopForced( false )
+  , mc_taskQueue()
+  , mt_clientCnt( 0 )
+  , mc_spareQueue()
+#ifdef USE_MUTUAL_EXCLUSION
+  , mc_protectAccess()
+#endif
+  , mb_systemStarted( false )
 {
+  // nop
+}
+
+
+void
+Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
+{
+  isoaglib_assert (!mb_systemStarted);
   if (!mb_systemStarted)
   {
     mb_systemStarted = true;
-    /// 1.) Init REAL Singletons
-    // NOW INIT ONCE the core singleton classes that correspond to the compile time
-    // configured features of the IsoAgLib
+
     getILibErrInstance().init();
-
-    /// 2.) Init Multipletons (multi protocol)
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT == 1)
-    getIsoMonitorInstance().init();
-    getIsoFilterManagerInstance().init();
-#ifdef DEF_Stream_IMPL
-    getMultiReceiveInstance().init();
-    getMultiSendInstance().init();
-#endif
-#ifdef USE_PROCESS
-    getProcessInstance().init();
-#endif
-#ifdef USE_TRACTOR_GENERAL
-    getTracGeneralInstance().init();
-#endif
-#ifdef USE_TRACTOR_FACILITIES
-    getTracFacilitiesInstance().init();
-#endif
-#ifdef USE_TRACTOR_MOVE
-    getTracMoveInstance().init();
-#endif
-#ifdef USE_TRACTOR_PTO
-    getTracPtoInstance().init();
-#endif
-#ifdef USE_TRACTOR_LIGHT
-    getTracLightInstance().init();
-#endif
-#ifdef USE_TRACTOR_AUX
-    getTracAuxInstance().init();
-#endif
-#ifdef USE_TIME_GPS
-    getTimePosGpsInstance().init();
-#endif
-#ifdef USE_ISO_TERMINAL
-    getIsoTerminalInstance().init();
-#endif
-
-#else
-
-    for ( int ind = 0; ind < PRT_INSTANCE_CNT; ++ind )
+    if (apc_observer != NULL)
     {
-      getIsoMonitorInstance( ind ).init();
-      getIsoFilterManagerInstance( ind ).init();
-#ifdef DEF_Stream_IMPL
-      getMultiReceiveInstance( ind ).init();
-      getMultiSendInstance( ind ).init();
-#endif
-#ifdef USE_PROCESS
-      getProcessInstance( ind ).init();
-#endif
-#ifdef USE_TRACTOR_GENERAL
-      getTracGeneralInstance( ind ).init();
-#endif
-#ifdef USE_TRACTOR_FACILITIES
-      getTracFacilitiesInstance( ind ).init();
-#endif
-#ifdef USE_TRACTOR_MOVE
-      getTracMoveInstance( ind ).init();
-#endif
-#ifdef USE_TRACTOR_PTO
-      getTracPtoInstance( ind ).init();
-#endif
-#ifdef USE_TRACTOR_LIGHT
-      getTracLightInstance( ind ).init();
-#endif
-#ifdef USE_TRACTOR_AUX
-      getTracAuxInstance( ind ).init();
-#endif
-#ifdef USE_TIME_GPS
-      getTimePosGpsInstance( ind ).init();
-#endif
-#ifdef USE_ISO_TERMINAL
-      getIsoTerminalInstance( ind ).init();
-#endif
+      const bool cb_observerRegistered
+        = getILibErrInstance().registerObserver (*apc_observer);
+
+      if (cb_observerRegistered)
+        mpc_registeredErrorObserver = apc_observer;
     }
-#endif
+
+    getSystemInstance().init();
+
+    #ifdef USE_EEPROM_IO
+      getEepromInstance().init();
+    #endif
+
+    #ifdef USE_ACTOR
+      getActorInstance().init();
+    #endif
+
+    #ifdef USE_SENSOR
+      getSensorInstance().init();
+    #endif
   }
+  // else: system already started, so don't restart.
 }
 
 
-/** handler function for access to undefined client.
-  * the base Singleton calls this function, if it detects an error
-  */
-void Scheduler_c::registerAccessFlt( void )
+void
+Scheduler_c::close( void )
+{
+  isoaglib_assert (mb_systemStarted);
+  if (mb_systemStarted)
+  {
+    mb_systemStarted = false;
+
+    #ifdef USE_SENSOR
+      getSensorInstance().close();
+    #endif
+
+    #ifdef USE_ACTOR
+      getActorInstance().close();
+    #endif
+
+    #ifdef USE_EEPROM_IO
+      getEepromInstance().close();
+    #endif
+
+    getSystemInstance().close();
+
+    if (mpc_registeredErrorObserver != NULL)
+    {
+      getILibErrInstance().deregisterObserver( *mpc_registeredErrorObserver );
+      mpc_registeredErrorObserver = NULL;
+    }
+
+    getILibErrInstance().close();
+
+    // Reset all member variables to initial state.
+    pc_currentlyExecutedTask = NULL;
+    mi32_lastTimeEventTime = 0;
+    mi32_demandedExecEndScheduler = 0;
+    mi32_averageExecTime = 0;
+    mi16_canExecTime = 0;
+    mb_execStopForced = false;
+
+    isoaglib_assert (mt_clientCnt == 0);
+    isoaglib_assert (mc_taskQueue.empty());
+    isoaglib_assert (mc_spareQueue.empty());
+    // mc_protectAccess() // nothing to reset here.
+  }
+  // else: system wasn't started, so nothing to close.
+}
+
+
+void
+Scheduler_c::registerAccessFlt( void )
 {
   getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Scheduler );
 }
@@ -403,8 +318,6 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   if ( ai32_demandedExecEndScheduler < 0 )
   { // limit execution time, even if no limit was defined by caller - avoid deadlock due to overload
     mi32_demandedExecEndScheduler = i32_stepStartTime + CONFIG_DEFAULT_MAX_SCHEDULER_TIME_EVENT_TIME;
-    //mi32_demandedExecEndScheduler = i32_stepStartTime + 250;
-
   }
   #endif
   // trigger the watchdog
@@ -449,7 +362,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
         ((i32_idleTime  == 0) && (System_c::getTime() < mi32_demandedExecEndScheduler));
         i32_idleTime = selectCallTaskAndUpdateQueue() )
   {
-            System_c::triggerWd();
+    System_c::triggerWd();
   }
 
   i32_endCanProcessing = mc_taskQueue.front().getTimeToNextTrigger( retriggerType_t(LatestRetrigger) );
@@ -460,7 +373,10 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
   /// @todo SOON-126 Removing the below extra-CAN-processing is subject to be done..
   // check if all tasks are called
   if ( i32_idleTime > 0 )
-  { // as we are in time, call CanIo_c::processMsg() if last CanIo_c::timeEvent
+  {
+#if 0
+/// see above
+    // as we are in time, call CanIo_c::processMsg() if last CanIo_c::timeEvent
     System_c::triggerWd();
     // was used to process received messages
     // ==> allows to cope wiht high BUS loads
@@ -478,7 +394,7 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
       }
     }
     #endif
-
+#endif
     // timeEvent of all registered clients called -> update overall
     // time statistic
     if ( mi32_averageExecTime != 0 )
@@ -594,7 +510,7 @@ Scheduler_c::resortTaskList(const SchedulerEntry_c* apc_sort)
 int32_t
 Scheduler_c::selectCallTaskAndUpdateQueue()
 { // ~X2C
-  IsoAgLib::iSystem_c::triggerWd();
+  System_c::triggerWd();
   #if DEBUG_SCHEDULER
   static bool b_firstCallSelectCallTastAndUpdateQueue = true;
   if ( b_firstCallSelectCallTastAndUpdateQueue ) {
@@ -643,7 +559,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
       i32_endTime = getCentralSchedulerExecEndTime();
     }
 
-    IsoAgLib::iSystem_c::triggerWd();
+    System_c::triggerWd();
     #if DEBUG_SCHEDULER_EXTREME
     INTERNAL_DEBUG_DEVICE << "Call timeevent of " <<  pc_execIter->getTaskName() << "endTime "
       << (int) i32_endTime << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -684,7 +600,7 @@ Scheduler_c::selectCallTaskAndUpdateQueue()
     { // executed task finished its work -> reschedule it by resort of task list
       resortTaskList(pc_execute);
     }
-    IsoAgLib::iSystem_c::triggerWd();
+    System_c::triggerWd();
 
     if(!b_result) return -1 ;
     // update idle time: first item is probably changed by sort
@@ -826,8 +742,11 @@ void Scheduler_c::printTaskList()
         pc_test++ )
   {
     if ( pc_test != mc_taskQueue.begin() ) INTERNAL_DEBUG_DEVICE << ", ";
-    INTERNAL_DEBUG_DEVICE << pc_test->getTimeToNextTrigger(  retriggerType_t(StandardRetrigger) ) << " name:"
-      << pc_test->getTaskName() ;
+    INTERNAL_DEBUG_DEVICE << pc_test->getTimeToNextTrigger(  retriggerType_t(StandardRetrigger) );
+    if (pc_test->getTaskName() == NULL)
+      INTERNAL_DEBUG_DEVICE << " unnamed task.";
+    else
+      INTERNAL_DEBUG_DEVICE << " name:" << pc_test->getTaskName();
   } //end for
   INTERNAL_DEBUG_DEVICE << "\n" << INTERNAL_DEBUG_DEVICE_ENDL;
 }
@@ -857,11 +776,14 @@ bool Scheduler_c::changeTimePeriodAndResortTask(Scheduler_Task_c * apc_client  ,
   //Now calculate Delta and nextTriggerTime for Client
   int16_t i_deltaTime = aui16_newTimePeriod - apc_client->getTimePeriod()  ;
   int32_t i32_newTriggerTime = apc_client->getNextTriggerTime() + i_deltaTime;
-  #if DEBUG_SCHEDULER
+#if DEBUG_SCHEDULER
     INTERNAL_DEBUG_DEVICE << "New TimePeriod:" << (int) aui16_newTimePeriod
-    << " Old TimePeriod: "<<  apc_client->getTimePeriod() <<" Name"
-    << apc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+    << " Old TimePeriod: "<<  apc_client->getTimePeriod();
+    if (apc_client->getTaskName() == NULL)
+      INTERNAL_DEBUG_DEVICE <<" Name" << apc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
+    else
+      INTERNAL_DEBUG_DEVICE <<" unnamed Task" << apc_client->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
   ///Now lets do the resort  and update new TimePeriod in client
   return changeRetriggerTimeAndResort(apc_client,i32_newTriggerTime ,aui16_newTimePeriod);
 
@@ -954,10 +876,12 @@ bool Scheduler_c::changeRetriggerTimeAndResort(STL_NAMESPACE::list<SchedulerEntr
   printTaskList();
   #endif
 
-  #if DEBUG_SCHEDULER
-  INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client:" << itc_task->getTaskName()
-  << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+#if DEBUG_SCHEDULER
+  if (itc_task->getTaskName() == NULL)
+    INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by unnamed Client." << INTERNAL_DEBUG_DEVICE_ENDL;
+  else
+    INTERNAL_DEBUG_DEVICE << "Scheduler_c notifyed by Client: " << itc_task->getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
 
   int32_t i32_deltaRetrigger = ai32_newRetriggerTime - itc_task->getNextTriggerTime();
 

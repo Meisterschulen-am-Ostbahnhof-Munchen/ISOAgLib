@@ -15,7 +15,7 @@
 #include "isosystempkg_c.h"
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include "isorequestpgn_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
@@ -74,24 +74,15 @@ IsoMonitor_c::IsoMonitor_c() :
   // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
 
-/** initialize directly after the singleton instance is created.
-  this is called from singleton.h and should NOT be called from the user again.
-  users please use init(...) instead.
-*/
-void IsoMonitor_c::singletonInit()
-{
-  mc_data.setSingletonKey( getSingletonVecKey() );
-  setAlreadyClosed(); // so init() will init ;-) (but only once!)
-  // "init();" moved to systemStartup() in Scheduler_c to avoid circular dependencies
-}
 
-
-/** initialisation for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
-void IsoMonitor_c::init( void )
+void
+IsoMonitor_c::init( void )
 {
-  // only init if closed (constructor "closes" it so it gets init'ed initially!
   if (checkAlreadyClosed())
   {
+    clearAlreadyClosed();
+    mc_data.setSingletonKey( getSingletonVecKey() );
+
     #if DEBUG_HEAP_USEAGE
     sui16_isoItemTotal -= mvec_isoMember.size();
     #endif
@@ -102,9 +93,6 @@ void IsoMonitor_c::init( void )
 
     // register no-service mode
     mc_serviceTool.setUnspecified();
-
-    // clear state of mb_alreadyClosed, so that close() is called one time AND no more init()s are performed!
-    clearAlreadyClosed();
 
     /// Set Period for Scheduler_c Start Period is 125
     /// timeEvent will change to longer Period after Start
@@ -123,26 +111,21 @@ void IsoMonitor_c::init( void )
     getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    if( getCanInstance4Comm().insertStandardIsoFilter(mt_customer, ((ADDRESS_CLAIM_PGN)+0xFF), false))
+    if( getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, ((ADDRESS_CLAIM_PGN)+0xFF), false))
       b_configure = true;
 #ifdef USE_WORKING_SET
-    if (getCanInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MASTER_PGN), false))
+    if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MASTER_PGN), false))
       b_configure = true;
-    if (getCanInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MEMBER_PGN), false))
+    if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MEMBER_PGN), false))
       b_configure = true;
 #endif
 
     if (b_configure) {
-      getCanInstance4Comm().reconfigureMsgObj();
+      getIsoBusInstance4Comm().reconfigureMsgObj();
     }
   }
 }
 
-/** default destructor which has nothing to do */
-IsoMonitor_c::~IsoMonitor_c()
-{
-  close();
-}
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
 void IsoMonitor_c::close( void )
@@ -152,16 +135,14 @@ void IsoMonitor_c::close( void )
     // avoid another call
     setAlreadyClosed();
 
-    while ( !c_arrClientC1.empty() )
-    {
-      (*c_arrClientC1.begin())->close();
-    }
+    // Every (i)IdentItem_c must have close()d before the IsoMonitor_c is close()d.
+    isoaglib_assert( c_arrClientC1.empty() );
+    // Every SaClaimHandler must have deregistered properly already.
+    isoaglib_assert( mvec_saClaimHandler.empty() );
+
     getSchedulerInstance().unregisterClient( this );
 
-    // Explicitly clear the saClaimHandler-list BEFORE clearing the ISOItems.
-    // else the ISOItems would notify the saClaimHandlers on their loss
-    // which is of course not needed here (and crashed :-()
-    mvec_saClaimHandler.clear();
+    // We can clear the list of remote nodes.
     mvec_isoMember.clear();
 
     getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, ADDRESS_CLAIM_PGN);
@@ -170,13 +151,43 @@ void IsoMonitor_c::close( void )
     getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    getCanInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8), Ident_c::ExtendedIdent);
+    getIsoBusInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8));
 #ifdef USE_WORKING_SET
-    getCanInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8), Ident_c::ExtendedIdent);
-    getCanInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8), Ident_c::ExtendedIdent);
+    getIsoBusInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8));
+    getIsoBusInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8));
 #endif
   }
 }
+
+
+bool
+IsoMonitor_c::registerIdentItem( IdentItem_c& arc_item )
+{
+  const bool cb_activationSuccess
+    = arc_item.activate( getSingletonVecKey() );
+
+  if (cb_activationSuccess)
+  { // Could activate it, so register it!
+    /// IsoMonitor_c.timeEvent() should be called from Scheduler_c in 50 ms
+    changeRetriggerTime();
+    (void) registerC1 (&arc_item);
+    return true;
+  }
+  else
+  { // Couldn't activate it, so we don't register it
+    return false;
+  }
+}
+
+
+void
+IsoMonitor_c::deregisterIdentItem( IdentItem_c& arc_item )
+{
+  mpc_activeLocalMember = NULL;
+  unregisterC1 (&arc_item);
+}
+
+
 
 /** deliver reference to data pkg as reference to CanPkgExt_c
   to implement the base virtual function correct
@@ -1061,13 +1072,12 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveCo
 
 
 /** trigger a request for claimed addreses
+  @pre IsoBus is properly initialized.
   @param ab_force false -> send request only if no request was detected until now
   @return true -> request was sent
   */
 bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
 { // trigger an initial request for claimed address
-  // send no request if CanIo_c is not yet ready for send
-  if ( ! getCanInstance4Comm().isReady2Send() ) return false;
   // ( only if no request was detected )
   if ( ( lastIsoSaRequest() != -1 ) && ( ! ab_force ) )
   { // at least one request was already detected
@@ -1096,7 +1106,7 @@ bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
   data().setUint32Data( 0, ADDRESS_CLAIM_PGN );
   data().setLen(3);
   // now IsoSystemPkg_c has right data -> send
-  getCanInstance4Comm() << data();
+  getIsoBusInstance4Comm() << data();
   // store adress claim request time
   setLastIsoSaRequest(i32_time);
 
@@ -1458,10 +1468,12 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
   }
 }
 
-// Funktion for Debugging in Scheduler_c
+
+#if DEBUG_SCHEDULER
 const char*
 IsoMonitor_c::getTaskName() const
-{   return "IsoMonitor_c";}
+{ return "IsoMonitor_c"; }
+#endif
 
 
 //! Function set ui16_earlierInterval and

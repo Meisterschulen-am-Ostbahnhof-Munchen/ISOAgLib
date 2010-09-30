@@ -30,18 +30,19 @@ namespace __IsoAgLib
   {
   public:
 
-    /** initialize directly after the singleton instance is created.
-        this is called from singleton.h and should NOT be called from the user again.
-        users please use init(...) instead.
-      */
-    void singletonInitBase(SINGLETON_VEC_KEY_PARAMETER_DEF);
-
+    /// Note: The following comment is obsolete, but kept here for reference because
+    ///       the Trac-classes aren't completely rewritten yet!!
     /// General init() so that EVERY subsystem of IsoAgLib has its init() call.
     /// nothing done so far, but can be overwritten in the derived classes if needed
     /// do not mistake this init() with the virtual (!) init_base() function
     /// It's okay that this init() normally does NOTHING, as init_base() is being
     /// called from singleonInit()!
-    void init() {}
+    void init();
+
+    // specialized init/close for the concrete derived specializations.
+    // will be called at the end of "init()" and the beginning of "close()", resp.
+    virtual void init_specialized() {}
+    virtual void close_specialized() {}
 
     /** constructor */
     BaseCommon_c() :
@@ -61,17 +62,7 @@ namespace __IsoAgLib
     ~BaseCommon_c() {}
 
     /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-    virtual void close( );
-
-    /** initialise element which can't be done during construct;
-        above all create the needed FilterBox_c instances
-        possible errors:
-          * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-        @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-        @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-        @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-      */
-    virtual void init_base (const IsoName_c*, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement);
+    void close();
 
     /** tractor object after init --> store isoName and mode
         this function was originally named "config", but to avoid warnings with the interface classes'
@@ -246,17 +237,15 @@ namespace __IsoAgLib
         return mrt_owner.timeEvent();
       }
 
-      virtual void close() {
-        mrt_owner.close();
-      }
-
       virtual int32_t getTimeToNextTrigger(retriggerType_en e_retriggerType = StandardRetrigger) const {
         return mrt_owner.getTimeToNextTrigger(e_retriggerType);
       }
 
+#if DEBUG_SCHEDULER
       virtual const char *getTaskName() const {
         return mrt_owner.getTaskName();
       }
+#endif
 
       virtual void updateEarlierAndLatestInterval() {
         mrt_owner.updateEarlierAndLatestInterval();
@@ -327,7 +316,9 @@ namespace __IsoAgLib
       return mt_task.getTimeToNextTriggerDefault(e_retriggerType);
     }
 
+#if DEBUG_SCHEDULER
     virtual char const *getTaskName() const = 0;
+#endif
 
     virtual bool processMsgRequestPGN(
         uint32_t aui32_pgn,

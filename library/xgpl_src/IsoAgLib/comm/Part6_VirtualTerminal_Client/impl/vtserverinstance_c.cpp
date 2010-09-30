@@ -73,7 +73,7 @@ VtServerInstance_c::isVtActive () const
   {
     // Using the current time for comparison checks currently, because we don't have the information
     // about the time when the last can-msg was processed or checked for (in case there's none).
-    // Note: Formerly here was a check using "getCanInstance4Comm().getLastProcessedCanPkgTime()",
+    // Note: Formerly here was a check using "getIsoBusInstance4Comm().getLastProcessedCanPkgTime()",
     //       but that is only the time when a msg was really processed - so in bus of e.g. a bus
     //       disconnection a VT-off wouldn't be detected, which is a safety issue of course!
     if ((System_c::getTime() - (int32_t)ms_vtStateA.lastReceived) <= 3000)

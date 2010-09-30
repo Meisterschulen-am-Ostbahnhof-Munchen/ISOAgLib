@@ -88,8 +88,9 @@ public:
   //! @param acrc_rightSide: Reference to the right side for the lower-comparison
   inline bool operator<(const SchedulerEntry_c& acrc_rightSide) const;
 
-  //  Operation: getTaskName
+#if DEBUG_SCHEDULER
   inline const char* getTaskName() const;
+#endif
 
   //  Operation: getTimePeriod
   inline uint16_t getTimePeriod() const;
@@ -140,10 +141,8 @@ public:
   //!  Allows Scheduler_c to set new TimePeriod
   inline bool setTimePeriod(uint16_t aui16_timePeriod) const;
 
-//!  Allows Scheduler_c to change next retriggerTime
-inline bool changeNextTriggerTime(int32_t ai32_nextRetriggerTime);
-
-  void close() { if (NULL != mpc_taskInstance) mpc_taskInstance->close();}
+  //!  Allows Scheduler_c to change next retriggerTime
+  inline bool changeNextTriggerTime(int32_t ai32_nextRetriggerTime);
 
 protected:
 
@@ -241,8 +240,8 @@ SchedulerEntry_c::operator<(const SchedulerEntry_c& acrc_rightSide) const
   return ( mpc_taskInstance->getNextTriggerTime() < acrc_rightSide.mpc_taskInstance->getNextTriggerTime() );
 }
 
-//!  Return ClassName for Scheduler_c
-//!  @return true -> this item must be triggered first
+
+#if DEBUG_SCHEDULER
 inline
 const char*
 SchedulerEntry_c::getTaskName() const
@@ -250,7 +249,7 @@ SchedulerEntry_c::getTaskName() const
   if ( mpc_taskInstance == NULL ) return "NULL";
   else return mpc_taskInstance->getTaskName();
 }
-
+#endif
 
 
 inline

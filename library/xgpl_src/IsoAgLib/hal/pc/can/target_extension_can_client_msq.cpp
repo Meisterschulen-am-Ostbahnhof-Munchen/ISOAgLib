@@ -1,7 +1,6 @@
 /*
-  target_extension_can_A1_binary.cpp: source for the PSEUDO BIOS for
-    development and test on the Opus A1 with CAN communication using
-    the Binary can drivers for /dev/wecan0 and /dev/wecan1
+  target_extension_can_client_msq.cpp: CAN-Server client based on
+    message-queues.
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -42,6 +41,17 @@ namespace __HAL {
 // globals
 static msqData_s msqDataClient = {-1,-1,-1,-1,-1,-1};
 static int32_t i32_lastReceiveTime = 0;
+static bool gsb_sendPrioritized = false;
+
+
+// Special function only for this module
+// can be used directly in special-case
+// when you know what you're doing...
+void setSendPrioritized (bool prio)
+{
+  gsb_sendPrioritized = prio;
+}
+
 
 int32_t getPipeHandleForCanRcvEvent()
 {
@@ -517,7 +527,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
   memset(&msqWriteBuf, 0, sizeof(msqWrite_s));
 
-  msqWriteBuf.i32_mtypePrioAnd1 = assembleWrite_mtype(__IsoAgLib::CanIo_c::msb_sendPrioritized);
+  msqWriteBuf.i32_mtypePrioAnd1 = assembleWrite_mtype (gsb_sendPrioritized);
   msqWriteBuf.ui16_pid = msqDataClient.i32_pid;
   msqWriteBuf.ui8_bus = bBusNumber;
   msqWriteBuf.ui8_obj = bMsgObj;

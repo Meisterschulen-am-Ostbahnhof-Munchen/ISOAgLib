@@ -57,9 +57,8 @@ public: // methods
                              1 byte preferred/last-used SA (0xFE for no preference)
                              1 byte flags, set to 0x00 initially (so the ISO-Name has a chance to change some of its
                                     instance(s) to avoid ISO-Name-conflicts on the bus BEFORE doing its initial address-claim
-      @param ai_singletonVecKey optional key for selection of IsoAgLib instance, defaults to 0 at construction time!
     */
-  IdentItem_c (uint16_t aui16_eepromAdr = 0xFFFF, int ai_singletonVecKey = 0);
+  IdentItem_c (uint16_t aui16_eepromAdr = 0xFFFF);
 
   /** constructor for ISO identity, which starts address claim for this identity
       @param aui8_indGroup        select the industry group, 2 == agriculture
@@ -78,15 +77,14 @@ public: // methods
                                   must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
       @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-      @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
   IdentItem_c(
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t aui8_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
+    uint32_t aui32_serNo, uint8_t aui8_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true
     #ifdef USE_WORKING_SET
-    int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL,
+    ,int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL
     #endif
-    int ai_singletonVecKey = 0);
+    );
 
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
       @param aui8_indGroup        select the industry group, 2 == agriculture
@@ -105,15 +103,27 @@ public: // methods
                                   must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
       @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-      @param ai_singletonVecKey   optional key for selection of IsoAgLib instance (default 0)
     */
   void init(
     uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true,
+    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true
     #ifdef USE_WORKING_SET
-    int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL,
+    ,int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL
     #endif
-    int ai_singletonVecKey = 0);
+    );
+
+  /** IsoMonitor uses this function to activate/start this Item
+    @param ai_singletonVecKey Activate this Item on the given IsoBus
+    @return false in case this Item wasn't properly set up before
+                  using some init(..)-call.
+  */
+  bool activate (int ai_singletonVecKey);
+
+  /** IsoMonitor uses this function to deactivate/stop this Item
+      For later (again) use, it needs to be initialized again.
+  */
+  void deactivate();
+
 
   /** deliver pointer to IsoItem_c in IsoMonitor_c
       @return NULL -> either no ISO item or not yet registered in IsoMonitor_c
@@ -142,13 +152,8 @@ public: // methods
     */
   void goOffline (bool ab_explicitlyOffByUser);
 
-  /** default destructor which has nothing to do */
+  // d'tor
   ~IdentItem_c();
-
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    * -> IdentItem_c::close() send address release for identities
-    */
-  void close( void );
 
   /** periodically called functions do perform
       time dependent actions
@@ -281,11 +286,11 @@ protected: // methods
 
 private: // methods
 
-  void init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
+  void init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr
     #ifdef USE_WORKING_SET
-    int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList,
+    ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
     #endif
-    int ai_singletonVecKey);
+  );
 
   /** HIDDEN! copy constructor for IdentItem_c
       NEVER copy a IdentItem_c around!!!!
@@ -294,7 +299,7 @@ private: // methods
           detects this fault, and shows you this WARNING!!
       @param acrc_src source
     */
-	IdentItem_c(const IdentItem_c& acrc_src);
+  IdentItem_c(const IdentItem_c& acrc_src);
 
   /** HIDDEN! assignment for IdentItem_c
       NEVER assign a IdentItem_c to another instance!!!!
@@ -337,6 +342,8 @@ private: // attributes
   #endif
 
   int32_t i32_lastIsoSaRequestForThisItem;
+
+  bool mb_readyForActivation;
 };
 
 }

@@ -13,37 +13,18 @@
 
 #include "isofiltermanager_c.h"
 
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 
 
 namespace __IsoAgLib {
 
 
-/** default destructor which has nothing to do */
-IsoFilterManager_c::~IsoFilterManager_c ()
-{
-  close();
-}
-
-
 /** constructor for IsoRequestPgn_c */
-IsoFilterManager_c::IsoFilterManager_c () :
-  SingletonIsoFilterManager_c (),
-  mt_handler(*this)
+IsoFilterManager_c::IsoFilterManager_c ()
+  : SingletonIsoFilterManager_c ()
+  , mvec_isoFilterBox()
+  , mt_handler(*this)
 {
-// functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
-}
-
-
-/** initialize directly after the singleton instance is created.
-  * this is called from singleton.h and should NOT be called from the user again.
-  * users please use init(...) instead. */
-void
-IsoFilterManager_c::singletonInit ()
-{
-  mb_alreadyInitialized = false; // so init() will init!
-  // set very long execution period as this singleton has no periodic jobs
-  setTimePeriod( 10000 );
 }
 
 
@@ -54,36 +35,45 @@ bool IsoFilterManager_c::timeEvent( void )
 }
 
 
-/** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
-void IsoFilterManager_c::close( void )
-{
-  if ( ! checkAlreadyClosed() ) {
-    // avoid another call
-    setAlreadyClosed();
-
-      // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-  }
-}
-
-
-/** just a dummy implementation of virtual abstract functions in Scheduler_Task_c */
+#if DEBUG_SCHEDULER
 const char* IsoFilterManager_c::getTaskName() const
-{
-  return "IsoFilterManager_c";
-}
+{ return "IsoFilterManager_c"; }
+#endif
 
 
 void
 IsoFilterManager_c::init()
 {
-  if (!mb_alreadyInitialized)
-  { // avoid double initialization. for now now close needed, only init once! ==> see Scheduler_c::startupSystem()
-    mb_alreadyInitialized = true;
-    // clear state of b_alreadyClosed, so that close() is called one time
+  if ( checkAlreadyClosed() )
+  {
     clearAlreadyClosed();
-    // register to get IsoMonitor list changes
+
     __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+
+    // set very long execution period as this singleton has no periodic jobs
+    setTimePeriod( 10000 );
+  }
+}
+
+
+void
+IsoFilterManager_c::close()
+{
+  if ( ! checkAlreadyClosed() )
+  { // avoid another call
+    setAlreadyClosed();
+
+    // for now, clear all the registered filters.
+    for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+         it_isoFilterBox != mvec_isoFilterBox.end();
+         ++it_isoFilterBox)
+    { // Search for existing IsoFilterBox
+      it_isoFilterBox->updateOnRemove (NULL);
+    }
+    mvec_isoFilterBox.clear();
+    // for later, all modules should remove their filters!
+
+    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
   }
 }
 
@@ -116,7 +106,7 @@ IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& arcs_isoFilter, bool ab_
     if (mvec_isoFilterBox.back().updateOnAdd())
     {
       if (ab_immReconfigure)
-        getCanInstance4Comm().reconfigureMsgObj();
+        getIsoBusInstance4Comm().reconfigureMsgObj();
     }
   }
 }
@@ -194,7 +184,7 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::I
     }
 
     if (b_reconfig)
-      getCanInstance4Comm().reconfigureMsgObj();
+      getIsoBusInstance4Comm().reconfigureMsgObj();
   }
   else if (at_action == ControlFunctionStateHandler_c::ChangedAddress)
   {
@@ -210,7 +200,7 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::I
     }
 
     if (b_reconfig)
-      getCanInstance4Comm().reconfigureMsgObj();
+      getIsoBusInstance4Comm().reconfigureMsgObj();
   }
   else
   { // ((at_action == RemoveFromMonitorList) || (at_action == LostAddress))

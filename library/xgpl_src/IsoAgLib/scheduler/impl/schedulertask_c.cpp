@@ -223,11 +223,12 @@ Scheduler_Task_c::setTimePeriod
   mui16_timePeriod = aui16_timePeriod;
   //call Function to calculate new intervals
   updateEarlierAndLatestInterval();
-  #if DEBUG_SCHEDULER
-  INTERNAL_DEBUG_DEVICE
-      << "Scheduler_Task_c::setTimePeriod( " << aui16_timePeriod << ") zu Task "
-      << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
-  #endif
+#if DEBUG_SCHEDULER
+  if (getTaskName() == NULL)
+    INTERNAL_DEBUG_DEVICE << "Scheduler_Task_c::setTimePeriod( " << aui16_timePeriod << ") zu unbenanntem Task " << INTERNAL_DEBUG_DEVICE_ENDL;
+  else
+    INTERNAL_DEBUG_DEVICE << "Scheduler_Task_c::setTimePeriod( " << aui16_timePeriod << ") zu Task " << getTaskName() << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
 }
 
 //!  deliver standard time till next retrigger (used for comparisong operators in priority queue of SystemManagement_c -> must be very quick as very often called)

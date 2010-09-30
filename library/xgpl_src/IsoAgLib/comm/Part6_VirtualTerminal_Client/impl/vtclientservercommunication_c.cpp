@@ -18,10 +18,11 @@
 
 #include "vtclientservercommunication_c.h"
 #include "../ivtclientservercommunication_c.h"
-#include <IsoAgLib/driver/can/impl/canio_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <IsoAgLib/util/iassert.h>
+#include <supplementary_driver/driver/datastreams/volatilememory_c.h>
 #include "../ivtobjectpicturegraphic_c.h"
 //#if not defined PRJ_ISO_TERMINAL_OBJECT_SELECTION1 || defined USE_VTOBJECT_graphicscontext
   #include "../ivtobjectgraphicscontext_c.h"
@@ -32,7 +33,6 @@
 #include "../ivtobjectstring_c.h"
 #include "../ivtobjectworkingset_c.h"
 
-#include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_VTCOMM || DEBUG_HEAP_USEAGE
   #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
@@ -414,7 +414,7 @@ VtClientServerCommunication_c::timeEventSendLanguagePGN()
   mc_data.setExtCanPkg3 (6, 0, REQUEST_PGN_MSG_PGN>>8,
                         mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                         (LANGUAGE_PGN & 0xFF), ((LANGUAGE_PGN >> 8)& 0xFF), ((LANGUAGE_PGN >> 16)& 0xFF));
-  getCanInstance4Comm() << mc_data;      // Command: REQUEST_PGN_MSG_PGN
+  getIsoBusInstance4Comm() << mc_data;      // Command: REQUEST_PGN_MSG_PGN
   mpc_vtServerInstance->getLocalSettings()->lastRequested = HAL::getTime();
 }
 
@@ -573,7 +573,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
     mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
                           mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           194, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
+    getIsoBusInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Number Of Soft Keys
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedSoftkeys = HAL::getTime();
 #if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Requested first property (C2)..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -587,7 +587,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
     mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
                           mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           195, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
+    getIsoBusInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Text Font Data
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedFont = HAL::getTime();
 #if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Requested fonts (C3)..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -603,7 +603,7 @@ VtClientServerCommunication_c::timeEventPrePoolUpload()
     mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
                           mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                           199, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-    getCanInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Hardware
+    getIsoBusInstance4Comm() << mc_data;      // Command: Get Technical Data --- Parameter: Get Hardware
     mpc_vtServerInstance->getVtCapabilities()->lastRequestedHardware = HAL::getTime();
 #if DEBUG_VTCOMM
     INTERNAL_DEBUG_DEVICE << "Requested hardware (C7)..." << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -635,7 +635,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
         mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8,
                               mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                               223, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-        getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
+        getIsoBusInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
         b_getVersionsSendTime = HAL::getTime();
       }
       if ((b_getVersionsSendTime+500) > HAL::getTime())
@@ -659,7 +659,7 @@ VtClientServerCommunication_c::timeEventPoolUpload()
       mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                             209,
                             marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
-      getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
+      getIsoBusInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Load Version
                                             //(Command: Non Volatile Memory --- Parameter: Delete Version - just a quick hack!)
       // start uploading after reception of LoadVersion Response
       men_uploadPoolState = UploadPoolWaitingForLoadVersionResponse;
@@ -746,7 +746,7 @@ VtClientServerCommunication_c::timeEvent(void)
     { // Do periodically WS-Maintenance sending (every second)
       mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                             0xFF, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-      getCanInstance4Comm() << mc_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
+      getIsoBusInstance4Comm() << mc_data;     // G.2: Function: 255 / 0xFF Working Set Maintenance Message
 
       mi32_nextWsMaintenanceMsg = HAL::getTime() + 1000;
     }
@@ -1125,7 +1125,7 @@ VtClientServerCommunication_c::processMsg()
       mc_data.setIsoPgn (ECU_TO_VT_PGN);
       mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
       mc_data.setIsoPs (mpc_vtServerInstance->getVtSourceAddress());
-      getCanInstance4Comm() << mc_data; // Command: "Command", parameter "Display Activation Response"
+      getIsoBusInstance4Comm() << mc_data; // Command: "Command", parameter "Display Activation Response"
     }
     break;
 
@@ -1153,7 +1153,7 @@ VtClientServerCommunication_c::processMsg()
             }
             mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                                   208 /* D0 */, marrp7c_versionLabel [0], marrp7c_versionLabel [1], marrp7c_versionLabel [2], marrp7c_versionLabel [3], marrp7c_versionLabel [4], lang1, lang2);
-            getCanInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Store Version
+            getIsoBusInstance4Comm() << mc_data;     // Command: Non Volatile Memory --- Parameter: Store Version
 
             // Now wait for response
             men_uploadPoolState = UploadPoolWaitingForStoreVersionResponse;
@@ -1194,7 +1194,7 @@ VtClientServerCommunication_c::processMsg()
         mc_data.setIsoPgn (ECU_TO_VT_PGN);
         mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
         mc_data.setIsoPs (mpc_vtServerInstance->getVtSourceAddress());
-        getCanInstance4Comm() << mc_data;
+        getIsoBusInstance4Comm() << mc_data;
       }
     } break;
 
@@ -2433,7 +2433,7 @@ VtClientServerCommunication_c::sendGetMemory()
                          192 /* 0xC0 */, 0xff,
                          (ui32_size) & 0xFF, (ui32_size >>  8) & 0xFF, (ui32_size >> 16) & 0xFF, ui32_size >> 24,
                          0xff, 0xff);
-  getCanInstance4Comm() << mc_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
+  getIsoBusInstance4Comm() << mc_data;     // Command: Get Technical Data --- Parameter: Get Memory Size
 
   // Now proceed to uploading
   men_uploadPoolState = UploadPoolWaitingForMemoryResponse;
@@ -2492,7 +2492,7 @@ VtClientServerCommunication_c::indicateUploadCompletion()
     case UploadPool: // successfully sent complete initial pool, so now send out the "End of Object Pool Message" and wait for response!
       mc_data.setExtCanPkg8 (7, 0, ECU_TO_VT_PGN>>8, mpc_vtServerInstance->getVtSourceAddress(), mrc_wsMasterIdentItem.getIsoItem()->nr(),
                              0x12, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
-      getCanInstance4Comm() << mc_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
+      getIsoBusInstance4Comm() << mc_data;     // Command: Object Pool Transfer --- Parameter: Object Pool Ready
       men_uploadPoolState = UploadPoolWaitingForEOOResponse; // and wait for response to set en_uploadState back to UploadIdle;
       mui32_uploadTimeout = DEF_TimeOut_EndOfObjectPool; // wait X seconds for terminal to initialize pool!
       mui32_uploadTimestamp = HAL::getTime();
@@ -2549,7 +2549,7 @@ VtClientServerCommunication_c::startUploadCommand()
                             actSend->vec_uploadBuffer [2], actSend->vec_uploadBuffer [3],
                             actSend->vec_uploadBuffer [4], actSend->vec_uploadBuffer [5],
                             actSend->vec_uploadBuffer [6], actSend->vec_uploadBuffer [7]);
-      getCanInstance4Comm() << mc_data;
+      getIsoBusInstance4Comm() << mc_data;
       // Save first byte for Response-Checking!
       mui8_commandParameter = actSend->vec_uploadBuffer [0];
 
@@ -2566,7 +2566,7 @@ VtClientServerCommunication_c::startUploadCommand()
     int i=5;
     for (; i < ui8_len; i++) mc_data.setUint8Data( i, actSend->mssObjectString->getStreamer()->getStringToStream() [i-5] );
     for (; i < 8;       i++) mc_data.setUint8Data( i, 0xFF); // pad unused bytes with "0xFF", so CAN-Pkg is of size 8!
-    getCanInstance4Comm() << mc_data;
+    getIsoBusInstance4Comm() << mc_data;
     // Save first byte for Response-Checking!
     mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 

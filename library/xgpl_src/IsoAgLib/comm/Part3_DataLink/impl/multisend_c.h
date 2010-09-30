@@ -231,8 +231,7 @@ public: // methods
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
 
-  /** default destructor which has nothing special to do (only call close!) */
-  virtual ~MultiSend_c() { close(); }
+  virtual ~MultiSend_c() {}
 
   /** this function is called by IsoMonitor_c on addition, state-change and removal of an IsoItem.
    * @param at_action enumeration indicating what happened to this IsoItem. @see IsoItemModification_en / IsoItemModification_t
@@ -402,8 +401,9 @@ public: // methods
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return (!mlist_sendStream.empty()); }
 
-  ///  Used for Debugging Tasks in Scheduler_c
+#if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
+#endif
 
 protected: // methods
   //! Function set ui16_earlierInterval and
@@ -473,13 +473,6 @@ private:
           ab_isGlobal);
     }
 
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
-
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
     CanCustomerProxy_c(CanCustomerProxy_c const &);
@@ -527,13 +520,6 @@ private:
     in case more than one ISO11783 BUS is used for IsoAgLib
     */
   MultiSend_c();
-
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
 
   SendStream_c* addSendStream (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
   SendStream_c* getSendStream (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);

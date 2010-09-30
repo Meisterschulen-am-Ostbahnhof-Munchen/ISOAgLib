@@ -13,24 +13,37 @@
 
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
 #include "basecommon_c.h"
-#include <IsoAgLib/driver/can/impl/canio_c.h>
 
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-void BaseCommon_c::singletonInitBase(SINGLETON_VEC_KEY_PARAMETER_DEF)
+
+/// NOTE: Currently all BaseCommon_c-based singletons are NOT working
+///       with Multiple ISOBUS Instances
+///       because getSingletonVecKey is needed here but declared/defined
+///       in the derived classes, which are the singletons.
+
+
+void
+BaseCommon_c::init()
 {
-  setAlreadyClosed();
-  init_base (NULL, 0);
-  // assign singletonVecKey to mc_data - if PRT_INSTANCE_CNT > 1
-  SINGLETON_MC_DATA_ASSIGN
+  if (checkAlreadyClosed())
+  {
+    clearAlreadyClosed();
+    SINGLETON_MC_DATA_ASSIGN
+
+    getSchedulerInstance().registerClient(&mt_task);
+
+    // set configure values with call for config
+    config_base (NULL, IsoAgLib::IdentModeImplement, 0 /* No individual PGN disabling */);
+
+    // now let concrete specialized classes init their part...
+    init_specialized();
+  }
 }
 
 /**
@@ -45,40 +58,16 @@ CanPkgExt_c& BaseCommon_c::dataBase()
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
 void BaseCommon_c::close( )
 {
-  if ( ! checkAlreadyClosed() ) {
-    // avoid another call
+  if ( ! checkAlreadyClosed() )
+  { // avoid another call
     setAlreadyClosed();
-    // unregister from timeEvent() call by Scheduler_c
+
+    close_specialized();
+
     getSchedulerInstance().unregisterClient(&mt_task);
   }
 };
 
-/** initialise element which can't be done during construct;
-    above all create the needed FilterBox_c instances
-    possible errors:
-      * dependant error in CanIo_c problems during insertion of new FilterBox_c entries for IsoAgLibBase
-    @param apc_isoName optional pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
-    @param ai_singletonVecKey singleton vector key in case PRT_INSTANCE_CNT > 1
-    @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
-  */
-void BaseCommon_c::init_base (const IsoName_c* apc_isoName, int ai_singletonVecKey, IsoAgLib::IdentMode_t at_identMode)
-{
-  getSchedulerInstance().registerClient(&mt_task);
-  mc_data.setSingletonKey( ai_singletonVecKey );
-
-  if (checkAlreadyClosed())
-  {
-    mb_filterCreated = false;
-  }
-
-  // set configure values with call for config
-  config_base (apc_isoName, at_identMode
-                           , 0 // No individual PGN disabling
-                           );
-
-  // clear state of b_alreadyClosed, so that close() is called one time
-  clearAlreadyClosed();
-};
 
 /** config tractor object after init --> store isoName and mode
     @param apc_isoName pointer to the ISOName variable of the responsible member instance (pointer enables automatic value update if var val is changed)
@@ -222,7 +211,7 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
   data().setUint32Data( 0 , ui32_requestedPGN );
   data().setLen( 3 );
   // now CanPkgExt_c has right data -> send
-  getCanInstance4Comm() << data();
+  getIsoBusInstance4Comm() << data();
   return true;
 }
 

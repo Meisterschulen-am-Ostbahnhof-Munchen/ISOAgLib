@@ -38,8 +38,6 @@ public:
   /** Destructor */
   ~iSchedulerTask_c();
 
-  virtual void close( void ) = 0;
-
   //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time
   //!  interval, which is important, if some tasks have time problems due to high load (data processing, IsoAgLib).
   //!  @return <0 -> too late, =0 -> trigger now, >0 -> wait
@@ -96,8 +94,9 @@ public:
 
   void startTaskTiming(int32_t aint32_StartTaskTime){return Scheduler_Task_c::startTaskTiming(aint32_StartTaskTime);}
 
-//! Used for Debugging Tasks in Scheduler_c
- virtual const char* getTaskName() const = 0;
+#if DEBUG_SCHEDULER
+  virtual const char* getTaskName() const = 0;
+#endif
 
 
   //! virtual function which allows a scheduler client to define
@@ -170,7 +169,8 @@ protected:
 
   /** gives to iCanio_c the permission to look inside the container, useful for
    the casting between canCustomer_c and iSchedulerTask_c */
-  friend class iCanIo_c;
+  friend class iIsoBus_c;
+  friend class iProprietaryBus_c;
   friend struct iIsoFilter_s;
   friend class iMultiReceive_c;
   friend class iScheduler_c;

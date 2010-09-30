@@ -91,16 +91,6 @@ class CanIo_c : public SingletonCanIo_c {
 
  public:
 
-
-
-   /** states if this Application should be prioritized over other applications.
-    * This is being set simply for this "can_server"-client.
-    * NOTE: This feature only works for applications running utilizing the "can_server"
-    */
-   static bool msb_sendPrioritized;
-
-
-
   /** Initialize the CAN hardware, and instantiate one msg object for
       sending of messages. Do configuration for BUS number, sending bitrate,
       CAN ident length, minx/max hardware/BIOS Msg Obj numbers by parameters;
@@ -135,44 +125,20 @@ class CanIo_c : public SingletonCanIo_c {
       @see    HAL::configCanObj
       @see    Ident_c::t_identType
     */
-  bool init(uint8_t aui8_busNumber, uint16_t aui16_bitrate, Ident_c::identType_t ren_identType, uint8_t aui8_minObjNr, uint8_t aui8_maxObjNr);
+  bool init(
+    uint8_t aui8_busNumber,
+    uint16_t aui16_bitrate,
+    Ident_c::identType_t ren_identType,
+    uint8_t aui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
+    uint8_t aui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR);
 
   /** check if this CanIo_c instance is configured so that it can be used to send */
-  bool isReady2Send() const { return ( mui8_busNumber != 0xFF );}
-
-
-#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-/** is the fist add after a reconfiguration */
- bool isFirstAddFilterBox() const
-{
-    if(mi32_minChangedFilterBox == -1) return true; //it is the fist addFilterBox after the reconfiguration or the initCAN
-
-    return false;
-}
-
-/** fast or full reconfiguration */
-  bool isFullReconfigNecessary()const {return ((mi32_minChangedFilterBox < 0 ));}
-
-/** set full reconfiguration */
- void setFullReconfigNecessary(){mi32_minChangedFilterBox = -2 ;}
-
-/** set value */
- void setMinChangedFilterBox(int32_t ai32_value){mi32_minChangedFilterBox = ai32_value;}
-
-/** get a filterbox index */
-  int32_t getMinChangedFilterBox() const { return (mi32_minChangedFilterBox >= 0 )? mi32_minChangedFilterBox : 0;}
-
-/** init value */
-  void initMinChangedFilterBox(){mi32_minChangedFilterBox = -1 ;}
-#endif
+  bool isReady2Send() const { return ( mui8_busNumber != 0xFF ); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
 
-  /** destructor of CanIo_c calls BIOS function for closing hardware CAN controller
-    @see HAL::closeCan
-  */
-  ~CanIo_c(){close();}
+  ~CanIo_c() {}
 
   /** periodically called function which does
     periodically needed actions; f.e. trigger watch
@@ -182,7 +148,7 @@ class CanIo_c : public SingletonCanIo_c {
   bool timeEvent( void );
 
   /** provide BUS number */
-  uint8_t getBusNumber( void ) const { return mui8_busNumber;}
+  uint8_t getBusNumber( void ) const { return mui8_busNumber; }
 
   #ifdef USE_CAN_MEASURE_BUSLOAD
   /** deliver actual BUS load in baud
@@ -204,11 +170,8 @@ class CanIo_c : public SingletonCanIo_c {
   */
   uint8_t sendCanFreecnt(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE);
 
-  /** clear the send buffer
-    @param ren_identType type of searched ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
-  */
-  void sendCanClearbuf(Ident_c::identType_t ren_identType = DEFAULT_IDENT_TYPE);
+  /** clear the send buffer */
+  void sendCanClearbuf();
 
   /** test if a FilterBox_c definition already exist
     (version expecial for standard ident, chosen at compile time)
@@ -286,26 +249,6 @@ class CanIo_c : public SingletonCanIo_c {
                             const Ident_c::identType_t at_identType = DEFAULT_IDENT_TYPE,
                             int8_t ai8_dlcForce = -1);
 
-
- /** create a Standard Iso Filter Box
-
-    possible errors:
-        * Err_c::badAlloc on not enough memory for new FilterBox
-        instance or for new configured MsgObj_c's
-    @see __IsoAgLib::CANCustomer
-    @param ar_customer reference to __IsoAgLib::CanCustomer_c  which needs
-         filtered messages (-> on received msg call
-       ar_customer.processMsg())
-    @param aui32_pgn PGN
-    @param ab_reconfigImmediate true -> all Filter objects are reconfigured
-         to according CAN hardware MsgObj after creating this filter
-    @return != true -> if inserting and wanted reconfiguration are performed without errors,
-      a reference to the created FilterBox is returned
-   @exception badAlloc
-  */
-
-  FilterBox_c* insertStandardIsoFilter(__IsoAgLib::CanCustomer_c& ar_customer, uint32_t aui32_pgn,bool ab_reconfigImmediate);
-
   /** reconfigure the MsgObj after insert/delete of FilterBox */
   bool reconfigureMsgObj();
 
@@ -317,7 +260,7 @@ class CanIo_c : public SingletonCanIo_c {
   */
   bool verifyBusMsgobjNr(uint8_t aui8_busNr, uint8_t aui8_objNr);
 
-/** helper function to search all FilterBoxes for matching
+  /** helper function to search all FilterBoxes for matching
     instance which maps to received CAN messages
     ( needed if the coordinated FilterBoxes don't match,
       especially important to process messages from global
@@ -343,7 +286,7 @@ class CanIo_c : public SingletonCanIo_c {
   bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer);
 
 
-/**
+  /**
     initiate processing of all received msg
     check all active MsgObj_c for received CAN msg and
     initiate their processing
@@ -360,9 +303,6 @@ class CanIo_c : public SingletonCanIo_c {
   uint8_t getProcessedMsgCnt( void ) const { return mui8_processedMsgCnt;}
 
   /** function for sending data out of CanPkg_c (uses BIOS function)
-      if send buffer is full a local loop waits till buffer has enough space
-      (every 100ms the watchdog is triggered, to avoid watchdog reset)
-
       possible errors:
           * Err_c::hwConfig on wrong configured CAN obj,
             not init BUS or no configured send obj
@@ -377,20 +317,6 @@ class CanIo_c : public SingletonCanIo_c {
     */
   CanIo_c& operator<<(CanPkg_c& acrc_src);
 
-  /** function for sending data out of CanPkgExt_c (uses BIOS function)
-      if send buffer is full a local loop waits till buffer has enough space
-      (every 100ms the watchdog is triggered, to avoid watchdog reset)
-
-      possible errors:
-          * Err_c::hwConfig on wrong configured CAN obj, not init BUS or no configured send obj
-          * Err_c::range on undef BUS or BIOS send obj nr
-          * Err_c::can_warn on physical CAN-BUS problems
-          * Err_c::can_off on physical CAN-BUS off state
-      @param acrc_src CanPkgExt_c which holds the to be sent data
-      @return reference to this CANIOExt_c instance ==> needed by commands like "c_can_io << pkg_1 << pkg_2 ... << pkg_n;"
-    */
-  CanIo_c& operator<<(CanPkgExt_c& acrc_src);
-
   /** check for can send conflict error and stop send retry on error
       (thus avoid BUS OFF)
       @return true -> there was send error and send retry stopped
@@ -401,11 +327,6 @@ class CanIo_c : public SingletonCanIo_c {
       @param ai32_maxSendDelay new maximum send delay in milli-seconds
    */
   void setMaxSendDelay (int32_t ai32_maxSendDelay);
-
-  /** set this client to have send-priority
-      @param ab_sendPrioritized enable (true) or disable (false) sending in Prioritized Mode
-   */
-  void setSendPriority(bool ab_sendPrioritized);
 
   FilterBox_c& getFilterBoxInstance(int32_t ai32_fbIdx) {return m_arrFilterBox[ai32_fbIdx];};
 
@@ -461,11 +382,26 @@ class CanIo_c : public SingletonCanIo_c {
     */
   CanIo_c( void );
 
-  /** initialize directly after the singleton instance is created.
-      this is called from singleton.h and should NOT be called from the user again.
-      users please use init(...) instead.
-    */
-  void singletonInit();
+#ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
+  /** is the fist add after a reconfiguration */
+  bool isFirstAddFilterBox() const
+  { return (mi32_minChangedFilterBox == -1); }
+
+  /** fast or full reconfiguration */
+  bool isFullReconfigNecessary() const { return ((mi32_minChangedFilterBox < 0 )); }
+
+  /** set full reconfiguration */
+  void setFullReconfigNecessary() { mi32_minChangedFilterBox = -2; }
+
+  /** set value */
+  void setMinChangedFilterBox (int32_t ai32_value) { mi32_minChangedFilterBox = ai32_value; }
+
+  /** get a filterbox index */
+  int32_t getMinChangedFilterBox() const { return (mi32_minChangedFilterBox >= 0 )? mi32_minChangedFilterBox : 0; }
+
+  /** init value */
+  void initMinChangedFilterBox() { mi32_minChangedFilterBox = -1; }
+#endif
 
   /** deliver min msg obj nr
       @return min msg obj nr
@@ -570,7 +506,7 @@ class CanIo_c : public SingletonCanIo_c {
 
 
  #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
- void printMyFilterBox();
+   void printMyFilterBox();
  #endif
   /** temp filer box to avoid new/delete for each insert of a filterBox
       @see FilterBox
@@ -579,12 +515,6 @@ class CanIo_c : public SingletonCanIo_c {
 
   /** maximum send delay - value of < 0 indicates that no send-delay check is requested*/
   int32_t mi32_maxSendDelay;
-
-  /** begin of an CAN error period */
-  int32_t mi32_canErrStart;
-
-  /** time of last detected CAN error */
-  int32_t mi32_canErrEnd;
 
   /**  timestamp of last CAN BUS integrity check  */
   int32_t mi32_lastCanCheck;
@@ -647,12 +577,8 @@ class CanIo_c : public SingletonCanIo_c {
    *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
    */
   bool mb_runningCanProcess;
-
-#if ((defined( USE_ISO_11783)) && ((CAN_INSTANCE_CNT > PRT_INSTANCE_CNT) || defined (ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)))
-  /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
-  bool mb_canChannelCouldSendIso;
-  #endif
 };
+
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique CanIo_c singleton instance

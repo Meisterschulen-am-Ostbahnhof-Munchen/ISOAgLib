@@ -8,28 +8,43 @@
  * implementation of ecuMain() and ecuShutdown() only.
  */
 
-#include <IsoAgLib/driver/can/icanio_c.h>
 #include <IsoAgLib/scheduler/ischeduler_c.h>
 
 extern bool ecuMain();
 extern bool ecuShutdown();
 
+
+void ecuMainLoop()
+{
+  int32_t i32_idleTimeSpread =
+    IsoAgLib::getISchedulerInstance().timeEvent();
+
+  if ( i32_idleTimeSpread > 0 )
+  {
+    IsoAgLib::getISchedulerInstance().waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
+  }
+}
+
+
 int main( int /* argc */, char** /*argv*/ )
 {
+  /// Init Core-ISOAgLib (along with System, EEPROM, Actor, Sensor, RS232)
+  IsoAgLib::getISchedulerInstance().init();
+
+  /// Init Application
   ecuMain();
 
+  /// Keep it running...
   while ( IsoAgLib::iSystem_c::canEn() )
-  {
-    int32_t i32_idleTimeSpread = 
-      IsoAgLib::getISchedulerInstance().timeEvent();
+    ecuMainLoop();
 
-    if ( i32_idleTimeSpread > 0 )
-      IsoAgLib::iCanIo_c::waitUntilCanReceiveOrTimeout( i32_idleTimeSpread );
-  }
-
+  /// Shutdown Application
   ecuShutdown();
 
-  return 1;
+  /// Shutdown Core-ISOAgLib
+  IsoAgLib::getISchedulerInstance().close();
+
+  return 0;
 }
 
 /* eof ecu_main.cpp */

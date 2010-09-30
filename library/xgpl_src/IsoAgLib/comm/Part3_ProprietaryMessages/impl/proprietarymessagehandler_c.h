@@ -16,11 +16,11 @@
 
 #include "proprietarymessageclient_c.h"
 
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/saclaimhandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisofilter_s.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-#include <IsoAgLib/driver/can/impl/canio_c.h>
 
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
@@ -42,8 +42,7 @@ namespace __IsoAgLib
   public:
     ProprietaryMessageHandler_c();
 
-    /** default destructor which does just close() everything */
-    virtual ~ProprietaryMessageHandler_c();
+    virtual ~ProprietaryMessageHandler_c() {}
 
     /** initialisation */
     void init( void );
@@ -97,8 +96,9 @@ namespace __IsoAgLib
      */
     void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
-    /** Function for Debugging in Scheduler_c */
+#if DEBUG_SCHEDULER
     virtual const char* getTaskName() const;
+#endif
 
     /** force an update of the CAN receive filter (if possible), as initial or
         new data has been set in an already registered client.
@@ -133,12 +133,6 @@ namespace __IsoAgLib
     typedef STL_NAMESPACE::vector<ClientNode_t> ProprietaryMessageClientVector_t;
     typedef STL_NAMESPACE::vector<ClientNode_t>::iterator ProprietaryMessageClientVectorIterator_t;
     typedef STL_NAMESPACE::vector<ClientNode_t>::const_iterator ProprietaryMessageClientVectorConstIterator_t;
-
-
-    /**
-      singletonInit() will be called exactly once directly after the singleton is created.
-    */
-    void singletonInit();
 
     /** Call updateSchedulingInformation() if client's nextTriggering has been changed */
     void updateSchedulingInformation();
@@ -217,13 +211,6 @@ private:
       //     aui8_multiReceiveError,
       //     ab_isGlobal);
     }
-
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
 
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.

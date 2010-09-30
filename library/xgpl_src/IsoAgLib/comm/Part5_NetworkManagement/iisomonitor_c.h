@@ -17,14 +17,13 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/isomonitor_c.h"
-#include "iisoitem_c.h"
+#include "iidentitem_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/icontrolfunctionstatehandler_c.h>
 
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-class iScheduler_c;
 
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
@@ -35,8 +34,16 @@ class iScheduler_c;
 class iIsoMonitor_c : private __IsoAgLib::IsoMonitor_c
 {
 public:
-  /** initialisation for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
-  void init( void ) { IsoMonitor_c::init(); }
+  /** register a properly set-up IdentItem.
+      @return false in case the IdentItem wasn't properly activated
+  */
+  bool registerIdentItem( iIdentItem_c& arc_item ) { return IsoMonitor_c::registerIdentItem( arc_item ); }
+
+  /** deregister a registered IdentItem
+      @param arc_item The (registered) IdentItem
+  */
+  void deregisterIdentItem( iIdentItem_c& arc_item ) { IsoMonitor_c::deregisterIdentItem( arc_item ); }
+
 
   /** deliver amount of ISO members in monitor list which optional (!!)
     match the condition of address claim state

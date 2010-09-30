@@ -401,16 +401,6 @@ class CanPkgExt_c : public CanPkg_c
     */
   const IsoName_c& getISONameForDA() { return *mpc_addrResolveResDA->mpc_isoName; }
 
-
-  #ifdef ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-    /** this virtual function can be used to detect CAnCustomer_c derived CAN message handlers, which
-        want to send/receive proprietary messages on a CanIo_c instance, which is used to transport
-        standardized protocol ISO 11783.
-        Any proprietary derived CAN message handler should overload this function to return true in this function.
-    */
-    virtual bool isProprietaryMessageOnStandardizedCan() const { return false;}
-  #endif // end of ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL
-
   /**
     abstract function to transform the string data into flag values
     => derived class must implement suitable data conversion function

@@ -50,10 +50,9 @@ public:
   void init();
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
-  void close( void ){};
+  void close( void ){}
 
-  /** destructor has nothing to destruct */
-  ~EepromIo_c();
+  ~EepromIo_c() {}
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ EEPROM managing operations ++++
@@ -224,13 +223,8 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of EepromIo_c within application
     */
-  EepromIo_c( void ) {};
-  /**
-    initialize directly after the singleton instance is created.
-    this is called from singleton.h and should NOT be called from the user again.
-    users please use init(...) instead.
-  */
-  void singletonInit();
+  EepromIo_c( void ) {}
+
   /**
     set error flags dependent on BIOS return value
     @param ai16_biosReturn BIOS return value which should be translated in error state of EEPROM_IO
