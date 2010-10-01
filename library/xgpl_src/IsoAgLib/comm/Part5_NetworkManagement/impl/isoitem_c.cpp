@@ -194,7 +194,7 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
   sprintf(c_temp, "0x%02x%02x%02x%02x%02x%02x%02x%02x", pb_src[0],pb_src[1],pb_src[2],pb_src[3],
       pb_src[4],pb_src[5],pb_src[6],pb_src[7]);
 
-  uint8_t ui8_len = strlen(c_temp);
+  uint8_t ui8_len = CNAMESPACE::strlen(c_temp);
   if (aui8_maxLen < ui8_len) ui8_len = aui8_maxLen;
   CNAMESPACE::memcpy(pc_asciiName, c_temp, ui8_len );
   pc_asciiName[ui8_len-1] = '\0';

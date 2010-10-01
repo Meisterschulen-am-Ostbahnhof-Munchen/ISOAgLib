@@ -377,7 +377,7 @@ void bigEndianHexNumberText2CanString( const char* ac_src, uint8_t* pui8_target,
   }
   unsigned int temp;
 
-  const unsigned int inputLen = strlen(ac_src);
+  const unsigned int inputLen = CNAMESPACE::strlen(ac_src);
   uint8_t* pui8_write = pui8_target;
 
   int ind = inputLen - ( 2 * SIZEOF_INT );

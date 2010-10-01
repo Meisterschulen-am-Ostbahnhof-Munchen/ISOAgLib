@@ -17,7 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
-#include <string.h>
+#include <string>
 
 namespace IsoAgLib
 {

@@ -182,7 +182,7 @@ EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* a
         setState4BiosReturn(HAL::eepromRead (ui16_actualStart, ui16_actualSize, (uint8_t*)pb_compare));
 
         // compare actual data in EEPROM with given data
-        if (memcmp(pb_compare, pb_data,ui16_actualSize) != 0)
+        if (CNAMESPACE::memcmp(pb_compare, pb_data,ui16_actualSize) != 0)
         { // old data is different -> write new data
           if (writeInit())
           { // call BIOS function

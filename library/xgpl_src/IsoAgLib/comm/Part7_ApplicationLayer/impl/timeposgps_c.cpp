@@ -284,7 +284,7 @@ namespace __IsoAgLib {
     configGps( NULL, IsoAgLib::IdentModeImplement );
 
     // 01.01.1970 00:00:00
-    struct tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
+    struct CNAMESPACE::tm t_testTime = {0, 0, 0, 1, 0, 70, 0 , 0 ,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
                             #endif
@@ -951,8 +951,8 @@ namespace __IsoAgLib {
         mui32_timeMillisecondOfDay = ui32_milliseconds;
         mi32_lastMillisecondUpdate = mi32_lastIsoPositionStream;
 
-        const time_t t_tempUnixTime = ( time_t(ui16_daysSince1970) * time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
-        tm* UtcNow = gmtime( &t_tempUnixTime );
+        const CNAMESPACE::time_t t_tempUnixTime = ( CNAMESPACE::time_t(ui16_daysSince1970) * CNAMESPACE::time_t(60L * 60L * 24L) ) + (ui32_milliseconds/1000);
+        CNAMESPACE::tm* UtcNow = CNAMESPACE::gmtime( &t_tempUnixTime );
         if ( UtcNow != NULL )
         {
           if ( checkMode(IsoAgLib::IdentModeTractor) || getSelectedDataSourceISOName().isUnspecified())
@@ -1226,13 +1226,13 @@ void TimePosGps_c::isoSendDirection( void )
 
     if (p_tm)
     { // testTime is only used for calculation of ui16_daysSince1970 => use time 12:00:00 to avoid daylight setting influence
-      struct tm testTime = {0, 0, 12, p_tm->tm_mday, p_tm->tm_mon, p_tm->tm_year, 0,0,-1
+      struct CNAMESPACE::tm testTime = {0, 0, 12, p_tm->tm_mday, p_tm->tm_mon, p_tm->tm_year, 0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
                             #endif
                             };
       // compensate mktime() time zone influence:
-      const time_t secondsSince1970 = mktime( &testTime ) + mt_tzOffset;
+      const CNAMESPACE::time_t secondsSince1970 = mktime( &testTime ) + mt_tzOffset;
       // calculate the days
       ui16_daysSince1970 = secondsSince1970 / ( 60L * 60L *24L );
     }
@@ -1404,9 +1404,9 @@ void TimePosGps_c::isoSendDirection( void )
                             #endif
                             };
     // argument of mktime is interpreted as local time (system time zone influence!)
-    const time_t middle = mktime( &testTime );
+    const CNAMESPACE::time_t middle = mktime( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct CNAMESPACE::tm* normalizedTime = localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = CNAMESPACE::localtime( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1431,8 +1431,8 @@ void TimePosGps_c::isoSendDirection( void )
                             #endif
                           };
 
-    const time_t middle = mktime( &testTime );
-    const struct CNAMESPACE::tm* normalizedTime = localtime( &middle );
+    const CNAMESPACE::time_t middle = mktime( &testTime );
+    const struct CNAMESPACE::tm* normalizedTime = CNAMESPACE::localtime( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1465,9 +1465,9 @@ void TimePosGps_c::isoSendDirection( void )
                           };
 
     // argument of mktime is interpreted as local time (system time zone influence!)
-    const time_t middle = mktime( &testTime );
+    const CNAMESPACE::time_t middle = mktime( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct CNAMESPACE::tm* normalizedTime = localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = CNAMESPACE::localtime( &middle );
 
     bit_calendar.hour   = normalizedTime->tm_hour;
     bit_calendar.minute = normalizedTime->tm_min;
@@ -1506,13 +1506,13 @@ void TimePosGps_c::isoSendDirection( void )
       currentUtcTm();
     }
 
-    time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000L
+    CNAMESPACE::time_t t_secondsSince1970Local = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000L
                                      + (bit_calendar.timezoneHourOffsetMinus24 - 24L) * 60L * 60L  // negative offsets => increased local time
                                      + bit_calendar.timezoneMinuteOffset * 60L;
 
     for (;;){
       // compensate system time zone setting: call localtime() and not gmtime()
-      struct CNAMESPACE::tm *p_ret = localtime( &t_secondsSince1970Local );
+      struct CNAMESPACE::tm *p_ret = CNAMESPACE::localtime( &t_secondsSince1970Local );
       if (p_ret)
         return p_ret;
       // non-negative, because otherwise localtime(..) would return NULL!
@@ -1603,7 +1603,7 @@ void TimePosGps_c::isoSendDirection( void )
       // compensate system time zone setting (part 1)
       if (bit_calendar.year != 0)
       {
-        struct tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+        struct CNAMESPACE::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
                                bit_calendar.day, bit_calendar.month-1,
                                bit_calendar.year-1900,
                                0,0,-1
@@ -1612,7 +1612,7 @@ void TimePosGps_c::isoSendDirection( void )
                                #endif
                              };
         mt_cachedLocalSeconds1970AtLastSet = mktime( &testTime );
-        if ((time_t)-1 == mt_cachedLocalSeconds1970AtLastSet)
+        if ((CNAMESPACE::time_t)-1 == mt_cachedLocalSeconds1970AtLastSet)
         { // this shouldn't happen anymore, but in case it does, reset the cachedSeconds to 0
           // because -1 will make localtime(..) return NULL!
           mt_cachedLocalSeconds1970AtLastSet = 0;
@@ -1622,10 +1622,10 @@ void TimePosGps_c::isoSendDirection( void )
       // in case bit_calendar.year is not yet set: keep mt_cachedLocalSeconds1970AtLastSet 0.
     }
 
-    const time_t t_secondsSince1970 = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
+    const CNAMESPACE::time_t t_secondsSince1970 = mt_cachedLocalSeconds1970AtLastSet + calendarSetAge()/1000;
 
     // compensate system time zone setting (part 2)
-    return localtime( &t_secondsSince1970 );
+    return CNAMESPACE::localtime( &t_secondsSince1970 );
   }
 
 #if DEBUG_SCHEDULER
