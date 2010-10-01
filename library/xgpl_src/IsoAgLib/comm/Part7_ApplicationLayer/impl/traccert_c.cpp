@@ -20,8 +20,6 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
 
-using namespace std;
-
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
@@ -51,7 +49,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     if (at_identMode == IsoAgLib::IdentModeTractor)
       return false; // This part is now handled in Part12_Diagnostic
-      
+
 #if 0
     //store old mode to decide to register or unregister from request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();

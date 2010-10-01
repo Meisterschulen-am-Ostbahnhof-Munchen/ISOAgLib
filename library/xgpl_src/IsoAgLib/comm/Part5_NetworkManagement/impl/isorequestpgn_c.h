@@ -204,7 +204,7 @@ private: // Private attributes
 #endif
 
 /** Convenience functor to register PGN. */
-struct RegisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
+struct RegisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32_t, void > {
   void operator()(
       uint32_t aui32_pgn,
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
@@ -219,7 +219,7 @@ private:
 };
 
 /** Convenience functor to unregister PGN. */
-struct UnregisterPgn_s : public std::binary_function< uint32_t, uint32_t, void > {
+struct UnregisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32_t, void > {
   void operator()(
       uint32_t aui32_pgn,
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {

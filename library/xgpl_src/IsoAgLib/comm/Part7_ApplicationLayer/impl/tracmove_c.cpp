@@ -28,7 +28,6 @@
 #endif
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
-using namespace std;
 
 #define TIMEOUT_SPEED_LOST 3000
 #define MISSING_SPEED         0
@@ -168,18 +167,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
-      // create FilterBox_c for PGN GROUND_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (GROUND_BASED_SPEED_DIST_PGN << 8)
+
       c_can.insertStandardIsoFilter(*this,GROUND_BASED_SPEED_DIST_PGN,false);
-
-      // create FilterBox_c for PGN WHEEL_BASED_SPEED_DIST_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (WHEEL_BASED_SPEED_DIST_PGN << 8)
       c_can.insertStandardIsoFilter(*this,WHEEL_BASED_SPEED_DIST_PGN,false);
-
-      // create FilterBox_c for PGN SELECTED_SPEED_MESSAGE, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (SELECTED_SPEED_MESSAGE << 8)
       c_can.insertStandardIsoFilter(*this,SELECTED_SPEED_MESSAGE,true);
-
     }
   }
 
@@ -531,8 +522,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     b_val8 |= mt_directionTheor;
     data().setUint8Data(7, b_val8);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
@@ -554,8 +543,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     //reserved fields
     data().setUint8Data(6, 0xFF);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
@@ -564,7 +551,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     if (!canSendEngineSpeed())
       return MessageNotSent;
-    
+
     data().setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
 
     // TODO unimplemented Engine Torque mode
@@ -582,8 +569,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // Engine demand
     data().setUint8Data(7, 0xFF);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
     return MessageSent;
   }
@@ -597,7 +582,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     (void)sendGroundBasedSpeedDist();
     (void)sendWheelBasedSpeedDist();
     (void)sendSelectedSpeed();
-  (void)sendEngineSpeed();
+    (void)sendEngineSpeed();
   }
 
 

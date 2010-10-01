@@ -159,7 +159,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
       // Await after is CTS has timeout value of "msci32_timeOutT2=1250; // cts -> data(TP)/dpo(ETP)"
       awaitNextStep (AwaitDpo,  msci32_timeOutT2);
       // how many pkgs are missing at all? is it more than wished?
-      mui8_pkgRemainingInBurst = std::min<uint32_t>( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
+      mui8_pkgRemainingInBurst = STL_NAMESPACE::min<uint32_t>( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
       break;
 
     case StreamTP:
@@ -169,7 +169,7 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
                        ? msci32_timeOutT1 /* BAM */
                        : msci32_timeOutT2 /* dest-adr. */);
       // how many pkgs are missing at all? is it more than wished?
-      mui8_pkgRemainingInBurst = std::min<uint32_t>( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
+      mui8_pkgRemainingInBurst = STL_NAMESPACE::min<uint32_t>( (mui32_pkgTotalSize - (mui32_pkgNextToWrite - 1)), uint32_t(wishingPkgs) );
       break;
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET

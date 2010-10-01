@@ -30,9 +30,6 @@
 #endif
 
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
-
-
 namespace __IsoAgLib {
 
 /** default constructor - only used in creation of IsoMonitor_c's temp member variable.
@@ -637,13 +634,17 @@ IsoItem_c::isWsAnnounced (int32_t ai32_timeAnnounceStarted)
 /** convert function - avoids lots of explicit static_casts */
 IsoAgLib::iIsoItem_c& IsoItem_c::toIisoItem_c()
 {
-  return static_cast<IsoAgLib::iIsoItem_c&>(*this);
+  // typically would be: static_cast<IsoAgLib::iIsoItem_c&>(*this);
+  // but avoiding that due to problems with IAR compiler
+  return (IsoAgLib::iIsoItem_c&)(*this);
 }
 
 /** convert function - avoids lots of explicit static_casts */
 const IsoAgLib::iIsoItem_c& IsoItem_c::toConstIisoItem_c() const
 {
-  return static_cast<const IsoAgLib::iIsoItem_c&>(*this);
+  // typically would be: static_cast<const IsoAgLib::iIsoItem_c&>(*this);
+  // but avoiding that due to problems with IAR compiler
+  return (const IsoAgLib::iIsoItem_c&)(*this);
 }
 
 } // end of namespace __IsoAgLib

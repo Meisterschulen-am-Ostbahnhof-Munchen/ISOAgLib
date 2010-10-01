@@ -19,7 +19,6 @@
 #include "tracguidancecommand_c.h"
 #include "tracguidance_c.h"
 
-using namespace std;
 
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
@@ -176,8 +175,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     data().setUint32Data(3, 0xFFFFFFFFUL);
     data().setUint8Data(7, 0xFF);
 
-    //CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     c_can << data();
   }
 

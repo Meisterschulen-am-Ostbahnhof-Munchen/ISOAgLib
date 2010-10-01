@@ -399,8 +399,10 @@ int16_t getRs232TxBufCount(uint8_t aui8_channel)
   @param wBuffersize wanted buffer size
   @param pFunction pointer to irq function or NULL if not wanted
  */
-int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
+int16_t configRs232RxObj (uint16_t wBuffersize, void (*pFunction)(uint8_t *bByte), uint8_t aui8_channel)
 {
+  (void)wBuffersize;
+  (void)pFunction;
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
@@ -414,6 +416,9 @@ int16_t configRs232RxObj(uint16_t wBuffersize,void (*pFunction)(uint8_t *bByte),
 int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint8_t *bByte),
                          void (*funktionBeforTransmit)(uint8_t *bByte), uint8_t aui8_channel)
 {
+  (void)wBuffersize;
+  (void)funktionAfterTransmit;
+  (void)funktionBeforTransmit;
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;
@@ -424,6 +429,7 @@ int16_t configRs232TxObj(uint16_t wBuffersize,void (*funktionAfterTransmit)(uint
  */
 int16_t getRs232Error(uint8_t *Errorcode, uint8_t aui8_channel)
 {
+  (void)Errorcode;
   if ( aui8_channel >= RS232_CHANNEL_CNT ) return HAL_RANGE_ERR;
   /** @todo ON REQUEST: should this be implemented? */
   return HAL_NO_ERR;

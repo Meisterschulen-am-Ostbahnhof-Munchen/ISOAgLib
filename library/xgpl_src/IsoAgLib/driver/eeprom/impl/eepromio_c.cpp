@@ -19,17 +19,13 @@
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
-
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
 /** C-style function, to get access to the unique EepromIo_c singleton instance */
 EepromIo_c& getEepromInstance( void ) { return EepromIo_c::instance();};
 
-/*******************************************/
-/** definition of public element functions */
-/*******************************************/
+
 /** default initialisation */
 void EepromIo_c::init()
 { // set the segment size
@@ -38,22 +34,9 @@ void EepromIo_c::init()
   mui16_rPosition = mui16_wPosition = 0;
 }
 
-// ++++++++++++++++++++++++++++++++++++
-// ++++ EEPROM managing operations ++++
-// ++++++++++++++++++++++++++++++++++++
 
-
-/**
-  set the write position in EEPROM (in Byte); answer if possible
-  if aui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
-
-  possible errors:
-      * range aui16_adress outer the limits of EEPROM memory
-
-  @param aui16_adress position of write mark [uint8_t]
-  @return true -> setting of write mark without errors
-*/
-bool EepromIo_c::setp(uint16_t aui16_adress)
+bool
+EepromIo_c::setp(uint16_t aui16_adress)
 {
   if (eepromSize() > aui16_adress)
   { // wanted position is in EEPROM range
@@ -67,17 +50,9 @@ bool EepromIo_c::setp(uint16_t aui16_adress)
   }
 };
 
-/**
-  set the read position in EEPROM (in Byte); answer if possible
-  if aui16_adress exceeds EEPROM memory ignore setting and set Err_c::range
 
-  possible errors:
-      * range aui16_adress outer the limits of EEPROM memory
-
-  @param aui16_adress position of read mark [uint8_t]
-  @return true -> setting of read mark without errors
-*/
-bool EepromIo_c::setg(uint16_t aui16_adress)
+bool
+EepromIo_c::setg(uint16_t aui16_adress)
 {
   if (eepromSize() > aui16_adress)
   { // wanted position is in EEPROM range
@@ -91,17 +66,9 @@ bool EepromIo_c::setg(uint16_t aui16_adress)
   }
 };
 
-/**
-  check if write position is at end of EEPROM
-  (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
-  possible errors:
-      * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
-
-  @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current write mark position tested)
-  @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
-*/
-bool EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
+bool
+EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
 { // compare (write position + lookahead) with size of EEPROM memory
   if ((mui16_wPosition + aui16_lookahead) >= eepromSize())
   { // position of write access + lookahead exceeds EEPROM memory
@@ -114,17 +81,9 @@ bool EepromIo_c::eofp(uint16_t aui16_lookahead, bool ab_setState)
   }
 };
 
-/**
-  check if read position is at end of EEPROM
-  (parameter specifies lookahead (normally length of operation - 1 is passed to check if a block of data fits into)
 
-  possible errors:
-      * range if (ab_setState == true) and (current read position + lookahead) is out of EEPROM range
-
-  @param aui16_lookahead optional uint8_t lookahead offset (default 0 -> only current read mark position tested)
-  @return false -> (current position + lookahead) is a valid EEPROM address. (true -> out of EEPROM range)
-*/
-bool EepromIo_c::eofg(uint16_t aui16_lookahead, bool ab_setState)
+bool
+EepromIo_c::eofg(uint16_t aui16_lookahead, bool ab_setState)
 { // compare (read position + lookahead) with size of EEPROM memory
   if ((mui16_rPosition + aui16_lookahead) >= eepromSize())
   { // position of read access + lookahead exceeds EEPROM memory
@@ -138,26 +97,8 @@ bool EepromIo_c::eofg(uint16_t aui16_lookahead, bool ab_setState)
 };
 
 
-
-/* ******************************** */
-/* iostream related output operator */
-/* ******************************** */
-
-/**
-  write a uint8_t string value to EEPROM from actual write position on (tellp() )
-
-  possible errors:
-      * range writing position exceeds end of EEPROM
-      * busy the EEPROM was busy with another action
-      * eepromSegment low level writing caused segment error
-
-  @see EepromIo_c::tellp
-  @see EepromIo_c::setp
-  @param apb_string string to write into EEPROM
-  @param aui16_number length of the string to write
-  @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
-*/
-EepromIo_c& EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t aui16_number)
+EepromIo_c&
+EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t aui16_number)
 { // check if enough space for string is after actual write position
   if (aui16_number > 0)
   { // second parameter true -> set Err_c::range if end is reached
@@ -170,15 +111,9 @@ EepromIo_c& EepromIo_c::writeString(const uint8_t *const apb_string, uint16_t au
   return *this;
 };
 
-/**
-  read operator for strings with given length; uses BIOS function
-  @see EepromIo_c::tellg
-  @see EepromIo_c::setg
-  @param apb_string pointer to uint8_t string, which should be read from actual EEPROM read position on
-  @param aui16_number number of uint8_t to read into string
-  @return true -> read with success
-*/
-bool EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
+
+bool
+EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
 { // check if enough space for string is after actual read position
   if (aui16_number == 0)
   { // someone wants to read 0 bytes. Well, that's fine, just do nothing and return with success
@@ -209,20 +144,8 @@ bool EepromIo_c::readString(uint8_t *const apb_string, uint16_t aui16_number)
 }
 
 
-
-/********************************************/
-/** definition of private element functions */
-/********************************************/
-
-
-/**
-  write the pointed data string to eeprom; uses BIOS function
-  @param aui16_adress adress to start writing
-  @param aui16_number amount of bytes to write to EEPROM
-  @param apb_data pointer to string of uint8_t to write to EEPROM
-  @return true -> write successful
-*/
-bool EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* apb_data){
+bool
+EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8_t* apb_data){
   uint16_t ui16_restNumber = aui16_number,
        ui16_actualStart = aui16_adress,
        ui16_actualSize;
@@ -297,11 +220,9 @@ bool EepromIo_c::write(uint16_t aui16_adress, uint16_t aui16_number, const uint8
 }
 
 
-/**
-  init for single write operation, check if write is possible; uses BIOS function
-  @return true -> EEPROM is ready for write operations
-*/
-bool EepromIo_c::writeInit(){
+bool
+EepromIo_c::writeInit()
+{
   // clear the BIOS state
   getILibErrInstance().clear( iLibErr_c::Eeprom );
 
@@ -323,12 +244,10 @@ bool EepromIo_c::writeInit(){
   // return if EEPROM is in good state with writeable and ready state
   return (getILibErrInstance().good( iLibErr_c::Eeprom ));
 }
-/**
-  wait with triggering the watchdog, till the EEPROM is ready
 
-  @return true -> EEPROM is ready for next operation
-*/
-int16_t EepromIo_c::wait_eepromReady( void )
+
+int16_t
+EepromIo_c::wait_eepromReady( void )
 { // test if EEPROM is ready for up to 1000msec.
   // don't builf timestamps, if EEPROM immediately ready
   if(HAL::eepromReady() == EE_READY) return EE_READY;
@@ -344,22 +263,18 @@ int16_t EepromIo_c::wait_eepromReady( void )
   }
   return i16_result;
 }
-/**
-  deliver the max number of bytes, which can be written in EEPROM from given start position on
-  @param aui16_adress wanted write position
-  @return amount of bytes between write position and end of EEPROM
-*/
-uint16_t EepromIo_c::maxSize(uint16_t aui16_adress){
+
+
+uint16_t
+EepromIo_c::maxSize(uint16_t aui16_adress)
+{
   uint16_t ui16_segmentEnd = ((aui16_adress/mui16_segmentSize + 1)*mui16_segmentSize) -1;
   return ((ui16_segmentEnd - aui16_adress)+1);
 }
 
 
-/**
-  set error flags dependent on BIOS return value
-  @param ai16_biosReturn BIOS return value which should be translated in error state of EEPROM_IO
-*/
-void EepromIo_c::setState4BiosReturn(int16_t ai16_biosReturn)
+void
+EepromIo_c::setState4BiosReturn(int16_t ai16_biosReturn)
 {
   switch (ai16_biosReturn)
   {
@@ -381,19 +296,9 @@ void EepromIo_c::setState4BiosReturn(int16_t ai16_biosReturn)
   }
 };
 
-/**
-  write the given data string to eeprom from actual write position
-  possible errors:
-      * Err_c::range writing exceeds EEPROM memory
-      * Err_c::busy other task communicates with EEPROM
-      * Err_c::unspecified low level SPI EEPROM communication doesn't work
-      * Err_c::eepromSegment low level reading caused segment error
 
-  @param apb_data pointer to data
-  @param aui8_len lenght of data
-  @return reference to this object for chains
-*/
-EepromIo_c& EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
+EepromIo_c&
+EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
 { // check if enough space for type T is after actual write position
   // second parameter true -> set Err_c::range if end is reached
   if (!eofp(aui8_len, true))
@@ -403,20 +308,10 @@ EepromIo_c& EepromIo_c::writeIntern(const uint8_t* apb_data, uint8_t aui8_len)
   }
   return *this;
 }
-/**
-  read from actual read position wanted amount of data in to pointer
 
-  possible errors:
-      * Err_c::range writing exceeds EEPROM memory
-      * Err_c::busy other task communicates with EEPROM
-      * Err_c::unspecified low level SPI EEPROM communication doesn't work
-      * Err_c::eepromSegment low level reading caused segment error
 
-  @param apb_data pointer to data
-  @param aui8_len lenght of data
-  @return reference to this object for chains
-*/
-EepromIo_c& EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len) {
+EepromIo_c&
+EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len) {
   // check if enough space for string is after actual read position
   // second parameter true -> set Err_c::range if end is reached
   if (!eofg(aui8_len, true))
@@ -429,12 +324,17 @@ EepromIo_c& EepromIo_c::readIntern(uint8_t* apb_data, uint8_t aui8_len) {
   return *this;
 }
 
-EepromIo_c& operator<<(EepromIo_c& rc_stream, const IsoName_c& rc_data )
+
+EepromIo_c&
+operator<<(EepromIo_c& rc_stream, const IsoName_c& rc_data )
 {
   rc_stream.writeIntern(rc_data.outputString(), 8);
   return rc_stream;
 }
-EepromIo_c& operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data )
+
+
+EepromIo_c&
+operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data )
 {
   uint8_t tempName[8];
   rc_stream.readIntern(tempName, 8);

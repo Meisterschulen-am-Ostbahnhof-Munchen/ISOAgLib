@@ -195,9 +195,9 @@ FsManager_c::close()
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
     getSchedulerInstance().unregisterClient(this);
 
-    std::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
-    std::for_each( v_communications.begin(), v_communications.end(), delete_object());
-    std::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
+    STL_NAMESPACE::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
+    STL_NAMESPACE::for_each( v_communications.begin(), v_communications.end(), delete_object());
+    STL_NAMESPACE::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
   }
 }
 

@@ -351,7 +351,7 @@ namespace __IsoAgLib
     {
       // get the ident from the stream
       const ReceiveStreamIdentifier_c& ac_ident = arc_stream.getIdent();
-      std::vector<ProprietaryMessageClientVectorIterator_t> vec_consumers;
+      STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t> vec_consumers;
 
       // look for the right sender
       for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); ++client_iterator )
@@ -393,13 +393,13 @@ namespace __IsoAgLib
         for (uint32_t ui32_cnt = 0; ui32_cnt < arc_stream.getByteTotalSize(); ui32_cnt++)
         {
           /** extract data bytes from string and store data in receive buffer */
-          for ( std::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
+          for ( STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
           { // feed data in all clients
             (*iter_consumer)->pc_client->ms_receivedData.setDataUi8( ui32_cnt,ui8_databyte );
           }
           ui8_databyte = arc_stream.getNextNotParsed();
         }
-        for ( std::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
+        for ( STL_NAMESPACE::vector<ProprietaryMessageClientVectorIterator_t>::iterator iter_consumer = vec_consumers.begin(); iter_consumer != vec_consumers.end(); ++iter_consumer)
         { /** call process message from client to evaluate the stored data */
           (*iter_consumer)->pc_client->processProprietaryMsg();
         }

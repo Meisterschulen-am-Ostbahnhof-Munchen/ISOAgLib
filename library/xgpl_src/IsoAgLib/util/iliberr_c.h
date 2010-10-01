@@ -14,53 +14,10 @@
 #ifndef _ILIB_ERR_H
 #define _ILIB_ERR_H
 
+// ISOAgLib
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
-
-#include <vector>
-
-template <unsigned N> class IsoaglibBitset {
-  private:
-    STL_NAMESPACE::vector<uint32_t> _v;
-  public:
-    IsoaglibBitset( void ): _v((N+31)>>5, uint32_t(0) ) {}
-		IsoaglibBitset( const IsoaglibBitset& ar_src ) : _v(ar_src._v){};
-
-    IsoaglibBitset<N>& set( void ) {
-      STL_NAMESPACE::vector<uint32_t>::iterator i;
-      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0xFFFFFFFFUL;
-      return *this;
-    }
-
-    IsoaglibBitset<N>& reset( void ) {
-      STL_NAMESPACE::vector<uint32_t>::iterator i;
-      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0;
-      return *this;
-    }
-
-    bool test(unsigned n) const {
-      return bool((_v[n>>5] & (uint32_t(1)<<(n&0x1F)))>0);
-    }
-
-    IsoaglibBitset<N>& set( unsigned n, int val = 1 ) {
-      if (0 == val)
-        _v[n>>5] &= ~(uint32_t(1)<<(n&0x1F));
-      else
-        _v[n>>5] |=  (uint32_t(1)<<(n&0x1F));
-      return *this;
-    }
-
-    IsoaglibBitset<N>& reset( unsigned n ) {
-      return set(n,0);
-    }
-
-    unsigned count( void ) const {
-      unsigned n,c=0;
-      for (n=0; n<N; ++n) if (test(n)) ++c;
-      return c;
-    }
-
-};
+#include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
 
 #define ERR_FIELD_COUNTER_SIZE 2

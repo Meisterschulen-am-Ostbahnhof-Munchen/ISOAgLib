@@ -834,4 +834,205 @@ template<class T, class B, int SIZE> class SingletonDerivedVec : public B
 /* by multiple inclusion of singleton_container.h the suitable template class can be generated */
 #include "singleton_container.h"
 
+
+
+#ifdef __IAR_SYSTEMS_ICC__
+/// NOW HERE COMES A SPECIAL IAR-COMPILER HACK TO GET Cont2 versions compiled and working!!!
+/// AS THE SINGLETONS AS THEY ARE IN HERE ARE SUBJECT TO BE REWRITTEN ANYWAY, NO FURTHER EFFORT
+/// IS BEING PUT IN MERGING THE TWO VERSIONS OR FIXING THE ORIGINAL VERSION ABOVE!!!
+
+template<class T, class B> class IarSingletonDerived : public B
+{
+ public:
+
+  static T& instance( void )
+{
+  if ( mspc_instance > (T*)1 )
+  {
+    return *mspc_instance;
+  }
+  else if ( mspc_instance == (T*)0 )
+  {
+
+    if ( mspc_instance == (T*)1 )
+    {
+      while ( mspc_instance == (T*)1 );
+
+      return *mspc_instance;
+    }
+
+    mspc_instance = (T*)1;
+    static T sc_instance;
+    mspc_instance = &sc_instance;
+  }
+  else
+  {
+    while ( mspc_instance == (T*)1 );
+  }
+  return *mspc_instance;
+}
+
+  static T& instance( int riIndex ) { return instance();}
+ //protected:
+  int getSingletonVecKey() const { return 0;}
+  static T* mspc_instance;
+};
+
+template<class T, class B> T* IarSingletonDerived<T,B>::mspc_instance = (T*)0;
+
+
+template<class T, class B, class C1, class C2> class IarSingletonDerivedCont2 : public IarSingletonDerived < T,B >
+{
+ public:
+
+  IarSingletonDerivedCont2( void )
+  {
+    pc_searchCacheC1 = c_arrClientC1.begin();
+    pc_searchCacheC2 = c_arrClientC2.begin();
+  }
+
+  ~IarSingletonDerivedCont2( void )
+  {
+  }
+
+public:
+  bool registerC1( C1* pc_client )
+  {
+    bool b_exists = false;
+    bool b_result = false;
+    for ( pc_searchCacheC1 = c_arrClientC1.begin();
+          pc_searchCacheC1 != c_arrClientC1.end();
+          pc_searchCacheC1++)
+      if ( *pc_searchCacheC1 == pc_client ) { b_exists = true; break;}
+    if ( !b_exists )
+    {
+      size_t oldSize = c_arrClientC1.size();
+      c_arrClientC1.push_back( pc_client );
+
+      if ( c_arrClientC1.size() == ( oldSize + 1 ) ) b_result = true;
+      pc_searchCacheC1 = c_arrClientC1.end() - 1;
+    }
+    return b_result;
+  }
+
+  void unregisterC1( C1* pc_client )
+  {
+    for ( pc_searchCacheC1 = c_arrClientC1.begin();
+          pc_searchCacheC1 != c_arrClientC1.end();
+          pc_searchCacheC1++)
+    {
+      if ( *pc_searchCacheC1 == pc_client )
+      {
+        c_arrClientC1.erase( pc_searchCacheC1 );
+        pc_searchCacheC1 = c_arrClientC1.begin();
+        break;
+      }
+    }
+  }
+
+#if 0
+  /// The current Singletons do not have the Key anymore, because that wasn't used at all...
+  bool existC1( K1 at_key )
+  {
+    if ( ( pc_searchCacheC1 != c_arrClientC1.end() ) && ( (*pc_searchCacheC1)->operator==( at_key ) ) )
+      return true;
+
+    for ( pc_searchCacheC1 = c_arrClientC1.begin();
+          pc_searchCacheC1 != c_arrClientC1.end();
+          pc_searchCacheC1++)
+      if ( (*pc_searchCacheC1)->operator==( at_key ) ) return true;
+
+
+    pc_searchCacheC1 = c_arrClientC1.begin();
+    return false;
+  }
+
+  C1& getC1 ( K1 at_key )
+  {
+    if ( !existC1( at_key ) )
+    {
+      IarSingletonDerivedCont2<T,B,C1,K1,C2,K2>::instance().registerAccessFlt();
+    }
+
+    return **pc_searchCacheC1;
+  }
+#endif
+
+  typedef typename STL_NAMESPACE::vector<C1*>::iterator cacheTypeC1_t;
+
+
+  bool registerC2( C2* pc_client )
+  {
+    bool b_exists = false;
+    bool b_result = false;
+    for ( pc_searchCacheC2 = c_arrClientC2.begin();
+          pc_searchCacheC2 != c_arrClientC2.end();
+          pc_searchCacheC2++)
+      if ( *pc_searchCacheC2 == pc_client ) { b_exists = true; break;}
+    if ( !b_exists )
+    {
+      size_t oldSize = c_arrClientC2.size();
+      c_arrClientC2.push_back( pc_client );
+
+      if ( c_arrClientC2.size() == ( oldSize + 1 ) ) b_result = true;
+      pc_searchCacheC2 = c_arrClientC2.end() - 1;
+    }
+    return b_result;
+  }
+
+  void unregisterC2( C2* pc_client )
+  {
+    for ( pc_searchCacheC2 = c_arrClientC2.begin();
+          pc_searchCacheC2 != c_arrClientC2.end();
+          pc_searchCacheC2++)
+    {
+      if ( *pc_searchCacheC2 == pc_client )
+      {
+        c_arrClientC2.erase( pc_searchCacheC2 );
+        pc_searchCacheC2 = c_arrClientC2.begin();
+        break;
+      }
+    }
+  }
+
+#if 0
+  /// The current Singletons do not have the Key anymore, because that wasn't used at all...
+  bool existC2( K2 at_key )
+  {
+    if ( ( pc_searchCacheC2 != c_arrClientC2.end() ) && ( (*pc_searchCacheC2)->operator==( at_key ) ) )
+      return true;
+
+    for ( pc_searchCacheC2 = c_arrClientC2.begin();
+          pc_searchCacheC2 != c_arrClientC2.end();
+          pc_searchCacheC2++)
+      if ( (*pc_searchCacheC2)->operator==( at_key ) ) return true;
+
+
+    pc_searchCacheC2 = c_arrClientC2.begin();
+    return false;
+  }
+
+  C2& getC2 ( K2 at_key )
+  {
+    if ( !existC2( at_key ) )
+    {
+      IarSingletonDerivedCont2<T,B,C1,K1,C2,K2>::instance().registerAccessFlt();
+    }
+
+    return **pc_searchCacheC2;
+  }
+#endif
+
+  typedef typename STL_NAMESPACE::vector<C2*>::iterator cacheTypeC2_t;
+//TODO
+//private:
+  STL_NAMESPACE::vector<C1*> c_arrClientC1;
+  STL_NAMESPACE::vector<C2*> c_arrClientC2;
+  cacheTypeC2_t pc_searchCacheC2;
+  cacheTypeC1_t pc_searchCacheC1;
+
+};
+#endif // __IAR_SYSTEMS_ICC__
+
+
 #endif

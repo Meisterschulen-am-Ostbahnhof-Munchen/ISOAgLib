@@ -45,7 +45,7 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
     mstr_SwIdentification ( "" ),
     mb_certificationIsSet ( false )
 {
-  STL_NAMESPACE::memset ( m_certification,0,sizeof ( uint8_t ) *8 );
+  CNAMESPACE::memset ( m_certification,0,sizeof ( uint8_t ) *8 );
 }
 
 

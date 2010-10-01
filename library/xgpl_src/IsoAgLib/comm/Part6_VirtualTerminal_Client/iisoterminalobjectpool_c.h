@@ -328,7 +328,7 @@ public:
    *         paired with a pointer to your iMultiSendStreamer_c instance
    *         that handles streaming of the proprietary IOP-data.
    */
-  virtual std::pair<uint32_t, iMultiSendStreamer_c*> getAppSpecificFixPoolData() { return std::pair<uint32_t,iMultiSendStreamer_c*>(0, NULL); }
+  virtual STL_NAMESPACE::pair<uint32_t, iMultiSendStreamer_c*> getAppSpecificFixPoolData() { return STL_NAMESPACE::pair<uint32_t,iMultiSendStreamer_c*>(0, NULL); }
 
   /** This function enables the application to add proprietary
    * (language dependent) IOP-data to the object pool upload
@@ -338,7 +338,7 @@ public:
    *         paired with a pointer to your iMultiSendStreamer_c instance
    *         that handles streaming of the proprietary IOP-data.
    */
-  virtual std::pair<uint32_t, iMultiSendStreamer_c*> getAppSpecificLangPoolData (int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/) { return std::pair<uint32_t,iMultiSendStreamer_c*>(0, NULL); }
+  virtual STL_NAMESPACE::pair<uint32_t, iMultiSendStreamer_c*> getAppSpecificLangPoolData (int8_t /*ai8_languageIndex*/, uint16_t /*aui16_languageCode*/) { return STL_NAMESPACE::pair<uint32_t,iMultiSendStreamer_c*>(0, NULL); }
 
 private:
   /**

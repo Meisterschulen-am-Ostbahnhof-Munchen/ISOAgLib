@@ -14,16 +14,6 @@
 #ifndef VT_CLIENT_SERVER_COMMUNICATION_H
 #define VT_CLIENT_SERVER_COMMUNICATION_H
 
-/// The following timeouts are ISOAgLib-proprietary values.
-/// In 11783-6 there are no real timeouts specified, yet
-/// ISOAgLib has to react on the case of a non-responding VT
-/// (either at Upload, Load or normal command)
-#define DEF_TimeOut_NormalCommand 10000
-#define DEF_TimeOut_GetMemory 10000
-#define DEF_TimeOut_EndOfObjectPool 60000
-#define DEF_TimeOut_VersionLabel 60000
-#define DEF_WaitFor_Reupload 5000
-
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminalpkg_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>

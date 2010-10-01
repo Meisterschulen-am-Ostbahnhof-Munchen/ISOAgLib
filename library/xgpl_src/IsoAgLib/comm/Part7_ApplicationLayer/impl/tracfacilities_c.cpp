@@ -20,7 +20,6 @@
 #include "tracfacilities_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
-using namespace std;
 
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
@@ -49,7 +48,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   TracFacilities_c::TracFacilities_c()
   : mb_facilitiesOnInitSent(false)
   {
-    memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
+    CNAMESPACE::memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
   }
 
   /** config the TracFacilities_c object after init -> set pointer to isoName and
@@ -86,7 +85,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
 
     /// init all value in facilitiesBitData_t with default Not Available
-    memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
+    CNAMESPACE::memset(arrui8_facilitiesBitData,0,sizeof(arrui8_facilitiesBitData));
 
     return true;
   }

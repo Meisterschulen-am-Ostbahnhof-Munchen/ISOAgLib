@@ -12,7 +12,9 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include <cstdlib>
+#include <stdio.h>
+
+// ISOAgLib
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
@@ -25,9 +27,6 @@
 #else
   #include <cctype>
 #endif
-
-
-using namespace std; // simple version to avoid problems with using CNAMESPACE
 
 
 // Begin Namespace __IsoAgLib

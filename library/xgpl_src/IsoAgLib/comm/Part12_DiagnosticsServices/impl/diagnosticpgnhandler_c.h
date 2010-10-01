@@ -17,7 +17,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
-#include <string>
+#include <string.h>
 
 namespace IsoAgLib
 {
@@ -56,13 +56,7 @@ enum Certification_t
   CertificationGpsReceiver
 };
 
-struct Certification_s
-{
-  typedef Certification_t enum_type;
-  enum { number_of_bits = 24 };
-};
-
-typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
+typedef IsoaglibBitset<24> CertificationBitMask_t;
 } // namespace IsoAgLib
 
 

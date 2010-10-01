@@ -80,7 +80,7 @@ struct UpdateErrorObserver_s : public STL_NAMESPACE::unary_function< iErrorObser
 void iLibErr_c::registerError( iLibErr_c::iLibErrTypes_t at_errType, iLibErrLocations_t at_errLocation )
 {
   if ((at_errLocation != AllErrLocations) && (at_errType != AllErrTypes)) {
-    errTypeAtLoc [at_errLocation].set (at_errType);
+    errTypeAtLoc [at_errLocation].setBit (at_errType);
   }
 
   STL_NAMESPACE::for_each(c_arrClientC1.begin(), c_arrClientC1.end(), UpdateErrorObserver_s(at_errType, at_errLocation));
@@ -154,7 +154,7 @@ uint16_t iLibErr_c::getErrCnt( iLibErrTypes_t at_errType ) const
     }
   } else {
     for (int i=0; i<AllErrLocations; i++) {
-      if (errTypeAtLoc [i].test (at_errType)) errors++;
+      if (errTypeAtLoc [i].isBitSet (at_errType)) errors++;
     }
   }
   return errors;
@@ -175,7 +175,7 @@ iLibErr_c::iLibErrTypes_t iLibErr_c::getErrIndType( uint8_t aui8_ind ) const
   {
     for ( int j=0; j<AllErrTypes; j++)
     {
-      if ( errTypeAtLoc [i].test (j))
+      if ( errTypeAtLoc [i].isBitSet (j))
       {
         i16_foundInd++;
         if ( i16_foundInd == aui8_ind ) return iLibErrTypes_t(j);
@@ -201,7 +201,7 @@ iLibErr_c::iLibErrLocations_t iLibErr_c::getErrIndLocation( uint8_t aui8_ind ) c
   {
     for ( int j=0; j<AllErrTypes; j++)
     {
-      if ( errTypeAtLoc [i].test (j))
+      if ( errTypeAtLoc [i].isBitSet (j))
       {
         i16_foundInd++;
         if ( i16_foundInd == aui8_ind ) return iLibErrLocations_t(i);

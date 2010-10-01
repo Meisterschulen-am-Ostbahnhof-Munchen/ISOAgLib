@@ -20,8 +20,6 @@
 #include "tracguidance_c.h"
 
 
-using namespace std;
-
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
@@ -75,8 +73,6 @@ void TracGuidanceCommand_c::checkCreateReceiveFilter( )
   { // check if needed receive filters for ISO are active
     setFilterCreated();
 
-    // create FilterBox_c for PGN GUIDANCE_MACHINE_STATUS, PF 254 - mask for DP, PF and PS
-    // mask: (0x3FF00 << 8) filter: (GUIDANCE_MACHINE_STATUS << 8)
     c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FF00) << 8),
                       (static_cast<MASK_TYPE>(GUIDANCE_SYSTEM_CMD) << 8), true);
   }
@@ -151,8 +147,6 @@ void TracGuidanceCommand_c::isoSendMessageImplMode( )
   data().setUint32Data(3, 0xFFFFFFFFUL);
   data().setUint8Data(7, 0xFF);
 
-  //CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-  // then it sends the data
   c_can << data();
 }
 

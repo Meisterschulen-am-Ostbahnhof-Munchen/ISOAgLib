@@ -27,7 +27,6 @@ uint32_t const gcui32_pgnMask16consecutive = 0x3FFF0uL;
 
 } //namespace
 
-using namespace std;
 
 namespace __IsoAgLib {
 
@@ -333,8 +332,6 @@ namespace __IsoAgLib {
     // Reserved fields
     data().setUint32Data(4, 0xFFFFFFFF);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
   }
 
@@ -358,8 +355,6 @@ namespace __IsoAgLib {
     data().setUint8Data(7, ui8_temp);
     // Reserved fields
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
   }
 
@@ -406,8 +401,6 @@ namespace __IsoAgLib {
     data().setUint32Data(3, 0xFFFFFFFF);
     data().setUint8Data(7, 0xFF);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
     return CommandSent;
   }
@@ -446,8 +439,6 @@ namespace __IsoAgLib {
         data().setUint32Data(3, 0xFFFFFFFF);
         data().setUint8Data(7, 0xFF);
 
-        // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-        // then it sends the data
         c_can << data();
       }
     }

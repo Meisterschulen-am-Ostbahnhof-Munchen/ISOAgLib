@@ -19,6 +19,7 @@
 /* *************************************** */
 #include <functional>
 
+#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
@@ -39,8 +40,13 @@ namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 class Process_c;
-typedef SINGLETON_DERIVED_CLIENT2(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcDataRemoteBase_c) SingletonProcess_c;
-//old: typedef SINGLETON_DERIVED_CLIENT2_KEY(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
+#ifdef __IAR_SYSTEMS_ICC__
+  // special hack in here, because Process_c is going to be rewritten anyway...
+  typedef IarSingletonDerivedCont2<Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcDataRemoteBase_c> SingletonProcess_c;
+#else
+  typedef SINGLETON_DERIVED_CLIENT2(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcDataRemoteBase_c) SingletonProcess_c;
+  //old: typedef SINGLETON_DERIVED_CLIENT2_KEY(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
+#endif
 
 /**
   Central managing instance for all process data
@@ -495,7 +501,11 @@ private: // Private attributes
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
+#ifdef __IAR_SYSTEMS_ICC__
+  friend class IarSingletonDerived<Process_c,Scheduler_Task_c>;
+#else
   friend class SINGLETON_DERIVED(Process_c,Scheduler_Task_c);
+#endif
   friend class IsoAgLib::iProcess_c;
   friend class IsoAgLib::iDevPropertyHandler_c;
   /**

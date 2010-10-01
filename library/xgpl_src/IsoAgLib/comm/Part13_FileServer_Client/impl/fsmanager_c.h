@@ -128,17 +128,17 @@ class FsManager_c : public SingletonFsManager_c
     /**
      * Vector of registered FsClientServerCommunication_c
      */
-    std::vector<FsClientServerCommunication_c *> v_communications;
+    STL_NAMESPACE::vector<FsClientServerCommunication_c *> v_communications;
 
     /**
      * Vector of known FsServerInstance_c
      */
-    std::vector<FsServerInstance_c *> v_serverInstances;
+    STL_NAMESPACE::vector<FsServerInstance_c *> v_serverInstances;
 
     /**
      * Vector of FsCommand_c* requesting properties for not-online FsServerInstance_cS
      */
-    std::list<FsCommand_c *> l_initializingCommands;
+    STL_NAMESPACE::list<FsCommand_c *> l_initializingCommands;
 };
 
 #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)

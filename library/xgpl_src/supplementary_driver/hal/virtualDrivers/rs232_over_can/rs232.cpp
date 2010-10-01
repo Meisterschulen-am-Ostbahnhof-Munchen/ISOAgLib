@@ -17,9 +17,6 @@
 uint8_t StoreInBigBuf = true;
 
 
-using namespace std; // simple version to avoid problems with using CNAMESPACE
-
-
 namespace HAL
 {
   /* ****************************** */
@@ -90,7 +87,7 @@ int16_t put_rs232NChar(const uint8_t *bpWrite,uint16_t wNumber, uint8_t aui8_cha
 
 		if( numLeft )
 			{
-			memcpy( &BigBuf[BigBufLen], bpWrite, numLeft );
+			CNAMESPACE::memcpy( &BigBuf[BigBufLen], bpWrite, numLeft );
 			BigBufLen += numLeft;
 			}
 

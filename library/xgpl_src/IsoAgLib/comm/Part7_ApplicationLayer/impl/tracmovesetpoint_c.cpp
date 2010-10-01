@@ -24,8 +24,6 @@
 #include "tracmovesetpoint_c.h"
 
 
-using namespace std;
-
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
@@ -82,8 +80,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      // create FilterBox_c for PGN SELECTED_SPEED_CMDClientBase, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (SELECTED_SPEED_CMD << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FFFF) << 8),
                         (static_cast<MASK_TYPE>(SELECTED_SPEED_CMD) << 8), false);
     }
@@ -156,8 +152,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       data().setUint16Data(4, 0xFF);
       data().setUint8Data( 6, 0xFF);
 
-      // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-      // then it sends the data
       c_can << data();
     }
 

@@ -23,8 +23,6 @@
 #include "tracptosetpoint_c.h"
 
 
-using namespace std;
-
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
@@ -87,8 +85,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
-      // create FilterBox_c for PGN HITCH_PTO_COMMANDS , PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (HITCH_PTO_COMMANDS  << 8)
+
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FFFF) << 8),
                         (static_cast<MASK_TYPE>(HITCH_PTO_COMMANDS ) << 8), true);
     }
@@ -176,8 +173,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     ui8_val7 |= (mt_frontPtoEconomyMode     );
     data().setUint8Data(7, ui8_val7);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     c_can << data();
 
     // we do not need to set setUpdateTime() in basecommon_c because time relevant

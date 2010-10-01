@@ -14,12 +14,81 @@
 #ifndef BITFIELDWRAPPER_C_H
 #define BITFIELDWRAPPER_C_H
 
-#include <bitset>
+// ISOAgLib
+#include <IsoAgLib/util/iassert.h>
 
+// STL
+#include <vector>
+
+
+template <unsigned N> class IsoaglibBitset {
+  private:
+    STL_NAMESPACE::vector<uint8_t> _v;
+  public:
+    IsoaglibBitset( void ): _v((N+7)>>3, uint8_t(0) ) {}
+    IsoaglibBitset( const IsoaglibBitset& ar_src ) : _v(ar_src._v){};
+
+    IsoaglibBitset<N>& set( void ) {
+      STL_NAMESPACE::vector<uint8_t>::iterator i;
+      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0xFFu;
+      return *this;
+    }
+
+    IsoaglibBitset<N>& reset( void ) {
+      STL_NAMESPACE::vector<uint8_t>::iterator i;
+      for (i=_v.begin(); i!=_v.end(); ++i) *i = 0x00u;
+      return *this;
+    }
+
+    bool isBitSet(unsigned n) const {
+      return ((_v[n>>3] & (uint8_t(1)<<(7-(n&0x07))))>0);
+    }
+
+    IsoaglibBitset<N>& setBit( unsigned n, int val = 1 ) {
+      if (0 == val)
+        _v[n>>3] &= ~(uint8_t(1)<<(7-(n&0x07)));
+      else
+        _v[n>>3] |=  (uint8_t(1)<<(7-(n&0x07)));
+      return *this;
+    }
+
+    IsoaglibBitset<N>& reset( unsigned n ) {
+      return setBit(n, 0);
+    }
+
+    unsigned count( void ) const {
+      unsigned n,c=0;
+      for (n=0; n<N; ++n) if (isBitSet(n)) ++c;
+      return c;
+    }
+
+    uint8_t getByte(unsigned n) const {
+      isoaglib_assert (n < ((N+7)>>3));
+      return _v[n];
+    }
+};
+
+
+
+#if 0
+//! This "better" version is commented out, because the IAR-compiler does not know #include <bitset>
+//!
 //! Example:
 //! 11 bit
 //! gets put into 2 bytes counted from 0 starting at the outmost left:
 //! 0123 4567  89Ax xxxx
+//!
+//! Example-usage:
+//! struct Certification_s
+//! {
+//!   typedef Certification_t enum_type;
+//!   enum { number_of_bits = 24 };
+//! };
+//! typedef BitFieldWrapper_c<Certification_s> CertificationBitMask_t;
+
+#include <bitset>
+
+
 template <class T>
 class BitFieldWrapper_c
 {
@@ -125,7 +194,8 @@ class BitFieldWrapper_c
     }
 
   private:
-    std::bitset<T::number_of_bits> m_bitField;
+    STL_NAMESPACE::bitset<T::number_of_bits> m_bitField;
 };
+#endif
 
 #endif

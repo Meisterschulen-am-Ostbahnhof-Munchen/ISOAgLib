@@ -16,7 +16,6 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "process_c.h"
-#include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>

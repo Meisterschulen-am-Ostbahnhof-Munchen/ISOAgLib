@@ -12,12 +12,6 @@
 */
 #include "istate_c.h"
 
-/* ************************************** */
-/* import some namespaces for easy access */
-/* ************************************** */
-//using namespace __IsoAgLib;  // using direct specification "__IsoAgLib::xyz" 
-                               // so that it will be correctly referenced in 
-                               // the generated documantation (doxygen)
 
 /**
   constructor of IState_c which can set the state to given initial value

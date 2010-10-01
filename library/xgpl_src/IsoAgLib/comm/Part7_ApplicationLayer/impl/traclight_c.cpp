@@ -20,7 +20,6 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include <IsoAgLib/util/iassert.h>
 
-using namespace std;
 
 namespace __IsoAgLib {
 
@@ -121,12 +120,8 @@ namespace __IsoAgLib {
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      // create FilterBox_c for PGN LIGHTING_DATA_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (LIGHTING_DATA_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FFFF) << 8),
                         (static_cast<MASK_TYPE>(LIGHTING_DATA_PGN) << 8), false);
-      // create FilterBox_c for PGN LIGHTING_COMMAND_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (LIGHTING_COMMAND_PGN << 8)
       c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FFFF) << 8),
                         (static_cast<MASK_TYPE>(LIGHTING_COMMAND_PGN) << 8), true);
 
@@ -227,7 +222,7 @@ namespace __IsoAgLib {
   {
     switch (t_command) {
       case IsoAgLib::daytimeRunning:
-        if ( (mt_cmd.daytimeRunning == IsoAgLib::IsoActive && t_val == IsoAgLib::IsoInactive)
+        if (  (mt_cmd.daytimeRunning == IsoAgLib::IsoActive && t_val == IsoAgLib::IsoInactive)
             ||(mt_cmd.daytimeRunning == IsoAgLib::IsoInactive && t_val == IsoAgLib::IsoActive)
            )
           mb_changeNeedBeSend = true;

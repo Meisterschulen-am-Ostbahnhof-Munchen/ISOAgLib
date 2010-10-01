@@ -20,7 +20,6 @@
 #include "tracpto_c.h"
 #include "tracgeneral_c.h"
 
-using namespace std;
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
@@ -106,12 +105,8 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
-      // create FilterBox_c for PGN FRONT_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
-      c_can.insertStandardIsoFilter(*this,FRONT_PTO_STATE_PGN,false);
 
-      // create FilterBox_c for PGN REAR_PTO_STATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
+      c_can.insertStandardIsoFilter(*this,FRONT_PTO_STATE_PGN,false);
       c_can.insertStandardIsoFilter(*this,REAR_PTO_STATE_PGN,true);
 
     }
@@ -294,8 +289,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     //reserved fields
     data().setUint16Data(6, 0xFFFF);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     c_can << data();
 
     // update time

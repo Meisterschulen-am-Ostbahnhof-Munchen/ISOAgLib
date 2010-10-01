@@ -119,7 +119,7 @@ private: // attributes
   pthread_t mthread_core;
   bool mb_requestThreadToStop;
 
-  std::set<void *>mset_keys;
+  STL_NAMESPACE::set<void *>mset_keys;
 };
 
 

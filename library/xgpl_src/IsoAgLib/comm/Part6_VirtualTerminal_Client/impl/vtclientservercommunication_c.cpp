@@ -109,6 +109,17 @@ static const uint8_t scpui8_cmdCompareTable[(scui8_cmdCompareTableMax-scui8_cmdC
 namespace __IsoAgLib {
 
 
+/// The following timeouts are ISOAgLib-proprietary values.
+/// In 11783-6 there are no real timeouts specified, yet
+/// ISOAgLib has to react on the case of a non-responding VT
+/// (either at Upload, Load or normal command)
+#define DEF_TimeOut_NormalCommand 10000
+#define DEF_TimeOut_GetMemory 10000
+#define DEF_TimeOut_EndOfObjectPool 60000
+#define DEF_TimeOut_VersionLabel 60000
+#define DEF_WaitFor_Reupload 5000
+
+
 void SendUpload_c::set (vtObjectString_c* apc_objectString)
 {
   ppc_vtObjects = NULL;
@@ -2386,7 +2397,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
         ms_uploadPhasesAutomatic [UploadPhaseIVtObjectsFix].ui32_size += ((vtObject_c*)mrc_pool.getIVtObjects()[0][curObject])->fitTerminal ();
 
       /// Phase 2
-      const std::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificFixPoolData();
+      const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificFixPoolData();
       ms_uploadPhasesAutomatic [UploadPhaseAppSpecificFix].pc_streamer = cpair_retval.second;
       ms_uploadPhasesAutomatic [UploadPhaseAppSpecificFix].ui32_size = cpair_retval.first;
     }
@@ -2412,7 +2423,7 @@ VtClientServerCommunication_c::initObjectPoolUploadingPhases (uploadPoolType_t r
     } // else: no LANGUAGE SPECIFIC objectpool, so keep this at 0 to indicate this!
 
     /// Phase 3
-    const std::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificLangPoolData(mi8_objectPoolUploadingLanguage, mui16_objectPoolUploadingLanguageCode);
+    const STL_NAMESPACE::pair<uint32_t, IsoAgLib::iMultiSendStreamer_c*> cpair_retval = mrc_pool.getAppSpecificLangPoolData(mi8_objectPoolUploadingLanguage, mui16_objectPoolUploadingLanguageCode);
     ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].pc_streamer = cpair_retval.second;
     ms_uploadPhasesAutomatic [UploadPhaseAppSpecificLang].ui32_size = cpair_retval.first;
   }

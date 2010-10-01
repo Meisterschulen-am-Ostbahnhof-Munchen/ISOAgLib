@@ -39,8 +39,6 @@
 const float gcf_rapidUpdateFilter = 0.15f;  // 15% new, 85%old to filter the update time.
 
 
-using namespace std;
-
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
 // Off-class/namespace c-style helper functions
 void getDegree10Minus7FromStream( __IsoAgLib::Stream_c& rc_stream, int32_t& ri32_result )
@@ -1106,8 +1104,6 @@ namespace __IsoAgLib {
     data().setInt32Data(0, mi32_latitudeDegree10Minus7 );
     data().setInt32Data(4, mi32_longitudeDegree10Minus7);
 
-    // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
-    // then it sends the data
     getIsoBusInstance4Comm() << data();
 
     // update time
@@ -1401,7 +1397,7 @@ void TimePosGps_c::isoSendDirection( void )
   {
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
-    struct ::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+    struct CNAMESPACE::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
                             ab_day,(ab_month-1),(ai16_year-1900),0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
@@ -1410,7 +1406,7 @@ void TimePosGps_c::isoSendDirection( void )
     // argument of mktime is interpreted as local time (system time zone influence!)
     const time_t middle = mktime( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct ::tm* normalizedTime = localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = localtime( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1428,7 +1424,7 @@ void TimePosGps_c::isoSendDirection( void )
     mt_cachedLocalSeconds1970AtLastSet = 0;
 
     /** @todo ON REQUEST-259: calender time consists of UTC time and local date? */
-    struct ::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
+    struct CNAMESPACE::tm testTime = { bit_calendar.second, bit_calendar.minute, bit_calendar.hour,
                             ab_day,(ab_month-1),(ai16_year-1900),0,0,-1
                             #if defined(__USE_BSD) || defined(__GNU_LIBRARY__) || defined(__GLIBC__) || defined(__GLIBC_MINOR__)
                             , 0, NULL
@@ -1436,7 +1432,7 @@ void TimePosGps_c::isoSendDirection( void )
                           };
 
     const time_t middle = mktime( &testTime );
-    const struct ::tm* normalizedTime = localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = localtime( &middle );
 
     bit_calendar.year   = normalizedTime->tm_year+1900;
     bit_calendar.month  = (normalizedTime->tm_mon+1);
@@ -1459,7 +1455,7 @@ void TimePosGps_c::isoSendDirection( void )
     mi32_lastCalendarSet = System_c::getTime();
     mt_cachedLocalSeconds1970AtLastSet = 0;
 
-    struct ::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
+    struct CNAMESPACE::tm testTime = { ab_second, int(ab_minute)-int(bit_calendar.timezoneMinuteOffset), (int(ab_hour)-(int(bit_calendar.timezoneHourOffsetMinus24)-24)),
                             bit_calendar.day,(bit_calendar.month-1),
                             (bit_calendar.year == 0) ? 70 : (bit_calendar.year-1900), // in case bit_calendar.year is not yet set: use 1970
                             0,0,-1
@@ -1471,7 +1467,7 @@ void TimePosGps_c::isoSendDirection( void )
     // argument of mktime is interpreted as local time (system time zone influence!)
     const time_t middle = mktime( &testTime );
     // compensate system time zone setting: call localtime() and not gmtime()
-    const struct ::tm* normalizedTime = localtime( &middle );
+    const struct CNAMESPACE::tm* normalizedTime = localtime( &middle );
 
     bit_calendar.hour   = normalizedTime->tm_hour;
     bit_calendar.minute = normalizedTime->tm_min;
@@ -1502,7 +1498,7 @@ void TimePosGps_c::isoSendDirection( void )
     bit_calendar.msec   = aui16_msec;
   }
 
-  const struct ::tm* TimePosGps_c::Utc2LocalTime()
+  const struct CNAMESPACE::tm* TimePosGps_c::Utc2LocalTime()
   {
     if (0 == mt_cachedLocalSeconds1970AtLastSet)
     {
@@ -1516,7 +1512,7 @@ void TimePosGps_c::isoSendDirection( void )
 
     for (;;){
       // compensate system time zone setting: call localtime() and not gmtime()
-      struct ::tm *p_ret = localtime( &t_secondsSince1970Local );
+      struct CNAMESPACE::tm *p_ret = localtime( &t_secondsSince1970Local );
       if (p_ret)
         return p_ret;
       // non-negative, because otherwise localtime(..) would return NULL!

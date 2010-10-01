@@ -24,7 +24,6 @@ namespace {
   int32_t const sci32_timeoutMaintenancePgn = 2000;
 }
 
-using namespace std;
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
@@ -142,26 +141,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
     { // check if needed receive filters for ISO are active
       setFilterCreated();
-      // create FilterBox_c for PGN FRONT_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
+
       c_can.insertStandardIsoFilter(*this,FRONT_HITCH_STATE_PGN,false);
-
-   // create FilterBox_c for PGN REAR_HITCH_STATE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertStandardIsoFilter(*this,REAR_HITCH_STATE_PGN,false);
-
-     // create FilterBox_c for PGN MAINTAIN_POWER_REQUEST_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (TIME_DATE_PGN << 8)
       c_can.insertStandardIsoFilter(*this,MAINTAIN_POWER_REQUEST_PGN,false);
-
-      // *************************************************************************************************
-      // Added by Martin Wodok to accomodate LANGUAGE_PGN Messages:
-      // create FilterBox_c for LANGUAGE_PGN, PF 254 - mask for DP, PF and PS
-      // mask: (0x3FFFF << 8) filter: (LANGUAGE_PGN << 8)
       c_can.insertStandardIsoFilter(*this,LANGUAGE_PGN,true);
-
-
-      // *************************************************************************************************
     }
   }
 
@@ -455,7 +439,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( !canSendLanguage() )
       return LanguageNotSent;
 
-    
     // we only send the TECU language settings
     // those will be overwritten by the VT-language
     /*if (  !mb_languageVtReceived
