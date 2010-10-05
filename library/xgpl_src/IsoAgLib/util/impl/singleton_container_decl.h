@@ -53,7 +53,11 @@
   /** register pointer to a new client
     * this function is called within construction of new client instance
     */
+#if defined( GET_K_DEF )
+template<TEMPLATE_DECL_KEY> bool CLASS_NAME_KEY()<TEMPLATE_QUAL_KEY>::gluemacs( register, GET_CL_DEF() )( GET_CL_DEF()* pc_client )
+#else //def GET_K_DEF
 template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( register, GET_CL_DEF() )( GET_CL_DEF()* pc_client )
+#endif //def GET_K_DEF
 { // find search the array for another entry with the same pointer value
   bool b_exists = false;
   bool b_result = false;
@@ -73,7 +77,11 @@ template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( register, GE
   /** unregister a client instance, which is destructed at the moment
     * this function is called within the destructor of the client instance
     */
+#if defined( GET_K_DEF )
+template<TEMPLATE_DECL_KEY> void CLASS_NAME_KEY()<TEMPLATE_QUAL_KEY>::gluemacs( unregister, GET_CL_DEF() )( GET_CL_DEF()* pc_client )
+#else //def GET_K_DEF
 template<TEMPLATE_DECL> void CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( unregister, GET_CL_DEF() )( GET_CL_DEF()* pc_client )
+#endif //def GET_K_DEF
 { // find search the array for the entry which shall be deleted
   for ( gluemacs( pc_searchCache, GET_CL_DEF() ) = gluemacs( c_arrClient, GET_CL_DEF() ).begin();
         gluemacs( pc_searchCache, GET_CL_DEF() ) != gluemacs( c_arrClient, GET_CL_DEF() ).end();
@@ -94,7 +102,7 @@ template<TEMPLATE_DECL> void CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( unregister, 
   * @param at_key key value to identify the searched entry
   * @return true -> searched item exists
   */
-template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( exist, GET_CL_DEF() )( GET_K_DEF() at_key )
+template<TEMPLATE_DECL_KEY> bool CLASS_NAME_KEY()<TEMPLATE_QUAL_KEY>::gluemacs( exist, GET_CL_DEF() )( GET_K_DEF() at_key )
 { // first check if the actual search cache iterator points to the searched item
   if ( ( gluemacs( pc_searchCache, GET_CL_DEF() ) != gluemacs( c_arrClient, GET_CL_DEF() ).end() ) && ( (*gluemacs( pc_searchCache, GET_CL_DEF() ))->operator==( at_key ) ) )
     return true;
@@ -116,12 +124,12 @@ template<TEMPLATE_DECL> bool CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( exist, GET_C
   * @param at_key key of the searched client instance
   * @return instance of the searched client instance
   */
-template<TEMPLATE_DECL> GET_CL_DEF()& CLASS_NAME()<TEMPLATE_QUAL>::gluemacs( get, GET_CL_DEF() )( GET_K_DEF() at_key )
+template<TEMPLATE_DECL_KEY> GET_CL_DEF()& CLASS_NAME_KEY()<TEMPLATE_QUAL_KEY>::gluemacs( get, GET_CL_DEF() )( GET_K_DEF() at_key )
 { // use gluemacs( exist, GET_CL_DEF() ) function to search for element -> this function sets cache
   // to searched element on success
   if ( !gluemacs( exist, GET_CL_DEF() )( at_key ) )
   { // if execution reaches this point, the searched element is NOT found
-    CLASS_NAME()<TEMPLATE_QUAL>::autoInstance().registerAccessFlt();
+    CLASS_NAME_KEY()<TEMPLATE_QUAL_KEY>::autoInstance().registerAccessFlt();
     // gluemacs( exist, GET_CL_DEF() ) sets cache to begin of array if searched item not found -> return it
   }
   // cache points now to searched item OR to default beginning

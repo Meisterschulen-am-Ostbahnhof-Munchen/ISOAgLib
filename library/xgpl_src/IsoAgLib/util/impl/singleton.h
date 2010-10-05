@@ -32,8 +32,6 @@
 #  include <ext/malloc_allocator.h>
 #endif
 
-#define IS_KEY_FOR_SINGLETON_CONTAINER 0 // currently not used
-
 #if (PRT_INSTANCE_CNT != 1)
   /** the macro SINGLETON allows to define classes independent from the value
     * of PRT_INSTANCE_CNT, so that the compiler selects the appropriate base class during
@@ -60,8 +58,8 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#  if IS_KEY_FOR_SINGLETON_CONTAINER
-#    define SINGLETON_CLIENT1_KEY( CLASS, CLIENT1, KEY1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1>
+
+#  define SINGLETON_CLIENT1_KEY( CLASS, CLIENT1, KEY1 ) SingletonVecCont1Key<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1>
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -72,7 +70,7 @@
     * Difference to SINGLETON_CLIENT1 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
     */
-#    define SINGLETON_DERIVED_CLIENT1_KEY( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedVecCont1<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1>
+#  define SINGLETON_DERIVED_CLIENT1_KEY( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedVecCont1Key<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1>
 
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
@@ -82,8 +80,8 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT2_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) \
-    SingletonVecCont2<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2>
+#  define SINGLETON_CLIENT2_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) \
+    SingletonVecCont2Key<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2>
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -94,8 +92,8 @@
     * Difference to SINGLETON_CLIENT2 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
     */
-#    define SINGLETON_DERIVED_CLIENT2_KEY( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
-    SingletonDerivedVecCont2<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2>
+#  define SINGLETON_DERIVED_CLIENT2_KEY( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
+    SingletonDerivedVecCont2Key<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2>
 
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
@@ -105,8 +103,8 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT3_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
-    SingletonVecCont3<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
+#  define SINGLETON_CLIENT3_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
+    SingletonVecCont3Key<CLASS,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -117,10 +115,10 @@
     * Difference to SINGLETON_CLIENT3 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
     */
-#    define SINGLETON_DERIVED_CLIENT3( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
+#  define SINGLETON_DERIVED_CLIENT3( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
     SingletonDerivedVecCont3<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
-#  else//IS_KEY_FOR_SINGLETON_CONTAINER
-#    define SINGLETON_CLIENT1( CLASS, CLIENT1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1>
+
+#  define SINGLETON_CLIENT1( CLASS, CLIENT1 ) SingletonVecCont1<CLASS,PRT_INSTANCE_CNT,CLIENT1>
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -131,7 +129,7 @@
     * Difference to SINGLETON_CLIENT1 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
     */
-#    define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1 ) SingletonDerivedVecCont1<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1>
+#  define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1 ) SingletonDerivedVecCont1<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1>
 
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
@@ -141,7 +139,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT2( CLASS, CLIENT1, CLIENT2 ) \
+#  define SINGLETON_CLIENT2( CLASS, CLIENT1, CLIENT2 ) \
     SingletonVecCont2<CLASS,PRT_INSTANCE_CNT,CLIENT1,CLIENT2>
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
@@ -153,7 +151,7 @@
     * Difference to SINGLETON_CLIENT2 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
     */
-#    define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, CLIENT2 ) \
+#  define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, CLIENT2 ) \
     SingletonDerivedVecCont2<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,CLIENT2>
 
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
@@ -164,7 +162,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT3( CLASS, CLIENT1, CLIENT2, CLIENT3 ) \
+#  define SINGLETON_CLIENT3( CLASS, CLIENT1, CLIENT2, CLIENT3 ) \
     SingletonVecCont3<CLASS,PRT_INSTANCE_CNT,CLIENT1,CLIENT2,CLIENT3>
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
@@ -176,9 +174,9 @@
     * Difference to SINGLETON_CLIENT3 is the fact, that this version allows to derive the singleton pattern using class from
     * another class. This is important to avoid multiple inheritance.
     */
-#    define SINGLETON_DERIVED_CLIENT3( CLASS, BASE, CLIENT1, CLIENT2, CLIENT3 ) \
+#  define SINGLETON_DERIVED_CLIENT3( CLASS, BASE, CLIENT1, CLIENT2, CLIENT3 ) \
     SingletonDerivedVecCont3<CLASS,BASE,PRT_INSTANCE_CNT,CLIENT1,CLIENT2,CLIENT3>
-#  endif//IS_KEY_FOR_SINGLETON_CONTAINER
+
 
   /** the macro autoInstance() uses the class  value singletonVecKey
     * to get a corresponding class instance, which is delegated to the same BUS
@@ -265,7 +263,7 @@
     */
 #  define SINGLETON_DERIVED( CLASS, BASE ) SingletonDerived<CLASS,BASE>
 
-#  if IS_KEY_FOR_SINGLETON_CONTAINER
+
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -274,7 +272,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT1_KEY( CLASS, CLIENT1, KEY1 ) SingletonCont1<CLASS,CLIENT1,KEY1>
+#  define SINGLETON_CLIENT1_KEY( CLASS, CLIENT1, KEY1 ) SingletonCont1Key<CLASS,CLIENT1,KEY1>
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -283,7 +281,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_DERIVED_CLIENT1_KEY( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedCont1<CLASS,BASE,CLIENT1,KEY1>
+#  define SINGLETON_DERIVED_CLIENT1_KEY( CLASS, BASE, CLIENT1, KEY1 ) SingletonDerivedCont1Key<CLASS,BASE,CLIENT1,KEY1>
 
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
@@ -293,7 +291,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT2_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) SingletonCont2<CLASS,CLIENT1,KEY1,CLIENT2,KEY2>
+#  define SINGLETON_CLIENT2_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2 ) SingletonCont2Key<CLASS,CLIENT1,KEY1,CLIENT2,KEY2>
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -302,8 +300,8 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_DERIVED_CLIENT2_KEY( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
-    SingletonDerivedCont2<CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2>
+#  define SINGLETON_DERIVED_CLIENT2_KEY( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2 ) \
+    SingletonDerivedCont2Key<CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2>
 
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
@@ -313,8 +311,8 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_DERIVED_CLIENT3_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
-    SingletonCont3< CLASS,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
+#  define SINGLETON_DERIVED_CLIENT3_KEY( CLASS, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
+    SingletonCont3Key< CLASS,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -323,9 +321,9 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT3_KEY( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
-    SingletonDerivedCont3< CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
-#  else//IS_KEY_FOR_SINGLETON_CONTAINER
+#  define SINGLETON_CLIENT3_KEY( CLASS, BASE, CLIENT1, KEY1, CLIENT2, KEY2, CLIENT3, KEY3 ) \
+    SingletonDerivedCont3Key< CLASS,BASE,CLIENT1,KEY1,CLIENT2,KEY2,CLIENT3,KEY3>
+
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -334,7 +332,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT1( CLASS, CLIENT1 ) SingletonCont1<CLASS,CLIENT1>
+#  define SINGLETON_CLIENT1( CLASS, CLIENT1 ) SingletonCont1<CLASS,CLIENT1>
   /** the macro SINGLETON_CLIENT1 allows to define a singleton, which allows ONE (aka 1)
     * client class to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -343,7 +341,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1 ) SingletonDerivedCont1<CLASS,BASE,CLIENT1>
+#  define SINGLETON_DERIVED_CLIENT1( CLASS, BASE, CLIENT1 ) SingletonDerivedCont1<CLASS,BASE,CLIENT1>
 
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
@@ -353,7 +351,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT2( CLASS, CLIENT1, CLIENT2 ) SingletonCont2<CLASS,CLIENT1,CLIENT2>
+#  define SINGLETON_CLIENT2( CLASS, CLIENT1, CLIENT2 ) SingletonCont2<CLASS,CLIENT1,CLIENT2>
   /** the macro SINGLETON_CLIENT2 allows to define a singleton, which allows TWO (aka 2)
     * client classes to register pointers to each instance (the register function has to be called
     * during execution of constructor, whereas the unregister function has to be called during
@@ -362,7 +360,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, CLIENT2 ) \
+#  define SINGLETON_DERIVED_CLIENT2( CLASS, BASE, CLIENT1, CLIENT2 ) \
     SingletonDerivedCont2<CLASS,BASE,CLIENT1,CLIENT2>
 
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
@@ -373,7 +371,7 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_DERIVED_CLIENT3( CLASS, CLIENT1, CLIENT2, CLIENT3 ) \
+#  define SINGLETON_DERIVED_CLIENT3( CLASS, CLIENT1, CLIENT2, CLIENT3 ) \
     SingletonCont3< CLASS,CLIENT1,CLIENT2,CLIENT3>
   /** the macro SINGLETON_CLIENT3 allows to define a singleton, which allows THREE (aka 3)
     * client classes to register pointers to each instance (the register function has to be called
@@ -383,9 +381,9 @@
     * instances of different classes which belongs to the same BUS can be defined independent
     * from PRT_INSTANCE_CNT
     */
-#    define SINGLETON_CLIENT3( CLASS, BASE, CLIENT1, CLIENT2, CLIENT3 ) \
+#  define SINGLETON_CLIENT3( CLASS, BASE, CLIENT1, CLIENT2, CLIENT3 ) \
     SingletonDerivedCont3< CLASS,BASE,CLIENT1,CLIENT2,CLIENT3>
-#  endif//IS_KEY_FOR_SINGLETON_CONTAINER
+
 
   /** the macro autoInstance() is simply replaced by instance() in cases where only one BUS is managed
     * as the more usual case is only one BUS, this solution creates no unneeded overhead

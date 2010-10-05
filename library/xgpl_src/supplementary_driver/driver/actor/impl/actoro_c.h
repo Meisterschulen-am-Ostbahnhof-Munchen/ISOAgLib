@@ -34,7 +34,7 @@ namespace __IsoAgLib {
   @short Hardware dependent object for hardware independent controling of actor outputs.
   @author Dipl.-Inform. Achim Spangler
   */
-class ActorO_c : public SingletonDerivedCont1<ActorO_c,ClientBase,DigitalO_c,uint8_t> {
+class ActorO_c : public SingletonDerivedCont1Key<ActorO_c,ClientBase,DigitalO_c,uint8_t> {
 public:
   /** destructor for the actor output manager object */
   ~ActorO_c();
