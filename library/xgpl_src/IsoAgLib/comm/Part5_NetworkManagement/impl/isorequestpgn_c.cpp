@@ -244,8 +244,12 @@ void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_iso
 IsoRequestPgn_c::IsoRequestPgn_c ()
   : SingletonIsoRequestPgn_c ()
   , m_registeredClientsWithPGN ()
+  , mc_data()
+  , mpc_isoItemSA( NULL ) // dummy value, is always properly set when used
+  , mpc_isoItemDA( NULL ) // dummy value, is always properly set when used
+  , mui32_requestedPGN( 0xFFFFFFFF ) // dummy value, is always properly set when used
+  , mb_alreadyClosed( true )
 {
-// functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }
 
 
