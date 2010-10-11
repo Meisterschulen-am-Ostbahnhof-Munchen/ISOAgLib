@@ -1,16 +1,3 @@
-/*
-  config_can_messenger.h
-
-  (C) Copyright 2009 - 2010 by OSB AG and developing partners
-
-  See the repository-log for details on the authors and file-history.
-  (Repository information can be found at <http://isoaglib.com/download>)
-
-  Use, modification and distribution are subject to the GNU General
-  Public License with exceptions for ISOAgLib. (See accompanying
-  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
-*/
-
 // File: config_can_messenger.h
 // IMPORTANT: Never change the first block of this header manually!!!
 //            All manual changes are overwritten by the next call of "update_makefile.sh conf_can_messenger_socket_win32" 
@@ -142,6 +129,9 @@
 
 /// define default max number for CAN Msg-Obj used for IsoAgLib
 // #define CONFIG_CAN_DEFAULT_MAX_OBJ_NR 13
+
+/// --> discard send-queue and continue without sending.
+// #define CONFIG_CAN_BLOCK_TIME 10
 
 /// YES | NO for EEPROM editor access via CAN
 // #define CONFIG_EEPROM_USE_CAN_EDITOR_YN NO

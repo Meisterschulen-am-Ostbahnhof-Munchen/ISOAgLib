@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="can_messenger"
-	ProjectGUID="{30D9F44A-96DB-40C5-8A99-45AEC0A3F139}"
+	ProjectGUID="{91BEEDFD-0F75-4B0D-90A6-DD301885E102}"
 	TargetFrameworkVersion="0"
 	>
 	<Platforms>
@@ -493,6 +493,50 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\scheduler\ischedulertask_c.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\system\isoaglibthread_c.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						AdditionalIncludeDirectories=""
+						PreprocessorDefinitions=""
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\impl\isobus_c.cpp"
 				>
 				<FileConfiguration
 					Name="Release|Win32"
@@ -1055,11 +1099,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\util\config.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\config.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\config.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\util\config.h"
 				>
 			</File>
 			<File
@@ -1111,10 +1155,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\icanio_c.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\icanpkg_c.h"
 				>
 			</File>
@@ -1140,6 +1180,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\iidentitem_c.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\iisobus_c.h"
 				>
 			</File>
 			<File
@@ -1171,6 +1215,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\iproprietarybus_c.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\library\xgpl_src\supplementary_driver\driver\rs232\irs232io_c.h"
 				>
 			</File>
@@ -1184,6 +1232,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\isoaglib_config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\pc\system\isoaglibthread_c.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\impl\isobus_c.h"
 				>
 			</File>
 			<File
@@ -1219,11 +1275,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\istate_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\istate_c.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\istate_c.h"
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\istate_c.h"
 				>
 			</File>
 			<File
@@ -1244,6 +1300,14 @@
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\multisendpkg_c.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\generic_utils\system\mutex_emulated.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\hal\generic_utils\system\mutex_pthread.h"
 				>
 			</File>
 			<File
