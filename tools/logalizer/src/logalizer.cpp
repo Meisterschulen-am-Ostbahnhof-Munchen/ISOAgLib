@@ -286,19 +286,17 @@ int parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54
   cout << line << endl;
 #endif
 
-  static int smode=0;
-  if (smode == 0)
-  { // perform logfile test
-    uint8_t x [1024];
-    smode = sscanf (line.c_str(), "%s %s %s %s %s %s %s %s %s %s %s %s %s %s %s", x,x,x,x,x,x,x,x,x,x,x,x,x,x,x);
-    if ((smode < 14) || (smode > 15)) exit_with_error("wrong rte-log format. use -a for absolute timestamps!");
-  }
-
-  int i1, i2, i3, i4, i5, i6, i7, i8, iB, iDb; // "%i* %x
+  int i1, i2, i3, i4, i5, i6, i7, i8, iB, iDb = 0; // "%i* %x
   uint64_t iA;
-  int parsed_count = (smode == 15)
-                    ? sscanf (line.c_str(), "%*s %*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x", &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8)
-                    : sscanf (line.c_str(),     "%*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x", &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+
+  int parsed_count = sscanf (line.c_str(), "%*s %*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x", &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+  if (parsed_count < 6) {
+    iDb = 0; // reset number of databytes
+    parsed_count = sscanf (line.c_str(), "%*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x", &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+  }
+  if (-1 < parsed_count && parsed_count < 6) {
+    exit_with_error("wrong rte-log format. use -a for absolute timestamps!");
+  }
 
   can_time = iA;
   can_id = iB;
