@@ -448,6 +448,8 @@ private:
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
   IsoMonitor_c( void );
 
+  Vec_ISOIterator internalIsoItemErase( Vec_ISOIterator aiter_toErase);
+
 private:
   virtual bool processPartStreamDataChunk(
       Stream_c &apc_stream,
