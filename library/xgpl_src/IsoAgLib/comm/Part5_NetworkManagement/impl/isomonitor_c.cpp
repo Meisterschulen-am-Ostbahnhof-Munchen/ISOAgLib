@@ -1482,7 +1482,7 @@ IsoMonitor_c::getTaskName() const
 #endif
 
 
-Vec_ISOIterator
+IsoMonitor_c::Vec_ISOIterator
 IsoMonitor_c::internalIsoItemErase( Vec_ISOIterator aiter_toErase )
 {
   // first inform SA-Claim handlers on SA-Loss
