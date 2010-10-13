@@ -1526,6 +1526,14 @@ EOF
     )
 }
 
+# make a directory for CMake stuff and echo the path
+make_cmake_dir()
+{
+    # replace nearest superdirectory VC6 with cmake_msvc:
+    local CMAKE_DIR="$(pwd | sed -e 's,\(.*\)/VC6/,\1/cmake_msvc/,')"
+    mkdir -p "$CMAKE_DIR" && printf -- '%s\n' "$CMAKE_DIR"
+}
+
 create_standard_makefile()
 {
     MakefileName="Makefile"
@@ -1687,7 +1695,7 @@ EOF
         omit_or_printf '\n  %s' "$PROJECT" $(
             cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c' || status_le1))"
     local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
-    expand_template "$CMAKE_SKELETON_FILE" >CMakeLists.txt
+    expand_template "$CMAKE_SKELETON_FILE" >"$(make_cmake_dir)/CMakeLists.txt"
 }
 
 create_pure_application_makefile()
@@ -2329,7 +2337,7 @@ EOF
         omit_or_printf '\n  %s' "$PROJECT" $(
             grep -E '\.cc|\.cpp|\.c' <"$DspPrjFilelist" || status_le1))"
     local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32)"
-    expand_template "$CMAKE_SKELETON_FILE" >CMakeLists.txt
+    expand_template "$CMAKE_SKELETON_FILE" >"$(make_cmake_dir)/CMakeLists.txt"
 }
 
 create_library_makefile()
