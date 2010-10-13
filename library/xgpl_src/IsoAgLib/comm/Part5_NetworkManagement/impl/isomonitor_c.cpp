@@ -183,6 +183,7 @@ IsoMonitor_c::registerIdentItem( IdentItem_c& arc_item )
 void
 IsoMonitor_c::deregisterIdentItem( IdentItem_c& arc_item )
 {
+  arc_item.deactivate();
   mpc_activeLocalMember = NULL;
   unregisterC1 (&arc_item);
 }
