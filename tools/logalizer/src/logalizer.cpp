@@ -288,14 +288,37 @@ int parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54
 
   int i1, i2, i3, i4, i5, i6, i7, i8, iB, iDb = 0; // "%i* %x
   uint64_t iA;
+  static int const sci_minimal_expected_parse_count = 4;
+  int parsed_count = 0;
+  static int remembered_mode = 0;
 
-  int parsed_count = sscanf (line.c_str(), "%*s %*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x", &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
-  if (parsed_count < 6) {
-    iDb = 0; // reset number of databytes
-    parsed_count = sscanf (line.c_str(), "%*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x", &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
-  }
-  if (-1 < parsed_count && parsed_count < 6) {
-    exit_with_error("wrong rte-log format. use -a for absolute timestamps!");
+  for (int current_mode = remembered_mode; ; ++current_mode) {
+    switch (current_mode) {
+    case 0:
+      break;
+    case 1:
+      parsed_count = sscanf(
+          line.c_str(),
+          "%*s %*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
+          &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+      if (parsed_count <= -1 || sci_minimal_expected_parse_count <= parsed_count)
+        remembered_mode = current_mode;
+      break;
+    case 2:
+      parsed_count = sscanf(
+          line.c_str(),
+          "%*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
+          &iA, &iB, &iDb, &i1, &i2, &i3, &i4, &i5, &i6, &i7, &i8);
+      if (remembered_mode)
+        ;
+      else if (-1 < parsed_count && parsed_count < sci_minimal_expected_parse_count)
+        exit_with_error("wrong rte-log format. use -a for absolute timestamps!");
+      else
+        remembered_mode = current_mode;
+      break;
+    }
+    if (remembered_mode)
+      break; // repeat until remembered_mode is set
   }
 
   can_time = iA;
