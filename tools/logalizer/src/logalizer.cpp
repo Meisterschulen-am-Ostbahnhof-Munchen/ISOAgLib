@@ -21,7 +21,7 @@
 #include <map>
 #include <iomanip>
 #include <stdlib.h>
-#include <../../libs/misc/yasper.h>
+#include <yasper.h>
 
 using namespace std;
 
@@ -91,7 +91,8 @@ private:
       Key_s const &arcs_left,
       Key_s const &arcs_right);
 
-  std::map< Key_s, PtrSession_t > mmap_transfers;
+  typedef std::map< Key_s, PtrSession_t > Transfers_t;
+  Transfers_t t_transfers;
 } gc_transferCollection;
 
 TransferCollection_c::PtrSession_t TransferCollection_c::newSession(
@@ -101,7 +102,7 @@ TransferCollection_c::PtrSession_t TransferCollection_c::newSession(
     size_t at_sizeTransferData)
 {
   PtrSession_t t_ptrSession = new Session_s(at_sizeTransferData);
-  mmap_transfers[
+  t_transfers[
       Key_s(
           ae_variant,
           aui8_transferSourceAddress,
@@ -115,11 +116,16 @@ TransferCollection_c::PtrSession_t TransferCollection_c::getSession(
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)
 {
-  return mmap_transfers[
-      Key_s(
-          ae_variant,
-          aui8_transferSourceAddress,
-          aui8_transferDestinationAddress) ];
+  Transfers_t::iterator it_transfer =
+    t_transfers.find(
+        Key_s(
+            ae_variant,
+            aui8_transferSourceAddress,
+            aui8_transferDestinationAddress));
+  return
+    it_transfer == t_transfers.end() ?
+    TransferCollection_c::PtrSession_t(0) :
+    it_transfer->second;
 }
 
 void TransferCollection_c::deleteSession(
@@ -127,7 +133,7 @@ void TransferCollection_c::deleteSession(
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)
 {
-  mmap_transfers.erase(
+  t_transfers.erase(
       Key_s(
           ae_variant,
           aui8_transferSourceAddress,
@@ -1431,6 +1437,24 @@ void interpretePgnsFS2Cl()
   analyzeFS2Cl(canGetSa(), canGetDa(), 8, can_data);
 }
 
+TransferCollection_c::PtrSession_t getTransferSession(
+    TransferCollection_c::Variant_e ae_variant,
+    uint8_t aui8_transferSourceAddress,
+    uint8_t aui8_transferDestinationAddress)
+{
+  TransferCollection_c::PtrSession_t t_ptrSession =
+    gc_transferCollection.getSession(
+        ae_variant,
+        aui8_transferSourceAddress,
+        aui8_transferDestinationAddress);
+  if (!t_ptrSession) {
+    cout << " (ERROR, no " <<
+      (TransferCollection_c::variant_tp == ae_variant ? "TP" : "ETP") <<
+      " " << hex << unsigned(aui8_transferSourceAddress) <<
+      "->" << hex << unsigned(aui8_transferDestinationAddress) <<") ";
+  }
+  return t_ptrSession;
+}
 
 void interpretePgnsTPETP()
 {
@@ -1488,14 +1512,15 @@ void interpretePgnsTPETP()
       cout << "DPO - Data Packet Offset (ETP)        ";
       {
         TransferCollection_c::PtrSession_t t_ptrSession =
-          gc_transferCollection.getSession(
+          getTransferSession(
               e_Variant,
               canGetSa(),
               canGetDa());
-        t_ptrSession->mui32_packetOffSet =
-          ((static_cast<uint32_t>(canGetData(4)) << 16) |
-           (static_cast<uint32_t>(canGetData(3)) << 8 ) |
-           (static_cast<uint32_t>(canGetData(2))));
+        if (t_ptrSession)
+          t_ptrSession->mui32_packetOffSet =
+            ((static_cast<uint32_t>(canGetData(4)) << 16) |
+             (static_cast<uint32_t>(canGetData(3)) << 8 ) |
+             (static_cast<uint32_t>(canGetData(2))));
       }
       break;
     case 0x13: 
@@ -1518,30 +1543,34 @@ void interpretePgnsTPETP()
     }
     if ((canGetPgn() == TP_CONN_MANAGE_PGN)) {
       TransferCollection_c::PtrSession_t t_ptrSession =
-        gc_transferCollection.getSession(
+        getTransferSession(
             e_Variant,
             canGetSa(),
             canGetDa());
-      t_ptrSession->mui32_embeddedPgn =
-        (static_cast<uint32_t>(canGetData(7)) << 16) |
-        (static_cast<uint32_t>(canGetData(6)) << 8 ) |
-        (static_cast<uint32_t>(canGetData(5)));
-      cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
-      interpretePgn ( t_ptrSession->mui32_embeddedPgn);
-      cout << ")";
+      if (t_ptrSession) {
+        t_ptrSession->mui32_embeddedPgn =
+          (static_cast<uint32_t>(canGetData(7)) << 16) |
+          (static_cast<uint32_t>(canGetData(6)) << 8 ) |
+          (static_cast<uint32_t>(canGetData(5)));
+        cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
+        interpretePgn ( t_ptrSession->mui32_embeddedPgn);
+        cout << ")";
+      }
     } else if (canGetPgn() == ETP_CONN_MANAGE_PGN) {
       TransferCollection_c::PtrSession_t t_ptrSession =
-        gc_transferCollection.getSession(
+        getTransferSession(
             e_Variant,
             canGetSa(),
             canGetDa());
-      t_ptrSession->mui32_embeddedPgn =
-        (static_cast<uint32_t>(canGetData(7)) << 16) |
-        (static_cast<uint32_t>(canGetData(6)) << 8 ) |
-        (static_cast<uint32_t>(canGetData(5)));
-      cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
-      interpretePgn (t_ptrSession->mui32_embeddedPgn);
-      cout << ")";
+      if (t_ptrSession) {
+        t_ptrSession->mui32_embeddedPgn =
+          (static_cast<uint32_t>(canGetData(7)) << 16) |
+          (static_cast<uint32_t>(canGetData(6)) << 8 ) |
+          (static_cast<uint32_t>(canGetData(5)));
+        cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
+        interpretePgn (t_ptrSession->mui32_embeddedPgn);
+        cout << ")";
+      }
     }
     break;
 
@@ -1552,11 +1581,13 @@ void interpretePgnsTPETP()
     cout << "DATA - Data Packet #"<<setw(2)<<setfill(' ')<<dec<<uint16_t(canGetData(0));
     {
       TransferCollection_c::PtrSession_t t_ptrSession =
-        gc_transferCollection.getSession(
+        getTransferSession(
             e_Variant,
             canGetSa(),
             canGetDa());
-      if ((canGetPgn() == TP_DATA_TRANSFER_PGN)) {
+      if (!t_ptrSession)
+        ;
+      else if ((canGetPgn() == TP_DATA_TRANSFER_PGN)) {
         for (int i = 0; i < 7; i++) {
           if ((7 *  (canGetData(0) - 1)) + i >= int(t_ptrSession->mvec_data.size()))
             break;
@@ -1577,84 +1608,46 @@ void interpretePgnsTPETP()
     break;
   }
 
-  if (b_tpStreamEnd)
+  if (b_tpStreamEnd || b_etpStreamEnd)
   {
     TransferCollection_c::PtrSession_t t_ptrSession =
-      gc_transferCollection.getSession(
+      getTransferSession(
           e_Variant,
           canGetDa(),
           canGetSa());
-    uint32_t const cui32_tpembeddedPgn = t_ptrSession->mui32_embeddedPgn;
+    if (t_ptrSession) {
+      uint32_t const cui32_embeddedPgn = t_ptrSession->mui32_embeddedPgn;
 
-    switch (cui32_tpembeddedPgn) {
-    case 0xab00:
-      analyzeFS2Cl(
-          canGetDa(),
-          canGetSa(),
-          t_ptrSession->mvec_data.size(),
-          &(t_ptrSession->mvec_data)[0]);
-      break;
-    case 0xaa00:
-      analyzeCl2FS(
-          canGetDa(),
-          canGetSa(),
-          t_ptrSession->mvec_data.size(),
-          &(t_ptrSession->mvec_data)[0]);
-      break;
-    default:
-      analyzeRest(
-          canGetDa(),
-          canGetSa(),
-          t_ptrSession->mvec_data.size(),
-          &(t_ptrSession->mvec_data)[0],
-          cui32_tpembeddedPgn);
-      break;
-    }
+      switch (cui32_embeddedPgn) {
+      case 0xab00:
+        analyzeFS2Cl(
+            canGetDa(),
+            canGetSa(),
+            t_ptrSession->mvec_data.size(),
+            &(t_ptrSession->mvec_data)[0]);
+        break;
+      case 0xaa00:
+        analyzeCl2FS(
+            canGetDa(),
+            canGetSa(),
+            t_ptrSession->mvec_data.size(),
+            &(t_ptrSession->mvec_data)[0]);
+        break;
+      default:
+        analyzeRest(
+            canGetDa(),
+            canGetSa(),
+            t_ptrSession->mvec_data.size(),
+            &(t_ptrSession->mvec_data)[0],
+            cui32_embeddedPgn);
+        break;
+      }
 
-    gc_transferCollection.deleteSession(
-        e_Variant,      
-        canGetDa(),
-        canGetSa());
-  }
-
-  if (b_etpStreamEnd)
-  {
-    TransferCollection_c::PtrSession_t t_ptrSession =
-      gc_transferCollection.getSession(
-          e_Variant,
+      gc_transferCollection.deleteSession(
+          e_Variant,      
           canGetDa(),
           canGetSa());
-    uint32_t const cui32_etpembeddedPgn = t_ptrSession->mui32_embeddedPgn;
-
-    switch (cui32_etpembeddedPgn) {
-    case 0xab00:
-      analyzeFS2Cl(
-         canGetDa(),
-         canGetSa(),
-         t_ptrSession->mvec_data.size(),
-         &(t_ptrSession->mvec_data)[0]);
-      break;
-    case 0xaa00:
-      analyzeCl2FS(
-         canGetDa(),
-         canGetSa(),
-         t_ptrSession->mvec_data.size(),
-         &(t_ptrSession->mvec_data)[0]);
-      break;
-    default:
-      analyzeRest(
-         canGetDa(),
-         canGetSa(),
-         t_ptrSession->mvec_data.size(),
-         &(t_ptrSession->mvec_data)[0],
-         cui32_etpembeddedPgn);
-      break;
     }
-
-    gc_transferCollection.deleteSession(
-        e_Variant,      
-        canGetDa(),
-        canGetSa());
   }
 }
 

@@ -11,7 +11,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 project(LOGALIZER)
 
 include_directories(
-  ../../../library/xgpl_src)
+  ../../../library/xgpl_src
+  ../../../tools/libs/misc)
 
 add_executable(
   logalizer
