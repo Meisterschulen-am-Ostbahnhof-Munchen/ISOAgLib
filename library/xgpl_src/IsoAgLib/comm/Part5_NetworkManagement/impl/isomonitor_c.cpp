@@ -86,7 +86,7 @@ IsoMonitor_c::init( void )
     #if DEBUG_HEAP_USEAGE
     sui16_isoItemTotal -= mvec_isoMember.size();
     #endif
-    mvec_isoMember.clear();
+    isoaglib_assert (mvec_isoMember.empty());
     mpc_isoMemberCache = mvec_isoMember.end();
     mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
     mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getSingletonVecKey() );
@@ -143,6 +143,11 @@ void IsoMonitor_c::close( void )
     getSchedulerInstance().unregisterClient( this );
 
     // We can clear the list of remote nodes.
+    /// NOTE: We do currently NOT call "internalIsoItemErase",
+    ///       because the list of SaClaimHandlers is empty anyway.
+    ///       But if the erase does some more stuff, it may be needed
+    ///       to call "internalIsoItemErase" for each item instead
+    ///       of just clearing the container of isoMembers.
     mvec_isoMember.clear();
 
     getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, ADDRESS_CLAIM_PGN);
@@ -183,6 +188,7 @@ IsoMonitor_c::registerIdentItem( IdentItem_c& arc_item )
 void
 IsoMonitor_c::deregisterIdentItem( IdentItem_c& arc_item )
 {
+  arc_item.deactivate();
   mpc_activeLocalMember = NULL;
   unregisterC1 (&arc_item);
 }
@@ -304,7 +310,7 @@ bool IsoMonitor_c::timeEvent( void )
             << sizeSlistTWithChunk( sizeof(IsoItem_c), sui16_isoItemTotal )
             << INTERNAL_DEBUG_DEVICE_NEWLINE << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
-          pc_iter = mvec_isoMember.erase(pc_iterDelete); // erase returns iterator to next element after the erased one
+          pc_iter = internalIsoItemErase (pc_iterDelete); // erase returns iterator to next element after the erased one
           // immediately reset cache, because it may have gotten invalid due to the erase!!
           mpc_isoMemberCache = mvec_isoMember.begin();
         }
@@ -910,7 +916,7 @@ bool IsoMonitor_c::deleteIsoMemberISOName(const IsoName_c& acrc_isoName)
       mpc_activeLocalMember = NULL;
     }
     // erase it from list (existIsoMemberISOName sets mpc_isoMemberCache to the wanted item)
-    mvec_isoMember.erase(mpc_isoMemberCache);
+    internalIsoItemErase (mpc_isoMemberCache);
     // immediately reset cache, because it may have gotten invalid due to the erase!!
     mpc_isoMemberCache = mvec_isoMember.begin();
     #if DEBUG_HEAP_USEAGE
@@ -1476,6 +1482,17 @@ IsoMonitor_c::getTaskName() const
 #endif
 
 
+IsoMonitor_c::Vec_ISOIterator
+IsoMonitor_c::internalIsoItemErase( Vec_ISOIterator aiter_toErase )
+{
+  // first inform SA-Claim handlers on SA-Loss
+  /// @todo SOON-240 We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
+  broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::RemoveFromMonitorList, *aiter_toErase);
+
+  return mvec_isoMember.erase( aiter_toErase );
+}
+
+
 //! Function set ui16_earlierInterval and
 //! ui16_laterInterval that will be used by
 //! getTimeToNextTrigger(retriggerType_t)
@@ -1520,7 +1537,7 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
       }
       else
       { // remove the item from the monitor list
-        pc_iter = mvec_isoMember.erase( pc_iter );
+        pc_iter = internalIsoItemErase( pc_iter );
         b_updateCacheIterator = true;
       }
     }

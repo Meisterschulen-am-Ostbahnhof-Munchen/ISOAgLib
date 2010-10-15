@@ -119,9 +119,7 @@ IsoItem_c& IsoItem_c::operator=(const IsoItem_c& acrc_src)
 
 /** default destructor */
 IsoItem_c::~IsoItem_c()
-{ // first inform SA-Claim handlers on SA-Loss
-  /// @todo SOON-240 We need to get sure that the IdentItem doesn't have a dangling reference to this IsoItem!
-  getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::RemoveFromMonitorList, *this);
+{
 #ifdef USE_WORKING_SET
   if (mpvec_slaveIsoNames)
     delete mpvec_slaveIsoNames;
