@@ -18,8 +18,10 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <map>
 #include <iomanip>
 #include <stdlib.h>
+#include <../../libs/misc/yasper.h>
 
 using namespace std;
 
@@ -31,24 +33,116 @@ uint8_t  can_data[8];
 uint8_t can_bytes;
 bool can_ext; /// @todo SOON-260: to be used! =)
 
-bool b_tpcts = false;
-bool b_tprts = false;
-uint32_t ui32_tpembeddedPgn = 0;
-uint8_t i_tpsa = 0;
-uint8_t i_tpda = 0;
-uint16_t i_tplengthData = 0;
-uint8_t *i_tpData = NULL;
-
-bool b_etpcts = false;
-bool b_etprts = false;
-uint32_t ui32_etpembeddedPgn = 0;
-uint8_t i_etpsa = 0;
-uint8_t i_etpda = 0;
-uint32_t i_etplengthData = 0;
-uint32_t i_etpPacketOffSet = 0;
-uint8_t *i_etpData = NULL;
-
 int i_multipacketWrap=0; // default will be set when parsing parameters
+
+class TransferCollection_c {
+public:
+  enum Variant_e {
+    variant_tp,
+    variant_etp,
+  };
+
+  struct Session_s {
+    Session_s(size_t at_sizeTransferData) :
+      mvec_data(at_sizeTransferData, 0),
+      mui32_embeddedPgn(0),
+      mui32_packetOffSet(0)
+    {}
+    std::vector< uint8_t > mvec_data;
+    uint32_t mui32_embeddedPgn;
+    uint32_t mui32_packetOffSet;
+  };
+
+  typedef yasper::ptr< Session_s > PtrSession_t;
+
+  PtrSession_t newSession(
+      Variant_e ae_variant,
+      uint8_t aui8_transferSourceAddress,
+      uint8_t aui8_transferDestinationAddress,
+      size_t at_sizeTransferData);
+
+  PtrSession_t getSession(
+      Variant_e ae_variant,
+      uint8_t aui8_transferSourceAddress,
+      uint8_t aui8_transferDestinationAddress);
+
+  void deleteSession(
+      Variant_e ae_variant,
+      uint8_t aui8_transferSourceAddress,
+      uint8_t aui8_transferDestinationAddress);
+
+private:
+  struct Key_s {
+    Key_s(
+        Variant_e ae_variant,
+        uint8_t aui8_transferSourceAddress,
+        uint8_t aui8_transferDestinationAddress) :
+      me_variant(ae_variant),
+      mui8_transferSourceAddress(aui8_transferSourceAddress),
+      mui8_transferDestinationAddress(aui8_transferDestinationAddress)
+    {}
+
+    Variant_e me_variant;
+    uint8_t mui8_transferSourceAddress;
+    uint8_t mui8_transferDestinationAddress;
+  };
+
+  friend bool operator<(
+      Key_s const &arcs_left,
+      Key_s const &arcs_right);
+
+  std::map< Key_s, PtrSession_t > mmap_transfers;
+} gc_transferCollection;
+
+TransferCollection_c::PtrSession_t TransferCollection_c::newSession(
+    Variant_e ae_variant,
+    uint8_t aui8_transferSourceAddress,
+    uint8_t aui8_transferDestinationAddress,
+    size_t at_sizeTransferData)
+{
+  PtrSession_t t_ptrSession = new Session_s(at_sizeTransferData);
+  mmap_transfers[
+      Key_s(
+          ae_variant,
+          aui8_transferSourceAddress,
+          aui8_transferDestinationAddress)
+    ] = t_ptrSession;
+  return t_ptrSession;
+}
+
+TransferCollection_c::PtrSession_t TransferCollection_c::getSession(
+    Variant_e ae_variant,
+    uint8_t aui8_transferSourceAddress,
+    uint8_t aui8_transferDestinationAddress)
+{
+  return mmap_transfers[
+      Key_s(
+          ae_variant,
+          aui8_transferSourceAddress,
+          aui8_transferDestinationAddress) ];
+}
+
+void TransferCollection_c::deleteSession(
+    Variant_e ae_variant,
+    uint8_t aui8_transferSourceAddress,
+    uint8_t aui8_transferDestinationAddress)
+{
+  mmap_transfers.erase(
+      Key_s(
+          ae_variant,
+          aui8_transferSourceAddress,
+          aui8_transferDestinationAddress) );
+}
+
+bool operator<(
+    TransferCollection_c::Key_s const &arcs_left,
+    TransferCollection_c::Key_s const &arcs_right)
+{
+  return
+    arcs_left.me_variant < arcs_right.me_variant &&
+    arcs_left.mui8_transferSourceAddress < arcs_right.mui8_transferSourceAddress &&
+    arcs_left.mui8_transferDestinationAddress < arcs_right.mui8_transferDestinationAddress;
+}
 
 char getAscii(uint8_t val) { return ((val >= 0x20) && (val < 0x7F)) ? (char(val)) : '.'; }
 
@@ -532,7 +626,11 @@ void interpretePgnsFs2Cl()
 }
 
 
-void analyzeCl2FS(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t data[])
+void analyzeCl2FS(
+    uint8_t SA,
+    uint8_t DA,
+    uint16_t lengthData,
+    uint8_t data[])
 {
   uint16_t i_pathNameLength = 0, i_destPathNameLength = 0;
 
@@ -1338,161 +1436,225 @@ void interpretePgnsTPETP()
 {
   bool b_tpStreamEnd = false;
   bool b_etpStreamEnd = false;
+  TransferCollection_c::Variant_e e_Variant = TransferCollection_c::variant_etp;
 
   if (canGetBytes() != 8)
   {
     cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    return;
   }
-  else
-  {
-    if ((canGetPgn() == ETP_CONN_MANAGE_PGN) || (canGetPgn() == TP_CONN_MANAGE_PGN))
-    {
-      switch (canGetData(0))
+
+  switch (canGetPgn()) {
+
+  case TP_CONN_MANAGE_PGN:
+    e_Variant = TransferCollection_c::variant_tp;
+    /* fall through */
+  case ETP_CONN_MANAGE_PGN:
+    switch (canGetData(0)) {
+    case 0x10: 
+      cout << "RTS - Request to Send (TP)            "; 
       {
-        case 0x10: 
-          cout << "RTS - Request to Send (TP)            "; 
-
-          b_tprts = true;
-          b_tpcts = false;
-          i_tpsa = canGetSa();
-          i_tpda = canGetDa();
-          i_tplengthData = uint16_t((canGetData(2)<<8) | (canGetData(1)));
-          i_tpData = new uint8_t[i_tplengthData];
-          break;
-        case 0x14:
-          cout << "RTS - Request to Send (ETP)           ";
-
-          b_etprts = true;
-          b_etpcts = false;
-          i_etpsa = canGetSa();
-          i_etpda = canGetDa();
-          i_etplengthData = (static_cast<uint32_t>(canGetData(4)) << 24) |
-		                    (static_cast<uint32_t>(canGetData(3)) << 16) |
-		                    (static_cast<uint32_t>(canGetData(2)) << 8 ) |
-		                    (static_cast<uint32_t>(canGetData(1)));
-          i_etpPacketOffSet = 0;
-          i_etpData = new uint8_t[i_etplengthData];
-          break;
-        case 0x11: 
-           cout << "CTS - Clear to Send (TP)              ";
-
-          b_tpcts = true;
-          break;
-        case 0x15: 
-          cout << "CTS - Clear to Send (ETP)             "; 
-          b_etpcts = true;
-          break;
-
-        case 0x16:
-          cout << "DPO - Data Packet Offset (ETP)        ";
-          i_etpPacketOffSet = ((static_cast<uint32_t>(canGetData(4)) << 16) |
-		                       (static_cast<uint32_t>(canGetData(3)) << 8 ) |
-		                       (static_cast<uint32_t>(canGetData(2))));
-          break;
-        case 0x13: 
-          cout << "EoMACK - End of Message Ack (TP)      ";
-          b_tpStreamEnd = true;
-          break;
-        case 0x17: 
-          cout << "EoMACK - End of Message Ack (ETP)     ";
-          b_etpStreamEnd = true;
-
-          break;
-        case 0x20: 
-           cout << "BAM - Broadcast Announce Msg (TP)     ";
-          break;
-        case 0xFF: 
-           cout << "CONNABORT - Connection Abort (TP/ETP) ";
-
-           b_tprts = false;
-           b_tpcts = false;
-           i_tpsa = 0;
-           i_tpda = 0;
-           i_tplengthData = 0;
-           i_tpData = NULL;
-           ui32_tpembeddedPgn = 0;
-
-           b_etprts = false;
-           b_etpcts = false;
-           i_etpsa = 0;
-           i_etpda = 0;
-           i_etplengthData = 0;
-           i_etpData = NULL;
-           i_etpPacketOffSet = 0;
-           ui32_etpembeddedPgn = 0;
-           break;
-        default: return;
+        size_t const ct_sizeTransferData = size_t(canGetData(2)) << 8 | canGetData(1);
+        (void)gc_transferCollection.newSession(
+            e_Variant,
+            canGetSa(),
+            canGetDa(),
+            ct_sizeTransferData);
       }
-      if ((canGetPgn() == TP_CONN_MANAGE_PGN)) {
-        ui32_tpembeddedPgn = (static_cast<uint32_t>(canGetData(7)) << 16) |
-		                       (static_cast<uint32_t>(canGetData(6)) << 8 ) |
-		                       (static_cast<uint32_t>(canGetData(5)));
-        cout << " on "<<setw(6)<<setfill('0')<<ui32_tpembeddedPgn<< " (";
-        interpretePgn (ui32_tpembeddedPgn);
-        cout << ")";
-      } else if (canGetPgn() == ETP_CONN_MANAGE_PGN) {
-        ui32_etpembeddedPgn = (static_cast<uint32_t>(canGetData(7)) << 16) |
-		                       (static_cast<uint32_t>(canGetData(6)) << 8 ) |
-		                       (static_cast<uint32_t>(canGetData(5)));
-        cout << " on "<<setw(6)<<setfill('0')<<ui32_etpembeddedPgn<< " (";
-        interpretePgn (ui32_etpembeddedPgn);
-        cout << ")";
+      break;
+    case 0x14:
+      cout << "RTS - Request to Send (ETP)           ";
+      {
+        size_t const ct_sizeTransferData = (static_cast<uint32_t>(canGetData(4)) << 24) |
+          (static_cast<uint32_t>(canGetData(3)) << 16) |
+          (static_cast<uint32_t>(canGetData(2)) << 8 ) |
+          (static_cast<uint32_t>(canGetData(1)));
+        (void)gc_transferCollection.newSession(
+            e_Variant,
+            canGetSa(),
+            canGetDa(),
+            ct_sizeTransferData);
       }
+      break;
+    case 0x11: 
+      cout << "CTS - Clear to Send (TP)              ";
 
+      break;
+    case 0x15: 
+      cout << "CTS - Clear to Send (ETP)             "; 
+      break;
+
+    case 0x16:
+      cout << "DPO - Data Packet Offset (ETP)        ";
+      {
+        TransferCollection_c::PtrSession_t t_ptrSession =
+          gc_transferCollection.getSession(
+              e_Variant,
+              canGetSa(),
+              canGetDa());
+        t_ptrSession->mui32_packetOffSet =
+          ((static_cast<uint32_t>(canGetData(4)) << 16) |
+           (static_cast<uint32_t>(canGetData(3)) << 8 ) |
+           (static_cast<uint32_t>(canGetData(2))));
+      }
+      break;
+    case 0x13: 
+      cout << "EoMACK - End of Message Ack (TP)      ";
+      b_tpStreamEnd = true;
+      break;
+    case 0x17: 
+      cout << "EoMACK - End of Message Ack (ETP)     ";
+      b_etpStreamEnd = true;
+
+      break;
+    case 0x20: 
+      cout << "BAM - Broadcast Announce Msg (TP)     ";
+      break;
+    case 0xFF: 
+      cout << "CONNABORT - Connection Abort (TP/ETP) ";           
+      gc_transferCollection.deleteSession(e_Variant, canGetSa(), canGetDa());
+      break;
+    default: return;
     }
-    else if ((canGetPgn() == ETP_DATA_TRANSFER_PGN) || (canGetPgn() == TP_DATA_TRANSFER_PGN))
+    if ((canGetPgn() == TP_CONN_MANAGE_PGN)) {
+      TransferCollection_c::PtrSession_t t_ptrSession =
+        gc_transferCollection.getSession(
+            e_Variant,
+            canGetSa(),
+            canGetDa());
+      t_ptrSession->mui32_embeddedPgn =
+        (static_cast<uint32_t>(canGetData(7)) << 16) |
+        (static_cast<uint32_t>(canGetData(6)) << 8 ) |
+        (static_cast<uint32_t>(canGetData(5)));
+      cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
+      interpretePgn ( t_ptrSession->mui32_embeddedPgn);
+      cout << ")";
+    } else if (canGetPgn() == ETP_CONN_MANAGE_PGN) {
+      TransferCollection_c::PtrSession_t t_ptrSession =
+        gc_transferCollection.getSession(
+            e_Variant,
+            canGetSa(),
+            canGetDa());
+      t_ptrSession->mui32_embeddedPgn =
+        (static_cast<uint32_t>(canGetData(7)) << 16) |
+        (static_cast<uint32_t>(canGetData(6)) << 8 ) |
+        (static_cast<uint32_t>(canGetData(5)));
+      cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
+      interpretePgn (t_ptrSession->mui32_embeddedPgn);
+      cout << ")";
+    }
+    break;
+
+  case TP_DATA_TRANSFER_PGN:
+    e_Variant = TransferCollection_c::variant_tp;
+    /* fall through */
+  case ETP_DATA_TRANSFER_PGN:
+    cout << "DATA - Data Packet #"<<setw(2)<<setfill(' ')<<dec<<uint16_t(canGetData(0));
     {
-      cout << "DATA - Data Packet #"<<setw(2)<<setfill(' ')<<dec<<uint16_t(canGetData(0));
+      TransferCollection_c::PtrSession_t t_ptrSession =
+        gc_transferCollection.getSession(
+            e_Variant,
+            canGetSa(),
+            canGetDa());
       if ((canGetPgn() == TP_DATA_TRANSFER_PGN)) {
         for (int i = 0; i < 7; i++) {
-          if ((7 *  (canGetData(0) - 1)) + i >= i_tplengthData)
+          if ((7 *  (canGetData(0) - 1)) + i >= int(t_ptrSession->mvec_data.size()))
             break;
-          i_tpData[(7 *  (canGetData(0) - 1)) + i] = canGetData(i + 1);
+          size_t t_index = (7 *  (canGetData(0) - 1)) + i;
+          (t_ptrSession->mvec_data)[t_index] = canGetData(i + 1);
         }
       } else if (canGetPgn() == ETP_DATA_TRANSFER_PGN) {
         for (int i = 0; i < 7; i++) {
-          if ((((i_etpPacketOffSet) * 7) + (7 *  (canGetData(0) - 1))) + i >= i_etplengthData)
+          size_t t_index = (t_ptrSession->mui32_packetOffSet * 7 + (7 *  (canGetData(0) - 1))) + i;
+          if (t_index >= t_ptrSession->mvec_data.size())
             break;
-          i_etpData[(((i_etpPacketOffSet) * 7) + (7 *  (canGetData(0) - 1))) + i] = canGetData(i + 1);
+          (t_ptrSession->mvec_data)[t_index] = canGetData(i + 1);
         }
       }
     }
+    break;
+  default:
+    break;
+  }
 
-    if (b_tpStreamEnd)
-    {
-      if (ui32_tpembeddedPgn == 0xab00)
-        analyzeFS2Cl(i_tpsa, i_tpda, i_tplengthData, i_tpData);
-      else if (ui32_tpembeddedPgn == 0xaa00)
-        analyzeCl2FS(i_tpsa, i_tpda, i_tplengthData, i_tpData);
-      else
-        analyzeRest(i_tpsa, i_tpda, i_tplengthData, i_tpData, ui32_tpembeddedPgn);
+  if (b_tpStreamEnd)
+  {
+    TransferCollection_c::PtrSession_t t_ptrSession =
+      gc_transferCollection.getSession(
+          e_Variant,
+          canGetDa(),
+          canGetSa());
+    uint32_t const cui32_tpembeddedPgn = t_ptrSession->mui32_embeddedPgn;
 
-      b_tprts = false;
-      b_tpcts = false;
-      i_tpsa = 0;
-      i_tpda = 0;
-      i_tplengthData = 0;
-      i_tpData = NULL;
-      ui32_tpembeddedPgn = 0;
+    switch (cui32_tpembeddedPgn) {
+    case 0xab00:
+      analyzeFS2Cl(
+          canGetDa(),
+          canGetSa(),
+          t_ptrSession->mvec_data.size(),
+          &(t_ptrSession->mvec_data)[0]);
+      break;
+    case 0xaa00:
+      analyzeCl2FS(
+          canGetDa(),
+          canGetSa(),
+          t_ptrSession->mvec_data.size(),
+          &(t_ptrSession->mvec_data)[0]);
+      break;
+    default:
+      analyzeRest(
+          canGetDa(),
+          canGetSa(),
+          t_ptrSession->mvec_data.size(),
+          &(t_ptrSession->mvec_data)[0],
+          cui32_tpembeddedPgn);
+      break;
     }
 
-    if (b_etpStreamEnd)
-    {
-      if (ui32_etpembeddedPgn == 0xab00)
-        analyzeFS2Cl(i_etpsa, i_etpda, uint16_t(i_etplengthData), i_etpData);
-      else if (ui32_etpembeddedPgn == 0xaa00)
-        analyzeCl2FS(i_etpsa, i_etpda, uint16_t(i_etplengthData), i_etpData);
-      else
-        analyzeRest(i_etpsa, i_etpda, uint16_t(i_etplengthData), i_etpData, ui32_etpembeddedPgn);
-      b_etprts = false;
-      b_etpcts = false;
-      i_etpsa = 0;
-      i_etpda = 0;
-      i_etplengthData = 0;
-      i_etpData = NULL;
-      i_etpPacketOffSet = 0;
-      ui32_etpembeddedPgn = 0;
+    gc_transferCollection.deleteSession(
+        e_Variant,      
+        canGetDa(),
+        canGetSa());
+  }
+
+  if (b_etpStreamEnd)
+  {
+    TransferCollection_c::PtrSession_t t_ptrSession =
+      gc_transferCollection.getSession(
+          e_Variant,
+          canGetDa(),
+          canGetSa());
+    uint32_t const cui32_etpembeddedPgn = t_ptrSession->mui32_embeddedPgn;
+
+    switch (cui32_etpembeddedPgn) {
+    case 0xab00:
+      analyzeFS2Cl(
+         canGetDa(),
+         canGetSa(),
+         t_ptrSession->mvec_data.size(),
+         &(t_ptrSession->mvec_data)[0]);
+      break;
+    case 0xaa00:
+      analyzeCl2FS(
+         canGetDa(),
+         canGetSa(),
+         t_ptrSession->mvec_data.size(),
+         &(t_ptrSession->mvec_data)[0]);
+      break;
+    default:
+      analyzeRest(
+         canGetDa(),
+         canGetSa(),
+         t_ptrSession->mvec_data.size(),
+         &(t_ptrSession->mvec_data)[0],
+         cui32_etpembeddedPgn);
+      break;
     }
+
+    gc_transferCollection.deleteSession(
+        e_Variant,      
+        canGetDa(),
+        canGetSa());
   }
 }
 
