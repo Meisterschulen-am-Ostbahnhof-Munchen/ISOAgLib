@@ -33,7 +33,7 @@ uint8_t  can_data[8];
 uint8_t can_bytes;
 bool can_ext; /// @todo SOON-260: to be used! =)
 
-int i_multipacketWrap=0; // default will be set when parsing parameters
+size_t i_multipacketWrap=0; // default will be set when parsing parameters
 
 class TransferCollection_c {
 public:
@@ -184,15 +184,15 @@ typedef enum {
 
 logType_t logType;
 
-void analyzeCl2FS(uint8_t, uint8_t, uint16_t, uint8_t[]);
-void analyzeFS2Cl(uint8_t, uint8_t, uint16_t, uint8_t[]);
-void analyzeRest(uint8_t, uint8_t, uint16_t, uint8_t[], uint32_t);
+typedef void Analyse_t(uint8_t, uint8_t, size_t, uint8_t[]);
+Analyse_t analyzeCl2FS;
+Analyse_t analyzeFS2Cl;
+Analyse_t analyzeRest;
 void decodeErrorCode(uint8_t);
 void decodeAttributes(uint8_t);
 void decodeDate(uint16_t);
 void decodeTime(uint16_t);
-void interpretePgnsCl2FS();
-void interpretePgnsFS2Cl();
+void interpretePgns8(Analyse_t *apt_analyse);
 void interpretePgnsVtEcu(bool);
 
 
@@ -631,11 +631,20 @@ void interpretePgnsFs2Cl()
   analyzeFS2Cl(canGetSa(), canGetDa(), canGetBytes(), can_data);
 }
 
+void interpretePgns8(Analyse_t *apt_analyse)
+{
+  apt_analyse(canGetSa(), canGetDa(), 8, can_data);
+}
+
+void interpretePgnsVar(Analyse_t *apt_analyse)
+{
+  apt_analyse(canGetSa(), canGetDa(), canGetBytes(), can_data);
+}
 
 void analyzeCl2FS(
     uint8_t SA,
     uint8_t DA,
-    uint16_t lengthData,
+    size_t lengthData,
     uint8_t data[])
 {
   uint16_t i_pathNameLength = 0, i_destPathNameLength = 0;
@@ -1427,16 +1436,6 @@ void interpreteVehiclePosition()
   }
 }
 
-void interpretePgnsCl2FS()
-{
-  analyzeCl2FS(canGetSa(), canGetDa(), 8, can_data);
-}
-
-void interpretePgnsFS2Cl()
-{
-  analyzeFS2Cl(canGetSa(), canGetDa(), 8, can_data);
-}
-
 TransferCollection_c::PtrSession_t getTransferSession(
     TransferCollection_c::Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
@@ -1456,11 +1455,14 @@ TransferCollection_c::PtrSession_t getTransferSession(
   return t_ptrSession;
 }
 
+void interpretePgnData(uint32_t rui32_pgn);
+void endOfTransfer(
+    TransferCollection_c::Variant_e ae_variant);
+
 void interpretePgnsTPETP()
 {
-  bool b_tpStreamEnd = false;
-  bool b_etpStreamEnd = false;
-  TransferCollection_c::Variant_e e_Variant = TransferCollection_c::variant_etp;
+  bool b_streamEnd = false;
+  TransferCollection_c::Variant_e e_variant = TransferCollection_c::variant_etp;
 
   if (canGetBytes() != 8)
   {
@@ -1471,7 +1473,7 @@ void interpretePgnsTPETP()
   switch (canGetPgn()) {
 
   case TP_CONN_MANAGE_PGN:
-    e_Variant = TransferCollection_c::variant_tp;
+    e_variant = TransferCollection_c::variant_tp;
     /* fall through */
   case ETP_CONN_MANAGE_PGN:
     switch (canGetData(0)) {
@@ -1480,7 +1482,7 @@ void interpretePgnsTPETP()
       {
         size_t const ct_sizeTransferData = size_t(canGetData(2)) << 8 | canGetData(1);
         (void)gc_transferCollection.newSession(
-            e_Variant,
+            e_variant,
             canGetSa(),
             canGetDa(),
             ct_sizeTransferData);
@@ -1494,7 +1496,7 @@ void interpretePgnsTPETP()
           (static_cast<uint32_t>(canGetData(2)) << 8 ) |
           (static_cast<uint32_t>(canGetData(1)));
         (void)gc_transferCollection.newSession(
-            e_Variant,
+            e_variant,
             canGetSa(),
             canGetDa(),
             ct_sizeTransferData);
@@ -1513,7 +1515,7 @@ void interpretePgnsTPETP()
       {
         TransferCollection_c::PtrSession_t t_ptrSession =
           getTransferSession(
-              e_Variant,
+              e_variant,
               canGetSa(),
               canGetDa());
         if (t_ptrSession)
@@ -1525,26 +1527,25 @@ void interpretePgnsTPETP()
       break;
     case 0x13: 
       cout << "EoMACK - End of Message Ack (TP)      ";
-      b_tpStreamEnd = true;
+      b_streamEnd = true;
       break;
     case 0x17: 
       cout << "EoMACK - End of Message Ack (ETP)     ";
-      b_etpStreamEnd = true;
-
+      b_streamEnd = true;
       break;
     case 0x20: 
       cout << "BAM - Broadcast Announce Msg (TP)     ";
       break;
     case 0xFF: 
       cout << "CONNABORT - Connection Abort (TP/ETP) ";           
-      gc_transferCollection.deleteSession(e_Variant, canGetSa(), canGetDa());
+      gc_transferCollection.deleteSession(e_variant, canGetSa(), canGetDa());
       break;
     default: return;
     }
-    if ((canGetPgn() == TP_CONN_MANAGE_PGN)) {
+    {
       TransferCollection_c::PtrSession_t t_ptrSession =
         getTransferSession(
-            e_Variant,
+            e_variant,
             canGetSa(),
             canGetDa());
       if (t_ptrSession) {
@@ -1553,36 +1554,21 @@ void interpretePgnsTPETP()
           (static_cast<uint32_t>(canGetData(6)) << 8 ) |
           (static_cast<uint32_t>(canGetData(5)));
         cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
-        interpretePgn ( t_ptrSession->mui32_embeddedPgn);
-        cout << ")";
-      }
-    } else if (canGetPgn() == ETP_CONN_MANAGE_PGN) {
-      TransferCollection_c::PtrSession_t t_ptrSession =
-        getTransferSession(
-            e_Variant,
-            canGetSa(),
-            canGetDa());
-      if (t_ptrSession) {
-        t_ptrSession->mui32_embeddedPgn =
-          (static_cast<uint32_t>(canGetData(7)) << 16) |
-          (static_cast<uint32_t>(canGetData(6)) << 8 ) |
-          (static_cast<uint32_t>(canGetData(5)));
-        cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
-        interpretePgn (t_ptrSession->mui32_embeddedPgn);
+        interpretePgn(t_ptrSession->mui32_embeddedPgn);
         cout << ")";
       }
     }
     break;
 
   case TP_DATA_TRANSFER_PGN:
-    e_Variant = TransferCollection_c::variant_tp;
+    e_variant = TransferCollection_c::variant_tp;
     /* fall through */
   case ETP_DATA_TRANSFER_PGN:
     cout << "DATA - Data Packet #"<<setw(2)<<setfill(' ')<<dec<<uint16_t(canGetData(0));
     {
       TransferCollection_c::PtrSession_t t_ptrSession =
         getTransferSession(
-            e_Variant,
+            e_variant,
             canGetSa(),
             canGetDa());
       if (!t_ptrSession)
@@ -1608,46 +1594,51 @@ void interpretePgnsTPETP()
     break;
   }
 
-  if (b_tpStreamEnd || b_etpStreamEnd)
-  {
+  if (b_streamEnd) { //instead of obsolete endOfTransfer(e_variant);
     TransferCollection_c::PtrSession_t t_ptrSession =
       getTransferSession(
-          e_Variant,
+          e_variant,
           canGetDa(),
           canGetSa());
     if (t_ptrSession) {
-      uint32_t const cui32_embeddedPgn = t_ptrSession->mui32_embeddedPgn;
-
-      switch (cui32_embeddedPgn) {
-      case 0xab00:
-        analyzeFS2Cl(
-            canGetDa(),
-            canGetSa(),
-            t_ptrSession->mvec_data.size(),
-            &(t_ptrSession->mvec_data)[0]);
-        break;
-      case 0xaa00:
-        analyzeCl2FS(
-            canGetDa(),
-            canGetSa(),
-            t_ptrSession->mvec_data.size(),
-            &(t_ptrSession->mvec_data)[0]);
-        break;
-      default:
-        analyzeRest(
-            canGetDa(),
-            canGetSa(),
-            t_ptrSession->mvec_data.size(),
-            &(t_ptrSession->mvec_data)[0],
-            cui32_embeddedPgn);
-        break;
-      }
-
-      gc_transferCollection.deleteSession(
-          e_Variant,      
-          canGetDa(),
-          canGetSa());
+      endOfTransfer(e_variant);
     }
+  }
+}
+
+void endOfTransfer(
+    TransferCollection_c::Variant_e ae_variant)
+{
+  TransferCollection_c::PtrSession_t t_ptrSession =
+    getTransferSession(
+        ae_variant,
+        canGetDa(),
+        canGetSa());
+  if (t_ptrSession) {
+    uint32_t const cui32_embeddedPgn = t_ptrSession->mui32_embeddedPgn;
+    Analyse_t *pt_analyse = &analyzeRest;
+
+    switch (cui32_embeddedPgn) {
+    case FS_TO_CLIENT_PGN:
+      pt_analyse = &analyzeFS2Cl;
+      break;
+    case CLIENT_TO_FS_PGN:
+      pt_analyse = &analyzeCl2FS;
+      break;
+    default:
+      break;
+    }
+
+    pt_analyse(
+        canGetDa(),
+        canGetSa(),
+        t_ptrSession->mvec_data.size(),
+        &(t_ptrSession->mvec_data)[0]);
+
+    gc_transferCollection.deleteSession(
+        ae_variant,      
+        canGetDa(),
+        canGetSa());
   }
 }
 
@@ -1659,8 +1650,8 @@ void interpretePgnData (uint32_t rui32_pgn)
     case ECU_TO_VT_PGN:                  interpretePgnsVtEcu(false); break; // from ECU
     case ACKNOWLEDGEMENT_PGN:            interpretePgnAcknowledge(); break;
     case PROCESS_DATA_PGN:               break;
-    case CLIENT_TO_FS_PGN:               interpretePgnsCl2Fs(); break;
-    case FS_TO_CLIENT_PGN:               interpretePgnsFs2Cl(); break;
+    case CLIENT_TO_FS_PGN:               interpretePgns8(&analyzeCl2FS); break;
+    case FS_TO_CLIENT_PGN:               interpretePgns8(&analyzeFS2Cl); break;
     case GUIDANCE_MACHINE_STATUS:        break;
     case GUIDANCE_SYSTEM_CMD:            break;
     case ISOBUS_CERTIFICATION_PGN:       break;
@@ -1926,31 +1917,36 @@ void checkHandshakingTP()
 {
   msgType_t mtype;
   uint8_t ui8_saClient=0xFE; // default to avoid compiler warning. The code below should make sure that it is always initialized properly!
-  if ((canGetPgn() == ETP_DATA_TRANSFER_PGN) || (canGetPgn() == TP_DATA_TRANSFER_PGN))
-  {
+  switch (canGetPgn()) {
+
+  case ETP_DATA_TRANSFER_PGN:
+  case TP_DATA_TRANSFER_PGN:
     ui8_saClient = canGetSa();
     mtype = msgTypeDATA;
-  }
-  else if ((canGetPgn() == ETP_CONN_MANAGE_PGN) || (canGetPgn() == TP_CONN_MANAGE_PGN))
-  {
-    switch (canGetData (0))
-    {
-      case 0x10:
-      case 0x14: mtype = msgTypeRTS; ui8_saClient = canGetSa(); break;
-      case 0x11:
-      case 0x15: mtype = msgTypeCTS; ui8_saClient = canGetDa(); break;
-      case 0x16: mtype = msgTypeDPO; ui8_saClient = canGetSa(); break;
-      case 0x13:
-      case 0x17: mtype = msgTypeEOMACK; ui8_saClient = canGetDa();break;
-      case 0xFF: mtype = msgTypeCONNABORT; ui8_saClient = canGetSa();
-                 // this message is special case! This aborts SA->DA and also DA->SA!
-                 struct_messages[4].svec_response [canGetDa()].push_back (mtype);
-                 struct_messages[4].svec_alives   [canGetDa()].push_back (canGetTime());
-                 break; // CONN ABORT BY SENDER!
+    break;
+
+  case ETP_CONN_MANAGE_PGN:
+  case TP_CONN_MANAGE_PGN:
+    switch (canGetData (0)) {
+    case 0x10:
+    case 0x14: mtype = msgTypeRTS; ui8_saClient = canGetSa(); break;
+    case 0x11:
+    case 0x15: mtype = msgTypeCTS; ui8_saClient = canGetDa(); break;
+    case 0x16: mtype = msgTypeDPO; ui8_saClient = canGetSa(); break;
+    case 0x13:
+    case 0x17: mtype = msgTypeEOMACK; ui8_saClient = canGetDa();break;
+    case 0xFF: mtype = msgTypeCONNABORT; ui8_saClient = canGetSa();
+      // this message is special case! This aborts SA->DA and also DA->SA!
+      struct_messages[4].svec_response [canGetDa()].push_back (mtype);
+      struct_messages[4].svec_alives   [canGetDa()].push_back (canGetTime());
+      break; // CONN ABORT BY SENDER!
       /// @todo SOON-260: Damn, can't we detect ConnAbort by Receiver here, too?
     }
+    break;
+
+  default:
+    return;
   }
-  else return;
 
   struct_messages[4].svec_response [ui8_saClient].push_back (mtype);
   struct_messages[4].svec_alives   [ui8_saClient].push_back (canGetTime());
@@ -2106,7 +2102,7 @@ int main (int argc, char** argv)
   }
 }
 
-void analyzeFS2Cl(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[])
+void analyzeFS2Cl(uint8_t SA, uint8_t DA, size_t lengthData, uint8_t Data[])
 {
   uint32_t i_pathNameLength = 0;
   uint16_t msg_count = 0;
@@ -2192,7 +2188,7 @@ void analyzeFS2Cl(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[])
       cout << " Count: " << setw(4) << msg_count << " ";
 
       //case file-data
-      if (lengthData == msg_count + 5) {
+      if (lengthData == msg_count + 5u) {
         for (uint16_t loop = 0; loop < msg_count; loop++) {
           cout << setw(2) << hex << uint32_t(Data[5 + loop]) << " ";
         }
@@ -2274,11 +2270,9 @@ void analyzeFS2Cl(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[])
   }
 }
 
-void analyzeRest(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[], uint32_t aui32_embeddedPgn)
+void analyzeRest(uint8_t SA, uint8_t DA, size_t lengthData, uint8_t Data[])
 {
-  (void)aui32_embeddedPgn; // currently unused
-
-  int local_multipacketWrap = i_multipacketWrap;
+  size_t local_multipacketWrap = i_multipacketWrap;
   if (local_multipacketWrap > lengthData)
     local_multipacketWrap = lengthData;
 
@@ -2286,19 +2280,19 @@ void analyzeRest(uint8_t SA, uint8_t DA, uint16_t lengthData, uint8_t Data[], ui
 
   cout << "              " << hex << setw(2)<<setfill('0') << uint32_t(SA) << "->" << setw(2)<<setfill('0') << uint32_t(DA) << " " << dec << setw(7)<<setfill(' ') << uint32_t(lengthData) << "  " << hex;
 
-  for (int blockoffset=0; blockoffset < lengthData; blockoffset += local_multipacketWrap)
+  for (size_t blockoffset=0; blockoffset < lengthData; blockoffset += local_multipacketWrap)
   {
     if (blockoffset > 0)
       cout << "                              ";
 
-    for (int inblock = 0; inblock < i_multipacketWrap; ++inblock)
+    for (size_t inblock = 0; inblock < i_multipacketWrap; ++inblock)
     {
       if ((blockoffset + inblock) < lengthData)
         cout << setw(2)<<setfill('0') << uint32_t(Data[blockoffset+inblock]) << " ";
       else
         cout << "   ";
     }
-    for (int inblock = 0; inblock < i_multipacketWrap; ++inblock)
+    for (size_t inblock = 0; inblock < i_multipacketWrap; ++inblock)
     {
       if ((blockoffset + inblock) < lengthData)
         cout << getAscii (Data[blockoffset+inblock]);
