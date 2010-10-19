@@ -1451,7 +1451,8 @@ generate_interface_filelist()
     # special exception to enable ISO-Request-PGN implementation in app scope
     grep -E "isorequestpgn_c.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
     # special exception for singletons.
-    grep -E "singleton_container_decl.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
+    # obsolete!
+    #grep -E "singleton_container_decl.h" "$TMP_INTERNAL_FILELIST" >> "$TMP_INTERFACE_FILELIST"
 
     local INTERFACE_FILE
     while read -r INTERFACE_FILE; do
