@@ -16,6 +16,8 @@
 #include "counteri_c.h"
 #include "sensori_c.h"
 
+#include <IsoAgLib/util/iliberr_c.h>
+
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

@@ -17,6 +17,7 @@
 // ISOAgLib
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/container.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
 
@@ -26,7 +27,7 @@
 namespace IsoAgLib {
   class iLibErr_c;
   class iErrorObserver_c;
-  typedef SINGLETON_CLIENT1( iLibErr_c, iErrorObserver_c ) SingletonILibErr_c;
+  typedef SINGLETON( iLibErr_c ) SingletonILibErr_c;
   // old: typedef SINGLETON_CLIENT1_KEY( iLibErr_c, iErrorObserver_c, int ) SingletonILibErr_c;
 
   /** C-style function, to get access to the unique iLibErr_c singleton instance */
@@ -205,6 +206,8 @@ private:
   iLibErr_c(const iLibErr_c& acrc_src);
 
   IsoaglibBitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
+
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(iErrorObserver_c);
 };
 
 class iErrorObserver_c {

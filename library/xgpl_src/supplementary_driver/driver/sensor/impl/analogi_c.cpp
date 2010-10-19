@@ -17,6 +17,10 @@
 #include "sensori_c.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/util/config.h>
+
+#include <IsoAgLib/util/iliberr_c.h>
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 

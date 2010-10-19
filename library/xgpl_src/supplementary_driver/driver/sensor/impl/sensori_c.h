@@ -17,6 +17,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/container.h>
 
 #include "analogi_c.h"
 #include "digitali_c.h"
@@ -39,7 +40,7 @@ SensorI_c& getSensorInstance( void );
   @short Hardware dependent object for hardware independent getting of sensor data.
   @author Dipl.-Inform. Achim Spangler
   */
-class SensorI_c : public SingletonDerivedCont3Key<SensorI_c,ClientBase,AnalogI_c,uint8_t,DigitalI_c,uint8_t,CounterI_c,uint8_t> {
+class SensorI_c : public SingletonDerived<SensorI_c,ClientBase> {
 public:
   /**
     initialisation for the sensor input management which sets the allowed number
@@ -194,7 +195,11 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of SensorI_c within application
     */
-  SensorI_c( void ) { };
+  SensorI_c( void )
+    : CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
+    , CONTAINER_CLIENT2_CTOR_INITIALIZER_LIST
+    , CONTAINER_CLIENT3_CTOR_INITIALIZER_LIST
+  { }
 
   /** register a pointer to an external analog input object
     * @param apc_object const pointer to new AnalogI_c instance,
@@ -311,6 +316,15 @@ private:
   uint8_t b_min_digital;
   /** max digital input */
   uint8_t b_maxDigital;
+
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(AnalogI_c);
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_KEY(AnalogI_c,uint8_t);
+
+  CONTAINER_CLIENT2_MEMBER_FUNCTIONS_MAIN(DigitalI_c);
+  CONTAINER_CLIENT2_MEMBER_FUNCTIONS_KEY(DigitalI_c,uint8_t);
+
+  CONTAINER_CLIENT3_MEMBER_FUNCTIONS_MAIN(CounterI_c);
+  CONTAINER_CLIENT3_MEMBER_FUNCTIONS_KEY(CounterI_c,uint8_t);
 };
 }
 

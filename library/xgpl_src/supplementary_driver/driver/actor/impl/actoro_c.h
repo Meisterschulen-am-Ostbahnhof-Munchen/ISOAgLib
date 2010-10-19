@@ -18,6 +18,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/container.h>
 
 #include "digitalo_c.h"
 #include "actor_c.h"
@@ -34,7 +35,7 @@ namespace __IsoAgLib {
   @short Hardware dependent object for hardware independent controling of actor outputs.
   @author Dipl.-Inform. Achim Spangler
   */
-class ActorO_c : public SingletonDerivedCont1Key<ActorO_c,ClientBase,DigitalO_c,uint8_t> {
+class ActorO_c : public SingletonDerived<ActorO_c,ClientBase> {
 public:
   /** destructor for the actor output manager object */
   ~ActorO_c();
@@ -100,7 +101,7 @@ private:
     /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ActorO_c within application
     */
-  ActorO_c( void ) { };
+  ActorO_c( void ) : CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST { }
 
   /** register pointer to a new client
     * this function is called within construction of new client instance
@@ -136,6 +137,9 @@ private: // Private attributes
   uint8_t b_min_digitalLimit;
   /** max digital channel limit */
   uint8_t b_maxDigitalLimit;
+
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(DigitalO_c);
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_KEY(DigitalO_c,uint8_t);
 };
 /** C-style function, to get access to the unique ActorO_c singleton instance */
 ActorO_c& getActorInstance( void );

@@ -20,6 +20,7 @@
 #include <functional>
 
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/container.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
@@ -40,13 +41,7 @@ namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 class Process_c;
-#ifdef __IAR_SYSTEMS_ICC__
-  // special hack in here, because Process_c is going to be rewritten anyway...
-  typedef IarSingletonDerivedCont2<Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcDataRemoteBase_c> SingletonProcess_c;
-#else
-  typedef SINGLETON_DERIVED_CLIENT2(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcDataRemoteBase_c) SingletonProcess_c;
-  //old: typedef SINGLETON_DERIVED_CLIENT2_KEY(Process_c, Scheduler_Task_c, ProcDataLocalBase_c, ProcIdent_c, ProcDataRemoteBase_c, ProcIdent_c ) SingletonProcess_c;
-#endif
+  typedef SINGLETON_DERIVED(Process_c, Scheduler_Task_c) SingletonProcess_c;
 
 /**
   Central managing instance for all process data
@@ -515,8 +510,10 @@ private: // Private attributes
     */
   Process_c() :
     mt_handler(*this),
-    mt_customer(*this)
-  {};
+    mt_customer(*this),
+    CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST,
+    CONTAINER_CLIENT2_CTOR_INITIALIZER_LIST
+  {}
 
   /** msg object for CAN I/O */
   ProcessPkg_c mc_data;
@@ -545,6 +542,8 @@ private: // Private attributes
   IsoAgLib::ProcessDataChangeHandler_c* mpc_processDataChangeHandler;
   Handler_t mt_handler;
   Customer_t mt_customer;
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcDataLocalBase_c);
+  CONTAINER_CLIENT2_MEMBER_FUNCTIONS_MAIN(ProcDataRemoteBase_c);
 };
 
 

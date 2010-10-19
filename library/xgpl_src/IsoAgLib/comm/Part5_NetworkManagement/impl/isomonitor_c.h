@@ -43,10 +43,8 @@ typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::iterator ControlF
 typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::const_iterator ControlFunctionStateHandlerVectorConstIterator_t;
 
 class IsoMonitor_c;
-typedef SINGLETON_DERIVED_CLIENT1(IsoMonitor_c, Scheduler_Task_c, IdentItem_c ) SingletonIsoMonitor_c;
-//old: typedef SINGLETON_DERIVED_CLIENT1_KEY(IsoMonitor_c, Scheduler_Task_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
-// NEU SINGLETON TYPEDEF, wenn ISOMonitor auch IdentItem_c liste verwalten soll
-// typedef SINGLETON_DERIVED1(IsoMonitor_c, Scheduler_Task_c, IdentItem_c, IsoName_c) SingletonIsoMonitor_c;
+typedef SINGLETON_DERIVED(IsoMonitor_c, Scheduler_Task_c) SingletonIsoMonitor_c;
+
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
   @short Manager for members of Scheduler_c (IsoItem_c)
@@ -625,6 +623,8 @@ private:
   IsoName_c mc_serviceTool;
   Handler_t mt_handler;
   Customer_t mt_customer;
+
+  CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(IdentItem_c);
 };
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )

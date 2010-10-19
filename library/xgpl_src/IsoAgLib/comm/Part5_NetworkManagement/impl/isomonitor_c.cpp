@@ -69,7 +69,8 @@ IsoMonitor_c::IsoMonitor_c() :
   mvec_isoMember(),
   mc_serviceTool( IsoName_c::IsoNameUnspecified() ),
   mt_handler(*this),
-  mt_customer(*this)
+  mt_customer(*this),
+  CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
 {
   // functionality moved OUT of the constructor, as the constructor is NOT called in embedded systems for static class instances.
 }

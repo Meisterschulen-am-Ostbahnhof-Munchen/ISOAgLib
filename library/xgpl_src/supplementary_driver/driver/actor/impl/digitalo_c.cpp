@@ -15,6 +15,9 @@
 #include "digitalo_c.h"
 #include "actoro_c.h"
 
+#include <IsoAgLib/util/iliberr_c.h>
+
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
@@ -43,7 +46,7 @@ void DigitalO_c::init(uint8_t aui8_channel)
   // config the PWM freq with BIOS call
   if (HAL::setPwmFreq(aui8_channel, CONFIG_PWM_DEFAULT_FREQUENCY) == HAL_RANGE_ERR)
   { // wrong channel or PWM
-	ui16_maxOutputPwmFreq = 0xFFFF;
+    ui16_maxOutputPwmFreq = 0xFFFF;
     getILibErrInstance().registerError( iLibErr_c::Range, iLibErr_c::Actor );
   }
   else

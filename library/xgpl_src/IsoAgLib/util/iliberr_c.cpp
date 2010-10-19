@@ -57,8 +57,11 @@ iLibErr_c::close()
 
 
 /** default constructor which sets the error value to noErr */
-iLibErr_c::iLibErr_c() : errTypeAtLoc() // : ui32_lastErrorTime(0)
-{ }
+iLibErr_c::iLibErr_c()
+  : errTypeAtLoc() // : ui32_lastErrorTime(0)
+  , CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
+{
+}
 
 struct UpdateErrorObserver_s : public STL_NAMESPACE::unary_function< iErrorObserver_c *, void > {
   void operator()(iErrorObserver_c *pc_errorObserver) {

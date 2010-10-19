@@ -16,9 +16,12 @@
 #include "sensori_c.h"
 #include <IsoAgLib/util/config.h>
 
+#include <IsoAgLib/util/iliberr_c.h>
+
 #if DEBUG_SENSORS
 #include <supplementary_driver/driver/rs232/impl/rs232io_c.h>
 #endif
+
 
 namespace IsoAgLib {
 /** function to handle a DigitalI_c event from HAL
