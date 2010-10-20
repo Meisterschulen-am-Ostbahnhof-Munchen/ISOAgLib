@@ -23,8 +23,9 @@
 
 #include "sensor_target_extensions.h"
 #include <IsoAgLib/hal/c2c/config.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
-#include <stdio.h>	// for debug!!!
+//#include <stdio.h>	// for debug!!!
 
 #include <cstdlib>
 #include <cstring>
