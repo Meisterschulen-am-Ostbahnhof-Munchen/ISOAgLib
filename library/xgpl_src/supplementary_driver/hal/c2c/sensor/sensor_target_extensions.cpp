@@ -29,6 +29,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <string.h>
 
 
 namespace __HAL {
