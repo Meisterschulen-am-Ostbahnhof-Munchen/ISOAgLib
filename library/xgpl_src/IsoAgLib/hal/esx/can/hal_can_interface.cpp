@@ -382,7 +382,7 @@ int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t 
   #ifdef USE_CAN_MEASURE_BUSLOAD
    gb_cinterfBusLoadSlice[aui8_busNr] = 0;
   // cnt 0xFF ist sign, that this MsgObj isn't configured for send
-  memset((gwCinterfBusLoad[aui8_busNr]),0,10);
+  CNAMESPACE::memset((gwCinterfBusLoad[aui8_busNr]),0,10);
   #endif
 
   // now config BUS

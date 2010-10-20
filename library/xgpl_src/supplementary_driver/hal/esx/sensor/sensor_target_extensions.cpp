@@ -172,7 +172,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
     if (_puiDiginTimebase[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
     else
     {
-      memset(_puiDiginTimebase[(ab_channel / 4)], 0, sizeof(uint16_t) * 4);
+      CNAMESPACE::memset(_puiDiginTimebase[(ab_channel / 4)], 0, sizeof(uint16_t) * 4);
       _puiDiginTimebase[(ab_channel / 4)][(ab_channel % 4)] = aui16_timebase;
     }
   }
@@ -217,7 +217,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
 	    _pulDiginCounter[(ab_channel / 4)] = (uint32_t*)malloc(4*sizeof(uint32_t));
 	    /* check if allocated properly and init */
 	    if (_pulDiginCounter[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-	    else memset(_pulDiginCounter[(ab_channel / 4)], 0, sizeof(uint32_t)*4);
+	    else CNAMESPACE::memset(_pulDiginCounter[(ab_channel / 4)], 0, sizeof(uint32_t)*4);
 	  }
 
     // create corresponding array elements for last trigger time
@@ -225,7 +225,7 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
     {  /* according 4-group of t_triggerNode isn't created -> allocate */
       _pt_diginTriggerTime[(ab_channel / 4)] = (t_triggerNode*)malloc(4*sizeof(t_triggerNode));
       if (_pt_diginTriggerTime[(ab_channel / 4)] == NULL) i16_errorState |= C_OVERFLOW;
-      else memset(_pt_diginTriggerTime[(ab_channel / 4)], 0, sizeof(t_triggerNode) * 4);
+      else CNAMESPACE::memset(_pt_diginTriggerTime[(ab_channel / 4)], 0, sizeof(t_triggerNode) * 4);
     }
   }
 

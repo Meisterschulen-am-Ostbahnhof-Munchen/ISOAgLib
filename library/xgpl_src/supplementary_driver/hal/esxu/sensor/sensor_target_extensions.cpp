@@ -206,7 +206,7 @@ HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/
   { /* standard BIOS frequency and period methods doesn�t fit for
      * the wanted timebase -> use extension functions -> allocate needed vars
      */
-    memset(&_pt_diginTriggerTime[ab_channel], 0, sizeof(t_triggerNode));
+    CNAMESPACE::memset(&_pt_diginTriggerTime[ab_channel], 0, sizeof(t_triggerNode));
   }
 #endif
 

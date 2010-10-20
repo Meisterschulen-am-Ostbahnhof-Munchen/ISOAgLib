@@ -339,7 +339,7 @@ bool isConsumerReading(uint8_t aui8_busNum)
 int32_t fifo_useMsgObjGet(uint8_t aui8_busNumber,__IsoAgLib::CanPkg_c* apc_data)
 {
   fifoData_s pt_receive;
-  STL_NAMESPACE::memset(&pt_receive,0,sizeof(fifoData_s));
+  CNAMESPACE::memset(&pt_receive,0,sizeof(fifoData_s));
 
 
   int32_t b_retVal = iFifoRead(aui8_busNumber,pt_receive);/** read the message but doesn`t pop it*/
