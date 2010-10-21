@@ -79,7 +79,7 @@ CONTAINER_CLIENTx_MEMBERS(Cx,c_arrClientCx,pc_searchCacheCx,cacheTypeCx_t)
 #define CONTAINER_CLIENTx_MEMBER_FUNCTIONS_KEY(existCx,getCx,Cx,Kx,pc_searchCacheCx,c_arrClientCx,cacheTypeCx_t) \
   bool existCx( Kx at_key ) \
   { \
-    if ( ( pc_searchCacheC1 != c_arrClientC1.end() ) && ( (*pc_searchCacheC1)->operator==( at_key ) ) ) \
+    if ( ( pc_searchCacheCx != c_arrClientCx.end() ) && ( (*pc_searchCacheCx)->operator==( at_key ) ) ) \
       return true; \
 \
     for ( pc_searchCacheCx = c_arrClientCx.begin(); \
