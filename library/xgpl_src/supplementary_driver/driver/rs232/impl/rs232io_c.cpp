@@ -105,11 +105,8 @@ RS232IO_c::init(
   // stop RS232 interface if configured before
   if ( ui32_baudrate != BAUDERATE_CONTRUCTOR_DEFAULT_VALUE )
   { // no more initial value
-    #ifdef USE_RS232_CHANNEL
-    if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ) HAL::close_rs232( ui8_channel );
-    #else
-    HAL::close_rs232();
-    #endif
+    if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE )
+      HAL::close_rs232( ui8_channel );
   }
 
   // set error state if one of b_baudAllowed and b_dataModeAllowed is false
@@ -135,9 +132,7 @@ RS232IO_c::init(
     {
       // Only here do we store the values, as these two fields help us know whether the device is already initialized
       ui32_baudrate = aui32_baudrate;
-#ifdef USE_RS232_CHANNEL
       ui8_channel = aui8_channel;
-#endif
     }
   }
   else
