@@ -55,19 +55,21 @@ public:
         * Err_c::badAlloc not enough memory for allocating the buffers
         * Err_c::range one of the configuration vals is not in allowed ranges
   */
-  bool init(uint32_t aui32_baudrate,
-          t_dataMode ren_dataMode,
-          bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
-          uint16_t aui16_sndBuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE, uint16_t aui16_recBuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE
-          #ifdef USE_RS232_CHANNEL
-          ,uint8_t aui8_channel = 0
-          #endif
-          )
-  {return RS232IO_c::init(aui32_baudrate, RS232IO_c::t_dataMode(ren_dataMode), ab_xonXoff, aui16_sndBuf, aui16_recBuf
-        #ifdef USE_RS232_CHANNEL
-        ,aui8_channel
-        #endif
-  );};
+  bool init(
+      uint32_t aui32_baudrate,
+      t_dataMode ren_dataMode,
+      bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
+      uint16_t aui16_sndBuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE,
+      uint16_t aui16_recBuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE,
+      uint8_t aui8_channel = 0) {
+    return RS232IO_c::init(
+        aui32_baudrate,
+        RS232IO_c::t_dataMode(ren_dataMode),
+        ab_xonXoff,
+        aui16_sndBuf,
+        aui16_recBuf,
+        aui8_channel);
+  }
   /**
     set the baudrate to a new value
     @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
@@ -126,10 +128,9 @@ public:
   */
   uint16_t rec_bufferSize()const{return RS232IO_c::rec_bufferSize();};
 
-  #ifdef USE_RS232_CHANNEL
   /** get the channel */
-  uint8_t getChannel() const { return RS232IO_c::getChannel();};
-  #endif
+  uint8_t getChannel() const { return RS232IO_c::getChannel(); }
+
   /**
     clear the receive buffer without reading of actual data in buffer
   */

@@ -28,11 +28,6 @@
 #ifndef _HAL_RS232_OVER_CAN_H_
 #define _HAL_RS232_OVER_CAN_H_
 
-// Multiple RS232 ports, so must use the channel parameter in the function calls!
-#if !defined( USE_RS232_CHANNEL )
-#	define USE_RS232_CHANNEL
-#endif
-
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/hal/hal_typedef.h>
 

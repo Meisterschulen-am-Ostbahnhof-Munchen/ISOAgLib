@@ -28,8 +28,6 @@
 #ifndef _HAL_DJ1_RS232_H_
 #define _HAL_DJ1_RS232_H_
 
-// Multiple RS232 ports, so must use the channel parameter in the function calls!
-#define USE_RS232_CHANNEL
 
 #include <IsoAgLib/hal/Dj1/config.h>
 #include <IsoAgLib/hal/Dj1/typedef.h>

@@ -59,30 +59,25 @@ RS232IO_c::RS232IO_c( void )
   , b_xon_xoff (false)
   , ui16_sndBuf (0)
   , ui16_recBuf (0)
-  #ifdef USE_RS232_CHANNEL
-  ,ui8_channel (CHANNEL_CONTRUCTOR_DEFAULT_VALUE)
-  #endif
+  , ui8_channel (CHANNEL_CONTRUCTOR_DEFAULT_VALUE)
 {};
 
 
 void
 RS232IO_c::close()
 {
-  #ifdef USE_RS232_CHANNEL
   if ( ui8_channel != CHANNEL_CONTRUCTOR_DEFAULT_VALUE ) HAL::close_rs232( ui8_channel );
-  #else
-  HAL::close_rs232();
-  #endif
 }
 
 
 bool
-RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_xonXoff,
-        uint16_t aui16_sndBuf, uint16_t aui16_recBuf
-        #ifdef USE_RS232_CHANNEL
-        , uint8_t aui8_channel
-        #endif
-        )
+RS232IO_c::init(
+    uint32_t aui32_baudrate,
+    t_dataMode ren_dataMode,
+    bool ab_xonXoff,
+    uint16_t aui16_sndBuf,
+    uint16_t aui16_recBuf,
+    uint8_t aui8_channel)
 {
   bool b_result;
   // check the configuration informations
@@ -120,7 +115,7 @@ RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_xonXof
   // set error state if one of b_baudAllowed and b_dataModeAllowed is false
   // and init hardware if everything is accepted
   if ( ((b_baudAllowed) && (b_dataModeAllowed))
-     &&(HAL::init_rs232(aui32_baudrate, b_dataParityVal, b_stopBit, ab_xonXoff RS232_CHANNEL_CALL_PARAM_LAST) == HAL_NO_ERR)
+     &&(HAL::init_rs232(aui32_baudrate, b_dataParityVal, b_stopBit, ab_xonXoff, aui8_channel) == HAL_NO_ERR)
       )
   { // o.k.
     // store configuration values
@@ -131,8 +126,8 @@ RS232IO_c::init(uint32_t aui32_baudrate, t_dataMode ren_dataMode, bool ab_xonXof
 
     b_result = true;
     // now init buffers
-    if (HAL::configRs232TxObj(ui16_sndBuf, NULL, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
-    if (HAL::configRs232RxObj(ui16_recBuf, NULL RS232_CHANNEL_CALL_PARAM_LAST) != HAL_NO_ERR) b_result = false;
+    if (HAL::configRs232TxObj(ui16_sndBuf, NULL, NULL, aui8_channel) != HAL_NO_ERR) b_result = false;
+    if (HAL::configRs232RxObj(ui16_recBuf, NULL, aui8_channel) != HAL_NO_ERR) b_result = false;
 
     if (!b_result)
       getILibErrInstance().registerError( iLibErr_c::BadAlloc, iLibErr_c::Rs232 );
@@ -180,7 +175,7 @@ bool RS232IO_c::setBaudrate(uint32_t aui32_baudrate)
   }
 
   // now set the baudrate if allowed
-  if ((b_baudAllowed) && (HAL::setRs232Baudrate(aui32_baudrate RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR))
+  if ((b_baudAllowed) && (HAL::setRs232Baudrate(aui32_baudrate, ui8_channel) == HAL_NO_ERR))
   { // everything o.k.
     ui32_baudrate = aui32_baudrate;
   }
@@ -201,7 +196,7 @@ bool RS232IO_c::setBaudrate(uint32_t aui32_baudrate)
 */
 bool RS232IO_c::setSndBufferSize(uint16_t aui16_bufferSize)
 {
-  if (HAL::configRs232TxObj(aui16_bufferSize, NULL, NULL RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR)
+  if (HAL::configRs232TxObj(aui16_bufferSize, NULL, NULL, ui8_channel) == HAL_NO_ERR)
   { // send buffer successful created
     ui16_sndBuf = aui16_bufferSize;
     return true;
@@ -222,7 +217,7 @@ bool RS232IO_c::setSndBufferSize(uint16_t aui16_bufferSize)
 */
 bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
 {
-  if (HAL::configRs232RxObj(aui16_bufferSize, NULL RS232_CHANNEL_PARAM_LAST) == HAL_NO_ERR)
+  if (HAL::configRs232RxObj(aui16_bufferSize, NULL, ui8_channel) == HAL_NO_ERR)
   { // receive buffer successful created
     ui16_recBuf = aui16_bufferSize;
     return true;
@@ -261,12 +256,12 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
     while ( ui16_restLen > 0 )
     { // send max item
 
-      ui16_maxSendItemSize = ui16_sndBuf - HAL::getRs232TxBufCount(RS232_CHANNEL_PARAM_SINGLE);    
+      ui16_maxSendItemSize = ui16_sndBuf - HAL::getRs232TxBufCount(ui8_channel);    
 
       // restrict actual max item size to waiting chars to send
       if ( ui16_maxSendItemSize > ui16_restLen ) ui16_maxSendItemSize = ui16_restLen;
       // send actual item
-      if (HAL::put_rs232NChar((apb_data + ui16_startSendPos), ui16_maxSendItemSize RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
+      if (HAL::put_rs232NChar((apb_data + ui16_startSendPos), ui16_maxSendItemSize, ui8_channel) != HAL_NO_ERR)
       {
         getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
       }
@@ -318,7 +313,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   RS232IO_c& RS232IO_c::operator<<(uint8_t ab_data)
   {
 	if (! isInitialized() ) return *this;
-    if (HAL::put_rs232Char(ab_data RS232_CHANNEL_PARAM_LAST) != HAL_NO_ERR)
+    if (HAL::put_rs232Char(ab_data, ui8_channel) != HAL_NO_ERR)
     {
       getILibErrInstance().registerError( iLibErr_c::Rs232Overflow, iLibErr_c::Rs232 );
     }
@@ -467,7 +462,7 @@ void RS232IO_c::receive(uint8_t* pb_data, uint16_t aui16_len)
       getILibErrInstance().registerError( iLibErr_c::Rs232Underflow, iLibErr_c::Rs232 );
       break;
     }
-    HAL::getRs232Char(pb_writer RS232_CHANNEL_PARAM_LAST);
+    HAL::getRs232Char(pb_writer, ui8_channel);
     pb_writer++;
   }
 }
@@ -481,7 +476,7 @@ void RS232IO_c::receive(uint8_t* pb_data, uint16_t aui16_len)
 */
 int16_t RS232IO_c::getLine( uint8_t* pui8_data, uint8_t ui8_lastChar )
 {
-  return HAL::getRs232String( pui8_data, ui8_lastChar RS232_CHANNEL_PARAM_LAST);
+  return HAL::getRs232String( pui8_data, ui8_lastChar, ui8_channel);
 }
 
 /**
@@ -495,8 +490,8 @@ RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::string& rc_data)
 //  char pc_tempArray[50];
 
   // first eat white space (including \t,\n) - stop if buffer is empty
-  for (HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST); (((b_data == ' ' ) || (b_data == '\t' )) && (!eof()));
-       HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST));
+  for (HAL::getRs232Char(&b_data, ui8_channel); (((b_data == ' ' ) || (b_data == '\t' )) && (!eof()));
+       HAL::getRs232Char(&b_data, ui8_channel));
 
   // if buffer is empty exit
   if (eof())
@@ -509,7 +504,7 @@ RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::string& rc_data)
 //  rc_data = b_data; // store it
   while ( !eof() )
   {
-    HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST);
+    HAL::getRs232Char(&b_data, ui8_channel);
     //strncat(pc_tempArray, (char *)&b_data, 1);
     if ((b_data == ' ' ) || (b_data == '\t' )) break;
     else rc_data.push_back( b_data );
@@ -531,7 +526,7 @@ RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::deque<char>& rc_data)
 
   while ( !eof() )
   {
-    HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST);
+    HAL::getRs232Char(&b_data, ui8_channel);
     rc_data.push_back( b_data );
   }
   return *this;
@@ -546,7 +541,7 @@ RS232IO_c& RS232IO_c::operator>>(STL_NAMESPACE::deque<char>& rc_data)
 */
 RS232IO_c& RS232IO_c::operator>>(uint8_t* pb_data)
 {
-  HAL::getRs232String(pb_data, '\n' RS232_CHANNEL_PARAM_LAST);
+  HAL::getRs232String(pb_data, '\n', ui8_channel);
   return *this;
 }
 
@@ -691,8 +686,8 @@ void RS232IO_c::readToken()
   uint8_t ui8_ind = 0;
 
   // first eat white space (including \t,\n) - stop if buffer is empty
-  for (HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST); (isspace(b_data) && (eof()));
-       HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST));
+  for (HAL::getRs232Char(&b_data, ui8_channel); (isspace(b_data) && (eof()));
+       HAL::getRs232Char(&b_data, ui8_channel));
 
 
   // if buffer is empty, overwrite old data, set rs232_underflow error and exit
@@ -707,7 +702,7 @@ void RS232IO_c::readToken()
   pc_token[0] = b_data; // store it
   for (ui8_ind = 1; ((ui8_ind < 12) && (eof())); ui8_ind++)
   {
-    HAL::getRs232Char(&b_data RS232_CHANNEL_PARAM_LAST);
+    HAL::getRs232Char(&b_data, ui8_channel);
     if (isspace(b_data))break; // break loop on whitespace
     pc_token[ui8_ind] = b_data;
   }
