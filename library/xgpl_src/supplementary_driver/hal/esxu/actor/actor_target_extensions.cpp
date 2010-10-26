@@ -20,11 +20,9 @@
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "actor.h"
-
 #include <IsoAgLib/util/impl/util_funcs.h>
-#include <supplementary_driver/driver/rs232/irs232io_c.h>
-
 
 namespace HAL {
 
@@ -77,7 +75,7 @@ static const int16_t cui16_openLow  = ( 170000L / 4000L ); // 1700mV * 100 / 40m
 		int16_t ci16_result = __HAL::get_adc(__HAL::getPwmoutAdcCheckNr(aui8_channel));
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "get_adc( "
 << (uint16_t)__HAL::getPwmoutAdcCheckNr(aui8_channel)
 << " ) returns " << ci16_result << "\r";

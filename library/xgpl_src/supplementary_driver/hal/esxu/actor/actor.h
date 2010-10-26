@@ -27,6 +27,8 @@
 #ifndef _HAL_ESXu_ACTOR_H_
 #define _HAL_ESXu_ACTOR_H_
 
+#include <IsoAgLib/isoaglib_config.h>
+
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
@@ -37,8 +39,6 @@ namespace __HAL {
 #include <IsoAgLib/hal/esxu/config.h>
 #include <IsoAgLib/hal/esxu/typedef.h>
 #include <IsoAgLib/hal/esxu/errcodes.h>
-
-#include <supplementary_driver/driver/rs232/irs232io_c.h>
 
 /* ******************************************************** */
 /**
@@ -98,7 +98,7 @@ namespace HAL
     int16_t retval = __HAL::set_pwm_freq(bOutput, dwFrequency);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "set_pwm_freq( "
 << (uint16_t)bOutput << ", "
 << (uint16_t)dwFrequency
@@ -119,7 +119,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
   int16_t retval = __HAL::get_digout_status(aui8_channel,&tOutputstatus);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "get_digout_status( "
 << (uint16_t)aui8_channel << ", "
 << "&tOutputstatus"
@@ -140,7 +140,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
     int16_t retval = __HAL::set_digout(aui8_channel, wPWMValue);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "set_digout( "
 << (uint16_t)aui8_channel << ", "
 << (uint16_t)wPWMValue
@@ -164,7 +164,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
     int16_t retval = __HAL::set_digout_mask(wOutputMask, wDigitalValue);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "set_digout_mask( "
 << (uint16_t)wOutputMask << ", "
 << (uint16_t)wDigitalValue
@@ -186,7 +186,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
 		int16_t retval = __HAL::get_adc( __HAL::getPwmCurrentCheckNr(aui8_channel) );
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "get_adc( "
 << (uint16_t)__HAL::getPwmCurrentCheckNr(aui8_channel)
 << " ) returns " << retval << "\r";

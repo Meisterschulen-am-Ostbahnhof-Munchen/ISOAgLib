@@ -29,11 +29,8 @@
 #ifndef _HAL_ESXu_SENSOR_H_
 #define _HAL_ESXu_SENSOR_H_
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "sensor_target_extensions.h"
-
-#if DEBUG_HAL
-#  include <supplementary_driver/driver/rs232/irs232io_c.h>
-#endif
 
 /* ******************************************************** */
 /**
@@ -116,7 +113,7 @@ namespace HAL
     int16_t retval = __HAL::init_analogin(bNumber, VOLTAGE_IN);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_analogin( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
 << (uint16_t)bNumber << ", "
 << (uint16_t)VOLTAGE_IN << ") returns " << retval << "\r";
 #endif
@@ -132,7 +129,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_analogin
     int16_t retval = __HAL::init_analogin(bNumber, CURRENT_IN);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_analogin( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_analogin( "
 << (uint16_t)bNumber << ", "
 << (uint16_t)CURRENT_IN << ") returns " << retval << "\r";
 #endif
@@ -152,7 +149,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_analogin
   	int16_t retval = __HAL::init_digin(ab_channel, bMode, bAktivhighlow, pfFunctionName);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_digin( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "init_digin( "
 << (uint16_t)ab_channel << ", "
 << (uint16_t)bMode << ", "
 << (uint16_t)bAktivhighlow << ", "
@@ -228,7 +225,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_digin( "
     {int16_t i16_temp = __HAL::get_adc(__HAL::getAnaloginCheckNr(ab_channel));
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 << (uint16_t)__HAL::getAnaloginCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
 #endif
 
@@ -243,7 +240,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getAnaloginCheckNr(ab_channel));
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc_mean( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
 << (uint16_t)__HAL::getAnaloginCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
 #endif
 
@@ -258,7 +255,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc_mean(
     {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(ab_channel));
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 << (uint16_t)__HAL::getDiginAdcCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
 #endif
 
@@ -273,7 +270,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
     {int16_t i16_temp = __HAL::get_adc_mean(__HAL::getDiginAdcCheckNr(ab_channel));
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc_mean( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc_mean( "
 << (uint16_t)__HAL::getDiginAdcCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
 #endif
 
@@ -288,7 +285,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc_mean(
     {int16_t i16_temp = __HAL::get_adc(__HAL::getDiginAdcCheckNr(ab_channel));
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_adc( "
 << (uint16_t)__HAL::getDiginAdcCheckNr(ab_channel) << ") returns " << i16_temp << "\r";
 #endif
 
@@ -304,7 +301,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_adc( "
 	__HAL::get_system_analogdata(&t_Sys_AnalogData);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - "
 << "get_system_analogdata( &t_Sys_AnalogData ) " << ", iTemperatur = " << t_Sys_AnalogData.iTemperatur << "\r";
 #endif
 
@@ -324,7 +321,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
     { int16_t retval = __HAL::get_digin_onoff(ab_channelNumber);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_onoff( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff( "
 << (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
 #endif
 
@@ -341,7 +338,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_ono
     int16_t retval = __HAL::get_digin_onoff_static(ab_channelNumber);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_onoff_static( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_onoff_static( "
 << (uint16_t)ab_channelNumber << ") returns " << retval << "\r";
 #endif
 
@@ -363,7 +360,7 @@ IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_ono
     int16_t retval = __HAL::get_digin_freq(ab_channelNumber, &ui16_result);
 
 #if DEBUG_HAL
-IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "get_digin_freq( "
+INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " << "get_digin_freq( "
 << (uint16_t)ab_channelNumber << ", "
 << (uint16_t)ui16_result << ") returns " << retval << "\r";
 #endif

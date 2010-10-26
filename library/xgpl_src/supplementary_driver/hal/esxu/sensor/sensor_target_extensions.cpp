@@ -22,12 +22,8 @@
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
 
+#include <IsoAgLib/isoaglib_config.h>
 #include "sensor_target_extensions.h"
-
-#if DEBUG_HAL
-#  include <supplementary_driver/driver/rs232/irs232io_c.h>
-#endif
-
 
 using namespace std; // simple version to avoid problems with using CNAMESPACE
 
@@ -144,25 +140,12 @@ int16_t init_counter(uint8_t ab_channel, uint16_t aui16_timebase, bool ab_activH
   int16_t ret = init_digin(ab_channel, b_codeEdge, b_codeActiv, NULL);
 
 #if DEBUG_HAL
-uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - init_digin( %u, %u, %u, NULL ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) ab_channel
-, (uint16_t) b_codeEdge
-, (uint16_t) b_codeActiv
-, (int16_t) ret
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-//{
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "init_digin( "
-//<< (uint16_t)ab_channel << ", "
-//<< (uint16_t)b_codeEdge << ", "
-//<< (uint16_t)b_codeActiv << ", NULL ) returns "
-//<< ret << "\r";
-////<< "max pulse width = " << aui16_timebase << " ms\r"
-////<< "get_cpu_freq() = " << get_cpu_freq() << " MHz\r";
-//////<< ", ui32_prescale = " << ui32_prescale << "\r";
-//}
+  INTERNAL_DEBUG_DEVICE <<
+    __HAL::get_time() << " ms - " <<
+    "init_digin( " << (uint16_t)ab_channel << ", " <<
+    (uint16_t)b_codeEdge << ", " <<
+    (uint16_t)b_codeActiv <<
+    ", NULL ) returns " << ret << "\r";
 #endif
 
 // NOTE: On ESXu, The prescaler applies to both RPM inputs DIN9 and DIN10
@@ -181,17 +164,9 @@ HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/
   i16_errorState = set_digin_prescaler(_b_prescale_1_Index);
 
 #if DEBUG_HAL
-//uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - set_digin_prescaler( %u ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) _b_prescale_1_Index
-, (int16_t) i16_errorState
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - " << "set_digin_prescaler( "
-//<< (uint16_t)_b_prescale_1_Index << " ) returns "
-//<< i16_errorState << "\r";
+  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
+    "set_digin_prescaler( " << (uint16_t)_b_prescale_1_Index <<
+    " ) returns " << i16_errorState << "\r";
 #endif
 
   /* clear counter value
@@ -216,22 +191,12 @@ uint16_t numPulsesToAvg = 1;
 int16_t configretval = config_digin_freq( ab_channel, wTime, numPulsesToAvg );
 
 #if DEBUG_HAL
-//uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - config_digin_freq( %u, %u, %u ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) ab_channel
-, (uint16_t) wTime
-, (uint16_t) numPulsesToAvg
-, (int16_t) configretval
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//	<< "config_digin_freq( "
-//	<< (uint16_t) ab_channel << ", "
-//	<< (uint16_t) wTime << ", "
-//	<< (uint16_t) numPulsesToAvg << " ) returns  "
-//	<< configretval << "\r";
+  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
+    "config_digin_freq( " <<
+    (uint16_t) ab_channel << ", " <<
+    (uint16_t) wTime << ", " <<
+    (uint16_t) numPulsesToAvg <<
+    " ) returns  " << configretval << "\r";
 #endif
 
   return i16_errorState;
@@ -247,15 +212,11 @@ uint32_t getCounter(uint8_t ab_channel)
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
 #if DEBUG_HAL
-uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) ab_channel
-, (uint16_t) ui16_result
-, (uint16_t) ui16_counter
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
+    "get_digin_period( " << unsigned(ab_channel) << ", " <<
+    unsigned(ui16_result) << ", " <<
+    unsigned(ui16_counter) <<
+    " ) returns " << unsigned(retval) << "\r";
 #endif
 
 	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
@@ -273,15 +234,11 @@ int16_t resetCounter(uint8_t ab_channel)
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
 #if DEBUG_HAL
-uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) ab_channel
-, (uint16_t) ui16_result
-, (uint16_t) ui16_counter
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
+    "get_digin_period( " << unsigned(ab_channel) << ", " <<
+    unsigned(ui16_result) << ", " <<
+    unsigned(ui16_counter) <<
+    " ) returns " << unsigned(retval) << "\r";
 #endif
 
 	_pulDiginCounter[ab_channel] = 0;
@@ -301,15 +258,11 @@ uint16_t getCounterPeriod(uint8_t ab_channel)
 	int16_t retval = get_digin_period(ab_channel, &ui16_result, &ui16_counter);
 
 #if DEBUG_HAL
-uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - get_digin_period( %u, %u, %u ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) ab_channel
-, (uint16_t) ui16_result
-, (uint16_t) ui16_counter
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
+  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
+    "get_digin_period( " << unsigned(ab_channel) << ", " <<
+    unsigned(ui16_result) << ", " <<
+    unsigned(ui16_counter) <<
+    " ) returns " << unsigned(retval) << "\r";
 #endif
 
 	_pulDiginCounter[ab_channel] += ( ui16_counter - _prevCounter[ab_channel] );
@@ -353,29 +306,10 @@ uint16_t getCounterFrequency(uint8_t ab_channel)
     int16_t retval = get_digin_freq((byte)ab_channel, &ui16_result);
 
 #if DEBUG_HAL
-uint8_t buf[128];
-sprintf( (char*)buf, "%u ms - get_digin_freq( %u, %u ) returns %i\r"
-, (uint16_t) __HAL::get_time()
-, (uint16_t) ab_channel
-, (uint16_t) ui16_result
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "get_digin_freq( " << (uint16_t) ab_channel << ", " << (uint16_t)ui16_result << " ) returns " << retval << "\r";
-
-//uint16_t ui16_period = 0;
-//uint16_t ui16_pulses = 0;
-//retval = get_digin_period(ab_channel, &ui16_period, &ui16_pulses);
-
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< ", get_digin_period( " << (uint16_t) ab_channel << ", " << ui16_period << ", " << ui16_pulses << " ) returns " << retval << "\r";
-
-//uint32_t period_us = (((uint32_t)ui16_period) << (_b_prescale_1_Index + 3)) / get_cpu_freq();
-//uint16_t freq_mHz = (1000000000UL + (period_us>>1)) / period_us;
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< " per_us = " << period_us << ", freq_mHz = " << freq_mHz << "\r";
+  INTERNAL_DEBUG_DEVICE << __HAL::get_time() << " ms - " <<
+    "get_digin_freq( " << unsigned(ab_channel) << ", " <<
+    unsigned(ui16_result) << ", " <<
+    " ) returns " << unsigned(retval) << "\r";
 #endif
 
 #if 0
