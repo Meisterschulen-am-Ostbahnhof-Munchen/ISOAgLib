@@ -1695,6 +1695,7 @@ EOF
     local INSERT_CMAKE_ADD_EXECUTABLE="$(
         omit_or_printf '\n  %s' "$PROJECT" $(
             cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c' || status_le1))"
+    local INSERT_CMAKE_SOURCE_FILES="$(omit_or_printf '\n  %s' "$(cat filelist__$PROJECT.txt)" )"
     local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
     expand_template "$CMAKE_SKELETON_FILE" >"$(make_cmake_dir)/CMakeLists.txt"
 }

@@ -6,6 +6,9 @@ if(NOT CMAKE_BUILD_TYPE)
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
+find_program(CSCOPE cscope)
+find_program(CTAGS ctags)
+
 project(${INSERT_CMAKE_PROJECT})
 
 add_definitions(${INSERT_CMAKE_DEFINITIONS})
@@ -15,5 +18,8 @@ include_directories(${INSERT_CMAKE_INCLUDE_DIRECTORIES})
 link_directories(${INSERT_CMAKE_LINK_DIRECTORIES})
 
 add_executable(${INSERT_CMAKE_ADD_EXECUTABLE})
+
+add_custom_target(tags COMMAND \${CSCOPE} -b ${INSERT_CMAKE_SOURCE_FILES}
+                       COMMAND \${CTAGS}     ${INSERT_CMAKE_SOURCE_FILES} )
 
 target_link_libraries(${INSERT_CMAKE_TARGET_LINK_LIBRARIES})
