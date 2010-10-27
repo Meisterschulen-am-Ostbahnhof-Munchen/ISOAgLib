@@ -269,6 +269,7 @@ private:
 };
 
 typedef void Interprete_t(PtrDataFrame_t);
+Interprete_t interpretePgnData;
 Interprete_t interpretePgnsCl2Fs;
 Interprete_t interpretePgnsFs2Cl;
 Interprete_t dump;
@@ -1532,7 +1533,6 @@ TransferCollection_c::PtrSession_t getTransferSession(
   return t_ptrSession;
 }
 
-void interpretePgnData(PtrDataFrame_t at_ptrFrame, uint32_t rui32_pgn);
 void endOfTransfer(
     PtrDataFrame_t at_ptrFrame,
     TransferCollection_c::Variant_e ae_variant);
@@ -1694,26 +1694,14 @@ void endOfTransfer(
         at_ptrFrame->destinationAddress(),
         at_ptrFrame->sourceAddress());
   if (t_ptrSession) {
-    uint32_t const cui32_embeddedPgn = t_ptrSession->mui32_embeddedPgn;
-    Interprete_t *pt_analyse = &dump;
-
-    switch (cui32_embeddedPgn) {
-    case FS_TO_CLIENT_PGN:
-      pt_analyse = &interpretePgnsFs2Cl;
-      break;
-    case CLIENT_TO_FS_PGN:
-      pt_analyse = &interpretePgnsCl2Fs;
-      break;
-    default:
-      break;
-    }
-
     PtrDataFrame_t t_ptrArtificialFrame = new DataFrame_c(
         t_ptrSession->mvec_data,
         at_ptrFrame->destinationAddress(),
         at_ptrFrame->sourceAddress());
 
-    pt_analyse(t_ptrArtificialFrame);
+    // output in both ways, dump (raw) and interprete:
+    dump(t_ptrArtificialFrame);
+    interpretePgnData(t_ptrArtificialFrame);
 
     gs_main.mc_trans.deleteSession(
         ae_variant,
@@ -1722,11 +1710,11 @@ void endOfTransfer(
   }
 }
 
-void interpretePgnData(PtrDataFrame_t at_ptrFrame, uint32_t rui32_pgn)
+void interpretePgnData(PtrDataFrame_t at_ptrFrame)
 {
   Interprete_t *p_f = 0;
 
-  switch (rui32_pgn)
+  switch (at_ptrFrame->pgn())
   {
   case VT_TO_ECU_PGN:                           p_f = interpretePgnsVtToEcu; break;
   case ECU_TO_VT_PGN:                           p_f = interpretePgnsVtFromEcu; break;
@@ -1907,7 +1895,7 @@ pair< int, PtrDataFrame_t > parseLogLine()
     // Interpreted PGN
     interpretePgn(t_ptrFrame->pgn());
     // Interpreted PGN-Data
-    interpretePgnData (t_ptrFrame, t_ptrFrame->pgn());
+    interpretePgnData (t_ptrFrame);
     cout << endl;
   }
   else
