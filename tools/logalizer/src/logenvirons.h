@@ -1,0 +1,30 @@
+/*
+  logenvirons.h
+
+  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+
+  See the repository-log for details on the authors and file-history.
+  (Repository information can be found at <http://isoaglib.com/download>)
+
+  Use, modification and distribution are subject to the GNU General
+  Public License with exceptions for ISOAgLib. (See accompanying
+  file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
+*/
+
+#ifndef LOGENVIRONS_H
+#define LOGENVIRONS_H
+
+#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/isoaglib_config.h>
+
+char getAscii(uint8_t val);
+
+/** Inline definitions. */
+
+inline char getAscii(uint8_t val)
+{
+  return ((val >= 0x20) && (val < 0x7F)) ? (char(val)) : '.';
+}
+
+#endif//ndef LOGENVIRONS_H

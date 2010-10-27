@@ -11,215 +11,15 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
-#include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/isoaglib_config.h>
-#include <iostream>
-#include <fstream>
+#include <logenvirons.h>
+#include <transfercollection.h>
+#include <dataframe.h>
+#include <inputstream.h>
 #include <string>
 #include <vector>
-#include <map>
 #include <iomanip>
 #include <stdlib.h>
-#include <yasper.h>
 #include <algorithm>
-
-using namespace std;
-
-char getAscii(uint8_t val)
-{
-  return ((val >= 0x20) && (val < 0x7F)) ? (char(val)) : '.';
-}
-
-class DataFrame_c {
-public:
-  DataFrame_c(
-      uint64_t aui64_time,
-      uint32_t aui64_identifier,
-      std::vector< uint8_t > const &acrvec_data
-    ) :
-    mui64_time(aui64_time),
-    mui64_identifier(aui64_identifier),
-    mvec_data(acrvec_data),
-    mb_canExt(false)
-  {}
-  DataFrame_c( // artificial frame for frame data and addresses only!
-      std::vector< uint8_t > const &acrvec_data,
-      uint8_t aui8_sourceAddress,
-      uint8_t aui8_destinationAddress
-    ) :
-    mui64_time(0),
-    mui64_identifier(uint32_t(aui8_destinationAddress) << 8 | aui8_sourceAddress),
-    mvec_data(acrvec_data)
-  {}
-  uint8_t prio() const {
-    return uint8_t(mui64_identifier >> 26);
-  }
-  uint8_t dp() const {
-    return (mui64_identifier >> 24) & 0x03;
-  }
-  uint8_t sourceAddress() const {
-     return mui64_identifier & 0xFF;
-  }
-  uint8_t ps() const {
-    return (mui64_identifier >>  8) & 0xFF;
-  }
-  uint8_t destinationAddress() const {
-    return (mui64_identifier >> 8) & 0xFF;
-  }
-  uint8_t pf() const {
-    return (mui64_identifier >> 16) & 0xFF;
-  }
-  uint32_t pgn() const {
-    return
-      (dp() << 16) |
-      (pf() << 8) |
-      ((pf() >= 0xF0) ? ps() : 0);
-  }
-  uint64_t time() const {
-    return mui64_time;
-  }
-  uint8_t dataOctet(size_t at_index) const {
-    return mvec_data[at_index];
-  }
-  char asciiDataOctet(size_t at_index) const {
-    return getAscii(mvec_data[at_index]);
-  }
-  std::vector< uint8_t > const &data() const {
-    return mvec_data;
-  }
-  size_t dataSize() const {
-    return mvec_data.size();
-  }
-  bool isPdu1() const {
-    return pf() < 0xF0;
-  }
-  uint64_t identifier() const {
-    return mui64_identifier;
-  };
-private:
-  uint64_t mui64_time;
-  uint32_t mui64_identifier;
-  std::vector< uint8_t > mvec_data;
-  bool mb_canExt; /// @todo SOON-260: to be used! =)
-};
-
-typedef yasper::ptr< DataFrame_c > PtrDataFrame_t;
-
-class TransferCollection_c {
-public:
-  enum Variant_e {
-    variant_tp,
-    variant_etp,
-  };
-
-  struct Session_s {
-    Session_s(size_t at_sizeTransferData) :
-      mvec_data(at_sizeTransferData, 0),
-      mui32_embeddedPgn(0),
-      mui32_packetOffSet(0)
-    {}
-    std::vector< uint8_t > mvec_data;
-    uint32_t mui32_embeddedPgn;
-    uint32_t mui32_packetOffSet;
-  };
-
-  typedef yasper::ptr< Session_s > PtrSession_t;
-
-  PtrSession_t newSession(
-      Variant_e ae_variant,
-      uint8_t aui8_transferSourceAddress,
-      uint8_t aui8_transferDestinationAddress,
-      size_t at_sizeTransferData);
-
-  PtrSession_t getSession(
-      Variant_e ae_variant,
-      uint8_t aui8_transferSourceAddress,
-      uint8_t aui8_transferDestinationAddress);
-
-  void deleteSession(
-      Variant_e ae_variant,
-      uint8_t aui8_transferSourceAddress,
-      uint8_t aui8_transferDestinationAddress);
-
-private:
-  struct Key_s {
-    Key_s(
-        Variant_e ae_variant,
-        uint8_t aui8_transferSourceAddress,
-        uint8_t aui8_transferDestinationAddress) :
-      me_variant(ae_variant),
-      mui8_transferSourceAddress(aui8_transferSourceAddress),
-      mui8_transferDestinationAddress(aui8_transferDestinationAddress)
-    {}
-
-    Variant_e me_variant;
-    uint8_t mui8_transferSourceAddress;
-    uint8_t mui8_transferDestinationAddress;
-  };
-
-  friend bool operator<(
-      Key_s const &arcs_left,
-      Key_s const &arcs_right);
-
-  typedef std::map< Key_s, PtrSession_t > Transfers_t;
-  Transfers_t t_transfers;
-};
-
-TransferCollection_c::PtrSession_t TransferCollection_c::newSession(
-    Variant_e ae_variant,
-    uint8_t aui8_transferSourceAddress,
-    uint8_t aui8_transferDestinationAddress,
-    size_t at_sizeTransferData)
-{
-  PtrSession_t t_ptrSession = new Session_s(at_sizeTransferData);
-  t_transfers[
-      Key_s(
-          ae_variant,
-          aui8_transferSourceAddress,
-          aui8_transferDestinationAddress)
-    ] = t_ptrSession;
-  return t_ptrSession;
-}
-
-TransferCollection_c::PtrSession_t TransferCollection_c::getSession(
-    Variant_e ae_variant,
-    uint8_t aui8_transferSourceAddress,
-    uint8_t aui8_transferDestinationAddress)
-{
-  Transfers_t::iterator it_transfer =
-    t_transfers.find(
-        Key_s(
-            ae_variant,
-            aui8_transferSourceAddress,
-            aui8_transferDestinationAddress));
-  return
-    it_transfer == t_transfers.end() ?
-    TransferCollection_c::PtrSession_t(0) :
-    it_transfer->second;
-}
-
-void TransferCollection_c::deleteSession(
-    Variant_e ae_variant,
-    uint8_t aui8_transferSourceAddress,
-    uint8_t aui8_transferDestinationAddress)
-{
-  t_transfers.erase(
-      Key_s(
-          ae_variant,
-          aui8_transferSourceAddress,
-          aui8_transferDestinationAddress) );
-}
-
-bool operator<(
-    TransferCollection_c::Key_s const &arcs_left,
-    TransferCollection_c::Key_s const &arcs_right)
-{
-  return
-    arcs_left.me_variant < arcs_right.me_variant &&
-    arcs_left.mui8_transferSourceAddress < arcs_right.mui8_transferSourceAddress &&
-    arcs_left.mui8_transferDestinationAddress < arcs_right.mui8_transferDestinationAddress;
-}
 
 void interpretePgnsCl2Fs();
 void interpretePgnsFs2Cl();
@@ -236,38 +36,6 @@ typedef enum {
   logTypeJrf
 } logType_t;
 
-// RAII Programming Idiom for file being the resource:
-class InputStream_c {
-public:
-  InputStream_c(string str_filename) :
-    mifs_in(),
-    mpis_in( (str_filename == "-")? &cin : &mifs_in )
-  {
-    if (isFile()) {
-      mifs_in.open(str_filename.c_str());
-    }
-  }
-  ~InputStream_c() {
-    if (isFile())
-      mifs_in.close();
-  }
-  istream &raw() {
-    return *mpis_in;
-  }
-
-  bool isOpen() {
-    return !isFile() || mifs_in.is_open();
-  }
-private:
-  // don't let the public copy it:
-  InputStream_c(InputStream_c const &);
-  bool isFile() {
-    return mpis_in != &cin;
-  }
-  ifstream mifs_in;
-  istream *mpis_in;
-};
-
 typedef void Interprete_t(PtrDataFrame_t);
 Interprete_t interpretePgnData;
 Interprete_t interpretePgnsCl2Fs;
@@ -279,8 +47,6 @@ void decodeDate(uint16_t);
 void decodeTime(uint16_t);
 Interprete_t interpretePgnsVtFromEcu;
 Interprete_t interpretePgnsVtToEcu;
-
-typedef yasper::ptr< InputStream_c > PtrInputStream_t;
 
 struct Main_s {
   size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
@@ -298,42 +64,42 @@ struct Main_s {
 
 void exit_with_usage(const char* progname)
 {
-  cout << "Usage: (1) " << progname << " <logFile> [logType] [wrapMultipacket]" << endl << endl;
-  cout << "logFile:  filepath or - (dash, means standard input rather than a real file)"<<endl;
-  cout << "logTypes: 0 -> can_server [DEFAULT]"<<endl;
-  cout << "          1 -> rte"<<endl;
-  cout << "          2 -> CANMon"<<endl;
-  cout << "          3 -> CANoe ASCII (.asc)"<<endl;
-  cout << "          4 -> A1ASCII"<<endl;
-  cout << "          5 -> PCANView"<<endl;
-  cout << "          6 -> JohnDeere"<<endl;
-  cout << "          7 -> rte2"<<endl;
-  cout << "          8 -> JRF (.jrf)"<<endl;
-  cout << endl;
-  cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << endl;
-  cout << endl;
+  std::cout << "Usage: (1) " << progname << " <logFile> [logType] [wrapMultipacket]" << std::endl << std::endl;
+  std::cout << "logFile:  filepath or - (dash, means standard input rather than a real file)"<<std::endl;
+  std::cout << "logTypes: 0 -> can_server [DEFAULT]"<<std::endl;
+  std::cout << "          1 -> rte"<<std::endl;
+  std::cout << "          2 -> CANMon"<<std::endl;
+  std::cout << "          3 -> CANoe ASCII (.asc)"<<std::endl;
+  std::cout << "          4 -> A1ASCII"<<std::endl;
+  std::cout << "          5 -> PCANView"<<std::endl;
+  std::cout << "          6 -> JohnDeere"<<std::endl;
+  std::cout << "          7 -> rte2"<<std::endl;
+  std::cout << "          8 -> JRF (.jrf)"<<std::endl;
+  std::cout << std::endl;
+  std::cout << "wrapMultipacket: Number of data-bytes to display per line. Defaults to 32." << std::endl;
+  std::cout << std::endl;
 #ifdef WIN32
-  cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
-  cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
-  cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<endl;
-  cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<endl;
-  cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<endl;
-  cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..."<<endl;
-  cout << "            ...'   446270'"<<endl;
-  cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
-  cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<endl;
-  cout << "            ...'    17920  ....... '"<<endl;
-  cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<endl;
+  std::cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
+  std::cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
+  std::cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
+  std::cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
+  std::cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
+  std::cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff    '..."<<std::endl;
+  std::cout << "            ...'   446270'"<<std::endl;
+  std::cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488  '..."<<std::endl;
+  std::cout << "            ...'    17920  ....... '"<<std::endl;
+  std::cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
 #else
-  cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<endl;
-  cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<endl;
-  cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<endl;
-  cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<endl;
-  cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<endl;
-  cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<endl;
-  cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<endl;
-  cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<endl;
-  cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<endl;
+  std::cout << "can_server: '104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0'"<<std::endl;
+  std::cout << "rte:        '[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06'"<<std::endl;
+  std::cout << "             (with OR without Channel-Nr. in []. This is being autodetected.)"<<std::endl;
+  std::cout << "CANMon:     'RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB'"<<std::endl;
+  std::cout << "CANoe:      '  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF'"<<std::endl;
+  std::cout << "A1ASCII:    'm e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270'"<<std::endl;
+  std::cout << "PCANView:   '    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15'"<<std::endl;
+  std::cout << "JohnDeere:  'r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....... '"<<std::endl;
+  std::cout << "JRF:        '41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF'"<<std::endl;
 #endif
 
   exit(0);
@@ -341,16 +107,16 @@ void exit_with_usage(const char* progname)
 
 void exit_with_error(const char* error_message)
 {
-  cerr << error_message << endl;
+  std::cerr << error_message << std::endl;
   exit(-1);
 }
 
-pair< int, PtrDataFrame_t > parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB
+std::pair< int, PtrDataFrame_t > parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
 
   unsigned arru_d[8];
@@ -369,12 +135,12 @@ pair< int, PtrDataFrame_t > parseLogLineCANMon() //RX        4     1   CFE5182x|
   return std::make_pair( i_result, t_ptrFrame );
 }
 
-pair< int, PtrDataFrame_t > parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....\\. "
+std::pair< int, PtrDataFrame_t > parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....\\. "
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
   int iA, iB;
   unsigned arru_d[8];
@@ -391,12 +157,12 @@ pair< int, PtrDataFrame_t > parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03
   return std::make_pair( i_result, t_ptrFrame );
 }
 
-pair< int, PtrDataFrame_t > parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
+std::pair< int, PtrDataFrame_t > parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
   long long iA;
   int iB;
@@ -417,12 +183,12 @@ pair< int, PtrDataFrame_t > parseLogLineCanServer() // "104916846 0 1 1 3 6 18ea
 }
 
 
-pair< int, PtrDataFrame_t > parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF "
+std::pair< int, PtrDataFrame_t > parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF "
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
   float f1;
   int iB, iDb;
@@ -442,12 +208,12 @@ pair< int, PtrDataFrame_t > parseLogLineCANoe() // "  18.9530 1  0CFE4980x      
 }
 
 
-pair< int, PtrDataFrame_t > parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270"
+std::pair< int, PtrDataFrame_t > parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270"
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
 /// @todo SOON-260: handle std/ext, too...
   int iA, iB, iDb;
@@ -468,12 +234,12 @@ pair< int, PtrDataFrame_t > parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x0
 
 
 
-pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06"
+std::pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06"
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
 
   int iB, iDb = 0; // "%i* %x
@@ -522,18 +288,18 @@ pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41  X   
 }
 
 
-pair< int, PtrDataFrame_t > parseLogLineRte2 ()
+std::pair< int, PtrDataFrame_t > parseLogLineRte2 ()
 {
     static uint64_t sui64_rteTime = 0;
     int big;
     int little;
     char *cursor;
     size_t byte;
-    string line;
+    std::string line;
 
     getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-    cout << line << endl;
+    std::cout << line << std::endl;
 #endif
 
     /* skip over any initial HW */
@@ -584,12 +350,12 @@ pair< int, PtrDataFrame_t > parseLogLineRte2 ()
 
 
 
-pair< int, PtrDataFrame_t > parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15"
+std::pair< int, PtrDataFrame_t > parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15"
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
   unsigned arru_d[8];
   int iA, iB, iDb;
@@ -608,12 +374,12 @@ pair< int, PtrDataFrame_t > parseLogLineTrc() // "    13)       116.6  Rx     18
 }
 
 
-pair< int, PtrDataFrame_t > parseLogLineJrf() // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
+std::pair< int, PtrDataFrame_t > parseLogLineJrf() // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
 {
-  string line;
+  std::string line;
   getline (gs_main.t_ptrIn->raw(), line);
 #if DEBUG
-  cout << line << endl;
+  std::cout << line << std::endl;
 #endif
   float fA;
   int iB;
@@ -638,68 +404,68 @@ void partiallyInterpretePgnsVtEcu(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
-    if (at_ptrFrame->dataOctet(0) < 0x10) cout << "Activation ";
-    if ((at_ptrFrame->dataOctet(0) >=0x10) && (at_ptrFrame->dataOctet(0) < 0xF0)) cout << "Command ";
+    if (at_ptrFrame->dataOctet(0) < 0x10) std::cout << "Activation ";
+    if ((at_ptrFrame->dataOctet(0) >=0x10) && (at_ptrFrame->dataOctet(0) < 0xF0)) std::cout << "Command ";
 
     int8_t i8_uidBytePos = -1;
 
     switch (at_ptrFrame->dataOctet(0))
     {
-      case 0x00: cout << "Soft Key"; i8_uidBytePos = 3; break;
-      case 0x01: cout << "Button"; i8_uidBytePos = 3; break;
-      case 0x02: cout << "Pointing Event"; break;
-      case 0x03: cout << "VT Select Input Object"; i8_uidBytePos = 2; break;
-      case 0x04: cout << "VT ESC"; i8_uidBytePos = 2; break;
-      case 0x05: cout << "VT Change Numeric Value"; i8_uidBytePos = 2; break;
-      case 0x06: cout << "VT Change Active Mask"; i8_uidBytePos = 2; break;
-      case 0x07: cout << "VT Change Soft Key Mask"; i8_uidBytePos = 4; break;
-      case 0x08: cout << "Input String Value"; i8_uidBytePos = 2; break;
+      case 0x00: std::cout << "Soft Key"; i8_uidBytePos = 3; break;
+      case 0x01: std::cout << "Button"; i8_uidBytePos = 3; break;
+      case 0x02: std::cout << "Pointing Event"; break;
+      case 0x03: std::cout << "VT Select Input Object"; i8_uidBytePos = 2; break;
+      case 0x04: std::cout << "VT ESC"; i8_uidBytePos = 2; break;
+      case 0x05: std::cout << "VT Change Numeric Value"; i8_uidBytePos = 2; break;
+      case 0x06: std::cout << "VT Change Active Mask"; i8_uidBytePos = 2; break;
+      case 0x07: std::cout << "VT Change Soft Key Mask"; i8_uidBytePos = 4; break;
+      case 0x08: std::cout << "Input String Value"; i8_uidBytePos = 2; break;
 
-      case 0x11: cout << "Object Pool Transfer"; break;
-      case 0x12: cout << "End of Object Pool"; break;
+      case 0x11: std::cout << "Object Pool Transfer"; break;
+      case 0x12: std::cout << "End of Object Pool"; break;
 
-      case 0x92: cout << "ESC"; i8_uidBytePos = 2; break;
+      case 0x92: std::cout << "ESC"; i8_uidBytePos = 2; break;
 
-      case 0xC0: cout << "Get Memory"; break;
-      case 0xC2: cout << "Get Number Of Soft Keys"; break;
-      case 0xC3: cout << "Get Text Font Data"; break;
-      case 0xC7: cout << "Get Hardware"; break;
+      case 0xC0: std::cout << "Get Memory"; break;
+      case 0xC2: std::cout << "Get Number Of Soft Keys"; break;
+      case 0xC3: std::cout << "Get Text Font Data"; break;
+      case 0xC7: std::cout << "Get Hardware"; break;
 
-      case 0xD0: cout << "Store Version"; break;
-      case 0xD1: cout << "Load Version"; break;
-      case 0xD2: cout << "Delete Version"; break;
+      case 0xD0: std::cout << "Store Version"; break;
+      case 0xD1: std::cout << "Load Version"; break;
+      case 0xD2: std::cout << "Delete Version"; break;
 
-      case 0xA0: cout << "Hide/Show Object"; i8_uidBytePos = 2; if (at_ptrFrame->dataOctet(4-1)) cout << " -show-"; else cout << " -hide-"; break;
-      case 0xA1: cout << "Enable/Disable Object"; i8_uidBytePos = 2; if (at_ptrFrame->dataOctet(4-1)) cout << " -enable-"; else cout << " -disable-"; break;
-      case 0xA2: cout << "Select Input Object"; i8_uidBytePos = 2; break;
-      case 0xA3: cout << "Control Audio Device"; break;
-      case 0xA4: cout << "Set Audio Volume"; break;
-      case 0xA5: cout << "Change Child Location"; i8_uidBytePos = 4; break;
-      case 0xA6: cout << "Change Size"; i8_uidBytePos = 2; break;
-      case 0xA7: cout << "Change Background Colour"; i8_uidBytePos = 2; break;
-      case 0xA8: cout << "Change Numeric Value"; i8_uidBytePos = 2; break;
-      case 0xA9: cout << "Change End Point"; i8_uidBytePos = 2; break;
-      case 0xAA: cout << "Change Font Attributes"; i8_uidBytePos = 2; break;
-      case 0xAB: cout << "Change Line Attributes"; i8_uidBytePos = 2; break;
-      case 0xAC: cout << "Change Fill Attributes"; i8_uidBytePos = 2; break;
-      case 0xAD: cout << "Change Active Mask"; i8_uidBytePos = 4; break;
-      case 0xAE: cout << "Change Soft Key Mask"; i8_uidBytePos = 5; break;
-      case 0xAF: cout << "Change Attribute"; i8_uidBytePos = 2; cout << " AID="<<uint16_t(at_ptrFrame->dataOctet(4-1)); break;
+      case 0xA0: std::cout << "Hide/Show Object"; i8_uidBytePos = 2; if (at_ptrFrame->dataOctet(4-1)) std::cout << " -show-"; else std::cout << " -hide-"; break;
+      case 0xA1: std::cout << "Enable/Disable Object"; i8_uidBytePos = 2; if (at_ptrFrame->dataOctet(4-1)) std::cout << " -enable-"; else std::cout << " -disable-"; break;
+      case 0xA2: std::cout << "Select Input Object"; i8_uidBytePos = 2; break;
+      case 0xA3: std::cout << "Control Audio Device"; break;
+      case 0xA4: std::cout << "Set Audio Volume"; break;
+      case 0xA5: std::cout << "Change Child Location"; i8_uidBytePos = 4; break;
+      case 0xA6: std::cout << "Change Size"; i8_uidBytePos = 2; break;
+      case 0xA7: std::cout << "Change Background Colour"; i8_uidBytePos = 2; break;
+      case 0xA8: std::cout << "Change Numeric Value"; i8_uidBytePos = 2; break;
+      case 0xA9: std::cout << "Change End Point"; i8_uidBytePos = 2; break;
+      case 0xAA: std::cout << "Change Font Attributes"; i8_uidBytePos = 2; break;
+      case 0xAB: std::cout << "Change Line Attributes"; i8_uidBytePos = 2; break;
+      case 0xAC: std::cout << "Change Fill Attributes"; i8_uidBytePos = 2; break;
+      case 0xAD: std::cout << "Change Active Mask"; i8_uidBytePos = 4; break;
+      case 0xAE: std::cout << "Change Soft Key Mask"; i8_uidBytePos = 5; break;
+      case 0xAF: std::cout << "Change Attribute"; i8_uidBytePos = 2; std::cout << " AID="<<uint16_t(at_ptrFrame->dataOctet(4-1)); break;
 
-      case 0xB0: cout << "Change Priority"; i8_uidBytePos = 2; break;
-      case 0xB1: cout << "Change List Item"; i8_uidBytePos = 2; break;
-      case 0xB2: cout << "Delete Object Pool"; break;
-      case 0xB3: cout << "Change String Value"; i8_uidBytePos = 2; break;
-      case 0xB4: cout << "Change Child Position"; i8_uidBytePos = 4; break;
+      case 0xB0: std::cout << "Change Priority"; i8_uidBytePos = 2; break;
+      case 0xB1: std::cout << "Change List Item"; i8_uidBytePos = 2; break;
+      case 0xB2: std::cout << "Delete Object Pool"; break;
+      case 0xB3: std::cout << "Change String Value"; i8_uidBytePos = 2; break;
+      case 0xB4: std::cout << "Change Child Position"; i8_uidBytePos = 4; break;
 
-      case 0xFE: cout << "VT Status Message: Active WS-Master's SA: "<<uint16_t(at_ptrFrame->dataOctet(1)); break;
-      case 0xFF: cout << "Working Set Maintenance"; break;
+      case 0xFE: std::cout << "VT Status Message: Active WS-Master's SA: "<<uint16_t(at_ptrFrame->dataOctet(1)); break;
+      case 0xFF: std::cout << "Working Set Maintenance"; break;
     }
-    if (i8_uidBytePos > 0) cout << " ObjectID="<<dec<<( (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos+1-1)<<8)) | (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos-1))) );
+    if (i8_uidBytePos > 0) std::cout << " ObjectID="<<std::dec<<( (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos+1-1)<<8)) | (uint16_t(at_ptrFrame->dataOctet(i8_uidBytePos-1))) );
   }
 }
 
@@ -708,7 +474,7 @@ void interpretePgnsVtFromEcu(PtrDataFrame_t at_ptrFrame)
   partiallyInterpretePgnsVtEcu(at_ptrFrame);
   bool const cb_response = at_ptrFrame->dataOctet(0) < 0x10;
   if (cb_response)
-    cout << " Response";
+    std::cout << " Response";
 }
 
 void interpretePgnsVtToEcu(PtrDataFrame_t at_ptrFrame)
@@ -718,7 +484,7 @@ void interpretePgnsVtToEcu(PtrDataFrame_t at_ptrFrame)
     (at_ptrFrame->dataOctet(0) >=0x10) &&
     (at_ptrFrame->dataOctet(0) < 0xF0);
   if (cb_response)
-    cout << " Response";  
+    std::cout << " Response";  
 }
 
 void interpretePgnsCl2Fs(
@@ -726,168 +492,168 @@ void interpretePgnsCl2Fs(
 {
   uint16_t i_pathNameLength = 0, i_destPathNameLength = 0;
 
-  cout << "SA: " << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->sourceAddress()) << " DA: " << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->destinationAddress()) << " length Data: " << setw(4)<<setfill('0') << uint32_t(at_ptrFrame->dataSize());
+  std::cout << "SA: " << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->sourceAddress()) << " DA: " << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->destinationAddress()) << " length Data: " << std::setw(4)<<std::setfill('0') << uint32_t(at_ptrFrame->dataSize());
   switch (uint32_t(at_ptrFrame->dataOctet(0)))
   {
-    case 0x00: cout << "\tClient Connection Maintenance";
+    case 0x00: std::cout << "\tClient Connection Maintenance";
       break;
 
-    case 0x01: cout << "\tGet File Server Properties Request ";
+    case 0x01: std::cout << "\tGet File Server Properties Request ";
       break;
 
-    case 0x10: cout << "\tGet Current Directory Request TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+    case 0x10: std::cout << "\tGet Current Directory Request TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       break;
 
-    case 0x11: cout << "\tChange Current Directory Request TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+    case 0x11: std::cout << "\tChange Current Directory Request TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
                i_pathNameLength = uint16_t((at_ptrFrame->dataOctet(3)<<8) | (at_ptrFrame->dataOctet(2)));
-               cout << " Path Name Length : " << i_pathNameLength;
-               cout << " Path Name : ";
+               std::cout << " Path Name Length : " << i_pathNameLength;
+               std::cout << " Path Name : ";
               for (uint16_t i = 0; i < i_pathNameLength; i++)
               {
-                cout << uint8_t(at_ptrFrame->dataOctet(4 + i));
+                std::cout << uint8_t(at_ptrFrame->dataOctet(4 + i));
               }
       break;
 
-    case 0x20: cout << "\tOpen File Request TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+    case 0x20: std::cout << "\tOpen File Request TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
 
-              if (at_ptrFrame->dataOctet(2) == 0) cout << " Open file for reading only";
-              if (at_ptrFrame->dataOctet(2) == 1) cout << " Open file for writing only";
-              if (at_ptrFrame->dataOctet(2) == 2) cout << " Open file for reading and writing only";
-              if (at_ptrFrame->dataOctet(2) == 3) cout << " Open directory";
+              if (at_ptrFrame->dataOctet(2) == 0) std::cout << " Open file for reading only";
+              if (at_ptrFrame->dataOctet(2) == 1) std::cout << " Open file for writing only";
+              if (at_ptrFrame->dataOctet(2) == 2) std::cout << " Open file for reading and writing only";
+              if (at_ptrFrame->dataOctet(2) == 3) std::cout << " Open directory";
 
-              (at_ptrFrame->dataOctet(2) & 4)? cout << " Create a new File if not existing": cout << " Open an existing File(fails if non-existent file)";
+              (at_ptrFrame->dataOctet(2) & 4)? std::cout << " Create a new File if not existing": std::cout << " Open an existing File(fails if non-existent file)";
 
-              (at_ptrFrame->dataOctet(2) & 8)? cout << " Open file for appending data the end of the file": cout << " Open file for random access";
+              (at_ptrFrame->dataOctet(2) & 8)? std::cout << " Open file for appending data the end of the file": std::cout << " Open file for random access";
 
-              (at_ptrFrame->dataOctet(2) & 16)? cout << " Open file with exclusive access(fails if already open)": cout << " Open file for shared access";
+              (at_ptrFrame->dataOctet(2) & 16)? std::cout << " Open file with exclusive access(fails if already open)": std::cout << " Open file for shared access";
 
               i_pathNameLength = uint16_t((at_ptrFrame->dataOctet(4)<<8) | (at_ptrFrame->dataOctet(3)));
 
-               cout << " Path Name Length: " << hex << i_pathNameLength;
-               cout << " Path Name: ";
+               std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
+               std::cout << " Path Name: ";
               for (uint16_t i = 0; i <   i_pathNameLength; i++)
               {
-                cout << uint8_t(at_ptrFrame->dataOctet(5 + i));
+                std::cout << uint8_t(at_ptrFrame->dataOctet(5 + i));
               }
       break;
 
-    case 0x21: cout << "\tSeek File Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
-               cout << " Handle: " << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
-               cout << " Position Mode: " << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(3));
-               cout << " Offset: " << hex << ( (static_cast<uint32_t>(at_ptrFrame->dataOctet(7))<<24) | (static_cast<uint32_t>(at_ptrFrame->dataOctet(6))<<16) | (static_cast<uint32_t>(at_ptrFrame->dataOctet(5))<<8) | (static_cast<uint32_t>(at_ptrFrame->dataOctet(4))) );
+    case 0x21: std::cout << "\tSeek File Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+               std::cout << " Handle: " << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
+               std::cout << " Position Mode: " << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(3));
+               std::cout << " Offset: " << std::hex << ( (static_cast<uint32_t>(at_ptrFrame->dataOctet(7))<<24) | (static_cast<uint32_t>(at_ptrFrame->dataOctet(6))<<16) | (static_cast<uint32_t>(at_ptrFrame->dataOctet(5))<<8) | (static_cast<uint32_t>(at_ptrFrame->dataOctet(4))) );
       break;
 
-    case 0x22: cout << "\tRead File Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
-               cout << " Handle: "     <<hex<<static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
-               cout << " Count: "      <<hex<<( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))) );
-               if (at_ptrFrame->dataOctet(5) == 0x00) cout << " Do not report hidden files a directory listing";
-               if (at_ptrFrame->dataOctet(5) == 0x01) cout << " Report hidden files in a directory listing";
-               if (at_ptrFrame->dataOctet(5) == 0xFF) cout << " Parameter ist not available, FS shall not report hidden in a directory listing";
-               if ( (at_ptrFrame->dataOctet(5) >= 0x02) && (at_ptrFrame->dataOctet(5) <= 0xFE) ) cout << " ERROR wrong Error Code";
+    case 0x22: std::cout << "\tRead File Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+               std::cout << " Handle: "     <<std::hex<<static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
+               std::cout << " Count: "      <<std::hex<<( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))) );
+               if (at_ptrFrame->dataOctet(5) == 0x00) std::cout << " Do not report hidden files a directory listing";
+               if (at_ptrFrame->dataOctet(5) == 0x01) std::cout << " Report hidden files in a directory listing";
+               if (at_ptrFrame->dataOctet(5) == 0xFF) std::cout << " Parameter ist not available, FS shall not report hidden in a directory listing";
+               if ( (at_ptrFrame->dataOctet(5) >= 0x02) && (at_ptrFrame->dataOctet(5) <= 0xFE) ) std::cout << " ERROR wrong Error Code";
       break;
 
-    case 0x23: cout << "\tWrite File Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
-               cout << " Handle: " << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
-               cout << " Number of Byte written Data: " <<dec<<( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))) );
-               cout << " Data: ";
+    case 0x23: std::cout << "\tWrite File Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+               std::cout << " Handle: " << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
+               std::cout << " Number of Byte written Data: " <<std::dec<<( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))) );
+               std::cout << " Data: ";
                for (int i = 0; i < ( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))) ); i++)
                {
-                 cout << "0x" << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(5 + i)) << " ";
+                 std::cout << "0x" << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(5 + i)) << " ";
                }
       break;
 
-    case 0x24: cout << "\tClose File Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
-               cout << " Handle: " << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
+    case 0x24: std::cout << "\tClose File Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+               std::cout << " Handle: " << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(2));
       break;
 
-    case 0x30: cout << "\tMove / Copy / Rename File Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
-               cout << ((at_ptrFrame->dataOctet(2) && 0x04)? " recursive" : " not recursive");
-               cout << ((at_ptrFrame->dataOctet(2) && 0x02)? " force" : " not force");
-               cout << ((at_ptrFrame->dataOctet(2) && 0x01)? " copy" : " not copy");
+    case 0x30: std::cout << "\tMove / Copy / Rename File Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+               std::cout << ((at_ptrFrame->dataOctet(2) && 0x04)? " recursive" : " not recursive");
+               std::cout << ((at_ptrFrame->dataOctet(2) && 0x02)? " force" : " not force");
+               std::cout << ((at_ptrFrame->dataOctet(2) && 0x01)? " copy" : " not copy");
 
                i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3);
 
-               cout << " Source Path Name Length: "  << hex << i_pathNameLength;
-               cout << " Source Path Name: ";
+               std::cout << " Source Path Name Length: "  << std::hex << i_pathNameLength;
+               std::cout << " Source Path Name: ";
                for (int i = 0; i < i_pathNameLength; i++) {
-                 cout << uint8_t(at_ptrFrame->dataOctet(7 + i));
+                 std::cout << uint8_t(at_ptrFrame->dataOctet(7 + i));
                }
 
                i_destPathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(6))<<8) | at_ptrFrame->dataOctet(5);
 
-               cout << " Destination Path Name Length: " << hex << i_destPathNameLength;
-               cout << " Destination Path Name: ";
+               std::cout << " Destination Path Name Length: " << std::hex << i_destPathNameLength;
+               std::cout << " Destination Path Name: ";
                for (int i = 0; i < i_destPathNameLength; i++) {
-                 cout << uint8_t(at_ptrFrame->dataOctet(7 + i_pathNameLength + i));
+                 std::cout << uint8_t(at_ptrFrame->dataOctet(7 + i_pathNameLength + i));
                }
       break;
 
-    case 0x31: cout << "\tDelete File Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+    case 0x31: std::cout << "\tDelete File Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
 
-               cout << ((at_ptrFrame->dataOctet(2) && 0x04)? " recursive" : " not recursive");
-               cout << ((at_ptrFrame->dataOctet(2) && 0x02)? " force" : " not force");
-               cout << ((at_ptrFrame->dataOctet(2) && 0x01)? " copy" : " not copy");
+               std::cout << ((at_ptrFrame->dataOctet(2) && 0x04)? " recursive" : " not recursive");
+               std::cout << ((at_ptrFrame->dataOctet(2) && 0x02)? " force" : " not force");
+               std::cout << ((at_ptrFrame->dataOctet(2) && 0x01)? " copy" : " not copy");
 
                i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3);
 
-               cout << " Path Name Length: " << hex << i_pathNameLength;
-               cout << " Path Name: ";
+               std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
+               std::cout << " Path Name: ";
               for (uint16_t i = 0; i <  i_pathNameLength; i++)
               {
-                cout << uint8_t(at_ptrFrame->dataOctet(5 + i));
+                std::cout << uint8_t(at_ptrFrame->dataOctet(5 + i));
               }
 
       break;
-    case 0x32: cout << "\tGet Files Attributes Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+    case 0x32: std::cout << "\tGet Files Attributes Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
 
                i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))<<8) | at_ptrFrame->dataOctet(2);
 
-               cout << " Path Name Length: " << hex << i_pathNameLength;
-               cout << " Path Name: " ;
+               std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
+               std::cout << " Path Name: " ;
                for (int i = 0; i < i_pathNameLength; i++) {
-                 cout << uint8_t(at_ptrFrame->dataOctet(4 + i));
+                 std::cout << uint8_t(at_ptrFrame->dataOctet(4 + i));
                }
       break;
-    case 0x33: cout << "\tSet File Attributes Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+    case 0x33: std::cout << "\tSet File Attributes Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
 
-               if (at_ptrFrame->dataOctet(2) == 0x1C) cout <<" Clear read-only attribute";
-               if (at_ptrFrame->dataOctet(2) == 0x1D) cout <<" Set read-only attribute";
-               if (at_ptrFrame->dataOctet(2) == 0x13) cout <<" Clear hidden attribute";
-               if (at_ptrFrame->dataOctet(2) == 0x17) cout <<" Set hidden attribute";
+               if (at_ptrFrame->dataOctet(2) == 0x1C) std::cout <<" Clear read-only attribute";
+               if (at_ptrFrame->dataOctet(2) == 0x1D) std::cout <<" Set read-only attribute";
+               if (at_ptrFrame->dataOctet(2) == 0x13) std::cout <<" Clear hidden attribute";
+               if (at_ptrFrame->dataOctet(2) == 0x17) std::cout <<" Set hidden attribute";
 
                i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(4))<<8) | at_ptrFrame->dataOctet(3);
 
-               cout << " Path Name Length: " << hex << i_pathNameLength;
-               cout << " Path Name: " ;
+               std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
+               std::cout << " Path Name: " ;
                for (int i = 0; i < i_pathNameLength; i++) {
-                 cout << uint8_t(at_ptrFrame->dataOctet(5 + i));
+                 std::cout << uint8_t(at_ptrFrame->dataOctet(5 + i));
                }
       break;
-    case 0x34: cout << "\tGet File Date & File Time Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+    case 0x34: std::cout << "\tGet File Date & File Time Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
 
                i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(3))<<8) | at_ptrFrame->dataOctet(2);
 
-               cout << " Path Name Length: " << hex << i_pathNameLength;
-               cout << " Path Name: " ;
+               std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
+               std::cout << " Path Name: " ;
                for (int i = 0; i < i_pathNameLength; i++) {
-                 cout << uint8_t(at_ptrFrame->dataOctet(4 + i));
+                 std::cout << uint8_t(at_ptrFrame->dataOctet(4 + i));
                }
       break;
-    case 0x40: cout << "\tInitialize Volume Request TAN: " << setw(2) << hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
-               cout << " Space : "        <<hex<< ((static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 24)
+    case 0x40: std::cout << "\tInitialize Volume Request TAN: " << std::setw(2) << std::hex << static_cast<uint32_t>(at_ptrFrame->dataOctet(1));
+               std::cout << " Space : "        <<std::hex<< ((static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 24)
 			                                    | (static_cast<uint32_t>(at_ptrFrame->dataOctet(4)) << 16)
 												| (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) <<  8)
 												| (static_cast<uint32_t>(at_ptrFrame->dataOctet(2))      ));
-               if (at_ptrFrame->dataOctet(6) == 0x00) cout <<" create  a new volume using all available space";
-               if (at_ptrFrame->dataOctet(6) == 0x02) cout <<" create  a new volume using space specified";
-               if (at_ptrFrame->dataOctet(6) == 0x01) cout <<" Overwrite the existing volume";
+               if (at_ptrFrame->dataOctet(6) == 0x00) std::cout <<" create  a new volume using all available space";
+               if (at_ptrFrame->dataOctet(6) == 0x02) std::cout <<" create  a new volume using space specified";
+               if (at_ptrFrame->dataOctet(6) == 0x01) std::cout <<" Overwrite the existing volume";
 
                i_pathNameLength = static_cast<uint16_t>(at_ptrFrame->dataOctet(8)<<8) | at_ptrFrame->dataOctet(7);
 
-               cout << " Path Name Length: " << hex << i_pathNameLength;
-               cout << " Path Name: " ;
+               std::cout << " Path Name Length: " << std::hex << i_pathNameLength;
+               std::cout << " Path Name: " ;
                for (int i = 0; i < i_pathNameLength; i++) {
-                 cout << uint8_t(at_ptrFrame->dataOctet(9 + i));
+                 std::cout << uint8_t(at_ptrFrame->dataOctet(9 + i));
                }
       break;
     default: return;
@@ -909,7 +675,7 @@ void interpreteWheelBasedSpeedDist(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
@@ -928,34 +694,34 @@ void interpreteWheelBasedSpeedDist(PtrDataFrame_t at_ptrFrame)
 
       // Operator direction reversed
       switch (at_ptrFrame->dataOctet(7) >> 6) {
-          case 0x0: cout << "Operator direction: NotReversed "; break;
-          case 0x1: cout << "Operator direction: Reversed "; break;
-          case 0x2: cout << "Operator direction: Error "; break;
-          case 0x3: cout << "Operator direction: Not available "; break;
+          case 0x0: std::cout << "Operator direction: NotReversed "; break;
+          case 0x1: std::cout << "Operator direction: Reversed "; break;
+          case 0x2: std::cout << "Operator direction: Error "; break;
+          case 0x3: std::cout << "Operator direction: Not available "; break;
       }
 
       // Start/Stop state
       switch ((at_ptrFrame->dataOctet(7) >> 4) & 0x03) {
-        case 0x0: cout << "St/Sp state: stop "; break;
-        case 0x1: cout << "St/Sp state: start "; break;
-        case 0x2: cout << "St/Sp state: error "; break;
-        case 0x3: cout << "St/Sp state: n/a "; break;
+        case 0x0: std::cout << "St/Sp state: stop "; break;
+        case 0x1: std::cout << "St/Sp state: start "; break;
+        case 0x2: std::cout << "St/Sp state: error "; break;
+        case 0x3: std::cout << "St/Sp state: n/a "; break;
       }
 
       // Key switch state
       switch ((at_ptrFrame->dataOctet(7) >> 2) & 0x03) {
-        case 0x0: cout << "Key sws: off "; break;
-        case 0x1: cout << "Key sws: not off "; break;
-        case 0x2: cout << "Key sws: error "; break;
-        case 0x3: cout << "Key sws: n/a "; break;
+        case 0x0: std::cout << "Key sws: off "; break;
+        case 0x1: std::cout << "Key sws: not off "; break;
+        case 0x2: std::cout << "Key sws: error "; break;
+        case 0x3: std::cout << "Key sws: n/a "; break;
       }
 
       // Ground based direction
       switch (at_ptrFrame->dataOctet(7) & 0x03) {
-        case 0x0: cout << "WB Dir: Reverse "; break;
-        case 0x1: cout << "WB Dir: Forward "; break;
-        case 0x2: cout << "WB Dir: Error "; break;
-        case 0x3: cout << "WB Dir: N/A "; break;
+        case 0x0: std::cout << "WB Dir: Reverse "; break;
+        case 0x1: std::cout << "WB Dir: Forward "; break;
+        case 0x2: std::cout << "WB Dir: Error "; break;
+        case 0x3: std::cout << "WB Dir: N/A "; break;
       }
   }
 }
@@ -964,7 +730,7 @@ void interpreteGroundBasedSpeedDist(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
@@ -984,10 +750,10 @@ void interpreteGroundBasedSpeedDist(PtrDataFrame_t at_ptrFrame)
 
       // Ground based direction
       switch (at_ptrFrame->dataOctet(7) & 0x03) {
-        case 0x0: cout << "GB Dir: Reverse "; break;
-        case 0x1: cout << "GB Dir: Forward "; break;
-        case 0x2: cout << "GB Dir: Error "; break;
-        case 0x3: cout << "GB Dir: N/A "; break;
+        case 0x0: std::cout << "GB Dir: Reverse "; break;
+        case 0x1: std::cout << "GB Dir: Forward "; break;
+        case 0x2: std::cout << "GB Dir: Error "; break;
+        case 0x3: std::cout << "GB Dir: N/A "; break;
       }
   }
 }
@@ -996,7 +762,7 @@ void interpreteRearPTOstate(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
@@ -1008,62 +774,62 @@ void interpreteRearPTOstate(PtrDataFrame_t at_ptrFrame)
 
       // Rear PTO engagement
       switch (at_ptrFrame->dataOctet(4) >> 6) {
-          case 0x0: cout << "RPTO eng: disen "; break;
-          case 0x1: cout << "RPTO eng: en "; break;
-          case 0x2: cout << "RPTO eng: Error "; break;
-          case 0x3: cout << "RPTO eng: n/a "; break;
+          case 0x0: std::cout << "RPTO eng: disen "; break;
+          case 0x1: std::cout << "RPTO eng: en "; break;
+          case 0x2: std::cout << "RPTO eng: Error "; break;
+          case 0x3: std::cout << "RPTO eng: n/a "; break;
       }
 
       // Rear PTO mode
       switch ((at_ptrFrame->dataOctet(4) >> 4) & 0x03) {
-        case 0x0: cout << "RPTO mod: 540 "; break;
-        case 0x1: cout << "RPTO mod: 1000 "; break;
-        case 0x2: cout << "RPTO mod: Error "; break;
-        case 0x3: cout << "RPTO mod: n/a "; break;
+        case 0x0: std::cout << "RPTO mod: 540 "; break;
+        case 0x1: std::cout << "RPTO mod: 1000 "; break;
+        case 0x2: std::cout << "RPTO mod: Error "; break;
+        case 0x3: std::cout << "RPTO mod: n/a "; break;
       }
 
       // Rear PTO economy mode
       switch ((at_ptrFrame->dataOctet(4) >> 2) & 0x03) {
-        case 0x0: cout << "RPTO ec mod: disen "; break;
-        case 0x1: cout << "RPTO ec mod: en "; break;
-        case 0x2: cout << "RPTO ec mod: error "; break;
-        case 0x3: cout << "RPTO ec mod: n/a "; break;
+        case 0x0: std::cout << "RPTO ec mod: disen "; break;
+        case 0x1: std::cout << "RPTO ec mod: en "; break;
+        case 0x2: std::cout << "RPTO ec mod: error "; break;
+        case 0x3: std::cout << "RPTO ec mod: n/a "; break;
       }
 
       // Rear PTO mode request status
       switch (at_ptrFrame->dataOctet(4) & 0x03) {
-        case 0x0: cout << "RPTO mod rq st: disen "; break;
-        case 0x1: cout << "RPTO mod rq st: en "; break;
-        case 0x2: cout << "RPTO mod rq st: Error "; break;
-        case 0x3: cout << "RPTO mod rq st: N/A "; break;
+        case 0x0: std::cout << "RPTO mod rq st: disen "; break;
+        case 0x1: std::cout << "RPTO mod rq st: en "; break;
+        case 0x2: std::cout << "RPTO mod rq st: Error "; break;
+        case 0x3: std::cout << "RPTO mod rq st: N/A "; break;
       }
 
       // Rear PTO mode
       switch (at_ptrFrame->dataOctet(5) >> 6) {
-          case 0x0: cout << "RPTO mode: external request "; break;
-          case 0x1: cout << "RPTO mode: controll override "; break;
-          case 0x2: cout << "RPTO mode: Error "; break;
-          case 0x3: cout << "RPTO mode: n/a "; break;
+          case 0x0: std::cout << "RPTO mode: external request "; break;
+          case 0x1: std::cout << "RPTO mode: controll override "; break;
+          case 0x2: std::cout << "RPTO mode: Error "; break;
+          case 0x3: std::cout << "RPTO mode: n/a "; break;
       }
 
       // Rear PTO Economy mode request status
       switch ((at_ptrFrame->dataOctet(5) >> 4) & 0x03) {
-        case 0x0: cout << "RPTO economy mode request status: external request "; break;
-        case 0x1: cout << "RPTO economy mode request status: controll override "; break;
-        case 0x2: cout << "RPTO economy mode request status: Error "; break;
-        case 0x3: cout << "RPTO economy mode request status: n/a "; break;
+        case 0x0: std::cout << "RPTO economy mode request status: external request "; break;
+        case 0x1: std::cout << "RPTO economy mode request status: controll override "; break;
+        case 0x2: std::cout << "RPTO economy mode request status: Error "; break;
+        case 0x3: std::cout << "RPTO economy mode request status: n/a "; break;
       }
 
       // Rear PTO shaft speed limit status
       switch ((at_ptrFrame->dataOctet(5) >> 1) & 0x07) {
-        case 0x0: cout << "RPTO shaft speed limit status: no limit "; break;
-        case 0x1: cout << "RPTO shaft speed limit status: op limit "; break;
-        case 0x2: cout << "RPTO shaft speed limit status: lim high "; break;
-        case 0x3: cout << "RPTO shaft speed limit status: lim low "; break;
-        case 0x4: cout << "RPTO shaft speed limit status: reserved "; break;
-        case 0x5: cout << "RPTO shaft speed limit status: reserved "; break;
-        case 0x6: cout << "RPTO shaft speed limit status: nr fault "; break;
-        case 0x7: cout << "RPTO shaft speed limit status: n/a "; break;
+        case 0x0: std::cout << "RPTO shaft speed limit status: no limit "; break;
+        case 0x1: std::cout << "RPTO shaft speed limit status: op limit "; break;
+        case 0x2: std::cout << "RPTO shaft speed limit status: lim high "; break;
+        case 0x3: std::cout << "RPTO shaft speed limit status: lim low "; break;
+        case 0x4: std::cout << "RPTO shaft speed limit status: reserved "; break;
+        case 0x5: std::cout << "RPTO shaft speed limit status: reserved "; break;
+        case 0x6: std::cout << "RPTO shaft speed limit status: nr fault "; break;
+        case 0x7: std::cout << "RPTO shaft speed limit status: n/a "; break;
       }
 
       // Bits 1 is reserved
@@ -1075,7 +841,7 @@ void interpreteRearHitch(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
@@ -1084,22 +850,22 @@ void interpreteRearHitch(PtrDataFrame_t at_ptrFrame)
 
       // Rear hith in-work indication.
       switch (at_ptrFrame->dataOctet(1) >> 6) {
-          case 0x0: cout << "RH in-wo ind: out-of-work "; break;
-          case 0x1: cout << "RH in-wo ind: in-work "; break;
-          case 0x2: cout << "RH in-wo ind: error "; break;
-          case 0x3: cout << "RH in-wo ind: n/a "; break;
+          case 0x0: std::cout << "RH in-wo ind: out-of-work "; break;
+          case 0x1: std::cout << "RH in-wo ind: in-work "; break;
+          case 0x2: std::cout << "RH in-wo ind: error "; break;
+          case 0x3: std::cout << "RH in-wo ind: n/a "; break;
       }
 
       // Rear hitch position limit status
       switch ((at_ptrFrame->dataOctet(1) >> 3) & 0x07) {
-        case 0x0: cout << "RH pos lim st: no limit "; break;
-        case 0x1: cout << "RH pos lim st: op limit "; break;
-        case 0x2: cout << "RH pos lim st: lim high "; break;
-        case 0x3: cout << "RH pos lim st: lim low "; break;
-        case 0x4: cout << "RH pos lim st: reserved "; break;
-        case 0x5: cout << "RH pos lim st: reserved "; break;
-        case 0x6: cout << "RH pos lim st: nr fault "; break;
-        case 0x7: cout << "RH pos lim st: n/a "; break;
+        case 0x0: std::cout << "RH pos lim st: no limit "; break;
+        case 0x1: std::cout << "RH pos lim st: op limit "; break;
+        case 0x2: std::cout << "RH pos lim st: lim high "; break;
+        case 0x3: std::cout << "RH pos lim st: lim low "; break;
+        case 0x4: std::cout << "RH pos lim st: reserved "; break;
+        case 0x5: std::cout << "RH pos lim st: reserved "; break;
+        case 0x6: std::cout << "RH pos lim st: nr fault "; break;
+        case 0x7: std::cout << "RH pos lim st: n/a "; break;
       }
 
       // Rear nominal lover link force
@@ -1116,92 +882,92 @@ void interpretePgnLanguage(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
     // Language Code
-    cout << "LC:" << at_ptrFrame->asciiDataOctet(0) << at_ptrFrame->asciiDataOctet(1) << " ";
+    std::cout << "LC:" << at_ptrFrame->asciiDataOctet(0) << at_ptrFrame->asciiDataOctet(1) << " ";
 
     // Decimal Point
     switch (at_ptrFrame->dataOctet(2) >> 6) {
-      case 0x0: cout << "dp:, "; break;
-      case 0x1: cout << "dp:. "; break;
-      case 0x2: cout << "dp:R "; break;
-      case 0x3: cout << "dp:N "; break;
+      case 0x0: std::cout << "dp:, "; break;
+      case 0x1: std::cout << "dp:. "; break;
+      case 0x2: std::cout << "dp:R "; break;
+      case 0x3: std::cout << "dp:N "; break;
     }
     // Time Format
     switch ((at_ptrFrame->dataOctet(2) >> 4) & 0x03) {
-      case 0x0: cout << "t:24 "; break;
-      case 0x1: cout << "t:12 "; break;
-      case 0x2: cout << "t:R  "; break;
-      case 0x3: cout << "t:N  "; break;
+      case 0x0: std::cout << "t:24 "; break;
+      case 0x1: std::cout << "t:12 "; break;
+      case 0x2: std::cout << "t:R  "; break;
+      case 0x3: std::cout << "t:N  "; break;
     }
     // Date Format
     switch (at_ptrFrame->dataOctet(3)) {
-      case 0x0: cout << "d:ddmmyyyy "; break;
-      case 0x1: cout << "d:ddyyyymm "; break;
-      case 0x2: cout << "d:mmyyyydd "; break;
-      case 0x3: cout << "d:mmddyyyy "; break;
-      case 0x4: cout << "d:yyyymmdd "; break;
-      case 0x5: cout << "d:yyyyddmm "; break;
-      default:  cout << "d:UNSPECIF "; break;
+      case 0x0: std::cout << "d:ddmmyyyy "; break;
+      case 0x1: std::cout << "d:ddyyyymm "; break;
+      case 0x2: std::cout << "d:mmyyyydd "; break;
+      case 0x3: std::cout << "d:mmddyyyy "; break;
+      case 0x4: std::cout << "d:yyyymmdd "; break;
+      case 0x5: std::cout << "d:yyyyddmm "; break;
+      default:  std::cout << "d:UNSPECIF "; break;
     }
     // Distance
     switch ((at_ptrFrame->dataOctet(4) >> 6) & 0x3) {
-      case 0x0: cout << "d:M  "; break;
-      case 0x1: cout << "d:IU "; break;
-      case 0x2: cout << "d:R  "; break;
-      case 0x3: cout << "d:N  "; break;
+      case 0x0: std::cout << "d:M  "; break;
+      case 0x1: std::cout << "d:IU "; break;
+      case 0x2: std::cout << "d:R  "; break;
+      case 0x3: std::cout << "d:N  "; break;
     }
     // Area
     switch ((at_ptrFrame->dataOctet(4) >> 4) & 0x3) {
-      case 0x0: cout << "a:M  "; break;
-      case 0x1: cout << "a:IU "; break;
-      case 0x2: cout << "a:R  "; break;
-      case 0x3: cout << "a:N  "; break;
+      case 0x0: std::cout << "a:M  "; break;
+      case 0x1: std::cout << "a:IU "; break;
+      case 0x2: std::cout << "a:R  "; break;
+      case 0x3: std::cout << "a:N  "; break;
     }
     // Volume
     switch ((at_ptrFrame->dataOctet(4) >> 2) & 0x3) {
-      case 0x0: cout << "v:M "; break;
-      case 0x1: cout << "v:I "; break;
-      case 0x2: cout << "v:U "; break;
-      case 0x3: cout << "v:N "; break;
+      case 0x0: std::cout << "v:M "; break;
+      case 0x1: std::cout << "v:I "; break;
+      case 0x2: std::cout << "v:U "; break;
+      case 0x3: std::cout << "v:N "; break;
     }
     // Mass
     switch ((at_ptrFrame->dataOctet(4) >> 0) & 0x3) {
-      case 0x0: cout << "m:M "; break;
-      case 0x1: cout << "m:I "; break;
-      case 0x2: cout << "m:U "; break;
-      case 0x3: cout << "m:N "; break;
+      case 0x0: std::cout << "m:M "; break;
+      case 0x1: std::cout << "m:I "; break;
+      case 0x2: std::cout << "m:U "; break;
+      case 0x3: std::cout << "m:N "; break;
     }
     // Temperature
     switch ((at_ptrFrame->dataOctet(5) >> 6) & 0x3) {
-      case 0x0: cout << "t:M  "; break;
-      case 0x1: cout << "t:IU "; break;
-      case 0x2: cout << "t:R  "; break;
-      case 0x3: cout << "t:N  "; break;
+      case 0x0: std::cout << "t:M  "; break;
+      case 0x1: std::cout << "t:IU "; break;
+      case 0x2: std::cout << "t:R  "; break;
+      case 0x3: std::cout << "t:N  "; break;
     }
     // Pressure
     switch ((at_ptrFrame->dataOctet(5) >> 4) & 0x3) {
-      case 0x0: cout << "p:M  "; break;
-      case 0x1: cout << "p:IU "; break;
-      case 0x2: cout << "p:R  "; break;
-      case 0x3: cout << "p:N  "; break;
+      case 0x0: std::cout << "p:M  "; break;
+      case 0x1: std::cout << "p:IU "; break;
+      case 0x2: std::cout << "p:R  "; break;
+      case 0x3: std::cout << "p:N  "; break;
     }
     // Force
     switch ((at_ptrFrame->dataOctet(5) >> 2) & 0x3) {
-      case 0x0: cout << "f:M  "; break;
-      case 0x1: cout << "f:IU "; break;
-      case 0x2: cout << "f:R  "; break;
-      case 0x3: cout << "f:N  "; break;
+      case 0x0: std::cout << "f:M  "; break;
+      case 0x1: std::cout << "f:IU "; break;
+      case 0x2: std::cout << "f:R  "; break;
+      case 0x3: std::cout << "f:N  "; break;
     }
     // System
     switch ((at_ptrFrame->dataOctet(5) >> 0) & 0x3) {
-      case 0x0: cout << "s:M "; break;
-      case 0x1: cout << "s:I "; break;
-      case 0x2: cout << "s:U "; break;
-      case 0x3: cout << "s:N "; break;
+      case 0x0: std::cout << "s:M "; break;
+      case 0x1: std::cout << "s:I "; break;
+      case 0x2: std::cout << "s:U "; break;
+      case 0x3: std::cout << "s:N "; break;
     }
   }
 }
@@ -1210,247 +976,247 @@ void interpreteLightingCommand(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
     // Tractor high-beam head lights
     switch ((at_ptrFrame->dataOctet(0) >> 6) & 0x3) {
-      case 0x0: cout << "Tractor high-beam head lights: deactivate "; break;
-      case 0x1: cout << "Tractor high-beam head lights: activate "; break;
-      case 0x2: cout << "Tractor high-beam head lights: reserve "; break;
-      case 0x3: cout << "Tractor high-beam head lights: don't care "; break;
+      case 0x0: std::cout << "Tractor high-beam head lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor high-beam head lights: activate "; break;
+      case 0x2: std::cout << "Tractor high-beam head lights: reserve "; break;
+      case 0x3: std::cout << "Tractor high-beam head lights: don't care "; break;
     }
     // Tractor low-beam head lights
     switch ((at_ptrFrame->dataOctet(0) >> 4) & 0x3) {
-      case 0x0: cout << "Tractor low-beam head lights: deactivate "; break;
-      case 0x1: cout << "Tractor low-beam head lights: activate "; break;
-      case 0x2: cout << "Tractor low-beam head lights: reserve "; break;
-      case 0x3: cout << "Tractor low-beam head lights: don't care "; break;
+      case 0x0: std::cout << "Tractor low-beam head lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor low-beam head lights: activate "; break;
+      case 0x2: std::cout << "Tractor low-beam head lights: reserve "; break;
+      case 0x3: std::cout << "Tractor low-beam head lights: don't care "; break;
     }
     // Tractor alternate head lights
     switch ((at_ptrFrame->dataOctet(0) >> 2) & 0x3) {
-      case 0x0: cout << "Tractor alternate head lights: deactivate "; break;
-      case 0x1: cout << "Tractor alternate head lights: activate "; break;
-      case 0x2: cout << "Tractor alternate head lights: reserve "; break;
-      case 0x3: cout << "Tractor alternate head lights: don't care "; break;
+      case 0x0: std::cout << "Tractor alternate head lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor alternate head lights: activate "; break;
+      case 0x2: std::cout << "Tractor alternate head lights: reserve "; break;
+      case 0x3: std::cout << "Tractor alternate head lights: don't care "; break;
     }
     // Daytime running lights
     switch ((at_ptrFrame->dataOctet(0) >> 0) & 0x3) {
-      case 0x0: cout << "Daytime running lights: deactivate "; break;
-      case 0x1: cout << "Daytime running lights: activate "; break;
-      case 0x2: cout << "Daytime running lights: reserve "; break;
-      case 0x3: cout << "Daytime running lights: don't care "; break;
+      case 0x0: std::cout << "Daytime running lights: deactivate "; break;
+      case 0x1: std::cout << "Daytime running lights: activate "; break;
+      case 0x2: std::cout << "Daytime running lights: reserve "; break;
+      case 0x3: std::cout << "Daytime running lights: don't care "; break;
     }
 
 
     // Left-turn signal lights
     switch ((at_ptrFrame->dataOctet(1) >> 6) & 0x3) {
-      case 0x0: cout << "Left-turn signal lights: deactivate "; break;
-      case 0x1: cout << "Left-turn signal lights: activate "; break;
-      case 0x2: cout << "Left-turn signal lights: reserve "; break;
-      case 0x3: cout << "Left-turn signal lights: don't care "; break;
+      case 0x0: std::cout << "Left-turn signal lights: deactivate "; break;
+      case 0x1: std::cout << "Left-turn signal lights: activate "; break;
+      case 0x2: std::cout << "Left-turn signal lights: reserve "; break;
+      case 0x3: std::cout << "Left-turn signal lights: don't care "; break;
     }
     // Right-turn signal lights
     switch ((at_ptrFrame->dataOctet(1) >> 4) & 0x3) {
-      case 0x0: cout << "Right-turn signal lights: deactivate "; break;
-      case 0x1: cout << "Right-turn signal lights: activate "; break;
-      case 0x2: cout << "Right-turn signal lights: reserve "; break;
-      case 0x3: cout << "Right-turn signal lights: don't care "; break;
+      case 0x0: std::cout << "Right-turn signal lights: deactivate "; break;
+      case 0x1: std::cout << "Right-turn signal lights: activate "; break;
+      case 0x2: std::cout << "Right-turn signal lights: reserve "; break;
+      case 0x3: std::cout << "Right-turn signal lights: don't care "; break;
     }
     // Beacon lights
     switch ((at_ptrFrame->dataOctet(1) >> 2) & 0x3) {
-      case 0x0: cout << "Beacon lights: deactivate "; break;
-      case 0x1: cout << "Beacon lights: activate "; break;
-      case 0x2: cout << "Beacon lights: reserve "; break;
-      case 0x3: cout << "Beacon lights: don't care "; break;
+      case 0x0: std::cout << "Beacon lights: deactivate "; break;
+      case 0x1: std::cout << "Beacon lights: activate "; break;
+      case 0x2: std::cout << "Beacon lights: reserve "; break;
+      case 0x3: std::cout << "Beacon lights: don't care "; break;
     }
     // Front fog lights
     switch ((at_ptrFrame->dataOctet(1) >> 0) & 0x3) {
-      case 0x0: cout << "Front fog: deactivate "; break;
-      case 0x1: cout << "Front fog: activate "; break;
-      case 0x2: cout << "Front fog: reserve "; break;
-      case 0x3: cout << "Front fog: don't care "; break;
+      case 0x0: std::cout << "Front fog: deactivate "; break;
+      case 0x1: std::cout << "Front fog: activate "; break;
+      case 0x2: std::cout << "Front fog: reserve "; break;
+      case 0x3: std::cout << "Front fog: don't care "; break;
     }
 
 
     // Left stop lights
     switch ((at_ptrFrame->dataOctet(2) >> 6) & 0x3) {
-      case 0x0: cout << "Left stop lights: deactivate "; break;
-      case 0x1: cout << "Left stop lights: activate "; break;
-      case 0x2: cout << "Left stop lights: reserve "; break;
-      case 0x3: cout << "Left stop lights: don't care "; break;
+      case 0x0: std::cout << "Left stop lights: deactivate "; break;
+      case 0x1: std::cout << "Left stop lights: activate "; break;
+      case 0x2: std::cout << "Left stop lights: reserve "; break;
+      case 0x3: std::cout << "Left stop lights: don't care "; break;
     }
     // Right stop lights
     switch ((at_ptrFrame->dataOctet(2) >> 4) & 0x3) {
-      case 0x0: cout << "Right stop lights: deactivate "; break;
-      case 0x1: cout << "Right stop lights: activate "; break;
-      case 0x2: cout << "Right stop lights: reserve "; break;
-      case 0x3: cout << "Right stop lights: don't care "; break;
+      case 0x0: std::cout << "Right stop lights: deactivate "; break;
+      case 0x1: std::cout << "Right stop lights: activate "; break;
+      case 0x2: std::cout << "Right stop lights: reserve "; break;
+      case 0x3: std::cout << "Right stop lights: don't care "; break;
     }
     // Center stop lights
     switch ((at_ptrFrame->dataOctet(2) >> 2) & 0x3) {
-      case 0x0: cout << "Center stop lights: deactivate "; break;
-      case 0x1: cout << "Center stop lights: activate "; break;
-      case 0x2: cout << "Center stop lights: reserve "; break;
-      case 0x3: cout << "Center stop lights: don't care "; break;
+      case 0x0: std::cout << "Center stop lights: deactivate "; break;
+      case 0x1: std::cout << "Center stop lights: activate "; break;
+      case 0x2: std::cout << "Center stop lights: reserve "; break;
+      case 0x3: std::cout << "Center stop lights: don't care "; break;
     }
     // Back up light and alarm horn
     switch ((at_ptrFrame->dataOctet(2) >> 0) & 0x3) {
-      case 0x0: cout << "Back up light and alarm horn: deactivate "; break;
-      case 0x1: cout << "Back up light and alarm horn: activate "; break;
-      case 0x2: cout << "Back up light and alarm horn: reserve "; break;
-      case 0x3: cout << "Back up light and alarm horn: don't care "; break;
+      case 0x0: std::cout << "Back up light and alarm horn: deactivate "; break;
+      case 0x1: std::cout << "Back up light and alarm horn: activate "; break;
+      case 0x2: std::cout << "Back up light and alarm horn: reserve "; break;
+      case 0x3: std::cout << "Back up light and alarm horn: don't care "; break;
     }
 
 
     // Tractor marker lights
     switch ((at_ptrFrame->dataOctet(3) >> 6) & 0x3) {
-      case 0x0: cout << "Tractor marker lights: deactivate "; break;
-      case 0x1: cout << "Tractor marker lights: activate "; break;
-      case 0x2: cout << "Tractor marker lights: reserve "; break;
-      case 0x3: cout << "Tractor marker lights: don't care "; break;
+      case 0x0: std::cout << "Tractor marker lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor marker lights: activate "; break;
+      case 0x2: std::cout << "Tractor marker lights: reserve "; break;
+      case 0x3: std::cout << "Tractor marker lights: don't care "; break;
     }
     // Implement marker lights
     switch ((at_ptrFrame->dataOctet(3) >> 4) & 0x3) {
-      case 0x0: cout << "Implement marker lights: deactivate "; break;
-      case 0x1: cout << "Implement marker lights: activate "; break;
-      case 0x2: cout << "Implement marker lights: reserve "; break;
-      case 0x3: cout << "Implement marker lights: don't care "; break;
+      case 0x0: std::cout << "Implement marker lights: deactivate "; break;
+      case 0x1: std::cout << "Implement marker lights: activate "; break;
+      case 0x2: std::cout << "Implement marker lights: reserve "; break;
+      case 0x3: std::cout << "Implement marker lights: don't care "; break;
     }
     // Tractor clearance lights
     switch ((at_ptrFrame->dataOctet(3) >> 2) & 0x3) {
-      case 0x0: cout << "Tractor clearance lights: deactivate "; break;
-      case 0x1: cout << "Tractor clearance lights: activate "; break;
-      case 0x2: cout << "Tractor clearance lights: reserve "; break;
-      case 0x3: cout << "Tractor clearance lights: don't care "; break;
+      case 0x0: std::cout << "Tractor clearance lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor clearance lights: activate "; break;
+      case 0x2: std::cout << "Tractor clearance lights: reserve "; break;
+      case 0x3: std::cout << "Tractor clearance lights: don't care "; break;
     }
     // Implement clearance lights
     switch ((at_ptrFrame->dataOctet(3) >> 0) & 0x3) {
-      case 0x0: cout << "Implement clearance lights: deactivate "; break;
-      case 0x1: cout << "Implement clearance lights: activate "; break;
-      case 0x2: cout << "Implement clearance lights: reserve "; break;
-      case 0x3: cout << "Implement clearance lights: don't care "; break;
+      case 0x0: std::cout << "Implement clearance lights: deactivate "; break;
+      case 0x1: std::cout << "Implement clearance lights: activate "; break;
+      case 0x2: std::cout << "Implement clearance lights: reserve "; break;
+      case 0x3: std::cout << "Implement clearance lights: don't care "; break;
     }
 
 
     // Tractor rear hight mounted work lights
     switch ((at_ptrFrame->dataOctet(4) >> 6) & 0x3) {
-      case 0x0: cout << "Tractor rear hight mounted work lights: deactivate "; break;
-      case 0x1: cout << "Tractor rear hight mounted work lights: activate "; break;
-      case 0x2: cout << "Tractor rear hight mounted work lights: reserve "; break;
-      case 0x3: cout << "Tractor rear hight mounted work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor rear hight mounted work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor rear hight mounted work lights: activate "; break;
+      case 0x2: std::cout << "Tractor rear hight mounted work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor rear hight mounted work lights: don't care "; break;
     }
     // Tractor rear low mounted work lights
     switch ((at_ptrFrame->dataOctet(4) >> 4) & 0x3) {
-      case 0x0: cout << "Tractor rear low mounted work lights: deactivate "; break;
-      case 0x1: cout << "Tractor rear low mounted work lights: activate "; break;
-      case 0x2: cout << "Tractor rear low mounted work lights: reserve "; break;
-      case 0x3: cout << "Tractor rear low mounted work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor rear low mounted work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor rear low mounted work lights: activate "; break;
+      case 0x2: std::cout << "Tractor rear low mounted work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor rear low mounted work lights: don't care "; break;
     }
     // Tractor underside work lights
     switch ((at_ptrFrame->dataOctet(4) >> 2) & 0x3) {
-      case 0x0: cout << "Tractor underside work lights: deactivate "; break;
-      case 0x1: cout << "Tractor underside work lights: activate "; break;
-      case 0x2: cout << "Tractor underside work lights: reserve "; break;
-      case 0x3: cout << "Tractor underside work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor underside work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor underside work lights: activate "; break;
+      case 0x2: std::cout << "Tractor underside work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor underside work lights: don't care "; break;
     }
     // Rear fog light
     switch ((at_ptrFrame->dataOctet(4) >> 0) & 0x3) {
-      case 0x0: cout << "Rear fog light: deactivate "; break;
-      case 0x1: cout << "Rear fog light: activate "; break;
-      case 0x2: cout << "Rear fog light: reserve "; break;
-      case 0x3: cout << "Rear fog light: don't care "; break;
+      case 0x0: std::cout << "Rear fog light: deactivate "; break;
+      case 0x1: std::cout << "Rear fog light: activate "; break;
+      case 0x2: std::cout << "Rear fog light: reserve "; break;
+      case 0x3: std::cout << "Rear fog light: don't care "; break;
     }
 
 
     // Tractor front high-mounted work lights
     switch ((at_ptrFrame->dataOctet(5) >> 6) & 0x3) {
-      case 0x0: cout << "Tractor front high-mounted work lights: deactivate "; break;
-      case 0x1: cout << "Tractor front high-mounted work lights: activate "; break;
-      case 0x2: cout << "Tractor front high-mounted work lights: reserve "; break;
-      case 0x3: cout << "Tractor front high-mounted work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor front high-mounted work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor front high-mounted work lights: activate "; break;
+      case 0x2: std::cout << "Tractor front high-mounted work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor front high-mounted work lights: don't care "; break;
     }
     // Tractor front low-mounted work lights
     switch ((at_ptrFrame->dataOctet(5) >> 4) & 0x3) {
-      case 0x0: cout << "Tractor front low-mounted work lights: deactivate "; break;
-      case 0x1: cout << "Tractor front low-mounted work lights: activate "; break;
-      case 0x2: cout << "Tractor front low-mounted work lights: reserve "; break;
-      case 0x3: cout << "Tractor front low-mounted work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor front low-mounted work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor front low-mounted work lights: activate "; break;
+      case 0x2: std::cout << "Tractor front low-mounted work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor front low-mounted work lights: don't care "; break;
     }
     // Tractor side high-mounted work lights
     switch ((at_ptrFrame->dataOctet(5) >> 2) & 0x3) {
-      case 0x0: cout << "Tractor side high-mounted work lights: deactivate "; break;
-      case 0x1: cout << "Tractor side high-mounted work lights: activate "; break;
-      case 0x2: cout << "Tractor side high-mounted work lights: reserve "; break;
-      case 0x3: cout << "Tractor side high-mounted work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor side high-mounted work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor side high-mounted work lights: activate "; break;
+      case 0x2: std::cout << "Tractor side high-mounted work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor side high-mounted work lights: don't care "; break;
     }
     // Tractor side low-mounted work lights
     switch ((at_ptrFrame->dataOctet(5) >> 0) & 0x3) {
-      case 0x0: cout << "Tractor side low-mounted work lights: deactivate "; break;
-      case 0x1: cout << "Tractor side low-mounted work lights: activate "; break;
-      case 0x2: cout << "Tractor side low-mounted work lights: reserve "; break;
-      case 0x3: cout << "Tractor side low-mounted work lights: don't care "; break;
+      case 0x0: std::cout << "Tractor side low-mounted work lights: deactivate "; break;
+      case 0x1: std::cout << "Tractor side low-mounted work lights: activate "; break;
+      case 0x2: std::cout << "Tractor side low-mounted work lights: reserve "; break;
+      case 0x3: std::cout << "Tractor side low-mounted work lights: don't care "; break;
     }
 
 
     // Implement left forward work lights
     switch ((at_ptrFrame->dataOctet(6) >> 6) & 0x3) {
-      case 0x0: cout << "Implement left forward work lights: deactivate "; break;
-      case 0x1: cout << "Implement left forward work lights: activate "; break;
-      case 0x2: cout << "Implement left forward work lights: reserve "; break;
-      case 0x3: cout << "Implement left forward work lights: don't care "; break;
+      case 0x0: std::cout << "Implement left forward work lights: deactivate "; break;
+      case 0x1: std::cout << "Implement left forward work lights: activate "; break;
+      case 0x2: std::cout << "Implement left forward work lights: reserve "; break;
+      case 0x3: std::cout << "Implement left forward work lights: don't care "; break;
     }
     // Implement right forward work lights
     switch ((at_ptrFrame->dataOctet(6) >> 4) & 0x3) {
-      case 0x0: cout << "Implement right forward work lights: deactivate "; break;
-      case 0x1: cout << "Implement right forward work lights: activate "; break;
-      case 0x2: cout << "Implement right forward work lights: reserve "; break;
-      case 0x3: cout << "Implement right forward work lights: don't care "; break;
+      case 0x0: std::cout << "Implement right forward work lights: deactivate "; break;
+      case 0x1: std::cout << "Implement right forward work lights: activate "; break;
+      case 0x2: std::cout << "Implement right forward work lights: reserve "; break;
+      case 0x3: std::cout << "Implement right forward work lights: don't care "; break;
     }
     // Implement OEM option 1 light
     switch ((at_ptrFrame->dataOctet(6) >> 2) & 0x3) {
-      case 0x0: cout << "Implement OEM option 1 light: deactivate "; break;
-      case 0x1: cout << "Implement OEM option 1 light: activate "; break;
-      case 0x2: cout << "Implement OEM option 1 light: reserve "; break;
-      case 0x3: cout << "Implement OEM option 1 light: don't care "; break;
+      case 0x0: std::cout << "Implement OEM option 1 light: deactivate "; break;
+      case 0x1: std::cout << "Implement OEM option 1 light: activate "; break;
+      case 0x2: std::cout << "Implement OEM option 1 light: reserve "; break;
+      case 0x3: std::cout << "Implement OEM option 1 light: don't care "; break;
     }
     // Implement OEM option 2 light
     switch ((at_ptrFrame->dataOctet(6) >> 0) & 0x3) {
-      case 0x0: cout << "Implement OEM option 2 light: deactivate "; break;
-      case 0x1: cout << "Implement OEM option 2 light: activate "; break;
-      case 0x2: cout << "Implement OEM option 2 light: reserve "; break;
-      case 0x3: cout << "Implement OEM option 2 light: don't care "; break;
+      case 0x0: std::cout << "Implement OEM option 2 light: deactivate "; break;
+      case 0x1: std::cout << "Implement OEM option 2 light: activate "; break;
+      case 0x2: std::cout << "Implement OEM option 2 light: reserve "; break;
+      case 0x3: std::cout << "Implement OEM option 2 light: don't care "; break;
     }
 
 
     // Implement rear work lights
     switch ((at_ptrFrame->dataOctet(7) >> 6) & 0x3) {
-      case 0x0: cout << "Implement rear work lights: deactivate "; break;
-      case 0x1: cout << "Implement rear work lights: activate "; break;
-      case 0x2: cout << "Implement rear work lights: reserve "; break;
-      case 0x3: cout << "Implement rear work lights: don't care "; break;
+      case 0x0: std::cout << "Implement rear work lights: deactivate "; break;
+      case 0x1: std::cout << "Implement rear work lights: activate "; break;
+      case 0x2: std::cout << "Implement rear work lights: reserve "; break;
+      case 0x3: std::cout << "Implement rear work lights: don't care "; break;
     }
     // Implement left-facing work lights
     switch ((at_ptrFrame->dataOctet(7) >> 4) & 0x3) {
-      case 0x0: cout << "Implement left-facing work lights: deactivate "; break;
-      case 0x1: cout << "Implement left-facing work lights: activate "; break;
-      case 0x2: cout << "Implement left-facing work lights: reserve "; break;
-      case 0x3: cout << "Implement left-facing work lights: don't care "; break;
+      case 0x0: std::cout << "Implement left-facing work lights: deactivate "; break;
+      case 0x1: std::cout << "Implement left-facing work lights: activate "; break;
+      case 0x2: std::cout << "Implement left-facing work lights: reserve "; break;
+      case 0x3: std::cout << "Implement left-facing work lights: don't care "; break;
     }
     // Implement right-facing work lights
     switch ((at_ptrFrame->dataOctet(7) >> 2) & 0x3) {
-      case 0x0: cout << "Implement right-facing work lights: deactivate "; break;
-      case 0x1: cout << "Implement right-facing work lights: activate "; break;
-      case 0x2: cout << "Implement right-facing work lights: reserve "; break;
-      case 0x3: cout << "Implement right-facing work lights: don't care "; break;
+      case 0x0: std::cout << "Implement right-facing work lights: deactivate "; break;
+      case 0x1: std::cout << "Implement right-facing work lights: activate "; break;
+      case 0x2: std::cout << "Implement right-facing work lights: reserve "; break;
+      case 0x3: std::cout << "Implement right-facing work lights: don't care "; break;
     }
     // Lighting data message request
     switch ((at_ptrFrame->dataOctet(7) >> 0) & 0x3) {
-      case 0x0: cout << "Lighting data message request: deactivate "; break;
-      case 0x1: cout << "Lighting data message request: activate "; break;
-      case 0x2: cout << "Lighting data message request: reserve "; break;
-      case 0x3: cout << "Lighting data message request: don't care "; break;
+      case 0x0: std::cout << "Lighting data message request: deactivate "; break;
+      case 0x1: std::cout << "Lighting data message request: activate "; break;
+      case 0x2: std::cout << "Lighting data message request: reserve "; break;
+      case 0x3: std::cout << "Lighting data message request: don't care "; break;
     }
   }
 }
@@ -1459,12 +1225,12 @@ void interpreteEngineSpeedMsg(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
     // Engine speed
-    cout << "Engine speed:" << static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) ) * 0.125 << " ";
+    std::cout << "Engine speed:" << static_cast<uint16_t>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(4)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) ) * 0.125 << " ";
   }
 }
 
@@ -1472,7 +1238,7 @@ void interpreteVehicleSpeed(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
@@ -1482,7 +1248,7 @@ void interpreteVehicleSpeed(PtrDataFrame_t at_ptrFrame)
     // 2 bytes Naviagion based vehicle speed 1/256 km/h per bit, 0 offset, datarange 0 to 250.996 km/h
     // 2 bytes pitch 1/128 deg/bit, -200 deg offset, -200 to 301.99 deg
     // 2 bytes altitude 0.125 m/bit, -2500 m offset, -2500 to 5531.875 m
-    cout << "Compass bearing:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(1)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(0)) ) / 128) << "° "
+    std::cout << "Compass bearing:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(1)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(0)) ) / 128) << "° "
          << "Naviagion based vehicle speed:" << static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(3)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(2)) ) / 256 << " km/h "
          << "pitch:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(5)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(4)) ) / 128) - 200 << "° "
          << "altitude:" << (static_cast<double>( (static_cast<uint16_t>(at_ptrFrame->dataOctet(7)) << 8) | static_cast<uint16_t>(at_ptrFrame->dataOctet(6)) ) * 0.125 ) - 2500 << " m ";
@@ -1493,7 +1259,7 @@ void interpreteVehiclePosition(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
   }
   else
   {
@@ -1501,7 +1267,7 @@ void interpreteVehiclePosition(PtrDataFrame_t at_ptrFrame)
     // J1939-71
     // 4 bytes Latitude  10^-7 deg/bit, -210 deg offset range from 10^-7 deg/bit, -210 deg offset
     // 4 bytes Longitude 10^-7 deg/bit, -210 deg offset range from 10^-7 deg/bit, -210 deg offset
-    cout << "Latitude: " << (static_cast<uint32_t>( (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 24)
+    std::cout << "Latitude: " << (static_cast<uint32_t>( (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 24)
                                                      | (static_cast<uint32_t>(at_ptrFrame->dataOctet(2)) << 16)
                                                      | (static_cast<uint32_t>(at_ptrFrame->dataOctet(1)) << 8)
                                                      |  static_cast<uint32_t>(at_ptrFrame->dataOctet(0))
@@ -1525,10 +1291,10 @@ TransferCollection_c::PtrSession_t getTransferSession(
         aui8_transferSourceAddress,
         aui8_transferDestinationAddress);
   if (!t_ptrSession) {
-    cout << " (ERROR, no " <<
+    std::cout << " (ERROR, no " <<
       (TransferCollection_c::variant_tp == ae_variant ? "TP" : "ETP") <<
-      " " << hex << unsigned(aui8_transferSourceAddress) <<
-      "->" << hex << unsigned(aui8_transferDestinationAddress) <<") ";
+      " " << std::hex << unsigned(aui8_transferSourceAddress) <<
+      "->" << std::hex << unsigned(aui8_transferDestinationAddress) <<") ";
   }
   return t_ptrSession;
 }
@@ -1544,7 +1310,7 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
 
   if (at_ptrFrame->dataSize() != 8)
   {
-    cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
+    std::cout << "*** ILLEGAL - THIS PGN *MUST* HAVE 8 DATABYTES ***";
     return;
   }
 
@@ -1556,7 +1322,7 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
   case ETP_CONN_MANAGE_PGN:
     switch (at_ptrFrame->dataOctet(0)) {
     case 0x10:
-      cout << "RTS - Request to Send (TP)            ";
+      std::cout << "RTS - Request to Send (TP)            ";
       {
         size_t const ct_sizeTransferData = size_t(at_ptrFrame->dataOctet(2)) << 8 | at_ptrFrame->dataOctet(1);
         (void)gs_main.mc_trans.newSession(
@@ -1567,7 +1333,7 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       }
       break;
     case 0x14:
-      cout << "RTS - Request to Send (ETP)           ";
+      std::cout << "RTS - Request to Send (ETP)           ";
       {
         size_t const ct_sizeTransferData = (static_cast<uint32_t>(at_ptrFrame->dataOctet(4)) << 24) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 16) |
@@ -1581,15 +1347,15 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       }
       break;
     case 0x11:
-      cout << "CTS - Clear to Send (TP)              ";
+      std::cout << "CTS - Clear to Send (TP)              ";
 
       break;
     case 0x15:
-      cout << "CTS - Clear to Send (ETP)             ";
+      std::cout << "CTS - Clear to Send (ETP)             ";
       break;
 
     case 0x16:
-      cout << "DPO - Data Packet Offset (ETP)        ";
+      std::cout << "DPO - Data Packet Offset (ETP)        ";
       {
         TransferCollection_c::PtrSession_t t_ptrSession =
           getTransferSession(
@@ -1604,18 +1370,18 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       }
       break;
     case 0x13:
-      cout << "EoMACK - End of Message Ack (TP)      ";
+      std::cout << "EoMACK - End of Message Ack (TP)      ";
       b_streamEnd = true;
       break;
     case 0x17:
-      cout << "EoMACK - End of Message Ack (ETP)     ";
+      std::cout << "EoMACK - End of Message Ack (ETP)     ";
       b_streamEnd = true;
       break;
     case 0x20:
-      cout << "BAM - Broadcast Announce Msg (TP)     ";
+      std::cout << "BAM - Broadcast Announce Msg (TP)     ";
       break;
     case 0xFF:
-      cout << "CONNABORT - Connection Abort (TP/ETP) ";
+      std::cout << "CONNABORT - Connection Abort (TP/ETP) ";
       gs_main.mc_trans.deleteSession(e_variant, at_ptrFrame->sourceAddress(), at_ptrFrame->destinationAddress());
       break;
     default: return;
@@ -1631,9 +1397,9 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 16) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 8 ) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)));
-        cout << " on " << setw(6) << setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
+        std::cout << " on " << std::setw(6) << std::setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
         interpretePgn(t_ptrSession->mui32_embeddedPgn);
-        cout << ")";
+        std::cout << ")";
       }
     }
     break;
@@ -1642,7 +1408,7 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
     e_variant = TransferCollection_c::variant_tp;
     /* fall through */
   case ETP_DATA_TRANSFER_PGN:
-    cout << "DATA - Data Packet #"<<setw(2)<<setfill(' ')<<dec<<uint16_t(at_ptrFrame->dataOctet(0));
+    std::cout << "DATA - Data Packet #"<<std::setw(2)<<std::setfill(' ')<<std::dec<<uint16_t(at_ptrFrame->dataOctet(0));
     {
       TransferCollection_c::PtrSession_t t_ptrSession =
         getTransferSession(
@@ -1782,50 +1548,50 @@ void interpretePgn(uint32_t rui32_pgn)
 {
   switch (rui32_pgn)
   {
-    case VT_TO_ECU_PGN:                  cout << "VT_TO_ECU         "; break;
-    case ECU_TO_VT_PGN:                  cout << "ECU_TO_VT         "; break;
-    case ACKNOWLEDGEMENT_PGN:            cout << "ACKNOWLEDGEMENT   "; break;
-    case PROCESS_DATA_PGN:               cout << "PROCESS_DATA      "; break;
-    case CLIENT_TO_FS_PGN:               cout << "CLIENT_TO_FS      "; break;
-    case FS_TO_CLIENT_PGN:               cout << "FS_TO_CLIENT      "; break;
-    case GUIDANCE_MACHINE_STATUS:        cout << "GUIDANCE_MACH_ST  "; break;
-    case GUIDANCE_SYSTEM_CMD:            cout << "GUIDANCE_SYS_CMD  "; break;
-    case ISOBUS_CERTIFICATION_PGN:       cout << "ISOBUS_CERTIFICAT."; break;
-    case ETP_DATA_TRANSFER_PGN:          cout << "ETP_DATA_TRANSFER "; break;
-    case ETP_CONN_MANAGE_PGN:            cout << "ETP_CONN_MANAGE   "; break;
-    case REQUEST_PGN_MSG_PGN:            cout << "REQUEST_MSG       "; break;
-    case TP_DATA_TRANSFER_PGN:           cout << "TP_DATA_TRANSFER  "; break;
-    case TP_CONN_MANAGE_PGN:             cout << "TP_CONN_MANAGE    "; break;
-    case ADDRESS_CLAIM_PGN:              cout << "ADDRESS_CLAIM     "; break;
-    case PROPRIETARY_A_PGN:              cout << "PROPRIETARY_A     "; break;
-    case PROPRIETARY_A2_PGN:             cout << "PROPRIETARY_A2    "; break;
-    case WORKING_SET_MEMBER_PGN:         cout << "WORKING_SET_MEMBER "; break;
-    case WORKING_SET_MASTER_PGN:         cout << "WORKING_SET_MASTER "; break;
-    case LANGUAGE_PGN:                   cout << "LANGUAGE          "; break;
-    case LIGHTING_DATA_PGN:              cout << "LIGHTING_DATA     "; break;
-    case LIGHTING_COMMAND_PGN:           cout << "LIGHTING_COMMAND  "; break;
-    case HITCH_PTO_COMMANDS:             cout << "HITCH_PTO_COMMANDS "; break;
-    case REAR_PTO_STATE_PGN:             cout << "REAR_PTO_STATE    "; break;
-    case FRONT_PTO_STATE_PGN:            cout << "FRONT_PTO_STATE   "; break;
-    case REAR_HITCH_STATE_PGN:           cout << "REAR_HITCH_STATE  "; break;
-    case FRONT_HITCH_STATE_PGN:          cout << "FRONT_HITCH_STATE "; break;
-    case MAINTAIN_POWER_REQUEST_PGN:     cout << "MAINTAIN_POWER_REQ"; break;
-    case WHEEL_BASED_SPEED_DIST_PGN:     cout << "WHEEL_BASED_SPEED_DIST "; break;
-    case GROUND_BASED_SPEED_DIST_PGN:    cout << "GROUND_BASED_SPEED_DIST "; break;
-    case SELECTED_SPEED_CMD:             cout << "SELECTED_SPEED_CMD "; break;
-    case SELECTED_SPEED_MESSAGE:         cout << "SELECTED_SPEED_MESSAGE "; break;
-    case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: cout << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
-    case SOFTWARE_IDENTIFICATION_PGN:    cout << "SOFTWARE_IDENTIFICATION "; break;
-    case TIME_DATE_PGN:                  cout << "TIME_DATE         "; break;
-    case VEHICLE_DIRECTION_SPEED:        cout << "VEHICLE_DIRECTION_SPEED "; break;
-    case VEHICLE_POSITION:               cout << "VEHICLE_POSITION "; break;
-    case PROPRIETARY_B_PGN:              cout << "PROPRIETARY_B(1of) "; break;
-    case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: cout << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
-    case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
-    case NMEA_GPS_POSITION_DATA_PGN:     cout << "NMEA_GPS_POSITION_DATA "; break;
-    case NMEA_GPS_DIRECTION_DATA_PGN:    cout << "NMEA_GPS_DIRECTION_DATA "; break;
-    case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:  cout << "GNSS Pseudorange Noise Statistics "; break;
-    default:                             cout << std::hex << "0x" << rui32_pgn << std::dec; break;
+    case VT_TO_ECU_PGN:                  std::cout << "VT_TO_ECU         "; break;
+    case ECU_TO_VT_PGN:                  std::cout << "ECU_TO_VT         "; break;
+    case ACKNOWLEDGEMENT_PGN:            std::cout << "ACKNOWLEDGEMENT   "; break;
+    case PROCESS_DATA_PGN:               std::cout << "PROCESS_DATA      "; break;
+    case CLIENT_TO_FS_PGN:               std::cout << "CLIENT_TO_FS      "; break;
+    case FS_TO_CLIENT_PGN:               std::cout << "FS_TO_CLIENT      "; break;
+    case GUIDANCE_MACHINE_STATUS:        std::cout << "GUIDANCE_MACH_ST  "; break;
+    case GUIDANCE_SYSTEM_CMD:            std::cout << "GUIDANCE_SYS_CMD  "; break;
+    case ISOBUS_CERTIFICATION_PGN:       std::cout << "ISOBUS_CERTIFICAT."; break;
+    case ETP_DATA_TRANSFER_PGN:          std::cout << "ETP_DATA_TRANSFER "; break;
+    case ETP_CONN_MANAGE_PGN:            std::cout << "ETP_CONN_MANAGE   "; break;
+    case REQUEST_PGN_MSG_PGN:            std::cout << "REQUEST_MSG       "; break;
+    case TP_DATA_TRANSFER_PGN:           std::cout << "TP_DATA_TRANSFER  "; break;
+    case TP_CONN_MANAGE_PGN:             std::cout << "TP_CONN_MANAGE    "; break;
+    case ADDRESS_CLAIM_PGN:              std::cout << "ADDRESS_CLAIM     "; break;
+    case PROPRIETARY_A_PGN:              std::cout << "PROPRIETARY_A     "; break;
+    case PROPRIETARY_A2_PGN:             std::cout << "PROPRIETARY_A2    "; break;
+    case WORKING_SET_MEMBER_PGN:         std::cout << "WORKING_SET_MEMBER "; break;
+    case WORKING_SET_MASTER_PGN:         std::cout << "WORKING_SET_MASTER "; break;
+    case LANGUAGE_PGN:                   std::cout << "LANGUAGE          "; break;
+    case LIGHTING_DATA_PGN:              std::cout << "LIGHTING_DATA     "; break;
+    case LIGHTING_COMMAND_PGN:           std::cout << "LIGHTING_COMMAND  "; break;
+    case HITCH_PTO_COMMANDS:             std::cout << "HITCH_PTO_COMMANDS "; break;
+    case REAR_PTO_STATE_PGN:             std::cout << "REAR_PTO_STATE    "; break;
+    case FRONT_PTO_STATE_PGN:            std::cout << "FRONT_PTO_STATE   "; break;
+    case REAR_HITCH_STATE_PGN:           std::cout << "REAR_HITCH_STATE  "; break;
+    case FRONT_HITCH_STATE_PGN:          std::cout << "FRONT_HITCH_STATE "; break;
+    case MAINTAIN_POWER_REQUEST_PGN:     std::cout << "MAINTAIN_POWER_REQ"; break;
+    case WHEEL_BASED_SPEED_DIST_PGN:     std::cout << "WHEEL_BASED_SPEED_DIST "; break;
+    case GROUND_BASED_SPEED_DIST_PGN:    std::cout << "GROUND_BASED_SPEED_DIST "; break;
+    case SELECTED_SPEED_CMD:             std::cout << "SELECTED_SPEED_CMD "; break;
+    case SELECTED_SPEED_MESSAGE:         std::cout << "SELECTED_SPEED_MESSAGE "; break;
+    case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: std::cout << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
+    case SOFTWARE_IDENTIFICATION_PGN:    std::cout << "SOFTWARE_IDENTIFICATION "; break;
+    case TIME_DATE_PGN:                  std::cout << "TIME_DATE         "; break;
+    case VEHICLE_DIRECTION_SPEED:        std::cout << "VEHICLE_DIRECTION_SPEED "; break;
+    case VEHICLE_POSITION:               std::cout << "VEHICLE_POSITION "; break;
+    case PROPRIETARY_B_PGN:              std::cout << "PROPRIETARY_B(1of) "; break;
+    case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: std::cout << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
+    case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  std::cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
+    case NMEA_GPS_POSITION_DATA_PGN:     std::cout << "NMEA_GPS_POSITION_DATA "; break;
+    case NMEA_GPS_DIRECTION_DATA_PGN:    std::cout << "NMEA_GPS_DIRECTION_DATA "; break;
+    case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:  std::cout << "GNSS Pseudorange Noise Statistics "; break;
+    default:                             std::cout << std::hex << "0x" << rui32_pgn << std::dec; break;
         /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
 #define AUX_VALVE_1_ESTIMATED_FLOW  0x00FE11LU
@@ -1842,10 +1608,10 @@ void interpretePgn(uint32_t rui32_pgn)
 
 
 
-pair< int, PtrDataFrame_t > parseLogLine()
+std::pair< int, PtrDataFrame_t > parseLogLine()
 {
   int const ci_errorCodeIfNotOverridden = -1;
-  pair< int, PtrDataFrame_t > result = std::make_pair(
+  std::pair< int, PtrDataFrame_t > result = std::make_pair(
       ci_errorCodeIfNotOverridden, // default to error, will always be set
       PtrDataFrame_t(0) );
   switch (gs_main.mt_logType)
@@ -1866,41 +1632,41 @@ pair< int, PtrDataFrame_t > parseLogLine()
     PtrDataFrame_t t_ptrFrame = result.second;
 
     // Timestamp
-    cout << setfill (' ') << dec << setw (10) << (t_ptrFrame->time()/1000) << "." << setfill('0')<<setw(3)<<(t_ptrFrame->time()%1000)<< "   ";
+    std::cout << std::setfill (' ') << std::dec << std::setw (10) << (t_ptrFrame->time()/1000) << "." << std::setfill('0')<<std::setw(3)<<(t_ptrFrame->time()%1000)<< "   ";
 
     // CAN-ID / number of bytes
-    cout << setfill ('0') << hex << setw (8) << t_ptrFrame->identifier() << "  " << uint16_t(t_ptrFrame->dataSize()) << " ";
+    std::cout << std::setfill ('0') << std::hex << std::setw (8) << t_ptrFrame->identifier() << "  " << uint16_t(t_ptrFrame->dataSize()) << " ";
 
     // Databytes (HEX)
     size_t i;
-    for (i=0; i< t_ptrFrame->dataSize(); i++) cout << " " << setw (2) <<uint16_t(t_ptrFrame->dataOctet(i));
-    for (;    i<8;              i++) cout << "   ";
-    cout << "  ";
+    for (i=0; i< t_ptrFrame->dataSize(); i++) std::cout << " " << std::setw (2) <<uint16_t(t_ptrFrame->dataOctet(i));
+    for (;    i<8;              i++) std::cout << "   ";
+    std::cout << "  ";
 
     // Databytes (HEX)
-    for (i=0; i< t_ptrFrame->dataSize(); i++) cout << setw (1) << char(t_ptrFrame->asciiDataOctet(i));
-    for (;    i<8;              i++) cout << " ";
+    for (i=0; i< t_ptrFrame->dataSize(); i++) std::cout << std::setw (1) << char(t_ptrFrame->asciiDataOctet(i));
+    for (;    i<8;              i++) std::cout << " ";
 
     // SA
-    cout << "  "<<setw(2) << uint16_t(t_ptrFrame->sourceAddress()) << "->";
+    std::cout << "  "<<std::setw(2) << uint16_t(t_ptrFrame->sourceAddress()) << "->";
     // DA
-    if (t_ptrFrame->isPdu1()) cout << setw(2) << uint16_t(t_ptrFrame->ps());
-    else cout << "FF";
+    if (t_ptrFrame->isPdu1()) std::cout << std::setw(2) << uint16_t(t_ptrFrame->ps());
+    else std::cout << "FF";
 
     // Priority
-    cout << " (" << uint16_t(t_ptrFrame->prio()) << ")";
+    std::cout << " (" << uint16_t(t_ptrFrame->prio()) << ")";
 
     // PGN
-    cout << " " << setw(6) << t_ptrFrame->pgn() << " => ";
+    std::cout << " " << std::setw(6) << t_ptrFrame->pgn() << " => ";
     // Interpreted PGN
     interpretePgn(t_ptrFrame->pgn());
     // Interpreted PGN-Data
     interpretePgnData (t_ptrFrame);
-    cout << endl;
+    std::cout << std::endl;
   }
   else
   {
-    cout << "---- line missing - error in parsing!----"<<endl; /// @todo SOON-260: replace by the original line!
+    std::cout << "---- line missing - error in parsing!----"<<std::endl; /// @todo SOON-260: replace by the original line!
   }
   return result;
 }
@@ -1921,8 +1687,8 @@ typedef enum
 
 typedef struct
 {
-  vector<uint64_t> svec_alives [256];
-  vector<msgType_t> svec_response [256];
+  std::vector<uint64_t> svec_alives [256];
+  std::vector<msgType_t> svec_response [256];
   const char* name;
   int32_t alivePeriod; // ==0 => single Event - >0 ==> periodic Event - <0 ==> handshaking Event
 } msgType_s;
@@ -2052,14 +1818,14 @@ void setup()
 
 int main (int argc, char** argv)
 {
-  cerr << "ISOBUS-Logalizer (c) 2007-2010 OSB AG." << endl << endl;
+  std::cerr << "ISOBUS-Logalizer (c) 2007-2010 OSB AG." << std::endl << std::endl;
 
   if (argc < 2)
     exit_with_usage(argv[0]);
 
   setup();
 
-  string str_filename = argv[1];
+  std::string str_filename = argv[1];
   gs_main.t_ptrIn = PtrInputStream_t( new InputStream_c(str_filename) );
 
   if (!gs_main.t_ptrIn->isOpen()) exit_with_error("Couldn't open file");
@@ -2076,7 +1842,7 @@ int main (int argc, char** argv)
 
   while (!gs_main.t_ptrIn->raw().eof())
   {
-    pair< int, PtrDataFrame_t > parse_result = parseLogLine();
+    std::pair< int, PtrDataFrame_t > parse_result = parseLogLine();
     if (0 == parse_result.first)
     {
       checkAlives(parse_result.second);
@@ -2088,7 +1854,7 @@ int main (int argc, char** argv)
 
   gs_main.t_ptrIn = PtrInputStream_t(0);
 
-  std::cerr << "Alriiiiite... printing out the results..." << endl;
+  std::cerr << "Alriiiiite... printing out the results..." << std::endl;
 
   for (int i=0; i<256; i++)
   {
@@ -2099,43 +1865,43 @@ int main (int argc, char** argv)
       {
         if (ci32_alivePeriod > 0)
         { // we have a periodic event!
-          std::cout << endl << "ISOBUS node with SA="<<hex<<i<<dec<<" had the following alive-times for ["<<struct_messages[loop_msg].name<<"] with alive-periods of "<<struct_messages[loop_msg].alivePeriod<<" ms:"<<endl;
+          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<struct_messages[loop_msg].name<<"] with alive-periods of "<<struct_messages[loop_msg].alivePeriod<<" ms:"<<std::endl;
         }
         else if (ci32_alivePeriod < 0)
         { // we have a handshaking event!
-          std::cout << endl << "ISOBUS node with SA="<<hex<<i<<dec<<" had the following alive-times for ["<<struct_messages[loop_msg].name<<"] with alive-periods of "<<(-struct_messages[loop_msg].alivePeriod)<<" ms:"<<endl;
+          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<struct_messages[loop_msg].name<<"] with alive-periods of "<<(-struct_messages[loop_msg].alivePeriod)<<" ms:"<<std::endl;
         }
         else
         { // sinlge events!! "== 0"
-          std::cout << endl << "ISOBUS node with SA="<<hex<<i<<dec<<" sent out ["<<struct_messages[loop_msg].name<<"] at the following times:"<<endl;
+          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<struct_messages[loop_msg].name<<"] at the following times:"<<std::endl;
         }
-        vector<msgType_t>::iterator type_iter=struct_messages[loop_msg].svec_response[i].begin();
-        for (vector<uint64_t>::iterator iter=struct_messages[loop_msg].svec_alives[i].begin();
+        std::vector<msgType_t>::iterator type_iter=struct_messages[loop_msg].svec_response[i].begin();
+        for (std::vector<uint64_t>::iterator iter=struct_messages[loop_msg].svec_alives[i].begin();
              iter != struct_messages[loop_msg].svec_alives[i].end();
              iter++)
         {
-          cout << setfill (' ');
-          cout << "absolute time: "<<setw(10)<<(*iter/1000)<<"."<<setw(3)<<setfill('0')<<(*iter%1000)<<setfill(' ');
+          std::cout << std::setfill (' ');
+          std::cout << "absolute time: "<<std::setw(10)<<(*iter/1000)<<"."<<std::setw(3)<<std::setfill('0')<<(*iter%1000)<<std::setfill(' ');
           if (iter != struct_messages[loop_msg].svec_alives[i].begin())
           {
             const uint64_t cui32_delta = ( *(iter) - *(iter-1) );
-            cout<< "  relative time: "<<setw(10)<<cui32_delta;
+            std::cout<< "  relative time: "<<std::setw(10)<<cui32_delta;
 
             if (ci32_alivePeriod > 0)
             { // print out the alivePeriod-deviation!
-              cout<<" deviation: ";
+              std::cout<<" deviation: ";
               int deviation = int ((double (int32_t (cui32_delta)-ci32_alivePeriod) / ci32_alivePeriod) * 100);
               uint8_t deviation_bias = (deviation > 0) ? '+' : '-';
               deviation = (deviation < 0) ? -deviation : deviation;
               if (deviation > 100)
               {
-                std::cout << "EXTREME DEVIATION(!!) OF " << setw(10) << deviation << "0";
+                std::cout << "EXTREME DEVIATION(!!) OF " << std::setw(10) << deviation << "0";
               }
               else
               {
                 while (deviation > 10)
                 {
-                  cout << deviation_bias;
+                  std::cout << deviation_bias;
                   deviation -= 10;
                 }
               }
@@ -2146,39 +1912,39 @@ int main (int argc, char** argv)
               int32_t i32_alivePeriodSpecial;
               switch (*type_iter)
               {
-                case msgTypeResponse: cout << " Response  "; i32_alivePeriodSpecial = -ci32_alivePeriod; break;
-                case msgTypeCommand:  cout << " Command   "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
-                case msgTypeRTS:      cout << " (E)TP-CONN: Request to Send (RTS)         "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
-                case msgTypeCTS:      cout << " (E)TP-CONN: Clear to Send (CTS)           "; i32_alivePeriodSpecial = 1250; break;
-                case msgTypeDPO:      cout << " (E)TP-CONN: Data Packet Offset (DPO)      "; i32_alivePeriodSpecial = 1250; break; /// @todo SOON-260: set the correct values here!
-                case msgTypeEOMACK:   cout << " (E)TP-CONN: End of Message ACK (EoMACK)   "; i32_alivePeriodSpecial = 1250; break;
-                case msgTypeDATA:     cout << " (E)TP-DATA                                "; i32_alivePeriodSpecial = 250; break;
-                case msgTypeCONNABORT:cout << " (E)TP-CONN: Connection Abort (CONNABORT)  "; i32_alivePeriodSpecial = -1; break; // doesn't come normally!
-                default:              cout << " ???                                       "; i32_alivePeriodSpecial = 0; break;
+                case msgTypeResponse: std::cout << " Response  "; i32_alivePeriodSpecial = -ci32_alivePeriod; break;
+                case msgTypeCommand:  std::cout << " Command   "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
+                case msgTypeRTS:      std::cout << " (E)TP-CONN: Request to Send (RTS)         "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
+                case msgTypeCTS:      std::cout << " (E)TP-CONN: Clear to Send (CTS)           "; i32_alivePeriodSpecial = 1250; break;
+                case msgTypeDPO:      std::cout << " (E)TP-CONN: Data Packet Offset (DPO)      "; i32_alivePeriodSpecial = 1250; break; /// @todo SOON-260: set the correct values here!
+                case msgTypeEOMACK:   std::cout << " (E)TP-CONN: End of Message ACK (EoMACK)   "; i32_alivePeriodSpecial = 1250; break;
+                case msgTypeDATA:     std::cout << " (E)TP-DATA                                "; i32_alivePeriodSpecial = 250; break;
+                case msgTypeCONNABORT:std::cout << " (E)TP-CONN: Connection Abort (CONNABORT)  "; i32_alivePeriodSpecial = -1; break; // doesn't come normally!
+                default:              std::cout << " ???                                       "; i32_alivePeriodSpecial = 0; break;
               }
-              if ( (*type_iter == msgTypeResponse) && (*(type_iter-1) == msgTypeResponse) ) cout << " - RESPONSE FOLLOWING A RESPONSE!";
-              if ( (*type_iter == msgTypeCommand)  && (*(type_iter-1) == msgTypeCommand)  ) cout << " - COMMAND FOLLOWING A COMMAND!";
+              if ( (*type_iter == msgTypeResponse) && (*(type_iter-1) == msgTypeResponse) ) std::cout << " - RESPONSE FOLLOWING A RESPONSE!";
+              if ( (*type_iter == msgTypeCommand)  && (*(type_iter-1) == msgTypeCommand)  ) std::cout << " - COMMAND FOLLOWING A COMMAND!";
               if (i32_alivePeriodSpecial > 0)
               { // print out the time it took!
-                if (cui32_delta > (unsigned int) (i32_alivePeriodSpecial)) cout << " *** !!! TIMEOUT - Check relative time!!!! ***";
+                if (cui32_delta > (unsigned int) (i32_alivePeriodSpecial)) std::cout << " *** !!! TIMEOUT - Check relative time!!!! ***";
                 else
                 {
                   int32_t time = int32_t ((cui32_delta*100) / i32_alivePeriodSpecial);
-                  cout <<setw(2)<<time<< " percent of timeout ("<<setw(4)<<i32_alivePeriodSpecial<<"): (one '%' shows 10%) ";
+                  std::cout <<std::setw(2)<<time<< " percent of timeout ("<<std::setw(4)<<i32_alivePeriodSpecial<<"): (one '%' shows 10%) ";
                   while (time > 10)
                   {
-                    cout << "%";
+                    std::cout << "%";
                     time -= 10;
                   }
                 }
               }
               else if (i32_alivePeriodSpecial < 0)
               { // unsolicited messages (like CONNABORT)
-                cout << "*** UNEXPECTED/UNSOLICITED MESSAGE ***";
+                std::cout << "*** UNEXPECTED/UNSOLICITED MESSAGE ***";
               }
             }
           }
-          cout << endl;
+          std::cout << std::endl;
           if (type_iter != struct_messages[loop_msg].svec_response[i].end()) type_iter++;
         }
       }
@@ -2193,89 +1959,89 @@ void interpretePgnsFs2Cl(
   uint16_t msg_count = 0;
   uint16_t msg_offset = 0;
 
-  cout << "SA: " << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->sourceAddress()) << " DA: " << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->destinationAddress()) << " length Data: " << setw(4)<<setfill('0') << uint32_t(at_ptrFrame->dataSize());
+  std::cout << "SA: " << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->sourceAddress()) << " DA: " << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->destinationAddress()) << " length Data: " << std::setw(4)<<std::setfill('0') << uint32_t(at_ptrFrame->dataSize());
 
   switch (uint32_t(at_ptrFrame->dataOctet(0))) {
     case 0x00:
-      cout << "\tFile Server Status: ";
-        (at_ptrFrame->dataOctet(1) & 0x2) ? cout << "Busy writing" : cout << "Not Busy writing";
-        (at_ptrFrame->dataOctet(1) & 0x1) ? cout << " Busy reading" : cout << " Not Busy reading";
-      cout << " Number of Open Files: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(2));
+      std::cout << "\tFile Server Status: ";
+        (at_ptrFrame->dataOctet(1) & 0x2) ? std::cout << "Busy writing" : std::cout << "Not Busy writing";
+        (at_ptrFrame->dataOctet(1) & 0x1) ? std::cout << " Busy reading" : std::cout << " Not Busy reading";
+      std::cout << " Number of Open Files: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(2));
       break; //File Server Status
 
     case 0x01:
 
-      cout << "\tGet File Server Properties Response Version Number:";
+      std::cout << "\tGet File Server Properties Response Version Number:";
       switch (at_ptrFrame->dataOctet(1)) {
-        case 0x00: cout << " Draft version of the Standard"; break;
-        case 0x01: cout << " Final Draft version of the Standard"; break;
-        case 0x02: cout << " First published version of the Standard"; break;
+        case 0x00: std::cout << " Draft version of the Standard"; break;
+        case 0x01: std::cout << " Final Draft version of the Standard"; break;
+        case 0x02: std::cout << " First published version of the Standard"; break;
       }
-      cout << " Maximum Number of Simuntaneously Open Files: " << hex << uint32_t(at_ptrFrame->dataOctet(2));
-      cout << " File Server Capabilities : ";
-      (at_ptrFrame->dataOctet(3)) ? cout << " File server supports multiple volumes"
-                : cout << " File server does not supports multiple volumes";
+      std::cout << " Maximum Number of Simuntaneously Open Files: " << std::hex << uint32_t(at_ptrFrame->dataOctet(2));
+      std::cout << " File Server Capabilities : ";
+      (at_ptrFrame->dataOctet(3)) ? std::cout << " File server supports multiple volumes"
+                : std::cout << " File server does not supports multiple volumes";
       break; //Get File Server Properties Response
 
     case 0x10:
 
-      cout << "\tGet Current Directory Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tGet Current Directory Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
-      cout << " Total Space: " << setw(8) <<  ((static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 24) |
+      std::cout << " Total Space: " << std::setw(8) <<  ((static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 24) |
 		                                      (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 16) |
 		                                      (static_cast<uint32_t>(at_ptrFrame->dataOctet(4)) << 8 ) |
 		                                      (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)))) << "(* 512 bytes)";
-      cout << " Free Space: " << setw(8) << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(10)) << 24) |
+      std::cout << " Free Space: " << std::setw(8) << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(10)) << 24) |
 		                                    (static_cast<uint32_t>(at_ptrFrame->dataOctet( 9)) << 16) |
 		                                    (static_cast<uint32_t>(at_ptrFrame->dataOctet( 8)) << 8 ) |
 		                                    (static_cast<uint32_t>(at_ptrFrame->dataOctet( 7)))) << "(* 512 bytes)";
       i_pathNameLength = (static_cast<uint16_t>(at_ptrFrame->dataOctet(12))<<8) | at_ptrFrame->dataOctet(11);
-      cout << " Path Name Length: " << setw(4) << i_pathNameLength;
+      std::cout << " Path Name Length: " << std::setw(4) << i_pathNameLength;
 
-      cout << " Path Name: ";
+      std::cout << " Path Name: ";
       for (uint16_t i_count = 0; i_count < i_pathNameLength; i_count++)
       {
-        cout << uint8_t(at_ptrFrame->dataOctet(13 + i_count));
+        std::cout << uint8_t(at_ptrFrame->dataOctet(13 + i_count));
       }
 
       break; //Get Current Directory Response
     case 0x11:
 
-      cout << "\tChange Current Directory Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tChange Current Directory Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
 
       break; //Chanege Current Directory Response
     case 0x20:
 
-      cout << "\tOpen File Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tOpen File Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
-      cout << " Handle: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(3));
+      std::cout << " Handle: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(3));
       decodeAttributes(at_ptrFrame->dataOctet(4));
 
       break; //Open File Response
     case 0x21:
 
-      cout << "\tSeek File Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tSeek File Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
-      cout << " Position : " << setw(8) << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 24) |
+      std::cout << " Position : " << std::setw(8) << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 24) |
 		                                   (static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 16) |
 		                                   (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 8 ) |
 		                                   (static_cast<uint32_t>(at_ptrFrame->dataOctet(4))));
       break; //Seek File Response
     case 0x22:
 
-      cout << "\tRead File/Directory Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tRead File/Directory Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
 
       msg_count = uint16_t((at_ptrFrame->dataOctet(4)<<8) | at_ptrFrame->dataOctet(3));
       msg_offset = 5;
 
-      cout << " Count: " << setw(4) << msg_count << " ";
+      std::cout << " Count: " << std::setw(4) << msg_count << " ";
 
       //case file-data
       if (at_ptrFrame->dataSize() == msg_count + 5u) {
         for (uint16_t loop = 0; loop < msg_count; loop++) {
-          cout << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(5 + loop)) << " ";
+          std::cout << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(5 + loop)) << " ";
         }
       }
       //else directory entries
@@ -2284,16 +2050,16 @@ void interpretePgnsFs2Cl(
           uint8_t filenamelength = uint8_t(at_ptrFrame->dataOctet(msg_offset));
           if (filenamelength == 0xff)
             break;
-          cout << " Filename length: " << uint16_t(filenamelength) << " ";
-          cout << " Filename: ";
+          std::cout << " Filename length: " << uint16_t(filenamelength) << " ";
+          std::cout << " Filename: ";
           uint8_t loopfilename = 0;
           for (; loopfilename < filenamelength; loopfilename++) {
-            cout << uint8_t(at_ptrFrame->dataOctet(msg_offset + 1 + loopfilename));
+            std::cout << uint8_t(at_ptrFrame->dataOctet(msg_offset + 1 + loopfilename));
           }
           decodeAttributes(at_ptrFrame->dataOctet(msg_offset + 1 + loopfilename));
           decodeDate(uint16_t(at_ptrFrame->dataOctet(msg_offset + 3 + loopfilename) << 8 | uint16_t(at_ptrFrame->dataOctet(msg_offset + 2 + loopfilename))));
           decodeTime(uint16_t(at_ptrFrame->dataOctet(msg_offset + 5 + loopfilename) << 8 | uint16_t(at_ptrFrame->dataOctet(msg_offset + 4 + loopfilename))));
-          cout << " FileSize: " << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(msg_offset + 9 + loopfilename)) << 24) |
+          std::cout << " FileSize: " << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(msg_offset + 9 + loopfilename)) << 24) |
 		                           (static_cast<uint32_t>(at_ptrFrame->dataOctet(msg_offset + 8 + loopfilename)) << 16) |
 		                           (static_cast<uint32_t>(at_ptrFrame->dataOctet(msg_offset + 7 + loopfilename)) << 8 ) |
 		                           (static_cast<uint32_t>(at_ptrFrame->dataOctet(msg_offset + 6 + loopfilename))));
@@ -2304,50 +2070,50 @@ void interpretePgnsFs2Cl(
       break; //Read File/Directory Response
     case 0x23:
 
-      cout << "\tWrite File Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tWrite File Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
-      cout << " Count: " << setw(4) << uint16_t((at_ptrFrame->dataOctet(4)<<8) | at_ptrFrame->dataOctet(3));
+      std::cout << " Count: " << std::setw(4) << uint16_t((at_ptrFrame->dataOctet(4)<<8) | at_ptrFrame->dataOctet(3));
       break; // Write File Response
     case 0x24:
 
-      cout << "\tClose File Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tClose File Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       break; // Close File Response
     case 0x30:
 
-      cout << "\tMove File Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tMove File Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       break; // Move File Response
     case 0x31:
 
-      cout << "\tDelete File Repsonse TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tDelete File Repsonse TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       break; // Delete File Repsonse
     case 0x32:
 
-      cout << "\tGet File Attribute Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tGet File Attribute Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       decodeAttributes(at_ptrFrame->dataOctet(3));
-      cout << " Size: " << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 24) |
+      std::cout << " Size: " << ((static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 24) |
 		                   (static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 16) |
 		                   (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)) << 8 ) |
 		                   (static_cast<uint32_t>(at_ptrFrame->dataOctet(4))));
       break; // Get File Attribute Response
     case 0x33:
 
-      cout << "\tSet File Attribute Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tSet File Attribute Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       break; // Set File Attribute Response
     case 0x34:
 
-      cout << "\tGet File Date & Time Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tGet File Date & Time Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       decodeDate(uint16_t((at_ptrFrame->dataOctet(4)<<8) | at_ptrFrame->dataOctet(3)));
       decodeTime(uint16_t((at_ptrFrame->dataOctet(6)<<8) | at_ptrFrame->dataOctet(5)));
       break; // Get File Date & Time Response
     case 0x40:
 
-      cout << "\tInitialize Volume Response TAN: " << setw(2) << hex << uint32_t(at_ptrFrame->dataOctet(1));
+      std::cout << "\tInitialize Volume Response TAN: " << std::setw(2) << std::hex << uint32_t(at_ptrFrame->dataOctet(1));
       decodeErrorCode(at_ptrFrame->dataOctet(2));
       decodeAttributes(at_ptrFrame->dataOctet(3));
       break; // Initialize Volume Response
@@ -2361,30 +2127,30 @@ void dump(PtrDataFrame_t at_ptrFrame)
   if (local_multipacketWrap > at_ptrFrame->dataSize())
     local_multipacketWrap = at_ptrFrame->dataSize();
 
-  cout << ")" << endl;
+  std::cout << ")" << std::endl;
 
-  cout << "              " << hex << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->sourceAddress()) << "->" << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->destinationAddress()) << " " << dec << setw(7)<<setfill(' ') << uint32_t(at_ptrFrame->dataSize()) << "  " << hex;
+  std::cout << "              " << std::hex << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->sourceAddress()) << "->" << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->destinationAddress()) << " " << std::dec << std::setw(7)<<std::setfill(' ') << uint32_t(at_ptrFrame->dataSize()) << "  " << std::hex;
 
   for (size_t blockoffset=0; blockoffset < at_ptrFrame->dataSize(); blockoffset += local_multipacketWrap)
   {
     if (blockoffset > 0)
-      cout << "                              ";
+      std::cout << "                              ";
 
     for (size_t inblock = 0; inblock < gs_main.mt_sizeMultipacketWrap; ++inblock)
     {
       if ((blockoffset + inblock) < at_ptrFrame->dataSize())
-        cout << setw(2)<<setfill('0') << uint32_t(at_ptrFrame->dataOctet(blockoffset+inblock)) << " ";
+        std::cout << std::setw(2)<<std::setfill('0') << uint32_t(at_ptrFrame->dataOctet(blockoffset+inblock)) << " ";
       else
-        cout << "   ";
+        std::cout << "   ";
     }
     for (size_t inblock = 0; inblock < gs_main.mt_sizeMultipacketWrap; ++inblock)
     {
       if ((blockoffset + inblock) < at_ptrFrame->dataSize())
-        cout << getAscii (at_ptrFrame->dataOctet(blockoffset+inblock));
+        std::cout << getAscii (at_ptrFrame->dataOctet(blockoffset+inblock));
       else
-        cout << " ";
+        std::cout << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
   }
 }
 
@@ -2392,81 +2158,81 @@ void decodeErrorCode(uint8_t i_errorCode)
 {
   switch (uint32_t(i_errorCode)) {
     case 0x00:
-      cout << " Success" ;
+      std::cout << " Success" ;
       break;
     case 0x01:
-      cout << " Access Denied" ;
+      std::cout << " Access Denied" ;
       break;
     case 0x02:
-      cout << " Invalid Access" ;
+      std::cout << " Invalid Access" ;
       break;
     case 0x03:
-      cout << " Too many files open" ;
+      std::cout << " Too many files open" ;
       break;
     case 0x04:
-      cout << " File or path not found" ;
+      std::cout << " File or path not found" ;
       break;
     case 0x05:
-      cout << " Invalid Handle" ;
+      std::cout << " Invalid Handle" ;
       break;
     case 0x06:
-      cout << " Invalid given source name" ;
+      std::cout << " Invalid given source name" ;
       break;
     case 0x07:
-      cout << " Invalid given destination name" ;
+      std::cout << " Invalid given destination name" ;
       break;
     case 0x08:
-      cout << " Out of free space" ;
+      std::cout << " Out of free space" ;
       break;
     case 0x09:
-      cout << " Failure during write operation" ;
+      std::cout << " Failure during write operation" ;
       break;
     case 0x0a:
-      cout << " Volume is possibly not initialized" ;
+      std::cout << " Volume is possibly not initialized" ;
       break;
     case 0x0b:
-      cout << " Failure during a read operation" ;
+      std::cout << " Failure during a read operation" ;
       break;
     case 0x0c:
-      cout << " Function not supported" ;
+      std::cout << " Function not supported" ;
       break;
     case 0x2A:
-      cout << " Invalid request length" ;
+      std::cout << " Invalid request length" ;
       break;
     case 0x2B:
-      cout << " Out of memory" ;
+      std::cout << " Out of memory" ;
       break;
     case 0x2C:
-      cout << " Any other error" ;
+      std::cout << " Any other error" ;
       break;
     case 0x2D:
-      cout << " End of file reached" ;
+      std::cout << " End of file reached" ;
       break;
     default:
-      cout << " Reserved" ;
+      std::cout << " Reserved" ;
       break;
   }
 }
 
 void decodeAttributes(uint8_t i_attributes)
 {
-  (i_attributes & 128)? cout << " Volume is case-sensitive"  : cout << " Volume is case-insensitive" ;
-  (i_attributes & 64)? cout << " Volume is not removable"  : cout << " Volume is removable" ;
-  (i_attributes & 32)? cout << " Volume does support long filenames"  : cout << " Volume does not support long filenames" ;
-  (i_attributes & 16)? cout << " Handle specifies a directory"  : cout << " Handle does not specify a directory" ;
-  (i_attributes & 8)? cout << " Handle specifies a volume"  : cout << " Handle does not specify a volume" ;
-  (i_attributes & 2)? cout << " Hidden attribute is set"  : cout << " Hidden attribute is not set" ;
-  (i_attributes & 1)? cout << " Read-only attribute is set"  : cout << " Read-only attribute is not set" ;
+  (i_attributes & 128)? std::cout << " Volume is case-sensitive"  : std::cout << " Volume is case-insensitive" ;
+  (i_attributes & 64)? std::cout << " Volume is not removable"  : std::cout << " Volume is removable" ;
+  (i_attributes & 32)? std::cout << " Volume does support long filenames"  : std::cout << " Volume does not support long filenames" ;
+  (i_attributes & 16)? std::cout << " Handle specifies a directory"  : std::cout << " Handle does not specify a directory" ;
+  (i_attributes & 8)? std::cout << " Handle specifies a volume"  : std::cout << " Handle does not specify a volume" ;
+  (i_attributes & 2)? std::cout << " Hidden attribute is set"  : std::cout << " Hidden attribute is not set" ;
+  (i_attributes & 1)? std::cout << " Read-only attribute is set"  : std::cout << " Read-only attribute is not set" ;
 }
 
 void decodeDate(uint16_t i_date)
 {
 
-  cout << " " << setw(4) << dec << uint32_t(1980 + ((i_date >> 9) & 0x7F)) << "-" << setw(2) << dec << uint32_t((i_date >> 5) & 0xF) << "-" << setw(2) << dec << uint32_t((i_date) & 0x1F);
+  std::cout << " " << std::setw(4) << std::dec << uint32_t(1980 + ((i_date >> 9) & 0x7F)) << "-" << std::setw(2) << std::dec << uint32_t((i_date >> 5) & 0xF) << "-" << std::setw(2) << std::dec << uint32_t((i_date) & 0x1F);
 
 }
 
 void decodeTime(uint16_t i_time)
 {
-  cout << " " << setw(2) << dec << uint32_t(((i_time >> 11) & 0x1F)) << "-" << setw(2) << dec << uint32_t(((i_time >> 5) & 0x3F)) << "-" << setw(2) << dec << uint32_t(2 * ((i_time) & 0x1F));
+  std::cout << " " << std::setw(2) << std::dec << uint32_t(((i_time >> 11) & 0x1F)) << "-" << std::setw(2) << std::dec << uint32_t(((i_time >> 5) & 0x3F)) << "-" << std::setw(2) << std::dec << uint32_t(2 * ((i_time) & 0x1F));
 }

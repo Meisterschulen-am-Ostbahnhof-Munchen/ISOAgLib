@@ -12,13 +12,13 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP = src/logalizer.cpp  
+SOURCES_APP := $(addprefix src/,logalizer.cpp transfercollection.cpp)
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt
 CC       = $(COMPILER_BINARY_PRE)gcc
 CXX      = $(COMPILER_BINARY_PRE)g++
-STRIP	 = $(COMPILER_BINARY_PRE)strip
+STRIP	  := $(COMPILER_BINARY_PRE)strip
 LEX      = flex
 YACC     = yacc
 CFLAGS   = -pipe -O -Wall -Wextra -g -fno-builtin -fno-exceptions -fno-exceptions -Winit-self -Wmissing-include-dirs -Wshadow -Wcast-qual -Wcast-align -Wconversion -Winline -Woverloaded-virtual -Wpointer-arith

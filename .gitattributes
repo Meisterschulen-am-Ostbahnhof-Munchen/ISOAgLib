@@ -551,7 +551,11 @@ tools/logalizer/Makefile -text
 tools/logalizer/README.txt -text
 tools/logalizer/cmake/CMakeLists.txt -text
 tools/logalizer/logalizer.vcproj -text
+tools/logalizer/src/dataframe.h -text
 tools/logalizer/src/logalizer.cpp -text
+tools/logalizer/src/logenvirons.h -text
+tools/logalizer/src/transfercollection.cpp -text
+tools/logalizer/src/transfercollection.h -text
 tools/proc2iso/COPYING -text
 tools/proc2iso/INSTALL -text
 tools/proc2iso/INSTALL.Win32.txt -text
