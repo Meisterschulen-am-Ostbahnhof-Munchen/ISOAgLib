@@ -552,6 +552,7 @@ tools/logalizer/README.txt -text
 tools/logalizer/cmake/CMakeLists.txt -text
 tools/logalizer/logalizer.vcproj -text
 tools/logalizer/src/dataframe.h -text
+tools/logalizer/src/inputstream.h -text
 tools/logalizer/src/logalizer.cpp -text
 tools/logalizer/src/logenvirons.h -text
 tools/logalizer/src/transfercollection.cpp -text

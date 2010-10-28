@@ -11,11 +11,13 @@ endif(NOT CMAKE_BUILD_TYPE)
 project(LOGALIZER)
 
 include_directories(
+  ../src
   ../../../library/xgpl_src
   ../../../tools/libs/misc)
 
 add_executable(
   logalizer
-  ../src/logalizer.cpp)
+  ../src/logalizer.cpp
+  ../src/transfercollection.cpp)
 
 target_link_libraries(logalizer)
