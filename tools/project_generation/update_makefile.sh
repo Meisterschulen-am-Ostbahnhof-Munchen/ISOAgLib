@@ -2338,6 +2338,7 @@ EOF
     local INSERT_CMAKE_ADD_EXECUTABLE="$(
         omit_or_printf '\n  %s' "$PROJECT" $(
             grep -E '\.cc|\.cpp|\.c' <"$DspPrjFilelist" || status_le1))"
+    local INSERT_CMAKE_SOURCE_FILES="$(omit_or_printf '\n  %s' "$(cat filelist__$PROJECT.txt)" )"
     local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32)"
     expand_template "$CMAKE_SKELETON_FILE" >"$(make_cmake_dir)/CMakeLists.txt"
 }
