@@ -21,46 +21,38 @@
 #include <stdlib.h>
 #include <algorithm>
 
-void interpretePgnsCl2Fs();
-void interpretePgnsFs2Cl();
-
-typedef enum {
-  logTypeCanServer=0, // default!
-  logTypeRte,
-  logTypeCANMon,
-  logTypeCANoe,
-  logTypeA1ASCII,
-  logTypeTrc,
-  logTypeJohnDeere,
-  logTypeRte2,
-  logTypeJrf
-} logType_t;
-
+namespace
+{
+typedef std::pair< int, PtrDataFrame_t > ParseLogLine_t();
 typedef void Interprete_t(PtrDataFrame_t);
+
+struct Main_s {
+  size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
+  TransferCollection_c mc_trans;
+  ParseLogLine_t *pt_parseLogLine;
+  PtrInputStream_t t_ptrIn;
+
+  Main_s();
+};
+
+inline Main_s::Main_s() :
+  mt_sizeMultipacketWrap(0),
+  mc_trans(),
+  pt_parseLogLine(0),
+  t_ptrIn(0)
+{
+}
+
+struct Main_s gs_main;
+} //namespace
+
 Interprete_t interpretePgnData;
-Interprete_t interpretePgnsCl2Fs;
 Interprete_t interpretePgnsFs2Cl;
 Interprete_t dump;
 void decodeErrorCode(uint8_t);
 void decodeAttributes(uint8_t);
 void decodeDate(uint16_t);
 void decodeTime(uint16_t);
-Interprete_t interpretePgnsVtFromEcu;
-Interprete_t interpretePgnsVtToEcu;
-
-struct Main_s {
-  size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
-  TransferCollection_c mc_trans;
-  logType_t mt_logType;
-  PtrInputStream_t t_ptrIn;
-
-  Main_s() :
-    mt_sizeMultipacketWrap(0),
-    mc_trans(),
-    mt_logType(),
-    t_ptrIn(0)
-  {}
-} gs_main;
 
 void exit_with_usage(const char* progname)
 {
@@ -399,6 +391,14 @@ std::pair< int, PtrDataFrame_t > parseLogLineJrf() // "41.19,0CFFFF2A,77,04,00,0
   return std::make_pair( i_result, t_ptrFrame );
 }
 
+std::pair< int, PtrDataFrame_t > defaultParseLogLine()
+{
+  std::pair< int, PtrDataFrame_t > result = std::make_pair(
+      -1,
+      PtrDataFrame_t(0) );
+  exit_with_error("Unknown Log-Type!");
+  return std::make_pair(1, result.second); // return just to satisfy compiler. exit_with_error will exit anyway ;)
+}
 
 void partiallyInterpretePgnsVtEcu(PtrDataFrame_t at_ptrFrame)
 {
@@ -1280,6 +1280,102 @@ void interpreteVehiclePosition(PtrDataFrame_t at_ptrFrame)
   }
 }
 
+inline int portFlowRepr(uint8_t ui8_octet)
+{
+  return int(ui8_octet) - 125;
+}
+
+std::string auxiliaryValveFailSaveModeMeasuredRepr(unsigned ui_2lsb)
+{
+  switch (ui_2lsb & 0x3u) {
+  case 0u:
+    return "block";
+  case 1u:
+    return "float";
+  case 2u:
+    return "error indication";
+  case 3u:
+    return "not available";
+  default:
+    return "(protocol error)";
+  }
+}
+
+std::string valveStateRepr(unsigned ui_4lsb)
+{
+  switch (ui_4lsb & 0xFu) {
+  case 0u:
+    return "blocked";
+  case 1u:
+    return "extend";
+  case 2u:
+    return "retract";
+  case 3u:
+    return "floating";
+  default:
+    return "reserved";
+  case 14u:
+    return "error indication";
+  case 15u:
+    return "not available";
+  }
+}
+
+std::string persistentLimitStatusRepr(unsigned ui_3lsb)
+{
+  switch (ui_3lsb & 0x7u) {
+  case 0u:
+    return "not limited";
+  case 1u:
+    return "operator limited/controlled";
+  case 2u:
+    return "limited high";
+  case 3u:
+    return "limited low";
+  default:
+    return "reserved";
+  case 6u:
+    return "non-recoverable fault";
+  case 7u:
+    return "not available";
+  }
+}
+
+void interpreteValveEstimatedFlow(PtrDataFrame_t at_ptrFrame)
+{
+  // for different valves resp. different values of at_ptrFrame->pgn()
+  std::cout <<
+    "Extend port estimated flow: " << portFlowRepr(at_ptrFrame->dataOctet(0)) << " " <<
+    "Retract port estimated flow: " << portFlowRepr(at_ptrFrame->dataOctet(1)) << " " <<
+    "Fail save mode - measured: " << auxiliaryValveFailSaveModeMeasuredRepr(unsigned(at_ptrFrame->dataOctet(2)) >> 6) << " " <<
+    "Valve state: " << valveStateRepr(at_ptrFrame->dataOctet(2)) << " " <<
+    "Limit status: " << persistentLimitStatusRepr(at_ptrFrame->dataOctet(3) >> 5);
+}
+
+inline double extendOrRetractPortPressureRepr(
+    std::vector< uint8_t > const &ar_data,
+    size_t t_offset)
+{
+  return 5e3 * (0x100u * ar_data[t_offset+1] + ar_data[t_offset]); // unit: Pa
+}
+
+inline double returnPortPressureRepr(unsigned at_octet)
+{
+  return 16e3 * at_octet; // unit: Pa
+}
+
+void interpreteValveMeasuredFlow(PtrDataFrame_t at_ptrFrame)
+{
+  // for different valves resp. different values of at_ptrFrame->pgn()
+  std::cout <<
+    "Extend port measured flow: " << portFlowRepr(at_ptrFrame->dataOctet(0)) << " " <<
+    "Retract port measured flow: " << portFlowRepr(at_ptrFrame->dataOctet(1)) << " " <<
+    "Extend port pressure: " << std::scientific << extendOrRetractPortPressureRepr(at_ptrFrame->data(), 2) << " Pa " <<
+    "Retract port pressure: " << std::scientific << extendOrRetractPortPressureRepr(at_ptrFrame->data(), 4) << " Pa " <<
+    "Return port pressure: " << std::scientific << returnPortPressureRepr(at_ptrFrame->dataOctet(6)) << " Pa " <<
+    "Limit Status: " << persistentLimitStatusRepr(at_ptrFrame->dataOctet(3) >> 5);
+}
+
 TransferCollection_c::PtrSession_t getTransferSession(
     TransferCollection_c::Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
@@ -1476,31 +1572,62 @@ void endOfTransfer(
   }
 }
 
-void interpretePgnData(PtrDataFrame_t at_ptrFrame)
+Interprete_t *getPgnDataInterpreter(PtrDataFrame_t at_ptrFrame)
 {
-  Interprete_t *p_f = 0;
-
   switch (at_ptrFrame->pgn())
   {
-  case VT_TO_ECU_PGN:                           p_f = interpretePgnsVtToEcu; break;
-  case ECU_TO_VT_PGN:                           p_f = interpretePgnsVtFromEcu; break;
-  case ACKNOWLEDGEMENT_PGN:                     p_f = interpretePgnAcknowledge; break;
-  case CLIENT_TO_FS_PGN:                        p_f = interpretePgnsCl2Fs; break;
-  case FS_TO_CLIENT_PGN:                        p_f = interpretePgnsFs2Cl; break;
-  case ETP_DATA_TRANSFER_PGN:                   p_f = interpretePgnsTPETP; break;
-  case ETP_CONN_MANAGE_PGN:                     p_f = interpretePgnsTPETP; break;
-  case TP_DATA_TRANSFER_PGN:                    p_f = interpretePgnsTPETP; break;
-  case TP_CONN_MANAGE_PGN:                      p_f = interpretePgnsTPETP; break;
-  case LANGUAGE_PGN:                            p_f = interpretePgnLanguage; break;
-  case LIGHTING_COMMAND_PGN:                    p_f = interpreteLightingCommand; break;
-  case REAR_PTO_STATE_PGN:                      p_f = interpreteRearPTOstate; break;
-  case REAR_HITCH_STATE_PGN:                    p_f = interpreteRearHitch; break;
-  case WHEEL_BASED_SPEED_DIST_PGN:              p_f = interpreteWheelBasedSpeedDist; break;
-  case GROUND_BASED_SPEED_DIST_PGN:             p_f = interpreteGroundBasedSpeedDist; break;
-  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:  p_f = interpreteEngineSpeedMsg; break;
-  case VEHICLE_DIRECTION_SPEED:                 p_f = interpreteVehicleSpeed; break;
-  case VEHICLE_POSITION:                        p_f = interpreteVehiclePosition; break;
-
+  case VT_TO_ECU_PGN:                           return interpretePgnsVtToEcu;
+  case ECU_TO_VT_PGN:                           return interpretePgnsVtFromEcu;
+  case ACKNOWLEDGEMENT_PGN:                     return interpretePgnAcknowledge;
+  case CLIENT_TO_FS_PGN:                        return interpretePgnsCl2Fs;
+  case FS_TO_CLIENT_PGN:                        return interpretePgnsFs2Cl;
+  case ETP_DATA_TRANSFER_PGN:                   return interpretePgnsTPETP;
+  case ETP_CONN_MANAGE_PGN:                     return interpretePgnsTPETP;
+  case TP_DATA_TRANSFER_PGN:                    return interpretePgnsTPETP;
+  case TP_CONN_MANAGE_PGN:                      return interpretePgnsTPETP;
+  case LANGUAGE_PGN:                            return interpretePgnLanguage;
+  case LIGHTING_COMMAND_PGN:                    return interpreteLightingCommand;
+  case REAR_PTO_STATE_PGN:                      return interpreteRearPTOstate;
+  case REAR_HITCH_STATE_PGN:                    return interpreteRearHitch;
+  case WHEEL_BASED_SPEED_DIST_PGN:              return interpreteWheelBasedSpeedDist;
+  case GROUND_BASED_SPEED_DIST_PGN:             return interpreteGroundBasedSpeedDist;
+  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:  return interpreteEngineSpeedMsg;
+  case VEHICLE_DIRECTION_SPEED:                 return interpreteVehicleSpeed;
+  case VEHICLE_POSITION:                        return interpreteVehiclePosition;
+  case AUX_VALVE_0_ESTIMATED_FLOW:
+  case AUX_VALVE_1_ESTIMATED_FLOW:
+  case AUX_VALVE_2_ESTIMATED_FLOW:
+  case AUX_VALVE_3_ESTIMATED_FLOW:
+  case AUX_VALVE_4_ESTIMATED_FLOW:
+  case AUX_VALVE_5_ESTIMATED_FLOW:
+  case AUX_VALVE_6_ESTIMATED_FLOW:
+  case AUX_VALVE_7_ESTIMATED_FLOW:
+  case AUX_VALVE_8_ESTIMATED_FLOW:
+  case AUX_VALVE_9_ESTIMATED_FLOW:
+  case AUX_VALVE_10_ESTIMATED_FLOW:
+  case AUX_VALVE_11_ESTIMATED_FLOW:
+  case AUX_VALVE_12_ESTIMATED_FLOW:
+  case AUX_VALVE_13_ESTIMATED_FLOW:
+  case AUX_VALVE_14_ESTIMATED_FLOW:
+  case AUX_VALVE_15_ESTIMATED_FLOW:
+    return interpreteValveEstimatedFlow;
+  case AUX_VALVE_0_MEASURED_FLOW:
+  case AUX_VALVE_1_MEASURED_FLOW:
+  case AUX_VALVE_2_MEASURED_FLOW:
+  case AUX_VALVE_3_MEASURED_FLOW:
+  case AUX_VALVE_4_MEASURED_FLOW:
+  case AUX_VALVE_5_MEASURED_FLOW:
+  case AUX_VALVE_6_MEASURED_FLOW:
+  case AUX_VALVE_7_MEASURED_FLOW:
+  case AUX_VALVE_8_MEASURED_FLOW:
+  case AUX_VALVE_9_MEASURED_FLOW:
+  case AUX_VALVE_10_MEASURED_FLOW:
+  case AUX_VALVE_11_MEASURED_FLOW:
+  case AUX_VALVE_12_MEASURED_FLOW:
+  case AUX_VALVE_13_MEASURED_FLOW:
+  case AUX_VALVE_14_MEASURED_FLOW:
+  case AUX_VALVE_15_MEASURED_FLOW:
+    return interpreteValveMeasuredFlow;
   case PROCESS_DATA_PGN:
   case GUIDANCE_MACHINE_STATUS:
   case GUIDANCE_SYSTEM_CMD:
@@ -1529,17 +1656,18 @@ void interpretePgnData(PtrDataFrame_t at_ptrFrame)
   default:
     break;
     /// @todo SOON-260: to be done...
-#define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
-#define AUX_VALVE_1_ESTIMATED_FLOW  0x00FE11LU
-    //...
-#define AUX_VALVE_0_MEASURED_FLOW   0x00FE20LU
 #define AUX_VALVE_1_MEASURED_FLOW   0x00FE21LU
     //...
 #define AUX_VALVE_0_COMMAND         0x00FE30LU
 #define AUX_VALVE_1_COMMAND         0x00FE31LU
     //...
   }
+  return 0;
+}
 
+void interpretePgnData(PtrDataFrame_t at_ptrFrame)
+{
+  Interprete_t *p_f = getPgnDataInterpreter(at_ptrFrame);
   if (p_f)
     p_f(at_ptrFrame);
 }
@@ -1548,85 +1676,117 @@ void interpretePgn(uint32_t rui32_pgn)
 {
   switch (rui32_pgn)
   {
-    case VT_TO_ECU_PGN:                  std::cout << "VT_TO_ECU         "; break;
-    case ECU_TO_VT_PGN:                  std::cout << "ECU_TO_VT         "; break;
-    case ACKNOWLEDGEMENT_PGN:            std::cout << "ACKNOWLEDGEMENT   "; break;
-    case PROCESS_DATA_PGN:               std::cout << "PROCESS_DATA      "; break;
-    case CLIENT_TO_FS_PGN:               std::cout << "CLIENT_TO_FS      "; break;
-    case FS_TO_CLIENT_PGN:               std::cout << "FS_TO_CLIENT      "; break;
-    case GUIDANCE_MACHINE_STATUS:        std::cout << "GUIDANCE_MACH_ST  "; break;
-    case GUIDANCE_SYSTEM_CMD:            std::cout << "GUIDANCE_SYS_CMD  "; break;
-    case ISOBUS_CERTIFICATION_PGN:       std::cout << "ISOBUS_CERTIFICAT."; break;
-    case ETP_DATA_TRANSFER_PGN:          std::cout << "ETP_DATA_TRANSFER "; break;
-    case ETP_CONN_MANAGE_PGN:            std::cout << "ETP_CONN_MANAGE   "; break;
-    case REQUEST_PGN_MSG_PGN:            std::cout << "REQUEST_MSG       "; break;
-    case TP_DATA_TRANSFER_PGN:           std::cout << "TP_DATA_TRANSFER  "; break;
-    case TP_CONN_MANAGE_PGN:             std::cout << "TP_CONN_MANAGE    "; break;
-    case ADDRESS_CLAIM_PGN:              std::cout << "ADDRESS_CLAIM     "; break;
-    case PROPRIETARY_A_PGN:              std::cout << "PROPRIETARY_A     "; break;
-    case PROPRIETARY_A2_PGN:             std::cout << "PROPRIETARY_A2    "; break;
-    case WORKING_SET_MEMBER_PGN:         std::cout << "WORKING_SET_MEMBER "; break;
-    case WORKING_SET_MASTER_PGN:         std::cout << "WORKING_SET_MASTER "; break;
-    case LANGUAGE_PGN:                   std::cout << "LANGUAGE          "; break;
-    case LIGHTING_DATA_PGN:              std::cout << "LIGHTING_DATA     "; break;
-    case LIGHTING_COMMAND_PGN:           std::cout << "LIGHTING_COMMAND  "; break;
-    case HITCH_PTO_COMMANDS:             std::cout << "HITCH_PTO_COMMANDS "; break;
-    case REAR_PTO_STATE_PGN:             std::cout << "REAR_PTO_STATE    "; break;
-    case FRONT_PTO_STATE_PGN:            std::cout << "FRONT_PTO_STATE   "; break;
-    case REAR_HITCH_STATE_PGN:           std::cout << "REAR_HITCH_STATE  "; break;
-    case FRONT_HITCH_STATE_PGN:          std::cout << "FRONT_HITCH_STATE "; break;
-    case MAINTAIN_POWER_REQUEST_PGN:     std::cout << "MAINTAIN_POWER_REQ"; break;
-    case WHEEL_BASED_SPEED_DIST_PGN:     std::cout << "WHEEL_BASED_SPEED_DIST "; break;
-    case GROUND_BASED_SPEED_DIST_PGN:    std::cout << "GROUND_BASED_SPEED_DIST "; break;
-    case SELECTED_SPEED_CMD:             std::cout << "SELECTED_SPEED_CMD "; break;
-    case SELECTED_SPEED_MESSAGE:         std::cout << "SELECTED_SPEED_MESSAGE "; break;
-    case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE: std::cout << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
-    case SOFTWARE_IDENTIFICATION_PGN:    std::cout << "SOFTWARE_IDENTIFICATION "; break;
-    case TIME_DATE_PGN:                  std::cout << "TIME_DATE         "; break;
-    case VEHICLE_DIRECTION_SPEED:        std::cout << "VEHICLE_DIRECTION_SPEED "; break;
-    case VEHICLE_POSITION:               std::cout << "VEHICLE_POSITION "; break;
-    case PROPRIETARY_B_PGN:              std::cout << "PROPRIETARY_B(1of) "; break;
-    case NMEA_GPS_POSITION_RAPID_UPDATE_PGN: std::cout << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
-    case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:  std::cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
-    case NMEA_GPS_POSITION_DATA_PGN:     std::cout << "NMEA_GPS_POSITION_DATA "; break;
-    case NMEA_GPS_DIRECTION_DATA_PGN:    std::cout << "NMEA_GPS_DIRECTION_DATA "; break;
-    case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:  std::cout << "GNSS Pseudorange Noise Statistics "; break;
-    default:                             std::cout << std::hex << "0x" << rui32_pgn << std::dec; break;
-        /// @todo SOON-260: to be done...
-#define AUX_VALVE_0_ESTIMATED_FLOW  0x00FE10LU
-#define AUX_VALVE_1_ESTIMATED_FLOW  0x00FE11LU
-        //...
-#define AUX_VALVE_0_MEASURED_FLOW   0x00FE20LU
-#define AUX_VALVE_1_MEASURED_FLOW   0x00FE21LU
-        //...
+  case VT_TO_ECU_PGN:                           std::cout << "VT_TO_ECU         "; break;
+  case ECU_TO_VT_PGN:                           std::cout << "ECU_TO_VT         "; break;
+  case ACKNOWLEDGEMENT_PGN:                     std::cout << "ACKNOWLEDGEMENT   "; break;
+  case PROCESS_DATA_PGN:                        std::cout << "PROCESS_DATA      "; break;
+  case CLIENT_TO_FS_PGN:                        std::cout << "CLIENT_TO_FS      "; break;
+  case FS_TO_CLIENT_PGN:                        std::cout << "FS_TO_CLIENT      "; break;
+  case GUIDANCE_MACHINE_STATUS:                 std::cout << "GUIDANCE_MACH_ST  "; break;
+  case GUIDANCE_SYSTEM_CMD:                     std::cout << "GUIDANCE_SYS_CMD  "; break;
+  case ISOBUS_CERTIFICATION_PGN:                std::cout << "ISOBUS_CERTIFICAT."; break;
+  case ETP_DATA_TRANSFER_PGN:                   std::cout << "ETP_DATA_TRANSFER "; break;
+  case ETP_CONN_MANAGE_PGN:                     std::cout << "ETP_CONN_MANAGE   "; break;
+  case REQUEST_PGN_MSG_PGN:                     std::cout << "REQUEST_MSG       "; break;
+  case TP_DATA_TRANSFER_PGN:                    std::cout << "TP_DATA_TRANSFER  "; break;
+  case TP_CONN_MANAGE_PGN:                      std::cout << "TP_CONN_MANAGE    "; break;
+  case ADDRESS_CLAIM_PGN:                       std::cout << "ADDRESS_CLAIM     "; break;
+  case PROPRIETARY_A_PGN:                       std::cout << "PROPRIETARY_A     "; break;
+  case PROPRIETARY_A2_PGN:                      std::cout << "PROPRIETARY_A2    "; break;
+  case WORKING_SET_MEMBER_PGN:                  std::cout << "WORKING_SET_MEMBER "; break;
+  case WORKING_SET_MASTER_PGN:                  std::cout << "WORKING_SET_MASTER "; break;
+  case LANGUAGE_PGN:                            std::cout << "LANGUAGE          "; break;
+  case LIGHTING_DATA_PGN:                       std::cout << "LIGHTING_DATA     "; break;
+  case LIGHTING_COMMAND_PGN:                    std::cout << "LIGHTING_COMMAND  "; break;
+  case HITCH_PTO_COMMANDS:                      std::cout << "HITCH_PTO_COMMANDS "; break;
+  case REAR_PTO_STATE_PGN:                      std::cout << "REAR_PTO_STATE    "; break;
+  case FRONT_PTO_STATE_PGN:                     std::cout << "FRONT_PTO_STATE   "; break;
+  case REAR_HITCH_STATE_PGN:                    std::cout << "REAR_HITCH_STATE  "; break;
+  case FRONT_HITCH_STATE_PGN:                   std::cout << "FRONT_HITCH_STATE "; break;
+  case MAINTAIN_POWER_REQUEST_PGN:              std::cout << "MAINTAIN_POWER_REQ"; break;
+  case WHEEL_BASED_SPEED_DIST_PGN:              std::cout << "WHEEL_BASED_SPEED_DIST "; break;
+  case GROUND_BASED_SPEED_DIST_PGN:             std::cout << "GROUND_BASED_SPEED_DIST "; break;
+  case SELECTED_SPEED_CMD:                      std::cout << "SELECTED_SPEED_CMD "; break;
+  case SELECTED_SPEED_MESSAGE:                  std::cout << "SELECTED_SPEED_MESSAGE "; break;
+  case ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE:  std::cout << "ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE "; break;
+  case SOFTWARE_IDENTIFICATION_PGN:             std::cout << "SOFTWARE_IDENTIFICATION "; break;
+  case TIME_DATE_PGN:                           std::cout << "TIME_DATE         "; break;
+  case VEHICLE_DIRECTION_SPEED:                 std::cout << "VEHICLE_DIRECTION_SPEED "; break;
+  case VEHICLE_POSITION:                        std::cout << "VEHICLE_POSITION "; break;
+  case PROPRIETARY_B_PGN:                       std::cout << "PROPRIETARY_B(1of) "; break;
+  case NMEA_GPS_POSITION_RAPID_UPDATE_PGN:      std::cout << "NMEA_GPS_POSITION_RAPID_UPDATE "; break;
+  case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:       std::cout << "NMEA_GPS_COG_SOG_RAPID_UPDATE "; break;
+  case NMEA_GPS_POSITION_DATA_PGN:              std::cout << "NMEA_GPS_POSITION_DATA "; break;
+  case NMEA_GPS_DIRECTION_DATA_PGN:             std::cout << "NMEA_GPS_DIRECTION_DATA "; break;
+  case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:  std::cout << "GNSS Pseudorange Noise Statistics "; break;
+
+  case AUX_VALVE_0_ESTIMATED_FLOW:
+  case AUX_VALVE_1_ESTIMATED_FLOW:
+  case AUX_VALVE_2_ESTIMATED_FLOW:
+  case AUX_VALVE_3_ESTIMATED_FLOW:
+  case AUX_VALVE_4_ESTIMATED_FLOW:
+  case AUX_VALVE_5_ESTIMATED_FLOW:
+  case AUX_VALVE_6_ESTIMATED_FLOW:
+  case AUX_VALVE_7_ESTIMATED_FLOW:
+  case AUX_VALVE_8_ESTIMATED_FLOW:
+  case AUX_VALVE_9_ESTIMATED_FLOW:
+  case AUX_VALVE_10_ESTIMATED_FLOW:
+  case AUX_VALVE_11_ESTIMATED_FLOW:
+  case AUX_VALVE_12_ESTIMATED_FLOW:
+  case AUX_VALVE_13_ESTIMATED_FLOW:
+  case AUX_VALVE_14_ESTIMATED_FLOW:
+  case AUX_VALVE_15_ESTIMATED_FLOW:
+    std::cout << "AUX_VALVE_" << std::dec << rui32_pgn-AUX_VALVE_0_ESTIMATED_FLOW << "_ESTIMATED_FLOW ";
+    break;
+  case AUX_VALVE_0_MEASURED_FLOW:
+  case AUX_VALVE_1_MEASURED_FLOW:
+  case AUX_VALVE_2_MEASURED_FLOW:
+  case AUX_VALVE_3_MEASURED_FLOW:
+  case AUX_VALVE_4_MEASURED_FLOW:
+  case AUX_VALVE_5_MEASURED_FLOW:
+  case AUX_VALVE_6_MEASURED_FLOW:
+  case AUX_VALVE_7_MEASURED_FLOW:
+  case AUX_VALVE_8_MEASURED_FLOW:
+  case AUX_VALVE_9_MEASURED_FLOW:
+  case AUX_VALVE_10_MEASURED_FLOW:
+  case AUX_VALVE_11_MEASURED_FLOW:
+  case AUX_VALVE_12_MEASURED_FLOW:
+  case AUX_VALVE_13_MEASURED_FLOW:
+  case AUX_VALVE_14_MEASURED_FLOW:
+  case AUX_VALVE_15_MEASURED_FLOW:
+    std::cout << "AUX_VALVE_" << std::dec << rui32_pgn-AUX_VALVE_0_MEASURED_FLOW << "_MEASURED_FLOW";
+    break;
+  default:                             std::cout << std::hex << "0x" << rui32_pgn << std::dec; break;
+    /// @todo SOON-260: to be done...
 #define AUX_VALVE_0_COMMAND         0x00FE30LU
 #define AUX_VALVE_1_COMMAND         0x00FE31LU
-        //...
+    //...
   }
 }
 
+ParseLogLine_t *getLogLineParser(size_t at_choice)
+{
+  static ParseLogLine_t * const carrpt_parseLogLine[] = {
+    parseLogLineCanServer,
+    parseLogLineRte,
+    parseLogLineCANMon,
+    parseLogLineCANoe,
+    parseLogLineA1ASCII,
+    parseLogLineTrc,
+    parseLogLineJohnDeere,
+    parseLogLineRte2,
+    parseLogLineJrf,
+    defaultParseLogLine
+  };
 
-
+  size_t t_sizeLogLine = sizeof carrpt_parseLogLine / sizeof carrpt_parseLogLine[0];
+  return carrpt_parseLogLine[
+      at_choice < t_sizeLogLine ? at_choice : t_sizeLogLine - 1 ];
+}
 
 std::pair< int, PtrDataFrame_t > parseLogLine()
 {
-  int const ci_errorCodeIfNotOverridden = -1;
-  std::pair< int, PtrDataFrame_t > result = std::make_pair(
-      ci_errorCodeIfNotOverridden, // default to error, will always be set
-      PtrDataFrame_t(0) );
-  switch (gs_main.mt_logType)
-  {
-    case logTypeCanServer: result = parseLogLineCanServer();   break;
-    case logTypeRte:       result = parseLogLineRte();         break;
-    case logTypeCANMon:    result = parseLogLineCANMon();      break;
-    case logTypeCANoe:     result = parseLogLineCANoe();       break;
-    case logTypeA1ASCII:   result = parseLogLineA1ASCII();     break;
-    case logTypeTrc:       result = parseLogLineTrc();         break;
-    case logTypeJohnDeere: result = parseLogLineJohnDeere();   break;
-    case logTypeRte2:      result = parseLogLineRte2();        break;
-    case logTypeJrf:       result = parseLogLineJrf();         break;
-    default:               exit_with_error("Unknown Log-Type!"); return std::make_pair(1, result.second); // return just to satisfy compiler. exit_with_error will exit anyway ;)
-  }
+  std::pair< int, PtrDataFrame_t > result = gs_main.pt_parseLogLine();
   if (result.first == 0) // no error
   { /// Printout interpreted line
     PtrDataFrame_t t_ptrFrame = result.second;
@@ -1830,15 +1990,13 @@ int main (int argc, char** argv)
 
   if (!gs_main.t_ptrIn->isOpen()) exit_with_error("Couldn't open file");
 
-  if (argc >= 3)
-    gs_main.mt_logType = (logType_t) atoi (argv[2]);
-  else // default to can_server
-    gs_main.mt_logType = logTypeCanServer;
+  gs_main.pt_parseLogLine = argc >= 3 ?
+    getLogLineParser(atoi(argv[2])) : // follow user's suggestion
+    parseLogLineCanServer; // default to can_server
 
-  if (argc >= 4)
-    gs_main.mt_sizeMultipacketWrap = atoi (argv[3]);
-  else // default to can_server
-    gs_main.mt_sizeMultipacketWrap = 32;
+  gs_main.mt_sizeMultipacketWrap = argc >= 4 ?
+    atoi(argv[3]) : // follow user's suggestion
+    32; // default to can_server
 
   while (!gs_main.t_ptrIn->raw().eof())
   {
