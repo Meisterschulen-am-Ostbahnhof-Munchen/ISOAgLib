@@ -1280,7 +1280,10 @@ void interpreteVehiclePosition(PtrDataFrame_t at_ptrFrame)
   }
 }
 
-inline int portFlowRepr(uint8_t ui8_octet)
+/** For extend port measured flow, retract port measured flow, extend
+  * port estimated flow, retract port estimated flow.
+  */
+inline int portMeasuredOrEstimatedFlowPercent(uint8_t ui8_octet)
 {
   return int(ui8_octet) - 125;
 }
@@ -1345,8 +1348,8 @@ void interpreteValveEstimatedFlow(PtrDataFrame_t at_ptrFrame)
 {
   // for different valves resp. different values of at_ptrFrame->pgn()
   std::cout <<
-    "Extend port estimated flow: " << portFlowRepr(at_ptrFrame->dataOctet(0)) << " " <<
-    "Retract port estimated flow: " << portFlowRepr(at_ptrFrame->dataOctet(1)) << " " <<
+    "Extend port estimated flow: " << portMeasuredOrEstimatedFlowPercent(at_ptrFrame->dataOctet(0)) << "% " <<
+    "Retract port estimated flow: " << portMeasuredOrEstimatedFlowPercent(at_ptrFrame->dataOctet(1)) << "% " <<
     "Fail save mode - measured: " << auxiliaryValveFailSaveModeMeasuredRepr(unsigned(at_ptrFrame->dataOctet(2)) >> 6) << " " <<
     "Valve state: " << valveStateRepr(at_ptrFrame->dataOctet(2)) << " " <<
     "Limit status: " << persistentLimitStatusRepr(at_ptrFrame->dataOctet(3) >> 5);
@@ -1368,12 +1371,61 @@ void interpreteValveMeasuredFlow(PtrDataFrame_t at_ptrFrame)
 {
   // for different valves resp. different values of at_ptrFrame->pgn()
   std::cout <<
-    "Extend port measured flow: " << portFlowRepr(at_ptrFrame->dataOctet(0)) << " " <<
-    "Retract port measured flow: " << portFlowRepr(at_ptrFrame->dataOctet(1)) << " " <<
+    "Extend port measured flow: " << portMeasuredOrEstimatedFlowPercent(at_ptrFrame->dataOctet(0)) << "% " <<
+    "Retract port measured flow: " << portMeasuredOrEstimatedFlowPercent(at_ptrFrame->dataOctet(1)) << "% " <<
     "Extend port pressure: " << std::scientific << extendOrRetractPortPressureRepr(at_ptrFrame->data(), 2) << " Pa " <<
     "Retract port pressure: " << std::scientific << extendOrRetractPortPressureRepr(at_ptrFrame->data(), 4) << " Pa " <<
     "Return port pressure: " << std::scientific << returnPortPressureRepr(at_ptrFrame->dataOctet(6)) << " Pa " <<
     "Limit Status: " << persistentLimitStatusRepr(at_ptrFrame->dataOctet(3) >> 5);
+}
+
+inline double commandPortFlowPercent(uint8_t ui8_octet)
+{
+  return 0.4 * ui8_octet;
+}
+
+std::string commandAuxiliaryFailSaveMode(unsigned ui_2lsb)
+{
+  switch (ui_2lsb & 0x3u) {
+  case 0u:
+    return "block";
+  case 1u:
+    return "float";
+  case 2u:
+    return "reserved";
+  case 3u:
+    return "don't care";
+  default:
+    return "(protocol error)";
+  }
+}
+
+std::string commandAuxiliaryStateRepr(unsigned ui_4lsb)
+{
+  switch (ui_4lsb & 0xFu) {
+  case 0u:
+    return "block";
+  case 1u:
+    return "extend";
+  case 2u:
+    return "retract";
+  case 3u:
+    return "float";
+  default:
+    return "reserved";
+  case 15u:
+    return "don't care";
+  }
+}
+
+
+void interpreteValveCommand(PtrDataFrame_t at_ptrFrame)
+{
+  // for different valves resp. different values of at_ptrFrame->pgn()
+  std::cout <<
+    "Auxiliary port flow - command: " << commandPortFlowPercent(at_ptrFrame->dataOctet(0)) << "% " <<
+    "Auxiliary fail safe mode - command: " << commandAuxiliaryFailSaveMode(at_ptrFrame->dataOctet(2) >> 6) << " " <<
+    "Auxiliary state - command: " << commandAuxiliaryStateRepr(at_ptrFrame->dataOctet(2));
 }
 
 TransferCollection_c::PtrSession_t getTransferSession(
@@ -1628,6 +1680,23 @@ Interprete_t *getPgnDataInterpreter(PtrDataFrame_t at_ptrFrame)
   case AUX_VALVE_14_MEASURED_FLOW:
   case AUX_VALVE_15_MEASURED_FLOW:
     return interpreteValveMeasuredFlow;
+  case AUX_VALVE_0_COMMAND:
+  case AUX_VALVE_1_COMMAND:
+  case AUX_VALVE_2_COMMAND:
+  case AUX_VALVE_3_COMMAND:
+  case AUX_VALVE_4_COMMAND:
+  case AUX_VALVE_5_COMMAND:
+  case AUX_VALVE_6_COMMAND:
+  case AUX_VALVE_7_COMMAND:
+  case AUX_VALVE_8_COMMAND:
+  case AUX_VALVE_9_COMMAND:
+  case AUX_VALVE_10_COMMAND:
+  case AUX_VALVE_11_COMMAND:
+  case AUX_VALVE_12_COMMAND:
+  case AUX_VALVE_13_COMMAND:
+  case AUX_VALVE_14_COMMAND:
+  case AUX_VALVE_15_COMMAND:
+    return interpreteValveCommand;
   case PROCESS_DATA_PGN:
   case GUIDANCE_MACHINE_STATUS:
   case GUIDANCE_SYSTEM_CMD:
@@ -1655,12 +1724,6 @@ Interprete_t *getPgnDataInterpreter(PtrDataFrame_t at_ptrFrame)
   case NMEA_GNSS_PSEUDORANGE_NOISE_STATISTICS:
   default:
     break;
-    /// @todo SOON-260: to be done...
-#define AUX_VALVE_1_MEASURED_FLOW   0x00FE21LU
-    //...
-#define AUX_VALVE_0_COMMAND         0x00FE30LU
-#define AUX_VALVE_1_COMMAND         0x00FE31LU
-    //...
   }
   return 0;
 }
@@ -1754,13 +1817,29 @@ void interpretePgn(uint32_t rui32_pgn)
   case AUX_VALVE_13_MEASURED_FLOW:
   case AUX_VALVE_14_MEASURED_FLOW:
   case AUX_VALVE_15_MEASURED_FLOW:
-    std::cout << "AUX_VALVE_" << std::dec << rui32_pgn-AUX_VALVE_0_MEASURED_FLOW << "_MEASURED_FLOW";
+    std::cout << "AUX_VALVE_" << std::dec << rui32_pgn-AUX_VALVE_0_MEASURED_FLOW << "_MEASURED_FLOW ";
     break;
-  default:                             std::cout << std::hex << "0x" << rui32_pgn << std::dec; break;
-    /// @todo SOON-260: to be done...
-#define AUX_VALVE_0_COMMAND         0x00FE30LU
-#define AUX_VALVE_1_COMMAND         0x00FE31LU
-    //...
+  case AUX_VALVE_0_COMMAND:
+  case AUX_VALVE_1_COMMAND:
+  case AUX_VALVE_2_COMMAND:
+  case AUX_VALVE_3_COMMAND:
+  case AUX_VALVE_4_COMMAND:
+  case AUX_VALVE_5_COMMAND:
+  case AUX_VALVE_6_COMMAND:
+  case AUX_VALVE_7_COMMAND:
+  case AUX_VALVE_8_COMMAND:
+  case AUX_VALVE_9_COMMAND:
+  case AUX_VALVE_10_COMMAND:
+  case AUX_VALVE_11_COMMAND:
+  case AUX_VALVE_12_COMMAND:
+  case AUX_VALVE_13_COMMAND:
+  case AUX_VALVE_14_COMMAND:
+  case AUX_VALVE_15_COMMAND:
+    std::cout << "AUX_VALVE_" << std::dec << rui32_pgn-AUX_VALVE_0_COMMAND << "_COMMAND ";
+    break;
+  default:
+    std::cout << std::hex << "0x" << rui32_pgn << std::dec;
+    break;
   }
 }
 
