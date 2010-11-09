@@ -13,6 +13,7 @@
 
 #include <logenvirons.h>
 #include <transfercollection.h>
+#include <messages.h>
 #include <dataframe.h>
 #include <inputstream.h>
 #include <string>
@@ -23,15 +24,15 @@
 
 namespace
 {
-typedef std::pair< int, PtrDataFrame_t > ParseLogLine_t();
+typedef std::pair< int, PtrDataFrame_t > ParseLogLine_t(std::string const &acr_line);
 typedef void Interprete_t(PtrDataFrame_t);
+
 
 struct Main_s {
   size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
   TransferCollection_c mc_trans;
   ParseLogLine_t *pt_parseLogLine;
-  PtrInputStream_t t_ptrIn;
-
+  Messages_c m_messages;
   Main_s();
 };
 
@@ -39,7 +40,7 @@ inline Main_s::Main_s() :
   mt_sizeMultipacketWrap(0),
   mc_trans(),
   pt_parseLogLine(0),
-  t_ptrIn(0)
+  m_messages()
 {
 }
 
@@ -103,18 +104,13 @@ void exit_with_error(const char* error_message)
   exit(-1);
 }
 
-std::pair< int, PtrDataFrame_t > parseLogLineCANMon() //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB
+std::pair< int, PtrDataFrame_t > parseLogLineCANMon(
+    std::string const &acr_line) //RX        4     1   CFE5182x| 98  2B  97  6F  FD  00  FF  EB
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
-
   unsigned arru_d[8];
   int iA, iB;
   int parsed_count = sscanf(
-      line.c_str(),
+      acr_line.c_str(),
       "%*s %i %*i %x%*s%x %x %x %x %x %x %x %x",
       &iA, &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
   int i_result = (parsed_count >= 2) ? 0 : -1;
@@ -127,17 +123,13 @@ std::pair< int, PtrDataFrame_t > parseLogLineCANMon() //RX        4     1   CFE5
   return std::make_pair( i_result, t_ptrFrame );
 }
 
-std::pair< int, PtrDataFrame_t > parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....\\. "
+std::pair< int, PtrDataFrame_t > parseLogLineJohnDeere(
+  std::string const &acr_line) // "r Xtd 2 1CAAF883 8 20 03 03 02 00 5C 5C FF 0   0 0060846488      17920  ....\\. "
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
   int iA, iB;
   unsigned arru_d[8];
   int parsed_count = sscanf(
-      line.c_str(),
+      acr_line.c_str(),
       "r Xtd %*i %x %*i %x %x %x %x %x %x %x %x %*i   %*i %i      17920  %s ",
       &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iA);
   int i_result = parsed_count >= 2 ? 0 : -1;
@@ -149,18 +141,14 @@ std::pair< int, PtrDataFrame_t > parseLogLineJohnDeere() // "r Xtd 2 1CAAF883 8 
   return std::make_pair( i_result, t_ptrFrame );
 }
 
-std::pair< int, PtrDataFrame_t > parseLogLineCanServer() // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
+std::pair< int, PtrDataFrame_t > parseLogLineCanServer(
+  std::string const &acr_line) // "104916846 0 1 1 3 6 18eafffe   0   ee  0   0   0   0   0   0"
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
   long long iA;
   int iB;
   unsigned arru_d[8];
   int parsed_count = sscanf(
-      line.c_str(),
+      acr_line.c_str(),
       "%lli %*i %*i %*i %*i %*i %x %x %x %x %x %x %x %x %x",
       &iA, &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
   int i_result = parsed_count >= 2 ? 0 : -1;
@@ -175,18 +163,14 @@ std::pair< int, PtrDataFrame_t > parseLogLineCanServer() // "104916846 0 1 1 3 6
 }
 
 
-std::pair< int, PtrDataFrame_t > parseLogLineCANoe() // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF "
+std::pair< int, PtrDataFrame_t > parseLogLineCANoe(
+  std::string const &acr_line) // "  18.9530 1  0CFE4980x        Rx   d 8 00 00 FF FF FF FF FF FF "
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
   float f1;
   int iB, iDb;
   unsigned arru_d[8];
   int parsed_count = sscanf(
-      line.c_str(),
+      acr_line.c_str(),
       " %f %*i %xx %*s %*s %u %x %x %x %x %x %x %x %x",      
       &f1, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
   int i_result = parsed_count == (3+iDb) ? 0 : -1;
@@ -200,40 +184,31 @@ std::pair< int, PtrDataFrame_t > parseLogLineCANoe() // "  18.9530 1  0CFE4980x 
 }
 
 
-std::pair< int, PtrDataFrame_t > parseLogLineA1ASCII() // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270"
+std::pair< int, PtrDataFrame_t > parseLogLineA1ASCII(
+  std::string const &acr_line) // "m e 0x0cf00203 8  0xff 0x00 0x00 0xfa 0xff 0xf0 0x18 0xff       446270"
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
-/// @todo SOON-260: handle std/ext, too...
+  char ch_baseOrExtended = '.';
   int iA, iB, iDb;
   unsigned arru_d[8];
   int parsed_count = sscanf(
-      line.c_str(),
-      "m e 0x%x %u 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x %i",
-      &iA, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iB);
-  int i_result = parsed_count == (3+iDb) ? 0 : -1;
+      acr_line.c_str(),
+      "m %c 0x%x %u 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x %i",
+      &ch_baseOrExtended, &iA, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iB);
+  int i_result = parsed_count == (4+iDb) ? 0 : -1;
   if (i_result < 0)
     return std::make_pair( i_result, PtrDataFrame_t(0) );
-
+  bool const cb_extendedFrameFormat = 'e' == ch_baseOrExtended;
   std::vector< uint8_t > vec_data;
   copy(arru_d, arru_d + size_t(iDb), back_inserter(vec_data));
-  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iB, iA, vec_data);
+  PtrDataFrame_t t_ptrFrame = new DataFrame_c(iB, iA, vec_data, cb_extendedFrameFormat);
   return std::make_pair( i_result, t_ptrFrame );
 }
 
 
 
-std::pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06"
+std::pair< int, PtrDataFrame_t > parseLogLineRte(
+  std::string const &acr_line) // "[0] HW             97.41  X   9f80182 8 67 34 b0 1c 54 01 e6 06"
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
-
   int iB, iDb = 0; // "%i* %x
   unsigned arru_d[8];
   uint64_t iA;
@@ -247,7 +222,7 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41 
       break;
     case 1:
       parsed_count = sscanf(
-          line.c_str(),
+          acr_line.c_str(),
           "%*s %*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
           &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
       if (parsed_count <= -1 || sci_minimal_expected_parse_count <= parsed_count)
@@ -255,7 +230,7 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41 
       break;
     case 2:
       parsed_count = sscanf(
-          line.c_str(),
+          acr_line.c_str(),
           "%*s %Li.%*s %*i.%*s X %x %u %x %x %x %x %x %x %x %x",
           &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
       if (remembered_mode)
@@ -280,22 +255,17 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte() // "[0] HW             97.41 
 }
 
 
-std::pair< int, PtrDataFrame_t > parseLogLineRte2 ()
+std::pair< int, PtrDataFrame_t > parseLogLineRte2(
+  std::string const &acr_line)
 {
     static uint64_t sui64_rteTime = 0;
     int big;
     int little;
     char *cursor;
     size_t byte;
-    std::string line;
-
-    getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-    std::cout << line << std::endl;
-#endif
 
     /* skip over any initial HW */
-    for (cursor = const_cast<char *>(line.c_str()); *cursor != 0 && !isspace (*cursor); cursor++)
+    for (cursor = const_cast<char *>(acr_line.c_str()); *cursor != 0 && !isspace (*cursor); cursor++)
         /* empty */;
 
     /*
@@ -303,7 +273,7 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte2 ()
      */
     big = strtol (cursor, &cursor, 10);
     if (*cursor != '.') {
-        fprintf (stderr, "unexpected terminator %c (%d): %s\n", *cursor, *cursor, line.c_str());
+        fprintf (stderr, "unexpected terminator %c (%d): %s\n", *cursor, *cursor, acr_line.c_str());
         return std::make_pair( -4, PtrDataFrame_t(0) );
     }
     little = strtol (&cursor[1], &cursor, 10);
@@ -330,7 +300,7 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte2 ()
     std::vector< uint8_t > vec_data(t_sizeData);
 
     for (byte = 0; byte < 8; byte++) {
-        if (byte > t_sizeData)     /* TODO: shouldn't this be >= ? */
+        if (byte >= t_sizeData)
             break;
 
         vec_data[byte] = uint8_t (strtol (cursor, &cursor, 16));
@@ -342,17 +312,13 @@ std::pair< int, PtrDataFrame_t > parseLogLineRte2 ()
 
 
 
-std::pair< int, PtrDataFrame_t > parseLogLineTrc() // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15"
+std::pair< int, PtrDataFrame_t > parseLogLineTrc(
+  std::string const &acr_line) // "    13)       116.6  Rx     18EF808B  8  12 15 15 15 15 15 15 15"
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
   unsigned arru_d[8];
   int iA, iB, iDb;
   int parsed_count = sscanf(
-      line.c_str(),
+      acr_line.c_str(),
       " %*s %u.%*u %*s %x %u %x %x %x %x %x %x %x %x",
       &iA, &iB, &iDb, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
   int i_result = parsed_count == (3+iDb) ? 0 : -1;
@@ -366,18 +332,14 @@ std::pair< int, PtrDataFrame_t > parseLogLineTrc() // "    13)       116.6  Rx  
 }
 
 
-std::pair< int, PtrDataFrame_t > parseLogLineJrf() // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
+std::pair< int, PtrDataFrame_t > parseLogLineJrf(
+  std::string const &acr_line) // "41.19,0CFFFF2A,77,04,00,00,7D,00,64,FF"
 {
-  std::string line;
-  getline (gs_main.t_ptrIn->raw(), line);
-#if DEBUG
-  std::cout << line << std::endl;
-#endif
   float fA;
   int iB;
   unsigned arru_d[8];
   int parsed_count = sscanf(
-      line.c_str(),
+      acr_line.c_str(),
       "%f,%x,%x,%x,%x,%x,%x,%x,%x,%x",
       &fA, &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7);
   int i_result = parsed_count >= 2 ? 0 : -1;
@@ -391,8 +353,9 @@ std::pair< int, PtrDataFrame_t > parseLogLineJrf() // "41.19,0CFFFF2A,77,04,00,0
   return std::make_pair( i_result, t_ptrFrame );
 }
 
-std::pair< int, PtrDataFrame_t > defaultParseLogLine()
+std::pair< int, PtrDataFrame_t > defaultParseLogLine(std::string const &acr_line)
 {
+  (void)acr_line;
   std::pair< int, PtrDataFrame_t > result = std::make_pair(
       -1,
       PtrDataFrame_t(0) );
@@ -1863,9 +1826,13 @@ ParseLogLine_t *getLogLineParser(size_t at_choice)
       at_choice < t_sizeLogLine ? at_choice : t_sizeLogLine - 1 ];
 }
 
-std::pair< int, PtrDataFrame_t > parseLogLine()
+std::pair< int, PtrDataFrame_t > parseLogLine(
+  std::string const &acr_line)
 {
-  std::pair< int, PtrDataFrame_t > result = gs_main.pt_parseLogLine();
+#if DEBUG
+  std::cout << "Reading " << acr_line << std::endl;
+#endif
+  std::pair< int, PtrDataFrame_t > result = gs_main.pt_parseLogLine(acr_line);
   if (result.first == 0) // no error
   { /// Printout interpreted line
     PtrDataFrame_t t_ptrFrame = result.second;
@@ -1886,55 +1853,32 @@ std::pair< int, PtrDataFrame_t > parseLogLine()
     for (i=0; i< t_ptrFrame->dataSize(); i++) std::cout << std::setw (1) << char(t_ptrFrame->asciiDataOctet(i));
     for (;    i<8;              i++) std::cout << " ";
 
-    // SA
-    std::cout << "  "<<std::setw(2) << uint16_t(t_ptrFrame->sourceAddress()) << "->";
-    // DA
-    if (t_ptrFrame->isPdu1()) std::cout << std::setw(2) << uint16_t(t_ptrFrame->ps());
-    else std::cout << "FF";
+    if (t_ptrFrame->isExtendedFrameFormat()) {
+      // SA
+      std::cout << "  "<<std::setw(2) << uint16_t(t_ptrFrame->sourceAddress()) << "->";
+      // DA
+      if (t_ptrFrame->isPdu1()) std::cout << std::setw(2) << uint16_t(t_ptrFrame->ps());
+      else std::cout << "FF";
 
-    // Priority
-    std::cout << " (" << uint16_t(t_ptrFrame->prio()) << ")";
+      // Priority
+      std::cout << " (" << uint16_t(t_ptrFrame->prio()) << ")";
 
-    // PGN
-    std::cout << " " << std::setw(6) << t_ptrFrame->pgn() << " => ";
-    // Interpreted PGN
-    interpretePgn(t_ptrFrame->pgn());
-    // Interpreted PGN-Data
-    interpretePgnData (t_ptrFrame);
-    std::cout << std::endl;
+      // PGN
+      std::cout << " " << std::setw(6) << t_ptrFrame->pgn() << " => ";
+      // Interpreted PGN
+      interpretePgn(t_ptrFrame->pgn());
+      // Interpreted PGN-Data
+      interpretePgnData (t_ptrFrame);
+      std::cout << std::endl;
+    }
   }
   else
   {
-    std::cout << "---- line missing - error in parsing!----"<<std::endl; /// @todo SOON-260: replace by the original line!
+    // report original line:
+    std::cout << "(" << acr_line << ")" <<std::endl;
   }
   return result;
 }
-
-
-typedef enum
-{
-  msgTypePeriodic,
-  msgTypeCommand,
-  msgTypeResponse,
-  msgTypeRTS,
-  msgTypeCTS,
-  msgTypeDATA,
-  msgTypeDPO,
-  msgTypeEOMACK,
-  msgTypeCONNABORT
-} msgType_t;
-
-typedef struct
-{
-  std::vector<uint64_t> svec_alives [256];
-  std::vector<msgType_t> svec_response [256];
-  const char* name;
-  int32_t alivePeriod; // ==0 => single Event - >0 ==> periodic Event - <0 ==> handshaking Event
-} msgType_s;
-
-msgType_s struct_messages [5];
-
-
 
 void checkAlives(PtrDataFrame_t at_ptrFrame)
 {
@@ -1943,7 +1887,7 @@ void checkAlives(PtrDataFrame_t at_ptrFrame)
        ((at_ptrFrame->pgn() == ECU_TO_VT_PGN) && (at_ptrFrame->dataOctet (0) == 0xFF))
      )
   {
-    struct_messages[0].svec_alives [at_ptrFrame->sourceAddress()].push_back (at_ptrFrame->time());
+    gs_main.m_messages.alives(0, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
   }
 
 
@@ -1952,7 +1896,7 @@ void checkAlives(PtrDataFrame_t at_ptrFrame)
        ((at_ptrFrame->pgn() == PROCESS_DATA_PGN) && (at_ptrFrame->dataOctet (0) == 0x0F))
      )
   {
-    struct_messages[1].svec_alives [at_ptrFrame->sourceAddress()].push_back (at_ptrFrame->time());
+    gs_main.m_messages.alives(1, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
   }
 
 }
@@ -1963,7 +1907,7 @@ void checkSingles(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->pgn() == ACKNOWLEDGEMENT_PGN)
   {
-    struct_messages[2].svec_alives [at_ptrFrame->sourceAddress()].push_back (at_ptrFrame->time());
+    gs_main.m_messages.alives(2, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
   }
 }
 
@@ -1975,7 +1919,7 @@ void checkHandshakingsVtCommands(PtrDataFrame_t at_ptrFrame)
 
   if ((at_ptrFrame->dataOctet(0) >= 0x60) && (at_ptrFrame->dataOctet(0) < 0xF0))
   { // not a maintenance command!
-    msgType_t msgType_direction;
+    msgType_e msgType_direction;
     uint8_t ui8_saClient;
     if (at_ptrFrame->pgn() == VT_TO_ECU_PGN)
     {
@@ -1990,8 +1934,8 @@ void checkHandshakingsVtCommands(PtrDataFrame_t at_ptrFrame)
       ui8_saClient = at_ptrFrame->sourceAddress();
     }
     else return;
-    struct_messages[mode].svec_response [ui8_saClient].push_back (msgType_direction);
-    struct_messages[mode].svec_alives   [ui8_saClient].push_back (at_ptrFrame->time());
+    gs_main.m_messages.response(mode, ui8_saClient).push_back (msgType_direction);
+    gs_main.m_messages.alives(mode, ui8_saClient).push_back (at_ptrFrame->time());
     return;
   }
 }
@@ -1999,7 +1943,7 @@ void checkHandshakingsVtCommands(PtrDataFrame_t at_ptrFrame)
 
 void checkHandshakingTP(PtrDataFrame_t at_ptrFrame)
 {
-  msgType_t mtype;
+  msgType_e mtype;
   uint8_t ui8_saClient=0xFE; // default to avoid compiler warning. The code below should make sure that it is always initialized properly!
   switch (at_ptrFrame->pgn()) {
 
@@ -2013,16 +1957,30 @@ void checkHandshakingTP(PtrDataFrame_t at_ptrFrame)
   case TP_CONN_MANAGE_PGN:
     switch (at_ptrFrame->dataOctet (0)) {
     case 0x10:
-    case 0x14: mtype = msgTypeRTS; ui8_saClient = at_ptrFrame->sourceAddress(); break;
+    case 0x14:
+      mtype = msgTypeRTS;
+      ui8_saClient = at_ptrFrame->sourceAddress();
+      break;
     case 0x11:
-    case 0x15: mtype = msgTypeCTS; ui8_saClient = at_ptrFrame->destinationAddress(); break;
-    case 0x16: mtype = msgTypeDPO; ui8_saClient = at_ptrFrame->sourceAddress(); break;
+    case 0x15:
+      mtype = msgTypeCTS;
+      ui8_saClient = at_ptrFrame->destinationAddress();
+      break;
+    case 0x16:
+      mtype = msgTypeDPO;
+      ui8_saClient = at_ptrFrame->sourceAddress();
+      break;
     case 0x13:
-    case 0x17: mtype = msgTypeEOMACK; ui8_saClient = at_ptrFrame->destinationAddress();break;
-    case 0xFF: mtype = msgTypeCONNABORT; ui8_saClient = at_ptrFrame->sourceAddress();
+    case 0x17:
+      mtype = msgTypeEOMACK;
+      ui8_saClient = at_ptrFrame->destinationAddress();
+      break;
+    case 0xFF:
+      mtype = msgTypeCONNABORT;
+      ui8_saClient = at_ptrFrame->sourceAddress();
       // this message is special case! This aborts SA->DA and also DA->SA!
-      struct_messages[4].svec_response [at_ptrFrame->destinationAddress()].push_back (mtype);
-      struct_messages[4].svec_alives   [at_ptrFrame->destinationAddress()].push_back (at_ptrFrame->time());
+      gs_main.m_messages.response(4, at_ptrFrame->destinationAddress()).push_back (mtype);
+      gs_main.m_messages.alives(4, at_ptrFrame->destinationAddress()).push_back (at_ptrFrame->time());
       break; // CONN ABORT BY SENDER!
       /// @todo SOON-260: Damn, can't we detect ConnAbort by Receiver here, too?
     }
@@ -2032,27 +1990,27 @@ void checkHandshakingTP(PtrDataFrame_t at_ptrFrame)
     return;
   }
 
-  struct_messages[4].svec_response [ui8_saClient].push_back (mtype);
-  struct_messages[4].svec_alives   [ui8_saClient].push_back (at_ptrFrame->time());
+  gs_main.m_messages.response(4, ui8_saClient).push_back (mtype);
+  gs_main.m_messages.alives(4, ui8_saClient).push_back (at_ptrFrame->time());
 }
 
 
 void setup()
 {
-  struct_messages [0].name = "VT Server<->Client Periodic Alive";
-  struct_messages [0].alivePeriod = 1000;
+  gs_main.m_messages.setName(0, "VT Server<->Client Periodic Alive");
+  gs_main.m_messages.setAlivePeriod(0, 1000);
 
-  struct_messages [1].name = "TC Server<->Client Periodic Alive";
-  struct_messages [1].alivePeriod = 2000;
+  gs_main.m_messages.setName(1, "TC Server<->Client Periodic Alive");
+  gs_main.m_messages.setAlivePeriod(1, 2000);
 
-  struct_messages [2].name = "NOT Acknowledge (NACK)";
-  struct_messages [2].alivePeriod = 0; // means NO alivePeriod!
+  gs_main.m_messages.setName(2, "NOT Acknowledge (NACK)");
+  gs_main.m_messages.setAlivePeriod(2, 0); // means NO alivePeriod!
 
-  struct_messages [3].name = "VT Command-Response times";
-  struct_messages [3].alivePeriod = -1500; // means Handshaking!
+  gs_main.m_messages.setName(3, "VT Command-Response times");
+  gs_main.m_messages.setAlivePeriod(3, -1500); // means Handshaking!
 
-  struct_messages [4].name = "(E)TP-communication times";
-  struct_messages [4].alivePeriod = -500; // means Handshaking! (damn, we have mixed periods here...)
+  gs_main.m_messages.setName(4, "(E)TP-communication times");
+  gs_main.m_messages.setAlivePeriod(4, -500); // means Handshaking! (damn, we have mixed periods here...)
 }
 
 int main (int argc, char** argv)
@@ -2065,9 +2023,9 @@ int main (int argc, char** argv)
   setup();
 
   std::string str_filename = argv[1];
-  gs_main.t_ptrIn = PtrInputStream_t( new InputStream_c(str_filename) );
+  PtrInputStream_t t_ptrIn = PtrInputStream_t( new InputStream_c(str_filename) );
 
-  if (!gs_main.t_ptrIn->isOpen()) exit_with_error("Couldn't open file");
+  if (!t_ptrIn->isOpen()) exit_with_error("Couldn't open file");
 
   gs_main.pt_parseLogLine = argc >= 3 ?
     getLogLineParser(atoi(argv[2])) : // follow user's suggestion
@@ -2077,49 +2035,52 @@ int main (int argc, char** argv)
     atoi(argv[3]) : // follow user's suggestion
     32; // default to can_server
 
-  while (!gs_main.t_ptrIn->raw().eof())
-  {
-    std::pair< int, PtrDataFrame_t > parse_result = parseLogLine();
+  for (;;) {
+    std::string str_line;
+    getline(t_ptrIn->raw(), str_line);
+    bool const cb_failReading = t_ptrIn->raw().fail();
+    if (cb_failReading)
+      break;
+    std::pair< int, PtrDataFrame_t > parse_result = parseLogLine(str_line);
     if (0 == parse_result.first)
     {
       checkAlives(parse_result.second);
       checkSingles(parse_result.second);
       checkHandshakingsVtCommands(parse_result.second);
       checkHandshakingTP(parse_result.second);
-    }
+    }    
   }
-
-  gs_main.t_ptrIn = PtrInputStream_t(0);
+  t_ptrIn = PtrInputStream_t(0);
 
   std::cerr << "Alriiiiite... printing out the results..." << std::endl;
 
   for (int i=0; i<256; i++)
   {
-    for (unsigned int loop_msg=0; loop_msg<(sizeof(struct_messages)/sizeof(msgType_s)); loop_msg++)
+    for (size_t loop_msg=0; loop_msg<gs_main.m_messages.endOfModes(); loop_msg++)
     {
-      const int32_t ci32_alivePeriod = struct_messages[loop_msg].alivePeriod;
-      if (struct_messages[loop_msg].svec_alives[i].size()>0)
+      const int32_t ci32_alivePeriod = gs_main.m_messages.alivePeriod(loop_msg);
+      if (gs_main.m_messages.alives(loop_msg, i).size()>0)
       {
         if (ci32_alivePeriod > 0)
         { // we have a periodic event!
-          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<struct_messages[loop_msg].name<<"] with alive-periods of "<<struct_messages[loop_msg].alivePeriod<<" ms:"<<std::endl;
+          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<gs_main.m_messages.name(loop_msg)<<"] with alive-periods of "<<gs_main.m_messages.alivePeriod(loop_msg)<<" ms:"<<std::endl;
         }
         else if (ci32_alivePeriod < 0)
         { // we have a handshaking event!
-          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<struct_messages[loop_msg].name<<"] with alive-periods of "<<(-struct_messages[loop_msg].alivePeriod)<<" ms:"<<std::endl;
+          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<gs_main.m_messages.name(loop_msg)<<"] with alive-periods of "<<(-gs_main.m_messages.alivePeriod(loop_msg))<<" ms:"<<std::endl;
         }
         else
         { // sinlge events!! "== 0"
-          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<struct_messages[loop_msg].name<<"] at the following times:"<<std::endl;
+          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<gs_main.m_messages.name(loop_msg)<<"] at the following times:"<<std::endl;
         }
-        std::vector<msgType_t>::iterator type_iter=struct_messages[loop_msg].svec_response[i].begin();
-        for (std::vector<uint64_t>::iterator iter=struct_messages[loop_msg].svec_alives[i].begin();
-             iter != struct_messages[loop_msg].svec_alives[i].end();
+        std::vector<msgType_e>::iterator type_iter=gs_main.m_messages.response(loop_msg, i).begin();
+        for (std::vector<uint64_t>::iterator iter=gs_main.m_messages.alives(loop_msg, i).begin();
+             iter != gs_main.m_messages.alives(loop_msg, i).end();
              iter++)
         {
           std::cout << std::setfill (' ');
           std::cout << "absolute time: "<<std::setw(10)<<(*iter/1000)<<"."<<std::setw(3)<<std::setfill('0')<<(*iter%1000)<<std::setfill(' ');
-          if (iter != struct_messages[loop_msg].svec_alives[i].begin())
+          if (iter != gs_main.m_messages.alives(loop_msg, i).begin())
           {
             const uint64_t cui32_delta = ( *(iter) - *(iter-1) );
             std::cout<< "  relative time: "<<std::setw(10)<<cui32_delta;
@@ -2145,7 +2106,7 @@ int main (int argc, char** argv)
             }
             else if (ci32_alivePeriod < 0)
             { // Handshaking
-              if (type_iter == struct_messages[loop_msg].svec_response[i].end()) exit_with_error("No direction/msgType set but is expected. System failure.");
+              if (type_iter == gs_main.m_messages.response(loop_msg, i).end()) exit_with_error("No direction/msgType set but is expected. System failure.");
               int32_t i32_alivePeriodSpecial;
               switch (*type_iter)
               {
@@ -2182,7 +2143,7 @@ int main (int argc, char** argv)
             }
           }
           std::cout << std::endl;
-          if (type_iter != struct_messages[loop_msg].svec_response[i].end()) type_iter++;
+          if (type_iter != gs_main.m_messages.response(loop_msg, i).end()) type_iter++;
         }
       }
     }

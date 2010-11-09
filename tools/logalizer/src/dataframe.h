@@ -23,12 +23,13 @@ public:
   DataFrame_c(
       uint64_t aui64_time,
       uint32_t aui64_identifier,
-      std::vector< uint8_t > const &acrvec_data
+      std::vector< uint8_t > const &acrvec_data,
+      bool ab_canExt = true
     ) :
     mui64_time(aui64_time),
     mui64_identifier(aui64_identifier),
     mvec_data(acrvec_data),
-    mb_canExt(false)
+    mb_canExt(ab_canExt)
   {}
   DataFrame_c( // artificial frame for frame data and addresses only!
       std::vector< uint8_t > const &acrvec_data,
@@ -37,7 +38,8 @@ public:
     ) :
     mui64_time(0),
     mui64_identifier(uint32_t(aui8_destinationAddress) << 8 | aui8_sourceAddress),
-    mvec_data(acrvec_data)
+    mvec_data(acrvec_data),
+    mb_canExt(true)
   {}
   uint8_t prio() const {
     return uint8_t(mui64_identifier >> 26);
@@ -84,11 +86,14 @@ public:
   uint64_t identifier() const {
     return mui64_identifier;
   };
+  bool isExtendedFrameFormat() const {
+    return mb_canExt;
+  };
 private:
   uint64_t mui64_time;
   uint32_t mui64_identifier;
   std::vector< uint8_t > mvec_data;
-  bool mb_canExt; /// @todo SOON-260: to be used! =)
+  bool mb_canExt;
 };
 
 typedef yasper::ptr< DataFrame_c > PtrDataFrame_t;

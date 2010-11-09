@@ -555,6 +555,7 @@ tools/logalizer/src/dataframe.h -text
 tools/logalizer/src/inputstream.h -text
 tools/logalizer/src/logalizer.cpp -text
 tools/logalizer/src/logenvirons.h -text
+tools/logalizer/src/messages.h -text
 tools/logalizer/src/transfercollection.cpp -text
 tools/logalizer/src/transfercollection.h -text
 tools/proc2iso/COPYING -text
