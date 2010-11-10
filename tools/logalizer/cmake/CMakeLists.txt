@@ -18,6 +18,7 @@ include_directories(
 add_executable(
   logalizer
   ../src/logalizer.cpp
-  ../src/transfercollection.cpp)
+  ../src/transfercollection.cpp
+  ../src/alivecollection.cpp)
 
 target_link_libraries(logalizer)

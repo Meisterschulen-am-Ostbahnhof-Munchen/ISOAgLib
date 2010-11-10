@@ -14,23 +14,23 @@
 #include <logenvirons.h>
 #include <transfercollection.h>
 
-TransferCollection_c::PtrSession_t TransferCollection_c::newSession(
+TransferCollection_c::PtrConnection_t TransferCollection_c::newConnection(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress,
     size_t at_sizeTransferData)
 {
-  PtrSession_t t_ptrSession = new Session_s(at_sizeTransferData);
+  PtrConnection_t t_ptrConnection = new Connection_s(at_sizeTransferData);
   t_transfers[
       Key_s(
           ae_variant,
           aui8_transferSourceAddress,
           aui8_transferDestinationAddress)
-    ] = t_ptrSession;
-  return t_ptrSession;
+    ] = t_ptrConnection;
+  return t_ptrConnection;
 }
 
-TransferCollection_c::PtrSession_t TransferCollection_c::getSession(
+TransferCollection_c::PtrConnection_t TransferCollection_c::getConnection(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)
@@ -43,11 +43,11 @@ TransferCollection_c::PtrSession_t TransferCollection_c::getSession(
             aui8_transferDestinationAddress));
   return
     it_transfer == t_transfers.end() ?
-    TransferCollection_c::PtrSession_t(0) :
+    TransferCollection_c::PtrConnection_t(0) :
     it_transfer->second;
 }
 
-void TransferCollection_c::deleteSession(
+void TransferCollection_c::deleteConnection(
     Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)

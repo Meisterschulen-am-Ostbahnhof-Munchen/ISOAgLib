@@ -25,27 +25,27 @@ public:
     variant_etp,
   };
 
-  struct Session_s {
-    Session_s(size_t at_sizeTransferData);
+  struct Connection_s {
+    Connection_s(size_t at_sizeTransferData);
     std::vector< uint8_t > mvec_data;
     uint32_t mui32_embeddedPgn;
     uint32_t mui32_packetOffSet;
   };
 
-  typedef yasper::ptr< Session_s > PtrSession_t;
+  typedef yasper::ptr< Connection_s > PtrConnection_t;
 
-  PtrSession_t newSession(
+  PtrConnection_t newConnection(
       Variant_e ae_variant,
       uint8_t aui8_transferSourceAddress,
       uint8_t aui8_transferDestinationAddress,
       size_t at_sizeTransferData);
 
-  PtrSession_t getSession(
+  PtrConnection_t getConnection(
       Variant_e ae_variant,
       uint8_t aui8_transferSourceAddress,
       uint8_t aui8_transferDestinationAddress);
 
-  void deleteSession(
+  void deleteConnection(
       Variant_e ae_variant,
       uint8_t aui8_transferSourceAddress,
       uint8_t aui8_transferDestinationAddress);
@@ -65,14 +65,14 @@ private:
       Key_s const &arcs_left,
       Key_s const &arcs_right);
 
-  typedef std::map< Key_s, PtrSession_t > Transfers_t;
+  typedef std::map< Key_s, PtrConnection_t > Transfers_t;
   Transfers_t t_transfers;
 };
 
 
 /** Inline definitions. */
 
-inline TransferCollection_c::Session_s::Session_s(size_t at_sizeTransferData) :
+inline TransferCollection_c::Connection_s::Connection_s(size_t at_sizeTransferData) :
   mvec_data(at_sizeTransferData, 0),
   mui32_embeddedPgn(0),
   mui32_packetOffSet(0)

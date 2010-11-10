@@ -12,7 +12,7 @@ COMPILER_BINARY_PRE =
 first: all
 
 ####### Files
-SOURCES_APP := $(addprefix src/,logalizer.cpp transfercollection.cpp)
+SOURCES_APP := $(addprefix src/,logalizer.cpp transfercollection.cpp alivecollection.cpp)
 
 ####### Some Standard Rules
 SUBLIBS  = -lrt

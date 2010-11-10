@@ -13,7 +13,7 @@
 
 #include <logenvirons.h>
 #include <transfercollection.h>
-#include <messages.h>
+#include <alivecollection.h>
 #include <dataframe.h>
 #include <inputstream.h>
 #include <string>
@@ -32,7 +32,7 @@ struct Main_s {
   size_t mt_sizeMultipacketWrap; // default will be set when parsing parameters
   TransferCollection_c mc_trans;
   ParseLogLine_t *pt_parseLogLine;
-  Messages_c m_messages;
+  AliveCollection_c m_alive;
   Main_s();
 };
 
@@ -40,7 +40,7 @@ inline Main_s::Main_s() :
   mt_sizeMultipacketWrap(0),
   mc_trans(),
   pt_parseLogLine(0),
-  m_messages()
+  m_alive()
 {
 }
 
@@ -96,12 +96,6 @@ void exit_with_usage(const char* progname)
 #endif
 
   exit(0);
-}
-
-void exit_with_error(const char* error_message)
-{
-  std::cerr << error_message << std::endl;
-  exit(-1);
 }
 
 std::pair< int, PtrDataFrame_t > parseLogLineCANMon(
@@ -1391,23 +1385,23 @@ void interpreteValveCommand(PtrDataFrame_t at_ptrFrame)
     "Auxiliary state - command: " << commandAuxiliaryStateRepr(at_ptrFrame->dataOctet(2));
 }
 
-TransferCollection_c::PtrSession_t getTransferSession(
+TransferCollection_c::PtrConnection_t getTransferConnection(
     TransferCollection_c::Variant_e ae_variant,
     uint8_t aui8_transferSourceAddress,
     uint8_t aui8_transferDestinationAddress)
 {
-  TransferCollection_c::PtrSession_t t_ptrSession =
-    gs_main.mc_trans.getSession(
+  TransferCollection_c::PtrConnection_t t_ptrConnection =
+    gs_main.mc_trans.getConnection(
         ae_variant,
         aui8_transferSourceAddress,
         aui8_transferDestinationAddress);
-  if (!t_ptrSession) {
+  if (!t_ptrConnection) {
     std::cout << " (ERROR, no " <<
       (TransferCollection_c::variant_tp == ae_variant ? "TP" : "ETP") <<
       " " << std::hex << unsigned(aui8_transferSourceAddress) <<
       "->" << std::hex << unsigned(aui8_transferDestinationAddress) <<") ";
   }
-  return t_ptrSession;
+  return t_ptrConnection;
 }
 
 void endOfTransfer(
@@ -1436,7 +1430,7 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       std::cout << "RTS - Request to Send (TP)            ";
       {
         size_t const ct_sizeTransferData = size_t(at_ptrFrame->dataOctet(2)) << 8 | at_ptrFrame->dataOctet(1);
-        (void)gs_main.mc_trans.newSession(
+        (void)gs_main.mc_trans.newConnection(
             e_variant,
             at_ptrFrame->sourceAddress(),
             at_ptrFrame->destinationAddress(),
@@ -1450,7 +1444,7 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 16) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(2)) << 8 ) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(1)));
-        (void)gs_main.mc_trans.newSession(
+        (void)gs_main.mc_trans.newConnection(
             e_variant,
             at_ptrFrame->sourceAddress(),
             at_ptrFrame->destinationAddress(),
@@ -1468,13 +1462,13 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
     case 0x16:
       std::cout << "DPO - Data Packet Offset (ETP)        ";
       {
-        TransferCollection_c::PtrSession_t t_ptrSession =
-          getTransferSession(
+        TransferCollection_c::PtrConnection_t t_ptrConnection =
+          getTransferConnection(
               e_variant,
               at_ptrFrame->sourceAddress(),
               at_ptrFrame->destinationAddress());
-        if (t_ptrSession)
-          t_ptrSession->mui32_packetOffSet =
+        if (t_ptrConnection)
+          t_ptrConnection->mui32_packetOffSet =
             ((static_cast<uint32_t>(at_ptrFrame->dataOctet(4)) << 16) |
              (static_cast<uint32_t>(at_ptrFrame->dataOctet(3)) << 8 ) |
              (static_cast<uint32_t>(at_ptrFrame->dataOctet(2))));
@@ -1493,23 +1487,24 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
       break;
     case 0xFF:
       std::cout << "CONNABORT - Connection Abort (TP/ETP) ";
-      gs_main.mc_trans.deleteSession(e_variant, at_ptrFrame->sourceAddress(), at_ptrFrame->destinationAddress());
+      gs_main.mc_trans.deleteConnection(e_variant, at_ptrFrame->sourceAddress(), at_ptrFrame->destinationAddress());
+      gs_main.mc_trans.deleteConnection(e_variant, at_ptrFrame->destinationAddress(), at_ptrFrame->sourceAddress());
       break;
     default: return;
     }
     {
-      TransferCollection_c::PtrSession_t t_ptrSession =
-        getTransferSession(
+      TransferCollection_c::PtrConnection_t t_ptrConnection =
+        getTransferConnection(
             e_variant,
             at_ptrFrame->sourceAddress(),
             at_ptrFrame->destinationAddress());
-      if (t_ptrSession) {
-        t_ptrSession->mui32_embeddedPgn =
+      if (t_ptrConnection) {
+        t_ptrConnection->mui32_embeddedPgn =
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(7)) << 16) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(6)) << 8 ) |
           (static_cast<uint32_t>(at_ptrFrame->dataOctet(5)));
-        std::cout << " on " << std::setw(6) << std::setfill('0') << t_ptrSession->mui32_embeddedPgn << " (";
-        interpretePgn(t_ptrSession->mui32_embeddedPgn);
+        std::cout << " on " << std::setw(6) << std::setfill('0') << t_ptrConnection->mui32_embeddedPgn << " (";
+        interpretePgn(t_ptrConnection->mui32_embeddedPgn);
         std::cout << ")";
       }
     }
@@ -1521,26 +1516,26 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
   case ETP_DATA_TRANSFER_PGN:
     std::cout << "DATA - Data Packet #"<<std::setw(2)<<std::setfill(' ')<<std::dec<<uint16_t(at_ptrFrame->dataOctet(0));
     {
-      TransferCollection_c::PtrSession_t t_ptrSession =
-        getTransferSession(
+      TransferCollection_c::PtrConnection_t t_ptrConnection =
+        getTransferConnection(
             e_variant,
             at_ptrFrame->sourceAddress(),
             at_ptrFrame->destinationAddress());
-      if (!t_ptrSession)
+      if (!t_ptrConnection)
         ;
       else if ((at_ptrFrame->pgn() == TP_DATA_TRANSFER_PGN)) {
         for (int i = 0; i < 7; i++) {
-          if ((7 *  (at_ptrFrame->dataOctet(0) - 1)) + i >= int(t_ptrSession->mvec_data.size()))
+          if ((7 *  (at_ptrFrame->dataOctet(0) - 1)) + i >= int(t_ptrConnection->mvec_data.size()))
             break;
           size_t t_index = (7 *  (at_ptrFrame->dataOctet(0) - 1)) + i;
-          (t_ptrSession->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
+          (t_ptrConnection->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
         }
       } else if (at_ptrFrame->pgn() == ETP_DATA_TRANSFER_PGN) {
         for (int i = 0; i < 7; i++) {
-          size_t t_index = (t_ptrSession->mui32_packetOffSet * 7 + (7 *  (at_ptrFrame->dataOctet(0) - 1))) + i;
-          if (t_index >= t_ptrSession->mvec_data.size())
+          size_t t_index = (t_ptrConnection->mui32_packetOffSet * 7 + (7 *  (at_ptrFrame->dataOctet(0) - 1))) + i;
+          if (t_index >= t_ptrConnection->mvec_data.size())
             break;
-          (t_ptrSession->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
+          (t_ptrConnection->mvec_data)[t_index] = at_ptrFrame->dataOctet(i + 1);
         }
       }
     }
@@ -1550,12 +1545,12 @@ void interpretePgnsTPETP(PtrDataFrame_t at_ptrFrame)
   }
 
   if (b_streamEnd) { //instead of obsolete endOfTransfer(e_variant);
-    TransferCollection_c::PtrSession_t t_ptrSession =
-      getTransferSession(
+    TransferCollection_c::PtrConnection_t t_ptrConnection =
+      getTransferConnection(
           e_variant,
           at_ptrFrame->destinationAddress(),
           at_ptrFrame->sourceAddress());
-    if (t_ptrSession) {
+    if (t_ptrConnection) {
       endOfTransfer(at_ptrFrame, e_variant);
     }
   }
@@ -1565,14 +1560,14 @@ void endOfTransfer(
     PtrDataFrame_t at_ptrFrame,
     TransferCollection_c::Variant_e ae_variant)
 {
-  TransferCollection_c::PtrSession_t t_ptrSession =
-    getTransferSession(
+  TransferCollection_c::PtrConnection_t t_ptrConnection =
+    getTransferConnection(
         ae_variant,
         at_ptrFrame->destinationAddress(),
         at_ptrFrame->sourceAddress());
-  if (t_ptrSession) {
+  if (t_ptrConnection) {
     PtrDataFrame_t t_ptrArtificialFrame = new DataFrame_c(
-        t_ptrSession->mvec_data,
+        t_ptrConnection->mvec_data,
         at_ptrFrame->destinationAddress(),
         at_ptrFrame->sourceAddress());
 
@@ -1580,7 +1575,7 @@ void endOfTransfer(
     dump(t_ptrArtificialFrame);
     interpretePgnData(t_ptrArtificialFrame);
 
-    gs_main.mc_trans.deleteSession(
+    gs_main.mc_trans.deleteConnection(
         ae_variant,
         at_ptrFrame->destinationAddress(),
         at_ptrFrame->sourceAddress());
@@ -1887,7 +1882,7 @@ void checkAlives(PtrDataFrame_t at_ptrFrame)
        ((at_ptrFrame->pgn() == ECU_TO_VT_PGN) && (at_ptrFrame->dataOctet (0) == 0xFF))
      )
   {
-    gs_main.m_messages.alives(0, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
+    gs_main.m_alive.alives(AliveCollection_c::categoryVtServerClientPeriodic, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
   }
 
 
@@ -1896,7 +1891,7 @@ void checkAlives(PtrDataFrame_t at_ptrFrame)
        ((at_ptrFrame->pgn() == PROCESS_DATA_PGN) && (at_ptrFrame->dataOctet (0) == 0x0F))
      )
   {
-    gs_main.m_messages.alives(1, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
+    gs_main.m_alive.alives(AliveCollection_c::categoryTcServerClientPeriodic, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
   }
 
 }
@@ -1907,7 +1902,7 @@ void checkSingles(PtrDataFrame_t at_ptrFrame)
 {
   if (at_ptrFrame->pgn() == ACKNOWLEDGEMENT_PGN)
   {
-    gs_main.m_messages.alives(2, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
+    gs_main.m_alive.alives(AliveCollection_c::categoryNotAcknowledge, at_ptrFrame->sourceAddress()).push_back (at_ptrFrame->time());
   }
 }
 
@@ -1915,7 +1910,7 @@ void checkSingles(PtrDataFrame_t at_ptrFrame)
 
 void checkHandshakingsVtCommands(PtrDataFrame_t at_ptrFrame)
 {
-  int mode; // no need to initialize.
+  AliveCollection_c::Category_e e_category; // no need to initialize.
 
   if ((at_ptrFrame->dataOctet(0) >= 0x60) && (at_ptrFrame->dataOctet(0) < 0xF0))
   { // not a maintenance command!
@@ -1923,19 +1918,19 @@ void checkHandshakingsVtCommands(PtrDataFrame_t at_ptrFrame)
     uint8_t ui8_saClient;
     if (at_ptrFrame->pgn() == VT_TO_ECU_PGN)
     {
-      mode = 3;
+      e_category = AliveCollection_c::categoryVtCommandResponse;
       msgType_direction = msgTypeResponse;
       ui8_saClient = at_ptrFrame->ps();
     }
     else if (at_ptrFrame->pgn() == ECU_TO_VT_PGN)
     {
-      mode = 3;
+      e_category = AliveCollection_c::categoryVtCommandResponse;
       msgType_direction = msgTypeCommand;
       ui8_saClient = at_ptrFrame->sourceAddress();
     }
     else return;
-    gs_main.m_messages.response(mode, ui8_saClient).push_back (msgType_direction);
-    gs_main.m_messages.alives(mode, ui8_saClient).push_back (at_ptrFrame->time());
+    gs_main.m_alive.response(e_category, ui8_saClient).push_back (msgType_direction);
+    gs_main.m_alive.alives(e_category, ui8_saClient).push_back (at_ptrFrame->time());
     return;
   }
 }
@@ -1979,8 +1974,8 @@ void checkHandshakingTP(PtrDataFrame_t at_ptrFrame)
       mtype = msgTypeCONNABORT;
       ui8_saClient = at_ptrFrame->sourceAddress();
       // this message is special case! This aborts SA->DA and also DA->SA!
-      gs_main.m_messages.response(4, at_ptrFrame->destinationAddress()).push_back (mtype);
-      gs_main.m_messages.alives(4, at_ptrFrame->destinationAddress()).push_back (at_ptrFrame->time());
+      gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (mtype);
+      gs_main.m_alive.alives(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (at_ptrFrame->time());
       break; // CONN ABORT BY SENDER!
       /// @todo SOON-260: Damn, can't we detect ConnAbort by Receiver here, too?
     }
@@ -1990,27 +1985,8 @@ void checkHandshakingTP(PtrDataFrame_t at_ptrFrame)
     return;
   }
 
-  gs_main.m_messages.response(4, ui8_saClient).push_back (mtype);
-  gs_main.m_messages.alives(4, ui8_saClient).push_back (at_ptrFrame->time());
-}
-
-
-void setup()
-{
-  gs_main.m_messages.setName(0, "VT Server<->Client Periodic Alive");
-  gs_main.m_messages.setAlivePeriod(0, 1000);
-
-  gs_main.m_messages.setName(1, "TC Server<->Client Periodic Alive");
-  gs_main.m_messages.setAlivePeriod(1, 2000);
-
-  gs_main.m_messages.setName(2, "NOT Acknowledge (NACK)");
-  gs_main.m_messages.setAlivePeriod(2, 0); // means NO alivePeriod!
-
-  gs_main.m_messages.setName(3, "VT Command-Response times");
-  gs_main.m_messages.setAlivePeriod(3, -1500); // means Handshaking!
-
-  gs_main.m_messages.setName(4, "(E)TP-communication times");
-  gs_main.m_messages.setAlivePeriod(4, -500); // means Handshaking! (damn, we have mixed periods here...)
+  gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, ui8_saClient).push_back (mtype);
+  gs_main.m_alive.alives(AliveCollection_c::categoryEtpTpCommunicationTimes, ui8_saClient).push_back (at_ptrFrame->time());
 }
 
 int main (int argc, char** argv)
@@ -2019,8 +1995,6 @@ int main (int argc, char** argv)
 
   if (argc < 2)
     exit_with_usage(argv[0]);
-
-  setup();
 
   std::string str_filename = argv[1];
   PtrInputStream_t t_ptrIn = PtrInputStream_t( new InputStream_c(str_filename) );
@@ -2053,101 +2027,7 @@ int main (int argc, char** argv)
   t_ptrIn = PtrInputStream_t(0);
 
   std::cerr << "Alriiiiite... printing out the results..." << std::endl;
-
-  for (int i=0; i<256; i++)
-  {
-    for (size_t loop_msg=0; loop_msg<gs_main.m_messages.endOfModes(); loop_msg++)
-    {
-      const int32_t ci32_alivePeriod = gs_main.m_messages.alivePeriod(loop_msg);
-      if (gs_main.m_messages.alives(loop_msg, i).size()>0)
-      {
-        if (ci32_alivePeriod > 0)
-        { // we have a periodic event!
-          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<gs_main.m_messages.name(loop_msg)<<"] with alive-periods of "<<gs_main.m_messages.alivePeriod(loop_msg)<<" ms:"<<std::endl;
-        }
-        else if (ci32_alivePeriod < 0)
-        { // we have a handshaking event!
-          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" had the following alive-times for ["<<gs_main.m_messages.name(loop_msg)<<"] with alive-periods of "<<(-gs_main.m_messages.alivePeriod(loop_msg))<<" ms:"<<std::endl;
-        }
-        else
-        { // sinlge events!! "== 0"
-          std::cout << std::endl << "ISOBUS node with SA="<<std::hex<<i<<std::dec<<" sent out ["<<gs_main.m_messages.name(loop_msg)<<"] at the following times:"<<std::endl;
-        }
-        std::vector<msgType_e>::iterator type_iter=gs_main.m_messages.response(loop_msg, i).begin();
-        for (std::vector<uint64_t>::iterator iter=gs_main.m_messages.alives(loop_msg, i).begin();
-             iter != gs_main.m_messages.alives(loop_msg, i).end();
-             iter++)
-        {
-          std::cout << std::setfill (' ');
-          std::cout << "absolute time: "<<std::setw(10)<<(*iter/1000)<<"."<<std::setw(3)<<std::setfill('0')<<(*iter%1000)<<std::setfill(' ');
-          if (iter != gs_main.m_messages.alives(loop_msg, i).begin())
-          {
-            const uint64_t cui32_delta = ( *(iter) - *(iter-1) );
-            std::cout<< "  relative time: "<<std::setw(10)<<cui32_delta;
-
-            if (ci32_alivePeriod > 0)
-            { // print out the alivePeriod-deviation!
-              std::cout<<" deviation: ";
-              int deviation = int ((double (int32_t (cui32_delta)-ci32_alivePeriod) / ci32_alivePeriod) * 100);
-              uint8_t deviation_bias = (deviation > 0) ? '+' : '-';
-              deviation = (deviation < 0) ? -deviation : deviation;
-              if (deviation > 100)
-              {
-                std::cout << "EXTREME DEVIATION(!!) OF " << std::setw(10) << deviation << "0";
-              }
-              else
-              {
-                while (deviation > 10)
-                {
-                  std::cout << deviation_bias;
-                  deviation -= 10;
-                }
-              }
-            }
-            else if (ci32_alivePeriod < 0)
-            { // Handshaking
-              if (type_iter == gs_main.m_messages.response(loop_msg, i).end()) exit_with_error("No direction/msgType set but is expected. System failure.");
-              int32_t i32_alivePeriodSpecial;
-              switch (*type_iter)
-              {
-                case msgTypeResponse: std::cout << " Response  "; i32_alivePeriodSpecial = -ci32_alivePeriod; break;
-                case msgTypeCommand:  std::cout << " Command   "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
-                case msgTypeRTS:      std::cout << " (E)TP-CONN: Request to Send (RTS)         "; i32_alivePeriodSpecial = 0; break; // no timing-requirement here!
-                case msgTypeCTS:      std::cout << " (E)TP-CONN: Clear to Send (CTS)           "; i32_alivePeriodSpecial = 1250; break;
-                case msgTypeDPO:      std::cout << " (E)TP-CONN: Data Packet Offset (DPO)      "; i32_alivePeriodSpecial = 1250; break; /// @todo SOON-260: set the correct values here!
-                case msgTypeEOMACK:   std::cout << " (E)TP-CONN: End of Message ACK (EoMACK)   "; i32_alivePeriodSpecial = 1250; break;
-                case msgTypeDATA:     std::cout << " (E)TP-DATA                                "; i32_alivePeriodSpecial = 250; break;
-                case msgTypeCONNABORT:std::cout << " (E)TP-CONN: Connection Abort (CONNABORT)  "; i32_alivePeriodSpecial = -1; break; // doesn't come normally!
-                default:              std::cout << " ???                                       "; i32_alivePeriodSpecial = 0; break;
-              }
-              if ( (*type_iter == msgTypeResponse) && (*(type_iter-1) == msgTypeResponse) ) std::cout << " - RESPONSE FOLLOWING A RESPONSE!";
-              if ( (*type_iter == msgTypeCommand)  && (*(type_iter-1) == msgTypeCommand)  ) std::cout << " - COMMAND FOLLOWING A COMMAND!";
-              if (i32_alivePeriodSpecial > 0)
-              { // print out the time it took!
-                if (cui32_delta > (unsigned int) (i32_alivePeriodSpecial)) std::cout << " *** !!! TIMEOUT - Check relative time!!!! ***";
-                else
-                {
-                  int32_t time = int32_t ((cui32_delta*100) / i32_alivePeriodSpecial);
-                  std::cout <<std::setw(2)<<time<< " percent of timeout ("<<std::setw(4)<<i32_alivePeriodSpecial<<"): (one '%' shows 10%) ";
-                  while (time > 10)
-                  {
-                    std::cout << "%";
-                    time -= 10;
-                  }
-                }
-              }
-              else if (i32_alivePeriodSpecial < 0)
-              { // unsolicited messages (like CONNABORT)
-                std::cout << "*** UNEXPECTED/UNSOLICITED MESSAGE ***";
-              }
-            }
-          }
-          std::cout << std::endl;
-          if (type_iter != gs_main.m_messages.response(loop_msg, i).end()) type_iter++;
-        }
-      }
-    }
-  }
+  gs_main.m_alive.report();
 }
 
 void interpretePgnsFs2Cl(

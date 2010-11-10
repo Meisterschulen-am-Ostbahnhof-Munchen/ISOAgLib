@@ -180,6 +180,10 @@
 				RelativePath=".\src\transfercollection.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\src\alivecollection.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
