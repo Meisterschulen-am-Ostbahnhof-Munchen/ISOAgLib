@@ -9,7 +9,7 @@ void iObjectPool_tutorialDisplay_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAME
     IsoAgLib::iVtObject_c* HUGE_MEM * pc_objList = all_iVtObjectLists [i_listIndex];
     while (i_objCount)
     {
-      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs);
+      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
       ++pc_objList;
       ++pps_sROMs;
       --i_objCount;

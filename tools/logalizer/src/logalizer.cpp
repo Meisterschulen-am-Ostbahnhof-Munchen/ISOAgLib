@@ -1977,7 +1977,6 @@ void checkHandshakingTP(PtrDataFrame_t at_ptrFrame)
       gs_main.m_alive.response(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (mtype);
       gs_main.m_alive.alives(AliveCollection_c::categoryEtpTpCommunicationTimes, at_ptrFrame->destinationAddress()).push_back (at_ptrFrame->time());
       break; // CONN ABORT BY SENDER!
-      /// @todo SOON-260: Damn, can't we detect ConnAbort by Receiver here, too?
     }
     break;
 
