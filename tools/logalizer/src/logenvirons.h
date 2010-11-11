@@ -17,6 +17,7 @@
 #define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/isoaglib_config.h>
+#include <stdlib.h>
 
 char getAscii(uint8_t val);
 

@@ -124,7 +124,7 @@ std::pair< int, PtrDataFrame_t > parseLogLineJohnDeere(
   unsigned arru_d[8];
   int parsed_count = sscanf(
       acr_line.c_str(),
-      "r Xtd %*i %x %*i %x %x %x %x %x %x %x %x %*i   %*i %i      17920  %s ",
+      "r Xtd %*i %x %*i %x %x %x %x %x %x %x %x %*i   %*i %i      17920  %*s ",
       &iB, arru_d, arru_d+1, arru_d+2, arru_d+3, arru_d+4, arru_d+5, arru_d+6, arru_d+7, &iA);
   int i_result = parsed_count >= 2 ? 0 : -1;
   if (i_result < 0)
