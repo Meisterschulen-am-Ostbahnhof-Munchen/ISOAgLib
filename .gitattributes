@@ -551,6 +551,8 @@ tools/logalizer/Makefile -text
 tools/logalizer/README.txt -text
 tools/logalizer/cmake/CMakeLists.txt -text
 tools/logalizer/logalizer.vcproj -text
+tools/logalizer/src/addresstracker.cpp -text
+tools/logalizer/src/addresstracker.h -text
 tools/logalizer/src/alivecollection.cpp -text
 tools/logalizer/src/alivecollection.h -text
 tools/logalizer/src/dataframe.h -text

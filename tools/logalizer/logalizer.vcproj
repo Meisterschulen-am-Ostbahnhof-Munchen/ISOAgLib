@@ -184,6 +184,10 @@
 				RelativePath=".\src\alivecollection.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\src\addresstracker.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"

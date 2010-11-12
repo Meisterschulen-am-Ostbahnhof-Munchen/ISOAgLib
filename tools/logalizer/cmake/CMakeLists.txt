@@ -19,6 +19,7 @@ add_executable(
   logalizer
   ../src/logalizer.cpp
   ../src/transfercollection.cpp
-  ../src/alivecollection.cpp)
+  ../src/alivecollection.cpp
+  ../src/addresstracker.cpp)
 
 target_link_libraries(logalizer)

@@ -1,5 +1,5 @@
 /*
-  messages.h
+  alivecollection.h
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 

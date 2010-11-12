@@ -16,6 +16,7 @@
 #include <alivecollection.h>
 #include <dataframe.h>
 #include <inputstream.h>
+#include <addresstracker.h>
 #include <string>
 #include <vector>
 #include <iomanip>
@@ -33,6 +34,7 @@ struct Main_s {
   TransferCollection_c mc_trans;
   ParseLogLine_t *pt_parseLogLine;
   AliveCollection_c m_alive;
+  AddressTracker_c mc_tracker;
   Main_s();
 };
 
@@ -40,7 +42,8 @@ inline Main_s::Main_s() :
   mt_sizeMultipacketWrap(0),
   mc_trans(),
   pt_parseLogLine(0),
-  m_alive()
+  m_alive(),
+  mc_tracker()
 {
 }
 
@@ -1404,6 +1407,26 @@ TransferCollection_c::PtrConnection_t getTransferConnection(
   return t_ptrConnection;
 }
 
+void interpreteRequestPgnMsg(PtrDataFrame_t at_ptrFrame)
+{
+  uint32_t cui32_requestedPgn =
+    ( uint32_t(at_ptrFrame->dataOctet(2)) << 8 |
+      at_ptrFrame->dataOctet(1) ) << 8 |
+    at_ptrFrame->dataOctet(0);
+
+  switch (cui32_requestedPgn) {
+  case ADDRESS_CLAIM_PGN:
+    return gs_main.mc_tracker.requestForAddressClaimed(at_ptrFrame);
+  default:
+    return;
+  }
+}
+
+void interpreteAddressClaimed(PtrDataFrame_t at_ptrFrame)
+{
+  gs_main.mc_tracker.addressClaimed(at_ptrFrame);
+}
+
 void endOfTransfer(
     PtrDataFrame_t at_ptrFrame,
     TransferCollection_c::Variant_e ae_variant);
@@ -1655,12 +1678,14 @@ Interprete_t *getPgnDataInterpreter(PtrDataFrame_t at_ptrFrame)
   case AUX_VALVE_14_COMMAND:
   case AUX_VALVE_15_COMMAND:
     return interpreteValveCommand;
+  case REQUEST_PGN_MSG_PGN:
+    return interpreteRequestPgnMsg;
+  case ADDRESS_CLAIM_PGN:
+    return interpreteAddressClaimed;
   case PROCESS_DATA_PGN:
   case GUIDANCE_MACHINE_STATUS:
   case GUIDANCE_SYSTEM_CMD:
   case ISOBUS_CERTIFICATION_PGN:
-  case REQUEST_PGN_MSG_PGN:
-  case ADDRESS_CLAIM_PGN:
   case PROPRIETARY_A_PGN:
   case PROPRIETARY_A2_PGN:
   case WORKING_SET_MEMBER_PGN:
@@ -1864,6 +1889,7 @@ std::pair< int, PtrDataFrame_t > parseLogLine(
       interpretePgn(t_ptrFrame->pgn());
       // Interpreted PGN-Data
       interpretePgnData (t_ptrFrame);
+      gs_main.mc_tracker.checkTimeouts(t_ptrFrame->time());
       std::cout << std::endl;
     }
   }
