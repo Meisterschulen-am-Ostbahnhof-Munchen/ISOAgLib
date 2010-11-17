@@ -211,7 +211,7 @@ template< typename T, int SIZE > T &multitonInstance(int riIndex = 0);
   * otherwise.
   */ 
 template< typename T, int SIZE >
-T &__IsoAgLib::multitonInstance(int riIndex = 0)
+T &__IsoAgLib::multitonInstance(int riIndex)
 {
   static T * mspc_instance[SIZE] = {(T*)0};
   if ( mspc_instance[0] > (T*)1 )
