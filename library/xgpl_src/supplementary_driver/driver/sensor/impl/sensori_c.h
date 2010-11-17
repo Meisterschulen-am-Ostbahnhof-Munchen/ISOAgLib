@@ -40,7 +40,8 @@ SensorI_c& getSensorInstance( void );
   @short Hardware dependent object for hardware independent getting of sensor data.
   @author Dipl.-Inform. Achim Spangler
   */
-class SensorI_c : public SingletonDerived<SensorI_c,ClientBase> {
+class SensorI_c : public ClientBase {
+  MACRO_MULTITON_CONTRIBUTION(SensorI_c, PRT_INSTANCE_CNT);
 public:
   /**
     initialisation for the sensor input management which sets the allowed number
@@ -191,7 +192,6 @@ private:
   friend class AnalogI_c;
   friend class DigitalI_c;
   friend class CounterI_c;
-  friend class SingletonDerived<SensorI_c,ClientBase>;
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of SensorI_c within application
     */

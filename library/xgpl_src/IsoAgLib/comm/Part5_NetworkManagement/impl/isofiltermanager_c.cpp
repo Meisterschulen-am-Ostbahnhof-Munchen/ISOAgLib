@@ -20,10 +20,9 @@ namespace __IsoAgLib {
 
 
 /** constructor for IsoRequestPgn_c */
-IsoFilterManager_c::IsoFilterManager_c ()
-  : SingletonIsoFilterManager_c ()
-  , mvec_isoFilterBox()
-  , mt_handler(*this)
+IsoFilterManager_c::IsoFilterManager_c () :
+  mvec_isoFilterBox(),
+  mt_handler(*this)
 {
 }
 

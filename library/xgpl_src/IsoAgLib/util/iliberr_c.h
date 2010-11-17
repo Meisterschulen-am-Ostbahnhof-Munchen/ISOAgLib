@@ -27,8 +27,6 @@
 namespace IsoAgLib {
   class iLibErr_c;
   class iErrorObserver_c;
-  typedef SINGLETON( iLibErr_c ) SingletonILibErr_c;
-  // old: typedef SINGLETON_CLIENT1_KEY( iLibErr_c, iErrorObserver_c, int ) SingletonILibErr_c;
 
   /** C-style function, to get access to the unique iLibErr_c singleton instance */
   iLibErr_c& getILibErrInstance( void );
@@ -40,7 +38,8 @@ namespace IsoAgLib {
   All objects which Can hold their own error state are derived from Err
   *@author Dipl.-Inform. Achim Spangler
 */
-class iLibErr_c : public SingletonILibErr_c {
+class iLibErr_c {
+  MACRO_MULTITON_CONTRIBUTION(iLibErr_c, PRT_INSTANCE_CNT);
 public:
   /** enum to identify the different error types */
   typedef enum iLibErrTypes_en {
@@ -197,8 +196,6 @@ public:
   ~iLibErr_c() {}
 
 private:
-  friend class SINGLETON( iLibErr_c );
-
   /** default constructor which sets the error value to noErr */
   iLibErr_c();
 

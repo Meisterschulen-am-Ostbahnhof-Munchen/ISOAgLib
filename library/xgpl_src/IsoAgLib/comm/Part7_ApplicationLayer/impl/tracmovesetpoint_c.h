@@ -22,10 +22,8 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-
-  class TracMoveSetPoint_c;
-  typedef SINGLETON_DERIVED(TracMoveSetPoint_c,BaseCommon_c) SingletonTracMoveSetPoint_c;
-  /** working on Base Data Msg;
+ 
+ /** working on Base Data Msg;
       stores, updates  and delivers all base data informations;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -34,7 +32,8 @@ namespace __IsoAgLib {
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
 
-  class TracMoveSetPoint_c : public SingletonTracMoveSetPoint_c{
+  class TracMoveSetPoint_c : public BaseCommon_c {
+    MACRO_MULTITON_CONTRIBUTION(TracMoveSetPoint_c, PRT_INSTANCE_CNT);
   public:// Public methods
     /* ********************************************* */
 
@@ -86,7 +85,6 @@ namespace __IsoAgLib {
 
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracMoveSetPoint_c,BaseCommon_c);
     /** HIDDEN constructor for a TracMoveSetPoint_c object instance which can optional
         set the configuration for send/receive for base msg type 1
         NEVER instantiate a variable of type TracMoveSetPoint_c within application

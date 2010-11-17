@@ -85,10 +85,8 @@ public:
   virtual void handleMsgEvent (uint32_t aui32_pgn) = 0;
 };
 
-
 class TimePosGps_c;
 typedef TimePosGps_c TimePosGPS_c; /// this typedef is only for some time to provide backward compatibility at API level
-typedef SINGLETON_DERIVED(TimePosGps_c,BaseCommon_c) SingletonTimePosGps_c;
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
@@ -98,8 +96,9 @@ typedef SINGLETON_DERIVED(TimePosGps_c,BaseCommon_c) SingletonTimePosGps_c;
   per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
 
-class TimePosGps_c : public SingletonTimePosGps_c
+class TimePosGps_c : public BaseCommon_c
 {
+  MACRO_MULTITON_CONTRIBUTION(TimePosGps_c, PRT_INSTANCE_CNT);
  public:
   // Public methods
   /* ********************************************* */
@@ -569,7 +568,6 @@ public:
 
 private:
   // Private methods
-  friend class SINGLETON_DERIVED(TimePosGps_c,BaseCommon_c);
 
   /** HIDDEN constructor for a TimePosGps_c object instance which can optional
     set the configuration for send/receive for base msg type NMEA 2000 GPS

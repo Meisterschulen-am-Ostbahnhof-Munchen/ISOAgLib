@@ -42,17 +42,15 @@ typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*> ControlFunctionSta
 typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::iterator ControlFunctionStateHandlerVectorIterator_t;
 typedef STL_NAMESPACE::vector<ControlFunctionStateHandler_c*>::const_iterator ControlFunctionStateHandlerVectorConstIterator_t;
 
-class IsoMonitor_c;
-typedef SINGLETON_DERIVED(IsoMonitor_c, Scheduler_Task_c) SingletonIsoMonitor_c;
-
 /** this object manages a monitor list of all
   ISO members including inserting and administration of local own members.
   @short Manager for members of Scheduler_c (IsoItem_c)
   @see ISOItem
   @author Dipl.-Inform. Achim Spangler
 */
-class IsoMonitor_c : public SingletonIsoMonitor_c
+class IsoMonitor_c : public Scheduler_Task_c
 {
+  MACRO_MULTITON_CONTRIBUTION(IsoMonitor_c, PRT_INSTANCE_CNT);
 private:
   // private typedef alias names
   #ifdef OPTIMIZE_HEAPSIZE_IN_FAVOR_OF_SPEED
@@ -440,8 +438,6 @@ private:
     * the base Singleton calls this function, if it detects an error
      */
   void registerAccessFlt( void ) {getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::System );}
-
-  friend class SINGLETON_DERIVED(IsoMonitor_c,Scheduler_Task_c);
 
   /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance */
   IsoMonitor_c( void );

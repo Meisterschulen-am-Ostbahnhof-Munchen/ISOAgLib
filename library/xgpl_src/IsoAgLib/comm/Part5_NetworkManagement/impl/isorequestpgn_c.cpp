@@ -239,11 +239,9 @@ void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_iso
   }
 }
 
-
 /** constructor for IsoRequestPgn_c */
 IsoRequestPgn_c::IsoRequestPgn_c ()
-  : SingletonIsoRequestPgn_c ()
-  , m_registeredClientsWithPGN ()
+  : m_registeredClientsWithPGN ()
   , mc_data()
   , mpc_isoItemSA( NULL ) // dummy value, is always properly set when used
   , mpc_isoItemDA( NULL ) // dummy value, is always properly set when used
@@ -252,13 +250,11 @@ IsoRequestPgn_c::IsoRequestPgn_c ()
 {
 }
 
-
 #if DEBUG_SCHEDULER
 const char*
 IsoRequestPgn_c::getTaskName() const
 { return "IsoRequestPgn_c"; }
 #endif
-
 
 #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance

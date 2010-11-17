@@ -35,11 +35,10 @@ namespace __IsoAgLib {
 // forward declarations
 class VtClientServerCommunication_c;
 class iIdentItem_c;
-class IsoTerminal_c;
-typedef SINGLETON_DERIVED(IsoTerminal_c,Scheduler_Task_c) SingletonIsoTerminal_c;
 
 /** central IsoAgLib terminal management object */
-class IsoTerminal_c : public SingletonIsoTerminal_c {
+class IsoTerminal_c : public Scheduler_Task_c {
+  MACRO_MULTITON_CONTRIBUTION(IsoTerminal_c, PRT_INSTANCE_CNT);
 public:
   virtual ~IsoTerminal_c() {}
 
@@ -196,7 +195,6 @@ private:
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
-  friend class SINGLETON_DERIVED(IsoTerminal_c, Scheduler_Task_c);
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of IsoTerminal_c within application
     */

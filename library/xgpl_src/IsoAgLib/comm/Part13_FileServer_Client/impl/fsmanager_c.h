@@ -33,12 +33,10 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-class FsManager_c;
-typedef SINGLETON_DERIVED(FsManager_c,Scheduler_Task_c) SingletonFsManager_c;
-
 /** central IsoAgLib terminal management object */
-class FsManager_c : public SingletonFsManager_c
+class FsManager_c : public Scheduler_Task_c
 {
+  MACRO_MULTITON_CONTRIBUTION(FsManager_c, PRT_INSTANCE_CNT);
   public:
 
   class SaClaimHandlerProxy_c : public SaClaimHandler_c {
@@ -107,8 +105,6 @@ class FsManager_c : public SingletonFsManager_c
    virtual void reactOnIsoItemModification (SaClaimHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
   private:
-    friend class SINGLETON_DERIVED(FsManager_c,Scheduler_Task_c);
-
     /** constructor is private, so singleton has to be used */
     FsManager_c();
 

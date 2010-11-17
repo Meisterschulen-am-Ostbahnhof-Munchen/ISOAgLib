@@ -34,11 +34,9 @@ namespace __IsoAgLib
   /** initialization parameter for IsoName */
   static const IsoName_c& screfc_noIsoName = IsoName_c::IsoNameUnspecified();
 
-  class ProprietaryMessageHandler_c;
-  typedef SINGLETON_DERIVED(ProprietaryMessageHandler_c, Scheduler_Task_c) SingletonProprietaryMessageHandler_c;
-
-  class ProprietaryMessageHandler_c : public SingletonProprietaryMessageHandler_c
+  class ProprietaryMessageHandler_c : public Scheduler_Task_c
   {
+    MACRO_MULTITON_CONTRIBUTION(ProprietaryMessageHandler_c, PRT_INSTANCE_CNT);
   public:
     ProprietaryMessageHandler_c();
 
@@ -246,8 +244,6 @@ private:
     Owner_t &mrt_owner;
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
-
-    friend class SINGLETON_DERIVED(IsoMonitor_c,Scheduler_Task_c);
 
     /** temp data where received and to be sent data is put */
     CanPkgExt_c mc_data;

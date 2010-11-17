@@ -51,7 +51,6 @@ namespace __IsoAgLib {
 /* *************************************** */
 
 class CanIo_c;
-typedef CAN_SINGLETON(CanIo_c) SingletonCanIo_c;
 /**
   Encapsulation of CAN IO with MsgObj_c instances in dynamic array.
   Initialization of CAN hardware, with default setting of one send object.
@@ -67,7 +66,8 @@ typedef CAN_SINGLETON(CanIo_c) SingletonCanIo_c;
   @author Dipl.-Inform. Achim Spangler
   @see FilterBox_c MsgObj
 */
-class CanIo_c : public SingletonCanIo_c {
+class CanIo_c {
+  MACRO_MULTITON_CONTRIBUTION(CanIo_c, CAN_INSTANCE_CNT);
  public: // changed from protected to work with the access from MsgObj_c
   /** define dynamic array of MsgObj_c instances for each hardware
     MsgObj_c one object instances in array
@@ -375,7 +375,6 @@ class CanIo_c : public SingletonCanIo_c {
 #endif //SYSTEM_WITH_ENHANCED_CAN_HAL
 
  private: // private methods
-  friend class CAN_SINGLETON( CanIo_c );
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of CanIo_c within application
     * (set mui8_busNumber to 0xFF so that init() detects first call after constructor)

@@ -101,8 +101,6 @@ typedef struct {
 
   } lightBitData_t;
 
-  class TracLight_c;
-  typedef SINGLETON_DERIVED(TracLight_c,BaseCommon_c) SingletonTracLight_c;
   /** stores, updates  and delivers lighting data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -110,8 +108,9 @@ typedef struct {
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
-  class TracLight_c : public SingletonTracLight_c
+  class TracLight_c : public BaseCommon_c
   {
+    MACRO_MULTITON_CONTRIBUTION(TracLight_c, PRT_INSTANCE_CNT);
   public: // Public methods
 
     // from BaseCommon_c
@@ -178,7 +177,6 @@ typedef struct {
 
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracLight_c,BaseCommon_c);
     /** HIDDEN constructor for a TracLight_c object instance which can optional
         set the configuration for send/receive for a lighting msg type
         NEVER instantiate a variable of type TracLight_c within application

@@ -23,8 +23,6 @@
 namespace __IsoAgLib {
 
 
-class TracFacilities_c;
-typedef SINGLETON_DERIVED(TracFacilities_c,BaseCommon_c) SingletonTracFacilities_c;
   /** stores, updates  and delivers all Facilities data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -32,8 +30,9 @@ typedef SINGLETON_DERIVED(TracFacilities_c,BaseCommon_c) SingletonTracFacilities
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
-class TracFacilities_c : public SingletonTracFacilities_c
+class TracFacilities_c : public BaseCommon_c
 {
+  MACRO_MULTITON_CONTRIBUTION(TracFacilities_c, PRT_INSTANCE_CNT);
  public:// Public methods
 
   /** config the TracFacilities_c object after init -> set pointer to isoName and
@@ -82,7 +81,6 @@ class TracFacilities_c : public SingletonTracFacilities_c
 
  private:
   // Private methods
-  friend class SINGLETON_DERIVED(TracFacilities_c,BaseCommon_c);
   /** HIDDEN constructor for a TracFacilities_c object instance which can optional
       set the configuration for send/receive for a moving msg
       NEVER instantiate a variable of type TracFacilities_c within application

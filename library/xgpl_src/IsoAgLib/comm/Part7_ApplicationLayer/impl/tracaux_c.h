@@ -91,8 +91,6 @@ namespace __IsoAgLib {
     a21_10_MaxRange = 100
   };
 
-  class TracAux_c;
-  typedef SINGLETON_DERIVED(TracAux_c,BaseCommon_c) SingletonTracAux_c;
   /** stores, updates  and delivers all auxiliary data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -101,7 +99,8 @@ namespace __IsoAgLib {
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
 
-  class TracAux_c : public SingletonTracAux_c {
+  class TracAux_c : public BaseCommon_c {
+    MACRO_MULTITON_CONTRIBUTION(TracAux_c, PRT_INSTANCE_CNT);
   public:// Public methods
     /* ********************************************* */
     /** \name Management Functions for class TracAux_c  */
@@ -365,7 +364,6 @@ namespace __IsoAgLib {
 
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracAux_c,BaseCommon_c);
     /** HIDDEN constructor for a TracAux_c object instance which can optional
         set the configuration for send/receive for base msg type 1
         NEVER instantiate a variable of type TracAux_c within application

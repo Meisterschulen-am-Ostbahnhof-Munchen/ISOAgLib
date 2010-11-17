@@ -53,8 +53,6 @@ typedef struct
   IsoAgLib::IsoLimitFlag_t t_ptoShaftSpeedLimitStatus : 3;
 } PtoData_t;
 
-  class TracPTO_c;
-  typedef SINGLETON_DERIVED(TracPTO_c,BaseCommon_c) SingletonTracPto_c;
   /** working on Base Data Msg;
       stores, updates and delivers all base data informations;
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -62,8 +60,9 @@ typedef struct
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
-  class TracPTO_c : public SingletonTracPto_c
+  class TracPTO_c : public BaseCommon_c
   {
+    MACRO_MULTITON_CONTRIBUTION(TracPTO_c, PRT_INSTANCE_CNT);
   public:// Public methods
     /* ********************************************* */
     /** \name Management Functions for class TracPTO_c  */
@@ -357,7 +356,6 @@ typedef struct
 
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracPTO_c,BaseCommon_c);
     /**
       HIDDEN constructor for a TracPTO_c object instance which can optional
       set the configuration for send/receive for base msg type 1,2

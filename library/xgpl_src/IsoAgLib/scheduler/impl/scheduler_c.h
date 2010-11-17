@@ -47,9 +47,8 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
   @short central manager object for all hardware independent IsoAgLib objects.
 */
-class Scheduler_c;
-typedef SINGLETON(Scheduler_c) SingletonScheduler_c;
-class Scheduler_c : public SingletonScheduler_c {
+class Scheduler_c {
+  MACRO_SINGLETON_CONTRIBUTION(Scheduler_c);
 public:
 
   /** Initialisation for the central IsoAgLib object
@@ -187,7 +186,6 @@ public:
      in this case return true */
   bool isTaskExecuted(const Scheduler_Task_c* apc_client) const;
 private: //Private methods
-  friend class SINGLETON( Scheduler_c );
   /** constructor for the central IsoAgLib object */
   Scheduler_c();
 

@@ -30,17 +30,14 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-// forward declaration
-
-class IsoFilterManager_c;
-typedef SINGLETON_DERIVED(IsoFilterManager_c, Scheduler_Task_c) SingletonIsoFilterManager_c;
 /** this object manages ISO-Filters - those may contain references
     to ISOName's and are initelligent self-adapting can-filters
     @short Manager for handling of inserting/adapting FilterBox_c-instances
     @see __IsoAgLib::ControlFunctionStateHandler_c
     @author Dipl.-Inf. Martin Wodok */
-class IsoFilterManager_c : public SingletonIsoFilterManager_c
+class IsoFilterManager_c : public Scheduler_Task_c
 {
+  MACRO_MULTITON_CONTRIBUTION(IsoFilterManager_c, PRT_INSTANCE_CNT);
 public:
   typedef STL_NAMESPACE::vector<IsoFilterBox_c> IsoFilterBox_vec;
   typedef STL_NAMESPACE::vector<IsoFilterBox_c>::iterator IsoFilterBox_it;
@@ -108,8 +105,6 @@ private:
 
 private: // Private attributes
   IsoFilterBox_vec mvec_isoFilterBox;
-
-  friend class SINGLETON_DERIVED (IsoFilterManager_c,Scheduler_Task_c);
 
   Handler_t mt_handler;
 };

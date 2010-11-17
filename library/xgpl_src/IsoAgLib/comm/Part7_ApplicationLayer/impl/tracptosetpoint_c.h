@@ -22,8 +22,6 @@
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
-  class TracPTOSetPoint_c;
-  typedef SINGLETON_DERIVED(TracPTOSetPoint_c,BaseCommon_c) SingletonTracPtoSetPoint_c;
   /** working on pto set point data Type;
       stores, updates and delivers all base data informations;
       Derive from BaseCommon_c some fundamental funktionality for all base data
@@ -33,6 +31,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
   class TracPTOSetPoint_c : public SingletonTracPtoSetPoint_c {
+    MACRO_MULTITON_CONTRIBUTION(TracPTOSetPoint_c, PRT_INSTANCE_CNT);
   public:// Public methods
     /* ********************************************* */
     /** \name Management Functions for class TracPTO_c  */
@@ -166,7 +165,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracPTOSetPoint_c,BaseCommon_c);
     /** HIDDEN constructor for a TracPTOSetPoint_c object instance which can optional
         set the configuration for send/receive for base msg type
         NEVER instantiate a variable of type TracPTOSetPoint_c within application

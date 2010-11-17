@@ -43,7 +43,8 @@ class IsoName_c;
   @short Simple data communication with EEPROM.
   @author Dipl.-Inform. Achim Spangler
 */
-class EepromIo_c : public Singleton<EepromIo_c> {
+class EepromIo_c {
+  MACRO_SINGLETON_CONTRIBUTION(EepromIo_c);
 public:
   typedef STL_NAMESPACE::string cc_string;
   /** default initialisation */
@@ -216,7 +217,6 @@ public:
 
 private:
 // Private methods
-  friend class Singleton<EepromIo_c>;
   friend EepromIo_c& operator<<(EepromIo_c& rc_stream, const IsoName_c& rc_data );
   friend EepromIo_c& operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data );
 

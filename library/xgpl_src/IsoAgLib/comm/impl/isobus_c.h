@@ -20,15 +20,14 @@
 
 namespace __IsoAgLib {
 
-class IsoBus_c;
-typedef SINGLETON(IsoBus_c) SingletonIsoBus_c;
 /**
   Class managing one ISOBUS CAN instance.
   @author Martin Wodok
   @see CanIo_c
 */
-class IsoBus_c : public SingletonIsoBus_c {
- public:
+class IsoBus_c {
+  MACRO_MULTITON_CONTRIBUTION(IsoBus_c, PRT_INSTANCE_CNT);
+public:
 
   /** Initialize the CAN hardware  and all related ISO-protocol modules.
       for possible error refer to @see CanIo_c

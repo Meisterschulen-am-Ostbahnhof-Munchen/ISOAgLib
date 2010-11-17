@@ -28,8 +28,6 @@ namespace __IsoAgLib {
 #define SELECTED_SPEED_MESSAGE_DISABLE_MASK                  0x0004LU
 #define ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE_DISABLE_MASK  0x0008LU 
 
-  class TracMove_c;
-  typedef SINGLETON_DERIVED(TracMove_c,BaseCommon_c) SingletonTracMove_c;
   /** stores, updates  and delivers all moving data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -38,8 +36,9 @@ namespace __IsoAgLib {
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
 
-  class TracMove_c : public SingletonTracMove_c
+  class TracMove_c : public BaseCommon_c
   {
+    MACRO_MULTITON_CONTRIBUTION(TracMove_c, PRT_INSTANCE_CNT);
   public:// Public methods
 
     /** config the TracMove_c object after init -> set pointer to isoName and
@@ -255,7 +254,6 @@ namespace __IsoAgLib {
 
   private:
     // Private methods
-    friend class SINGLETON_DERIVED(TracMove_c,BaseCommon_c);
     /** HIDDEN constructor for a TracMove_c object instance which can optional
         set the configuration for send/receive for a moving msg
         NEVER instantiate a variable of type TracMove_c within application

@@ -114,14 +114,11 @@ MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &
 
 
 
-class MultiReceive_c;
-typedef SINGLETON_DERIVED(MultiReceive_c,Scheduler_Task_c) SingletonMultiReceive_c;
-
 //  +X2C Class 192 : MultiReceive_c
 //!  Stereotype: 76
-class MultiReceive_c : public SingletonMultiReceive_c
+class MultiReceive_c : public Scheduler_Task_c
 {
-
+  MACRO_MULTITON_CONTRIBUTION(MultiReceive_c, PRT_INSTANCE_CNT);
 public:
   MultiReceive_c();
   ~MultiReceive_c() {}
@@ -338,8 +335,6 @@ private:
     Owner_t &mrt_owner;
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
-
-  friend class SINGLETON_DERIVED(MultiReceive_c,Scheduler_Task_c);
 
   /** temp data where received data is put */
   CanPkgExt_c mc_data;

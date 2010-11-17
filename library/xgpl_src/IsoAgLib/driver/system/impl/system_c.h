@@ -33,8 +33,8 @@ namespace __IsoAgLib {
     other object to implement specific I/O operations.
   @author Dipl.-Inform. Achim Spangler
   */
-class System_c;
-class System_c : public Singleton<System_c> {
+class System_c {
+  MACRO_SINGLETON_CONTRIBUTION(System_c);
 public:
 
 
@@ -125,7 +125,6 @@ public:
 
 protected:
 private:
-  friend class Singleton< System_c >;
   friend class IsoAgLib::iSystem_c;
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of System_c within application

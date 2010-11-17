@@ -62,8 +62,6 @@ typedef struct
   uint8_t ui8_GPSReceiver : 1;
 } certificationBitData_t;
 
-class TracCert_c;
-typedef SINGLETON_DERIVED(TracCert_c,BaseCommon_c) SingletonTracCert_c;
   /** stores, updates  and delivers all moving data information;
       Derive from BaseCommon_c some fundamental funktionality for all base data
       Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -71,8 +69,9 @@ typedef SINGLETON_DERIVED(TracCert_c,BaseCommon_c) SingletonTracCert_c;
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
-class TracCert_c : public SingletonTracCert_c
+class TracCert_c : public BaseCommon_c
 {
+  MACRO_MULTITON_CONTRIBUTION(TracCert_c, PRT_INSTANCE_CNT);
  public:// Public methods
 
   /** config the TracCert_c object after init -> set pointer to isoName and
@@ -290,7 +289,6 @@ class TracCert_c : public SingletonTracCert_c
 
  private:
   // Private methods
-  friend class SINGLETON_DERIVED(TracCert_c,BaseCommon_c);
   /** HIDDEN constructor for a TracCert_c object instance which can optional
       set the configuration for send/receive for a moving msg
       NEVER instantiate a variable of type TracCert_c within application

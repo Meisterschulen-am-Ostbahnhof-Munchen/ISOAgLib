@@ -40,8 +40,6 @@ namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
-class Process_c;
-  typedef SINGLETON_DERIVED(Process_c, Scheduler_Task_c) SingletonProcess_c;
 
 /**
   Central managing instance for all process data
@@ -74,8 +72,9 @@ class Process_c;
 
   @author Dipl.-Inform. Achim Spangler
 */
-class Process_c : public SingletonProcess_c
+class Process_c : public Scheduler_Task_c
 {
+  MACRO_MULTITON_CONTRIBUTION(Process_c, PRT_INSTANCE_CNT);
 public:
   /** initialisation for Process_c
   */
@@ -499,7 +498,6 @@ private: // Private attributes
 #ifdef __IAR_SYSTEMS_ICC__
   friend class IarSingletonDerived<Process_c,Scheduler_Task_c>;
 #else
-  friend class SINGLETON_DERIVED(Process_c,Scheduler_Task_c);
 #endif
   friend class IsoAgLib::iProcess_c;
   friend class IsoAgLib::iDevPropertyHandler_c;

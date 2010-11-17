@@ -23,14 +23,13 @@
 namespace IsoAgLib {
 
 
-class iProprietaryBus_c;
-typedef SINGLETON(iProprietaryBus_c) SingletonIproprietaryBus_c;
 /**
   @short Class managing a Proprietary CAN bus.
   @author Martin Wodok
   @see CanIo_c
 */
-class iProprietaryBus_c : public SingletonIproprietaryBus_c {
+class iProprietaryBus_c {
+  MACRO_MULTITON_CONTRIBUTION(iProprietaryBus_c, CAN_INSTANCE_CNT);
  public:
   /**
     Initialize the CAN hardware, and instantiate one msg object for

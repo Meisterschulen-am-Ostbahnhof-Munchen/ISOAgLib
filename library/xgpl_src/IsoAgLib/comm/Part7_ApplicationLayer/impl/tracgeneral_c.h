@@ -50,8 +50,6 @@ typedef struct
 
 } indicatedStateImpl_t;
 
-class TracGeneral_c;
-typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
 /** stores, updates  and delivers all base data informations;
     Derive from BaseCommon_c some fundamental funktionality for all base data
     Derive from Scheduler_Task_c to register in Scheduler_c for timeEvent trigger
@@ -59,8 +57,9 @@ typedef SINGLETON_DERIVED (TracGeneral_c, BaseCommon_c) SingletonTracGeneral_c;
     Derive from SINGLETON to create a Singleton which manages one global accessible singleton
     per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
   */
-class TracGeneral_c : public SingletonTracGeneral_c
+class TracGeneral_c : public BaseCommon_c
 {
+  MACRO_MULTITON_CONTRIBUTION(TracGeneral_c, PRT_INSTANCE_CNT);
 public: // Public methods
   /* ********************************************* */
   /** \name Management Functions for class TracGeneral_c  */
@@ -278,7 +277,6 @@ public: // Public methods
 
 private:
   // Private methods
-  friend class SINGLETON_DERIVED(TracGeneral_c,BaseCommon_c);
   /** HIDDEN constructor for a TracGeneral_c object instance which can optional
       set the configuration for send/receive for general base msg
       NEVER instantiate a variable of type TracGeneral_c within application

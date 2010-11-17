@@ -34,14 +34,14 @@ namespace __IsoAgLib {
 // forward declaration
 class IsoRequestPgnHandler_c;
 
-class IsoRequestPgn_c;
-typedef SINGLETON_DERIVED(IsoRequestPgn_c, CanCustomer_c) SingletonIsoRequestPgn_c;
 /** this object manages a list of all ISO members to react on Request for PGN
     @short Manager for handling of Requests for PGN
     @see
     @author Dipl.-Inf. (FH) Martina Winkler */
-class IsoRequestPgn_c : public SingletonIsoRequestPgn_c
+
+class IsoRequestPgn_c : CanCustomer_c
 {
+  MACRO_MULTITON_CONTRIBUTION(IsoRequestPgn_c, PRT_INSTANCE_CNT);
 private:
   struct PGN_s
   {
@@ -157,7 +157,7 @@ protected: // Protected methods
 
 private: // Private methods
   /** constructor for IsoRequestPgn_c */
-  IsoRequestPgn_c (void);
+  IsoRequestPgn_c();
 
   void sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType);
 
@@ -178,8 +178,6 @@ private: // Private methods
 private: // Private attributes
   /// holds all registered clients with PGN(s)
   STL_NAMESPACE::vector<PGN_s> m_registeredClientsWithPGN;
-
-  friend class SINGLETON_DERIVED (IsoRequestPgn_c,CanCustomer_c);
 
   /** temp data where received and to be sent data is put */
   CanPkgExt_c mc_data;

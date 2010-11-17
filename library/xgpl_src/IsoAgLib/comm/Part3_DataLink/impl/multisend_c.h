@@ -73,10 +73,9 @@ public:
   @author Dipl.-Inform. Achim Spangler
   @author Dipl.-Inf. Martin Wodok
 */
-class MultiSend_c;
-typedef SINGLETON_DERIVED(MultiSend_c, Scheduler_Task_c) SingletonMultiSend_c;
-class MultiSend_c : public SingletonMultiSend_c
+class MultiSend_c : public Scheduler_Task_c
 {
+  MACRO_MULTITON_CONTRIBUTION(MultiSend_c, PRT_INSTANCE_CNT);
 public:
   enum sendState_t   { AwaitCts, SendData, SendPauseTillCts, AwaitEndofmsgack };
   enum sendSuccess_t { SendSuccess, SendAborted, Running };
@@ -509,7 +508,6 @@ private:
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
   // Private methods
-  friend class SINGLETON_DERIVED(MultiSend_c, Scheduler_Task_c);
   friend class iMultiSend_c;
   friend class SendStream_c;
 

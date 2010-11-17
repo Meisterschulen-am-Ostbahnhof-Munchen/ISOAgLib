@@ -65,7 +65,6 @@ namespace __IsoAgLib {
   <!--@param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)-->
 */
 IsoMonitor_c::IsoMonitor_c() :
-  SingletonIsoMonitor_c(),
   mvec_isoMember(),
   mc_serviceTool( IsoName_c::IsoNameUnspecified() ),
   mt_handler(*this),

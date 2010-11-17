@@ -30,11 +30,9 @@
 #include <supplementary_driver/hal/hal_rs232.h>
 
 
-namespace IsoAgLib { class iRS232IO_c;};
+namespace IsoAgLib { class iRS232IO_c; }
 
 namespace __IsoAgLib {
-class RS232IO_c;
-typedef RS232_SINGLETON(RS232IO_c) SingletonRS232_c;
 /**
   object for serial communication via RS232 device;
   the interface is initialized during constructor call;
@@ -43,7 +41,8 @@ typedef RS232_SINGLETON(RS232IO_c) SingletonRS232_c;
   @short object for serial communication via RS232 device.
   @author Dipl.-Inform. Achim Spangler
 */
-class RS232IO_c : public SingletonRS232_c {
+class RS232IO_c {
+  MACRO_MULTITON_CONTRIBUTION(RS232IO_c, RS232_INSTANCE_CNT);
 
 #define BAUDERATE_CONTRUCTOR_DEFAULT_VALUE 0xFFFF
 #define CHANNEL_CONTRUCTOR_DEFAULT_VALUE 0xFF
@@ -381,7 +380,6 @@ public:
   #endif
 
 private: //Private methods
-  friend class RS232_SINGLETON( RS232IO_c );
   friend class IsoAgLib::iRS232IO_c;
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of RS232IO_c within application
