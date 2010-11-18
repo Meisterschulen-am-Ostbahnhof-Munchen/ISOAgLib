@@ -80,8 +80,8 @@ public:
   //! @return true -> this MRCW wants/has to handle this Stream
   bool doesAcceptStream (const ReceiveStreamIdentifier_c &arcc_streamIdent);
 
-  void start();
-  void stop();
+  void start (CanCustomer_c& apc_fpCustomer);
+  void stop (CanCustomer_c& apc_fpCustomer);
 
 public: // attributes
   CanCustomer_c* mpc_client;

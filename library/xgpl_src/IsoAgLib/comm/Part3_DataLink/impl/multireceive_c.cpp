@@ -90,7 +90,7 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s(
 
 
 void
-MultiReceiveClientWrapper_s::start()
+MultiReceiveClientWrapper_s::start (CanCustomer_c& apc_fpCustomer)
 {
   if (__IsoAgLib::getIsoMonitorInstance4Comm().existIsoMemberISOName (mc_isoName, true)) // it needs to have claimed an address
     mui8_cachedClientAddress = __IsoAgLib::getIsoMonitorInstance4Comm().isoMemberISOName (mc_isoName).nr();
@@ -99,20 +99,20 @@ MultiReceiveClientWrapper_s::start()
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    if (!getIsoBusInstance4Comm().existFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8)))
-      getIsoBusInstance4Comm().insertFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8), true, 8);
+    if (!getIsoBusInstance4Comm().existFilter (apc_fpCustomer, (mui32_pgnMask << 8), (mui32_pgn << 8)))
+      getIsoBusInstance4Comm().insertFilter (apc_fpCustomer, (mui32_pgnMask << 8), (mui32_pgn << 8), true, 8);
   }
   #endif
 }
 
 
 void
-MultiReceiveClientWrapper_s::stop()
+MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
 {
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    __IsoAgLib::getIsoBusInstance4Comm().deleteFilter (*mpc_client, (mui32_pgnMask << 8), (mui32_pgn << 8));
+    __IsoAgLib::getIsoBusInstance4Comm().deleteFilter (apc_fpCustomer, (mui32_pgnMask << 8), (mui32_pgn << 8));
   }
   #endif
 }
@@ -648,7 +648,7 @@ MultiReceive_c::registerClientIso(
       #endif
       SINGLETON_VEC_KEY_WITH_COMMA));
 
-  mlist_clients.back().start();
+  mlist_clients.back().start (mt_customer);
 }
 
 
@@ -678,7 +678,7 @@ MultiReceive_c::registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& 
       true
       SINGLETON_VEC_KEY_WITH_COMMA));
 
-  mlist_clients.back().start();
+  mlist_clients.back().start (mt_customer);
 }
 #endif
 
@@ -707,7 +707,7 @@ MultiReceive_c::deregisterClient (CanCustomer_c& arc_client)
   {
     if (pc_iter->mpc_client == &arc_client)
     { // remove MultiReceiveClientWrapper_s
-      pc_iter->stop();
+      pc_iter->stop (mt_customer);
       pc_iter = mlist_clients.erase (pc_iter);
     } else {
       ++pc_iter;
@@ -763,7 +763,7 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acr
       && (pc_iter->mui32_pgnMask == aui32_pgnMask)
        )
     { // remove MultiReceiveClientWrapper_s
-      pc_iter->stop();
+      pc_iter->stop (mt_customer);
       pc_iter = mlist_clients.erase (pc_iter);
     } else {
       ++pc_iter;
