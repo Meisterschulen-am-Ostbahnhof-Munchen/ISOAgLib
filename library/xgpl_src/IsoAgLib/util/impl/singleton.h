@@ -202,56 +202,24 @@
 #include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
-namespace __IsoAgLib
-{
-template< typename T, int SIZE > T &multitonInstance(int riIndex = 0);
-} // namespace __IsoAgLib
+#define COMPOUND_STATEMENT(body) do { body } while (0)
 
-/** Exclusive for MACRO_MULTITON_CONTRIBUTION. Shall not be accessed
-  * otherwise.
-  */ 
-template< typename T, int SIZE >
-T &__IsoAgLib::multitonInstance(int riIndex)
-{
-  static T * mspc_instance[SIZE] = {(T*)0};
-  if ( mspc_instance[0] > (T*)1 )
-  { // is already complete initialized -> this is THE MOST OFTEN CASE
-    return *mspc_instance[riIndex];
-  }
-  else if ( mspc_instance[0] == (T*)0 )
-  { // in case of parallel access from two tasks, the first tasks block further
-    // inits with setting the poitner to 1 -> later tasks perform busy waiting
-    if ( mspc_instance[0] == (T*)1 )
-    { // perform busy waiting till first task is ready with init
-      while ( mspc_instance[0] == (T*)1 ) {}
-      // as soon as the pointer is != 1 the init is ready
-      return *mspc_instance[riIndex];
-    }
-    // if execution reaches this point, Singleton::instance() is called first time
-    mspc_instance[0] = (T*)1; // block further calls till init is ready
 #ifdef WIN32
-    for ( int i = 0; i < SIZE; i++)
-    {
-      mspc_instance[i] = new T;
-      mspc_instance[i]->singletonVecKey = i;
-    }
+#  define HELP_INIT_MULTITONS(T, SIZE) COMPOUND_STATEMENT( \
+for (int i = 0; i < SIZE; i++) { \
+  mspc_instance[i] = new T; \
+  mspc_instance[i]->singletonVecKey = i; \
+} )
 #else
-    static T sc_instance[SIZE];
-    for ( int i = 0; i < SIZE; i++)
-    { // initialise the instance (in embedded systems, the constructor is NOT called for static var)
-      sc_instance[i].singletonVecKey = i;
-      // set static pointerto instance
-      mspc_instance[i] = &sc_instance[i];
-    }
+#  define HELP_INIT_MULTITONS(T, SIZE) COMPOUND_STATEMENT( \
+static T sc_instance[SIZE]; \
+for (int i = 0; i < SIZE; ++i) \
+{ /* initialise the instance (in embedded systems, the constructor is NOT called for static var) */ \
+  sc_instance[i].singletonVecKey = i; \
+  /* set static pointer to instance */ \
+  mspc_instance[i] = &sc_instance[i]; \
+} )
 #endif
-  }
-  else
-  { // is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
-    // we'll get a definitive endless loop here - fine to debug ;-)
-    while ( mspc_instance[0] == (T*)1 ) {}
-  }
-  return *mspc_instance[riIndex];
-}
 
 /** method instance returns reference to the singleton instance
   * prevent parallel access to initialisation by several tasks
@@ -260,9 +228,31 @@ T &__IsoAgLib::multitonInstance(int riIndex)
   */
 #define MACRO_MULTITON_CONTRIBUTION(T, SIZE) \
 public: \
-  friend T &__IsoAgLib::multitonInstance< T, SIZE >(int); \
   static T& instance( int riIndex = 0 ) { \
-    return __IsoAgLib::multitonInstance< T, SIZE >(riIndex); \
+    static T * mspc_instance[SIZE] = {(T*)0}; \
+    if ( mspc_instance[0] > (T*)1 ) \
+    { /* is already complete initialized -> this is THE MOST OFTEN CASE */ \
+      return *mspc_instance[riIndex]; \
+    } \
+    else if ( mspc_instance[0] == (T*)0 ) \
+    { /* in case of parallel access from two tasks, the first tasks block further
+       * inits with setting the poitner to 1 -> later tasks perform busy waiting */ \
+      if ( mspc_instance[0] == (T*)1 ) \
+      { /* perform busy waiting till first task is ready with init */ \
+        while ( mspc_instance[0] == (T*)1 ) {} \
+        /* as soon as the pointer is != 1 the init is ready */ \
+        return *mspc_instance[riIndex]; \
+      } \
+      /* if execution reaches this point, Singleton::instance() is called first time */ \
+      mspc_instance[0] = (T*)1; /* block further calls till init is ready */ \
+      HELP_INIT_MULTITONS(T, SIZE); \
+    } \
+    else \
+    { /* is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
+       * we'll get a definitive endless loop here - fine to debug ;-) */ \
+      while ( mspc_instance[0] == (T*)1 ) {} \
+    } \
+    return *mspc_instance[riIndex]; \
   } \
 protected: \
   int getSingletonVecKey() const { return singletonVecKey; } \
