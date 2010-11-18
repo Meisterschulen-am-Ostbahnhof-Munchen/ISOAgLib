@@ -507,17 +507,21 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
           // currently don't send a ConnAbort when unsolicited DTs come in...
           return false;
         }
+
+        // From now on we use the Stream's RSI, because that has the PGN embedded!
+        const ReceiveStreamIdentifier_c& c_streamRsi = pc_streamFound->getIdent();
+
         // From this point on the SA/DA pair matches, so that we can return true
         if (!(pc_streamFound->handleDataPacket (data().getDataUnionConst()))) {
           // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
-          if (c_isoRSI.getDa() == 0xFF)
+          if (c_streamRsi.getDa() == 0xFF)
           {
-            notifyErrorConnAbort (c_isoRSI, TransferErrorBamSequenceError, false /* don't send connAbort-Msg */);
+            notifyErrorConnAbort (c_streamRsi, TransferErrorBamSequenceError, false /* don't send connAbort-Msg */);
             #if DEBUG_MULTIRECEIVE
             INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** BAM sequence error ***" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
           } else {
-            notifyErrorConnAbort (c_isoRSI, TransferErrorWrongSequenceNumber, true /* send connAbort-Msg */);
+            notifyErrorConnAbort (c_streamRsi, TransferErrorWrongSequenceNumber, true /* send connAbort-Msg */);
             #if DEBUG_MULTIRECEIVE
             INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "*** ConnectionAbort due to (E)TP.DATA, but wrong sequence number, see msg before! ***" << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
