@@ -44,22 +44,13 @@ static uint16_t sui16_isoItemTotal = 0;
 #endif
 
 namespace __IsoAgLib {
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique IsoMonitor_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  IsoMonitor_c& getIsoMonitorInstance( uint8_t aui8_instance )
-  { // if > 1 singleton instance is used, no static reference can be used
-    return IsoMonitor_c::instance( aui8_instance );
-  }
-#else
-  /** C-style function, to get access to the unique IsoMonitor_c singleton instance */
-  IsoMonitor_c& getIsoMonitorInstance( void )
-  {
-    static IsoMonitor_c& c_isoMonitor = IsoMonitor_c::instance();
-    return c_isoMonitor;
-  }
-#endif
+/** C-style function, to get access to the unique IsoMonitor_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance )
+{ // if > 1 singleton instance is used, no static reference can be used
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoMonitor_c, aui8_instance);
+}
 
 /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance
   <!--@param apc_lb optional pointer to central Scheduler_c instance (default NULL -> the later set is needed)-->

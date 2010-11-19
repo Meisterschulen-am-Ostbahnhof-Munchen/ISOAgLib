@@ -325,6 +325,8 @@ private:
   uint16_t mui16_rPosition;
   /** actual write position in EEPROM */
   uint16_t mui16_wPosition;
+
+  friend EepromIo_c &getEepromInstance(uint8_t aui8_instance);
 };
 
 
@@ -391,7 +393,7 @@ bool EepromIo_c::write(uint16_t aui16_adress, T rTemplateVal)
 };
 
 /** C-style function, to get access to the unique EepromIo_c singleton instance */
-EepromIo_c& getEepromInstance( void );
+EepromIo_c& getEepromInstance(uint8_t aui8_instance = 0);
 EepromIo_c& operator<<(EepromIo_c& rc_stream, const IsoName_c& rc_data );
 EepromIo_c& operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data );
 

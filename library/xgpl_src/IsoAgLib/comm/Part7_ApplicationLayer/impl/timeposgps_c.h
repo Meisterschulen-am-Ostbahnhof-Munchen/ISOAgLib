@@ -752,18 +752,14 @@ private:
   IsoAgLib::IdentMode_t  mt_identModeGps;
 
   STL_NAMESPACE::vector<MsgEventHandler_c*> mvec_msgEventHandlers;
+
+  friend TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance );
 };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TimePosGps_c& getTimePosGpsInstance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique Base_c singleton instance */
-  TimePosGps_c& getTimePosGpsInstance( void );
-#endif // END of PRT_INSTANCE_CNT
-
+  TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance = 0 );
 } // END of Namespace __IsoAgLib
 
 #endif // END of TIMEPOSGPS_C_H

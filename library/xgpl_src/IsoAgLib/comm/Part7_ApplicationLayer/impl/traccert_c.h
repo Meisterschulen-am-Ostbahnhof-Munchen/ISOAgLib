@@ -317,17 +317,10 @@ class TracCert_c : public BaseCommon_c
     // Private attributes
     /** struct of certification data */
     certificationBitData_t m_certData;
+    friendTracCert_c &getTracCertInstance(uint8_t aui8_instance);
 };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique TracCert_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
-    */
-  TracCert_c& getTracCertInstance(uint8_t aui8_instance = 0);
-  #else
-  /** C-style function, to get access to the unique TracCert_c singleton instance */
-  TracCert_c& getTracCertInstance(void);
-  #endif
+  TracCert_c &getTracCertInstance(uint8_t aui8_instance = 0);
 
 }
 

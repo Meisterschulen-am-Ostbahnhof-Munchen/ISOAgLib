@@ -28,15 +28,14 @@
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
   /** C-style function, to get access to the unique iLibErr_c singleton instance */
-  iLibErr_c& getILibErrInstance( void ) { return IsoAgLib::getILibErrInstance();}
+  iLibErr_c &getILibErrInstance(uint8_t aui8_instance) { return IsoAgLib::getILibErrInstance(aui8_instance);}
 }
 
 namespace IsoAgLib {
 /** C-style function, to get access to the unique iLibErr_c singleton instance */
-iLibErr_c& getILibErrInstance( void )
+iLibErr_c &getILibErrInstance(uint8_t aui8_instance)
 {
-  static iLibErr_c& rc_errInstance = iLibErr_c::instance();
-  return rc_errInstance;
+  MACRO_MULTITON_GET_INSTANCE_BODY(iLibErr_c, aui8_instance);
 }
 
 /**

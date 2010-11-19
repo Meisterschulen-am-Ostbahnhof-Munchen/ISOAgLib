@@ -48,15 +48,13 @@ namespace __IsoAgLib {
 static const uint8_t scui8_tpPriority=6;
 
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiReceive_c& getMultiReceiveInstance( uint8_t aui8_instance ) { return MultiReceive_c::instance( aui8_instance );};
-#else
-  /** C-style function, to get access to the unique MultiReceive_c singleton instance */
-  MultiReceive_c& getMultiReceiveInstance( void ) { return MultiReceive_c::instance();};
-#endif
+  MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance )
+  {
+    MACRO_MULTITON_GET_INSTANCE_BODY(MultiReceive_c, aui8_instance);
+  }
 
 
 

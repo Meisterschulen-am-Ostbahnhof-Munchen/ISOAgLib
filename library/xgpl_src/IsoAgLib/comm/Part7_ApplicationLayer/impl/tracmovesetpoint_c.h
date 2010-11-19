@@ -123,16 +123,12 @@ namespace __IsoAgLib {
 
     /** commanded direction of the machine */
     IsoAgLib::IsoDirectionFlag_t mt_selectedDirectionCmd;
+    friend TracMoveSetPoint_c &getTracMoveSetPointInstance(uint8_t aui8_instance);
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique TracMoveSetPoint_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracMoveSetPoint_c& getTracMoveSetPointInstance(uint8_t aui8_instance = 0);
-  #else
-  /** C-style function, to get access to the unique TracMoveSetPoint_c singleton instance */
-  TracMoveSetPoint_c& getTracMoveSetPointInstance(void);
-  #endif
+  TracMoveSetPoint_c &getTracMoveSetPointInstance(uint8_t aui8_instance = 0);
 }
 #endif

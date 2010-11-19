@@ -457,17 +457,12 @@ private:
   int32_t mi32_timePeriodForActiveStreams;
   Handler_t mt_handler;
   Customer_t mt_customer;
+  friend MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance );
 }; // ~X2C
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique MultiReceive_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiReceive_c& getMultiReceiveInstance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique MultiReceive_c singleton instance */
-  MultiReceive_c& getMultiReceiveInstance( void );
-#endif
-
+  MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance = 0 );
 } // end namespace __IsoAgLib
 #endif // -X2C

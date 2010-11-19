@@ -51,17 +51,13 @@ static const uint8_t scui8_isoCanPkgDelay = 4;
 
 
 namespace __IsoAgLib {
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique MultiSend_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  MultiSend_c& getMultiSendInstance( uint8_t aui8_instance ) { return MultiSend_c::instance( aui8_instance );};
-#else
-  /** C-style function, to get access to the unique MultiSend_c singleton instance */
-  MultiSend_c& getMultiSendInstance( void ) { return MultiSend_c::instance();};
-#endif
-
-
+  MultiSend_c &getMultiSendInstance( uint8_t aui8_instance )
+  {
+    MACRO_MULTITON_GET_INSTANCE_BODY(MultiSend_c, aui8_instance);
+  }
 
 /** This is mostly used for debugging now... */
 void SendUploadBase_c::set (uint8_t* apui8_buffer, uint32_t aui32_bufferSize)

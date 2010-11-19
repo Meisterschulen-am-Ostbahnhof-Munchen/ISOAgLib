@@ -57,12 +57,11 @@ extern unsigned int DeallocateHeapMalloc;
 /* import some namespaces for easy access */
 /* ************************************** */
 namespace __IsoAgLib {
-  /** C-style function, to get access to the unique Scheduler_c singleton instance */
-  Scheduler_c& getSchedulerInstance( void )
-  {
-    static Scheduler_c& c_scheduler = Scheduler_c::instance();
-    return c_scheduler;
-  }
+/** C-style function, to get access to the unique Scheduler_c singleton instance */
+Scheduler_c &getSchedulerInstance(uint8_t aui8_instance)
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(Scheduler_c, aui8_instance);
+}
 
 
 Scheduler_c::Scheduler_c()

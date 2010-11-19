@@ -20,7 +20,10 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** C-style function, to get access to the unique ActorO_c singleton instance */
-ActorO_c& getActorInstance( void ) { return ActorO_c::instance();};
+ActorO_c &getActorInstance(uint8_t aui8_instance)
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(ActorO_c, aui8_instance);
+}
 
 
 void

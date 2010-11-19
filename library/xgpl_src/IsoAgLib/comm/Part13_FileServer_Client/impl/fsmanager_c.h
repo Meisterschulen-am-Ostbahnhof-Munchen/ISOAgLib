@@ -135,17 +135,13 @@ class FsManager_c : public Scheduler_Task_c
      * Vector of FsCommand_c* requesting properties for not-online FsServerInstance_cS
      */
     STL_NAMESPACE::list<FsCommand_c *> l_initializingCommands;
+    friend FsManager_c &getFsManagerInstance(uint8_t rui8_instance);
 };
 
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique FsManager_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  FsManager_c &getFsManagerInstance(uint8_t rui8_instance = 0);
-#else
-  /** C-style function, to get access to the unique FsManager_c singleton instance */
-  FsManager_c &getFsManagerInstance(void);
-#endif
+/** C-style function, to get access to the unique FsManager_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+FsManager_c &getFsManagerInstance(uint8_t rui8_instance = 0);
 
 //End namespace
 }

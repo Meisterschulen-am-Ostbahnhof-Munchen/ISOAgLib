@@ -51,22 +51,13 @@ extern unsigned int DeallocateHeapMalloc;
 
 
 namespace __IsoAgLib {
-#if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique CanIo_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  CanIo_c& getCanInstance( uint8_t aui8_instance )
-  { // if > 1 singleton instance is used, no static reference can be used
-    return CanIo_c::instance( aui8_instance );
-  }
-#else
-  /** C-style function, to get access to the unique CanIo_c singleton instance */
-  CanIo_c& getCanInstance( void )
-  {
-    static CanIo_c &c_can_io = CanIo_c::instance();
-    return c_can_io;
-  }
-#endif
+/** C-style function, to get access to the unique CanIo_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+CanIo_c &getCanInstance( uint8_t aui8_instance )
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(CanIo_c, aui8_instance);
+}
 
 
 /** Initialize the CAN hardware, and instantiate one msg object for

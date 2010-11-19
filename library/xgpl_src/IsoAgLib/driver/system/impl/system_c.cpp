@@ -24,7 +24,10 @@
 
 namespace __IsoAgLib {
 /** C-style function, to get access to the unique System_c singleton instance */
-System_c& getSystemInstance( void ) { return System_c::instance();};
+System_c &getSystemInstance(uint8_t aui8_instance)
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(System_c, aui8_instance);
+}
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   * the call of System_c::close() stimulates final shutdown of power

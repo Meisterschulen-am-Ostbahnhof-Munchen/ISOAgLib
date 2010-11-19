@@ -27,22 +27,13 @@ namespace {
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique TracGeneral_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracGeneral_c& getTracGeneralInstance( uint8_t aui8_instance )
+  TracGeneral_c &getTracGeneralInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return TracGeneral_c::instance( aui8_instance );
-  };
-  #else
-  /** C-style function, to get access to the unique TracGeneral_c singleton instance */
-  TracGeneral_c& getTracGeneralInstance( void )
-  {
-    static TracGeneral_c& c_lbsTracGeneral = TracGeneral_c::instance();
-    return c_lbsTracGeneral;
-  };
-  #endif
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracGeneral_c, aui8_instance);
+  }
 
   TracGeneral_c::TracGeneral_c()
     : mb_languageTecuReceived (false)

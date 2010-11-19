@@ -256,20 +256,11 @@ IsoRequestPgn_c::getTaskName() const
 { return "IsoRequestPgn_c"; }
 #endif
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
 /** C-style function, to get access to the unique IsoRequestPgn_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-IsoRequestPgn_c& getIsoRequestPgnInstance (uint8_t aui8_instance)
-{ // if > 1 singleton instance is used, no static reference can be used
-  return IsoRequestPgn_c::instance(aui8_instance);
-};
-#else
-/** C-style function, to get access to the unique IsoRequestPgn_c singleton instance */
-IsoRequestPgn_c& getIsoRequestPgnInstance (void)
+IsoRequestPgn_c &getIsoRequestPgnInstance(uint8_t aui8_instance)
 {
-  static IsoRequestPgn_c& c_isoRequestPgn = IsoRequestPgn_c::instance ();
-  return c_isoRequestPgn;
-};
-#endif
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoRequestPgn_c, aui8_instance);
+}
 
 } // end of namespace __IsoAgLib

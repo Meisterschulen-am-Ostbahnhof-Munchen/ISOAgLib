@@ -23,22 +23,13 @@
 
 namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique TracPTO_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracPTO_c& getTracPtoInstance(uint8_t aui8_instance)
-  { // if > 1 singleton instance is used, no static reference can be used
-    return TracPTO_c::instance(aui8_instance);
-  };
-  #else
-  /** C-style function, to get access to the unique TracPTO_c singleton instance */
-  TracPTO_c& getTracPtoInstance( void )
+  TracPTO_c &getTracPtoInstance(uint8_t aui8_instance)
   {
-    static TracPTO_c& c_lbsTracPto = TracPTO_c::instance();
-    return c_lbsTracPto;
-  };
-  #endif
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracPTO_c, aui8_instance);
+  }
 
   /** config the TracPTO_c object after init -> set pointer to isoName and
       config send/receive of different base msg types

@@ -119,18 +119,10 @@ class TracFacilities_c : public BaseCommon_c
 
     /** check if facilities already sent after address claim */
     bool mb_facilitiesOnInitSent;
+    friend TracFacilities_c &getTracFacilitiesInstance(uint8_t aui8_instance);
 };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique TracFacilities_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
-    */
-  TracFacilities_c& getTracFacilitiesInstance(uint8_t aui8_instance = 0);
-  #else
-  /** C-style function, to get access to the unique TracFacilities_c singleton instance */
-  TracFacilities_c& getTracFacilitiesInstance(void);
-  #endif
-
+  TracFacilities_c &getTracFacilitiesInstance(uint8_t aui8_instance = 0);
 }
 
 #endif

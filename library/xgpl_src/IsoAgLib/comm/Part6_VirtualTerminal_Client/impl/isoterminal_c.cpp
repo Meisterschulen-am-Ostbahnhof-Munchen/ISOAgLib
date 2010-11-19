@@ -20,22 +20,13 @@
 
 
 namespace __IsoAgLib {
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique IsoTerminal_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  IsoTerminal_c& getIsoTerminalInstance(uint8_t aui8_instance)
+  IsoTerminal_c &getIsoTerminalInstance(uint8_t aui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    return IsoTerminal_c::instance(aui8_instance);
-  };
-#else
-  /** C-style function, to get access to the unique IsoTerminal_c singleton instance */
-  IsoTerminal_c& getIsoTerminalInstance(void)
-  {
-    static IsoTerminal_c& c_isoTerminal = IsoTerminal_c::instance();
-    return c_isoTerminal;
-  };
-#endif
+    MACRO_MULTITON_GET_INSTANCE_BODY(IsoTerminal_c, aui8_instance);
+  }
 
 
 

@@ -576,18 +576,15 @@ class CanIo_c {
    *  timeEvent triggered CAN processing -> when this flag is TRUE, no further processing is performed
    */
   bool mb_runningCanProcess;
+
+  friend CanIo_c &getCanInstance( uint8_t aui8_instance );
 };
 
 
-#if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique CanIo_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  CanIo_c& getCanInstance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique CanIo_c singleton instance */
-  CanIo_c& getCanInstance( void );
-#endif
+  CanIo_c &getCanInstance( uint8_t aui8_instance = 0 );
 
 /** this typedef is only for some time to provide backward compatibility at API level */
 typedef CanIo_c CANIO_c;

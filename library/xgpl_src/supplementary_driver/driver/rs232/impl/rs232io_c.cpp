@@ -31,23 +31,13 @@
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
-#if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique RS232IO_c singleton instance
-    * if more than one RS232 channel is used for IsoAgLib, an index must be given to select the wanted channel
-    */
-  RS232IO_c& getRs232Instance( uint8_t aui8_instance )
-  { // if > 1 singleton instance is used, no static reference can be used
-    return RS232IO_c::instance( aui8_instance );
-  };
-#else
-  /** C-style function, to get access to the unique RS232IO_c singleton instance */
-  RS232IO_c& getRs232Instance( void )
-  {
-    static RS232IO_c &c_rs232_io = RS232IO_c::instance();
-    return c_rs232_io;
-  };
-#endif
-
+/** C-style function, to get access to the unique RS232IO_c singleton instance
+ * if more than one RS232 channel is used for IsoAgLib, an index must be given to select the wanted channel
+ */
+RS232IO_c &getRs232Instance( uint8_t aui8_instance )
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(RS232IO_c, aui8_instance);
+}
 
 /*******************************************/
 /** definition of public element functions */

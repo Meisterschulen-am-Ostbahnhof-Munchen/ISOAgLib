@@ -34,23 +34,13 @@
 
 namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique TracMove_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracMove_c& getTracMoveInstance( uint8_t aui8_instance )
+  TracMove_c &getTracMoveInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return TracMove_c::instance( aui8_instance );
-  };
-  #else
-  /** C-style function, to get access to the unique Base_c singleton instance */
-  TracMove_c& getTracMoveInstance( void )
-  {
-    static TracMove_c& c_lbsTracMove = TracMove_c::instance();
-    return c_lbsTracMove;
-  };
-  #endif
-
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracMove_c, aui8_instance);
+  }
 
   /** config the TracMove_c object after init -> set pointer to isoName and
       config send/receive of a moving msg type

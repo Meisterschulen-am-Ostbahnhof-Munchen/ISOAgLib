@@ -403,18 +403,15 @@ private:
   uint16_t ui16_recBuf;
   char pc_token[15];
   uint8_t ui8_channel; /**< channel to use for RS232 */
+
+  friend RS232IO_c &getRs232Instance( uint8_t aui8_instance );
 };
 
 
-#if defined( RS232_INSTANCE_CNT ) && ( RS232_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique RS232IO_c singleton instance
     * if more than one RS232 channel is used for IsoAgLib, an index must be given to select the wanted channel
     */
-  RS232IO_c& getRs232Instance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique RS232IO_c singleton instance */
-  RS232IO_c& getRs232Instance( void );
-#endif
+  RS232IO_c &getRs232Instance( uint8_t aui8_instance = 0 );
 
 }
 

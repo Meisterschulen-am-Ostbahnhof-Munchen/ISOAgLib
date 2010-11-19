@@ -394,16 +394,12 @@ typedef struct
 
     /** pto rear information */
     PtoData_t mt_ptoRear;
+    friend TracPTO_c &getTracPtoInstance(uint8_t aui8_instance);
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique TracPTO_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TracPTO_c& getTracPtoInstance(uint8_t aui8_instance = 0);
-  #else
-  /** C-style function, to get access to the unique TracPTO_c singleton instance */
-  TracPTO_c& getTracPtoInstance(void);
-  #endif
+  TracPTO_c &getTracPtoInstance(uint8_t aui8_instance = 0);
 }
 #endif

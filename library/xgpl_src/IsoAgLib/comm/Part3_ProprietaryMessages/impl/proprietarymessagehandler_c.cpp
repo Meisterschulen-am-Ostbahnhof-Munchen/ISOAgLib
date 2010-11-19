@@ -507,6 +507,10 @@ namespace __IsoAgLib
     return (true);
   }
 
-};
+  ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance)
+  {
+    MACRO_MULTITON_GET_INSTANCE_BODY(ProprietaryMessageHandler_c, aui8_instance);
+  }
 
 
+} // namespace __IsoAgLib

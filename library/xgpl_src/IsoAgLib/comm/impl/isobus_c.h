@@ -98,17 +98,12 @@ public:
 
   bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer)
   { return getCanInstance4Comm().deleteAllFiltersForCustomer (ar_customer); }
+  friend IsoBus_c &getIsoBusInstance(uint8_t aui8_instance);
 };
 
 
 /** C-style function, to get access to the unique singleton instance(s) */
-#if (PRT_INSTANCE_CNT > 1)
-  inline IsoBus_c& getIsoBusInstance( uint8_t aui8_instance = 0 )
-  { return IsoBus_c::instance( aui8_instance ); }
-#else
-  inline IsoBus_c& getIsoBusInstance( void )
-  { return IsoBus_c::instance(); }
-#endif
+IsoBus_c &getIsoBusInstance( uint8_t aui8_instance = 0 );
 
 } // __IsoAgLib
 

@@ -232,16 +232,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     /** state of the rear power take-off (PTO) economy mode*/
     IsoAgLib::IsoActiveFlag_t mt_rearPtoEconomyMode;
+
+    friend TracPTOSetPoint_c &getTracPtoSetPointInstance(uint8_t aui8_instance);
   };
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique TracPTOSetPoint_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracPTOSetPoint_c& getTracPtoSetPointInstance(uint8_t aui8_instance = 0);
-  #else
-  /** C-style function, to get access to the unique TracPTOSetPoint_c singleton instance */
-  TracPTOSetPoint_c& getTracPtoSetPointInstance(void);
+  TracPTOSetPoint_c &getTracPtoSetPointInstance(uint8_t aui8_instance = 0);
   #endif
 }
 #endif

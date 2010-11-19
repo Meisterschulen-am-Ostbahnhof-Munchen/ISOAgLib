@@ -149,18 +149,13 @@ class TracGuidanceCommand_c : public BaseCommon_c
 
   /** list of all available clients which sends curvature commands */
   STL_NAMESPACE::map<uint8_t, CurvatureCommander_s> mmap_commanders; // mmap_commanders[sourceAddress]
+  friend TracGuidanceCommand_c &getTracGuidanceCommandInstance(uint8_t aui8_instance);
 };
 
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
 /** C-style function, to get access to the unique TracGuidanceCommand_c singleton instance
   * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
   */
-TracGuidanceCommand_c& getTracGuidanceCommandInstance(uint8_t aui8_instance = 0);
-#else
-/** C-style function, to get access to the unique TracGuidanceCommand_c singleton instance */
-TracGuidanceCommand_c& getTracGuidanceCommandInstance(void);
-#endif
-
+TracGuidanceCommand_c &getTracGuidanceCommandInstance(uint8_t aui8_instance = 0);
 
 }//end namespache __IsoAgLib
 

@@ -41,28 +41,19 @@ extern unsigned int DeallocateHeapMalloc;
 
 
 namespace __IsoAgLib {
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Process_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  Process_c& getProcessInstance( uint8_t aui8_instance )
-  { // if > 1 singleton instance is used, no static reference can be used
-    return Process_c::instance( aui8_instance );
-  };
-#else
-  /** C-style function, to get access to the unique Process_c singleton instance */
-  Process_c& getProcessInstance( void )
+  Process_c &getProcessInstance( uint8_t aui8_instance )
   {
-    static Process_c& c_process = Process_c::instance();
-    return c_process;
-  };
-#endif
+    MACRO_MULTITON_GET_INSTANCE_BODY(Process_c, aui8_instance);
+  }
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& Process_c::getDevPropertyHandlerInstance( void )
   {
     return mc_devPropertyHandler;
-  };
+  }
 #endif
 
 

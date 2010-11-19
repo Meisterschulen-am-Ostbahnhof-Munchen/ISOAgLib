@@ -619,6 +619,7 @@ private:
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
   Handler_t mt_handler;
   Customer_t mt_customer;
+  friend MultiSend_c &getMultiSendInstance( uint8_t aui8_instance );
 };
 
 inline MultiSend_c::msgType_t MultiSend_c::protocolTypeByPacketSize(uint32_t ui32_size)
@@ -636,15 +637,10 @@ inline bool MultiSend_c::sendIsoTarget (const IsoName_c& acrc_isoNameSender, con
   return sendIntern(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL, protocolTypeByPacketSize(aui32_dataSize));
 }
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique MultiSend_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  MultiSend_c& getMultiSendInstance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique Process_c singleton instance */
-  MultiSend_c& getMultiSendInstance( void );
-#endif
+/** C-style function, to get access to the unique MultiSend_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+MultiSend_c &getMultiSendInstance( uint8_t aui8_instance = 0 );
 
 } // End Namespace __IsoAgLib
 #endif

@@ -132,8 +132,9 @@ private:
   System_c( void ) {};
 
 // Private attributes
+  friend System_c &getSystemInstance(uint8_t aui8_instance);
 };
 /** C-style function, to get access to the unique System_c singleton instance */
-System_c& getSystemInstance( void );
+System_c &getSystemInstance(uint8_t aui8_instance = 0);
 }
 #endif

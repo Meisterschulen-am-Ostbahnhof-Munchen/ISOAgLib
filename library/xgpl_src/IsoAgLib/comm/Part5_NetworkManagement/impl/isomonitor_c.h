@@ -621,17 +621,13 @@ private:
   Customer_t mt_customer;
 
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(IdentItem_c);
+  friend IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance );
 };
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique IsoMonitor_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  IsoMonitor_c& getIsoMonitorInstance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique IsoMonitor_c singleton instance */
-  IsoMonitor_c& getIsoMonitorInstance( void );
-#endif
+/** C-style function, to get access to the unique IsoMonitor_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+  IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance = 0 );
 
 /** this typedef is only for some time to provide backward compatibility at API level */
 typedef IsoMonitor_c ISOMonitor_c;

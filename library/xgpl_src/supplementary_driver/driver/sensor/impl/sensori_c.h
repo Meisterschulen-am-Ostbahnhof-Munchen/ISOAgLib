@@ -28,7 +28,7 @@
 namespace __IsoAgLib {
 class SensorI_c;
 /** C-style function, to get access to the unique SensorI_c singleton instance */
-SensorI_c& getSensorInstance( void );
+SensorI_c &getSensorInstance(uint8_t aui8_instance = 0);
 
 /**
   Hardware dependent object for hardware independent getting of sensor data;

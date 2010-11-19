@@ -17,7 +17,10 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 /** C-style function, to get access to the unique SensorI_c singleton instance */
-SensorI_c& getSensorInstance( void ) { return SensorI_c::instance();};
+SensorI_c &getSensorInstance(uint8_t aui8_instance)
+{
+  MACRO_MULTITON_GET_INSTANCE_BODY(SensorI_c, aui8_instance);
+}
 
 
 void

@@ -296,10 +296,12 @@ private: // Private attributes
 
   /** was system started already? */
   bool mb_systemStarted;
+
+  friend Scheduler_c &getSchedulerInstance(uint8_t aui8_instance);
 };
 
   /** C-style function, to get access to the unique Scheduler_c singleton instance */
-  Scheduler_c& getSchedulerInstance( void );
+  Scheduler_c &getSchedulerInstance(uint8_t aui8_instance = 0);
 
 }
 

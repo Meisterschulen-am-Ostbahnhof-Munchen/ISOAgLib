@@ -473,23 +473,13 @@ namespace __IsoAgLib {
     return mi32_lastIsoDirection;
   }
 
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Base_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  TimePosGps_c& getTimePosGpsInstance( uint8_t aui8_instance )
-  { // if > 1 singleton instance is used, no static reference can be used
-    return TimePosGps_c::instance( aui8_instance );
-  };
-  #else
-  /** C-style function, to get access to the unique Base_c singleton instance */
-  TimePosGps_c& getTimePosGpsInstance( void )
+  TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance )
   {
-    static TimePosGps_c& c_lbsTimePosGps = TimePosGps_c::instance();
-    return c_lbsTimePosGps;
-  };
-  #endif
-
+    MACRO_MULTITON_GET_INSTANCE_BODY(TimePosGps_c, aui8_instance);
+  }
 
   /** check if a received GPS message should be parsed */
   bool TimePosGps_c::checkParseReceivedGps(const IsoName_c& acrc_currentSender) const

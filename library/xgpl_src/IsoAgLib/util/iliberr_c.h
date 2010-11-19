@@ -29,7 +29,7 @@ namespace IsoAgLib {
   class iErrorObserver_c;
 
   /** C-style function, to get access to the unique iLibErr_c singleton instance */
-  iLibErr_c& getILibErrInstance( void );
+  iLibErr_c &getILibErrInstance(uint8_t aui8_instance = 0);
 
 /**
   Basic object for Error Management:
@@ -205,6 +205,7 @@ private:
   IsoaglibBitset<AllErrTypes> errTypeAtLoc [AllErrLocations];
 
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(iErrorObserver_c);
+  friend iLibErr_c &getILibErrInstance(uint8_t aui8_instance);
 };
 
 class iErrorObserver_c {
@@ -237,7 +238,7 @@ inline void iLibErr_c::deregisterObserver( iErrorObserver_c &arc_observer )
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
   /** C-style function, to get access to the unique iLibErr_c singleton instance */
-  IsoAgLib::iLibErr_c& getILibErrInstance( void );
+  IsoAgLib::iLibErr_c &getILibErrInstance(uint8_t aui8_instance = 0);
   using IsoAgLib::iLibErr_c;
 }
 #endif

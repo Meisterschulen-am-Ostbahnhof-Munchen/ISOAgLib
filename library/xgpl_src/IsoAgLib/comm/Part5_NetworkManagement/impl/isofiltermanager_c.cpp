@@ -214,20 +214,11 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::I
 
 
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
 /** C-style function, to get access to the unique IsoFilterManager_c singleton instance
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
-IsoFilterManager_c& getIsoFilterManagerInstance (uint8_t aui8_instance)
+IsoFilterManager_c &getIsoFilterManagerInstance (uint8_t aui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  return IsoFilterManager_c::instance(aui8_instance);
-};
-#else
-/** C-style function, to get access to the unique IsoFilterManager_c singleton instance */
-IsoFilterManager_c& getIsoFilterManagerInstance (void)
-{
-  static IsoFilterManager_c& c_isoFilterManager = IsoFilterManager_c::instance ();
-  return c_isoFilterManager;
-};
-#endif
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoFilterManager_c, aui8_instance);
+}
 
 } // end of namespace __IsoAgLib

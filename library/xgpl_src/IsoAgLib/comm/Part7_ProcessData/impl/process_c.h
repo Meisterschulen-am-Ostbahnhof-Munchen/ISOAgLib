@@ -542,19 +542,14 @@ private: // Private attributes
   Customer_t mt_customer;
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcDataLocalBase_c);
   CONTAINER_CLIENT2_MEMBER_FUNCTIONS_MAIN(ProcDataRemoteBase_c);
+  friend Process_c &getProcessInstance( uint8_t aui8_instance );
 };
 
 
 
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
   /** C-style function, to get access to the unique Process_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
     */
-  Process_c& getProcessInstance( uint8_t aui8_instance = 0 );
-#else
-  /** C-style function, to get access to the unique Process_c singleton instance */
-  Process_c& getProcessInstance( void );
-#endif
-
+  Process_c &getProcessInstance( uint8_t aui8_instance = 0 );
 }
 #endif

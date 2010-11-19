@@ -397,6 +397,7 @@ private:
 
   /** should a new language pgn changed command be sent? */
   bool mb_languagePgnChanged;
+  friend TracGeneral_c &getTracGeneralInstance(uint8_t aui8_instance);
 };
 
 inline bool TracGeneral_c::canSendFrontHitchState() {
@@ -411,15 +412,9 @@ inline bool TracGeneral_c::canSendLanguage() {
   return 0 == (LANGUAGE_PGN_DISABLE_MASK & mui16_suppressMask);
 }
 
-  #if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  /** C-style function, to get access to the unique TracGeneral_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  TracGeneral_c& getTracGeneralInstance(uint8_t aui8_instance = 0);
-  #else
-  /** C-style function, to get access to the unique TracGeneral_c singleton instance */
-  TracGeneral_c& getTracGeneralInstance(void);
-  #endif
-
+/** C-style function, to get access to the unique TracGeneral_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+TracGeneral_c &getTracGeneralInstance(uint8_t aui8_instance = 0);
 } // End Namespace __IsoAgLib
 #endif

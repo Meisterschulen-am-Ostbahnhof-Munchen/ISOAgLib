@@ -252,22 +252,13 @@ FsManager_c::notifyOnFileserverStateChange(
 }
 
 
-#if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
-  /** C-style function, to get access to the unique FsManager_c singleton instance
-    * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
-    */
-  FsManager_c &getFsManagerInstance(uint8_t rui8_instance = 0)
-  { // if > 1 singleton instance is used, no static reference can be used
-    return FsManager_c::instance(rui8_instance);
-  };
-#else
-  /** C-style function, to get access to the unique FsManager_c singleton instance */
-  FsManager_c &getFsManagerInstance(void)
-  {
-    static FsManager_c& c_fsManager = FsManager_c::instance();
-    return c_fsManager;
-  };
-#endif
+/** C-style function, to get access to the unique FsManager_c singleton instance
+ * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
+ */
+FsManager_c &getFsManagerInstance(uint8_t rui8_instance = 0)
+{ // if > 1 singleton instance is used, no static reference can be used
+  MACRO_MULTITON_GET_INSTANCE_BODY(FsManager_c, aui8_instance);
+}
 
 //End namespace
 }

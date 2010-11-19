@@ -32,143 +32,68 @@
 #  include <ext/malloc_allocator.h>
 #endif
 
-#if (PRT_INSTANCE_CNT != 1)
-  /** the macro autoInstance() uses the class  value singletonVecKey
-    * to get a corresponding class instance, which is delegated to the same BUS
-    */
-#  define autoInstance()                    instance( ClientBase::getSingletonVecKey() )
+#define SINGLETON_VEC_KEY_PARAMETER_DEF               int ai_singletonVecKey
+#define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF  int ai_singletonVecKey = 0
+#define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ai_singletonVecKey
+#define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , int ai_singletonVecKey = 0
+#define SINGLETON_VEC_KEY_PARAMETER_USE               ai_singletonVecKey
+#define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA  , ai_singletonVecKey
 
-#  define SINGLETON_VEC_KEY_PARAMETER_DEF               int ai_singletonVecKey
-#  define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF  int ai_singletonVecKey = 0
-#  define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA  , int ai_singletonVecKey
-#  define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA , int ai_singletonVecKey = 0
-#  define SINGLETON_VEC_KEY_PARAMETER_USE               ai_singletonVecKey
-#  define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA  , ai_singletonVecKey
-
-#  define SINGLETON_PAR_DOT_DEF(PAR)                     int getSingletonVecKey() const { return PAR.getSingletonVecKey(); }
-#  define SINGLETON_PAR_ARR_DEF(PAR)                     int getSingletonVecKey() const { return PAR->getSingletonVecKey(); }
-#  define SINGLETON_PAR_BASE_DEF(PAR)       int getSingletonVecKey() const { return PAR::getSingletonVecKey(); }
-#  define SINGLETON_MC_DATA_ASSIGN                   mc_data.setSingletonKey( getSingletonVecKey() );
-#  define SINGLETON_MEMBER_DEF               ClientBase c_clientBase; \
+#define SINGLETON_PAR_DOT_DEF(PAR)                     int getSingletonVecKey() const { return PAR.getSingletonVecKey(); }
+#define SINGLETON_PAR_ARR_DEF(PAR)                     int getSingletonVecKey() const { return PAR->getSingletonVecKey(); }
+#define SINGLETON_PAR_BASE_DEF(PAR)       int getSingletonVecKey() const { return PAR::getSingletonVecKey(); }
+#define SINGLETON_MC_DATA_ASSIGN                   mc_data.setSingletonKey( getSingletonVecKey() );
+#define SINGLETON_MEMBER_DEF               ClientBase c_clientBase; \
                                                     int getSingletonVecKey() const { return c_clientBase.getSingletonVecKey(); }
-#  define SINGLETON_MEMBER_ASSIGN(PAR)     c_clientBase.setSingletonKey (PAR.c_clientBase.getSingletonVecKey());
-#  define SINGLETON_MEMBER_CONSTRUCTOR    c_clientBase( ai_singletonVecKey ),
-#  define SINGLETON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getSingletonVecKey() ),
-#  define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ai_singletonVecKey ),
+#define SINGLETON_MEMBER_ASSIGN(PAR)     c_clientBase.setSingletonKey (PAR.c_clientBase.getSingletonVecKey());
+#define SINGLETON_MEMBER_CONSTRUCTOR    c_clientBase( ai_singletonVecKey ),
+#define SINGLETON_MEMBER_COPY_CONSTRUCTOR(PAR) c_clientBase( PAR.getSingletonVecKey() ),
+#define SINGLETON_PARENT_CONSTRUCTOR      ClientBase( ai_singletonVecKey ),
 
-#  define SINGLETON_VEC_KEY_INIT_CALL                   setSingletonKey( ai_singletonVecKey );
-#  define SINGLETON_VEC_KEY                             getSingletonVecKey()
-#  define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
+#define SINGLETON_VEC_KEY_INIT_CALL                   setSingletonKey( ai_singletonVecKey );
+#define SINGLETON_VEC_KEY                             getSingletonVecKey()
+#define SINGLETON_VEC_KEY_WITH_COMMA                , getSingletonVecKey()
 
 
-#  define getForeignInstance4Comm(PAR)      PAR.getSingletonVecKey()
-#  define getIsoBusInstance4Comm()          getIsoBusInstance( getSingletonVecKey() )
-#  define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
-#  define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getSingletonVecKey() )
-#  define getTracGeneralInstance4Comm()     getTracGeneralInstance( getSingletonVecKey() )
-#  define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance( getSingletonVecKey() )
-#  define getTracMoveInstance4Comm()        getTracMoveInstance( getSingletonVecKey() )
-#  define getTracLightInstance4Comm()       getTracLightInstance( getSingletonVecKey() )
-#  define getTracAuxInstance4Comm()         getTracAuxInstance( getSingletonVecKey() )
-#  define getTracPtoInstance4Comm()         getTracPtoInstance( getSingletonVecKey() )
-#  define getTracGuidanceInstance4Comm()    getTracGuidanceInstance( getSingletonVecKey() )
-#  define getTracGuidanceCommandInstance4Comm()  getTracGuidanceCommandInstance( getSingletonVecKey() )
-#  define getIsoMonitorInstance4Comm()      getIsoMonitorInstance( getSingletonVecKey() )
-#  define getProcessInstance4Comm()         getProcessInstance( getSingletonVecKey() )
-#  define getMultiSendInstance4Comm()       getMultiSendInstance( getSingletonVecKey() )
-#  define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getSingletonVecKey() )
-#  define getIsoTerminalInstance4Comm()     getIsoTerminalInstance( getSingletonVecKey() )
-#  define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance( getSingletonVecKey() )
-#  define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance( getSingletonVecKey() )
-#  define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance( getSingletonVecKey() )
-#  define getFsManagerInstance4Comm()       getFsManagerInstance( getSingletonVecKey() )
+#define getForeignInstance4Comm(PAR)      PAR.getSingletonVecKey()
+#define getIsoBusInstance4Comm()          getIsoBusInstance( getSingletonVecKey() )
+#define getCanInstance4Comm()             getCanInstance( getSingletonVecKey() )
+#define getTimePosGpsInstance4Comm()      getTimePosGpsInstance( getSingletonVecKey() )
+#define getTracGeneralInstance4Comm()     getTracGeneralInstance( getSingletonVecKey() )
+#define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance( getSingletonVecKey() )
+#define getTracMoveInstance4Comm()        getTracMoveInstance( getSingletonVecKey() )
+#define getTracLightInstance4Comm()       getTracLightInstance( getSingletonVecKey() )
+#define getTracAuxInstance4Comm()         getTracAuxInstance( getSingletonVecKey() )
+#define getTracPtoInstance4Comm()         getTracPtoInstance( getSingletonVecKey() )
+#define getTracGuidanceInstance4Comm()    getTracGuidanceInstance( getSingletonVecKey() )
+#define getTracGuidanceCommandInstance4Comm()  getTracGuidanceCommandInstance( getSingletonVecKey() )
+#define getIsoMonitorInstance4Comm()      getIsoMonitorInstance( getSingletonVecKey() )
+#define getProcessInstance4Comm()         getProcessInstance( getSingletonVecKey() )
+#define getMultiSendInstance4Comm()       getMultiSendInstance( getSingletonVecKey() )
+#define getMultiReceiveInstance4Comm()    getMultiReceiveInstance( getSingletonVecKey() )
+#define getIsoTerminalInstance4Comm()     getIsoTerminalInstance( getSingletonVecKey() )
+#define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance( getSingletonVecKey() )
+#define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance( getSingletonVecKey() )
+#define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance( getSingletonVecKey() )
+#define getFsManagerInstance4Comm()       getFsManagerInstance( getSingletonVecKey() )
 
 /** the class ClientBase delivers the base information, to concat client class instances
-    * with the corresponding server class instance. This is realized by the single
-    * attribute singletonVecKey, which is evaluated by the macro autoInstance()
-    */
-  class ClientBase {
-   public:
-    ClientBase( int ai_singletonVecKey = 0 ) : mi_singletonVecKey(ai_singletonVecKey){};
-    ClientBase( const ClientBase& acrc_src )
-      : mi_singletonVecKey(acrc_src.mi_singletonVecKey) { };
-    int getSingletonVecKey() const { return mi_singletonVecKey;};
-    void setSingletonKey( int aiKey ) { mi_singletonVecKey = aiKey;};
-   protected:
-    const ClientBase& operator=( const ClientBase& acrc_src )
-    { mi_singletonVecKey = acrc_src.mi_singletonVecKey; return *this;};
-   private:
-    int mi_singletonVecKey;
-  };
-#else //PRT_INSTANCE_CNT
-  /** the macro autoInstance() is simply replaced by instance() in cases where only one BUS is managed
-    * as the more usual case is only one BUS, this solution creates no unneeded overhead
-    */
-#  define autoInstance()                  instance()
-
-#  define SINGLETON_VEC_KEY_PARAMETER_DEF
-#  define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF
-#  define SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
-#  define SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA
-#  define SINGLETON_VEC_KEY_PARAMETER_USE
-#  define SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA
-
-#  define SINGLETON_PAR_DOT_DEF(PAR)
-#  define SINGLETON_PAR_ARR_DEF(PAR)
-#  define SINGLETON_PAR_BASE_DEF(PAR)
-
-#  define SINGLETON_MC_DATA_ASSIGN
-#  define SINGLETON_MEMBER_DEF
-#  define SINGLETON_MEMBER_ASSIGN(PAR)
-#  define SINGLETON_MEMBER_COPY_CONSTRUCTOR(PAR)
-#  define SINGLETON_MEMBER_CONSTRUCTOR
-#  define SINGLETON_PARENT_CONSTRUCTOR
-
-#  define SINGLETON_VEC_KEY_INIT_CALL
-#  define SINGLETON_VEC_KEY
-#  define SINGLETON_VEC_KEY_WITH_COMMA
-
-#  define getForeignInstance4Comm(PAR)
-#  define getIsoBusInstance4Comm()          getIsoBusInstance()
-#  define getCanInstance4Comm()             getCanInstance()
-#  define getTimePosGpsInstance4Comm()      getTimePosGpsInstance()
-#  define getTracGeneralInstance4Comm()     getTracGeneralInstance()
-#  define getTracFacilitiesInstance4Comm()  getTracFacilitiesInstance()
-#  define getTracMoveInstance4Comm()        getTracMoveInstance()
-#  define getTracLightInstance4Comm()       getTracLightInstance()
-#  define getTracAuxInstance4Comm()         getTracAuxInstance()
-#  define getTracPtoInstance4Comm()         getTracPtoInstance()
-#  define getTracGuidanceInstance4Comm()    getTracGuidanceInstance()
-#  define getTracGuidanceCommandInstance4Comm()  getTracGuidanceCommandInstance()
-#  define getIsoMonitorInstance4Comm()      getIsoMonitorInstance()
-#  define getProcessInstance4Comm()         getProcessInstance()
-#  define getMultiSendInstance4Comm()       getMultiSendInstance()
-#  define getMultiReceiveInstance4Comm()    getMultiReceiveInstance()
-#  define getIsoTerminalInstance4Comm()     getIsoTerminalInstance()
-#  define getIsoRequestPgnInstance4Comm()   getIsoRequestPgnInstance()
-#  define getIsoFilterManagerInstance4Comm() getIsoFilterManagerInstance()
-#  define getProprietaryMessageHandlerInstance4Comm() getProprietaryMessageHandlerInstance()
-#  define getFsManagerInstance4Comm()       getFsManagerInstance()
-
-  /** the class ClientBase delivers the base information, to concat client class instances
-    * with the corresponding server class instance. This is realized by the single
-    * attribute singletonVecKey, which is evaluated by the macro autoInstance()
-    */
-  class ClientBase {
-   public:
-    /** the constructor accepts an attribute, which is ignored in cases where only one BUS
-      * is managed. The variant of ClientBase for more than one BUS uses this parameter
-      * to store the dedicated BUS for later accesses by autoInstance()
-      */
-    ClientBase( int /* ai_singletonVecKey is intentionally unused for one-instance version of Singleton */ = 0 ) {};
-    ClientBase( const ClientBase& /* acrc_src is intentionally unused for one-instance version of Singleton */ ) { };
-
-    int getSingletonVecKey() const { return 0;};
-    void setSingletonKey( int /* riKey is intentionally unused for one-instance version of Singleton */ ) { };
-   protected:
-    const ClientBase& operator=( const ClientBase& /* acrc_src is intentionally unused for one-instance version of Singleton */ ) { return *this;};
-  };
-#endif
+ * with the corresponding server class instance. This is realized by the single
+ * attribute singletonVecKey
+ */
+class ClientBase {
+public:
+  ClientBase( int ai_singletonVecKey = 0 ) : mi_singletonVecKey(ai_singletonVecKey){};
+  ClientBase( const ClientBase& acrc_src )
+    : mi_singletonVecKey(acrc_src.mi_singletonVecKey) { };
+  int getSingletonVecKey() const { return mi_singletonVecKey;};
+  void setSingletonKey( int aiKey ) { mi_singletonVecKey = aiKey;};
+protected:
+  const ClientBase& operator=( const ClientBase& acrc_src )
+  { mi_singletonVecKey = acrc_src.mi_singletonVecKey; return *this;};
+private:
+  int mi_singletonVecKey;
+};
 
 /** PROP_SINGLETON defines the number of proprietary busses to be supported.
   */
@@ -202,62 +127,19 @@
 #include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
 
-#define COMPOUND_STATEMENT(body) do { body } while (0)
-
-#ifdef WIN32
-#  define HELP_INIT_MULTITONS(T, SIZE) COMPOUND_STATEMENT( \
-for (int i = 0; i < SIZE; i++) { \
-  mspc_instance[i] = new T; \
-  mspc_instance[i]->singletonVecKey = i; \
-} )
-#else
-#  define HELP_INIT_MULTITONS(T, SIZE) COMPOUND_STATEMENT( \
-static T sc_instance[SIZE]; \
-for (int i = 0; i < SIZE; ++i) \
-{ /* initialise the instance (in embedded systems, the constructor is NOT called for static var) */ \
-  sc_instance[i].singletonVecKey = i; \
-  /* set static pointer to instance */ \
-  mspc_instance[i] = &sc_instance[i]; \
-} )
-#endif
-
-/** method instance returns reference to the singleton instance
-  * prevent parallel access to initialisation by several tasks
-  * @param riIndex selection of the wanted static instance (default first entry)
-  * @return reference to singleton instance
-  */
 #define MACRO_MULTITON_CONTRIBUTION(T, SIZE) \
-public: \
-  static T& instance( int riIndex = 0 ) { \
-    static T * mspc_instance[SIZE] = {(T*)0}; \
-    if ( mspc_instance[0] > (T*)1 ) \
-    { /* is already complete initialized -> this is THE MOST OFTEN CASE */ \
-      return *mspc_instance[riIndex]; \
-    } \
-    else if ( mspc_instance[0] == (T*)0 ) \
-    { /* in case of parallel access from two tasks, the first tasks block further
-       * inits with setting the poitner to 1 -> later tasks perform busy waiting */ \
-      if ( mspc_instance[0] == (T*)1 ) \
-      { /* perform busy waiting till first task is ready with init */ \
-        while ( mspc_instance[0] == (T*)1 ) {} \
-        /* as soon as the pointer is != 1 the init is ready */ \
-        return *mspc_instance[riIndex]; \
-      } \
-      /* if execution reaches this point, Singleton::instance() is called first time */ \
-      mspc_instance[0] = (T*)1; /* block further calls till init is ready */ \
-      HELP_INIT_MULTITONS(T, SIZE); \
-    } \
-    else \
-    { /* is set to 1 -> make busy wait ( in case this position is reached due to circular init call,
-       * we'll get a definitive endless loop here - fine to debug ;-) */ \
-      while ( mspc_instance[0] == (T*)1 ) {} \
-    } \
-    return *mspc_instance[riIndex]; \
-  } \
-protected: \
-  int getSingletonVecKey() const { return singletonVecKey; } \
 private: \
-  int singletonVecKey
+  int singletonVecKey; \
+  int getSingletonVecKey() const { return singletonVecKey; } \
+  typedef T Instances_t[SIZE]
+
+#define MACRO_MULTITON_GET_INSTANCE_BODY(T, instance) \
+  static T::Instances_t st_instances; \
+  for (int i = 0; i < int(sizeof st_instances / sizeof st_instances[0]); ++i) { \
+    /* initialise the instance */ \
+    st_instances[i].singletonVecKey = i; \
+  } \
+  return st_instances[instance]
 
 #define MACRO_SINGLETON_CONTRIBUTION(T) MACRO_MULTITON_CONTRIBUTION(T, 1)
 

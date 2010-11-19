@@ -30,22 +30,13 @@ uint32_t const gcui32_pgnMask16consecutive = 0x3FFF0uL;
 
 namespace __IsoAgLib {
 
-  #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT > 1)
   /** C-style function, to get access to the unique TracAux_c singleton instance
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
-  TracAux_c& getTracAuxInstance( uint8_t rui8_instance )
+  TracAux_c &getTracAuxInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    return TracAux_c::instance( rui8_instance );
-  };
-  #else
-  /** C-style function, to get access to the unique TracAux_c singleton instance */
-  TracAux_c& getTracAuxInstance( void )
-  {
-    static TracAux_c& c_lbsTracAux = TracAux_c::instance();
-    return c_lbsTracAux;
-  };
-  #endif
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracAux_c, aui8_instance);
+  }
 
   /** config the TracAux_c object after init -> set pointer to isoName and
       config send/receive of different base msg types

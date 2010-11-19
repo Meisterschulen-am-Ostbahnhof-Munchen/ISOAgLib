@@ -140,10 +140,11 @@ private: // Private attributes
 
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(DigitalO_c);
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_KEY(DigitalO_c,uint8_t);
+  friend ActorO_c &getActorInstance(uint8_t aui8_instance);
 };
+
 /** C-style function, to get access to the unique ActorO_c singleton instance */
-ActorO_c& getActorInstance( void );
+ActorO_c &getActorInstance(uint8_t aui8_instance = 0);
 
 }
 #endif
-
