@@ -63,7 +63,7 @@ FsServerInstance_c::~FsServerInstance_c()
     delete ps_tmpDir;
   }
 
-  getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))
+  getIsoFilterManagerInstance (getForeignInstance4Comm (c_fsManager))
     .removeIsoFilter (ms_receiveFilter);
 #if DEBUG_FILESERVER
   INTERNAL_DEBUG_DEVICE << "Fileserver destroyed (stopped Address Claim)." << INTERNAL_DEBUG_DEVICE_ENDL;

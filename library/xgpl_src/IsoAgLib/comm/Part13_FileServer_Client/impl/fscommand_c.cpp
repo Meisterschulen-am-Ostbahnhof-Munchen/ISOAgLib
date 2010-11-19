@@ -17,6 +17,7 @@
 #include "fsclientservercommunication_c.h"
 
 // ISOAgLib
+#include <IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>

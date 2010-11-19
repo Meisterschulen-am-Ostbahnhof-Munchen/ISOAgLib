@@ -128,9 +128,10 @@ private:
 #include <vector>
 
 #define MACRO_MULTITON_CONTRIBUTION(T, SIZE) \
+public: \
+  int getSingletonVecKey() const { return singletonVecKey; } \
 private: \
   int singletonVecKey; \
-  int getSingletonVecKey() const { return singletonVecKey; } \
   typedef T Instances_t[SIZE]
 
 #define MACRO_MULTITON_GET_INSTANCE_BODY(T, instance) \
