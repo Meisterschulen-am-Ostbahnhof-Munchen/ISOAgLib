@@ -325,6 +325,7 @@ private:
 
   CONTAINER_CLIENT3_MEMBER_FUNCTIONS_MAIN(CounterI_c);
   CONTAINER_CLIENT3_MEMBER_FUNCTIONS_KEY(CounterI_c,uint8_t);
+  friend SensorI_c &getSensorInstance(uint8_t aui8_instance);
 };
 }
 

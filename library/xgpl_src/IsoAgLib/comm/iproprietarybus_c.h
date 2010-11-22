@@ -19,9 +19,9 @@
 #include <IsoAgLib/driver/can/icanpkg_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
-
-namespace IsoAgLib {
-
+#if 0 < PROP_INSTANCE_CNT
+namespace IsoAgLib
+{
 
 /**
   @short Class managing a Proprietary CAN bus.
@@ -240,6 +240,7 @@ class iProprietaryBus_c {
 /** C-style function, to get access to the unique singleton instance(s) */
 iProprietaryBus_c &getIProprietaryBusInstance( uint8_t aui8_instance = 0 );
 
-} // IsoAgLib
+} // namespace IsoAgLib
 
+#endif // 0 < PROP_INSTANCE_CNT
 #endif // IPROPRIETARYBUS_C_H

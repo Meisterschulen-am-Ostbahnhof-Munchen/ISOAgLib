@@ -13,6 +13,7 @@
 
 #include <IsoAgLib/comm/iproprietarybus_c.h>
 
+#if 0 < PROP_INSTANCE_CNT
 namespace IsoAgLib
 {
 
@@ -22,3 +23,4 @@ iProprietaryBus_c &getIProprietaryBusInstance( uint8_t aui8_instance )
 }
 
 }
+#endif
