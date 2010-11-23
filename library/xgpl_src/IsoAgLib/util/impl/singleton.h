@@ -100,7 +100,7 @@ private:
 #if (PROP_INSTANCE_CNT == 0)
 #  define getCanInstance4Prop()   ERROR_not_configured_for_Proprietary_CAN_usage_ERROR
 #elif (PROP_INSTANCE_CNT > 1)
-#  define getCanInstance4Prop()   ccc getCanInstance( (PRT_INSTANCE_CNT) + getMultitonInst() )
+#  define getCanInstance4Prop()   getCanInstance( (PRT_INSTANCE_CNT) + getMultitonInst() )
 #else
 #  if (PRT_INSTANCE_CNT == 0)
 #    define getCanInstance4Prop()   getCanInstance()
