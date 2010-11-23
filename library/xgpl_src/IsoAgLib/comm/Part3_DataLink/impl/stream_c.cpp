@@ -37,10 +37,10 @@ namespace __IsoAgLib {
 
 Stream_c::Stream_c(
   const ReceiveStreamIdentifier_c& ac_rsi, 
-  uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA ,
+  uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA ,
   bool ab_skipCtsAwait
 ) : StreamInput_c()
-  , SINGLETON_MEMBER_CONSTRUCTOR
+  , MULTITON_MEMBER_CONSTRUCTOR
     mc_ident (ac_rsi)
   , mt_streamState (StreamRunning)
   , mt_awaitStep (AwaitCtsSend) // so next timeEvent will send out the CTS!
@@ -75,7 +75,7 @@ Stream_c::Stream_c(
 
 Stream_c::Stream_c (const Stream_c &rhs)
   : StreamInput_c (rhs)
-  , SINGLETON_MEMBER_COPY_CONSTRUCTOR(rhs)
+  , MULTITON_MEMBER_COPY_CONSTRUCTOR(rhs)
     mc_ident (rhs.mc_ident)
   , mt_streamState (rhs.mt_streamState)
   , mt_awaitStep (rhs.mt_awaitStep)
@@ -102,7 +102,7 @@ Stream_c::~Stream_c()
 Stream_c&
 Stream_c::operator= (const Stream_c& ref)
 {
-  SINGLETON_MEMBER_ASSIGN(ref)
+  MULTITON_MEMBER_ASSIGN(ref)
 
   mc_ident = ref.mc_ident;
   mt_streamState = ref.mt_streamState;

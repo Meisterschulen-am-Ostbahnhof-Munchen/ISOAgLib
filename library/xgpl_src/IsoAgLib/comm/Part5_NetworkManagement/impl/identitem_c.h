@@ -113,11 +113,11 @@ public: // methods
     );
 
   /** IsoMonitor uses this function to activate/start this Item
-    @param ai_singletonVecKey Activate this Item on the given IsoBus
+    @param ai_multitonInst Activate this Item on the given IsoBus
     @return false in case this Item wasn't properly set up before
                   using some init(..)-call.
   */
-  bool activate (int ai_singletonVecKey);
+  bool activate (int ai_multitonInst);
 
   /** IsoMonitor uses this function to deactivate/stop this Item
       For later (again) use, it needs to be initialized again.

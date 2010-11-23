@@ -25,7 +25,7 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique EepromIo_c singleton instance */
 EepromIo_c &getEepromInstance(uint8_t aui8_instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(EepromIo_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(EepromIo_c, 1, aui8_instance);
 }
 
 

@@ -478,7 +478,7 @@ namespace __IsoAgLib {
     */
   TimePosGps_c &getTimePosGpsInstance( uint8_t aui8_instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(TimePosGps_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TimePosGps_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
   /** check if a received GPS message should be parsed */

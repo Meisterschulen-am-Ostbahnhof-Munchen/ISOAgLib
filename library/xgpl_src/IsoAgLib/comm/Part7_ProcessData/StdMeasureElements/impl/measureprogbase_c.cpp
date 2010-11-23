@@ -183,7 +183,7 @@ MeasureProgBase_c::~MeasureProgBase_c(){
   }
   else
   { // no subprog with same type exist -> insert new one
-    mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment SINGLETON_VEC_KEY_WITH_COMMA));
+    mvec_measureSubprog.push_front(MeasureSubprog_c(ren_type, ren_doSend, ai32_increment MULTITON_INST_WITH_COMMA));
     #if DEBUG_HEAP_USEAGE
     sui16_MeasureProgBaseTotal++;
 

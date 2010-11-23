@@ -99,7 +99,7 @@ IsoFilterManager_c::insertIsoFilter (const IsoFilter_s& arcs_isoFilter, bool ab_
   // Check if IsoFilter does yet exist in some IsoFilterBox
   if (!existIsoFilter (arcs_isoFilter))
   { // insert an empty IsoFilterBox. initialized then in list right after
-    mvec_isoFilterBox.push_back (IsoFilterBox_c (arcs_isoFilter SINGLETON_VEC_KEY_WITH_COMMA));
+    mvec_isoFilterBox.push_back (IsoFilterBox_c (arcs_isoFilter MULTITON_INST_WITH_COMMA));
 
     // now get the inserted IsoFilterBox and retrigger update of real hardware filters
     if (mvec_isoFilterBox.back().updateOnAdd())
@@ -218,7 +218,7 @@ IsoFilterManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::I
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
 IsoFilterManager_c &getIsoFilterManagerInstance (uint8_t aui8_instance)
 { // if > 1 singleton instance is used, no static reference can be used
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoFilterManager_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoFilterManager_c, PRT_INSTANCE_CNT, aui8_instance);
 }
 
 } // end of namespace __IsoAgLib

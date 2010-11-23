@@ -30,7 +30,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   TracPTOSetPoint_c &getTracPtoSetPointInstance(uint8_t aui8_instance)
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracPTOSetPoint_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracPTOSetPoint_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
   /** config the TracPTOSetPoint_c object after init -> set pointer to isoName and

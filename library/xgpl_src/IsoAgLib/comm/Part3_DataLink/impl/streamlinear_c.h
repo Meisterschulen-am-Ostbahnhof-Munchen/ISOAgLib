@@ -32,7 +32,7 @@ class StreamLinear_c : public Stream_c
 
 public:
 
-  StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
   virtual ~StreamLinear_c ();
 

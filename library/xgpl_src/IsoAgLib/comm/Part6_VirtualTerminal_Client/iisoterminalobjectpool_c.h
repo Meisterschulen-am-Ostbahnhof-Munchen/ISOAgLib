@@ -273,7 +273,7 @@ public:
   /**
     this init function has to be idempotent! use "b_initAllObjects" for this reason, it's initialized to false at construction time.
   */
-  virtual void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF)=0;
+  virtual void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF)=0;
 
   iIsoTerminalObjectPool_c(iVtObject_c*HUGE_MEM** a_iVtObjects, uint16_t a_numObjects, uint16_t a_numObjectsLang, uint16_t a_dimension, uint16_t a_skWidth=60, uint16_t a_skHeight=32)
     : iVtObjects (a_iVtObjects)

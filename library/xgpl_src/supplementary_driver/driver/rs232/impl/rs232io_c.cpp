@@ -36,7 +36,7 @@ namespace __IsoAgLib {
  */
 RS232IO_c &getRs232Instance( uint8_t aui8_instance )
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(RS232IO_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(RS232IO_c, RS232_INSTANCE_CNT, aui8_instance);
 }
 
 /*******************************************/

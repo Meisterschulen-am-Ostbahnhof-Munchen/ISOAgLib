@@ -27,9 +27,9 @@ namespace __IsoAgLib {
 //! init mpc_iterWriteChunk, mpc_iterParsedChunk, mui32_writeCnt, mui32_parsedCnt
 StreamChunk_c::StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi,
                               uint32_t aui32_msgSize
-                              SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
+                              MULTITON_INST_PARAMETER_DEF_WITH_COMMA
                              ,bool ab_skipCtsAwait)
-  : Stream_c (ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
+  : Stream_c (ac_rsi, aui32_msgSize MULTITON_INST_PARAMETER_USE_WITH_COMMA , ab_skipCtsAwait)
 {
   /// Do NOTHING more here
   /// User HAS TO call "immediateInitAfterConstruction" **immediately** AFTER Construction!

@@ -35,8 +35,8 @@ public:
   ///
   /// @param vtObjectFontAttributesSROM
   /// @param b_initPointer
-  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectFontAttributes_c::init (vtObjectFontAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectFontAttributes_s* vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectFontAttributes_c::init (vtObjectFontAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   };
 
   //  Operation: get_vtObjectFontAttributes_a

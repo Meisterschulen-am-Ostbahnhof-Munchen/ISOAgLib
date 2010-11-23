@@ -32,8 +32,8 @@ public:
   /// Operation: init
   /// @param vtObjectMacroSROM
   /// @param b_initPointer
-  void init(const iVtObjectMacro_s* vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectMacroSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
+  void init(const iVtObjectMacro_s* vtObjectMacroSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectMacroSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   //  Operation: get_vtObjectMacro_a
   iVtObjectMacro_s* get_vtObjectMacro_a() { return (iVtObjectMacro_s *)&(get_vtObject_a()); }

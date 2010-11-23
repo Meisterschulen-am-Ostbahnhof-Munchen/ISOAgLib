@@ -39,7 +39,7 @@ public:
     @param ab_started optional running state (default off)
     @param ai32_lastVal optional value of last trigger event (default 0)
   */
-  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0  SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
+  MeasureSubprog_c(Proc_c::type_t ren_type = Proc_c::TimeProp, Proc_c::doSend_t ren_doSend = Proc_c::DoVal, int32_t ai32_increment = 0  MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF_WITH_COMMA);
 
   /**
     operator= for Subprogs

@@ -48,7 +48,7 @@ namespace __IsoAgLib {
   @short central manager object for all hardware independent IsoAgLib objects.
 */
 class Scheduler_c {
-  MACRO_SINGLETON_CONTRIBUTION(Scheduler_c);
+  MACRO_SINGLETON_CONTRIBUTION();
 public:
 
   /** Initialisation for the central IsoAgLib object

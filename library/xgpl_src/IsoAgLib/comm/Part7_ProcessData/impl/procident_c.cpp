@@ -29,8 +29,8 @@ namespace __IsoAgLib {
             as corresponding device is registered as having claimed address in monitor table list)
   */
   ProcIdent_c::ProcIdent_c( const IsoAgLib::ElementDdi_s* aps_elementDDI, uint16_t aui16_element,
-                            const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName, int ai_singletonVecKey)
-  : ClientBase( ai_singletonVecKey ),
+                            const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName, int ai_multitonInst)
+  : ClientBase( ai_multitonInst ),
     mpc_externalOverridingIsoName(NULL),
 		mc_isoName(IsoName_c::IsoNameUnspecified())
 {

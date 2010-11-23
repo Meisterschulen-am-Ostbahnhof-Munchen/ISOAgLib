@@ -160,7 +160,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                      measure prog data sets
     @param aui16_eepromAdr optional adress where value is stored in EEPROM
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataLocalBase_c( const IsoAgLib::ElementDdi_s* aps_elementDDI = NULL, uint16_t aui16_element = 0xFFFF,
                        const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
@@ -170,10 +170,10 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                        , uint16_t aui16_eepromAdr = 0xFFFF
 #endif
                        , IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL
-                       , int ai_singletonVecKey = 0
+                       , int ai_multitonInst = 0
                        )
     : ProcDataBase_c( aps_elementDDI, aui16_element,
-                      acrc_isoName, apc_externalOverridingIsoName, apc_processDataChangeHandler, ai_singletonVecKey
+                      acrc_isoName, apc_externalOverridingIsoName, apc_processDataChangeHandler, ai_multitonInst
                      )
 
     {
@@ -182,7 +182,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
           , aui16_eepromAdr
       #endif // USE_EEPROM_IO
           , apc_processDataChangeHandler
-          , ai_singletonVecKey);
+          , ai_multitonInst);
     }
 
   /** initialise this ProcDataLocalBase_c instance to a well defined initial state
@@ -212,7 +212,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                      measure prog data sets
     @param aui16_eepromAdr optional adress where value is stored in EEPROM
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
             const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
@@ -222,7 +222,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
             , uint16_t aui16_eepromAdr = 0xFFFF
 #endif
             , IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL
-            , int ai_singletonVecKey = 0
+            , int ai_multitonInst = 0
             );
 
   /** copy constructor */

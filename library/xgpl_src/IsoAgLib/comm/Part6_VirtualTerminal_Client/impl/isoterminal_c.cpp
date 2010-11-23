@@ -25,7 +25,7 @@ namespace __IsoAgLib {
     */
   IsoTerminal_c &getIsoTerminalInstance(uint8_t aui8_instance)
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(IsoTerminal_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(IsoTerminal_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
 
@@ -58,7 +58,7 @@ IsoTerminal_c::init()
   if (checkAlreadyClosed())
   { // avoid another call
     clearAlreadyClosed();
-    mc_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setMultitonInst( getMultitonInst() );
 
     getSchedulerInstance().registerClient(this);
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
@@ -148,7 +148,7 @@ IsoTerminal_c::initAndRegisterIsoObjectPoolCommon (IdentItem_c& rc_identItem, Is
     }
   }
   // create new instance
-  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index, ab_isSlave SINGLETON_VEC_KEY_WITH_COMMA);
+  VtClientServerCommunication_c* pc_vtCSC = new VtClientServerCommunication_c (rc_identItem, *this, arc_pool, apc_versionLabel, ui8_index, ab_isSlave MULTITON_INST_WITH_COMMA);
   if (pc_vtCSC->men_objectPoolState == VtClientServerCommunication_c::OPCannotBeUploaded) // meaning here is: OPCannotBeInitialized (due to versionLabel problems)
   { // most likely due to wrong version label
     /// Error already registered in the VtClientServerCommunication_c(..) constructor!
@@ -365,7 +365,7 @@ IsoTerminal_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIte
 
         // VtServerInstance not yet in list, so add it ...
         /// @todo SOON-79: It should be enough if we store the IsoItem*, we don't need both the IsoItem AND IsoName...
-        ml_vtServerInst.push_back (VtServerInstance_c (acrc_isoItem, acrc_isoItem.isoName(), *this SINGLETON_VEC_KEY_WITH_COMMA));
+        ml_vtServerInst.push_back (VtServerInstance_c (acrc_isoItem, acrc_isoItem.isoName(), *this MULTITON_INST_WITH_COMMA));
         VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
 
         // ... and notify all vtClientServerComm instances
@@ -417,7 +417,7 @@ IsoTerminal_c::fakeVtProperties (uint16_t aui16_dimension, uint16_t aui16_skWidt
 {
   const IsoItem_c c_dummyIsoItem;
   // casting NULL to a reference is okay here, as the reference isn't used for any FAKE_VT case (iop_generator, etc.)
-  ml_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this) SINGLETON_VEC_KEY_WITH_COMMA));
+  ml_vtServerInst.push_back (VtServerInstance_c (c_dummyIsoItem, IsoName_c::IsoNameUnspecified(), (*this) MULTITON_INST_WITH_COMMA));
   VtServerInstance_c& r_vtServerInst = ml_vtServerInst.back();
   r_vtServerInst.fakeVtProperties (aui16_dimension, aui16_skWidth, aui16_skHeight, aui16_colorDepth, aui16_fontSizes);
 

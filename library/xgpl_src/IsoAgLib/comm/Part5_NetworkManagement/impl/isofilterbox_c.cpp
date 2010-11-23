@@ -46,8 +46,8 @@ IsoFilter_s::equalMaskAndFilter (const IsoFilter_s& acrc_isoFilter) const
 
 
 
-IsoFilterBox_c::IsoFilterBox_c (const IsoFilter_s& arcs_isoFilter SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-: SINGLETON_PARENT_CONSTRUCTOR
+IsoFilterBox_c::IsoFilterBox_c (const IsoFilter_s& arcs_isoFilter MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+: MULTITON_PARENT_CONSTRUCTOR
   ms_isoFilter (arcs_isoFilter)
 , mpc_filterBox (NULL)
 {}

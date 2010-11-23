@@ -39,7 +39,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   TracMove_c &getTracMoveInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracMove_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracMove_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
   /** config the TracMove_c object after init -> set pointer to isoName and

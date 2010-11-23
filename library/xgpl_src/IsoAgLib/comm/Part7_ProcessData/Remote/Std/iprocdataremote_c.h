@@ -151,17 +151,17 @@ public:
       @param acrc_isoName optional ISOName code of this instance
       @param apc_commanderIsoName pointer to updated ISOName variable of commander
       @param apc_processDataChangeHandler optional pointer to handler class of application
-      @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+      @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
     */
   iProcDataRemote_c(const ElementDdi_s* ps_elementDDI = NULL,
                     uint16_t aui16_element = 0xFFFF,
                     const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                     const iIsoName_c* apc_commanderIsoName = NULL,
                     ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-                    int ai_singletonVecKey = 0)
+                    int ai_multitonInst = 0)
   : ProcDataRemote_c( ps_elementDDI, aui16_element,
                      acrc_isoName, apc_commanderIsoName,
-                     apc_processDataChangeHandler, ai_singletonVecKey)
+                     apc_processDataChangeHandler, ai_multitonInst)
   {}
 
 
@@ -175,10 +175,10 @@ public:
                     const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                     const iIsoName_c* apc_commanderISOName = NULL,
                     ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-                    int ai_singletonVecKey = 0)
+                    int ai_multitonInst = 0)
   : ProcDataRemote_c( NULL, aui16_element,
                       acrc_isoName, apc_commanderISOName,
-                      apc_processDataChangeHandler, ai_singletonVecKey
+                      apc_processDataChangeHandler, ai_multitonInst
                     )
   {
     const ElementDdi_s s_tmpElementDDI[2] =
@@ -190,7 +190,7 @@ public:
 
     ProcDataRemote_c::init( s_tmpElementDDI, aui16_element,
                             acrc_isoName, apc_commanderISOName,
-                            apc_processDataChangeHandler, ai_singletonVecKey);
+                            apc_processDataChangeHandler, ai_multitonInst);
   }
 
 
@@ -203,17 +203,17 @@ public:
       @param acrc_isoName optional ISOName code of this instance
       @param apc_commanderISOName pointer to updated ISOName variable of commander
       @param apc_processDataChangeHandler optional pointer to handler class of application
-      @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+      @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
     */
   void init(const ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
             const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
             const iIsoName_c* apc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_singletonVecKey = 0
+            int ai_multitonInst = 0
            )
    { ProcDataRemote_c::init( ps_elementDDI, aui16_element,
                              acrc_isoName, apc_commanderISOName,
-                             apc_processDataChangeHandler, ai_singletonVecKey
+                             apc_processDataChangeHandler, ai_multitonInst
                            );
    }
 
@@ -227,14 +227,14 @@ public:
       @param acrc_isoName optional ISOName code of this instance
       @param apc_commanderISOName pointer to updated ISOName variable of commander
       @param apc_processDataChangeHandler optional pointer to handler class of application
-      @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+      @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
     */
   void init(uint16_t aui16_DDI,
             uint16_t aui16_element,
             const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
             const iIsoName_c* apc_commanderISOName = NULL,
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_singletonVecKey = 0)
+            int ai_multitonInst = 0)
   {
      const ElementDdi_s s_tmpElementDDI[2] =
      {
@@ -245,7 +245,7 @@ public:
 
      ProcDataRemote_c::init( s_tmpElementDDI, aui16_element,
                             acrc_isoName, apc_commanderISOName, apc_processDataChangeHandler,
-                            ai_singletonVecKey
+                            ai_multitonInst
                            );
   };
 

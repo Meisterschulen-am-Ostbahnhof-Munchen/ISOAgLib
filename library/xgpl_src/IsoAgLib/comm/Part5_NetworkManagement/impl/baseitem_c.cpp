@@ -21,10 +21,10 @@ namespace __IsoAgLib {
   and the actual time as parameter to initialise all own values
   @param ai32_time optional timestamp to store as last update
   @param ab_status state of this ident (off, claimed address, ...) (default: off)
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
-BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey)
-  : IStateExt_c(ab_status, ai_singletonVecKey), mi32_lastTime(ai32_time)
+BaseItem_c::BaseItem_c( int32_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst)
+  : IStateExt_c(ab_status, ai_multitonInst), mi32_lastTime(ai32_time)
 {}
 
 /**
@@ -43,24 +43,24 @@ BaseItem_c::~BaseItem_c(){
 /**
   set pointer to containing Scheduler_c instance and update timestamp of object
   @param ai32_time optional timestamp to set as update time
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
-void BaseItem_c::set(int32_t ai32_time, int ai_singletonVecKey)
+void BaseItem_c::set(int32_t ai32_time, int ai_multitonInst)
 {
   if (ai32_time >= 0) mi32_lastTime = ai32_time;
-  /** ai_singletonVecKey==-1 is special value to indicate, that the ai_singletonVecKey should not be changed */
-  if (ai_singletonVecKey != -1) ClientBase::setSingletonKey(ai_singletonVecKey);
+  /** ai_multitonInst==-1 is special value to indicate, that the ai_multitonInst should not be changed */
+  if (ai_multitonInst != -1) ClientBase::setMultitonInst(ai_multitonInst);
 }
 
 /**
   set pointer to containing Scheduler_c instance and update timestamp of object
   @param ai32_time optional timestamp to set as update time
   @param ab_status state of this ident (off, claimed address, ...) (default: off)
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
-void BaseItem_c::set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_singletonVecKey)
+void BaseItem_c::set(int32_t ai32_time, IState_c::itemState_t ab_status, int ai_multitonInst)
 {
-  set(  ai32_time,ai_singletonVecKey);
+  set(  ai32_time,ai_multitonInst);
   // force clear of old item state
   setItemState( ab_status, true );
 }

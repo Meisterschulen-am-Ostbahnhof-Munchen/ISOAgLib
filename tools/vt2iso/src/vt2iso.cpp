@@ -468,7 +468,7 @@ void vt2iso_c::clean_exit (const char* error_message)
   {
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
 
-    fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (SINGLETON_VEC_KEY_PARAMETER_DEF)\n{\n", mstr_className.c_str());
+    fprintf (partFile_functions, "void iObjectPool_%s_c::initAllObjectsOnce (MULTITON_INST_PARAMETER_DEF)\n{\n", mstr_className.c_str());
     fprintf (partFile_functions, "  if (b_initAllObjects) return;   // so the pointer to the ROM structures are only getting set once on initialization!\n");
     fprintf (partFile_functions, "  int i_objCount = %d;\n", map_objNameIdTable.size() - extraLanguageLists);
     fprintf (partFile_functions, "  int i_listIndex = 0;\n");
@@ -478,7 +478,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_functions, "    IsoAgLib::iVtObject_c* HUGE_MEM * pc_objList = %sall_iVtObjectLists [i_listIndex];\n", mstr_namespacePrefix.c_str());
     fprintf (partFile_functions, "    while (i_objCount)\n");
     fprintf (partFile_functions, "    {\n");
-    fprintf (partFile_functions, "      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);\n");
+    fprintf (partFile_functions, "      ((__IsoAgLib::vtObject_c*)(*pc_objList))->init (*pps_sROMs MULTITON_INST_PARAMETER_USE_WITH_COMMA);\n");
     fprintf (partFile_functions, "      ++pc_objList;\n");
     fprintf (partFile_functions, "      ++pps_sROMs;\n");
     fprintf (partFile_functions, "      --i_objCount;\n");
@@ -613,7 +613,7 @@ void vt2iso_c::clean_exit (const char* error_message)
     fprintf (partFile_handler_derived, "\n%s",mstr_namespaceDeclarationEnd.c_str());
     fprintf (partFile_handler_derived, "\nclass iObjectPool_%s_c : public IsoAgLib::iIsoTerminalObjectPool_c {", mstr_className.c_str());
     fprintf (partFile_handler_derived, "\npublic:");
-    fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(SINGLETON_VEC_KEY_PARAMETER_DEF);");
+    fprintf (partFile_handler_derived, "\n  void initAllObjectsOnce(MULTITON_INST_PARAMETER_DEF);");
     int extraLanguageLists = (ui_languages>0)?arrs_language[0].count : 0;
     fprintf (partFile_handler_derived, "\n  iObjectPool_%s_c() : iIsoTerminalObjectPool_c (%sall_iVtObjectLists%s, %d, %d, %d, %d, %d) {}\n",
              mstr_className.c_str(), mstr_namespacePrefix.c_str(), mstr_poolIdent.c_str(), map_objNameIdTable.size() - extraLanguageLists, extraLanguageLists, opDimension, skWidth, skHeight);

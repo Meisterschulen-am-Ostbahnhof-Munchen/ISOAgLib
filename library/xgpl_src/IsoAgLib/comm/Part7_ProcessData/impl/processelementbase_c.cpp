@@ -30,7 +30,7 @@ ProcessElementBase_c::ProcessElementBase_c(
   // only set singletonKey in ClientBase, if more than one IsoAgLib instance
   // ismanaged by this IsoAgLib
   if ( apc_processData != NULL )
-    setSingletonKey( apc_processData->getSingletonVecKey() );
+    setMultitonInst( apc_processData->getMultitonInst() );
   #endif
 }
 /**
@@ -55,7 +55,7 @@ ProcessElementBase_c::ProcessElementBase_c(const ProcessElementBase_c& acrc_src)
   @param acrc_src source ProcessElementBase_c instance
 */
 const ProcessElementBase_c& ProcessElementBase_c::operator=(const ProcessElementBase_c& acrc_src){
-  setSingletonKey(acrc_src.getSingletonVecKey());
+  setMultitonInst(acrc_src.getMultitonInst());
   // copy element vars
   mpc_processData = acrc_src.mpc_processData;
 
@@ -75,7 +75,7 @@ ProcessElementBase_c::~ProcessElementBase_c(){
 void ProcessElementBase_c::set(ProcDataBase_c& arc_processData )
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
-  ClientBase::setSingletonKey(arc_processData.getSingletonVecKey());
+  ClientBase::setMultitonInst(arc_processData.getMultitonInst());
   #endif
   mpc_processData = &arc_processData;
 };
@@ -88,7 +88,7 @@ void ProcessElementBase_c::set(ProcDataBase_c *const acpc_processData)
 {
   #if defined(PRT_INSTANCE_CNT) && (PRT_INSTANCE_CNT != 1 )
   if ( acpc_processData != NULL )
-    ClientBase::setSingletonKey(acpc_processData->getSingletonVecKey());
+    ClientBase::setMultitonInst(acpc_processData->getMultitonInst());
   #endif
   mpc_processData = acpc_processData;
 };

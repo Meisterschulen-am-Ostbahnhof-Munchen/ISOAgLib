@@ -56,7 +56,7 @@ namespace __IsoAgLib {
     */
   MultiSend_c &getMultiSendInstance( uint8_t aui8_instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(MultiSend_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(MultiSend_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
 /** This is mostly used for debugging now... */
@@ -239,7 +239,7 @@ MultiSend_c::init(void)
   if (checkAlreadyClosed())
   {
     clearAlreadyClosed();
-    mc_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setMultitonInst( getMultitonInst() );
 
     getSchedulerInstance().registerClient( this );
     __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
@@ -319,7 +319,7 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
   }
 
   if (mlist_sendStream.empty()) {
-    mlist_sendStream.push_back (SendStream_c(*this SINGLETON_VEC_KEY_WITH_COMMA ));
+    mlist_sendStream.push_back (SendStream_c(*this MULTITON_INST_WITH_COMMA ));
   } else {
     mlist_sendStream.insert (mlist_sendStream.end(), mlist_sendStream.back()); // insert a copy of the first element (for performance reasons)
   }

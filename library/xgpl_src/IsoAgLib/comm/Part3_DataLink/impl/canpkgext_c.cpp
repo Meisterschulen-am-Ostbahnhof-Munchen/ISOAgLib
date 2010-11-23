@@ -62,8 +62,8 @@ AddressResolveResults_c* CanPkgExt_c::mpc_addrResolveResDA = NULL;
 
 
 /** default constructor, which has nothing to do */
-CanPkgExt_c::CanPkgExt_c( int ai_singletonVecKey )
-  : CanPkg_c( ai_singletonVecKey )
+CanPkgExt_c::CanPkgExt_c( int ai_multitonInst )
+  : CanPkg_c( ai_multitonInst )
 {
   static bool sb_addrResolveInitialized = false;
   if ( ! sb_addrResolveInitialized )

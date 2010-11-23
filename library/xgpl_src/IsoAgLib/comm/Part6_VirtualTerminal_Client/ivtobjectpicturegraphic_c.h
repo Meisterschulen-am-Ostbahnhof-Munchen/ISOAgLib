@@ -29,8 +29,8 @@ public:
   //! Parameter:
   //! @param vtObjectPictureGraphicSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectPictureGraphic_s* vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectPictureGraphic_c::init (vtObjectPictureGraphicSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectPictureGraphic_a

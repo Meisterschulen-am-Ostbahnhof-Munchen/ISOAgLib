@@ -122,7 +122,7 @@ namespace __IsoAgLib {
                    measure prog data sets
   @param aui16_eepromAdr optional adress where value is stored in EEPROM
   @param apc_processDataChangeHandler optional pointer to handler class of application
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
 ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMeasure_c(
      const IsoAgLib::ElementDdi_s* ps_elementDDI,
@@ -134,7 +134,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
      uint16_t aui16_eepromAdr,
 #endif
      IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-     int ai_singletonVecKey
+     int ai_multitonInst
      )
   : ProcDataLocalBase_c(ps_elementDDI, aui16_element,
                         acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
@@ -142,7 +142,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
                         aui16_eepromAdr,
 #endif
                         apc_processDataChangeHandler,
-                        ai_singletonVecKey )
+                        ai_multitonInst )
   , mc_setpoint( this )
 {
 }
@@ -176,7 +176,7 @@ ProcDataLocalSimpleSetpointSimpleMeasure_c::ProcDataLocalSimpleSetpointSimpleMea
                   measure prog data sets
   @param aui16_eepromAdr optional adress where value is stored in EEPROM
   @param apc_processDataChangeHandler optional pointer to handler class of application
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                                                       const IsoName_c& acrc_isoName,
@@ -186,7 +186,7 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi
                                                       uint16_t aui16_eepromAdr,
 #endif
                                                       IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-                                                      int ai_singletonVecKey
+                                                      int ai_multitonInst
       )
 {
   ProcDataLocalBase_c::init(ps_elementDDI, aui16_element,
@@ -195,7 +195,7 @@ void ProcDataLocalSimpleSetpointSimpleMeasure_c::init(const IsoAgLib::ElementDdi
                             aui16_eepromAdr,
 #endif
                             apc_processDataChangeHandler,
-                            ai_singletonVecKey );
+                            ai_multitonInst );
   mc_setpoint.init( this );
 }
 /** copy constructor */

@@ -29,7 +29,11 @@ namespace IsoAgLib
   @see CanIo_c
 */
 class iProprietaryBus_c {
-  MACRO_MULTITON_CONTRIBUTION(iProprietaryBus_c, CAN_INSTANCE_CNT);
+#if 1 < CAN_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
  public:
   /**
     Initialize the CAN hardware, and instantiate one msg object for

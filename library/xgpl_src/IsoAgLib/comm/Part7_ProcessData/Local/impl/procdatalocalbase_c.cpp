@@ -155,7 +155,7 @@ namespace __IsoAgLib {
                   measure prog data sets
   @param aui16_eepromAdr optional adress where value is stored in EEPROM
   @param apc_processDataChangeHandler optional pointer to handler class of application
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
 void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                                const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
@@ -164,11 +164,11 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint
                                uint16_t aui16_eepromAdr,
 #endif // USE_EEPROM_IO
                                IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-                               int ai_singletonVecKey
+                               int ai_multitonInst
                                )
 {
   ProcDataBase_c::init( ps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName,
-                        apc_processDataChangeHandler, ai_singletonVecKey);
+                        apc_processDataChangeHandler, ai_multitonInst);
 
   mb_cumulativeValue = ab_cumulativeValue;
 #ifdef USE_EEPROM_IO

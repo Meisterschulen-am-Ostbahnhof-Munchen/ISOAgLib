@@ -202,7 +202,7 @@ public:
   }
 
   /// Using the singletonVecKey from internal class
-  SINGLETON_PAR_BASE_DEF(IdentItem_c)
+  MULTITON_PAR_BASE_DEF(IdentItem_c)
 
 private:
   friend class iIsoMonitor_c;

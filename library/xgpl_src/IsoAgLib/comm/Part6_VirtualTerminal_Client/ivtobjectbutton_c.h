@@ -33,8 +33,8 @@ public:
   /// 
   /// @param vtObjectButtonSROM
   /// @param b_initPointer
-  void init(const iVtObjectButton_s* vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectButton_c::init (vtObjectButtonSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectButton_s* vtObjectButtonSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectButton_c::init (vtObjectButtonSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectButton_a

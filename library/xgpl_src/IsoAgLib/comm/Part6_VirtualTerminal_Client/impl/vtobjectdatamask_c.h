@@ -36,8 +36,8 @@ public:
   //  Operation: init
   //! @param vtObjectDataMaskSROM
   //! @param b_initPointer
-  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);}
+  void init(const iVtObjectDataMask_s* vtObjectDataMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectDataMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
   //  Operation: get_vtObjectDataMask_a
   iVtObjectDataMask_s* get_vtObjectDataMask_a() { return (iVtObjectDataMask_s *)&(get_vtObject_a()); }

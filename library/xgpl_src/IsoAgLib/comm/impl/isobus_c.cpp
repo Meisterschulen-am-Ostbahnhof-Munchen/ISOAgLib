@@ -238,7 +238,7 @@ IsoBus_c::insertStandardIsoFilter(
 
 IsoBus_c &getIsoBusInstance( uint8_t aui8_instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoBus_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoBus_c, PRT_INSTANCE_CNT, aui8_instance);
 }
 
 

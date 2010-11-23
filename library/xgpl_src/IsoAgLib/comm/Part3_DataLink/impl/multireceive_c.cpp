@@ -53,7 +53,7 @@ static const uint8_t scui8_tpPriority=6;
     */
   MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(MultiReceive_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(MultiReceive_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
 
@@ -69,9 +69,9 @@ MultiReceiveClientWrapper_s::MultiReceiveClientWrapper_s(
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
     ,bool ab_isFastPacket
     #endif
-    SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
+    MULTITON_INST_PARAMETER_DEF_WITH_COMMA
   ) 
-  : SINGLETON_PARENT_CONSTRUCTOR
+  : MULTITON_PARENT_CONSTRUCTOR
     mpc_client(&arc_client)
   , mc_isoName (acrc_isoNameClient)
   , mui32_pgn(aui32_pgn)
@@ -648,7 +648,7 @@ MultiReceive_c::registerClientIso(
       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
       , false
       #endif
-      SINGLETON_VEC_KEY_WITH_COMMA));
+      MULTITON_INST_WITH_COMMA));
 
   mlist_clients.back().start (mt_customer);
 }
@@ -678,7 +678,7 @@ MultiReceive_c::registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& 
       ab_alsoGlobalErrors,
       isoNameSender,
       true
-      SINGLETON_VEC_KEY_WITH_COMMA));
+      MULTITON_INST_WITH_COMMA));
 
   mlist_clients.back().start (mt_customer);
 }
@@ -779,7 +779,7 @@ MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent,
 {
   // Assumption/Precondition: Stream not there, so create and add it without checking!
 
-  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize SINGLETON_VEC_KEY_WITH_COMMA));
+  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize MULTITON_INST_WITH_COMMA));
   mlist_streams.back().immediateInitAfterConstruction();
 
   // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
@@ -1195,7 +1195,7 @@ MultiReceive_c::init()
   if ( checkAlreadyClosed() )
   {
     clearAlreadyClosed();
-    mc_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setMultitonInst( getMultitonInst() );
 
     getSchedulerInstance().registerClient( this );
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );

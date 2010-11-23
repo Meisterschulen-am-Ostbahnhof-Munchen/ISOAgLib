@@ -26,7 +26,7 @@ namespace __IsoAgLib {
 /** C-style function, to get access to the unique System_c singleton instance */
 System_c &getSystemInstance(uint8_t aui8_instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(System_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(System_c, 1, aui8_instance);
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown

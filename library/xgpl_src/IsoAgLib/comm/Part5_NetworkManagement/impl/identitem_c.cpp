@@ -238,7 +238,7 @@ IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16
 
 
 bool
-IdentItem_c::activate (int ai_singletonVecKey)
+IdentItem_c::activate (int ai_multitonInst)
 {
   if (mb_readyForActivation)
   { /// Set Item to ACTIVE
@@ -247,7 +247,7 @@ IdentItem_c::activate (int ai_singletonVecKey)
       (IState_c::itemState_t (IState_c::Active |
                               IState_c::PreAddressClaim |
                               IState_c::Local)),
-      ai_singletonVecKey);
+      ai_multitonInst);
 
     // The Diagnostics Handler needs to be created on Construction!
     isoaglib_assert (mpc_diagnosticPgnHandler);

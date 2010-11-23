@@ -49,7 +49,7 @@ namespace __IsoAgLib {
  */
 IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance )
 { // if > 1 singleton instance is used, no static reference can be used
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoMonitor_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoMonitor_c, PRT_INSTANCE_CNT, aui8_instance);
 }
 
 /** constructor for IsoMonitor_c which can store optional pointer to central Scheduler_c instance
@@ -72,7 +72,7 @@ IsoMonitor_c::init( void )
   if (checkAlreadyClosed())
   {
     clearAlreadyClosed();
-    mc_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setMultitonInst( getMultitonInst() );
 
     #if DEBUG_HEAP_USEAGE
     sui16_isoItemTotal -= mvec_isoMember.size();
@@ -80,7 +80,7 @@ IsoMonitor_c::init( void )
     isoaglib_assert (mvec_isoMember.empty());
     mpc_isoMemberCache = mvec_isoMember.end();
     mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getSingletonVecKey() );
+    mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
 
     // register no-service mode
     mc_serviceTool.setUnspecified();
@@ -160,7 +160,7 @@ bool
 IsoMonitor_c::registerIdentItem( IdentItem_c& arc_item )
 {
   const bool cb_activationSuccess
-    = arc_item.activate( getSingletonVecKey() );
+    = arc_item.activate( getMultitonInst() );
 
   if (cb_activationSuccess)
   { // Could activate it, so register it!
@@ -577,7 +577,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& acrc_isoName,
   // FROM NOW ON WE DECIDE TO (TRY TO) CREATE A NEW IsoItem_c
   // prepare temp item with wanted data
   mc_tempIsoMemberItem.set (System_c::getTime(), // Actually this value/time can be anything. The time is NOT used in PreAddressClaim and when entering AddressClaim it is being set correctly!
-    acrc_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Active), getSingletonVecKey() );
+    acrc_isoName, aui8_nr, IState_c::itemState_t(ren_state | IState_c::Active), getMultitonInst() );
   // if it's a local item, we need to set the back-reference.
   if (apc_identItemForLocalItems)
     mc_tempIsoMemberItem.setIdentItem(*apc_identItemForLocalItems);

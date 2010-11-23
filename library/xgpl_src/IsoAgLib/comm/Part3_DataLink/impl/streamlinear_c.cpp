@@ -18,8 +18,8 @@
 namespace __IsoAgLib {
 
 
-StreamLinear_c::StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  : Stream_c (ac_rsi, aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA)
+StreamLinear_c::StreamLinear_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  : Stream_c (ac_rsi, aui32_msgSize MULTITON_INST_PARAMETER_USE_WITH_COMMA)
   , mui32_parsedCnt (0)
 {
   mvecui8_buffer.reserve (aui32_msgSize); // as reactOnStreamStart told we have enough memory!

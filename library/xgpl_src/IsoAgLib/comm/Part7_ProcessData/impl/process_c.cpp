@@ -46,7 +46,7 @@ namespace __IsoAgLib {
     */
   Process_c &getProcessInstance( uint8_t aui8_instance )
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(Process_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(Process_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
@@ -63,7 +63,7 @@ Process_c::init()
   if (checkAlreadyClosed())
   {
     clearAlreadyClosed();
-    mc_data.setSingletonKey( getSingletonVecKey() );
+    mc_data.setMultitonInst( getMultitonInst() );
 
     getSchedulerInstance().registerClient( this );
     mi32_lastFilterBoxTime = 0;

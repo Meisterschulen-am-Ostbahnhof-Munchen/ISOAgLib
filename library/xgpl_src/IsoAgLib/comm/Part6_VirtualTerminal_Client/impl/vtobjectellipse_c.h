@@ -37,8 +37,8 @@ public:
   //  Operation: init
   //! @param vtObjectellipseSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectEllipse_s* vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectellipseSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
+  void init(const iVtObjectEllipse_s* vtObjectellipseSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectellipseSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   //  Operation: get_vtObjectmeter_a
   iVtObjectEllipse_s* get_vtObjectEllipse_a() { return (iVtObjectEllipse_s *)&(get_vtObject_a()); }

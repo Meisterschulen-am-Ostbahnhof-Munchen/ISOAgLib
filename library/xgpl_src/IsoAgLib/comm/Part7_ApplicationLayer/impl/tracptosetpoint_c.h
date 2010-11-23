@@ -31,7 +31,11 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
   class TracPTOSetPoint_c : public SingletonTracPtoSetPoint_c {
-    MACRO_MULTITON_CONTRIBUTION(TracPTOSetPoint_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+    MACRO_MULTITON_CONTRIBUTION();
+#else
+    MACRO_SINGLETON_CONTRIBUTION();
+#endif
   public:// Public methods
     /* ********************************************* */
     /** \name Management Functions for class TracPTO_c  */

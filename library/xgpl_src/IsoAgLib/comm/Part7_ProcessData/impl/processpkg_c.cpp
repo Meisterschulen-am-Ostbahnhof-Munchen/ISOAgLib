@@ -24,8 +24,8 @@ namespace __IsoAgLib {
 
 
 /** default constructor which has nothing to do */
-ProcessPkg_c::ProcessPkg_c( int ai_singletonVecKey )
-  : CanPkgExt_c( ai_singletonVecKey )
+ProcessPkg_c::ProcessPkg_c( int ai_multitonInst )
+  : CanPkgExt_c( ai_multitonInst )
   , mi32_pdValue( 0 )
   , bit_data()
 {

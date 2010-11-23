@@ -37,8 +37,8 @@ public:
   //! Parameter:
   //! @param vtObjectOutputStringSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectOutputString_c::init (vtObjectOutputStringSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectOutputString_s* vtObjectOutputStringSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectOutputString_c::init (vtObjectOutputStringSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectOutputString_a

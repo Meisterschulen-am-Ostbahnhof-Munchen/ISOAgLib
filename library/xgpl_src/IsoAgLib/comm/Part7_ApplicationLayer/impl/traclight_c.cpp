@@ -28,7 +28,7 @@ namespace __IsoAgLib {
    */
   TracLight_c& getTracLightInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracLight_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracLight_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
   void

@@ -156,7 +156,7 @@ public:
                      measure prog data sets
     @param aui16_eepromAdr optional adress where value is stored in EEPROM
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   iProcDataLocalSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                 uint16_t aui16_element = 0xFFFF,
@@ -166,14 +166,14 @@ public:
                                 uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                                 ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-                                int ai_singletonVecKey = 0
+                                int ai_multitonInst = 0
   ) : ProcDataLocalSimpleMeasure_c(ps_elementDDI, aui16_element,
                                    acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
 #ifdef USE_EEPROM_IO
                                    aui16_eepromAdr,
 #endif
                                    apc_processDataChangeHandler,
-                                   ai_singletonVecKey) {}
+                                   ai_multitonInst) {}
 
   /**
     initialise this ProcDataLocalSimpleMeasure_c
@@ -205,7 +205,7 @@ public:
                      measure prog data sets
     @param aui16_eepromAdr optional adress where value is stored in EEPROM
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t aui16_element,
@@ -216,7 +216,7 @@ public:
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_singletonVecKey = 0
+            int ai_multitonInst = 0
             )
   {ProcDataLocalSimpleMeasure_c::init(ps_elementDDI, aui16_element,
                                       acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
@@ -224,7 +224,7 @@ public:
                                       aui16_eepromAdr,
 #endif
                                       apc_processDataChangeHandler,
-                                      ai_singletonVecKey);
+                                      ai_multitonInst);
   }
 
   /** set the poitner to the handler class

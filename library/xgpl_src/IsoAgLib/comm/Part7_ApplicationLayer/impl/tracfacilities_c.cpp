@@ -28,7 +28,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     */
   TracFacilities_c &getTracFacilitiesInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracFacilities_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracFacilities_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
   /** HIDDEN constructor for a TracFacilities_c object instance which can optional

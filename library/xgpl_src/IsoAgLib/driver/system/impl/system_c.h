@@ -34,7 +34,7 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
   */
 class System_c {
-  MACRO_SINGLETON_CONTRIBUTION(System_c);
+  MACRO_SINGLETON_CONTRIBUTION();
 public:
 
 
@@ -129,7 +129,7 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of System_c within application
     */
-  System_c( void ) {};
+  System_c() {}
 
 // Private attributes
   friend System_c &getSystemInstance(uint8_t aui8_instance);

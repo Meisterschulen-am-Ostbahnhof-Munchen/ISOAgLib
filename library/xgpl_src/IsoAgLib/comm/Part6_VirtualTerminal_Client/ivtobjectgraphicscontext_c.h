@@ -24,8 +24,8 @@ public:
   ///
   /// @param vtObjectGraphicsContextSROM
   /// @param b_initPointer
-  void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectGraphicsContext_c::init (vtObjectGraphicsContextSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectGraphicsContext_s* vtObjectGraphicsContextSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectGraphicsContext_c::init (vtObjectGraphicsContextSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   };
 
   /// Operation: get_vtObjectGraphicsContext_a

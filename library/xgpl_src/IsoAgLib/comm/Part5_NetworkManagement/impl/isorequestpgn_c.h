@@ -41,7 +41,11 @@ class IsoRequestPgnHandler_c;
 
 class IsoRequestPgn_c : CanCustomer_c
 {
-  MACRO_MULTITON_CONTRIBUTION(IsoRequestPgn_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
 private:
   struct PGN_s
   {
@@ -204,11 +208,11 @@ struct RegisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32_t
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
     getIsoRequestPgnInstance4Comm().registerPGN(*mcp_handler, aui32_pgn, aui32_pgnMask);
   }
-  RegisterPgn_s(IsoRequestPgnHandler_c *apc_handler SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) :
-    SINGLETON_MEMBER_CONSTRUCTOR
+  RegisterPgn_s(IsoRequestPgnHandler_c *apc_handler MULTITON_INST_PARAMETER_DEF_WITH_COMMA) :
+    MULTITON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:
-  SINGLETON_MEMBER_DEF
+  MULTITON_MEMBER_DEF
   IsoRequestPgnHandler_c *const mcp_handler;
 };
 
@@ -219,11 +223,11 @@ struct UnregisterPgn_s : public STL_NAMESPACE::binary_function< uint32_t, uint32
       uint32_t aui32_pgnMask = IsoRequestPgn_c::mscui32_pgnDefaultMask) {
     getIsoRequestPgnInstance4Comm().unregisterPGN(*mcp_handler, aui32_pgn, aui32_pgnMask);
   }
-  UnregisterPgn_s(IsoRequestPgnHandler_c *apc_handler SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) :
-    SINGLETON_MEMBER_CONSTRUCTOR
+  UnregisterPgn_s(IsoRequestPgnHandler_c *apc_handler MULTITON_INST_PARAMETER_DEF_WITH_COMMA) :
+    MULTITON_MEMBER_CONSTRUCTOR
     mcp_handler(apc_handler) {}
 private:
-  SINGLETON_MEMBER_DEF
+  MULTITON_MEMBER_DEF
   IsoRequestPgnHandler_c *const mcp_handler;
 };
 

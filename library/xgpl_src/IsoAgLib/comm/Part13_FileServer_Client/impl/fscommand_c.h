@@ -286,7 +286,7 @@ class FsCommand_c : CanCustomer_c
     bool reactOnStreamStart(const ReceiveStreamIdentifier_c& refc_ident, uint32_t rui32_totalLen);
     /** MultiReceiveClient functions END **/
 
-    int getSingletonVecKey() const { return 0; }
+    int getMultitonInst() const { return 0; }
 
   private:
     // member variable instead of multiple inheritance

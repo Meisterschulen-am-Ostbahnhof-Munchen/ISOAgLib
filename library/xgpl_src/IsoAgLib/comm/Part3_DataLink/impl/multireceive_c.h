@@ -72,7 +72,7 @@ public:
                               #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
                               ,bool ab_isFastPacket
                               #endif
-                              SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA
+                              MULTITON_INST_PARAMETER_DEF_WITH_COMMA
                              );
 
   //! Check if this MRCW should handle the given stream
@@ -118,7 +118,11 @@ MultiReceiveClientWrapper_s::doesAcceptStream (const ReceiveStreamIdentifier_c &
 //!  Stereotype: 76
 class MultiReceive_c : public Scheduler_Task_c
 {
-  MACRO_MULTITON_CONTRIBUTION(MultiReceive_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
 public:
   MultiReceive_c();
   ~MultiReceive_c() {}

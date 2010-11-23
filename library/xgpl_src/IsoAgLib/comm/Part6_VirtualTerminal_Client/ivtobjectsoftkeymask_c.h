@@ -33,8 +33,8 @@ public:
   //! Parameter:
   //! @param vtObjectSoftKeyMaskSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectSoftKeyMask_c::init (vtObjectSoftKeyMaskSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectSoftKeyMask_s* vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectSoftKeyMask_c::init (vtObjectSoftKeyMaskSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectSoftKeyMask_a

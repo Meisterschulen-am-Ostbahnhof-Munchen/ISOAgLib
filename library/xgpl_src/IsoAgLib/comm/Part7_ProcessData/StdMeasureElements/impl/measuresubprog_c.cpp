@@ -31,8 +31,8 @@ namespace __IsoAgLib {
   @param ab_started optional running state (default off)
   @param ai32_lastVal optional value of last trigger event (default 0)
 */
-MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-: ClientBase( SINGLETON_VEC_KEY_PARAMETER_USE ),
+MeasureSubprog_c::MeasureSubprog_c(Proc_c::type_t ren_type, Proc_c::doSend_t ren_doSend, int32_t ai32_increment MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+: ClientBase( MULTITON_INST_PARAMETER_USE ),
   mi32_lastVal( 0 ),
   mi32_increment( ai32_increment ),
   mb_started( false ),

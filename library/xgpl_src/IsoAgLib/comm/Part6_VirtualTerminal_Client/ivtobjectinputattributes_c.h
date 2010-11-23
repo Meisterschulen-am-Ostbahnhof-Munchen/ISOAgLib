@@ -33,8 +33,8 @@ public:
   ///
   /// @param vtObjectInputAttributesSROM
   /// @param b_initPointer
-  void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectInputAttributes_c::init (vtObjectInputAttributesSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectInputAttributes_s* vtObjectInputAttributesSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectInputAttributes_c::init (vtObjectInputAttributesSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectInputAttributes_a

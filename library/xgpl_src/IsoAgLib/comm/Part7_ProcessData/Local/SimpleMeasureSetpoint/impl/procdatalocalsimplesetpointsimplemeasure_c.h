@@ -166,7 +166,7 @@ public:
                      measure prog data sets
     @param aui16_eepromAdr optional adress where value is stored in EEPROM
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   ProcDataLocalSimpleSetpointSimpleMeasure_c(const IsoAgLib::ElementDdi_s* ps_elementDDI = NULL,
                                              uint16_t aui16_element = 0xFFFF,
@@ -177,7 +177,7 @@ public:
                                              uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                                              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-                                             int ai_singletonVecKey = 0
+                                             int ai_multitonInst = 0
       );
 
   /**
@@ -210,7 +210,7 @@ public:
                      measure prog data sets
     @param aui16_eepromAdr optional adress where value is stored in EEPROM
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   void init(const IsoAgLib::ElementDdi_s* ps_elementDDI,
             uint16_t aui16_element,
@@ -221,7 +221,7 @@ public:
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
-            int ai_singletonVecKey = 0
+            int ai_multitonInst = 0
       );
 
   /** copy constructor */

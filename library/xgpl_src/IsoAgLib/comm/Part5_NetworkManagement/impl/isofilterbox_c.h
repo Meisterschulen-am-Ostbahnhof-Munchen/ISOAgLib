@@ -67,7 +67,7 @@ private:
 class IsoFilterBox_c : public ClientBase
 {
 public:
-  IsoFilterBox_c (const IsoFilter_s& rrefcs_isoFilter SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  IsoFilterBox_c (const IsoFilter_s& rrefcs_isoFilter MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
   bool hasIsoFilter (const IsoFilter_s& arcs_isoFilter) { return (ms_isoFilter == arcs_isoFilter); }
 

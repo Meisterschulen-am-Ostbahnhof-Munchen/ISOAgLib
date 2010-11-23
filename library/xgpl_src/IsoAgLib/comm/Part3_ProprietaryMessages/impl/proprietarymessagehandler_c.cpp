@@ -42,7 +42,7 @@ namespace __IsoAgLib
     if (checkAlreadyClosed())
     {
       clearAlreadyClosed();
-      mc_data.setSingletonKey( getSingletonVecKey() );
+      mc_data.setMultitonInst( getMultitonInst() );
 
       getSchedulerInstance().registerClient( this );
       __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
@@ -509,7 +509,7 @@ namespace __IsoAgLib
 
   ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance)
   {
-    MACRO_MULTITON_GET_INSTANCE_BODY(ProprietaryMessageHandler_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(ProprietaryMessageHandler_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
 

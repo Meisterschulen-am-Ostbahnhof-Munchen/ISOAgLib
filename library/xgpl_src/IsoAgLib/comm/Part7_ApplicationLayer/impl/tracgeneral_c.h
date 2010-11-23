@@ -59,7 +59,11 @@ typedef struct
   */
 class TracGeneral_c : public BaseCommon_c
 {
-  MACRO_MULTITON_CONTRIBUTION(TracGeneral_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
 public: // Public methods
   /* ********************************************* */
   /** \name Management Functions for class TracGeneral_c  */

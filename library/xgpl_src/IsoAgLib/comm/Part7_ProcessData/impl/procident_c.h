@@ -52,7 +52,7 @@ public:
               uint16_t aui16_element = 0xFFFF,
               const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
               const IsoName_c *apc_externalOverridingIsoName = NULL,
-              int ai_singletonVecKey = 0);
+              int ai_multitonInst = 0);
 
   /** copy constructor */
   ProcIdent_c( const ProcIdent_c& acrc_src );

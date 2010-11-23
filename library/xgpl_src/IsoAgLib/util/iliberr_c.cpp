@@ -35,7 +35,7 @@ namespace IsoAgLib {
 /** C-style function, to get access to the unique iLibErr_c singleton instance */
 iLibErr_c &getILibErrInstance(uint8_t aui8_instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(iLibErr_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(iLibErr_c, PRT_INSTANCE_CNT, aui8_instance);
 }
 
 /**

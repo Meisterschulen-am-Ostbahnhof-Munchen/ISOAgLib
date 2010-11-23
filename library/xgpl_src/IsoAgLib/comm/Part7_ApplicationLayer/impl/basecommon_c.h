@@ -161,18 +161,18 @@ namespace __IsoAgLib
     static const uint16_t TIMEOUT_SENDING_NODE_J1939 = 5000;
 
     /// Using the singletonVecKey from mc_data (-->CanPkgExt_c)
-    SINGLETON_PAR_DOT_DEF(mc_data)
+    MULTITON_PAR_DOT_DEF(mc_data)
 
   protected:
     void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
     uint16_t getTimeOut( ) { return mui16_timeOut; }
 
     RegisterPgn_s getRegisterPgn() {
-      return RegisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
+      return RegisterPgn_s(&mt_handler MULTITON_INST_WITH_COMMA);
     }
 
     UnregisterPgn_s getUnregisterPgn(){
-      return UnregisterPgn_s(&mt_handler SINGLETON_VEC_KEY_WITH_COMMA);
+      return UnregisterPgn_s(&mt_handler MULTITON_INST_WITH_COMMA);
     }
 
     void setTimePeriod(uint16_t aui16_timePeriod) {

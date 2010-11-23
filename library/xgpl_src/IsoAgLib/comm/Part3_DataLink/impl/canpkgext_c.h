@@ -72,7 +72,7 @@ class CanPkgExt_c : public CanPkg_c
   CanPkgExt_c& operator=(const CanPkgExt_c&); //!< prevent copy operator use: do not code this method
  public:
   /** default constructor, which has nothing to do */
-  CanPkgExt_c( int ai_singletonVecKey = 0 );
+  CanPkgExt_c( int ai_multitonInst = 0 );
 
   /** virtual default destructor, which has nothing to do */
   virtual ~CanPkgExt_c();

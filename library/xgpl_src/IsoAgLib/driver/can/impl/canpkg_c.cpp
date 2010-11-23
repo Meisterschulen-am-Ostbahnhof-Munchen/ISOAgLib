@@ -36,8 +36,8 @@ uint8_t CanPkg_c::msui8_len = 0;
   default constructor, which does nothing for the base class,
   but can do something in derived classes
 */
-CanPkg_c::CanPkg_c( int ai_singletonVecKey )
-  : ClientBase( ai_singletonVecKey )
+CanPkg_c::CanPkg_c( int ai_multitonInst )
+  : ClientBase( ai_multitonInst )
  {
 }
 

@@ -44,7 +44,7 @@ class IsoName_c;
   @author Dipl.-Inform. Achim Spangler
 */
 class EepromIo_c {
-  MACRO_SINGLETON_CONTRIBUTION(EepromIo_c);
+  MACRO_SINGLETON_CONTRIBUTION();
 public:
   typedef STL_NAMESPACE::string cc_string;
   /** default initialisation */

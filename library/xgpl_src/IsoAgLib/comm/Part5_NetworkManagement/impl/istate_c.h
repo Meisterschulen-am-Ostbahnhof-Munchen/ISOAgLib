@@ -47,13 +47,13 @@ public:
     constructor of IState_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Active value)
   */
-  IState_c(itemState_t ren_itemState = Active, int ai_singletonVecKey = 0);
+  IState_c(itemState_t ren_itemState = Active, int ai_multitonInst = 0);
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param aui8_state optional wanted state information (default \<empty\> value)
   */
-  IState_c(uint8_t aui8_state, int ai_singletonVecKey = 0);
+  IState_c(uint8_t aui8_state, int ai_multitonInst = 0);
 
   /**
     copy constructor for IState_c
@@ -127,13 +127,13 @@ public:
     constructor of IStateExt_c which can set the state to given initial value
     @param ren_itemState optional wanted state information (default Off value)
   */
-  IStateExt_c(itemState_t ren_itemState = OffExplicitly, int ai_singletonVecKey = 0);
+  IStateExt_c(itemState_t ren_itemState = OffExplicitly, int ai_multitonInst = 0);
 
   /**
     constructor of IState_c which can set the state to given initial value
     @param aui8_state optional wanted state information (default \<empty\> value)
   */
-  IStateExt_c(uint8_t aui8_state, int ai_singletonVecKey = 0);
+  IStateExt_c(uint8_t aui8_state, int ai_multitonInst = 0);
 
   /**
     copy constructor for IState_c

@@ -24,7 +24,7 @@ namespace __IsoAgLib {
 
 /// NOTE: Currently all BaseCommon_c-based singletons are NOT working
 ///       with Multiple ISOBUS Instances
-///       because getSingletonVecKey is needed here but declared/defined
+///       because getMultitonInst is needed here but declared/defined
 ///       in the derived classes, which are the singletons.
 
 
@@ -34,7 +34,7 @@ BaseCommon_c::init()
   if (checkAlreadyClosed())
   {
     clearAlreadyClosed();
-    SINGLETON_MC_DATA_ASSIGN
+    MULTITON_MC_DATA_ASSIGN
 
     getSchedulerInstance().registerClient(&mt_task);
 

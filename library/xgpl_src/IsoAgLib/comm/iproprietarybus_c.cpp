@@ -19,7 +19,7 @@ namespace IsoAgLib
 
 iProprietaryBus_c &getIProprietaryBusInstance( uint8_t aui8_instance )
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(iProprietaryBus_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(iProprietaryBus_c, CAN_INSTANCE_CNT, aui8_instance);
 }
 
 }

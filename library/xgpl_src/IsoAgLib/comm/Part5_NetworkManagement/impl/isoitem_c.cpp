@@ -204,12 +204,12 @@ void IsoItem_c::getPureAsciiName(int8_t *pc_asciiName, uint8_t aui8_maxLen)
   @param acrc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
   @param aui8_nr number of this item
   @param aren_status state of this ident (off, claimed address, ...)
-  @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+  @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
 */
 void IsoItem_c::set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
-        itemState_t aren_status, int ai_singletonVecKey )
+        itemState_t aren_status, int ai_multitonInst )
 {
-  BaseItem_c::set( ai32_time, aren_status, ai_singletonVecKey );
+  BaseItem_c::set( ai32_time, aren_status, ai_multitonInst );
   setISOName(acrc_isoName);
   setNr(aui8_nr);
 }

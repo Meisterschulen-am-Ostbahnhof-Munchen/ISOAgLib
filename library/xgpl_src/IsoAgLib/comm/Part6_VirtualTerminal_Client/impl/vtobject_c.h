@@ -51,7 +51,7 @@ public:
   /** @todo ON REQUEST: check for double initialization via flags & STRUCT_IN_RAM etc.
            - double init call should normally not happen
     */
-  void init (iVtObject_s* aps_vtObject_a SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_a = aps_vtObject_a; SINGLETON_VEC_KEY_INIT_CALL }
+  void init (iVtObject_s* aps_vtObject_a MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_a = aps_vtObject_a; MULTITON_INST_INIT_CALL }
 
 protected:
   //  Operation: get_vtObject_a

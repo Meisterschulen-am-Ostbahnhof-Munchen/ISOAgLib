@@ -33,8 +33,8 @@ public:
   //! Parameter:
   //! @param vtObjectLinearBarGraphSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectLinearBarGraph_c::init (vtObjectLinearBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectLinearBarGraph_s* vtObjectLinearBarGraphSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectLinearBarGraph_c::init (vtObjectLinearBarGraphSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectLinearBarGraph_a

@@ -36,8 +36,8 @@ public:
   //  Operation: init
   //! @param vtObjectAuxiliaryInputSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInputSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);}
+  void init(const iVtObjectAuxiliaryInput_s* vtObjectAuxiliaryInputSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  {vtObject_c::init((iVtObject_s *)vtObjectAuxiliaryInputSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);}
 
   //  Operation: get_vtObjectAuxiliaryInput_a
   iVtObjectAuxiliaryInput_s* get_vtObjectAuxiliaryInput_a() { return (iVtObjectAuxiliaryInput_s *)&(get_vtObject_a()); }

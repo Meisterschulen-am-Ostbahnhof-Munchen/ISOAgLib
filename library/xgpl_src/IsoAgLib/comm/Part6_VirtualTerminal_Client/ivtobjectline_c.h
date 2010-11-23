@@ -33,8 +33,8 @@ public:
   //! Parameter:
   //! @param vtObjectLineSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectLine_s* vtObjectLineSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectLine_c::init (vtObjectLineSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectLine_s* vtObjectLineSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectLine_c::init (vtObjectLineSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectLine_a

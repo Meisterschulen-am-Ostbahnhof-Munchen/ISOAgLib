@@ -100,17 +100,17 @@ namespace __IsoAgLib {
     @param acrc_isoName optional ISOName code of this instance
     @param apc_commanderISOName pointer to updated ISOName variable of commander
     @param apc_processDataChangeHandler optional pointer to handler class of application
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
 void ProcDataRemoteBase_c::init(  const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                                   const IsoName_c& acrc_isoName, const IsoName_c* apc_commanderISOName,
                                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
-                                  int ai_singletonVecKey)
+                                  int ai_multitonInst)
 {
   ProcDataBase_c::init( ps_elementDDI, aui16_element,
                         acrc_isoName, NULL, apc_processDataChangeHandler);
 
-  setSingletonKey( ai_singletonVecKey );
+  setMultitonInst( ai_multitonInst );
   setCommanderISOName(apc_commanderISOName);
 
   getProcessInstance4Comm().registerRemoteProcessData( this );

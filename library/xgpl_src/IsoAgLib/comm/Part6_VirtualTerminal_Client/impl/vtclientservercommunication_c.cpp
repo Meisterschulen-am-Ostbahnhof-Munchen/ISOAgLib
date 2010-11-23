@@ -328,7 +328,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   IsoAgLib::iIsoTerminalObjectPool_c& arc_pool,
   char* apc_versionLabel,
   uint8_t aui8_clientId,
-  bool ab_isSlave SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
+  bool ab_isSlave MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
   : mrc_pool (arc_pool)
   , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , mb_checkSameCommand (true)
@@ -361,7 +361,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mi32_nextWsMaintenanceMsg (-1)
   , mb_receiveFilterCreated (false)
   , mui8_clientId (aui8_clientId)
-  , mc_data (SINGLETON_VEC_KEY_PARAMETER_USE)
+  , mc_data (MULTITON_INST_PARAMETER_USE)
   , men_displayState (VtClientDisplayStateHidden)
   , mq_sendUpload()
   , mlist_auxAssignments()
@@ -371,7 +371,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mb_isSlave(ab_isSlave)
 {
   // the generated initAllObjectsOnce() has to ensure to be idempotent! (vt2iso-generated source does this!)
-  mrc_pool.initAllObjectsOnce (SINGLETON_VEC_KEY);
+  mrc_pool.initAllObjectsOnce (MULTITON_INST);
   // now let all clients know which client they belong to
   if (mui8_clientId > 0) // the iVtObjects are initialised with 0 as default index
   {

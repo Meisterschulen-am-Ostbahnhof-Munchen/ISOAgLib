@@ -32,7 +32,7 @@ namespace __IsoAgLib {
 class IsoTerminalPkg_c : public CanPkgExt_c  {
 public:
   /** default constructor */
-  IsoTerminalPkg_c (int ai_singletonVecKey = 0) : CanPkgExt_c (ai_singletonVecKey) {}
+  IsoTerminalPkg_c (int ai_multitonInst = 0) : CanPkgExt_c (ai_multitonInst) {}
   /** default destructor */
   ~IsoTerminalPkg_c() {}
 

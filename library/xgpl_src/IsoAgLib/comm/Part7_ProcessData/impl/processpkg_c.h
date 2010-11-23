@@ -38,7 +38,7 @@ class ProcessPkg_c : public CanPkgExt_c  {
 private:
 public:
   /** default constructor which has nothing to do */
-  ProcessPkg_c( int ai_singletonVecKey = 0 );
+  ProcessPkg_c( int ai_multitonInst = 0 );
   /** default constructor which has nothing to do */
   ~ProcessPkg_c();
 

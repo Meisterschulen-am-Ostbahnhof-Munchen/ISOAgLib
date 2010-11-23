@@ -98,7 +98,11 @@ typedef TimePosGps_c TimePosGPS_c; /// this typedef is only for some time to pro
 
 class TimePosGps_c : public BaseCommon_c
 {
-  MACRO_MULTITON_CONTRIBUTION(TimePosGps_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
  public:
   // Public methods
   /* ********************************************* */

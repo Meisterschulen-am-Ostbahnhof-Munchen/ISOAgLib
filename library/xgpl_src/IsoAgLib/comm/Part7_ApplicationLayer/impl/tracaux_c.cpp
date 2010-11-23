@@ -35,7 +35,7 @@ namespace __IsoAgLib {
     */
   TracAux_c &getTracAuxInstance( uint8_t aui8_instance )
   { // if > 1 singleton instance is used, no static reference can be used
-    MACRO_MULTITON_GET_INSTANCE_BODY(TracAux_c, aui8_instance);
+    MACRO_MULTITON_GET_INSTANCE_BODY(TracAux_c, PRT_INSTANCE_CNT, aui8_instance);
   }
 
   /** config the TracAux_c object after init -> set pointer to isoName and

@@ -34,8 +34,8 @@ public:
   //! Parameter:
   //! @param vtObjectWorkingSetSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectWorkingSet_c::init (vtObjectWorkingSetSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectWorkingSet_s* vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectWorkingSet_c::init (vtObjectWorkingSetSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectWorkingSet_a

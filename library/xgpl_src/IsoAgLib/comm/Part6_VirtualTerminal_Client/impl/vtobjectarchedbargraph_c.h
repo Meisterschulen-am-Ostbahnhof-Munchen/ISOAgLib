@@ -38,8 +38,8 @@ public:
   //  Operation: init
   //! @param vtObjectArchedBarGraphSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA)
-  { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); }
+  void init(const iVtObjectArchedBarGraph_s* vtObjectArchedBarGraphSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
+  { vtObject_c::init ((iVtObject_s*) vtObjectArchedBarGraphSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); }
 
   //  Operation: get_vtObjectArchedBarGraph_a
   iVtObjectArchedBarGraph_s* get_vtObjectArchedBarGraph_a() { return (iVtObjectArchedBarGraph_s *)&(get_vtObject_a()); }

@@ -37,8 +37,8 @@ namespace IsoAgLib {
 class iCanPkgExt_c : private __IsoAgLib::CanPkgExt_c {
 public:
 
-  iCanPkgExt_c(SINGLETON_VEC_KEY_PARAMETER_DEFAULT_NULL_DEF)
-    : CanPkgExt_c(SINGLETON_VEC_KEY_PARAMETER_USE) { }
+  iCanPkgExt_c(MULTITON_INST_PARAMETER_DEFAULT_NULL_DEF)
+    : CanPkgExt_c(MULTITON_INST_PARAMETER_USE) { }
 
   /**
     deliver the ident

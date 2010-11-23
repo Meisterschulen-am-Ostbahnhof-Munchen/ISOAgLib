@@ -34,7 +34,7 @@ public:
   //! Parameter:
   //! @param vtObjectAuxiliaryFunctionSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryFunctionSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA); };
+  void init(const iVtObjectAuxiliaryFunction_s* vtObjectAuxiliaryFunctionSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) { vtObject_c::init ((iVtObject_s*) vtObjectAuxiliaryFunctionSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA); };
 
 
   //  Operation: get_vtObjectAuxiliaryFunction_a

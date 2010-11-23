@@ -177,7 +177,7 @@ class Stream_c : public StreamInput_c //, public ClientBase --> for single inher
 {
 public:
   Stream_c (const ReceiveStreamIdentifier_c& ac_rsi,
-            uint32_t aui32_msgSize SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA,
+            uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA,
             bool ab_skipCtsAwait=false);
 
   Stream_c (const Stream_c &);
@@ -251,7 +251,7 @@ private:
 
 
 protected:
-  SINGLETON_MEMBER_DEF
+  MULTITON_MEMBER_DEF
 
 
 private:

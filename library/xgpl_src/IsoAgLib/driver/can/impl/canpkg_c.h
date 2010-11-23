@@ -63,7 +63,7 @@ public:
     default constructor, which does nothing for the base class,
     but can do something in derived classes
   */
-  CanPkg_c( int ai_singletonVecKey = 0 );
+  CanPkg_c( int ai_multitonInst = 0 );
 
   /** virtual destructor, which can be overloaded in derived classes */
   virtual ~CanPkg_c();

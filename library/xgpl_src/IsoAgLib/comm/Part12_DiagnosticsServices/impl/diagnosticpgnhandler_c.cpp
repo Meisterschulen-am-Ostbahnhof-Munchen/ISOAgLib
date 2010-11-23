@@ -33,7 +33,7 @@
 // Actually those enums should then just be moved out into its own file
 // then the problems would vanish and it would be clean. But the define is
 // okay for this case here, as the singletons are currently all done by define.
-#define getSingletonVecKey() mrc_identItem.getSingletonVecKey()
+#define getMultitonInst() mrc_identItem.getMultitonInst()
 
 
 namespace __IsoAgLib

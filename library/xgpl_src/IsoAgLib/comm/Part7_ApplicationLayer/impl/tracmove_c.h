@@ -38,7 +38,11 @@ namespace __IsoAgLib {
 
   class TracMove_c : public BaseCommon_c
   {
-    MACRO_MULTITON_CONTRIBUTION(TracMove_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+    MACRO_MULTITON_CONTRIBUTION();
+#else
+    MACRO_SINGLETON_CONTRIBUTION();
+#endif
   public:// Public methods
 
     /** config the TracMove_c object after init -> set pointer to isoName and

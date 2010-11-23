@@ -40,8 +40,12 @@ SensorI_c &getSensorInstance(uint8_t aui8_instance = 0);
   @short Hardware dependent object for hardware independent getting of sensor data.
   @author Dipl.-Inform. Achim Spangler
   */
-class SensorI_c : public ClientBase {
-  MACRO_MULTITON_CONTRIBUTION(SensorI_c, PRT_INSTANCE_CNT);
+class SensorI_c {
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
 public:
   /**
     initialisation for the sensor input management which sets the allowed number

@@ -220,7 +220,7 @@ public:
 
   /** constructor of VtClientServerCommunication_c
    */
-  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId, bool ab_isSlave SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA);
+  VtClientServerCommunication_c (IdentItem_c& mrc_wsMasterIdentItem, IsoTerminal_c &r_isoTerminal, IsoAgLib::iIsoTerminalObjectPool_c& arc_pool, char* apc_versionLabel, uint8_t aui8_clientId, bool ab_isSlave MULTITON_INST_PARAMETER_DEF_WITH_COMMA);
 
 
   /** explicit conversion to reference of interface class type */
@@ -445,7 +445,7 @@ private:
   virtual bool isNetworkMgmt() const { return false; }
 
   /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
-  SINGLETON_PAR_DOT_DEF(mc_data)
+  MULTITON_PAR_DOT_DEF(mc_data)
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */

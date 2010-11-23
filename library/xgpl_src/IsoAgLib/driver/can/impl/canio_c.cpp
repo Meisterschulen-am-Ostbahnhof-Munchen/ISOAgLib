@@ -56,7 +56,7 @@ namespace __IsoAgLib {
  */
 CanIo_c &getCanInstance( uint8_t aui8_instance )
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(CanIo_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(CanIo_c, CAN_INSTANCE_CNT, aui8_instance);
 }
 
 
@@ -576,7 +576,7 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
     #endif
       << int(getBusNumber())
       << ", can instance = "
-      << getSingletonVecKey()
+      << getMultitonInst()
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
@@ -1138,7 +1138,7 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
     }
 #  if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
   INTERNAL_DEBUG_DEVICE << " CanIo_c::FilterBox2MsgObj  - FULL RECONFIGURATION on BUS number = "<< int(getBusNumber())
-    << ", can instance = " << getSingletonVecKey() << INTERNAL_DEBUG_DEVICE_ENDL;
+    << ", can instance = " << getMultitonInst() << INTERNAL_DEBUG_DEVICE_ENDL;
 #  endif
 
   }
@@ -1191,7 +1191,7 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
             // new last element to be configured after actual last element
             pc_search4MsgObjReuse->setFilter(c_tempIdent);
 #  if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-            pc_search4MsgObjReuse->setCanSingletonKey(getSingletonVecKey());
+            pc_search4MsgObjReuse->setCanSingletonKey(getMultitonInst());
 #  endif
             pc_search4MsgObjReuse->insertFilterBox(pc_iterFilterBox);
             pc_search4MsgObjReuse++;
@@ -1206,7 +1206,7 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
             mc_tempObj.insertFilterBox(pc_iterFilterBox);
 
 #  if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
-            mc_tempObj.setCanSingletonKey(getSingletonVecKey());
+            mc_tempObj.setCanSingletonKey(getMultitonInst());
 #  endif
             mc_tempObj.setBusNumber(mui8_busNumber);
 
@@ -1216,7 +1216,7 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
 #    ifdef SYSTEM_PC
             << STL_NAMESPACE::hex
 #    endif
-            << c_tempIdent.ident() << ", can Instance = "<< getSingletonVecKey()
+            << c_tempIdent.ident() << ", can Instance = "<< getMultitonInst()
             << INTERNAL_DEBUG_DEVICE_ENDL;
 #  endif
 

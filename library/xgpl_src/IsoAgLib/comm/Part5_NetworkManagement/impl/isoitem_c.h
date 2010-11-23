@@ -168,10 +168,10 @@ public:
     @param acrc_isoName ISOName code of this item ((deviceClass << 3) | devClInst )
     @param aui8_nr number of this item
     @param aren_status state of this ident (off, claimed address, ...)
-    @param ai_singletonVecKey optional key for selection of IsoAgLib instance (default 0)
+    @param ai_multitonInst optional key for selection of IsoAgLib instance (default 0)
   */
   void set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t aui8_nr,
-           itemState_t aren_status = IState_c::Active, int ai_singletonVecKey = 0 );
+           itemState_t aren_status = IState_c::Active, int ai_multitonInst = 0 );
 
   /** this sets the back-reference to the associated IdentItem if this is a LOCAL Item!
       there's no need to unset the back-reference, because the local/remote state

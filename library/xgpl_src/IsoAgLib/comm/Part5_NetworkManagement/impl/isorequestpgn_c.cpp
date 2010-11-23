@@ -260,7 +260,7 @@ IsoRequestPgn_c::getTaskName() const
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS */
 IsoRequestPgn_c &getIsoRequestPgnInstance(uint8_t aui8_instance)
 {
-  MACRO_MULTITON_GET_INSTANCE_BODY(IsoRequestPgn_c, aui8_instance);
+  MACRO_MULTITON_GET_INSTANCE_BODY(IsoRequestPgn_c, PRT_INSTANCE_CNT, aui8_instance);
 }
 
 } // end of namespace __IsoAgLib

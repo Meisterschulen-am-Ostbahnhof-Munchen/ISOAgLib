@@ -129,7 +129,7 @@ namespace __IsoAgLib
       IsoFilter_s getCurrentFilter (CanCustomer_c &);
 
     /// Using the singletonVecKey from mpc_localIdent (-->IdentItem_c)
-    SINGLETON_PAR_ARR_DEF(mpc_localIdent)
+    MULTITON_PAR_ARR_DEF(mpc_localIdent)
 
 
     private:

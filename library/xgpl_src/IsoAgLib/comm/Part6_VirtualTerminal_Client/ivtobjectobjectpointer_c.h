@@ -33,8 +33,8 @@ public:
   //! Parameter:
   //! @param vtObjectObjectPointerSROM:
   //! @param b_initPointer:
-  void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA) {
-    vtObjectObjectPointer_c::init (vtObjectObjectPointerSROM SINGLETON_VEC_KEY_PARAMETER_USE_WITH_COMMA);
+  void init(const iVtObjectObjectPointer_s* vtObjectObjectPointerSROM MULTITON_INST_PARAMETER_DEF_WITH_COMMA) {
+    vtObjectObjectPointer_c::init (vtObjectObjectPointerSROM MULTITON_INST_PARAMETER_USE_WITH_COMMA);
   }
 
   //  Operation: get_vtObjectObjectPointer_a

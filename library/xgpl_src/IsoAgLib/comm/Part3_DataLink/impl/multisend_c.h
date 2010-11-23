@@ -75,7 +75,11 @@ public:
 */
 class MultiSend_c : public Scheduler_Task_c
 {
-  MACRO_MULTITON_CONTRIBUTION(MultiSend_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
 public:
   enum sendState_t   { AwaitCts, SendData, SendPauseTillCts, AwaitEndofmsgack };
   enum sendSuccess_t { SendSuccess, SendAborted, Running };
@@ -86,7 +90,7 @@ public:
   {
   public:
 
-    SendStream_c (MultiSend_c& arc_multiSend SINGLETON_VEC_KEY_PARAMETER_DEF_WITH_COMMA ) : SINGLETON_PARENT_CONSTRUCTOR mrc_multiSend (arc_multiSend)
+    SendStream_c (MultiSend_c& arc_multiSend MULTITON_INST_PARAMETER_DEF_WITH_COMMA ) : MULTITON_PARENT_CONSTRUCTOR mrc_multiSend (arc_multiSend)
       {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
     /**
       call "init" directly after construction!

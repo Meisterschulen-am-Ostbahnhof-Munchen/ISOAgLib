@@ -40,7 +40,11 @@ typedef struct
     */
 class TracGuidanceCommand_c : public BaseCommon_c
 {
-  MACRO_MULTITON_CONTRIBUTION(TracGuidanceCommand_c, PRT_INSTANCE_CNT);
+#if 1 < PRT_INSTANCE_CNT
+  MACRO_MULTITON_CONTRIBUTION();
+#else
+  MACRO_SINGLETON_CONTRIBUTION();
+#endif
  public:// Public methods
 
   /** config the TracGuidanceCommand_c object after init -> set pointer to isoName and
