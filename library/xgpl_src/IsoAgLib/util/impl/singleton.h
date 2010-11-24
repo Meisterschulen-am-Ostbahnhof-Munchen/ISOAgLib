@@ -134,7 +134,6 @@ public: \
 private: \
   int mi_multitonInst
 
-#if 0 // TODO enable optimization
 /** Like MACRO_MULTITON_CONTRIBUTION except for the special case
  *  SIZE==0 where the member variable mi_multitonInst is omitted for
  *  optimization:
@@ -144,9 +143,6 @@ public: \
   int getMultitonInst() const { return 0; } \
   void setMultitonInst(int ai_instance) { (void)ai_instance; } \
 private:
-#else // non optimized variant
-#define MACRO_SINGLETON_CONTRIBUTION() MACRO_MULTITON_CONTRIBUTION()
-#endif
 
 #define MACRO_MULTITON_INITIALIZATION_LIST_PART() mi_multitonInst(0)
 
