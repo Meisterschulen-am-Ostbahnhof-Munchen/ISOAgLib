@@ -140,9 +140,10 @@ private: \
  */
 #define MACRO_SINGLETON_CONTRIBUTION() \
 public: \
-  int getMultitonInst() const { return 0; } \
+  int getMultitonInst() const { return multitonInst; } \
   void setMultitonInst(int ai_instance) { (void)ai_instance; } \
-private:
+private: \
+  enum { multitonInst }
 
 #define MACRO_MULTITON_INITIALIZATION_LIST_PART() mi_multitonInst(0)
 
