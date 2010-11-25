@@ -16,7 +16,7 @@
 #include <IsoAgLib/isoaglib_config.h>
 #ifdef USE_EEPROM_IO
 
-#include <stdint.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 
 namespace IsoAgLibTutorial {
   class TutorialEeprom_c {
