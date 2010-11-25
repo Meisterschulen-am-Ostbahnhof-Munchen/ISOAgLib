@@ -40,7 +40,7 @@
 #define MULTITON_INST_PARAMETER_USE_WITH_COMMA  , ai_multitonInst
 
 #define MULTITON_PAR_DOT_DEF(PAR)                     int getMultitonInst() const { return PAR.getMultitonInst(); }
-#define MULTITON_PAR_ARR_DEF(PAR)                     int getMultitonInst() const { return PAR->getMultitonInst(); }
+#define MULTITON_PAR_ARR_DEF(PAR)                     int getMultitonInst() const { return (PAR) ? (PAR)->getMultitonInst() : 0; }
 #define MULTITON_PAR_BASE_DEF(PAR)       int getMultitonInst() const { return PAR::getMultitonInst(); }
 #define MULTITON_MC_DATA_ASSIGN                   mc_data.setMultitonInst( getMultitonInst() );
 #define MULTITON_MEMBER_DEF               ClientBase c_clientBase; \
