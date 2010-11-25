@@ -18,15 +18,12 @@
   #include "../../Part6_VirtualTerminal_Client/impl/isoterminal_c.h"
 #endif
 
-#ifdef USE_EEPROM_IO
-#include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
-#endif
-
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 
+#include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 
 namespace __IsoAgLib {
 
@@ -38,11 +35,11 @@ IdentItem_c::~IdentItem_c()
 }
 
 
-IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr)
+IdentItem_c::IdentItem_c ()
   : BaseItem_c (System_c::getTime(), IState_c::IstateNull, -1) // using an INVALID SingletonVecKey as it will be initialized later!
-  , mpc_isoItem (NULL)
-  , mui16_eepromAdr (aui16_eepromAdr)
-  , mui8_globalRunState (GlobalRunStateNeverClaimed)
+  , mpc_isoItem(NULL)
+  , mpc_dataStorageHandler(NULL)
+  , mui8_sa(0x0)
   , mpc_diagnosticPgnHandler (NULL)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
@@ -52,48 +49,12 @@ IdentItem_c::IdentItem_c (uint16_t aui16_eepromAdr)
 
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
-
-  init (NULL, 0xFF, aui16_eepromAdr
-#ifdef USE_WORKING_SET
-        ,-1, NULL // -1 indicates we're no working-set!
-#endif
-      );
+  isoaglib_assert(mpc_diagnosticPgnHandler);
 }
 
 
-IdentItem_c::IdentItem_c(
-  uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst,
-  uint8_t ab_func, uint16_t aui16_manufCode, uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr,
-  uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf
-  #ifdef USE_WORKING_SET
-  ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
-  #endif
-)
-  : BaseItem_c (System_c::getTime(), IState_c::IstateNull, -1) // using an INVALID SingletonVecKey as it will be initialized later!
-  , mpc_isoItem (NULL)
-  , mui16_eepromAdr (0xFFFF)
-  , mui8_globalRunState (GlobalRunStateNeverClaimed)
-  , mpc_diagnosticPgnHandler(NULL)
-#ifdef USE_WORKING_SET
-  , mpvec_slaveIsoNames (NULL)
-#endif
-  , i32_lastIsoSaRequestForThisItem(-1)
-  , mb_readyForActivation( false )
-{
-  mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
-
-  init (aui8_indGroup, aui8_devClass, aui8_devClassInst, ab_func, aui16_manufCode, aui32_serNo,
-        aui8_preferredSa, aui16_eepromAdr, ab_funcInst, ab_ecuInst, ab_selfConf
-        #ifdef USE_WORKING_SET
-        ,ai8_slaveCount, apc_slaveIsoNameList
-        #endif
-       );
-}
-
-
-// private
 void
-IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr
+IdentItem_c::init ( const IsoName_c& arc_isoNameParam, IsoAgLib::iIdentDataStorage_c& apc_claimDataStorage
   #ifdef USE_WORKING_SET
   ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
   #endif
@@ -111,102 +72,12 @@ IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16
     #endif
   }
 
-  // set all other member variables depending on the EEPROM-Address parameter/member variable
-  mui16_eepromAdr = aui16_eepromAdr;
-
-  /// Default to true for now. This'll be just set FALSE when initialization is postponed by the user!
-  mb_readyForActivation = true;
-
-  bool b_useParameters;
-  if (aui16_eepromAdr == 0xFFFF)
-  { // Not using EEPROM
-    b_useParameters = true;
-  }
-  else
-  { // Using EEPROM
-   #ifdef USE_EEPROM_IO
-    /// FIRST, default to EEPROM values
-    EepromIo_c& rc_eeprom = getEepromInstance();
-    uint8_t p8ui8_isoNameEeprom [8];
-    rc_eeprom.setg (mui16_eepromAdr);
-    rc_eeprom >> mui8_globalRunState >> mui8_preferredSa;
-    rc_eeprom.readString (p8ui8_isoNameEeprom, 8);
-    mc_isoName = IsoName_c (p8ui8_isoNameEeprom);
-
-#if DEBUG_NETWORK_MANAGEMENT
-      INTERNAL_DEBUG_DEVICE << "Read global run state " << (int)mui8_globalRunState << " from EEPROM.";
-#endif
-
-    // use fallback to free definition, when the EEPROM has only invalid SA
-    if ( mui8_preferredSa == 0xFF ) mui8_preferredSa = 0xFE;
-
-    if (apc_isoNameParam == NULL)
-    { // no parameter given, so don't even try to figure out if we'd want to use them!
-      b_useParameters = false;
-    }
-    else
-    { /// SECOND, decide on the GlobalRunState and validity of the EEPROM values
-      if (mui8_globalRunState == GlobalRunStateNeverClaimed)
-      { // FIRST ECU power-up, try with given program parameters (eeprom is only for storage of claimed iso-name!)
-        b_useParameters = true;
-
-#if DEBUG_NETWORK_MANAGEMENT
-      INTERNAL_DEBUG_DEVICE << " GlobalRunStateNeverClaimed" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-      }
-      else if (mui8_globalRunState == GlobalRunStateAlreadyClaimed)
-      { // FURTHER ECU power-up, use claimed name stored in EEPROM
-        // but only if not a new firmware was flashed with new ISO-Name and the EEPROM was NOT reset!
-
-#if DEBUG_NETWORK_MANAGEMENT
-      INTERNAL_DEBUG_DEVICE << " GlobalRunStateAlreadyClaimed" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-
-        if (mc_isoName.isEqualRegardingNonInstFields (*apc_isoNameParam))
-        { // no firmware change, so go ahead!
-          b_useParameters=false; // use EEPROM values - fine...
-        }
-        else
-        { // firmware changed, we have different parameter-IsoName as in EEPROM, so use the parameters instead!
-          b_useParameters=true; // override with most likely newer firmware(=parameter)
-        }
-      }
-      else
-      { // Illegal value in EEPROM
-        b_useParameters=true;
-
-#if DEBUG_NETWORK_MANAGEMENT
-      INTERNAL_DEBUG_DEVICE << " Illegal value in EEPROM." << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-      }
-    }
-   #else
-    // ERROR: Using EEPROM Address but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!
-    getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
-    #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
-    INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c() construction but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-    MACRO_ISOAGLIB_ABORT();
-    #else
-    b_useParameters = true; // fallback because we can't read out the eeprom!
-    #endif
-   #endif
-  }
-
-  /// THIRD, use parameters if SECOND told us to do OR we were running without EEPROM anyway
-  if (b_useParameters)
-  {
-    if (apc_isoNameParam == NULL)
-    { /// NO Parameter-IsoName is given AND NO EEPROM address given, so initialize this IdentItem empty to be initialized later with "init"
-      mc_isoName.setUnspecified();
-      mb_readyForActivation = false; // only case where we don't start the address-claim procedure!
-    }
-    else
-    { /// Parameter-IsoName is given and should be used: use it!
-      mc_isoName = *apc_isoNameParam;
-    }
-    mui8_preferredSa = aui8_preferredSa; // 0xFF in case of "mc_isoName = IsoName_c::IsoNameUnspecified;"
-    mui8_globalRunState = GlobalRunStateNeverClaimed; // 0
-  }
+  // store claim data Storage handler for further usage
+  mpc_dataStorageHandler = &apc_claimDataStorage;
+  // get SA from application
+  mui8_sa = mpc_dataStorageHandler->loadSa();
+  // store our configured iso identity
+  mc_isoName = arc_isoNameParam;
 
 #ifdef USE_WORKING_SET
   /// store SLAVE ISONAMEs
@@ -234,6 +105,7 @@ IdentItem_c::init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16
     }
   }
 #endif
+  mb_readyForActivation = true;
 }
 
 
@@ -277,27 +149,6 @@ IdentItem_c::deactivate()
     mpvec_slaveIsoNames = NULL;
   }
 #endif
-}
-
-
-void
-IdentItem_c::init(
-  uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-  uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr, uint8_t ab_funcInst, uint8_t ab_ecuInst, bool ab_selfConf
-  #ifdef USE_WORKING_SET
-  ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
-  #endif
-  )
-{
-  // temporary to assemble the single parameters to one IsoName so it gets better handled in the following function call
-  IsoName_c c_isoNameParam (ab_selfConf, aui8_indGroup, aui8_devClass, aui8_devClassInst,
-                            ab_func, aui16_manufCode, aui32_serNo, ab_funcInst, ab_ecuInst);
-
-  init (&c_isoNameParam, aui8_preferredSa, aui16_eepromAdr
-        #ifdef USE_WORKING_SET
-        ,ai8_slaveCount, apc_slaveIsoNameList
-        #endif
-       );
 }
 
 
@@ -366,25 +217,18 @@ IdentItem_c::timeEvent( void )
 bool
 IdentItem_c::timeEventPreAddressClaim( void )
 {
-  bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
-  if (cb_sent)
-    updateLastIsoSaRequestForThisItem();
-
-  bool b_isoNameSuccessfulUnified = false;
-  // check if isoName is unique and change if needed (to avoid adress conflict on Scheduler_c BUS) and allowed!
-
-  // fixIsoName=true: no unifying possible, calling "unifyIsoISOName" only to see if the isoname exists in the monitor yet or not...
-  const bool cb_fixIsoName = (mui8_globalRunState == GlobalRunStateAlreadyClaimed); // If already claimed with this IsoName, we can't change away!
-  b_isoNameSuccessfulUnified = getIsoMonitorInstance4Comm().unifyIsoISOName (mc_isoName, cb_fixIsoName);
-
-  if (b_isoNameSuccessfulUnified)
+  if( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( mc_isoName, true ) ) 
   {
     // insert element in list
-    mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_preferredSa,
+    mpc_isoItem = getIsoMonitorInstance4Comm().insertIsoMember (isoName(), mui8_sa,
       IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
 
     if (mpc_isoItem != NULL)
     {
+      bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
+      if (cb_sent)
+        updateLastIsoSaRequestForThisItem();
+
       // register the new item for ISORequestPGN
       getIsoRequestPgnInstance4Comm().registerLocalDevice( isoName() );
 
@@ -394,10 +238,9 @@ IdentItem_c::timeEventPreAddressClaim( void )
 
       mpc_isoItem->timeEvent();
     }
+    setItemState(IState_c::AddressClaim);
   }
 
-  // set ident_item state to claim address
-  if (b_isoNameSuccessfulUnified) setItemState(IState_c::AddressClaim);
   return true;
 }
 
@@ -431,40 +274,29 @@ IdentItem_c::timeEventActive( void )
   /// If we're in Activetimeevent, we always do have a valid mpc_isoItem!
   if (mpc_isoItem->itemState(IState_c::Local))
   {
+    bool b_storeAddress = false;
     bool b_oldAddressClaimState = mpc_isoItem->itemState(IState_c::ClaimedAddress);
 
     mpc_isoItem->timeEvent();
     // check if IsoItem_c reports now to have finished address claim and store it in Ident_Item
-    if ( (mpc_isoItem->itemState(IState_c::ClaimedAddress))
-      && (!b_oldAddressClaimState) )
-    { // item changed from address claim to claimed address state
-      // -> create local filter for processs data
-      setItemState(IState_c::ClaimedAddress);
+    if(mpc_isoItem->itemState(IState_c::ClaimedAddress)) {
 
-      // set global run state because address claimed already
-      mui8_globalRunState = GlobalRunStateAlreadyClaimed;
+      if(!b_oldAddressClaimState) {
+        // item changed from address claim to claimed address state
+        // -> create local filter for processs data
+        setItemState(IState_c::ClaimedAddress);
+        b_storeAddress = true;
+      }
 
-#if DEBUG_NETWORK_MANAGEMENT
-      INTERNAL_DEBUG_DEVICE << "Write global run state " << (int)mui8_globalRunState << " to EEPROM." << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
+      // check for a changed SA - there's no state change cause of address conflict handling
+      if((mpc_isoItem->nr() != mui8_sa)) {
+        mui8_sa = mpc_isoItem->nr();
+        b_storeAddress = true;
+      }
 
-      if (mui16_eepromAdr != 0xFFFF)
-      {
-        #ifdef USE_EEPROM_IO
-        const uint8_t* pcui8_isoName = mc_isoName.outputString();
-        EepromIo_c& rc_eeprom = getEepromInstance();
-        rc_eeprom.setp (mui16_eepromAdr);
-        rc_eeprom << mui8_globalRunState << mui8_preferredSa;
-        rc_eeprom.writeString (pcui8_isoName, 8);
-
-        #else
-        // ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-        getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Eeprom );
-        #if DEBUG_NETWORK_MANAGEMENT && defined(SYSTEM_PC)
-        INTERNAL_DEBUG_DEVICE << "ERROR: Using EEPROM Address in IdentItem_c()'s timeEventActive but IsoAgLib is NOT compiled with USE_EEPROM_IO !!!!" << INTERNAL_DEBUG_DEVICE_ENDL;
-        MACRO_ISOAGLIB_ABORT();
-        #endif
-        #endif
+      isoaglib_assert(mpc_dataStorageHandler);
+      if(b_storeAddress) {
+        mpc_dataStorageHandler->storeSa(mui8_sa);
       }
     }
   }
@@ -478,7 +310,7 @@ IdentItem_c::timeEventActive( void )
 
     if (cb_isoNameStillAvailable)
     { // insert element in list
-      mpc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), mui8_preferredSa,
+      mpc_isoItem =  rc_isoMonitor.insertIsoMember(isoName(), mui8_sa,
         IState_c::itemState_t(IState_c::Local | IState_c::PreAddressClaim), this, false);
       if ( NULL != mpc_isoItem )
       {

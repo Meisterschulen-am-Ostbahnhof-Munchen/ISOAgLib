@@ -8,7 +8,7 @@ PROJECT_AUTHOR_EMAIL="f.obenhuber@osb-ag.de"
 ISO_AG_LIB_PATH="../.."
 
 REL_APP_PATH="tutorial/src/ecu_display tutorial/src/common"
-APP_SRC_FILE="ecu_main.cpp ecu_display.cpp component_tecu.cpp component_timepos.cpp component_vtclient.cpp"
+APP_SRC_FILE="*.cpp"
 PRJ_ISO_TERMINAL_OBJECT_SELECTION1="component_vtclient_pool/tutorialDisplay-objectselection.inc"
 PRJ_DEFINES="CAN_FIFO_EXPONENT_BUFFER_SIZE=6"
 PRJ_INCLUDE_PATH="tutorial/src/common"

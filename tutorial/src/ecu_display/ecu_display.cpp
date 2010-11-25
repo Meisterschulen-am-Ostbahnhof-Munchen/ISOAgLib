@@ -6,6 +6,7 @@
  */
 
 #include "tutorial_settings.h"
+#include "tutorial_identdatastorage.h"
 
 // components
 #include "component_vtclient.h"
@@ -18,33 +19,33 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
 
 
-IsoAgLib::iIdentItem_c* p_ident;
-IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display;
-IsoAgLibTutorialDisplay::TutorialDisplayTecu_c* p_tecu;
-IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c* p_timepos;
+IsoAgLib::iIdentItem_c* p_ident = 0;
+IsoAgLibTutorial::tutorialIdentDataStorage_c* p_identDataStorage = 0;
+IsoAgLibTutorialDisplay::TutorialDisplay_c* p_display = 0;
+IsoAgLibTutorialDisplay::TutorialDisplayTecu_c* p_tecu = 0;
+IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c* p_timepos = 0;
 
 /* ISO identification */
-static const uint8_t scui8_indGroup = 2;
+static const uint16_t scui16_manfCode = 0x7FF;
+static const uint32_t scui32_serNo = 27;
 static const uint8_t scui8_devClass = 5;
-static const uint8_t sci8_devClassInst = 0;
-static const uint8_t sci8_func = 27;
-static const uint16_t sci16_manfCode = 0x7FF;
-static const uint32_t sci32_serNo = 27;
-static const uint32_t sci32_prefSA = 254;
-static const uint32_t sci32_eepromAddr = 0x100;
-static const uint8_t sci8_funcInst = 0;
-static const uint8_t sci8_ecuInst = 1;
-static const uint8_t sci8_selfConf = true;
-static const uint8_t sci8_master = 0;
+static const uint8_t scui8_devClassInst = 0;
+static const uint8_t scui8_ecuInst = 1;
+static const uint8_t scui8_func = 27;
+static const uint8_t scui8_funcInst = 0;
+static const uint8_t scui8_indGroup = 2;
+static const uint8_t scui8_selfConf = 1;
 
+static const uint16_t scui16_eepromBaseAddress = 0x80;
 
 bool ecuMain() {
 
+  p_identDataStorage = new IsoAgLibTutorial::tutorialIdentDataStorage_c( scui16_eepromBaseAddress );
   p_tecu = new IsoAgLibTutorialDisplay::TutorialDisplayTecu_c();
   p_timepos = new IsoAgLibTutorialDisplay::TutorialDisplayTimePos_c();
   p_display = new IsoAgLibTutorialDisplay::TutorialDisplay_c();
 
-  if( ! p_display || ! p_timepos || ! p_tecu ) {
+  if( ! p_display || ! p_timepos || ! p_tecu || ! p_identDataStorage ) {
     return false;
   }
 
@@ -54,19 +55,18 @@ bool ecuMain() {
 
   p_ident = new IsoAgLib::iIdentItem_c();
 
-  p_ident->init(
-    scui8_indGroup,
-    scui8_devClass,
-    sci8_devClassInst,
-    sci8_func,
-    sci16_manfCode,
-    sci32_serNo,
-    sci32_prefSA,
-    sci32_eepromAddr,
-    sci8_funcInst,
-    sci8_ecuInst,
-    sci8_selfConf,
-    sci8_master );
+  const IsoAgLib::iIsoName_c c_isoname (
+      scui8_selfConf,
+      scui8_indGroup,
+      scui8_devClass,
+      scui8_devClassInst,
+      scui8_func,
+      scui16_manfCode,
+      scui32_serNo,
+      scui8_funcInst,
+      scui8_ecuInst );
+
+  p_ident->init( c_isoname, *p_identDataStorage, 0 );
 
   p_ident->setEcuIdentification( "PartNr D", "Serial 127", "Frontside", "Display", "OSB AG" ); // dummy values
   p_ident->setSwIdentification( "IsoAgLib Display ECU Tutorial*" );
@@ -107,6 +107,7 @@ bool ecuShutdown() {
   IsoAgLib::getIisoMonitorInstance().deregisterIdentItem( *p_ident );
 
   delete p_ident;
+  delete p_identDataStorage;
 
   IsoAgLib::getIIsoBusInstance().close();
 

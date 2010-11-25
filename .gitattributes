@@ -622,6 +622,10 @@ tutorial/compiler_projects/conf_ecu_display_win32 -text
 tutorial/compiler_projects/conf_ecu_display_x86linux -text
 tutorial/compiler_projects/update_makefile.sh -text
 tutorial/src/common/ecu_main.cpp -text
+tutorial/src/common/tutorial_eeprom.cpp -text
+tutorial/src/common/tutorial_eeprom.h -text
+tutorial/src/common/tutorial_identdatastorage.cpp -text
+tutorial/src/common/tutorial_identdatastorage.h -text
 tutorial/src/common/tutorial_settings.h -text
 tutorial/src/ecu_display/_generate_vtclient_pool.bat -text
 tutorial/src/ecu_display/_generate_vtclient_pool.sh -text

@@ -360,16 +360,6 @@ public:
   */
   uint8_t unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveConflict);
 
-  /**
-    change isoName if actual isoName isn't unique
-    (search possible free instance to given device class)
-    possible errors:
-      * Err_c::busy no other device class inst code leads to unique ISOName code
-    @param rc_isoName reference to ISOName var (is changed directly if needed!!)
-    @return true -> referenced ISOName is now unique
-  */
-  bool unifyIsoISOName (IsoName_c& rc_isoName, bool ab_dontUnify);
-
   /** deliver timestamp of last ISO request for SA claim msg
     @return time of last Request PG for Adress Claim on BUS
   */

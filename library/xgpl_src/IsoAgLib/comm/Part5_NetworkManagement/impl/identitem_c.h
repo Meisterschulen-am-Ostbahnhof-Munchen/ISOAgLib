@@ -22,6 +22,10 @@
 #include <IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h>
 #include <IsoAgLib/driver/system/isystem_c.h>
 
+// forward declaration of iIdentDataStorage_c - no internal definition
+namespace IsoAgLib {
+  class iIdentDataStorage_c;
+};
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -31,9 +35,8 @@ namespace __IsoAgLib {
   new instances start in prepare address claim state and stay there for a random and serialNo dependent time;
   then they are inserted as announcing member in the monitoring list and start announcing;
 
-  If the IsoAgLib shall not start immediately with address claim on definition of the variable
-  ( e.g. if some data must be read for definition of local identity ),
-  the address claim can be started later with explicit call of iIdentItem_c::start( ).
+  IsoAgLib starts the address claim procedure after the init function is called and the iIdentItem
+  is registered at iIsoMonitor with registerIdentItem().
 
   The IsoAgLib backend is responsible for answering all requests like
   RequestForClaimedSourceAdress ( ISO 11783 )
@@ -49,68 +52,24 @@ class IdentItem_c : public BaseItem_c
 {
 
 public: // methods
-
-  /** A) default constructor:  will not do anything, create a not-yet-initialized identity. use "init" afterwards!
-    * B) EEPROM address given: will read WantedSA/ISOName from EEPROM and start address claim for this identity
-    * @param aui16_eepromAdr Address of EEPROM where the following 10 bytes have to be stored stored:
-                             8 byte ISO-Name stored in LITTLE ENDIAN
-                             1 byte preferred/last-used SA (0xFE for no preference)
-                             1 byte flags, set to 0x00 initially (so the ISO-Name has a chance to change some of its
-                                    instance(s) to avoid ISO-Name-conflicts on the bus BEFORE doing its initial address-claim
-    */
-  IdentItem_c (uint16_t aui16_eepromAdr = 0xFFFF);
-
-  /** constructor for ISO identity, which starts address claim for this identity
-      @param aui8_indGroup        select the industry group, 2 == agriculture
-      @param ab_func              function code of the member (25 = network interconnect)
-      @param aui16_manufCode      11bit manufactor code
-      @param aui32_serNo          21bit serial number
-      @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
-                                  SA for self conf ISO device) (default 254 for no special wish)
-      @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
-                                  (default 0xFFFF for NO EEPROM store)
-      @param ab_funcInst          function instance of this member (default 0)
-      @param ab_ecuInst           ECU instance of this member (default 0)
-      @param ab_selfConf          true -> this member as a self configurable source adress
-      @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
-                                  in case an address claim for the slave devices shall be sent by this ECU, they
-                                  must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
-      @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
-                                  IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    */
-  IdentItem_c(
-    uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t aui8_preferredSa = 254, uint16_t aui16_eepromAdr = 0xFFFF, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true
-    #ifdef USE_WORKING_SET
-    ,int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL
-    #endif
-    );
+  /** default constructor */
+  IdentItem_c ();
 
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
-      @param aui8_indGroup        select the industry group, 2 == agriculture
-      @param ab_func              function code of the member (25 = network interconnect)
-      @param aui16_manufCode      11bit manufactor code
-      @param aui32_serNo          21bit serial number
-      @param aui8_preferredSa     preferred source adress (SA) of the ISO item (fixed SA or last time
-                                  SA for self conf ISO device) (default 254 for no special wish)
-      @param aui16_eepromAdr      EEPROM adress, where the used IsoName / SA / flags are stored
-                                  (default 0xFFFF for NO EEPROM store)
-      @param ab_funcInst          function instance of this member (default 0)
-      @param ab_ecuInst           ECU instance of this member (default 0)
-      @param ab_selfConf          defaults to true -> this member as a self configurable source adress
-      @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
+      @param arc_isoNameParam     ISONAME parameter for this ident instance
+      @param arc_dataStorage      ident data storage handler implementation of iIdentDataStorage_c
+      @param ai8_slaveCount       amount of attached slave devices; default 0 == master;
                                   in case an address claim for the slave devices shall be sent by this ECU, they
                                   must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
       @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     */
-  void init(
-    uint8_t aui8_indGroup, uint8_t aui8_devClass, uint8_t aui8_devClassInst, uint8_t ab_func, uint16_t aui16_manufCode,
-    uint32_t aui32_serNo, uint8_t aui8_preferredSa, uint16_t aui16_saEepromAdr, uint8_t ab_funcInst = 0, uint8_t ab_ecuInst = 0, bool ab_selfConf = true
+  void init ( const IsoName_c& arc_isoNameParam, IsoAgLib::iIdentDataStorage_c& arc_dataStorage
     #ifdef USE_WORKING_SET
-    ,int8_t ai8_slaveCount = -1, const IsoName_c* apc_slaveIsoNameList = NULL
+    ,int8_t ai8_slaveCount = 0, const IsoName_c* apc_slaveIsoNameList = NULL
     #endif
-    );
+  );
+
 
   /** IsoMonitor uses this function to activate/start this Item
     @param ai_multitonInst Activate this Item on the given IsoBus
@@ -286,12 +245,6 @@ protected: // methods
 
 private: // methods
 
-  void init (IsoName_c* apc_isoNameParam, uint8_t aui8_preferredSa, uint16_t aui16_eepromAdr
-    #ifdef USE_WORKING_SET
-    ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
-    #endif
-  );
-
   /** HIDDEN! copy constructor for IdentItem_c
       NEVER copy a IdentItem_c around!!!!
       ONLY copy pointers to the wanted instance!!!
@@ -312,19 +265,16 @@ private: // methods
 
 private: // attributes
 
-  enum globalRunState_en { GlobalRunStateNeverClaimed = 0,
-                           GlobalRunStateAlreadyClaimed = 1 };
-
   /** pointer to associated IsoItem */
   IsoItem_c* mpc_isoItem;
 
-  /** "pointer" to EEPROM where the following block of data (10 bytes) are stored/retrieved */
-  uint16_t mui16_eepromAdr;
 
-  /** Global Run State of this identity */
-  uint8_t mui8_globalRunState; // use globalRunState_en, but as it's ui8 we cannot directly use this type!
-  /** Preferred-SA of this identity */
-  uint8_t mui8_preferredSa;
+  /** pointer to a valid claim data Storage handler. If 0 not used. */
+  IsoAgLib::iIdentDataStorage_c* mpc_dataStorageHandler; 
+
+  /** configured/retrived SA of this identity */
+  uint8_t mui8_sa;
+
   /** IsoName code of this identity */
   IsoName_c mc_isoName;
 
@@ -343,6 +293,7 @@ private: // attributes
 
   int32_t i32_lastIsoSaRequestForThisItem;
 
+  // protect this ident from beeing initialized more than once
   bool mb_readyForActivation;
 };
 

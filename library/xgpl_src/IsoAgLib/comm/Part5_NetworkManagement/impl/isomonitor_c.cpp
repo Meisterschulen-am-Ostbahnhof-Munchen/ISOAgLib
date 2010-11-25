@@ -949,53 +949,6 @@ bool IsoMonitor_c::deleteIsoMemberNr(uint8_t aui8_nr)
 }
 
 
-/**
-  change isoName if actual isoName isn't unique
-  (search possible free instance to given device class)
-  possible errors:
-    * busy no other device class inst code leads to unique ISOName code
-  @param rc_isoName reference to ISOName var (is changed directly if needed!!)
-  @param ab_dontUnify don't touch the IsoName because it most likely has already (at least once) claimed
-                      an SA with this IsoName, so it can't change away, it has to keep its identity
-  @return true -> referenced ISOName is now unique
-*/
-bool IsoMonitor_c::unifyIsoISOName (IsoName_c& rc_isoName, bool ab_dontUnify)
-{
-  bool b_result = true;
-  if (existIsoMemberISOName (rc_isoName))
-  {
-    if (ab_dontUnify)
-    { // if we shouldn't unify, we're lost
-      b_result = false;
-    }
-    else
-    { // we can try to unify, so search now with changed instances if one is available
-      IsoName_c c_tempISOName = rc_isoName;
-
-      // store the pos part of given isoName
-      int16_t tempPos = (rc_isoName.devClassInst()),
-              diff = 1;
-
-      for (; diff < 16; diff++)
-      {
-        c_tempISOName.setDevClassInst( (tempPos + diff) & 0x0F ); // modulo through all 16 instances
-        if (!(existIsoMemberISOName(c_tempISOName)))
-        { // new instance can't be found in list -> it is unique
-          rc_isoName.setDevClassInst( (tempPos + diff) & 0x0F );
-          break;
-        }
-      }
-      if (diff == 16)
-      { // we tried all 16, but none was available!
-        b_result = false;
-      }
-    } // else: if we can't unify, we're lost here as such an IsoName is already claimed on the bus
-  } // else: IsoName doesn't exist --> fine!
-
-  if (!b_result) getILibErrInstance().registerError( iLibErr_c::Busy, iLibErr_c::System );
-  return b_result;
-}
-
 /** check if SA of an announcing IsoItem_c is unique and deliver
   another free SA if not yet unique (else deliver its actual SA if unique yet)
   @param apc_isoItem pointer to announcing IsoItem_c

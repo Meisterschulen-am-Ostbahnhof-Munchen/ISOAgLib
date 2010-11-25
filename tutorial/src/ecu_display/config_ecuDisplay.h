@@ -151,6 +151,9 @@
 /// define default max number for CAN Msg-Obj used for IsoAgLib
 // #define CONFIG_CAN_DEFAULT_MAX_OBJ_NR 13
 
+/// --> discard send-queue and continue without sending.
+// #define CONFIG_CAN_BLOCK_TIME 10
+
 /// YES | NO for EEPROM editor access via CAN
 // #define CONFIG_EEPROM_USE_CAN_EDITOR_YN NO
 
