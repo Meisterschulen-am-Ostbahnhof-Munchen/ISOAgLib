@@ -148,9 +148,11 @@ private: \
 #define MACRO_MULTITON_INITIALIZATION_LIST_PART() mi_multitonInst(0)
 
 #define MACRO_MULTITON_GET_INSTANCE_BODY(T, SIZE, instance)  \
-  static T st_instances[SIZE]; \
-  st_instances[instance].setMultitonInst(instance); \
-  return st_instances[instance]
+  static T *sarrpt_instances[SIZE]; \
+  T *&rpt_instance = sarrpt_instances[instance]; \
+  if (0 == rpt_instance) \
+    rpt_instance = new T; \
+  return *rpt_instance
 
 // be backward compatible:
 #define SINGLETON_VEC_KEY_PARAMETER_DEF MULTITON_INST_PARAMETER_DEF
