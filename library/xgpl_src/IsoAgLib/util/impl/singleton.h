@@ -153,7 +153,6 @@ private: \
 namespace __IsoAgLib
 {
 union MaxAlign_u {
-  long long lli_dummy;
   long li_dummy;
   void *p_dummy;
 };
