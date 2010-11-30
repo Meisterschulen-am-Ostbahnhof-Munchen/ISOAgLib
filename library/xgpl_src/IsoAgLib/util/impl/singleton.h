@@ -147,9 +147,9 @@ private: \
 
 #define MACRO_MULTITON_INITIALIZATION_LIST_PART() mi_multitonInst(0)
 
-#define DO_REPLACEMENT_NEW_ON_STATIC_BUFFER 1
+#define DO_PLACEMENT_NEW_ON_STATIC_BUFFER 1
 
-#if DO_REPLACEMENT_NEW_ON_STATIC_BUFFER
+#if DO_PLACEMENT_NEW_ON_STATIC_BUFFER
 namespace __IsoAgLib
 {
 union MaxAlign_u {
@@ -157,24 +157,24 @@ union MaxAlign_u {
   void *p_dummy;
 };
 } // namespace __IsoAgLib
-#  define DEFINE_STATIC_BUFFER_FOR_REPLACEMENT_NEW(T, SIZE) \
+#  define DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE) \
     static union { \
       __IsoAgLib::MaxAlign_u mu_dummy; \
       char mc_mem[SIZE * sizeof(T)]; \
     } su_place
-#  define STATIC_BUFFER_ARGUMENT_FOR_REPLACEMENT_NEW(T, instance) \
+#  define STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance) \
   (su_place.mc_mem + (instance * sizeof(T)))
-#else //DO_REPLACEMENT_NEW_ON_STATIC_BUFFER
-#  define DEFINE_STATIC_BUFFER_FOR_REPLACEMENT_NEW(T, SIZE) (void)0
-#  define STATIC_BUFFER_ARGUMENT_FOR_REPLACEMENT_NEW(T, instance)
-#endif //DO_REPLACEMENT_NEW_ON_STATIC_BUFFER
+#else //DO_PLACEMENT_NEW_ON_STATIC_BUFFER
+#  define DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE) (void)0
+#  define STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance)
+#endif //DO_PLACEMENT_NEW_ON_STATIC_BUFFER
 
 #define MACRO_MULTITON_GET_INSTANCE_BODY(T, SIZE, instance)  \
   static T *sarrpt_instances[SIZE]; \
   T *&rpt_instance = sarrpt_instances[instance]; \
   if (0 == rpt_instance) { \
-    DEFINE_STATIC_BUFFER_FOR_REPLACEMENT_NEW(T, SIZE); \
-    rpt_instance = new STATIC_BUFFER_ARGUMENT_FOR_REPLACEMENT_NEW(T, instance) T; \
+    DEFINE_STATIC_BUFFER_FOR_PLACEMENT_NEW(T, SIZE); \
+    rpt_instance = new STATIC_BUFFER_ARGUMENT_FOR_PLACEMENT_NEW(T, instance) T; \
   } \
   return *rpt_instance
 
