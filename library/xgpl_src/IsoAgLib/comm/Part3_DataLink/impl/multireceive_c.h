@@ -124,7 +124,6 @@ class MultiReceive_c : public Scheduler_Task_c
   MACRO_SINGLETON_CONTRIBUTION();
 #endif
 public:
-  MultiReceive_c();
   ~MultiReceive_c() {}
 
   //  Operation: processMsg
@@ -461,6 +460,8 @@ private:
   int32_t mi32_timePeriodForActiveStreams;
   Handler_t mt_handler;
   Customer_t mt_customer;
+private:
+  MultiReceive_c();
   friend MultiReceive_c &getMultiReceiveInstance( uint8_t aui8_instance );
 }; // ~X2C
 

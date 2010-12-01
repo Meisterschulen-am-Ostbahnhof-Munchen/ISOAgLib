@@ -367,7 +367,7 @@ typedef struct
       NEVER instantiate a variable of type TracPTO_c within application
       only access TracPTO_c via getTracPTOInstance() or getTracPTOInstance( int riLbsBusNr ) in case more than one BUS is used for IsoAgLib
     */
-    TracPTO_c() {};
+    TracPTO_c() {}
 
     /** check if filter boxes shall be created - create only filters based
         on active local idents which has already claimed an address

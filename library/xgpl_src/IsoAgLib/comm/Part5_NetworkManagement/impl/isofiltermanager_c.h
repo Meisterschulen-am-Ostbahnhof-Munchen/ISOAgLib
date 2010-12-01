@@ -57,9 +57,6 @@ public:
 
   bool removeIsoFilter (const IsoFilter_s& rrefcs_isoFilter);
 
-  /** constructor for IsoFilterManager_c */
-  IsoFilterManager_c (void);
-
   virtual bool timeEvent( void );
   void close( void );
 #if DEBUG_SCHEDULER
@@ -107,10 +104,15 @@ private:
    */
   void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t /*at_action*/, IsoItem_c const& /*acrc_isoItem*/);
 
-private: // Private attributes
+private:
+  /** constructor for IsoFilterManager_c */
+  IsoFilterManager_c();
+
+  // Private attributes
   IsoFilterBox_vec mvec_isoFilterBox;
 
   Handler_t mt_handler;
+
   friend IsoFilterManager_c &getIsoFilterManagerInstance (uint8_t aui8_instance);
 };
 

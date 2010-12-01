@@ -102,6 +102,8 @@ public:
 
   bool deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c& ar_customer)
   { return getCanInstance4Comm().deleteAllFiltersForCustomer (ar_customer); }
+private:
+  IsoBus_c() {}
   friend IsoBus_c &getIsoBusInstance(uint8_t aui8_instance);
 };
 
