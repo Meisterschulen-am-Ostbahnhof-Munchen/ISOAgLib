@@ -64,9 +64,15 @@ namespace HAL
   */
   inline int16_t init_rs232(uint32_t baudrate,uint8_t bMode,uint8_t bStoppbits,bool bitSoftwarehandshake, uint8_t aui8_channel)
     { isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::init_rs232(baudrate,bMode,bStoppbits,bitSoftwarehandshake); }
-	/** close the RS232 interface. */
-	inline int16_t close_rs232(uint8_t aui8_channel)
-		{ isoaglib_assert(0 == aui8_channel); (void)aui8_channel; return __HAL::config_rs232_rx_obj(0,NULL); return __HAL::config_rs232_tx_obj(0,NULL,NULL); }
+  /** close the RS232 interface. */
+  inline int16_t close_rs232(uint8_t aui8_channel)
+  {
+    isoaglib_assert(0 == aui8_channel);
+    (void)aui8_channel;
+    int16_t const cb_rx = __HAL::config_rs232_rx_obj(0, NULL);
+    int16_t const cb_tx = __HAL::config_rs232_tx_obj(0, NULL, NULL);
+    return cb_rx ? cb_rx : cb_tx;
+  }
   /**
     set the RS232 Baudrate
     @param baudrate wanted baudrate

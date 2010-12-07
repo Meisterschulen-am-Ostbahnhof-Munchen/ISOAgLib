@@ -283,7 +283,7 @@ bool RS232IO_c::setRecBufferSize(uint16_t aui16_bufferSize)
   */
   RS232IO_c& RS232IO_c::operator<<(const char *const apc_data)
   {
-    send( (uint8_t*)(apc_data), (uint8_t)strlen( apc_data ) );
+    send( (uint8_t*)(apc_data), (uint8_t)CNAMESPACE::strlen( apc_data ) );
     return *this;
   }
 
