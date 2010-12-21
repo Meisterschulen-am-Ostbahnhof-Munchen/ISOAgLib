@@ -294,6 +294,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             }
           }
           setUpdateTime( ci32_now );
+          setSelectedDataSourceISOName( rcc_tempISOName );
         }
         else
         { // there is a sender conflict
