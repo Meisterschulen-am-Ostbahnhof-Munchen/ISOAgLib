@@ -376,6 +376,7 @@ void TracMove_c::singletonInit()
             }
           }
           setUpdateTime( ci32_now );
+          setSelectedDataSourceISOName( rcc_tempISOName );
         }
         else
         { // there is a sender conflict
