@@ -251,6 +251,9 @@ struct transferBuf_s {
     } s_data;
 #endif
   };
+  transferBuf_s() {
+    CNAMESPACE::memset(this, 0, sizeof *this);
+  }
 };
 
 // client specific data

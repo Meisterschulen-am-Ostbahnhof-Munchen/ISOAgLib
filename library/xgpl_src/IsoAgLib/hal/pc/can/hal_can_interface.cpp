@@ -446,10 +446,15 @@ int16_t can_configMsgobjSendpause(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, uin
 int16_t can_configMsgobjClose(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 {
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-    arrHalCan[aui8_busNr][aui8_msgobjNr].b_canObjConfigured = false;
+    std::vector< tHalCan > &rvec_h = arrHalCan[aui8_busNr];
+    rvec_h[aui8_msgobjNr].b_canObjConfigured = false;
     // erase element if it is the last in the vector, otherwise it can stay there
-    while (arrHalCan[aui8_busNr].back().b_canObjConfigured == false)
-        arrHalCan[aui8_busNr].pop_back();
+    for (;;) {
+      bool const b_ready = rvec_h.empty() || rvec_h.back().b_canObjConfigured;
+      if (b_ready)
+        break;
+      rvec_h.pop_back();
+    }
 #endif
   return closeCanObj(aui8_busNr, aui8_msgobjNr);
 }
