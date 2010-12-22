@@ -77,6 +77,7 @@
 
 
 #include <cstdlib>  // Include before vector or else CNAMESPACE stuff is screwed up for Tasking
+#include <cstring>
 #include <vector>
 #include <list>
 #include <string>
