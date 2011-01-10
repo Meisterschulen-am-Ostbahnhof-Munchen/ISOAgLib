@@ -129,7 +129,7 @@ private:
         detects this fault, and shows you this WARNING!!
     @param acrc_src source
   */
-  DigitalO_c(const DigitalO_c& acrc_src) : ActorBase_c(acrc_src) {};
+  DigitalO_c(const DigitalO_c&);
   /**
     HIDDEN! assignment for Digital_O
     NEVER assign a DigitalO_c to another instance!!!!
@@ -137,7 +137,7 @@ private:
         detects this fault, and shows you this WARNING!!
     <!--@param acrc_src source-->
   */
-  DigitalO_c& operator=(const DigitalO_c& /*acrc_src*/){return *this;};
+  DigitalO_c& operator=(const DigitalO_c&);
 
   uint16_t ui16_value;
   /** minimal allowed current in active state */

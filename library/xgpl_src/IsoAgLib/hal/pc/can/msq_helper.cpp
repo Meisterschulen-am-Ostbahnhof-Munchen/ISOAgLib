@@ -40,13 +40,11 @@ void send_command_ack(int32_t ai32_mtype, msqData_s* p_msqDataServer, int32_t ai
 
 int32_t send_command(transferBuf_s* p_s_transferBuf, msqData_s* p_msqDataClient)
 {
-  int16_t i16_rc;
-
-  if ((i16_rc = msgsnd(p_msqDataClient->i32_cmdHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(long), 0)) == -1)
+  if (msgsnd(p_msqDataClient->i32_cmdHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(long), 0) == -1)
     return HAL_UNKNOWN_ERR;
 
   // wait for ACK
-  if((i16_rc = msgrcv(p_msqDataClient->i32_cmdAckHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(long), p_msqDataClient->i32_pid, 0)) == -1)
+  if(msgrcv(p_msqDataClient->i32_cmdAckHandle, p_s_transferBuf, sizeof(transferBuf_s) - sizeof(long), p_msqDataClient->i32_pid, 0) == -1)
     return HAL_UNKNOWN_ERR;
 
   if (p_s_transferBuf->ui16_command == COMMAND_ACKNOWLEDGE)

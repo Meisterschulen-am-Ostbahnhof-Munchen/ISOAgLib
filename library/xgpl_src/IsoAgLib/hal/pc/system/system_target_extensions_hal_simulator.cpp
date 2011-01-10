@@ -270,9 +270,10 @@ int16_t getSnr(uint8_t *snrDat)
 /* configuration of the system supervisor*/
 int16_t  configWd(tWDConfig *tConfigArray)
 {
+ (void)tConfigArray;
+
   DEBUG_PRINT4("DEBUG: configWd called with MaxTime %hu, MinTime %hu, UDmax %hu, UDmin %hd\n",
     tConfigArray->bWDmaxTime, tConfigArray->bWDminTime, tConfigArray->bUDmax, tConfigArray->bUDmin);
-  tConfigArray = tConfigArray; // Just suppress warning.
   return 0;
 }
 void wdTriggern(void)
@@ -327,8 +328,9 @@ int16_t getOn_offSwitch(void)
 /* switch relais on or off*/
 void setRelais(boolean bitState)
 {
+  (void)bitState;
+
   DEBUG_PRINT1("DEBUG: setRelais(%d) called\n", bitState);
-  bitState = bitState; // Just suppress warning
 }
 
 int16_t KeyGetByte(uint8_t *p)

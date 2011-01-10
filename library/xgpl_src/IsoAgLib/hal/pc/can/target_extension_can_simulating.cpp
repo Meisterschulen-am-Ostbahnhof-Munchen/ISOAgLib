@@ -220,7 +220,7 @@ void scanCanMsgLine( uint8_t bBusNumber,uint8_t bMsgObj )
   while ( true )
   { // read lines till timestamp is >= last close time
     fgets(zeile, 99, arrMsgObj[bBusNumber][bMsgObj].can_input);
-    if ( strlen( zeile ) == 0 )
+    if ( *zeile == '\0' )
     {
       if ( feof(arrMsgObj[bBusNumber][bMsgObj].can_input) )
       {
@@ -260,7 +260,6 @@ void scanCanMsgLine( uint8_t bBusNumber,uint8_t bMsgObj )
 int16_t configCanObj ( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig * ptConfig )
 {
   char name[50];
-  char zeile[100];
 
 #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   // add a new element in the vector (simply resize with old size + 1)
@@ -392,6 +391,7 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
   __HAL::tCanMsgReg* retValue;
 
   retValue = __HAL::IRQ_TriggerSend(bBusNumber,bMsgObj,&tCanregister);
+  (void)retValue; // return value currently not used...
 #endif
 #endif
 
@@ -428,9 +428,6 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend * ptSend )
 
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
-  char zeile[100];
-  int32_t empfangszeit;
-
   if (getTime() < arrMsgObj[bBusNumber][bMsgObj].pRead.tReceiveTime.l1ms)
   {
     /* zeit noch nicht erreicht */
@@ -463,7 +460,8 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
         irqInValue.tD5_D7.b[3] = ptReceive->abData[7];
 
 /** the input of the IwriteCentralCanfifo is the CAN bus number which start from 1, -> we have to +1 make **/
-      retValue =  IwriteCentralCanfifo(bBusNumber, bMsgObj+1, &irqInValue);
+      (void) IwriteCentralCanfifo(bBusNumber, bMsgObj+1, &irqInValue);
+      // currently don't care about the return value...
       #endif
 
     //printf("in getCanMsg len rec %d und dat %d\n",ptReceive->bDlc, arrMsgObj[bBusNumber][bMsgObj].pRead.bDlc);

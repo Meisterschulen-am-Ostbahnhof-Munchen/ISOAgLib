@@ -40,14 +40,25 @@ namespace __IsoAgLib {
 class SendUpload_c : public SendUploadBase_c
 {
 public:
-  /** StringUpload constructor that initializes all fields of this class (use only for Change String Value TP Commands) */
-  SendUpload_c() : SendUploadBase_c() {}
+  SendUpload_c()
+    : SendUploadBase_c()
+    , mssObjectString (NULL)
+    , ppc_vtObjects (NULL)
+    , ui16_numObjects (0)
+  {}
 
   SendUpload_c (vtObjectString_c* apc_objectString)
-    {set(apc_objectString);}
+    : SendUploadBase_c()
+    , mssObjectString (NULL)
+    , ppc_vtObjects (NULL)
+    , ui16_numObjects (0)
+  {
+    set (apc_objectString);
+  }
 
   SendUpload_c (uint8_t byte1, uint8_t byte2, uint8_t byte3, uint8_t byte4, uint8_t byte5, uint8_t byte6, uint8_t byte7, uint8_t byte8, IsoAgLib::iVtObject_c** rppc_vtObjects, uint16_t aui16_numObjects)
-    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8), mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
+    : SendUploadBase_c( byte1, byte2, byte3, byte4, byte5, byte6, byte7, byte8)
+    , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (rppc_vtObjects)
     , ui16_numObjects (aui16_numObjects)
     {}
@@ -56,6 +67,7 @@ public:
     : SendUploadBase_c (apui8_buffer, bufferSize)
     , mssObjectString(NULL)  /// Use BUFFER - NOT MultiSendStreamer!
     , ppc_vtObjects (NULL)
+    , ui16_numObjects (0)
     {}
 
   void set (vtObjectString_c* apc_objectString);

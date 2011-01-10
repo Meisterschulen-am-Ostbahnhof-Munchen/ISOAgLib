@@ -23,6 +23,16 @@ class MultiSendPkg_c;
 class vtObjectStringStreamer_c : public IsoAgLib::iMultiSendStreamer_c
 {
  public:
+  vtObjectStringStreamer_c()
+    : iMultiSendStreamer_c()
+    , mui16_vtObjectAId (0)
+    , mpc_stringToStream (NULL)
+    , mui16_strLenToSend (0)
+    , mui32_streamPosition (0)
+    //marr_uploadBuffer
+    , mui32_streamPositionStored (0)
+  {}
+  
   //  Operation: setDataNextStreamPart
   //! @param mspData:
   //! @param bytes:

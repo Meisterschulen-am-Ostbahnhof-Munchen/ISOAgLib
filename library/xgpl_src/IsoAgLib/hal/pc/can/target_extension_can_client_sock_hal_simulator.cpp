@@ -141,22 +141,20 @@ int read_data(SOCKET_TYPE s,     /* connected socket */
 
 int32_t send_command(transferBuf_s* p_writeBuf, SOCKET_TYPE ri32_commandSocket)
 {
-  int16_t i16_rc;
-
-  if ((i16_rc = send(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s),
+  if (send(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s),
 #ifdef WIN32
                      0
 #else
                      MSG_DONTWAIT
 #endif
-                     ) ) == -1)
+                     ) == -1)
   {
     MACRO_ISOAGLIB_PERROR("send");
     return HAL_UNKNOWN_ERR;
   }
 
   // wait for ACK
-  if ((i16_rc = read_data(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s))) == -1)
+  if (read_data(ri32_commandSocket, (char*)p_writeBuf, sizeof(transferBuf_s)) == -1)
   {
     MACRO_ISOAGLIB_PERROR("read_data");
     return HAL_UNKNOWN_ERR;
@@ -310,7 +308,10 @@ int16_t closeCan ( uint8_t bBusNumber )
 int16_t chgCanObjPause ( uint8_t bBusNumber, uint8_t bMsgObj, uint16_t wPause)
 {
   // just to remove compiler warnings
-  bBusNumber = bBusNumber; bMsgObj = bMsgObj; wPause = wPause;
+  (void)bBusNumber;
+  (void)bMsgObj;
+  (void)wPause;
+
   DEBUG_PRINT2("chgCanObjPause, bus %d, obj %d\n", bBusNumber, bMsgObj);
 /*
   fprintf(stderr,"sende Pause auf BUS %d fuer CAN Objekt %d auf %d eingestellt\n",
@@ -478,7 +479,6 @@ int32_t can_lastReceiveTime()
 
 int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
 {
-  int32_t i32_rc;
   transferBuf_s s_transferBuf;
 
   memset(&s_transferBuf, 0, sizeof(transferBuf_s));
@@ -486,10 +486,10 @@ int16_t getCanMsgBufCount(uint8_t bBusNumber,uint8_t bMsgObj)
   #ifdef WINCE
     return 0; /// @todo WINCE-176 verify conditional return value for Windows CE
   #else
-    if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK)) > 0)
+    if (recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK) > 0)
   #endif
 #else
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK)) > 0)
+  if (recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK) > 0)
 #endif
   {
     if (((bMsgObj == s_transferBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_transferBuf.s_data.ui8_bus))
@@ -528,7 +528,6 @@ bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval )
 //  changed to only one through this file, and the one defined externally.
 int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 {
-  int32_t i32_rc;
   transferBuf_s s_transferBuf;
 
   // See if the HALSimulator_c wants to insert a can msg for this bBusNumber and bMsgObj
@@ -556,10 +555,10 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
   #ifdef WINCE
     if( TRUE ) /// @todo WINCE-176 get number of bytes waiting in socket stream
   #else
-    if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK)) > 0)
+    if (recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_PEEK) > 0)
   #endif
 #else
-  if ((i32_rc = recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK)) > 0)                     
+  if (recv(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s), MSG_DONTWAIT|MSG_PEEK) > 0) 
 #endif
   {
     if ( ((bMsgObj == s_transferBuf.s_data.ui8_obj) || (bMsgObj == COMMON_MSGOBJ_IN_QUEUE)) && (bBusNumber == s_transferBuf.s_data.ui8_bus))
@@ -573,7 +572,7 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
     return HAL_UNKNOWN_ERR;
 
   // we assemble the mtype with FALSE here, as we do NOT have sendPriorities in this direction!
-  if ((i32_rc = read_data(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s))) == -1)
+  if (read_data(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s)) == -1)
   {
     // bus filter ????
     return HAL_UNKNOWN_ERR;
@@ -607,8 +606,6 @@ int16_t getCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tReceive * ptReceive )
 
 int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 {
-  int32_t i32_rc;
-
   DEBUG_PRINT2("sendCanMsg, bus %d, obj %d\n", bBusNumber, bMsgObj);
   transferBuf_s s_transferBuf;
 
@@ -632,13 +629,13 @@ int16_t sendCanMsg ( uint8_t bBusNumber,uint8_t bMsgObj, tSend* ptSend )
 
     HALSimulator_c::GetHALSimulator_c().SendCanMsg( bBusNumber, s_transferBuf.s_data.i32_sendTimeStamp, ptSend->bXtd, ptSend->dwId, ptSend->bDlc, ptSend->abData );
 
-  if ((i32_rc = send(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
+  if (send(i32_dataSocket, (char*)&s_transferBuf, sizeof(transferBuf_s),
 #ifdef WIN32
         0
 #else
         MSG_DONTWAIT
 #endif
-     )) == -1)
+     ) == -1)
   {
     MACRO_ISOAGLIB_PERROR("send");
     return HAL_UNKNOWN_ERR;

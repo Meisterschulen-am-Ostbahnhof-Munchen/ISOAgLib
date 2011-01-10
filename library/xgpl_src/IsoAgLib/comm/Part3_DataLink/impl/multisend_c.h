@@ -90,8 +90,29 @@ public:
   {
   public:
 
-    SendStream_c (MultiSend_c& arc_multiSend MULTITON_INST_PARAMETER_DEF_WITH_COMMA ) : MULTITON_PARENT_CONSTRUCTOR mrc_multiSend (arc_multiSend)
-      {}; // does NOT initialize anything, use "init(...)" directly after construction!!!!
+    // This c'tor does NOT REALLY "initialize "anything, use "init(...)" directly after construction!!!!
+    SendStream_c (MultiSend_c& arc_multiSend MULTITON_INST_PARAMETER_DEF_WITH_COMMA )
+      : MULTITON_PARENT_CONSTRUCTOR 
+        mui32_pgn (0)
+      , mc_isoNameReceiver()
+      , mc_isoNameSender()
+      #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
+      , mui8_FpSequenceCounter (0)
+      #endif
+      , mi32_timestampToWaitTo (0)
+      , mui32_dataBufferOffset (0)
+      , mui32_dataSize (0)
+      , mhpbui8_data (NULL)
+      , men_sendState (AwaitCts) // dummy init state
+      , mpen_sendSuccessNotify (NULL)
+      , men_msgType (IsoTP) // dummy init state
+      , mpc_mss (NULL)
+      , mui32_packetNrRequestedInLastCts (0)
+      , mui8_packetsLeftToSendInBurst (0)
+      , mui8_packetsSentInThisBurst (0)
+      , mrc_multiSend (arc_multiSend)
+    {}
+
     /**
       call "init" directly after construction!
     */

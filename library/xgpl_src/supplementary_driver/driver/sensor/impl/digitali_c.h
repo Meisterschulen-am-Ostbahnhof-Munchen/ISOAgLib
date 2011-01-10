@@ -116,7 +116,7 @@ private:
         detects this fault, and shows you this WARNING!!
     <!--@param acrc_src source-->
   */
-  DigitalI_c(const DigitalI_c& /*acrc_src*/) : SensorBase_c(0) {};
+  DigitalI_c(const DigitalI_c&);
   /**
     HIDDEN! assignment for DigitalI_c
     NEVER assign a DigitalI_c to another instance!!!!
@@ -124,7 +124,7 @@ private:
         detects this fault, and shows you this WARNING!!
     <!--@param acrc_src source-->
   */
-  DigitalI_c& operator=(const DigitalI_c& /*acrc_src*/){return *this;};
+  DigitalI_c& operator=(const DigitalI_c&);
   /** true if the digit input should be gathered static */
   bool b_static;
   /**

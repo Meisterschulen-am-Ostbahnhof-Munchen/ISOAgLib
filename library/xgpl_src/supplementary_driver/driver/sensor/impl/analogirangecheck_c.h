@@ -107,7 +107,7 @@ protected:
         detects this fault, and shows you this WARNING!!
     @param acrc_src source
   */
-  AnalogIRangeCheck_c(const AnalogIRangeCheck_c& acrc_src) : AnalogI_c(acrc_src) {};
+  AnalogIRangeCheck_c(const AnalogIRangeCheck_c&);
   /**
     HIDDEN! assignment for AnalogIRangeCheck_c
     NEVER assign a AnalogIRangeCheck_c to another instance!!!!
@@ -115,7 +115,7 @@ protected:
         detects this fault, and shows you this WARNING!!
     <!--@param acrc_src source-->
   */
-  AnalogIRangeCheck_c& operator=(const AnalogIRangeCheck_c& /* acrc_src */){ return *this;};
+  AnalogIRangeCheck_c& operator=(const AnalogIRangeCheck_c&);
 private:
   /** min range limit */
   uint16_t ui16_minValid;

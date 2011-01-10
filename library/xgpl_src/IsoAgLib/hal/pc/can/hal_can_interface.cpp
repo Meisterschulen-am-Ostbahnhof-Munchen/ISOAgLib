@@ -98,7 +98,7 @@ uint8_t ui8_cinterfLastSendBufCnt;
 int32_t i32_cinterfMsgobjSuccSend;
 uint8_t ui8_cinterfBufSize;
 
-bool b_canObjConfigured;
+bool b_canObjConfigured; // only used in ENHANCED_CAN_HAL case
 
 } tHalCan;
 
@@ -790,6 +790,7 @@ __HAL::tCanMsgReg* IwriteCentralCanfifo(uint8_t bBus,uint8_t bOjekt,__HAL::tCanM
           }
 
          bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,tCanregister->tArbit.dw,(void*)tCanregister);
+         (void)b_ret; // return value currently only used in debug...
 
           #if DEBUG_FIFO_WRITE
            if(!b_ret)

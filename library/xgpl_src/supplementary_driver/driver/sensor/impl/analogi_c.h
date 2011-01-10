@@ -97,7 +97,7 @@ protected:
         detects this fault, and shows you this WARNING!!
     @param acrc_src source
   */
-  AnalogI_c(const AnalogI_c& acrc_src) : SensorBase_c(acrc_src) {};
+  AnalogI_c(const AnalogI_c&);
   /**
     HIDDEN! assignment for AnalogI_c
     NEVER assign a AnalogI_c to another instance!!!!
@@ -105,7 +105,7 @@ protected:
         detects this fault, and shows you this WARNING!!
     <!--@param acrc_src source-->
   */
-  AnalogI_c& operator=(const AnalogI_c& /*acrc_src*/){ return *this;};
+  AnalogI_c& operator=(const AnalogI_c&);
 private: // Private attributes
   /**
     input type: voltage or current

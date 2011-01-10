@@ -179,6 +179,7 @@ __HAL::tCanMsgReg HUGE_MEM * IwriteCentralCanfifo(byte bBus,byte bOjekt,__HAL::t
           }
 
          bool b_ret = HAL::iFifoWrite(bBus,i32_fbIndex,i32_msgId,(void*)tCanregister);
+         (void)b_ret; // return value currently only used for debug...
 
           #if DEBUG_FIFO_WRITE
            if(!b_ret)
@@ -390,7 +391,6 @@ int16_t can_stateMsgobjFreecnt(uint8_t aui8_busNr, uint8_t aui8_msgobjNr)
 int16_t can_configGlobalInit(uint8_t aui8_busNr, uint16_t ab_baudrate, uint16_t aui16_maskStd, uint32_t aui32_maskExt, uint32_t aui32_maskLastmsg)
 {
   // init variables
-  int32_t i32_now = get_time();
     i32_cinterfBeginBit1err[aui8_busNr] = -1;
 
   #ifdef USE_CAN_MEASURE_BUSLOAD

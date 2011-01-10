@@ -121,9 +121,8 @@ int16_t init_counter(uint16_t aui16_timebase, bool ab_risingEdge)
   i32_prescale *= (get_cpu_freq() * 1000);
   i32_prescale /= 65534;
   /* configure init channel */
-  unsigned int ret = 	// temp for debug!
 //  init_digin(b_codeEdge, irqFuncArr);
-  init_digin(b_codeEdge, NULL);
+  (void) init_digin(b_codeEdge, NULL);
 
 {
 //    byte pbString[128];
