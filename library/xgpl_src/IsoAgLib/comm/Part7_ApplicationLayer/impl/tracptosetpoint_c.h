@@ -30,7 +30,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       Derive from SINGLETON to create a Singleton which manages one global accessible singleton
       per IsoAgLib instance (if only one IsoAgLib instance is defined in application config, no overhead is produced).
     */
-  class TracPTOSetPoint_c : public SingletonTracPtoSetPoint_c {
+  class TracPTOSetPoint_c : public BaseCommon_c {
 #if 1 < PRT_INSTANCE_CNT
     MACRO_MULTITON_CONTRIBUTION();
 #else
@@ -244,6 +244,5 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     * if more than one CAN BUS is used for IsoAgLib, an m_index must be given to select the wanted BUS
     */
   TracPTOSetPoint_c &getTracPtoSetPointInstance(uint8_t aui8_instance = 0);
-  #endif
 }
 #endif

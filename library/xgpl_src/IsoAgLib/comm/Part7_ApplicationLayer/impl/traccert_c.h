@@ -321,7 +321,7 @@ class TracCert_c : public BaseCommon_c
     // Private attributes
     /** struct of certification data */
     certificationBitData_t m_certData;
-    friendTracCert_c &getTracCertInstance(uint8_t aui8_instance);
+    friend TracCert_c &getTracCertInstance(uint8_t aui8_instance);
 };
 
   TracCert_c &getTracCertInstance(uint8_t aui8_instance = 0);
