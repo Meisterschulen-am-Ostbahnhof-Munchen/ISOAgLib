@@ -990,10 +990,10 @@ void CanIo_c::getCommonFilterMask()
         if(!pc_iter->isIdle())
         {
           if (pc_iter->maskFilterPair().getType() == Ident_c::StandardIdent) {
-            mc_maskStd.ident_bitAnd(pc_iter->mask());
+            mc_maskStd.ident_bitAnd(Ident_c( pc_iter->maskFilterPair().getMask(), pc_iter->maskFilterPair().getType() ));
           }
           else {
-            mc_maskExt.ident_bitAnd(pc_iter->mask());
+            mc_maskExt.ident_bitAnd(Ident_c( pc_iter->maskFilterPair().getMask(), pc_iter->maskFilterPair().getType() ));
           }
         }
       }
@@ -1029,7 +1029,7 @@ void CanIo_c::getCommonFilterMaskAfterMerge()
 int16_t CanIo_c::FilterBox2MsgObj()
 {
   int16_t i16_result = 0;
-  Ident_c c_tempIdent;
+  Ident_c c_tempIdent( 0, IsoAgLib::iIdent_c::ExtendedIdent );
   ArrMsgObj::iterator pc_iterMsgObj, pc_search4MsgObjReuse = marr_msgObj.begin();
 
 #  if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
@@ -1083,7 +1083,7 @@ ArrFilterBox::iterator pc_iterFilterBox = m_arrFilterBox.begin();
     if(!pc_iterFilterBox->isIdle())
     {
         // get filter Ident_c setting from actual FilterBox
-        c_tempIdent = pc_iterFilterBox->filter();
+        c_tempIdent.set( pc_iterFilterBox->maskFilterPair().getFilter(), pc_iterFilterBox->maskFilterPair().getType() );
         // mask the actual filter Ident_c with the bits of the global mask
         if (c_tempIdent.identType() == Ident_c::StandardIdent)
           c_tempIdent.ident_bitAnd(mc_maskStd);

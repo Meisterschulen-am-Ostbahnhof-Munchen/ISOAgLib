@@ -17,6 +17,8 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/hal/hal_system.h>
 
+
+
 #if DEBUG_MSGOBJ || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
     #include <iostream>
@@ -33,10 +35,9 @@ namespace __IsoAgLib {
 
 /** default constructor for MsgObj_c which only init all member values defined start state */
 MsgObj_c::MsgObj_c()
-  : marr_filterBoxIndex()
+  : marr_filterBoxIndex(), mc_filter( MASK_INVALID, Ident_c::ExtendedIdent ) 
 {
   // set all member variables to initial values
-  mc_filter.setEmpty(true);
   setBusNumber(0);
   setMsgObjNr(0);
   setIsOpen(false);
@@ -48,9 +49,8 @@ MsgObj_c::MsgObj_c()
 /** copy constructor for this class, which gets data from another MsgObj_c instance
   @param acrc_src source MsgObj_c instance which should be cloned by this instance
 */
-MsgObj_c::MsgObj_c(const MsgObj_c& acrc_src)
+MsgObj_c::MsgObj_c(const MsgObj_c& acrc_src) : mc_filter( acrc_src.mc_filter )
 { // set all member variables to the corresponding value from the source instance
-  mc_filter = acrc_src.mc_filter;
   setMsgObjNr(acrc_src.msgObjNr());
 
 #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
@@ -138,7 +138,7 @@ bool MsgObj_c::merge(MsgObj_c& acrc_right)
 */
 void MsgObj_c::close()
 {
-  mc_filter.setEmpty(true);
+  mc_filter.set( 0, Ident_c::StandardIdent );
 
   // the member function closeCan checks isOpen() and closes the BIOS object
   // if needed
@@ -392,15 +392,15 @@ bool MsgObj_c::prepareIrqTable(uint8_t aui8_busNum,uint8_t aui8_objNr,int32_t* c
         continue;
       }
 
-      if(getFilterBoxInstance(cp_elem[tblIdx]).identType()  == __IsoAgLib::Ident_c::StandardIdent) //it is a standard id - 11 bits
+      if(getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getType()  == __IsoAgLib::Ident_c::StandardIdent) //it is a standard id - 11 bits
       {
-        s_data.fbMask = (getFilterBoxInstance(cp_elem[tblIdx]).mask().ident() & 0x7FF);
-        s_data.fbFilter = (getFilterBoxInstance(cp_elem[tblIdx]).mask().ident() & getFilterBoxInstance(cp_elem[tblIdx]).filter().ident() & 0x7FF);
+        s_data.fbMask = (getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getMask() & 0x7FF);
+        s_data.fbFilter = (getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getMask() & getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getFilter() & 0x7FF);
       }
       else //extended id - 29 bits
       {
-        s_data.fbMask = getFilterBoxInstance(cp_elem[tblIdx]).mask().ident();
-        s_data.fbFilter = getFilterBoxInstance(cp_elem[tblIdx]).mask().ident() & getFilterBoxInstance(cp_elem[tblIdx]).filter().ident() ;
+        s_data.fbMask = getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getMask();
+        s_data.fbFilter = getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getMask() & getFilterBoxInstance(cp_elem[tblIdx]).maskFilterPair().getFilter() ;
       }
       s_data.i32_filterBoxVecIdx = cp_elem[tblIdx];
 
