@@ -989,7 +989,7 @@ void CanIo_c::getCommonFilterMask()
       {
         if(!pc_iter->isIdle())
         {
-          if (pc_iter->identType() == Ident_c::StandardIdent) {
+          if (pc_iter->maskFilterPair().getType() == Ident_c::StandardIdent) {
             mc_maskStd.ident_bitAnd(pc_iter->mask());
           }
           else {
