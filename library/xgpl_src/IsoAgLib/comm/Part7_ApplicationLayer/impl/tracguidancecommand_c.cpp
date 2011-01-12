@@ -64,8 +64,7 @@ void TracGuidanceCommand_c::checkCreateReceiveFilter( )
   { // check if needed receive filters for ISO are active
     setFilterCreated();
 
-    c_can.insertFilter(*this, (static_cast<MASK_TYPE>(0x3FF00) << 8),
-                      (static_cast<MASK_TYPE>(GUIDANCE_SYSTEM_CMD) << 8), true);
+    c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00 << 8, GUIDANCE_SYSTEM_CMD << 8), true);
   }
 }
 

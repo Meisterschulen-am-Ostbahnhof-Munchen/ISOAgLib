@@ -89,8 +89,8 @@ IsoTerminal_c::close()
     ml_vtServerInst.clear();
 
     // deregister ISO Filters
-    getIsoBusInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8));
-    getIsoBusInstance4Comm().deleteFilter(mt_customer, (0x3FFFF00UL), (LANGUAGE_PGN << 8));
+    getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8)));
+    getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (LANGUAGE_PGN << 8)));
 
     // deregister in IsoMonitor_c
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);

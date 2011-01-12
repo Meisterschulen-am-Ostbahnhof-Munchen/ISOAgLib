@@ -233,7 +233,7 @@ IsoBus_c::insertStandardIsoFilter(
       break;
   }
 
-  return insertFilter (ar_customer,( 0x3FFFF00UL), (aui32_pgn << 8), ab_reconfigImmediate, i8_dataLen);
+  return insertFilter (ar_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (aui32_pgn << 8) ), ab_reconfigImmediate, i8_dataLen);
 }
 
 IsoBus_c &getIsoBusInstance( uint8_t aui8_instance)

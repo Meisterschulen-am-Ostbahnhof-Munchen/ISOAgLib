@@ -270,12 +270,6 @@ INTERNAL_DEBUG_DEVICE << "CanClose: ";
                             __IsoAgLib::Ident_c& arc_ident, uint8_t ab_rxtx )
   {
 
-//  if (arc_ident.identType() == __IsoAgLib::Ident_c::BothIdent)
-//    pt_config->bXtd = DEFAULT_IDENT_TYPE;
-//  else
-//    pt_config->bXtd = arc_ident.identType();
-
-
     uint32_t Ident = arc_ident.ident();
     uint8_t  Type  = arc_ident.identType();
 

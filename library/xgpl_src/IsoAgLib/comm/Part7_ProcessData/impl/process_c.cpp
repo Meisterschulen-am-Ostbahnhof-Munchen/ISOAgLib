@@ -80,9 +80,9 @@ Process_c::init()
 
     // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
     const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
-    if (!getIsoBusInstance4Comm().existFilter( mt_customer, (0x3FFFF00UL), cui32_filter))
+    if (!getIsoBusInstance4Comm().existFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter) ) )
     { // create FilterBox
-      getIsoBusInstance4Comm().insertFilter( mt_customer, (0x3FFFF00UL), cui32_filter, true);
+      getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), true);
     }
 
     //  start with 200 msec timer period
@@ -174,9 +174,9 @@ bool Process_c::timeEvent( void ){
          iter != ml_filtersToDeleteISO.end();
          iter++)
     {
-      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &(*iter), 8, Ident_c::ExtendedIdent)))
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8)))
       { // corresponding FilterBox_c exist -> delete it
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &(*iter), 8, Ident_c::ExtendedIdent));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8));
       }
     }
     ml_filtersToDeleteISO.clear();
@@ -659,9 +659,9 @@ bool Process_c::deleteRemoteFilter(IsoName_c const& acrc_isoName)
     if ((*pc_iter)->isoName() == acrc_isoName)
     { // remote proc data has given onwerisoName
       // -> delete according FilterBox (after check if corresponding FilterBox_c exists)
-      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent)))
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8)))
       { // corresponding FilterBox_c exist -> delete it
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, 0x3FF00FF, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8));
         // and let the caller know of the positive deletion!
         return true;
       } else
@@ -678,9 +678,10 @@ bool Process_c::deleteRemoteFilter(IsoName_c const& acrc_isoName)
  */
 bool Process_c::createRemoteFilter(IsoName_c const& acrc_isoName)
 {
-  if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent)))
+  if (!getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFUL, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8 )))
   { // no suitable FilterBox_c exist -> create it
-    getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (mt_customer, 0x3FF00FFUL, (PROCESS_DATA_PGN << 8), NULL, &acrc_isoName, 8, Ident_c::ExtendedIdent), true);
+    getIsoFilterManagerInstance4Comm().insertIsoFilter(
+        IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFUL, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8 ) );
     return true;
   }
 
@@ -729,7 +730,7 @@ Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemMod
     case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (mt_customer, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent), true);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter(   IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8) ), &acrc_isoItem.isoName(), NULL, 8 ), true);
       }
       else
       { // remote IsoItem_c has finished adr claim
@@ -740,7 +741,7 @@ Process_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemMod
     case ControlFunctionStateHandler_c::RemoveFromMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8), &acrc_isoItem.isoName(), NULL, 8, Ident_c::ExtendedIdent));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ((PROCESS_DATA_PGN) << 8) ), &acrc_isoItem.isoName(), NULL, 8 ));
       }
       else
       { // remote IsoItem_c

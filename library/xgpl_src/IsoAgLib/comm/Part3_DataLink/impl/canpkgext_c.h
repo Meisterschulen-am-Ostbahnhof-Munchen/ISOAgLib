@@ -33,7 +33,7 @@ class AddressResolveResults_c
     ~AddressResolveResults_c();
 
     uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
-    void setAddress(uint8_t aui8_newAddress) {mrc_ident.set(aui8_newAddress,mui8_position);}
+    void setAddress(uint8_t aui8_newAddress) { mrc_ident.setByte(aui8_newAddress,mui8_position); }
 
     // IMPORTANT:
     // the IsoName_c instance should be handled as if it would be a fixed
@@ -261,18 +261,18 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field DP
     @return data page
   */
-  void setIsoDp(uint8_t aui8_val) {setIdent( uint8_t((ident(3)& 0x1C) | (aui8_val & 0x03)), 3, Ident_c::ExtendedIdent);}
+  void setIsoDp(uint8_t aui8_val) {setIdentByte( uint8_t((ident(3)& 0x1C) | (aui8_val & 0x03)), 3 );}
 
   /**
     set the value of the ISO11783 ident field PF
     @return PDU Format
   */
-  void setIsoPf(uint8_t aui8_val) {setIdent(aui8_val, 2, Ident_c::ExtendedIdent); }
+  void setIsoPf(uint8_t aui8_val) {setIdentByte(aui8_val, 2 ); }
 
   /** combined setting of DP and PF field in identifier as 10Bit part of a 16-Bit parameter
       @param aui16_dpPf DP and PF for the PGN
     */
-  void setIsoDpPf( uint16_t aui16_dpPf ) { setIdentWord( uint16_t(((ident(3)& 0x1C)<<8) | (aui16_dpPf & 0x03FF)), 1, Ident_c::ExtendedIdent);}
+  void setIsoDpPf( uint16_t aui16_dpPf ) { setIdentWord( uint16_t(((ident(3)& 0x1C)<<8) | (aui16_dpPf & 0x03FF)), 1 );}
 
   /**
     set the value of the ISO11783 ident field PS
@@ -284,7 +284,7 @@ class CanPkgExt_c : public CanPkg_c
     set the value of the ISO11783 ident field PRI
     @return priority
   */
-  void setIsoPri(uint8_t aui8_val){setIdent( uint8_t((ident(3)&3) | (aui8_val << 2)), 3, Ident_c::ExtendedIdent);}
+  void setIsoPri(uint8_t aui8_val){setIdentByte( uint8_t((ident(3)&3) | (aui8_val << 2)), 3 );}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
     CanPkg_c::setIdentType(Ident_c::ExtendedIdent);

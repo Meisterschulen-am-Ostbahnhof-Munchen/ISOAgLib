@@ -14,6 +14,7 @@
 #include "proprietarymessageclient_c.h"
 #include "proprietarymessagehandler_c.h"
 
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
 
 namespace __IsoAgLib
 {
@@ -21,7 +22,7 @@ namespace __IsoAgLib
   /** default constructor
       initializes the parameter for filter and mask to "novalue"
     */
-  ProprietaryMessageClient_c::ProprietaryMessageClient_c(): mui32_canMask(scui32_noMask), mui32_canFilter(scui32_noFilter),
+  ProprietaryMessageClient_c::ProprietaryMessageClient_c(): mui32_canMask(MASK_INVALID), mui32_canFilter(MASK_INVALID),
                                                             mc_isonameRemoteECU(screfc_noIsoName), mpc_localIdent(spc_nolocalIdent),
                                                             men_sendSuccess(MultiSend_c::SendSuccess)
   {
@@ -35,7 +36,7 @@ namespace __IsoAgLib
   /** second constructor
       initializes the parameter to actual values
     */
-  ProprietaryMessageClient_c::ProprietaryMessageClient_c( uint32_t aui32_mask, uint32_t aui32_filter,
+  ProprietaryMessageClient_c::ProprietaryMessageClient_c( const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
                                                           const IsoName_c& acrc_rremoteECU,
                                                           const IdentItem_c& apc_localIdent)
                                                           : mpc_localIdent(NULL),
@@ -46,7 +47,7 @@ namespace __IsoAgLib
     /* register the client */
     getProprietaryMessageHandlerInstance4Comm().registerProprietaryMessageClient(this);
     /* define receive filter */
-    defineReceiveFilter( aui32_mask, aui32_filter, acrc_rremoteECU, &apc_localIdent);
+    defineReceiveFilter( acrc_maskFilter, acrc_rremoteECU, &apc_localIdent);
   }
 
   ProprietaryMessageClient_c::~ProprietaryMessageClient_c()
@@ -60,23 +61,22 @@ namespace __IsoAgLib
         - ProprietaryMessageHandler_c::triggerClientDataUpdate()
       @return true when wanted PGN is in allowed range
     */
-  bool ProprietaryMessageClient_c::defineReceiveFilter( uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c& acrc_rremoteECU, const IdentItem_c* apc_localIdent)
+  bool ProprietaryMessageClient_c::defineReceiveFilter( const IsoAgLib::iMaskFilter_c& acrc_maskFilter, const IsoName_c& acrc_rremoteECU, const IdentItem_c* apc_localIdent)
   {
     // require a minimum mask, so that no other messages could be retrieved, but only PROP A/A2/B
-    if ( ( (aui32_mask == scui32_noMask) &&
-           (aui32_filter == scui32_noFilter) &&
+    if ( ( acrc_maskFilter.empty() &&
            (acrc_rremoteECU == screfc_noIsoName) &&
            (apc_localIdent == spc_nolocalIdent)
          )
          ||
-         ( ( ((aui32_mask & 0x2FF0000) == 0x2FF0000) && ((aui32_filter & 0x2FF0000) == 0x0EF0000) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
-           ( ((aui32_mask & 0x3FF0000) == 0x3FF0000) && ((aui32_filter & 0x3FF0000) == 0x0FF0000) )    /** Proprietary B */
+         ( ( ((acrc_maskFilter.getMask() & 0x2FF0000) == 0x2FF0000) && ((acrc_maskFilter.getFilter() & 0x2FF0000) == 0x0EF0000) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
+           ( ((acrc_maskFilter.getMask() & 0x3FF0000) == 0x3FF0000) && ((acrc_maskFilter.getFilter() & 0x3FF0000) == 0x0FF0000) )    /** Proprietary B */
          )
        )
     {
       /** set actual values for filter, mask, remote and local ident */
-      mui32_canMask = aui32_mask;
-      mui32_canFilter = aui32_filter;
+      mui32_canMask = acrc_maskFilter.getMask();
+      mui32_canFilter = acrc_maskFilter.getFilter();
       mc_isonameRemoteECU = acrc_rremoteECU;
       mpc_localIdent = apc_localIdent;
 
@@ -141,8 +141,7 @@ namespace __IsoAgLib
 
     // create new IsoFilter
     return IsoFilter_s (arc_customer,
-                        mui32_canMask,
-                        mui32_canFilter,
+                        IsoAgLib::iMaskFilter_c( mui32_canMask, mui32_canFilter ),
                         &rc_localIsoName,
                         &mc_isonameRemoteECU);
   }

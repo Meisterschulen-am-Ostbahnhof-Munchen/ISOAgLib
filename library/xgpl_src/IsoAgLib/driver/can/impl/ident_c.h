@@ -40,9 +40,8 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @param at_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-        (default: DEFAULT_IDENT_TYPE set in isoaglib_config)
   */
-  Ident_c(MASK_TYPE at_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
+  Ident_c(MASK_TYPE at_ident, identType_t ren_identType);
 
   /** constructor which gets its values from other instance
     @param acrc_src source Ident_c instance
@@ -73,28 +72,27 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @return true -> given setting and type are equal
   */
   bool equal(const MASK_TYPE at_ident, identType_t ren_identType) const
-    {return ((t_ident == at_ident)&&(data.type == ren_identType));}
+    {return ((mt_ident == at_ident)&&(mt_type == ren_identType));}
 
   /** deliver ident value masked by given ident
     @param at_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
   MASK_TYPE masked(MASK_TYPE at_mask = ~0) const
-    {return (data.type == StandardIdent)?(at_mask & t_ident & 0x7FF):(at_mask & t_ident);}
+    {return (mt_type == StandardIdent)?(at_mask & mt_ident & 0x7FF):(at_mask & mt_ident);}
 
   /** deliver ident value masked by given ident
     @param acrc_mask mask value
     @return ident setting masked by at_mask (only '1' where mask and ident has '1')
   */
   MASK_TYPE masked(const Ident_c& acrc_mask) const
-    {return (data.type == StandardIdent)
-      ?(acrc_mask.t_ident & t_ident & 0x7FF):(acrc_mask.t_ident & t_ident);}
+    {return (mt_type == StandardIdent) ?(acrc_mask.mt_ident & mt_ident & 0x7FF):(acrc_mask.mt_ident & mt_ident);}
 
   /** update the ident with bitwise AND with given ident setting
     @param rc_bitAnd Ident_c variable with ident to bit_AND
   */
   void ident_bitAnd(const Ident_c& rc_bitAnd)
-    {if (rc_bitAnd.data.type == data.type) t_ident &= rc_bitAnd.t_ident;data.empty = 0;}
+    {if (rc_bitAnd.mt_type == mt_type) mt_ident &= rc_bitAnd.mt_ident;}
 
   /** deliver amount of different bits from own ident to compared ident
     @param acrc_ident reference to compared ident
@@ -118,17 +116,17 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
       Update the mask only, when the ident type of the referenced mask is the same.
     */
   void updateWithMask( const Ident_c& acrc_mask )
-    { if ( data.type == acrc_mask.data.type ) t_ident &= acrc_mask.t_ident;}
+    { if ( mt_type == acrc_mask.mt_type ) mt_ident &= acrc_mask.mt_ident;}
   /**
     deliver the ident type
     @return Ident_c::S for 11bit ident or Ident_c::E for 29bit
   */
-  identType_t identType() const {return static_cast<identType_t>(data.type);}
+  identType_t identType() const {return mt_type;}
 
   /** deliver the ident setting
     @return ident value
   */
-  MASK_TYPE ident() const {return t_ident;}
+  MASK_TYPE ident() const {return mt_ident;}
 
   /** deliver the uint8_t value of ident at wanted position
     (position 0 is least significant position -> nearest to DLC field of
@@ -136,34 +134,21 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @param ab_pos
     @return ident value
   */
-  uint8_t ident(uint8_t ab_pos) const {return static_cast<uint8_t>((t_ident >> (ab_pos*8)) & 0xFF);}
-
-  /** check if Ident_c is set as empty (needed for MsgObj) */
-  bool empty() const {return (data.empty == 1);}
-
-  /** set the Ident_c to empty state
-    @param ab_empty set empty state (default = true)
-  */
-  void setEmpty(bool ab_empty = true) {data.empty = (ab_empty)?1:0;}
+  uint8_t ident(uint8_t ab_pos) const {return static_cast<uint8_t>((mt_ident >> (ab_pos*8)) & 0xFF);}
 
   /** set this ident
     @param at_ident new ident setting
-    @param ren_identType new ident type
-        (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-        (default defined in isoaglib_config.h)
+    @param ren_identType new ident type (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
   */
-  void set(MASK_TYPE at_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
+  void set(MASK_TYPE at_ident, identType_t ren_identType);
 
   /** set this ident with access to single unsigned char
     (position 0 is least significant position -> nearest to DLC field of
     CAN frame)
     @param ab_val new val for ident at wanted position
     @param ab_pos position in ident, where ident should be placed in
-    @param ren_identType new ident type
-        (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-        (default defined in isoaglib_config.h)
   */
-  void set(uint8_t ab_val = 0, uint8_t ab_pos = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE);
+  void setByte(uint8_t ab_val, uint8_t ab_pos);
 
   /**
     set specific uint16_t of this ident
@@ -172,27 +157,26 @@ enum identType_t {StandardIdent = 0, ExtendedIdent = 1};
     @param aui16_val value for ident at wanted position for the telegram
     @param aui8_pos position [0..1] for wanted value for ident for the telegram (pos0==byte0, pos1==byte2)
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
-      default defined in isoaglib_config.h
   */
-  void setWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE);
+  void setWord(uint16_t aui16_val, uint8_t aui8_pos);
 
   /** set type of ident
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
   */
-  void setIdentType(Ident_c::identType_t at_type){data.type = at_type;}
+  void setIdentType(Ident_c::identType_t at_type){mt_type = at_type;}
 
   /** set this ident according to other Ident
     @param acrc_src source Ident_c instance
   */
-  const Ident_c& operator=(const Ident_c& acrc_src)
-    {t_ident = acrc_src.t_ident; data = acrc_src.data; return acrc_src;}
+  const Ident_c& operator=(const Ident_c& acrc_src) {
+    mt_ident = acrc_src.mt_ident;
+    mt_type = acrc_src.mt_type;
+    return acrc_src;
+  }
 
 private:
-  MASK_TYPE t_ident;
-  struct {
-    identType_t type : 2;
-    MASK_TYPE empty : 1;
-  } data;
+  MASK_TYPE mt_ident;
+  identType_t mt_type;
 };
 }
 

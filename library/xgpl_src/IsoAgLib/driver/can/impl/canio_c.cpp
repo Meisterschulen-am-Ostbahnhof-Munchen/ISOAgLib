@@ -59,35 +59,9 @@ CanIo_c &getCanInstance( uint8_t aui8_instance )
   MACRO_MULTITON_GET_INSTANCE_BODY(CanIo_c, CAN_INSTANCE_CNT, aui8_instance);
 }
 
-
-/** Initialize the CAN hardware, and instantiate one msg object for
-  sending of messages. Do configuration for BUS number, sending bitrate,
-  CAN ident length, minx/max hardware/BIOS Msg Obj numbers by parameters;
-  called by specified constructor or external functions;
-  wrong BUS and msg obj numbers are rejected and cause set of Err_c:range
-
-  possible errors:
-      * Err_c::range on undefined BUS,  msgOb_nr or sendBufferSize,
-      * Err_c::hwConfig on uninitialized BUS, undef. msgType or CAN-BIOS mem-err,
-      * Err_c::busy on already used sending Msg-Obj
-  @param aui8_busNumber number of the CAN bus
-  @param aui16_bitrate bitrate (default by define in isoaglib_config.h)
-  @param ren_identType optional length of the ident
-    (S (11bit), E (29bit), B
-    (send both standard and extended ident msg) (default by define in isoaglib_config.h)
-  @param aui8_minObjNr optional minimum number for hardware CAN message object
-    (important for sharing CAN controller with other tasks) (default by define in isoaglib_config.h)
-  @param aui8_maxObjNr optional maximum number for hardware CAN message object
-    (default by define in isoaglib_config.h)
-  @return true -> correct initialisation without errors
-  @pre CAN is closed / not yet initialized
-  @see HAL::can_configGlobalInit
-  @see HAL::can_configMsgobjInit
-  @see Ident_c::t_identType
-*/
 bool
 CanIo_c::init(
-  uint8_t aui8_busNumber, uint16_t aui16_bitrate, Ident_c::identType_t ren_identType,
+  uint8_t aui8_busNumber, uint16_t aui16_bitrate,
   uint8_t aui8_minObjNr, uint8_t aui8_maxObjNr)
 {
   // check preconditions
@@ -137,7 +111,7 @@ CanIo_c::init(
   mui8_processedMsgCnt = 0;
   mc_maskStd.set(0x7FF, Ident_c::StandardIdent);
   mc_maskExt.set(0x1FFFFFFF, Ident_c::ExtendedIdent);
-  mc_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
+  mc_maskLastmsg.set(0, Ident_c::ExtendedIdent);
 
   /** set min and max allowed obj numbers (important for multithreading
       where each threads manages only a portion of all objects)
@@ -147,7 +121,6 @@ CanIo_c::init(
   setMaxHALMsgObjNr(aui8_maxObjNr);
 #endif
   mui8_busNumber = aui8_busNumber;
-  men_identType = ren_identType;
 
   return baseCanInit (aui16_bitrate);
 }
@@ -232,7 +205,6 @@ uint16_t CanIo_c::getBusLoad() const
 
 /** deliver the numbers which can be placed at the moment in the send buffer
   @param ren_identType type of searched ident: standard 11bit or extended 29bit
-    (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
   @return number of msgs which fit into send buffer
 */
 uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t /*ren_identType*/)
@@ -249,8 +221,7 @@ uint8_t CanIo_c::sendCanFreecnt(Ident_c::identType_t /*ren_identType*/)
 
 
 /** clear the send buffer
-  <!--@param ren_identType type of searched ident: standard 11bit or extended 29bit
-    (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)-->
+  <!--@param ren_identType type of searched ident: standard 11bit or extended 29bit-->
 */
 void CanIo_c::sendCanClearbuf()
 {
@@ -266,62 +237,14 @@ void CanIo_c::sendCanClearbuf()
 
 
 /** test if a FilterBox_c definition already exist
-  (version expecial for standard ident, chosen at compile time)
-  @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-  @param aui16_mask individual mask for this filter box
-  @param at_filter individual filter
-  @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
-  @param apc_iter optional pointer Iterator to result FilterBox
-  @return true -> same FilterBox_c already exist
-*/
-bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
-                          uint16_t aui16_mask, uint16_t at_filter,
-                          Ident_c::identType_t ren_identType, ArrFilterBox::iterator* apc_iter)
-
-{
-  // check if filter/t_mask are already inserted
-  // return false if this setting isnt unique
-  Ident_c c_compFilter = Ident_c(at_filter, ren_identType);
-  Ident_c c_compMask = Ident_c(aui16_mask, ren_identType);
-  c_compFilter.set(at_filter, ren_identType);
-  c_compMask.set(aui16_mask, ren_identType);
-
-  return existFilter(ar_customer, c_compMask, c_compFilter, apc_iter);
-}
-/** test if a FilterBox_c definition already exist
-  (version expecial for extended ident, chosen at compile time)
-  @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-  @param aui32_mask individual mask for this filter box
-  @param aui32_filter individual filter
-  @param ren_identType type of searched ident: standard 11bit (default) or extended 29bit
-  @param apc_iter optional pointer Iterator to result FilterBox
-  @return true -> same FilterBox_c already exist
-*/
-bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
-                          uint32_t aui32_mask, uint32_t aui32_filter,
-                          Ident_c::identType_t ren_identType, ArrFilterBox::iterator* apc_iter)
-
-{
-  // check if filter/t_mask are already inserted
-  // return false if this setting isnt unique
-  Ident_c c_compFilter = Ident_c(aui32_filter, ren_identType);
-  Ident_c c_compMask = Ident_c(aui32_mask, ren_identType);
-  c_compFilter.set(aui32_filter, ren_identType);
-  c_compMask.set(aui32_mask, ren_identType);
-
-  return existFilter(ar_customer, c_compMask, c_compFilter, apc_iter);
-}
-
-/** test if a FilterBox_c definition already exist
   (version with comper items as Ident_c class instances, chosen by compiler)
   @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-  @param ac_compMask individual mask for this filter box
-  @param ac_compFilter individual filter
+  @param arc_filterpair filter mask type set
   @param apc_iter optional pointer Iterator to result FilterBox
   @return true -> same FilterBox_c already exist
 */
 bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
-                          const Ident_c& ac_compMask, const Ident_c& ac_compFilter,
+                          const IsoAgLib::iMaskFilterType_c& arc_filterpair,
                           ArrFilterBox::iterator* apc_iter)
 
 {
@@ -335,7 +258,7 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   // check if given FilterBox_c definition is not yet in array
   for (; pc_iter != m_arrFilterBox.end(); pc_iter++)
   {
-    if ( ( pc_iter->equalFilterMask(ac_compMask, ac_compFilter ) )
+    if ( ( pc_iter->equalFilterMask( arc_filterpair ) )
       && ( pc_iter->equalCustomer( ar_customer )               ) )
     { // FilterBox_c with equal def found
       //-> don't insert complete ident def two times
@@ -372,41 +295,38 @@ bool CanIo_c::existFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
   @param ab_reconfigImmediate true -> all Filter objects are reconfigured to according
 
       CAN hardware MsgObj after creating this filter
-  @param at_identType ident type of the created ident: standard 11bit (default) or extended 29bit
+  @param at_identType ident type of the created ident: standard 11bit or extended 29bit
   @return != NULL -> if inserting and wanted reconfiguration are performed without errors, a reference to the created FilterBox is returned
   @exception badAlloc
 */
 FilterBox_c* CanIo_c::insertFilter(__IsoAgLib::CanCustomer_c & ar_customer,
-                                  uint32_t aui32_mask, uint32_t aui32_filter,
+                                  const IsoAgLib::iMaskFilterType_c& arc_filterpair,
                                   bool ab_reconfigImmediate,
-                                  const Ident_c::identType_t at_identType,
                                   int8_t ai8_dlcForce)
 
 {
-  Ident_c c_newMask = Ident_c(aui32_mask, at_identType);
-  Ident_c c_newFilter = Ident_c(aui32_filter, at_identType);
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_ENDL;
       printMyFilterBox();
 #endif
 
-  if (existFilter(ar_customer, c_newMask, c_newFilter, NULL))
+  if (existFilter(ar_customer, arc_filterpair, NULL))
   { // filter,mask,cancustomer definition already inserted
     return NULL;
   }
 
   //look for existing mask/filter definition
-  FilterBox_c* tempFilterBox_c = getFilterBox(c_newMask, c_newFilter);
+  FilterBox_c* tempFilterBox_c = getFilterBox( arc_filterpair );
 
   if (tempFilterBox_c != NULL)
   { // filterbox with mask/filter found
     #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
     INTERNAL_DEBUG_DEVICE << "filterbox mask/filter already exist -> insert cancustomer" << INTERNAL_DEBUG_DEVICE_ENDL;
     #ifdef SYSTEM_PC
-    INTERNAL_DEBUG_DEVICE << "mask: "<< STL_NAMESPACE::hex << c_newMask.ident() << " filter: " << c_newFilter.ident() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "mask: "<< STL_NAMESPACE::hex << arc_filterpair.getMask() << " filter: " << arc_filterpair.getFilter() << STL_NAMESPACE::dec << INTERNAL_DEBUG_DEVICE_ENDL;
     #else
-    INTERNAL_DEBUG_DEVICE << "mask: " << c_newMask.ident() << " filter: " << c_newFilter.ident() << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "mask: " << arc_filterpair.getMask() << " filter: " << arc_filterpair.getFilter() << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #endif
     tempFilterBox_c->insertCustomer (&ar_customer, ai8_dlcForce);
@@ -420,7 +340,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   mc_tempFilterBox.clearData();
 
   // define temp FilterBox_c with new values
-  mc_tempFilterBox.set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce);
+  mc_tempFilterBox.set( arc_filterpair, &ar_customer, ai8_dlcForce);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = cntFilter();
@@ -438,7 +358,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   {
     if ( m_arrFilterBox[ui8_overwritenFilterBoxIndex].isIdle() )
     { //if idle filterbox found overwrite it with the new filterbox
-      m_arrFilterBox[ui8_overwritenFilterBoxIndex].set(c_newMask, c_newFilter, &ar_customer, ai8_dlcForce);
+      m_arrFilterBox[ui8_overwritenFilterBoxIndex].set(arc_filterpair, &ar_customer, ai8_dlcForce);
 
       m_arrFilterBox[ui8_overwritenFilterBoxIndex].setFbVecIdx(ui8_overwritenFilterBoxIndex);
 
@@ -462,7 +382,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
       #ifdef SYSTEM_PC
       << STL_NAMESPACE::hex
       #endif
-      << c_newMask.ident() << " filter: " << c_newFilter.ident()
+      << arc_filterpair.getMask() << " filter: " << arc_filterpair.getFilter()
       #ifdef SYSTEM_PC
       << STL_NAMESPACE::dec
       #endif
@@ -482,7 +402,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
     #ifdef SYSTEM_PC
     << STL_NAMESPACE::hex
     #endif
-    << c_newMask.ident() << " filter: " << c_newFilter.ident()
+    << arc_filterpair.getMask() << " filter: " << arc_filterpair.getFilter()
     #ifdef SYSTEM_PC
     << STL_NAMESPACE::dec
     #endif
@@ -548,13 +468,10 @@ INTERNAL_DEBUG_DEVICE << "end CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_E
   @param at_mask individual mask for this filter box
   @param at_filter individual filter
   @param at_identType ident type of the deleted ident: standard 11bit or extended 29bit
-        (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
   @return true -> FilterBox_c found and deleted
 */
 bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
-                           MASK_TYPE at_mask, MASK_TYPE at_filter,
-                           const Ident_c::identType_t at_identType)
-
+                           const IsoAgLib::iMaskFilterType_c& arc_filterpair )
 {
   bool b_result = false;
 
@@ -569,7 +486,7 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
     #ifdef SYSTEM_PC
       << STL_NAMESPACE::hex
     #endif
-      << at_filter
+      << arc_filterpair.getFilter()
       << " on Can bus = "
     #ifdef SYSTEM_PC
       << STL_NAMESPACE::dec
@@ -580,13 +497,11 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
       << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
-  Ident_c c_deleteMask = Ident_c(at_mask, at_identType),
-        c_deleteFilter = Ident_c(at_filter, at_identType);
 
   // iterator for quick access to all array elements
   ArrFilterBox::iterator pc_iter;
 
-  if (existFilter(ar_customer, c_deleteMask, c_deleteFilter, &pc_iter))
+  if (existFilter(ar_customer, arc_filterpair, &pc_iter))
   { // filter found -> delete element where pc_iter points to
     if ( pc_iter->deleteFilter(ar_customer) )
     { //no more cancustomer exist for the filterbox -> delete
@@ -823,7 +738,7 @@ uint32_t ui32_msgNbr = 0;
 #endif
           if(i32_fbIdx >= 0 && i32_fbIdx < static_cast<int32_t>(m_arrFilterBox.size()))
           {
-            if(!(m_arrFilterBox[i32_fbIdx].isIdle())  &&  m_arrFilterBox[i32_fbIdx].matchMsgId(i32_ident,identType))
+            if(!(m_arrFilterBox[i32_fbIdx].isIdle())  &&  m_arrFilterBox[i32_fbIdx].maskFilterPair().matchMsgId( Ident_c( i32_ident, identType ) ))
             {
               // !! the interested FilterBox processes the message
               #if 0 //#if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
@@ -1463,7 +1378,7 @@ bool CanIo_c::canMsg2FilterBox( uint32_t aui32_ident, Ident_c::identType_t at_ty
 
   while (ar_arrFilterBoxIter != m_arrFilterBox.end())
   {
-    if ( ar_arrFilterBoxIter->matchMsgId( aui32_ident, at_type ) )
+    if ( ar_arrFilterBoxIter->maskFilterPair().matchMsgId( Ident_c( aui32_ident, at_type ) ) )
     { // matching FilterBox_c found
       return true;
     }
@@ -1475,16 +1390,15 @@ bool CanIo_c::canMsg2FilterBox( uint32_t aui32_ident, Ident_c::identType_t at_ty
 
 
 /** search for a FilterBox with given mask and filter
-    @param  at_mask    filterBox mask
-    @param  at_filter  filterBox filter
+    @param  arc_maskFilter filter mask combination
     @return            located FilterBox or NULL if not exist
   */
-FilterBox_c* CanIo_c::getFilterBox(Ident_c& at_mask, Ident_c& at_filter) const
+FilterBox_c* CanIo_c::getFilterBox( const IsoAgLib::iMaskFilterType_c& arc_maskFilter ) const
 {
 
   for(uint8_t i = 0; i < cntFilter(); i++)
   {
-    if( m_arrFilterBox[i].equalFilterMask(at_mask, at_filter) )
+    if( m_arrFilterBox[i].equalFilterMask( arc_maskFilter ) )
       return const_cast<FilterBox_c*>(&m_arrFilterBox[i]);
   }
 
@@ -1780,10 +1694,9 @@ CanIo_c::CanIo_c( void ) :
     mi32_lastProcessedCanPkgTime(0),
     mui16_bitrate(0),
     mi32_endLastReconfigTime(0),
-    mc_maskStd(),
-    mc_maskExt(),
-    mc_maskLastmsg(),
-    men_identType(Ident_c::StandardIdent),
+    mc_maskStd( 0, Ident_c::StandardIdent ),
+    mc_maskExt( 0, Ident_c::ExtendedIdent ),
+    mc_maskLastmsg( 0, Ident_c::ExtendedIdent ),
     mui8_busNumber(0xFF),
     mui8_minmsgObjLimit(0),
     mui8_minReceiveObjNr(0),
@@ -1843,7 +1756,7 @@ CanIo_c::baseCanInit (uint16_t aui16_bitrate)
       << "CanIo_c::baseCanInit( " << aui16_bitrate << " ) vor HAL::can_configGlobalInit" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   // init CAN BUS (BIOS function)
-  mc_maskLastmsg.set(0, DEFAULT_IDENT_TYPE);
+  mc_maskLastmsg.set(0, Ident_c::ExtendedIdent);
 
   int16_t i16_retvalInit = HAL::can_configGlobalInit(mui8_busNumber, mui16_bitrate, mc_maskStd.ident(), mc_maskExt.ident(),
                       mc_maskLastmsg.ident());
@@ -1885,23 +1798,15 @@ CanIo_c::baseCanInit (uint16_t aui16_bitrate)
   int16_t i16_retvalConfig = 0;
   // config the send CAN object with BIOS function
   bool b_configSuccess = true;
-  Ident_c c_sendIdent;
-
 
   const uint8_t cui8_firstSendMsgObj = minHALMsgObjNr();
-  switch (men_identType)
-  {
-    case Ident_c::StandardIdent:
-      c_sendIdent.setIdentType(Ident_c::StandardIdent);
-      break;
-    case Ident_c::ExtendedIdent:
-      c_sendIdent.setIdentType(Ident_c::ExtendedIdent);
-      break;
-  }
+
+  Ident_c c_extIdent( 0, Ident_c::ExtendedIdent );
+
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
-  i16_retvalConfig = HAL::can_configMsgobjInit(mui8_busNumber,cui8_firstSendMsgObj, c_sendIdent, true);
+  i16_retvalConfig = HAL::can_configMsgobjInit(mui8_busNumber,cui8_firstSendMsgObj, c_extIdent, true);
   #else
-  i16_retvalConfig = HAL::can_configMsgobjInit(mui8_busNumber,cui8_firstSendMsgObj, c_sendIdent, c_sendIdent, true);
+  i16_retvalConfig = HAL::can_configMsgobjInit(mui8_busNumber,cui8_firstSendMsgObj, c_extIdent, c_extIdent, true);
   #endif
 
   // check for error state
@@ -2006,17 +1911,17 @@ void CanIo_c::printMyFilterBox(){
 #  ifdef SYSTEM_PC
         << std::hex
 #  endif
-        << m_arrFilterBox[i].filter().ident()
+        << m_arrFilterBox[i].maskFilterPair().getFilter()
         << ", Mask: 0x"
 #  ifdef SYSTEM_PC
         << std::hex
 #  endif
-        << m_arrFilterBox[i].mask().ident()
+        << m_arrFilterBox[i].maskFilterPair().getMask()
         << ", IdentType: "
 #  ifdef SYSTEM_PC
         << std::dec
 #  endif
-        << m_arrFilterBox[i].identType()
+        << m_arrFilterBox[i].maskFilterPair().getType()
         << ", FbVecId : "
 #  ifdef SYSTEM_PC
         << std::dec

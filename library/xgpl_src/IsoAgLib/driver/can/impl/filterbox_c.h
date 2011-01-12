@@ -23,6 +23,7 @@
 #include "ident_c.h"
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
@@ -123,31 +124,22 @@ public:
   /* *************************************** */
 
   /** set the mask (t_mask) and filter (t_filter) of this FilterBox
-    @param acrc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+    @param arc_maskFilter filter mask pair combination
     @param acrc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
     @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
-    @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg>>>>>>> .r2856
+    @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
   */
-   void set (const Ident_c& acrc_mask,
-            const Ident_c& acrc_filter,
+   void set (const IsoAgLib::iMaskFilterType_c& arc_maskFilter, 
             CanCustomer_c *apc_customer = NULL,
             int8_t ai8_dlcForce = -1);
-
-
-  /** check if ID from a CAN msg matches this FilterBox
-    @param at_ident CAN ident of received msg
-    @return true -> CAN ident fits to local filter/mask definition
-  */
-  inline bool matchMsgId(MASK_TYPE at_ident, Ident_c::identType_t at_type )
-  { return ( (mc_mask.masked(at_ident) == mc_mask.masked(mc_filter)) && (at_type == identType()) );}
 
   /** checks, if FilterBox_c definition given by ac_mask and ac_filter is the same
     @param ac_mask mask to use for comparison
     @param ac_filter filter to use for comparison
     @return true -> given mask and filter are same as the local defs
   */
-  bool equalFilterMask(const Ident_c& ac_mask, const Ident_c& ac_filter) const
-    {return ((mc_mask == ac_mask) && (mc_filter == ac_filter));}
+  bool equalFilterMask(const IsoAgLib::iMaskFilterType_c& arc_filterMaskPair ) const
+    { return (mc_maskFilterPair == arc_filterMaskPair ); }
 
   /** checks, if Filter_Box_c has already stored given customer
       @param ar_customer  customer to compare
@@ -162,18 +154,10 @@ public:
     */
   bool deleteFilter(const __IsoAgLib::CanCustomer_c & ar_customer);
 
-  /** deliver the type of the FilterBox_c ident */
-  Ident_c::identType_t identType() const {return mc_filter.identType();}
-
-  /** deliver const reference to mask Ident
-    @return const reference to mask Ident_c instance
-  */
-  const Ident_c& mask() const {return mc_mask;}
-
-  /** deliver const reference to filter Ident
-    @return const reference to filter Ident_c instance
-  */
-  const Ident_c& filter() const {return mc_filter;}
+  /** deliver const reference to filter mask pair */
+  const IsoAgLib::iMaskFilterType_c& maskFilterPair() const {
+    return mc_maskFilterPair;
+  }
 
   #if DEBUG_CAN_BUFFER_FILLING
   /** some debug messages */
@@ -201,11 +185,7 @@ public:
 
 private:
 // Private attributes
-  /** mc_filter for this FilterBox_c insance */
-  Ident_c mc_filter;
-
-  /** mc_mask for this FilterBox_c instance */
-  Ident_c mc_mask;
+  IsoAgLib::iMaskFilterType_c mc_maskFilterPair;
 
   /**vector of pointer to pc_customer CanCustomer_c  which works with the received CAN data */
   STL_NAMESPACE::vector<CustomerLen_s> mvec_customer;

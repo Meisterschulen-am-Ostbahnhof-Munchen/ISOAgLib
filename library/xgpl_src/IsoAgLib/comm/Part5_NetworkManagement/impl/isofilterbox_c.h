@@ -17,6 +17,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
@@ -31,11 +32,11 @@ class CanCustomer_c;
 struct IsoFilter_s
 {
   // dlcForce == -1: don't check dlc. value of 0..8: force to be exactly this dlc!
-  IsoFilter_s (CanCustomer_c& arc_canCustomer, uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c* apc_isoNameDa = NULL, const IsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, Ident_c::identType_t at_identType=Ident_c::ExtendedIdent);
+  IsoFilter_s (CanCustomer_c& arc_canCustomer, const IsoAgLib::iMaskFilter_c& arc_maskFilter, const IsoName_c* apc_isoNameDa = NULL, const IsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1 );
   ~IsoFilter_s();
 
-  uint32_t         getMask()      const { return mc_identMask.ident(); }
-  uint32_t         getFilter()    const { return mc_identFilter.ident(); }
+  uint32_t         getMask()      const { return mc_maskFilter.getMask(); }
+  uint32_t         getFilter()    const { return mc_maskFilter.getFilter(); }
   const IsoName_c& getIsoNameDa() const { return mc_isoNameDa; }
   const IsoName_c& getIsoNameSa() const { return mc_isoNameSa; }
 
@@ -50,8 +51,7 @@ private:
   bool equalMaskAndFilter (const IsoFilter_s& acrc_isoFilter) const;
 
 private:
-  Ident_c mc_identMask;
-  Ident_c mc_identFilter;
+  IsoAgLib::iMaskFilter_c mc_maskFilter;
   IsoName_c mc_isoNameDa;
   IsoName_c mc_isoNameSa;
 
@@ -80,8 +80,7 @@ public:
 private:
   IsoFilter_s ms_isoFilter;
   FilterBox_c* mpc_filterBox;
-  Ident_c mc_adaptedIdentMask;
-  Ident_c mc_adaptedIdentFilter;
+  IsoAgLib::iMaskFilter_c mc_adaptedMaskFilter;
 };
 
 /** this typedef is only for some time to provide backward compatibility at API level */

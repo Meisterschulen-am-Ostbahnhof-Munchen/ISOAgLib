@@ -246,6 +246,7 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
   }
 
   // now nr() has now suitable value
+  c_pkg.setIdentType(Ident_c::ExtendedIdent);
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
@@ -369,6 +370,7 @@ bool IsoItem_c::timeEvent( void )
         }
         if (b_sendOutWsMessage)
         { // Really send it out on the bus now!
+          c_pkg.setIdentType(Ident_c::ExtendedIdent);
           c_pkg.setIsoPri (7);
           c_pkg.setMonitorItemForSA (this);
           c_isobus << c_pkg;
@@ -413,6 +415,7 @@ IsoItem_c::processAddressClaimed(
     // this item has higher PRIO, so that we shall reject the SA steal
     // by resending OUR SA CLAIM
     IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+    c_pkg.setIdentType(Ident_c::ExtendedIdent);
     c_pkg.setMonitorItemForSA( this );
     c_pkg.setIsoPri(6);
     c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
@@ -445,6 +448,7 @@ bool IsoItem_c::sendSaClaim()
   INTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
   IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
+  c_pkg.setIdentType(Ident_c::ExtendedIdent);
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information

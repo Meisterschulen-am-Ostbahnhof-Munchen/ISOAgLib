@@ -72,9 +72,8 @@ public:
     set ident for the telegram
     @param at_ident ident for the telegram
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
-      default defined in isoaglib_config.h
   */
-  static void setIdent(MASK_TYPE at_ident, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+  static void setIdent(MASK_TYPE at_ident, __IsoAgLib::Ident_c::identType_t at_type)
     {msc_ident.set(at_ident, at_type);}
 
   /**
@@ -83,11 +82,10 @@ public:
     CAN frame)
     @param ab_val value for ident at wanted position for the telegram
     @param ab_pos position for wanted value for ident for the telegram
-    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
-      default defined in isoaglib_config.h
   */
-  static void setIdent(uint8_t ab_val, uint8_t ab_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
-    {msc_ident.set(ab_val, ab_pos, at_type);}
+  static void setIdentByte(uint8_t ab_val, uint8_t ab_pos) {
+    msc_ident.setByte(ab_val, ab_pos);
+  }
 
   /**
     set specific uint16_t of ident for the telegram
@@ -95,11 +93,10 @@ public:
     CAN frame)
     @param aui16_val value for ident at wanted position for the telegram
     @param aui8_pos position [0..1] for wanted value for ident for the telegram (pos0==byte0, pos1==byte2)
-    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
-      default defined in isoaglib_config.h
   */
-  static void setIdentWord(uint16_t aui16_val, uint8_t aui8_pos, __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE)
-    {msc_ident.setWord(aui16_val, aui8_pos, at_type);}
+  static void setIdentWord(uint16_t aui16_val, uint8_t aui8_pos) {
+    msc_ident.setWord(aui16_val, aui8_pos);
+  }
 
   /**
     set type of ident
@@ -212,8 +209,8 @@ public:
     @param aui8_len amount of bytes in the data string
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  static void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time = 0,
-    __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE);
+  static void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
+    __IsoAgLib::Ident_c::identType_t at_type );
 
   /**
     set complete CAN msg with one function call
@@ -223,8 +220,8 @@ public:
     @param apc_data pointer to the source data Flexible8ByteString_c string
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  static void set(MASK_TYPE at_ident, const Flexible8ByteString_c* apc_data, int32_t ai32_time = 0,
-    __IsoAgLib::Ident_c::identType_t at_type = DEFAULT_IDENT_TYPE);
+  static void set(MASK_TYPE at_ident, const Flexible8ByteString_c* apc_data, int32_t ai32_time,
+    __IsoAgLib::Ident_c::identType_t at_type);
 
   /**
     ==> OBSOLETE, because now all pkg-data is STATIC!

@@ -147,10 +147,10 @@ void IsoMonitor_c::close( void )
     getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    getIsoBusInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8));
+    getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8) ) );
 #ifdef USE_WORKING_SET
-    getIsoBusInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8));
-    getIsoBusInstance4Comm().deleteFilter( mt_customer, 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8));
+    getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8) ) );
+    getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8) ) );
 #endif
   }
 }
@@ -1039,6 +1039,7 @@ bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
 
 //  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
 
+  data().setIdentType(Ident_c::ExtendedIdent);
   data().setIsoPri(6);
   data().setIsoPgn(REQUEST_PGN_MSG_PGN);
   data().setIsoPs(255); // global request

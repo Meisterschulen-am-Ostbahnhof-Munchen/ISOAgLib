@@ -169,6 +169,7 @@ void ProcDataBase_c::setBasicSendFlags() const
   // the communicating devices are represented on ISO11783
   mc_data.setIsoPri(3);
   mc_data.setIsoPgn(PROCESS_DATA_PGN);
+  mc_data.setIdentType(Ident_c::ExtendedIdent);
 
   // general command is already set, use these values:
   // set command in ProcessPkg::flags2string

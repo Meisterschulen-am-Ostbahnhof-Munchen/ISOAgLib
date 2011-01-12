@@ -24,7 +24,7 @@ Flexible8ByteString_c CanPkg_c::msc_data;
 int32_t CanPkg_c::msi32_time = 0;
 
 /** identifier of CAN msg */
-__IsoAgLib::Ident_c CanPkg_c::msc_ident;
+__IsoAgLib::Ident_c CanPkg_c::msc_ident( 0, Ident_c::ExtendedIdent );
 
 /** state of the received can-message */
 MessageState_t CanPkg_c::mst_msgState = MessageValid; // no default value is needed, but anyway..

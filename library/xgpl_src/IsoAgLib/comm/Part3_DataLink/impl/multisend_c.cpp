@@ -866,8 +866,8 @@ MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemM
     case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
@@ -875,8 +875,8 @@ MultiSend_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemM
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL),  (TP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }

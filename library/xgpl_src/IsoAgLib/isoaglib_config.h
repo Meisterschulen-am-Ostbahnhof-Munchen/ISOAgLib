@@ -614,22 +614,12 @@
 #ifndef MASK_TYPE
 #  ifdef USE_ISO_11783
 #    define MASK_TYPE uint32_t
+#    define MASK_INVALID 0xC0000000L
 #  else
 #    define MASK_TYPE uint16_t
+#    define MASK_INVALID 0xF800
 #  endif
 #endif
-
-/// define default ident type
-#define DEFAULT_IDENT_TYPE __IsoAgLib::Ident_c::ExtendedIdent
-
-#ifdef USE_ISO_11783
-  /// config CanIo_c to handle both 11bit and 29bit ident types if ISO 11783 is active
-#  define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::ExtendedIdent
-#else
-  /// config CanIo_c to only 11bit ident type if ISO 11783 is NOT active
-#  define DEFAULT_CONFIG_IDENT_TYPE __IsoAgLib::Ident_c::StandardIdent
-#endif
-
 
 #ifndef USE_WORKING_SET
   /// auto-define USE_WORKING_SET dependend on the parts that need it!

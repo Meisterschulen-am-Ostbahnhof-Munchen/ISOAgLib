@@ -17,6 +17,7 @@
 #include <IsoAgLib/driver/can/iident_c.h>
 #include <IsoAgLib/driver/can/icancustomer_c.h>
 #include <IsoAgLib/driver/can/icanpkg_c.h>
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 #if 0 < PROP_INSTANCE_CNT
@@ -48,7 +49,6 @@ class iProprietaryBus_c {
         * Err_c::busy on already used sending Msg-Obj
     @param aui8_busNumber number of the CAN bus
     @param aui16_bitrate bitrate (default by define in isoaglib_config.h)
-    @param ren_identType 
     @param aui8_minObjNr optional minimum number for hardware CAN
            message object (important for sharing CAN controller with
          other tasks) (default by define in isoaglib_config.h)
@@ -58,11 +58,10 @@ class iProprietaryBus_c {
   */
   inline bool init(
     uint8_t aui8_busNumber,
-    uint16_t aui16_bitrate = DEFAULT_BITRATE,
-    iIdent_c::identType_t ren_identType = DEFAULT_CONFIG_IDENT_TYPE,
+    uint16_t aui16_bitrate,
     uint8_t aui8_minObjNr = CONFIG_CAN_DEFAULT_MIN_OBJ_NR,
     uint8_t aui8_maxObjNr = CONFIG_CAN_DEFAULT_MAX_OBJ_NR)
-  { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, aui16_bitrate, ren_identType, aui8_minObjNr, aui8_maxObjNr); }
+  { return __IsoAgLib::getCanInstance4Prop().init (aui8_busNumber, aui16_bitrate, aui8_minObjNr, aui8_maxObjNr); }
 
   /** Close the opened Proprietary CAN-bus */
   inline void close() { return __IsoAgLib::getCanInstance4Prop().close(); }
@@ -78,16 +77,14 @@ class iProprietaryBus_c {
   /**
     deliver the numbers which can be placed at the moment in the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return number of msgs which fit into send buffer
   */
-  uint8_t sendCanFreecnt(iIdent_c::identType_t ren_identType = DEFAULT_IDENT_TYPE)
+  uint8_t sendCanFreecnt(iIdent_c::identType_t ren_identType)
   { return __IsoAgLib::getCanInstance4Prop().sendCanFreecnt(ren_identType); }
 
   /**
     clear the send buffer
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
   */
   void sendCanClearbuf() { __IsoAgLib::getCanInstance4Prop().sendCanClearbuf(); }
 
@@ -99,48 +96,14 @@ class iProprietaryBus_c {
 
   /**
     test if a FilterBox_c definition already exist
-    (version expecial for standard ident, chosen at compile time)
     @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-    @param aui32_mask individual mask for this filter box
-    @param aui32_filter individual filter
-    @param ren_identType type of searched ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
+    @param acrc_filterMask individual set of filter and mask
     @return true -> same FilterBox_c already exist
   */
   bool existFilter(
     const IsoAgLib::iCanCustomer_c & ar_customer,
-    uint16_t aui32_mask, uint16_t aui32_filter,
-    iIdent_c::identType_t ren_identType = DEFAULT_IDENT_TYPE)
-  { return __IsoAgLib::getCanInstance4Prop().existFilter(ar_customer, aui32_mask, aui32_filter, ren_identType, NULL); }
-
-  /**
-    test if a FilterBox_c definition already exist
-    (version expecial for extended ident, chosen at compile time)
-    @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-    @param aui32_mask individual mask for this filter box
-    @param aui32_filter individual filter
-    @param ren_identType type of searched ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
-    @return true -> same FilterBox_c already exist
-  */
-  bool existFilter(
-    const IsoAgLib::iCanCustomer_c & ar_customer,
-    uint32_t aui32_mask, uint32_t aui32_filter,
-    iIdent_c::identType_t ren_identType = DEFAULT_IDENT_TYPE)
-  { return __IsoAgLib::getCanInstance4Prop().existFilter( ar_customer, aui32_mask, aui32_filter, ren_identType, NULL); }
-
-  /**
-    test if a FilterBox_c definition already exist
-    (version with comper items as Ident_c class instances, chosen by compiler)
-    @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-    @param ac_compMask individual mask for this filter box
-    @param ac_compFilter individual filter
-    @return true -> same FilterBox_c already exist
-  */
-  bool existFilter(
-    const IsoAgLib::iCanCustomer_c & ar_customer,
-    const iIdent_c& ac_compMask, const iIdent_c& ac_compFilter)
-  { return __IsoAgLib::getCanInstance4Prop().existFilter(ar_customer, ac_compMask, ac_compFilter, NULL); }
+    const IsoAgLib::iMaskFilterType_c& acrc_filterMask)
+  { return __IsoAgLib::getCanInstance4Prop().existFilter(ar_customer, acrc_filterMask, NULL); }
 
   /**
     create a Filter Box with specified at_mask/at_filter
@@ -157,27 +120,22 @@ class iProprietaryBus_c {
     @param ar_customer reference to IsoAgLib::iCanCustomer_c  which needs
            filtered messages (-> on received msg call
            ar_customer.processMsg())
-    @param at_mask individual mask for this filter box
-    @param at_filter individual filter
+    @param acrc_filterMask individual filter mask set
     @param ab_reconfigImmediate true -> all Filter objects are reconfigured
            to according CAN hardware MsgObj after creating this filter
-    @param at_identType ident type of the created ident: standard 11bit or extended 29bit
-      (default DEFAULT_IDENT_TYPE set in isoaglib_config.h)
     @return true -> inserting and if wanted reconfiguration are
           performed without errors
     @exception badAlloc
   */
   bool insertFilter(
     IsoAgLib::iCanCustomer_c& ar_customer,
-    MASK_TYPE at_mask, MASK_TYPE at_filter,
-    bool ab_reconfigImmediate = true,
-    const iIdent_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
+    IsoAgLib::iMaskFilterType_c acrc_filterMask,
+    bool ab_reconfigImmediate = true)
   { /// @todo Add DLC force here, too.
     return NULL != __IsoAgLib::getCanInstance4Prop().insertFilter(
         ar_customer,
-        at_mask, at_filter,
-        ab_reconfigImmediate,
-        at_identType);
+        acrc_filterMask,
+        ab_reconfigImmediate);
   }
 
   /**
@@ -188,19 +146,15 @@ class iProprietaryBus_c {
   /**
     delete a FilerBox definition
     @param ar_customer reference to the processing class ( the same filter setting can be registered by different consuming classes )
-    @param aui32_mask individual mask for this filter box
-    @param aui32_filter individual filter
-    @param at_identType ident type of the deleted ident: standard 11bit or extended 29bit
-        (defualt DEFAULT_IDENT_TYPE defined in isoaglib_config.h)
+    @param acrc_filterMask individual filter mask combination
     @return true -> FilterBox_c found and deleted
   */
   bool deleteFilter(
     const IsoAgLib::iCanCustomer_c& ar_customer,
-    MASK_TYPE aui32_mask, MASK_TYPE aui32_filter,
-    const iIdent_c::identType_t at_identType = DEFAULT_IDENT_TYPE)
+    IsoAgLib::iMaskFilterType_c acrc_filterMask)
   {
     return __IsoAgLib::getCanInstance4Prop().deleteFilter(
-      ar_customer, aui32_mask, aui32_filter, at_identType);
+      ar_customer, acrc_filterMask);
   }
 
 

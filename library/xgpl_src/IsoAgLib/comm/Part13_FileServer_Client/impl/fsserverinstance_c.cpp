@@ -35,10 +35,10 @@ FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_
   , ui8_capabilities(0)
   , v_volumes()
   , men_state(offline)
-  , ms_receiveFilter (*this, 0x3FFFF00UL, (FS_TO_GLOBAL_PGN << 8),
+  , ms_receiveFilter (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, (FS_TO_GLOBAL_PGN << 8) ),
                       NULL,
                       &pref_newItem.isoName(),
-                      8, Ident_c::ExtendedIdent)
+                      8 )
   , c_data (getForeignInstance4Comm (ref_fsManager))
 {
   isoaglib_assert (!getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager)).existIsoFilter (ms_receiveFilter));

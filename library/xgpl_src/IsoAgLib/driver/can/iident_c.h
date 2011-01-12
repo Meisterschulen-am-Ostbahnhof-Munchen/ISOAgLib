@@ -38,9 +38,8 @@ public:
     @param at_ident new ident setting
     @param ren_identType new ident type 
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-        (default: DEFAULT_IDENT_TYPE set in isoaglib_config)
   */
-  iIdent_c(MASK_TYPE at_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE)
+  iIdent_c(MASK_TYPE at_ident, identType_t ren_identType)
     : Ident_c(at_ident, ren_identType) {};
   /**
     @brief constructor which gets its values from other instance
@@ -120,22 +119,12 @@ public:
   */
   MASK_TYPE ident(uint8_t ab_pos) const {return Ident_c::ident(ab_pos);};
   /**
-    @brief check if Ident_c is set as empty (needed for MsgObj)
-  */
-  bool empty() const {return Ident_c::empty();};
-  /**
-    @brief set the Ident_c to empty state
-    @param ab_empty set empty state (default = true)
-  */
-  void setEmpty(bool ab_empty = true) {Ident_c::setEmpty(ab_empty);};
-  /**
     @brief set this ident
     @param at_ident new ident setting
     @param ren_identType new ident type
         (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-        (default defined in isoaglib_config.h)
   */
-  void set(MASK_TYPE at_ident = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE)
+  void set(MASK_TYPE at_ident, identType_t ren_identType)
     {Ident_c::set(at_ident, ren_identType);};
   /**
     @brief set this ident with access to single unsigned char
@@ -143,12 +132,9 @@ public:
     CAN frame)
     @param ab_val new val for ident at wanted position
     @param ab_pos position in ident, where ident should be placed in
-    @param ren_identType new ident type
-        (Ident_c::S for 11bit ident or Ident_c::E for 29bit)
-        (default defined in isoaglib_config.h)
   */
-  void set(uint8_t ab_val = 0, uint8_t ab_pos = 0, identType_t ren_identType = DEFAULT_IDENT_TYPE)
-    {Ident_c::set(ab_val, ab_pos, ren_identType);};
+  void setByte(uint8_t ab_val, uint8_t ab_pos )
+    {Ident_c::setByte(ab_val, ab_pos);};
   /**
     @brief set type of ident
     @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E

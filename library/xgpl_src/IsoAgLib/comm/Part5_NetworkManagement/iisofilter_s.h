@@ -31,11 +31,11 @@ namespace IsoAgLib
 
 struct iIsoFilter_s : private __IsoAgLib::IsoFilter_s
 {
-  iIsoFilter_s (iCanCustomer_c& arc_canCustomer, uint32_t aui32_mask, uint32_t aui32_filter, const iIsoName_c* apc_isoNameDa = NULL, const iIsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1, iIdent_c::identType_t at_identType=iIdent_c::ExtendedIdent)
+  iIsoFilter_s (iCanCustomer_c& arc_canCustomer, const IsoAgLib::iMaskFilter_c& arc_maskFilter, const iIsoName_c* apc_isoNameDa = NULL, const iIsoName_c* apc_isoNameSa = NULL, int8_t ai8_dlcForce=-1 )
     : IsoFilter_s (static_cast<__IsoAgLib::CanCustomer_c&>(arc_canCustomer),
-      aui32_mask, aui32_filter,
+      arc_maskFilter, 
       apc_isoNameDa, apc_isoNameSa,
-      ai8_dlcForce, at_identType) {}
+      ai8_dlcForce ) {}
 
 
   uint32_t          getMask()      const { return IsoFilter_s::getMask(); }

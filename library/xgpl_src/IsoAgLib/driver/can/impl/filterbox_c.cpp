@@ -35,8 +35,7 @@ int FilterBox_c::msi_processMsgLoopIndex = -1; // not used if "mspc_currentlyPro
 int FilterBox_c::msi_processMsgLoopSize = -1; // not used if "mspc_currentlyProcessedFilterBox==NULL" though.
 
 FilterBox_c::FilterBox_c()
-  : mc_filter(0, Ident_c::StandardIdent)
-  , mc_mask(0, Ident_c::StandardIdent)
+  : mc_maskFilterPair()
   , mvec_customer()
   , mui8_filterBoxNr(IdleState)
   , mui8_busNumber(IdleState)
@@ -53,8 +52,7 @@ FilterBox_c::FilterBox_c()
    @exception badAlloc
 */
 FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
-  : mc_filter(acrc_src.mc_filter)
-  , mc_mask(acrc_src.mc_mask)
+  : mc_maskFilterPair(acrc_src.mc_maskFilterPair)
   , mvec_customer(acrc_src.mvec_customer)
   , mui8_filterBoxNr(acrc_src.mui8_filterBoxNr)
   , mui8_busNumber(acrc_src.mui8_busNumber)
@@ -85,10 +83,7 @@ FilterBox_c::~FilterBox_c()
 FilterBox_c& FilterBox_c::operator=(const FilterBox_c& acrc_src){
   if ( this != &acrc_src)
   {
-    mc_filter = acrc_src.mc_filter;
-    mc_mask = acrc_src.mc_mask;
-
-    // acrc_src and self are different object instances
+    mc_maskFilterPair = acrc_src.mc_maskFilterPair;
     mvec_customer = acrc_src.mvec_customer;
 
     mui8_busNumber = acrc_src.mui8_busNumber;
@@ -103,10 +98,8 @@ FilterBox_c& FilterBox_c::operator=(const FilterBox_c& acrc_src){
 void FilterBox_c::clearData()
 {
   mvec_customer.clear();
-  mc_mask.set(0, DEFAULT_IDENT_TYPE);
-  mc_filter.set(0, DEFAULT_IDENT_TYPE);
-  mc_filter.setEmpty(true);
-  mc_mask.setEmpty(true);
+  mc_maskFilterPair.setEmpty();
+
   mui8_busNumber = IdleState;
   mui8_filterBoxNr = IdleState;
   mi32_fbVecIdx = InvalidIdx;
@@ -154,8 +147,10 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   #endif // end of #ifdef for usage of mb_performIsobusResolve
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
-  if (mc_filter.empty() || mc_mask.empty() ) return false;
-  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, mc_filter, mc_mask, 0))
+  isoaglib_assert( ! mc_maskFilterPair.empty() );
+  Ident_c c_mask = mc_maskFilterPair.getMaskIdent();
+  Ident_c c_filter = mc_maskFilterPair.getFilterIdent();
+  switch (HAL::can_configMsgobjInit(aui8_busNumber, aui8_FilterBoxNr, c_filter, c_mask, 0))
   {
     case HAL_NO_ERR:
       return true;
@@ -206,20 +201,18 @@ void FilterBox_c::closeHAL()
 /**
   set the mask (t_mask) and filter (t_filter) of this FilterBox
  @param acrc_mask mask for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
-  @param acrc_filter filter for this Filer_Box (MASK_TYPE defined in isoaglib_config.h)
+  @param arc_maskFilterPair mask filter combination
   @param apc_customer pointer to the CanCustomer_c instance, which creates this FilterBox_c instance
   @param ai8_dlcForce force the DLC to be exactly this long (0 to 8 bytes). use -1 for NO FORCING and accepting any length can-pkg
 */
-void FilterBox_c::set (const Ident_c& acrc_mask,
-                       const Ident_c& acrc_filter,
+void FilterBox_c::set (const IsoAgLib::iMaskFilterType_c& arc_maskFilterPair,
                        CanCustomer_c* apc_customer,
                        int8_t ai8_dlcForce)
 {
   // actually "apc_customer" should've rather been a reference!
   isoaglib_assert (apc_customer);
 
-  mc_filter = acrc_filter;
-  mc_mask = acrc_mask;
+  mc_maskFilterPair = arc_maskFilterPair;
 
   STL_NAMESPACE::vector<CustomerLen_s>::iterator pc_iter = mvec_customer.begin();
   for (; pc_iter != mvec_customer.end(); ++pc_iter)
@@ -473,7 +466,7 @@ void FilterBox_c::doDebug(uint8_t aui8_busNumber)
     r_maxCnt = HAL::can_stateMsgobjBuffercnt(aui8_busNumber, mui8_filterBoxNr);
     INTERNAL_DEBUG_DEVICE << "\r\nNew Max buffer filling: " << r_maxCnt
       << " at Filterbox Nr: " << uint16_t(mui8_filterBoxNr)
-      << " with Filter: " << mc_filter.ident()
+      << " with Filter: " << mc_maskFilterPair.getFilter()
       << " at BUS: " << uint16_t(aui8_busNumber)
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }
@@ -482,7 +475,7 @@ void FilterBox_c::doDebug(uint8_t aui8_busNumber)
     r_minFree = HAL::can_stateMsgobjFreecnt(aui8_busNumber, mui8_filterBoxNr);
     INTERNAL_DEBUG_DEVICE << "\r\nNew Min buffer free: " << r_minFree
       << " at Filterbox Nr: " << uint16_t(mui8_filterBoxNr)
-      << " with Filter: " << mc_filter.ident()
+      << " with Filter: " << mc_maskFilterPair.getFilter()
       << " at BUS: " << uint16_t(aui8_busNumber)
       << INTERNAL_DEBUG_DEVICE_ENDL;
   }

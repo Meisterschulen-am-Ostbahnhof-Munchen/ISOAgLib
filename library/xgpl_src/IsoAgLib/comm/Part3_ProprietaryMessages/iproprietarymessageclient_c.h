@@ -17,6 +17,7 @@
 
 #include <IsoAgLib/comm/Part5_NetworkManagement/iisoname_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
 
 
 // Begin Namespace IsoAgLib
@@ -43,12 +44,13 @@ namespace IsoAgLib
     }
 
     /** Constructor of the API class registers the new instance immediatly at ProprietaryMessageHandler_c
-        so that each succeeding setup call will be reflected there by call of
-    */
-    iProprietaryMessageClient_c(uint32_t aui32_filter, uint32_t aui32_mask,
+        so that each succeeding setup call will be reflected there by call of processProprietaryMsg */
+    iProprietaryMessageClient_c(const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
                                 const IsoAgLib::iIsoName_c& acrc_rremoteECU,
                                 const IsoAgLib::iIdentItem_c& apc_localIdent)
-    : ProprietaryMessageClient_c(aui32_filter, aui32_mask, static_cast<const __IsoAgLib::IsoName_c&>(acrc_rremoteECU), static_cast<const __IsoAgLib::IdentItem_c&>(apc_localIdent)) {}
+    : ProprietaryMessageClient_c( acrc_maskFilter,
+                                  static_cast<const __IsoAgLib::IsoName_c&>(acrc_rremoteECU),
+                                  static_cast<const __IsoAgLib::IdentItem_c&>(apc_localIdent)) {}
 
     virtual ~iProprietaryMessageClient_c() {}
 
@@ -58,13 +60,15 @@ namespace IsoAgLib
     virtual void processProprietaryMsg() = 0;
 
     /** define receive filter which will be used by ProprietaryMessageHandler for definition of CAN filter.
-        trigger an update of CAN receive filters with call of
-              ProprietaryMessageHandler::tiggerClientDataUpdate()
+        trigger an update of CAN receive filters with call of ProprietaryMessageHandler::tiggerClientDataUpdate()
         @return true, when wanted PGN is from allowed range
     */
-    bool defineReceiveFilter( uint32_t aui32_mask, uint32_t aui32_filter, const IsoAgLib::iIsoName_c& acrc_rremoteECU,
-                                                                          const IsoAgLib::iIdentItem_c* apc_localIdent)
-    { return ProprietaryMessageClient_c::defineReceiveFilter (aui32_mask, aui32_filter, static_cast<const __IsoAgLib::IsoName_c&>(acrc_rremoteECU), static_cast<const __IsoAgLib::IdentItem_c*>(apc_localIdent)); }
+    bool defineReceiveFilter( const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
+                              const IsoAgLib::iIsoName_c& acrc_rremoteECU,
+                              const IsoAgLib::iIdentItem_c* apc_localIdent)
+    { return ProprietaryMessageClient_c::defineReceiveFilter ( acrc_maskFilter,
+                                                               static_cast<const __IsoAgLib::IsoName_c&>(acrc_rremoteECU),
+                                                               static_cast<const __IsoAgLib::IdentItem_c*>(apc_localIdent)); }
 
     /** function to tell "i will send data" to the handler */
     void sendDataToHandler() { ProprietaryMessageClient_c::sendDataToHandler(); }

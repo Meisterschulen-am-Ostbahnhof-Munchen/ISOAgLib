@@ -82,7 +82,7 @@ namespace __IsoAgLib
     }
     /* define receive filter with "no"-values
     scui32_noFilter marks the whole filter as "not set"*/
-    IsoFilter_s s_tempIsoFilter(mt_customer, scui32_noMask, scui32_noFilter, NULL, NULL);
+    IsoFilter_s s_tempIsoFilter(mt_customer, IsoAgLib::iMaskFilter_c(), NULL, NULL);
     ClientNode_t t_tempClientNode (apc_proprietaryclient, s_tempIsoFilter);
     // push back new client
     mvec_proprietaryclient.push_back (t_tempClientNode);
@@ -92,7 +92,7 @@ namespace __IsoAgLib
   void ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
   {
     /* define receive filter with "no"-values*/
-    apc_proprietaryclient->defineReceiveFilter (scui32_noMask, scui32_noFilter, screfc_noIsoName, spc_nolocalIdent);
+    apc_proprietaryclient->defineReceiveFilter ( IsoAgLib::iMaskFilter_c(), screfc_noIsoName, spc_nolocalIdent);
     // look in the whole list
     for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     {
@@ -112,7 +112,7 @@ namespace __IsoAgLib
     bool ab_forceFilterRemoval)
   {
     // default for "ab_forceFilterRemoval"
-    IsoFilter_s s_newIsoFilter (mt_customer, scui32_noMask, scui32_noFilter, NULL, NULL);
+    IsoFilter_s s_newIsoFilter (mt_customer, IsoAgLib::iMaskFilter_c(), NULL, NULL);
 
     if (ab_forceFilterRemoval)
     { // keep default "s_newIsoFilter" from above.
@@ -143,7 +143,7 @@ namespace __IsoAgLib
         if ( (*client_iterator).s_isoFilter != s_newIsoFilter)
         {
           /// ## if old filter is not equal to "no filter"
-          if ((*client_iterator).s_isoFilter.getFilter() != scui32_noFilter)
+          if ((*client_iterator).s_isoFilter.getFilter() != MASK_INVALID)
           {
             /** delete filter */
             __IsoAgLib::getIsoFilterManagerInstance4Comm().removeIsoFilter ((*client_iterator).s_isoFilter);
@@ -155,7 +155,7 @@ namespace __IsoAgLib
           }
 
           /// ## if new filter is not equal to "no filter"
-          if (s_newIsoFilter.getFilter() != scui32_noFilter)
+          if (s_newIsoFilter.getFilter() != MASK_INVALID)
           {
             //  insert new filter
             __IsoAgLib::getIsoFilterManagerInstance4Comm().insertIsoFilter (s_newIsoFilter);

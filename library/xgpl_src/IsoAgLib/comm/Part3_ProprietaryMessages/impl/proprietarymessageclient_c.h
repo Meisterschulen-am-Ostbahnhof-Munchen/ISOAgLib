@@ -25,6 +25,7 @@
 namespace IsoAgLib
 { // forward declarations for friends
   class iProprietaryMessageHandler_c;
+  class iMaskFilter_c;
 }
 
 // Begin Namespace __IsoAgLib
@@ -32,12 +33,6 @@ namespace __IsoAgLib
 {
   // forward declarations for friends
   class ProprietaryMessageHandler_c;
-
-  /** initialization parameter for filter must be > 29 Bit */
-  static const uint32_t scui32_noFilter = 0xFFFFFFFF;
-
-  /** initialization parameter for mask must be > 29 Bit */
-  static const uint32_t scui32_noMask = 0xFFFFFFFF;
 
   /** Class proprietarymessageclient_c
       internal base class where each object represents one "proprietary PGN, Local node, remote node"-set
@@ -54,7 +49,7 @@ namespace __IsoAgLib
       /** second constructor
           initializes the parameter for filter and mask to ""
         */
-      ProprietaryMessageClient_c(uint32_t aui32_filter, uint32_t aui32_mask,
+      ProprietaryMessageClient_c(const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
                                  const IsoName_c& acrc_rremoteECU,
                                  const IdentItem_c& apc_localIdent);
 
@@ -104,8 +99,9 @@ namespace __IsoAgLib
             - ProprietaryMessageHandler_c::triggerClientDataUpdate()
           @return true when wanted PGN is in allowed range
         */
-      bool defineReceiveFilter( uint32_t aui32_mask, uint32_t aui32_filter, const IsoName_c& acrc_rremoteECU,
-                                                                            const IdentItem_c* apc_localIdent);
+      bool defineReceiveFilter( const IsoAgLib::iMaskFilter_c& acrc_maskFilter,
+                                const IsoName_c& acrc_rremoteECU,
+                                const IdentItem_c* apc_localIdent);
 
       /** set time period in milliseconds for repeated send of the data that has been stored in c_sendData()
           only one message is sent when period == 0

@@ -97,8 +97,8 @@ MultiReceiveClientWrapper_s::start (CanCustomer_c& apc_fpCustomer)
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    if (!getIsoBusInstance4Comm().existFilter (apc_fpCustomer, (mui32_pgnMask << 8), (mui32_pgn << 8)))
-      getIsoBusInstance4Comm().insertFilter (apc_fpCustomer, (mui32_pgnMask << 8), (mui32_pgn << 8), true, 8);
+    if (!getIsoBusInstance4Comm().existFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( ( mui32_pgnMask << 8), (mui32_pgn << 8 ))))
+      getIsoBusInstance4Comm().insertFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( (mui32_pgnMask << 8), (mui32_pgn << 8 ) ), true, 8);
   }
   #endif
 }
@@ -110,7 +110,7 @@ MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (mb_isFastPacket)
   { /// Fast-Packet additions
-    __IsoAgLib::getIsoBusInstance4Comm().deleteFilter (apc_fpCustomer, (mui32_pgnMask << 8), (mui32_pgn << 8));
+    __IsoAgLib::getIsoBusInstance4Comm().deleteFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( (mui32_pgnMask << 8), (mui32_pgn << 8) ) );
   }
   #endif
 }
@@ -1201,10 +1201,10 @@ MultiReceive_c::init()
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
     // insert receive filters for broadcasted TP
-    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8, false, 8);
-    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8, false, 8);
-    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8, false, 8);
-    getIsoBusInstance4Comm().insertFilter(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8, false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
+    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
     getIsoBusInstance4Comm().reconfigureMsgObj();
 
     setTimePeriod (5000); // nothing to do per default!
@@ -1223,10 +1223,10 @@ MultiReceive_c::close( void )
     getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
     // remove receive filters for broadcasted TP
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8);
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8);
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8);
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8);
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ) );
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ) );
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ) );
+    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ) );
 
     mlist_streams.clear();
     mlist_clients.clear();
@@ -1353,10 +1353,10 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIt
     case ControlFunctionStateHandler_c::AddToMonitorList:
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has finished adr claim
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8), false);
-        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8), true);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8), false);
+        getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8), true);
       }
       break;
 
@@ -1364,10 +1364,10 @@ MultiReceive_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoIt
       if (acrc_isoItem.itemState (IState_c::Local))
       { // local IsoItem_c has gone (i.e. IdentItem has gone, too.)
         /// @todo SOON-178 activate the reconfiguration when the second parameter in removeIsoFilter is there finally...
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8), &acrc_isoItem.isoName(), NULL, 8));
-        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN   << 8) ), &acrc_isoItem.isoName(), NULL, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN << 8) ), &acrc_isoItem.isoName(), NULL, 8));
         /// @todo SOON-178 Maybe clean up some streams and clients?
         /// Shouldn't appear normally anyway, so don't care for right now...
       }

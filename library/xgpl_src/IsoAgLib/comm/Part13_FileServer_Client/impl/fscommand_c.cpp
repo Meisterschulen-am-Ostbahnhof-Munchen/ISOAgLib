@@ -114,10 +114,10 @@ FsCommand_c::~FsCommand_c()
   if (b_receiveFilterCreated)
   {
     // Single-Packet
-    IsoFilter_s tempIsoFilter (*this, 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8),
+    IsoFilter_s tempIsoFilter (*this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8) ),
                                &rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
                                &rc_fileserver.getIsoName(),
-                               8, Ident_c::ExtendedIdent);
+                               8 );
 
     const bool cb_isoFilterRemoved
       = getIsoFilterManagerInstance4Comm().removeIsoFilter( tempIsoFilter );
@@ -150,10 +150,10 @@ FsCommand_c::timeEvent(void)
     getMultiReceiveInstance4Comm().registerClientIso (*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFF, false, false, &getFileserver().getIsoName());
 
     // Single-Packet (completely SA->DA specific!)
-    IsoFilter_s tempIsoFilter (*this, 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8),
+    IsoFilter_s tempIsoFilter (*this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8) ),
                                &rc_csCom.getClientIdentItem().getIsoItem()->isoName(),
                                &getFileserver().getIsoName(),
-                               8, Ident_c::ExtendedIdent);
+                               8 );
 
     isoaglib_assert (!getIsoFilterManagerInstance4Comm().existIsoFilter( tempIsoFilter ));
     getIsoFilterManagerInstance4Comm().insertIsoFilter( tempIsoFilter, true );

@@ -37,9 +37,8 @@ public:
     set ident for the telegram
     @param at_ident ident for the telegram
     @param at_type type of iIdent_c: 11bit iIdent_c::S or 29bit iIdent_c::E
-      default defined in isoaglib_config.h
   */
-  void setIdent (MASK_TYPE at_ident, iIdent_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+  void setIdent (MASK_TYPE at_ident, iIdent_c::identType_t at_type)
     { CanPkg_c::setIdent (at_ident, at_type); }
 
   /**
@@ -48,11 +47,9 @@ public:
     CAN frame)
     @param ab_val value for ident at wanted position for the telegram
     @param ab_pos position for wanted value for ident for the telegram
-    @param at_type type of Ident_c: 11bit Ident_c::S or 29bit Ident_c::E
-      default defined in isoaglib_config.h
   */
-  static void setIdent (uint8_t ab_val, uint8_t ab_pos, iIdent_c::identType_t at_type = DEFAULT_IDENT_TYPE)
-    { CanPkg_c::setIdent (ab_val, ab_pos, at_type); }
+  static void setIdentByte (uint8_t ab_val, uint8_t ab_pos )
+    { CanPkg_c::setIdentByte (ab_val, ab_pos); }
 
   /**
     set type of ident
@@ -167,8 +164,8 @@ public:
     @param aui8_len amount of bytes in the data string
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  static void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time = 0,
-    iIdent_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+  static void set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time,
+    iIdent_c::identType_t at_type)
     { CanPkg_c::set (at_ident, apb_data, aui8_len, ai32_time, at_type); }
 
   /**
@@ -179,8 +176,8 @@ public:
     @param apc_data pointer to the source data Flexible8ByteString_c string
     @param ai32_time optional timestamp of CAN telegram in [msec.] since system start
   */
-  static void set(MASK_TYPE at_ident, const __IsoAgLib::Flexible8ByteString_c* apc_data, int32_t ai32_time = 0,
-    iIdent_c::identType_t at_type = DEFAULT_IDENT_TYPE)
+  static void set(MASK_TYPE at_ident, const __IsoAgLib::Flexible8ByteString_c* apc_data, int32_t ai32_time,
+    iIdent_c::identType_t at_type)
     { CanPkg_c::set(at_ident, apc_data, ai32_time, at_type); }
 
 

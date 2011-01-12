@@ -182,6 +182,7 @@ bool BaseCommon_c::timeEventImplMode()
 /** send a PGN request */
 bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 {
+  data().setIdentType(Ident_c::ExtendedIdent);
   data().setIsoPri(6);
   // set PGN first, as this might overwrite the PS field
   data().setIsoPgn(REQUEST_PGN_MSG_PGN);

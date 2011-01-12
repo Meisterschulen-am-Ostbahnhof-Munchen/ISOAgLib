@@ -44,7 +44,7 @@ IsoRequestPgn_c::close (void)
     // avoid another call
     setAlreadyClosed();
 
-    getIsoBusInstance4Comm().deleteFilter( *this, 0x3FFFF00UL, MASK_TYPE(static_cast<MASK_TYPE>(REQUEST_PGN_MSG_PGN | 0xFF) << 8));
+    getIsoBusInstance4Comm().deleteFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( REQUEST_PGN_MSG_PGN | 0xFF ) << 8 ) );
   }
 }
 
@@ -199,6 +199,7 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
     ui32_purePgn &= 0x3FF00;
   }
 
+  data().setIdentType( IsoAgLib::iIdent_c::ExtendedIdent );
   data().setIsoPri(6);
   data().setIsoDp(0);
   data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
@@ -224,7 +225,7 @@ void IsoRequestPgn_c::registerLocalDevice( const __IsoAgLib::IsoName_c& rc_isoNa
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &rc_isoName, NULL, 3));
+    getIsoFilterManagerInstance4Comm().insertIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, REQUEST_PGN_MSG_PGN << 8 ), &rc_isoName, NULL, 3));
   }
 }
 /** unregister an IsoName_c of a local device, so that IsoFilterManager_c stops receiving
@@ -235,7 +236,7 @@ void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_iso
 {
   if ( getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(rc_isoName) )
   { // local IsoItem_c has finished adr claim
-    getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, (0x3FFFF00UL), (REQUEST_PGN_MSG_PGN << 8), &rc_isoName, NULL, 3));
+    getIsoFilterManagerInstance4Comm().removeIsoFilter (IsoFilter_s (*this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, REQUEST_PGN_MSG_PGN << 8 ), &rc_isoName, NULL, 3));
   }
 }
 

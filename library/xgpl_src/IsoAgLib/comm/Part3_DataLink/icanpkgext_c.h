@@ -54,7 +54,7 @@ public:
   */
   MASK_TYPE ident(uint8_t ab_pos) const {return CanPkgExt_c::ident(ab_pos); }
 
-  void setIdent(MASK_TYPE at_ident, IsoAgLib::iIdent_c::identType_t at_type = DEFAULT_IDENT_TYPE) { CanPkgExt_c::setIdent(at_ident, at_type); }
+  void setIdent(MASK_TYPE at_ident, IsoAgLib::iIdent_c::identType_t at_type) { CanPkgExt_c::setIdent(at_ident, at_type); }
 
   /**
     set type of ident
