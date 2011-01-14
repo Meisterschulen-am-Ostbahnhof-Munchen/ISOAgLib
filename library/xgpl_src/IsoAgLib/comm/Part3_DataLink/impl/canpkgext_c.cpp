@@ -473,7 +473,6 @@ bool CanPkgExt_c::resolveSendingInformation()
     #if DEBUG_CAN
       INTERNAL_DEBUG_DEVICE << "We reached an INVALID state. SA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
-    getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
     return false;
   }
   else if ( mpc_addrResolveResSA->mpc_monitorItem != NULL )
@@ -486,7 +485,6 @@ bool CanPkgExt_c::resolveSendingInformation()
       #if DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is not known local." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
     }
   }
@@ -511,7 +509,6 @@ bool CanPkgExt_c::resolveSendingInformation()
       #if DEBUG_CAN
         INTERNAL_DEBUG_DEVICE << "Sending not valid. DA could not be resolved." << INTERNAL_DEBUG_DEVICE_ENDL;
       #endif
-      getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
       return false;
     }
     else if ( mpc_addrResolveResDA->mpc_monitorItem != NULL )
@@ -524,7 +521,6 @@ bool CanPkgExt_c::resolveSendingInformation()
         #if DEBUG_CAN
           INTERNAL_DEBUG_DEVICE << "Sending is not possible because item is known local." << INTERNAL_DEBUG_DEVICE_ENDL;
         #endif
-        getILibErrInstance().registerError( iLibErr_c::Precondition, iLibErr_c::Can );
         return false;
       }
     }

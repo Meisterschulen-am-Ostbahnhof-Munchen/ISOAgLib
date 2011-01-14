@@ -193,7 +193,10 @@ IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
     // check if source and destination address are valid
     if ( ! acrc_src.resolveSendingInformation() )
     { // preconditions for correct sending are not fullfilled -> set error state
+#if 0
+      /* check is temporary disabled! */
       getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
+#endif
       return *this;
     }
   }
