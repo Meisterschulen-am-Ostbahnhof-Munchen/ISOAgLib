@@ -1,7 +1,7 @@
 /*
-  target_extension_can_client_socketcan.cpp: socketcan driver implementation
+  target_extension_can_socketcan.cpp: socketcan driver implementation
 
-  (C) Copyright 2010 by OSB AG and developing partners
+  (C) Copyright 2011 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -11,11 +11,6 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/*  TODO:
- *  @todo SocketCAN: think about implementation of global mask setup
- *  @todo SocketCAN: implement netlink interface
- *  */
-
 #include <net/if.h>
 #include <sys/ioctl.h>
 
@@ -24,7 +19,10 @@
 #include <linux/can/raw.h>
 #include <linux/version.h>
 
+#include <map>
+
 #include <IsoAgLib/hal/pc/system/system.h>
+#include <IsoAgLib/util/iassert.h>
 
 #ifndef PF_CAN
 #define PF_CAN 29
@@ -32,6 +30,10 @@
 
 #ifndef AF_CAN
 #define AF_CAN PF_CAN
+#endif
+
+#ifndef DEF_CAN_NETDEV_PREFIX
+#define DEF_CAN_NETDEV_PREFIX "can"
 #endif
 
 #if DEBUG_CAN
@@ -42,173 +44,200 @@
 #  define DEBUG_PRINT(...)
 #endif
 
+/* use this define to get a very verbose output */
+//#define DEBUG_CAN_VERBOSE 1
+
 namespace __HAL {
 
+  /** representation of a rx msg obj */
+  struct rxMsgObj_s {
+    rxMsgObj_s() :
+        mb_lock(false),
+        mb_xtd(false),
+        mui32_filter(0),
+        mui32_mask(0) {}
+    bool     mb_lock;
+    bool     mb_xtd;
+    uint32_t mui32_filter;
+    uint32_t mui32_mask;
+  };
 
-  /** representation of a single msg obj */
-  struct tMsgObj {
-    bool     b_canBufferLock;
-    bool     b_canObjConfigured;
-    uint8_t  ui8_bufXtd;
-    uint8_t  ui8_bMsgType;
-    uint32_t ui32_filter;
-    uint32_t ui32_mask;
-    uint16_t ui16_size;
+
+  /** representation of a tx msg obj */
+  struct txMsgObj_s {
+    txMsgObj_s() :
+        mb_lock(false),
+        ui8_txMsgObj(0) {}
+    bool    mb_lock;        /* lock tx */
+    uint8_t ui8_txMsgObj;   /* index of tx object */
   };
 
 
   /** representation of a single can bus instance */
   struct canBus_s {
     canBus_s() :
-        mvec_msgObj(),
-        mb_busUsed( false ),
-        mui16_globalMask( 0 ),
-        mui32_globalMask( 0 ),
-        mui32_lastMask( 0 ),
-        mb_initReceived( false ),
-        mi_fd( -1 ) {}
-
-    std::vector<tMsgObj>    mvec_msgObj;
-    bool                    mb_busUsed;
-    uint16_t                mui16_globalMask;
-    uint32_t                mui32_globalMask;
-    uint32_t                mui32_lastMask;
-    bool                    mb_initReceived;
-    int                     mi_fd;
+        mc_rxMsgObj(),
+        mc_txMsgObj(),
+        mb_initialized(false),
+        mi_fd(-1) {}
+    std::map<uint8_t, rxMsgObj_s> mc_rxMsgObj;      /* configured msg objects */
+    std::map<uint8_t, txMsgObj_s> mc_txMsgObj;      /* configured msg objects */
+    bool                          mb_initialized;   /* initialization flag */
+    int                           mi_fd;            /* socket fd */
   };
 
 
   /** hold latest timestamp of can frame reception */
-  static int32_t gsi32_lastReceiveTime = 0;
+  static int32_t g_lastReceiveTime = 0;
   /** information about each channel available */
-  static std::vector<canBus_s> gsvec_canBus;
+  static canBus_s g_bus[ HAL_CAN_MAX_BUS_NR + 1 ];
+  /** maximum fd */
+  static int g_fdMax = 0;
+  /** fd set with opened fd for receive path */
+  static fd_set g_rfds;
 
-  /** setHandleForBus bus with range checks */
-  void setHandleForBus( uint8_t ui8_bus, int ast_socket ) {
-    if ( gsvec_canBus.size() <= ui8_bus )
-      gsvec_canBus.resize( ui8_bus + 1 );
-    gsvec_canBus[ui8_bus].mi_fd = ast_socket;
+
+  /** recalculate maximum fd and set fd mask for select call */
+  void recalcFd() {
+    FD_ZERO(&g_rfds);
+    for (uint8_t i = 0; i < HAL_CAN_MAX_BUS_NR; ++i) {
+      if (g_bus[ i ].mb_initialized) {
+        FD_SET(g_bus[ i ].mi_fd, &g_rfds);
+        if (g_fdMax < g_bus[ i ].mi_fd) {
+          g_fdMax = g_bus[ i ].mi_fd;
+        }
+      }
+    }
   }
 
 
-  /** startup the driver */
-  int16_t can_startDriver() {
-    gsvec_canBus.resize( HAL_CAN_MAX_BUS_NR + 1 );
+  /** check bus number for range */
+  bool checkBusNumber(uint8_t ui8_bus) {
+    return (HAL_CAN_MAX_BUS_NR >= ui8_bus);
+  }
+
+
+  /** set filter on bus */
+  int16_t setSockFilter(const uint8_t ui8_bus) {
+    DEBUG_PRINT("\n");
+
+    isoaglib_assert( g_bus[ ui8_bus ].mb_initialized );
+
+    if (g_bus[ ui8_bus ].mc_rxMsgObj.empty()) {
+      DEBUG_PRINT("%s not msg objs for bus %d\n", __FUNCTION__, ui8_bus);
+      return HAL_CONFIG_ERR;
+    }
+
+    struct can_filter filter[ g_bus[ ui8_bus ].mc_rxMsgObj.size() ];
+    unsigned filterId = 0;
+    for (std::map<uint8_t, rxMsgObj_s>::iterator i = g_bus[ ui8_bus ].mc_rxMsgObj.begin();
+         i != g_bus[ ui8_bus ].mc_rxMsgObj.end(); ++i) {
+
+      /* only set filter for not locked msg objects */
+      if (! i->second.mb_lock) {
+        filter[ filterId ].can_id = i->second.mui32_filter;
+        filter[ filterId ].can_mask = i->second.mui32_mask;
+        ++filterId;
+      }
+    }
+
+    if (0 != filterId) {
+      if (-1 == setsockopt(g_bus[ ui8_bus ].mi_fd, SOL_CAN_RAW, CAN_RAW_FILTER, &filter, filterId * sizeof(struct can_filter))) {
+        perror("setsockopt");
+        return HAL_CONFIG_ERR;
+      }
+    }
+
     return HAL_NO_ERR;
   }
 
 
-  /** stop he driver */
-  int16_t can_stopDriver() {
-    DEBUG_PRINT( "can_stopDriver\n" );
-    return HAL_NO_ERR;
-  }
-
-
-  /** initialize a can channel with give parameter
-      @param bBusNumber channel number: results in interface name can<number>
-      @param wGlobMask unused
-      @param dwGlobMaskLastmsg unused
-      @param wBitrate bitrate to set for channel: not yet implemented
-  */
-  int16_t init_can( uint8_t bBusNumber, uint16_t wGlobMask, uint32_t dwGlobMask, uint32_t dwGlobMaskLastmsg, uint16_t ) {
-
-    DEBUG_PRINT( "init_can bus: %d\n", bBusNumber );
-
-    // argument check
-    if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
-      return HAL_RANGE_ERR;
-    }
-
-    if ( ! gsvec_canBus[ bBusNumber ].mb_busUsed ) {
-
-      DEBUG_PRINT( "init_can bus: %d\n", bBusNumber );
-
-      char fname[32];
-      sprintf( fname, "can%u", bBusNumber );
-
-      // create a socket
-      int m_handle = socket( PF_CAN, SOCK_RAW, CAN_RAW );
-      if ( m_handle < 0 ) {
-        perror( "socket" );
-        return HAL_CONFIG_ERR;
-      }
-
-      DEBUG_PRINT( "init_can: bus: %d fname: %s m_handle: %x\n", bBusNumber, fname, m_handle );
-
-      // get the interface
-      struct ifreq ifr;
-      strncpy( ifr.ifr_name, fname, IFNAMSIZ );
-      int ret = ioctl( m_handle, SIOCGIFINDEX, &ifr );
-
-      if ( ret < 0 ) {
-        perror( "SIOCGIFINDEX" );
-        setHandleForBus( bBusNumber, 0 );
-        return HAL_CONFIG_ERR;
-      }
-
-      // bind to the socket
-      struct sockaddr_can addr;
-      addr.can_family = AF_CAN;
-      addr.can_ifindex = ifr.ifr_ifindex;
-      int result = bind( m_handle, ( struct sockaddr* ) & addr, sizeof( addr ) );
-
-      if ( result < 0 ) {
-        perror( "bind" );
-        setHandleForBus( bBusNumber, NULL );
-        return HAL_CONFIG_ERR;
-      }
-
-      // enable loopback (ensure, because it may not be default in the future)
-      int loopback = 1; /* 0 = disabled, 1 = enabled (default) */
-      if ( -1 == setsockopt( m_handle, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof( loopback ) ) ) {
-        perror( "enabling loopback" );
-        return HAL_CONFIG_ERR;
-      }
-
-      int recv_own_msgs = 0; /* 0 = disabled (default), 1 = enabled */
-      if ( -1 == setsockopt( m_handle, SOL_CAN_RAW, CAN_RAW_RECV_OWN_MSGS, &recv_own_msgs, sizeof( recv_own_msgs ) ) ) {
-        perror( "setting local echo option" );
-        return HAL_CONFIG_ERR;
-      }
-
-      // set error mask
-      can_err_mask_t err_mask = ( CAN_ERR_MASK );
-      if ( -1 == setsockopt( m_handle, SOL_CAN_RAW, CAN_RAW_ERR_FILTER, &err_mask, sizeof( err_mask ) ) ) {
-        perror( "setting error mask" );
-        return HAL_CONFIG_ERR;
-      }
-
-
-      setHandleForBus( bBusNumber, m_handle );
-
-      gsvec_canBus[ bBusNumber ].mui16_globalMask = wGlobMask;
-      gsvec_canBus[ bBusNumber ].mui32_globalMask = dwGlobMask;
-      gsvec_canBus[ bBusNumber ].mui32_lastMask = dwGlobMaskLastmsg;
-
-      gsvec_canBus[ bBusNumber ].mb_initReceived = true;
-      gsvec_canBus[ bBusNumber ].mb_busUsed = true;
-    }
-
+  /** change global mask of channel;
+      implementation of that functions breaks with the socketcan concept - not implemented
+      @param ui8_bus channel to use
+      @param ui32_globalMask
+      @param ui32_globalMaskLastMsg
+   */
+  int16_t changeGlobalMask(uint8_t /* ui8_bus */, uint16_t /* ui16_globalMask */, uint32_t /* ui32_globalMask */, uint32_t /* ui32_globalMaskLastMsg */) {
+    DEBUG_PRINT("%s\n", __FUNCTION__);
     return HAL_NO_ERR;
   };
 
 
-  /** change global mask of channel - this function only stores the values for
-   *  further usage; the data is not passed to the interface
-      @param bBusNumber channel to use
-      @param wGlobMask unused
-      @param dwGlobMaskLastmsg unused
-   */
-  int16_t changeGlobalMask( uint8_t bBusNumber, uint16_t wGlobMask, uint32_t dwGlobMask, uint32_t dwGlobMaskLastmsg ) {
-    DEBUG_PRINT( "changeGlobalMask\n" );
+  /** initialize a can channel with given parameter
+      @param ui8_bus channel to use
+      @param ui32_globalMask
+      @param ui32_globalMaskLastMsg
+      @param ui16_bitrate to set for channel
+  */
+  int16_t init_can(uint8_t ui8_bus, uint16_t ui16_globalMask, uint32_t ui32_globalMask, uint32_t ui32_globalMaskLastMsg, uint16_t /* ui16_bitrate */) {
+    DEBUG_PRINT("%s: %d\n", __FUNCTION__, ui8_bus);
 
-    gsvec_canBus[ bBusNumber ].mui16_globalMask = wGlobMask;
-    gsvec_canBus[ bBusNumber ].mui32_globalMask = dwGlobMask;
-    gsvec_canBus[ bBusNumber ].mui32_lastMask = dwGlobMaskLastmsg;
+    /* argument check */
+    if ( HAL_CAN_MAX_BUS_NR < ui8_bus) {
+      return HAL_RANGE_ERR;
+    }
 
-    gsvec_canBus[ bBusNumber ].mb_initReceived = true;
-    gsvec_canBus[ bBusNumber ].mb_busUsed = true;
+    /* check for already initialized bus */
+    if (g_bus[ ui8_bus ].mb_initialized) {
+      DEBUG_PRINT("%s: bus already initialized\n", __FUNCTION__);
+      return changeGlobalMask(ui8_bus, ui16_globalMask, ui32_globalMask, ui32_globalMaskLastMsg);
+    }
+
+    /*  generate device name */
+    char fname[ IFNAMSIZ ];
+    sprintf(fname, "%s%u", DEF_CAN_NETDEV_PREFIX, ui8_bus);
+
+    /* create a socket */
+    int fd = socket(PF_CAN, SOCK_RAW, CAN_RAW);
+    if (fd < 0) {
+      perror("socket");
+      return HAL_CONFIG_ERR;
+    }
+
+    /* get the interface index */
+    struct ifreq ifr;
+    strncpy(ifr.ifr_name, fname, IFNAMSIZ);
+    if (-1 == ioctl(fd, SIOCGIFINDEX, &ifr)) {
+      perror("SIOCGIFINDEX");
+      return HAL_CONFIG_ERR;
+    }
+
+    /* bind to the socket */
+    struct sockaddr_can addr;
+    addr.can_family = AF_CAN;
+    addr.can_ifindex = ifr.ifr_ifindex;
+    if (-1 == bind(fd, (struct sockaddr*) & addr, sizeof(addr))) {
+      perror("bind");
+      return HAL_CONFIG_ERR;
+    }
+
+    /* enable loopback (ensure, because it may not be default in the future) */
+    int loopback = 1; /* 0 = disabled, 1 = enabled (default) */
+    if (-1 == setsockopt(fd, SOL_CAN_RAW, CAN_RAW_LOOPBACK, &loopback, sizeof(loopback))) {
+      perror("enabling loopback");
+      return HAL_CONFIG_ERR;
+    }
+
+    /* disable reception of own sent messages */
+    int recv_own_msgs = 0; /* 0 = disabled (default), 1 = enabled */
+    if (-1 == setsockopt(fd, SOL_CAN_RAW, CAN_RAW_RECV_OWN_MSGS, &recv_own_msgs, sizeof(recv_own_msgs))) {
+      perror("setting local echo option");
+      return HAL_CONFIG_ERR;
+    }
+
+    /* set error mask */
+    can_err_mask_t err_mask = (CAN_ERR_MASK);
+    if (-1 == setsockopt(fd, SOL_CAN_RAW, CAN_RAW_ERR_FILTER, &err_mask, sizeof(err_mask))) {
+      perror("setting error mask");
+      return HAL_CONFIG_ERR;
+    }
+
+    /* check for a possible new maximum fd */
+    recalcFd();
+
+    g_bus[ ui8_bus ].mi_fd = fd;
+    g_bus[ ui8_bus ].mb_initialized = true;
 
     return HAL_NO_ERR;
   };
@@ -217,29 +246,43 @@ namespace __HAL {
   /** close channel
       @param bBusNumber channel to close
    */
-  int16_t closeCan( uint8_t bBusNumber ) {
+  int16_t closeCan(uint8_t ui8_bus) {
+    DEBUG_PRINT("\n");
 
-    DEBUG_PRINT( "closeCan bus: %d\n", bBusNumber );
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
 
-    // argument check
-    if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
-      return HAL_RANGE_ERR;
+    /* close bus */
+    if (-1 == close(g_bus[ ui8_bus ].mi_fd)) {
+      perror("close");
+      return HAL_UNKNOWN_ERR;
     }
 
-    if ( gsvec_canBus[ bBusNumber ].mb_busUsed ) {
-      if ( 0 > close( gsvec_canBus[ bBusNumber ].mi_fd ) ) {
-        perror( "close" );
-      }
-      setHandleForBus( bBusNumber, -1 );
-      gsvec_canBus[ bBusNumber ].mb_busUsed = false;
-    }
+    g_bus[ ui8_bus ].mb_initialized = false;
+    g_bus[ ui8_bus ].mc_rxMsgObj.clear();
+    g_bus[ ui8_bus ].mc_txMsgObj.clear();
+    g_bus[ ui8_bus ].mi_fd = -1;
+
+    recalcFd();
 
     return HAL_NO_ERR;
   };
 
 
-  /** unimplemented obsoleted? */
-  int16_t chgCanObjPause( uint8_t, uint8_t, uint16_t ) {
+  /** startup the driver */
+  int16_t can_startDriver() {
+    return HAL_NO_ERR;
+  }
+
+
+  /** stop he driver */
+  int16_t can_stopDriver() {
+    DEBUG_PRINT("\n");
+
+#ifndef NDEBUG
+    for (uint8_t i = 0; i < HAL_CAN_MAX_BUS_NR; ++i) {
+      isoaglib_assert( ! g_bus[ i ].mb_initialized ); 
+    }
+#endif
     return HAL_NO_ERR;
   }
 
@@ -247,174 +290,183 @@ namespace __HAL {
   /** retrieve can bus state
       @param bBusNumber channel number
       @ ptStatus container for state placement
-    */
-  int16_t getCanBusStatus( uint8_t bBusNumber, tCanBusStatus* /* ptStatus */ ) {
-    ( void )bBusNumber;
-    DEBUG_PRINT( "getCanBusStatus bus: %d\n", bBusNumber );
+   */
+  int16_t getCanBusStatus(uint8_t /* ui8_bus */, tCanBusStatus* /* ptStatus */) {
+    DEBUG_PRINT("\n");
     return HAL_NO_ERR;
   }
 
 
   /** configure a msg object (in this enh.can-hal-case FilterBox!) - data is used during rx for consistency checks only */
-  int16_t configCanObj( uint8_t bBusNumber, uint8_t bMsgObj, tCanObjConfig* ptConfig ) {
+  int16_t configCanObj(uint8_t ui8_bus, uint8_t ui8_msgObj, tCanObjConfig* p_config) {
+    DEBUG_PRINT("\n");
 
-    DEBUG_PRINT( "configCanObj bus: %d obj: %d\n", bBusNumber, bMsgObj );
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
+    isoaglib_assert( p_config );
 
-    if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
+    /* TX path */
+    if (p_config->bMsgType) {
+
+      /* Please note: the TX objects are created only for convenience and to satisfy IsoAgLib's PC target extension interface! */
+
+      /* check number */
+      if (g_bus[ ui8_bus ].mc_rxMsgObj.end() != g_bus[ ui8_bus ].mc_rxMsgObj.find(ui8_msgObj)) {
+        /* number configured as rx */
+        return HAL_RANGE_ERR;
+      }
+
+      txMsgObj_s obj;
+      obj.mb_lock = false;
+      g_bus[ui8_bus].mc_txMsgObj[ ui8_msgObj ] = obj;
+      return HAL_NO_ERR;
+    }
+    else { /* RX path */
+      /* check number */
+      if (g_bus[ ui8_bus ].mc_txMsgObj.end() != g_bus[ ui8_bus ].mc_txMsgObj.find(ui8_msgObj)) {
+        /* number configured as tx */
+        return HAL_RANGE_ERR;
+      }
+
+      rxMsgObj_s obj;
+      obj.mb_lock = false;
+      obj.mb_xtd = p_config->bXtd;
+      obj.mui32_filter = p_config->dwId;
+      obj.mui32_mask = p_config->mask;
+
+      g_bus[ui8_bus].mc_rxMsgObj[ ui8_msgObj ] = obj;
+
+      return setSockFilter(ui8_bus); /* pass configured msg box filters to protocol driver */
+    }
+    return HAL_CONFIG_ERR;
+  };
+
+
+
+  /** close a msg object */
+  int16_t closeCanObj(uint8_t ui8_bus, uint8_t ui8_msgObj) {
+    DEBUG_PRINT("\n");
+
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
+
+    /* TX path */
+    std::map<uint8_t, txMsgObj_s>::iterator itx = g_bus[ ui8_bus ].mc_txMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_txMsgObj.end() != itx) {
+      g_bus[ ui8_bus ].mc_txMsgObj.erase(itx);
+      return HAL_NO_ERR;
+    }
+
+
+    /*  RX path */
+    std::map<uint8_t, rxMsgObj_s>::iterator irx = g_bus[ ui8_bus ].mc_rxMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_rxMsgObj.end() != irx) {
+      g_bus[ ui8_bus ].mc_rxMsgObj.erase(irx);
+      return setSockFilter(ui8_bus);
+    }
+
+    return HAL_RANGE_ERR;
+  };
+
+
+  /** reconfigure a msg object */
+  int16_t chgCanObjId(uint8_t ui8_bus, uint8_t ui8_msgObj, uint32_t ui32_id, uint32_t ui32_mask, uint8_t ui8_xtd) {
+    DEBUG_PRINT("\n");
+
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
+
+    std::map<uint8_t, rxMsgObj_s>::iterator i = g_bus[ ui8_bus ].mc_rxMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_rxMsgObj.end() == i) {
       return HAL_RANGE_ERR;
     }
 
-    if ( bMsgObj >= gsvec_canBus[ bBusNumber ].mvec_msgObj.size() ) {
-      gsvec_canBus[ bBusNumber ].mvec_msgObj.resize( bMsgObj + 1 );
-    }
+    i->second.mui32_filter = ui32_id;
+    i->second.mui32_mask = ui32_mask;
+    i->second.mb_xtd = (ui8_xtd == 0) ? false : true;
 
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].b_canObjConfigured = true;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui8_bufXtd = ptConfig->bXtd;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui32_filter = ptConfig->dwId;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui32_mask = ptConfig->mask;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui8_bMsgType = ptConfig->bMsgType;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui16_size = ptConfig->wNumberMsgs;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].b_canBufferLock = false;
-
-    return HAL_NO_ERR;
-  };
-
-
-
-  /** close a msg object - data is used during rx for consistency checks only */
-  int16_t closeCanObj( uint8_t bBusNumber, uint8_t bMsgObj ) {
-    DEBUG_PRINT( "closeCanObj bus: %d obj: %d\n", bBusNumber, bMsgObj );
-
-    if (( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
-
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].b_canObjConfigured = false;
-
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].b_canBufferLock = false;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui16_size = 0;
-
-    // erase element if it is the last in the vector, otherwise it can stay there
-    while ( gsvec_canBus[ bBusNumber ].mvec_msgObj.back().b_canObjConfigured == false )
-      gsvec_canBus[ bBusNumber ].mvec_msgObj.pop_back();
-
-    return HAL_NO_ERR;
-
-  };
-
-
-  /** reconfigure a msg object - data is used during rx for consistency checks only */
-  int16_t chgCanObjId( uint8_t bBusNumber, uint8_t bMsgObj, uint32_t dwId, uint32_t mask, uint8_t bXtd ) {
-
-    DEBUG_PRINT( "chgCanObjId bus: %d obj: %d\n", bBusNumber, bMsgObj );
-    if (( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) return HAL_RANGE_ERR;
-
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].b_canObjConfigured = TRUE;
-
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui8_bufXtd = bXtd;
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui32_filter = dwId;
-
-    gsvec_canBus[ bBusNumber ].mvec_msgObj[bMsgObj].ui32_mask = mask;
-
-    return HAL_NO_ERR;
+    return setSockFilter(ui8_bus);
   }
+
+
+
   /**
     lock a MsgObj to avoid further placement of messages into buffer.
-    @param aui8_busNr number of the BUS to config
-    @param aui8_msgobjNr number of the MsgObj to config
+    @param ui8_bus number of the BUS to config
+    @param ui8_msgObj number of the MsgObj to config
     @param ab_doLock true==lock(default); false==unlock
     @return HAL_NO_ERR == no error;
-            HAL_CONFIG_ERR == BUS not initialised or ident can't be changed
             HAL_RANGE_ERR == wrong BUS or MsgObj number
          */
-  int16_t lockCanObj( uint8_t aui8_busNr, uint8_t aui8_msgobjNr, bool ab_doLock ) {
-    DEBUG_PRINT( "lockCanObj bus: %d obj: %d lock: %d\n", aui8_busNr, aui8_msgobjNr, ab_doLock );
+  int16_t lockCanObj(uint8_t ui8_bus, uint8_t ui8_msgObj, bool b_lock) {
+    DEBUG_PRINT("\n");
 
-    if (( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) {
-      return HAL_RANGE_ERR;
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
+
+    /* tx */
+    std::map<uint8_t, txMsgObj_s>::const_iterator itx = g_bus[ ui8_bus ].mc_txMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_txMsgObj.end() != itx) {
+      g_bus[ ui8_bus ].mc_txMsgObj[ ui8_msgObj ].mb_lock = b_lock;
+      return HAL_NO_ERR;
     }
 
-    gsvec_canBus[ aui8_busNr ].mvec_msgObj[aui8_msgobjNr].b_canBufferLock = ab_doLock;
+    /* rx */
+    std::map<uint8_t, rxMsgObj_s>::iterator irx = g_bus[ ui8_bus ].mc_rxMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_rxMsgObj.end() != irx) {
+      g_bus[ ui8_bus ].mc_rxMsgObj[ ui8_msgObj ].mb_lock = b_lock;
+      return setSockFilter(ui8_bus);
+    }
 
-    return HAL_NO_ERR;
+    return HAL_RANGE_ERR;
   }
 
   /**
     check if MsgObj is currently locked
-    @param aui8_busNr number of the BUS to check
-    @param aui8_msgobjNr number of the MsgObj to check
+    @param ui8_bus number of the BUS to check
+    @param ui8_msgObj number of the MsgObj to check
     @return true -> MsgObj is currently locked
   */
-  bool getCanMsgObjLocked( uint8_t aui8_busNr, uint8_t aui8_msgobjNr ) {
-    DEBUG_PRINT( "getCanMsgObjLocked bus: %d obj: %d\n", aui8_busNr, aui8_msgobjNr );
+  bool getCanMsgObjLocked(uint8_t ui8_bus, uint8_t ui8_msgObj) {
+    DEBUG_PRINT("\n");
 
-    if (( aui8_busNr > HAL_CAN_MAX_BUS_NR ) ) return true;
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
 
-    return gsvec_canBus[ aui8_busNr ].mvec_msgObj[aui8_msgobjNr].b_canBufferLock;
-  }
-
-
-  /**
-    clear buffer of specific object
-    @param bBusNumber channel number
-    @param aui8_msgobjNr number of the MsgObj to check
-  */
-  int16_t clearCanObjBuf( uint8_t bBusNumber, uint8_t aui8_msgObjNr ) {
-    ( void )aui8_msgObjNr;
-    DEBUG_PRINT( "clearCanObjBuf bus: %d obj: %d\n", bBusNumber, aui8_msgObjNr );
-
-    if (( bBusNumber > HAL_CAN_MAX_BUS_NR ) ) {
-      return HAL_RANGE_ERR;
+    /* tx */
+    std::map<uint8_t, txMsgObj_s>::const_iterator itx = g_bus[ ui8_bus ].mc_txMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_txMsgObj.end() != itx) {
+      return itx->second.mb_lock;
     }
 
-    return HAL_NO_ERR;
-  }
-
-
-  /**
-    get latest rx timestamp global for every channel
-    @return rx timestamp in ms
-  */
-  int32_t can_lastReceiveTime() {
-    DEBUG_PRINT( "can_lastReceiveTime\n" );
-    return gsi32_lastReceiveTime;
-  }
-
-  int16_t getCanMsgBufCount( uint8_t bBusNumber, uint8_t bMsgObj ) {
-    DEBUG_PRINT( "getCanMsgBufCount %d %d\n", bBusNumber, bMsgObj );
-    if ( gsvec_canBus[ bBusNumber ].mvec_msgObj.size() >= bMsgObj ) {
-      return 1; /*  TODO */
+    /* rx */
+    std::map<uint8_t, rxMsgObj_s>::const_iterator irx = g_bus[ ui8_bus ].mc_rxMsgObj.find(ui8_msgObj);
+    if (g_bus[ ui8_bus ].mc_rxMsgObj.end() != irx) {
+      return irx->second.mb_lock;
     }
-    return 0;
-  };
+
+    return false;
+  }
 
 
   /**
     block till data is available on any opened channel or timeout occours
-    @param rui16_timeoutInterval timeout in ms
+    @param ui16_timeout timeout in ms
   */
-  bool waitUntilCanReceiveOrTimeout( uint16_t rui16_timeoutInterval ) {
-    fd_set rfds;
-    struct timeval s_timeout;
+  bool waitUntilCanReceiveOrTimeout(uint16_t ui16_timeout) {
+    DEBUG_PRINT("\n");
 
-    FD_ZERO( &rfds );
-    for ( unsigned i = 0; i < gsvec_canBus.size(); i++ ) {
-      if ( gsvec_canBus[ i ].mb_busUsed ) {
-        FD_SET( gsvec_canBus[ i ].mi_fd, &rfds );
-      }
-    }
+    static struct timeval timeout;
+    timeout.tv_sec = 0;
+    timeout.tv_usec = ui16_timeout * 1000;
 
-    s_timeout.tv_sec = 0;
-    s_timeout.tv_usec = rui16_timeoutInterval * 1000;
+    fd_set rfds = g_rfds;
+    /* result written to rfds is ignored! */
+    int rc = select(g_fdMax + 1, &rfds, 0, 0, &timeout);
 
-    int rc = select( FD_SETSIZE, &rfds, NULL, NULL, &s_timeout );
-
-    return ( rc > 0 );
+    return (rc > 0);
   };
 
 
   /** print errTest if errMask & data is true; return errMask & data */
-  bool printIfError( uint32_t data, uint32_t errMask, const char* errText ) {
-    if ( data & errMask ) {
-      fprintf( stderr, "%d: %s ", getTime(), errText );
+  bool printIfError(uint32_t ui32_data, uint32_t ui32_errMask, const char* carr_errText) {
+    if (ui32_data & ui32_errMask) {
+      fprintf(stderr, "%d: %s ", getTime(), carr_errText);
       return true;
     }
     return false;
@@ -422,89 +474,89 @@ namespace __HAL {
 
 
   /** print human readable error code on error frame reception */
-  int16_t handleErrorFrame( const struct can_frame& frame ) {
+  int16_t handleErrorFrame(const struct can_frame& frame) {
     // check dlc
-    if ( CAN_ERR_DLC != frame.can_dlc ) {
-      fprintf( stderr, "handleErrorFrame: wrong dlc: %d!\n", frame.can_dlc );
+    if (CAN_ERR_DLC != frame.can_dlc) {
+      fprintf(stderr, "handleErrorFrame: wrong dlc: %d!\n", frame.can_dlc);
       /*  this is something weird - check your can driver */
       return HAL_UNKNOWN_ERR;
     }
 
-    (void) printIfError( frame.can_id, CAN_ERR_TX_TIMEOUT,            "TX timeout (by netdevice driver)" );
-    (void) printIfError( frame.can_id, CAN_ERR_ACK,                   "received no ACK on transmission" );
-    (void) printIfError( frame.can_id, CAN_ERR_BUSOFF,                "bus off" );
-    (void) printIfError( frame.can_id, CAN_ERR_BUSERROR,              "bus error (may flood!)" );
-    (void) printIfError( frame.can_id, CAN_ERR_RESTARTED,             "controller restarted" );
+    (void) printIfError(frame.can_id, CAN_ERR_TX_TIMEOUT,            "TX timeout (by netdevice driver)");
+    (void) printIfError(frame.can_id, CAN_ERR_ACK,                   "received no ACK on transmission");
+    (void) printIfError(frame.can_id, CAN_ERR_BUSOFF,                "bus off");
+    (void) printIfError(frame.can_id, CAN_ERR_BUSERROR,              "bus error (may flood!)");
+    (void) printIfError(frame.can_id, CAN_ERR_RESTARTED,             "controller restarted");
 
     /* arbitration lost in bit ... / data[0] */
-    if ( printIfError( frame.can_id, CAN_ERR_LOSTARB,           "lost arbitration / data[0]: " ) ) {
-      (void) printIfError( frame.can_id, CAN_ERR_LOSTARB_UNSPEC,      "unspecified\n" );
+    if (printIfError(frame.can_id, CAN_ERR_LOSTARB,                  "lost arbitration / data[0]: ")) {
+      (void) printIfError(frame.can_id, CAN_ERR_LOSTARB_UNSPEC,      "unspecified\n");
     }
     /* else bit number in bitstream */
 
     /* error status of CAN-controller / data[1] */
-    if ( printIfError( frame.can_id, CAN_ERR_CRTL,              "controller problems / data[1]:" ) ) {
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_UNSPEC,      "unspecified\n" );
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_RX_OVERFLOW, "RX buffer overflow\n" );
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_TX_OVERFLOW, "TX buffer overflow\n" );
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_RX_WARNING,  "reached warning level for RX errors\n" );
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_TX_WARNING,  "reached warning level for TX errors\n" );
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_RX_PASSIVE,  "reached error passive status RX\n" );
-      (void) printIfError( frame.data[ 1 ], CAN_ERR_CRTL_TX_PASSIVE,  "reached error passive status TX\n" );
+    if (printIfError(frame.can_id, CAN_ERR_CRTL,                     "controller problems / data[1]:")) {
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_UNSPEC,      "unspecified\n");
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_RX_OVERFLOW, "RX buffer overflow\n");
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_TX_OVERFLOW, "TX buffer overflow\n");
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_RX_WARNING,  "reached warning level for RX errors\n");
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_TX_WARNING,  "reached warning level for TX errors\n");
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_RX_PASSIVE,  "reached error passive status RX\n");
+      (void) printIfError(frame.data[ 1 ], CAN_ERR_CRTL_TX_PASSIVE,  "reached error passive status TX\n");
     }
     /* (at least one error counter exceeds */
     /* the protocol-defined level of 127)  */
 
     /* error in CAN protocol (type) / data[2] */
-    if ( printIfError( frame.can_id, CAN_ERR_PROT,              "protocol violations / data[2..3]: " ) ) {
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_UNSPEC,      "unspecified\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_BIT,         "single bit error\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_FORM,        "frame format error\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_STUFF,       "bit stuffing error\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_BIT0,        "unable to send dominant bit\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_BIT1,        "unable to send recessive bit\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_OVERLOAD,    "bus overload\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_ACTIVE,      "active error announcement\n" );
-      (void) printIfError( frame.data[ 2 ], CAN_ERR_PROT_TX,          "error occured on transmission\n" );
+    if (printIfError(frame.can_id, CAN_ERR_PROT,                     "protocol violations / data[2..3]: ")) {
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_UNSPEC,      "unspecified\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_BIT,         "single bit error\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_FORM,        "frame format error\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_STUFF,       "bit stuffing error\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_BIT0,        "unable to send dominant bit\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_BIT1,        "unable to send recessive bit\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_OVERLOAD,    "bus overload\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_ACTIVE,      "active error announcement\n");
+      (void) printIfError(frame.data[ 2 ], CAN_ERR_PROT_TX,          "error occured on transmission\n");
       /* error in CAN protocol (location) / data[3] */
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_UNSPEC,  "unspecified\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_SOF,     "start of frame\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID28_21, "ID bits 28 - 21 (SFF: 10 - 3)\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID20_18, "ID bits 20 - 18 (SFF: 2 - 0 \n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_SRTR,    "substitute RTR (SFF: RTR)\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_IDE,     "identifier extension\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID17_13, "ID bits 17-13\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID12_05, "ID bits 12-5\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ID04_00, "ID bits 4-0\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_RTR,     "RTR\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_RES1,    "reserved bit 1\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_RES0,    "reserved bit 0\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_DLC,     "data length code\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_DATA,    "data section\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_SEQ, "CRC sequence\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_DEL, "CRC delimiter\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK,     "ACK slot\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK_DEL, "ACK delimiter\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_EOF,     "end of frame\n" );
-      (void) printIfError( frame.data[ 3 ], CAN_ERR_PROT_LOC_INTERM,  "intermission\n" );
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_UNSPEC,  "unspecified\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_SOF,     "start of frame\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ID28_21, "ID bits 28 - 21 (SFF: 10 - 3)\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ID20_18, "ID bits 20 - 18 (SFF: 2 - 0 \n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_SRTR,    "substitute RTR (SFF: RTR)\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_IDE,     "identifier extension\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ID17_13, "ID bits 17-13\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ID12_05, "ID bits 12-5\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ID04_00, "ID bits 4-0\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_RTR,     "RTR\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_RES1,    "reserved bit 1\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_RES0,    "reserved bit 0\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_DLC,     "data length code\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_DATA,    "data section\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_SEQ, "CRC sequence\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_CRC_DEL, "CRC delimiter\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK,     "ACK slot\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_ACK_DEL, "ACK delimiter\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_EOF,     "end of frame\n");
+      (void) printIfError(frame.data[ 3 ], CAN_ERR_PROT_LOC_INTERM,  "intermission\n");
     }
 
     /* error status of CAN-transceiver / data[4] */
-    /*                                                              CANH CANL */
-    if ( printIfError( frame.can_id, CAN_ERR_TRX,                     "transceiver status  / data[4]: " ) ) {
-      bool printed 
-               = printIfError( frame.data[ 4 ], CAN_ERR_TRX_UNSPEC,             "0000 0000\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_NO_WIRE,       "0000 0100\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_BAT,  "0000 0101\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_VCC,  "0000 0110\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_GND,  "0000 0111\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_NO_WIRE,       "0100 0000\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_BAT,  "0101 0000\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_VCC,  "0110 0000\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_GND,  "0111 0000\n" );
-      printed |= printIfError( frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_CANH, "1000 0000\n" );
-      if ( ! printed ) {
-        fprintf( stderr, "\n" );
+    /* CANH CANL */
+    if (printIfError(frame.can_id, CAN_ERR_TRX,                                "transceiver status  / data[4]: ")) {
+      bool printed = false;
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_UNSPEC,             "CAN_ERR_TRX_UNSPEC\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANH_NO_WIRE,       "CAN_ERR_TRX_CANH_NO_WIRE\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_BAT,  "CAN_ERR_TRX_CANH_SHORT_TO_BAT\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_VCC,  "CAN_ERR_TRX_CANH_SHORT_TO_VCC\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANH_SHORT_TO_GND,  "CAN_ERR_TRX_CANH_SHORT_TO_GND\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANL_NO_WIRE,       "CAN_ERR_TRX_CANL_NO_WIRE\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_BAT,  "CAN_ERR_TRX_CANL_SHORT_TO_BAT\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_VCC,  "CAN_ERR_TRX_CANL_SHORT_TO_VCC\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_GND,  "CAN_ERR_TRX_CANL_SHORT_TO_GND\n");
+      printed |= printIfError(frame.data[ 4 ], CAN_ERR_TRX_CANL_SHORT_TO_CANH, "CAN_ERR_TRX_CANL_SHORT_TO_CANH\n");
+      if (! printed) {
+        fprintf(stderr, "\n");
       }
     }
 
@@ -512,60 +564,88 @@ namespace __HAL {
   }
 
 
-// MDS NOTE: This is code is highly inefficient and needs to be optimized!
-//  The receive structure should be changed so that it does not need to be copied from
-//  one structure to another 3 or 4 times before sending it to the higher levels.
-//  This should be done at most once!
-//  There are several different CAN msg receive structures defined, and that should be
-//  changed to only one through this file, and the one defined externally.
-  int16_t getCanMsg( uint8_t bBusNumber, uint8_t, tReceive* ptReceive ) {
-
-    if ( bBusNumber > HAL_CAN_MAX_BUS_NR ) {
-      return HAL_RANGE_ERR;
-    }
-
+  /** retrive a pending msg from bus and store in tReceive */
+  int16_t getCanMsg(uint8_t ui8_bus, uint8_t, tReceive* p_receive) {
     static struct can_frame frame;
-    memset( &frame, 0, sizeof( frame ) );
 
-    if ( recv( gsvec_canBus[ bBusNumber ].mi_fd, ( char* ) &frame, sizeof( struct can_frame ), MSG_DONTWAIT ) == -1 ) {
+    isoaglib_assert( p_receive );
+    isoaglib_assert( checkBusNumber( ui8_bus ) );
+
+
+    bzero(&frame, sizeof(struct can_frame));
+    bzero(p_receive, sizeof(tReceive));
+
+    int32_t timestamp = getTime();
+
+    if (recv(g_bus[ ui8_bus ].mi_fd, (char*) &frame, sizeof(struct can_frame), MSG_DONTWAIT) == -1) {
+      /* no data */
       return HAL_UNKNOWN_ERR;
     }
 
-    gsi32_lastReceiveTime = getTime();
 
-    // check for err frame
-    if (( CAN_ERR_FLAG & frame.can_id ) == CAN_ERR_FLAG ) {
-      DEBUG_PRINT( "getCanMsg: error frame!\n" );
-      return handleErrorFrame( frame );
+    /* check for err frame */
+    if ((CAN_ERR_FLAG & frame.can_id) == CAN_ERR_FLAG) {
+      DEBUG_PRINT("%s: error frame!\n", __FUNCTION__);
+      return handleErrorFrame(frame);
     }
 
-    // copy data
-    ptReceive->dwId = frame.can_id & 0x7FFFFFFF;
-    ptReceive->bXtd = (( frame.can_id & CAN_EFF_FLAG ) == CAN_EFF_FLAG ) ? 1 : 0;
+    /* copy data */
+    p_receive->bXtd = ((frame.can_id & CAN_EFF_FLAG) == CAN_EFF_FLAG) ? 1 : 0;
+    p_receive->dwId = frame.can_id & (p_receive->bXtd ? CAN_EFF_MASK : CAN_SFF_MASK);
 
-    for ( uint8_t i_loop = 0; i_loop < gsvec_canBus[ bBusNumber ].mvec_msgObj.size(); i_loop++ ) {
-      if ( ! gsvec_canBus[ bBusNumber ].mvec_msgObj[i_loop].b_canBufferLock ) {
 
-        if (( gsvec_canBus[ bBusNumber ].mvec_msgObj[i_loop].ui8_bufXtd == ptReceive->bXtd )
-            && (( ptReceive->dwId & gsvec_canBus[ bBusNumber ].mvec_msgObj[i_loop].ui32_mask ) == ( gsvec_canBus[ bBusNumber ].mvec_msgObj[i_loop].ui32_filter & gsvec_canBus[ bBusNumber ].mvec_msgObj[i_loop].ui32_mask ) ) ) {
-          ptReceive->bMsgObj = i_loop;
-          break;
+    /* gather msg box number. check for mask and filter first in order to avoid
+     * uneeded xtd and lock flag checks, that shall be possitive in most cases on a
+     * ISOBUS system. */
+    bool found = false;
+    for (std::map<uint8_t, rxMsgObj_s>::iterator i = g_bus[ ui8_bus ].mc_rxMsgObj.begin();
+         i != g_bus[ ui8_bus ].mc_rxMsgObj.end(); ++i) {
+
+      if ((p_receive->dwId & i->second.mui32_mask) == (i->second.mui32_filter & i->second.mui32_mask)) {
+
+        /* check for extended/standard flag match */
+        if (i->second.mb_xtd != p_receive->bXtd) {
+          continue;
         }
+
+        /* this is the correct obj - either check lock */
+        if (i->second.mb_lock) {
+          continue;
+        }
+
+        /* everything is ok */
+        p_receive->bMsgObj = i->first;
+        found = true;
+        break;
       }
     }
 
-    ptReceive->bDlc = frame.can_dlc;
-    // prevent timestamp which is in the future! (because of 10ms clock jitter)
-    ptReceive->tReceiveTime.l1ms = gsi32_lastReceiveTime;
-
-    memcpy( ptReceive->abData, frame.data, frame.can_dlc );
-
-#if DEBUG_CAN
-    DEBUG_PRINT( "%012ld rx: %02x#", getTime(), ptReceive->dwId );
-    for ( unsigned i = 0; i < frame.can_dlc; ++i ) {
-      fprintf( stderr, "%02x", ptReceive->abData[ i ] );
+    if (! found) {
+#ifndef NDEBUG
+      /* if we get here, there's a gap between the filters passed
+       * to the socket and the configured msg objects. normaly this
+       * should never happen so print an error even without DEBUG_CAN
+       * not defined. */
+      fprintf(stderr, "%012d rx: %02x#", getTime(), p_receive->dwId);
+      for (unsigned i = 0; i < frame.can_dlc; ++i) {
+        fprintf(stderr, "%02x", p_receive->abData[ i ]);
+      }
+      fprintf(stderr, " ------------ no matching msgobj found - filter setup corrupted!\n");
+#endif
+      return HAL_CONFIG_ERR;
     }
-    fprintf( stderr, "\n" );
+
+    g_lastReceiveTime = timestamp;
+    p_receive->bDlc = frame.can_dlc;
+    p_receive->tReceiveTime.l1ms = timestamp;
+    memcpy(p_receive->abData, frame.data, frame.can_dlc);
+
+#if DEBUG_CAN && DEBUG_CAN_VERBOSE
+    DEBUG_PRINT("%012ld rx: %02x#", getTime(), p_receive->dwId);
+    for (unsigned i = 0; i < frame.can_dlc; ++i) {
+      fprintf(stderr, "%02x", p_receive->abData[ i ]);
+    }
+    fprintf(stderr, "\n");
 #endif
 
     return HAL_NO_ERR;
@@ -573,48 +653,80 @@ namespace __HAL {
 
 
 
-  int16_t sendCanMsg( uint8_t bBusNumber, uint8_t, tSend* ptSend ) {
+  int16_t sendCanMsg(uint8_t ui8_bus, uint8_t, tSend* p_send) {
+#if DEBUG_CAN && DEBUG_CAN_VERBOSE
+    DEBUG_PRINT("\n");
+#endif
 
-    DEBUG_PRINT( "sendCanMsg bus: %d\n", bBusNumber );
-
-#if DEBUG_CAN
-    DEBUG_PRINT( "%012ld tx: %x#", getTime(), ptSend->dwId );
-    for ( unsigned i = 0; i < ptSend->bDlc; ++i ) {
-      fprintf( stderr, "%02x", ptSend->abData[ i ] );
+    if (g_bus[ui8_bus].mc_txMsgObj.empty()) {
+      DEBUG_PRINT("%s: no tx object configured\n", __FUNCTION__);
+      return HAL_CONFIG_ERR;
     }
-    fprintf( stderr, "\n" );
+    /* TODO: no possibility to check for msg obj lock */
+
+
+#if DEBUG_CAN && DEBUG_CAN_VERBOSE
+    DEBUG_PRINT("%012ld tx: %x#", getTime(), p_send->dwId);
+    for (unsigned i = 0; i < p_send->bDlc; ++i) {
+      fprintf(stderr, "%02x", p_send->abData[ i ]);
+    }
+    fprintf(stderr, "\n");
 #endif
 
     static struct can_frame frame;
-    memset( &frame, 0, sizeof( struct can_frame ) );
+    bzero(&frame, sizeof(struct can_frame));
 
-    frame.can_id = ptSend->dwId;
-    frame.can_dlc = ptSend->bDlc;
-    if ( ptSend->bXtd > 0 ) {
+    frame.can_id = p_send->dwId;
+    frame.can_dlc = p_send->bDlc;
+    if (p_send->bXtd) {
       frame.can_id |= CAN_EFF_FLAG;
     }
 
-    memcpy( frame.data, ptSend->abData, frame.can_dlc );
+    memcpy(frame.data, p_send->abData, frame.can_dlc);
 
-    int rc = send( gsvec_canBus[ bBusNumber ].mi_fd, ( char* ) & frame, sizeof( frame ), MSG_DONTWAIT );
-
-    if ( -1 == rc ) {
+    if (-1 == send(g_bus[ ui8_bus ].mi_fd, (char*) & frame, sizeof(struct can_frame), MSG_DONTWAIT)) {
+      perror("send");
       return HAL_UNKNOWN_ERR;
     }
 
-    return rc;
+    return HAL_NO_ERR;
   };
 
 
-  /** TODO ON REQUEST MaxSendDelay: Change all callers of this function so that they can handle the case of returnVal<0 to interprete
-   *        this as error code. THEN change this function to use negative values as error codes
-   */
-  int32_t getMaxSendDelay( uint8_t /* aui8_busNr */ ) {
-    DEBUG_PRINT( "getMaxSendDelay\n" );
-    return 0; // we don't have no error code, we can just return some error-maxDelay instead
+  /** get latest rx timestamp global for every channel */
+  int32_t can_lastReceiveTime() {
+    DEBUG_PRINT("\n");
+    return g_lastReceiveTime;
+  }
+
+
+  /** unimplemented */
+  int16_t clearCanObjBuf(uint8_t, uint8_t) {
+    DEBUG_PRINT("\n");
+    return HAL_NO_ERR;
+  }
+
+
+  /** unimplemented */
+  int16_t getCanMsgBufCount(uint8_t, uint8_t) {
+    DEBUG_PRINT("\n");
+    return 0;
+  };
+
+
+  /** unimplemented */
+  int32_t getMaxSendDelay(uint8_t) {
+    DEBUG_PRINT("\n");
+    return 0;
+  }
+
+
+  /** unimplemented */
+  int16_t chgCanObjPause(uint8_t, uint8_t, uint16_t) {
+    DEBUG_PRINT("\n");
+    return HAL_NO_ERR;
   }
 
 } // end namespace __HAL
 
 // eof
-
