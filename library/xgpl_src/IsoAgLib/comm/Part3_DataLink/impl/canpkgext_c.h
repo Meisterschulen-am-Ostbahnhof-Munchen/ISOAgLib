@@ -212,7 +212,7 @@ class CanPkgExt_c : public CanPkg_c
     get the value of the ISO11783 ident field PGN
     @return parameter group number
   */
-  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x3FF00 ) | isoPs() );}
+  uint32_t isoPgn() const {return ( ( ( (uint32_t)ident() >> 8) & 0x3FF00LU ) | isoPs() );}
 
   /**
     get the value of the ISO11783 ident field EDP+DP
@@ -241,7 +241,7 @@ class CanPkgExt_c : public CanPkg_c
   bool isPdu1() const { return (isoPf() <= 0xEF); }
   bool isPdu2() const { return (isoPf() >= 0xF0); }
   bool hasDa() const { return isPdu1(); }
-  uint32_t isoPurePgn() const { return ( ((ident() >> 8) & 0x3FF00) | (hasDa() ? 0 : isoPs()) ); }
+  uint32_t isoPurePgn() const { return ( ((ident() >> 8) & 0x3FF00LU) | (hasDa() ? 0 : isoPs()) ); }
 
   /**
     set the value of the ISO11783 ident field SA

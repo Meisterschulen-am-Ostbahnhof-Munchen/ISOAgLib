@@ -138,7 +138,7 @@ public:
   //! register a TP/ETP receiver
   //! @pre This combination (Client/IsoName/Pgn) is not yet registered
   void registerClientIso (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
-                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                          uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFFLU,
                           bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false, const IsoName_c* apcc_isoNameSender=NULL);
 
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
@@ -146,7 +146,7 @@ public:
   //! NOTE: Destination-Specific NMEA reception is NOT YET supported!
   //! @pre This combination (Client/IsoName/Pgn) is not yet registered
   void registerClientNmea (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName,
-                           uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFF,
+                           uint32_t aui32_pgn, uint32_t aui32_pgnMask=0x3FFFFLU,
                            bool ab_alsoBroadcast=false, bool ab_alsoGlobalErrors=false);
   #endif
 

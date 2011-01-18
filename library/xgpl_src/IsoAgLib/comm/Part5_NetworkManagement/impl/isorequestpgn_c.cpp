@@ -196,7 +196,7 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
   uint32_t ui32_purePgn = mui32_requestedPGN;
   if (((ui32_purePgn >> 8) & 0xFF) < 0xF0)
   { // destination specific, so clear the destSA field as we want the PURE PGN!
-    ui32_purePgn &= 0x3FF00;
+    ui32_purePgn &= 0x3FF00LU;
   }
 
   data().setIdentType( IsoAgLib::iIdent_c::ExtendedIdent );
@@ -246,7 +246,7 @@ IsoRequestPgn_c::IsoRequestPgn_c ()
   , mc_data()
   , mpc_isoItemSA( NULL ) // dummy value, is always properly set when used
   , mpc_isoItemDA( NULL ) // dummy value, is always properly set when used
-  , mui32_requestedPGN( 0xFFFFFFFF ) // dummy value, is always properly set when used
+  , mui32_requestedPGN( 0xFFFFFFFFLU ) // dummy value, is always properly set when used
   , mb_alreadyClosed( true )
 {
 }

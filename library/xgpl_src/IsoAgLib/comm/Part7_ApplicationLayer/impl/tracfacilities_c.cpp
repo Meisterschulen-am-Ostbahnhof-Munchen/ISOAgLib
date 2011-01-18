@@ -121,7 +121,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     // in CanPkgExt_c -> resolveSendingInformation
     IsoName_c const& rcc_tempISOName = data().getISONameForSA();
 
-    switch (data().isoPgn() & 0x3FF00)
+    switch (data().isoPgn() & 0x3FF00LU)
     {
       case TRACTOR_FACILITIES_PGN:
         if ( checkParseReceived (rcc_tempISOName) )

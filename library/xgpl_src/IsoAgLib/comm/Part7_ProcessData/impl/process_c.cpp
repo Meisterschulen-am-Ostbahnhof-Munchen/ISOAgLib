@@ -174,9 +174,9 @@ bool Process_c::timeEvent( void ){
          iter != ml_filtersToDeleteISO.end();
          iter++)
     {
-      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8)))
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFLU, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8)))
       { // corresponding FilterBox_c exist -> delete it
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFLU, (PROCESS_DATA_PGN << 8) ), NULL, &(*iter), 8));
       }
     }
     ml_filtersToDeleteISO.clear();
@@ -659,9 +659,9 @@ bool Process_c::deleteRemoteFilter(IsoName_c const& acrc_isoName)
     if ((*pc_iter)->isoName() == acrc_isoName)
     { // remote proc data has given onwerisoName
       // -> delete according FilterBox (after check if corresponding FilterBox_c exists)
-      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8)))
+      if (getIsoFilterManagerInstance4Comm().existIsoFilter( IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFLU, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8)))
       { // corresponding FilterBox_c exist -> delete it
-        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FF, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8));
+        getIsoFilterManagerInstance4Comm().removeIsoFilter(  IsoFilter_s (mt_customer, IsoAgLib::iMaskFilter_c( 0x3FF00FFLU, (PROCESS_DATA_PGN << 8) ), NULL, &acrc_isoName, 8));
         // and let the caller know of the positive deletion!
         return true;
       } else

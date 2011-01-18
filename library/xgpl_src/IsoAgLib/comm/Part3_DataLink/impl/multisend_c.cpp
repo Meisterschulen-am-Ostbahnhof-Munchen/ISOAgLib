@@ -153,7 +153,7 @@ void
 MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType)
 {
   mui32_pgn = aui32_pgn;
-  if ((mui32_pgn & 0x0FF00) < 0x0F000) mui32_pgn &= 0x3FF00;
+  if ((mui32_pgn & 0x0FF00LU) < 0x0F000LU) mui32_pgn &= 0x3FF00LU;
   mc_isoNameSender = acrc_isoNameSender;     // copy the 8byte IsoName
   mc_isoNameReceiver = acrc_isoNameReceiver; // copy the 8byte IsoName
   mhpbui8_data = rhpb_data;

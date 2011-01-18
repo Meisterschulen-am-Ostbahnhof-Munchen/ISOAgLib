@@ -69,8 +69,8 @@ namespace __IsoAgLib
            (apc_localIdent == spc_nolocalIdent)
          )
          ||
-         ( ( ((acrc_maskFilter.getMask() & 0x2FF0000) == 0x2FF0000) && ((acrc_maskFilter.getFilter() & 0x2FF0000) == 0x0EF0000) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
-           ( ((acrc_maskFilter.getMask() & 0x3FF0000) == 0x3FF0000) && ((acrc_maskFilter.getFilter() & 0x3FF0000) == 0x0FF0000) )    /** Proprietary B */
+         ( ( ((acrc_maskFilter.getMask() & 0x2FF0000LU) == 0x2FF0000LU) && ((acrc_maskFilter.getFilter() & 0x2FF0000LU) == 0x0EF0000LU) ) || /** Proprietary A/A2 may be receivable with one filter/mask combination! */
+           ( ((acrc_maskFilter.getMask() & 0x3FF0000LU) == 0x3FF0000LU) && ((acrc_maskFilter.getFilter() & 0x3FF0000LU) == 0x0FF0000LU) )    /** Proprietary B */
          )
        )
     {
@@ -134,7 +134,7 @@ namespace __IsoAgLib
     const IsoName_c& rc_localIsoName = (
                                         (mpc_localIdent == NULL)
                                         ||
-                                        (((mui32_canFilter & 0x3FF0000) >> 8) == PROPRIETARY_B_PGN)
+                                        (((mui32_canFilter & 0x3FF0000LU) >> 8) == PROPRIETARY_B_PGN)
                                        )
                                         ? IsoName_c::IsoNameUnspecified() // if we have no IdentItem, we have no IsoName
                                         : mpc_localIdent->isoName();

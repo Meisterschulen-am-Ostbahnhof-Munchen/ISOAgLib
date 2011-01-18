@@ -50,7 +50,7 @@ public:
     @param aui8_devClassInst initial DEVCLASSINST (instance). Defaults to "unknown" (=0xF)
   */
   inline explicit IsoName_c( uint8_t aui8_devClass, uint8_t aui8_devClassInst=0xF )
-  { set( true, 2, aui8_devClass, aui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFF, 0x1F, 0x7 ); }
+  { set( true, 2, aui8_devClass, aui8_devClassInst, 0xFF, 0x7FF, 0x1FFFFFLU, 0x1F, 0x7 ); }
 
   /** constructor which can read in initial data from uint8_t string
     @param apb_src 64bit input data string, mustn't be NULL.

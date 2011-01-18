@@ -110,7 +110,7 @@ CanIo_c::init(
   mi32_lastProcessedCanPkgTime = 0;
   mui8_processedMsgCnt = 0;
   mc_maskStd.set(0x7FF, Ident_c::StandardIdent);
-  mc_maskExt.set(0x1FFFFFFF, Ident_c::ExtendedIdent);
+  mc_maskExt.set(0x1FFFFFFFLU, Ident_c::ExtendedIdent);
   mc_maskLastmsg.set(0, Ident_c::ExtendedIdent);
 
   /** set min and max allowed obj numbers (important for multithreading

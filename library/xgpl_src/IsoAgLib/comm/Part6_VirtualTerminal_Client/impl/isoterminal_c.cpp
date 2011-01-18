@@ -245,7 +245,7 @@ IsoTerminal_c::processMsg()
   uint8_t ui8_index;
 
   /// -->VT_TO_GLOBAL_PGN<-- ///
-  if ((data().isoPgn() & 0x3FFFF) == VT_TO_GLOBAL_PGN)
+  if ((data().isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
     uint8_t const cui8_cmdByte = data().getUint8Data (1-1);
     if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
@@ -286,7 +286,7 @@ IsoTerminal_c::processMsg()
 
 
   /// -->LANGUAGE_PGN<-- ///
-  if ((data().isoPgn() & 0x3FFFF) == LANGUAGE_PGN)
+  if ((data().isoPgn() & 0x3FFFFLU) == LANGUAGE_PGN)
   {
     VtServerInstance_c* pc_server = NULL;
     // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications

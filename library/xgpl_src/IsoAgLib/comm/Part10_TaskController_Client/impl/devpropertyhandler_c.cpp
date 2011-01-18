@@ -188,7 +188,7 @@ DevPropertyHandler_c::DevPropertyHandler_c()
 bool
 DevPropertyHandler_c::processMsg()
 {
-  if ((data().isoPgn() & 0x3FF00) != PROCESS_DATA_PGN)
+  if ((data().isoPgn() & 0x3FF00LU) != PROCESS_DATA_PGN)
     //should never be the case
     return FALSE;
 

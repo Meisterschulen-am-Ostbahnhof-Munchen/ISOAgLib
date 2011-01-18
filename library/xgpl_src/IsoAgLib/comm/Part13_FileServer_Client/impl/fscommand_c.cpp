@@ -126,7 +126,7 @@ FsCommand_c::~FsCommand_c()
     isoaglib_assert (cb_isoFilterRemoved == true);
 
     // Multi-Packet
-    getMultiReceiveInstance4Comm().deregisterClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFF, &getFileserver().getIsoName());
+    getMultiReceiveInstance4Comm().deregisterClient(*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFFLU, &getFileserver().getIsoName());
   }
 
   // Scheduler
@@ -147,7 +147,7 @@ FsCommand_c::timeEvent(void)
   if (!b_receiveFilterCreated)
   {
     // Multi-Packet (completely SA->DA specific!)
-    getMultiReceiveInstance4Comm().registerClientIso (*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFF, false, false, &getFileserver().getIsoName());
+    getMultiReceiveInstance4Comm().registerClientIso (*this, rc_csCom.getClientIdentItem().getIsoItem()->isoName(), FS_TO_CLIENT_PGN, 0x3FFFFLU, false, false, &getFileserver().getIsoName());
 
     // Single-Packet (completely SA->DA specific!)
     IsoFilter_s tempIsoFilter (*this, IsoAgLib::iMaskFilter_c( 0x3FFFFFFUL, (FS_TO_CLIENT_PGN << 8) ),

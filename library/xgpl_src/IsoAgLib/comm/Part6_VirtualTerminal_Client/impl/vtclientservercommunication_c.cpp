@@ -1052,7 +1052,7 @@ VtClientServerCommunication_c::processMsg()
 //  INTERNAL_DEBUG_DEVICE << "Incoming Message: mc_data.isoPgn=" << mc_data.isoPgn() << " - HAL::getTime()=" << HAL::getTime() << " - data[0]=" << (uint16_t)mc_data.getUint8Data (0) << "...  ";
 //  #endif
 
-  if ((mc_data.isoPgn() & 0x3FF00) == ACKNOWLEDGEMENT_PGN)
+  if ((mc_data.isoPgn() & 0x3FF00LU) == ACKNOWLEDGEMENT_PGN)
   { // Pass on to ACK-Processing!
     return processMsgAck();
   }

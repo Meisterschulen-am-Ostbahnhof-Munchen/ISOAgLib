@@ -64,7 +64,7 @@ void TracGuidanceCommand_c::checkCreateReceiveFilter( )
   { // check if needed receive filters for ISO are active
     setFilterCreated();
 
-    c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00 << 8, GUIDANCE_SYSTEM_CMD << 8), true);
+    c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, GUIDANCE_SYSTEM_CMD << 8), true);
   }
 }
 
@@ -96,7 +96,7 @@ bool TracGuidanceCommand_c::processMsg()
 {
   uint8_t ui8_sa = data().isoSa();
 
-  switch (data().isoPgn() & 0x3FF00)
+  switch (data().isoPgn() & 0x3FF00LU)
   {
     case GUIDANCE_SYSTEM_CMD:
       if ( checkMode(IsoAgLib::IdentModeTractor) && ( getCommander() == ui8_sa ) )

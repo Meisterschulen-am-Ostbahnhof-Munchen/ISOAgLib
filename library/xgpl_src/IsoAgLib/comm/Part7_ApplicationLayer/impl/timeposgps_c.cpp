@@ -413,12 +413,12 @@ namespace __IsoAgLib {
       // register Broadcast-TP/FP receive of NMEA 2000 data
       // make sure that the needed multi receive are registered
       #ifdef ENABLE_NMEA_2000_MULTI_PACKET
-      getMultiReceiveInstance4Comm().registerClientIso (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF, true, false);
-      getMultiReceiveInstance4Comm().registerClientIso (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF, true, false);
+      getMultiReceiveInstance4Comm().registerClientIso (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFFLU, true, false);
+      getMultiReceiveInstance4Comm().registerClientIso (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFFLU, true, false);
 
       #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-      getMultiReceiveInstance4Comm().registerClientNmea (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFF, true, false);
-      getMultiReceiveInstance4Comm().registerClientNmea (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFF, true, false);
+      getMultiReceiveInstance4Comm().registerClientNmea (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_POSITION_DATA_PGN,  0x3FFFFLU, true, false);
+      getMultiReceiveInstance4Comm().registerClientNmea (*this, __IsoAgLib::IsoName_c::IsoNameUnspecified(), NMEA_GPS_DIRECTION_DATA_PGN, 0x3FFFFLU, true, false);
       #endif
       mc_nmea2000Streamer.vec_data.reserve(51); // GNSS Position Data with TWO reference stations
       #endif // END of ENABLE_NMEA_2000_MULTI_PACKET

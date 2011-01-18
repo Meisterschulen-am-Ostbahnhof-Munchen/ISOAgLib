@@ -1107,7 +1107,7 @@ bool IsoMonitor_c::processMsg()
 
 
   // Handle DESTINATION PGNs
-  switch ((data().isoPgn() & 0x3FF00))
+  switch ((data().isoPgn() & 0x3FF00LU))
   {
     case ADDRESS_CLAIM_PGN:
     { // address claim
