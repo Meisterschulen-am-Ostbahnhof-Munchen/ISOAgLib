@@ -462,7 +462,7 @@ void MsgObj_c::printMyFilterBox(){
 #ifdef SYSTEM_PC
                            << STL_NAMESPACE::dec
 #endif
-                           << getFilterBoxInstance(marr_filterBoxIndex[i]).maskFilterPair.getType()
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).maskFilterPair().getType()
                            << ", FilterBox index : "
 #ifdef SYSTEM_PC
                            << STL_NAMESPACE::dec
