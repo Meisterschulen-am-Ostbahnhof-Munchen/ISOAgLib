@@ -452,17 +452,17 @@ void MsgObj_c::printMyFilterBox(){
 #ifdef SYSTEM_PC
                            << STL_NAMESPACE::hex
 #endif
-                           << getFilterBoxInstance(marr_filterBoxIndex[i]).filter().ident()
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).maskFilterPair().getFilter()
                            << ", Mask: 0x"
 #ifdef SYSTEM_PC
                            << STL_NAMESPACE::hex
 #endif
-                           << getFilterBoxInstance(marr_filterBoxIndex[i]).mask().ident()
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).maskFilterPair().getMask()
                            << ", IdentType: "
 #ifdef SYSTEM_PC
                            << STL_NAMESPACE::dec
 #endif
-                           << getFilterBoxInstance(marr_filterBoxIndex[i]).identType()
+                           << getFilterBoxInstance(marr_filterBoxIndex[i]).maskFilterPair.getType()
                            << ", FilterBox index : "
 #ifdef SYSTEM_PC
                            << STL_NAMESPACE::dec
