@@ -514,8 +514,8 @@ bool CanIo_c::deleteFilter(const __IsoAgLib::CanCustomer_c& ar_customer,
       //     list
       // ==>> ONLY POP FilterBox_c from BACK of STL_NAMESPACE::vector<T> to AVOID chain of FilterBox_c movements in STL_NAMESPACE::vector<T>
       //to be deleted filterbox is set to idle
-      while( m_arrFilterBox.back().isIdle() )
-      { //remove idle filterBox if at the end of vector
+      while( !m_arrFilterBox.empty() && m_arrFilterBox.back().isIdle() )
+      {
         m_arrFilterBox.pop_back();
       }
 
@@ -577,8 +577,8 @@ bool CanIo_c::deleteAllFiltersForCustomer (const __IsoAgLib::CanCustomer_c & ar_
   //     list
   // ==>> ONLY POP FilterBox_c from BACK of STL_NAMESPACE::vector<T> to AVOID chain of FilterBox_c movements in STL_NAMESPACE::vector<T>
   //to be deleted filterbox is set to idle
-  while( m_arrFilterBox.back().isIdle() )
-  { //remove idle filterBox if at the end of vector
+  while( !m_arrFilterBox.empty() && m_arrFilterBox.back().isIdle() )
+  {
     m_arrFilterBox.pop_back();
   }
 
