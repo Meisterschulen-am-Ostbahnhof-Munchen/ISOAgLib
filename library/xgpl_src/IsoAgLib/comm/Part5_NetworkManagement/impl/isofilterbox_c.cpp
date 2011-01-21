@@ -80,10 +80,10 @@ IsoFilterBox_c::updateOnAdd()
       { // retrieve current address
         const uint8_t cui8_adr = getIsoMonitorInstance4Comm().isoMemberISOName (ms_isoFilter.mc_isoNameDa).nr();
 
-        isoaglib_assert( ( c_maskFilter.getFilter() & 0xff00 ) == 0 );
+        isoaglib_assert( ( c_maskFilter.getFilter() & 0xff00UL ) == 0 );
 
-        c_maskFilter.setFilter( c_maskFilter.getFilter() | ( cui8_adr << 8 ) );
-        c_maskFilter.setMask( c_maskFilter.getMask() | 0xff00 );
+        c_maskFilter.setFilter( c_maskFilter.getFilter() | ( static_cast<uint32_t>( cui8_adr ) << 8 ) );
+        c_maskFilter.setMask( c_maskFilter.getMask() | 0xff00UL );
       }
       else return false; // can't create the filter - IsoName not claimed on the bus!
     }
