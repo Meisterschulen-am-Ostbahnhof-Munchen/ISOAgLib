@@ -64,7 +64,7 @@ IsoBus_c::init (uint8_t aui8_busNumber)
 {
   /// CAN-Bus
   const bool cb_canSuccess =
-    getCanInstance4Comm().init (aui8_busNumber, 250, Ident_c::ExtendedIdent);
+    getCanInstance4Comm().init (aui8_busNumber, 250 );
 
   /// Part 5 - Network Management
   getIsoRequestPgnInstance4Comm().init();
