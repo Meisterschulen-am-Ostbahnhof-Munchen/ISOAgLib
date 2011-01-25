@@ -18,6 +18,7 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <stdlib.h>
 
 #if DEBUG_DIAGNOSTICPGN
   #ifdef SYSTEM_PC
