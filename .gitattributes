@@ -142,7 +142,6 @@ library/xgpl_src/IsoAgLib/hal/Dj1/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/Dj1/can/hal_can_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/Dj1/can/hal_can_interface.h -text
 library/xgpl_src/IsoAgLib/hal/Dj1/config.h -text
-library/xgpl_src/IsoAgLib/hal/Dj1/eeprom/eeprom.h -text
 library/xgpl_src/IsoAgLib/hal/Dj1/errcodes.h -text
 library/xgpl_src/IsoAgLib/hal/Dj1/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/Dj1/typedef.h -text
@@ -150,7 +149,6 @@ library/xgpl_src/IsoAgLib/hal/c2c/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/can/hal_can_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/c2c/can/hal_can_interface.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/config.h -text
-library/xgpl_src/IsoAgLib/hal/c2c/eeprom/eeprom.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/errcodes.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/c2c/system/system_target_extensions.cpp -text
@@ -161,7 +159,6 @@ library/xgpl_src/IsoAgLib/hal/esxu/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/can/hal_can_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/esxu/can/hal_can_interface.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/config.h -text
-library/xgpl_src/IsoAgLib/hal/esxu/eeprom/eeprom.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/errcodes.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/esxu/system/system_target_extensions.cpp -text
@@ -178,9 +175,6 @@ library/xgpl_src/IsoAgLib/hal/p1mc/can/can.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/can/hal_can_interface.cpp -text
 library/xgpl_src/IsoAgLib/hal/p1mc/can/hal_can_interface.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/config.h -text
-library/xgpl_src/IsoAgLib/hal/p1mc/eeprom/eeprom.h -text
-library/xgpl_src/IsoAgLib/hal/p1mc/eeprom/hal_interface_eeprom.cpp -text
-library/xgpl_src/IsoAgLib/hal/p1mc/eeprom/hal_interface_eeprom.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/errcodes.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/system/system.h -text
 library/xgpl_src/IsoAgLib/hal/p1mc/system/system_target_extensions.cpp -text
@@ -215,10 +209,12 @@ library/xgpl_src/supplementary_driver/driver/datastreams/volatilememory_c.h -tex
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.cpp -text
 library/xgpl_src/supplementary_driver/driver/datastreams/volatilememorywithsize_c.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/actor/actor.h -text
+library/xgpl_src/supplementary_driver/hal/Dj1/eeprom/eeprom.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/Dj1/sensor/sensor.h -text
 library/xgpl_src/supplementary_driver/hal/c2c/actor/actor.h -text
 library/xgpl_src/supplementary_driver/hal/c2c/actor/actor_target_extensions.cpp -text
+library/xgpl_src/supplementary_driver/hal/c2c/eeprom/eeprom.h -text
 library/xgpl_src/supplementary_driver/hal/c2c/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/c2c/sensor/sensor.h -text
 library/xgpl_src/supplementary_driver/hal/c2c/sensor/sensor_target_extensions.cpp -text
@@ -226,10 +222,12 @@ library/xgpl_src/supplementary_driver/hal/c2c/sensor/sensor_target_extensions.h 
 library/xgpl_src/supplementary_driver/hal/esx/actor/actor_target_extensions.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/actor/actor.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/actor/actor_target_extensions.cpp -text
+library/xgpl_src/supplementary_driver/hal/esxu/eeprom/eeprom.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/rs232/rs232.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor.h -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.cpp -text
 library/xgpl_src/supplementary_driver/hal/esxu/sensor/sensor_target_extensions.h -text
+library/xgpl_src/supplementary_driver/hal/p1mc/eeprom/eeprom.h -text
 library/xgpl_src/supplementary_driver/hal/pc/actor/actor_target_extensions_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/rs232/target_extension_rs232_hal_simulator.cpp -text
 library/xgpl_src/supplementary_driver/hal/pc/sensor/sensor_target_extensions_hal_simulator.cpp -text

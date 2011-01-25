@@ -173,7 +173,7 @@ public:
                                              const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
                                              const IsoName_c *apc_externalOverridingIsoName = NULL,
                                              bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                              uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                                              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -217,7 +217,7 @@ public:
             const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,

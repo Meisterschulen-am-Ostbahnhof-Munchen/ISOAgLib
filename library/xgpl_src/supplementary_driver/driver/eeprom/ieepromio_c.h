@@ -32,7 +32,13 @@ namespace IsoAgLib {
 class iEepromIo_c : private __IsoAgLib::EepromIo_c {
 public:
   /** destructor has nothing to destruct */
-  ~iEepromIo_c() {};
+  ~iEepromIo_c() {}
+
+  /** Initialize EEPROM-subsystem */
+  void init() { EepromIo_c::init(); }
+
+  /** Close EEPROM-subsystem */
+  void close() { EepromIo_c::close(); }
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ EEPROM managing operations ++++

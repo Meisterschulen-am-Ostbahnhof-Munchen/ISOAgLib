@@ -1,5 +1,5 @@
 /*
-  eeprom.h: definition of HAL namesapce layer for ESX
+  eeprom.h: definition of HAL namesapce layer for C2C
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
 
@@ -11,7 +11,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/** \file IsoAgLib/hal/esx/eeprom/eeprom.h
+/** \file IsoAgLib/hal/c2c/eeprom/eeprom.h
  * The header <i>\<target\>/\<device\>/\<device\>.h</i> performs a name
    mapping between platform specific BIOS / OS function names
    and the function names, the IsoAgLib uses for hardware access.
@@ -24,29 +24,17 @@
 */
 /* ************************************************************ */
 
-#ifndef _HAL_ESX_EEPROM_H_
-#define _HAL_ESX_EEPROM_H_
+#ifndef _HAL_C2C_EEPROM_H_
+#define _HAL_C2C_EEPROM_H_
 
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
+#include <IsoAgLib/hal/c2c/config.h>
+#include <IsoAgLib/hal/c2c/typedef.h>
+#include <IsoAgLib/hal/c2c/errcodes.h>
 
 namespace __HAL {
   extern "C" {
     /** include the BIOS specific header into __HAL */
-    #include <commercial_BIOS/bios_esx/Xos20esx.h>
-
-    #if defined(USE_CAN_EEPROM_EDITOR)
-      /** include the BIOS specific header for CAN EEPROM editor
-        * into __HAL if this function is activated in the central target
-        * independent config file */
-      #include <../commercial_BIOS/bios_esx/Xos20eec.h>
-    #elif defined(USE_RS232_EEPROM_EDITOR)
-      /** include the BIOS specific header for RS232 EEPROM editor
-        * into __HAL if this function is activated in the central target
-        * independent config file */
-      #include <../commercial_BIOS/bios_esx/Xos20ees.h>
-    #endif
+    #include <commercial_BIOS/bios_c2c/c2c10osy.h>
   }
 }
 /**
@@ -63,7 +51,7 @@ namespace HAL
 /*@{*/
 
   /**
-   deliver the EEPROM size in uint8_t -> mult ESX BIOS value with 1024
+   deliver the EEPROM size in uint8_t -> mult C2C BIOS value with 1024
    @return EEPROM size in byte
   */
   inline int16_t getEepromSize(void)
@@ -73,6 +61,9 @@ namespace HAL
    deliver the EEPROM segment size in kbyte
    @return EEPROM segment size in kbyte
   */
+  // MSCHMIDT - I think this is actually supposed to say size in bytes instead
+  // MSCHMIDT - of size in kbyte.  get_eeprom_segment_size() returns size in
+  // MSCHMIDT - bytes.
   inline int16_t getEepromSegmentSize(void)
     {return __HAL::get_eeprom_segment_size();};
 
@@ -103,14 +94,22 @@ namespace HAL
     @return error state (C_NO_ERR == o.k.)
   */
   inline int16_t eepromWp(bool bitMode)
-    {return __HAL::eeprom_wp(bitMode);};
+    {return HAL_NO_ERR;};
 
   /**
     check if EEPROM is ready for actions
     @return EE_READY -> ready
   */
   inline int16_t eepromReady(void)
-    {return __HAL::eeprom_ready();};
+    {return EE_READY;};
+// MSCHMIDT - Should really implement a target extension for the c2c in eeprom_target_extensions.cc
+// MSCHMIDT - (see C:\DEV\IsoAgLib\lgpl_src\IsoAgLib\hal\pc\eeprom\eeprom_target_extensions.cc)
+// MSCHMIDT - /* get the status of eeprom*/
+// MSCHMIDT - int16_t eepromReady(void){
+// MSCHMIDT -   // printf("eeprom ready aufgerufen\n");
+// MSCHMIDT -   return EE_READY;
+// MSCHMIDT - }
+
 
  /*@}*/
 
@@ -126,8 +125,8 @@ namespace HAL
     @param iObjNrTransmitCan CAN Msg Obj number for send of Editor msg
     @param dwReceiveCanId CAN Ident_c to use for receive of Editor msg
     @param bUseExtendedCAN set to 0 for standard 11bit, to 1 for extended 29bit Ident
-    @param iNumberMsgsReceive size of CAN receive puffer size
-    @param iNumberMsgsTransmit size of CAN send puffer size
+    @param iNumberMsgsReceive size of CAN receive buffer size
+    @param iNumberMsgsTransmit size of CAN send buffer size
     @return HAL_NO_ERR if no error occured
   */
   inline int16_t InitEEEditor(  uint8_t bBus,

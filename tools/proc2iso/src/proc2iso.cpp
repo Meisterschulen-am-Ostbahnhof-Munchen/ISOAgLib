@@ -404,11 +404,13 @@ void defaultAttributes ()
     vecstr_attrString [attrECU_Inst] = "0";
     attrIsGiven [attrECU_Inst] = true;
   }
+#if 0
   if (!attrIsGiven [attrStore_SA_at_EEPROM_address])
   {
     vecstr_attrString [attrStore_SA_at_EEPROM_address] = "0xFFFF";
     attrIsGiven [attrStore_SA_at_EEPROM_address] = true;
   }
+#endif
   if (!attrIsGiven [attrElement_number])
   {
     vecstr_attrString [attrElement_number] = "0xFF";
@@ -1373,9 +1375,11 @@ static void processElement (DOMNode *node, uint64_t ombType, const char* ac_work
         b_dpdCombination = FALSE;
 
         fprintf(partFileB, "c_myIsoName, &c_myIsoName, %s", vecstr_constructor[1].c_str());
+#if 0
         fprintf(partFileB, "\n#ifdef USE_EEPROM_IO\n");
         fprintf(partFileB, ", 0x%x", stringtonumber(vecstr_attrString[attrStore_SA_at_EEPROM_address].c_str(), 0, -1));
         fprintf(partFileB, "\n#endif\n");
+#endif
         fprintf(partFileB, ");\n\n");
 
         // if we have at least one DeviceProcessDataCombination => buffer_length_dpd is already reseted to 0 and buffer already written

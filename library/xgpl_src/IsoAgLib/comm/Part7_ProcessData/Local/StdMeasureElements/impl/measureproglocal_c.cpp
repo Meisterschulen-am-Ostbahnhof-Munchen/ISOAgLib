@@ -581,7 +581,7 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
 
   b_sendSuccess = processData().sendValISOName(mc_isoName, val());
 
-  #ifdef USE_EEPROM_IO
+  #if 0 //def USE_EEPROM_IO
   // call reset function for ProcessData -> if this prog is the first one reset eepromVal
   // processData().resetEeprom(this);
   // simply call resetEeprom(void) to get independent from ProcDataLocal_c

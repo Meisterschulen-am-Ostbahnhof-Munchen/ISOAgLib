@@ -15,8 +15,6 @@
 #define _PC_EEPROM_TARGET_EXTENSIONS_H_
 
 #include <IsoAgLib/isoaglib_config.h>
-#include "../typedef.h"
-#include "../errcodes.h"
 
 #ifdef USE_RS232_EEPROM_EDITOR
   #include "pc_eeditor_rs232.h"

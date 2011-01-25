@@ -70,7 +70,7 @@ typedef long int long int64_t;
 #define attrWanted_SA (21)
 #define attrFunc_Inst (22)
 #define attrECU_Inst (23)
-#define attrStore_SA_at_EEPROM_address (24)
+//#define attrStore_SA_at_EEPROM_address (24)
 #define attrManufacturer_code (25)
 #define attrDevice_class (26)
 #define attrDevice_class_instance (27)

@@ -19,8 +19,7 @@
 /* *************************************** */
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-#include <IsoAgLib/hal/hal_eeprom.h>
-
+#include <supplementary_driver/hal/hal_eeprom.h>
 #include <supplementary_driver/hal/hal_rs232.h>
 
 

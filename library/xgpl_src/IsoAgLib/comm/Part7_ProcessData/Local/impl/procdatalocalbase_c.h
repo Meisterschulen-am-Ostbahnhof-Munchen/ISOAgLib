@@ -166,7 +166,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
                        const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
                        const IsoName_c *apc_externalOverridingIsoName = NULL,
                        bool ab_cumulativeValue = false
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                        , uint16_t aui16_eepromAdr = 0xFFFF
 #endif
                        , IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL
@@ -178,7 +178,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
 
     {
       init( aps_elementDDI, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue
-      #ifdef USE_EEPROM_IO
+      #if 0 //def USE_EEPROM_IO
           , aui16_eepromAdr
       #endif // USE_EEPROM_IO
           , apc_processDataChangeHandler
@@ -218,7 +218,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
             const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
             , uint16_t aui16_eepromAdr = 0xFFFF
 #endif
             , IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL
@@ -234,7 +234,7 @@ class ProcDataLocalBase_c : public ProcDataBase_c
   /** default destructor which has nothing to do */
   ~ProcDataLocalBase_c();
 
-  #ifdef USE_EEPROM_IO
+  #if 0 //def USE_EEPROM_IO
   /** deliver the eeprom adr for the value
     @return configured EEPROM adress
   */
@@ -347,7 +347,7 @@ private:
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const ProcDataLocalBase_c& acrc_src );
 
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
   /** deliver the eeprom value
     @return actual EEPROM value
   */
@@ -376,7 +376,7 @@ private:
   /** store the master value of the main programm */
   int32_t mi32_masterVal;
 
-  #ifdef USE_EEPROM_IO
+  #if 0 //def USE_EEPROM_IO
     /** the eeprom value can differ from main programm value
       (if value from eeprom has been restored, if value has been
       resetted); mi32_masterVal starts with 0, and can be
@@ -384,7 +384,7 @@ private:
     int32_t mi32_eepromVal;
   #endif
 
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
   /** last time, where automatic value store was performed */
   int32_t mi32_lastEepromStore;
   /** eeprom adress of the value, if this process data

@@ -148,7 +148,7 @@ public:
                                               const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                                               const iIsoName_c *apc_externalOverridingIsoName = NULL,
                                               bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                               uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                                               ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -156,7 +156,7 @@ public:
                                               )
     : ProcDataLocalSimpleSetpointSimpleMeasure_c(ps_elementDDI, aui16_element,
                                                  acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                                  aui16_eepromAdr,
 #endif
                                                  apc_processDataChangeHandler,
@@ -200,7 +200,7 @@ public:
             const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
             const iIsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -208,7 +208,7 @@ public:
             )
   {ProcDataLocalSimpleSetpointSimpleMeasure_c::init(ps_elementDDI, aui16_element,
                                                     acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                                     aui16_eepromAdr,
 #endif
                                                     apc_processDataChangeHandler,
@@ -289,7 +289,7 @@ public:
      return setpointConst().sendSetpointForGroup( ac_targetISOName, en_valueGroup, __IsoAgLib::ProcessCmd_c::setValue);
     }
 
-  #ifdef USE_EEPROM_IO
+  #if 0 //def USE_EEPROM_IO
   /**
     deliver the eeprom adr for the value
     @return configured EEPROM adress

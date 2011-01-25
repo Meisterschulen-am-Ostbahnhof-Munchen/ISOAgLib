@@ -29,8 +29,8 @@
 #define _HAL_PC_EEPROM_H_
 
 #include <IsoAgLib/isoaglib_config.h>
-#include "../typedef.h"
-#include "../errcodes.h"
+#include <IsoAgLib/hal/pc/typedef.h>
+#include <IsoAgLib/hal/pc/errcodes.h>
 #include "eeprom_target_extensions.h"
 
 #include <cstdio>

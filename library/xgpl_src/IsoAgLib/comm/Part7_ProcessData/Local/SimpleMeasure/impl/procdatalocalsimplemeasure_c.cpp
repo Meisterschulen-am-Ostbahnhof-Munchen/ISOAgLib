@@ -159,7 +159,7 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::Eleme
                                                            const IsoName_c& acrc_isoName,
                                                            const IsoName_c *apc_externalOverridingIsoName,
                                                            bool ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                                            uint16_t aui16_eepromAdr,
 #endif
                                                            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
@@ -168,7 +168,7 @@ ProcDataLocalSimpleMeasure_c::ProcDataLocalSimpleMeasure_c(const IsoAgLib::Eleme
   : ProcDataLocalBase_c(ps_elementDDI, aui16_element,
                         acrc_isoName, apc_externalOverridingIsoName,
                         ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                         aui16_eepromAdr,
 #endif
                         apc_processDataChangeHandler,
@@ -213,7 +213,7 @@ void ProcDataLocalSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_element
                                         const IsoName_c& acrc_isoName,
                                         const IsoName_c *apc_externalOverridingIsoName,
                                         bool ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                         uint16_t aui16_eepromAdr,
 #endif
                                         IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
@@ -222,7 +222,7 @@ void ProcDataLocalSimpleMeasure_c::init(const IsoAgLib::ElementDdi_s* ps_element
 {
   ProcDataLocalBase_c::init(ps_elementDDI, aui16_element,
                             acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif
                             apc_processDataChangeHandler,

@@ -129,7 +129,7 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(const IsoAgLib::Ele
                                                              uint16_t aui16_element, const IsoName_c& acrc_isoName,
                                                              const IsoName_c *apc_externalOverridingIsoName,
                                                              bool ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                                              uint16_t aui16_eepromAdr,
 #endif
                                                              IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
@@ -137,7 +137,7 @@ ProcDataLocalSimpleSetpoint_c::ProcDataLocalSimpleSetpoint_c(const IsoAgLib::Ele
       )
     : ProcDataLocalBase_c(ps_elementDDI, aui16_element,
                           acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                           aui16_eepromAdr,
 #endif
                           apc_processDataChangeHandler,
@@ -183,7 +183,7 @@ void ProcDataLocalSimpleSetpoint_c::init(const IsoAgLib::ElementDdi_s* ps_elemen
                                          const IsoName_c& acrc_isoName,
                                          const IsoName_c *apc_externalOverridingIsoName,
                                          bool ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                          uint16_t aui16_eepromAdr,
 #endif
                                          IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
@@ -192,7 +192,7 @@ void ProcDataLocalSimpleSetpoint_c::init(const IsoAgLib::ElementDdi_s* ps_elemen
 {
   ProcDataLocalBase_c::init(ps_elementDDI, aui16_element, acrc_isoName,
                             apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif
                             apc_processDataChangeHandler,
@@ -220,7 +220,7 @@ const ProcDataLocalSimpleSetpoint_c& ProcDataLocalSimpleSetpoint_c::operator=( c
 ProcDataLocalSimpleSetpoint_c::~ProcDataLocalSimpleSetpoint_c(){
 }
 
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
 /**
   set the eeprom adr for the value, read in value from EEPROM
 
@@ -269,7 +269,7 @@ bool ProcDataLocalSimpleSetpoint_c::timeEvent( uint16_t* /* pui16_nextTimePeriod
   return true;
 }
 
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
 /**
   called from MeasureProg item -> if this item is first in list
   reset eeprom val

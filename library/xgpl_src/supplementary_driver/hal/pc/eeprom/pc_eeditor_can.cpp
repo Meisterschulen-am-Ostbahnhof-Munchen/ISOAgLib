@@ -12,11 +12,7 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-#include "pc_eeditor_can.h"
 #include "eeprom.h"
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
 #include <string.h>
 #include <cstdio>
 //typedef char int8_t;

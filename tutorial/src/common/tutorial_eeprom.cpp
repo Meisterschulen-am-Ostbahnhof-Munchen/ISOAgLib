@@ -6,7 +6,7 @@
 
 #ifdef USE_EEPROM_IO
 
-#include <IsoAgLib/driver/eeprom/ieepromio_c.h>
+#include <supplementary_driver/driver/eeprom/ieepromio_c.h>
 
 #include "tutorial_eeprom.h"
 

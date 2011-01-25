@@ -9,6 +9,9 @@
  */
 
 #include <IsoAgLib/scheduler/ischeduler_c.h>
+#ifdef USE_EEPROM_IO
+#  include <supplementary_driver/driver/eeprom/ieepromio_c.h>
+#endif
 
 extern bool ecuMain();
 extern bool ecuShutdown();
@@ -28,8 +31,13 @@ void ecuMainLoop()
 
 int main( int /* argc */, char** /*argv*/ )
 {
-  /// Init Core-ISOAgLib (along with System, EEPROM, Actor, Sensor, RS232)
+  /// Init Core-ISOAgLib (along with System, Actor, Sensor, RS232)
   IsoAgLib::getISchedulerInstance().init();
+
+  /// Init Supplementary-ISOAgLib (EEPROM for IdentItem)
+  #ifdef USE_EEPROM_IO
+  IsoAgLib::getIeepromInstance().init();
+  #endif
 
   /// Init Application
   ecuMain();
@@ -40,6 +48,11 @@ int main( int /* argc */, char** /*argv*/ )
 
   /// Shutdown Application
   ecuShutdown();
+
+  /// Shutdown Supplementary-ISOAgLib (EEPROM for IdentItem)
+  #ifdef USE_EEPROM_IO
+  IsoAgLib::getIeepromInstance().close();
+  #endif
 
   /// Shutdown Core-ISOAgLib
   IsoAgLib::getISchedulerInstance().close();

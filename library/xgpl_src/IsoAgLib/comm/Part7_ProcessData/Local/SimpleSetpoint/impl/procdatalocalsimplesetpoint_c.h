@@ -177,7 +177,7 @@ public:
                                 const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
                                 const IsoName_c *apc_externalOverridingIsoName = NULL,
                                 bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                                 uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                                 IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -220,7 +220,7 @@ public:
             const IsoName_c& acrc_isoName = IsoName_c::IsoNameInitialProcessData(),
             const IsoName_c *apc_externalOverridingIsoName = NULL,
             bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -263,7 +263,7 @@ public:
   MeasureProgLocal_c& prog(const IsoName_c& acrc_isoName, bool ab_doCreate)
     { return mc_measureprog.prog(acrc_isoName, ab_doCreate);}
 
-  #ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
   /**
     set the eeprom adr for the value, read in value from EEPROM
 
@@ -327,7 +327,7 @@ public:
   virtual int32_t setpointMaxValue() const { return setpointConst().setpointMasterVal();}
 
 private: // Private methods
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
   /**
     called from MeasureProg item -> if this item is first in list
     reset eeprom val

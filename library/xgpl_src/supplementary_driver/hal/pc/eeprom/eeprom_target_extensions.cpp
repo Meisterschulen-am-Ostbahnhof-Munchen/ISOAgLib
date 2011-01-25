@@ -20,7 +20,7 @@
  * and types in <i>\<target\>/\<device\>/\<device\>.h</i> .
  * ********************************************************** */
 
-#include "eeprom_target_extensions.h"
+#include "eeprom.h"
 #include <cstdio>
 #include <cctype>
 namespace __HAL {

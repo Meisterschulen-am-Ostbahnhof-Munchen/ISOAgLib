@@ -16,7 +16,7 @@
 #include "scheduler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
+#include <supplementary_driver/driver/eeprom/impl/eepromio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
 #ifdef USE_ACTOR
@@ -27,7 +27,7 @@
 #endif
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
-  #include <IsoAgLib/hal/hal_eeprom.h>
+  #include <supplementary_driver/hal/hal_eeprom.h>
 #endif
 
 #if DEBUG_SCHEDULER || DEBUG_HEAP_USEAGE || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
@@ -104,10 +104,6 @@ Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
 
     getSystemInstance().init();
 
-    #ifdef USE_EEPROM_IO
-      getEepromInstance().init();
-    #endif
-
     #ifdef USE_ACTOR
       getActorInstance().init();
     #endif
@@ -134,10 +130,6 @@ Scheduler_c::close( void )
 
     #ifdef USE_ACTOR
       getActorInstance().close();
-    #endif
-
-    #ifdef USE_EEPROM_IO
-      getEepromInstance().close();
     #endif
 
     getSystemInstance().close();

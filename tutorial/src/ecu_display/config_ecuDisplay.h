@@ -12,7 +12,7 @@
 #define HAL_PATH_ISOAGLIB IsoAgLib/hal/pc
 #define HAL_PATH_ISOAGLIB_SYSTEM IsoAgLib/hal/pc/system
 #define HAL_PATH_ISOAGLIB_CAN IsoAgLib/hal/pc/can
-#define HAL_PATH_ISOAGLIB_EEPROM IsoAgLib/hal/pc/eeprom
+#define HAL_PATH_SUPPLEMENTARY_EEPROM supplementary_driver/hal/pc/eeprom
 #define HAL_PATH_SUPPLEMENTARY_RS232 supplementary_driver/hal/pc/rs232
 #define HAL_PATH_SUPPLEMENTARY_ACTOR supplementary_driver/hal/pc/actor
 #define HAL_PATH_SUPPLEMENTARY_SENSOR supplementary_driver/hal/pc/sensor
@@ -70,9 +70,7 @@
 #ifndef USE_PROCESS_YN 
 	#define USE_PROCESS_YN NO 
 #endif
-#ifndef USE_EEPROM_IO 
-	#define USE_EEPROM_IO 
-#endif
+#define USE_EEPROM_IO
 #ifndef USE_DATASTREAMS_IO 
 	#define USE_DATASTREAMS_IO 
 #endif

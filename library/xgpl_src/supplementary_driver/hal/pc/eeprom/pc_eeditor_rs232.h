@@ -1,5 +1,5 @@
 /*
-  pc_eeditor_rs232.cpp: source for the PSEUDO BIOS RS232 EEPROM Editor
+  pc_eeditor_rs232.h: header for the PSEUDO BIOS RS232 EEPROM Editor
     module for development and test on a PC
 
   (C) Copyright 2009 - 2010 by OSB AG and developing partners
@@ -11,17 +11,13 @@
   Public License with exceptions for ISOAgLib. (See accompanying
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
-#include "pc_eeditor_rs232.h"
-#include "../config.h"
-#include "../typedef.h"
-#include "../errcodes.h"
-#include <cstdio>
+#ifndef PC_EEDITOR_RS232_H
+#define PC_EEDITOR_RS232_H
 
+  /* PROTOTYPES */
 namespace __HAL {
-
-int16_t iCallRs232EEMonitor(void)
-{
-  printf("iCallRs232EEMonitor())\n");
-  return HAL_NO_ERR;
-}
+  int16_t iCallRs232EEMonitor(void);
 } // end namespace __HAL
+
+#endif
+

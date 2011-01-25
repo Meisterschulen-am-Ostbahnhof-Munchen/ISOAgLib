@@ -13,7 +13,6 @@
 */
 #ifndef PC_EEDITOR_CAN_H
 #define PC_EEDITOR_CAN_H
-#include "../typedef.h"
 
   /* PROTOTYPES */
 namespace __HAL {

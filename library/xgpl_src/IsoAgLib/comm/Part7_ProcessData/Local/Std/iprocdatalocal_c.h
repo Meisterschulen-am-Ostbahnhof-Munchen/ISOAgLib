@@ -166,14 +166,14 @@ public:
                     const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                   uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                   ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_multitonInst = 0)
     : ProcDataLocal_c( ps_elementDDI, aui16_element,
                        acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                        aui16_eepromAdr,
 #endif
                        apc_processDataChangeHandler,
@@ -191,13 +191,13 @@ public:
                     const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                    uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
                    ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                    int ai_multitonInst = 0)
     : ProcDataLocal_c( NULL, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                       aui16_eepromAdr,
 #endif
                       apc_processDataChangeHandler,
@@ -213,7 +213,7 @@ public:
 
     ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
                       acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                       aui16_eepromAdr,
 #endif
                       apc_processDataChangeHandler,
@@ -257,7 +257,7 @@ public:
              uint16_t aui16_element = 0xFFFF,
              const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -265,7 +265,7 @@ public:
             )
   {ProcDataLocal_c::init( ps_elementDDI, aui16_element,
                          acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                          aui16_eepromAdr,
 #endif
                          apc_processDataChangeHandler,
@@ -307,7 +307,7 @@ public:
   void init( uint16_t aui16_DDI, uint16_t aui16_element,
              const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
             uint16_t aui16_eepromAdr = 0xFFFF,
 #endif
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
@@ -323,7 +323,7 @@ public:
 
      ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
                             acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#ifdef USE_EEPROM_IO
+#if 0 //def USE_EEPROM_IO
                             aui16_eepromAdr,
 #endif
                             apc_processDataChangeHandler,
@@ -411,7 +411,7 @@ public:
                                             en_valueGroup, __IsoAgLib::ProcessCmd_c::setValue );
   }
 
-  #ifdef USE_EEPROM_IO
+  #if 0 //def USE_EEPROM_IO
   /**
     deliver the eeprom adr for the value
     @return configured EEPROM adress

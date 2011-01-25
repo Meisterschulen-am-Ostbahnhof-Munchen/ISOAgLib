@@ -122,7 +122,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
       static_cast<ProcDataLocalBase_c*>(pprocessData());
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata,
                                               pc_procdata->masterMeasurementVal()
-                                              #ifdef USE_EEPROM_IO
+                                              #if 0 //def USE_EEPROM_IO
                                                 , pc_procdata->eepromVal()
                                               #endif
                                               ));
@@ -515,7 +515,7 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
   }
   #endif
 
-  #ifdef USE_EEPROM_IO
+  #if 0 //def USE_EEPROM_IO
   // set initial value of new item to eeprom value
   ProcDataLocalBase_c* pc_procdata =
     static_cast<ProcDataLocalBase_c*>(pprocessData());

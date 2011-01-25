@@ -495,19 +495,6 @@
 #    define USE_PROCESS
 #  endif
 
-/**
-  * @def USE_EEPROM_IO_YN
-  * activate module for hardware EEPROM access via IsoAgLib
- * this is important as local process data can then store
- * actual values in confiugrable rates into EEPROM
-  */
-#  ifndef USE_EEPROM_IO_YN
-#     define USE_EEPROM_IO_YN YES
-#  endif
-#  if USE_EEPROM_IO_YN == YES && !defined(USE_EEPROM_IO)
-#    define USE_EEPROM_IO
-#  endif
-
 
 /*@}*/
 

@@ -26,11 +26,9 @@
 #include <IsoAgLib/isoaglib_config.h>
 
 
-#ifdef HAL_PATH_ISOAGLIB_EEPROM
-#  define _hal_eeprom_header_ <HAL_PATH_ISOAGLIB_EEPROM/eeprom.h>
+#ifdef HAL_PATH_SUPPLEMENTARY_EEPROM
+#  define _hal_eeprom_header_ <HAL_PATH_SUPPLEMENTARY_EEPROM/eeprom.h>
 #  include _hal_eeprom_header_
-#else
-  // currently EEPROM is mandatory, but there are platforms without, so don't error out here.
 #endif
 
 

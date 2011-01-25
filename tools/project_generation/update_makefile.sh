@@ -142,7 +142,7 @@ status_le1() { [ $? -le 1 ]; }
 #     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT ( specify if process daza with maximum restricted feature set shall be used; default 0 )
 #     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED ( specify if process daza with maximum restricted feature without any distinction between measurement and setpoint set shall be used; default 0 )
 # + PRJ_DATASTREAMS ( specify if the input and output filestream should be accessed by IsoAgLib; provides target HAL for filestream handling; default 0 )
-# + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; provides important functions for local process data and local ISO items; default 0 )
+# + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; default 0 )
 # + PRJ_ACTOR ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
 # + PRJ_SENSOR_DIGITAL ( specify if IsoAgLib extension for digital sensor data read should be used; provides several utility and diagnostic functions; default 0 )
 # + PRJ_SENSOR_COUNTER ( specify if IsoAgLib extension for counting sensor data read should be used; provides several utility and diagnostic functions; default 0 )
@@ -392,7 +392,7 @@ check_set_correct_variables()
     HAL_PATH_ISOAGLIB="$HAL_PREFIX_ISOAGLIB"
     HAL_PATH_ISOAGLIB_SYSTEM="$HAL_PREFIX_ISOAGLIB/system"
     HAL_PATH_ISOAGLIB_CAN="$HAL_PREFIX_ISOAGLIB/can"
-    HAL_PATH_ISOAGLIB_EEPROM="$HAL_PREFIX_ISOAGLIB/eeprom"
+    HAL_PATH_SUPPLEMENTARY_EEPROM="$HAL_PREFIX_SUPPLEMENTARY/eeprom"
     HAL_PATH_SUPPLEMENTARY_RS232="$HAL_PREFIX_SUPPLEMENTARY/rs232"
     HAL_PATH_SUPPLEMENTARY_ACTOR="$HAL_PREFIX_SUPPLEMENTARY/actor"
     HAL_PATH_SUPPLEMENTARY_SENSOR="$HAL_PREFIX_SUPPLEMENTARY/sensor"
@@ -442,8 +442,8 @@ check_set_correct_variables()
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB" ]; then echo_ "Invalid proprietary HAL path: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB"; exit 2; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_SYSTEM" ]; then echo_ "Proprietary HAL is missing the 'system' directory: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_SYSTEM"; exit 2; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_CAN" ]; then echo_ "Proprietary HAL is missing the 'can' directory: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_CAB"; exit 2; fi
-    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_EEPROM" ]; then echo_ "Proprietary HAL is missing the 'eeprom' directory: $HAL_FIND_PATH/$HAL_PATH_ISOAGLIB_EEPROM"; exit 2; fi
     # Disable N/A supplementary modules
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_EEPROM" ]; then HAL_PATH_SUPPLEMENTARY_EEPROM=""; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_RS232" ]; then HAL_PATH_SUPPLEMENTARY_RS232=""; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_ACTOR" ]; then HAL_PATH_SUPPLEMENTARY_ACTOR=""; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_SENSOR" ]; then HAL_PATH_SUPPLEMENTARY_SENSOR=""; fi
@@ -642,7 +642,7 @@ driver_and_hal_features()
 
     if [ "$PRJ_EEPROM" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/eeprom/*' -o -path '*/hal/hal_eeprom.h'" >&3
-        printf '%s' " -o -path '*${HAL_PATH_ISOAGLIB_EEPROM}/*'" >&4
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_EEPROM}/*'" >&4
     fi
     if [ "$PRJ_DATASTREAMS" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
@@ -935,7 +935,7 @@ prepare_feature_partitions()
 
     # DRIVER features:
     add_feature_partition_rule PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL '.*/hal/generic_utils/can/\|.*/driver/can/'
-    add_feature_partition_rule PRJ_EEPROM '.*/driver/eeprom/\|.*/hal/.*/eeprom/\|.*/hal/hal_eeprom\.h$\|.*/eeprom_adr\.h$'
+    add_feature_partition_rule PRJ_EEPROM '.*/driver/eeprom/\|.*/hal/.*/eeprom/\|.*/hal/hal_eeprom\.h$'
     add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/\|.*/hal/.*/datastreams/\|.*/hal/hal_datastreams\.h$'
     add_feature_partition_rule PRJ_ACTOR '.*/driver/actor\|.*/hal/.*/actor/actor\.h$\|.*/hal/.*/actor/actor_target_extensions\.\|*/hal/hal_actor\.h$'
     add_feature_partition_rule PRJ_SENSOR_DIGITAL '.*digitali_c\.[^/]*$'
@@ -1124,7 +1124,11 @@ END_OF_PATH
         echo_ "#define HAL_PATH_ISOAGLIB $HAL_PATH_ISOAGLIB">&3
         echo_ "#define HAL_PATH_ISOAGLIB_SYSTEM $HAL_PATH_ISOAGLIB_SYSTEM">&3
         echo_ "#define HAL_PATH_ISOAGLIB_CAN $HAL_PATH_ISOAGLIB_CAN">&3
-        echo_ "#define HAL_PATH_ISOAGLIB_EEPROM $HAL_PATH_ISOAGLIB_EEPROM">&3
+        if [ -n "$HAL_PATH_SUPPLEMENTARY_EEPROM" ]; then 
+          echo_ "#define HAL_PATH_SUPPLEMENTARY_EEPROM $HAL_PATH_SUPPLEMENTARY_EEPROM">&3
+        else
+          echo_ "// keep HAL_PATH_SUPPLEMENTARY_EEPROM undefined as this module is not available for the given configuration/target" >&3
+        fi
         if [ -n "$HAL_PATH_SUPPLEMENTARY_RS232" ]; then 
           echo_ "#define HAL_PATH_SUPPLEMENTARY_RS232 $HAL_PATH_SUPPLEMENTARY_RS232">&3
         else
@@ -1282,11 +1286,7 @@ END_OF_PATH
             echo_e "#ifndef USE_PROCESS_YN $ENDLINE\t#define USE_PROCESS_YN NO $ENDLINE#endif" >&3
         fi
         if [ "$PRJ_EEPROM" -gt 0 ] ; then
-            echo_e "#ifndef USE_EEPROM_IO $ENDLINE\t#define USE_EEPROM_IO $ENDLINE#endif" >&3
-        else
-        # the default in isoaglib_config.h is to activate
-        # EEPROM as long as USE_EEPROM_IO_YN unset
-            echo_e "#ifndef USE_EEPROM_IO_YN $ENDLINE\t#define USE_EEPROM_IO_YN NO $ENDLINE#endif" >&3
+            echo_e "#define USE_EEPROM_IO" >&3
         fi
     
         if [ "$PRJ_DATASTREAMS" -gt 0 -o $PRJ_ISO_TERMINAL -gt 0 -o $PRJ_TIME_GPS -gt 0 ]; then
