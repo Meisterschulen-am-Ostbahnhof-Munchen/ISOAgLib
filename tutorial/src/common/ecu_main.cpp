@@ -12,6 +12,16 @@
 #ifdef USE_EEPROM_IO
 #  include <supplementary_driver/driver/eeprom/ieepromio_c.h>
 #endif
+#ifdef USE_ACTOR
+#  include <supplementary_driver/driver/actor/iactoro_c.h>
+#endif
+#ifdef USE_SENSOR
+#  include <supplementary_driver/driver/sensor/isensori_c.h>
+#endif
+#ifdef USE_RS232
+#  include <supplementary_driver/driver/rs232/irs232io_c.h>
+#endif
+
 
 extern bool ecuMain();
 extern bool ecuShutdown();
@@ -31,12 +41,24 @@ void ecuMainLoop()
 
 int main( int /* argc */, char** /*argv*/ )
 {
-  /// Init Core-ISOAgLib (along with System, Actor, Sensor, RS232)
+  /// Init Core-ISOAgLib (along with System)
   IsoAgLib::getISchedulerInstance().init();
 
-  /// Init Supplementary-ISOAgLib (EEPROM for IdentItem)
+  /// Init Supplementary-ISOAgLib
   #ifdef USE_EEPROM_IO
   IsoAgLib::getIeepromInstance().init();
+  #endif
+  #ifdef USE_ACTOR
+  IsoAgLib::getIactorInstance().init();
+  #endif
+  #ifdef USE_SENSOR
+  IsoAgLib::getIsensorInstance().init();
+  #endif
+  #ifdef USE_RS232
+  IsoAgLib::getIrs232Instance().init(
+      19200,
+      IsoAgLib::iRS232IO_c::_8_N_1
+  ); // Instance 0
   #endif
 
   /// Init Application
@@ -49,7 +71,16 @@ int main( int /* argc */, char** /*argv*/ )
   /// Shutdown Application
   ecuShutdown();
 
-  /// Shutdown Supplementary-ISOAgLib (EEPROM for IdentItem)
+  /// Shutdown Supplementary-ISOAgLib
+  #ifdef USE_RS232
+  IsoAgLib::getIrs232Instance().close();
+  #endif
+  #ifdef USE_SENSOR
+  IsoAgLib::getIsensorInstance().close();
+  #endif
+  #ifdef USE_ACTOR
+  IsoAgLib::getIactorInstance().close();
+  #endif
   #ifdef USE_EEPROM_IO
   IsoAgLib::getIeepromInstance().close();
   #endif

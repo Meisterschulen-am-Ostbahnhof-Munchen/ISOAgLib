@@ -61,7 +61,8 @@ public:
       bool ab_xonXoff = CONFIG_RS232_DEFAULT_XON_XOFF,
       uint16_t aui16_sndBuf = CONFIG_RS232_DEFAULT_SND_PUF_SIZE,
       uint16_t aui16_recBuf = CONFIG_RS232_DEFAULT_REC_PUF_SIZE,
-      uint8_t aui8_channel = 0) {
+      uint8_t aui8_channel = 0)
+  {
     return RS232IO_c::init(
         aui32_baudrate,
         RS232IO_c::t_dataMode(ren_dataMode),
@@ -70,6 +71,10 @@ public:
         aui16_recBuf,
         aui8_channel);
   }
+
+  /** close sub-system */
+  void close() { RS232IO_c::close(); }
+
   /**
     set the baudrate to a new value
     @param aui32_baudrate baudrate {75, 600, 1200, 2400, 4800, 9600, 19200}
@@ -160,16 +165,7 @@ public:
     @param aui8_len length of data string
   */
   void send(const uint8_t* rpData, uint8_t aui8_len) {RS232IO_c::send(rpData, aui8_len);};
-  /**
-    send string on RS232
 
-    possible errors:
-        * Err_c::rs232_overflow send buffer buffer overflow during send
-    @param acrc_data sent data string
-    @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
-  */
-  iRS232IO_c& operator<<( const STL_NAMESPACE::string& acrc_data )
-    {return static_cast<iRS232IO_c&>(RS232IO_c::operator<<(acrc_data));};
   /**
     send NULL terminated string on RS232 (terminating NULL isn't sent)
 
@@ -277,21 +273,7 @@ public:
   */
   int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' )
     { return RS232IO_c::getLine( pui8_data, ui8_lastChar );};
-  /**
-    receive whitespace (or buffer end) terminated string on RS232
-    @param rc_data reference to data string for receive
-    @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
-  */
-  iRS232IO_c& operator>>( STL_NAMESPACE::string& rc_data)
-    {return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(rc_data));};
-  /**
-    read the received RS232 string into a deque.
-    read until the end of the buffer.
-    @param rc_data reference to data deque for receive
-    @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
-   */
-  RS232IO_c& operator>>(STL_NAMESPACE::deque<char>& rc_data)
-  { return static_cast<iRS232IO_c&>(RS232IO_c::operator>>(rc_data)); };
+
   /**
     receive '\n' (or buffer end) terminated string on RS232
     @param pb_data pointer to string to receive

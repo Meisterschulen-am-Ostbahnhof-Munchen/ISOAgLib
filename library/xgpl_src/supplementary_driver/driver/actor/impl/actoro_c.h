@@ -21,7 +21,6 @@
 #include <IsoAgLib/util/impl/container.h>
 
 #include "digitalo_c.h"
-#include "actor_c.h"
 
 
 // Begin Namespace __IsoAgLib

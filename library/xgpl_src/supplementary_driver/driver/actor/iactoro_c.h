@@ -14,16 +14,8 @@
 #ifndef IACTOR_O_H
 #define IACTOR_O_H
 
-
-#error "This file is currently not supported."
-
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include "impl/actor_o.h"
-#include "idigital_o.h"
-#include "iactor.h"
+#include "impl/actoro_c.h"
+#include "idigitalo_c.h"
 
 
 // Begin Namespace IsoAgLib
@@ -48,10 +40,19 @@ public:
     @param ab_digitalLast greatest allowed digital output channel number (DIGITAL_OUTPUT_MAX)
     @see masterHeader
   */
-  void init(uint8_t ab_digitalFirst = DIGITAL_OUTPUT_MIN, uint8_t ab_digitalLast = DIGITAL_OUTPUT_MAX)
-  { init(ab_digitalFirst, ab_digitalLast);};
+  void init(
+      uint8_t ab_digitalFirst = DIGITAL_OUTPUT_MIN,
+      uint8_t ab_digitalLast = DIGITAL_OUTPUT_MAX)
+  {
+    ActorO_c::init(ab_digitalFirst, ab_digitalLast);
+  }
+
+  // close sub-system
+  void close() {}
+
   /** destructor for the actor output manager object */
-  ~iActorO_c() {};
+  ~iActorO_c() {}
+
   /**
     set the limits for digital output channels (first setting can be done by constructor parameters)
 
@@ -61,7 +62,7 @@ public:
     @param ab_digitalLast number of the greatest allowed digital input channel
   */
   void setDigitalLimits(uint8_t ab_digitalFirst, uint8_t ab_digitalLast)
-    {ActorO_c::setDigitalLimits(ab_digitalFirst, ab_digitalLast);};
+    { ActorO_c::setDigitalLimits(ab_digitalFirst, ab_digitalLast); }
 
   /**
     check if digital output object to given ab_channel exist
@@ -71,7 +72,7 @@ public:
     @return true -> searched input object exist
   */
   bool existDigital(uint8_t ab_channel)
-    {return ActorO_c::existDigital(ab_channel);};
+    { return ActorO_c::existDigital(ab_channel); }
 
   /**
     deliver reference to requested digital channel object to access this actor output;
@@ -89,7 +90,8 @@ public:
     @exception containerElementNonexistant
   */
   iDigitalO_c& digital(uint8_t ab_channel)
-    {return static_cast<iDigitalO_c&>(ActorO_c::digital(ab_channel));};
+    { return static_cast<iDigitalO_c&>(ActorO_c::digital(ab_channel)); }
+
 private:
   /** allow getIactorInstance() access to shielded base class.
       otherwise __IsoAgLib::getActorInstance() wouldn't be accepted by compiler
@@ -99,8 +101,9 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of ActorO_c within application
     */
-  iActorO_c( void ) : ActorO_c() {};
+  iActorO_c();
 };
+
 /** C-style function, to get access to the unique iActorO_c singleton instance */
 inline iActorO_c& getIactorInstance( void ) { return static_cast<iActorO_c&>(__IsoAgLib::getActorInstance());};
 

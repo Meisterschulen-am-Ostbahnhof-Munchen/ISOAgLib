@@ -138,6 +138,8 @@ private:
     <!--@param acrc_src source-->
   */
   iDigitalO_c& operator=(const iDigitalO_c& /*acrc_src*/){ return *this;};
+
+  friend class iActorO_c;
 };
 
 }

@@ -14,7 +14,6 @@
 #ifndef ACTOR_BASE_H
 #define ACTOR_BASE_H
 
-#include "actor_c.h"
 #include <supplementary_driver/hal/hal_actor.h>
 
 // Begin Namespace __IsoAgLib

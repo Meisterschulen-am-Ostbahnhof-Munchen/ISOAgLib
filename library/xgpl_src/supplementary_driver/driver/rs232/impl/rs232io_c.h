@@ -15,18 +15,8 @@
 #ifndef RS232_IO_H
 #define RS232_IO_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
-
-#if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
-  #include <stl/_string.h>
-#else
-  #include <string>
-#endif
-#include <deque>
 #include <supplementary_driver/hal/hal_rs232.h>
 
 
@@ -186,15 +176,7 @@ public:
     @param aui8_len length of data string
   */
   void send(const uint8_t* rpData, uint8_t aui8_len);
-  /**
-    send string on RS232
 
-    possible errors:
-        * Err_c::rs232_overflow send buffer buffer overflow during send
-    @param acrc_data sent data string
-    @return refernce to RS232IO_c for cmd like "rs232 << data1 << data2;"
-  */
-  RS232IO_c& operator<<(const STL_NAMESPACE::string& acrc_data);
   /**
     send NULL terminated string on RS232 (terminating NULL isn't sent)
 
@@ -293,19 +275,6 @@ public:
   */
   int16_t getLine( uint8_t* pui8_data, uint8_t ui8_lastChar = '\n' );
 
-  /**
-    receive whitespace (or buffer end) terminated string on RS232
-    @param rc_data reference to data string for receive
-    @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
-  */
-  RS232IO_c& operator>>(STL_NAMESPACE::string& rc_data);
-  /**
-    read the received RS232 string into a deque.
-    read until the end of the buffer.
-    @param rc_data reference to data deque for receive
-    @return refernce to RS232IO_c for cmd like "rs232 >> data1 >> data2;"
-   */
-  RS232IO_c& operator>>(STL_NAMESPACE::deque<char>& rc_data);
   /**
     receive '\n' (or buffer end) terminated string on RS232
     @param pb_data pointer to string to receive

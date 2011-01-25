@@ -19,12 +19,6 @@
 #include <supplementary_driver/driver/eeprom/impl/eepromio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
-#ifdef USE_ACTOR
-  #include <supplementary_driver/driver/actor/impl/actoro_c.h>
-#endif
-#ifdef USE_SENSOR
-  #include <supplementary_driver/driver/sensor/impl/sensori_c.h>
-#endif
 
 #if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
   #include <supplementary_driver/hal/hal_eeprom.h>
@@ -103,14 +97,6 @@ Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
     }
 
     getSystemInstance().init();
-
-    #ifdef USE_ACTOR
-      getActorInstance().init();
-    #endif
-
-    #ifdef USE_SENSOR
-      getSensorInstance().init();
-    #endif
   }
   // else: system already started, so don't restart.
 }
@@ -123,14 +109,6 @@ Scheduler_c::close( void )
   if (mb_systemStarted)
   {
     mb_systemStarted = false;
-
-    #ifdef USE_SENSOR
-      getSensorInstance().close();
-    #endif
-
-    #ifdef USE_ACTOR
-      getActorInstance().close();
-    #endif
 
     getSystemInstance().close();
 

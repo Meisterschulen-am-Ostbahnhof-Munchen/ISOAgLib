@@ -50,10 +50,13 @@ public:
   void init(uint8_t ab_digitalFirst = DIGITAL_INPUT_MIN, uint8_t ab_digitalLast = DIGITAL_INPUT_MIN,
             uint8_t ab_analogFirst = ANALOG_INPUT_MIN, uint8_t ab_analogLast = ANALOG_INPUT_MAX,
            uint8_t ab_counterFirst = COUNTER_INPUT_MIN, uint8_t ab_counterLast = COUNTER_INPUT_MAX)
-  { init(ab_digitalFirst, ab_digitalLast, ab_analogFirst, ab_analogLast,ab_counterFirst, ab_counterLast);};
+  { init(ab_digitalFirst, ab_digitalLast, ab_analogFirst, ab_analogLast,ab_counterFirst, ab_counterLast); }
+
+  /** close sub-system */
+  void close() {}
 
   /** destructor for the sensor input manager object */
-  ~iSensorI_c() {};
+  ~iSensorI_c() {}
 
   /**
     set the limits for digital input channels (first setting can be done by constructor parameters)
