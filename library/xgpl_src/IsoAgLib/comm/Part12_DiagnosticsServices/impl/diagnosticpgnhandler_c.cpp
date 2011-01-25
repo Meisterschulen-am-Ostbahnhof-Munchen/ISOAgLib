@@ -138,7 +138,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             st_sendSuccessDONTCAREFOR ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PGN: " << mstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PGN: " << mcstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
       }
@@ -154,7 +154,7 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             st_sendSuccessDONTCAREFOR ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN: " << mstr_EcuIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
+        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN: " << mcstr_EcuIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
         return true;
       }
