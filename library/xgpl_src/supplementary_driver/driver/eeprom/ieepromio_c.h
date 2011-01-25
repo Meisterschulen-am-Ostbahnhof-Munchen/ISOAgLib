@@ -16,9 +16,7 @@
 
 #include "impl/eepromio_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement//iisoname_c.h>
-#include <string>
 
-//using STL_NAMESPACE::string;
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {
@@ -118,23 +116,6 @@ public:
   /* ************** writing **************** */
   /* *************************************** */
 
-
-  /**
-    write a text string value to EEPROM from actual write position on (tellp() )
-
-    possible errors:
-        * Err_c::range writing position exceeds end of EEPROM
-        * Err_c::hwBusy the EEPROM was busy with another action
-        * Err_c::eepromSegment low level writing caused segment error
-
-    @see iEepromIo_c::tellp
-    @see iEepromIo_c::setp
-    @param arc_val string to write into EEPROM
-    @return reference to this iEepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
-  */
-  iEepromIo_c& operator<<(STL_NAMESPACE::string& arc_val)
-    {return static_cast<iEepromIo_c&>(EepromIo_c::operator<<(arc_val));};
-
   /**
     write a value to EEPROM from actual write position on (tellp() )
     by use of template mechanism the correct write implementation is generted
@@ -226,9 +207,5 @@ inline iEepromIo_c& operator<<(iEepromIo_c& rc_stream, const iIsoName_c& rc_data
 inline iEepromIo_c& operator>>(iEepromIo_c& rc_stream, iIsoName_c& rc_data )
   { return static_cast<iEepromIo_c&>(operator>>(static_cast<__IsoAgLib::EepromIo_c&>(rc_stream), rc_data ) );};
 
-
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef iEepromIo_c iEEPROMIO_c;
-
-} // end of IsoAgLibInterafce namespace
+} // IsoAgLib
 #endif

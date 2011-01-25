@@ -23,13 +23,6 @@
 #include <supplementary_driver/hal/hal_rs232.h>
 
 
-// workaround for 8.0Beta bug
-#if defined(__TSW_CPP__) && !defined(__TSW_CPP_70__) && !defined(__TSW_CPP_756__)
-  #include <stl/_string.h>
-#else
-  #include <string>
-#endif
-
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class IsoName_c;
@@ -45,14 +38,10 @@ class IsoName_c;
 class EepromIo_c {
   MACRO_SINGLETON_CONTRIBUTION();
 public:
-  typedef STL_NAMESPACE::string cc_string;
-  /** default initialisation */
-  void init();
-  /** every subsystem of IsoAgLib has explicit function for controlled shutdown
-    */
-  void close( void ){}
-
   ~EepromIo_c() {}
+
+  void init();
+  void close() {}
 
   // ++++++++++++++++++++++++++++++++++++
   // ++++ EEPROM managing operations ++++
@@ -146,20 +135,7 @@ public:
   */
   template<class T>
     EepromIo_c& operator<<(const T& rTemplateVal){return writeIntern(((const uint8_t*)(&rTemplateVal)), sizeof(T));}
-  /**
-    write a text string value to EEPROM from actual write position on (tellp() )
 
-    possible errors:
-        * range writing position exceeds end of EEPROM
-        * busy the EEPROM was busy with another action
-        * eepromSegment low level writing caused segment error
-
-    @see EepromIo_c::tellp
-    @see EepromIo_c::setp
-    @param acrc_val string to write into EEPROM
-    @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
-  */
-  inline EepromIo_c& operator<<(const cc_string& acrc_val);
   /**
     write a uint8_t string value to EEPROM from actual write position on (tellp() )
 
@@ -222,7 +198,11 @@ private:
   /** private constructor which prevents direct instantiation in user application
     * NEVER define instance of EepromIo_c within application
     */
-  EepromIo_c( void ) {}
+  EepromIo_c()
+    : mui16_segmentSize( 0 )
+    , mui16_rPosition( 0 )
+    , mui16_wPosition( 0 )
+  {}
 
   /**
     set error flags dependent on BIOS return value
@@ -315,10 +295,7 @@ private:
   EepromIo_c& readIntern(uint8_t* apb_data, uint8_t aui8_len);
 
 private:
-// Private attributes
-  /**
-    segment size of EEPROM which can't be exceedecd by write actions
-  */
+  /** segment size of EEPROM which can't be exceedecd by write actions */
   uint16_t mui16_segmentSize;
   /** actual read position in EEPROM */
   uint16_t mui16_rPosition;
@@ -332,33 +309,6 @@ private:
 /* *********************************************************************** */
 /* ****inline implementation of stream input/output template functions**** */
 /* *********************************************************************** */
-
-
-
-/**
-  write a text string value to EEPROM from actual write position on (tellp() )
-
-  possible errors:
-      * range writing position exceeds end of EEPROM
-      * busy the EEPROM was busy with another action
-      * eepromSegment low level writing caused segment error
-
-  @see __IsoAgLib::EepromIo_c::tellp
-  @see __IsoAgLib::EepromIo_c::setp
-  @param acrc_val string to write into EEPROM
-  @return reference to this EepromIo_c instance (for chains like "eeprom << val1 << val2 << ... << val_n;")
-*/
-inline EepromIo_c& EepromIo_c::operator<<(const cc_string& acrc_val)
-{ // check if enough space for string is after actual write position
-  // second parameter true -> set range if end is reached
-  if (!eofp(acrc_val.size() * sizeof(int8_t), true))
-  { // use private write function to read in correct number of bytes into data string
-   write (mui16_wPosition, acrc_val.size() * sizeof(int8_t),
-            static_cast<const uint8_t*>(static_cast<const void*>(acrc_val.c_str())));
-    mui16_wPosition += (acrc_val.size() * sizeof(int8_t)); //inkrement position
-  }
-  return *this;
-};
 
 /**
   write the template parameter value at given position to EEPROM,
@@ -396,9 +346,6 @@ EepromIo_c& getEepromInstance(uint8_t aui8_instance = 0);
 EepromIo_c& operator<<(EepromIo_c& rc_stream, const IsoName_c& rc_data );
 EepromIo_c& operator>>(EepromIo_c& rc_stream, IsoName_c& rc_data );
 
-
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef EepromIo_c EEPROMIO_c;
-}
+} // __IsoAgLib
 
 #endif
