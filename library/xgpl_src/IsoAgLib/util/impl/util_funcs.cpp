@@ -1336,4 +1336,50 @@ VtFontScaling::getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension
 uint8_t VtFontScaling::marr_font2PixelDimensionTableW [15] = {6,  8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128};
 uint8_t VtFontScaling::marr_font2PixelDimensionTableH [15] = {8,  8, 12, 16, 16, 24, 32, 32, 48, 64, 64, 96,128,128,192};
 
+
+
+int
+getCStringLength (const char *acstr_text)
+{
+  isoaglib_assert (acstr_text);
+
+  const char *nullByte = acstr_text;
+  while ((*nullByte) != 0x00)
+    ++nullByte;
+
+  return nullByte - acstr_text;
+}
+
+
+// add src-string without 0x00!
+// note: be sure that your dest-buffer has enough space!
+void
+addCStringWithoutTermination (char **dest, const char *src)
+{
+  while (*src != 0x00)
+  {
+    *(*dest) = *src;
+    ++(*dest);
+    ++src;
+  }
+}
+
+
+int
+getCStringCount (const char *src, char countChar)
+{
+  int count = 0;
+
+  while (*src != 0x00)
+  {
+    if (*src == countChar)
+      ++count;
+    ++src;
+  }
+
+  return count;
+}
+
+
+
 } // end of namespace __IsoAgLib

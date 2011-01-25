@@ -955,6 +955,19 @@ int32_t convertIstreamI32( StreamInput_c& rc_stream )
 #endif
 
 
+/// Some CString functions
+/// (replacing the need for C standard library calls)
+
+int
+getCStringLength (const char *acstr_text);
+
+void
+addCStringWithoutTermination (char **dest, const char *src);
+
+int
+getCStringCount (const char *src, char countChar);
+
+
 
 
 #ifdef USE_VT_UNICODE_SUPPORT

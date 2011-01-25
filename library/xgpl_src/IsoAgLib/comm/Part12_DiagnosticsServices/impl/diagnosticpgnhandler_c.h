@@ -17,7 +17,6 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 #include <IsoAgLib/util/impl/bitfieldwrapper_c.h>
 
-#include <string>
 
 namespace IsoAgLib
 {
@@ -87,9 +86,9 @@ public:
   virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/);
 
 
-  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNr, const STL_NAMESPACE::string& astr_serialNr, const STL_NAMESPACE::string& astr_location, const STL_NAMESPACE::string& astr_type, const STL_NAMESPACE::string& astr_manufacturerName );
+  bool setEcuIdentification( const char *acstr_partNr, const char *acstr_serialNr, const char *acstr_location, const char *acstr_type, const char *acstr_manufacturerName );
 
-  bool setSwIdentification( const STL_NAMESPACE::string& astr_swIdentification );
+  bool setSwIdentification( const char *acstr_swIdentification );
 
   //! Setter for the different certification message fields
   //! Parameter:
@@ -107,8 +106,8 @@ public:
 private: // attributes
   IdentItem_c& mrc_identItem;
 
-  STL_NAMESPACE::string mstr_EcuIdentification;
-  STL_NAMESPACE::string mstr_SwIdentification;
+  char *mcstr_EcuIdentification;
+  char *mcstr_SwIdentification;
   bool mb_certificationIsSet;
   uint8_t m_certification[8];
 };

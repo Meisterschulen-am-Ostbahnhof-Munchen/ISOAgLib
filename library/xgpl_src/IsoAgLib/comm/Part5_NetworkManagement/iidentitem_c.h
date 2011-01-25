@@ -115,9 +115,19 @@ public:
     @return true if the fields were okay
             false if one field was too long (> 200 chars) or had '*' in it.
   */
-  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNbr, const STL_NAMESPACE::string& astr_serialNbr, const STL_NAMESPACE::string& astr_location, const STL_NAMESPACE::string& astr_type, const STL_NAMESPACE::string& astr_manufacturerName )
+  bool setEcuIdentification(
+      const char *acstr_partNbr,
+      const char *acstr_serialNbr,
+      const char *acstr_location,
+      const char *acstr_type,
+      const char *acstr_manufacturerName)
   {
-    return IdentItem_c::setEcuIdentification (astr_partNbr, astr_serialNbr, astr_location, astr_type, astr_manufacturerName);
+    return IdentItem_c::setEcuIdentification(
+        acstr_partNbr,
+        acstr_serialNbr,
+        acstr_location,
+        acstr_type,
+        acstr_manufacturerName);
   }
 
   /** Set SW Identification fields, needed during the diagnostic procedure
@@ -126,9 +136,9 @@ public:
       @return true if the SW Identification was okay
               false if it was too long (> 200 chars) or empty
    */
-  bool setSwIdentification( const STL_NAMESPACE::string& astr_swId)
+  bool setSwIdentification( const char *acstr_swId )
   {
-    return IdentItem_c::setSwIdentification (astr_swId);
+    return IdentItem_c::setSwIdentification( acstr_swId );
   }
 
   //! Setter for the different certification message fields
@@ -141,11 +151,21 @@ public:
   //! @param aui16_referenceNumber Compliance certification reference number as in ISO 11783-7 A.29.18
   //! @return true all parameters were okay in range
   //!         false at least one parameter was wrong
-  bool setCertificationData( uint16_t ui16_year, IsoAgLib::CertificationRevision_t a_revision, IsoAgLib::CertificationLabType_t a_laboratoryType, uint16_t aui16_laboratoryId,
-                               const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask, uint16_t aui16_referenceNumber )
+  bool setCertificationData(
+      uint16_t ui16_year,
+      IsoAgLib::CertificationRevision_t a_revision,
+      IsoAgLib::CertificationLabType_t a_laboratoryType,
+      uint16_t aui16_laboratoryId,
+      const IsoAgLib::CertificationBitMask_t& acrc_certificationBitMask,
+      uint16_t aui16_referenceNumber)
   {
-    return IdentItem_c::setCertificationData( ui16_year , a_revision, a_laboratoryType, aui16_laboratoryId,
-                                              acrc_certificationBitMask, aui16_referenceNumber );
+    return IdentItem_c::setCertificationData(
+        ui16_year,
+        a_revision,
+        a_laboratoryType,
+        aui16_laboratoryId,
+        acrc_certificationBitMask,
+        aui16_referenceNumber);
   }
 
   /// Using the singletonVecKey from internal class

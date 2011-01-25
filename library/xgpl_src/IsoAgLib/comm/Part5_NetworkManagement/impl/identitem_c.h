@@ -175,15 +175,25 @@ public: // methods
 #endif
 
   /** Set ECU Identification fields, needed during the diagnostic procedure */
-  bool setEcuIdentification( const STL_NAMESPACE::string& astr_partNr, const STL_NAMESPACE::string& astr_serialNr, const STL_NAMESPACE::string& astr_location, const STL_NAMESPACE::string& astr_type, const STL_NAMESPACE::string& astr_manufacturerName )
+  bool setEcuIdentification(
+      const char *acstr_partNr,
+      const char *acstr_serialNr,
+      const char *acstr_location,
+      const char *acstr_type,
+      const char *acstr_manufacturerName)
   { // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-    return mpc_diagnosticPgnHandler->setEcuIdentification( astr_partNr, astr_serialNr, astr_location, astr_type, astr_manufacturerName );
+    return mpc_diagnosticPgnHandler->setEcuIdentification(
+        acstr_partNr,
+        acstr_serialNr,
+        acstr_location,
+        acstr_type,
+        acstr_manufacturerName);
   }
 
   /** Set SW Identification fields, needed during the diagnostic procedure */
-  bool setSwIdentification( const STL_NAMESPACE::string& astr_partNbr)
+  bool setSwIdentification( const char *acstr_partNbr )
   { // mpc_diagnosticPgnHandler is allocated in the constructor, so no need to be checked for NULL
-    return mpc_diagnosticPgnHandler->setSwIdentification( astr_partNbr);
+    return mpc_diagnosticPgnHandler->setSwIdentification( acstr_partNbr );
   }
 
   //! Setter for the different certification message fields
