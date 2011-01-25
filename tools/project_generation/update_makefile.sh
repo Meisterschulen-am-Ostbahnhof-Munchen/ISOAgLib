@@ -143,10 +143,10 @@ status_le1() { [ $? -le 1 ]; }
 #     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED ( specify if process daza with maximum restricted feature without any distinction between measurement and setpoint set shall be used; default 0 )
 # + PRJ_DATASTREAMS ( specify if the input and output filestream should be accessed by IsoAgLib; provides target HAL for filestream handling; default 0 )
 # + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; default 0 )
-# + PRJ_ACTOR ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_SENSOR_DIGITAL ( specify if IsoAgLib extension for digital sensor data read should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_SENSOR_COUNTER ( specify if IsoAgLib extension for counting sensor data read should be used; provides several utility and diagnostic functions; default 0 )
-# + PRJ_SENSOR_ANALOG ( specify if IsoAgLib extension for analog sensor data read should be used; provides several utility and diagnostic functions; default 0 )
+# + PRJ_OUTPUTS ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
+# + PRJ_INPUTS_DIGITAL ( specify if IsoAgLib extension for digital input data read should be used; provides several utility and diagnostic functions; default 0 )
+# + PRJ_INPUTS_COUNTER ( specify if IsoAgLib extension for counting input data read should be used; provides several utility and diagnostic functions; default 0 )
+# + PRJ_INPUTS_ANALOG ( specify if IsoAgLib extension for analog input data read should be used; provides several utility and diagnostic functions; default 0 )
 # + PRJ_RS232 ( specify if IsoAgLib extension for C++ stream oriented I/O should be used; default 0 )
 
 set_default_values()
@@ -231,10 +231,10 @@ set_default_values()
     PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
     PRJ_EEPROM=0
     PRJ_DATASTREAMS=0
-    PRJ_ACTOR=0
-    PRJ_SENSOR_DIGITAL=0
-    PRJ_SENSOR_ANALOG=0
-    PRJ_SENSOR_COUNTER=0
+    PRJ_OUTPUTS=0
+    PRJ_INPUTS_DIGITAL=0
+    PRJ_INPUTS_ANALOG=0
+    PRJ_INPUTS_COUNTER=0
     PRJ_RS232=0
     PRJ_MULTIPACKET=0
     # has to be overridden by configuration:
@@ -394,8 +394,8 @@ check_set_correct_variables()
     HAL_PATH_ISOAGLIB_CAN="$HAL_PREFIX_ISOAGLIB/can"
     HAL_PATH_SUPPLEMENTARY_EEPROM="$HAL_PREFIX_SUPPLEMENTARY/eeprom"
     HAL_PATH_SUPPLEMENTARY_RS232="$HAL_PREFIX_SUPPLEMENTARY/rs232"
-    HAL_PATH_SUPPLEMENTARY_ACTOR="$HAL_PREFIX_SUPPLEMENTARY/actor"
-    HAL_PATH_SUPPLEMENTARY_SENSOR="$HAL_PREFIX_SUPPLEMENTARY/sensor"
+    HAL_PATH_SUPPLEMENTARY_OUTPUTS="$HAL_PREFIX_SUPPLEMENTARY/outputs"
+    HAL_PATH_SUPPLEMENTARY_INPUTS="$HAL_PREFIX_SUPPLEMENTARY/inputs"
     HAL_PATH_SUPPLEMENTARY_DATASTREAMS="$HAL_PREFIX_SUPPLEMENTARY/datastreams"
 
     case "$USE_TARGET_SYSTEM" in
@@ -445,8 +445,8 @@ check_set_correct_variables()
     # Disable N/A supplementary modules
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_EEPROM" ]; then HAL_PATH_SUPPLEMENTARY_EEPROM=""; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_RS232" ]; then HAL_PATH_SUPPLEMENTARY_RS232=""; fi
-    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_ACTOR" ]; then HAL_PATH_SUPPLEMENTARY_ACTOR=""; fi
-    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_SENSOR" ]; then HAL_PATH_SUPPLEMENTARY_SENSOR=""; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_OUTPUTS" ]; then HAL_PATH_SUPPLEMENTARY_OUTPUTS=""; fi
+    if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_INPUTS" ]; then HAL_PATH_SUPPLEMENTARY_INPUTS=""; fi
     if [ ! -d "$HAL_FIND_PATH/$HAL_PATH_SUPPLEMENTARY_DATASTREAMS" ]; then HAL_PATH_SUPPLEMENTARY_DATASTREAMS=""; fi
 
     # handle virtual drivers
@@ -648,22 +648,22 @@ driver_and_hal_features()
         printf '%s' " -o -path '*/driver/datastreams/*' -o -path '*/hal/hal_datastreams.h'" >&3
         printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_DATASTREAMS}/*'" >&4
     fi
-    if [ "$PRJ_ACTOR" -gt 0 ]; then
-        printf '%s' " -o -path '*/driver/actor*' -o -path '*/hal/hal_actor.h'" >&3
-        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_ACTOR}/actor.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_ACTOR}/actor_target_extensions.*'" >&4
+    if [ "$PRJ_OUTPUTS" -gt 0 ]; then
+        printf '%s' " -o -path '*/driver/outputs*' -o -path '*/hal/hal_outputs.h'" >&3
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/outputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_OUTPUTS}/outputs_target_extensions.*'" >&4
     fi
-    if [ "$PRJ_SENSOR_DIGITAL" -gt 0 ]; then
+    if [ "$PRJ_INPUTS_DIGITAL" -gt 0 ]; then
         printf '%s' " -o -name '*digitali_c.*'" >&3
     fi
-    if [ "$PRJ_SENSOR_ANALOG" -gt 0 ]; then
+    if [ "$PRJ_INPUTS_ANALOG" -gt 0 ]; then
         printf '%s' " -o -name '*analogi*'" >&3
     fi
-    if [ "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
+    if [ "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
         printf '%s' " -o -name '*counteri*'" >&3
     fi
-    if [ "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
-        printf '%s' " -o -name '*sensorbase_c.*' -o -name '*sensor_c.*' -o -name '*sensori_c.*' -o -path '*/hal/hal_sensor.h'" >&3
-        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_SENSOR}/sensor.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_SENSOR}/sensor_target_extensions.*'" >&4
+    if [ "$PRJ_INPUTS_DIGITAL" -gt 0 -o "$PRJ_INPUTS_ANALOG" -gt 0 -o "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
+        printf '%s' " -o -name '*inputbase_c.*' -o -name '*inputs_c.*' -o -path '*/hal/hal_inputs.h'" >&3
+        printf '%s' " -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs.h' -o -path '*${HAL_PATH_SUPPLEMENTARY_INPUTS}/inputs_target_extensions.*'" >&4
     fi
     if [ "$PRJ_RS232" -gt 0 ]; then
         printf '%s' " -o -path '*/driver/rs232/*' -o -path '*/hal/hal_rs232.h'" >&3
@@ -937,11 +937,11 @@ prepare_feature_partitions()
     add_feature_partition_rule PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL '.*/hal/generic_utils/can/\|.*/driver/can/'
     add_feature_partition_rule PRJ_EEPROM '.*/driver/eeprom/\|.*/hal/.*/eeprom/\|.*/hal/hal_eeprom\.h$'
     add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/\|.*/hal/.*/datastreams/\|.*/hal/hal_datastreams\.h$'
-    add_feature_partition_rule PRJ_ACTOR '.*/driver/actor\|.*/hal/.*/actor/actor\.h$\|.*/hal/.*/actor/actor_target_extensions\.\|*/hal/hal_actor\.h$'
-    add_feature_partition_rule PRJ_SENSOR_DIGITAL '.*digitali_c\.[^/]*$'
-    add_feature_partition_rule PRJ_SENSOR_ANALOG '.*analogi\.[^/]*$'
-    add_feature_partition_rule PRJ_SENSOR_COUNTER '.*counteri\.[^/]*$'
-    add_feature_partition_rule PRJ_SENSOR____ '.*/hal/.*/sensor/sensor\.h$\|.*/hal/.*/sensor/sensor_target_extensions\.\|.*sensorbase_c\.[^/]*$\|.*sensor_c\.[^/]*$\|.*sensori_c\.[^/]*$\|.*/hal/hal_sensor\.h$'
+    add_feature_partition_rule PRJ_OUTPUTS '.*/driver/outputs\|.*/hal/.*/outputs/outputs\.h$\|.*/hal/.*/outputs/outputs_target_extensions\.\|*/hal/hal_outputs\.h$'
+    add_feature_partition_rule PRJ_INPUTS_DIGITAL '.*digitali_c\.[^/]*$'
+    add_feature_partition_rule PRJ_INPUTS_ANALOG '.*analogi\.[^/]*$'
+    add_feature_partition_rule PRJ_INPUTS_COUNTER '.*counteri\.[^/]*$'
+    add_feature_partition_rule PRJ_INPUTS____ '.*/hal/.*/inputs/inputs\.h$\|.*/hal/.*/inputs/inputs_target_extensions\.\|.*inputbase_c\.[^/]*$\|.*inputs_c\.[^/]*$\|.*/hal/hal_inputs\.h$'
     add_feature_partition_rule PRJ_RS232_OVER_CAN '.*/hal/virtualDrivers/rs232_over_can/'
     add_feature_partition_rule PRJ_RS232 '.*/hal/.*/rs232/\|.*/driver/rs232/'
     add_feature_partition_rule 'MISCELLANEOUS' '.'
@@ -1134,15 +1134,15 @@ END_OF_PATH
         else
           echo_ "// keep HAL_PATH_SUPPLEMENTARY_RS232 undefined as this module is not available for the given configuration/target" >&3
         fi
-        if [ -n "$HAL_PATH_SUPPLEMENTARY_ACTOR" ]; then
-          echo_ "#define HAL_PATH_SUPPLEMENTARY_ACTOR $HAL_PATH_SUPPLEMENTARY_ACTOR">&3
+        if [ -n "$HAL_PATH_SUPPLEMENTARY_OUTPUTS" ]; then
+          echo_ "#define HAL_PATH_SUPPLEMENTARY_OUTPUTS $HAL_PATH_SUPPLEMENTARY_OUTPUTS">&3
         else
-          echo_ "// keep HAL_PATH_SUPPLEMENTARY_ACTOR undefined as this module is not available for the given configuration/target" >&3
+          echo_ "// keep HAL_PATH_SUPPLEMENTARY_OUTPUTS undefined as this module is not available for the given configuration/target" >&3
         fi
-        if [ -n "$HAL_PATH_SUPPLEMENTARY_SENSOR" ]; then
-          echo_ "#define HAL_PATH_SUPPLEMENTARY_SENSOR $HAL_PATH_SUPPLEMENTARY_SENSOR">&3
+        if [ -n "$HAL_PATH_SUPPLEMENTARY_INPUTS" ]; then
+          echo_ "#define HAL_PATH_SUPPLEMENTARY_INPUTS $HAL_PATH_SUPPLEMENTARY_INPUTS">&3
         else
-          echo_ "// keep HAL_PATH_SUPPLEMENTARY_SENSOR undefined as this module is not available for the given configuration/target" >&3
+          echo_ "// keep HAL_PATH_SUPPLEMENTARY_INPUTS undefined as this module is not available for the given configuration/target" >&3
         fi
         if [ -n "$HAL_PATH_SUPPLEMENTARY_DATASTREAMS" ]; then
           echo_ "#define HAL_PATH_SUPPLEMENTARY_DATASTREAMS $HAL_PATH_SUPPLEMENTARY_DATASTREAMS">&3
@@ -1338,12 +1338,12 @@ END_OF_PATH
             echo_e "#ifndef USE_RS232$ENDLINE\t#define USE_RS232 1$ENDLINE#endif" >&3
         fi
  
-        if [ "$PRJ_ACTOR" -gt 0 ]; then
-            echo_e "#ifndef USE_ACTOR$ENDLINE\t#define USE_ACTOR$ENDLINE#endif" >&3
+        if [ "$PRJ_OUTPUTS" -gt 0 ]; then
+            echo_e "#ifndef USE_OUTPUTS$ENDLINE\t#define USE_OUTPUTS$ENDLINE#endif" >&3
         fi
  
-        if [ "$PRJ_SENSOR_DIGITAL" -gt 0 -o "$PRJ_SENSOR_ANALOG" -gt 0 -o "$PRJ_SENSOR_COUNTER" -gt 0 ]; then
-            echo_e "#ifndef USE_SENSOR$ENDLINE\t#define USE_SENSOR$ENDLINE#endif" >&3
+        if [ "$PRJ_INPUTS_DIGITAL" -gt 0 -o "$PRJ_INPUTS_ANALOG" -gt 0 -o "$PRJ_INPUTS_COUNTER" -gt 0 ]; then
+            echo_e "#ifndef USE_INPUTS$ENDLINE\t#define USE_INPUTS$ENDLINE#endif" >&3
         fi
 
         # write overwriteable parts of isoaglib_config.h
@@ -2086,9 +2086,9 @@ create_CcsPrj()
     CCS_LIB_INSTALL_LIB_DIR="$CCS_LIB_INSTALL_DIR/lib"
 
     # check platform specific settings
-    if [ $PRJ_ACTOR -gt 0 -o $PRJ_SENSOR_DIGITAL -gt 0 -o $PRJ_SENSOR_ANALOG -gt 0 -o $PRJ_SENSOR_COUNTER -gt 0 ]; then
+    if [ $PRJ_OUTPUTS -gt 0 -o $PRJ_INPUTS_DIGITAL -gt 0 -o $PRJ_INPUTS_ANALOG -gt 0 -o $PRJ_INPUTS_COUNTER -gt 0 ]; then
         echo_
-        echo_ "Misconfigured config file: P1MC has no sensor/actor capabilities!"
+        echo_ "Misconfigured config file: P1MC has no inputs/outputs capabilities!"
         exit 0
     fi
 
@@ -2571,12 +2571,13 @@ DEBUG_MULTISEND
 DEBUG_MUTEX
 DEBUG_NETWORK_MANAGEMENT
 DEBUG_NMEA
+DEBUG_OUTPUTS
 DEBUG_RECEIVE
 DEBUG_REGISTERERROR
 DEBUG_SCHEDULER
 DEBUG_SCHEDULER_EXTREME
 DEBUG_SENDING
-DEBUG_SENSORS
+DEBUG_INPUTS
 DEBUG_SYSTEM
 DEBUG_TASKS_QUEUE
 DEBUG_TIME_EVENTS

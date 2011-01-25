@@ -12,11 +12,11 @@
 #ifdef USE_EEPROM_IO
 #  include <supplementary_driver/driver/eeprom/ieepromio_c.h>
 #endif
-#ifdef USE_ACTOR
-#  include <supplementary_driver/driver/actor/iactoro_c.h>
+#ifdef USE_OUTPUTS
+#  include <supplementary_driver/driver/outputs/ioutputs_c.h>
 #endif
-#ifdef USE_SENSOR
-#  include <supplementary_driver/driver/sensor/isensori_c.h>
+#ifdef USE_INPUTS
+#  include <supplementary_driver/driver/inputs/iinputs_c.h>
 #endif
 #ifdef USE_RS232
 #  include <supplementary_driver/driver/rs232/irs232io_c.h>
@@ -48,11 +48,11 @@ int main( int /* argc */, char** /*argv*/ )
   #ifdef USE_EEPROM_IO
   IsoAgLib::getIeepromInstance().init();
   #endif
-  #ifdef USE_ACTOR
-  IsoAgLib::getIactorInstance().init();
+  #ifdef USE_OUTPUTS
+  IsoAgLib::getIoutputsInstance().init();
   #endif
-  #ifdef USE_SENSOR
-  IsoAgLib::getIsensorInstance().init();
+  #ifdef USE_INPUTS
+  IsoAgLib::getIinputsInstance().init();
   #endif
   #ifdef USE_RS232
   IsoAgLib::getIrs232Instance().init(
@@ -75,11 +75,11 @@ int main( int /* argc */, char** /*argv*/ )
   #ifdef USE_RS232
   IsoAgLib::getIrs232Instance().close();
   #endif
-  #ifdef USE_SENSOR
-  IsoAgLib::getIsensorInstance().close();
+  #ifdef USE_INPUTS
+  IsoAgLib::getIinputsInstance().close();
   #endif
-  #ifdef USE_ACTOR
-  IsoAgLib::getIactorInstance().close();
+  #ifdef USE_OUTPUTS
+  IsoAgLib::getIoutputsInstance().close();
   #endif
   #ifdef USE_EEPROM_IO
   IsoAgLib::getIeepromInstance().close();
