@@ -52,10 +52,10 @@ DiagnosticPgnHandler_c::DiagnosticPgnHandler_c ( IdentItem_c& arc_identItem ) :
 DiagnosticPgnHandler_c::~DiagnosticPgnHandler_c()
 {
   if (mcstr_EcuIdentification)
-    free (mcstr_EcuIdentification);
+    CNAMESPACE::free (mcstr_EcuIdentification);
 
   if (mcstr_SwIdentification)
-    free (mcstr_SwIdentification);
+    CNAMESPACE::free (mcstr_SwIdentification);
 }
 
 
@@ -280,12 +280,12 @@ DiagnosticPgnHandler_c::setEcuIdentification(
     return false; // wrong sublength(s) or * in substring(s)
 
   if (mcstr_EcuIdentification)
-    free (mcstr_EcuIdentification);
+    CNAMESPACE::free (mcstr_EcuIdentification);
 
   // string deparated by * and terminated by 0x00
   int newLen = len1 + 1 + len2 + 1 + len3 + 1 + len4 + 1 + len5 + 1 + 1;
 
-  mcstr_EcuIdentification = (char *) malloc (sizeof (char) * newLen);
+  mcstr_EcuIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_EcuIdentification;
   addCStringWithoutTermination (&destPtr, acstr_partNr);
@@ -321,10 +321,10 @@ DiagnosticPgnHandler_c::setSwIdentification ( const char *acstr_SwId )
   int numStars = getCStringCount (acstr_SwId, '*');
 
   if (mcstr_SwIdentification)
-    free (mcstr_SwIdentification);
+    CNAMESPACE::free (mcstr_SwIdentification);
 
   int newLen = 1+swIdLen+1+1; // // uint8,swid,*,0x00
-  mcstr_SwIdentification = (char *) malloc (sizeof (char) * newLen);
+  mcstr_SwIdentification = (char *) CNAMESPACE::malloc (sizeof (char) * newLen);
 
   char *destPtr = mcstr_SwIdentification;
   *destPtr++ = uint8_t (numStars); // number of fields
