@@ -100,6 +100,8 @@ MultiReceiveClientWrapper_s::start (CanCustomer_c& apc_fpCustomer)
     if (!getIsoBusInstance4Comm().existFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( ( mui32_pgnMask << 8), (mui32_pgn << 8 ))))
       getIsoBusInstance4Comm().insertFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( (mui32_pgnMask << 8), (mui32_pgn << 8 ) ), true, 8);
   }
+  #else
+  (void)apc_fpCustomer;
   #endif
 }
 
@@ -112,6 +114,8 @@ MultiReceiveClientWrapper_s::stop (CanCustomer_c& apc_fpCustomer)
   { /// Fast-Packet additions
     __IsoAgLib::getIsoBusInstance4Comm().deleteFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( (mui32_pgnMask << 8), (mui32_pgn << 8) ) );
   }
+  #else
+  (void)apc_fpCustomer;
   #endif
 }
 
