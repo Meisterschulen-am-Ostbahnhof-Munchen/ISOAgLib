@@ -15,11 +15,8 @@
 #ifndef SCHEDULERTASK_C_H
 #define SCHEDULERTASK_C_H
 
-
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 
 // Begin Namespace __IsoAgLib
@@ -35,10 +32,11 @@ namespace __IsoAgLib {
   typedef enum retriggerType_en { StandardRetrigger = 1, EarliestRetrigger = 2, LatestRetrigger = 4 } retriggerType_t;
 
 
-class Scheduler_Task_c {
+// All Scheduler-Tasks are subsystems, because of
+// the not-possible multiple-inheritance right now
+class Scheduler_Task_c : public Subsystem_c
+{
  public:
-
-  //Constructor
   Scheduler_Task_c();
 
   /** this function is used by IsoAgLib components
@@ -53,20 +51,6 @@ class Scheduler_Task_c {
     */
   virtual bool timeEvent() = 0;
 
-  /// NOTE: The following "alreadyClosed" stuff should not be part of
-  ///       Scheduler_Task_c but rather be a base class for all
-  ///       IsoAgLib-subsystems. Just for now didn't want to put it
-  ///       into singleton.h, because that's not really 100% dedicated
-  ///       to Singletons only...
-
-  /** clear mb_alreadyClosed so that close() can be called one time */
-  void clearAlreadyClosed( void ) { mb_alreadyClosed = false; }
-
-  /** set mb_alreadyClosed so that close() can't be called another time */
-  void setAlreadyClosed( void ) { mb_alreadyClosed = true; }
-
-  /** check mb_alreadyClosed to decide if close() can be called */
-  bool checkAlreadyClosed( void ) const { return mb_alreadyClosed; }
 
 
   /** Start Integrate Implementation for Timescheduling */
@@ -277,10 +261,6 @@ protected:
   //!  ONLY for use by Scheduler_c to move task in TaskQueue
   //!  @param ai32_nextRetriggerTime new timeStamp for retrigger
   inline void changeNextTriggerTime(int32_t ai32_nextRetriggerTime) ;
-
-  //  Attribute: mb_alreadyClosed
-  /** store already called close() after last call of init() */
-  bool mb_alreadyClosed;
 
   /** Start Integrate private Implementation for Timescheduling */
   //! counter to detect amount of timeEvent() calls, where the next task in the Scheduler_c

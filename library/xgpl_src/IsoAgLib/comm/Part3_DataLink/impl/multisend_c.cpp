@@ -20,6 +20,7 @@
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_MULTISEND || DEBUG_HEAP_USEAGE
   #ifdef SYSTEM_PC
@@ -29,7 +30,6 @@
   #endif
 #endif
 
-#include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_HEAP_USEAGE
   static uint16_t sui16_lastPrintedBufferCapacity = 0;
@@ -232,49 +232,44 @@ MultiSend_c::SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoN
 }
 
 
-/** initialisation for MultiSend_c */
 void
-MultiSend_c::init(void)
+MultiSend_c::init()
 {
-  if (checkAlreadyClosed())
-  {
-    clearAlreadyClosed();
-    mc_data.setMultitonInst( getMultitonInst() );
+  isoaglib_assert (!initialized());
 
-    getSchedulerInstance().registerClient( this );
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+  mc_data.setMultitonInst( getMultitonInst() );
 
-    #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
-    mui8_nextFpSequenceCounter = 0;
-    #endif
+  getSchedulerInstance().registerClient( this );
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
-    // Receive filters for ISO 11783 are created selectively in the SA claim handler,
-    // so that only messages that are directed to a local SA are received
-  }
+  #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
+  mui8_nextFpSequenceCounter = 0;
+  #endif
+
+  // Receive filters for ISO 11783 are created selectively in the SA claim handler,
+  // so that only messages that are directed to a local SA are received
+
+  setInitialized();
 }
 
 
-
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown
-  */
-void MultiSend_c::close()
+void
+MultiSend_c::close()
 {
-  if (!checkAlreadyClosed())
-  {
-    // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-    getSchedulerInstance().unregisterClient( this );
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+  getSchedulerInstance().unregisterClient( this );
 
-    /// For right now, we do gracefully kill all interrupted stream,
-    /// but normally the modules should abort thier own sending when they
-    /// get stopped... @todo Check that some day, for now it's okay though.
-    mlist_sendStream.clear();
+  /// For right now, we do gracefully kill all interrupted stream,
+  /// but normally the modules should abort thier own sending when they
+  /// get stopped... @todo Check that some day, for now it's okay though.
+  mlist_sendStream.clear();
 
-    // if not empty, some modules have not properly closed down its send-streams!
-    isoaglib_assert (mlist_sendStream.empty());
-  }
+  // if not empty, some modules have not properly closed down its send-streams!
+  isoaglib_assert (mlist_sendStream.empty());
+
+  setClosed();
 }
 
 

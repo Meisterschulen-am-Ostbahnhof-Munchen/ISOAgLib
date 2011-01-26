@@ -179,8 +179,8 @@ namespace __IsoAgLib
       return mt_task.setTimePeriod(aui16_timePeriod);
     }
 
-    bool checkAlreadyClosed() const {
-      return mt_task.checkAlreadyClosed();
+    bool initialized() const {
+      return mt_task.initialized();
     }
 
     bool changeTimePeriodAndResortTask(uint16_t aui16_newTimePeriod ) {
@@ -206,12 +206,12 @@ namespace __IsoAgLib
       return mt_task.getLastRetriggerTime();
     }
 
-    void setAlreadyClosed() {
-      mt_task.setAlreadyClosed();
+    void setInitialized() {
+      mt_task.setInitialized();
     }
 
-    void clearAlreadyClosed() {
-      mt_task.clearAlreadyClosed();
+    void setClosed() {
+      mt_task.setClosed();
     }
 
     /** flags that disable PGNs individually */

@@ -15,6 +15,7 @@
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
+#include <IsoAgLib/util/iassert.h>
 #include "basecommon_c.h"
 
 
@@ -31,19 +32,16 @@ namespace __IsoAgLib {
 void
 BaseCommon_c::init()
 {
-  if (checkAlreadyClosed())
-  {
-    clearAlreadyClosed();
-    MULTITON_MC_DATA_ASSIGN
+  isoaglib_assert (!initialized());
 
-    getSchedulerInstance().registerClient(&mt_task);
+  MULTITON_MC_DATA_ASSIGN
+  getSchedulerInstance().registerClient(&mt_task);
+  // set configure values with call for config
+  config_base (NULL, IsoAgLib::IdentModeImplement, 0 /* No individual PGN disabling */);
+  // now let concrete specialized classes init their part...
+  init_specialized();
 
-    // set configure values with call for config
-    config_base (NULL, IsoAgLib::IdentModeImplement, 0 /* No individual PGN disabling */);
-
-    // now let concrete specialized classes init their part...
-    init_specialized();
-  }
+  setInitialized();
 }
 
 /**
@@ -55,17 +53,16 @@ CanPkgExt_c& BaseCommon_c::dataBase()
   return mc_data;
 }
 
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-void BaseCommon_c::close( )
+
+void
+BaseCommon_c::close( )
 {
-  if ( ! checkAlreadyClosed() )
-  { // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    close_specialized();
+  close_specialized();
+  getSchedulerInstance().unregisterClient(&mt_task);
 
-    getSchedulerInstance().unregisterClient(&mt_task);
-  }
+  setClosed();
 };
 
 

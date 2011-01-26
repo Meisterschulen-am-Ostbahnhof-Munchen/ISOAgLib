@@ -1196,45 +1196,44 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
 void
 MultiReceive_c::init()
 {
-  if ( checkAlreadyClosed() )
-  {
-    clearAlreadyClosed();
-    mc_data.setMultitonInst( getMultitonInst() );
+  isoaglib_assert (!initialized());
 
-    getSchedulerInstance().registerClient( this );
-    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+  mc_data.setMultitonInst( getMultitonInst() );
 
-    // insert receive filters for broadcasted TP
-    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
-    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
-    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
-    getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
-    getIsoBusInstance4Comm().reconfigureMsgObj();
+  getSchedulerInstance().registerClient( this );
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
-    setTimePeriod (5000); // nothing to do per default!
-  }
+  // insert receive filters for broadcasted TP
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
+  getIsoBusInstance4Comm().reconfigureMsgObj();
+
+  setTimePeriod (5000); // nothing to do per default!
+
+  setInitialized();
 }
 
 
 void
 MultiReceive_c::close( void )
 {
-  if ( ! checkAlreadyClosed() )
-  { // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    getSchedulerInstance().unregisterClient( this );
-    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+  getSchedulerInstance().unregisterClient( this );
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
 
-    // remove receive filters for broadcasted TP
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ) );
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ) );
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ) );
-    getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ) );
+  // remove receive filters for broadcasted TP
+  getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ) );
+  getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ) );
+  getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ) );
+  getIsoBusInstance4Comm().deleteFilter (mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ) );
 
-    mlist_streams.clear();
-    mlist_clients.clear();
-  }
+  mlist_streams.clear();
+  mlist_clients.clear();
+
+  setClosed();
 }
 
 

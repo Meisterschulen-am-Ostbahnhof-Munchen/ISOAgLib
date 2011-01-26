@@ -55,48 +55,41 @@ IsoTerminal_c::IsoTerminal_c() :
 void
 IsoTerminal_c::init()
 {
-  if (checkAlreadyClosed())
-  { // avoid another call
-    clearAlreadyClosed();
-    mc_data.setMultitonInst( getMultitonInst() );
+  isoaglib_assert (!initialized());
 
-    getSchedulerInstance().registerClient(this);
-    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
+  mc_data.setMultitonInst( getMultitonInst() );
 
-    // register ISO Filters
-    bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
-    bool const cb_set = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
-    if (cb_set)
-      b_atLeastOneFilterAdded = true;
+  getSchedulerInstance().registerClient(this);
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
 
-    if (b_atLeastOneFilterAdded) getIsoBusInstance4Comm().reconfigureMsgObj();
-  }
+  // register ISO Filters
+  bool b_atLeastOneFilterAdded = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(VT_TO_GLOBAL_PGN),false);
+  bool const cb_set = NULL != getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer,(LANGUAGE_PGN),false);
+  if (cb_set)
+    b_atLeastOneFilterAdded = true;
+
+  if (b_atLeastOneFilterAdded)
+    getIsoBusInstance4Comm().reconfigureMsgObj();
+
+  setInitialized();
 }
 
 
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
 void
 IsoTerminal_c::close()
 {
-  if (!checkAlreadyClosed())
-  { // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    // Detect still registered IsoObjectPools at least in DEBUG mode!
-    isoaglib_assert (getClientCount() == 0);
+  // Detect still registered IsoObjectPools at least in DEBUG mode!
+  isoaglib_assert (getClientCount() == 0);
 
-    // remove all registered VtServer-instances
-    ml_vtServerInst.clear();
+  ml_vtServerInst.clear();
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8)));
+  getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (LANGUAGE_PGN << 8)));
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
+  getSchedulerInstance().unregisterClient(this);
 
-    // deregister ISO Filters
-    getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (VT_TO_GLOBAL_PGN << 8)));
-    getIsoBusInstance4Comm().deleteFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (LANGUAGE_PGN << 8)));
-
-    // deregister in IsoMonitor_c
-    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler(mt_handler);
-    // deregister in Scheduler_c
-    getSchedulerInstance().unregisterClient(this);
-  }
+  setClosed();
 }
 
 

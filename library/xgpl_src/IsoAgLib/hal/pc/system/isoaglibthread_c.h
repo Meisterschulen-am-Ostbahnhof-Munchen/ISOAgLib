@@ -44,11 +44,6 @@ namespace __IsoAgLib {
  *
  * Passing a "key" secures double start-calls or things alike.
  *
- * NOTE: Currently a complete restart of the Thread/IsoAgLib is NOT
- *       supported, as the SystemInit can't be performed again
- *       and it's not tested if that would work out fine.
- *       SO BE SURE TO (FOR NOW) NOT DO THIS!!
- *
  * NOTE: Only 1 ISOBUS Instance is supported by this class currently.
  *       It is still an open discussion if BUS/System-Init should belong
  *       into this class or not though...
@@ -103,13 +98,13 @@ public:
   //! (regardless of who has started it)
   //! @return true => ISOAgLib Thread was already started
   //!         false => ISOAgLib Thread was not started
-  bool isRunning();
+  bool isRunning() const;
 
   //! Checks if the ISOAgLib Thread was started from the
   //! given instance (represented by "key")
   //! @return true => ISOAgLib Thread was started by "key"
   //!         false => ISOAgLib Thread was not started by "key"
-  bool isRunning (void *key);
+  bool isRunning (void *key) const;
 
 private: // methods
   // thread stuff
@@ -125,7 +120,7 @@ private: // attributes
 
 inline
 bool
-IsoAgLibThread_c::isRunning()
+IsoAgLibThread_c::isRunning() const
 {
   return !mset_keys.empty();
 }
@@ -133,13 +128,22 @@ IsoAgLibThread_c::isRunning()
 
 inline
 bool
-IsoAgLibThread_c::isRunning (void *key)
+IsoAgLibThread_c::isRunning (void *key) const
 {
   return (mset_keys.count (key) > 0);
 }
 
 
 } // __IsoAgLib
+
+
+// Also put this class into the interface!
+namespace IsoAgLib
+{
+
+typedef __IsoAgLib::IsoAgLibThread_c iIsoAgLibThread_c;
+
+} // IsoAgLib
 
 #endif
 

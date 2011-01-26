@@ -12,6 +12,7 @@
 */
 
 #include "proprietarymessagehandler_c.h"
+#include <IsoAgLib/util/iassert.h>
 
 #include <list>
 
@@ -37,42 +38,37 @@ namespace __IsoAgLib
   }
 
 
-  void ProprietaryMessageHandler_c::init()
+  void
+  ProprietaryMessageHandler_c::init()
   {
-    if (checkAlreadyClosed())
-    {
-      clearAlreadyClosed();
-      mc_data.setMultitonInst( getMultitonInst() );
+    isoaglib_assert (!initialized());
 
-      getSchedulerInstance().registerClient( this );
-      __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+    mc_data.setMultitonInst( getMultitonInst() );
 
-      mb_hardTiming = false;
-      setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
-    }
+    getSchedulerInstance().registerClient( this );
+    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+
+    mb_hardTiming = false;
+    setTimePeriod (27012); // wait some silly large time as we have really NOTHING to do scheduled!
+
+    setInitialized();
   }
 
 
-  void ProprietaryMessageHandler_c::close()
+  void
+  ProprietaryMessageHandler_c::close()
   {
-    if (!checkAlreadyClosed())
-    { // avoid another call
-      setAlreadyClosed();
+    isoaglib_assert (initialized());
 
-      __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-      getSchedulerInstance().unregisterClient( this );
-    }
+    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+    getSchedulerInstance().unregisterClient( this );
+
+    setClosed();
   }
 
-  /** register the proprietary message client pointer in an internal list of all clients.
-      Derive and register from the member attributes:
-          ui32_can, mui32_canFilter, mc_isonameRemoteECU, mpc_localIdent
-      the suitable CAN message receive filters.
-      The internal implementation will take care to adapt the receive filter as soon as
-      the SA of the remote or local is changed.
-      @return true if client is registered otherwise false
-    */
-  void ProprietaryMessageHandler_c::registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
+
+  void
+  ProprietaryMessageHandler_c::registerProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
   {
     // look in the whole list
     for ( ProprietaryMessageClientVectorConstIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
@@ -88,8 +84,9 @@ namespace __IsoAgLib
     mvec_proprietaryclient.push_back (t_tempClientNode);
   }
 
-  /** deregister a ProprietaryMessageClient */
-  void ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
+
+  void
+  ProprietaryMessageHandler_c::deregisterProprietaryMessageClient (ProprietaryMessageClient_c* apc_proprietaryclient)
   {
     /* define receive filter with "no"-values*/
     apc_proprietaryclient->defineReceiveFilter ( IsoAgLib::iMaskFilter_c(), screfc_noIsoName, spc_nolocalIdent);
@@ -214,7 +211,8 @@ namespace __IsoAgLib
   }
 
 
-  void ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c& client)
+  void
+  ProprietaryMessageHandler_c::sendData(ProprietaryMessageClient_c& client)
   {
     /** get data from client */
     IsoAgLib::iGenericData_c& rc_sendData = client.getDataSend();
@@ -266,7 +264,8 @@ namespace __IsoAgLib
   }
 
 
-  void ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent)
+  void
+  ProprietaryMessageHandler_c::updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent)
   {
     if (pc_nextClient != NULL)
     { // we have a client requesting to send up next...
@@ -291,8 +290,8 @@ namespace __IsoAgLib
   }
 
 
-  /** Call updateSchedulingInformation() if client's nextTriggering has been changed */
-  void ProprietaryMessageHandler_c::updateSchedulingInformation()
+  void
+  ProprietaryMessageHandler_c::updateSchedulingInformation()
   {
     ProprietaryMessageClient_c* pc_nextClient = NULL;
 
@@ -317,7 +316,8 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageHandler_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t /** aui32_totalLen */)
+  bool
+  ProprietaryMessageHandler_c::reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t /** aui32_totalLen */)
   {
     // if remote_ECU is specified and not the ident's SA is the remote_ECU -> don't react on stream
     // look in the whole list
@@ -416,7 +416,8 @@ namespace __IsoAgLib
 #endif
 
 
-  bool ProprietaryMessageHandler_c::processMsg()
+  bool
+  ProprietaryMessageHandler_c::processMsg()
   {
     // look in the whole list
     for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
@@ -455,7 +456,8 @@ namespace __IsoAgLib
   }
 
 
-  void ProprietaryMessageHandler_c::updateEarlierAndLatestInterval()
+  void
+  ProprietaryMessageHandler_c::updateEarlierAndLatestInterval()
   {
     if (mb_hardTiming)
     {
@@ -471,7 +473,8 @@ namespace __IsoAgLib
   }
 
 
-  bool ProprietaryMessageHandler_c::timeEvent()
+  bool
+  ProprietaryMessageHandler_c::timeEvent()
   {
     ProprietaryMessageClient_c* pc_nextClient = NULL;
 

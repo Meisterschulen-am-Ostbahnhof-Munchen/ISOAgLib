@@ -34,8 +34,9 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
 
   /** Close the CAN hardware and all related ISO-protocol modules.
       For possible errors refer to @see CanIo_c
+      @return true if successful, false if already closed
     */
-  void close() { IsoBus_c::close(); }
+  bool close() { return IsoBus_c::close(); }
 
   /** @return CAN-Bus Number - 0xFF in case the bus is not initialized yet */
   uint8_t getBusNumber() const { return IsoBus_c::getBusNumber(); }

@@ -22,31 +22,17 @@
 /// Begin Namespace IsoAgLib
 namespace IsoAgLib {
 
-/** Costructor for iSchedulerTask_c */
 
 iSchedulerTask_c::iSchedulerTask_c()
 {
-  if (checkAlreadyClosed())
-  { // avoid another call
-    clearAlreadyClosed();
+  __IsoAgLib::getSchedulerInstance().registerClient(this);
+}
 
-    // register in Scheduler_c to get time-events
-    __IsoAgLib::getSchedulerInstance().registerClient(this);
-  }
-};
 
-/** Destructor for iSchedulerTask_c */
 iSchedulerTask_c:: ~iSchedulerTask_c()
 {
-
-  if (!checkAlreadyClosed())
-  { // avoid another call
-    setAlreadyClosed();
-
-    // deregister in Scheduler_c
-    __IsoAgLib::getSchedulerInstance().unregisterClient(this);
-  }
-};
+  __IsoAgLib::getSchedulerInstance().unregisterClient(this);
+}
 
 
 //!  deliver the time [msec] to the next awaited retrigger of this task. The central scheduler can use the parameter to deduce the possible time

@@ -1026,8 +1026,8 @@ getCStringCount (const char *src, char countChar);
   void push_backUTF8 (STL_NAMESPACE::string& rrefstr_string, uint16_t aui16_unicode);
 #endif
 
-class VtFontScaling {
-
+class VtFontScaling
+{
 public:
   static uint8_t getScaledFont(uint8_t aui8_originalSize, int32_t ai32_vtDimension, int32_t ai32_opDimension, uint16_t aui16_vtSupportedFonts,
                                bool ab_buttonParent, bool ab_inSkm,
@@ -1036,9 +1036,23 @@ public:
 private:
   static uint8_t marr_font2PixelDimensionTableW[15];
   static uint8_t marr_font2PixelDimensionTableH[15];
-
 };
 
+
+class Subsystem_c
+{
+public:
+  Subsystem_c()
+    : mb_initialized (false)
+  {}
+
+  void setInitialized()   { mb_initialized = true; }
+  void setClosed()        { mb_initialized = false; }
+  bool initialized() const { return mb_initialized; }
+
+private:
+  bool mb_initialized;
+};
 
 } // end of namespace __IsoAgLib
 #endif

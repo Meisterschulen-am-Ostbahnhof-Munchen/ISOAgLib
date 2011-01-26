@@ -22,7 +22,6 @@
 // ISOAgLib
 #include <IsoAgLib/scheduler/ischeduler_c.h>
 #include <IsoAgLib/comm/iisobus_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/iisomonitor_c.h>
 
 // system (we know we're on PC!)
 #include <assert.h>
@@ -63,13 +62,13 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
       std::cout << "IsoAgLibThread_c::start - Init ISOAgLib-core and -CAN/ISOBUS & Start THREAD for key " << key << "." << std::endl;
 #endif
 
-      // @todo NOTE that a REstart is not yet possible, because
-      //       close() does not really enable a REstart!
       IsoAgLib::getISchedulerInstance().init();
-      IsoAgLib::getIIsoBusInstance().init (aui8_busNr);
+      bool isoRetVal = IsoAgLib::getIIsoBusInstance().init (aui8_busNr);
+      isoaglib_assert (isoRetVal == true);
 
       mb_requestThreadToStop = false;
-      pthread_create (&mthread_core, NULL, thread_core, (void *)this);
+      int createRetVal = pthread_create (&mthread_core, NULL, thread_core, (void *)this);
+      isoaglib_assert (createRetVal == 0);
 
       return startSuccess;
     }
@@ -91,15 +90,17 @@ IsoAgLibThread_c::stop (void *key)
   }
   else
   { /// was running for this key - key is now already erased
-    if (!isRunning())
+    if (mset_keys.empty())
     { /// No more keys -> stop thread then of course, too!
 #ifdef DEBUG_THREAD
       std::cout << "IsoAgLibThread_c::stop - Stop THREAD for key " << key << "." << std::endl;
 #endif
       mb_requestThreadToStop = true;
-      pthread_join (mthread_core, NULL);
+      int joinRetVal = pthread_join (mthread_core, NULL);
+      isoaglib_assert (joinRetVal == 0);
       // Thread is not running now anymore...
-      IsoAgLib::getIIsoBusInstance().close();
+      bool isoRetVal = IsoAgLib::getIIsoBusInstance().close();
+      isoaglib_assert (isoRetVal == true);
       IsoAgLib::getISchedulerInstance().close();
       // Last one closed the door.
     }

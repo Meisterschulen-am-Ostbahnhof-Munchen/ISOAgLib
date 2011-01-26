@@ -18,6 +18,7 @@
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 
 #if DEBUG_SCHEDULER || DEBUG_HEAP_USEAGE || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
   #include <IsoAgLib/util/impl/util_funcs.h>
@@ -53,7 +54,8 @@ Scheduler_c &getSchedulerInstance()
 
 
 Scheduler_c::Scheduler_c()
-  : mpc_registeredErrorObserver( NULL )
+  : Subsystem_c()
+  , mpc_registeredErrorObserver( NULL )
   , pc_currentlyExecutedTask( NULL )
   , mi32_lastTimeEventTime( 0 )
   , mi32_demandedExecEndScheduler( 0 )
@@ -66,7 +68,6 @@ Scheduler_c::Scheduler_c()
 #ifdef USE_MUTUAL_EXCLUSION
   , mc_protectAccess()
 #endif
-  , mb_systemStarted( false )
 {
   // nop
 }
@@ -75,59 +76,52 @@ Scheduler_c::Scheduler_c()
 void
 Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
 {
-  isoaglib_assert (!mb_systemStarted);
-  if (!mb_systemStarted)
+  isoaglib_assert (!initialized());
+
+  getILibErrInstance().init();
+  if (apc_observer != NULL)
   {
-    mb_systemStarted = true;
+    const bool cb_observerRegistered
+      = getILibErrInstance().registerObserver (*apc_observer);
 
-    getILibErrInstance().init();
-    if (apc_observer != NULL)
-    {
-      const bool cb_observerRegistered
-        = getILibErrInstance().registerObserver (*apc_observer);
-
-      if (cb_observerRegistered)
-        mpc_registeredErrorObserver = apc_observer;
-    }
-
-    getSystemInstance().init();
+    if (cb_observerRegistered)
+      mpc_registeredErrorObserver = apc_observer;
   }
-  // else: system already started, so don't restart.
+  getSystemInstance().init();
+
+  setInitialized();
 }
 
 
 void
-Scheduler_c::close( void )
+Scheduler_c::close()
 {
-  isoaglib_assert (mb_systemStarted);
-  if (mb_systemStarted)
+  isoaglib_assert (initialized());
+
+  getSystemInstance().close();
+
+  if (mpc_registeredErrorObserver != NULL)
   {
-    mb_systemStarted = false;
-
-    getSystemInstance().close();
-
-    if (mpc_registeredErrorObserver != NULL)
-    {
-      getILibErrInstance().deregisterObserver( *mpc_registeredErrorObserver );
-      mpc_registeredErrorObserver = NULL;
-    }
-
-    getILibErrInstance().close();
-
-    // Reset all member variables to initial state.
-    pc_currentlyExecutedTask = NULL;
-    mi32_lastTimeEventTime = 0;
-    mi32_demandedExecEndScheduler = 0;
-    mi32_averageExecTime = 0;
-    mi16_canExecTime = 0;
-    mb_execStopForced = false;
-
-    isoaglib_assert (mt_clientCnt == 0);
-    isoaglib_assert (mc_taskQueue.empty());
-    isoaglib_assert (mc_spareQueue.empty());
-    // mc_protectAccess() // nothing to reset here.
+    getILibErrInstance().deregisterObserver( *mpc_registeredErrorObserver );
+    mpc_registeredErrorObserver = NULL;
   }
-  // else: system wasn't started, so nothing to close.
+
+  getILibErrInstance().close();
+
+  // Reset all member variables to initial state.
+  pc_currentlyExecutedTask = NULL;
+  mi32_lastTimeEventTime = 0;
+  mi32_demandedExecEndScheduler = 0;
+  mi32_averageExecTime = 0;
+  mi16_canExecTime = 0;
+  mb_execStopForced = false;
+
+  isoaglib_assert (mt_clientCnt == 0);
+  isoaglib_assert (mc_taskQueue.empty());
+  isoaglib_assert (mc_spareQueue.empty());
+  // mc_protectAccess() // nothing to reset here.
+
+  setClosed();
 }
 
 

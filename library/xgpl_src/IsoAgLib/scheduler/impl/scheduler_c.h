@@ -25,6 +25,7 @@ namespace IsoAgLib
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/hal/hal_system.h>
 #include <IsoAgLib/util/impl/singleton.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/scheduler/impl/schedulerentry_c.h>
 
@@ -47,7 +48,8 @@ namespace __IsoAgLib {
   @author Dipl.-Inform. Achim Spangler
   @short central manager object for all hardware independent IsoAgLib objects.
 */
-class Scheduler_c {
+class Scheduler_c : public Subsystem_c
+{
   MACRO_SINGLETON_CONTRIBUTION();
 public:
 
@@ -293,9 +295,6 @@ private: // Private attributes
   /** Attribute for the exclusive access of the IsoAgLib for threads */
   HAL::ExclusiveAccess_c mc_protectAccess;
 #endif
-
-  /** was system started already? */
-  bool mb_systemStarted;
 
   friend Scheduler_c &getSchedulerInstance();
 };

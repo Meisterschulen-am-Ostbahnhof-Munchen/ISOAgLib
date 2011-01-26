@@ -121,13 +121,12 @@ FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemM
 void
 FsManager_c::init()
 {
-  if (checkAlreadyClosed())
-  {
-    clearAlreadyClosed();
+  isoaglib_assert (!initialized());
 
-    getSchedulerInstance().registerClient(this);
-    getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
-  }
+  getSchedulerInstance().registerClient(this);
+  getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mc_saClaimHandler);
+
+  setInitialized();
 }
 
 
@@ -138,7 +137,8 @@ const char* FsManager_c::getTaskName() const
 
 
 FsManager_c::FsManager_c()
-  : mc_saClaimHandler(*this)
+  : Scheduler_Task_c()
+  , mc_saClaimHandler(*this)
   , v_communications()
   , v_serverInstances()
   , l_initializingCommands()
@@ -188,17 +188,16 @@ struct delete_object
 void
 FsManager_c::close()
 {
-  if (!checkAlreadyClosed ())
-  {
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
-    getSchedulerInstance().unregisterClient(this);
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler (mc_saClaimHandler);
+  getSchedulerInstance().unregisterClient(this);
 
-    STL_NAMESPACE::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
-    STL_NAMESPACE::for_each( v_communications.begin(), v_communications.end(), delete_object());
-    STL_NAMESPACE::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
-  }
+  STL_NAMESPACE::for_each( l_initializingCommands.begin(), l_initializingCommands.end(), delete_object());
+  STL_NAMESPACE::for_each( v_communications.begin(), v_communications.end(), delete_object());
+  STL_NAMESPACE::for_each( v_serverInstances.begin(), v_serverInstances.end(), delete_object());
+
+  setClosed();
 }
 
 

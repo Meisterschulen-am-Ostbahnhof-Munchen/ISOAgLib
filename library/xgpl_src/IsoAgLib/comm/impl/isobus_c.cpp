@@ -62,9 +62,15 @@ namespace __IsoAgLib {
 bool
 IsoBus_c::init (uint8_t aui8_busNumber)
 {
+  if (getCanInstance4Comm().initialized())
+    return false;
+
   /// CAN-Bus
   const bool cb_canSuccess =
-    getCanInstance4Comm().init (aui8_busNumber, 250 );
+    getCanInstance4Comm().init (aui8_busNumber, 250);
+
+  if (!cb_canSuccess)
+    return false;
 
   /// Part 5 - Network Management
   getIsoRequestPgnInstance4Comm().init();
@@ -117,13 +123,16 @@ IsoBus_c::init (uint8_t aui8_busNumber)
     getFsManagerInstance4Comm().init();
   #endif
 
-  return cb_canSuccess;
+  return true;
 }
 
 
-void
+bool
 IsoBus_c::close()
 {
+  if (!getCanInstance4Comm().initialized())
+    return false;
+
   /// Part 13 - File Server (Client)
   #ifdef USE_ISO_FILESERVER_CLIENT
     getFsManagerInstance4Comm().close();
@@ -176,6 +185,8 @@ IsoBus_c::close()
 
   /// CAN-Bus
   getCanInstance4Comm().close();
+
+  return true;
 }
 
 

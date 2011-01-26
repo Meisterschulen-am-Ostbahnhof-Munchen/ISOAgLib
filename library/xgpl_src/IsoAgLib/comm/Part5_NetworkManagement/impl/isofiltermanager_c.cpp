@@ -14,6 +14,7 @@
 #include "isofiltermanager_c.h"
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 
 namespace __IsoAgLib {
@@ -43,37 +44,35 @@ const char* IsoFilterManager_c::getTaskName() const
 void
 IsoFilterManager_c::init()
 {
-  if ( checkAlreadyClosed() )
-  {
-    clearAlreadyClosed();
+  isoaglib_assert (!initialized());
 
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+  __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
-    // set very long execution period as this singleton has no periodic jobs
-    setTimePeriod( 10000 );
-  }
+  // set very long execution period as this singleton has no periodic jobs
+  setTimePeriod( 10000 );
+
+  setInitialized();
 }
 
 
 void
 IsoFilterManager_c::close()
 {
-  if ( ! checkAlreadyClosed() )
-  { // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    // for now, clear all the registered filters.
-    for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
-         it_isoFilterBox != mvec_isoFilterBox.end();
-         ++it_isoFilterBox)
-    { // Search for existing IsoFilterBox
-      it_isoFilterBox->updateOnRemove (NULL);
-    }
-    mvec_isoFilterBox.clear();
-    // for later, all modules should remove their filters!
-
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+  // for now, clear all the registered filters.
+  for (IsoFilterBox_it it_isoFilterBox = mvec_isoFilterBox.begin();
+       it_isoFilterBox != mvec_isoFilterBox.end();
+        ++it_isoFilterBox)
+  { // Search for existing IsoFilterBox
+    it_isoFilterBox->updateOnRemove (NULL);
   }
+  mvec_isoFilterBox.clear();
+  // for later, all modules should remove their filters!
+
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+
+  setClosed();
 }
 
 

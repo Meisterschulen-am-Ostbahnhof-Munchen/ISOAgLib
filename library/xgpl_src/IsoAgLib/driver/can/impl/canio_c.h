@@ -18,16 +18,10 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/impl/util_funcs.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/hal_can.h>
 #include <IsoAgLib/hal/hal_system.h>
-
-
-
-// include base standard headers and define some constants
-// (f.e. for hardware dependent settings)
-
-// include declarations of objects for dynamic array
 #include "ident_c.h"
 #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
   #include "msgobj_c.h"
@@ -66,7 +60,8 @@ class CanIo_c;
   @author Dipl.-Inform. Achim Spangler
   @see FilterBox_c MsgObj
 */
-class CanIo_c {
+class CanIo_c : public Subsystem_c
+{
 #if 1 < CAN_INSTANCE_CNT
   MACRO_MULTITON_CONTRIBUTION();
 #else

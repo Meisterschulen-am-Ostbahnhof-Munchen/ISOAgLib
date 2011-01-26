@@ -13,11 +13,12 @@
 
 #include "isomonitor_c.h"
 #include "isosystempkg_c.h"
-#include <IsoAgLib/util/iliberr_c.h>
+#include "isorequestpgn_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include "isorequestpgn_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
+#include <IsoAgLib/util/iliberr_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 #ifdef USE_PROCESS
   #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
@@ -67,92 +68,90 @@ IsoMonitor_c::IsoMonitor_c() :
 
 
 void
-IsoMonitor_c::init( void )
+IsoMonitor_c::init()
 {
-  if (checkAlreadyClosed())
-  {
-    clearAlreadyClosed();
-    mc_data.setMultitonInst( getMultitonInst() );
+  isoaglib_assert (!initialized());
 
-    #if DEBUG_HEAP_USEAGE
-    sui16_isoItemTotal -= mvec_isoMember.size();
-    #endif
-    isoaglib_assert (mvec_isoMember.empty());
-    mpc_isoMemberCache = mvec_isoMember.end();
-    mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
-    mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
+  mc_data.setMultitonInst( getMultitonInst() );
 
-    // register no-service mode
-    mc_serviceTool.setUnspecified();
+  #if DEBUG_HEAP_USEAGE
+  sui16_isoItemTotal -= mvec_isoMember.size();
+  #endif
+  isoaglib_assert (mvec_isoMember.empty());
+  mpc_isoMemberCache = mvec_isoMember.end();
+  mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
+  mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
 
-    /// Set Period for Scheduler_c Start Period is 125
-    /// timeEvent will change to longer Period after Start
-    setTimePeriod( (uint16_t) 125   );
-    // register in Scheduler_c to be triggered fopr timeEvent
-    getSchedulerInstance().registerClient( this );
+  // register no-service mode
+  mc_serviceTool.setUnspecified();
 
-    mpc_activeLocalMember = NULL;
+  /// Set Period for Scheduler_c Start Period is 125
+  /// timeEvent will change to longer Period after Start
+  setTimePeriod( (uint16_t) 125   );
+  // register in Scheduler_c to be triggered fopr timeEvent
+  getSchedulerInstance().registerClient( this );
 
-    bool b_configure = false;
+  mpc_activeLocalMember = NULL;
 
-    // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
-    getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, ADDRESS_CLAIM_PGN);
+  bool b_configure = false;
+
+  // add filter REQUEST_PGN_MSG_PGN via IsoRequestPgn_c
+  getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, ADDRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
-    getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MASTER_PGN);
-    getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MEMBER_PGN);
+  getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MASTER_PGN);
+  getIsoRequestPgnInstance4Comm().registerPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    if( getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, ((ADDRESS_CLAIM_PGN)+0xFF), false))
-      b_configure = true;
+  if( getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, ((ADDRESS_CLAIM_PGN)+0xFF), false))
+    b_configure = true;
 #ifdef USE_WORKING_SET
-    if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MASTER_PGN), false))
-      b_configure = true;
-    if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MEMBER_PGN), false))
-      b_configure = true;
+  if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MASTER_PGN), false))
+    b_configure = true;
+  if (getIsoBusInstance4Comm().insertStandardIsoFilter(mt_customer, (WORKING_SET_MEMBER_PGN), false))
+    b_configure = true;
 #endif
 
-    if (b_configure) {
-      getIsoBusInstance4Comm().reconfigureMsgObj();
-    }
+  if (b_configure) {
+    getIsoBusInstance4Comm().reconfigureMsgObj();
   }
+
+  setInitialized();
 }
 
 
-/** every subsystem of IsoAgLib has explicit function for controlled shutdown */
-void IsoMonitor_c::close( void )
+void
+IsoMonitor_c::close()
 {
-  if ( ! checkAlreadyClosed() )
-  {
-    // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (initialized());
 
-    // Every (i)IdentItem_c must have close()d before the IsoMonitor_c is close()d.
-    isoaglib_assert( c_arrClientC1.empty() );
-    // Every SaClaimHandler must have deregistered properly already.
-    isoaglib_assert( mvec_saClaimHandler.empty() );
+  // Every (i)IdentItem_c must have close()d before the IsoMonitor_c is close()d.
+  isoaglib_assert( c_arrClientC1.empty() );
+  // Every SaClaimHandler must have deregistered properly already.
+  isoaglib_assert( mvec_saClaimHandler.empty() );
 
-    getSchedulerInstance().unregisterClient( this );
+  getSchedulerInstance().unregisterClient( this );
 
-    // We can clear the list of remote nodes.
-    /// NOTE: We do currently NOT call "internalIsoItemErase",
-    ///       because the list of SaClaimHandlers is empty anyway.
-    ///       But if the erase does some more stuff, it may be needed
-    ///       to call "internalIsoItemErase" for each item instead
-    ///       of just clearing the container of isoMembers.
-    mvec_isoMember.clear();
+  // We can clear the list of remote nodes.
+  /// NOTE: We do currently NOT call "internalIsoItemErase",
+  ///       because the list of SaClaimHandlers is empty anyway.
+  ///       But if the erase does some more stuff, it may be needed
+  ///       to call "internalIsoItemErase" for each item instead
+  ///       of just clearing the container of isoMembers.
+  mvec_isoMember.clear();
 
-    getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, ADDRESS_CLAIM_PGN);
+  getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, ADDRESS_CLAIM_PGN);
 #ifdef USE_WORKING_SET
-    getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MASTER_PGN);
-    getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MEMBER_PGN);
+  getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MASTER_PGN);
+  getIsoRequestPgnInstance4Comm().unregisterPGN (mt_handler, WORKING_SET_MEMBER_PGN);
 #endif
 
-    getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8) ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((ADDRESS_CLAIM_PGN+0xFF) << 8) ) );
 #ifdef USE_WORKING_SET
-    getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8) ) );
-    getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8) ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((WORKING_SET_MASTER_PGN) << 8) ) );
+  getIsoBusInstance4Comm().deleteFilter( mt_customer, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ((WORKING_SET_MEMBER_PGN) << 8) ) );
 #endif
-  }
+
+  setClosed();
 }
 
 

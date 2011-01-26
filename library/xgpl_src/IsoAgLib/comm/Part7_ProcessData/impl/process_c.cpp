@@ -19,6 +19,7 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoitem_c.h>
+#include <IsoAgLib/util/iassert.h>
 
 #if DEBUG_HEAP_USEAGE
   #ifdef SYSTEM_PC
@@ -60,48 +61,46 @@ namespace __IsoAgLib {
 void
 Process_c::init()
 {
-  if (checkAlreadyClosed())
-  {
-    clearAlreadyClosed();
-    mc_data.setMultitonInst( getMultitonInst() );
+  isoaglib_assert (!initialized());
 
-    getSchedulerInstance().registerClient( this );
-    mi32_lastFilterBoxTime = 0;
-    mb_needCallOfCheckCreateRemoteReceiveFilter = false;
-    __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
-      #ifdef USE_PROC_DATA_DESCRIPTION_POOL
-      mc_devPropertyHandler.init(&mc_data);
-      #endif
-    mpc_tcISOName = NULL;
-    mui8_lastTcStatus = 0;
-    mpc_processWsmTaskMsgHandler = NULL;
+  mc_data.setMultitonInst( getMultitonInst() );
 
-    mpc_processDataChangeHandler = NULL;
+  getSchedulerInstance().registerClient( this );
+  mi32_lastFilterBoxTime = 0;
+  mb_needCallOfCheckCreateRemoteReceiveFilter = false;
+  __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
+    #ifdef USE_PROC_DATA_DESCRIPTION_POOL
+    mc_devPropertyHandler.init(&mc_data);
+    #endif
+  mpc_tcISOName = NULL;
+  mui8_lastTcStatus = 0;
+  mpc_processWsmTaskMsgHandler = NULL;
 
-    // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
-    const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
-    if (!getIsoBusInstance4Comm().existFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter) ) )
-    { // create FilterBox
-      getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), true);
-    }
+  mpc_processDataChangeHandler = NULL;
 
-    //  start with 200 msec timer period
-    Scheduler_Task_c::setTimePeriod(200);
+  // receive PROCESS_DATA_PGN messages which are addressed to GLOBAL
+  const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
+  if (!getIsoBusInstance4Comm().existFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter) ) )
+  { // create FilterBox
+    getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), true);
   }
+
+  //  start with 200 msec timer period
+  Scheduler_Task_c::setTimePeriod(200);
+
+  setInitialized();
 }
 
 /** every subsystem of IsoAgLib has explicit function for controlled shutdown
   */
-void Process_c::close( void ) {
-  if ( ! checkAlreadyClosed() ) {
-    // avoid another call
-    setAlreadyClosed();
-    // unregister from Scheduler_c
-    getSchedulerInstance().unregisterClient( this );
+void Process_c::close()
+{
+  isoaglib_assert (initialized());
 
-    // unregister ISO monitor list changes
-    __IsoAgLib::getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
-  }
+  getSchedulerInstance().unregisterClient( this );
+  getIsoMonitorInstance4Comm().deregisterControlFunctionStateHandler( mt_handler );
+
+  setClosed();
 };
 
 

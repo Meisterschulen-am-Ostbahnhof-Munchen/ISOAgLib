@@ -124,7 +124,7 @@ CanIo_c::init(
 
 
 void
-CanIo_c::close( void )
+CanIo_c::close()
 {
   if ( mui8_busNumber == 0xFF )
   { // CAN already closed -> don't call HAL close again
@@ -1671,6 +1671,7 @@ bool CanIo_c::setBitrate(uint16_t aui16_newSpeed, bool ab_force)
   * (set mui8_busNumber to 0xFF so that init() detects first call after constructor)
   */
 CanIo_c::CanIo_c( void ) :
+    Subsystem_c(),
   #ifndef SYSTEM_WITH_ENHANCED_CAN_HAL
     marr_msgObj(),
     mc_tempObj(),

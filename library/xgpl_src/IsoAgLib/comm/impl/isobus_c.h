@@ -33,14 +33,17 @@ class IsoBus_c {
 #endif
 public:
 
-  /** Initialize the CAN hardware  and all related ISO-protocol modules.
+  /** Initialize the CAN hardware and all related ISO-protocol modules.
       for possible error refer to @see CanIo_c
       @param aui8_busNumber number of the physical CAN bus (starting at 0)
+      @return true if successful, false if bus-problem or already initialized
     */
   bool init (uint8_t aui8_busNumber);
 
-  /** Close the CAN hardware and all related ISO-protocol modules. */
-  void close();
+  /** Close the CAN hardware and all related ISO-protocol modules.
+      @return true if successful, false if already closed
+    */
+  bool close();
 
   IsoBus_c& operator<< (CanPkgExt_c& acrc_src);
 

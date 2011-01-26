@@ -30,9 +30,9 @@ namespace __IsoAgLib {
 // ////////////////////////////// Operation 1398 : Scheduler_Task_c
 
 Scheduler_Task_c::Scheduler_Task_c()
-: mui16_earlierInterval(75) //default 3/4 of timeperiod
+: Subsystem_c()
+, mui16_earlierInterval(75) //default 3/4 of timeperiod
 , mui16_latestInterval(50)   //default 1/2 of timeperiod
-, mb_alreadyClosed(true)
 , mi_executionTimeHealth( 0 )
 , mi32_nextRetriggerTime( 0 )
 , mui32_callCnt( 0 )

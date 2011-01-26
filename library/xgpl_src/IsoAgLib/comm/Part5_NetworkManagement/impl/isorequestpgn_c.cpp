@@ -16,6 +16,7 @@
 
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
+#include <IsoAgLib/util/iassert.h>
 #include <algorithm>
 
 
@@ -23,29 +24,24 @@ namespace __IsoAgLib {
 
 
 void
-IsoRequestPgn_c::init (void)
+IsoRequestPgn_c::init()
 {
-  // only init if closed (constructor "closes" it so it gets init'ed initially!
-  if (checkAlreadyClosed ())
-  {
-    // clear state of mb_alreadyClosed, so that close() is called one time AND no more init()s are performed!
-    clearAlreadyClosed();
+  isoaglib_assert (!mc_subsystemState.initialized);
 
-    getIsoBusInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
-  }
+  getIsoBusInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
+
+  mc_subsystemState.setInitialized();
 }
 
 
 void
-IsoRequestPgn_c::close (void)
+IsoRequestPgn_c::close()
 {
-  if (!checkAlreadyClosed ())
-  {
-    // avoid another call
-    setAlreadyClosed();
+  isoaglib_assert (mc_subsystemState.initialized());
 
-    getIsoBusInstance4Comm().deleteFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( REQUEST_PGN_MSG_PGN | 0xFF ) << 8 ) );
-  }
+  getIsoBusInstance4Comm().deleteFilter( *this, IsoAgLib::iMaskFilter_c( 0x3FFFF00UL, ( REQUEST_PGN_MSG_PGN | 0xFF ) << 8 ) );
+
+  mc_subsystemState.setClosed();
 }
 
 
@@ -242,7 +238,8 @@ void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_iso
 
 /** constructor for IsoRequestPgn_c */
 IsoRequestPgn_c::IsoRequestPgn_c ()
-  : m_registeredClientsWithPGN ()
+  : mc_subsystemState()
+  , m_registeredClientsWithPGN ()
   , mc_data()
   , mpc_isoItemSA( NULL ) // dummy value, is always properly set when used
   , mpc_isoItemDA( NULL ) // dummy value, is always properly set when used

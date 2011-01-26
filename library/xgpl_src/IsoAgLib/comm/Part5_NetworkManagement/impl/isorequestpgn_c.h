@@ -165,21 +165,13 @@ private: // Private methods
 
   void sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType);
 
-
-  /** clear mb_alreadyClosed so that close() can be called one time */
-  void clearAlreadyClosed( void ) { mb_alreadyClosed = false; }
-
-  /** set mb_alreadyClosed so that close() can't be called another time */
-  void setAlreadyClosed( void ) { mb_alreadyClosed = true; }
-
-  /** check mb_alreadyClosed to decide if close() can be called */
-  bool checkAlreadyClosed( void ) const { return mb_alreadyClosed; }
-
   virtual bool processInvalidMsg() { return false; }
 
   virtual bool isNetworkMgmt() const { return false; }
 
 private: // Private attributes
+  Subsystem_c mc_subsystemState;
+
   /// holds all registered clients with PGN(s)
   STL_NAMESPACE::vector<PGN_s> m_registeredClientsWithPGN;
 
