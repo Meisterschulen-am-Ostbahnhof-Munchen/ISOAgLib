@@ -97,56 +97,5 @@ namespace HAL
   */
   inline int16_t eepromReady(void)
     {return __HAL::eepromReady();};
-
- /*@}*/
-
-#ifdef USE_CAN_EEPROM_EDITOR
-  /* ********************************* */
-  /** \name CAN EEPROM Editor functions */
-  /*@{*/
-
-  /**
-    initialize the CAN EEPROM editor module
-    @param bBus CAN BUS number to use for EEEditor
-    @param iObjNrReceiveCan CAN Msg Obj number for receive of Editor msg
-    @param iObjNrTransmitCan CAN Msg Obj number for send of Editor msg
-    @param dwReceiveCanId CAN Ident_c to use for receive of Editor msg
-    @param bUseExtendedCAN set to 0 for standard 11bit, to 1 for extended 29bit Ident
-    @param iNumberMsgsReceive size of CAN receive buffer size
-    @param iNumberMsgsTransmit size of CAN send buffer size
-    @return HAL_NO_ERR if no error occured
-  */
-  inline int16_t InitEEEditor(  uint8_t bBus,
-                       int16_t iObjNrReceiveCan, int16_t iObjNrTransmitCan,
-                       uint32_t dwReceiveCanId, uint8_t bUseExtendedCAN,
-                       int16_t iNumberMsgsReceive, int16_t iNumberMsgsTransmit)
-  {return __HAL::iInitEEEditor(bBus, iObjNrReceiveCan, iObjNrTransmitCan,
-          dwReceiveCanId, bUseExtendedCAN, iNumberMsgsReceive, iNumberMsgsTransmit);
-  };
-
-  /**
-    periodic call to the CAN EEEditor, to process editor msg
-    @return true -> EEPROM write msg recieved, and EEPROM values changed
-  */
-  inline int16_t ProcessCANEEEditorMsg()
-  {return __HAL::iCallCanEEMonitor();};
-
- /*@}*/
-#endif
-
-#ifdef USE_RS232_EEPROM_EDITOR
-  /* *********************************** */
-  /** \name RS232 EEPROM Editor functions */
-  /*@{*/
-
-  /**
-    periodic call to the RS232 EEEditor, to process editor msg
-    @return true -> EEPROM write msg recieved, and EEPROM values changed
-  */
-  inline int16_t ProcessRS232EEEditorMsg(void)
-  {return __HAL::iCallRs232EEMonitor();};
-  /*@}*/
-#endif
-
 }
 #endif

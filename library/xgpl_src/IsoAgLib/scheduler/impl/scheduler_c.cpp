@@ -16,13 +16,8 @@
 #include "scheduler_c.h"
 #include <IsoAgLib/driver/system/impl/system_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
-#include <supplementary_driver/driver/eeprom/impl/eepromio_c.h>
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
-
-#if defined(USE_CAN_EEPROM_EDITOR) || defined( USE_RS232_EEPROM_EDITOR )
-  #include <supplementary_driver/hal/hal_eeprom.h>
-#endif
 
 #if DEBUG_SCHEDULER || DEBUG_HEAP_USEAGE || defined(TEST_TIMING) || DEBUG_ELEMENTBASE	|| DEBUG_TIME_EVENTS || DEBUG_TASKS_QUEUE
   #include <IsoAgLib/util/impl/util_funcs.h>
@@ -302,14 +297,6 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
     mi16_canExecTime = System_c::getTime() - i32_stepStartTime;
   }
   System_c::triggerWd();
-  /* call EEEditor Process */
-  #if defined(USE_CAN_EEPROM_EDITOR)
-    // check if immediate return is needed
-    HAL::ProcessCANEEEditorMsg();
-  #elif defined(USE_RS232_EEPROM_EDITOR)
-    // check if immediate return is needed
-    HAL::ProcessRS232EEEditorMsg();
-  #endif
 
   #if defined( CAN_INSTANCE_CNT ) && ( CAN_INSTANCE_CNT > 1 )
   for ( uint8_t ind = 1; ind < CAN_INSTANCE_CNT; ind++ )

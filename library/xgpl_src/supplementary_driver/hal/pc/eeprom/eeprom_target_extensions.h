@@ -16,13 +16,6 @@
 
 #include <IsoAgLib/isoaglib_config.h>
 
-#ifdef USE_RS232_EEPROM_EDITOR
-  #include "pc_eeditor_rs232.h"
-#endif
-#ifdef USE_CAN_EEPROM_EDITOR
-  #include "pc_eeditor_can.h"
-#endif
-
 namespace __HAL {
 /* ******************************************************** */
 /**

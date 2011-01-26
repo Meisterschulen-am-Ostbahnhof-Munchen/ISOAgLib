@@ -322,55 +322,6 @@
 #  define TIMEOUT_TRACTOR_DATA 3000
 #endif
 
-/*@}*/
-
-/* ******************************************************** */
-/**
- * \name Configure the use of an EEPROM Editor
- * Enable EEPROM data can be read and
- * write during runtime via RS232 or CAN
- */
-/*@{*/
-/**
-  * @def CONFIG_EEPROM_USE_CAN_EDITOR_YN
-  * use CAN connected EEPROM editor
-  */
-#  ifndef CONFIG_EEPROM_USE_CAN_EDITOR_YN
-    /// YES | NO for EEPROM editor access via CAN
-#    define CONFIG_EEPROM_USE_CAN_EDITOR_YN NO
-#  endif
-#  if CONFIG_EEPROM_USE_CAN_EDITOR_YN == YES && !defined(USE_CAN_EEPROM_EDITOR)
-#    define USE_CAN_EEPROM_EDITOR
-#  endif
-
-/**
-  * @def CONFIG_EEPROM_USE_RS232_EDITOR_YN
-  * use RS232 connected EEPROM editor
-  */
-#  ifndef CONFIG_EEPROM_USE_RS232_EDITOR_YN
-    /// YES | NO for EEPROM editor access via RS232
-#    define CONFIG_EEPROM_USE_RS232_EDITOR_YN NO
-#  endif
-#  if CONFIG_EEPROM_USE_RS232_EDITOR_YN == YES && !defined(USE_RS232_EEPROM_EDITOR)
-#    define USE_RS232_EEPROM_EDITOR
-#  endif
-
-
-#ifndef CONFIG_EEPROM_USE_CAN_REC_IDENT
-  /// set CAN Ident_c for filtering out EEEditor msgs
-#  define CONFIG_EEPROM_USE_CAN_REC_IDENT 0x700
-#endif
-
-#ifndef CONFIG_EEPROM_USE_CAN_BUS
-  /** set CAN BUS number for CAN EEPROM Editor */
-#  define CONFIG_EEPROM_USE_CAN_BUS       0
-#endif
-
-#ifndef CONFIG_EEPROM_USE_CAN_BUFFER_SIZE
-  /** set CAN buffer size for receive and send */
-#  define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
-#endif
-
 #ifndef CONFIG_EEPROM_PADDING_BYTE
   /** set byte-value to retrieve when reading EEPROM out of bounds */
 #  define CONFIG_EEPROM_PADDING_BYTE 0xFF

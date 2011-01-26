@@ -20,9 +20,6 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/hal/hal_system.h>
-#ifdef USE_CAN_EEPROM_EDITOR
-  #include <IsoAgLib/hal/hal_eeprom.h>
-#endif
 
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION || DEBUG_HEAP_USEAGE || DEBUG_CAN_BUFFER_FILLING
   #ifdef SYSTEM_PC
@@ -1625,11 +1622,6 @@ INTERNAL_DEBUG_DEVICE << "-------------------------------------IRQ TABLE " << IN
 uint8_t CanIo_c::updateMinReceiveObjNr()
 {
   mui8_minReceiveObjNr = 1 + minHALMsgObjNr();
-  #ifdef USE_CAN_EEPROM_EDITOR
-  // the MsgObj next to the sending MsgObj are used for the EEPROM Editor
-  // --> increase the offset for the first receive MsgObj by furhter two items
-  mui8_minReceiveObjNr += 2;
-  #endif
   return mui8_minReceiveObjNr;
 }
 
@@ -1760,17 +1752,6 @@ CanIo_c::baseCanInit (uint16_t aui16_bitrate)
 
   int16_t i16_retvalInit = HAL::can_configGlobalInit(mui8_busNumber, mui16_bitrate, mc_maskStd.ident(), mc_maskExt.ident(),
                       mc_maskLastmsg.ident());
-
-  #ifdef USE_CAN_EEPROM_EDITOR
-    /* if CAN init with success init CAN EEEditor */
-    if ( ( i16_retvalInit == HAL_NO_ERR) && ( mui8_busNumber == CONFIG_EEPROM_USE_CAN_BUS ) )
-    {
-      uint8_t b_eepromType = Ident_c::ExtendedIdent;
-      HAL::InitEEEditor( CONFIG_EEPROM_USE_CAN_BUS, minReceiveObjNr() - 2,
-          (minReceiveObjNr() - 1), CONFIG_EEPROM_USE_CAN_REC_IDENT, b_eepromType,
-          CONFIG_EEPROM_USE_CAN_BUFFER_SIZE, CONFIG_CAN_SEND_BUFFER_SIZE);
-    }
-  #endif
 
   // check for error state
   if (i16_retvalInit == HAL_RANGE_ERR)
