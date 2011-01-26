@@ -26,7 +26,7 @@ namespace __IsoAgLib {
 void
 IsoRequestPgn_c::init()
 {
-  isoaglib_assert (!mc_subsystemState.initialized);
+  isoaglib_assert (!mc_subsystemState.initialized());
 
   getIsoBusInstance4Comm().insertStandardIsoFilter(*this,(REQUEST_PGN_MSG_PGN | 0xFF),true);
 
