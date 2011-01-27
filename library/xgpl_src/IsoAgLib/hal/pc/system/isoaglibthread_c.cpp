@@ -34,6 +34,9 @@ namespace __IsoAgLib {
 IsoAgLibThread_c::startResult
 IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
 {
+  // make start/stop thread-safe
+  mc_protectAccess.waitAcquireAccess();
+
   // need to save that state before inserting the key!
   const bool cb_wasRunning = isRunning();
 
@@ -47,10 +50,12 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
     { /// was already running before insertion
       if (aui8_busNr == IsoAgLib::getIIsoBusInstance().getBusNumber())
       { // same setup
+        mc_protectAccess.releaseAccess();
         return startSuccess;
       }
       else
       { // different setup
+        mc_protectAccess.releaseAccess();
         return startFailAlreadyStartedWithDifferentSettings;
       }
     }
@@ -71,11 +76,13 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
       mb_requestThreadToStop = false;
       pthread_create (&mthread_core, NULL, thread_core, (void *)this);
 
+      mc_protectAccess.releaseAccess();
       return startSuccess;
     }
   }
   else
   { /// key already registered
+    mc_protectAccess.releaseAccess();
     return startNoActionAlreadyRunningForThisKey;
   }
 }
@@ -84,9 +91,13 @@ IsoAgLibThread_c::start (void *key, uint8_t aui8_busNr)
 IsoAgLibThread_c::stopResult
 IsoAgLibThread_c::stop (void *key)
 {
+  // make start/stop thread-safe
+  mc_protectAccess.waitAcquireAccess();
+
   // erase and check if it was erased or not
   if (mset_keys.erase (key) == 0)
   { /// was not started for this key at all
+    mc_protectAccess.releaseAccess();
     return stopFailNotStartedForThisKey;
   }
   else
@@ -109,6 +120,7 @@ IsoAgLibThread_c::stop (void *key)
       std::cout << "IsoAgLibThread_c::stop - Thread still running, only removed key " << key << "." << std::endl;
 #endif
     }
+    mc_protectAccess.releaseAccess();
     return stopSuccess;
   }
 }
