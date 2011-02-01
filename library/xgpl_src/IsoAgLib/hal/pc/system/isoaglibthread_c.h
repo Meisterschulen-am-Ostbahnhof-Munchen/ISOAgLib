@@ -23,6 +23,7 @@
 
 // IsoAgLib
 #include <IsoAgLib/hal/hal_system.h>
+#include <IsoAgLib/hal/generic_utils/system/mutex_pthread.h>
 
 // system
 #include <pthread.h>
@@ -59,7 +60,8 @@ public:
   }
 private:
   IsoAgLibThread_c()
-    : mthread_core()
+    : mc_protectAccess()
+    , mthread_core()
     , mb_requestThreadToStop (false)
     , mset_keys()
   {} // private c'tor
@@ -111,6 +113,7 @@ private: // methods
   static void* thread_core (void* thread_param);
 
 private: // attributes
+  HAL::ExclusiveAccess_c mc_protectAccess; // make start/stop sequence thread-safe
   pthread_t mthread_core;
   bool mb_requestThreadToStop;
 
