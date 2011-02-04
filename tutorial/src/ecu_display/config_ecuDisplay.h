@@ -14,8 +14,8 @@
 #define HAL_PATH_ISOAGLIB_CAN IsoAgLib/hal/pc/can
 #define HAL_PATH_SUPPLEMENTARY_EEPROM supplementary_driver/hal/pc/eeprom
 #define HAL_PATH_SUPPLEMENTARY_RS232 supplementary_driver/hal/pc/rs232
-#define HAL_PATH_SUPPLEMENTARY_ACTOR supplementary_driver/hal/pc/actor
-#define HAL_PATH_SUPPLEMENTARY_SENSOR supplementary_driver/hal/pc/sensor
+#define HAL_PATH_SUPPLEMENTARY_OUTPUTS supplementary_driver/hal/pc/outputs
+#define HAL_PATH_SUPPLEMENTARY_INPUTS supplementary_driver/hal/pc/inputs
 #define HAL_PATH_SUPPLEMENTARY_DATASTREAMS supplementary_driver/hal/pc/datastreams
 
 
@@ -151,21 +151,6 @@
 
 /// --> discard send-queue and continue without sending.
 // #define CONFIG_CAN_BLOCK_TIME 10
-
-/// YES | NO for EEPROM editor access via CAN
-// #define CONFIG_EEPROM_USE_CAN_EDITOR_YN NO
-
-/// YES | NO for EEPROM editor access via RS232
-// #define CONFIG_EEPROM_USE_RS232_EDITOR_YN NO
-
-/// set CAN Ident_c for filtering out EEEditor msgs
-// #define CONFIG_EEPROM_USE_CAN_REC_IDENT 0x700
-
-/** set CAN BUS number for CAN EEPROM Editor */
-// #define CONFIG_EEPROM_USE_CAN_BUS       0
-
-/** set CAN buffer size for receive and send */
-// #define CONFIG_EEPROM_USE_CAN_BUFFER_SIZE    10
 
 /** set byte-value to retrieve when reading EEPROM out of bounds */
 // #define CONFIG_EEPROM_PADDING_BYTE 0xFF

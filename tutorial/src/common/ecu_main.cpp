@@ -7,6 +7,7 @@
  * The single tutorial-ECUs differ in the
  * implementation of ecuMain() and ecuShutdown() only.
  */
+#include <cstdlib>
 
 #include <IsoAgLib/scheduler/ischeduler_c.h>
 #ifdef USE_EEPROM_IO
@@ -42,7 +43,10 @@ void ecuMainLoop()
 int main( int /* argc */, char** /*argv*/ )
 {
   /// Init Core-ISOAgLib (along with System)
-  IsoAgLib::getISchedulerInstance().init();
+  if (!IsoAgLib::getISchedulerInstance().init()) {
+    isoaglib_assert (!"Couldn't initialize IsoAgLib (System/Scheduler).");
+    return EXIT_FAILURE;
+  }
 
   /// Init Supplementary-ISOAgLib
   #ifdef USE_EEPROM_IO
@@ -62,14 +66,20 @@ int main( int /* argc */, char** /*argv*/ )
   #endif
 
   /// Init Application
-  ecuMain();
+  if (!ecuMain()) {
+    isoaglib_assert (!"Couldn't initialize ECU.");
+    return EXIT_FAILURE;
+  }
 
   /// Keep it running...
   while ( IsoAgLib::iSystem_c::canEn() )
     ecuMainLoop();
 
   /// Shutdown Application
-  ecuShutdown();
+  if (!ecuShutdown()) {
+    isoaglib_assert (!"Couldn't shutdown ECU.");
+    return EXIT_FAILURE;
+  }
 
   /// Shutdown Supplementary-ISOAgLib
   #ifdef USE_RS232
@@ -88,7 +98,7 @@ int main( int /* argc */, char** /*argv*/ )
   /// Shutdown Core-ISOAgLib
   IsoAgLib::getISchedulerInstance().close();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 /* eof ecu_main.cpp */

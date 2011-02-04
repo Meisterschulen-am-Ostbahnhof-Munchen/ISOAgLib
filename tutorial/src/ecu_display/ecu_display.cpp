@@ -109,7 +109,8 @@ bool ecuShutdown() {
   delete p_ident;
   delete p_identDataStorage;
 
-  IsoAgLib::getIIsoBusInstance().close();
+  if (!IsoAgLib::getIIsoBusInstance().close())
+    return false;
 
   return true;
 }

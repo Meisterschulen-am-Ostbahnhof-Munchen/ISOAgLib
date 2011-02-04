@@ -108,9 +108,34 @@ SOCKET_TYPE call_socket(unsigned short portnum)
 
   if ((connectSocket = socket(SOCKET_TYPE_INET_OR_UNIX, SOCK_STREAM, 0)) < 0)   /* get socket */
     return INVALID_SOCKET;
-  if (connect(connectSocket, (struct sockaddr *)&sa, ui32_len) < 0) {                  /* connect */
-    close(connectSocket);
-    return INVALID_SOCKET;
+
+  bool printedRetryMsg = false;
+  while (connect(connectSocket, (struct sockaddr *)&sa, ui32_len) < 0)   /* connect */
+  { // couldn't connect for some reason. why?
+    if (errno == ECONNREFUSED)
+    { // CAN-Server not yet started!
+      if (!printedRetryMsg)
+      { // notify user that can_server needs to be started! (only once)
+        fprintf (stderr,"ISOAgLib CAN-Init: Can't connect to CAN-Server (socket-variant).\n"
+                        "ISOAgLib CAN-Init: Waiting for CAN-Server to be started - Retrying every second...\n");
+        printedRetryMsg = true;
+      }      
+      // wait until can_server may be ready...
+      sleep (1); // 1 second
+    }
+    else
+    { // any other error.
+      fprintf (stderr, "ISOAgLib CAN-Init: Can't connect to CAN-Server (socket-variant).\n");
+      fprintf (stderr, "ISOAgLib CAN-Init: connect: %s\n", strerror(errno));
+      
+      close(connectSocket);
+      return INVALID_SOCKET;
+    }
+  }
+  
+  if (printedRetryMsg)
+  { // if retry was printed, print success, too.
+    printf ("ISOAgLib CAN-Init: Finally connected to CAN-Server. Continuing with application...\n\n");
   }
 
 #endif
@@ -202,10 +227,14 @@ int16_t can_startDriver()
 #endif
 
   i32_commandSocket = call_socket(COMMAND_TRANSFER_PORT);
-
-  // client registration
-  transferBuf_s s_transferBuf;
+  if (i32_commandSocket == INVALID_SOCKET) {
+    return HAL_UNKNOWN_ERR;
+  }
   i32_dataSocket = call_socket(DATA_TRANSFER_PORT);
+  if (i32_dataSocket == INVALID_SOCKET) {
+    close (i32_commandSocket);
+    return HAL_UNKNOWN_ERR;
+  }
 
 #ifdef WIN32
   // Set the socket I/O mode: In this case FIONBIO
@@ -219,6 +248,7 @@ int16_t can_startDriver()
   ioctlsocket(i32_dataSocket, FIONBIO, (unsigned long FAR*) &iMode);
 #endif
 
+  transferBuf_s s_transferBuf;
   s_transferBuf.ui16_command = COMMAND_REGISTER;
   s_transferBuf.s_startTimeClock.t_clock = getStartupTime();
 
@@ -248,8 +278,12 @@ int16_t can_stopDriver()
 
   s_transferBuf.ui16_command = COMMAND_DEREGISTER;
 
-  return send_command(&s_transferBuf, i32_commandSocket);
-
+  int16_t retVal = send_command(&s_transferBuf, i32_commandSocket);
+  
+  close(i32_commandSocket);
+  close(i32_dataSocket);
+  
+  return retVal;
 }
 
 int16_t init_can ( uint8_t bBusNumber,uint16_t wGlobMask,uint32_t dwGlobMask,uint32_t dwGlobMaskLastmsg,uint16_t wBitrate )

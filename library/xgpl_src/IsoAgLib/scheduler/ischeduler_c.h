@@ -69,8 +69,10 @@ namespace IsoAgLib {
 */
 class iScheduler_c : private __IsoAgLib::Scheduler_c {
 public:
-  /** initialisation for the central IsoAgLib object */
-  void init( IsoAgLib::iErrorObserver_c *apc_observer = NULL ) { Scheduler_c::init( apc_observer ); }
+  /** initialisation for the central IsoAgLib object
+      @return true if Scheduler/System could be initialized/opened
+    */
+  bool init( IsoAgLib::iErrorObserver_c *apc_observer = NULL ) { Scheduler_c::init( apc_observer ); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */

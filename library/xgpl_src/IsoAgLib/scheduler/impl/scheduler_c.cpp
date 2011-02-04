@@ -73,7 +73,7 @@ Scheduler_c::Scheduler_c()
 }
 
 
-void
+bool
 Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
 {
   isoaglib_assert (!initialized());
@@ -87,9 +87,12 @@ Scheduler_c::init( IsoAgLib::iErrorObserver_c *apc_observer )
     if (cb_observerRegistered)
       mpc_registeredErrorObserver = apc_observer;
   }
-  getSystemInstance().init();
+  const bool systemInitResult = getSystemInstance().init();
 
+  // either way regardless of result avoid double init!
   setInitialized();
+  
+  return systemInitResult;
 }
 
 

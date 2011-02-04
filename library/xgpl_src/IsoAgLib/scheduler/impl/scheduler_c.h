@@ -55,8 +55,9 @@ public:
 
   /** Initialisation for the central IsoAgLib object
       @param apc_observer Optional pointer to an error-handler
+      @return true if Scheduler/System could be initialized/opened
    */
-  void init( IsoAgLib::iErrorObserver_c *apc_observer = NULL );
+  bool init( IsoAgLib::iErrorObserver_c *apc_observer = NULL );
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close();
