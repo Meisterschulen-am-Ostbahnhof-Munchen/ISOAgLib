@@ -72,7 +72,7 @@ public:
   /** initialisation for the central IsoAgLib object
       @return true if Scheduler/System could be initialized/opened
     */
-  bool init( IsoAgLib::iErrorObserver_c *apc_observer = NULL ) { Scheduler_c::init( apc_observer ); }
+  bool init( IsoAgLib::iErrorObserver_c *apc_observer = NULL ) { return Scheduler_c::init( apc_observer ); }
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown
     */
