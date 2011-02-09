@@ -10,6 +10,7 @@
 #include <cstdlib>
 
 #include <IsoAgLib/scheduler/ischeduler_c.h>
+#include <IsoAgLib/util/iassert.h>
 #ifdef USE_EEPROM_IO
 #  include <supplementary_driver/driver/eeprom/ieepromio_c.h>
 #endif
@@ -22,7 +23,6 @@
 #ifdef USE_RS232
 #  include <supplementary_driver/driver/rs232/irs232io_c.h>
 #endif
-
 
 extern bool ecuMain();
 extern bool ecuShutdown();
