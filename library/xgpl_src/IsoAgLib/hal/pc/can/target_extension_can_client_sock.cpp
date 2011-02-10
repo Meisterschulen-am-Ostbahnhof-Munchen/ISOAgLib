@@ -128,7 +128,7 @@ SOCKET_TYPE call_socket(unsigned short portnum)
       fprintf (stderr, "ISOAgLib CAN-Init: Can't connect to CAN-Server (socket-variant).\n");
       fprintf (stderr, "ISOAgLib CAN-Init: connect: %s\n", strerror(errno));
       
-      close(connectSocket);
+      (void)close(connectSocket);
       return INVALID_SOCKET;
     }
   }
@@ -232,7 +232,11 @@ int16_t can_startDriver()
   }
   i32_dataSocket = call_socket(DATA_TRANSFER_PORT);
   if (i32_dataSocket == INVALID_SOCKET) {
-    close (i32_commandSocket);
+  #ifdef WIN32
+    (void)closesocket (i32_commandSocket);
+  #else
+    (void)close (i32_commandSocket);
+  #endif
     return HAL_UNKNOWN_ERR;
   }
 
@@ -272,16 +276,19 @@ int16_t can_startDriver()
 
 int16_t can_stopDriver()
 {
-  transferBuf_s s_transferBuf;
-
   DEBUG_PRINT("can_stopDriver called\n");
 
+  transferBuf_s s_transferBuf;
   s_transferBuf.ui16_command = COMMAND_DEREGISTER;
-
   int16_t retVal = send_command(&s_transferBuf, i32_commandSocket);
-  
-  close(i32_commandSocket);
-  close(i32_dataSocket);
+
+#ifdef WIN32
+  (void)closesocket (i32_commandSocket);
+  (void)closesocket (i32_dataSocket);
+#else
+  (void)close(i32_commandSocket);
+  (void)close(i32_dataSocket);
+#endif
   
   return retVal;
 }
