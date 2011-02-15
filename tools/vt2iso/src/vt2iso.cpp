@@ -84,6 +84,23 @@ extern BGR_s vtColourTable[256];
 // ### GLOBALS ###
 char iso639table [DEF_iso639entries][2+1] = {{"aa"},{"ab"},{"af"},{"am"},{"ar"},{"as"},{"ay"},{"az"},{"ba"},{"be"},{"bg"},{"bh"},{"bi"},{"bn"},{"bo"},{"br"},{"ca"},{"co"},{"cs"},{"cy"},{"da"},{"de"},{"dz"},{"el"},{"en"},{"eo"},{"es"},{"et"},{"eu"},{"fa"},{"fi"},{"fj"},{"fo"},{"fr"},{"fy"},{"ga"},{"gd"},{"gl"},{"gn"},{"gu"},{"ha"},{"hi"},{"hr"},{"hu"},{"hy"},{"ia"},{"ie"},{"ik"},{"in"},{"is"},{"it"},{"iw"},{"ja"},{"ji"},{"jw"},{"ka"},{"kk"},{"kl"},{"km"},{"kn"},{"ko"},{"ks"},{"ku"},{"ky"},{"la"},{"ln"},{"lo"},{"lt"},{"lv"},{"mg"},{"mi"},{"mk"},{"ml"},{"mn"},{"mo"},{"mr"},{"ms"},{"mt"},{"my"},{"na"},{"ne"},{"nl"},{"no"},{"oc"},{"om"},{"or"},{"pa"},{"pl"},{"ps"},{"pt"},{"qu"},{"rm"},{"rn"},{"ro"},{"ru"},{"rw"},{"sa"},{"sd"},{"sg"},{"sh"},{"si"},{"sk"},{"sl"},{"sm"},{"sn"},{"so"},{"sq"},{"sr"},{"ss"},{"st"},{"su"},{"sv"},{"sw"},{"ta"},{"te"},{"tg"},{"th"},{"ti"},{"tk"},{"tl"},{"tn"},{"to"},{"tr"},{"ts"},{"tt"},{"tw"},{"uk"},{"ur"},{"uz"},{"vi"},{"vo"},{"wo"},{"xh"},{"yo"},{"zh"},{"zu"}};
 
+std::string escapedString (const std::string &instr)
+{
+  std::string outstr;
+  for (unsigned i=0; i<instr.length(); ++i)
+  {
+    switch (instr[i])
+    {
+    case '"':
+    case '\\': outstr += '\\'; outstr += instr[i]; break;
+    case '\n': outstr += "\\n"; break;
+    case '\r': outstr += "\\r"; break;
+    default: outstr += instr[i]; break;
+    }
+  }
+  return outstr;
+}
+
 #define X(str) XStr(str).unicodeForm()
 // ---------------------------------------------------------------------------
 //  This is a simple class that lets us do easy (though not terribly efficient)
@@ -2957,11 +2974,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cerr << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND enabled = ATTRIBUTES FOR THE <inputstring> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
-            if (!copyWithQuoteAndLength (tempString, arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrLength].getIntValue()))
+            if (!copyWithQuoteAndLength (tempString, escapedString(arrc_attributes [attrValue].get()).c_str(), arrc_attributes [attrLength].getIntValue()))
             {
               return false;
             }
-            arrc_attributes [attrValue].set( tempString); //str(format("%s") % tempString.c_str());
+            arrc_attributes [attrValue].set(tempString);
           }
           signed int retEnabled = booltoi( arrc_attributes [attrEnabled].get().c_str());
           signed int retHorJustification = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
@@ -3113,11 +3130,11 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
               std::cout << "YOU NEED TO SPECIFY THE width= AND height= AND font_attributes= AND length= ATTRIBUTES FOR THE <outputstring> OBJECT '" << m_objName << "'! STOPPING PARSER! bye."<<std::endl<<std::endl;
               return false;
             }
-            if (!copyWithQuoteAndLength (tempString, arrc_attributes [attrValue].get().c_str(), arrc_attributes [attrLength].getIntValue()))
+            if (!copyWithQuoteAndLength (tempString, escapedString(arrc_attributes [attrValue].get()).c_str(), arrc_attributes [attrLength].getIntValue()))
             {
               return false;
             }
-            arrc_attributes [attrValue].set(str(format("%s") % tempString.c_str()));
+            arrc_attributes [attrValue].set( tempString );
           }
           signed int retHorJust = horizontaljustificationtoi (arrc_attributes [attrHorizontal_justification].get().c_str());
           if (retHorJust == -1)
