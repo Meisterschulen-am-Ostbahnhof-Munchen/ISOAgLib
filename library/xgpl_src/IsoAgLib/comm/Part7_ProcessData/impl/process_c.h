@@ -470,13 +470,6 @@ private: // Private attributes
           ab_isGlobal);
     }
 
-#if defined(ALLOW_PROPRIETARY_MESSAGES_ON_STANDARD_PROTOCOL_CHANNEL)
-    virtual bool isProprietaryMessageOnStandardizedCan() const
-    {
-      return mrt_owner.isProprietaryMessageOnStandardizedCan();
-    }
-#endif
-
     // CanCustomerProxy_c shall not be copyable. Otherwise the
     // reference to the containing object would become invalid.
     CanCustomerProxy_c(CanCustomerProxy_c const &);
