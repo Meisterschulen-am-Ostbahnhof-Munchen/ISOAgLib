@@ -31,7 +31,7 @@
 #	endif
 #	if !defined(_TCHAR_DEFINED)
 #		define _TCHAR_DEFINED
-#		if !defined(_UNICODE) && !defined(UNICODE)
+#		if !defined(ISOAGLIB_USE_UNICODE)
 #			define TCHAR char    	// ASCII
 #		else
 #			define TCHAR wchar_t	// Unicode
@@ -47,7 +47,7 @@
 #		pragma warning(disable:4005)
 #	endif
 #	if !defined(TEXT)
-#		if !defined(_UNICODE) && !defined(UNICODE)
+#		if !defined(ISOAGLIB_USE_UNICODE)
 #			define TEXT(s) s		// ASCII
 #		else
 #			define TEXT(s) L##s		// Unicode
@@ -55,7 +55,7 @@
 #	endif
 
 	
-#if !defined(_UNICODE) && !defined(UNICODE)
+#if !defined(ISOAGLIB_USE_UNICODE)
 #	define STD_TSTRING	std::string
 #else
 #	define STD_TSTRING	std::wstring
@@ -65,7 +65,7 @@
 // define string functions for (non) unicode handling
 //
 
-#if defined(_UNICODE) || defined(UNICODE)
+#if defined(ISOAGLIB_USE_UNICODE)
 #	define STRLEN  wcslen
 #	define STRCHR  wcschr
 #	define STRRCHR wcsrchr
@@ -84,7 +84,7 @@
 #endif
 
 
-#if defined(WIN32) && defined(UNICODE)
+#if defined(WIN32) && defined(ISOAGLIB_USE_UNICODE)
 #	include <windows.h>
 #	if defined(__WXMSW__)
 #		undef Yield		// only a 16-bit compatibility function
@@ -108,6 +108,6 @@
 		MultiByteToWideChar( cp, 0, lpStr, -1, lpwStr, size );
 		return true;
 	}
-#endif // WIN32 && UNICODE
+#endif // WIN32 && ISOAGLIB_USE_UNICODE
 
 #endif	//__UNICODE_HELPER_H__

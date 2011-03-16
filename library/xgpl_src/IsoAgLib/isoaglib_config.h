@@ -763,11 +763,10 @@
 /** define the debug device to use */
 #ifndef INTERNAL_DEBUG_DEVICE
 #  ifdef SYSTEM_PC
-
 #    include <iostream>
 #    include <fstream>
 #    include "stdio.h"
-#    ifndef UNICODE
+#    ifndef ISOAGLIB_USE_UNICODE
 #      define INTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
 #      define INTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
 #    else
@@ -788,7 +787,7 @@ struct NullOut_s {
 }
 #      define INTERNAL_DEBUG_DEVICE (::__IsoAgLib::NullOut_s())
 #    endif
-#    ifndef UNICODE
+#    ifndef ISOAGLIB_USE_UNICODE
 #      define INTERNAL_DEBUG_DEVICE_ENDL "\r\n"
 #      define INTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
 #    else
@@ -803,7 +802,7 @@ struct NullOut_s {
 #  ifdef SYSTEM_PC
 #    include <iostream>
 #    include <fstream>
-#    ifndef UNICODE
+#    ifndef ISOAGLIB_USE_UNICODE
 #      define EXTERNAL_DEBUG_DEVICE STL_NAMESPACE::cout
 #      define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
 #    else
@@ -814,7 +813,7 @@ struct NullOut_s {
 #    define EXTERNAL_DEBUG_FLUSH fflush(0);
 #  else
 #    define EXTERNAL_DEBUG_DEVICE IsoAgLib::getIrs232Instance()
-#    ifndef UNICODE
+#    ifndef ISOAGLIB_USE_UNICODE
 #      define EXTERNAL_DEBUG_DEVICE_ENDL "\r\n"
 #      define EXTERNAL_DEBUG_DEVICE_NEWLINE "\r\n"
 #    else
