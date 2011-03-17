@@ -13,7 +13,6 @@
 */
 
 //#define GET_VERSIONS
-//#define USE_SIMPLE_AUX_RESPONSE
 
 
 #include "vtclientservercommunication_c.h"
@@ -1024,7 +1023,7 @@ VtClientServerCommunication_c::storeAuxAssignment()
         return true;
       }
     }
-    it++;
+    ++it;
   }
 
   // Function not found, so we need to add (in case it was NOT an unassignment)
@@ -1201,7 +1200,7 @@ VtClientServerCommunication_c::processMsg()
       bool const cb_assignmentOkay = storeAuxAssignment();
 
       if (cb_assignmentOkay)
-      { /// For now simply respond without doing anything else with this information. simply ack the assignment!
+      { // respond if it was a valid assignment...
         mc_data.setIsoPgn (ECU_TO_VT_PGN);
         mc_data.setIsoSa (mrc_wsMasterIdentItem.getIsoItem()->nr());
         mc_data.setIsoPs (mpc_vtServerInstance->getVtSourceAddress());
