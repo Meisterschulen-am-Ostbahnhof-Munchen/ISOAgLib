@@ -43,6 +43,9 @@
   #endif
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 #if DEBUG_HEAP_USEAGE
   static uint16_t sui16_lastPrintedSendUploadQueueSize = 0;
@@ -354,7 +357,7 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   , mui32_uploadTimeout (0) // will be set when needed
   , mui8_commandParameter (0) // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   , mui8_uploadError (0) // only valid in OPCannotBeUploaded case
-  , men_sendSuccess (__IsoAgLib::MultiSend_c::SendSuccess)
+  , men_sendSuccess (__IsoAgLib::SendStream_c::SendSuccess)
   , mui16_inputStringId (0xFFFF) // will be set when first chunk is received
   , mui8_inputStringLength (0) // will be set when first chunk is received
   , mi32_nextWsMaintenanceMsg (-1)
@@ -467,14 +470,14 @@ VtClientServerCommunication_c::checkPoolPhaseRunningMultiSend()
 {
   switch (men_sendSuccess)
   {
-    case __IsoAgLib::MultiSend_c::Running:
+    case __IsoAgLib::SendStream_c::Running:
     { // do nothing, still wait.
     } break;
-    case __IsoAgLib::MultiSend_c::SendAborted:
+    case __IsoAgLib::SendStream_c::SendAborted:
     { // aborted sending - re-send the current stream (partial OP)
       startCurrentUploadPhase();
     } break;
-    case __IsoAgLib::MultiSend_c::SendSuccess:
+    case __IsoAgLib::SendStream_c::SendSuccess:
     { // see what part we just finished
       indicateUploadPhaseCompletion(); // may complete the upload or switch to the next phase
     } break;
@@ -568,7 +571,7 @@ VtClientServerCommunication_c::startCurrentUploadPhase()
     mrc_wsMasterIdentItem.isoName(),
     mpc_vtServerInstance->getIsoName(),
     streamer,
-    ECU_TO_VT_PGN, men_sendSuccess);
+    ECU_TO_VT_PGN, men_sendSuccess, NULL);
 }
 
 
@@ -842,18 +845,18 @@ VtClientServerCommunication_c::timeEvent(void)
       // "normal" command
       switch (men_sendSuccess)
       {
-      case __IsoAgLib::MultiSend_c::SendAborted:
+      case __IsoAgLib::SendStream_c::SendAborted:
         /// Note: The behavior of what to do seems to be not really specified in ISO11783-3.
         // If aborted, retry regardless of any application-logic-retry, as it was a multisend problem, not a problem of the command itself!
         startUploadCommand();
         break;
 
-      case __IsoAgLib::MultiSend_c::Running:
+      case __IsoAgLib::SendStream_c::Running:
         // increase sent time-stamp, so it matches best the time when the multisend has finished sending, so that the timeout counts from that time on!
         mui32_uploadTimestamp = HAL::getTime();
         break;
 
-      case __IsoAgLib::MultiSend_c::SendSuccess: // no break, handle along with default: wait for response!
+      case __IsoAgLib::SendStream_c::SendSuccess: // no break, handle along with default: wait for response!
         // won't reach here when "Running", as timestamp is getting get to now above!
         // Waiting for an answer now... Did it time out?
         if (((uint32_t) HAL::getTime()) > (mui32_uploadTimeout + mui32_uploadTimestamp))
@@ -1434,7 +1437,7 @@ VtClientServerCommunication_c::processMsg()
   {
     if (men_uploadType == UploadCommand)
     { /* if Waiting or Timedout (or Failed <shouldn't happen>) */
-      if (men_sendSuccess == __IsoAgLib::MultiSend_c::SendSuccess)
+      if (men_sendSuccess == __IsoAgLib::SendStream_c::SendSuccess)
       { /// Our command was successfully sent & responded to, so remove it from the queue
         if (mui8_commandParameter == arrui8_canData [0])
         { /* okay, right response for our current command! */
@@ -2563,7 +2566,7 @@ VtClientServerCommunication_c::startUploadCommand()
       // Save first byte for Response-Checking!
       mui8_commandParameter = actSend->vec_uploadBuffer [0];
 
-      men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+      men_sendSuccess = __IsoAgLib::SendStream_c::SendSuccess; // as it has been sent out right now.
       b_return = true;
     }
   }
@@ -2580,7 +2583,7 @@ VtClientServerCommunication_c::startUploadCommand()
     // Save first byte for Response-Checking!
     mui8_commandParameter = actSend->mssObjectString->getStreamer()->getFirstByte();
 
-    men_sendSuccess = __IsoAgLib::MultiSend_c::SendSuccess; // as it has been sent out right now.
+    men_sendSuccess = __IsoAgLib::SendStream_c::SendSuccess; // as it has been sent out right now.
     b_return = true;
   }
   else if (actSend->mssObjectString == NULL)
@@ -2590,7 +2593,7 @@ VtClientServerCommunication_c::startUploadCommand()
 
     b_return = getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
       mpc_vtServerInstance->getIsoName(), &actSend->vec_uploadBuffer.front(),
-      actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, men_sendSuccess);
+      actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, men_sendSuccess, NULL);
   }
   else
   {
@@ -2599,7 +2602,7 @@ VtClientServerCommunication_c::startUploadCommand()
 
     b_return = getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
       mpc_vtServerInstance->getIsoName(), (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
-      ECU_TO_VT_PGN, men_sendSuccess);
+      ECU_TO_VT_PGN, men_sendSuccess, NULL);
   }
 
   // Set time-out values

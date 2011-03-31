@@ -517,7 +517,7 @@ private:
   uint8_t mui8_commandParameter; // this is kinda used as a cache only, because it's a four-case if-else to get the first byte!
   uint8_t mui8_uploadError;
 
-  MultiSend_c::sendSuccess_t men_sendSuccess;
+  SendStream_c::sendSuccess_t men_sendSuccess;
 
   uint16_t mui16_inputStringId;
   uint8_t mui8_inputStringLength;

@@ -575,7 +575,7 @@ comm_features()
         fi
     fi
     if [ "$PRJ_ISO11783" -gt 0 ]; then
-        printf '%s' " -o -path '*/i*isobus_c.*' -o -path '*i*proprietarybus_c.*' -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'" >&3
+        printf '%s' " -o -path '*/i*isobus_c.*' -o -path '*i*proprietarybus_c.*' -o -path '*/Part3_DataLink/i*multi*' -o -path '*/Part3_DataLink/impl/sendstream_c.*' -o -path '*/Part3_DataLink/impl/stream_c.*' -o -path '*/Part3_DataLink/istream_c.*' -o -path '*/supplementary_driver/driver/datastreams/streaminput_c.h'  -o -path '*/IsoAgLib/convert.h'" >&3
         if [ "$PRJ_MULTIPACKET_STREAM_CHUNK" -gt 0 ]; then
             printf '%s' " -o -path '*/Part3_DataLink/impl/streamchunk_c.*' -o -path '*/Part3_DataLink/impl/chunk_c.*'" >&3
         else
@@ -931,7 +931,7 @@ prepare_feature_partitions()
     add_feature_partition_rule PRJ_ISO_TERMINAL '.*/Part6_VirtualTerminal_Client/'
     add_feature_partition_rule PRJ_DATASTREAMS '.*/driver/datastreams/volatilememory_c\.[^/]*$'
     add_feature_partition_rule PRJ_MULTIPACKET_STREAM_CHUNK '.*/Part3_DataLink/impl/streamchunk_c\.[^/]*$'
-    add_feature_partition_rule PRJ_ISO11783 '.*/Part3_DataLink/i.*multi.*\|.*/Part3_DataLink/impl/stream_c\.[^/]*$\|.*/Part3_DataLink/istream_c\.[^/]*$\|.*/supplementary_driver/driver/datastreams/streaminput_c\.h\|.*/IsoAgLib/convert\.h'
+    add_feature_partition_rule PRJ_ISO11783 '.*/Part3_DataLink/i.*multi.*\|.*/Part3_DataLink/impl/sendstream_c\.[^/]*$\|.*/Part3_DataLink/impl/stream_c\.[^/]*$\|.*/Part3_DataLink/istream_c\.[^/]*$\|.*/supplementary_driver/driver/datastreams/streaminput_c\.h\|.*/IsoAgLib/convert\.h'
 
     # DRIVER features:
     add_feature_partition_rule PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL '.*/hal/generic_utils/can/\|.*/driver/can/'

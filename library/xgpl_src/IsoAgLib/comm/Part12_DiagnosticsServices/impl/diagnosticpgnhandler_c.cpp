@@ -87,7 +87,7 @@ DiagnosticPgnHandler_c::close()
 
 bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver )
 { // ~X2C
-  static MultiSend_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
+  static SendStream_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
   if ( !mrc_identItem.isClaimedAddress() ) return false;
   if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) ) return false; // request not adressed to us!
 
@@ -100,7 +100,8 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             m_certification,
             8,
             ISOBUS_CERTIFICATION_PGN,
-            st_sendSuccessDONTCAREFOR ) )
+            st_sendSuccessDONTCAREFOR,
+            NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ISOBUS_CERTIFICATION " << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -120,7 +121,8 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             diagProtocolId,
             8,
             ECU_DIAGNOSTIC_PROTOCOL_PGN,
-            st_sendSuccessDONTCAREFOR ) )
+            st_sendSuccessDONTCAREFOR,
+            NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL: first byte (diag protocol id) is " << uint16_t (diagProtocolId[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -136,7 +138,8 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             (uint8_t *) mcstr_SwIdentification,
             getCStringLength (mcstr_SwIdentification),
             SOFTWARE_IDENTIFICATION_PGN,
-            st_sendSuccessDONTCAREFOR ) )
+            st_sendSuccessDONTCAREFOR,
+            NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PGN: " << mcstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -152,7 +155,8 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             (uint8_t *) mcstr_EcuIdentification,
             getCStringLength (mcstr_EcuIdentification),
             ECU_IDENTIFICATION_INFORMATION_PGN,
-            st_sendSuccessDONTCAREFOR ) )
+            st_sendSuccessDONTCAREFOR,
+            NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN: " << mcstr_EcuIdentification << INTERNAL_DEBUG_DEVICE_ENDL;

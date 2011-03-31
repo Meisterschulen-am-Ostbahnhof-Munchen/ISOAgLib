@@ -50,6 +50,9 @@ library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/sendstream_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/sendstream_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/stream_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/streamchunk_c.cpp -text
