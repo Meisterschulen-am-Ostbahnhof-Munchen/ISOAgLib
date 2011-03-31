@@ -32,6 +32,7 @@ IdentItem_c::~IdentItem_c()
 {
   isoaglib_assert (mpc_diagnosticPgnHandler);
   delete mpc_diagnosticPgnHandler;
+  if (mpc_diagnosticsServices) delete mpc_diagnosticsServices;
 }
 
 
@@ -41,6 +42,7 @@ IdentItem_c::IdentItem_c ()
   , mpc_dataStorageHandler(NULL)
   , mui8_sa(0x0)
   , mpc_diagnosticPgnHandler (NULL)
+  , mpc_diagnosticsServices (NULL)
 #ifdef USE_WORKING_SET
   , mpvec_slaveIsoNames (NULL)
 #endif
@@ -49,15 +51,17 @@ IdentItem_c::IdentItem_c ()
 
 {
   mpc_diagnosticPgnHandler = new DiagnosticPgnHandler_c(*this);
+
   isoaglib_assert(mpc_diagnosticPgnHandler);
 }
 
 
 void
-IdentItem_c::init ( const IsoName_c& arc_isoNameParam, IsoAgLib::iIdentDataStorage_c& apc_claimDataStorage
-  #ifdef USE_WORKING_SET
-  ,int8_t ai8_slaveCount, const IsoName_c* apc_slaveIsoNameList
-  #endif
+IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
+                    IsoAgLib::iIdentDataStorage_c& apc_claimDataStorage,
+                    bool ab_enablediagnosticsServices,
+                    int8_t ai8_slaveCount,
+                    const IsoName_c* apc_slaveIsoNameList
   )
 {
   /// Check if Item was already properly initialized
@@ -104,8 +108,20 @@ IdentItem_c::init ( const IsoName_c& arc_isoNameParam, IsoAgLib::iIdentDataStora
       }
     }
   }
+#else
+  // avoid warning
+  (void) apc_slaveIsoNameList;
+  (void) ai8_slaveCount;
+  isoaglib_assert (ai8_slaveCount == -1);
+  isoaglib_assert (apc_slaveIsoNameList == NULL);
 #endif
   mb_readyForActivation = true;
+
+  if (ab_enablediagnosticsServices)
+  {
+    mpc_diagnosticsServices = new DiagnosticsServices_c(*this);
+    if (mpc_dataStorageHandler) mpc_dataStorageHandler->loadDtcs(mpc_diagnosticsServices->getDtcContainer());
+  }
 }
 
 
@@ -124,6 +140,7 @@ IdentItem_c::activate (int ai_multitonInst)
     // The Diagnostics Handler needs to be created on Construction!
     isoaglib_assert (mpc_diagnosticPgnHandler);
     mpc_diagnosticPgnHandler->init();
+    if (mpc_diagnosticsServices) mpc_diagnosticsServices->init();
     return true;
   }
   else
@@ -140,6 +157,11 @@ IdentItem_c::deactivate()
   goOffline (true);
 
   mpc_diagnosticPgnHandler->close();
+  if (mpc_diagnosticsServices)
+  {
+    if (mpc_dataStorageHandler) mpc_dataStorageHandler->storeDtcs(mpc_diagnosticsServices->getDtcContainer());
+    mpc_diagnosticsServices->close();
+  }
 
   // if we have a list of slaves, then
 #ifdef USE_WORKING_SET

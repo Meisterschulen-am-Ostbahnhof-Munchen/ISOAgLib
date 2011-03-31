@@ -29,8 +29,14 @@ doc/index.html -text
 doc/stylesheet.css -text
 doc/txt/impressum.txt -text
 library/commercial_BIOS/readme.txt -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticstypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticsservices_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/dtccontainer_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsclient_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsclientservercommunication_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/ifsmanager_c.h -text

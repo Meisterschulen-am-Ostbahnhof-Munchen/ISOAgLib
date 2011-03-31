@@ -630,6 +630,23 @@
 // e.g. #include <MaskDefinition/IsoTerminalObjectSelection.inc>
 #endif
 
+/**
+  * @def CONFIG_MAX_ACTIVE_DTCS && CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS
+  * use to define number of DTC to be registered for DM1 and DM2 diagnostic services
+  * max value for CONFIG_MAX_ACTIVE_DTCS is 32
+  * max value for CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS is 445
+  */
+#ifndef CONFIG_MAX_ACTIVE_DTCS
+#  define  CONFIG_MAX_ACTIVE_DTCS 32
+#endif
+#ifndef CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS
+#  define  CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS 445
+#endif
+
+// absolute limit CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS due to TP max size
+#if CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS > 445
+#error CONFIG_MAX_PREVIOUSLY_ACTIVE_DTCS should not extend 445
+#endif
 
 /* ******************************************************** */
 /**

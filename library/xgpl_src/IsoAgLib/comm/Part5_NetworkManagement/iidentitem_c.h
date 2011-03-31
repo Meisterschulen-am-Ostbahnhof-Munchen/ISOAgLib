@@ -20,6 +20,8 @@
 #include "iisoitem_c.h"
 #include "iisoname_c.h"
 
+#include <IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h>
+
 namespace __IsoAgLib {
   class IsoTerminal_c;
   class DevPropertyHandler_c;
@@ -50,6 +52,18 @@ class iIdentDataStorage_c {
         @param a_sa SA to store for next power cycle
       */
     virtual void storeSa( const uint8_t a_sa ) = 0;
+
+    /** Application needs to fill in the stored DTCs. Note that all entries are disabled at
+        default, so only fields with registered DTCs need to be filled in.
+        @param arr_dtc
+      */
+    virtual void loadDtcs( __IsoAgLib::DtcContainer_c &arc_dtcContainer ) = 0;
+
+    /** Application needs to store all registered DTCs from the list.
+        All entries with "ui32_spn == spiNone" can be omitted.
+        @param arr_dtc
+      */
+    virtual void storeDtcs( const __IsoAgLib::DtcContainer_c &arc_dtcContainer ) = 0;
 };
 
 /**
@@ -75,24 +89,26 @@ class iIdentItem_c : private __IsoAgLib::IdentItem_c  {
 public:
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
       @param arc_isoname          proper initialized isoname for this identification
-      @param apc_claimDataStorage pointer to claim data storage handler (default 0, disabled)
-      @param ai8_slaveCount       amount of attached slave devices; default -1 == no master state;
+      @param arc_dataStorage      ident data storage handler implementation of iIdentDataStorage_c
+      @param ab_enablediagnosticsServices enable or disable diagnostics services manager
+      @param ai8_slaveCount       amount of attached slave devices; -1 == no master state, >= 0 is master
                                   in case an address claim for the slave devices shall be sent by this ECU, they
-                                  must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
+                                  must get their own IdentItem_c instance ( then with value -1 for ai8_slaveCount )
       @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
     */
-  void init( const iIsoName_c& arc_isoname, iIdentDataStorage_c& arc_storageHandler
-    #ifdef USE_WORKING_SET
-    ,int8_t ai8_slaveCount = -1, const iIsoName_c* apc_slaveIsoNameList = NULL
-    #endif
+  void init( const iIsoName_c& arc_isoname,
+             iIdentDataStorage_c& arc_storageHandler,
+             bool ab_enablediagnosticsServices,
+             int8_t ai8_slaveCount,
+             const iIsoName_c* apc_slaveIsoNameList
     )
   {
-    IdentItem_c::init ( arc_isoname, arc_storageHandler
-                       #ifdef USE_WORKING_SET
-                       ,ai8_slaveCount, apc_slaveIsoNameList
-                       #endif
-                       );
+    IdentItem_c::init ( arc_isoname,
+                        arc_storageHandler,
+                        ab_enablediagnosticsServices,
+                        ai8_slaveCount,
+                        apc_slaveIsoNameList);
   }
 
 
@@ -166,6 +182,14 @@ public:
         aui16_laboratoryId,
         acrc_certificationBitMask,
         aui16_referenceNumber);
+  }
+
+  //! Get Diagnostics Services manager
+  //! @return a valid pointer if the Diagnostics Services is defined 
+  //!         a NULL pointer otherwise
+  iDiagnosticsServices_c* getIdiagnosticsServices()
+  {
+    return static_cast<iDiagnosticsServices_c*>(IdentItem_c::getDiagnosticsServices());
   }
 
   /// Using the singletonVecKey from internal class

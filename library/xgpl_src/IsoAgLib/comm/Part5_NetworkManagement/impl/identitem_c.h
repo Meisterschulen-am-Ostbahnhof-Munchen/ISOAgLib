@@ -30,6 +30,8 @@ namespace IsoAgLib {
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
+  class DiagnosticsServices_c;
+
 /**
   class for identity/ies (Control Function(s)) which are managed by the actual ECU;
   new instances start in prepare address claim state and stay there for a random and serialNo dependent time;
@@ -55,20 +57,12 @@ public: // methods
   /** default constructor */
   IdentItem_c ();
 
-  /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
-      @param arc_isoNameParam     ISONAME parameter for this ident instance
-      @param arc_dataStorage      ident data storage handler implementation of iIdentDataStorage_c
-      @param ai8_slaveCount       amount of attached slave devices; default 0 == master;
-                                  in case an address claim for the slave devices shall be sent by this ECU, they
-                                  must get their own IdentItem_c instance ( then with default value -1 for ai8_slaveCount )
-      @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
-                                  IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
-    */
-  void init ( const IsoName_c& arc_isoNameParam, IsoAgLib::iIdentDataStorage_c& arc_dataStorage
-    #ifdef USE_WORKING_SET
-    ,int8_t ai8_slaveCount = 0, const IsoName_c* apc_slaveIsoNameList = NULL
-    #endif
-  );
+  // see interface
+  void init ( const IsoName_c& arc_isoNameParam,
+              IsoAgLib::iIdentDataStorage_c& arc_dataStorage,
+              bool ab_enablediagnosticsServices,
+              int8_t ai8_slaveCount,
+              const IsoName_c* apc_slaveIsoNameList);
 
 
   /** IsoMonitor uses this function to activate/start this Item
@@ -196,6 +190,8 @@ public: // methods
     return mpc_diagnosticPgnHandler->setSwIdentification( acstr_partNbr );
   }
 
+  DiagnosticsServices_c* getDiagnosticsServices() { return mpc_diagnosticsServices; }
+
   //! Setter for the different certification message fields
   //! Parameter:
   //! @param ui16_year Certification year as in ISO 11783-7 A.29.1, must be between 2000 and 2061
@@ -290,6 +286,8 @@ private: // attributes
 
   /** Diagnostic PGN handler */
   DiagnosticPgnHandler_c* mpc_diagnosticPgnHandler;
+  /** Diagnostics Services handler */
+  DiagnosticsServices_c* mpc_diagnosticsServices;
 
   #ifdef USE_WORKING_SET
   /** pointer to a list of all slave nodes represented by their ISO-Name
