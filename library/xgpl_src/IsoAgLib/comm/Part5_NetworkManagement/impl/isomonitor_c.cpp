@@ -35,6 +35,10 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
+
 /** this define controls the time interval between regular SA requests on the bus
  *  (set to 0 to stop any periodic SA requests)
  */
@@ -589,7 +593,7 @@ IsoItem_c* IsoMonitor_c::insertIsoMember(const IsoName_c& acrc_isoName,
   if (ab_announceAddition)
   { // immediately announce addition.
     // only not do this if you insert a local isoitem that is in state "AddressClaim" - it will be done there if it changes its state to "ClaimedAddress".
-    getIsoMonitorInstance4Comm().broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *pc_result);
+    broadcastIsoItemModification2Clients (ControlFunctionStateHandler_c::AddToMonitorList, *pc_result);
   }
 #if DEBUG_HEAP_USEAGE
   sui16_isoItemTotal++;

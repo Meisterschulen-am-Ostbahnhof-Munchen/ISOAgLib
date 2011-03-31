@@ -16,6 +16,9 @@
 #include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/util/iassert.h>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 namespace __IsoAgLib {
 

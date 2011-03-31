@@ -23,6 +23,9 @@
 #include <IsoAgLib/comm/Part3_DataLink/impl/stream_c.h>
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

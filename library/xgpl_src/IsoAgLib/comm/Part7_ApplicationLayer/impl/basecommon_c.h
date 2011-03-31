@@ -22,6 +22,11 @@
 #include <IsoAgLib/comm/Part7_ApplicationLayer/ibasetypes.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4355 )
+#endif
+
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib
 {
@@ -358,5 +363,9 @@ namespace __IsoAgLib
   };
 
 }// end namespace __IsoAgLib
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
 
 #endif

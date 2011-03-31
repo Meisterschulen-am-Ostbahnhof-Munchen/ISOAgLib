@@ -29,6 +29,9 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
 
 namespace __IsoAgLib {
 

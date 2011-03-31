@@ -35,6 +35,9 @@
   #endif
 #endif
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
 
 const float gcf_rapidUpdateFilter = 0.15f;  // 15% new, 85%old to filter the update time.
 

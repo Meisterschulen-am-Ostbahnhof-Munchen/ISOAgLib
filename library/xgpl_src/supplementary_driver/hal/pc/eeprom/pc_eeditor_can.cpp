@@ -17,6 +17,10 @@
 #include <cstdio>
 //typedef char int8_t;
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4996 )
+#endif
+
 namespace __HAL {
 
 int16_t iInitEEEditor(  uint8_t bBus,
@@ -75,7 +79,7 @@ int16_t iInitEEEditor(  uint8_t bBus,
       break;
     case 'c':
       sscanf(pcVal, "%hd", &iVal);
-      cVal = iVal;
+      cVal = static_cast<int8_t>(iVal);
       printf("EEprom Editor int8_t %c and Addresse %d\n", cVal, wAddress);
       eepromWrite(wAddress, 1, (const uint8_t*)&cVal);
       break;

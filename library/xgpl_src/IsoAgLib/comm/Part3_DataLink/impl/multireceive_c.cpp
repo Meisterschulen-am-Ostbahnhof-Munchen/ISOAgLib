@@ -29,7 +29,9 @@
   #endif
 #endif
 
-
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 // helper macros
 #define MACRO_pgnFormatOfPGN(mpPgn)     ((mpPgn>>8) & 0xFF)
