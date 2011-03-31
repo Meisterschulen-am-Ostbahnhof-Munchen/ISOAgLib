@@ -60,9 +60,9 @@ public: // methods
   // see interface
   void init ( const IsoName_c& arc_isoNameParam,
               IsoAgLib::iIdentDataStorage_c& arc_dataStorage,
-              bool ab_enablediagnosticsServices,
               int8_t ai8_slaveCount,
-              const IsoName_c* apc_slaveIsoNameList);
+              const IsoName_c* apc_slaveIsoNameList,
+              bool ab_enablediagnosticsServices);
 
 
   /** IsoMonitor uses this function to activate/start this Item

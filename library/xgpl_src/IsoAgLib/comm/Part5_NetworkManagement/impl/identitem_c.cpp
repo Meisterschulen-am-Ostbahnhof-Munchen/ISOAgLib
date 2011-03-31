@@ -59,9 +59,9 @@ IdentItem_c::IdentItem_c ()
 void
 IdentItem_c::init ( const IsoName_c& arc_isoNameParam,
                     IsoAgLib::iIdentDataStorage_c& apc_claimDataStorage,
-                    bool ab_enablediagnosticsServices,
                     int8_t ai8_slaveCount,
-                    const IsoName_c* apc_slaveIsoNameList
+                    const IsoName_c* apc_slaveIsoNameList,
+                    bool ab_enablediagnosticsServices
   )
 {
   /// Check if Item was already properly initialized

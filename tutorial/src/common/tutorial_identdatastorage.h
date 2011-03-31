@@ -27,6 +27,15 @@ namespace IsoAgLibTutorial {
         _storeSa(a_sa);
       }
 
+      void loadDtcs( __IsoAgLib::DtcContainer_c &arc_dtcContainer )
+      {
+        _loadDtcs(arc_dtcContainer);
+      }
+      void storeDtcs( const __IsoAgLib::DtcContainer_c &arc_dtcContainer )
+      {
+        _storeDtcs(arc_dtcContainer);
+      }
+
     private:
       static const uint32_t m_eepromMagicPattern = 0x150a61b;
       static const uint8_t m_defaultSa = 0x80;
@@ -39,6 +48,9 @@ namespace IsoAgLibTutorial {
       uint8_t _loadSa();
       //! protected implementation for storing the source address
       void _storeSa(const uint8_t a_sa);
+
+      void _loadDtcs( __IsoAgLib::DtcContainer_c &arc_dtcContainer );
+      void _storeDtcs( const __IsoAgLib::DtcContainer_c &arc_dtcContainer );
 
 #ifdef USE_EEPROM_IO
       IsoAgLibTutorial::TutorialEeprom_c mc_eeprom;

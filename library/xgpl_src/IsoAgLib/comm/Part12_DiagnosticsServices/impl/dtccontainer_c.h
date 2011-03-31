@@ -68,7 +68,7 @@ public:
     }
 
     // Special SPN scui32_spiNone indicates empty-placeholder
-    static const int spiNone = 0xFFFFFFFF;
+    static const uint32_t spiNone = 0xFFFFFFFF;
 
     uint32_t ui32_spn;
     IsoAgLib::FailureModeIndicator_en en_fmi;

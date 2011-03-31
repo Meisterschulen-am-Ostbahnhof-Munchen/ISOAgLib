@@ -109,6 +109,8 @@ public:
   {
     __IsoAgLib::DiagnosticsServices_c::serviceTool_dtcClearPrevious();
   }
+private:
+  friend class iIdentItem_c;
 };
 
 } // IsoAgLib

@@ -90,25 +90,25 @@ public:
   /** init function for later start of address claim of an ISO identity (this can be only called once upon a default-constructed object)
       @param arc_isoname          proper initialized isoname for this identification
       @param arc_dataStorage      ident data storage handler implementation of iIdentDataStorage_c
-      @param ab_enablediagnosticsServices enable or disable diagnostics services manager
       @param ai8_slaveCount       amount of attached slave devices; -1 == no master state, >= 0 is master
                                   in case an address claim for the slave devices shall be sent by this ECU, they
                                   must get their own IdentItem_c instance ( then with value -1 for ai8_slaveCount )
       @param apc_slaveIsoNameList pointer to list of IsoName_c values, where the slave devices are defined.
                                   IsoAgLib will then send the needed "master indicates its slaves" messages on BUS
+      @param ab_enablediagnosticsServices enable or disable diagnostics services manager
     */
   void init( const iIsoName_c& arc_isoname,
              iIdentDataStorage_c& arc_storageHandler,
-             bool ab_enablediagnosticsServices,
              int8_t ai8_slaveCount,
-             const iIsoName_c* apc_slaveIsoNameList
+             const iIsoName_c* apc_slaveIsoNameList,
+             bool ab_enablediagnosticsServices
     )
   {
     IdentItem_c::init ( arc_isoname,
                         arc_storageHandler,
-                        ab_enablediagnosticsServices,
                         ai8_slaveCount,
-                        apc_slaveIsoNameList);
+                        apc_slaveIsoNameList,
+                        ab_enablediagnosticsServices);
   }
 
 

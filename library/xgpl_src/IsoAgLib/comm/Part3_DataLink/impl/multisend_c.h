@@ -32,7 +32,7 @@
 #include <functional>
 
 namespace IsoAgLib {
-IsoAgLib::iMultiSendStreamer_c;
+class iMultiSendStreamer_c;
 }
 
 
@@ -143,7 +143,7 @@ public: // methods
 
 
   /**
-    Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer. 
+    Send an ISO 11783 (E)TP broadcast multipacket message using a given data-buffer.
     Will check the size of the message and decide whether or not to use the transport protocol
     @param acrc_isoNameSender ISOName of sender
     @param rhpb_data HUGE_MEM pointer to the data

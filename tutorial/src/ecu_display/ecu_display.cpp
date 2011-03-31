@@ -66,7 +66,7 @@ bool ecuMain() {
       scui8_funcInst,
       scui8_ecuInst );
 
-  p_ident->init( c_isoname, *p_identDataStorage, 0 );
+  p_ident->init( c_isoname, *p_identDataStorage, 0 , NULL, true );
 
   p_ident->setEcuIdentification( "PartNr D", "Serial 127", "Frontside", "Display", "OSB AG" ); // dummy values
   p_ident->setSwIdentification( "IsoAgLib Display ECU Tutorial*" );

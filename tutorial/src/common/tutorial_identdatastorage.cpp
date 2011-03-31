@@ -29,6 +29,16 @@ namespace IsoAgLibTutorial {
     mc_eeprom.setValid();
 #endif
   }
+
+  void tutorialIdentDataStorage_c::_loadDtcs( __IsoAgLib::DtcContainer_c& /*arc_dtcContainer*/ )
+  {
+    // @TODO load DTCs
+  }
+
+  void tutorialIdentDataStorage_c::_storeDtcs( const __IsoAgLib::DtcContainer_c& /*arc_dtcContainer*/ )
+  {
+    // @TODO save DTCs
+  }
 }
 
 // eof
