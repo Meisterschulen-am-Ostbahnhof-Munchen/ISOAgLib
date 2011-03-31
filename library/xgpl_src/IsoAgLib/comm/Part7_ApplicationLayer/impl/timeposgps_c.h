@@ -743,7 +743,7 @@ private:
   Nmea2000SendStreamer_c mc_nmea2000Streamer;
 
   /** sending success state */
-  MultiSend_c::sendSuccess_t mt_multiSendSuccessState;
+  SendStream_c::sendSuccess_t mt_multiSendSuccessState;
 
   #endif // END of ENABLE_NMEA_2000_MULTI_PACKET
   /** ISOName of GPS data sender */

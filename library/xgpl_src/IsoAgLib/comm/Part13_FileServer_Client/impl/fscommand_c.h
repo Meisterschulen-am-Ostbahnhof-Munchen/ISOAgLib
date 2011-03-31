@@ -325,7 +325,7 @@ class FsCommand_c : CanCustomer_c
     /** how many times has the request been sent? **/
     uint8_t ui8_requestAttempts;
     /** status of a sent multi-message **/
-    MultiSend_c::sendSuccess_t en_sendSuccessNotify;
+    SendStream_c::sendSuccess_t en_sendSuccessNotify;
 
     /** recieve information **/
     uint8_t ui8_errorCode;

@@ -178,7 +178,7 @@ DevPropertyHandler_c::DevPropertyHandler_c()
      mpc_data(NULL), mui8_tcSourceAddress(0), mui8_versionLabel(0), mpc_devDefaultDeviceDescription(NULL), mpc_devPoolForUpload(NULL),
      mpc_wsMasterIdentItem(NULL), men_poolState(OPNotRegistered), men_uploadState(StateIdle), men_uploadStep(UploadStart),
      men_uploadCommand(UploadCommandWaitingForCommandResponse), mui32_uploadTimestamp(0), mui32_uploadTimeout(0),
-     mui8_commandParameter(0), men_sendSuccess(__IsoAgLib::MultiSend_c::SendSuccess), mi32_timeWsAnnounceKey(-1)
+     mui8_commandParameter(0), men_sendSuccess(__IsoAgLib::SendStream_c::SendSuccess), mi32_timeWsAnnounceKey(-1)
 {}
 
 
@@ -283,7 +283,7 @@ DevPropertyHandler_c::processMsg()
           men_uploadStep = UploadUploading;
           getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
             getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-            this, PROCESS_DATA_PGN, men_sendSuccess);
+            this, PROCESS_DATA_PGN, men_sendSuccess, NULL);
         }
         else
         {
@@ -622,10 +622,10 @@ DevPropertyHandler_c::timeEvent( void )
       break;
     case UploadUploading:
       switch (men_sendSuccess) {
-        case __IsoAgLib::MultiSend_c::Running: {
+        case __IsoAgLib::SendStream_c::Running: {
           // wait
         } break;
-        case __IsoAgLib::MultiSend_c::SendAborted: {
+        case __IsoAgLib::SendStream_c::SendAborted: {
           // aborted sending
           men_uploadState = StateIdle;
           men_uploadStep = UploadFailed;
@@ -636,7 +636,7 @@ DevPropertyHandler_c::timeEvent( void )
           INTERNAL_DEBUG_DEVICE << "Upload failed, send aborted..." << INTERNAL_DEBUG_DEVICE_ENDL;
           #endif
         } break;
-        case __IsoAgLib::MultiSend_c::SendSuccess: {
+        case __IsoAgLib::SendStream_c::SendSuccess: {
           men_uploadStep = UploadWaitForOPTransferResponse;
           mui32_uploadTimestamp = HAL::getTime();
           mui32_uploadTimeout = DEF_TimeOut_EndOfDevicePool;
@@ -730,15 +730,15 @@ DevPropertyHandler_c::timeEvent( void )
       if (((uint32_t) HAL::getTime()) < (mui32_uploadTimeout + mui32_uploadTimestamp))
       {
         switch (men_sendSuccess) {
-        case __IsoAgLib::MultiSend_c::Running: {
+        case __IsoAgLib::SendStream_c::Running: {
           // wait
           } break;
-        case __IsoAgLib::MultiSend_c::SendAborted: {
+        case __IsoAgLib::SendStream_c::SendAborted: {
           // aborted sending
           men_uploadState = StateIdle;
           men_uploadCommand = UploadCommandTimedOut;
           } break;
-        case __IsoAgLib::MultiSend_c::SendSuccess: {
+        case __IsoAgLib::SendStream_c::SendSuccess: {
           men_uploadState = StateIdle;
           }
         }
@@ -1079,7 +1079,7 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
     getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
       getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, men_sendSuccess);
+      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, men_sendSuccess, NULL);
     men_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }
 }

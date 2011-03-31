@@ -89,7 +89,7 @@ namespace __IsoAgLib
         is streaming out right now. In this case DO NOT MODIFY the
         GenericData_c SendData via getDataSend() !!!
         */
-      bool isSending() { return (men_sendSuccess == MultiSend_c::Running); }
+      bool isSending() { return (men_sendSuccess == SendStream_c::Running); }
 
       /** function to tell "i will send data" to the handler */
       void sendDataToHandler();
@@ -178,7 +178,7 @@ namespace __IsoAgLib
       uint32_t mui32_nextSendTimeStamp;
 
       /** actual (E)TP-send state */
-      MultiSend_c::sendSuccess_t men_sendSuccess;
+      SendStream_c::sendSuccess_t men_sendSuccess;
   };
 };
 

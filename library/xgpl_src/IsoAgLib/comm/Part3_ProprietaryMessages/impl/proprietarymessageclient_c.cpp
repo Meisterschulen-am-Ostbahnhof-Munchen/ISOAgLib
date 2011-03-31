@@ -24,7 +24,7 @@ namespace __IsoAgLib
     */
   ProprietaryMessageClient_c::ProprietaryMessageClient_c(): mui32_canMask(MASK_INVALID), mui32_canFilter(MASK_INVALID),
                                                             mc_isonameRemoteECU(screfc_noIsoName), mpc_localIdent(spc_nolocalIdent),
-                                                            men_sendSuccess(MultiSend_c::SendSuccess)
+                                                            men_sendSuccess(SendStream_c::SendSuccess)
   {
     setSendPeriodMsec(0);
     mui32_nextSendTimeStamp = 0;
@@ -40,7 +40,7 @@ namespace __IsoAgLib
                                                           const IsoName_c& acrc_rremoteECU,
                                                           const IdentItem_c& apc_localIdent)
                                                           : mpc_localIdent(NULL),
-                                                            men_sendSuccess(MultiSend_c::SendSuccess)
+                                                            men_sendSuccess(SendStream_c::SendSuccess)
   {
     setSendPeriodMsec(0);
     mui32_nextSendTimeStamp = 0;

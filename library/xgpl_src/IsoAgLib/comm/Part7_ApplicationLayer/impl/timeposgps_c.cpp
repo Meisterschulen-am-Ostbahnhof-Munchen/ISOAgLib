@@ -387,7 +387,7 @@ namespace __IsoAgLib {
     mi32_lastIsoDirection = 0;
 #ifdef ENABLE_NMEA_2000_MULTI_PACKET
     mi32_lastIsoPositionStream = 0;
-    mt_multiSendSuccessState = MultiSend_c::SendSuccess;
+    mt_multiSendSuccessState = SendStream_c::SendSuccess;
     mi32_altitudeCm = 0x7FFFFFFF;
 
     mui8_satelliteCnt = 0;
@@ -578,7 +578,7 @@ namespace __IsoAgLib {
               }
               else
               {
-                mf_rapidUpdateRateFilter = (mf_rapidUpdateRateFilter * (1.0f-gcf_rapidUpdateFilter)) + 
+                mf_rapidUpdateRateFilter = (mf_rapidUpdateRateFilter * (1.0f-gcf_rapidUpdateFilter)) +
                                           ((ci32_now - mi32_lastMillisecondUpdate) * gcf_rapidUpdateFilter);
               }
             }
@@ -620,7 +620,7 @@ namespace __IsoAgLib {
         if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
           // Here we get degrees as fraction of 128, and have to change to rad 10^-4
-          // -> / 128 * MATH_PI / 180 * 10000 
+          // -> / 128 * MATH_PI / 180 * 10000
 #define MATH_PI 3.14159265
           mui16_courseOverGroundRad10Minus4 = static_cast<uint16_t>( static_cast<double>(data().getUint16Data( 0 ) ) * MATH_PI * 125.0 / 288.0 );
           // [256 one bit is 1/256 km/h] [* 1000 * 100 / 60 / 60 -> we get km/h but want cm/sec]
@@ -1073,7 +1073,7 @@ namespace __IsoAgLib {
       #ifdef ENABLE_NMEA_2000_MULTI_PACKET
       if ( ( isPositionStreamToSend() )
         && ( ( ci32_now - mi32_lastIsoPositionStream ) >= 1000 )
-        && ( mt_multiSendSuccessState != MultiSend_c::Running  ) )
+        && ( mt_multiSendSuccessState != SendStream_c::Running  ) )
       {
         if ( getAvailableExecTime() == 0 ) return false;
         isoSendPositionStream();
@@ -1270,9 +1270,9 @@ void TimePosGps_c::isoSendDirection( void )
 
     //now trigger sending
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-    if ( getMultiSendInstance4Comm().sendIsoFastPacketBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoFastPacketBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState, NULL) )
     #else
-    if ( getMultiSendInstance4Comm().sendIsoBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState) )
+    if ( getMultiSendInstance4Comm().sendIsoBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState, NULL) )
     #endif
     { // update time
       mi32_lastIsoPositionStream = ci32_now;

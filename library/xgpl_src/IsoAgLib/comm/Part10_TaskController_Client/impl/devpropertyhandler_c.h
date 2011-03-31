@@ -230,7 +230,7 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     STL_NAMESPACE::list<SendUploadDevProp_c>  ml_sendUpload;
 
-    MultiSend_c::sendSuccess_t men_sendSuccess;
+    SendStream_c::sendSuccess_t men_sendSuccess;
 
     int32_t mi32_timeWsAnnounceKey;
 };

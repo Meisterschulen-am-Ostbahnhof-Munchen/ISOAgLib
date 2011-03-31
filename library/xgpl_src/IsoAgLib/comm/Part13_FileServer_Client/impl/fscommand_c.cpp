@@ -62,7 +62,7 @@ FsCommand_c::FsCommand_c(
   , b_receivedResponse( true )
   , i32_lastrequestAttempt( -1 )
   , ui8_requestAttempts( 0 ) // value will be reset when needed
-  , en_sendSuccessNotify( __IsoAgLib::MultiSend_c::SendSuccess )
+  , en_sendSuccessNotify( __IsoAgLib::SendStream_c::SendSuccess )
   , ui8_errorCode( 0 )
   , pui8_currentDirectory( NULL )
   , ui16_curDirAllocSize( 0 )
@@ -172,18 +172,18 @@ FsCommand_c::timeEvent(void)
     { // was started, so check progress
       switch (en_sendSuccessNotify)
       {
-        case MultiSend_c::Running:
+        case SendStream_c::Running:
           /* just wait */
           break;
 
-        case MultiSend_c::SendSuccess:
+        case SendStream_c::SendSuccess:
           mb_waitForMultiSendFinish = false;
           // NOW we have really sent out the request
           // and can wait for the answer/timeout!
           i32_lastrequestAttempt = HAL::getTime();
           break;
 
-        case MultiSend_c::SendAborted:
+        case SendStream_c::SendAborted:
           // retry (currently) unlimited
           sendMultiPacketTry();
           break;
@@ -255,7 +255,7 @@ FsCommand_c::timeEvent(void)
               clearDirectoryList();
 
               rc_csCom.readDirectoryResponse(IsoAgLib::fsFileserverNotResponding, v_dirData);
-            } 
+            }
             else
               rc_csCom.readFileResponse(IsoAgLib::fsFileserverNotResponding, 0, (uint8_t *)NULL);
             break;
@@ -724,7 +724,8 @@ FsCommand_c::sendMultiPacketTry()
       pui8_sendBuffer,
       ui8_packetLength,
       CLIENT_TO_FS_PGN,
-      en_sendSuccessNotify);
+      en_sendSuccessNotify,
+      NULL);
 }
 
 
