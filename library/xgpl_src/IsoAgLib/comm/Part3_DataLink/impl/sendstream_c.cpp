@@ -131,7 +131,8 @@ void
 SendStream_c::notifySender(sendSuccess_t ae_newStatus)
 {
   *mpen_sendSuccessNotify = ae_newStatus;
-  mpc_multiSendEventHandler->reactOnFinished(*this);
+  if (mpc_multiSendEventHandler)
+    mpc_multiSendEventHandler->reactOnFinished(*this);
 }
 
 /**
