@@ -376,10 +376,10 @@ uint16_t DiagnosticsServices_c::assembleDM1DM2(uint8_t* arr_send8bytes, bool ab_
     if ( (c_dtc.ui32_spn != DtcContainer_c::Dtc_s::spiNone)
       && (c_dtc.b_active == ab_searchForActiveDtc) )
     {
-      arr_send8bytes[temp_size++] = c_dtc.ui32_spn & 0xFF;
-      arr_send8bytes[temp_size++] = (c_dtc.ui32_spn >> 8) & 0xFF;
+      arr_send8bytes[temp_size++] = static_cast<uint8_t>(c_dtc.ui32_spn);
+      arr_send8bytes[temp_size++] = static_cast<uint8_t>(c_dtc.ui32_spn >> 8);
       arr_send8bytes[temp_size++] = ((c_dtc.ui32_spn >> 11) & 0xE0) // 3 MSB in bits 8-6
-                                       & static_cast<uint8_t>(c_dtc.en_fmi);
+                                       | static_cast<uint8_t>(c_dtc.en_fmi);
       arr_send8bytes[temp_size++] = (c_dtc.ui16_occurrenceCount < 0x7F)?c_dtc.ui16_occurrenceCount:0x7F;
     }
   }
