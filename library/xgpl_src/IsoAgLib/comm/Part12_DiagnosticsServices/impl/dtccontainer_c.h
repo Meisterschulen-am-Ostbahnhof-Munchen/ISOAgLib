@@ -13,9 +13,6 @@
 #ifndef DTC_CONTAINER_H
 #define DTC_CONTAINER_H
 
-// @TODO remove for release
-#define DEBUG_DIAGNOSTICPGN 1
-
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
