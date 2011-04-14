@@ -55,7 +55,7 @@ static tSystem t_biosextSysdata =
 */
 int16_t open_system()
 {
-  int16_t i16_result = open_esx(&t_biosextSysdata);
+  const int16_t i16_result = open_esx(&t_biosextSysdata);
 
 
   #ifdef _INIT_BABYBOARD_
@@ -67,7 +67,7 @@ int16_t open_system()
   BA_set_pwm_freq(POSITION_1, PIN_4, 500);
   #endif
 
-  return i16_result;
+  return ( ( i16_result == C_NO_ERR ) ? HAL_NO_ERR : HAL_CONFIG_ERR );
 }
 /**
   close the system with system specific function call
