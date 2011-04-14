@@ -67,7 +67,18 @@ int16_t open_system()
   BA_set_pwm_freq(POSITION_1, PIN_4, 500);
   #endif
 
-  return ( ( i16_result == C_NO_ERR ) ? HAL_NO_ERR : HAL_CONFIG_ERR );
+  switch( i16_result )
+  {
+    case C_NOACT:
+    case C_BUSY:
+    case C_CHECKSUM:
+      return i16_result;
+    case C_CONFIG:
+    case C_NO_ERR:
+      return HAL_NO_ERR;
+  }
+
+  return HAL_UNKNOWN_ERR;
 }
 /**
   close the system with system specific function call
