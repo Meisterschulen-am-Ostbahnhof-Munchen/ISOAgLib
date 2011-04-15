@@ -80,14 +80,6 @@ CanPkgExt_c::CanPkgExt_c( const CanPkg_c& arc_src, int ai_multitonInst )
 
 
 void
-CanPkgExt_c::setUint8Data( int8_t ai8_pos, uint8_t aui8_val)
-{
-  isoaglib_assert((ai8_pos >= 0) && (ai8_pos < 8));
-  mc_data.setUint8Data(ai8_pos, aui8_val);
-}
-
-
-void
 CanPkgExt_c::setIsoPgn(uint32_t aui32_val)
 {
   const uint16_t cui16_dpPf = static_cast<uint16_t>((aui32_val >> 8) & 0x03FF); // now extended to 2 bits (added R/EDP)
