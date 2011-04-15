@@ -41,37 +41,6 @@ namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
 
-/**
-  Central managing instance for all process data
-  informations in the system
-
-  <b>Basic Rules for Matching of Received Messages)</b>
-  1) primary match with LIS, DEVCLASS, ZAEHLNUM, WERT, INST
-  2) distinguishing of more hits by POS
-  \n
-  <b>Acceptance Guidlines for Received Messages)</b>
-  1) EMPF must fit to local member, SEND must be of existing member with claimed address
-  2) special addition for Remote Process Data:
-       alternatively SEND fit to owner of some Remote Data used to
-       detect setpoints sent by owner of Remote Process Data
-       -> possible to detect if local commander gets master or not
-       (measure values are ignored by rule 2 unless MeasureProgRemote_c::receiveForeignMeasurement()
-        was called for this ProcessDataRemote instance)
-  \n
-  The most functions of (i)Process_c are only relevant for the internal
-  implementation, so that the interface to the API is quite small.
-  Some of the internal tasks are:
-  - handle list of pointers to all process data instances in the application
-  - distribute the periodic timeEvent() call to all local process data instances,
-    so that %e.g. value can be sent for measurement programs
-  - forward incoming CAN messages to the appropriate process data to update values
-    or to register measure progs, setpoints, etc.
-
-  An overall description of Process Data management in IsoAgLib can be found in
-  \ref ProcDataPage .
-
-  @author Dipl.-Inform. Achim Spangler
-*/
 class Process_c : public Scheduler_Task_c
 {
 #if 1 < PRT_INSTANCE_CNT
@@ -90,48 +59,15 @@ public:
   virtual ~Process_c() {}
 
   /**
-    deliver reference to data pkg
-    @return reference to ProcessPkg_c which handles CAN I/O of process data
-  */
-  ProcessPkg_c& data(){return mc_data;};
-  /**
-    deliver reference to data pkg as reference to CanPkgExt_c
-    to implement the base virtual function correct
-  */
-  virtual CanPkgExt_c& dataBase();
-
-  /**
     start processing of a process msg
     ignore all invalid messages where sender has no address (0xFE)
     @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
   */
-  bool processMsg();
-
-  // needed for bus-snooping!
-  virtual bool isNetworkMgmt() const { return true; }
+  bool processMsg( const CanPkg_c& arc_data );
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
 #endif
-
-  /**
-    if the amount of created local process data is known, then enough capacity for the
-    vector with pointers to all of them can be reserved. Otherwise the vector
-    will increase with several reallocations, where each reallocation triggers
-    increase of capacity by factor 2 ( capacity is the amount of elements,
-    which can be stored before reallocation takes place ).
-    @param aui16_localProcCapacity
-  */
-  void localProcDataReserveCnt( uint16_t aui16_localProcCapacity );
-  /**
-    if the amount of created remote process data is known, then enough capacity for the
-    vector with pointers to all of them can be reserved. Otherwise the vector
-    will increase with several reallocations, where each reallocation triggers
-    increase of capacity by factor 2 ( capacity is the amount of elements,
-    which can be stored before reallocation takes place ).
-    @param aui16_remoteProcCapacity
-  */
-  void remoteProcDataReserveCnt( uint16_t aui16_remoteProcCapacity );
 
   /**
     checks if a suitable ProcDataLocalBase_c item exist
@@ -188,30 +124,6 @@ public:
  ProcDataRemoteBase_c& procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
                                        const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
 
-
-  /**
-    delivers count of local process data entries with similar ident
-    (which differs only in _instance_ of owner)
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoName isoName code of searched local Process Data instance
-    @return count of similar local process data entries
-  */
-  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoName);
-
-  /**
-    delivers count of remote process data entries with similar ident
-    (which differs only in _instance_ of owner)
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
-    @param acrc_isoName isoName code of searched remote Process Data instance
-    @return count of similar remote process data entries
-  */
-  uint8_t procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element,
-                             const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoName);
 
   /**
     performs periodically actions
@@ -360,10 +272,6 @@ private: // Private methods
   /** checks if proprietary DDI's can be summed up in groups */
   ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
-  virtual bool processInvalidMsg() {
-    return false;
-  }
-
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
       uint32_t aui32_totalLen)
@@ -414,20 +322,8 @@ private: // Private attributes
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual CanPkgExt_c& dataBase() {
-      return mrt_owner.dataBase();
-    }
-
-    virtual bool processMsg() {
-      return mrt_owner.processMsg();
-    }
-
-    virtual bool processInvalidMsg() {
-      return mrt_owner.processInvalidMsg();
-    }
-
-    virtual bool isNetworkMgmt() const {
-      return mrt_owner.isNetworkMgmt();
+    virtual bool processMsg( const CanPkg_c& arc_data ) {
+      return mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(
@@ -516,9 +412,6 @@ private: // Private attributes
     CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST,
     CONTAINER_CLIENT2_CTOR_INITIALIZER_LIST
   {}
-
-  /** msg object for CAN I/O */
-  ProcessPkg_c mc_data;
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
   /**

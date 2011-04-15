@@ -82,14 +82,12 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
     void init( ProcessPkg_c *apc_data);
 
     /** start processing of a process msg */
-    bool processMsg();
+    bool processMsg( ProcessPkg_c& arc_data );
 
     bool timeEvent( void );
 
     bool registerDevicePool (const IdentItem_c* apc_wsMasterIdentItem, const HUGE_MEM uint8_t* apc_devicePoolByteArray, const uint32_t aui32_bytestreamLength, bool mb_setToDefault);
     bool sendCommandChangeDesignator(uint16_t apui16_objectID, const char* apc_newString, uint8_t stringLength);
-
-    ProcessPkg_c& data(){return *mpc_data;};
 
     /** place next data to send direct into send buffer of pointed
       stream send package - MultiSend_c will send this

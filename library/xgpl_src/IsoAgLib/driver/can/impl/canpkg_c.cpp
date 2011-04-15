@@ -17,55 +17,47 @@
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-/** max 8 data bytes defined as union */
-Flexible8ByteString_c CanPkg_c::msc_data;
-
-/** receive time of CAN message */
-int32_t CanPkg_c::msi32_time = 0;
-
-/** identifier of CAN msg */
-__IsoAgLib::Ident_c CanPkg_c::msc_ident( 0, Ident_c::ExtendedIdent );
-
-/** state of the received can-message */
-MessageState_t CanPkg_c::mst_msgState = MessageValid; // no default value is needed, but anyway..
-
-/** size of data */
-uint8_t CanPkg_c::msui8_len = 0;
-
 /**
   default constructor, which does nothing for the base class,
   but can do something in derived classes
 */
-CanPkg_c::CanPkg_c( int ai_multitonInst )
-  : ClientBase( ai_multitonInst )
+CanPkg_c::CanPkg_c() 
+  : mc_data(),
+    mi32_time( 0 ),
+    mc_ident( 0, Ident_c::ExtendedIdent ),
+    mui8_len( 0 )
  {
 }
 
 /** virtual destructor, which can be overloaded in derived classes */
-CanPkg_c::~CanPkg_c(){
-}
+CanPkg_c::~CanPkg_c(){}
 
+
+CanPkg_c::CanPkg_c( const CanPkg_c& arc_src )
+  : mc_data( arc_src.mc_data ),
+    mi32_time( arc_src.mi32_time ),
+    mc_ident( arc_src.mc_ident ),
+    mui8_len( arc_src.mui8_len ) {}
+
+#if 0
 /**
-  ==> OBSOLETE, because now all pkg-data is STATIC!
-  ==> REACTIVATE if some NON-STATIC member vars will be added!
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   assign operator to insert informations from one CanPkg_c into another
   @see __IsoAgLib::FilterBox_c::operator>>
   @see CanPkgExt_c::operator=
   @see CanPkgExt_c::getData
   @param acrc_right reference to the source CanPkg_c on the right
   @return reference to the source CanPkg_c to enable assign chains like "pkg1 = pkg2 = pkg3 = pkg4;"
+*/
 const CanPkg_c& CanPkg_c::operator=(const CanPkg_c& acrc_right)
 {
-  msc_ident = acrc_right.msc_ident;
-  msui8_len = acrc_right.msui8_len;
-  msc_data = acrc_right.msc_data;
-  msi32_time = acrc_right.msi32_time;
+  mc_ident = acrc_right.mc_ident;
+  mui8_len = acrc_right.mui8_len;
+  mc_data = acrc_right.mc_data;
+  mi32_time = acrc_right.mi32_time;
 
   return *this;
 }
-*/
+#endif
 
 /**
   put data into given reference to BIOS related data structure with data, len
@@ -79,8 +71,8 @@ void CanPkg_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
 {
   rt_ident = ident();
   rui8_identType = identType();
-  rb_dlcTarget = msui8_len;
-  msc_data.getDataToString( pb_dataTarget, msui8_len );
+  rb_dlcTarget = mui8_len;
+  mc_data.getDataToString( pb_dataTarget, mui8_len );
 }
 
 /**
@@ -93,10 +85,10 @@ void CanPkg_c::getData(uint32_t& rt_ident, uint8_t& rui8_identType,
 */
 void CanPkg_c::set(MASK_TYPE at_ident, const uint8_t* apb_data, uint8_t aui8_len, int32_t ai32_time, Ident_c::identType_t at_type)
 {
-  msc_ident.set(at_ident, at_type);
-  msui8_len = (aui8_len<9)?aui8_len:8;
-  msc_data.setDataFromString( apb_data, msui8_len );
-  msi32_time = ai32_time;
+  mc_ident.set(at_ident, at_type);
+  mui8_len = (aui8_len<9)?aui8_len:8;
+  mc_data.setDataFromString( apb_data, mui8_len );
+  mi32_time = ai32_time;
 }
 
 /**
@@ -110,8 +102,8 @@ void CanPkg_c::setDataFromString(const uint8_t* apb_data, uint8_t aui8_len)
   if ( aui8_len > 0 )
   { // there is something to set - this function might be called from some generic algorithms which rely
     // on the underlying functions to handle zero-lenght properly
-    msui8_len = (aui8_len<9)?aui8_len:8;
-    msc_data.setDataFromString( apb_data, msui8_len);
+    mui8_len = (aui8_len<9)?aui8_len:8;
+    mc_data.setDataFromString( apb_data, mui8_len);
   }
 }
 
@@ -129,52 +121,35 @@ void CanPkg_c::setDataFromString(uint8_t aui8_targetPositionOffset, const uint8_
   { // there is something to set - this function might be called from some generic algorithms which rely
     // on the underlying functions to handle zero-lenght properly
     const unsigned int cui_copyByteCnt = (aui8_len+aui8_targetPositionOffset <= 8)?aui8_len:(8-aui8_targetPositionOffset);
-    msui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
-    msc_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
+    mui8_len = aui8_targetPositionOffset + cui_copyByteCnt;
+    mc_data.setDataFromString( aui8_targetPositionOffset, apb_data, cui_copyByteCnt);
   }
 }
 
 /**
-  ==> OBSOLETE, because now all pkg-data is STATIC!
-  ==> REACTIVATE if some NON-STATIC member vars will be added!
-
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   compare for equality with other CANPkg
   @param acrc_cmp reference to the to be compared CANPkg
   @return true -> both CanPkg_c have the same data
+*/
 bool CanPkg_c::operator==(const CanPkg_c& acrc_cmp) const
 {
-  bool b_result = true;
-  if (msc_data != acrc_cmp.msc_data) b_result = false;
-  if (msc_ident != acrc_cmp.msc_ident) b_result = false;
-  if (msui8_len != acrc_cmp.msui8_len) b_result = false;
-  if (msi32_time != acrc_cmp.msi32_time) b_result = false;
-  return b_result;
+  return (mc_data == acrc_cmp.mc_data)
+    && (mc_ident == acrc_cmp.mc_ident)
+    && (mui8_len == acrc_cmp.mui8_len)
+    && (mi32_time == acrc_cmp.mi32_time);
 }
-*/
 
 /**
-  ==> OBSOLETE, because now all pkg-data is STATIC!
-  ==> REACTIVATE if some NON-STATIC member vars will be added!
-  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   compare for difference to other CANPkg
   @param acrc_cmp reference to the to be compared CANPkg
   @return true -> both CanPkg_c have different data
+*/
 bool CanPkg_c::operator!=(const CanPkg_c& acrc_cmp) const
 {
-  ANYWAY I THINK THIS LOGIC IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!
-
-  bool b_result = true;
-
-  if (msc_data == acrc_cmp.msc_data) b_result = false;
-  if (msc_ident == acrc_cmp.msc_ident) b_result = false;
-  if (msui8_len == acrc_cmp.msui8_len) b_result = false;
-  if (msi32_time == acrc_cmp.msi32_time) b_result = false;
-
-  return b_result;
-  return false;
+  return (mc_data != acrc_cmp.mc_data)
+    && (mc_ident != acrc_cmp.mc_ident)
+    && (mui8_len != acrc_cmp.mui8_len)
+    && (mi32_time != acrc_cmp.mi32_time);
 }
-*/
 
 } // end of namespace __IsoAgLib

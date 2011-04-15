@@ -22,10 +22,26 @@
 
 namespace __IsoAgLib {
 
+ProcessPkg_c::ProcessPkg_c( const ProcessPkg_c& arc_src )
+  : CanPkgExt_c( arc_src ),
+    mc_processCmd( arc_src.mc_processCmd ),
+    mi32_pdValue( arc_src.mi32_pdValue ),
+    bit_data( arc_src.bit_data )
+{
+}
+
+ProcessPkg_c::ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst )
+: CanPkgExt_c( arc_src, ai_multitonInst )
+, mc_processCmd()
+, mi32_pdValue( 0 )
+, bit_data()
+
+{
+}
 
 /** default constructor which has nothing to do */
 ProcessPkg_c::ProcessPkg_c( int ai_multitonInst )
-  : CanPkgExt_c( ai_multitonInst )
+  : CanPkgExt_c()
   , mi32_pdValue( 0 )
   , bit_data()
 {
@@ -119,19 +135,19 @@ void ProcessPkg_c::setData(proc_specCmd_t ren_procSpecCmd)
 */
 void ProcessPkg_c::string2Flags()
 {
-  set_Cmd(CanPkg_c::msc_data[0] & 0xf);
+  set_Cmd(mc_data[0] & 0xf);
   uint16_t mui16_element = 0;
-  mui16_element = uint16_t(CanPkg_c::msc_data[1]) << 4;
-  mui16_element |= ((CanPkg_c::msc_data[0] & 0xF0)>>4);
+  mui16_element = uint16_t(mc_data[1]) << 4;
+  mui16_element |= ((mc_data[0] & 0xF0)>>4);
   set_Element(mui16_element);
 
   uint16_t newDDI = 0;
-  newDDI |= CanPkg_c::msc_data[3];
+  newDDI |= mc_data[3];
   newDDI = newDDI << 8;
-  newDDI |= CanPkg_c::msc_data[2];
+  newDDI |= mc_data[2];
   set_DDI(newDDI);
 
-  mi32_pdValue = CanPkg_c::msc_data.getInt32Data(4);
+  mi32_pdValue = mc_data.getInt32Data(4);
 };
 
 /**
@@ -163,16 +179,17 @@ void ProcessPkg_c::flags2String()
     default: ui8_cmd = 0xFF;
   }
 
-  CanPkg_c::msc_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
-  CanPkg_c::msc_data.setUint8Data(1, element() >> 4 );
-  CanPkg_c::msc_data.setUint8Data(2, DDI() & 0x00FF );
-  CanPkg_c::msc_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
+  mc_data.setUint8Data(0, (ui8_cmd & 0xf) | ( (element() & 0xf) << 4) );
+  mc_data.setUint8Data(1, element() >> 4 );
+  mc_data.setUint8Data(2, DDI() & 0x00FF );
+  mc_data.setUint8Data(3, (DDI()& 0xFF00) >> 8 );
   // for ISO the ident is directly read and written
 
-  CanPkg_c::msc_data.setInt32Data(4, mi32_pdValue);
+  mc_data.setInt32Data(4, mi32_pdValue);
 
   setLen(8);
 };
+
 
 /**
   extract data from ISO commands and save it to member class
@@ -180,63 +197,63 @@ void ProcessPkg_c::flags2String()
 */
 bool ProcessPkg_c::resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI)
 {
-  bool mb_isSetpoint = false;
-  bool mb_isRequest = false;
-  ProcessCmd_c::ValueGroup_t men_valueGroup = ProcessCmd_c::noValue;
-  ProcessCmd_c::CommandType_t men_command = ProcessCmd_c::noCommand;
+  bool b_isSetpoint = false;
+  bool b_isRequest = false;
+  ProcessCmd_c::ValueGroup_t en_valueGroup = ProcessCmd_c::noValue;
+  ProcessCmd_c::CommandType_t en_command = ProcessCmd_c::noCommand;
 
   if ( identType() != Ident_c::StandardIdent) {
     // ISO command
     switch (cmd()) {
       case 0x00:
-        men_command = ProcessCmd_c::requestConfiguration;
+        en_command = ProcessCmd_c::requestConfiguration;
         break;
       case 0x01:
-        men_command = ProcessCmd_c::configurationResponse;
+        en_command = ProcessCmd_c::configurationResponse;
         break;
       case 0x02:
-        men_command = ProcessCmd_c::requestValue;
-        mb_isRequest = true;
+        en_command = ProcessCmd_c::requestValue;
+        b_isRequest = true;
         break;
       case 0x03:
-        men_command = ProcessCmd_c::setValue;
+        en_command = ProcessCmd_c::setValue;
         break;
       case 0x04:
-        men_command = ProcessCmd_c::measurementTimeValueStart;
+        en_command = ProcessCmd_c::measurementTimeValueStart;
         break;
       case 0x05:
-        men_command = ProcessCmd_c::measurementDistanceValueStart;
+        en_command = ProcessCmd_c::measurementDistanceValueStart;
         break;
       case 0x06:
-        men_command = ProcessCmd_c::measurementMinimumThresholdValueStart;
+        en_command = ProcessCmd_c::measurementMinimumThresholdValueStart;
         break;
       case 0x07:
-        men_command = ProcessCmd_c::measurementMaximumThresholdValueStart;
+        en_command = ProcessCmd_c::measurementMaximumThresholdValueStart;
         break;
       case 0x08:
-        men_command = ProcessCmd_c::measurementChangeThresholdValueStart;
+        en_command = ProcessCmd_c::measurementChangeThresholdValueStart;
         break;
       case 0x0d:
-        men_command = ProcessCmd_c::nack;
+        en_command = ProcessCmd_c::nack;
         break;
       case 0x0e:
-        men_command = ProcessCmd_c::taskControllerStatus;
+        en_command = ProcessCmd_c::taskControllerStatus;
         break;
       case 0x0f:
-        men_command = ProcessCmd_c::workingsetMasterMaintenance;
+        en_command = ProcessCmd_c::workingsetMasterMaintenance;
         break;
     }
   }
 
   if ( rl_elementDDI.ui16_DDI == DDI() )
   {
-    mb_isSetpoint = rl_elementDDI.b_isSetpoint;
-    men_valueGroup = rl_elementDDI.en_valueGroup;
+    b_isSetpoint = rl_elementDDI.b_isSetpoint;
+    en_valueGroup = rl_elementDDI.en_valueGroup;
   }
 
-  if (men_command != ProcessCmd_c::noCommand)
+  if (en_command != ProcessCmd_c::noCommand)
   {
-    mc_processCmd.setValues(mb_isSetpoint, mb_isRequest, men_valueGroup, men_command);
+    mc_processCmd.setValues(b_isSetpoint, b_isRequest, en_valueGroup, en_command);
     return true;
   }
   else return false;

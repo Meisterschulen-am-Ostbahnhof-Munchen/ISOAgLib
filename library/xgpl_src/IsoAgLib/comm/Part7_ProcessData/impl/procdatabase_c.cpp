@@ -86,23 +86,6 @@ void ProcDataBase_c::assignFromSource( const ProcDataBase_c& acrc_src )
 ProcDataBase_c::~ProcDataBase_c() {}
 
 
-/** helper function to get reference to process data pkg very quick */
-ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
-{
-#if defined( PRT_INSTANCE_CNT ) && ( PRT_INSTANCE_CNT > 1 )
-  // if more than one CAN BUS is used for IsoAgLib
-  // no single cache value can be used, as each CAN BUS get its
-  // individual ProcessPkg_c (a static functional-variable would
-  // be used for ALL instances of ProcDataBase_c - also from
-  // different CAN BUS'es)
-  return getProcessInstance4Comm().data();
-#else
-  static ProcessPkg_c& mc_data = getProcessInstance4Comm().data();
-  return mc_data;
-#endif
-}
-
-
 /**
   process a message, which is adressed for this process data item;
   ProcDataBase_c::processMsg() is responsible to delegate the
@@ -111,12 +94,22 @@ ProcessPkg_c& ProcDataBase_c::getProcessPkg( void ) const
   both functions are virtual, so that depending on loacl or remote
   process data the suitable reaction can be implemented
 */
-void ProcDataBase_c::processMsg()
+void ProcDataBase_c::processMsg( ProcessPkg_c& pkg )
 {
-  if (getProcessInstance4Comm().data().mc_processCmd.checkIsSetpoint())
-    processSetpoint();
+
+  STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter;
+  for (iter = mlist_elementDDI.begin(); iter != mlist_elementDDI.end(); iter++)
+    if ( iter->ui16_DDI == pkg.DDI() )
+      break;
+
+  isoaglib_assert( iter != mlist_elementDDI.end() );
+
+  pkg.resolveCommandTypeForISO( *iter );
+
+  if (pkg.mc_processCmd.checkIsSetpoint())
+    processSetpoint( pkg );
   else
-    processProg();
+    processProg(pkg);
 }
 
 
@@ -144,14 +137,16 @@ bool ProcDataBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */ )
   @param ai32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
 */
-bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t ai32_val) const
+bool ProcDataBase_c::sendValISOName( ProcessPkg_c& pkg, const IsoName_c& /*ac_varISOName*/, int32_t ai32_val) const
 {
-  setBasicSendFlags();
 
-  getProcessPkg().setData( ai32_val );
+  setBasicSendFlags( pkg );
+
+  pkg.setData( ai32_val );
 
   // send the msg
-  getIsoBusInstance4Comm() << getProcessPkg();
+  pkg.flags2String();
+  getIsoBusInstance4Comm() << pkg;
   // check for any error during send resolve, ...
   if ( getILibErrInstance().good(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can) )
   { // good
@@ -162,22 +157,19 @@ bool ProcDataBase_c::sendValISOName( const IsoName_c& /*ac_varISOName*/, int32_t
 }
 
 
-void ProcDataBase_c::setBasicSendFlags() const
+void ProcDataBase_c::setBasicSendFlags( ProcessPkg_c& pkg ) const
 {
-  ProcessPkg_c& mc_data = getProcessPkg();
-
   // the communicating devices are represented on ISO11783
-  mc_data.setIsoPri(3);
-  mc_data.setIsoPgn(PROCESS_DATA_PGN);
-  mc_data.setIdentType(Ident_c::ExtendedIdent);
+  pkg.setIsoPri(3);
+  pkg.setIsoPgn(PROCESS_DATA_PGN);
 
   // general command is already set, use these values:
   // set command in ProcessPkg::flags2string
-  const ProcessCmd_c::ValueGroup_t men_valueGroup = getProcessInstance4Comm().data().mc_processCmd.getValueGroup();
-  const bool mb_isSetpoint = getProcessInstance4Comm().data().mc_processCmd.checkIsSetpoint();
+  const ProcessCmd_c::ValueGroup_t men_valueGroup = pkg.mc_processCmd.getValueGroup();
+  const bool mb_isSetpoint = pkg.mc_processCmd.checkIsSetpoint();
 
-  mc_data.set_Element(0xFFFF);
-  mc_data.set_DDI(0);
+  pkg.set_Element(0xFFFF);
+  pkg.set_DDI(0);
 
   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s>::const_iterator iter_elementDDI;
 
@@ -188,8 +180,8 @@ void ProcDataBase_c::setBasicSendFlags() const
     // => we don't have reliable infos about men_valueGroup and mb_isSetpoint
     // => don't check for men_valueGroup and mb_isSetpoint but use this single entry in list
     iter_elementDDI = elementDDI().begin();
-    mc_data.set_Element(element());
-    mc_data.set_DDI(iter_elementDDI->ui16_DDI);
+    pkg.set_Element(element());
+    pkg.set_DDI(iter_elementDDI->ui16_DDI);
   }
   else
   {
@@ -199,8 +191,8 @@ void ProcDataBase_c::setBasicSendFlags() const
     {
       if ( (iter_elementDDI->en_valueGroup == men_valueGroup) && (iter_elementDDI->b_isSetpoint == mb_isSetpoint) )
       {
-        mc_data.set_Element(element());
-        mc_data.set_DDI(iter_elementDDI->ui16_DDI);
+        pkg.set_Element(element());
+        pkg.set_DDI(iter_elementDDI->ui16_DDI);
         break;
       }
     }
@@ -211,7 +203,7 @@ void ProcDataBase_c::setBasicSendFlags() const
   process a measure prog message
   -> fully dependent on children type local/remote
 */
-void ProcDataBase_c::processProg()
+void ProcDataBase_c::processProg( const ProcessPkg_c& )
 {
   return;
 }
@@ -220,19 +212,9 @@ void ProcDataBase_c::processProg()
 /**
   virtual base for processing of a setpoint message
 */
-void ProcDataBase_c::processSetpoint()
+void ProcDataBase_c::processSetpoint( const ProcessPkg_c& )
 {
   return;
-}
-
-
-/**
-  deliver DDI from last received can pkg
-  @return DDI
-*/
-uint16_t ProcDataBase_c::getDDIfromCANPkg( void ) const
-{
-  return getProcessPkg().DDI();
 }
 
 } // end of namespace __IsoAgLib

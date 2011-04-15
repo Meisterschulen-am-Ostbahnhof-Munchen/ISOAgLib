@@ -63,15 +63,10 @@ Process_c::init()
 {
   isoaglib_assert (!initialized());
 
-  mc_data.setMultitonInst( getMultitonInst() );
-
   getSchedulerInstance().registerClient( this );
   mi32_lastFilterBoxTime = 0;
   mb_needCallOfCheckCreateRemoteReceiveFilter = false;
   __IsoAgLib::getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
-    #ifdef USE_PROC_DATA_DESCRIPTION_POOL
-    mc_devPropertyHandler.init(&mc_data);
-    #endif
   mpc_tcISOName = NULL;
   mui8_lastTcStatus = 0;
   mpc_processWsmTaskMsgHandler = NULL;
@@ -113,46 +108,7 @@ void Process_c::registerAccessFlt( void )
   getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
 }
 
-/**
-  if the amount of created local process data is known, then enough capacity for the
-  vector with pointers to all of them can be reserved. Otherwise the vector
-  will increase with several reallocations, where each reallocation triggers
-  increase of capacity by factor 2 ( capacity is the amount of elements,
-  which can be stored before reallocation takes place ).
-  @param aui16_localProcCapacity
-*/
-void Process_c::localProcDataReserveCnt( uint16_t aui16_localProcCapacity )
-{
-  if ( c_arrClientC1.capacity() < aui16_localProcCapacity )
-  { // trigger increase of capacity
-    c_arrClientC1.reserve( aui16_localProcCapacity );
-  }
-}
-/**
-  if the amount of created remote process data is known, then enough capacity for the
-  vector with pointers to all of them can be reserved. Otherwise the vector
-  will increase with several reallocations, where each reallocation triggers
-  increase of capacity by factor 2 ( capacity is the amount of elements,
-  which can be stored before reallocation takes place ).
-  @param aui16_remoteProcCapacity
-*/
-void Process_c::remoteProcDataReserveCnt( uint16_t aui16_remoteProcCapacity )
-{
-  if ( c_arrClientC2.capacity() < aui16_remoteProcCapacity )
-  { // trigger increase of capacity
-    c_arrClientC2.reserve( aui16_remoteProcCapacity );
-  }
-}
 
-
-/**
-  deliver reference to data pkg as reference to CanPkgExt_c
-  to implement the base virtual function correct
-*/
-CanPkgExt_c& Process_c::dataBase()
-{
-  return mc_data;
-}
 
 /**
   performs periodically actions,
@@ -271,69 +227,75 @@ void Process_c::resetTimerPeriod( void )
 }
 
 
-bool Process_c::processMsg()
+bool Process_c::processMsg( const CanPkg_c& arc_data )
 {
+
+  ProcessPkg_c pkg( arc_data, getMultitonInst() );
+
+  // call string2flags function that was done formerly in the filterbox
+  pkg.string2Flags();
+
   // check for invalid SA/DA
-  if (data().getMonitorItemForSA() == NULL)
+  if (pkg.getMonitorItemForSA() == NULL)
   { // SA = 0xFE  =>  don't handle such messages, we need to have a sender
     return true;
   }
 
 #if defined(USE_PROC_DATA_DESCRIPTION_POOL)
 // first check if this is a device property message -> then DevPropertyHandler_c should process this msg
-if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (
-     ( ( data().cmd() ) < 2 ) || ( data().cmd() == 0xD ) ) )
+if ( ( pkg.identType() == Ident_c::ExtendedIdent ) && (
+     ( ( pkg.cmd() ) < 2 ) || ( pkg.cmd() == 0xD ) ) )
 {
-  if (mc_devPropertyHandler.processMsg()) return true;
+  if (mc_devPropertyHandler.processMsg( pkg )) return true;
 }
 #endif
 
   // check for sender isoName (only in remote)
-  const IsoName_c& c_isoNameSender = data().getMonitorItemForSA()->isoName();
+  const IsoName_c& c_isoNameSender = pkg.getMonitorItemForSA()->isoName();
 
   // process TC status message (for local instances)
-  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (data().cmd() == 0xE))
+  if ( ( pkg.identType() == Ident_c::ExtendedIdent ) && (pkg.cmd() == 0xE))
   {
     // update isoName of TC
     /// @todo SOON-240 This only works until the IsoItem gets destructed!!!
     /// --> Copy the ISONAME, do not take a pointer to that ISONAME!
     mpc_tcISOName = &c_isoNameSender;
-    processTcStatusMsg(mc_data.getValue(), c_isoNameSender);
+    processTcStatusMsg(pkg.getValue(), c_isoNameSender);
 
 #ifdef USE_PROC_DATA_DESCRIPTION_POOL
-    mc_devPropertyHandler.updateTcStateReceived(mc_data[4]);
-    mc_devPropertyHandler.setTcSourceAddress(data().isoSa());
+    mc_devPropertyHandler.updateTcStateReceived(pkg[4]);
+    mc_devPropertyHandler.setTcSourceAddress(pkg.isoSa());
 #endif
     return TRUE;
   }
 
   // process working set task message (for remote instances (e.g. TC))
-  if ( ( mc_data.identType() == Ident_c::ExtendedIdent ) && (data().cmd() == 0xF))
+  if ( ( pkg.identType() == Ident_c::ExtendedIdent ) && (pkg.cmd() == 0xF))
   {
-    processWorkingSetTaskMsg(mc_data.getValue(), c_isoNameSender);
+    processWorkingSetTaskMsg(pkg.getValue(), c_isoNameSender);
     return TRUE;
   }
 
   bool b_result = false;
 
-  if (data().getMonitorItemForDA() == NULL)
+  if (pkg.getMonitorItemForDA() == NULL)
   { // broadcast message
     return b_result;
   }
 
   // use isoName from corresponding monitor item for checks
-  const IsoName_c& c_isoNameReceiver = data().getMonitorItemForDA()->isoName();
+  const IsoName_c& c_isoNameReceiver = pkg.getMonitorItemForDA()->isoName();
 
   // check first for remote Process Data
-  if ( existProcDataRemote( data().DDI(), data().element(), c_isoNameSender, c_isoNameReceiver) )
+  if ( existProcDataRemote( pkg.DDI(), pkg.element(), c_isoNameSender, c_isoNameReceiver) )
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataRemote( data().DDI(), data().element(), c_isoNameSender, c_isoNameReceiver).processMsg();
+    procDataRemote( pkg.DDI(), pkg.element(), c_isoNameSender, c_isoNameReceiver).processMsg( pkg );
     b_result = true;
   }
   // if not found => now check for remote Process Data
-  else if ( existProcDataLocal( data().DDI(), data().element(), c_isoNameReceiver) )
+  else if ( existProcDataLocal( pkg.DDI(), pkg.element(), c_isoNameReceiver) )
   { // there exists an appropriate process data item -> let the item process the msg
-    procDataLocal( data().DDI(), data().element(), c_isoNameReceiver).processMsg();
+    procDataLocal( pkg.DDI(), pkg.element(), c_isoNameReceiver).processMsg( pkg );
     b_result = true;
   }
 
@@ -415,57 +377,6 @@ ProcDataRemoteBase_c& Process_c::procDataRemote( uint16_t aui16_DDI, uint16_t au
     getILibErrInstance().registerError( iLibErr_c::ElNonexistent, iLibErr_c::Process );
   }
   return **pc_searchCacheC2;
-}
-
-
-/**
-  delivers count of local process data entries with similar ident
-  (which differs only in _instance_ of owner)
-  ISO parameter
-  @param aui16_DDI
-  @param aui16_element
-  @param acrc_isoName isoName code of searched local Process Data instance
-  @return count of similar local process data entries
-*/
-uint8_t Process_c::procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoName)
-{
-  uint8_t ui8_cnt=0;
-
-  for ( cacheTypeC1_t pc_iter = c_arrClientC1.begin();
-       ( pc_iter != c_arrClientC1.end() );
-       pc_iter++ )
-  { // search for all local items which match the searched identity
-    // don't check sender devClass => 0xFF
-    if ((*pc_iter)->matchISO (IsoName_c::IsoNameUnspecified(), acrc_isoName, aui16_DDI, aui16_element))
-      ui8_cnt++;
-  }
-  return ui8_cnt;
-}
-
-
-/**
-  delivers count of remote process data entries with similar ident
-  (which differs only in _instance_ of owner)
-  ISO parameter
-  @param aui16_DDI
-  @param aui16_element
-  @param acrc_isoNameSender isoName of the sender (used for check against ownerisoName())
-  @param acrc_isoName isoName code of searched remote Process Data instance
-  @return count of similar remote process data entries
-*/
-uint8_t Process_c::procDataRemoteCnt( uint16_t aui16_DDI, uint16_t aui16_element,
-                                      const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoName)
-{
-  uint8_t ui8_cnt=0;
-
-  for ( cacheTypeC2_t pc_iter = c_arrClientC2.begin();
-       ( pc_iter != c_arrClientC2.end() );
-       pc_iter++ )
-  { // search for all local items which match the searched identity
-    if ((*pc_iter)->matchISO(acrc_isoNameSender, acrc_isoName, aui16_DDI, aui16_element))
-      ui8_cnt++;
-  }
-  return ui8_cnt;
 }
 
 

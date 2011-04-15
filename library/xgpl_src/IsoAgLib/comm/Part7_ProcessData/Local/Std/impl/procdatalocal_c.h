@@ -397,10 +397,10 @@ private: // Private methods
 #endif
 
   /** processing of a setpoint message */
-  virtual void processSetpoint();
+  virtual void processSetpoint( const ProcessPkg_c& pkg );
 
   /** process a measure prog message for local process data */
-  virtual void processProg();
+  virtual void processProg( const ProcessPkg_c& pkg );
 
   /** deliver reference to ManageMeasureProgLocal_c */
   ManageMeasureProgLocal_c& getManageProg( void ) { return mc_measureprog;}

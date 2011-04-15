@@ -64,11 +64,11 @@ public:
   */
   virtual bool timeEvent( void );
   /**  process a setpoint message */
-  void processMsg();
+  void processMsg( const ProcessPkg_c& pkg );
   /**  process a setpoint set command (pure virtual method)  */
-  virtual void processSet() = 0;
+  virtual void processSet( const ProcessPkg_c& pkg ) = 0;
   /** process a setpoint request command (pure virtual method) */
-  virtual void processRequest() const = 0;
+  virtual void processRequest( const ProcessPkg_c& pkg ) const = 0;
 
 protected: // Protected methods
   /**

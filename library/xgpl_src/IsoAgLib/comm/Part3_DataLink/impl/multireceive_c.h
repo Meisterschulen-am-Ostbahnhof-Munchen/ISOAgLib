@@ -127,12 +127,12 @@ public:
   ~MultiReceive_c() {}
 
   //  Operation: processMsg
-  virtual bool processMsg();
+  virtual bool processMsg( const CanPkg_c& arc_data );
 
   /// @pre Only to be called with StreamType TP/ETP!
-  bool processMsgIso (StreamType_t at_streamType);
+  bool processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& arc_pkg );
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-  void processMsgNmea();
+  void processMsgNmea( const CanPkgExt_c& pkg );
 #endif
 
   //! register a TP/ETP receiver
@@ -154,7 +154,7 @@ public:
   void deregisterClient (CanCustomer_c& arc_client, const IsoName_c& acrc_isoName, uint32_t aui32_pgn, uint32_t aui32_pgnMask, const IsoName_c* apcc_isoNameSender=NULL);
 
   //! @pre ONLY CALL THIS IF YOU KNOW THAT THERE'S NOT SUCH A STREAM ALREADY IN LIST!
-  Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize);
+  Stream_c* createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, int32_t ai_time );
 
   int32_t getCtsDelay() const { return (getStreamCount() == 1) ? mi32_ctsSendDelayOneStream : mi32_ctsSendDelayMoreStreams; }
 
@@ -190,18 +190,6 @@ public:
 
   /** every subsystem of IsoAgLib has explicit function for controlled shutdown */
   void close( void );
-
-  /**
-    deliver reference to data pkg
-    @return reference to the member BasePkg_c, which encapsulates the CAN send structure
-  */
-  CanPkgExt_c& data() { return mc_data; };
-
-  /**
-    deliver reference to data pkg as reference to CanPkgExt_c
-    to implement the base virtual function correct
-  */
-  virtual CanPkgExt_c& dataBase();
 
   //! return 0x00-0xFF: first byte of the stream!
   //! return 0x100: first byte not yet known!
@@ -254,20 +242,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual CanPkgExt_c& dataBase() {
-      return mrt_owner.dataBase();
-    }
-
-    virtual bool processMsg() {
-      return mrt_owner.processMsg();
-    }
-
-    virtual bool processInvalidMsg() {
-      return mrt_owner.processInvalidMsg();
-    }
-
-    virtual bool isNetworkMgmt() const {
-      return mrt_owner.isNetworkMgmt();
+    virtual bool processMsg( const CanPkg_c& arc_data ) {
+      return mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(
@@ -339,9 +315,6 @@ private:
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
-  /** temp data where received data is put */
-  CanPkgExt_c mc_data;
-
   Stream_c* getStreamIso (const ReceiveStreamIdentifier_c &arcc_streamIdent,
                           bool ab_includePgnInSearch)
   { return getStreamInternal (arcc_streamIdent, ab_includePgnInSearch); }
@@ -388,19 +361,11 @@ private:
   //! Will also remove kept-streams.
   void removeStream (Stream_c &arc_stream);
 
-  virtual bool processInvalidMsg(){
-    return false;
-  }
-
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
       uint32_t aui32_totalLen)
   {
     return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-  }
-
-  virtual bool isNetworkMgmt() const {
-    return false;
   }
 
   virtual void reactOnAbort(Stream_c &arc_stream)

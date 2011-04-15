@@ -292,10 +292,6 @@ private:
   Flexible8ByteString_c mu_data;
 };
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef IsoName_c ISOName_c;
-
-
 inline
 bool
 IsoName_c::selfConf() const

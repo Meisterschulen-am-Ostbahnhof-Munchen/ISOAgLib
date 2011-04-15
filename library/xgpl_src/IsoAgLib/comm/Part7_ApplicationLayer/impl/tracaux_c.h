@@ -364,7 +364,7 @@ namespace __IsoAgLib {
   virtual const char* getTaskName() const;
 #endif
 
-  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t rui32_pgn, IsoItem_c* rpc_isoItemSender, IsoItem_c* rpc_isoItemReceiver, int32_t );
 
   private:
     // Private methods
@@ -399,7 +399,7 @@ namespace __IsoAgLib {
         @pre  sender of message is existent in monitor list
         @see  CanPkgExt_c::resolveSendingInformation()
       */
-    virtual bool processMsg();
+    virtual bool processMsg( const CanPkg_c& arc_data );
 
     /** send estimated and measured messages (only tractor mode)
         @pre client has already claimed an address
@@ -446,7 +446,7 @@ namespace __IsoAgLib {
 
     /** Prepare sending estimated or measured flow.
      */
-    void prepareSendingEstimatedMeasured();
+    void prepareSendingEstimatedMeasured( CanPkgExt_c& pkg );
 
   private:
     /** auxiliary valves are numbered beginning with 0 and increase in sequence to the maximum number of auxiliary

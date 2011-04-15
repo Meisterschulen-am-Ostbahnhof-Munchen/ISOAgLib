@@ -166,19 +166,12 @@ bool ProcDataRemoteBase_c::timeEvent( uint16_t* /*pui16_nextTimePeriod */)
   return true;
 }
 
-bool ProcDataRemoteBase_c::sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val) const
+bool ProcDataRemoteBase_c::sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
 {
-  setRemoteSendFlags (ac_varISOName);
+  arc_pkg.setISONameForDA(isoName());
+  arc_pkg.setISONameForSA(ac_varISOName);
 
-  return ProcDataBase_c::sendValISOName (ac_varISOName, ai32_val);
-}
-
-void ProcDataRemoteBase_c::setRemoteSendFlags(const IsoName_c& ac_varISOName) const
-{
-  ProcessPkg_c& c_data = getProcessPkg();
-
-  c_data.setISONameForDA(isoName());
-  c_data.setISONameForSA(ac_varISOName);
+  return ProcDataBase_c::sendValISOName ( arc_pkg, ac_varISOName, ai32_val);
 }
 
 } // end of namespace __IsoAgLib

@@ -34,7 +34,6 @@ static const int32_t sci132_periodDM1 = 1000;
 DiagnosticsServices_c::DiagnosticsServices_c( IdentItem_c& arc_identItem ) :
   mrc_identItem ( arc_identItem ),
   mpc_serviceToolVerifier(NULL),
-  mc_data(),
   mc_dtcs(),
   mi32_dm1LastSentTime(-1),
   mb_dm1CurrentNeedsToBeSent(true),
@@ -412,10 +411,9 @@ void
 DiagnosticsServices_c::sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8bytes)
 {
   IsoBus_c& c_isobus = getIsoBusInstance4Comm();
-  CanPkgExt_c& c_pkg = dataBase();
+  CanPkgExt_c c_pkg;
 
   // now nr() has now suitable value
-  c_pkg.setIdentType(Ident_c::ExtendedIdent);
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ui32_pgn);
   c_pkg.setMonitorItemForSA( mrc_identItem.getIsoItem() );
@@ -426,7 +424,7 @@ DiagnosticsServices_c::sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8byt
 }
 
 bool
-DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* /*apc_isoItemReceiver*/)
+DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
 {
   if ( !mrc_identItem.isClaimedAddress() ) return false;
 

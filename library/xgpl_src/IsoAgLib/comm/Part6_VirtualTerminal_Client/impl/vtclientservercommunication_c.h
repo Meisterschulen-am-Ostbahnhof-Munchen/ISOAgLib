@@ -14,7 +14,6 @@
 #ifndef VT_CLIENT_SERVER_COMMUNICATION_H
 #define VT_CLIENT_SERVER_COMMUNICATION_H
 
-#include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminalpkg_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/iisoterminalobjectpool_c.h>
 #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/ivtobject_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
@@ -256,7 +255,7 @@ public:
   bool timeEventPoolUpload();
 
   /** function that handles incoming acknowledgement messages */
-  bool processMsgAck();
+  bool processMsgAck( const CanPkgExt_c& arc_data );
 
   /** function that handles incoming language pgn */
   void notifyOnVtsLanguagePgn();
@@ -264,11 +263,9 @@ public:
   /** function that handles incoming Vt Status Message */
   void notifyOnVtStatusMessage();
 
-  void notifyOnAuxInputStatus();
+  void notifyOnAuxInputStatus( const CanPkgExt_c& arc_data );
 
-  virtual bool processMsg();
-
-  virtual CanPkgExt_c& dataBase() { return mc_data; }
+  virtual bool processMsg( const CanPkg_c& arc_data );
 
   uint16_t getVtObjectPoolDimension();
   uint16_t getVtObjectPoolSoftKeyWidth();
@@ -415,7 +412,7 @@ private:
   friend class IsoTerminal_c;
 
   //! @return true for successful assignment, false if SA couldn't be found.
-  bool storeAuxAssignment();
+  bool storeAuxAssignment( const CanPkgExt_c& arc_data );
 
   void doStart();
   void doStop();
@@ -452,12 +449,7 @@ private:
     */
   void setVtDisplayState (bool b_isVtStatusMsg, uint8_t ui8_saOrDisplayState);
 
-  virtual bool processInvalidMsg() { return false; }
-
-  virtual bool isNetworkMgmt() const { return false; }
-
-  /// Using the singletonVecKey from mc_data (-->IsoTerminalPkg_c)
-  MULTITON_PAR_DOT_DEF(mc_data)
+  int getMultitonInst() { return mi_multitonInst; };
 
 private: // attributes
   /** static instance to store temporarily before push_back into list */
@@ -528,8 +520,6 @@ private:
 
   uint8_t mui8_clientId;
 
-  IsoTerminalPkg_c mc_data;
-
   vtClientDisplayState_t men_displayState;
 
   #ifdef USE_LIST_FOR_FIFO
@@ -559,6 +549,8 @@ private:
   int32_t mi32_fakeVtOffUntil;
 
   bool mb_isSlave; // @todo WS SLAVE: could be substituted by master/slave specific derived classes
+
+  int mi_multitonInst;
 };
 
 }

@@ -15,7 +15,7 @@
 #define ICAN_CUSTOMER_H
 
 #include "impl/cancustomer_c.h"
-#include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
+#include <IsoAgLib/driver/can/icanpkg_c.h>
 
 namespace __IsoAgLib
 { // forward declarations
@@ -39,44 +39,19 @@ class iCanCustomer_c : private __IsoAgLib::CanCustomer_c
 {
 public:
   /**
-    virtual function which delivers a pointer to the iCANCustomer
-    specific iCanPkgExt_c instance
-  */
-  virtual iCanPkgExt_c& iDataBase()=0;
-
-  /**
     process a message -> the specialized/derived version of this virtual
     function is called during processing of received CAN telegrams in CanIo_c::processMsg
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool processMsg() { return processMsgDefault(); }
-
- /**
-    process a message -> the specialized/derived version of this virtual
-    function can be called during processing of received CAN telegrams in CanIo_c::processMsg
-    @see __IsoAgLib::CanIo_c::processMsg
-  */
-  virtual bool processInvalidMsg() { return false; }
-
-  virtual bool isNetworkMgmt() const { return false; }
-
+  virtual bool process( const iCanPkg_c& arc_data ) = 0;
 
 private:
-  /**
-    virtual function which delivers a pointer to the CANCustomer
-    specific CanPkgExt_c instance
-  */
-  virtual __IsoAgLib::CanPkgExt_c& dataBase() { return static_cast<__IsoAgLib::CanPkgExt_c&>(iDataBase()); }
-
   friend class iIsoBus_c;
   friend class iProprietaryBus_c;
   friend struct iIsoFilter_s;
   friend class iMultiReceive_c;
   friend class __IsoAgLib::ProprietaryMessageHandler_c;
 };
-
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef iCanCustomer_c iCANCustomer_c;
 
 } // namespace
 #endif

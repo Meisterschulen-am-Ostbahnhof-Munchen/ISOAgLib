@@ -305,10 +305,11 @@ bool MeasureProgLocal_c::stop(bool /* b_deleteSubProgs */, Proc_c::type_t ren_ty
   */
 bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                            en_valueGroup, ProcessCmd_c::setValue);
-  return processDataConst().sendValISOName(ac_targetISOName, valForGroup(en_valueGroup));
+  return processDataConst().sendValISOName( pkg, ac_targetISOName, valForGroup(en_valueGroup));
 }
 
 
@@ -318,10 +319,11 @@ bool MeasureProgLocal_c::sendValForGroup( ProcessCmd_c::ValueGroup_t en_valueGro
     @return true -> successful sent
   */
 bool MeasureProgLocal_c::sendSetpointValForGroup( ProcessCmd_c::ValueGroup_t en_valueGroup, const IsoName_c& ac_targetISOName) const {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(TRUE /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(TRUE /* isSetpoint */, false, /* isRequest */
                                                               en_valueGroup, ProcessCmd_c::setValue);
-  return processDataConst().sendValISOName(ac_targetISOName, setpointValForGroup(en_valueGroup));
+  return processDataConst().sendValISOName( pkg, ac_targetISOName, setpointValForGroup(en_valueGroup));
 }
 
 /** deliver to en_valueGroup according setpoint from a master setpoint
@@ -363,32 +365,31 @@ int32_t MeasureProgLocal_c::setpointValForGroup(ProcessCmd_c::ValueGroup_t en_va
       * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
-bool MeasureProgLocal_c::processMsg()
+bool MeasureProgLocal_c::processMsg( const ProcessPkg_c& arc_data )
 {
-  bool b_result = MeasureProgBase_c::processMsg();
+  bool b_result = MeasureProgBase_c::processMsg( arc_data );
 
   // call base function - if base function returns true, nothing else must be done
   if (!b_result)
-  { // only use the local vars if needed
-    ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-
-    if (c_pkg.senderItem() == NULL)
+  {
+    if (arc_data.senderItem() == NULL)
     { // sender with SA 0xFE is not of interest here!
       return true;
     }
 
     // backup sender isoname before answering with resetValForGroup() or sendValForGroup() (modification during send in c_pkg !)
-    const IsoName_c c_senderIsoNameOrig = c_pkg.senderItem()->isoName();
+    const IsoName_c c_senderIsoNameOrig = arc_data.senderItem()->isoName();
+
+    // ISO: value in message contains reset value
+    const int32_t ci32_val = arc_data.getValue();
 
     // the message was a value message -> evaluate it here
-    if ( c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
+    if ( arc_data.mc_processCmd.getCommand() == ProcessCmd_c::setValue)
     { // write - accept only write actions to local data only if this is reset try
 
-      // ISO: value in message contains reset value
-      const int32_t ci32_val = c_pkg.getValue();
-      resetValForGroup(c_pkg.mc_processCmd.getValueGroup(), ci32_val);
+      resetValForGroup(arc_data.mc_processCmd.getValueGroup(), ci32_val);
 
-      if (Proc_c::defaultDataLoggingDDI == c_pkg.DDI())
+      if (Proc_c::defaultDataLoggingDDI == arc_data.DDI())
       { // setValue command for default data logging DDI stops measurement (same as TC task status "suspended")
         getProcessInstance4Comm().processTcStatusMsg(0, c_senderIsoNameOrig, TRUE /* ab_skipLastTcStatus */);
       }
@@ -399,12 +400,12 @@ bool MeasureProgLocal_c::processMsg()
     } // write
     else
     { // read -> answer wanted value
-      sendValForGroup( c_pkg.mc_processCmd.getValueGroup(), c_senderIsoNameOrig );
+      sendValForGroup( arc_data.mc_processCmd.getValueGroup(), c_senderIsoNameOrig );
 
-      if ((Proc_c::defaultDataLoggingDDI == c_pkg.DDI()) &&
+      if ((Proc_c::defaultDataLoggingDDI == arc_data.DDI()) &&
           (processDataConst().getProcessDataChangeHandler() != NULL ))
         // call handler function if handler class is registered
-        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), processData().getPkgValue(), c_senderIsoNameOrig.toConstIisoName_c() );
+        processDataConst().getProcessDataChangeHandler()->processDefaultLoggingStart( pprocessData(), ci32_val, c_senderIsoNameOrig.toConstIisoName_c() );
     } // read
   }
 
@@ -572,14 +573,16 @@ bool MeasureProgLocal_c::resetVal(int32_t ai32_val){
   // send resetted val
   bool b_sendSuccess;
 
+  ProcessPkg_c pkg;
+
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               ProcessCmd_c::exactValue, ProcessCmd_c::setValue);
   // allow reset with value
   //mi32_val = 0;
   mi32_val = ai32_val;
 
-  b_sendSuccess = processData().sendValISOName(mc_isoName, val());
+  b_sendSuccess = processData().sendValISOName( pkg, mc_isoName, val());
 
   #if 0 //def USE_EEPROM_IO
   // call reset function for ProcessData -> if this prog is the first one reset eepromVal
@@ -632,11 +635,12 @@ bool MeasureProgLocal_c::resetMed()
   */
 bool MeasureProgLocal_c::resetMin()
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               ProcessCmd_c::minValue, ProcessCmd_c::setValue);
   mi32_min = 0;
-  return processData().sendValISOName(mc_isoName, min());
+  return processData().sendValISOName( pkg, mc_isoName, min());
 }
 
 
@@ -649,11 +653,12 @@ bool MeasureProgLocal_c::resetMin()
   */
 bool MeasureProgLocal_c::resetMax()
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                               ProcessCmd_c::maxValue, ProcessCmd_c::setValue);
   mi32_max = 0;
-  return processData().sendValISOName(mc_isoName, max());
+  return processData().sendValISOName( pkg, mc_isoName, max());
 }
 
 

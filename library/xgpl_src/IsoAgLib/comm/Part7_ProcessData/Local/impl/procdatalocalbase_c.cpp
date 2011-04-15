@@ -304,15 +304,16 @@ bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */)
 */
 bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetISOName) const {
 
+    ProcessPkg_c pkg;
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
+    pkg.mc_processCmd.setValues(false /* isSetpoint */, false, /* isRequest */
                                                              ProcessCmd_c::exactValue,
                                                              ProcessCmd_c::setValue);
 
     #if 0 //def USE_EEPROM_IO
     return sendValISOName(ac_targetISOName, eepromVal());
     #else
-    return sendValISOName(ac_targetISOName, masterMeasurementVal());
+    return sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
     #endif
 }
 
@@ -322,20 +323,19 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetIS
     derived classes with more flexible management (including measurement programs)
     use their own overloaded version.
 */
-void ProcDataLocalBase_c::processProg()
+void ProcDataLocalBase_c::processProg( const ProcessPkg_c& pkg )
 {
-  ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if (c_pkg.senderItem() == NULL)
+  if (pkg.senderItem() == NULL)
   { // sender with SA 0xFE is not of interest
     return;
   }
 
   // handle for simple measurement value
-  if (c_pkg.mc_processCmd.checkIsRequest() &&
-      // c_pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
-      c_pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
+  if (pkg.mc_processCmd.checkIsRequest() &&
+      // pkg.mc_processCmd.checkIsMeasure() &&  /* already checked before, we are in processProg() ! */
+      pkg.mc_processCmd.getValueGroup() == ProcessCmd_c::exactValue)
   { // request for measurement value
-    sendMasterMeasurementVal( c_pkg.senderItem()->isoName() );
+    sendMasterMeasurementVal( pkg.senderItem()->isoName() );
   }
 }
 
@@ -344,13 +344,13 @@ void ProcDataLocalBase_c::processProg()
     this base class variant checks only, if a setpoint cmd was recieved
     which wants to reset a measurement value
 */
-void ProcDataLocalBase_c::processSetpoint()
+void ProcDataLocalBase_c::processSetpoint( const ProcessPkg_c& pkg )
 {
   #ifdef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-  if (getProcessInstance4Comm().data().dataRawCmdLong() == 0)
+  if (pkg.dataRawCmdLong() == 0)
   { // let processProg process measurement value reset -> change PD to use std. reset
-    getProcessInstance4Comm().data().setPd(1);
-    processProg();
+    pkg.setPd(1);
+    processProg(pkg);
   }
   #endif
 }
@@ -376,19 +376,12 @@ void ProcDataLocalBase_c::resetEeprom( void ){
 }
 #endif // USE_EEPROM_IO
 
-bool ProcDataLocalBase_c::sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val) const
+bool ProcDataLocalBase_c::sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
 {
-  setLocalSendFlags (ac_varISOName);
+  arc_pkg.setISONameForDA(ac_varISOName);
+  arc_pkg.setISONameForSA(isoName());
 
-  return ProcDataBase_c::sendValISOName (ac_varISOName, ai32_val);
-}
-
-void ProcDataLocalBase_c::setLocalSendFlags(const IsoName_c& ac_varISOName) const
-{
-  ProcessPkg_c& c_data = getProcessPkg();
-
-  c_data.setISONameForDA(ac_varISOName);
-  c_data.setISONameForSA(isoName());
+  return ProcDataBase_c::sendValISOName (arc_pkg, ac_varISOName, ai32_val);
 }
 
 } // end of namespace __IsoAgLib

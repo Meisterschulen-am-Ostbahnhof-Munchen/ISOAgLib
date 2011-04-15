@@ -197,21 +197,35 @@ IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
   if ( ! getCanInstance4Comm().isReady2Send() )
     return *this;
 
-  // when ISO is compiled, we must make sure, that the ISO specific
-  // resolving is only used for extended ident messages
-  if ( acrc_src.identType() == Ident_c::ExtendedIdent )
-  {
-    // check if source and destination address are valid
-    if ( ! acrc_src.resolveSendingInformation() )
-    { // preconditions for correct sending are not fullfilled -> set error state
+  isoaglib_assert( arc_src.identType() == Ident_c::ExtendedIdent );
+
+  // check if source and destination address are valid
+  if ( ! acrc_src.resolveSendingInformation( getMultitonInst() ) )
+  { // preconditions for correct sending are not fullfilled -> set error state
 #if 0
-      /* check is temporary disabled! */
-      getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
+    /* check is temporary disabled! */
+    getILibErrInstance().registerError(IsoAgLib::iLibErr_c::CanBus, IsoAgLib::iLibErr_c::Can);
 #endif
-      return *this;
-    }
+    return *this;
   }
+
   (void) getCanInstance4Comm().operator<<( static_cast<CanPkg_c&>(acrc_src) );
+  return *this;
+}
+
+IsoBus_c&
+IsoBus_c::operator<<(CanPkg_c& acrc_src)
+{
+  isoaglib_assert (getCanInstance4Comm().isReady2Send());
+  if ( ! getCanInstance4Comm().isReady2Send() )
+    return *this;
+
+  if( acrc_src.identType() != Ident_c::StandardIdent )
+  {
+    return *this;
+  }
+
+  (void) getCanInstance4Comm().operator<<( acrc_src );
   return *this;
 }
 

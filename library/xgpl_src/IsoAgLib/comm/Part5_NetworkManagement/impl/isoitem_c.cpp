@@ -14,7 +14,6 @@
 #include "isoitem_c.h"
 // necessary for convert operators
 #include "../iisoitem_c.h"
-#include "isosystempkg_c.h"
 #include "isomonitor_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
@@ -227,7 +226,6 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 {
   IsoBus_c& c_isobus = getIsoBusInstance4Comm();
   IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-  IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
 
   if (nr() == 254)
   { // no success -> send NACK and switch to off | error state
@@ -248,18 +246,21 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
     }
   }
 
+  CanPkgExt_c c_pkg;
   // now nr() has now suitable value
-  c_pkg.setIdentType(Ident_c::ExtendedIdent);
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
-  c_pkg.setMonitorItemForSA( this ); // free SA or NACK flag
+  c_pkg.setIsoSa( nr() );
   // set NAME to CANPkg
   c_pkg.setDataUnion( outputNameUnion() );
   // now IsoSystemPkg_c has right data -> send
   c_isobus << c_pkg;
   // update timestamp
   updateTime();
+  #if DEBUG_ADDRESS_CLAIM
+  INTERNAL_DEBUG_DEVICE << "Sending initial SA claim (sendAddressClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
 
   mb_repeatClaim = false;
 }
@@ -351,7 +352,9 @@ bool IsoItem_c::timeEvent( void )
       else
       { // <0 or >0
         bool b_sendOutWsMessage=true;
-        IsoSystemPkg_c& c_pkg = c_isoMonitor.data();
+
+        CanPkgExt_c c_pkg;
+
         if ( mi8_slavesToClaimAddress < 0 ) // should be -1, but simply catch all <0 for ws-master sending
         { // Announce WS-Master
           mi8_slavesToClaimAddress = mpvec_slaveIsoNames->size();
@@ -373,7 +376,6 @@ bool IsoItem_c::timeEvent( void )
         }
         if (b_sendOutWsMessage)
         { // Really send it out on the bus now!
-          c_pkg.setIdentType(Ident_c::ExtendedIdent);
           c_pkg.setIsoPri (7);
           c_pkg.setMonitorItemForSA (this);
           c_isobus << c_pkg;
@@ -417,9 +419,8 @@ IsoItem_c::processAddressClaimed(
   { // IsoItem_c::processMsg() is only called for local item, when
     // this item has higher PRIO, so that we shall reject the SA steal
     // by resending OUR SA CLAIM
-    IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
-    c_pkg.setIdentType(Ident_c::ExtendedIdent);
-    c_pkg.setMonitorItemForSA( this );
+    CanPkgExt_c c_pkg;
+    c_pkg.setIsoSa( nr() );
     c_pkg.setIsoPri(6);
     c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
     c_pkg.setIsoPs(255); // global information
@@ -427,6 +428,9 @@ IsoItem_c::processAddressClaimed(
     c_pkg.setDataUnion(outputNameUnion());
       // now IsoSystemPkg_c has right data -> send
     getIsoBusInstance4Comm() << c_pkg;
+  #if DEBUG_ADDRESS_CLAIM
+  INTERNAL_DEBUG_DEVICE << "sending sa claim" << INTERNAL_DEBUG_DEVICE_ENDL;
+  #endif
   }
   else
   { // remote item
@@ -450,12 +454,11 @@ bool IsoItem_c::sendSaClaim()
   #if DEBUG_ADDRESS_CLAIM
   INTERNAL_DEBUG_DEVICE << "Send SA claim (sendSaClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-  IsoSystemPkg_c& c_pkg = getIsoMonitorInstance4Comm().data();
-  c_pkg.setIdentType(Ident_c::ExtendedIdent);
+  CanPkgExt_c c_pkg;
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
   c_pkg.setIsoPs(255); // global information
-  c_pkg.setMonitorItemForSA( this );
+  c_pkg.setIsoSa( nr() );
   // set NAME to CANPkg
   c_pkg.setDataUnion(outputNameUnion());
   // now IsoSystemPkg_c has right data -> send
@@ -530,7 +533,7 @@ IsoItem_c::setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoName
 
 /// This is for incoming WORKING_SET_MASTER_PGN
 void
-IsoItem_c::setMaster (uint8_t aui8_slaveCount)
+IsoItem_c::setMaster (uint8_t aui8_slaveCount, int32_t ai_time )
 {
   if (mpvec_slaveIsoNames)
   { // already registered as working-set master.
@@ -542,7 +545,7 @@ IsoItem_c::setMaster (uint8_t aui8_slaveCount)
     mpvec_slaveIsoNames = new STL_NAMESPACE::vector<IsoName_c> (aui8_slaveCount, IsoName_c::IsoNameUnspecified());
   }
 
-  mi32_timeAnnounceForRemoteItem = getIsoMonitorInstance4Comm().data().time();
+  mi32_timeAnnounceForRemoteItem = ai_time;
 }
 
 

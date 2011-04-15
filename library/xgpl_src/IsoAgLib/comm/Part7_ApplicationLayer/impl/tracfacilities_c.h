@@ -48,7 +48,7 @@ class TracFacilities_c : public BaseCommon_c
 
   virtual ~TracFacilities_c() {}
 
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
   /* ******************************************* */
   /** \name Set Values for periodic send on BUS  */
@@ -108,7 +108,7 @@ class TracFacilities_c : public BaseCommon_c
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  virtual bool processMsg();
+  virtual bool processMsg( const CanPkg_c& arc_data );
 
   /** send guidance data
   @see  TracFacilities_c::processMsgRequestPGN

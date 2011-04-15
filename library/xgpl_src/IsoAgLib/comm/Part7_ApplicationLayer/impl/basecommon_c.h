@@ -57,7 +57,6 @@ namespace __IsoAgLib
       mi32_lastMsgReceived(0),
       mpc_isoName(NULL),
       mc_selectedDataSourceISOName(),
-      mc_data(),
       mt_task(*this),
       mt_handler(*this),
       mui16_timeOut(TIMEOUT_SENDING_NODE_NMEA)
@@ -78,16 +77,6 @@ namespace __IsoAgLib
       */
     virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0);
 
-     /** deliver reference to data pkg
-         @return reference to the member CanPkg, which encapsulates the CAN send structure
-        */
-    CanPkgExt_c& data() {return mc_data;}
-
-    /**
-      virtual function which delivers a pointer to the CANCustomer
-      specific CanPkgExt_c instance
-    */
-    virtual CanPkgExt_c& dataBase();
 
     /** functions with actions, which must be performed periodically
         -> called periodically by Scheduler_c
@@ -165,19 +154,18 @@ namespace __IsoAgLib
     static const uint16_t TIMEOUT_SENDING_NODE_NMEA = 3000;
     static const uint16_t TIMEOUT_SENDING_NODE_J1939 = 5000;
 
-    /// Using the singletonVecKey from mc_data (-->CanPkgExt_c)
-    MULTITON_PAR_DOT_DEF(mc_data)
+    //int getMultitonInst() { return mi_multitonInst; }
 
   protected:
     void setTimeOut( uint16_t aui16_timeout) { mui16_timeOut = aui16_timeout; }
     uint16_t getTimeOut( ) { return mui16_timeOut; }
 
     RegisterPgn_s getRegisterPgn() {
-      return RegisterPgn_s(&mt_handler MULTITON_INST_WITH_COMMA);
+      return RegisterPgn_s(&mt_handler, 0 ); // XXX TODO
     }
 
     UnregisterPgn_s getUnregisterPgn(){
-      return UnregisterPgn_s(&mt_handler MULTITON_INST_WITH_COMMA);
+      return UnregisterPgn_s(&mt_handler, 0 ); // XXX TODO
     }
 
     void setTimePeriod(uint16_t aui16_timePeriod) {
@@ -281,12 +269,14 @@ namespace __IsoAgLib
       virtual bool processMsgRequestPGN(
           uint32_t aui32_pgn,
           IsoItem_c *apc_isoItemSender,
-          IsoItem_c *apc_isoItemReceiver)
+          IsoItem_c *apc_isoItemReceiver,
+          int32_t ai_time )
       {
         return mrt_owner.processMsgRequestPGN(
             aui32_pgn,
             apc_isoItemSender,
-            apc_isoItemReceiver);
+            apc_isoItemReceiver,
+            ai_time );
       }
 
       // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
@@ -328,7 +318,8 @@ namespace __IsoAgLib
     virtual bool processMsgRequestPGN(
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
-        IsoItem_c *apc_isoItemReceiver) = 0;
+        IsoItem_c *apc_isoItemReceiver,
+        int32_t ai_time ) = 0;
 
     // private attributes
     /** can be implement mode or tractor mode */
@@ -347,9 +338,6 @@ namespace __IsoAgLib
 
     /** IsoName of data source (e.g. tractor, terminal) from which commands are send exclusively */
     IsoName_c mc_selectedDataSourceISOName;
-
-    /** temp data where received data is put */
-    CanPkgExt_c mc_data;
 
     Task_t mt_task;
     Handler_t mt_handler;

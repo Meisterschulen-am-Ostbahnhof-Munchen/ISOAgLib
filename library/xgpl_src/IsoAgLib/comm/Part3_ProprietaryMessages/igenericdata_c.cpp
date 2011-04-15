@@ -33,23 +33,6 @@ namespace IsoAgLib
     clearVector();
   }
 
-  iGenericData_c::iGenericData_c (const iCanPkgExt_c& arc_canPkg)
-    : vec_data(), ui32_ident(arc_canPkg.ident())
-  {
-    // copy data
-    setDataStream (0, arc_canPkg.getUint8DataConstPointer(), arc_canPkg.getLen());
-  }
-
-  void iGenericData_c::getDataToCanPkgExt (iCanPkgExt_c& arc_canPkg)
-  {
-    // if iGenericData_c lenght exceed iCanPkgExt_c lenght, return
-    if (getLen() > 8) return;
-    // copy ident
-    arc_canPkg.setIdent (getIdent(), IsoAgLib::iIdent_c::ExtendedIdent);
-    // copy data
-    arc_canPkg.setDataFromString (getDataStream(), static_cast<uint8_t>(getLen())); // > 8 checked above
-  }
-
   /** storing data
     @param aui16_pos position to store data in vector
     @param aui8_data data byte

@@ -231,8 +231,6 @@ private:
   { return static_cast<iIsoMonitor_c&>(__IsoAgLib::getIsoMonitorInstance());}
 #endif
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef iIsoMonitor_c iISOMonitor_c;
 
 }
 #endif

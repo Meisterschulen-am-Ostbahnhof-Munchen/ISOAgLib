@@ -15,10 +15,13 @@
 
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/hal/hal_system.h>
+#include <IsoAgLib/driver/can/imaskfilter_c.h>
 #include <IsoAgLib/driver/can/impl/canio_c.h>
 
 
 namespace __IsoAgLib {
+
+
 
 /**
   Class managing one ISOBUS CAN instance.
@@ -46,6 +49,7 @@ public:
   bool close();
 
   IsoBus_c& operator<< (CanPkgExt_c& acrc_src);
+  IsoBus_c& operator<< (CanPkg_c& acrc_src);
 
   uint8_t getBusNumber() const { return getCanInstance4Comm().getBusNumber(); }
 
@@ -62,13 +66,38 @@ public:
     return getCanInstance4Comm().existFilter (ar_customer, IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::ExtendedIdent ), NULL);
   }
 
-  FilterBox_c* insertFilter( __IsoAgLib::CanCustomer_c& ar_customer,
+  FilterBox_c* insertFilter( CanCustomer_c& ar_customer,
                              const IsoAgLib::iMaskFilter_c& arc_maskFilter,
                              bool ab_reconfigImmediate = true,
                              int8_t ai8_dlcForce = -1 ) {
     return getCanInstance4Comm().insertFilter (ar_customer, IsoAgLib::iMaskFilterType_c(  arc_maskFilter, IsoAgLib::iIdent_c::ExtendedIdent ), ab_reconfigImmediate,
       ai8_dlcForce);
   }
+
+
+  bool insertStdFilter( CanCustomer_c& ar_customer,
+                             const IsoAgLib::iMaskFilter_c& arc_maskFilter,
+                             int ai_dlcForce,
+                             bool ab_reconfigImmediate ) {
+    return ( getCanInstance4Comm().insertFilter (
+        ar_customer,
+        IsoAgLib::iMaskFilterType_c(  arc_maskFilter, IsoAgLib::iIdent_c::StandardIdent ),
+        ab_reconfigImmediate,
+        static_cast<int8_t>(ai_dlcForce)) != NULL );
+  }
+
+
+  bool deleteStdFilter( const CanCustomer_c& ar_customer, const IsoAgLib::iMaskFilter_c& arc_maskFilter )
+  {
+    return getCanInstance4Comm().deleteFilter (ar_customer, IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::StandardIdent) );
+  }
+
+
+  bool existStdFilter(const CanCustomer_c& ar_customer, const IsoAgLib::iMaskFilter_c& arc_maskFilter )
+  {
+    return getCanInstance4Comm().existFilter (ar_customer, IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::StandardIdent), NULL);
+  }
+
 
  /** create a Standard Iso Filter Box
     possible errors:

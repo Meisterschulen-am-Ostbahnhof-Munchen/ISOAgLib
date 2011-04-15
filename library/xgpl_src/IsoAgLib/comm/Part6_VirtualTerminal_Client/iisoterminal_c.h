@@ -92,8 +92,6 @@ public:
   { return static_cast<iIsoTerminal_c&>(__IsoAgLib::getIsoTerminalInstance()); }
 #endif
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef iIsoTerminal_c iISOTerminal_c;
 
 }
 #endif

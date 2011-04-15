@@ -175,14 +175,7 @@ class FsServerInstance_c : public CanCustomer_c
       */
    FsBusy_en getBusy() { return en_busy; }
 
-   /**
-    * stuff used for receiving can-packets
-    */
-   CANPkgExt_c& dataBase(){return c_data;}
-   CANPkgExt_c& data(){return c_data;}
-   bool processMsg();
-
-   CANPkgExt_c c_data;
+   bool processMsg( const CanPkg_c& arc_data );
 
    /** time-triggered operations */
    void timeEvent();

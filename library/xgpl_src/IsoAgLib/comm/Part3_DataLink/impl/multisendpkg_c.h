@@ -37,9 +37,7 @@ class MultiSendPkg_c : public CanPkgExt_c  {
 private:
   // private typedef alias names
 public:
-  /** default constructor which has nothing to do */
-  MultiSendPkg_c() {}
-  /** default destructor which has nothing to do */
+  MultiSendPkg_c() : CanPkgExt_c() {}
   ~MultiSendPkg_c() {}
 
   /* ************************** */

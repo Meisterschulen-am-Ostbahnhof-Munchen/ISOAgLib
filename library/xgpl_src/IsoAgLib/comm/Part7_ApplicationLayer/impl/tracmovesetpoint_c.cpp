@@ -79,20 +79,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracMoveSetPoint_c::processMsg()
+  bool TracMoveSetPoint_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
     //IsoName_c const& rcc_tempISOName = data().getISONameForSA();
 
-    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN
+    switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN
     {
       case SELECTED_SPEED_CMD:
         if ( checkMode(IsoAgLib::IdentModeTractor) )
         {
-          mi16_selectedSpeedSetPointCmd =   data().getUint16Data(0);
-          mi16_selectedSpeedSetPointLimit = data().getUint16Data(2);
-          mt_selectedDirectionCmd = IsoAgLib::IsoDirectionFlag_t( (data().getUint8Data(7) & 0x3) );
+          mi16_selectedSpeedSetPointCmd =   pkg.getUint16Data(0);
+          mi16_selectedSpeedSetPointLimit = pkg.getUint16Data(2);
+          mt_selectedDirectionCmd = IsoAgLib::IsoDirectionFlag_t( (pkg.getUint8Data(7) & 0x3) );
         }
         break;
     }
@@ -127,22 +128,22 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
       IsoBus_c& c_can = getIsoBusInstance4Comm();
 
-      data().setISONameForSA( *getISOName() );
-      data().setIdentType(Ident_c::ExtendedIdent);
-      data().setIsoPri(3);
-      data().setLen(8);
+      CanPkgExt_c pkg;
+      pkg.setISONameForSA( *getISOName() );
+      pkg.setIsoPri(3);
+      pkg.setLen(8);
 
-      data().setIsoPgn(SELECTED_SPEED_CMD);
+      pkg.setIsoPgn(SELECTED_SPEED_CMD);
       uint8_t ui8_temp = 0;
-      data().setUint16Data(0, mi16_selectedSpeedSetPointCmd);
-      data().setUint16Data(2, mi16_selectedSpeedSetPointLimit);
+      pkg.setUint16Data(0, mi16_selectedSpeedSetPointCmd);
+      pkg.setUint16Data(2, mi16_selectedSpeedSetPointLimit);
       ui8_temp |= mt_selectedDirectionCmd;
-      data().setUint8Data(7, ui8_temp);
+      pkg.setUint8Data(7, ui8_temp);
       //reserved fields
-      data().setUint16Data(4, 0xFF);
-      data().setUint8Data( 6, 0xFF);
+      pkg.setUint16Data(4, 0xFF);
+      pkg.setUint8Data( 6, 0xFF);
 
-      c_can << data();
+      c_can << pkg;
     }
 
     if ( getAvailableExecTime() == 0 ) return false;
@@ -161,7 +162,7 @@ TracMoveSetPoint_c::getTaskName() const
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information
            - verify this also for the other TracFoo classes
   */
-bool TracMoveSetPoint_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/)
+bool TracMoveSetPoint_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
 {
   return false;
 }

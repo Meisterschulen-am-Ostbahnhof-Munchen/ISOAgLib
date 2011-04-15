@@ -96,15 +96,6 @@ public:
 
   virtual ~IsoRequestPgn_c () {}
 
-  /** deliver reference to data pkg
-      @return reference to the CAN communication member object mc_data (CanPkgExt_c)
-      @see CANPkgExt */
-  CanPkgExt_c& data() {return mc_data;};
-
-  //  Operation: dataBase
-  //!  deliver reference to data pkg as reference to CanPkgExt_c
-  //!  to implement the base virtual function correct
-  virtual CanPkgExt_c& dataBase() {return mc_data;}
 
   /** adds the PGN to the list
       @param r_PGNHandler: reference to a IsoRequestPgnHandler_c from IsoMonitor_c, IsoItem_c, TimePosGps_c, TracGeneral_c or IsoTerminalServer
@@ -143,9 +134,6 @@ public:
       @return true, if the r_PGNHandler is already registered with that PGN */
   bool checkIfAlreadyRegistered (IsoRequestPgnHandler_c &r_PGNHandler, const uint32_t cui32_pgn, uint32_t aui32_pgnMask = mscui32_pgnDefaultMask);
 
-  /// only interesting for processMsgRequestPGN implementations to get the exact can-pkg time!
-  int32_t getTimeOfLastRequest() { return data().time(); }
-
   /** Only call sendCannotRespondNow(..) when you're about to respond to a requested PGN */
   void answerRequestPGNwithACK (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackCode) { sendAcknowledgePGN (arc_isoItemSender, aui8_ackCode); }
 
@@ -157,7 +145,7 @@ public:
 protected: // Protected methods
   /** process system msg
     * @return true -> message (Request for PGN) processed by IsoRequestPgn_c; false -> let others process */
-  bool processMsg ();
+  bool processMsg ( const CanPkg_c& arc_data );
 
 private: // Private methods
   /** constructor for IsoRequestPgn_c */
@@ -165,18 +153,11 @@ private: // Private methods
 
   void sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_ackType);
 
-  virtual bool processInvalidMsg() { return false; }
-
-  virtual bool isNetworkMgmt() const { return false; }
-
 private: // Private attributes
   Subsystem_c mc_subsystemState;
 
   /// holds all registered clients with PGN(s)
   STL_NAMESPACE::vector<PGN_s> m_registeredClientsWithPGN;
-
-  /** temp data where received and to be sent data is put */
-  CanPkgExt_c mc_data;
 
   /// The following variables are just kept here as cache in case the user
   /// calls "sendAcknowledgePGN" out and the CAN-Pkg was changed in between

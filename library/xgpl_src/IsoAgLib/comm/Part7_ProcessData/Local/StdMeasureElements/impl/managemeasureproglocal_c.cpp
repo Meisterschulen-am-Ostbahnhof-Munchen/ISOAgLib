@@ -374,16 +374,15 @@ bool ManageMeasureProgLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
 }
 
 /** process a measure prog message for local process data */
-void ManageMeasureProgLocal_c::processProg()
+void ManageMeasureProgLocal_c::processProg( const ProcessPkg_c& arc_data )
 {
-  ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if (c_pkg.senderItem() == NULL)
+  if (arc_data.senderItem() == NULL)
   { // sender wit SA 0xFE is not of interest
     return;
   }
 
-  const IsoName_c& c_callerISOName =  c_pkg.senderItem()->isoName();
-  ProcessCmd_c::CommandType_t en_command = c_pkg.mc_processCmd.getCommand();
+  const IsoName_c& c_callerISOName =  arc_data.senderItem()->isoName();
+  ProcessCmd_c::CommandType_t en_command = arc_data.mc_processCmd.getCommand();
 
   // call updateProgCache with createIfNeeded if this is a writing action, otherwise don't create if none found
   if ( (en_command & 0x10) || /* measurement command indices are >= 0x10 < 0x20! */
@@ -393,8 +392,8 @@ void ManageMeasureProgLocal_c::processProg()
     updateProgCache(c_callerISOName, true);
   }
   else
-    if ( !c_pkg.mc_processCmd.checkIsRequest() ||
-         c_pkg.mc_processCmd.getValueGroup() != ProcessCmd_c::exactValue )
+    if ( !arc_data.mc_processCmd.checkIsRequest() ||
+         arc_data.mc_processCmd.getValueGroup() != ProcessCmd_c::exactValue )
     { // use normal mechanism -> exist function if no entry found
       if (!updateProgCache(c_callerISOName, false))return;
     }
@@ -423,7 +422,7 @@ void ManageMeasureProgLocal_c::processProg()
   }
   #endif
   // now call process msg for cached item
-  mpc_progCache->processMsg();
+  mpc_progCache->processMsg( arc_data );
 }
 
 /**

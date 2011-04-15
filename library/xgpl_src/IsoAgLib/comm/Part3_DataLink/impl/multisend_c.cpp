@@ -146,8 +146,6 @@ MultiSend_c::init()
 {
   isoaglib_assert (!initialized());
 
-  mc_data.setMultitonInst( getMultitonInst() );
-
   getSchedulerInstance().registerClient( this );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
@@ -386,12 +384,13 @@ MultiSend_c::updateEarlierAndLatestInterval()
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
 */
 bool
-MultiSend_c::processMsg()
+MultiSend_c::processMsg( const CanPkg_c& arc_data )
 {
-  SendStream_c* pc_sendStreamFound = getSendStream (data().getISONameForDA(), data().getISONameForSA()); // sa/da swapped, of course ;-) !
+  CanPkgExt_c c_data( arc_data, getMultitonInst() );
+  SendStream_c* pc_sendStreamFound = getSendStream (c_data.getISONameForDA(), c_data.getISONameForSA()); // sa/da swapped, of course ;-) !
   if (pc_sendStreamFound)
   { // found a matching SendStream, so call its processMsg()
-    const bool cb_success = pc_sendStreamFound->processMsg();
+    const bool cb_success = pc_sendStreamFound->processMsg( c_data );
     calcAndSetNextTriggerTime();
     return cb_success;
   }
@@ -407,10 +406,9 @@ MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender
 {
   if (aui16_dataSize < beginTpPacketSize)
   {
-    MultiSendPkg_c& rc_multiSendPkg = data();
+    MultiSendPkg_c rc_multiSendPkg;
     rc_multiSendPkg.setIsoPri (6);
     rc_multiSendPkg.setISONameForSA (acrc_isoNameSender);
-    rc_multiSendPkg.setIdentType (Ident_c::ExtendedIdent);
     rc_multiSendPkg.setLen (uint8_t (aui16_dataSize));
     rc_multiSendPkg.setIsoPgn(ai32_pgn);
     for (unsigned ui = 0 ; ui < aui16_dataSize; ++ui)

@@ -46,10 +46,12 @@ namespace IsoAgLib {
   bool config (const iIsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode = IsoAgLib::IdentModeImplement, uint16_t aui16_suppressMask = 0)
   { return TracMove_c::config_base(apc_isoName, at_identMode, aui16_suppressMask ); }
 
+#if 0
   /** update selected speed with actually best available speed
       @param at_speedSource  from which source is the speed available
     */
   void updateSpeed(IsoAgLib::SpeedSource_t at_speedSource) {TracMove_c::updateSpeed(at_speedSource);}
+#endif
 
   /** update distance and direction with the actually best available distance and direction
       @param t_distanceSrc  from which source is the distance and direction available

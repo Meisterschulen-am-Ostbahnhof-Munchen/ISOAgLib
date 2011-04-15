@@ -98,7 +98,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
 #if 0
   // This part is moved to the diagnostic PGN handling under Part_12
-  bool TracCert_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+  bool TracCert_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -115,40 +115,41 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracCert_c::processMsg()
+  bool TracCert_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    uint32_t const cui32_pgn = data().isoPgn();
+    uint32_t const cui32_pgn = pkg.isoPgn();
     switch (cui32_pgn)
     {
       case ISOBUS_CERTIFICATION_PGN:
         if ( checkParseReceived (rcc_tempISOName) )
         { // sender is allowed to send
-          m_certData.ui8_isobusCertRevision =  (data().getUint8Data(0)  >>  6) & 0x3u;
-          m_certData.ui8_isobusCertYear =      (data().getUint8Data(0)  >>  0) & 0x3Fu;
-          m_certData.ui16_certLabId = (uint16_t(data().getUint8Data(2)) << 3) |
-                                              ((data().getUint8Data(1)  >> 5) & 0x7u);
-          m_certData.ui8_isobusCertLabType =   (data().getUint8Data(1)  >> 1) & 0x7u;
-          m_certData.ui8_minimumECU =          (data().getUint8Data(3)  >> 7) & 0x1u;
-          m_certData.ui8_TECUClass1 =          (data().getUint8Data(3)  >> 6) & 0x1u;
-          m_certData.ui8_TECUClass2 =          (data().getUint8Data(3)  >> 5) & 0x1u;
-          m_certData.ui8_TECUClass3 =          (data().getUint8Data(3)  >> 4) & 0x1u;
-          m_certData.ui8_Class3ECU =           (data().getUint8Data(3)  >> 3) & 0x1u;
-          m_certData.ui8_VirtualTerminal =     (data().getUint8Data(3)  >> 2) & 0x1u;
-          m_certData.ui8_VTWorkingSetMaster =  (data().getUint8Data(3)  >> 1) & 0x1u;
-          m_certData.ui8_VTWorkingSetMember =  (data().getUint8Data(3)  >> 0) & 0x1u;
-          m_certData.ui8_TaskController =      (data().getUint8Data(4)  >> 7) & 0x1u;
-          m_certData.ui8_TCWorkingSetMaster =  (data().getUint8Data(4)  >> 6) & 0x1u;
-          m_certData.ui8_TCWorkingSetMember =  (data().getUint8Data(4)  >> 5) & 0x1u;
-          m_certData.ui8_FileServer =          (data().getUint8Data(4)  >> 4) & 0x1u;
-          m_certData.ui8_GPSReceiver =         (data().getUint8Data(4)  >> 3) & 0x1u;
-          m_certData.ui16_certReferenceNumber = data().getUint16Data(6);
+          m_certData.ui8_isobusCertRevision =  (pkg.getUint8Data(0)  >>  6) & 0x3u;
+          m_certData.ui8_isobusCertYear =      (pkg.getUint8Data(0)  >>  0) & 0x3Fu;
+          m_certData.ui16_certLabId = (uint16_t(pkg.getUint8Data(2)) << 3) |
+                                              ((pkg.getUint8Data(1)  >> 5) & 0x7u);
+          m_certData.ui8_isobusCertLabType =   (pkg.getUint8Data(1)  >> 1) & 0x7u;
+          m_certData.ui8_minimumECU =          (pkg.getUint8Data(3)  >> 7) & 0x1u;
+          m_certData.ui8_TECUClass1 =          (pkg.getUint8Data(3)  >> 6) & 0x1u;
+          m_certData.ui8_TECUClass2 =          (pkg.getUint8Data(3)  >> 5) & 0x1u;
+          m_certData.ui8_TECUClass3 =          (pkg.getUint8Data(3)  >> 4) & 0x1u;
+          m_certData.ui8_Class3ECU =           (pkg.getUint8Data(3)  >> 3) & 0x1u;
+          m_certData.ui8_VirtualTerminal =     (pkg.getUint8Data(3)  >> 2) & 0x1u;
+          m_certData.ui8_VTWorkingSetMaster =  (pkg.getUint8Data(3)  >> 1) & 0x1u;
+          m_certData.ui8_VTWorkingSetMember =  (pkg.getUint8Data(3)  >> 0) & 0x1u;
+          m_certData.ui8_TaskController =      (pkg.getUint8Data(4)  >> 7) & 0x1u;
+          m_certData.ui8_TCWorkingSetMaster =  (pkg.getUint8Data(4)  >> 6) & 0x1u;
+          m_certData.ui8_TCWorkingSetMember =  (pkg.getUint8Data(4)  >> 5) & 0x1u;
+          m_certData.ui8_FileServer =          (pkg.getUint8Data(4)  >> 4) & 0x1u;
+          m_certData.ui8_GPSReceiver =         (pkg.getUint8Data(4)  >> 3) & 0x1u;
+          m_certData.ui16_certReferenceNumber = pkg.getUint16Data(6);
 
           setSelectedDataSourceISOName (rcc_tempISOName);
-          setUpdateTime( data().time() );
+          setUpdateTime( pkg.time() );
         } else
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
@@ -171,7 +172,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     data().setISONameForSA( *getISOName() );
     setSelectedDataSourceISOName(*getISOName());
-    data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(3);
     data().setLen(8);
 

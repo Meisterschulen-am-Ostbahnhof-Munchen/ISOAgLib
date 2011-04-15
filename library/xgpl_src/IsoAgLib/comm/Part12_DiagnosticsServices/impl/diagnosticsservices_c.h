@@ -106,9 +106,7 @@ public:
   /** call back function called when the TP is finished */
   void reactOnFinished(const SendStream_c& sendStream);
 
-  CanPkgExt_c& dataBase() { return mc_data; }
-
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_time );
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
@@ -127,12 +125,14 @@ private: // typedef
     bool processMsgRequestPGN(
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
-        IsoItem_c *apc_isoItemReceiver)
+        IsoItem_c *apc_isoItemReceiver,
+        int32_t ai_time )
     {
       return mrt_owner.processMsgRequestPGN(
           aui32_pgn,
           apc_isoItemSender,
-          apc_isoItemReceiver);
+          apc_isoItemReceiver,
+          ai_time );
     }
 
     // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
@@ -187,7 +187,6 @@ private: // method
 private: // attributes
   IdentItem_c& mrc_identItem;
   IsoAgLib::iServiceToolVerifier_c* mpc_serviceToolVerifier;
-  CanPkgExt_c mc_data;
 
   // Wrap list of DTC active/inactive
   DtcContainer_c mc_dtcs;

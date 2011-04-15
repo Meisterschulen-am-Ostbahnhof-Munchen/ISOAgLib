@@ -55,7 +55,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @param at_identMode either IsoAgLib::IdentModeImplement or IsoAgLib::IdentModeTractor
       @return true -> configuration was successfull
     */
-  bool TracGeneral_c::config_base (const ISOName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
+  bool TracGeneral_c::config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask)
   { // set configure values
     //store old mode to decide to register or unregister to request for pgn
     IsoAgLib::IdentMode_t t_oldMode = getMode();
@@ -126,7 +126,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     */
   void TracGeneral_c::checkCreateReceiveFilter( )
   {
-    ISOMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
+    IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
     IsoBus_c &c_can = getIsoBusInstance4Comm();
 
     if ( ( !checkFilterCreated() ) && ( c_isoMonitor.existActiveLocalIsoMember() ) )
@@ -165,14 +165,15 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  sender of message is existent in monitor list
       @see  CANPkgExt_c::resolveSendingInformation()
     */
-  bool TracGeneral_c::processMsg()
+  bool TracGeneral_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     bool b_result = false;
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CANPkgExt_c -> resolveSendingInformation
-    ISOName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    switch (data().isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
+    switch (pkg.isoPgn() /* & 0x3FFFF */) // don't need to &0x3FFFF, as this is the whole PGN...
     {
       case FRONT_HITCH_STATE_PGN:
       case REAR_HITCH_STATE_PGN:
@@ -180,10 +181,10 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         // and if actual sender isn't in conflict to previous sender
         if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
-          uint8_t ui8_tempHitch = (( data().getUint8Data( 0 ) * 4) / 10 );
+          uint8_t ui8_tempHitch = (( pkg.getUint8Data( 0 ) * 4) / 10 );
           if ( (ui8_tempHitch != ERROR_VAL_8)
               && (ui8_tempHitch != NO_VAL_8) ) {
-            switch ( (data().getUint8Data( 1 ) >> 6) & 3 ) {
+            switch ( (pkg.getUint8Data( 1 ) >> 6) & 3 ) {
             case 0: // not in work
               break;
             case 1: // in work
@@ -197,23 +198,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
               break;
             }
           }
-          if (data().isoPgn() == FRONT_HITCH_STATE_PGN)
+          if (pkg.isoPgn() == FRONT_HITCH_STATE_PGN)
           { // front hitch
             setHitchFront(ui8_tempHitch);
-            mui8_frontLinkForce = data().getUint8Data( 2 );
-            mui16_frontDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 ) ) << 8);
-            mt_frontHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
+            mui8_frontLinkForce = pkg.getUint8Data( 2 );
+            mui16_frontDraft = static_cast<uint16_t>(pkg.getUint8Data( 3 ) ) + (static_cast<uint16_t>(pkg.getUint8Data( 4 ) ) << 8);
+            mt_frontHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( pkg.getUint8Data(1) >> 3 ) & 3 );
           }
           else
           { // back hitch
             setHitchRear(ui8_tempHitch);
-            mui8_rearLinkForce = data().getUint8Data( 2 );
-            mui16_rearDraft = static_cast<uint16_t>(data().getUint8Data( 3 ) ) + (static_cast<uint16_t>(data().getUint8Data( 4 )) << 8);
-            mt_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( data().getUint8Data(1) >> 3 ) & 3 );
+            mui8_rearLinkForce = pkg.getUint8Data( 2 );
+            mui16_rearDraft = static_cast<uint16_t>(pkg.getUint8Data( 3 ) ) + (static_cast<uint16_t>(pkg.getUint8Data( 4 )) << 8);
+            mt_rearHitchPosLimitStatus = IsoAgLib::IsoLimitFlag_t( ( pkg.getUint8Data(1) >> 3 ) & 3 );
           }
           setSelectedDataSourceISOName (rcc_tempISOName);
           //set update time
-          setUpdateTime( data().time() );
+          setUpdateTime( pkg.time() );
         }
         else
         { // there is a sender conflict
@@ -224,23 +225,23 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
       case MAINTAIN_POWER_REQUEST_PGN: // maintain power request
       {
-        indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[data().getISONameForSA()];
+        indicatedStateImpl_t &rt_indicateData = mmap_indicatedState[pkg.getISONameForSA()];
 
-        if ( ( (data().getUint8Data( 0 ) >> 6) & 3) == 1)
+        if ( ( (pkg.getUint8Data( 0 ) >> 6) & 3) == 1)
           rt_indicateData.b_maintainEcuPower = true;
         else
           rt_indicateData.b_maintainEcuPower = false;
-        if ( ( (data().getUint8Data( 0 ) >> 4) & 3) == 1)
+        if ( ( (pkg.getUint8Data( 0 ) >> 4) & 3) == 1)
           rt_indicateData.b_maintainActuatorPower = true;
         else
           rt_indicateData.b_maintainActuatorPower = false;
 
-        rt_indicateData.inTransport = ( (data().getUint8Data( 1 ) >> 6) & 3 );
-        rt_indicateData.inPark =      ( (data().getUint8Data( 1 ) >> 4) & 3 );
-        rt_indicateData.inWork =      ( (data().getUint8Data( 1 ) >> 2) & 3 );
+        rt_indicateData.inTransport = ( (pkg.getUint8Data( 1 ) >> 6) & 3 );
+        rt_indicateData.inPark =      ( (pkg.getUint8Data( 1 ) >> 4) & 3 );
+        rt_indicateData.inWork =      ( (pkg.getUint8Data( 1 ) >> 2) & 3 );
 
-        rt_indicateData.i32_lastMaintainPowerRequest = data().time();
-        mi32_lastMaintainPowerRequest = data().time();
+        rt_indicateData.i32_lastMaintainPowerRequest = pkg.time();
+        mi32_lastMaintainPowerRequest = pkg.time();
 
         updateMaintainPowerRequest();
 
@@ -249,12 +250,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       }
 
       case LANGUAGE_PGN:
-        if (data().getISONameForSA().getEcuType() == IsoName_c::ecuTypeTractorECU)
+        if (pkg.getISONameForSA().getEcuType() == IsoName_c::ecuTypeTractorECU)
         { // only from nodes that indicate "TractorECU"
           mb_languageTecuReceived = true;
           for (int i=0; i<8; i++)
           {
-            mp8ui8_languageTecu[i] = data().getUint8Data(i);
+            mp8ui8_languageTecu[i] = pkg.getUint8Data(i);
           }
         }
         b_result = true;
@@ -263,7 +264,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     return b_result;
   }
 
-  bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, ISOItem_c* apc_isoItemSender, ISOItem_c* apc_isoItemReceiver)
+  bool TracGeneral_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )
@@ -299,7 +300,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     (void)sendRearHitchState();
   }
 
-  TracGeneral_c::SendHitchState_e TracGeneral_c::prepareSendingHitchState()
+  TracGeneral_c::SendHitchState_e TracGeneral_c::prepareSendingHitchState( CanPkgExt_c& pkg)
   {
     //check for isoName and if address claim has yet occured, because this function can also bo called
     //independent from timeEvent() function
@@ -307,10 +308,9 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
          (!getIsoMonitorInstance4Comm().existIsoMemberISOName(*getISOName(), true)) )
       return HitchStateNotSent;
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
     setSelectedDataSourceISOName( *getISOName() );
     return HitchStateSent;
@@ -321,49 +321,50 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( !canSendFrontHitchState() )
       return HitchStateNotSent;
 
-    SendHitchState_e const e_sending = prepareSendingHitchState();
+    CanPkgExt_c pkg;
+    SendHitchState_e const e_sending = prepareSendingHitchState( pkg );
     if (HitchStateNotSent == e_sending)
       return e_sending;
-    data().setIsoPgn(FRONT_HITCH_STATE_PGN);
+    pkg.setIsoPgn(FRONT_HITCH_STATE_PGN);
 
     uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
     ui8_temp |= mt_frontHitchPosLimitStatus << 3;
     switch (hitchFront()) {
     case ERROR_VAL_8:
-      data().setUint8Data(0, hitchFront());
+      pkg.setUint8Data(0, hitchFront());
       ui8_temp |= ( IsoAgLib::IsoError << 6 );
-      data().setUint8Data(1, ui8_temp);
+      pkg.setUint8Data(1, ui8_temp);
       break;
     case NO_VAL_8:
-      data().setUint8Data(0, hitchFront());
+      pkg.setUint8Data(0, hitchFront());
       ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
-      data().setUint8Data(1, ui8_temp);
+      pkg.setUint8Data(1, ui8_temp);
       break;
     default:
-      data().setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
+      pkg.setUint8Data(0, ((hitchFront() & 0x7F)*10/4));
       if ((hitchFront() & 0x80) != 0)
       {
         ui8_temp |= IsoAgLib::IsoActive << 6;
-        data().setUint8Data(1, ui8_temp ); // work
+        pkg.setUint8Data(1, ui8_temp ); // work
       }
       else
       {
         ui8_temp |= IsoAgLib::IsoInactive << 6;
-        data().setUint8Data(1, ui8_temp);
+        pkg.setUint8Data(1, ui8_temp);
       }
       break;
     }
-    data().setUint8Data(2, mui8_frontLinkForce);
-    data().setUint8Data(3, mui16_frontDraft& 0xFF);
-    data().setUint8Data(4, (mui16_frontDraft >> 8) );
+    pkg.setUint8Data(2, mui8_frontLinkForce);
+    pkg.setUint8Data(3, mui16_frontDraft& 0xFF);
+    pkg.setUint8Data(4, (mui16_frontDraft >> 8) );
 
     /* Reserved Bytes */
-    data().setUint8Data(5, 0xFF );
-    data().setUint16Data(6, 0xFFFF );
+    pkg.setUint8Data(5, 0xFF );
+    pkg.setUint16Data(6, 0xFFFF );
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return HitchStateSent;
   }
 
@@ -372,48 +373,49 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     if ( !canSendRearHitchState() )
       return HitchStateNotSent;
 
-    SendHitchState_e const e_sending = prepareSendingHitchState();
+    CanPkgExt_c pkg;
+    SendHitchState_e const e_sending = prepareSendingHitchState( pkg );
     if (HitchStateNotSent == e_sending)
       return e_sending;
-    data().setIsoPgn(REAR_HITCH_STATE_PGN);
+    pkg.setIsoPgn(REAR_HITCH_STATE_PGN);
     uint8_t ui8_temp = 0x7;  /* Pre-load the reserved bits */
     ui8_temp = mt_rearHitchPosLimitStatus << 3;
     switch (hitchRear()) {
     case ERROR_VAL_8:
-      data().setUint8Data(0, hitchRear());
+      pkg.setUint8Data(0, hitchRear());
       ui8_temp |= ( IsoAgLib::IsoError << 6 );
-      data().setUint8Data(1, ui8_temp);
+      pkg.setUint8Data(1, ui8_temp);
       break;
     case NO_VAL_8:
-      data().setUint8Data(0, hitchRear());
+      pkg.setUint8Data(0, hitchRear());
       ui8_temp |= ( IsoAgLib::IsoNotAvailable << 6 );
-      data().setUint8Data(1, ui8_temp);
+      pkg.setUint8Data(1, ui8_temp);
       break;
     default:
-      data().setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
+      pkg.setUint8Data(0, ((hitchRear() & 0x7F)*10/4));
       if ((hitchRear() & 0x80) != 0)
       {
         ui8_temp |= IsoAgLib::IsoActive << 6;
-        data().setUint8Data(1, ui8_temp ); // work
+        pkg.setUint8Data(1, ui8_temp ); // work
       }
       else
       {
         ui8_temp |= IsoAgLib::IsoInactive << 6;
-        data().setUint8Data(1, ui8_temp);
+        pkg.setUint8Data(1, ui8_temp);
       }
       break;
     }
-    data().setUint8Data(2, mui8_rearLinkForce);
-    data().setUint8Data(3, (mui16_rearDraft& 0xFF) );
-    data().setUint8Data(4, mui16_rearDraft >> 8);
+    pkg.setUint8Data(2, mui8_rearLinkForce);
+    pkg.setUint8Data(3, (mui16_rearDraft& 0xFF) );
+    pkg.setUint8Data(4, mui16_rearDraft >> 8);
 
     /* Reserved Bytes */
-    data().setUint8Data(5, 0xFF );
-    data().setUint16Data(6, 0xFFFF );
+    pkg.setUint8Data(5, 0xFF );
+    pkg.setUint16Data(6, 0xFFFF );
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return HitchStateSent;
   }
 
@@ -441,7 +443,6 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       return LanguageNotSent;
     }
     data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
     data().setIsoPri(6);
     data().setLen(8);
 
@@ -470,29 +471,29 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { //if VT has up to now not send the language command there is no sense to send it
       return LanguageNotSent;
     }
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(6);
-    data().setLen(8);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(6);
+    pkg.setLen(8);
 
     setSelectedDataSourceISOName( *getISOName() );
     IsoBus_c& c_can = getIsoBusInstance4Comm();
-    data().setIsoPgn(LANGUAGE_PGN);
+    pkg.setIsoPgn(LANGUAGE_PGN);
     //Bytes 1,2: language command
-    data().setUint16Data(0, (mp8ui8_languageTecu[0] | (mp8ui8_languageTecu[1] << 8)) );
+    pkg.setUint16Data(0, (mp8ui8_languageTecu[0] | (mp8ui8_languageTecu[1] << 8)) );
     //Byte 3: number format; Bit 1-4: reserved, Bit 5,6: time format, Bit 7,8: decimal symbol
-    data().setUint8Data(2, mp8ui8_languageTecu[2]);
+    pkg.setUint8Data(2, mp8ui8_languageTecu[2]);
     //Byte 4: date format
-    data().setUint8Data(3, mp8ui8_languageTecu[3]);
+    pkg.setUint8Data(3, mp8ui8_languageTecu[3]);
     //Byte 5: units of measure; Bit 1,2: mass units, Bit 3,4: volume units, Bit 5,6: area units, Bit 7,8: distance units
-    data().setUint8Data(4, mp8ui8_languageTecu[4]);
+    pkg.setUint8Data(4, mp8ui8_languageTecu[4]);
     //Byte 6: units of measure; Bit 1,2: units system; Bit 3,4; force units, Bit 5,6: pressure units, Bit 7,8: temperature units
-    data().setUint8Data(5, mp8ui8_languageTecu[5]);
+    pkg.setUint8Data(5, mp8ui8_languageTecu[5]);
     //Bytes 7,8: reserved
-    data().setUint8Data(6, 0xFF);
-    data().setUint8Data(7, 0xFF);
+    pkg.setUint8Data(6, 0xFF);
+    pkg.setUint8Data(7, 0xFF);
 
-    c_can << data();
+    c_can << pkg;
     return LanguageSent;
   }
 
@@ -538,21 +539,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         val2 |= ( IsoAgLib::IsoNotAvailablePark      << 4);
         val2 |= ( mt_implState.inWork                   << 2);
     }
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(6);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(6);
 
-    data().setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
-    data().setUint8Data(0, val1);
-    data().setUint8Data(1, val2);
+    pkg.setIsoPgn(MAINTAIN_POWER_REQUEST_PGN);
+    pkg.setUint8Data(0, val1);
+    pkg.setUint8Data(1, val2);
     //reserved fields
-    data().setUint16Data(2, 0xFFFFU);
-    data().setUint32Data(4, 0xFFFFFFFFUL);
-    data().setLen(8);
+    pkg.setUint16Data(2, 0xFFFFU);
+    pkg.setUint32Data(4, 0xFFFFFFFFUL);
+    pkg.setLen(8);
 
     // CanIo_c::operator<< retrieves the information with the help of CanPkg_c::getData
     // then it sends the data
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
   }
 
   /** force a request for pgn for language information */

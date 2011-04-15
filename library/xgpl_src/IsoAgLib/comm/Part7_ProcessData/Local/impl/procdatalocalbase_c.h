@@ -323,21 +323,21 @@ class ProcDataLocalBase_c : public ProcDataBase_c
       @param ai32_val int32_t value to send
       @return true -> sendIntern set successful EMPF and SEND
   */
-  bool sendValISOName( const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
+  bool sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
  protected:
   /** processing of a setpoint message.
       this base class variant checks only, if a setpoint cmd was recieved
       which wants to reset a measurement value
   */
-  virtual void processSetpoint();
+  virtual void processSetpoint( const ProcessPkg_c& pkg );
 
   /** process a measure prog message for local process data.
       this variant is only used for simple measurement progam management.
       derived classes with more flexible management (including measurement programs)
       use their own overloaded version.
   */
-  virtual void processProg();
+  virtual void processProg( const ProcessPkg_c& pkg );
 
 private:
   friend class ManageMeasureProgLocal_c; /** allow access to eepromVal() and resetEeprom() */
@@ -366,8 +366,6 @@ private:
   */
   void resetEeprom( void );
 #endif
-
-  void setLocalSendFlags (const IsoName_c& ac_varISOName) const;
 
  private:
    /** allow explicit MeasureProgLocal_c the access to private elements */

@@ -116,7 +116,7 @@ namespace __IsoAgLib {
     }
   }
 
-  bool TracLight_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+  bool TracLight_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -510,19 +510,22 @@ namespace __IsoAgLib {
       @see CanIo_c::processMsg
       @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
     */
-  bool TracLight_c::processMsg()
-  { // an ISO11783 base information msg received
+  bool TracLight_c::processMsg( const CanPkg_c& arc_data )
+  {
+    
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    // an ISO11783 base information msg received
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     lightBitData_t* pt_data = NULL;
 
-    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN!
+    switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN!
     {
       case LIGHTING_DATA_PGN:
         // lighting state information is sent by more than one sender -> store ALL messages with SA as key in STL_NAMESPACE::map
-        pt_data = &(mmap_data[data().isoSa()]);
+        pt_data = &(mmap_data[pkg.isoSa()]);
         if (pt_data != NULL)
           pt_data->dataMsgReq = IsoAgLib::IsoDontCare; //reserved field in lighting data
         break;
@@ -531,17 +534,17 @@ namespace __IsoAgLib {
         if ( checkParseReceived (rcc_tempISOName) )
         { // sender is allowed to send
           pt_data = &mt_cmd;
-          mt_cmd.dataMsgReq = IsoAgLib::IsoDataReq_t( data().getUint8Data(7) & 3 );
+          mt_cmd.dataMsgReq = IsoAgLib::IsoDataReq_t( pkg.getUint8Data(7) & 3 );
 
           if (mt_cmd.dataMsgReq == IsoAgLib::IsoDataRequested)
             mb_cmdWait4Response = true;
 
           // set last time - use the array of send time stamps which is needed in tractor mode
           // in implement mode, the first item can be used to trace received tractor commands
-          marr_timeStamp[0] = data().time();
+          marr_timeStamp[0] = pkg.time();
 
           setSelectedDataSourceISOName (rcc_tempISOName);
-          setUpdateTime( data().time() );
+          setUpdateTime( pkg.time() );
         } else
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
@@ -557,7 +560,7 @@ namespace __IsoAgLib {
     // from here on, we can safely process the message as all preconditions are fullfilled
     // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
     #if SIZEOF_INT == 2
-      uint16_t ui16_temp = data().getUint16Data( 0 );
+      uint16_t ui16_temp = pkg.getUint16Data( 0 );
       pt_data->daytimeRunning =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
       pt_data->alternateHead  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
       pt_data->lowBeamHead  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
@@ -566,7 +569,7 @@ namespace __IsoAgLib {
       pt_data->beacon  =              IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
       pt_data->rightTurn  =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
       pt_data->leftTurn  =            IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-      ui16_temp = data().getUint16Data( 2 );
+      ui16_temp = pkg.getUint16Data( 2 );
       pt_data->backUpLightAlarmHorn = IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
       pt_data->centerStop  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
       pt_data->rightStop  =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
@@ -575,7 +578,7 @@ namespace __IsoAgLib {
       pt_data->tracClearance  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
       pt_data->implMarker  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
       pt_data->tracMarker  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-      ui16_temp = data().getUint16Data( 4 );
+      ui16_temp = pkg.getUint16Data( 4 );
       pt_data->rearFog =              IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
       pt_data->undersideWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
       pt_data->rearLowWork  =         IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
@@ -584,7 +587,7 @@ namespace __IsoAgLib {
       pt_data->sideHighWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 10) & 3 ) ;
       pt_data->frontLowWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 12) & 3 ) ;
       pt_data->frontHighWork  =       IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
-      ui16_temp = data().getUint16Data( 6 );
+      ui16_temp = pkg.getUint16Data( 6 );
       pt_data->implOEMOpt2 =           IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  0) & 3 ) ;
       pt_data->implOEMOpt1  =          IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  2) & 3 ) ;
       pt_data->implRightForwardWork  =    IsoAgLib::IsoActiveFlag_t( (ui16_temp >>  4) & 3 ) ;
@@ -595,7 +598,7 @@ namespace __IsoAgLib {
       pt_data->implRearWork  =        IsoAgLib::IsoActiveFlag_t( (ui16_temp >> 14) & 3 ) ;
     #else
       // 32-Bit CPU
-      uint32_t ui32_temp = data().getUint32Data( 0 );
+      uint32_t ui32_temp = pkg.getUint32Data( 0 );
       pt_data->daytimeRunning =       IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  0) & 3 ) ;
       pt_data->alternateHead =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  2) & 3 ) ;
       pt_data->lowBeamHead =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  4) & 3 ) ;
@@ -612,7 +615,7 @@ namespace __IsoAgLib {
       pt_data->tracClearance =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 26) & 3 ) ;
       pt_data->implMarker =           IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 28) & 3 ) ;
       pt_data->tracMarker =           IsoAgLib::IsoActiveFlag_t( (ui32_temp >> 30) & 3 ) ;
-      ui32_temp = data().getUint32Data( 4 );
+      ui32_temp = pkg.getUint32Data( 4 );
       pt_data->rearFog =              IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  0) & 3 ) ;
       pt_data->undersideWork =        IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  2) & 3 ) ;
       pt_data->rearLowWork =          IsoAgLib::IsoActiveFlag_t( (ui32_temp >>  4) & 3 ) ;
@@ -671,14 +674,13 @@ namespace __IsoAgLib {
     return true;
   }
 
-  TracLight_c::SendMessage_e TracLight_c::helpSendMessage()
+  TracLight_c::SendMessage_e TracLight_c::helpSendMessage( CanPkgExt_c& pkg )
   {
     // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
     // function of base class BaseCommon_c
 
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setISONameForSA( *getISOName() );
-    data().setLen(8);
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setLen(8);
 
     uint16_t ui16_temp = 0;
     ui16_temp =
@@ -690,7 +692,7 @@ namespace __IsoAgLib {
       (mt_cmd.beacon         << 10) +
       (mt_cmd.rightTurn      << 12) +
       (mt_cmd.leftTurn       << 14);
-    data().setUint16Data(0, ui16_temp);
+    pkg.setUint16Data(0, ui16_temp);
     ui16_temp = 0;
     ui16_temp =
       (mt_cmd.backUpLightAlarmHorn <<  0) +
@@ -701,7 +703,7 @@ namespace __IsoAgLib {
       (mt_cmd.tracClearance        << 10) +
       (mt_cmd.implMarker           << 12) +
       (mt_cmd.tracMarker           << 14);
-    data().setUint16Data(2, ui16_temp);
+    pkg.setUint16Data(2, ui16_temp);
     ui16_temp = 0;
     ui16_temp =
       (mt_cmd.rearFog       <<  0) +
@@ -712,17 +714,18 @@ namespace __IsoAgLib {
       (mt_cmd.sideHighWork  << 10) +
       (mt_cmd.frontLowWork  << 12) +
       (mt_cmd.frontHighWork << 14);
-    data().setUint16Data(4, ui16_temp);
+    pkg.setUint16Data(4, ui16_temp);
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return MessageSent;
   }
 
   TracLight_c::SendMessage_e TracLight_c::sendLightingData()
   { // there is no need to check for address claim in tractor mode because this is already done in the timeEvent
     // function of base class BaseCommon_c
+    CanPkgExt_c pkg;
 
     // precondition checks for sending as implement
     if (!mb_cmdWait4Response) return MessageNotSent;
@@ -731,11 +734,11 @@ namespace __IsoAgLib {
     if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
       return MessageNotSent;
 
-    data().setIsoPgn(LIGHTING_DATA_PGN);
+    pkg.setIsoPgn(LIGHTING_DATA_PGN);
     //reset flag because msg will now be send
     mb_cmdWait4Response = false;
 
-    data().setIsoPri(6);
+    pkg.setIsoPri(6);
 
     uint16_t ui16_temp = 0;
     ui16_temp =
@@ -747,14 +750,16 @@ namespace __IsoAgLib {
       (mt_cmd.implRightFacingWork  << 10) +
       (mt_cmd.implLeftFacingWork   << 12) +
       (mt_cmd.implRearWork         << 14);
-    data().setUint16Data(6, ui16_temp);
+    pkg.setUint16Data(6, ui16_temp);
 
-    return helpSendMessage();
+    return helpSendMessage( pkg );
   }
 
   TracLight_c::SendMessage_e TracLight_c::sendLightingCommand()
   {
     int32_t const ci32_now = getLastRetriggerTime();
+
+    CanPkgExt_c pkg;
 
     // tractor mode
     if ( ( ci32_now - marr_timeStamp[m_index] ) <= 1000 )
@@ -767,10 +772,10 @@ namespace __IsoAgLib {
     }
     mb_changeNeedBeSend = false;
     // now it's evident, that we have to send a command
-    data().setIsoPgn(LIGHTING_COMMAND_PGN);
+    pkg.setIsoPgn(LIGHTING_COMMAND_PGN);
     setSelectedDataSourceISOName(*getISOName());
 
-    data().setIsoPri(3);
+    pkg.setIsoPri(3);
     uint16_t ui16_temp = 0;
     ui16_temp =
       (mt_cmd.implOEMOpt2          <<  0) +
@@ -781,14 +786,14 @@ namespace __IsoAgLib {
       (mt_cmd.implRightFacingWork  << 10) +
       (mt_cmd.implLeftFacingWork   << 12) +
       (mt_cmd.implRearWork         << 14);
-    data().setUint16Data(6, ui16_temp);
+    pkg.setUint16Data(6, ui16_temp);
     //overwrite the eldest time event with latest time event
     marr_timeStamp[m_index] = ci32_now;
 
     //set m_index to the eldest time event
     m_index = (m_index + 1) % 10;
 
-    return helpSendMessage();
+    return helpSendMessage( pkg );
   }
 
   /** send light update; there is a difference between implement and tractor mode

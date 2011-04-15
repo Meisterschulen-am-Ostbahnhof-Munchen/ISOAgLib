@@ -112,16 +112,17 @@ namespace __IsoAgLib {
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracAux_c::processMsg()
+  bool TracAux_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     unsigned int valveNumber = 15;
-    const int32_t ci32_now = data().time();
+    const int32_t ci32_now = pkg.time();
 
-    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, as this is the complete PGN anyway...
+    switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, as this is the complete PGN anyway...
     {
       case AUX_VALVE_0_ESTIMATED_FLOW:
         valveNumber--;
@@ -156,11 +157,11 @@ namespace __IsoAgLib {
       case AUX_VALVE_15_ESTIMATED_FLOW:
         if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
-          marr_valve[valveNumber].ui8_extendPortEstFlow = data().getUint8Data(0);
-          marr_valve[valveNumber].ui8_retractPortEstFlow = data().getUint8Data(1);
-          marr_valve[valveNumber].ui8_estFailSaveMode = ( (data().getUint8Data(2) >> 6) & 3 );
-          marr_valve[valveNumber].ui8_estValveState = ( data().getUint8Data(2) & 0xF );
-          marr_valve[valveNumber].ui8_estValveLimitStatus = ( data().getUint8Data(3) >> 5);
+          marr_valve[valveNumber].ui8_extendPortEstFlow = pkg.getUint8Data(0);
+          marr_valve[valveNumber].ui8_retractPortEstFlow = pkg.getUint8Data(1);
+          marr_valve[valveNumber].ui8_estFailSaveMode = ( (pkg.getUint8Data(2) >> 6) & 3 );
+          marr_valve[valveNumber].ui8_estValveState = ( pkg.getUint8Data(2) & 0xF );
+          marr_valve[valveNumber].ui8_estValveLimitStatus = ( pkg.getUint8Data(3) >> 5);
 
           setSelectedDataSourceISOName (rcc_tempISOName);
           setUpdateTime( ci32_now );
@@ -204,14 +205,14 @@ namespace __IsoAgLib {
       case AUX_VALVE_15_MEASURED_FLOW:
         if ( checkParseReceived( rcc_tempISOName ) )
         { // sender is allowed to send
-          marr_valve[valveNumber].ui8_extendPortMeasuredFlow = data().getUint8Data(0);
-          marr_valve[valveNumber].ui8_retractPortMeasuredFlow = data().getUint8Data(1);
-          marr_valve[valveNumber].ui16_extendPortPressure =  ( static_cast<uint16_t>(data().getUint8Data(2)) +
-                                                             ( static_cast<uint16_t>(data().getUint8Data(3)) << 8 ) );
-          marr_valve[valveNumber].ui16_retractPortPressure = ( static_cast<uint16_t>(data().getUint8Data(4)) +
-                                                             ( static_cast<uint16_t>(data().getUint8Data(5)) << 8 ) );
-          marr_valve[valveNumber].ui8_returnPortPressure = data().getUint8Data(6);
-          marr_valve[valveNumber].ui8_measuredValveLimitStatus = ( data().getUint8Data(7) >> 5 );
+          marr_valve[valveNumber].ui8_extendPortMeasuredFlow = pkg.getUint8Data(0);
+          marr_valve[valveNumber].ui8_retractPortMeasuredFlow = pkg.getUint8Data(1);
+          marr_valve[valveNumber].ui16_extendPortPressure =  ( static_cast<uint16_t>(pkg.getUint8Data(2)) +
+                                                             ( static_cast<uint16_t>(pkg.getUint8Data(3)) << 8 ) );
+          marr_valve[valveNumber].ui16_retractPortPressure = ( static_cast<uint16_t>(pkg.getUint8Data(4)) +
+                                                             ( static_cast<uint16_t>(pkg.getUint8Data(5)) << 8 ) );
+          marr_valve[valveNumber].ui8_returnPortPressure = pkg.getUint8Data(6);
+          marr_valve[valveNumber].ui8_measuredValveLimitStatus = ( pkg.getUint8Data(7) >> 5 );
 
           setSelectedDataSourceISOName (rcc_tempISOName);
           setUpdateTime( ci32_now );
@@ -255,9 +256,9 @@ namespace __IsoAgLib {
       case AUX_VALVE_15_COMMAND:
         if ( checkMode(IsoAgLib::IdentModeTractor) )
         {
-          marr_valve[valveNumber].ui8_cmdPortFlow = data().getUint8Data(0);
-          marr_valve[valveNumber].ui8_cmdFailSaveMode = ( ( data().getUint8Data(2) >> 6) & 3);
-          marr_valve[valveNumber].ui8_cmdValveState = ( data().getUint8Data(2) & 0xF );
+          marr_valve[valveNumber].ui8_cmdPortFlow = pkg.getUint8Data(0);
+          marr_valve[valveNumber].ui8_cmdFailSaveMode = ( ( pkg.getUint8Data(2) >> 6) & 3);
+          marr_valve[valveNumber].ui8_cmdValveState = ( pkg.getUint8Data(2) & 0xF );
         }
         break;
     }
@@ -294,59 +295,61 @@ namespace __IsoAgLib {
     return true;
   }
 
-  void TracAux_c::prepareSendingEstimatedMeasured()
+  void TracAux_c::prepareSendingEstimatedMeasured( CanPkgExt_c& pkg )
   {
     setSelectedDataSourceISOName(*getISOName());
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);    
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);    
   }
 
   void TracAux_c::isoSendEstimated(uint32_t aui32_pgn)
   {
     isoaglib_assert(AUX_VALVE_0_ESTIMATED_FLOW <= aui32_pgn);
     isoaglib_assert(aui32_pgn <= AUX_VALVE_15_ESTIMATED_FLOW);
-    prepareSendingEstimatedMeasured();
-    data().setIsoPgn(aui32_pgn);
+    CanPkgExt_c pkg;
+    prepareSendingEstimatedMeasured( pkg );
+    pkg.setIsoPgn(aui32_pgn);
     IsoAuxValveData_t &rt_valve = marr_valve[aui32_pgn - AUX_VALVE_0_ESTIMATED_FLOW];
-    data().setUint8Data(0, rt_valve.ui8_extendPortEstFlow);
-    data().setUint8Data(1, rt_valve.ui8_retractPortEstFlow);
+    pkg.setUint8Data(0, rt_valve.ui8_extendPortEstFlow);
+    pkg.setUint8Data(1, rt_valve.ui8_retractPortEstFlow);
     uint8_t ui8_temp = 0;
     ui8_temp |= rt_valve.ui8_estValveState;
     ui8_temp |= (rt_valve.ui8_estFailSaveMode << 6);
-    data().setUint8Data(2, ui8_temp);
+    pkg.setUint8Data(2, ui8_temp);
     ui8_temp = 0;
     ui8_temp |= (rt_valve.ui8_estValveLimitStatus << 5);
-    data().setUint8Data(3, ui8_temp );
+    pkg.setUint8Data(3, ui8_temp );
     // Reserved fields
-    data().setUint32Data(4, 0xFFFFFFFF);
+    pkg.setUint32Data(4, 0xFFFFFFFF);
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
   }
 
   void TracAux_c::isoSendMeasured(uint32_t aui32_pgn)
   {
     isoaglib_assert(AUX_VALVE_0_MEASURED_FLOW <= aui32_pgn);
     isoaglib_assert(aui32_pgn <= AUX_VALVE_15_MEASURED_FLOW);
-    prepareSendingEstimatedMeasured();
 
-    data().setIsoPgn(aui32_pgn);
+    CanPkgExt_c pkg;
+    prepareSendingEstimatedMeasured( pkg );
+
+    pkg.setIsoPgn(aui32_pgn);
     IsoAuxValveData_t &rt_valve = marr_valve[aui32_pgn - AUX_VALVE_0_MEASURED_FLOW];
-    data().setUint8Data(0, rt_valve.ui8_extendPortMeasuredFlow);
-    data().setUint8Data(1, rt_valve.ui8_retractPortMeasuredFlow);
-    data().setUint8Data(2, rt_valve.ui16_extendPortPressure & 0xFF);
-    data().setUint8Data(3, rt_valve.ui16_extendPortPressure >> 8);
-    data().setUint8Data(4, rt_valve.ui16_retractPortPressure & 0xFF);
-    data().setUint8Data(5, rt_valve.ui16_retractPortPressure >> 8);
-    data().setUint8Data(6, rt_valve.ui8_returnPortPressure);
+    pkg.setUint8Data(0, rt_valve.ui8_extendPortMeasuredFlow);
+    pkg.setUint8Data(1, rt_valve.ui8_retractPortMeasuredFlow);
+    pkg.setUint8Data(2, rt_valve.ui16_extendPortPressure & 0xFF);
+    pkg.setUint8Data(3, rt_valve.ui16_extendPortPressure >> 8);
+    pkg.setUint8Data(4, rt_valve.ui16_retractPortPressure & 0xFF);
+    pkg.setUint8Data(5, rt_valve.ui16_retractPortPressure >> 8);
+    pkg.setUint8Data(6, rt_valve.ui8_returnPortPressure);
     uint8_t ui8_temp = 0;
     ui8_temp |= (rt_valve.ui8_measuredValveLimitStatus << 5);
-    data().setUint8Data(7, ui8_temp);
+    pkg.setUint8Data(7, ui8_temp);
     // Reserved fields
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
   }
 
   /** send estimated and measured messages (only tractor mode)
@@ -374,25 +377,25 @@ namespace __IsoAgLib {
     if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
       return CommandNotSent;
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
-    data().setIsoPgn(aui32_pgn);
+    pkg.setIsoPgn(aui32_pgn);
 
     IsoAuxValveData_t &rt_valve = marr_valve[aui32_pgn - AUX_VALVE_0_COMMAND];
-    data().setUint8Data(0, rt_valve.ui8_cmdPortFlow);
+    pkg.setUint8Data(0, rt_valve.ui8_cmdPortFlow);
     uint8_t ui8_temp = 0;
     ui8_temp |= rt_valve.ui8_cmdValveState;
     ui8_temp |= (rt_valve.ui8_cmdFailSaveMode << 6);
-    data().setUint8Data(2, ui8_temp);
+    pkg.setUint8Data(2, ui8_temp);
     // Reserved fields
-    data().setUint8Data(1, 0xFF);
-    data().setUint32Data(3, 0xFFFFFFFF);
-    data().setUint8Data(7, 0xFF);
+    pkg.setUint8Data(1, 0xFF);
+    pkg.setUint32Data(3, 0xFFFFFFFF);
+    pkg.setUint8Data(7, 0xFF);
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return CommandSent;
   }
 
@@ -408,29 +411,29 @@ namespace __IsoAgLib {
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
      //send all active marr_valve commands
     for (int i = 0; i < nrOfValves; i++)
     {
       if (marr_auxFlag[i].ui8_commandActivated)
       {
-        data().setIsoPgn(AUX_VALVE_0_COMMAND | i);
+        pkg.setIsoPgn(AUX_VALVE_0_COMMAND | i);
 
-        data().setUint8Data(0, marr_valve[i].ui8_cmdPortFlow);
+        pkg.setUint8Data(0, marr_valve[i].ui8_cmdPortFlow);
         uint8_t ui8_temp = 0;
                 ui8_temp |= marr_valve[i].ui8_cmdValveState;
                 ui8_temp |= (marr_valve[i].ui8_cmdFailSaveMode << 6);
-        data().setUint8Data(2, ui8_temp);
+        pkg.setUint8Data(2, ui8_temp);
         // Reserved fields
-        data().setUint8Data(1, 0xFF);
-        data().setUint32Data(3, 0xFFFFFFFF);
-        data().setUint8Data(7, 0xFF);
+        pkg.setUint8Data(1, 0xFF);
+        pkg.setUint32Data(3, 0xFFFFFFFF);
+        pkg.setUint8Data(7, 0xFF);
 
-        c_can << data();
+        c_can << pkg;
       }
     }
   }
@@ -807,7 +810,7 @@ TracAux_c::getTaskName() const
 #endif
 
 
-bool TracAux_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+bool TracAux_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
 {
   // check if we are allowed to send a request for pgn
   if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )

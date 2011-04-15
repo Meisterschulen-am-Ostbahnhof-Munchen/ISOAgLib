@@ -377,12 +377,6 @@ public:
   uint16_t element() const  { return ProcIdent_c::element();}
 
   /**
-    deliver DDI from last received can pkg
-    @return DDI
-  */
-  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();}
-
-  /**
     send the base value (the one that is updated via setMasterMeasurementVal() )
     to a specified target (selected by GPT)
     @param ac_targetISOName ISOName of target

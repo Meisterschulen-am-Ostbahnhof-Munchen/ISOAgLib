@@ -55,7 +55,7 @@ namespace __IsoAgLib {
     /** update selected speed with actually best available speed
         @param t_speedSrc  from which source is the speed available
       */
-    void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc);
+    void updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, int32_t ai_time );
 
     /** update distance and direction with the actually best available distance and direction
         @param t_distanceSrc  from which source is the distance and direction available
@@ -254,7 +254,7 @@ namespace __IsoAgLib {
   virtual const char* getTaskName() const;
 #endif
 
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
   private:
     // Private methods
@@ -289,7 +289,7 @@ namespace __IsoAgLib {
         @pre  sender of message is existent in monitor list
         @see  CanPkgExt_c::resolveSendingInformation()
       */
-    virtual bool processMsg();
+    virtual bool processMsg( const CanPkg_c& arc_data );
 
     /** send moving data with ground&theor speed&dist
         @see  CanIo_c::operator<<
@@ -332,7 +332,7 @@ namespace __IsoAgLib {
 
     /** Prepare sending any message.
      */
-    void prepareSending();
+    void prepareSending( CanPkgExt_c& pkg );
 
   private:
     // Private attributes

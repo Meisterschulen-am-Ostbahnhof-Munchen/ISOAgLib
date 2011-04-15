@@ -131,16 +131,7 @@ status_le1() { [ $? -le 1 ]; }
 # + PRJ_TIME_GPS (only incorporate parts from BASE that provide time and GPS information)
 # + PRJ_PROCESS ( specify if process data should be used ; default 0 )
 #   - PROC_LOCAL ( specify if local process data shall be used; must be activated for all types of local process data; default 0 )
-#     o PROC_LOCAL_STD ( specify if full featured local process data shall be used; default 0 )
-#     o PROC_LOCAL_SIMPLE_MEASURE ( specify if local process data with restricted measurement feature set shall be used; default 0 )
-#     o PROC_LOCAL_SIMPLE_SETPOINT ( specify if local process data with restricted setpoint feature set shall be used; default 0 )
-#     o PROC_LOCAL_SIMPLE_MEASURE_SETPOINT ( specify if process daza with maximum restricted feature set shall be used; default 0 )
 #   - PROC_REMOTE ( specify if remote process data shall be used; must be activated for all types of remote process data; default 0 )
-#     o PROC_REMOTE_STD ( specify if full featured remote process data shall be used; default 0 )
-#     o PROC_REMOTE_SIMPLE_MEASURE ( specify if remote process data with restricted measurement feature set shall be used; default 0 )
-#     o PROC_REMOTE_SIMPLE_SETPOINT ( specify if remote process data with restricted setpoint feature set shall be used; default 0 )
-#     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT ( specify if process daza with maximum restricted feature set shall be used; default 0 )
-#     o PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED ( specify if process daza with maximum restricted feature without any distinction between measurement and setpoint set shall be used; default 0 )
 # + PRJ_DATASTREAMS ( specify if the input and output filestream should be accessed by IsoAgLib; provides target HAL for filestream handling; default 0 )
 # + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; default 0 )
 # + PRJ_OUTPUTS ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
@@ -219,16 +210,7 @@ set_default_values()
     PRJ_TRACTOR_PTO_SETPOINT=0
     PRJ_PROCESS=0
     PROC_LOCAL=0
-    PROC_LOCAL_STD=0
-    PROC_LOCAL_SIMPLE_MEASURE=0
-    PROC_LOCAL_SIMPLE_SETPOINT=0
-    PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=0
     PROC_REMOTE=0
-    PROC_REMOTE_STD=0
-    PROC_REMOTE_SIMPLE_MEASURE=0
-    PROC_REMOTE_SIMPLE_SETPOINT=0
-    PROC_REMOTE_SIMPLE_MEASURE_SETPOINT=0
-    PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
     PRJ_EEPROM=0
     PRJ_DATASTREAMS=0
     PRJ_OUTPUTS=0
@@ -454,20 +436,10 @@ check_set_correct_variables()
         HAL_PATH_SUPPLEMENTARY_RS232="supplementary_driver/hal/virtualDrivers/rs232_over_can"
     fi
 
-    INC_LOC_STD_MEASURE_ELEMENTS=$(expr "$PROC_LOCAL" \& \
-        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_SETPOINT" \) || status_le1)
-    INC_LOC_STD_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" \& \
-        \( "$PROC_LOCAL_STD" \| "$PROC_LOCAL_SIMPLE_MEASURE" \) || status_le1)
-    INC_LOC_SIMPLE_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" \& \
-        \( "$PROC_LOCAL_SIMPLE_SETPOINT" \| "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
-    INC_REM_STD_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_SETPOINT" \) || status_le1)
-    INC_REM_STD_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_STD" \| "$PROC_REMOTE_SIMPLE_MEASURE" \) || status_le1)
-    INC_REM_SIMPLE_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_SIMPLE_SETPOINT" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
-    INC_REM_SIMPLE_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" \& \
-        \( "$PROC_REMOTE_SIMPLE_MEASURE" \| "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" \) || status_le1)
+    INC_LOC_STD_MEASURE_ELEMENTS=$(expr "$PROC_LOCAL" || status_le1)
+    INC_LOC_STD_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" || status_le1)
+    INC_REM_STD_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" || status_le1)
+    INC_REM_STD_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" || status_le1)
     PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" || status_le1)
 
     case "$USE_CAN_DRIVER" in
@@ -717,71 +689,22 @@ comm_proc_features()
             printf '%s' " -o \( -path '*/Part10_TaskController_Client/i*devproperty*' -a -not -name 'devproperty*' \)" >&3
         fi
 
+        printf '%s' " -o -path '*/Part7_ProcessData/StdMeasureElements/*'" >&3
+        printf '%s' " -o -path '*/Part7_ProcessData/StdSetpointElements/*'" >&3
+
         if [ "$PROC_LOCAL" -gt 0 ]; then
             printf '%s' " -o -path '*/Part7_ProcessData/Local/impl/*'" >&3
-
-            if [ "$PROC_LOCAL_STD" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/Std/*'" >&3
-            fi
-            if [ "$PROC_LOCAL_SIMPLE_MEASURE" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleMeasure/*'" >&3
-            fi
-            if [ "$PROC_LOCAL_SIMPLE_SETPOINT" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleSetpoint/*'" >&3
-            fi
-            if [ "$PROC_LOCAL_SIMPLE_MEASURE_SETPOINT" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleMeasureSetpoint/*'" >&3
-            fi
-
-            if [ "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/StdMeasureElements/*'" >&3
-            fi
-            if [ "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/StdSetpointElements/*'" >&3
-            fi
-            if [ "$INC_LOC_SIMPLE_SETPOINT_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Local/SimpleSetpointElements/*'" >&3
-            fi
+            printf '%s' " -o -path '*/Part7_ProcessData/Local/Std/*'" >&3
+            printf '%s' " -o -path '*/Part7_ProcessData/Local/StdMeasureElements/*'" >&3
+            printf '%s' " -o -path '*/Part7_ProcessData/Local/StdSetpointElements/*'" >&3
         fi
         if [ "$PROC_REMOTE" -gt 0 ]; then
             printf '%s' " -o -path '*/Part7_ProcessData/Remote/impl/*'" >&3
-
-            if [ "$PROC_REMOTE_STD" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/Std/*'" >&3
-            fi
-            if [ "$PROC_REMOTE_SIMPLE_MEASURE" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleMeasure/*'" >&3
-            fi
-            if [ "$PROC_REMOTE_SIMPLE_SETPOINT" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleSetpoint/*'" >&3
-            fi
-            if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 -a "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleMeasureSetpoint/*'" >&3
-            elif [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 ]; then
-                printf '%s' " -o -name '*procdataremotesimplesetpointsimplemeasure_c.*'" >&3
-            elif [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ]; then
-                printf '%s' " -o -name '*procdataremotesimplesetpointsimplemeasurecombined_c.*'" >&3
-            fi
-            if [ "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdMeasureElements/*'" >&3
-            fi
-            if [ "$INC_REM_SIMPLE_MEASURE_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleMeasureElements/*'" >&3
-            fi
-            if [ "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdSetpointElements/*'" >&3
-            fi
-            if [ "$INC_REM_SIMPLE_SETPOINT_ELEMENTS" -gt 0 ]; then
-                printf '%s' " -o -path '*/Part7_ProcessData/Remote/SimpleSetpointElements/*'" >&3
-            fi
+            printf '%s' " -o -path '*/Part7_ProcessData/Remote/Std/*'" >&3
+            printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdMeasureElements/*'" >&3
+            printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdSetpointElements/*'" >&3
         fi
 
-        if [ "$INC_LOC_STD_MEASURE_ELEMENTS" -gt 0 -o "$INC_REM_STD_MEASURE_ELEMENTS" -gt 0 ]; then
-            printf '%s' " -o -path '*/Part7_ProcessData/StdMeasureElements/*'" >&3
-        fi
-        if [ "$INC_LOC_STD_SETPOINT_ELEMENTS" -gt 0 -o "$INC_REM_STD_SETPOINT_ELEMENTS" -gt 0 ]; then
-            printf '%s' " -o -path '*/Part7_ProcessData/StdSetpointElements/*'" >&3
-        fi
 
     fi
 }
@@ -896,24 +819,12 @@ prepare_feature_partitions()
     FEATURE_PARTITION_RULES=''
     # COMM PROC features:
     add_feature_partition_rule PRJ_PROCESS '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc\|.*/Part7_ProcessData/iprocesscmd\|.*/Part7_ProcessData/impl/processcmd\|.*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h$'
-    add_feature_partition_rule PROC_LOCAL_STD '.*/Part7_ProcessData/Local/Std/'
-    add_feature_partition_rule PROC_LOCAL_SIMPLE_MEASURE_SETPOINT '*/Part7_ProcessData/Local/SimpleMeasureSetpoint/*'
-    add_feature_partition_rule PROC_LOCAL_SIMPLE_MEASURE '.*/Part7_ProcessData/Local/SimpleMeasure/'
-    add_feature_partition_rule PROC_LOCAL_SIMPLE_SETPOINT '.*/Part7_ProcessData/Local/SimpleSetpoint/'
-    add_feature_partition_rule INC_LOC_SIMPLE_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Local/SimpleSetpointElements/'
-    add_feature_partition_rule PROC_LOCAL '.*/Part10_TaskController_Client/.*devproperty\|.*/Part7_ProcessData/Local/'
-    add_feature_partition_rule PROC_REMOTE_STD '.*/Part7_ProcessData/Remote/Std/'
-    add_feature_partition_rule PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED '*procdataremotesimplesetpointsimplemeasurecombined_c\.[^/]*$'
-    add_feature_partition_rule PROC_REMOTE_SIMPLE_MEASURE_SETPOINT '.*/Part7_ProcessData/Remote/SimpleMeasureSetpoint/'
-    add_feature_partition_rule PROC_REMOTE_SIMPLE_MEASURE '.*/Part7_ProcessData/Remote/SimpleMeasure/'
-    add_feature_partition_rule PROC_REMOTE_SIMPLE_SETPOINT '.*/Part7_ProcessData/Remote/SimpleSetpoint/'
+    add_feature_partition_rule PROC_LOCAL '.*/Part10_TaskController_Client/.*devproperty\|.*/Part7_ProcessData/Local/\|.*/Part7_ProcessData/Local/Std/'
+    add_feature_partition_rule PROC_REMOTE '.*/Part7_ProcessData/Remote/impl/\|.*/Part7_ProcessData/Remote/Std/'
     add_feature_partition_rule INC_REM_STD_MEASURE_ELEMENTS '.*/Part7_ProcessData/Remote/StdMeasureElements/'
-    add_feature_partition_rule INC_REM_SIMPLE_MEASURE_ELEMENTS '.*/Part7_ProcessData/Remote/SimpleMeasureElements/'
     add_feature_partition_rule INC_REM_STD_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Remote/StdSetpointElements/'
-    add_feature_partition_rule INC_REM_SIMPLE_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Remote/SimpleSetpointElements/'
     add_feature_partition_rule INC_LOC_STD_MEASURE_ELEMENTS '.*/Part7_ProcessData/.*/StdMeasureElements/'
     add_feature_partition_rule INC_LOC_STD_SETPOINT_ELEMENTS '.*/Part7_ProcessData/.*/StdSetpointElements'
-    add_feature_partition_rule PROC_REMOTE '.*/Part7_ProcessData/Remote/impl/'
 
     # COMM features:
     add_feature_partition_rule PRJ_BASE '.*ibasetypes\.h\.[^/]*$\|.*basecommon_c*\.[^/]*$'
@@ -1264,21 +1175,7 @@ END_OF_PATH
         if [ "$PRJ_PROCESS" -gt 0 ] ; then
             echo_e "#ifndef USE_PROCESS $ENDLINE  #define USE_PROCESS $ENDLINE#endif" >&3
             if [ "$PROC_REMOTE" -gt 0 ] ; then
-                if [ "$PROC_REMOTE_STD" -gt 0 ] ; then
-                    echo_e "#ifndef USE_PROC_REMOTE_STD $ENDLINE  #define USE_PROC_REMOTE_STD $ENDLINE#endif" >&3
-                fi
-                if [ "$PROC_REMOTE_SIMPLE_MEASURE" -gt 0 ] ; then
-                    echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE $ENDLINE#endif" >&3
-                fi
-                if [ "$PROC_REMOTE_SIMPLE_SETPOINT" -gt 0 ] ; then
-                    echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_SETPOINT $ENDLINE#endif" >&3
-                fi
-                if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT" -gt 0 ] ; then
-                    echo_e "#ifndef USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE  #define USE_PROC_REMOTE_SIMPLE_MEASURE_SETPOINT $ENDLINE#endif" >&3
-                fi
-                if [ "$PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED" -gt 0 ] ; then
-                    echo_e "#ifndef USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE  #define USE_PROC_SIMPLE_REMOTE_MEASURE_SETPOINT_COMBINED $ENDLINE#endif" >&3
-                fi
+              echo_e "#ifndef USE_PROC_REMOTE_STD $ENDLINE  #define USE_PROC_REMOTE_STD $ENDLINE#endif" >&3
             fi
         else
         # the default in isoaglib_config.h is to activate

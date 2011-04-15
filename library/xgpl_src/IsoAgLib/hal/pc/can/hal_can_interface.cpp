@@ -635,14 +635,14 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
       i32_cinterfLastSuccReceive[aui8_busNr] = getTime();
       // apc_data->setTime(i32_cinterfLastSuccReceive[aui8_busNr]);
       // CanPkg_c::setTime changed to static
-      __IsoAgLib::CanPkg_c::setTime(i32_cinterfLastSuccReceive[aui8_busNr]);
+      apc_data->setTime(i32_cinterfLastSuccReceive[aui8_busNr]);
     }
     else
     {
       i32_cinterfLastSuccReceive[aui8_busNr] = pt_receive->tReceiveTime.l1ms;
       // apc_data->setTime(pt_receive->tReceiveTime.l1ms);
       // CanPkg_c::setTime changed to static
-      __IsoAgLib::CanPkg_c::setTime(pt_receive->tReceiveTime.l1ms);
+      apc_data->setTime(pt_receive->tReceiveTime.l1ms);
     }
 
 
@@ -668,7 +668,7 @@ int16_t can_useMsgobjGet(uint8_t aui8_busNr, uint8_t aui8_msgobjNr, __IsoAgLib::
 
     // rpc_data->setIdent(pt_receive->dwId, idType);
     // setIdent changed to static member function
-    __IsoAgLib::CanPkg_c::setIdent(pt_receive->dwId, idType);
+    apc_data->setIdent(pt_receive->dwId, idType);
     apc_data->setDataFromString(pt_receive->abData, pt_receive->bDlc);
   }
   return i16_retVal;

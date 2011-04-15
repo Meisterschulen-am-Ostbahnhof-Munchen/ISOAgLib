@@ -131,7 +131,7 @@ typedef struct
       else                              setPtoFrontEngaged( IsoAgLib::IsoActive );
     }
 
-    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
     /** force a request for pgn for front pto state */
     bool sendRequestUpdateFront();
@@ -389,7 +389,7 @@ typedef struct
         @pre  sender of message is existent in monitor list
         @see  CanPkgExt_c::resolveSendingInformation()
       */
-    virtual bool processMsg();
+    virtual bool processMsg( const CanPkg_c& arc_data );
 
   private:
     // Private attributes

@@ -17,7 +17,7 @@
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <cstdlib>	// Include before vector or else CNAMESPACE stuff is screwed up for Tasking
 #include <vector>
-#include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
+#include <IsoAgLib/driver/can/icanpkg_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 
@@ -37,15 +37,6 @@ namespace IsoAgLib
     /** Destructor */
     ~iGenericData_c();
 
-    /** Constructor that copies the content (ident and data) of iCanPkgExt_c
-      @param arc_canPkg iCanPkgExt_c to be copied to the iGenericData_c
-    */
-    iGenericData_c (const iCanPkgExt_c& arc_canPkg);
-
-    /** copy iGenericData_c content (ident and data) into an iCanPkgExt_c
-      @param arc_canPkg iCanPkgExt_c to get the content to (destination)
-    */
-    void getDataToCanPkgExt (iCanPkgExt_c& arc_canPkg);
 
     /**
       set ident for the telegram

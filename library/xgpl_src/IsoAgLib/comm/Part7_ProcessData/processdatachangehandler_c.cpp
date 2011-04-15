@@ -15,52 +15,16 @@
 
 #include "processdatachangehandler_c.h"
 #include "Local/Std/iprocdatalocal_c.h"
-#include "Local/SimpleMeasure/iprocdatalocalsimplemeasure_c.h"
-#include "Local/SimpleSetpoint/iprocdatalocalsimplesetpoint_c.h"
-#include "Local/SimpleMeasureSetpoint/iprocdatalocalsimplesetpointsimplemeasure_c.h"
 #include "Remote/Std/iprocdataremote_c.h"
-#include "Remote/SimpleMeasure/iprocdataremotesimplemeasure_c.h"
-#include "Remote/SimpleSetpoint/iprocdataremotesimplesetpoint_c.h"
-#include "Remote/SimpleMeasureSetpoint/iprocdataremotesimplesetpointsimplemeasure_c.h"
-#include "Remote/SimpleMeasureSetpoint/iprocdataremotesimplesetpointsimplemeasurecombined_c.h"
 
 namespace IsoAgLib {
 iProcDataLocal_c* EventSource_c::makeIProcDataLocal( void ) {
   return static_cast<iProcDataLocal_c*>(pc_src);
 }
 
-iProcDataLocalSimpleMeasure_c* EventSource_c::makeIProcDataLocalSimpleMeasure( void ) {
-  return static_cast<iProcDataLocalSimpleMeasure_c*>(pc_src);
-}
-
-iProcDataLocalSimpleSetpoint_c* EventSource_c::makeIProcDataLocalSimpleSetpoint( void ) {
- return static_cast<iProcDataLocalSimpleSetpoint_c*>(pc_src);
-}
-
-iProcDataLocalSimpleSetpointSimpleMeasure_c* EventSource_c::makeIProcDataLocalSimpleSetpointSimpleMeasure( void ) {
-  return static_cast<iProcDataLocalSimpleSetpointSimpleMeasure_c*>(pc_src);
-}
-
 iProcDataRemote_c* EventSource_c::makeIProcDataRemote( void ) {
   return static_cast<iProcDataRemote_c*>(pc_src);
 }
-
-iProcDataRemoteSimpleMeasure_c* EventSource_c::makeIProcDataRemoteSimpleMeasure( void ) {
-  return static_cast<iProcDataRemoteSimpleMeasure_c*>(pc_src);
-}
-
-iProcDataRemoteSimpleSetpoint_c* EventSource_c::makeIProcDataRemoteSimpleSetpoint( void ) {
-  return static_cast<iProcDataRemoteSimpleSetpoint_c*>(pc_src);
-}
-
-iProcDataRemoteSimpleSetpointSimpleMeasure_c* EventSource_c::makeIProcDataRemoteSimpleSetpointSimpleMeasure( void ) {
-  return static_cast<iProcDataRemoteSimpleSetpointSimpleMeasure_c*>(pc_src);
-}
-
-iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c* EventSource_c::makeIProcDataRemoteSimpleSetpointSimpleMeasureCombined( void ) {
-  return static_cast<iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c*>(pc_src);
-}
-
 
 /** react on new received setpoint for local process data
   * (remote system which wants to control the local system dependent on the setpoint

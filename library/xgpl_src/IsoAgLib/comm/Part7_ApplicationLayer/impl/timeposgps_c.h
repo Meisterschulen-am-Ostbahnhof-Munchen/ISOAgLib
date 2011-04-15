@@ -86,7 +86,6 @@ public:
 };
 
 class TimePosGps_c;
-typedef TimePosGps_c TimePosGPS_c; /// this typedef is only for some time to provide backward compatibility at API level
 
 /** working on GPS data and Calendar;
   stores, updates  and delivers all base data informations;
@@ -139,7 +138,7 @@ class TimePosGps_c : public BaseCommon_c
       @param apc_isoItemSender pointer to source address
       @param apc_isoItemReceiver pointer to destination address
     */
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_time );
 
   /** force a request for pgn for time/date information */
   bool sendRequestUpdateTimeDate();
@@ -608,7 +607,7 @@ private:
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool processMsg();
+  bool processMsg( const CanPkg_c& arc_data );
 
   /** Calls all the registered handlers with the given PGN,
       so they can get the current values via the normal getters. */

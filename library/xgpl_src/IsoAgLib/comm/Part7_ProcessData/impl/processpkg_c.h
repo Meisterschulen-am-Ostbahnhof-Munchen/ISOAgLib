@@ -37,6 +37,8 @@ namespace __IsoAgLib {
 class ProcessPkg_c : public CanPkgExt_c  {
 private:
 public:
+  ProcessPkg_c( const ProcessPkg_c& arc_src );
+  ProcessPkg_c( const CanPkg_c& arc_src, int ai_multitonInst = 0 );
   /** default constructor which has nothing to do */
   ProcessPkg_c( int ai_multitonInst = 0 );
   /** default constructor which has nothing to do */
@@ -81,12 +83,12 @@ public:
   /**
     @return pointer to IsoItem_c of Receiver
   */
-  IsoItem_c* receiverItem() { return getMonitorItemForDA(); }
+  IsoItem_c* receiverItem() const { return getMonitorItemForDA(); }
 
   /**
     @return pointer to IsoItem_c of Sender
   */
-  IsoItem_c* senderItem() { return getMonitorItemForSA(); }
+  IsoItem_c* senderItem() const { return getMonitorItemForSA(); }
 
 
   /* *********************** */
@@ -114,7 +116,7 @@ public:
     set data value
     @param ai32_val new data value for message
   */
-  void setData (int32_t ai32_val) { mi32_pdValue = ai32_val; }
+  void setData(int32_t ai32_val) { mi32_pdValue = ai32_val; }
 
   /**
     set one of the special commands of type proc_specCmd_t:
@@ -122,7 +124,7 @@ public:
     with specified data type specifying flag in CAN data string
     @param ren_procSpecCmd special command to send
   */
-  void setData (proc_specCmd_t ren_procSpecCmd);
+  void setData(proc_specCmd_t ren_procSpecCmd);
 
   /**
     extract data from ISO commands and save it to member class
@@ -131,29 +133,29 @@ public:
   bool resolveCommandTypeForISO(const IsoAgLib::ElementDdi_s& rl_elementDDI);
 
   /**
-    overloaded virtual function to translate the string data into flag values;
+    function to translate the string data into flag values;
     needed for assigning informations from another CanPkg_c or CANPkgExt
     @see CanPkg_c::operator=
     @see CanPkgExt_c::operator=
   */
-  virtual void string2Flags();
-
-  /** stores the command in generalized form */
-  ProcessCmd_c mc_processCmd;
-
-private: // Private methods
+  void string2Flags();
 
   /**
-    overloaded virtual function to translate flag values to data string;
+    function to translate flag values to data string;
     needed for sending informations from this object via CanIo_c on CAN BUS,
     because CanIo_c doesn't know anything about the data format of this type of msg
     so that it can only use an unformated data string from CANPkg
     @see CanPkg_c::getData
     @see CanPkgExt_c::getData
   */
-  virtual void flags2String();
+  void flags2String();
+
+  /** stores the command in generalized form */
+  ProcessCmd_c mc_processCmd;
 
 private: // Private attributes
+
+
   int32_t mi32_pdValue;
 
   struct _bit_data {

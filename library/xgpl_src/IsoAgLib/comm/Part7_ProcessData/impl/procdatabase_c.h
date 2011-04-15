@@ -112,9 +112,6 @@ public:
   /** default destructor which has nothing to do */
   virtual ~ProcDataBase_c();
 
-  //! Retrieve value from ProcessPkg
-  int32_t getPkgValue() { return getProcessPkg().getValue(); }
-
   /** set the pointer to the handler class
     * @param apc_processDataChangeHandler pointer to handler class of application
     */
@@ -133,7 +130,7 @@ public:
     both functions are virtual, so that depending on loacl or remote
     process data the suitable reaction can be implemented
   */
-  void processMsg();
+  void processMsg( ProcessPkg_c& pkg );
 
   /** perform periodic acoins
     @param pui16_nextTimePeriod calculated new time period, based on current measure progs (only for local proc data)
@@ -142,12 +139,6 @@ public:
   virtual bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   virtual const IsoName_c& commanderISOName() const { return IsoName_c::IsoNameUnspecified(); }
-
-
-  /** deliver DDI from last received can pkg
-    @return DDI
-  */
-  uint16_t getDDIfromCANPkg( void ) const;
 
 protected: // Protected methods
   /** send the given int32_t value with variable ISOName ac_varISOName;
@@ -164,12 +155,9 @@ protected: // Protected methods
     @param ai32_val int32_t value to send
     @return true -> sendIntern set successful EMPF and SEND
   */
-  virtual bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
+  virtual bool sendValISOName( ProcessPkg_c& pkg, const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
 
-  void setBasicSendFlags() const;
-
-  /** helper function to get reference to process data pkg very quick */
-  ProcessPkg_c& getProcessPkg( void ) const;
+  void setBasicSendFlags( ProcessPkg_c& pkg ) const;
 
 private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
@@ -178,10 +166,10 @@ private: // Private methods
   /** process a measure prog message
     -> fully dependent on children type local/remote
   */
-  virtual void processProg();
+  virtual void processProg( const ProcessPkg_c& pkg );
 
   /** virtual base for processing of a setpoint message */
-  virtual void processSetpoint();
+  virtual void processSetpoint( const ProcessPkg_c& pkg );
 
 private: // Private attributes
 

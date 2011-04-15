@@ -12,7 +12,6 @@
 */
 
 #include "isomonitor_c.h"
-#include "isosystempkg_c.h"
 #include "isorequestpgn_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
 #include <IsoAgLib/comm/impl/isobus_c.h>
@@ -75,8 +74,6 @@ void
 IsoMonitor_c::init()
 {
   isoaglib_assert (!initialized());
-
-  mc_data.setMultitonInst( getMultitonInst() );
 
   #if DEBUG_HEAP_USEAGE
   sui16_isoItemTotal -= mvec_isoMember.size();
@@ -187,15 +184,6 @@ IsoMonitor_c::deregisterIdentItem( IdentItem_c& arc_item )
   unregisterC1 (&arc_item);
 }
 
-
-
-/** deliver reference to data pkg as reference to CanPkgExt_c
-  to implement the base virtual function correct
-*/
-CanPkgExt_c& IsoMonitor_c::dataBase()
-{
-  return mc_data;
-}
 
 /** performs periodically actions,
   possible errors:
@@ -1042,25 +1030,26 @@ bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
 
 //  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
 
-  data().setIdentType(Ident_c::ExtendedIdent);
-  data().setIsoPri(6);
-  data().setIsoPgn(REQUEST_PGN_MSG_PGN);
-  data().setIsoPs(255); // global request
+  CanPkgExt_c c_data;
+
+  c_data.setIsoPri(6);
+  c_data.setIsoPgn(REQUEST_PGN_MSG_PGN);
+  c_data.setIsoPs(255); // global request
   if ( existActiveLocalIsoMember() )
   { // use the SA of the already active node
-    data().setMonitorItemForSA( &getActiveLocalIsoMember() );
+    c_data.setMonitorItemForSA( &getActiveLocalIsoMember() );
     b_sendOwnSa = true;
   }
   else
   { // no local ident has claimed an adress so far
-    data().setIsoSa(254); // special flag for "no SA yet"
+    c_data.setIsoSa(254); // special flag for "no SA yet"
   }
   // built request data string
 //  uint8_t pb_requestString[4];
-  data().setUint32Data( 0, ADDRESS_CLAIM_PGN );
-  data().setLen(3);
+  c_data.setUint32Data( 0, ADDRESS_CLAIM_PGN );
+  c_data.setLen(3);
   // now IsoSystemPkg_c has right data -> send
-  getIsoBusInstance4Comm() << data();
+  getIsoBusInstance4Comm() << c_data;
   // store adress claim request time
   setLastIsoSaRequest(i32_time);
 
@@ -1083,7 +1072,7 @@ bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
   important for managing of members
   @return true -> message processed by IsoMonitor_c; false -> process msg by ServiceMonitor
 */
-bool IsoMonitor_c::processMsg()
+bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
 {
   bool b_processed = false;
 
@@ -1095,29 +1084,33 @@ bool IsoMonitor_c::processMsg()
   debugPrintNameTable();
 #endif
 
+  CanPkgExt_c c_isoData( arc_data, getMultitonInst() );
+
+  // get sender isoname
+  const IsoName_c cc_dataIsoName (c_isoData.getDataUnionConst());
+
   // decide whether the message should be processed
   if ( mc_serviceTool.isSpecified() )
   { // we are in diagnostic mode --> check if the message sender is the diagnostic tool
-    IsoName_c const& rcc_isoNameSa = data().getISONameForSA();
+    IsoName_c const& rcc_isoNameSa = c_isoData.getISONameForSA();
     if (rcc_isoNameSa.isSpecified())
     {
       if ( rcc_isoNameSa != mc_serviceTool ) return false;
     }
-    else if ( data().isoName() != mc_serviceTool ) return false;
+    else if ( cc_dataIsoName != mc_serviceTool ) return false;
     // if we reach here, the received message has to be processed, as the sender is the
     // diagnostic tool
   }
 
 
   // Handle DESTINATION PGNs
-  switch ((data().isoPgn() & 0x3FF00LU))
+  switch ((c_isoData.isoPgn() & 0x3FF00LU))
   {
     case ADDRESS_CLAIM_PGN:
     { // address claim
       b_processed = true;
-      const IsoName_c cc_dataIsoName (data().isoName());
-      const uint8_t cui8_sa = data().isoSa();
-      const int32_t ci32_time = data().time();
+      const uint8_t cui8_sa = c_isoData.isoSa();
+      const int32_t ci32_time = c_isoData.time();
 
       if ( existIsoMemberISOName (cc_dataIsoName) )
       {
@@ -1283,27 +1276,25 @@ bool IsoMonitor_c::processMsg()
 
 #ifdef USE_PROCESS
     case PROCESS_DATA_PGN:
-      static_cast<__IsoAgLib::CanPkg_c&>(getProcessInstance4Comm().data())
-        = static_cast<__IsoAgLib::CanPkg_c&>(data());
-      getProcessInstance4Comm().data().string2Flags();
-      return getProcessInstance4Comm().processMsg();
+      // TODO copy arc data in procesMsg of process_c
+      return getProcessInstance4Comm().processMsg( arc_data );
 #endif
   } // end switch for DESTINATION pgn
 
   // Handle NON-DESTINATION PGNs
-  switch ((data().isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
+  switch ((c_isoData.isoPgn() /* & 0x3FFFF */ )) // isoPgn is already "& 0x3FFFF" !
   {
     #ifdef USE_WORKING_SET
     case WORKING_SET_MASTER_PGN:
     { // working set master
       b_processed = true;
       // get and check sender
-      IsoItem_c* pc_masterItem = data().getMonitorItemForSA();
-      // we have to check here because we also receive network-management messages here (i.e. "virtual bool isNetworkMgmt() const { return true; }").
+      IsoItem_c* pc_masterItem = c_isoData.getMonitorItemForSA();
+      // we have to check here because we also receive network-management messages here").
       if (pc_masterItem)
       { // in Record Byte 1 (i.e. offset-byte 0) stands the number of TOTAL MEMBERS of this Working-Set.
         // Note that this includes the Master, too - So we need to substract the master
-        pc_masterItem->setMaster (data().getUint8Data (1-1)-1);
+        pc_masterItem->setMaster (c_isoData.getUint8Data (1-1)-1, c_isoData.time() );
         /** @todo SOON-240: WE HAVE TO BE SURE THAT ALL THOSE x MEMBER DEFINITIONS REALLY ARRIVED!!
          * for now the slaves' isonames are just initialized with IsoNameUnspecified until the WORKING_SET_SLAVE message arrives...
          * AND: Check what happens if the WS-sequence arrives a further time?
@@ -1323,13 +1314,13 @@ bool IsoMonitor_c::processMsg()
     { // working set member
       b_processed = true;
       // get and check sender
-      IsoItem_c* pc_masterItem = data().getMonitorItemForSA();
-      // we have to check here because we also receive network-management messages here (i.e. "virtual bool isNetworkMgmt() const { return true; }").
+      IsoItem_c* pc_masterItem = c_isoData.getMonitorItemForSA();
+      // we have to check here because we also receive network-management messages here").
       if (pc_masterItem)
       {
         // the working set master places the NAME field of each children
         // in the data part of this message type
-        pc_masterItem->addSlave (data().isoName());
+        pc_masterItem->addSlave (cc_dataIsoName);
       }
       else
       { // shouldn't happen normally (but could be a theoretical message on the bus,
@@ -1354,7 +1345,7 @@ bool IsoMonitor_c::processMsg()
 }
 
 bool
-IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver)
+IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp )
 {
   switch (aui32_pgn)
   {
@@ -1362,7 +1353,8 @@ IsoMonitor_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItem
       if (apc_isoItemReceiver == NULL)
       { // No specific destination so it's broadcast: Let all local item answer!
         // update time of last GLOBAL adress claim request to detect dead nodes
-        setLastIsoSaRequest (getIsoRequestPgnInstance4Comm().getTimeOfLastRequest()); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+        setLastIsoSaRequest (ai_requestTimestamp); // Now using CAN-Pkg-Times, see header for "setLastIsoSaRequest" for more information!
+
 
         bool b_processedRequestPGN = false;
         for (Vec_ISOIterator pc_iterItem = mvec_isoMember.begin();

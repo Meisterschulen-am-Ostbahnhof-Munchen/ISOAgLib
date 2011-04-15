@@ -71,7 +71,7 @@ void
 FsManager_c::reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem)
 {
   // we only care for fileservers
-  if (acrc_isoItem.isoName().getEcuType() != ISOName_c::ecuTypeFileServerOrPrinter)
+  if (acrc_isoItem.isoName().getEcuType() != IsoName_c::ecuTypeFileServerOrPrinter)
     return;
 
   if (at_action == ControlFunctionStateHandler_c::AddToMonitorList)

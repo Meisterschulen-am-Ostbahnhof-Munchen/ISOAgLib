@@ -180,9 +180,6 @@ public:
 #endif
 };
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef iIsoItem_c iISOItem_c;
-
 }
 
 #endif

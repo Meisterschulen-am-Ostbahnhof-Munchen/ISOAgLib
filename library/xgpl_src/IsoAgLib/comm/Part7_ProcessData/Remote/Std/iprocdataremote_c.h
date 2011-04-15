@@ -290,11 +290,6 @@ public:
   */
   uint16_t element() const{return ProcDataRemote_c::element();}
 
-  /** deliver DDI from last received can pkg
-    @return DDI
-  */
-  uint16_t getDDIfromCANPkg() const { return ProcDataBase_c::getDDIfromCANPkg();}
-
   /** deliver a reference to the setpoint object
     @return reference to member object with setpoint informations
   */

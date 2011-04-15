@@ -34,7 +34,7 @@ BaseCommon_c::init()
 {
   isoaglib_assert (!initialized());
 
-  MULTITON_MC_DATA_ASSIGN
+
   getSchedulerInstance().registerClient(&mt_task);
   // set configure values with call for config
   config_base (NULL, IsoAgLib::IdentModeImplement, 0 /* No individual PGN disabling */);
@@ -43,16 +43,6 @@ BaseCommon_c::init()
 
   setInitialized();
 }
-
-/**
-  virtual function which delivers a pointer to the CANCustomer
-  specific CanPkgExt_c instance
-*/
-CanPkgExt_c& BaseCommon_c::dataBase()
-{
-  return mc_data;
-}
-
 
 void
 BaseCommon_c::close( )
@@ -138,7 +128,7 @@ bool BaseCommon_c::timeEvent()
   }
 
   if ( ( getISOName() != NULL )
-    && (!getIsoMonitorInstance4Comm().existLocalIsoMemberISOName(*getISOName(), true)) )
+    && (!getIsoMonitorInstance( 0 ).existLocalIsoMemberISOName(*getISOName(), true)) ) // XXX TODO
   { // local isoname for sending is registrated, but it is not yet fully claimed
     // --> nothing to do
     return true;
@@ -179,15 +169,15 @@ bool BaseCommon_c::timeEventImplMode()
 /** send a PGN request */
 bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 {
-  data().setIdentType(Ident_c::ExtendedIdent);
-  data().setIsoPri(6);
+  CanPkgExt_c pkg;
+  pkg.setIsoPri(6);
   // set PGN first, as this might overwrite the PS field
-  data().setIsoPgn(REQUEST_PGN_MSG_PGN);
+  pkg.setIsoPgn(REQUEST_PGN_MSG_PGN);
 
   /// if the IsoItem_c is not in the monitor list, ignore this request
-  if ( getIsoMonitorInstance4Comm().existActiveLocalIsoMember() )
+  if ( getIsoMonitorInstance(0 ).existActiveLocalIsoMember() ) // XXX TODO
   { // use the SA of the already active node
-    data().setMonitorItemForSA( &getIsoMonitorInstance4Comm().getActiveLocalIsoMember() );
+    pkg.setMonitorItemForSA( &getIsoMonitorInstance( 0 ).getActiveLocalIsoMember() ); // XXX TODO
   }
   else
   { // there exists no local ident which is in claimed state -> we are not allowed to send on ISOBUS
@@ -196,20 +186,20 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 
   // now check and retrieve the target
   if ( ( getSelectedDataSourceISONameConst().isSpecified() )
-    && ( getIsoMonitorInstance4Comm().existIsoMemberISOName( getSelectedDataSourceISONameConst(), true ) ) )
+    && ( getIsoMonitorInstance( 0 ).existIsoMemberISOName( getSelectedDataSourceISONameConst(), true ) ) ) // XXX TODO
   { // we have a valid tractor data source, that can be asked directly
-    data().setISONameForDA( getSelectedDataSourceISONameConst() );
+    pkg.setISONameForDA( getSelectedDataSourceISONameConst() );
   }
   else
   { // there is no selected tractor registered --> ask to global
-    data().setIsoPs(255); // global request
+    pkg.setIsoPs(255); // global request
   }
 
   // built request data string
-  data().setUint32Data( 0 , ui32_requestedPGN );
-  data().setLen( 3 );
+  pkg.setUint32Data( 0 , ui32_requestedPGN );
+  pkg.setLen( 3 );
   // now CanPkgExt_c has right data -> send
-  getIsoBusInstance4Comm() << data();
+  getIsoBusInstance( 0 ) << pkg; // XXX TODO
   return true;
 }
 
@@ -220,12 +210,12 @@ bool BaseCommon_c::sendPgnRequest(uint32_t ui32_requestedPGN)
 bool BaseCommon_c::check4ReqForPgn(uint32_t /* aui32_pgn */, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver)
 {
   if ( NULL == getISOName() ) return false; // not configured for Send
-  if ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) return false;
+  if ( ! getIsoMonitorInstance( 0 ).existIsoMemberISOName( *getISOName(), true ) ) return false; // XXX TODO
 
   // now we can be sure, that we are in tractor mode, and the registered tractor isoname
   // belongs to an already claimed IsoItem_c --> we are allowed to send
   if ( ( apc_isoItemReceiver == NULL ) ||
-  ( &getIsoMonitorInstance4Comm().isoMemberISOName( *getISOName() ) == apc_isoItemReceiver ) )
+  ( &getIsoMonitorInstance(0 ).isoMemberISOName( *getISOName() ) == apc_isoItemReceiver ) ) // XXX TODO
   { // the REQUEST was directed to GLOBAL or to the SA that belongs to the
     // tractor IdentItem_c that is matched by the registrated IsoName_c (getISOName())
     return true;

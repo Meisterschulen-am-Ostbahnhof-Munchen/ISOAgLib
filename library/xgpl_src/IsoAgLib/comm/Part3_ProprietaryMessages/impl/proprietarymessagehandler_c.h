@@ -54,7 +54,7 @@ namespace __IsoAgLib
 
     /** overloading processMsg() to get can-messages
       */
-    virtual bool processMsg();
+    virtual bool processMsg( const CanPkg_c& arc_data );
 
     /** overloading reactOnStreamStart to get (E)TP-messages */
     virtual bool reactOnStreamStart (const ReceiveStreamIdentifier_c& ac_ident, uint32_t aui32_totalLen);
@@ -68,15 +68,6 @@ namespace __IsoAgLib
       @return true -> all planned activities performed in allowed time
     */
     virtual bool timeEvent( void );
-
-    /** deliver reference to data pkg as reference to CanPkgExt_c
-      to implement the base virtual function correct
-    */
-    virtual CanPkgExt_c& dataBase()
-    {
-      return mc_data;
-    }
-
 
     /** register the proprietary message client pointer in an interanl list of all clients.
         Derive and register from the member attributes:
@@ -160,20 +151,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual CanPkgExt_c& dataBase() {
-      return mrt_owner.dataBase();
-    }
-
-    virtual bool processMsg() {
-      return mrt_owner.processMsg();
-    }
-
-    virtual bool processInvalidMsg() {
-      return true; // nop - return mrt_owner.processInvalidMsg();
-    }
-
-    virtual bool isNetworkMgmt() const {
-      return false; // nop - return mrt_owner.isNetworkMgmt();
+    virtual bool processMsg( const CanPkg_c& arc_data ) {
+      return mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(
@@ -248,9 +227,6 @@ private:
     Owner_t &mrt_owner;
   };
   typedef ControlFunctionStateHandlerProxy_c Handler_t;
-
-    /** temp data where received and to be sent data is put */
-    CanPkgExt_c mc_data;
 
     /** dynamic array of memberItems for handling
         of single member informations

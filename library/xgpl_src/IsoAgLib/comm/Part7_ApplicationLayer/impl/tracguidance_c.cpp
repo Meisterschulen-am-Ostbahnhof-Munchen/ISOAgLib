@@ -101,25 +101,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracGuidance_c::processMsg()
+  bool TracGuidance_c::processMsg( const CanPkg_c& arc_data )
   {
-    switch (data().isoPgn() & 0x3FF00LU)
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    switch (pkg.isoPgn() & 0x3FF00LU)
     {
       case GUIDANCE_MACHINE_STATUS:
         // there is no need to check if sender exist in the monitor list because this is already done
         // in CanPkgExt_c -> resolveSendingInformation
-        IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+        IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
         if ( checkParseReceived( rcc_tempISOName ) )
         {
-          mui16_estCurvature = data().getUint16Data(0);
-          mt_requestResetCmdStatus = IsoAgLib::IsoResetFlag_t           ( (data().getUint16Data(2) >> 6) & 0x3);
-          mt_steeringInputPosStatus = IsoAgLib::IsoSteerPosFlag_t       ( (data().getUint8Data(2) >> 4) & 0x3);
-          mt_steeringSystemReadiness = IsoAgLib::IsoSteerReadinessFlag_t( (data().getUint8Data(2) >> 2) & 0x3);
-          mt_mechanicalSystemLogout = IsoAgLib::IsoActiveFlag_t         ( (data().getUint8Data(2) >> 0) & 0x3);
+          mui16_estCurvature = pkg.getUint16Data(0);
+          mt_requestResetCmdStatus = IsoAgLib::IsoResetFlag_t           ( (pkg.getUint16Data(2) >> 6) & 0x3);
+          mt_steeringInputPosStatus = IsoAgLib::IsoSteerPosFlag_t       ( (pkg.getUint8Data(2) >> 4) & 0x3);
+          mt_steeringSystemReadiness = IsoAgLib::IsoSteerReadinessFlag_t( (pkg.getUint8Data(2) >> 2) & 0x3);
+          mt_mechanicalSystemLogout = IsoAgLib::IsoActiveFlag_t         ( (pkg.getUint8Data(2) >> 0) & 0x3);
 
           setSelectedDataSourceISOName (rcc_tempISOName);
-          setUpdateTime( data().time() );
+          setUpdateTime( pkg.time() );
         }
         else
         { // there is a sender conflict
@@ -142,30 +143,30 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     setSelectedDataSourceISOName(*getISOName());
 
+    CanPkgExt_c pkg;
     // retrieve the actual dynamic sender no of the member with the registered isoName
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
-    data().setISONameForSA( *getISOName() );
+    pkg.setISONameForSA( *getISOName() );
     if ( getIsoMonitorInstance4Comm().existIsoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ) )
-      data().setISONameForDA( getIsoMonitorInstance4Comm().isoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ).isoName() );
+      pkg.setISONameForDA( getIsoMonitorInstance4Comm().isoMemberNr( getTracGuidanceCommandInstance4Comm().getCommander() ).isoName() );
     else
-      data().setISONameForDA( IsoName_c::IsoNameUnspecified() );
+      pkg.setISONameForDA( IsoName_c::IsoNameUnspecified() );
 
-    data().setIsoPgn(GUIDANCE_MACHINE_STATUS);
+    pkg.setIsoPgn(GUIDANCE_MACHINE_STATUS);
     uint8_t ui8_temp = 0;
-    data().setUint16Data(0, mui16_estCurvature);
+    pkg.setUint16Data(0, mui16_estCurvature);
     ui8_temp |= (mt_requestResetCmdStatus   << 6);
     ui8_temp |= (mt_steeringInputPosStatus  << 4);
     ui8_temp |= (mt_steeringSystemReadiness << 2);
     ui8_temp |= (mt_mechanicalSystemLogout  << 0);
-    data().setUint8Data(2, ui8_temp);
+    pkg.setUint8Data(2, ui8_temp);
     //reserved fields
-    data().setUint32Data(3, 0xFFFFFFFFUL);
-    data().setUint8Data(7, 0xFF);
+    pkg.setUint32Data(3, 0xFFFFFFFFUL);
+    pkg.setUint8Data(7, 0xFF);
 
-    c_can << data();
+    c_can << pkg;
   }
 
 #if DEBUG_SCHEDULER
@@ -174,7 +175,7 @@ TracGuidance_c::getTaskName() const
 { return "TracGuidance_c"; }
 #endif
 
-bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+bool TracGuidance_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
 {
   bool const b_allowed = BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver);
   if (!b_allowed)

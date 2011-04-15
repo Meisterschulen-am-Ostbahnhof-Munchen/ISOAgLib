@@ -14,6 +14,7 @@
 #define IISOBUS_C_H
 
 #include "impl/isobus_c.h"
+#include <IsoAgLib/driver/can/icancustomer_c.h>
 
 
 namespace IsoAgLib {
@@ -40,6 +41,29 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
 
   /** @return CAN-Bus Number - 0xFF in case the bus is not initialized yet */
   uint8_t getBusNumber() const { return IsoBus_c::getBusNumber(); }
+
+  iIsoBus_c& operator<< (iCanPkg_c& acrc_src) {
+    return static_cast<iIsoBus_c&>(IsoBus_c::operator<<( acrc_src ));
+  }
+
+  bool insertStdFilter( iCanCustomer_c& ar_customer,
+                             const IsoAgLib::iMaskFilter_c& arc_maskFilter,
+                             int ai_dlcForce,
+                             bool ab_reconfigImmediate ) {
+    return IsoBus_c::insertStdFilter (
+        ar_customer,
+        arc_maskFilter,
+        ab_reconfigImmediate,
+        static_cast<int8_t>(ai_dlcForce));
+  }
+
+
+  bool deleteStdFilter( const iCanCustomer_c& ar_customer, const iMaskFilter_c& arc_maskFilter )
+  { return IsoBus_c::deleteStdFilter (ar_customer, arc_maskFilter ); }
+
+  bool existStdFilter(const iCanCustomer_c& ar_customer, const iMaskFilter_c& arc_maskFilter ) {
+    return IsoBus_c::existStdFilter (ar_customer, arc_maskFilter);
+  }
 
  private:
   /** allow getIisoBusInstance() access to shielded base class.

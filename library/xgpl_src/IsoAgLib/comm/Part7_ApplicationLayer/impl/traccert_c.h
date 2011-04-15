@@ -310,12 +310,12 @@ class TracCert_c : public BaseCommon_c
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  virtual bool processMsg();
+  virtual bool processMsg( const CanPkg_c& arc_data );
 
   /** Do not longer want to process a request for
     * ISOBUS_CERTIFICATION_PGN, because this functionality is moved to
     * the diagnostic PGN handling under Part_12. */
-  bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/) { return false; }
+  bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t ) { return false; }
 
  private:
     // Private attributes

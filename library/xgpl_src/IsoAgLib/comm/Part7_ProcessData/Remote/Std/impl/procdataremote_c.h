@@ -278,9 +278,9 @@ public:
 
 private: // Private methods
   /** process a measure prog message for remote process data */
-  virtual void processProg();
+  virtual void processProg( const ProcessPkg_c& pkg );
   /** processing of a setpoint message */
-  virtual void processSetpoint();
+  virtual void processSetpoint( const ProcessPkg_c& pkg );
 
 private: // Private attributes
   /** object for managing jobs of remote setpoints */

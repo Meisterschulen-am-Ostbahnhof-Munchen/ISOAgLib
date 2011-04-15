@@ -37,7 +37,7 @@ namespace __IsoAgLib {
 
 Stream_c::Stream_c(
   const ReceiveStreamIdentifier_c& ac_rsi, 
-  uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA ,
+  uint32_t aui32_msgSize, int32_t ai_time MULTITON_INST_PARAMETER_DEF_WITH_COMMA ,
   bool ab_skipCtsAwait
 ) : StreamInput_c()
   , MULTITON_MEMBER_CONSTRUCTOR
@@ -55,6 +55,8 @@ Stream_c::Stream_c(
   , mui8_streamFirstByte (0) // meaning: not yet identified!! (when you check it, it's already set!)
   , mui32_dataPageOffset (0) // will be set when needed
   , mi32_timeoutLimit (msci32_timeNever)
+  , mi_startTime(ai_time)
+  , mi_finishTime(-1)
 {
   #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   if (getStreamType() == StreamFastPacket)
@@ -90,6 +92,8 @@ Stream_c::Stream_c (const Stream_c &rhs)
   , mui8_streamFirstByte (rhs.mui8_streamFirstByte)
   , mui32_dataPageOffset (rhs.mui32_dataPageOffset)
   , mi32_timeoutLimit (rhs.mi32_timeoutLimit)
+  , mi_startTime(rhs.mi_startTime)
+  , mi_finishTime(rhs.mi_finishTime)
 {
 }
 
@@ -120,6 +124,8 @@ Stream_c::operator= (const Stream_c& ref)
   mui32_dataPageOffset = ref.mui32_dataPageOffset;
 
   mi32_timeoutLimit = ref.mi32_timeoutLimit;
+  mi_startTime = ref.mi_startTime;
+  mi_finishTime = ref.mi_finishTime;
 
   return *this;
 }
@@ -189,8 +195,9 @@ Stream_c::expectBurst(uint8_t wishingPkgs)
 
 
 bool
-Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
+Stream_c::handleDataPacket (const CanPkg_c& pkg)
 { // ~X2C
+  const Flexible8ByteString_c* apu_data = pkg.getDataUnionConst();
   // expecting data at all?
   if (mt_awaitStep != AwaitData) {
     #if DEBUG_MULTIRECEIVE
@@ -261,6 +268,7 @@ Stream_c::handleDataPacket (const Flexible8ByteString_c* apu_data)
       // ---END--- was last packet! So
       awaitNextStep (AwaitNothing, msci32_timeNever); // no timeOut on own Send-Awaits
       mt_streamState = StreamFinished;
+      mi_finishTime = pkg.time();
     } else {
       // ---CTS--- go for more!
       // Calculate the send delay

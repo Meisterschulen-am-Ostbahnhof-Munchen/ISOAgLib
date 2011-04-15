@@ -203,10 +203,6 @@ private:
   static int msi_processMsgLoopIndex; /// "< 0" indicates Loop ==> need to adapt at delete operations
   static int msi_processMsgLoopSize;  /// used if in Loop mode, need to be adapted at remove/add, too.
 
-#if ((defined(USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
-  /** we have either compiled for ISO, OR there is at least one internal / proprietary CAN channel */
-  bool mb_performIsobusResolve;
-#endif
 };
 }
 #endif

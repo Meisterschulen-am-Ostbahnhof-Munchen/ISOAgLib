@@ -195,14 +195,14 @@ bool ProcDataRemote_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */)
 }
 
 /** process a setpoint message */
-void ProcDataRemote_c::processSetpoint(){
-  setpoint().processMsg();
+void ProcDataRemote_c::processSetpoint( const ProcessPkg_c& pkg ){
+  setpoint().processMsg( pkg );
 }
 
 /** process a measure prog message for remote process data */
-void ProcDataRemote_c::processProg(){
+void ProcDataRemote_c::processProg( const ProcessPkg_c& pkg ){
   // simply call the process function for the one member object
-  prog().processMsg();
+  prog().processMsg( pkg );
 }
 
 /**

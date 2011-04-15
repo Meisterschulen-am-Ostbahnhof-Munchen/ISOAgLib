@@ -251,7 +251,7 @@ public:
   IsoItem_c* getMaster();
 
   void setMasterSlaves (STL_NAMESPACE::vector<IsoName_c>* apvec_slaveIsoNames);
-  void setMaster (uint8_t aui8_slaveCount);
+  void setMaster (uint8_t aui8_slaveCount, int32_t ai_time );
   void addSlave (IsoName_c const& rcc_slaveName);
 
   /// For checking if the WS-Announce is completed use the "announce key" returned from "startWsAnnounce()".
@@ -392,9 +392,6 @@ private: // members
   /** ISOName of element */
   IsoName_c mc_isoName;
 };
-
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef IsoItem_c ISOItem_c;
 
 /**
   lower comparison between left IsoItem_c and right ISOName uint8_t

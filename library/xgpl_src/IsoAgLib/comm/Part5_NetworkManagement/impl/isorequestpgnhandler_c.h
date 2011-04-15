@@ -37,21 +37,9 @@ public:
   virtual bool processMsgRequestPGN(
       uint32_t aui32_pgn,
       IsoItem_c *apc_isoItemSender,
-      IsoItem_c *apc_isoItemReceiver)
-  {
-    return processMsgRequestPGNDefault(
-        aui32_pgn,
-        apc_isoItemSender,
-        apc_isoItemReceiver);
-  }
+      IsoItem_c *apc_isoItemReceiver,
+      int32_t ai_requestTimestamp ) = 0;
 
-  bool processMsgRequestPGNDefault(
-      uint32_t /*aui32_pgn*/,
-      IsoItem_c * /*apc_isoItemSender*/,
-      IsoItem_c * /*apc_isoItemReceiver*/)
-  {
-    return false;
-  }
 };
 
 /** Proxy for IsoRequestPgnHandler_c.
@@ -71,12 +59,14 @@ private:
   virtual bool processMsgRequestPGN(
       uint32_t aui32_pgn,
       IsoItem_c *apc_isoItemSender,
-      IsoItem_c *apc_isoItemReceiver)
+      IsoItem_c *apc_isoItemReceiver,
+      int32_t ai_time )
   {
     return mrt_owner.processMsgRequestPGN(
         aui32_pgn,
         apc_isoItemSender,
-        apc_isoItemReceiver);
+        apc_isoItemReceiver,
+        ai_time );
   }
 
   // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise

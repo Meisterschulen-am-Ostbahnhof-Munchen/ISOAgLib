@@ -108,12 +108,12 @@ public:
   bool isVtActive() const;
 
   /** setter */
-  void setLatestVtStatusData();
-  void setLocalSettings();
-  void setVersion();
-  void setSoftKeyData();
-  void setTextFontData();
-  void setHardwareData();
+  void setLatestVtStatusData( const CanPkgExt_c& arc_data );
+  void setLocalSettings( const CanPkgExt_c& arc_data );
+  void setVersion( const CanPkgExt_c& arc_data );
+  void setSoftKeyData( const CanPkgExt_c& arc_data );
+  void setTextFontData( const CanPkgExt_c& arc_data );
+  void setHardwareData( const CanPkgExt_c& arc_data );
 
   /** getter */
   const IsoName_c&           getIsoName()             const { return mc_isoName; }

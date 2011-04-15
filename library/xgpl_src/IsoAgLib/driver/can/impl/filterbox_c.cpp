@@ -40,9 +40,6 @@ FilterBox_c::FilterBox_c()
   , mui8_filterBoxNr(IdleState)
   , mui8_busNumber(IdleState)
   , mi32_fbVecIdx(-1)
-#if ((defined( USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
-  , mb_performIsobusResolve(true)
-#endif
 {}
 
 /**
@@ -57,9 +54,6 @@ FilterBox_c::FilterBox_c(const FilterBox_c& acrc_src)
   , mui8_filterBoxNr(acrc_src.mui8_filterBoxNr)
   , mui8_busNumber(acrc_src.mui8_busNumber)
   , mi32_fbVecIdx(acrc_src.mi32_fbVecIdx)
-#if ((defined( USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
-  , mb_performIsobusResolve(acrc_src.mb_performIsobusResolve)
-#endif
 {}
 
 /**
@@ -122,29 +116,6 @@ bool FilterBox_c::configCan(uint8_t aui8_busNumber, uint8_t aui8_FilterBoxNr)
   // store mui8_busNumber for later close of can
   mui8_busNumber = aui8_busNumber;
   mui8_filterBoxNr = aui8_FilterBoxNr;
-
-#if ((defined(USE_ISO_11783)) && (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT))
-  // we have either compiled forISO, OR there is at least one internal / proprietary CAN channel
-
-  // when we are communicating on the standardized CAN channel, and ISO is used, the default shall be true
-  mb_performIsobusResolve = true;
-
-  #if CAN_INSTANCE_CNT > PRT_INSTANCE_CNT
-  // we have at least one internal/proprietary CAN channel --> check whether this FilterBox_c
-  // was created for this internal (i.e. non ISOBUS) communication
-  for ( unsigned int ind = PRT_INSTANCE_CNT; ind < CAN_INSTANCE_CNT; ind++ )
-  {
-    if ( getCanInstance( ind ).getBusNumber() == mui8_busNumber )
-    { // this FilterBox_c has been created for processing of internal/proprietary messages
-      mb_performIsobusResolve = false;
-      break;
-    }
-  }
-  #endif // when amount of standardized prt instances is same as amount of CAN instances, no special check is needed
-
-  /// @todo Allow proprietary messages (standard-ident) on ISOBUS - set mb_performIsobusResolve accordingly (and maybe do something else)
-
-  #endif // end of #ifdef for usage of mb_performIsobusResolve
 
   #ifdef SYSTEM_WITH_ENHANCED_CAN_HAL
   isoaglib_assert( ! mc_maskFilterPair.empty() );
@@ -312,124 +283,57 @@ bool FilterBox_c::processMsg()
   //! a Filter is inserted IN THIS filterbox (pushed back!)
   mspc_currentlyProcessedFilterBox = this;
   msi_processMsgLoopSize = mvec_customer.size();
-  for (msi_processMsgLoopIndex = 0;
-       msi_processMsgLoopIndex < msi_processMsgLoopSize;
-       ++msi_processMsgLoopIndex)
+  for ( msi_processMsgLoopIndex = 0;
+        msi_processMsgLoopIndex < msi_processMsgLoopSize;
+        ++msi_processMsgLoopIndex )
   {
     const int8_t ci8_vecCustomerDlcForce = mvec_customer[msi_processMsgLoopIndex].i8_dlcForce;
     CanCustomer_c* pc_customer = mvec_customer[msi_processMsgLoopIndex].pc_customer;
-    isoaglib_assert (pc_customer);
+    isoaglib_assert( pc_customer );
 
-    CanPkgExt_c* pc_target = &(pc_customer->dataBase());
+    // dont construct a new pkg for each iteration - thus it's "yet" static TODO
+    CanPkg_c c_pkg;
 
-    #if defined SYSTEM_WITH_ENHANCED_CAN_HAL
-      HAL::can_useMsgobjGet(mui8_busNumber, 0xFF, pc_target);
-    #else
-      const int32_t ci32_fifoRet = HAL::fifo_useMsgObjGet(mui8_busNumber, pc_target);
-      if (ci32_fifoRet != HAL_NO_ERR)
-      {
-      #if DEBUG_FILTERBOX
-         INTERNAL_DEBUG_DEVICE
-        << "Central Fifo - Reading problem on bus : " << int(mui8_busNumber) << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-        IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
-        break; // so that "msi_processMsgLoopIndex = -1" will be done before returning.
-      }
-      #if DEBUG_FILTERBOX
-         INTERNAL_DEBUG_DEVICE
-        << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
-    #endif
+#if defined SYSTEM_WITH_ENHANCED_CAN_HAL
+    HAL::can_useMsgobjGet( mui8_busNumber, 0xFF, &c_pkg );
+#else
+    const int32_t ci32_fifoRet = HAL::fifo_useMsgObjGet( mui8_busNumber, &c_pkg );
+    if ( ci32_fifoRet != HAL_NO_ERR )
+    {
+#if DEBUG_FILTERBOX
+      INTERNAL_DEBUG_DEVICE
+      << "Central Fifo - Reading problem on bus : " << int( mui8_busNumber ) << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+      IsoAgLib::getILibErrInstance().registerError( IsoAgLib::iLibErr_c::CanWarn, IsoAgLib::iLibErr_c::Can );
+      break; // so that "msi_processMsgLoopIndex = -1" will be done before returning.
+    }
+#if DEBUG_FILTERBOX
+    INTERNAL_DEBUG_DEVICE
+    << "FilterBox is consuming the message " << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
+#endif // SYSTEM_WITH_ENHANCED_CAN_HAL
 
-    const int8_t ci8_targetLen = pc_target->getLen();
 
     /// Check DataLengthCode (DLC) if required
-    if ((ci8_vecCustomerDlcForce < 0) || (ci8_vecCustomerDlcForce == ci8_targetLen))
-    { // either no dlc-check requested or dlc matches the check!
-      pc_target->mst_msgState = DlcValid;
+    if (( ci8_vecCustomerDlcForce < 0 ) || ( ci8_vecCustomerDlcForce == c_pkg.getLen() ) )
+    {
+      // either no dlc-check requested or dlc matches the check!
+      b_result = pc_customer->processMsg( c_pkg );
     }
     else
     { // dlc-check was requested but failed
-      pc_target->mst_msgState = (ci8_targetLen < ci8_vecCustomerDlcForce) ? DlcInvalidTooShort : DlcInvalidTooLong;
-
-      #if DEBUG_FILTERBOX
-         INTERNAL_DEBUG_DEVICE
-        << "DLC_ERROR on identifier : " << pc_target->ident() << INTERNAL_DEBUG_DEVICE_ENDL;
-      #endif
+#if DEBUG_FILTERBOX
+      INTERNAL_DEBUG_DEVICE
+      << "DLC_ERROR on identifier : " << c_pkg.ident()
+      << " dlc: " << static_cast<int>( c_pkg.getLen() )
+      << " expected: " <<  static_cast<int>( ci8_vecCustomerDlcForce )
+      << INTERNAL_DEBUG_DEVICE_ENDL;
+#endif
     }
 
-    #ifdef USE_ISO_11783
-    // this is a compile where at least one CAN channel uses ISO 11783 protocol (i.e. this is not a pure proprietary CAN project)
-      #if (CAN_INSTANCE_CNT > PRT_INSTANCE_CNT)
-      // there is either a proprietary CAN channel in addition to the ISO 11783 channel, or some proprietary messages
-      // have to be handled at the ISO 11783 BUS (e.g. some bootloader messages are sent on ISOBUS)
-        // the decision whether a FilterBox_c has to perform SA resolve is derived for _all_ messages which are routed through this FilterBox_c object
-    if ( mb_performIsobusResolve )
-      #endif // end combination check of whether the flag based decision on resolving has to be performed
-    { // this block is only used for ISOBUS messages
-      // add address-resolving result to dlc-check result!
-      pc_target->mst_msgState = static_cast<MessageState_t>(pc_target->mst_msgState | pc_target->resolveReceivingInformation());
-
-      if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrInvalid)
-        || ((pc_target->mst_msgState & DlcValidationMask) != DlcValid)
-         )
-      { // AdrInvalid || !DlcValid
-        #ifdef PROCESS_INVALID_PACKETS
-        pc_target->string2Flags();
-        if (c_customerIterator->pc_customer->processInvalidMsg() )
-        { // customer indicated, that it processed the content of the received message
-          // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          b_result = true;
-        }
-        #endif
-      }
-      else
-      { // !AdrInvalid && DlcValid
-        if ( ((pc_target->mst_msgState & AdrResolveMask) == AdrValid) || (pc_customer->isNetworkMgmt()) )
-        { // is either [AdrValid] or [OnlyNetworkMgmt with NwMan-Customer]
-          pc_target->string2Flags();
-          if ( pc_customer->processMsg() )
-          { // customer indicated, that it processed the content of the received message
-            //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-            b_result = true;
-          }
-        }
-        // else: OnlyNetworkMgmt but no NwMan-Customer - discard message
-      }
-    }
-      #if ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT )
-      // the project uses at least on one of the CAN BUSes ISO 11783 OR proprietary messages are handled at least on one CAN channel
-    else
-      #endif
-    #endif // end of #ifdef USE_ISO_11783
-    #if ( ( CAN_INSTANCE_CNT > PRT_INSTANCE_CNT ) || !defined(USE_ISO_11783) )
-     // either this project does NOT use ISO 11783 at all,
-     // OR there is a proprietary message CAN channel - and this FilterBox_c object is dedicated to the proprietary CAN channel (by being at "else" block)
-     // OR there can be a mixture of ISO 11783 and proprietary messages on one channel - and the currently handled message is not ISO 11783 (by being at "else" block)
-    {
-      if ((pc_target->mst_msgState & DlcValidationMask) != DlcValid)
-      {
-        #ifdef PROCESS_INVALID_PACKETS
-        pc_target->string2Flags();
-        if (pc_customer->processInvalidMsg() )
-        { // customer indicated, that it processed the content of the received message
-          // --> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          b_result = true;
-        }
-        #endif
-      }
-      else
-      {
-        pc_target->string2Flags();
-        if ( pc_customer->processMsg() )
-        { // customer indicated, that it processed the content of the received message
-          //--> do not show this message to any other FilterBox_c that might be connected to the same MsgObj_c
-          b_result = true;
-        }
-      }
-    }
-    #endif
   }
+
+
   mspc_currentlyProcessedFilterBox = NULL; // indicate that we're not anymore in the loop!
   return b_result;
 }

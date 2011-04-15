@@ -303,22 +303,22 @@ void ProcDataLocal_c::resetEeprom( MeasureProgLocal_c* pc_progItem )
 #endif
 
 /** process a setpoint message */
-void ProcDataLocal_c::processSetpoint(){
-  switch (getProcessInstance4Comm().data().mc_processCmd.getCommand())
+void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg ){
+  switch ( pkg.mc_processCmd.getCommand())
   {
     case ProcessCmd_c::setValue:
     case ProcessCmd_c::requestValue:
-      mc_setpoint.processMsg();
+      mc_setpoint.processMsg( pkg );
       break;
     default:
       // process measurement commands even if this DDI is defined as a setpoint
-      mc_measureprog.processProg();
+      mc_measureprog.processProg( pkg );
   }
 }
 
 /** process a measure prog message for local process data */
-void ProcDataLocal_c::processProg(){
-  mc_measureprog.processProg();
+void ProcDataLocal_c::processProg( const ProcessPkg_c& pkg ){
+  mc_measureprog.processProg( pkg );
 }
 
 /**

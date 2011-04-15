@@ -69,19 +69,9 @@ public:
   void TEMPORARYSOLUTION_setTimePeriod(uint16_t aui16_timePeriod) { setTimePeriod (aui16_timePeriod); }
 
   /** function that handles incoming can messages */
-  virtual bool processMsg();
+  virtual bool processMsg( const CanPkg_c& arc_data );
 
   bool sendCommandForDEBUG(IsoAgLib::iIdentItem_c& apc_wsMasterIdentItem, uint8_t* apui8_buffer, uint32_t ui32_size);
-
-  /** deliver reference to data pkg
-    @return reference to the member IsoTerminalPkg_c, which encapsulates the CAN send structure
-  */
-  CanPkgExt_c& data(){return mc_data;};
-
-  /** deliver reference to data pkg as reference to CanPkgExt_c
-    to implement the base virtual function correct
-  */
-  virtual CanPkgExt_c& dataBase();
 
 
   VtClientServerCommunication_c& getClientByID (uint8_t ui8_clientIndex) { return *mvec_vtClientServerComm[ui8_clientIndex]; }
@@ -114,20 +104,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual CanPkgExt_c& dataBase() {
-      return mrt_owner.dataBase();
-    }
-
-    virtual bool processMsg() {
-      return mrt_owner.processMsg();
-    }
-
-    virtual bool processInvalidMsg() {
-      return mrt_owner.processInvalidMsg();
-    }
-
-    virtual bool isNetworkMgmt() const {
-      return mrt_owner.isNetworkMgmt();
+    virtual bool processMsg( const CanPkg_c& arc_data ) {
+      return mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(
@@ -210,14 +188,6 @@ private:
    */
   virtual void reactOnIsoItemModification (ControlFunctionStateHandler_c::IsoItemModification_t at_action, IsoItem_c const& acrc_isoItem);
 
-  virtual bool processInvalidMsg(){
-    return false;
-  }
-
-  virtual bool isNetworkMgmt() const {
-    return false;
-  }
-
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
       uint32_t aui32_totalLen)
@@ -262,9 +232,6 @@ private:
 protected:
 
 private: // attributes
-
-  /** temp data where received data is put */
-  CanPkgExt_c mc_data;
 
   STL_NAMESPACE::list<VtServerInstance_c> ml_vtServerInst;
 

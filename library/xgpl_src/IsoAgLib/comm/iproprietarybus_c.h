@@ -181,12 +181,6 @@ class iProprietaryBus_c {
     { (void) __IsoAgLib::getCanInstance4Prop().operator<< (acrc_src);
       return *this; }
 
-  /// For now also work with iCanPkgExt, because it has the flags2string stuff included.
-  /// NOTE: This needs to be separated into ISO / flags2strings somehow FINALLY!!!
-  iProprietaryBus_c& operator<< (iCanPkgExt_c& acrc_src)
-    { (void) __IsoAgLib::getCanInstance4Prop().operator<< (acrc_src);
-      return *this; }
-
  private:
   /** allow getIproprietaryBusInstance() access to shielded base class.
       otherwise __IsoAgLib::getProprietaryBusInstance() wouldn't be accepted by compiler

@@ -258,7 +258,7 @@ public:
     controlling commands
     @return true -> message was already edited complete
   */
-  virtual bool processMsg();
+  virtual bool processMsg( const ProcessPkg_c& arc_data );
 
   /**
     perform periodic actions
@@ -377,7 +377,7 @@ private: // Private methods
         * Err_c::badAlloc not enough memory to add new subprog
     @param ren_doSend set process data subtype to send (Proc_c::DoNone, Proc_c::DoVal, Proc_c::DoValForExactSetpoint...)
   */
-  void processIncrementMsg(Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
+  void processIncrementMsg( const ProcessPkg_c& pkg, Proc_c::doSend_t ren_doSend = Proc_c::DoVal);
 
 private: // Private attributes
 

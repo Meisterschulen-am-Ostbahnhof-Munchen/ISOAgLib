@@ -152,7 +152,6 @@ bool ProcIdent_c::matchISO( const IsoName_c& acrc_isoNameSender,
     if (isoName() != acrc_isoNameReceiver) return false;
   }
 
-  if (!getProcessInstance4Comm().data().resolveCommandTypeForISO(*iter)) return false;
   // all previous tests are positive -> answer positive match
   return true;
 }

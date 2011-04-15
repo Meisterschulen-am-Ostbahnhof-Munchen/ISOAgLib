@@ -199,7 +199,7 @@ public:
     process msg;
     @return true -> msg is already complete edited
   */
-  virtual bool processMsg();
+  virtual bool processMsg( const ProcessPkg_c& pkg );
   /**
     set if this MeasureProgRemote_c instance should store
     target/partner process data messages not direct addressed
@@ -212,7 +212,7 @@ public:
     set according to values of the package the accoring value
     (uses function, wich converts if needed)
   */
-  void setValFromPkg();
+  void setValFromPkg( const ProcessPkg_c& pkg );
 
 
   /**
@@ -269,7 +269,7 @@ private: // Private methods
     (the base function only delivers ProcDataBase_c)
     @return pointer to containing ProcDataRemote_c
   */
-  ProcDataRemoteBase_c *const pprocessData()const
+  ProcDataRemoteBase_c * pprocessData()const
   {
     return ((ProcDataRemoteBase_c*)((void*)ProcessElementBase_c::pprocessData()));
   };

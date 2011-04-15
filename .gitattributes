@@ -50,7 +50,6 @@ library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.cpp -te
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/impl/fsmanager_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/impl/fsserverinstance_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part13_FileServer_Client/impl/fsserverinstance_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part3_DataLink/impl/chunk_c.h -text
@@ -134,7 +133,6 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmovesetpoint_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracptosetpoint_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/Remote/SimpleMeasureSetpoint/impl/procdataremotesimplesetpointsimplemeasurecombined_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/elementddi_s.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h -text

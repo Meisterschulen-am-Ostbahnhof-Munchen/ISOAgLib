@@ -39,7 +39,6 @@ FsServerInstance_c::FsServerInstance_c(const IsoItem_c &pref_newItem, FsManager_
                       NULL,
                       &pref_newItem.isoName(),
                       8 )
-  , c_data (getForeignInstance4Comm (ref_fsManager))
 {
   isoaglib_assert (!getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager)).existIsoFilter (ms_receiveFilter));
   getIsoFilterManagerInstance (getForeignInstance4Comm (ref_fsManager))
@@ -117,15 +116,16 @@ IsoAgLib::iFsServerInstance_c* FsServerInstance_c::toInterfacePointer()
 
 
 bool
-FsServerInstance_c::processMsg()
+FsServerInstance_c::processMsg( const CanPkg_c& arc_data )
 {
+  CanPkgExt_c pkg( arc_data, getFsManager().getMultitonInst() );
   // we only registered for one kind of message,
   // and that is FS_TO_GLOBAL
 
   if (getState() == unusable)
     return true;
 
-  switch (data().getUint8Data(0))
+  switch (pkg.getUint8Data(0))
   {
     // FS Status
     case 0x00:
@@ -140,9 +140,9 @@ FsServerInstance_c::processMsg()
           // nothing to do if we weren't offline
           break;
       }
-      en_busy = FsBusy_en(data().getUint8Data(1));
-      ui8_nrOpenFiles = data().getUint8Data(2);
-      i32_lastTime = data().time();
+      en_busy = FsBusy_en(pkg.getUint8Data(1));
+      ui8_nrOpenFiles = pkg.getUint8Data(2);
+      i32_lastTime = pkg.time();
       break;
   }
 

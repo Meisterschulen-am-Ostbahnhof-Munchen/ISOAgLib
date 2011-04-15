@@ -92,19 +92,20 @@ TracGuidanceCommand_c::TracGuidanceCommand_c() {}
     @pre  sender of message is existent in monitor list
     @see  CanPkgExt_c::resolveSendingInformation()
   */
-bool TracGuidanceCommand_c::processMsg()
+bool TracGuidanceCommand_c::processMsg( const CanPkg_c& arc_data )
 {
-  uint8_t ui8_sa = data().isoSa();
+  CanPkgExt_c pkg( arc_data, getMultitonInst() );
+  uint8_t ui8_sa = pkg.isoSa();
 
-  switch (data().isoPgn() & 0x3FF00LU)
+  switch (pkg.isoPgn() & 0x3FF00LU)
   {
     case GUIDANCE_SYSTEM_CMD:
       if ( checkMode(IsoAgLib::IdentModeTractor) && ( getCommander() == ui8_sa ) )
       {
-        mmap_commanders[mui8_commanderSa].ui16_curvatureCmd = data().getUint16Data(0);
-        mmap_commanders[mui8_commanderSa].t_curvatureCmdStatus = IsoAgLib::IsoSteerFlag_t( data().getUint8Data(2) & 0x3 );
+        mmap_commanders[mui8_commanderSa].ui16_curvatureCmd = pkg.getUint16Data(0);
+        mmap_commanders[mui8_commanderSa].t_curvatureCmdStatus = IsoAgLib::IsoSteerFlag_t( pkg.getUint8Data(2) & 0x3 );
 
-        setUpdateTime( data().time() );
+        setUpdateTime( pkg.time() );
       }
       break;
   }
@@ -119,25 +120,26 @@ void TracGuidanceCommand_c::isoSendMessageImplMode( )
   if ( ( NULL == getISOName() ) || ( ! getIsoMonitorInstance4Comm().existIsoMemberISOName( *getISOName(), true ) ) )
     return;
 
+
   IsoBus_c& c_can = getIsoBusInstance4Comm();
 
+  CanPkgExt_c pkg;
   // retrieve the actual dynamic sender no of the member with the registered isoName
-  data().setIdentType(Ident_c::ExtendedIdent);
-  data().setIsoPri(3);
-  data().setLen(8);
+  pkg.setIsoPri(3);
+  pkg.setLen(8);
 
-  data().setISONameForDA( getTracGuidanceInstance4Comm().getSelectedDataSourceISONameConst() );
-  data().setISONameForSA( *getISOName() );
-  data().setIsoPgn(GUIDANCE_SYSTEM_CMD);
-  data().setUint16Data(0, mmap_commanders[mui8_commanderSa].ui16_curvatureCmd);
+  pkg.setISONameForDA( getTracGuidanceInstance4Comm().getSelectedDataSourceISONameConst() );
+  pkg.setISONameForSA( *getISOName() );
+  pkg.setIsoPgn(GUIDANCE_SYSTEM_CMD);
+  pkg.setUint16Data(0, mmap_commanders[mui8_commanderSa].ui16_curvatureCmd);
   uint8_t ui8_temp = 0;
   ui8_temp |= (mmap_commanders[mui8_commanderSa].t_curvatureCmdStatus);
-  data().setUint8Data(2, ui8_temp);
+  pkg.setUint8Data(2, ui8_temp);
   //reserved fields
-  data().setUint32Data(3, 0xFFFFFFFFUL);
-  data().setUint8Data(7, 0xFF);
+  pkg.setUint32Data(3, 0xFFFFFFFFUL);
+  pkg.setUint8Data(7, 0xFF);
 
-  c_can << data();
+  c_can << pkg;
 }
 
 /** get currently selected curvature commanders source address
@@ -208,7 +210,7 @@ TracGuidanceCommand_c::getTaskName() const
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information
            - verify this also for the other TracFoo classes
   */
-bool TracGuidanceCommand_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/)
+bool TracGuidanceCommand_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
 {
   return false;
 }

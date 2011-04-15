@@ -43,7 +43,6 @@ namespace __IsoAgLib
   {
     isoaglib_assert (!initialized());
 
-    mc_data.setMultitonInst( getMultitonInst() );
 
     getSchedulerInstance().registerClient( this );
     getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
@@ -222,32 +221,34 @@ namespace __IsoAgLib
     { /** single packet */
       IsoBus_c& c_isobus = getIsoBusInstance4Comm();
 
+    
+      CanPkgExt_c pkg;
       /** sets the saved ident */
-      mc_data.setIdent (rc_sendData.getIdent(), Ident_c::ExtendedIdent);
+      pkg.setIdent (rc_sendData.getIdent(), Ident_c::ExtendedIdent);
 
       /** if PGN is proprietary A1/A2 PGN then add destination address */
-      if ( ( ( mc_data.isoPgn()) & 0x2FF00 ) == PROPRIETARY_A_PGN)
+      if ( ( ( pkg.isoPgn()) & 0x2FF00 ) == PROPRIETARY_A_PGN)
       { /** add destination address */
-        mc_data.setISONameForDA( client.mc_isonameRemoteECU );
+        pkg.setISONameForDA( client.mc_isonameRemoteECU );
       }
       if (client.mpc_localIdent == NULL)
       { /** Sending with 0xFE as SA */
-        mc_data.setISONameForSA (screfc_noIsoName);
+        pkg.setISONameForSA (screfc_noIsoName);
       }
       else
       { /** Sending with LocalIdent as SA */
         /* The localIdent will always have an ISOName - if it's not yet unified,
             then the sending will not find it in the IsoMonitor_c-list so simply no
             packet is being sent */
-        mc_data.setISONameForSA (client.mpc_localIdent->isoName());
+        pkg.setISONameForSA (client.mpc_localIdent->isoName());
       }
 
       /** default priority for Proprietary PGN as stated in PGN's definition in ISO 11783-3 */
-      mc_data.setIsoPri(6);
+      pkg.setIsoPri(6);
       /** set data */
-      mc_data.setDataFromString (rc_sendData.getDataStream(), rc_sendData.getLen());
+      pkg.setDataFromString (rc_sendData.getDataStream(), rc_sendData.getLen());
       /** sending */
-      c_isobus << mc_data;
+      c_isobus << pkg;
     }
     else
     { /** multi-packet */
@@ -418,23 +419,25 @@ namespace __IsoAgLib
 
 
   bool
-  ProprietaryMessageHandler_c::processMsg()
+  ProprietaryMessageHandler_c::processMsg( const CanPkg_c& arc_data )
   {
+
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // look in the whole list
     for ( ProprietaryMessageClientVectorIterator_t client_iterator = mvec_proprietaryclient.begin(); client_iterator != mvec_proprietaryclient.end(); client_iterator++ )
     {
-      if ( ( (mc_data.isoPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) == (*client_iterator).pc_client->mui32_canFilter )
+      if ( ( (pkg.isoPgn() << 8) & (*client_iterator).pc_client->mui32_canMask) == (*client_iterator).pc_client->mui32_canFilter )
       { // PGN check okay
-        if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == mc_data.getISONameForSA())))
+        if ( ( (*client_iterator).pc_client->mc_isonameRemoteECU.isUnspecified() || ((*client_iterator).pc_client->mc_isonameRemoteECU == pkg.getISONameForSA())))
         { // SA check okay
           // following check checks for PROPRIETARY_A_PGN and PROPRIETARY_A2_PGN at once!
-          if ( (mc_data.isoPgn() & 0x2FF00) == PROPRIETARY_A_PGN)
+          if ( (pkg.isoPgn() & 0x2FF00) == PROPRIETARY_A_PGN)
           { // DA check
-            if ( ! ( (mc_data.getISONameForDA() == screfc_noIsoName) /* msg addressed to global => OKAY */
+            if ( ! ( (pkg.getISONameForDA() == screfc_noIsoName) /* msg addressed to global => OKAY */
                     ||
                     ((*client_iterator).pc_client->mpc_localIdent == NULL) /* we have no identity => OKAY */
                     ||
-                    ((*client_iterator).pc_client->mpc_localIdent->isoName() == mc_data.getISONameForDA()) /* we have an identity and it's addressed to us => OAKY */
+                    ((*client_iterator).pc_client->mpc_localIdent->isoName() == pkg.getISONameForDA()) /* we have an identity and it's addressed to us => OAKY */
                )   )
             { // DA did NOT match
               continue;
@@ -443,9 +446,9 @@ namespace __IsoAgLib
           /** reset vector */
           (*client_iterator).pc_client->ms_receivedData.clearVector();
           // Destination Address matched
-          (*client_iterator).pc_client->ms_receivedData.setIdent( mc_data.ident() );
+          (*client_iterator).pc_client->ms_receivedData.setIdent( pkg.ident() );
           /** set data bytes along with len */
-          (*client_iterator).pc_client->ms_receivedData.setDataStream(0, mc_data.getUint8DataConstPointer(), mc_data.getLen());
+          (*client_iterator).pc_client->ms_receivedData.setDataStream(0, pkg.getUint8DataConstPointer(), pkg.getLen());
           /** process message from client */
           (*client_iterator).pc_client->processProprietaryMsg();
           /** ms_receivedData will NOT be cleared here in case the client

@@ -19,7 +19,6 @@
 /* *************************************** */
 #include "impl/schedulertask_c.h"
 #include <IsoAgLib/scheduler/impl/scheduler_c.h>
-#include <IsoAgLib/comm/Part3_DataLink/icanpkgext_c.h>
 
 /// Begin Namespace IsoAgLib
 namespace IsoAgLib {

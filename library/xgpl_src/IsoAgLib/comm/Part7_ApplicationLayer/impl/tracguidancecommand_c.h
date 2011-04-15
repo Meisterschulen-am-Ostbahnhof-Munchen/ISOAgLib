@@ -110,7 +110,7 @@ class TracGuidanceCommand_c : public BaseCommon_c
   virtual const char* getTaskName() const;
 #endif
 
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
  private:
   // Private methods
@@ -138,7 +138,7 @@ class TracGuidanceCommand_c : public BaseCommon_c
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  virtual bool processMsg();
+  virtual bool processMsg( const CanPkg_c& arc_data );
 
   /** send guidance data
       @see  CanIo_c::operator<<

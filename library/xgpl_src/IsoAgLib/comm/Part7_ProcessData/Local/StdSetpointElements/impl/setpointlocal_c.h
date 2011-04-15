@@ -347,11 +347,11 @@ private: // Private methods
   /**
     process a setpoint request for local process data
   */
-  virtual void processRequest() const;
+  virtual void processRequest( const ProcessPkg_c& pkg ) const;
   /**
     process a setpoint set for local process data
   */
-  virtual void processSet();
+  virtual void processSet( const ProcessPkg_c& pkg );
 
   /**
     deliver a reference to ProcDataLocal_c

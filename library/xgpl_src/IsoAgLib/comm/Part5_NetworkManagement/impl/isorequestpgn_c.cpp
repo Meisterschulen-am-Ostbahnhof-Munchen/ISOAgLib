@@ -145,27 +145,29 @@ IsoRequestPgn_c::checkIfAlreadyRegistered(
     a la "if ((data().isoPgn() & 0x3FF00) == REQUEST_PGN_MSG_PGN)"
   * @return true -> message processed by IsoRequestPgn_c (also possible is NACK); false -> let others process */
 bool
-IsoRequestPgn_c::processMsg ()
+IsoRequestPgn_c::processMsg ( const CanPkg_c& arc_data )
 {
+  CanPkgExt_c isoPkg( arc_data, getMultitonInst() );
   /// Store incoming information for possible later user-triggered "sendAcknowledgePGN()"
-  mpc_isoItemSA = data().getMonitorItemForSA();
-  mpc_isoItemDA = data().getMonitorItemForDA();
-  mui32_requestedPGN = ( (static_cast<uint32_t>(data().operator[](0)))
-                      | (static_cast<uint32_t>(data().operator[](1)) << 8)
-                      | (static_cast<uint32_t>(data().operator[](2)) << 16) );
+  mpc_isoItemSA = isoPkg.getMonitorItemForSA();
+  mpc_isoItemDA = isoPkg.getMonitorItemForDA();
+  mui32_requestedPGN = ( (static_cast<uint32_t>(isoPkg.operator[](0)))
+                      | (static_cast<uint32_t>(isoPkg.operator[](1)) << 8)
+                      | (static_cast<uint32_t>(isoPkg.operator[](2)) << 16) );
 
   /// In case a node on the bus has not yet claimed an address (it sends with sa=0xFE, i.e. MonitorItem_c==NULL),
   /// it can still request ANY PGNs according to Mike - so no special check done here!
   /// 1. Distribute to all clients
   bool b_processedByAnyClient = false;
   for (STL_NAMESPACE::vector<PGN_s>::iterator it_pgn = m_registeredClientsWithPGN.begin();;) {
+
     it_pgn = STL_NAMESPACE::find_if(
         it_pgn,
         m_registeredClientsWithPGN.end(),
         DoesMatchPgn_s(mui32_requestedPGN));
     if (it_pgn == m_registeredClientsWithPGN.end())
       break;
-    bool const cb_set = it_pgn->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA);
+    bool const cb_set = it_pgn->p_handler->processMsgRequestPGN(mui32_requestedPGN, mpc_isoItemSA, mpc_isoItemDA, isoPkg.time() );
     if (cb_set)
       b_processedByAnyClient = true;
     ++it_pgn;
@@ -195,21 +197,21 @@ IsoRequestPgn_c::sendAcknowledgePGN (IsoItem_c& arc_isoItemSender, uint8_t aui8_
     ui32_purePgn &= 0x3FF00LU;
   }
 
-  data().setIdentType( IsoAgLib::iIdent_c::ExtendedIdent );
-  data().setIsoPri(6);
-  data().setIsoDp(0);
-  data().setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
-  data().setMonitorItemForDA (mpc_isoItemSA);
-  data().setMonitorItemForSA (&arc_isoItemSender);
+  CanPkgExt_c isoPkg;
+  isoPkg.setIsoPri(6);
+  isoPkg.setIsoDp(0);
+  isoPkg.setIsoPf(ACKNOWLEDGEMENT_PGN >> 8);
+  isoPkg.setMonitorItemForDA (mpc_isoItemSA);
+  isoPkg.setMonitorItemForSA (&arc_isoItemSender);
   // set the first four bytes as uint32_t value, where lowest byte equals to ControlByte
-  data().setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (aui8_ackType)));
+  isoPkg.setUint32Data ((1-1), (0xFFFFFF00UL | uint32_t (aui8_ackType)));
   // set at lowest byte of second uint32_t value the reserved 0xFF
   // and place at the higher bytes of this second uint32_t
   // the ui32_purePgn
-  data().setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
-  data().setLen (8);
+  isoPkg.setUint32Data ((5-1), ((ui32_purePgn << 8)|0xFFUL) );
+  isoPkg.setLen (8);
 
-  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << isoPkg;
 }
 
 
@@ -240,7 +242,6 @@ void IsoRequestPgn_c::unregisterLocalDevice( const __IsoAgLib::IsoName_c& rc_iso
 IsoRequestPgn_c::IsoRequestPgn_c ()
   : mc_subsystemState()
   , m_registeredClientsWithPGN ()
-  , mc_data()
   , mpc_isoItemSA( NULL ) // dummy value, is always properly set when used
   , mpc_isoItemDA( NULL ) // dummy value, is always properly set when used
   , mui32_requestedPGN( 0xFFFFFFFFLU ) // dummy value, is always properly set when used

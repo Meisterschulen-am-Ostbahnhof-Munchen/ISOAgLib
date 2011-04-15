@@ -171,12 +171,13 @@ void SetpointRemote_c::setExact( int32_t ai32_val){
   // set time of command
   mi32_commandedTime = System_c::getTime();
 
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
                                                            ProcessCmd_c::exactValue,
                                                            ProcessCmd_c::setValue);
 
-  processData().sendValISOName(processData().commanderISOName(), ai32_val);
+  processData().sendValISOName( pkg, processData().commanderISOName(), ai32_val);
 }
 
 
@@ -196,12 +197,13 @@ void SetpointRemote_c::setMin( int32_t ai32_val){
   // set time of command
   mi32_commandedTime = System_c::getTime();
 
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                            ProcessCmd_c::minValue,
                                                            ProcessCmd_c::setValue);
 
-  processData().sendValISOName(processData().commanderISOName(), ai32_val);
+  processData().sendValISOName( pkg, processData().commanderISOName(), ai32_val);
 }
 
 /**
@@ -220,12 +222,13 @@ void SetpointRemote_c::setMax( int32_t ai32_val){
   // set time of command
   mi32_commandedTime = System_c::getTime();
 
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                            ProcessCmd_c::maxValue,
                                                            ProcessCmd_c::setValue);
   // send command to owner
-  processData().sendValISOName(processData().commanderISOName(), ai32_val);
+  processData().sendValISOName(pkg, processData().commanderISOName(), ai32_val);
 }
 
 /**
@@ -244,12 +247,13 @@ void SetpointRemote_c::setDefault( int32_t ai32_val){
   // set time of command
   mi32_commandedTime = System_c::getTime();
 
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                            ProcessCmd_c::defaultValue,
                                                            ProcessCmd_c::setValue);
   // send command to owner:
-  processData().sendValISOName(processData().commanderISOName(), ai32_val);
+  processData().sendValISOName( pkg, processData().commanderISOName(), ai32_val);
 }
 
 /**
@@ -257,52 +261,56 @@ void SetpointRemote_c::setDefault( int32_t ai32_val){
 */
 void SetpointRemote_c::requestExact() const
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
                                                            ProcessCmd_c::exactValue,
                                                            ProcessCmd_c::requestValue);
 
 // Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
+  processDataConst().sendValISOName( pkg, processDataConst().commanderISOName(), (int32_t)0);
 }
 /**
   request remote master setpoint - MIN
 */
 void SetpointRemote_c::requestMin() const
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
                                                            ProcessCmd_c::minValue,
                                                            ProcessCmd_c::requestValue);
 
 // Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
+  processDataConst().sendValISOName( pkg, processDataConst().commanderISOName(), (int32_t)0);
 }
 /**
   request remote master setpoint - MAX
 */
 void SetpointRemote_c::requestMax() const
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
                                                            ProcessCmd_c::maxValue,
                                                            ProcessCmd_c::requestValue);
 
 // Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
+  processDataConst().sendValISOName( pkg, processDataConst().commanderISOName(), (int32_t)0);
 }
 /**
   request remote master setpoint - DEFAULT
 */
 void SetpointRemote_c::requestDefault() const
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, true /* isRequest */,
                                                            ProcessCmd_c::defaultValue,
                                                            ProcessCmd_c::requestValue);
 
 // Explicitly cast to int32_t for compilers that cannot differentiate between float and int32_t
-  processDataConst().sendValISOName(processDataConst().commanderISOName(), (int32_t)0);
+  processDataConst().sendValISOName( pkg, processDataConst().commanderISOName(), (int32_t)0);
 }
 
 /**
@@ -418,39 +426,38 @@ bool SetpointRemote_c::valid() const {
 }
 
 /** process a setpoint request for remote process data */
-void SetpointRemote_c::processRequest() const {
+void SetpointRemote_c::processRequest( const ProcessPkg_c& ) const {
 }
 
 /** process a setpoint set for remote process data */
-void SetpointRemote_c::processSet()
+void SetpointRemote_c::processSet( const ProcessPkg_c& pkg )
 {
-  ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if ( (c_pkg.senderItem() == NULL) || (c_pkg.receiverItem() == NULL) )
+  if ( (pkg.senderItem() == NULL) || (pkg.receiverItem() == NULL) )
   { // SA 0xFE or Broadcast
     return;
   }
 
-  const int32_t i32_val = c_pkg.getValue();
+  const int32_t i32_val = pkg.getValue();
 
   // detect if something was changed, so that the handler shall be called
   bool b_change = false;
 
   // retreive the isoName of send and empf
-  const IsoName_c& c_empfISOName = c_pkg.receiverItem()->isoName();
-  const IsoName_c& c_sendISOName = c_pkg.senderItem()->isoName();
+  const IsoName_c& c_empfISOName = pkg.receiverItem()->isoName();
+  const IsoName_c& c_sendISOName = pkg.senderItem()->isoName();
 
   if (c_sendISOName == processData().isoName())
   { // the owner sent the value
-    if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
+    if (pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // was a normal value
-      if  ( ( mc_answeredMaster.valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val )
+      if  ( ( mc_answeredMaster.valForGroup( pkg.mc_processCmd.getValueGroup() ) != i32_val )
          || ( ! mc_answeredMaster.valid() )
          || ( mc_answeredMaster.isoName() != c_empfISOName )
          || ( ! mc_answeredMaster.master() )
           ) b_change = true;
 
       bool b_changeMeasurement;
-      switch (c_pkg.mc_processCmd.getValueGroup())
+      switch (pkg.mc_processCmd.getValueGroup())
       { // compare new value with corresponding last value
         case ProcessCmd_c::exactValue:   b_changeMeasurement = (mc_answeredMaster.exact() != i32_val); break;
         case ProcessCmd_c::defaultValue: b_changeMeasurement = (mc_answeredMaster.getDefault() != i32_val); break;
@@ -460,9 +467,9 @@ void SetpointRemote_c::processSet()
       }
       // call processMeasurementUpdate handler function in case a measurement prog is running for this setpoint DDI
       if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) )
-        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, c_pkg.senderItem()->isoName().toConstIisoName_c(), b_changeMeasurement);
+        processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_val, pkg.senderItem()->isoName().toConstIisoName_c(), b_changeMeasurement);
 
-      mc_answeredMaster.setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
+      mc_answeredMaster.setValForGroup( i32_val, pkg.mc_processCmd.getValueGroup());
       // set the isoName of the actual master
       mc_answeredMaster.setISOName( c_empfISOName);
       // set the valid flag to true
@@ -475,14 +482,14 @@ void SetpointRemote_c::processSet()
   // check if it was a master release command
   if (((c_empfISOName == mc_answeredMaster.isoName())
       ||(c_sendISOName == processData().isoName()))
-    &&(c_pkg.isSpecCmd( setpointReleaseCmd)) )
+    &&(pkg.isSpecCmd( setpointReleaseCmd)) )
   { // the actual master setpoint is released
     releaseMasterIntern();
     b_change = true;
   }
   // check if it was a SETPOINT_ERROR message for the master
   if ((c_empfISOName == mc_answeredMaster.isoName())
-    && (c_pkg.isSpecCmd( setpointErrCmd)) )
+    && (pkg.isSpecCmd( setpointErrCmd)) )
   { // the owner (controlling) system can�t deliver the commanded setpoint -> actual invalid
     if ( mc_answeredMaster.valid() ) b_change = true;
     mc_answeredMaster.setValid( false);
@@ -492,14 +499,14 @@ void SetpointRemote_c::processSet()
   if ((c_empfISOName == processData().commanderISOName())
     && (c_sendISOName == processData().isoName()))
   { // the owner of the process data sent me an answer
-    if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
+    if (pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     { // normal value
-      if  ( ( mc_answeredMe.valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val )
+      if  ( ( mc_answeredMe.valForGroup( pkg.mc_processCmd.getValueGroup() ) != i32_val )
          || ( ! mc_answeredMe.valid() )
          || ( ! mc_answeredMe.master() )
           ) b_change = true;
       // set the given value
-      mc_answeredMe.setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
+      mc_answeredMe.setValForGroup( i32_val, pkg.mc_processCmd.getValueGroup());
       // set the valid flag to true
       mc_answeredMe.setValid( true);
       // i am the master if i get a normal value answered
@@ -507,11 +514,11 @@ void SetpointRemote_c::processSet()
     }
     else
     { // error or release command
-      if (c_pkg.isSpecCmd( setpointReleaseCmd)) {
+      if (pkg.isSpecCmd( setpointReleaseCmd)) {
         mc_answeredMe.setMaster( false);
         b_change = true;
       }
-      if (c_pkg.isSpecCmd( setpointErrCmd)) {
+      if (pkg.isSpecCmd( setpointErrCmd)) {
         mc_answeredMe.setValid( false);
         b_change = true;
       }
@@ -523,7 +530,7 @@ void SetpointRemote_c::processSet()
   }
   // call handler function if handler class is registered
   if ( ( processDataConst().getProcessDataChangeHandler() != NULL ) && ( b_change ) )
-    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), c_pkg.senderItem()->isoName().toConstIisoName_c() );
+    processDataConst().getProcessDataChangeHandler()->processSetpointResponse( pprocessData(), setpointMasterVal(), pkg.senderItem()->isoName().toConstIisoName_c() );
 
 }
 

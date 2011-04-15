@@ -33,19 +33,9 @@ namespace __IsoAgLib {
 
 
 
-/** deliver reference to data pkg as reference to CanPkgExt_c
-  to implement the base virtual function correct
- */
-CanPkgExt_c& IsoTerminal_c::dataBase()
-{
-  return mc_data;
-}
-
-
 /** default constructor
  */
 IsoTerminal_c::IsoTerminal_c() :
-  mc_data(), /* to be set later on when it's being set from Singleton-Template construct */
   ml_vtServerInst(),
   mvec_vtClientServerComm(),
   mt_handler(*this),
@@ -59,8 +49,6 @@ void
 IsoTerminal_c::init()
 {
   isoaglib_assert (!initialized());
-
-  mc_data.setMultitonInst( getMultitonInst() );
 
   getSchedulerInstance().registerClient(this);
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler(mt_handler);
@@ -234,23 +222,26 @@ IsoTerminal_c::timeEvent(void)
   @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
  */
 bool
-IsoTerminal_c::processMsg()
+IsoTerminal_c::processMsg( const CanPkg_c& arc_data )
 {
+
+  CanPkgExt_c c_data( arc_data, getMultitonInst() );
+
   // VT_TO_GLOBAL is the only PGN we accept without VT being active, because it marks the VT active!!
   STL_NAMESPACE::list<VtServerInstance_c>::iterator lit_vtServerInst;
   uint8_t ui8_index;
 
   /// -->VT_TO_GLOBAL_PGN<-- ///
-  if ((data().isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
+  if ((c_data.isoPgn() & 0x3FFFFLU) == VT_TO_GLOBAL_PGN)
   { // iterate through all registered VtServerInstances and process msg if vtSourceAddress == isoSa
-    uint8_t const cui8_cmdByte = data().getUint8Data (1-1);
+    uint8_t const cui8_cmdByte = c_data.getUint8Data (1-1);
     if (cui8_cmdByte == 0xFE) // Command: "Status", Parameter: "VT Status Message"
     {
       for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
       {
-        if (lit_vtServerInst->getVtSourceAddress() == data().isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
+        if (lit_vtServerInst->getVtSourceAddress() == c_data.isoSa()) // getVtSourceAddress gets the SA from the IsoItem, so it's the current one...
         {
-          lit_vtServerInst->setLatestVtStatusData();
+          lit_vtServerInst->setLatestVtStatusData( c_data );
 
           // iterate through all registered VtClientServerCommunication and notify their pools with "eventVtStatusMsg"
           for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)
@@ -273,7 +264,7 @@ IsoTerminal_c::processMsg()
       {
         if (mvec_vtClientServerComm[ui8_index])
         {
-          mvec_vtClientServerComm[ui8_index]->notifyOnAuxInputStatus();
+          mvec_vtClientServerComm[ui8_index]->notifyOnAuxInputStatus( c_data );
         }
       }
     }
@@ -282,13 +273,13 @@ IsoTerminal_c::processMsg()
 
 
   /// -->LANGUAGE_PGN<-- ///
-  if ((data().isoPgn() & 0x3FFFFLU) == LANGUAGE_PGN)
+  if ((c_data.isoPgn() & 0x3FFFFLU) == LANGUAGE_PGN)
   {
     VtServerInstance_c* pc_server = NULL;
     // first process LANGUAGE_PGN for all VtServerInstances BEFORE processing for the VtClientServerCommunications
     for (lit_vtServerInst = ml_vtServerInst.begin(); lit_vtServerInst != ml_vtServerInst.end(); lit_vtServerInst++)
     {
-      if (lit_vtServerInst->getVtSourceAddress() == data().isoSa())
+      if (lit_vtServerInst->getVtSourceAddress() == c_data.isoSa())
       {
         pc_server = &(*lit_vtServerInst);
         break;
@@ -297,7 +288,7 @@ IsoTerminal_c::processMsg()
 
     if (pc_server != NULL)
     {
-      pc_server->setLocalSettings();
+      pc_server->setLocalSettings( c_data );
 
       // notify all connected vtCSCs
       for (ui8_index = 0; ui8_index < mvec_vtClientServerComm.size(); ui8_index++)

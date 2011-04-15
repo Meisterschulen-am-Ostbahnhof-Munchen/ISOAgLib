@@ -184,10 +184,7 @@ class ProcDataRemoteBase_c : public ProcDataBase_c
   @param ai32_val int32_t value to send
   @return true -> sendIntern set successful EMPF and SEND
      */
-  bool sendValISOName(const IsoName_c& ac_varISOName, int32_t ai32_val = 0) const;
-
-private: // Private methods
-  void setRemoteSendFlags (const IsoName_c& ac_varISOName) const;
+  bool sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const;
 
 private: // Private attributes
   /** pointer to the isoName of the local ident, which acts as commanding member */

@@ -129,7 +129,7 @@ typedef struct {
       */
     virtual bool config_base (const IsoName_c* apc_isoName, IsoAgLib::IdentMode_t at_identMode, uint16_t aui16_suppressMask = 0);
 
-    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+    bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
     virtual ~TracLight_c() {}
 
@@ -234,7 +234,7 @@ typedef struct {
         @see CanIo_c::processMsg
         @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
       */
-    virtual bool processMsg();
+    virtual bool processMsg( const CanPkg_c& arc_data );
 
     /** send light update; there is a difference between implement and tractor mode
         @see  TracLight_c::processMsgRequestPGN
@@ -246,7 +246,7 @@ typedef struct {
 
     /** Help method sendMessage.
      */
-    SendMessage_e helpSendMessage();
+    SendMessage_e helpSendMessage( CanPkgExt_c& pkg );
 
     /** Send lighting data message.
      */

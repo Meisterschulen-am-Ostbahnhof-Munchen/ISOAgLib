@@ -79,7 +79,7 @@ public: // Public methods
 
   virtual ~TracGeneral_c() {}
 
-  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t );
 
   /** force a request for pgn for language information */
   bool sendRequestUpdateLanguage();
@@ -306,7 +306,7 @@ private:
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool processMsg();
+  bool processMsg( const CanPkg_c& arc_data );
 
   /** send front hitch and rear hitch data msg
       @see  CanIo_c::operator<<
@@ -329,13 +329,9 @@ private:
   SendHitchState_e sendRearHitchState();
 
   /** Prepare sending any hitch date message. */
-  SendHitchState_e prepareSendingHitchState();
+  SendHitchState_e prepareSendingHitchState( CanPkgExt_c& pkg );
 
   bool canSendLanguage();
-
-  virtual bool processInvalidMsg() { return false; }
-
-  virtual bool isNetworkMgmt() const { return false; }
 
 private:
   // Private attributes

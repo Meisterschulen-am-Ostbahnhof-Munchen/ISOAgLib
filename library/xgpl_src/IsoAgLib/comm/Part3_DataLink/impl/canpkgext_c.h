@@ -17,11 +17,11 @@
 
 #include <IsoAgLib/driver/can/impl/canpkg_c.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 
-class IsoName_c;
 class IsoItem_c;
 
 
@@ -35,22 +35,14 @@ class AddressResolveResults_c
     uint8_t getAddress() const {return mrc_ident.ident(mui8_position);}
     void setAddress(uint8_t aui8_newAddress) { mrc_ident.setByte(aui8_newAddress,mui8_position); }
 
-    // IMPORTANT:
-    // the IsoName_c instance should be handled as if it would be a fixed
-    // _part_ of the struct --> the constructor allocates an instance, the destructur frees it
-    //                          and all other operations just operate on the allocated instance.
-    IsoName_c* mpc_isoName;
-
-    // IMPORTANT:
-    // in contrast to IsoName_c, the MonitorItem_c _POINTER_ is always set to NULL or to an instance, that
-    // is located somewhere else (thus do NEVER NEVER NEVER call new or delete for this entry!!!!!!!!)
+    IsoName_c mc_isoName;
     IsoItem_c* mpc_monitorItem;
 
     //can be source or destination address
     Ident_c& mrc_ident;
     //can be source or destination address
     uint8_t mui8_position;
-} ;
+};
 
 
 typedef enum Scope_en
@@ -60,6 +52,30 @@ typedef enum Scope_en
 } Scope;
 
 
+/** values which indicate the state of the received can-message */
+typedef enum MessageState_en {
+  MessageValid        = 0,
+
+  AdrResolveMask      = (0x3<<0), // AdrResolve wraps SA and DA into one!
+  AdrValid            = (0x0<<0),
+  AdrOnlyNetworkMgmt  = (0x1<<0), // e.g. someone sending to a remote address (can be interesting to snoop!)
+  AdrInvalid          = (0x3<<0), // e.g. someone sending with SA 0xFF. definitely malformed can-packet!
+
+  // from here on it's just additional information -
+  // decisions can be purely taken on the flags above!
+  SaValidationMask    = (0x3<<4),
+  SaValid             = (0x0<<4),
+  SaInvalidUnknown    = (0x1<<4),
+  SaInvalidGlobal     = (0x2<<4),
+  SaInvalidLocal      = (0x3<<4),
+
+  DaValidationMask    = (0x3<<6),
+  DaValid             = (0x0<<6),
+  DaInvalidUnknown    = (0x1<<6),
+  DaInvalidAnonymous  = (0x2<<6),
+  DaInvalidRemote     = (0x3<<6),
+} MessageState_t;
+
 /** extended version of CanPkg_c which overwrites the
     assign and getData functions
     with call for data flag converting functions
@@ -67,141 +83,17 @@ typedef enum Scope_en
   */
 class CanPkgExt_c : public CanPkg_c
 {
- private:
-  CanPkgExt_c( const CanPkgExt_c&);           //!< prevent copy constructor use: do not code this method
-  CanPkgExt_c& operator=(const CanPkgExt_c&); //!< prevent copy operator use: do not code this method
  public:
   /** default constructor, which has nothing to do */
-  CanPkgExt_c( int ai_multitonInst = 0 );
+  CanPkgExt_c();
+
+  /** more constructors.... */
+  CanPkgExt_c( const CanPkg_c&, int ai_multitonInst );
+  CanPkgExt_c( const CanPkgExt_c&);
 
   /** virtual default destructor, which has nothing to do */
   virtual ~CanPkgExt_c();
 
-  /**
-    ==> REACTIVATE if some NON-STATIC member vars will be added!
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    assign operator to insert informations from one CanPkg_c into another
-    @see __IsoAgLib::FilterBox_c::operator>>
-    @see CanPkgExt_c::operator=
-    @see CanPkgExt_c::getData
-    @param acrc_right reference to the source CanPkg_c on the right
-    @return reference to the source CanPkg_c to enable assign chains like
-        "pkg1 = pkg2 = pkg3 = pkg4;"
-  virtual const CanPkg_c& operator=(const CanPkg_c& acrc_right);
-  */
-
-  /**
-    simply deliver a uint8_t from a specific position with operator[]
-    @param aui8_pos position of dellivered uint8_t [0..7]
-    @return uint8_t balue in CAN data string at pos ab_pos
-  */
-  uint8_t operator[](uint8_t aui8_pos) const {return msc_data[aui8_pos];}
-
-  /**
-    set an uint8_t value at specified position in string
-    @param ai8_pos position [0..7]
-    @param aui8_val uint8_t value to set
-  */
-  void setUint8Data( int8_t ai8_pos, uint8_t aui8_val);
-
-  /**
-    set an uint16_t value at specified position in string
-    @param aui8_pos position [0..6]
-    @param aui16_val uint16_t value to set
-  */
-  void setUint16Data( uint8_t aui8_pos, uint16_t aui16_val)
-    { msc_data.setUint16Data(aui8_pos, aui16_val);}
-
-  /**
-    set an int16_t value at specified position in string
-    @param aui8_pos position [0..6]
-    @param ai16_val int16_t value to set
-  */
-  void setInt16Data( uint8_t aui8_pos, int16_t ai16_val)
-    { msc_data.setInt16Data(aui8_pos, ai16_val);}
-
-  /**
-    set an uint32_t value at specified position in string
-    @param aui8_pos position [0..4]
-    @param aui32_val uint32_t value to set
-  */
-  void setUint32Data( uint8_t aui8_pos, uint32_t aui32_val)
-    { msc_data.setUint32Data(aui8_pos, aui32_val);}
-
-  /**
-    set an int32_t value at specified position in string
-    @param aui8_pos position [0..4]
-    @param ai32_val int32_t value to set
-  */
-  void setInt32Data( uint8_t aui8_pos, int32_t ai32_val)
-    { msc_data.setInt32Data(aui8_pos, ai32_val);}
-
-  /**
-    set an float value at specified position in string
-    @param aui8_pos position [0..4]
-    @param af_val float value to set
-   */
-  void setFloatData( uint8_t aui8_pos, float af_val)
-  { msc_data.setFloatData(aui8_pos, af_val);}
-
-  /**
-    simply deliver a uint8_t from a specific position with
-    @param aui8_pos position of dellivered uint8_t [0..7]
-    @return uint8_t balue in CAN data string at pos ab_pos
-  */
-  uint8_t getUint8Data(uint8_t aui8_pos) const {return msc_data.getUint8Data(aui8_pos);}
-
-  /**
-    simply deliver a uint16_t from a specific starting position with
-    @param aui8_pos position of dellivered uint16_t [0..6]
-    @return uint16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
-  */
-  uint16_t getUint16Data(uint8_t aui8_pos) const {return msc_data.getUint16Data(aui8_pos);}
-
-  /**
-    simply deliver a int16_t from a specific starting position with
-    @param aui8_pos position of dellivered int16_t [0..6]
-    @return int16_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
-  */
-  int16_t getInt16Data(uint8_t aui8_pos) const {return msc_data.getInt16Data(aui8_pos);}
-
-  /**
-    simply deliver a uint32_t from a specific starting position with
-    @param aui8_pos position of dellivered uint32_t [0..4]
-    @return uint32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
-  */
-  uint32_t getUint32Data(uint8_t aui8_pos) const {return msc_data.getUint32Data(aui8_pos);}
-
-  /**
-    simply deliver a int32_t from a specific starting position with
-    @param aui8_pos position of dellivered int32_t [0..4]
-    @return int32_t balue in CAN data string at pos (ab_pos, ab_pos+1) read Low/High order
-  */
-  int32_t getInt32Data(uint8_t aui8_pos) const {return msc_data.getInt32Data(aui8_pos);}
-
-  /**
-    simply deliver a float from a specific starting position with
-    @param aui8_pos position [0..4]
-    @return af_val float to return
-   */
-  float getFloatData( uint8_t aui8_pos) const { return msc_data.getFloatData(aui8_pos);}
-
-  /**
-    put data into given reference to BIOS related data structure with data, len
-    @param rt_ident     reference where the ident is placed for send
-    @param rui8_identType reference to the ident type val: 0==std, 1==ext
-    @param rb_dlcTarget reference to the DLC field of the target
-    @param pb_dataTarget pointer to the data string of the target
-  */
-  virtual void getData(uint32_t& rt_ident, uint8_t& rui8_identType,
-                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget);
-
-  /** is the currently handled message a network management message
-      @return  true -> message is a network management message
-     */
-  virtual bool isNetworkMgmt() const { return false; }
-
-  // begin of block with ISO 11783 CAN formating functions
   /**
     get the value of the ISO11783 ident field SA
     @return source adress
@@ -255,7 +147,7 @@ class CanPkgExt_c : public CanPkg_c
   */
   void setIsoPgn(uint32_t aui32_val);
 
-  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults);
+  bool resolveAddress(AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance );
 
   /**
     set the value of the ISO11783 ident field DP
@@ -287,18 +179,15 @@ class CanPkgExt_c : public CanPkg_c
   void setIsoPri(uint8_t aui8_val){setIdentByte( uint8_t((ident(3)&3) | (aui8_val << 2)), 3 );}
 
   void setExtCanPkg(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t len) {
-    CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
     setIsoPf(pf);
     setIsoPs(ps);
     setIsoSa(sa);
     setLen (len);
-    msb_runFlag2String = false;
   }
 
   void setExtCanPkg3(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2) {
-    CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
     setIsoPf(pf);
@@ -308,7 +197,6 @@ class CanPkgExt_c : public CanPkg_c
     setUint8Data (1, d1);
     setUint8Data (2, d2);
     setLen (3);
-    msb_runFlag2String = false;
   }
 
   // This function sets the DLC to 8 and fills up
@@ -323,7 +211,6 @@ class CanPkgExt_c : public CanPkg_c
   }
 
   void setExtCanPkg8(uint8_t pri, uint8_t dp, uint8_t pf, uint8_t ps, uint8_t sa, uint8_t d0, uint8_t d1, uint8_t d2, uint8_t d3, uint8_t d4, uint8_t d5, uint8_t d6, uint8_t d7) {
-    CanPkg_c::setIdentType(Ident_c::ExtendedIdent);
     setIsoPri(pri);
     setIsoDp(dp);
     setIsoPf(pf);
@@ -338,7 +225,6 @@ class CanPkgExt_c : public CanPkg_c
     setUint8Data (6, d6);
     setUint8Data (7, d7);
     setLen (8);
-    msb_runFlag2String = false;
   }
 
   /** check if source and destination address are valid
@@ -348,7 +234,7 @@ class CanPkgExt_c : public CanPkg_c
                Invalid -> one or both addresses are invalid
                OnlyNetworkMgmt -> one or both addresses are only useable for network management
     */
-  MessageState_t resolveReceivingInformation();
+  MessageState_t resolveReceivingInformation( int ai_multitonInstance );
 
   /** check if source and destination address are valid
       @see     CanPkgExt_c::operator<<
@@ -357,7 +243,7 @@ class CanPkgExt_c : public CanPkg_c
                Invalid -> one or both addresses are invalid
                OnlyNetworkMgmt -> one or both addresses are only useable for network management
     */
-  bool resolveSendingInformation();
+  bool resolveSendingInformation( int ai_multitonInst );
 
   /** set the monitoritem for resolve SA
       @param apc_monitorItem  needed monitoritem
@@ -379,7 +265,7 @@ class CanPkgExt_c : public CanPkg_c
     */
   void setISONameForDA( const IsoName_c& acrc_isoName );
 
-  uint8_t checkMonitorItemISOName( const AddressResolveResults_c& arc_addressResolveResults ) const;
+  uint8_t checkMonitorItemISOName( const AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance ) const;
 
   /** short inline function for setting the Destination address (PS) to global (0xFF)
     */
@@ -387,40 +273,31 @@ class CanPkgExt_c : public CanPkg_c
 
   /** get the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForSA() { return mpc_addrResolveResSA->mpc_monitorItem; }
+  IsoItem_c* getMonitorItemForSA() const { return mc_addrResolveResSA.mpc_monitorItem; }
 
   /** get the isoName for resolved SA
     */
-  const IsoName_c& getISONameForSA() { return *mpc_addrResolveResSA->mpc_isoName; }
+  const IsoName_c& getISONameForSA() const { return mc_addrResolveResSA.mc_isoName; }
 
   /** set the monitoritem for resolved SA
     */
-  IsoItem_c* getMonitorItemForDA() { return mpc_addrResolveResDA->mpc_monitorItem; }
+  IsoItem_c* getMonitorItemForDA() const { return mc_addrResolveResDA.mpc_monitorItem; }
 
   /** set the isoName for resolved DA
     */
-  const IsoName_c& getISONameForDA() { return *mpc_addrResolveResDA->mpc_isoName; }
-
-  /**
-    abstract function to transform the string data into flag values
-    => derived class must implement suitable data conversion function
-
-    needed for assigning informations from another CanPkg_c or CANPkgExt
-    @see CanPkgExt_c::operator=
-  */
-  virtual void string2Flags();
+  const IsoName_c& getISONameForDA() const { return mc_addrResolveResDA.mc_isoName; }
 
 private:
 // Private methods
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
-  MessageState_t address2IdentRemoteSa();
+  MessageState_t address2IdentRemoteSa( int ai_multitonInstance );
 
   /** report if the combination of address and scope is valid in context of message processing
       @return  true -> address, scope combination is valid
     */
-  MessageState_t address2IdentLocalDa();
+  MessageState_t address2IdentLocalDa( int ai_multitonInstance );
 
   /** set address in context of sending a message
       @param  arc_addressResolveResults  source or destination address
@@ -434,34 +311,19 @@ private:
       @return true -> monitoritem could be resolved
               false -> nothing more to be done
     */
-  bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults );
+  bool resolveMonitorItem( AddressResolveResults_c& arc_addressResolveResults, int ai_multitonInstance  );
 
-  /**
-    abstract transform flag values to data string
-    => derived class must implement suitable data converting function
-
-    needed for sending informations from this object via CanIo_c on CAN BUS,
-    because CanIo_c doesn't know anything about the data format of this type of msg
-    so that it can only use an unformated data string from CANPkg
-    @see CanPkgExt_c::getData
-    @see __IsoAgLib::CanIo_c::operator<<
-  */
-  virtual void flags2String();
-
-  /** flag to decide if flags2String has to be executed during send.
-      Normally this is needed, but after each call of setExtCanPkg?? all bytes of the stream are already setup.
-    */
-  static bool msb_runFlag2String;
 
   /** variable which holds the results for a resolved source address */
-  static AddressResolveResults_c* mpc_addrResolveResSA;
+  AddressResolveResults_c mc_addrResolveResSA;
 
   /** variable which holds the results for a resolved destination address */
-  static AddressResolveResults_c* mpc_addrResolveResDA;
-};
+  AddressResolveResults_c mc_addrResolveResDA;
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef CanPkgExt_c CANPkgExt_c;
+  /** Iso msg state of this can pkg after resolving */
+  MessageState_t mt_msgState;
+
+};
 
 }
 #endif

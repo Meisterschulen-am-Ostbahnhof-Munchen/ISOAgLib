@@ -244,7 +244,7 @@ public:
       * dependant error in CanIo_c on send problems
     @return true -> received msg processed by this instance
   */
-  virtual bool processMsg();
+  virtual bool processMsg( const ProcessPkg_c& arc_data );
   /**
     set the measure prog value and send values if triggered to do
 
@@ -376,7 +376,7 @@ private: // Private methods
       (the base function only delivers ProcDataBase_c)
     @return pointer to containing ProcDataLocal_c
   */
-  ProcDataLocalBase_c *const pprocessData()const
+  ProcDataLocalBase_c * pprocessData()const
   {
     return ((ProcDataLocalBase_c*)((void*)ProcessElementBase_c::pprocessData()));
   };

@@ -17,6 +17,7 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/util/impl/singleton.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
 
 #include "multisendeventhandler_c.h"
@@ -86,7 +87,7 @@ public:
     start processing of a process msg
     that matches this SendStream
   */
-  bool processMsg();
+  bool processMsg( const CanPkgExt_c& arc_data );
 
   int32_t getNextTriggerTime() const { return mi32_timestampToWaitTo; }
 
@@ -135,7 +136,7 @@ private: // methods
                    false-> use the (E)TP_CONN_MANAGE_PGN
                    --Value is not of interest in Fast-Packet sending!--
   */
-  void sendPacketIso (bool ab_data);
+  void sendPacketIso( bool ab_data, MultiSendPkg_c& arc_data );
 
 #if defined (ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   /**

@@ -83,7 +83,7 @@ public:
   void init();
   void close();
 
-  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/);
+  virtual bool processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t );
 
 
   bool setEcuIdentification( const char *acstr_partNr, const char *acstr_serialNr, const char *acstr_location, const char *acstr_type, const char *acstr_manufacturerName );

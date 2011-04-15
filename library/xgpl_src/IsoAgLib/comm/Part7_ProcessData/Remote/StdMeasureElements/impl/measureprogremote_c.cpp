@@ -262,10 +262,12 @@ bool MeasureProgRemote_c::start(Proc_c::type_t ren_type, Proc_c::doSend_t ren_do
           en_valueGroup = ProcessCmd_c::exactValue;
       }
 
+      ProcessPkg_c pkg;
+
       // prepare general command in process pkg
-      getProcessInstance4Comm().data().mc_processCmd.setValues(b_isSetpoint, false /* isRequest */,
+      pkg.mc_processCmd.setValues(b_isSetpoint, false /* isRequest */,
                                                                en_valueGroup, en_command);
-      if (!processData().sendValISOName(isoName(), i32_tmpValue))
+      if (!processData().sendValISOName( pkg, isoName(), i32_tmpValue))
          b_sendResult = false;
     }
   }
@@ -378,10 +380,11 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
           en_valueGroup = ProcessCmd_c::exactValue;
       }
 
+      ProcessPkg_c pkg;
       // prepare general command in process pkg
-      getProcessInstance4Comm().data().mc_processCmd.setValues(b_isSetpoint, false /* isRequest */,
+      pkg.mc_processCmd.setValues(b_isSetpoint, false /* isRequest */,
                                                                en_valueGroup, en_command);
-      b_result = processData().sendValISOName(isoName(), i32_stopVal);
+      b_result = processData().sendValISOName( pkg, isoName(), i32_stopVal);
     }
 
     if (b_deleteSubProgs)
@@ -397,25 +400,22 @@ bool MeasureProgRemote_c::stop(bool b_deleteSubProgs, Proc_c::type_t ren_type, P
   process msg;
   @return true -> msg is already complete edited
 */
-bool MeasureProgRemote_c::processMsg()
+bool MeasureProgRemote_c::processMsg( const ProcessPkg_c& pkg )
 {
-  bool b_result = MeasureProgBase_c::processMsg();
+  bool b_result = MeasureProgBase_c::processMsg( pkg );
   // call base function - if base function returns true, nothing else must be done
   if (!b_result)
   { // the message was a value message -> evaluate it here
 
-    // only update vars if received msg contains data (PD==1)
-    ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-
     // ISO: cmd() == 3;
-    if (    c_pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue
+    if (    pkg.mc_processCmd.getCommand() == ProcessCmd_c::setValue
          &&
-            (    (c_pkg.receiverItem() && c_pkg.receiverItem()->itemState(IState_c::Local))
+            (    (pkg.receiverItem() && pkg.receiverItem()->itemState(IState_c::Local))
               || (mb_receiveForeignMeasurement)
             )
        )
     { // write -> data from remote process data
-      setValFromPkg();
+      setValFromPkg( pkg );
       b_result = true;
     }
   }
@@ -426,23 +426,20 @@ bool MeasureProgRemote_c::processMsg()
   set according to values of the package the accoring value
   (uses function, wich converts if needed)
 */
-void MeasureProgRemote_c::setValFromPkg()
+void MeasureProgRemote_c::setValFromPkg( const ProcessPkg_c& pkg )
 {
-  // convert the value if wanted
-  // set timestamp of last measurement receive
-  ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-  if (c_pkg.senderItem() == NULL)
+  if (pkg.senderItem() == NULL)
   { // sender with SA 0xFE not of interest
     return;
   }
 
-  mi32_lastMeasureReceive = c_pkg.time();
+  mi32_lastMeasureReceive = pkg.time();
 
   bool b_change = false;
 
-  const int32_t i32_new_val = c_pkg.getValue();
+  const int32_t i32_new_val = pkg.getValue();
 
-  switch (c_pkg.mc_processCmd.getValueGroup())
+  switch (pkg.mc_processCmd.getValueGroup())
   {
     case ProcessCmd_c::exactValue: // msg contains measured val
       // set val with function, to calc delta and accel
@@ -462,7 +459,7 @@ void MeasureProgRemote_c::setValFromPkg()
 
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, c_pkg.senderItem()->isoName().toConstIisoName_c(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processMeasurementUpdate( pprocessData(), i32_new_val, pkg.senderItem()->isoName().toConstIisoName_c(), b_change );
 }
 
 /**
@@ -513,17 +510,19 @@ void MeasureProgRemote_c::initVal(int32_t ai32_val){
   @param ai32_val reset measure value to this value
   @return true -> command successful sent
 */
-bool MeasureProgRemote_c::resetVal(int32_t ai32_val){
+bool MeasureProgRemote_c::resetVal(int32_t ai32_val ) {
   // if stored remote isoName isn't valid exit this function
   // error state are set by the function
   if (!verifySetRemoteISOName())return false;
 
+  ProcessPkg_c pkg;
+
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */,
+  pkg.mc_processCmd.setValues(false /* isSetpoint */, false /* isRequest */,
                                                            ProcessCmd_c::exactValue,
                                                            ProcessCmd_c::measurementReset);
 
-  return processData().sendValISOName(isoName(), ai32_val);
+  return processData().sendValISOName( pkg, isoName(), ai32_val);
 }
 
 

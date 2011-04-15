@@ -177,7 +177,7 @@ class Stream_c : public StreamInput_c //, public ClientBase --> for single inher
 {
 public:
   Stream_c (const ReceiveStreamIdentifier_c& ac_rsi,
-            uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA,
+            uint32_t aui32_msgSize, int32_t ai_time MULTITON_INST_PARAMETER_DEF_WITH_COMMA,
             bool ab_skipCtsAwait=false);
 
   Stream_c (const Stream_c &);
@@ -207,7 +207,7 @@ public:
   //! @return false -> Stream was either not in the state of awaiting Data
   //!                  or the sequence number didn't match
   //!         true -> Data was added to the stream.
-  bool handleDataPacket (const Flexible8ByteString_c* apc_data);
+  bool handleDataPacket (const CanPkg_c& arc_pkg );
 
 /// Begin Additional Abstract methods handled by StreamLinear_c/StreamChunk_c
   //  Operation: insert
@@ -236,6 +236,8 @@ public:
   uint32_t getByteTotalSize ()            const { return mui32_byteTotalSize; };
   uint32_t getByteAlreadyReceived()       const { return mui32_byteAlreadyReceived; };
   uint32_t getBurstNumber()               const { return mui32_burstCurrent; };
+  int32_t getStartTime()                  const { return mi_startTime; }
+  int32_t getFinishTime()                 const { return mi_finishTime; }
   //! Provide first byte set by first call of processDataChunk... First byte containes command.
   uint8_t  getFirstByte()                 const { return mui8_streamFirstByte; };
   //! Store first byte of stream. First byte containes command.
@@ -283,6 +285,9 @@ private:
   uint32_t mui32_dataPageOffset;      //  Attribute: mui32_dataPageOffset: gets set when a DPO arrives...
 
   int32_t mi32_timeoutLimit;
+
+  int32_t mi_startTime;
+  int32_t mi_finishTime;
 };
 
 

@@ -269,70 +269,8 @@ PRJ_ISO11783=1
 # decide if local process data are wanted
 # PROC_LOCAL=0
 
-# select the feature set of the wanted local process data
-
-# select standard local process data iProcDataLocal_c with
-# measure programs and enhanced management of received setpoints
-# PROC_LOCAL_STD=0
-
-# select iProcDataLocalSimpleMeasure_c for
-# local process data without measure programs to reduce
-# HEAP useage ( all measurement programs are stored on HEAP, as
-# amount of active programs depend on remote ECUs )
-# PROC_LOCAL_SIMPLE_MEASURE=0
-
-# select iProcDataLocalSimpleSetpoint_c for
-# local process data without selective reaction on received setpoints
-# ( simply store received setpoints and automatically ACK the receive of
-#   a setpoint )
-# PROC_LOCAL_SIMPLE_SETPOINT=0
-
-# select iProcDataLocalSimpleSetpointSimpleMeasure_c for
-# local process data with smallest resource needs - and most
-# restricted feature set
-# PROC_LOCAL_SIMPLE_MEASURE_SETPOINT=0
-
 # decide if remote process data are wanted
 # PROC_REMOTE=0
-
-# select the feature set of the wanted remote process data
-
-# select iProcDataRemote_c for remote process data which can
-# use measure programs to request periodic measurement value update
-# and which provides setpoint management which can detect current master
-# setpoint ( setpoint which is ACKed by commanded device ) and the self
-# requested value ( information if own setpoint is ACKed and if own
-# requested setpoint interval is currently maintained by remote device
-# - this can happen if intersection between ACKed setpoint request and
-# own setpoint request is _not_ empty, so that commanded implement can
-# satisfy both )
-# PROC_REMOTE_STD=0
-
-# select iProcDataRemoteSimpleMeasure_c if capable setpoint management
-# is needed, but simple one shot measurement value request is enough
-# ( reduce HEAP useage, as the potential parallel active increments are
-#   stored in dynamic lists at HEAP )
-# PROC_REMOTE_SIMPLE_MEASURE=0
-
-# select iProcDataRemoteSimpleSetpoint_c if measurement programs are needed,
-# but no or only simple setpoint control is wanted
-# ( reduce memory useage, as no management data is needed for detection
-#   of active setpoint in relation to own setpoint wish )
-# PROC_REMOTE_SIMPLE_SETPOINT=0
-
-# select iProcDataRemoteSimpleSetpointSimpleMeasure_c if only
-# one shot measurement value requests and no setpoint handling is needed
-# ( in relation to iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c
-#   the single setpoint and the single measurement value can represent
-#   different values )
-# PROC_REMOTE_SIMPLE_MEASURE_SETPOINT=0
-
-# select iProcDataRemoteSimpleSetpointSimpleMeasureCombined_c for
-# a very simple approach on remote process data.
-# This is only useful if no distinguishing between setpoint and measurement
-# value is needed
-# PROC_REMOTE_SIMPLE_MEASURE_SETPOINT_COMBINED=0
-
 
 # ###############################################################
 # Optional Driver Selection

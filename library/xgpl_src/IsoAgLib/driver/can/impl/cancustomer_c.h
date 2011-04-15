@@ -15,6 +15,8 @@
 #define CAN_CUSTOMER_H
 
 #include <IsoAgLib/driver/can/impl/ident_c.h>
+#include <IsoAgLib/driver/can/impl/canpkg_c.h>
+#include <IsoAgLib/driver/can/icanpkg_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 
 
@@ -39,12 +41,6 @@ namespace __IsoAgLib
 class CanCustomer_c  {
 public:
 
-  /**
-    virtual function which delivers a pointer to the CANCustomer
-    specific CanPkgExt_c instance
-  */
-  virtual CanPkgExt_c& dataBase() = 0;
-
   /** virtual destructor */
   virtual ~CanCustomer_c() {}
 
@@ -58,30 +54,12 @@ public:
     <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
     @see __IsoAgLib::CanIo_c::processMsg
   */
-  virtual bool processMsg() = 0;
 
-  /**
-     process a message -> the specialized/derived version of this virtual
-     function is called during processing of received CAN telegrams in CanIo_c::processMsg
-     <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
-     @see __IsoAgLib::CanIo_c::processMsg
-     @return true -> message was processed; else the received CAN message will be served to other matching CanCustomer_c
-  */
-  bool processMsgDefault()
-  { // dummy function - just to allow classes to (indirectly) derive from
-    // CanCustomer_c without the need to implement this function
-    return false;
+  virtual bool processMsg( const CanPkg_c& arc_data ) {
+    return process( static_cast<const IsoAgLib::iCanPkg_c&>( arc_data ) );
   }
 
-  /**
-    process a message -> the specialized/derived version of this virtual
-    function can be called during processing of received CAN telegrams in CanIo_c::processMsg
-    <!--@param apc_box pointer to the FilterBox_c instances which received the telegram (i.e. which has the telegram in its buffer)-->
-    @see __IsoAgLib::CanIo_c::processMsg
-  */
-  virtual bool processInvalidMsg() { return false; }
-
-  virtual bool isNetworkMgmt() const { return false; }
+  virtual bool process( const IsoAgLib::iCanPkg_c& /* arc_data */ ) { return false; }
 
 /// MULTI-PACKET (TP/ETP) METHODS
 /// /////////////////////////////
@@ -155,20 +133,8 @@ public:
   virtual ~CanCustomerProxy_c() {}
 
 private:
-  virtual CanPkgExt_c &dataBase() {
-    return mrt_owner.dataBase();
-  }
-
-  virtual bool processMsg() {
-    return mrt_owner.processMsg();
-  }
-
-  virtual bool processInvalidMsg() {
-    return mrt_owner.processInvalidMsg();
-  }
-
-  virtual bool isNetworkMgmt() const {
-    return mrt_owner.isNetworkMgmt();
+  virtual bool processMsg( const CanPkg_c& arc_data ) {
+    return mrt_owner.processMsg( arc_data );
   }
 
   virtual bool reactOnStreamStart(

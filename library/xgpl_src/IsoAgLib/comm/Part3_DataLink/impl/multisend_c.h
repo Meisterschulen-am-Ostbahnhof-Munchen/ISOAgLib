@@ -235,28 +235,11 @@ public: // methods
   */
   void setSendStreamDelay(uint16_t aui16_delay);
 
-  /**
-    deliver reference to data pkg
-    @return reference to MultiSendPkg_c which handles CAN I/O of process data
-  */
-  MultiSendPkg_c& data() { return mc_data; }
-
-  /**
-    deliver reference to data pkg as reference to CanPkgExt_c
-    to implement the base virtual function correct
-  */
-  virtual CanPkgExt_c& dataBase() { return mc_data; }
-
-  /**
-    deliver reference to data pkg for const read access
-    @return const reference to MultiSendPkg_c which handles CAN I/O of process data
-  */
-  const MultiSendPkg_c& constData() const { return mc_data; }
 
   /**
     start processing of a process msg: delegate to specific SendStream_c instance
   */
-  bool processMsg();
+  bool processMsg( const CanPkg_c& arc_data );
 
   /**
     perform periodical actions
@@ -292,21 +275,10 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual CanPkgExt_c& dataBase() {
-      return mrt_owner.dataBase();
+    virtual bool processMsg( const CanPkg_c& arc_data ) {
+      return mrt_owner.processMsg( arc_data );
     }
 
-    virtual bool processMsg() {
-      return mrt_owner.processMsg();
-    }
-
-    virtual bool processInvalidMsg() {
-      return mrt_owner.processInvalidMsg();
-    }
-
-    virtual bool isNetworkMgmt() const {
-      return mrt_owner.isNetworkMgmt();
-    }
 
     virtual bool reactOnStreamStart(
         ReceiveStreamIdentifier_c const &ac_ident,
@@ -422,10 +394,6 @@ private:
                                      return cui8_returnVal; }
   #endif
 
-  virtual bool processInvalidMsg() {
-    return false;
-  }
-
   virtual bool processPartStreamDataChunk(
       Stream_c &apc_stream,
       bool ab_isFirstChunk,
@@ -447,10 +415,6 @@ private:
       uint32_t aui32_totalLen)
   {
     return mt_customer.reactOnStreamStartDefault(ac_ident, aui32_totalLen);
-  }
-
-  virtual bool isNetworkMgmt() const {
-    return false;
   }
 
   virtual void notificationOnMultiReceiveError(
@@ -484,9 +448,6 @@ private:
   #if defined(ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
   uint8_t mui8_nextFpSequenceCounter;
   #endif
-
-  /** msg object for CAN I/O */
-  MultiSendPkg_c mc_data;
 
   STL_NAMESPACE::list<SendStream_c> mlist_sendStream;
   Handler_t mt_handler;

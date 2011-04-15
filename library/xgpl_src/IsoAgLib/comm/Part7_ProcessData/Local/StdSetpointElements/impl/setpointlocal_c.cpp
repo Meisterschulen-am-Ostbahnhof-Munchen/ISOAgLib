@@ -613,28 +613,27 @@ bool SetpointLocal_c::sendSetpointForGroup(const IsoName_c& ac_targetISOName,
                                            ProcessCmd_c::ValueGroup_t en_valueGroup,
                                            ProcessCmd_c::CommandType_t en_command) const
 {
+  ProcessPkg_c pkg;
   // prepare general command in process pkg
-  getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+  pkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                            en_valueGroup, en_command);
-  return processDataConst().sendValISOName(ac_targetISOName, masterConst().valForGroup(en_valueGroup));
+  return processDataConst().sendValISOName( pkg, ac_targetISOName, masterConst().valForGroup(en_valueGroup));
 }
 
 
 /**
   process a setpoint request for local process data
 */
-void SetpointLocal_c::processRequest() const
+void SetpointLocal_c::processRequest( const ProcessPkg_c& pkg ) const
 {
-  ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
-
   // check if master setpoint is defined
   bool b_existMaster = existMaster();
 
   if (b_existMaster)
   { // use the values in general command which are already set
-    if (c_pkg.senderItem() != NULL)
+    if (pkg.senderItem() != NULL)
     { // sender is valid
-      sendSetpointForGroup (c_pkg.senderItem()->isoName(), c_pkg.mc_processCmd.getValueGroup(), ProcessCmd_c::setValue );
+      sendSetpointForGroup (pkg.senderItem()->isoName(), pkg.mc_processCmd.getValueGroup(), ProcessCmd_c::setValue );
     }
   }
 }
@@ -642,20 +641,19 @@ void SetpointLocal_c::processRequest() const
 /**
   process a setpoint set for local process data
 */
-void SetpointLocal_c::processSet()
+void SetpointLocal_c::processSet( const ProcessPkg_c& pkg )
 {
-  ProcessPkg_c& c_pkg = getProcessInstance4Comm().data();
   Vec_SetpointRegisterIterator pc_callerIter = mvec_register.begin();
 
   // detect if something was changed
   bool b_change = false;
 
-  if (c_pkg.senderItem() == NULL)
+  if (pkg.senderItem() == NULL)
   { // sender with SA 0xFE is not of interest
     return;
   }
 
-  const IsoName_c& c_callerISOName = c_pkg.senderItem()->isoName();
+  const IsoName_c& c_callerISOName = pkg.senderItem()->isoName();
   for (pc_callerIter = mvec_register.begin(); pc_callerIter != mvec_register.end(); pc_callerIter++)
   { // check if c_callerISOName already set the item at ui8_callerIndex
     // ignore item of actual acepted master, as this should be handled as new
@@ -667,7 +665,7 @@ void SetpointLocal_c::processSet()
   // check if caller was found
   if (pc_callerIter == mvec_register.end())
   { // caller didn't set setpoint previous to this -> create item
-    if (c_pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
+    if (pkg.isSpecCmd( static_cast<proc_specCmd_t>(setpointReleaseCmd|setpointErrCmd)) == false)
     {
       mvec_register.push_front( SetpointRegister_c( c_callerISOName));
       #if DEBUG_HEAP_USEAGE
@@ -688,8 +686,11 @@ void SetpointLocal_c::processSet()
 
     // ui8_callerIndex points to this new item
   }
+
+  const int32_t i32_val = pkg.getValue();
+
   // check if setpoint is released -  SETPOINT_RELEASE_COMMAND
-  if (c_pkg.isSpecCmd( setpointReleaseCmd))
+  if (pkg.isSpecCmd( setpointReleaseCmd))
   { // check if the to be deleted item is the actual master
     if ((existMaster()) && (master().isoName() == c_callerISOName))
     { // if this item was master setpoint, set pc_masterCache to end()
@@ -705,24 +706,24 @@ void SetpointLocal_c::processSet()
       << "SetLReg T: " << sui16_setpointLocalTotal << ", Node: " << ( sizeof(SetpointRegister_c) + 2 * sizeof(SetpointRegister_c*) ) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
+    ProcessPkg_c sendPkg( pkg );
     // prepare general command in process pkg
-    getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
+    sendPkg.mc_processCmd.setValues(true /* isSetpoint */, false, /* isRequest */
                                                              ProcessCmd_c::exactValue,
                                                              ProcessCmd_c::setValue);
     // notify the caller
-    processData().sendValISOName( c_callerISOName, SETPOINT_RELEASE_COMMAND);
+    processData().sendValISOName( sendPkg, c_callerISOName, SETPOINT_RELEASE_COMMAND);
   }
   else
   {
-    int32_t i32_val = processData().getPkgValue();
     // now set according to mod the suitable setpoint type  value
     // simply set the new setpoint vlue
-    if ( pc_callerIter->valForGroup( c_pkg.mc_processCmd.getValueGroup() ) != i32_val ) b_change = true;
-    pc_callerIter->setValForGroup( i32_val, c_pkg.mc_processCmd.getValueGroup());
+    if ( pc_callerIter->valForGroup( pkg.mc_processCmd.getValueGroup() ) != i32_val ) b_change = true;
+    pc_callerIter->setValForGroup( i32_val, pkg.mc_processCmd.getValueGroup());
   }
   // call handler function if handler class is registered
   if ( processDataConst().getProcessDataChangeHandler() != NULL )
-    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), processData().getPkgValue(), c_callerISOName.toConstIisoName_c(), b_change );
+    processDataConst().getProcessDataChangeHandler()->processSetpointSet( pprocessData(), i32_val, c_callerISOName.toConstIisoName_c(), b_change );
 }
 
 } // end of namespace __IsoAgLib

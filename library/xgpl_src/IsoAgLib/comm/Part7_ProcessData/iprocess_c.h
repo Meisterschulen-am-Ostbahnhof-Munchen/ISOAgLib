@@ -41,38 +41,6 @@
 // Begin Namespace IsoAgLib::iProcess_c
 namespace IsoAgLib {
 
-/**
-  Central managing instance for all process data
-  informations in the system
-
-  <b>Basic Rules for Matching of Received Messages)</b>
-  1) primary match with LIS, DEVCLASS, ZAEHLNUM, WERT, INST
-  2) distinguishing of more hits by POS
-  \n
-  <b>Acceptance Guidlines for Received Messages)</b>
-  1) EMPF must fit to local member, SEND must be of existing member with claimed address
-  2) special addition for Remote Process Data:
-       alternatively SEND fit to owner of some Remote Data used to
-       detect setpoints sent by owner of Remote Process Data
-       -> possible to detect if local commander gets master or not
-       (measure values are ignored by rule 2 unless MeasureProgRemote_c::receiveForeignMeasurement()
-        was called for this ProcessDataRemote instance)
-  \n
-  The most functions of (i)Process_c are only relevant for the internal
-  implementation, so that the interface to the API is quite small.
-  Some of the internal tasks are:
-  - handle list of pointers to all process data instances in the application
-  - distribute the periodic timeEvent() call to all local process data instances,
-    so that %e.g. value can be sent for measurement programs
-  - forward incoming CAN messages to the appropriate process data to update values
-    or to register measure progs, setpoints, etc.
-
-  An overall description of Process Data management in IsoAgLib can be found in
-  \ref ProcDataPage .
-
-
-  @author Dipl.-Inform. Achim Spangler
-*/
 class iProcess_c : private __IsoAgLib::Process_c  {
 public:
 
@@ -80,79 +48,6 @@ public:
   iDevPropertyHandler_c& getDevPropertyHandlerInstance( void )
   {return static_cast<iDevPropertyHandler_c&>(Process_c::getDevPropertyHandlerInstance());};
 #endif
-
-  /**
-    if the amount of created local process data is known, then enough capacity for the
-    vector with pointers to all of them can be reserved. Otherwise the vector
-    will increase with several reallocations, where each reallocation triggers
-    increase of capacity by factor 2 ( capacity is the amount of elements,
-    which can be stored before reallocation takes place ).
-    @param aui16_localProcCapacity
-  */
-  void localProcDataReserveCnt( uint16_t aui16_localProcCapacity )
-  { Process_c::localProcDataReserveCnt( aui16_localProcCapacity );}
-
-  /**
-    if the amount of created remote process data is known, then enough capacity for the
-    vector with pointers to all of them can be reserved. Otherwise the vector
-    will increase with several reallocations, where each reallocation triggers
-    increase of capacity by factor 2 ( capacity is the amount of elements,
-    which can be stored before reallocation takes place ).
-    @param aui16_remoteProcCapacity
-  */
-  void remoteProcDataReserveCnt( uint16_t aui16_remoteProcCapacity )
-  { Process_c::remoteProcDataReserveCnt( aui16_remoteProcCapacity );}
-
-  /**
-    checks if a suitable iProcessDataLocal_c item exist
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameReceiver isoName of searched local Process Data instance
-    @return true -> suitable instance found
-  */
-  bool existProcDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& acrc_isoNameReceiver)
-  { return Process_c::existProcDataLocal(aui16_DDI, aui16_element, acrc_isoNameReceiver);}
-  /**
-    checks if a suitable iProcessDataRemote_c item exist
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
-    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-    @return true -> suitable instance found
-  */
-  bool existProcDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                            const iIsoName_c& acrc_isoNameSender, const iIsoName_c& acrc_isoNameReceiver)
-  { return Process_c::existProcDataRemote( aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoNameReceiver);}
-
-  /**
-    delivers count of local process data entries with similar ident
-    (which differs only in _instance_ of owner)
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoName isoName code of searched local Process Data instance
-    @return count of similar local process data entries
-  */
-  uint8_t procDataLocalCnt( uint16_t aui16_DDI, uint16_t aui16_element, const iIsoName_c& acrc_isoName)
-  {return Process_c::procDataLocalCnt(aui16_DDI, aui16_element, acrc_isoName);}
-
-  /**
-    delivers count of remote process data entries with similar ident
-    (which differs only in _instance_ of owner)
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
-    @param acrc_isoName isoName code of searched remote Process Data instance
-    @return count of similar remote process data entries
-  */
-  uint8_t procDataRemoteCnt( uint16_t aui16_DDI,
-                             uint16_t aui16_element,
-                             const iIsoName_c& acrc_isoNameSender,
-                             const iIsoName_c& acrc_isoName)
-  { return Process_c::procDataRemoteCnt( aui16_DDI, aui16_element, acrc_isoNameSender, acrc_isoName); }
 
   // addDDI2ExistingProcData only possible for remote process data project (iProcDataRemote_c has to be defined)
   /** checks if a DDI can be added to a group and return ptr to proc data if successfully */

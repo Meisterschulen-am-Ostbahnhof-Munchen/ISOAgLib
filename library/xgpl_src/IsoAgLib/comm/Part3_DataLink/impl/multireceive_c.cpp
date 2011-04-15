@@ -194,10 +194,10 @@ MultiReceive_c::notifyErrorConnAbort(
 
 
 bool
-MultiReceive_c::processMsg()
+MultiReceive_c::processMsg( const CanPkg_c& arc_data )
 {
-  // Always get sure that the can-pkg from "data()" is NOT written to unless it's FULLY PARSED!
-  const uint8_t cui8_pgnFormat = data().isoPf();
+  CanPkgExt_c pkg( arc_data, getMultitonInst() );
+  const uint8_t cui8_pgnFormat = pkg.isoPf();
 
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
   /// Setup TP/ETP/FP identification
@@ -213,10 +213,10 @@ MultiReceive_c::processMsg()
   {
     case StreamTP:
     case StreamETP:
-      return processMsgIso (ct_streamType); // bidirectional PGN, so retval is important
+      return processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
 
     case StreamFastPacket:
-      processMsgNmea();
+      processMsgNmea( pkg );
       return true; // unidirectional PGN, so always not of interest for others (as far as currently known)
   }
   return false; // make compiler happy... we should've caught all cases in the switch, so...
@@ -227,27 +227,27 @@ MultiReceive_c::processMsg()
                                      ? StreamETP
                                      : StreamTP;
 
-  return processMsgIso (ct_streamType); // bidirectional PGN, so retval is important
+  return processMsgIso (ct_streamType, pkg ); // bidirectional PGN, so retval is important
 #endif
 }
 
 
 bool
-MultiReceive_c::processMsgIso (StreamType_t at_streamType)
+MultiReceive_c::processMsgIso (StreamType_t at_streamType, const CanPkgExt_c& arc_pkg )
 {
   isoaglib_assert ((at_streamType == StreamETP) || (at_streamType == StreamTP));
 
-  const uint8_t cui8_pgnFormat = data().isoPf();
-  const uint8_t cui8_dataByte0 = data().getUint8Data(0);
+  const uint8_t cui8_pgnFormat = arc_pkg.isoPf();
+  const uint8_t cui8_dataByte0 = arc_pkg.getUint8Data(0);
 
   // Note: The RSI's PGN is not valid for DT packets!!
   ReceiveStreamIdentifier_c c_isoRSI(
     at_streamType,
-    (uint32_t (data().getUint8Data(5)) | (uint32_t (data().getUint8Data(6)) << 8) | (uint32_t (data().getUint8Data(7)) << 16)),
-    data().isoPs(),
-    data().getISONameForDA(),
-    data().isoSa(),
-    data().getISONameForSA());
+    (uint32_t (arc_pkg.getUint8Data(5)) | (uint32_t (arc_pkg.getUint8Data(6)) << 8) | (uint32_t (arc_pkg.getUint8Data(7)) << 16)),
+    arc_pkg.isoPs(),
+    arc_pkg.getISONameForDA(),
+    arc_pkg.isoSa(),
+    arc_pkg.getISONameForSA());
 
   bool b_eCmd=false;
 
@@ -257,7 +257,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
     case MACRO_pgnFormatOfPGN (TP_CONN_MANAGE_PGN):
     { // to allow local variables
     #if DEBUG_MULTIRECEIVE
-      INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "{CM: " << data().time() << "} ";
+      INTERNAL_DEBUG_DEVICE << INTERNAL_DEBUG_DEVICE_NEWLINE << "{CM: " << arc_pkg.time() << "} ";
     #endif
       switch (cui8_dataByte0)
       {
@@ -298,13 +298,13 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
 
             // Get Message Size
             uint32_t ui32_msgSize = (c_isoRSI.isIsoEtp())
-                                      ? data().getUint32Data(1)
-                                      : data().getUint16Data(1);
+                                      ? arc_pkg.getUint32Data(1)
+                                      : arc_pkg.getUint16Data(1);
 
             // Calculate Number of Packets (only for TP-#Pkg-Check!)
             const uint32_t cui32_numPkg = (ui32_msgSize + 6) / 7;
             // check for TP-RTS if pkg-count matches the calculated AND if size > 8
-            if (  (c_isoRSI.isIsoTp() && (data().getUint8Data(3) != cui32_numPkg))
+            if (  (c_isoRSI.isIsoTp() && (arc_pkg.getUint8Data(3) != cui32_numPkg))
                 || (ui32_msgSize < 9))
             { // This handles both
               notifyErrorConnAbort (c_isoRSI, TransferErrorWrongPackageAmountOrMessageSize, true);
@@ -336,7 +336,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
             }
             // else: Client accepts this stream, so create a representation of the stream NOW -
             // - further handling is done in "timeEvent()" now!*/
-            createStream (c_isoRSI, ui32_msgSize);
+            createStream (c_isoRSI, ui32_msgSize, arc_pkg.time() );
             // the constructor above sets the Stream to "AwaitCtsSend" and "StreamRunning"
             // so next timeEvent will send out the CTS and set the pkgRemainingInBurst to a correct value!
           } // end local variables allowment!
@@ -369,9 +369,9 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
             }
 
             // try to set the DPO in this stream - if it's not allowed right now (or timedout), this DPO was not correct
-            if (! (pc_streamFound->setDataPageOffset ( uint32_t(data().getUint8Data(2)) |
-                                                      (uint32_t(data().getUint8Data(3)) << 8) |
-                                                      (uint32_t(data().getUint8Data(4)) << 16))))
+            if (! (pc_streamFound->setDataPageOffset ( uint32_t(arc_pkg.getUint8Data(2)) |
+                                                      (uint32_t(arc_pkg.getUint8Data(3)) << 8) |
+                                                      (uint32_t(arc_pkg.getUint8Data(4)) << 16))))
             { // DPO not awaited now!
               notifyErrorConnAbort (c_isoRSI, TransferErrorDpoNotAwaitedNow, true);
               tellClientRemoveStream (*pc_streamFound);
@@ -423,10 +423,10 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
               // we can do this here, because we do not send any kind of ConnAbort, so we can simply continue...
             }
 
-            const uint32_t cui32_msgSize = data().getUint16Data(1);
+            const uint32_t cui32_msgSize = arc_pkg.getUint16Data(1);
             const uint32_t cui32_numPkg = (cui32_msgSize + 6) / 7;
             // check for TP-RTS if pkg-count matches the calculated AND if size > 0
-            if ((data().getUint8Data(3) != cui32_numPkg) || (cui32_msgSize < 9))
+            if ((arc_pkg.getUint8Data(3) != cui32_numPkg) || (cui32_msgSize < 9))
             { // This handles both
               notifyErrorConnAbort (c_isoRSI, TransferErrorBamNotTakenWrongPkgNumberOrMessageSize, false);
               #if DEBUG_MULTIRECEIVE
@@ -438,7 +438,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
             // NO client checks as in RTS-case above, as it's for ALL clients, they HAVE to take it =)
 
             // "Stream_c"'s constructor will set awaitStep to "awaitData" and timeOut to 250ms!
-            createStream (c_isoRSI, cui32_msgSize);
+            createStream (c_isoRSI, cui32_msgSize, arc_pkg.time() );
           }
           return true; // all BAMs are not of interest for MultiSend or other CAN-Customers!
 
@@ -491,7 +491,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
     case MACRO_pgnFormatOfPGN(ETP_DATA_TRANSFER_PGN):
     case MACRO_pgnFormatOfPGN(TP_DATA_TRANSFER_PGN):
       #if DEBUG_MULTIRECEIVE
-        INTERNAL_DEBUG_DEVICE << "{DATA: " << data().time() << "} "; INTERNAL_DEBUG_FLUSH
+        INTERNAL_DEBUG_DEVICE << "{DATA: " << arc_pkg.time() << "} "; INTERNAL_DEBUG_FLUSH
       #endif
 
       /////////////////////////
@@ -516,7 +516,7 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
         const ReceiveStreamIdentifier_c& c_streamRsi = pc_streamFound->getIdent();
 
         // From this point on the SA/DA pair matches, so that we can return true
-        if (!(pc_streamFound->handleDataPacket (data().getDataUnionConst()))) {
+        if (!(pc_streamFound->handleDataPacket (arc_pkg))) {
           // Stream was not in state of receiving DATA right now, connection abort, inform Client and close Stream!
           if (c_streamRsi.getDa() == 0xFF)
           {
@@ -553,9 +553,9 @@ MultiReceive_c::processMsgIso (StreamType_t at_streamType)
 #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
 /// @pre Only to be called with StreamType FP!
 void
-MultiReceive_c::processMsgNmea()
+MultiReceive_c::processMsgNmea( const CanPkgExt_c& pkg )
 {
-  const uint8_t cui8_dataByte0 = data().getUint8Data(0);
+  const uint8_t cui8_dataByte0 = pkg.getUint8Data(0);
 
   /** Note:
     * FP can also be destination specific!
@@ -564,11 +564,11 @@ MultiReceive_c::processMsgNmea()
     */
   ReceiveStreamIdentifier_c c_fpRSI(
     StreamFastPacket,
-    data().isoPurePgn(),
-    data().hasDa() ? data().isoPs()           : 0xFF,
-    data().hasDa() ? data().getISONameForDA() : IsoName_c::IsoNameUnspecified(),
-    data().isoSa(),
-    data().getISONameForSA());
+    pkg.isoPurePgn(),
+    pkg.hasDa() ? pkg.isoPs()           : 0xFF,
+    pkg.hasDa() ? pkg.getISONameForDA() : IsoName_c::IsoNameUnspecified(),
+    pkg.isoSa(),
+    pkg.getISONameForSA());
 
   Stream_c* pc_streamFound = getStreamNmea (c_fpRSI);
   if (!pc_streamFound)
@@ -591,7 +591,7 @@ MultiReceive_c::processMsgNmea()
              ) */
              )
         {
-          pc_streamFound = createStream (c_fpRSI, data().getUint8Data (1));
+          pc_streamFound = createStream (c_fpRSI, pkg.getUint8Data (1), pkg.time() );
           break; // enough if at least one client wants this message...
         }
       }
@@ -616,7 +616,7 @@ MultiReceive_c::processMsgNmea()
   /// - had the stream already open
   /// - or just created the stream
   isoaglib_assert (pc_streamFound);
-  if (!(pc_streamFound->handleDataPacket (data().getDataUnionConst())))
+  if (!(pc_streamFound->handleDataPacket (pkg)))
   { // Wrong packet sequence number!
     notifyErrorConnAbort (c_fpRSI, TransferErrorFastpacketSequenceError, false);
     /// Do NOT tell client on Abort of something it doesn't know about.
@@ -781,11 +781,11 @@ MultiReceive_c::deregisterClient(CanCustomer_c& arc_client, const IsoName_c& acr
 
 
 Stream_c*
-MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize)
+MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent, uint32_t aui32_msgSize, int32_t ai_time )
 {
   // Assumption/Precondition: Stream not there, so create and add it without checking!
 
-  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize MULTITON_INST_WITH_COMMA));
+  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA));
   mlist_streams.back().immediateInitAfterConstruction();
 
   // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
@@ -1065,10 +1065,11 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
 
   uint8_t ui8_pkgsToExpect = arc_stream.expectBurst (ui32_allowPackets); // we wish e.g. 20 pkgs (as always), but there're only 6 more missing to complete the stream!
 
+  CanPkgExt_c pkg;
   switch (arc_stream.getStreamType())
   {
     case StreamETP:
-      mc_data.setExtCanPkg8 (scui8_tpPriority, 0, (ETP_CONN_MANAGE_PGN >> 8),
+      pkg.setExtCanPkg8 (scui8_tpPriority, 0, (ETP_CONN_MANAGE_PGN >> 8),
                              arc_stream.getIdent().getSa(), /* dest */
                              arc_stream.getIdent().getDa(), /* src */
                              0x15 /* decimal: 21 */,
@@ -1078,7 +1079,7 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
       break;
 
     case StreamTP:
-      mc_data.setExtCanPkg8 (scui8_tpPriority, 0, (TP_CONN_MANAGE_PGN >> 8),
+      pkg.setExtCanPkg8 (scui8_tpPriority, 0, (TP_CONN_MANAGE_PGN >> 8),
                              arc_stream.getIdent().getSa(), /* dest */
                              arc_stream.getIdent().getDa(), /* src */
                              0x11 /* decimal: 17 */,
@@ -1101,7 +1102,7 @@ MultiReceive_c::sendCurrentCts (DEF_Stream_c_IMPL &arc_stream)
   }
 
   // send message
-  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << pkg;
 }
 
 
@@ -1122,12 +1123,13 @@ MultiReceive_c::sendConnAbort (const ReceiveStreamIdentifier_c &arcc_rsi)
 
   uint8_t pgn = (arcc_rsi.getStreamType() == StreamETP) ? (ETP_CONN_MANAGE_PGN >> 8) : (TP_CONN_MANAGE_PGN >> 8);
 
-  mc_data.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ arcc_rsi.getSa(), /* src: */ arcc_rsi.getDa(),
+  CanPkgExt_c pkg;
+  pkg.setExtCanPkg8 (scui8_tpPriority, 0, pgn, /* dest: */ arcc_rsi.getSa(), /* src: */ arcc_rsi.getDa(),
                          0xFF /* decimal: 255 */, 0xFF,0xFF,0xFF,0xFF, MACRO_BYTEORDER_toLoMidHi(arcc_rsi.getPgn()));
   #if DEBUG_MULTIRECEIVE
   INTERNAL_DEBUG_DEVICE << "Sending out ConnAbort!" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif
-  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << pkg;
 }
 
 
@@ -1156,11 +1158,12 @@ MultiReceive_c::tellClientRemoveStream (Stream_c &arc_stream)
 void
 MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
 {
+  CanPkgExt_c pkg;
   // NO Check here, this function IS called on purpose and WILL send EoMAck and CLOSE the Stream!
   switch (arc_stream.getStreamType())
   {
     case StreamETP:
-      mc_data.setExtCanPkg8 (scui8_tpPriority, 0, (ETP_CONN_MANAGE_PGN >> 8),
+      pkg.setExtCanPkg8 (scui8_tpPriority, 0, (ETP_CONN_MANAGE_PGN >> 8),
                              arc_stream.getIdent().getSa(), /* dest */
                              arc_stream.getIdent().getDa(), /* src */
                              0x17 /* decimal: 23 */,
@@ -1169,7 +1172,7 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
       break;
 
     case StreamTP:
-      mc_data.setExtCanPkg8 (scui8_tpPriority, 0, (TP_CONN_MANAGE_PGN >> 8),
+      pkg.setExtCanPkg8 (scui8_tpPriority, 0, (TP_CONN_MANAGE_PGN >> 8),
                              arc_stream.getIdent().getSa(), /* dest */
                              arc_stream.getIdent().getDa(), /* src */
                              0x13 /* decimal: 19 */,
@@ -1191,7 +1194,7 @@ MultiReceive_c::sendEndOfMessageAck (DEF_Stream_c_IMPL &arc_stream)
   }
 
   // send message
-  __IsoAgLib::getIsoBusInstance4Comm() << mc_data;
+  __IsoAgLib::getIsoBusInstance4Comm() << pkg;
 }
 
 
@@ -1199,8 +1202,6 @@ void
 MultiReceive_c::init()
 {
   isoaglib_assert (!initialized());
-
-  mc_data.setMultitonInst( getMultitonInst() );
 
   getSchedulerInstance().registerClient( this );
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
@@ -1250,13 +1251,6 @@ MultiReceive_c::getClient (ReceiveStreamIdentifier_c ac_streamIdent)
       return i_list_clients->mpc_client;
   }
   return NULL;
-}
-
-
-__IsoAgLib::CanPkgExt_c&
-MultiReceive_c::dataBase()
-{
-  return mc_data;
 }
 
 

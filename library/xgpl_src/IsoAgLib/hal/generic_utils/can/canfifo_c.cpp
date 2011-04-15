@@ -347,12 +347,12 @@ int32_t fifo_useMsgObjGet(uint8_t aui8_busNumber,__IsoAgLib::CanPkg_c* apc_data)
   if (b_retVal == HAL_NO_ERR)
   {
 
-    __IsoAgLib::CanPkg_c::setTime(pt_receive.i32_time);
+    apc_data->setTime(pt_receive.i32_time);
 
     __IsoAgLib::Ident_c::identType_t idType;
     getFifoCanIdenType(pt_receive.bXtd, idType);
 
-    __IsoAgLib::CanPkg_c::setIdent(pt_receive.dwId, idType);
+    apc_data->setIdent(pt_receive.dwId, idType);
     apc_data->setDataFromString(pt_receive.abData, pt_receive.bDlc);
   }
   return b_retVal;

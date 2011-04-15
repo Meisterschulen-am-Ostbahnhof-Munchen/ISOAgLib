@@ -103,7 +103,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     }
   }
 
-  bool TracPTO_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+  bool TracPTO_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -126,21 +126,22 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracPTO_c::processMsg()
+  bool TracPTO_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    if (((data().isoPgn() /*& 0x3FFFF*/) == FRONT_PTO_STATE_PGN) || ((data().isoPgn() /*& 0x3FFFF*/) == REAR_PTO_STATE_PGN))
+    if (((pkg.isoPgn() /*& 0x3FFFF*/) == FRONT_PTO_STATE_PGN) || ((pkg.isoPgn() /*& 0x3FFFF*/) == REAR_PTO_STATE_PGN))
     {
-      const int32_t ci32_now = data().time();
+      const int32_t ci32_now = pkg.time();
       // only take values, if i am not the regular sender
       // and if actual sender isn't in conflict to previous sender
       if ( checkParseReceived( rcc_tempISOName ) )
       { // sender is allowed to send
         PtoData_t* pt_ptoData = NULL;
-        if (data().isoPgn() == FRONT_PTO_STATE_PGN)
+        if (pkg.isoPgn() == FRONT_PTO_STATE_PGN)
         { // front PTO
           pt_ptoData = &mt_ptoFront;
         }
@@ -150,25 +151,25 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
         }
 
         pt_ptoData->i32_lastPto = ci32_now;
-        pt_ptoData->ui16_pto8DigitPerRpm         = data().getUint16Data(0);
-        pt_ptoData->ui16_ptoSetPoint8DigitPerRpm = data().getUint16Data(2);
-        pt_ptoData->t_ptoEngaged = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 6) & 3 );
-        pt_ptoData->t_pto1000    = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 4) & 3 );
-        pt_ptoData->t_ptoEconomy = IsoAgLib::IsoActiveFlag_t(          (    data().getUint8Data(4) >> 2) & 3 );
-        pt_ptoData->t_ptoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    data().getUint8Data(4)       & 3 );
-        pt_ptoData->t_ptoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 6) & 3 );
-        pt_ptoData->t_ptoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (data().getUint8Data(5) >> 4) & 3 );
-        pt_ptoData->t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (data().getUint8Data(5) >> 1) & 0x7 );
+        pt_ptoData->ui16_pto8DigitPerRpm         = pkg.getUint16Data(0);
+        pt_ptoData->ui16_ptoSetPoint8DigitPerRpm = pkg.getUint16Data(2);
+        pt_ptoData->t_ptoEngaged = IsoAgLib::IsoActiveFlag_t(          (    pkg.getUint8Data(4) >> 6) & 3 );
+        pt_ptoData->t_pto1000    = IsoAgLib::IsoActiveFlag_t(          (    pkg.getUint8Data(4) >> 4) & 3 );
+        pt_ptoData->t_ptoEconomy = IsoAgLib::IsoActiveFlag_t(          (    pkg.getUint8Data(4) >> 2) & 3 );
+        pt_ptoData->t_ptoEngagementReqStatus   = IsoAgLib::IsoReqFlag_t(    pkg.getUint8Data(4)       & 3 );
+        pt_ptoData->t_ptoModeReqStatus         = IsoAgLib::IsoReqFlag_t(   (pkg.getUint8Data(5) >> 6) & 3 );
+        pt_ptoData->t_ptoEconomyModeReqStatus  = IsoAgLib::IsoReqFlag_t(   (pkg.getUint8Data(5) >> 4) & 3 );
+        pt_ptoData->t_ptoShaftSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( (pkg.getUint8Data(5) >> 1) & 0x7 );
 
         // set last time
         setSelectedDataSourceISOName (rcc_tempISOName);
         // update time
-        pt_ptoData->i32_lastPto = data().time();
+        pt_ptoData->i32_lastPto = pkg.time();
         // must be set because this is needed in basecommon_c
         setUpdateTime( pt_ptoData->i32_lastPto );
 
         //msg from Tractor received do tell Scheduler_c next call not until  3000ms
-        changeRetriggerTimeAndResort(data().time() + TIMEOUT_TRACTOR_DATA);
+        changeRetriggerTimeAndResort(pkg.time() + TIMEOUT_TRACTOR_DATA);
       }
 
       else
@@ -245,42 +246,42 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
     setSelectedDataSourceISOName(*getISOName());
 
     PtoData_t* pt_ptoData = NULL;
     if (t_sendptodata == sendFrontPto)
     {
-      data().setIsoPgn(FRONT_PTO_STATE_PGN);
+      pkg.setIsoPgn(FRONT_PTO_STATE_PGN);
       pt_ptoData = &mt_ptoFront;
     }
     else
     { //sendRearPto
-      data().setIsoPgn(REAR_PTO_STATE_PGN);
+      pkg.setIsoPgn(REAR_PTO_STATE_PGN);
       pt_ptoData = &mt_ptoRear;
     }
 
     uint8_t ui8_val;
-    data().setUint16Data(0, pt_ptoData->ui16_pto8DigitPerRpm);
-    data().setUint16Data(2, pt_ptoData->ui16_ptoSetPoint8DigitPerRpm);
+    pkg.setUint16Data(0, pt_ptoData->ui16_pto8DigitPerRpm);
+    pkg.setUint16Data(2, pt_ptoData->ui16_ptoSetPoint8DigitPerRpm);
     ui8_val =  (pt_ptoData->t_ptoEngaged             << 6);
     ui8_val |= (pt_ptoData->t_pto1000                << 4);
     ui8_val |= (pt_ptoData->t_ptoEconomy             << 2);
     ui8_val |= (pt_ptoData->t_ptoEngagementReqStatus << 0);
-    data().setUint8Data(4, ui8_val);
+    pkg.setUint8Data(4, ui8_val);
     ui8_val = 0;
     ui8_val |= (pt_ptoData->t_ptoModeReqStatus         << 6);
     ui8_val |= (pt_ptoData->t_ptoEconomyModeReqStatus  << 4);
     ui8_val |= (pt_ptoData->t_ptoShaftSpeedLimitStatus << 1);
-    data().setUint8Data(5, ui8_val);
+    pkg.setUint8Data(5, ui8_val);
     //reserved fields
-    data().setUint16Data(6, 0xFFFF);
+    pkg.setUint16Data(6, 0xFFFF);
 
-    c_can << data();
+    c_can << pkg;
 
     // update time
     pt_ptoData->i32_lastPto = getLastRetriggerTime();

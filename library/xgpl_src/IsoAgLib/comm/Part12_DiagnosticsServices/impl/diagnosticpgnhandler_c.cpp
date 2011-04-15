@@ -85,7 +85,7 @@ DiagnosticPgnHandler_c::close()
 }
 
 
-bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver )
+bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver, int32_t )
 { // ~X2C
   static SendStream_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
   if ( !mrc_identItem.isClaimedAddress() ) return false;

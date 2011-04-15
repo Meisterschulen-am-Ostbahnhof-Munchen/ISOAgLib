@@ -85,23 +85,24 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracPTOSetPoint_c::processMsg()
+  bool TracPTOSetPoint_c::processMsg( const CanPkg_c& arc_data )
   {
-    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, as we're interested in the whole PGN
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
+    switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, as we're interested in the whole PGN
     {
       case HITCH_PTO_COMMANDS:
         if ( checkMode(IsoAgLib::IdentModeTractor) )
         {
-          mui8_frontHitchPosCmd =     data().getUint8Data(0);
-          mui8_rearHitchPosCmd =      data().getUint8Data(1);
-          mui16_frontPtoSetPointCmd = data().getUint16Data(2);
-          mui16_rearPtoSetPointCmd =  data().getUint16Data(4);
-          mt_frontPtoEngagement =  IsoAgLib::IsoActiveFlag_t( (data().getUint8Data(6) >> 6) & 3);
-          mt_rearPtoEngagement =   IsoAgLib::IsoActiveFlag_t( (data().getUint8Data(6) >> 4) & 3);
-          mt_frontPtoMode =        IsoAgLib::IsoActiveFlag_t( (data().getUint8Data(7) >> 6) & 3);
-          mt_rearPtoMode =         IsoAgLib::IsoActiveFlag_t( (data().getUint8Data(7) >> 4) & 3);
-          mt_frontPtoEconomyMode = IsoAgLib::IsoActiveFlag_t( (data().getUint8Data(7) >> 2) & 3);
-          mt_rearPtoEconomyMode =  IsoAgLib::IsoActiveFlag_t(  data().getUint8Data(7)       & 3);
+          mui8_frontHitchPosCmd =     pkg.getUint8Data(0);
+          mui8_rearHitchPosCmd =      pkg.getUint8Data(1);
+          mui16_frontPtoSetPointCmd = pkg.getUint16Data(2);
+          mui16_rearPtoSetPointCmd =  pkg.getUint16Data(4);
+          mt_frontPtoEngagement =  IsoAgLib::IsoActiveFlag_t( (pkg.getUint8Data(6) >> 6) & 3);
+          mt_rearPtoEngagement =   IsoAgLib::IsoActiveFlag_t( (pkg.getUint8Data(6) >> 4) & 3);
+          mt_frontPtoMode =        IsoAgLib::IsoActiveFlag_t( (pkg.getUint8Data(7) >> 6) & 3);
+          mt_rearPtoMode =         IsoAgLib::IsoActiveFlag_t( (pkg.getUint8Data(7) >> 4) & 3);
+          mt_frontPtoEconomyMode = IsoAgLib::IsoActiveFlag_t( (pkg.getUint8Data(7) >> 2) & 3);
+          mt_rearPtoEconomyMode =  IsoAgLib::IsoActiveFlag_t(  pkg.getUint8Data(7)       & 3);
 
           // we do not need to set setUpdateTime() in basecommon_c because time relevant
           // verifications are now done by the scheduler
@@ -142,28 +143,28 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
-    data().setIsoPgn(HITCH_PTO_COMMANDS);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
+    pkg.setIsoPgn(HITCH_PTO_COMMANDS);
 
-    data().setUint8Data(0, mui8_frontHitchPosCmd);
-    data().setUint8Data(1, mui8_rearHitchPosCmd);
-    data().setUint16Data(2, mui16_frontPtoSetPointCmd);
-    data().setUint16Data(4, mui16_rearPtoSetPointCmd);
+    pkg.setUint8Data(0, mui8_frontHitchPosCmd);
+    pkg.setUint8Data(1, mui8_rearHitchPosCmd);
+    pkg.setUint16Data(2, mui16_frontPtoSetPointCmd);
+    pkg.setUint16Data(4, mui16_rearPtoSetPointCmd);
     uint8_t ui8_val6 = 0;
     ui8_val6 |= (mt_frontPtoEngagement  << 6);
     ui8_val6 |= (mt_rearPtoEngagement   << 4);
-    data().setUint8Data(6, ui8_val6);
+    pkg.setUint8Data(6, ui8_val6);
     uint8_t ui8_val7 = 0;
     ui8_val7 |= (mt_frontPtoMode        << 6);
     ui8_val7 |= (mt_rearPtoMode         << 4);
     ui8_val7 |= (mt_frontPtoEconomyMode << 2);
     ui8_val7 |= (mt_frontPtoEconomyMode     );
-    data().setUint8Data(7, ui8_val7);
+    pkg.setUint8Data(7, ui8_val7);
 
-    c_can << data();
+    c_can << pkg;
 
     // we do not need to set setUpdateTime() in basecommon_c because time relevant
     // settings are now done by the scheduler
@@ -180,7 +181,7 @@ TracPTOSetPoint_c::getTaskName() const
     @todo SOON-824: add answering of requestPGN in case this object is configured for sending of these information
            - verify this also for the other TracFoo classes
   */
-bool TracPTOSetPoint_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/)
+bool TracPTOSetPoint_c::processMsgRequestPGN (uint32_t /*aui32_pgn*/, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
 {
   return false;
 }

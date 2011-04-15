@@ -168,25 +168,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracMove_c::processMsg()
+  bool TracMove_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
     #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     #endif
 
-    const int32_t ci32_now = data().time();
+    const int32_t ci32_now = pkg.time();
 
     #ifdef USE_RS232_FOR_DEBUG
     INTERNAL_DEBUG_DEVICE << "c_tempISOName: " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
     INTERNAL_DEBUG_DEVICE << "senderISOName: " <<  static_cast<const int>(getSelectedDataSourceISOName().devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
-    INTERNAL_DEBUG_DEVICE << "PGN:          " << (data().isoPgn() /*& 0x1FFFF*/) << INTERNAL_DEBUG_DEVICE_ENDL;
+    INTERNAL_DEBUG_DEVICE << "PGN:          " << (pkg.isoPgn() /*& 0x1FFFF*/) << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
 
-    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &0x3FFFF as this is the whole PGN...
+    switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &0x3FFFF as this is the whole PGN...
     {
       case GROUND_BASED_SPEED_DIST_PGN:
       case WHEEL_BASED_SPEED_DIST_PGN:
@@ -194,12 +195,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         // and if actual sender isn't in conflict to previous sender
         if ( ( checkParseReceived( rcc_tempISOName ) ) )/*|| noch keine normale geschw empfangen */
         { // sender is allowed to send
-          int32_t i32_tempSpeed = data().getUint16Data(0);
+          int32_t i32_tempSpeed = pkg.getUint16Data(0);
           bool b_usableSpeed = true;
-          uint32_t ui32_tempDist = data().getUint32Data( 2 );
+          uint32_t ui32_tempDist = pkg.getUint32Data( 2 );
 
           // handle special values
-          switch (data().getUint16Data(0))
+          switch (pkg.getUint16Data(0))
           {
             case NO_VAL_16: // missing signal --> match to NO_VAL_32S
               i32_tempSpeed = NO_VAL_32S;
@@ -221,20 +222,20 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
           // but if NO_VAL_32 indicates missing information, this information should NOT be overwritten
           if ( ( ui32_tempDist > 0xFAFFFFFF ) && ( ui32_tempDist != NO_VAL_32 ) ) ui32_tempDist = ERROR_VAL_32;
 
-          if ( ( (data().getUint8Data( 7 ) & 3 ) == IsoAgLib::IsoReverse) && (b_usableSpeed) )
+          if ( ( (pkg.getUint8Data( 7 ) & 3 ) == IsoAgLib::IsoReverse) && (b_usableSpeed) )
             //if direction is in error state this has no effect to the speed;
             //if direction is not available it is assumed that the speed is positive
             i32_tempSpeed *= -1; //driving reverse;
 
 
-          const uint32_t testTimeOutdatedSpeed = (data().time() - mui32_lastUpdateTimeSpeed);
-          const uint32_t testTimeOutdatedDist  = (data().time() - mui32_lastUpdateTimeDistDirec);
-          if (data().isoPgn() == GROUND_BASED_SPEED_DIST_PGN)
+          const uint32_t testTimeOutdatedSpeed = (pkg.time() - mui32_lastUpdateTimeSpeed);
+          const uint32_t testTimeOutdatedDist  = (pkg.time() - mui32_lastUpdateTimeDistDirec);
+          if (pkg.isoPgn() == GROUND_BASED_SPEED_DIST_PGN)
           { // real speed
             setSpeedReal(i32_tempSpeed);
             // real dist
             setDistReal( ui32_tempDist );
-            mt_directionReal = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7) & 0x3 );
+            mt_directionReal = IsoAgLib::IsoDirectionFlag_t(pkg.getUint8Data(7) & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS GROUND(65097): " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
@@ -246,7 +247,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
-              updateSpeed(IsoAgLib::GroundBasedSpeed);
+              updateSpeed(IsoAgLib::GroundBasedSpeed, pkg.time() );
             }
 
             //if ground based dist and direction is actually the best available
@@ -267,12 +268,12 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
             setDistTheor( ui32_tempDist );
             #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
             // additionally scan for key switch and maximum power time
-            c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data( 7 ) >> 2 ) & 0x3 ));
-            c_tracgeneral.setMaxPowerTime(data().getUint8Data( 6 ) );
+            c_tracgeneral.setKeySwitch(IsoAgLib::IsoActiveFlag_t( ( pkg.getUint8Data( 7 ) >> 2 ) & 0x3 ));
+            c_tracgeneral.setMaxPowerTime(pkg.getUint8Data( 6 ) );
             #endif
-            mt_operatorDirectionReversed = IsoAgLib::IsoOperatorDirectionFlag_t( ( data().getUint8Data(7) >> 6) & 0x3);
-            mt_startStopState = IsoAgLib::IsoActiveFlag_t( ( data().getUint8Data(7) >> 4) & 0x3);
-            mt_directionTheor = IsoAgLib::IsoDirectionFlag_t(data().getUint8Data(7)       & 0x3 );
+            mt_operatorDirectionReversed = IsoAgLib::IsoOperatorDirectionFlag_t( ( pkg.getUint8Data(7) >> 6) & 0x3);
+            mt_startStopState = IsoAgLib::IsoActiveFlag_t( ( pkg.getUint8Data(7) >> 4) & 0x3);
+            mt_directionTheor = IsoAgLib::IsoDirectionFlag_t(pkg.getUint8Data(7)       & 0x3 );
             #ifdef USE_RS232_FOR_DEBUG
             INTERNAL_DEBUG_DEVICE << "PROCESS WHEEL(65096): " <<  static_cast<const int>(rcc_tempISOName.devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
             #endif
@@ -282,7 +283,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
                  )
                )
             { // speed information is usable and the current selected speed is at least not better or outdated
-              updateSpeed(IsoAgLib::WheelBasedSpeed);
+              updateSpeed(IsoAgLib::WheelBasedSpeed, pkg.time() );
             }
             if ( ( mui32_distReal <= 0xFAFFFFFF ) &&
                  ( ( mt_distDirecSource <= IsoAgLib::WheelBasedDistDirec )
@@ -308,32 +309,32 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
         // first check whether the received message indicates a valid speed source - and ignore the message totally,
         // if speedSource == IsoNotAvailableSpeed
-        const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (data().getUint8Data(7) >> 2) & 0x7) );
+        const IsoAgLib::IsoSpeedSourceFlag_t t_testSpeedSource = IsoAgLib::IsoSpeedSourceFlag_t( ( (pkg.getUint8Data(7) >> 2) & 0x7) );
 
         if ( ( ( checkParseReceived( rcc_tempISOName ) ) ) && (t_testSpeedSource != IsoAgLib::IsoNotAvailableSpeed))
         {
-          mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (data().getUint8Data(7) >> 5) & 0x7) );
-          mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( data().getUint8Data(7) & 0x3);
+          mt_selectedSpeedLimitStatus = IsoAgLib::IsoLimitFlag_t( ( (pkg.getUint8Data(7) >> 5) & 0x7) );
+          mt_selectedDirection        = IsoAgLib::IsoDirectionFlag_t( pkg.getUint8Data(7) & 0x3);
 
           setSelectedDataSourceISOName(rcc_tempISOName);
           setUpdateTime( ci32_now );
 
-          if (data().getUint16Data(0) <= 0xFAFF) //valid selected speed?
+          if (pkg.getUint16Data(0) <= 0xFAFF) //valid selected speed?
           {
-            mi32_selectedSpeed = data().getUint16Data(0);
+            mi32_selectedSpeed = pkg.getUint16Data(0);
             mt_selectedSpeedSource =  t_testSpeedSource;
-            updateSpeed(IsoAgLib::SelectedSpeed);
+            updateSpeed(IsoAgLib::SelectedSpeed, pkg.time());
             if (mt_selectedDirection == IsoAgLib::IsoReverse)
               mi32_selectedSpeed *= -1; //driving reverse
           }
           else //fall back to ground based speed
             mt_speedSource = IsoAgLib::GroundBasedSpeed;
 
-          if (data().getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
+          if (pkg.getUint32Data(2) <= 0xFAFFFFFF) //valid selected distance?
           {
-            mui32_selectedDistance = data().getUint32Data(2);
+            mui32_selectedDistance = pkg.getUint32Data(2);
             mt_distDirecSource = IsoAgLib::SelectedDistDirec;
-            mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (data().getUint8Data(7) >> 0) & 0x3) );
+            mt_selectedDirection = IsoAgLib::IsoDirectionFlag_t(   ( (pkg.getUint8Data(7) >> 0) & 0x3) );
             updateDistanceDirection(IsoAgLib::SelectedDistDirec);
           } else //fall back to ground based direction and distance
             mt_distDirecSource = IsoAgLib::GroundBasedDistDirec;
@@ -348,7 +349,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     return true;
   }
 
-  void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc)
+  void TracMove_c::updateSpeed(IsoAgLib::SpeedSource_t t_speedSrc, int32_t ai_time )
   {
     #if ( (defined USE_BASE || defined USE_TIME_GPS) && defined ENABLE_MULTIPACKET_VARIANT_FAST_PACKET)
     TimePosGps_c& c_timeposgps = getTimePosGpsInstance4Comm();
@@ -381,7 +382,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
         break;
     }
     // update time
-    mui32_lastUpdateTimeSpeed = data().time();
+    mui32_lastUpdateTimeSpeed = ai_time;
   }
 
   void TracMove_c::updateDistanceDirection(IsoAgLib::DistanceDirectionSource_t t_distanceSrc)
@@ -452,15 +453,14 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     return true;
   }
 
-  void TracMove_c::prepareSending()
+  void TracMove_c::prepareSending( CanPkgExt_c& pkg )
   {
     // there is no need to check for address claim because this is already done in the timeEvent
     // function of base class BaseCommon_c
 
-    data().setISONameForSA( *getISOName() );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    pkg.setISONameForSA( *getISOName() );
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
     #ifdef USE_RS232_FOR_DEBUG
     INTERNAL_DEBUG_DEVICE << "getISOName: " <<  static_cast<const int>(getISOName()->devClass() ) << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -474,20 +474,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     if (!canSendGroundBasedSpeedDist())
       return MessageNotSent;
-    prepareSending();
-    data().setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
-    data().setUint16Data( 0, __IsoAgLib::abs(mi32_speedReal));
-    data().setUint32Data(2, mui32_distReal);
+    CanPkgExt_c pkg;
+    prepareSending( pkg );
+    pkg.setIsoPgn(GROUND_BASED_SPEED_DIST_PGN);
+    pkg.setUint16Data( 0, __IsoAgLib::abs(mi32_speedReal));
+    pkg.setUint32Data(2, mui32_distReal);
 
     uint8_t b_val8 = 0;
     b_val8 |= mt_directionReal;
-    data().setUint8Data(7, b_val8);
+    pkg.setUint8Data(7, b_val8);
     //reserved fields
-    data().setUint8Data(6, 0xFF);
+    pkg.setUint8Data(6, 0xFF);
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return MessageSent;
   }
 
@@ -495,25 +496,26 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     if (!canSendWheelBasedSpeedDist())
       return MessageNotSent;
-    prepareSending();
-    data().setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
-    data().setUint16Data(0, __IsoAgLib::abs(mi32_speedTheor));
-    data().setUint32Data(2, mui32_distTheor);
+    CanPkgExt_c pkg;
+    prepareSending( pkg );
+    pkg.setIsoPgn(WHEEL_BASED_SPEED_DIST_PGN);
+    pkg.setUint16Data(0, __IsoAgLib::abs(mi32_speedTheor));
+    pkg.setUint32Data(2, mui32_distTheor);
 
     uint8_t b_val8 = 0;
-    //data().setUint8Data(7, b_val8);
+    //pkg.setUint8Data(7, b_val8);
 #if defined(USE_BASE) || defined(USE_TRACTOR_GENERAL)
     TracGeneral_c& c_tracgeneral = getTracGeneralInstance4Comm();
     // additionally scan for key switch and maximum power time
-    data().setUint8Data(6, c_tracgeneral.maxPowerTime() );
+    pkg.setUint8Data(6, c_tracgeneral.maxPowerTime() );
     b_val8 |= (c_tracgeneral.keySwitch() << 2);
 #endif
     b_val8 |= (mt_operatorDirectionReversed << 6);
     b_val8 |= (mt_startStopState << 4);
     b_val8 |= mt_directionTheor;
-    data().setUint8Data(7, b_val8);
+    pkg.setUint8Data(7, b_val8);
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return MessageSent;
   }
 
@@ -521,20 +523,21 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
   {
     if (!canSendSelectedSpeed())
       return MessageNotSent;
-    prepareSending();
-    data().setIsoPgn(SELECTED_SPEED_MESSAGE);
+    CanPkgExt_c pkg;
+    prepareSending( pkg );
+    pkg.setIsoPgn(SELECTED_SPEED_MESSAGE);
     uint8_t ui8_temp = 0;
 
-    data().setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
-    data().setUint32Data(2, mui32_selectedDistance);
+    pkg.setUint16Data(0, __IsoAgLib::abs(mi32_selectedSpeed));
+    pkg.setUint32Data(2, mui32_selectedDistance);
     ui8_temp |= (mt_selectedSpeedLimitStatus << 5);
     ui8_temp |= (mt_selectedSpeedSource      << 2);
     ui8_temp |= (mt_selectedDirection        << 0);
-    data().setUint8Data(7, ui8_temp);
+    pkg.setUint8Data(7, ui8_temp);
     //reserved fields
-    data().setUint8Data(6, 0xFF);
+    pkg.setUint8Data(6, 0xFF);
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return MessageSent;
   }
 
@@ -543,24 +546,25 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     if (!canSendEngineSpeed())
       return MessageNotSent;
 
-    data().setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
+    CanPkgExt_c pkg;
+    pkg.setIsoPgn(ELECTRONIC_ENGINE_CONTROLLER_1_MESSAGE);
 
     // TODO unimplemented Engine Torque mode
-    data().setUint16Data(0, 0xFF);
+    pkg.setUint16Data(0, 0xFF);
     // TODO Driver's demand engine - Percentage torque
-    data().setUint8Data(1, 0xFF);
+    pkg.setUint8Data(1, 0xFF);
     // TODO Actual Engine - Percentage torque
-    data().setUint8Data(2, 0xFF);
+    pkg.setUint8Data(2, 0xFF);
     // Engine speed
-    data().setUint16Data(3, mui16_engineSpeed);
+    pkg.setUint16Data(3, mui16_engineSpeed);
     // Source adresse of controlling deice for engine.
-    data().setUint8Data(5, 0xFF);
+    pkg.setUint8Data(5, 0xFF);
     // Engine starter mode
-    data().setUint8Data(6, 0xFF);
+    pkg.setUint8Data(6, 0xFF);
     // Engine demand
-    data().setUint8Data(7, 0xFF);
+    pkg.setUint8Data(7, 0xFF);
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
     return MessageSent;
   }
 
@@ -583,7 +587,7 @@ TracMove_c::getTaskName() const
 { return "TracMove_c"; }
 #endif
 
-bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+bool TracMove_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
 {
   // check if we are allowed to send a request for pgn
   if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) )

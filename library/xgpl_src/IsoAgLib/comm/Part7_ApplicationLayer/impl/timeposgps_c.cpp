@@ -499,15 +499,16 @@ namespace __IsoAgLib {
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TimePosGps_c::processMsg()
+  bool TimePosGps_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    const int32_t ci32_now = data().time();
+    const int32_t ci32_now = pkg.time();
 
-    switch (data().isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN.
+    switch (pkg.isoPgn() /*& 0x3FFFF*/) // don't need to &, we're interested in the whole PGN.
     {
       case TIME_DATE_PGN:
         // time - date
@@ -519,17 +520,17 @@ namespace __IsoAgLib {
           if ( mc_sendGpsISOName.isUnspecified()  )
           { // neither this item nor another item is sending GPS data -> this is the best time source
             setCalendarUtc(
-            (data().getUint8Data(5) + 1985), data().getUint8Data(3), (data().getUint8Data(4) / 4), (data().getUint8Data(2)),
-            (data().getUint8Data(1)), (data().getUint8Data(0) / 4));
+            (pkg.getUint8Data(5) + 1985), pkg.getUint8Data(3), (pkg.getUint8Data(4) / 4), (pkg.getUint8Data(2)),
+            (pkg.getUint8Data(1)), (pkg.getUint8Data(0) / 4));
           }
           else
           { // only fetch the date, as this information might not be defined by GPS
-            setDateUtc((data().getUint8Data(5) + 1985), data().getUint8Data(3), (data().getUint8Data(4) / 4));
+            setDateUtc((pkg.getUint8Data(5) + 1985), pkg.getUint8Data(3), (pkg.getUint8Data(4) / 4));
           }
           setTimeOut( TIMEOUT_SENDING_NODE_NMEA );
           // take local timezone offset in all cases
-          bit_calendar.timezoneMinuteOffset = data().getUint8Data(6);
-          bit_calendar.timezoneHourOffsetMinus24 = data().getUint8Data(7);
+          bit_calendar.timezoneMinuteOffset = pkg.getUint8Data(6);
+          bit_calendar.timezoneHourOffsetMinus24 = pkg.getUint8Data(7);
           // set last time
           setUpdateTime(ci32_now);
           setSelectedDataSourceISOName (rcc_tempISOName);
@@ -547,25 +548,25 @@ namespace __IsoAgLib {
         if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
 #ifdef USE_J1939_VEHICLE_PGNS
-          if (data().isoPgn() == SAE_J1939_71_VEHICLE_POSITION)
+          if (pkg.isoPgn() == SAE_J1939_71_VEHICLE_POSITION)
           {
-            mi32_latitudeDegree10Minus7  = data().getUint32Data( 0 ) - 2100000000; // 210 / 0.0000001
-            mi32_longitudeDegree10Minus7 = data().getUint32Data( 4 ) - 2100000000; // 210 / 0.0000001
+            mi32_latitudeDegree10Minus7  = pkg.getUint32Data( 0 ) - 2100000000; // 210 / 0.0000001
+            mi32_longitudeDegree10Minus7 = pkg.getUint32Data( 4 ) - 2100000000; // 210 / 0.0000001
 
             setTimeOut( TIMEOUT_SENDING_NODE_J1939 );
           }
           else
 #endif
           {
-            mi32_latitudeDegree10Minus7  = data().getInt32Data( 0 );
-            mi32_longitudeDegree10Minus7 = data().getInt32Data( 4 );
+            mi32_latitudeDegree10Minus7  = pkg.getInt32Data( 0 );
+            mi32_longitudeDegree10Minus7 = pkg.getInt32Data( 4 );
 
             setTimeOut( TIMEOUT_SENDING_NODE_NMEA );
           }
           mi32_lastIsoPositionSimple = ci32_now;
           mc_sendGpsISOName = rcc_tempISOName;
 
-          if (data().isoPgn() == NMEA_GPS_POSITION_RAPID_UPDATE_PGN)
+          if (pkg.isoPgn() == NMEA_GPS_POSITION_RAPID_UPDATE_PGN)
           {
             // give an offset to the millisecond time of day based on a filtered message rate
             const int32_t ci32_updateDelta = ci32_now - mi32_lastMillisecondUpdate;
@@ -607,7 +608,7 @@ namespace __IsoAgLib {
             #endif
           }
 
-          notifyOnEvent (data().isoPgn());
+          notifyOnEvent (pkg.isoPgn());
         }
         else
         { // there is a sender conflict
@@ -622,11 +623,11 @@ namespace __IsoAgLib {
           // Here we get degrees as fraction of 128, and have to change to rad 10^-4
           // -> / 128 * MATH_PI / 180 * 10000
 #define MATH_PI 3.14159265
-          mui16_courseOverGroundRad10Minus4 = static_cast<uint16_t>( static_cast<double>(data().getUint16Data( 0 ) ) * MATH_PI * 125.0 / 288.0 );
+          mui16_courseOverGroundRad10Minus4 = static_cast<uint16_t>( static_cast<double>(pkg.getUint16Data( 0 ) ) * MATH_PI * 125.0 / 288.0 );
           // [256 one bit is 1/256 km/h] [* 1000 * 100 / 60 / 60 -> we get km/h but want cm/sec]
-          mui16_speedOverGroundCmSec        = static_cast<uint16_t>( static_cast<double>( data().getUint16Data( 2 ) * 125 ) / static_cast<double>( 128 * 9 ) );
+          mui16_speedOverGroundCmSec        = static_cast<uint16_t>( static_cast<double>( pkg.getUint16Data( 2 ) * 125 ) / static_cast<double>( 128 * 9 ) );
           // we are getting speed from here as well:
-          mi32_altitudeCm = static_cast<int32_t>( ( static_cast<double>( data().getUint16Data( 6 ) ) * 0.125 - 2500.0 ) * 100.0 );
+          mi32_altitudeCm = static_cast<int32_t>( ( static_cast<double>( pkg.getUint16Data( 6 ) ) * 0.125 - 2500.0 ) * 100.0 );
           // always update values to know if the information is there or not!
 
           // set last time (also always, because if the sender's sending it's sending so we can't send!!
@@ -657,10 +658,10 @@ namespace __IsoAgLib {
       case NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN:
         if ( checkParseReceivedGps( rcc_tempISOName ) )
         { // sender is allowed to send
-          mui8_directionSequenceID          = data().getUint8Data ( 0 );
-          mui8_courseOverGroundReference    = data().getUint8Data ( 1 ) & 0x03;
-          mui16_courseOverGroundRad10Minus4 = data().getUint16Data( 2 );
-          mui16_speedOverGroundCmSec        = data().getUint16Data( 4 );
+          mui8_directionSequenceID          = pkg.getUint8Data ( 0 );
+          mui8_courseOverGroundReference    = pkg.getUint8Data ( 1 ) & 0x03;
+          mui16_courseOverGroundRad10Minus4 = pkg.getUint16Data( 2 );
+          mui16_speedOverGroundCmSec        = pkg.getUint16Data( 4 );
           // always update values to know if the information is there or not!
 
           setTimeOut(TIMEOUT_SENDING_NODE_NMEA);
@@ -675,7 +676,7 @@ namespace __IsoAgLib {
              )
           {
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
-            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
+            getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed, pkg.time() );
 #endif
             notifyOnEvent (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
           }
@@ -691,7 +692,7 @@ namespace __IsoAgLib {
     return false;
   }
 
-  bool TimePosGps_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+  bool TimePosGps_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -930,7 +931,7 @@ namespace __IsoAgLib {
       case NMEA_GPS_POSITION_DATA_PGN: // 0x01F805LU -> 129029
       {
         setTimeOut( TIMEOUT_SENDING_NODE_NMEA );
-        mi32_lastIsoPositionStream = data().time();
+        mi32_lastIsoPositionStream = rc_stream.getStartTime();
         // fetch sequence number from Byte1
         IsoAgLib::convertIstream( rc_stream, mui8_positionSequenceID );
         // --> continue with Byte2 ...
@@ -1029,7 +1030,7 @@ namespace __IsoAgLib {
         {
           mui16_courseOverGroundRad10Minus4 = ui16_newCOG;
           mui16_speedOverGroundCmSec = ui16_newSOG;
-          mi32_lastIsoDirection = data().time();
+          mi32_lastIsoDirection = rc_stream.getStartTime();
 #if defined (USE_TRACTOR_MOVE) || defined (USE_BASE)
           getTracMoveInstance4Comm().updateSpeed(IsoAgLib::GpsBasedSpeed);
 #endif
@@ -1088,16 +1089,16 @@ namespace __IsoAgLib {
   {
     // retreive the actual dynamic sender no of the member with the registered isoName
     uint8_t b_sa = getIsoMonitorInstance4Comm().isoMemberISOName(*mpc_isoNameGps, true).nr();
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(2);
-    data().setLen(8);
-    data().setIsoSa(b_sa);
+    CanPkgExt_c pkg;
+    pkg.setIsoPri(2);
+    pkg.setLen(8);
+    pkg.setIsoSa(b_sa);
 
-    data().setIsoPgn(NMEA_GPS_POSITION_RAPID_UPDATE_PGN);
-    data().setInt32Data(0, mi32_latitudeDegree10Minus7 );
-    data().setInt32Data(4, mi32_longitudeDegree10Minus7);
+    pkg.setIsoPgn(NMEA_GPS_POSITION_RAPID_UPDATE_PGN);
+    pkg.setInt32Data(0, mi32_latitudeDegree10Minus7 );
+    pkg.setInt32Data(4, mi32_longitudeDegree10Minus7);
 
-    getIsoBusInstance4Comm() << data();
+    getIsoBusInstance4Comm() << pkg;
 
     // update time
     mi32_lastIsoPositionSimple = getLastRetriggerTime();
@@ -1140,25 +1141,25 @@ namespace __IsoAgLib {
 
 void TimePosGps_c::isoSendDirection( void )
 {
+  CanPkgExt_c pkg;
   // little pre-Setup
   mui8_directionSequenceID = 0xFF; // not using tied-together-packaging right now
   mui8_courseOverGroundReference = 0; // for now, we only send TRUE NORTH
 
-  data().setIdentType(Ident_c::ExtendedIdent);
-  data().setIsoPri(2);
-  data().setLen(8);
-  data().setISONameForSA(*mpc_isoNameGps);
+  pkg.setIsoPri(2);
+  pkg.setLen(8);
+  pkg.setISONameForSA(*mpc_isoNameGps);
 
-  data().setIsoPgn (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
-  data().setUint8Data (0, mui8_directionSequenceID );
-  data().setUint8Data (1, mui8_courseOverGroundReference);
-  data().setUint16Data(2, mui16_courseOverGroundRad10Minus4 );
-  data().setUint16Data(4, mui16_speedOverGroundCmSec );
-  data().setUint16Data(6, 0xFFFF );
+  pkg.setIsoPgn (NMEA_GPS_COG_SOG_RAPID_UPDATE_PGN);
+  pkg.setUint8Data (0, mui8_directionSequenceID );
+  pkg.setUint8Data (1, mui8_courseOverGroundReference);
+  pkg.setUint16Data(2, mui16_courseOverGroundRad10Minus4 );
+  pkg.setUint16Data(4, mui16_speedOverGroundCmSec );
+  pkg.setUint16Data(6, 0xFFFF );
 
   // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
   // then it sends the data
-  getIsoBusInstance4Comm() << data();
+  getIsoBusInstance4Comm() << pkg;
 
   // update time
   mi32_lastIsoDirection = getSchedulerInstance().getLastTimeEventTrigger();
@@ -1292,42 +1293,42 @@ void TimePosGps_c::isoSendDirection( void )
   {
     if (!getIsoMonitorInstance4Comm().existIsoMemberISOName(acrc_isoName, true)) return;
 
-    data().setISONameForSA( acrc_isoName );
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(6);
-    data().setLen(8);
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( acrc_isoName );
+    pkg.setIsoPri(6);
+    pkg.setLen(8);
 
     if ( ( getSelectedDataSourceISOName() == acrc_isoName ) )
     { // this item (identified by ISOName is configured to send
       if ( checkMode(IsoAgLib::IdentModeTractor) )
         setSelectedDataSourceISOName(*getISOName());
 
-      data().setIsoPgn(TIME_DATE_PGN);
+      pkg.setIsoPgn(TIME_DATE_PGN);
 
       const struct CNAMESPACE::tm* p_tm = currentUtcTm();
       if (NULL != p_tm)
       {
-        data().setUint8Data(0, (p_tm->tm_sec * 4) );
-        data().setUint8Data(1, p_tm->tm_min);
-        data().setUint8Data(2, p_tm->tm_hour);
-        data().setUint8Data(3, p_tm->tm_mon + 1);
-        data().setUint8Data(4, p_tm->tm_mday * 4);
-        data().setUint8Data(5, p_tm->tm_year + 1900 - 1985);
+        pkg.setUint8Data(0, (p_tm->tm_sec * 4) );
+        pkg.setUint8Data(1, p_tm->tm_min);
+        pkg.setUint8Data(2, p_tm->tm_hour);
+        pkg.setUint8Data(3, p_tm->tm_mon + 1);
+        pkg.setUint8Data(4, p_tm->tm_mday * 4);
+        pkg.setUint8Data(5, p_tm->tm_year + 1900 - 1985);
       }
       else
       {
-        data().setUint16Data( 0, 0U );
-        data().setUint8Data(2, 0U);
-        data().setUint8Data(3, 1U);
-        data().setUint8Data(4, 4U);
-        data().setUint8Data(5, 0U);
+        pkg.setUint16Data( 0, 0U );
+        pkg.setUint8Data(2, 0U);
+        pkg.setUint8Data(3, 1U);
+        pkg.setUint8Data(4, 4U);
+        pkg.setUint8Data(5, 0U);
       }
-      data().setUint8Data(6, bit_calendar.timezoneMinuteOffset );
-      data().setUint8Data(7, bit_calendar.timezoneHourOffsetMinus24 );
+      pkg.setUint8Data(6, bit_calendar.timezoneMinuteOffset );
+      pkg.setUint8Data(7, bit_calendar.timezoneHourOffsetMinus24 );
 
       // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
       // then it sends the data
-      getIsoBusInstance4Comm() << data();
+      getIsoBusInstance4Comm() << pkg;
 
       // update time
       setUpdateTime(getLastRetriggerTime() );

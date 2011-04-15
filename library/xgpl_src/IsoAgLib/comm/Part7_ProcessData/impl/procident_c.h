@@ -246,6 +246,11 @@ public:
 
   static bool hasDDIType (uint16_t aui16_DDI, ProcessCmd_c::ValueGroup_t t_ddiType);
 
+
+protected:
+   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s> mlist_elementDDI;
+
+
 private: // Private attributes
   /** internal base function for copy constructor and assignement */
   void assignFromSource( const ProcIdent_c& acrc_src );
@@ -259,8 +264,6 @@ private: // Private attributes
     */
   IsoName_c mc_isoName;
 
-
-   STL_NAMESPACE::list<IsoAgLib::ElementDdi_s> mlist_elementDDI;
    uint16_t mui16_element;
 
 private: // Private methods

@@ -83,8 +83,5 @@ private:
   IsoAgLib::iMaskFilter_c mc_adaptedMaskFilter;
 };
 
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef IsoFilter_s ISOFilter_s;
-
 } // End Namespace __IsoAgLib
 #endif

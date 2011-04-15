@@ -83,15 +83,15 @@ bool SetpointBase_c::timeEvent( void ){
 }
 
 /** process a setpoint message */
-void SetpointBase_c::processMsg(){
+void SetpointBase_c::processMsg( const ProcessPkg_c& pkg ){
   // check if its a request for actual setpoint
-  if (getProcessInstance4Comm().data().mc_processCmd.checkIsRequest())
+  if (pkg.mc_processCmd.checkIsRequest())
   {
-    processRequest();
+    processRequest(pkg);
   }
   else
   { // set setpoint value
-    processSet();
+    processSet(pkg);
   }
 }
 
@@ -141,11 +141,12 @@ void SetpointBase_c::sendSetpointVals( const SetpointRegister_c& acrc_src,
 
   if (en_valueGroup != ProcessCmd_c::noValue)
   {
+     ProcessPkg_c pkg;
      // prepare general command in process pkg
-     getProcessInstance4Comm().data().mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
+     pkg.mc_processCmd.setValues(true /* isSetpoint */, false /* isRequest */,
                                                               en_valueGroup, ProcessCmd_c::setValue);
 
-     pprocessData()->sendValISOName( acrc_src.isoName(), i32_value);
+     pprocessData()->sendValISOName( pkg, acrc_src.isoName(), i32_value);
   }
 }
 

@@ -84,7 +84,8 @@ class FsCommand_c : CanCustomer_c
 
     /** functions to decode fileserver repsonses. **/
     void decodeGetCurrentDirectoryResponse();
-    void decodeOpenFileResponse();
+    void decodeOpenFileResponse( const CanPkgExt_c& arc_data );
+    void decodeSeekFileResponse( const CanPkgExt_c& arc_data );
     void decodeSeekFileResponse();
     void decodeReadFileResponse();
     void decodeReadDirectoryResponse();
@@ -135,16 +136,10 @@ class FsCommand_c : CanCustomer_c
     void sendMultiPacketTry();
 
     /**
-      * functions used when receiving information.
-      */
-    CANPkgExt_c& dataBase() { return c_data; }
-    CANPkgExt_c& data() { return c_data; }
-
-    /**
       * process received messages. decodes the received responses and forwards it by calling the XXXResponse methods of the
       * FsClientServerCommunication_c.
       */
-    bool processMsg();
+    bool processMsg( const CanPkg_c& arc_data );
 
     /**
       * Method called by FsClientServerCommunciation_c. After the response of get current directory, the fileserver is considered to
@@ -308,8 +303,6 @@ class FsCommand_c : CanCustomer_c
     /** buffer containing the standard maintenance message, content equal for all clients! **/
     static uint8_t pui8_maintenanceBuffer[8];
 
-    /** send information **/
-    CANPkgExt_c c_data;
     /** send package length **/
     uint8_t ui8_packetLength;
     /** buffer containing the sent message. **/

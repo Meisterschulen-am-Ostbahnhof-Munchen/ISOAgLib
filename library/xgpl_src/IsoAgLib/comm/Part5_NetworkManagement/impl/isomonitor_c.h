@@ -23,7 +23,6 @@
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/driver/system/impl/system_c.h>
-#include "isosystempkg_c.h"
 #include "isoitem_c.h"
 #include "saclaimhandler_c.h"
 #include "isorequestpgnhandler_c.h"
@@ -90,20 +89,8 @@ public:
   */
   bool timeEvent( void );
 
-  virtual bool isNetworkMgmt() const { return true; }
-
   virtual ~IsoMonitor_c() {}
 
-  /** deliver reference to data pkg
-    @return reference to the CAN communication member object mc_data (IsoSystemPkg_c)
-    @see CANPkgExt
-  */
-  IsoSystemPkg_c& data() {return mc_data;}
-
-  /** deliver reference to data pkg as reference to CanPkgExt_c
-    to implement the base virtual function correct
-  */
-  virtual CanPkgExt_c& dataBase();
 
   /** deliver amount of ISO members in monitor list which optional (!!)
     match the condition of address claim state
@@ -392,7 +379,7 @@ public:
   */
   uint8_t getSlaveCount (IsoItem_c* apc_masterItem);
 
-  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver);
+  virtual bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* /*apc_isoItemSender*/, IsoItem_c* apc_isoItemReceiver, int32_t ai_requestTimestamp );
 
 #if DEBUG_SCHEDULER
   virtual const char* getTaskName() const;
@@ -419,7 +406,7 @@ protected: // Protected methods
     (this function is only called if NO conflict is detected)
     @return true -> message processed by IsoMonitor_c; false -> process msg by ServiceMonitor
   */
-  bool processMsg();
+  bool processMsg( const CanPkg_c& arc_data );
 
   //! Function set ui16_earlierInterval and
   //! ui16_laterInterval that will be used by
@@ -466,10 +453,6 @@ private:
         ab_isGlobal);
   }
 
-  virtual bool processInvalidMsg(){
-    return false;
-  }
-
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
       uint32_t aui32_totalLen)
@@ -491,20 +474,8 @@ private:
     virtual ~CanCustomerProxy_c() {}
 
   private:
-    virtual CanPkgExt_c& dataBase() {
-      return mrt_owner.dataBase();
-    }
-
-    virtual bool processMsg() {
-      return mrt_owner.processMsg();
-    }
-
-    virtual bool processInvalidMsg() {
-      return mrt_owner.processInvalidMsg();
-    }
-
-    virtual bool isNetworkMgmt() const {
-      return mrt_owner.isNetworkMgmt();
+    virtual bool processMsg( const CanPkg_c& arc_data ) {
+      return mrt_owner.processMsg( arc_data );
     }
 
     virtual bool reactOnStreamStart(
@@ -562,12 +533,14 @@ private:
     virtual bool processMsgRequestPGN(
         uint32_t aui32_pgn,
         IsoItem_c *apc_isoItemSender,
-        IsoItem_c *apc_isoItemReceiver)
+        IsoItem_c *apc_isoItemReceiver,
+        int32_t ai_requestTimestamp )
     {
       return mrt_owner.processMsgRequestPGN(
           aui32_pgn,
           apc_isoItemSender,
-          apc_isoItemReceiver);
+          apc_isoItemReceiver,
+          ai_requestTimestamp );
     }
 
     // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
@@ -587,9 +560,6 @@ private:
     MonitorItem_c local member after check for existance
      */
   IsoItem_c* mpc_activeLocalMember;
-
-  /** temp data where received and to be sent data is put */
-  IsoSystemPkg_c mc_data;
 
   /** dynamic array of memberItems for handling
       of single member informations
@@ -622,9 +592,6 @@ private:
  * if more than one CAN BUS is used for IsoAgLib, an index must be given to select the wanted BUS
  */
   IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance = 0 );
-
-/** this typedef is only for some time to provide backward compatibility at API level */
-typedef IsoMonitor_c ISOMonitor_c;
 
 }
 #endif

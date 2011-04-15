@@ -260,9 +260,9 @@ private: // Private methods
   /** base function for assignment of element vars for copy constructor and operator= */
   void assignFromSource( const SetpointRemote_c& acrc_src );
   /** process a setpoint request for remote process data */
-  virtual void processRequest() const;
+  virtual void processRequest( const ProcessPkg_c& pkg ) const;
   /** process a setpoint set for remote process data */
-  virtual void processSet();
+  virtual void processSet( const ProcessPkg_c& pkg );
   /**
     clear the master flag without checking
     if this action is allowed

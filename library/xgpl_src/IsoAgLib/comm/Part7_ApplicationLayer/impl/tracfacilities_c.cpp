@@ -99,7 +99,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
     }
   }
 
-  bool TracFacilities_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver)
+  bool TracFacilities_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t )
   {
     // check if we are allowed to send a request for pgn
     if ( ! BaseCommon_c::check4ReqForPgn(aui32_pgn, apc_isoItemSender, apc_isoItemReceiver) ) return false;
@@ -115,23 +115,24 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
       @pre  sender of message is existent in monitor list
       @see  CanPkgExt_c::resolveSendingInformation()
     */
-  bool TracFacilities_c::processMsg()
+  bool TracFacilities_c::processMsg( const CanPkg_c& arc_data )
   {
+    CanPkgExt_c pkg( arc_data, getMultitonInst() );
     // there is no need to check if sender exist in the monitor list because this is already done
     // in CanPkgExt_c -> resolveSendingInformation
-    IsoName_c const& rcc_tempISOName = data().getISONameForSA();
+    IsoName_c const& rcc_tempISOName = pkg.getISONameForSA();
 
-    switch (data().isoPgn() & 0x3FF00LU)
+    switch (pkg.isoPgn() & 0x3FF00LU)
     {
       case TRACTOR_FACILITIES_PGN:
         if ( checkParseReceived (rcc_tempISOName) )
         { // sender is allowed to send
 
           for (uint8_t ui8_counter = 0;ui8_counter<sizeof(arrui8_facilitiesBitData)/sizeof(uint8_t);++ui8_counter)
-            arrui8_facilitiesBitData[ui8_counter] = data().getUint8Data(ui8_counter);
+            arrui8_facilitiesBitData[ui8_counter] = pkg.getUint8Data(ui8_counter);
 
           setSelectedDataSourceISOName (rcc_tempISOName);
-          setUpdateTime( data().time() );
+          setUpdateTime( pkg.time() );
         } else
         { // there is a sender conflict
           getILibErrInstance().registerError( iLibErr_c::BaseSenderConflict, iLibErr_c::Base );
@@ -151,20 +152,20 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
     IsoBus_c& c_can = getIsoBusInstance4Comm();
 
-    data().setISONameForSA( *getISOName() );
+    CanPkgExt_c pkg;
+    pkg.setISONameForSA( *getISOName() );
     setSelectedDataSourceISOName(*getISOName());
-    data().setIdentType(Ident_c::ExtendedIdent);
-    data().setIsoPri(3);
-    data().setLen(8);
+    pkg.setIsoPri(3);
+    pkg.setLen(8);
 
-    data().setIsoPgn(TRACTOR_FACILITIES_PGN);
+    pkg.setIsoPgn(TRACTOR_FACILITIES_PGN);
 
     for (uint8_t ui8_counter = 0;ui8_counter<sizeof(arrui8_facilitiesBitData)/sizeof(uint8_t);++ui8_counter)
-      data().setUint8Data(ui8_counter,arrui8_facilitiesBitData[ui8_counter]);
+      pkg.setUint8Data(ui8_counter,arrui8_facilitiesBitData[ui8_counter]);
 
     // CanIo_c::operator<< retreives the information with the help of CanPkg_c::getData
     // then it sends the data
-    c_can << data();
+    c_can << pkg;
   }
 
   void TracFacilities_c::setTractorClass(const IsoAgLib::IsoTecuClassFlag_t at_val)

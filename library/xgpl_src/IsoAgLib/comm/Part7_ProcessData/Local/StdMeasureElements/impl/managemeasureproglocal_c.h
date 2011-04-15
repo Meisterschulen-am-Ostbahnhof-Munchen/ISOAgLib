@@ -146,7 +146,7 @@ private:
   bool timeEvent( uint16_t *pui16_nextTimePeriod = NULL );
 
   /** process a measure prog message for local process data */
-  void processProg();
+  void processProg( const ProcessPkg_c& arc_data );
 
   /**
     check if specific measureprog exist
