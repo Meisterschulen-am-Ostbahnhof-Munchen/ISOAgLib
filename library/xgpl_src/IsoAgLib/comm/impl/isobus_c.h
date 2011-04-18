@@ -57,7 +57,7 @@ public:
   uint16_t getBusLoad() const { return getCanInstance4Comm().getBusLoad(); }
   #endif
 
-  uint8_t sendCanFreecnt() { return getCanInstance4Comm().sendCanFreecnt (Ident_c::ExtendedIdent); }
+  uint8_t sendCanFreecnt() { return getCanInstance4Comm().sendCanFreecnt(); }
 
   bool stopSendRetryOnErr() { return getCanInstance4Comm().stopSendRetryOnErr(); }
 

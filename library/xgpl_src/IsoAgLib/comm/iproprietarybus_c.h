@@ -79,8 +79,8 @@ class iProprietaryBus_c {
     @param ren_identType type of searched ident: standard 11bit or extended 29bit
     @return number of msgs which fit into send buffer
   */
-  uint8_t sendCanFreecnt(iIdent_c::identType_t ren_identType)
-  { return __IsoAgLib::getCanInstance4Prop().sendCanFreecnt(ren_identType); }
+  uint8_t sendCanFreecnt()
+  { return __IsoAgLib::getCanInstance4Prop().sendCanFreecnt(); }
 
   /**
     clear the send buffer
