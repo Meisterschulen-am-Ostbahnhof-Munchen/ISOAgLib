@@ -1,8 +1,7 @@
 /*
-  canpkgext_c.cpp: header for extended CanPkg_c object, which calls
-    data flag converting functions on assign operations
+  canpkgext_c.cpp: header for an ISO-supported CanPkg_c object
 
-  (C) Copyright 2009 - 2010 by OSB AG and developing partners
+  (C) Copyright 2009 - 2011 by OSB AG and developing partners
 
   See the repository-log for details on the authors and file-history.
   (Repository information can be found at <http://isoaglib.com/download>)
@@ -75,7 +74,7 @@ CanPkgExt_c::CanPkgExt_c( const CanPkg_c& arc_src, int ai_multitonInst )
     mt_msgState( MessageValid ) // note that this is done here in the body afterwards
 {
   mt_msgState = resolveReceivingInformation( ai_multitonInst );
-  isoaglib_assert( arc_src.identType() == CanPkg_c::ExtendedIdent ); 
+  isoaglib_assert( arc_src.identType() == Ident_c::ExtendedIdent ); 
 }
 
 

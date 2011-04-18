@@ -197,7 +197,7 @@ IsoBus_c::operator<<(CanPkgExt_c& acrc_src)
   if ( ! getCanInstance4Comm().isReady2Send() )
     return *this;
 
-  isoaglib_assert( arc_src.identType() == Ident_c::ExtendedIdent );
+  isoaglib_assert( acrc_src.identType() == Ident_c::ExtendedIdent );
 
   // check if source and destination address are valid
   if ( ! acrc_src.resolveSendingInformation( getMultitonInst() ) )

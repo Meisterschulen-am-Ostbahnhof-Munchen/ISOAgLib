@@ -22,25 +22,24 @@
 namespace __IsoAgLib {
 
 /**
-  Storing the informations of one CAN
-  message package. Implements some methods
-  for input and output of informations into
-  other objects and data structures.
-  @author Dipl.-Inform. Achim Spangler
+  Storing the information of one CAN message package.
+  Implements some methods for input and output of
+  information into other objects and data structures.
+
+  ATTENTION: The ==/!=/= operators do operate
+             on all 8 databytes!
 */
 class CanPkg_c {
 public:
-  /**
-    default constructor, which does nothing for the base class,
-    but can do something in derived classes
-  */
-  CanPkg_c();
-
-  /* copy constructor */
-  CanPkg_c( const CanPkg_c& arc_src );
-
-  /** virtual destructor, which can be overloaded in derived classes */
   virtual ~CanPkg_c();
+
+  CanPkg_c();
+  CanPkg_c( const CanPkg_c& arc_src );
+  CanPkg_c &operator=( const CanPkg_c & );
+
+  bool operator==(const CanPkg_c &) const;
+  bool operator!=(const CanPkg_c &) const;
+  uint8_t operator[](uint8_t aui8_pos) const {return mc_data[aui8_pos];}
 
   /**
     set ident for the telegram
@@ -83,7 +82,7 @@ public:
     deliver type of Ident_c: 11bit standard or 29bit extended
     @return: Ident_c::S or Ident_c::E
   */
-  __IsoAgLib::Ident_c::identType_t identType() {return mc_ident.identType();}
+  __IsoAgLib::Ident_c::identType_t identType() const {return mc_ident.identType();}
 
   /**
     deliver the ident
@@ -221,28 +220,6 @@ public:
     */
   void getDataToString( uint8_t aui8_positionOffset, uint8_t* pui8_targetData, uint8_t aui8_maxSize )
     {mc_data.getDataToString( aui8_positionOffset, pui8_targetData, aui8_maxSize );}
-
-  /**
-    compare for equality with other CANPkg
-    @param acrc_cmp reference to the to be compared CANPkg
-    @return true -> both CanPkg_c have the same data
-  */
-  bool operator==(const CanPkg_c& acrc_cmp) const;
-
-  /**
-    compare for difference to other CANPkg
-    @param acrc_cmp reference to the to be compared CANPkg
-    @return true -> both CanPkg_c have different data
-  */
-  bool operator!=(const CanPkg_c& acrc_cmp) const;
-
-
-  /**
-    simply deliver a uint8_t from a specific position with operator[]
-    @param aui8_pos position of dellivered uint8_t [0..7]
-    @return uint8_t balue in CAN data string at pos ab_pos
-  */
-  uint8_t operator[](uint8_t aui8_pos) const {return mc_data[aui8_pos];}
 
   /**
     set an uint8_t value at specified position in string
