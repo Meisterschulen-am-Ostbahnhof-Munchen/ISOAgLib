@@ -40,20 +40,24 @@ static tSystem t_biosextSysdata =
     {0,0,0,0,0,0,0,0},
   0,0};
 
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
+
 int16_t open_system()
 {
-  int16_t i16_result = open_c2c(&t_biosextSysdata);
+  const int16_t i16_result = open_c2c(&t_biosextSysdata);
 
-  return i16_result;
+  switch( i16_result )
+  {
+    case C_NOACT:
+    case C_BUSY:
+    case C_CHECKSUM:
+      return i16_result;
+    case C_DEFAULT:
+    case C_NO_ERR:
+      return HAL_NO_ERR;
+  }
+
+  return HAL_UNKNOWN_ERR;
 }
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
 
 // MSCHMIDT - I think there is a bug here...  
 // I think it should read:

@@ -26,43 +26,26 @@ namespace __HAL {
 
 static bool system_is_opened = false;
 
-/**
-  open the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
 int16_t open_system()
 {
-	int16_t i16_result = C_NO_ERR;
-	if( !system_is_opened )
-		{
-		tSystem t_biosextSysdata;
-		i16_result = open_micro(&t_biosextSysdata);
+  tSystem t_biosextSysdata;
+  const int16_t i16_result = open_micro( &t_biosextSysdata );
 
-		system_is_opened = true;
+  switch( i16_result )
+  {
+    case C_NOACT:
+    case C_BUSY:
+    case C_CHECKSUM:
+    case C_RANGE:
+    case C_RD_WR:
+      return i16_result;
+    case C_NO_ERR:
+      system_is_opened = true;
+      return HAL_NO_ERR;
+  }
 
-#if DEBUG_HAL
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "open_micro( &t_biosextSysdata ) returns " << i16_result << "\r";
-
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[64];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - open_micro() returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (int16_t) i16_result
-);
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-		}
-
-	return i16_result;
+  return HAL_UNKNOWN_ERR;
 }
-/**
-  close the system with system specific function call
-  @return error state (C_NO_ERR == o.k.)
-*/
 
 // MSCHMIDT - I think there is a bug here...  
 // I think it should read:
