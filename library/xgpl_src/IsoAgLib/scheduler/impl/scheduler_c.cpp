@@ -380,6 +380,12 @@ int32_t Scheduler_c::timeEvent( int32_t ai32_demandedExecEndScheduler )
     }
     #endif
 
+    // workaround for often&long idling applications (i.e. without ISOBUS and no(t much) CAN-reception
+    // so that the watchdog will be triggered regularly!
+    // NOTE: This will be rewritten anyway with the new Scheduler
+    //       that will have the Watchdog as a Task!
+    if (i32_idleTime > 100)
+      i32_idleTime = 100;
 
     ///return i32_idleTime to inform mainapplication when recall is needed;
     return i32_idleTime;
