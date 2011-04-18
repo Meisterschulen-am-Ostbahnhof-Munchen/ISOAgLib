@@ -47,14 +47,15 @@ class iIsoBus_c : private __IsoAgLib::IsoBus_c {
   }
 
   bool insertStdFilter( iCanCustomer_c& ar_customer,
-                             const IsoAgLib::iMaskFilter_c& arc_maskFilter,
-                             int ai_dlcForce,
-                             bool ab_reconfigImmediate ) {
-    return IsoBus_c::insertStdFilter (
+                        const IsoAgLib::iMaskFilter_c& arc_maskFilter,
+                        int ai_dlcForce,
+                        bool ab_reconfigImmediate )
+  {
+    return IsoBus_c::insertStdFilter(
         ar_customer,
         arc_maskFilter,
-        ab_reconfigImmediate,
-        static_cast<int8_t>(ai_dlcForce));
+        ai_dlcForce,
+        ab_reconfigImmediate);
   }
 
 

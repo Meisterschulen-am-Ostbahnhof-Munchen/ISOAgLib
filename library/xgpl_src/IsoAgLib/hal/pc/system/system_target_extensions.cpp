@@ -186,50 +186,14 @@ int16_t configWatchdog()
     return timeGetTime() - getStartupTime();
   }
 #else
-
-
  // use gettimeofday for native LINUX system
 int32_t getTime()
 {
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,0))
-  // sysconf(_SC_CLK_TCK) provides clock_t ticks per second
-  //  static const int64_t ci64_mesecPerClock = 1000 / sysconf(_SC_CLK_TCK);
-  static struct timeval now;
-  gettimeofday(&now, 0);
-  // fetch RAW - non normalized - time in scaling of gettimeofday()
-  int64_t i64_time4Timeofday = int64_t(now.tv_sec)*1000LL + int64_t(now.tv_usec/1000);
-
-  // store offset between gettimeofday() and system start
-  static int64_t si64_systemStart4Timeofday = i64_time4Timeofday;
-  // static store delta between times() normalization and gettimeofday() norm
-  static int64_t si64_deltaStartTimes = i64_time4Timeofday - int64_t(getStartUpTime()) * msecPerClock;
-
-  // derive change of the normalization delta
-  const int64_t ci64_deltaChange = i64_time4Timeofday - int64_t(times(NULL)) * msecPerClock - si64_deltaStartTimes;
-  if ( ( ci64_deltaChange >= 1000 ) || ( ci64_deltaChange <= -1000 ) )
-  { // user changed the system clock inbetween
-    si64_deltaStartTimes += ci64_deltaChange;
-    si64_systemStart4Timeofday += ci64_deltaChange;
-  }
-
-  // now calculate the real time in [msec] since startup
-  i64_time4Timeofday -= si64_systemStart4Timeofday;
-  // now derive the well define overflows
-  while ( i64_time4Timeofday > 0x7FFFFFFFLL )
-  {
-    i64_time4Timeofday         -= 0xFFFFFFFF;
-    si64_systemStart4Timeofday += 0xFFFFFFFF;
-    si64_deltaStartTimes       += 0xFFFFFFFF;
-  }
-
-  return i64_time4Timeofday;
-#else
   /** linux-2.6 */
   static timespec ts;
   clock_gettime(CLOCK_MONOTONIC, &ts);
   const int32_t ci_now = int32_t(ts.tv_sec)*1000 + int32_t(ts.tv_nsec/1000000);
   return ci_now - getStartupTime();
-#endif
 }
 #endif
 
@@ -361,5 +325,15 @@ int16_t KeyGetByte(uint8_t *p)
     return 1;
   #endif
 }
+
+void sleep_max_ms( uint32_t ms )
+{
+#ifdef WIN32
+ Sleep( ms );
+#else
+ usleep ( ms * 1000 );
+#endif
+}
+
 
 } // end namespace __HAL

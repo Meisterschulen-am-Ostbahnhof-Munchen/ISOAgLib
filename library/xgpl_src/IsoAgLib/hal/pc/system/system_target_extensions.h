@@ -79,6 +79,8 @@ int16_t  getOn_offSwitch(void);            /* the evaluation of the on/off-switc
 void setRelais(boolean bitState);       /* switch relais on or off*/
 int16_t KeyGetByte(uint8_t *p);
 
+void sleep_max_ms( uint32_t ms );
+
 /*@}*/
 
 } //end namespace __HAL

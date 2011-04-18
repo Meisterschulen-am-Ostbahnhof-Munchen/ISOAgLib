@@ -68,22 +68,26 @@ public:
 
   FilterBox_c* insertFilter( CanCustomer_c& ar_customer,
                              const IsoAgLib::iMaskFilter_c& arc_maskFilter,
-                             bool ab_reconfigImmediate = true,
-                             int8_t ai8_dlcForce = -1 ) {
-    return getCanInstance4Comm().insertFilter (ar_customer, IsoAgLib::iMaskFilterType_c(  arc_maskFilter, IsoAgLib::iIdent_c::ExtendedIdent ), ab_reconfigImmediate,
-      ai8_dlcForce);
+                             int ai_dlcForce,
+                             bool ab_reconfigImmediate)
+  {
+    return getCanInstance4Comm().insertFilter(
+      ar_customer,
+      IsoAgLib::iMaskFilterType_c( arc_maskFilter, IsoAgLib::iIdent_c::ExtendedIdent ),
+      ai_dlcForce,
+      ab_reconfigImmediate);
   }
 
-
   bool insertStdFilter( CanCustomer_c& ar_customer,
-                             const IsoAgLib::iMaskFilter_c& arc_maskFilter,
-                             int ai_dlcForce,
-                             bool ab_reconfigImmediate ) {
-    return ( getCanInstance4Comm().insertFilter (
+                        const IsoAgLib::iMaskFilter_c& arc_maskFilter,
+                        int ai_dlcForce,
+                        bool ab_reconfigImmediate )
+  {
+    return ( getCanInstance4Comm().insertFilter(
         ar_customer,
         IsoAgLib::iMaskFilterType_c(  arc_maskFilter, IsoAgLib::iIdent_c::StandardIdent ),
-        ab_reconfigImmediate,
-        static_cast<int8_t>(ai_dlcForce)) != NULL );
+        ai_dlcForce,
+        ab_reconfigImmediate) != NULL );
   }
 
 

@@ -22,7 +22,7 @@
    function, the module targetExtensions can be used to implement
    the needed activity.
 */
-/* ************************************************************ */
+
 #ifndef _HAL_DJ1_SYSTEM_H_
 #define _HAL_DJ1_SYSTEM_H_
 
@@ -30,8 +30,6 @@
 #include <cstring>
 #include <cstdlib>
 
-#include "../config.h"
-#include "../typedef.h"
 #include "../errcodes.h"
 
 #include <IsoAgLib/util/impl/util_funcs.h>
@@ -46,22 +44,10 @@ namespace __HAL
    }
 }
 
-/**
-   namespace with layer of inline (cost NO overhead -> compiler replaces
-   inline function with call to orig BIOS function)
-   functions between all IsoAgLib calls for BIOS and the corresponding BIOS functions
-   --> simply replace the call to the corresponding BIOS function in this header
-       for adaptation to new platform
- */
+
 namespace HAL
 {
-  /* *********************************** */
-  /** \name Global System BIOS functions */
-  /**
-    open the system with system specific function call
-    @return error state (HAL_NO_ERR == o.k.)
-  */
-  inline int16_t  open_system ( void )
+  inline int16_t open_system()
   {
     __HAL::DjBios_SysOpen();
     __HAL::DjBios_AnalogInit(10); /* Allow HAL::getAdcUbat() to work */
@@ -69,31 +55,19 @@ namespace HAL
   };
 
 
-  /**
-    close the system with system specific function call
-    @return error state (HAL_NO_ERR == o.k.)
-  */
-  inline int16_t  closeSystem ( void )
+  inline int16_t closeSystem()
   {
     __HAL::DjBios_SysClose();
     return ( HAL_NO_ERR );
   };
 
 
-  /** check if open_System() has already been called */
-  inline bool isSystemOpened ( void )
+  inline bool isSystemOpened()
   {
     return ( __HAL::DjBios_SysIsOpen() == __HAL::BIOS_YES );
   };
 
 
-  /**
-    configure the watchdog of the system with the
-    settings of configC2C
-    @return error state (HAL_NO_ERR == o.k.)
-      or DATA_CHANGED on new values -> need call of wdReset to use new settings
-    @see wdReset
-  */
   inline int16_t configWatchdog()
   {
 //jtm    return __HAL::configWatchdog();
@@ -101,39 +75,25 @@ namespace HAL
   };
 
 
-  /**
-    reset the watchdog to use new configured watchdog settings
-  */
-  inline int16_t  wdReset ( void )
+  inline int16_t wdReset()
   {
     return ( HAL_NO_ERR );
 //jtm    return __HAL::reset_wd();
   };
 
 
-  /**
-    trigger the watchdog
-  */
-  inline void wdTriggern ( void )
+  inline void wdTriggern()
   {
     __HAL::DjBios_TaskWDSysService();
   };
 
 
-  /**
-    get the system time in [ms]
-    @return [ms] since start of the system
-  */
-  inline int32_t getTime(void)
+  inline int32_t getTime()
   {
     return ( (int32_t)__HAL::DjBios_TimeGetNow() );
   };
 
 
-
-  /**
-    getSerialNr - Get Serial Number, as a long integer
-  */
   inline int32_t getSerialNr ( int16_t* pi16_errCode = NULL )
   {
     int32_t SerNum;
@@ -173,9 +133,6 @@ namespace HAL
   };
 
 
-  /**
-    getSnr - Get Serial Number, an array of up to 6 characters
-  */
   inline int16_t getSnr(uint8_t *snrDat)
   {
     int16_t retval = HAL_UNKNOWN_ERR;
@@ -200,9 +157,6 @@ namespace HAL
   }
 
 
-  /**
-    Get Local ID
-  */
   inline int16_t getLokalId(uint8_t *Dat)
   {
 //jtm      int16_t retval = __HAL::get_lokal_id(Dat);
@@ -227,10 +181,8 @@ namespace HAL
     return ( 0 );
   }
 
-  /**
-    start the Task Timer -> time between calls of Task Manager
-  */
-  inline void startTaskTimer ( void )
+
+  inline void startTaskTimer()
   {
 //jtm      __HAL::start_task_timer ( T_TASK_BASIC );
 //jtm
@@ -247,18 +199,9 @@ namespace HAL
 //jtm  );
 //jtm  HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
 //jtm  #endif
-
   }
 
-  /**
-    init the Task Call
-  This function permits cyclic and/or delayed calls of user functions. If 0 is tranferred as parameter
-  for wInterval, the function call will occur only once. (For starting the tasks start task timer
-  (word wBasicTick) has to be queried.)
-  The ordering of the task into the interrupt system uses the transfer parameter wHandle. If a zero-pointer
-  is used in the user function parameter, the function will stop when the handle is called.
-  The maximum number of tasks is limited to 4.
-  */
+
   inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
   {
 //jtm      int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
@@ -302,78 +245,54 @@ namespace HAL
   };
 
 
-
-  /**
-    get the main power voltage
-    @return voltage of power [mV]
-  */
-  inline int16_t  getAdcUbat( void )
+  inline int16_t getAdcUbat()
   {
     return ( __HAL::DjBios_AnalogGetVoltsFilter(10) );
   };
 
 
 
-  /**
-    get the voltage of the external reference 8.5Volt for work of external sensors
-    @return voltage at external reference [mV]
-  */
-  inline int16_t  getAdc_u85( void )
+  inline int16_t getAdc_u85()
   {
     return 8500;
   };
 
 
-
-  /**
-    check if Ignition Sense/CAN_EN is active
-      (if NO_CAN_EN_CHECK is defined (in hal\dj1\config.h) this function return
-       always return ON)
-    @return ON(1) or OFF(0)
-  */
-  inline int16_t  getOn_offSwitch ( void )
+  inline int16_t getOn_offSwitch()
   {
 #if defined(NO_CAN_EN_CHECK)
     return ON
 #else
     return ( (__HAL::DjBios_IgnOn() == __HAL::BIOS_TRUE) ? 1 : 0 );
 #endif
-
   };
 
 
-  /**
-    activate the power selfholding to perform system
-    stop (f.e. store values) actions after loss of CAN_EN
-  */
-  inline void stayingAlive ( void )
+  inline void stayingAlive()
   {
     __HAL::DjBios_PowerHold ( __HAL::BIOS_TRUE );
   };
 
 
-  /**
-    shut off the whole system (set power down)
-  */
-  inline void powerDown ( void )
+  inline void powerDown()
   {
     __HAL::DjBios_PowerHold ( __HAL::BIOS_FALSE );
   };
 
 
-  /**
-    switch relais on or off
-    @param bitState true -> Relais ON
-  */
-  inline void setRelais(bool bitState)
+  inline void setRelais( bool bitState )
   {
     /* ON during system Initialization and off during close */
     __HAL::DjBios_PowerHold ( bitState ? __HAL::BIOS_TRUE: __HAL::BIOS_FALSE );
   };
-
-
-/*@}*/
+  
+   
+  inline void sleep_max_ms( uint32_t ms )
+  {
+    // currently no sleeping on Dj1 hardware, but that's fine!
+  }
 }
+
 
 #ifdef USE_MUTUAL_EXCLUSION
 #include <IsoAgLib/hal/generic_utils/system/mutex_emulated.h>

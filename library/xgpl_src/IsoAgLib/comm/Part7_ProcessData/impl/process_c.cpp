@@ -77,7 +77,7 @@ Process_c::init()
   const uint32_t cui32_filter = (((PROCESS_DATA_PGN) | 0xFF) << 8);
   if (!getIsoBusInstance4Comm().existFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter) ) )
   { // create FilterBox
-    getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), true);
+    getIsoBusInstance4Comm().insertFilter( mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), cui32_filter ), 8, true);
   }
 
   //  start with 200 msec timer period

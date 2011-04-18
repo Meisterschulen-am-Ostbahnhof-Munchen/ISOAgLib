@@ -77,7 +77,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAgLib
     { // check if needed receive filters for ISO are active
       setFilterCreated();
 
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, HITCH_PTO_COMMANDS << 8), true);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFFFLU << 8, HITCH_PTO_COMMANDS << 8), 8, true);
     }
   }
 

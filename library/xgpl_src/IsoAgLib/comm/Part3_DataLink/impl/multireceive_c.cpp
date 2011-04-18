@@ -100,7 +100,7 @@ MultiReceiveClientWrapper_s::start (CanCustomer_c& apc_fpCustomer)
   if (mb_isFastPacket)
   { /// Fast-Packet additions
     if (!getIsoBusInstance4Comm().existFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( ( mui32_pgnMask << 8), (mui32_pgn << 8 ))))
-      getIsoBusInstance4Comm().insertFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( (mui32_pgnMask << 8), (mui32_pgn << 8 ) ), true, 8);
+      getIsoBusInstance4Comm().insertFilter (apc_fpCustomer, IsoAgLib::iMaskFilter_c( (mui32_pgnMask << 8), (mui32_pgn << 8 ) ), 8, true);
   }
   #else
   (void)apc_fpCustomer;
@@ -785,7 +785,7 @@ MultiReceive_c::createStream (const ReceiveStreamIdentifier_c &arcc_streamIdent,
 {
   // Assumption/Precondition: Stream not there, so create and add it without checking!
 
-  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA));
+  mlist_streams.push_back (DEF_Stream_c_IMPL (arcc_streamIdent, aui32_msgSize, ai_time MULTITON_INST_WITH_COMMA , false));
   mlist_streams.back().immediateInitAfterConstruction();
 
   // notify the Scheduler that we want to a 100ms timeEvent now (as we have at least one stream!)
@@ -1207,10 +1207,10 @@ MultiReceive_c::init()
   getIsoMonitorInstance4Comm().registerControlFunctionStateHandler( mt_handler );
 
   // insert receive filters for broadcasted TP
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), false, 8);
-  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), false, 8);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_CONN_MANAGE_PGN  |0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), ( TP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_CONN_MANAGE_PGN  |0xFF)<<8 ), 8, false);
+  getIsoBusInstance4Comm().insertFilter(mt_customer, IsoAgLib::iMaskFilter_c( (0x3FFFF00UL), (ETP_DATA_TRANSFER_PGN|0xFF)<<8 ), 8, false);
   getIsoBusInstance4Comm().reconfigureMsgObj();
 
   setTimePeriod (5000); // nothing to do per default!

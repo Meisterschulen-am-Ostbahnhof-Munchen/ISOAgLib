@@ -81,7 +81,7 @@ namespace __IsoAgLib { // Begin Namespace __IsoAglib
 
       // create FilterBox_c for PGN GUIDANCE_MACHINE_STATUS, PF 254 - mask for DP, PF and PS
       // mask: (0x3FF00 << 8) filter: (GUIDANCE_MACHINE_STATUS << 8)
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, GUIDANCE_MACHINE_STATUS << 8), true);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FF00LU << 8, GUIDANCE_MACHINE_STATUS << 8), 8, true);
     }
   }
 

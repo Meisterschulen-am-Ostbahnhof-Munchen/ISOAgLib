@@ -258,8 +258,8 @@ FilterBox_c *
 CanIo_c::insertFilter(
   __IsoAgLib::CanCustomer_c & ar_customer,
   const IsoAgLib::iMaskFilterType_c& arc_filterpair,
-  bool ab_reconfigImmediate,
-  int8_t ai8_dlcForce)
+  int ai_dlcForce,
+  bool ab_reconfigImmediate)
 {
 #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION
 INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::insertFilter " << INTERNAL_DEBUG_DEVICE_ENDL;
@@ -284,7 +284,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
     INTERNAL_DEBUG_DEVICE << "mask: " << arc_filterpair.getMask() << " filter: " << arc_filterpair.getFilter() << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
     #endif
-    tempFilterBox_c->insertCustomer (&ar_customer, ai8_dlcForce);
+    tempFilterBox_c->insertCustomer (&ar_customer, ai_dlcForce);
     //do not insert new filterbox because it already exists
     return tempFilterBox_c;
   }
@@ -295,7 +295,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   mc_tempFilterBox.clearData();
 
   // define temp FilterBox_c with new values
-  mc_tempFilterBox.set( arc_filterpair, &ar_customer, ai8_dlcForce);
+  mc_tempFilterBox.set( arc_filterpair, &ar_customer, ai_dlcForce);
 
   // insert new FilterBox_c and exit function if no dyn array growth is reported
   const uint8_t b_oldSize = cntFilter();
@@ -313,7 +313,7 @@ INTERNAL_DEBUG_DEVICE << "-----------------------------------start CanIo_c::inse
   {
     if ( m_arrFilterBox[ui8_overwritenFilterBoxIndex].isIdle() )
     { //if idle filterbox found overwrite it with the new filterbox
-      m_arrFilterBox[ui8_overwritenFilterBoxIndex].set(arc_filterpair, &ar_customer, ai8_dlcForce);
+      m_arrFilterBox[ui8_overwritenFilterBoxIndex].set(arc_filterpair, &ar_customer, ai_dlcForce);
 
       m_arrFilterBox[ui8_overwritenFilterBoxIndex].setFbVecIdx(ui8_overwritenFilterBoxIndex);
 
@@ -793,15 +793,17 @@ CanIo_c::operator<<( CanPkg_c& acrc_src )
 
   // wait till Msg can be placed in send buffer
   while ( HAL::can_stateMsgobjFreecnt( mui8_busNumber, ui8_sendObjNr ) < 1 )
-  {  // perform wait loop
-    // trigger the watchdog
+  { // perform wait loop
     HAL::wdTriggern();
+
+    // don't do it with busy waiting, yield 1ms, less or not at all!
+    HAL::sleep_max_ms( 1 );
 
     /**
       * redmine ticket 69.
       * we wait for CONFIG_CAN_BLOCK_TIME ms if the send-queue is opening for this one package.
-      * if we cannot send out the message within 10 ms we assume that the bus is
-      * in an error situation (bus-off or bus-pasive) and no messages can be sent out.
+      * if we cannot send out the message within CONFIG_CAN_BLOCK_TIME ms we assume that the
+      * bus is in an error situation (bus-off or bus-passive) and no messages can be sent out.
       * In that case we clear the send buffer and try to insert the most recent message.
       **/
     if ( ( HAL::getTime() - i32_now ) > CONFIG_CAN_BLOCK_TIME )
@@ -818,7 +820,6 @@ CanIo_c::operator<<( CanPkg_c& acrc_src )
       break;
     }
   }
-  // it's time to trigger the watchdog
   HAL::wdTriggern();
 
   #if DEBUG_CAN_FILTERBOX_MSGOBJ_RELATION

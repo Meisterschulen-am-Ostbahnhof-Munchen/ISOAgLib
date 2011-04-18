@@ -202,8 +202,8 @@ class CanIo_c : public Subsystem_c
 
   FilterBox_c* insertFilter(__IsoAgLib::CanCustomer_c& ar_customer,
                             const IsoAgLib::iMaskFilterType_c& arc_filterpair,
-                            bool ab_reconfigImmediate = true,
-                            int8_t ai8_dlcForce = -1);
+                            int ai_dlcForce,
+                            bool ab_reconfigImmediate);
 
   /** reconfigure the MsgObj after insert/delete of FilterBox */
   bool reconfigureMsgObj();

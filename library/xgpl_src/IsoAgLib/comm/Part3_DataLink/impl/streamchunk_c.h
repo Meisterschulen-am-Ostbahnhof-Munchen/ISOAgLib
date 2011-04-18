@@ -32,7 +32,7 @@ namespace __IsoAgLib {
 class StreamChunk_c : public Stream_c
 {
 public:
-  StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize MULTITON_INST_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait=false);
+  StreamChunk_c (const ReceiveStreamIdentifier_c& ac_rsi, uint32_t aui32_msgSize, int32_t ai32_creationTime MULTITON_INST_PARAMETER_DEF_WITH_COMMA , bool b_skipCtsAwait);
 
   StreamChunk_c (const StreamChunk_c& acrc_src);
 

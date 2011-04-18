@@ -130,12 +130,14 @@ class iProprietaryBus_c {
   bool insertFilter(
     IsoAgLib::iCanCustomer_c& ar_customer,
     IsoAgLib::iMaskFilterType_c acrc_filterMask,
-    bool ab_reconfigImmediate = true)
-  { /// @todo Add DLC force here, too.
-    return NULL != __IsoAgLib::getCanInstance4Prop().insertFilter(
+    int ai_dlcForce,
+    bool ab_reconfigImmediate)
+  {
+    return ( __IsoAgLib::getCanInstance4Prop().insertFilter(
         ar_customer,
         acrc_filterMask,
-        ab_reconfigImmediate);
+        ai_dlcForce,
+        ab_reconfigImmediate) != NULL);
   }
 
   /**

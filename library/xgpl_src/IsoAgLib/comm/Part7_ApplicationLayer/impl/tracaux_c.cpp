@@ -451,9 +451,9 @@ namespace __IsoAgLib {
     { // check if needed receive filters for ISO are active
       setFilterCreated();
       // insert Filter now with 0x3FFF0 so that all 16 AUX_VALVEs are registered at once!
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_ESTIMATED_FLOW << 8), false);
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_MEASURED_FLOW << 8), false);
-      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_COMMAND << 8 ), true);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_ESTIMATED_FLOW << 8), 8, false);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_MEASURED_FLOW << 8), 8, false);
+      c_can.insertFilter(*this, IsoAgLib::iMaskFilter_c( 0x3FFF0 << 8, AUX_VALVE_0_COMMAND << 8 ), 8, true);
     }
   }
 
