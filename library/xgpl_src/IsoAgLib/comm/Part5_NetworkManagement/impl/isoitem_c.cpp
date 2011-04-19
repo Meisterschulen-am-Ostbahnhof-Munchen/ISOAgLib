@@ -309,7 +309,7 @@ bool IsoItem_c::timeEvent( void )
     }
     else
     { // no adress claim request sent till now
-      getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true );
+      getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( true, NULL );
 
       if (mpc_identItem)
         mpc_identItem->updateLastIsoSaRequestForThisItem();

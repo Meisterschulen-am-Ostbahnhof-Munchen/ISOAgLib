@@ -247,7 +247,7 @@ IdentItem_c::timeEventPreAddressClaim( void )
 
     if (mpc_isoItem != NULL)
     {
-      bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress();
+      bool const cb_sent = getIsoMonitorInstance4Comm().sendRequestForClaimedAddress( false, NULL );
       if (cb_sent)
         updateLastIsoSaRequestForThisItem();
 

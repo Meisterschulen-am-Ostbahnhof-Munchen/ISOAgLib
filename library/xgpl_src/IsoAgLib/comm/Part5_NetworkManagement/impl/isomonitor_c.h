@@ -366,7 +366,7 @@ public:
     @param ab_force false -> send request only if no request was detected until now
     @return true -> request was sent
    */
-  bool sendRequestForClaimedAddress( bool ab_force = false );
+  bool sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender );
 
   /** get the Xth slave of the master isoItem
     @param index tells which slave of the working set to get

@@ -244,10 +244,19 @@ bool IsoMonitor_c::timeEvent( void )
 #if CONFIG_ISO_ITEM_MAX_AGE > 0
   // the following activities are optional for cleanup
   // --> do NOT execute them, if execution time is limited
-  if ( getAvailableExecTime() == 0 ) return false;
+  if ( getAvailableExecTime() == 0 )
+	return false;
 
-  if ( lastIsoSaRequest() == -1) return true;
-  else if ( existActiveLocalIsoMember() )
+  if ( lastIsoSaRequest() == -1)
+	return true;
+  
+  IsoItem_c *someActiveLocalMember = NULL;
+  if ( existActiveLocalIsoMember() )
+  { // store some active local member for later use below...
+    someActiveLocalMember = &getActiveLocalIsoMember();
+  }
+
+  if (someActiveLocalMember)
   { // we could send the next SA request
     const int32_t ci32_timePeriod = SA_REQUEST_PERIOD_MSEC
         + ( ( getActiveLocalIsoMember().nr() % 0x80 ) * 1000 );
@@ -257,7 +266,7 @@ bool IsoMonitor_c::timeEvent( void )
     // ==> MAX INTERVAL is (SA_REQUEST_PERIOD_MSEC + (0xFF % 0x80) ) == ( SA_REQUEST_PERIOD_MSEC + 0x7F )
     if ( ( HAL::getTime() - lastIsoSaRequest() ) > ci32_timePeriod )
     { // it's time for the next SA request in case we have already one
-      sendRequestForClaimedAddress( true );
+      sendRequestForClaimedAddress( true, someActiveLocalMember );
     }
   }
 
@@ -308,7 +317,7 @@ bool IsoMonitor_c::timeEvent( void )
     } // for
     if ( b_requestAdrClaim )
     { // at least one node needs an additional adr claim
-      sendRequestForClaimedAddress( true );
+      sendRequestForClaimedAddress( true, someActiveLocalMember );
     }
   } // if
   #endif
@@ -1012,55 +1021,34 @@ uint8_t IsoMonitor_c::unifyIsoSa(const IsoItem_c* apc_isoItem, bool ab_resolveCo
 }
 
 
-/** trigger a request for claimed addreses
-  @pre IsoBus is properly initialized.
-  @param ab_force false -> send request only if no request was detected until now
-  @return true -> request was sent
-  */
-bool IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force )
+bool
+IsoMonitor_c::sendRequestForClaimedAddress( bool ab_force, IsoItem_c *sender )
 { // trigger an initial request for claimed address
   // ( only if no request was detected )
   if ( ( lastIsoSaRequest() != -1 ) && ( ! ab_force ) )
   { // at least one request was already detected
     return false;
   }
-  bool b_sendOwnSa = false;
-  // now it's needed to send
-  const int32_t i32_time = HAL::getTime();
-
-//  getRs232Instance() << "_time in sendReq4AdrCl: " << HAL::getTime() <<"_";
-
   CanPkgExt_c c_data;
 
   c_data.setIsoPri(6);
   c_data.setIsoPgn(REQUEST_PGN_MSG_PGN);
   c_data.setIsoPs(255); // global request
-  if ( existActiveLocalIsoMember() )
-  { // use the SA of the already active node
-    c_data.setMonitorItemForSA( &getActiveLocalIsoMember() );
-    b_sendOwnSa = true;
-  }
+  if ( sender )
+    c_data.setMonitorItemForSA( sender );
   else
-  { // no local ident has claimed an adress so far
-    c_data.setIsoSa(254); // special flag for "no SA yet"
-  }
-  // built request data string
-//  uint8_t pb_requestString[4];
-  c_data.setUint32Data( 0, ADDRESS_CLAIM_PGN );
+    c_data.setIsoSa( 0xFE );
   c_data.setLen(3);
-  // now IsoSystemPkg_c has right data -> send
+  c_data.setUint32Data( 0, ADDRESS_CLAIM_PGN );
   getIsoBusInstance4Comm() << c_data;
-  // store adress claim request time
-  setLastIsoSaRequest(i32_time);
 
-  // now send own SA in case at least one local ident has yet claimed adress
-  if (b_sendOwnSa)
+  setLastIsoSaRequest( HAL::getTime() );
+
+  // now send own local SAs in case at least one local ident has claimed adress
+  if ( existActiveLocalIsoMember() )
   {
-    #if DEBUG_ISOMONITOR
-    INTERNAL_DEBUG_DEVICE << "Send checking SA request (sendRequestForClaimedAddress())" << INTERNAL_DEBUG_DEVICE_ENDL;
-    #endif
     const uint8_t cui8_localCnt = localIsoMemberCnt();
-    for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ui8_ind++ )
+    for ( uint8_t ui8_ind = 0; ui8_ind < cui8_localCnt; ++ui8_ind )
     { // the function IsoItem_c::sendSaClaim() checks if this item is local and has already claimed a SA
       localIsoMemberInd( ui8_ind ).sendSaClaim();
     }
@@ -1462,7 +1450,7 @@ void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
   mc_serviceTool = acrc_serviceTool;
   if ( mc_serviceTool.isUnspecified() )
   { // back to normal operation --> trigger send of Req4SaClaim
-    sendRequestForClaimedAddress( true );
+    sendRequestForClaimedAddress( true, NULL );
   }
   else
   { // switch from normal operation to diagnostic mode
