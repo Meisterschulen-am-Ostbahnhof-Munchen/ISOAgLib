@@ -76,7 +76,7 @@ CanPkg_c::getData(
   uint32_t& rt_ident,
   uint8_t& rui8_identType,
   uint8_t& rb_dlcTarget,
-  uint8_t* pb_dataTarget)
+  uint8_t* pb_dataTarget) const
 {
   rt_ident = ident();
   rui8_identType = identType();

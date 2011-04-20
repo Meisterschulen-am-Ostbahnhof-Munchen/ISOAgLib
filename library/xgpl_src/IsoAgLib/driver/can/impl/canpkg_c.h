@@ -106,7 +106,7 @@ public:
   const Flexible8ByteString_c* getDataUnionConst() const { return &mc_data;}
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
-  const uint8_t* getUint8DataConstPointer( uint8_t aui8_positionOffset )
+  const uint8_t* getUint8DataConstPointer( uint8_t aui8_positionOffset ) const
     { return mc_data.getUint8DataConstPointer( aui8_positionOffset );}
 
   /** retrieve a raw const pointer to uint8_t data string */
@@ -205,20 +205,20 @@ public:
     @param pb_dataTarget pointer to the data string of the target
   */
   void getData(uint32_t& rt_ident, uint8_t& rui8_identType,
-                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget);
+                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget) const;
 
   /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the pointed array must be at least 8 byte in size.
       This function copies as many byte as are defined by mui8_len.
     */
-  void getDataToString( uint8_t* pui8_targetData )
+  void getDataToString( uint8_t* pui8_targetData ) const
     { mc_data.getDataToString( pui8_targetData, mui8_len  ); }
 
   /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the amount of copied data can be restricted by the last parameter.
       The first parameter defines the index of the first copied data byte.
     */
-  void getDataToString( uint8_t aui8_positionOffset, uint8_t* pui8_targetData, uint8_t aui8_maxSize )
+  void getDataToString( uint8_t aui8_positionOffset, uint8_t* pui8_targetData, uint8_t aui8_maxSize ) const
     {mc_data.getDataToString( aui8_positionOffset, pui8_targetData, aui8_maxSize );}
 
   /**

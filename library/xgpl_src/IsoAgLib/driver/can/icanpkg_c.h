@@ -65,13 +65,13 @@ public:
     deliver type of Ident_c: 11bit standard or 29bit extended
     @return: Ident_c::S or Ident_c::E
   */
-  iIdent_c::identType_t identType() { return CanPkg_c::identType(); }
+  iIdent_c::identType_t identType() const { return CanPkg_c::identType(); }
 
   /**
     deliver the ident
     @return ident setting as MASK_TYPE
   */
-  MASK_TYPE ident() { return CanPkg_c::ident(); }
+  MASK_TYPE ident() const { return CanPkg_c::ident(); }
 
   /**
     deliver the uint8_t value of ident at wanted position
@@ -80,20 +80,20 @@ public:
     @param ab_pos
     @return ident value
   */
-  MASK_TYPE ident(uint8_t ab_pos) { return CanPkg_c::ident(ab_pos); }
+  MASK_TYPE ident(uint8_t ab_pos) const { return CanPkg_c::ident(ab_pos); }
 
   /** retrieve CAN data bytes represented by pointer to Union8ByteString_u */
   __IsoAgLib::Flexible8ByteString_c* getDataUnion() { return CanPkg_c::getDataUnion(); }
 
   /** retrieve CAN data bytes represented by CONST pointer to Union8ByteString_u */
-  const __IsoAgLib::Flexible8ByteString_c* getDataUnionConst() { return CanPkg_c::getDataUnionConst(); }
+  const __IsoAgLib::Flexible8ByteString_c* getDataUnionConst() const { return CanPkg_c::getDataUnionConst(); }
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
-  const uint8_t* getUint8DataConstPointer( uint8_t aui8_positionOffset )
+  const uint8_t* getUint8DataConstPointer( uint8_t aui8_positionOffset ) const
     { return CanPkg_c::getUint8DataConstPointer (aui8_positionOffset); }
 
   /** retrieve a raw const pointer to uint8_t data string */
-  const uint8_t* getUint8DataConstPointer() { return CanPkg_c::getUint8DataConstPointer();}
+  const uint8_t* getUint8DataConstPointer() const { return CanPkg_c::getUint8DataConstPointer();}
 
   /** retrieve a raw const pointer to uint8_t data string from given offset position onwards */
   uint8_t* getUint8DataPointer (uint8_t aui8_positionOffset)
@@ -139,7 +139,7 @@ public:
     { CanPkg_c::setDataUnion(aui8_ind, apc_data); }
 
   /** retrieve len of last received CAN message */
-  uint8_t getLen( void ) { return CanPkg_c::getLen(); }
+  uint8_t getLen( void ) const { return CanPkg_c::getLen(); }
 
   /**
     set the data len of CAN pkg (if ab_val is greater than 8, 8 is stored)
@@ -157,7 +157,7 @@ public:
     deliver time
     @return timestamp of the CAN telegram in [msec.] since system start
   */
-  int32_t time() { return CanPkg_c::time(); }
+  int32_t time() const { return CanPkg_c::time(); }
 
   /**
     set complete CAN msg with one function call
@@ -192,21 +192,21 @@ public:
     @param pb_dataTarget pointer to the data string of the target
   */
   virtual void getData(uint32_t& rt_ident, uint8_t& rui8_identType,
-                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget)
+                       uint8_t& rb_dlcTarget, uint8_t* pb_dataTarget) const
     { CanPkg_c::getData (rt_ident, rui8_identType, rb_dlcTarget, pb_dataTarget); }
 
   /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the pointed array must be at least 8 byte in size.
       This function copies as many byte as are defined by msui8_len.
     */
-  void getDataToString( uint8_t* pui8_targetData )
+  void getDataToString( uint8_t* pui8_targetData ) const
     { CanPkg_c::getDataToString (pui8_targetData); }
 
   /** copy the data bytes from the CanPkg_c to the given uint8_t* pointer.
       the amount of copied data can be restricted by the last parameter.
       The first parameter defines the index of the first copied data byte.
     */
-  void getDataToString( uint8_t aui8_positionOffset, uint8_t* pui8_targetData, uint8_t aui8_maxSize )
+  void getDataToString( uint8_t aui8_positionOffset, uint8_t* pui8_targetData, uint8_t aui8_maxSize ) const
     { CanPkg_c::getDataToString (aui8_positionOffset, pui8_targetData, aui8_maxSize); }
 
   /**
