@@ -119,6 +119,7 @@ status_le1() { [ $? -le 1 ]; }
 #
 # + PRJ_ISO11783=1 ( select ISO 11783, default not even ISO for internal CAN comm only )
 # + PRJ_ISO_TERMINAL ( specify if ISO virtual terminal is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
+# + PRJ_ISO_TASKCONTROLLER_CLIENT ( specify if ISO task controller client is wanted; default 0; only possible if PRJ_ISO11783=1 -> error message if not )
 # + PRJ_BASE ( specify if Base data - main tractor information as PGN or LBS Base message - is wanted; default 0 )
 # + PRJ_TRACTOR_GENERAL (only incorporate parts from BASE that provide tractor hitch and RPM information)
 # + PRJ_TRACTOR_MOVE (only incorporate parts from BASE that provide tractor distance and speed information)
@@ -129,9 +130,6 @@ status_le1() { [ $? -le 1 ]; }
 # + PRJ_TRACTOR_GUIDANCE (only incorporate parts from BASE that provide tractor guidance information)
 # + PRJ_TRACTOR_CERTIFICATION (only incorporate parts from BASE that provide tractor certification information)
 # + PRJ_TIME_GPS (only incorporate parts from BASE that provide time and GPS information)
-# + PRJ_PROCESS ( specify if process data should be used ; default 0 )
-#   - PROC_LOCAL ( specify if local process data shall be used; must be activated for all types of local process data; default 0 )
-#   - PROC_REMOTE ( specify if remote process data shall be used; must be activated for all types of remote process data; default 0 )
 # + PRJ_DATASTREAMS ( specify if the input and output filestream should be accessed by IsoAgLib; provides target HAL for filestream handling; default 0 )
 # + PRJ_EEPROM ( specify if the EEPROM should be accessed by IsoAgLib; default 0 )
 # + PRJ_OUTPUTS ( specify if IsoAgLib extension for PWM access should be used; provides several utility and diagnostic functions; default 0 )
@@ -194,6 +192,7 @@ set_default_values()
     PRJ_ISO_FILESERVER_CLIENT=0
     PRJ_ISO_TERMINAL=0
     PRJ_ISO_TERMINAL_LAYOUT_MANAGER=0
+    PRJ_ISO_TASKCONTROLLER_CLIENT=0
     PRJ_RS232_OVER_CAN=0
     PRJ_MULTIPACKET_STREAM_CHUNK=1
     PRJ_BASE=0
@@ -208,9 +207,6 @@ set_default_values()
     PRJ_TRACTOR_CERTIFICATION=0
     PRJ_TRACTOR_MOVE_SETPOINT=0
     PRJ_TRACTOR_PTO_SETPOINT=0
-    PRJ_PROCESS=0
-    PROC_LOCAL=0
-    PROC_REMOTE=0
     PRJ_EEPROM=0
     PRJ_DATASTREAMS=0
     PRJ_OUTPUTS=0
@@ -436,10 +432,6 @@ check_set_correct_variables()
         HAL_PATH_SUPPLEMENTARY_RS232="supplementary_driver/hal/virtualDrivers/rs232_over_can"
     fi
 
-    INC_LOC_STD_MEASURE_ELEMENTS=$(expr "$PROC_LOCAL" || status_le1)
-    INC_LOC_STD_SETPOINT_ELEMENTS=$(expr "$PROC_LOCAL" || status_le1)
-    INC_REM_STD_MEASURE_ELEMENTS=$(expr "$PROC_REMOTE" || status_le1)
-    INC_REM_STD_SETPOINT_ELEMENTS=$(expr "$PROC_REMOTE" || status_le1)
     PRJ_MULTIPACKET=$(expr "$PRJ_MULTIPACKET" \| "$PRJ_ISO_FILESERVER_CLIENT" \| "$PRJ_ISO_TERMINAL" \| "$PRJ_PROPRIETARY_PGN_INTERFACE" || status_le1)
 
     case "$USE_CAN_DRIVER" in
@@ -676,36 +668,14 @@ driver_and_hal_features()
 #Write to FD3 what's needed for finding COMM PROC features.
 comm_proc_features()
 {
-    if [ "$PRJ_PROCESS" -gt 0 ]; then
+    if [ "$PRJ_ISO_TASKCONTROLLER_CLIENT" -gt 0 ]; then
         if [ -n "${COMM_PROC_FEATURES:-}" ]; then
             printf '%s' " -o " >&3
         fi
         printf '%s' " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/iprocesscmd*' -o -path '*/Part7_ProcessData/impl/processcmd*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'" >&3
-
-        if [ "$PRJ_ISO11783" -gt 0 -a "$PROC_LOCAL" -gt 0 ]; then
-            # allow DevPropertyHandler
-            printf '%s' " -o -path '*/Part10_TaskController_Client/i*devproperty*'" >&3
-        else
-            printf '%s' " -o \( -path '*/Part10_TaskController_Client/i*devproperty*' -a -not -name 'devproperty*' \)" >&3
-        fi
-
+        printf '%s' " -o -path '*/Part10_TaskController_Client/i*devproperty*'" >&3
         printf '%s' " -o -path '*/Part7_ProcessData/StdMeasureElements/*'" >&3
         printf '%s' " -o -path '*/Part7_ProcessData/StdSetpointElements/*'" >&3
-
-        if [ "$PROC_LOCAL" -gt 0 ]; then
-            printf '%s' " -o -path '*/Part7_ProcessData/Local/impl/*'" >&3
-            printf '%s' " -o -path '*/Part7_ProcessData/Local/Std/*'" >&3
-            printf '%s' " -o -path '*/Part7_ProcessData/Local/StdMeasureElements/*'" >&3
-            printf '%s' " -o -path '*/Part7_ProcessData/Local/StdSetpointElements/*'" >&3
-        fi
-        if [ "$PROC_REMOTE" -gt 0 ]; then
-            printf '%s' " -o -path '*/Part7_ProcessData/Remote/impl/*'" >&3
-            printf '%s' " -o -path '*/Part7_ProcessData/Remote/Std/*'" >&3
-            printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdMeasureElements/*'" >&3
-            printf '%s' " -o -path '*/Part7_ProcessData/Remote/StdSetpointElements/*'" >&3
-        fi
-
-
     fi
 }
 
@@ -818,13 +788,7 @@ prepare_feature_partitions()
 {
     FEATURE_PARTITION_RULES=''
     # COMM PROC features:
-    add_feature_partition_rule PRJ_PROCESS '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc\|.*/Part7_ProcessData/iprocesscmd\|.*/Part7_ProcessData/impl/processcmd\|.*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h$'
-    add_feature_partition_rule PROC_LOCAL '.*/Part10_TaskController_Client/.*devproperty\|.*/Part7_ProcessData/Local/\|.*/Part7_ProcessData/Local/Std/'
-    add_feature_partition_rule PROC_REMOTE '.*/Part7_ProcessData/Remote/impl/\|.*/Part7_ProcessData/Remote/Std/'
-    add_feature_partition_rule INC_REM_STD_MEASURE_ELEMENTS '.*/Part7_ProcessData/Remote/StdMeasureElements/'
-    add_feature_partition_rule INC_REM_STD_SETPOINT_ELEMENTS '.*/Part7_ProcessData/Remote/StdSetpointElements/'
-    add_feature_partition_rule INC_LOC_STD_MEASURE_ELEMENTS '.*/Part7_ProcessData/.*/StdMeasureElements/'
-    add_feature_partition_rule INC_LOC_STD_SETPOINT_ELEMENTS '.*/Part7_ProcessData/.*/StdSetpointElements'
+    add_feature_partition_rule PRJ_ISO_TASKCONTROLLER_CLIENT '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc\|.*/Part7_ProcessData/iprocesscmd\|.*/Part7_ProcessData/impl/processcmd\|.*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h$\|.*/Part10_TaskController_Client/.*devproperty\|.*/Part7_ProcessData/.*/StdMeasureElements/\|.*/Part7_ProcessData/.*/StdSetpointElements'
 
     # COMM features:
     add_feature_partition_rule PRJ_BASE '.*ibasetypes\.h\.[^/]*$\|.*basecommon_c*\.[^/]*$'
@@ -1143,10 +1107,6 @@ END_OF_PATH
             echo_e "#ifndef USE_TIME_GPS $ENDLINE\t#define USE_TIME_GPS $ENDLINE#endif" >&3
         fi
     
-        if [ "$PROC_LOCAL" -gt 0 ] ; then
-            echo_e "#ifndef USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE\t#define USE_PROC_DATA_DESCRIPTION_POOL $ENDLINE#endif" >&3
-        fi
-    
         echo_ "// Decide if HEAP allocation strategy shall reduce size about 5K to 10K in favour of speed" >&3
         echo_ "// Strong Advice: Don't activate this, as long your target has not too tight memory restrictions" >&3
         echo_ "// Initialization of CAN filters and of local process data might get too slow under worst case conditions" >&3
@@ -1172,17 +1132,7 @@ END_OF_PATH
         fi
     
     
-        if [ "$PRJ_PROCESS" -gt 0 ] ; then
-            echo_e "#ifndef USE_PROCESS $ENDLINE  #define USE_PROCESS $ENDLINE#endif" >&3
-            if [ "$PROC_REMOTE" -gt 0 ] ; then
-              echo_e "#ifndef USE_PROC_REMOTE_STD $ENDLINE  #define USE_PROC_REMOTE_STD $ENDLINE#endif" >&3
-            fi
-        else
-        # the default in isoaglib_config.h is to activate
-        # PROCESS as long as USE_PROCESS_YN unset
-            echo_e "#ifndef USE_PROCESS_YN $ENDLINE\t#define USE_PROCESS_YN NO $ENDLINE#endif" >&3
-        fi
-        if [ "$PRJ_EEPROM" -gt 0 ] ; then
+		if [ "$PRJ_EEPROM" -gt 0 ] ; then
             echo_e "#define USE_EEPROM_IO" >&3
         fi
     
@@ -1217,6 +1167,9 @@ END_OF_PATH
                     echo_e "#ifndef PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE\t#define PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $PRJ_ISO_TERMINAL_OBJECT_SELECTION4 $ENDLINE#endif" >&3
                 fi
             fi
+			if [ "$PRJ_ISO_TASKCONTROLLER_CLIENT" -gt 0 ] ; then
+				echo_e "#ifndef USE_ISO_TASKCONTROLLER_CLIENT $ENDLINE  #define USE_ISO_TASKCONTROLLER_CLIENT $ENDLINE#endif" >&3
+			fi
             if [ "$PRJ_ISO_FILESERVER_CLIENT" -gt 0 ] ; then
                 echo_e "#ifndef USE_ISO_FILESERVER_CLIENT $ENDLINE\t#define USE_ISO_FILESERVER_CLIENT $ENDLINE#endif" >&3
             fi

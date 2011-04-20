@@ -172,15 +172,13 @@ PRT_INSTANCE_CNT=1
 PRJ_ISO11783=1
 
 # Specify if Part 3 - Proprietary Messages (via Proprietary PGNs) is enabled.
-# PRJ_PROPRIETARY_PGN_INTERFACE=0
+# PRJ_PROPRIETARY_PGN_INTERFACE=1
 
 # Specify if Part 6 - VT-Client support is enabled.
 # PRJ_ISO_TERMINAL=1
 
 # Specify if Part 10 - TC-Client support is enabled.
-# Note: There will be an exclusive setting for TC-Client in some future
-#       release of IsoAgLib analog to VT- and FS-Client.
-#       Currently please enable Process-Data (PRJ_PROCESS) below.
+# PRJ_ISO_TASKCONTROLLER_CLIENT=1
 
 # Specify if Part 12 - Diagnostic Services is enabled.
 # Note: This is currently always added to IsoAgLib as it was
@@ -191,41 +189,41 @@ PRJ_ISO11783=1
 
 # Specify if Part 7 - all BASE data are selected
 # if only special BASE data should be used select one or more of the following parts
-# PRJ_BASE=0
+# PRJ_BASE=1
 
 # only incorporate parts from BASE that provide tractor hitch and RPM information
-# PRJ_TRACTOR_GENERAL=0
+# PRJ_TRACTOR_GENERAL=1
 
 # only incorporate parts from BASE that provide tractor moving (distance, speed, direction, ...) information
 # the following project setting includes only measurement of tractor data.
 # i.e. NO SETTING OF COMMANDS
-# PRJ_TRACTOR_MOVE=0
+# PRJ_TRACTOR_MOVE=1
 
 # additionally integrate sending of tractor move commands
-# PRJ_TRACTOR_MOVE_SETPOINT=0
+# PRJ_TRACTOR_MOVE_SETPOINT=1
 
 # only incorporate parts from BASE that provide tractor PTO information
 # the following project setting includes only measurement of tractor data.
 # i.e. NO SETTING OF COMMANDS
-# PRJ_TRACTOR_PTO=0
+# PRJ_TRACTOR_PTO=1
 
 # additionally integrate sending of tractor PTO commands
-# PRJ_TRACTOR_PTO_SETPOINT=0
+# PRJ_TRACTOR_PTO_SETPOINT=1
 
 # only incorporate parts from BASE that provide tractor lighting information
-# PRJ_TRACTOR_LIGHT=0
+# PRJ_TRACTOR_LIGHT=1
 
 # only incorporate parts from BASE that provide tractor auxiliary valve information
-# PRJ_TRACTOR_AUX=0
+# PRJ_TRACTOR_AUX=1
 
 # only incorporate parts from BASE that provide time and GPS information
-# PRJ_TIME_GPS=0
+# PRJ_TIME_GPS=1
 
 # only incorporate parts from BASE that provide tractor guidance information
-# PRJ_TRACTOR_GUIDANCE=0
+# PRJ_TRACTOR_GUIDANCE=1
 
 # only incorporate parts from BASE that provide tractor certification information
-# PRJ_TRACTOR_CERTIFICATION=0
+# PRJ_TRACTOR_CERTIFICATION=1
 
 
 ### Special Setup / Customization / Optimization
@@ -242,7 +240,7 @@ PRJ_ISO11783=1
 #                  -> let PRJ_MULTIPACKET_STREAM_CHUNK stay commented out, or set to 1
 # linear         : if only final parsing is used, then chunk handling can't reduce HEAP usage, so that simpler linear buffer can be used
 #                  -> set  PRJ_MULTIPACKET_STREAM_CHUNK to 0
-# PRJ_MULTIPACKET_STREAM_CHUNK=0
+# PRJ_MULTIPACKET_STREAM_CHUNK=1
 
 # Specify if Part 6 - VT-Client should be size optimized
 #                     (leaves out unneeded object-type implementations)
@@ -256,46 +254,18 @@ PRJ_ISO11783=1
 
 
 # ###############################################################
-# Process Data Communication Setup
-# ###############################################################
-# Note: This part is subject to be REMOVED from the API.
-#       Process-Data communication will be moved to the
-#       TC-Client internals. It can't be used by the Application
-#       Programmer directly in the next release of IsoAgLib.
-
-# activate globally the use of process data
-# PRJ_PROCESS=0
-
-# decide if local process data are wanted
-# PROC_LOCAL=0
-
-# decide if remote process data are wanted
-# PROC_REMOTE=0
-
-# ###############################################################
 # Optional Driver Selection
 # ###############################################################
 
-# select if the EEPROM driver shall be used, to read/write EEPROM
-# data from within the IsoAgLib. This is important for local
-# process data, as IsoAgLib can store intermediate values in EEPROM
-# so that the value can be re-read on each system startup
-# ( important for cumulative values like distance, when the
-#   application has only to calculate the distance increments of the
-#   current working session, and the IsoAgLib provides the cumulated
-#   value on BUS;
-#   it's also important to store the current SA on ISO 11783 address claim
-#   --> try to reuse SA os last working session on next system start.
-#       the application has only to specify to EEPROM address to handle the SA;
-#       IsoAgLib takes then care of storing and reloading the SA )
-PRJ_EEPROM=1
+# select if support for EEPROM access should be enabled.
+# PRJ_EEPROM=1
 
 # select if the datastreams from HAL for file input and output shall be used
-# PRJ_DATASTREAMS=0
+# PRJ_DATASTREAMS=1
 
 # select iRS232IO_c for RS232 output which can be used like the
 # standard C++ iostreams
-# PRJ_RS232=0
+# PRJ_RS232=1
 
 # Define the amount of available RS232 channels at the ECU
 # ( default 1 )
@@ -314,32 +284,30 @@ PRJ_EEPROM=1
 # USE_RS232_DRIVER="simulating"
 
 # select special RS232 virtual driver HAL for RS232_over_CAN
-# PRJ_RS232_OVER_CAN=0
+# PRJ_RS232_OVER_CAN=1
 
 # select iDigitalO_c ( one instance/variable of this class per channel )
 # for digital On/Off input
 # ( provides automatic range check which uses diagnose function of HAL
 #  - BIOS/OS - to check if current is in allowed interval );
 # use iActorO_c for global access to all active iDigitalO_c instances
-# PRJ_SENSOR_DIGITAL=0
+# PRJ_INPUTS_DIGITAL=1
 
 # select iAnalogI_c for analog ( current or voltage ) sensor input.
 # or iAnalogIRangeCheck_c with enhanced automatic range check
-# PRJ_SENSOR_ANALOG=0
+# PRJ_INPUTS_ANALOG=1
 
 # select iCounterI_c for counter input.
 # the existing HAL implementations ( e.g. for ESX ) extend the BIOS/OS
 # function, as a IsoAgLib specific event counting for very low
 # event repetition rates is provided - the BIOS version is only
 # designed for typical RPM values
-# PRJ_SENSOR_COUNTER=0
+# PRJ_INPUTS_COUNTER=1
 
 # select if the digital output driver shall be integrated into the project.
 # you can then use the HAL of IsoAgLib to realize a mostly hardware independend
-# access on PWM output. This is completely independent from communication tasks,
-# but was created during research and is actively used by OSB AG for its own
-# projects
-# PRJ_ACTOR=0
+# access on PWM output. This is completely independent from communication tasks.
+# PRJ_OUTPUTS=1
 
 
 # ###############################################################
