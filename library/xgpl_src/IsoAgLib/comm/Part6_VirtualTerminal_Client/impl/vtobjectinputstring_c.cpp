@@ -77,7 +77,7 @@ vtObjectInputString_c::stream(uint8_t* destMemory,
         destMemory [14] = 0xFF;
       }
       destMemory [15] = vtObjectInputString_a->horizontalJustification;
-      destMemory [16] = vtObjectInputString_a->length;  // Length not greater than 255!
+      destMemory [16] = static_cast<uint8_t>(vtObjectInputString_a->length);  // Length not greater than 255!
       sourceOffset += 17;
       curBytes += 17;
     }

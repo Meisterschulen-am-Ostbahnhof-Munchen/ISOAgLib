@@ -20,6 +20,7 @@
 #include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
@@ -68,8 +69,32 @@ class FsCommand_c : CanCustomer_c
     SchedulerTaskProxy_c &operator=(SchedulerTaskProxy_c const &);
 
     Owner_t &mrt_owner;
-  };
-  typedef SchedulerTaskProxy_c Task_t;
+  }; // SchedulerTaskProxy_c
+
+  class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
+  public:
+    typedef FsCommand_c Owner_t;
+
+    MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    ~MultiSendEventHandlerProxy_c() {}
+
+  private:
+    void reactOnStateChange(const SendStream_c& sendStream)
+    {
+       mrt_owner.reactOnStateChange(sendStream);
+    }
+
+    // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+    // the reference to the containing object would become invalid.
+    MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &);
+
+    MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  }; // MultiSendEventHandlerProxy_c
+
+  void reactOnStateChange(const SendStream_c& sendStream);
 
   private:
     // forbid copy construction
@@ -285,7 +310,9 @@ class FsCommand_c : CanCustomer_c
 
   private:
     // member variable instead of multiple inheritance
-    Task_t mc_schedulerTask;
+    SchedulerTaskProxy_c mc_schedulerTask;
+    MultiSendEventHandlerProxy_c mt_multiSendEventHandler;
+
     /** the TAN counter for the fileserver communication. **/
     uint8_t ui8_tan;
     /** the reference to the fsclientservercommunication. responses will be directed to this. **/

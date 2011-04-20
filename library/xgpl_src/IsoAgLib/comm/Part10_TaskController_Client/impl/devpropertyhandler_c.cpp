@@ -32,6 +32,10 @@
 #include <IsoAgLib/util/impl/singleton.h>
 #include <supplementary_driver/driver/rs232/irs232io_c.h>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
+
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/vtclientservercommunication_c.h>
@@ -173,7 +177,8 @@ const DevicePool_c& DevicePool_c::operator=(const DevicePool_c& c_devicePool)
 
 
 DevPropertyHandler_c::DevPropertyHandler_c()
-   : ui16_currentSendPosition(0), ui16_storedSendPosition(0), mi32_tcStateLastReceived(0), mui8_lastTcState(0), mi32_timeStartWaitAfterAddrClaim(0), mb_initDone(0), mi32_timeWsTaskMsgSent(0),
+   : mt_multiSendEventHandler(*this), ui16_currentSendPosition(0), ui16_storedSendPosition(0), mi32_tcStateLastReceived(0),
+     mui8_lastTcState(0), mi32_timeStartWaitAfterAddrClaim(0), mb_initDone(0), mi32_timeWsTaskMsgSent(0),
      mb_setToDefault(false), mb_tcAliveNew(false), mb_receivedStructureLabel(false), mb_receivedLocalizationLabel(false),
      mpc_data(NULL), mui8_tcSourceAddress(0), mui8_versionLabel(0), mpc_devDefaultDeviceDescription(NULL), mpc_devPoolForUpload(NULL),
      mpc_wsMasterIdentItem(NULL), men_poolState(OPNotRegistered), men_uploadState(StateIdle), men_uploadStep(UploadStart),
@@ -286,7 +291,7 @@ DevPropertyHandler_c::processMsg( ProcessPkg_c& arc_data )
           men_uploadStep = UploadUploading;
           getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
             getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-            this, PROCESS_DATA_PGN, men_sendSuccess, NULL);
+            this, PROCESS_DATA_PGN, &mt_multiSendEventHandler);
         }
         else
         {
@@ -1091,7 +1096,8 @@ DevPropertyHandler_c::startUploadCommandChangeDesignator()
     /// Use multi CAN-Pkgs [(E)TP], doesn't fit into a single CAN-Pkg!
     getMultiSendInstance4Comm().sendIsoTarget(mpc_wsMasterIdentItem->isoName(),
       getIsoMonitorInstance4Comm().isoMemberNr(mui8_tcSourceAddress).isoName(),
-      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(), PROCESS_DATA_PGN, men_sendSuccess, NULL);
+      &actSend->vec_uploadBuffer.front(), actSend->vec_uploadBuffer.size(),
+      PROCESS_DATA_PGN, &mt_multiSendEventHandler);
     men_uploadCommand = UploadMultiSendCommandWaitingForCommandResponse;
   }
 }
@@ -1182,6 +1188,12 @@ DevPropertyHandler_c::sendPoolActivatieMsg()
                            procCmdPar_OPActivateMsg, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff);
   mpc_data->flags2String();
   getIsoBusInstance4Comm() << *mpc_data;
+}
+
+void
+DevPropertyHandler_c::reactOnStateChange(const SendStream_c& sendStream)
+{
+  men_sendSuccess = sendStream.getSendSuccess();
 }
 
 };

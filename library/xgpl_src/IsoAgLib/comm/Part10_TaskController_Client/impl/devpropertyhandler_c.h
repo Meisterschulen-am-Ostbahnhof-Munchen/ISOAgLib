@@ -22,6 +22,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 
 #include <map>
 #include <list>
@@ -111,6 +112,33 @@ class DevPropertyHandler_c : public IsoAgLib::iMultiSendStreamer_c
 
     void updateTcStateReceived(uint8_t aui8_lastTcState) { mui8_lastTcState = aui8_lastTcState; mi32_tcStateLastReceived = HAL::getTime();};
     void setTcSourceAddress(uint8_t rtcSourceAddress) { mui8_tcSourceAddress = rtcSourceAddress;};
+
+  private:
+    class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
+    public:
+      typedef DevPropertyHandler_c Owner_t;
+
+      MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+      ~MultiSendEventHandlerProxy_c() {}
+
+    private:
+      void reactOnStateChange(const SendStream_c& sendStream)
+      {
+         mrt_owner.reactOnStateChange(sendStream);
+      }
+
+      // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+      // the reference to the containing object would become invalid.
+      MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &);
+
+      MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &);
+
+      Owner_t &mrt_owner;
+    }; // MultiSendEventHandlerProxy_c
+    MultiSendEventHandlerProxy_c mt_multiSendEventHandler;
+
+    void reactOnStateChange(const SendStream_c& sendStream);
 
   private:
 

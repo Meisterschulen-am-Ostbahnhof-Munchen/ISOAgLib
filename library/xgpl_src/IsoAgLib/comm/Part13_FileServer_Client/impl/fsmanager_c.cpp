@@ -22,6 +22,9 @@
 #include <iterator>
 #include <algorithm>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {

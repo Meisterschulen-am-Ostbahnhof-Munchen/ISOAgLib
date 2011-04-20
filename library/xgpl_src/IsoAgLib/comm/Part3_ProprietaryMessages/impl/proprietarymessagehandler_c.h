@@ -141,92 +141,92 @@ namespace __IsoAgLib
     void updateTimePeriod (ProprietaryMessageClient_c* pc_nextClient, bool ab_fromTimeEvent);
 
   private:
-private:
-  class CanCustomerProxy_c : public CanCustomer_c {
-  public:
-    typedef ProprietaryMessageHandler_c Owner_t;
+    class CanCustomerProxy_c : public CanCustomer_c {
+    public:
+      typedef ProprietaryMessageHandler_c Owner_t;
 
-    CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+      CanCustomerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
 
-    virtual ~CanCustomerProxy_c() {}
+      virtual ~CanCustomerProxy_c() {}
+
+    private:
+      virtual bool processMsg( const CanPkg_c& arc_data ) {
+        return mrt_owner.processMsg( arc_data );
+      }
+
+      virtual bool reactOnStreamStart(
+          ReceiveStreamIdentifier_c const &ac_ident,
+          uint32_t aui32_totalLen)
+      {
+        return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
+      }
+
+      virtual void reactOnAbort(Stream_c &arc_stream)
+      {
+        (void)arc_stream;
+        // nop - mrt_owner.reactOnAbort(arc_stream);
+      }
+
+      virtual bool processPartStreamDataChunk(
+          Stream_c &apc_stream,
+          bool ab_isFirstChunk,
+          bool ab_isLastChunk)
+      {
+        return mrt_owner.processPartStreamDataChunk(
+            apc_stream,
+            ab_isFirstChunk,
+            ab_isLastChunk);
+      }
+
+      virtual void notificationOnMultiReceiveError(
+          ReceiveStreamIdentifier_c const &ac_streamIdent,
+          uint8_t aui8_multiReceiveError,
+          bool ab_isGlobal)
+      {
+        (void)ac_streamIdent;
+        (void)aui8_multiReceiveError;
+        (void)ab_isGlobal;
+        // nop - mrt_owner.notificationOnMultiReceiveError(
+        //     ac_streamIdent,
+        //     aui8_multiReceiveError,
+        //     ab_isGlobal);
+      }
+
+      // CanCustomerProxy_c shall not be copyable. Otherwise the
+      // reference to the containing object would become invalid.
+      CanCustomerProxy_c(CanCustomerProxy_c const &);
+
+      CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
+
+      Owner_t &mrt_owner;
+    };
+
+    class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
+    public:
+      typedef ProprietaryMessageHandler_c Owner_t;
+
+      ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+      virtual ~ControlFunctionStateHandlerProxy_c() {}
+
+    private:
+      virtual void reactOnIsoItemModification(
+          IsoItemModification_t at_action,
+          IsoItem_c const &acrc_isoItem)
+      {
+        mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
+      }
+
+      // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
+      // reference to the containing object would become invalid.
+      ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
+
+      ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
+
+      Owner_t &mrt_owner;
+    };
 
   private:
-    virtual bool processMsg( const CanPkg_c& arc_data ) {
-      return mrt_owner.processMsg( arc_data );
-    }
-
-    virtual bool reactOnStreamStart(
-        ReceiveStreamIdentifier_c const &ac_ident,
-        uint32_t aui32_totalLen)
-    {
-      return mrt_owner.reactOnStreamStart(ac_ident, aui32_totalLen);
-    }
-
-    virtual void reactOnAbort(Stream_c &arc_stream)
-    {
-      (void)arc_stream;
-      // nop - mrt_owner.reactOnAbort(arc_stream);
-    }
-
-    virtual bool processPartStreamDataChunk(
-        Stream_c &apc_stream,
-        bool ab_isFirstChunk,
-        bool ab_isLastChunk)
-    {
-      return mrt_owner.processPartStreamDataChunk(
-          apc_stream,
-          ab_isFirstChunk,
-          ab_isLastChunk);
-    }
-
-    virtual void notificationOnMultiReceiveError(
-        ReceiveStreamIdentifier_c const &ac_streamIdent,
-        uint8_t aui8_multiReceiveError,
-        bool ab_isGlobal)
-    {
-      (void)ac_streamIdent;
-      (void)aui8_multiReceiveError;
-      (void)ab_isGlobal;
-      // nop - mrt_owner.notificationOnMultiReceiveError(
-      //     ac_streamIdent,
-      //     aui8_multiReceiveError,
-      //     ab_isGlobal);
-    }
-
-    // CanCustomerProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    CanCustomerProxy_c(CanCustomerProxy_c const &);
-
-    CanCustomerProxy_c &operator=(CanCustomerProxy_c const &);
-
-    Owner_t &mrt_owner;
-  };
-  typedef CanCustomerProxy_c Customer_t;
-  class ControlFunctionStateHandlerProxy_c : public ControlFunctionStateHandler_c {
-  public:
-    typedef ProprietaryMessageHandler_c Owner_t;
-
-    ControlFunctionStateHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
-
-    virtual ~ControlFunctionStateHandlerProxy_c() {}
-
-  private:
-    virtual void reactOnIsoItemModification(
-        IsoItemModification_t at_action,
-        IsoItem_c const &acrc_isoItem)
-    {
-      mrt_owner.reactOnIsoItemModification(at_action, acrc_isoItem);
-    }
-
-    // ControlFunctionStateHandlerProxy_c shall not be copyable. Otherwise the
-    // reference to the containing object would become invalid.
-    ControlFunctionStateHandlerProxy_c(ControlFunctionStateHandlerProxy_c const &);
-
-    ControlFunctionStateHandlerProxy_c &operator=(ControlFunctionStateHandlerProxy_c const &);
-
-    Owner_t &mrt_owner;
-  };
-  typedef ControlFunctionStateHandlerProxy_c Handler_t;
 
     /** dynamic array of memberItems for handling
         of single member informations
@@ -235,8 +235,9 @@ private:
 
     bool mb_hardTiming;
 
-    Handler_t mt_handler;
-    Customer_t mt_customer;
+    ControlFunctionStateHandlerProxy_c mt_handler;
+    CanCustomerProxy_c mt_customer;
+
     friend ProprietaryMessageHandler_c &getProprietaryMessageHandlerInstance(uint8_t aui8_instance);
   };
 

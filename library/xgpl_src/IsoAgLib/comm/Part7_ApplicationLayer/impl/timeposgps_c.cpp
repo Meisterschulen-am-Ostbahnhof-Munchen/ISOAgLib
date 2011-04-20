@@ -37,6 +37,7 @@
 
 #if defined(_MSC_VER)
 #pragma warning( disable : 4996 )
+#pragma warning( disable : 4355 )
 #endif
 
 const float gcf_rapidUpdateFilter = 0.15f;  // 15% new, 85%old to filter the update time.
@@ -154,7 +155,8 @@ namespace __IsoAgLib {
       or getTimePosGpsInstance (protocolInstanceNr) in case more than one ISO11783 BUS is used for IsoAgLib
    */
   TimePosGps_c::TimePosGps_c()
-  : mf_rapidUpdateRateFilter(0.0f)
+  : mt_multiSendEventHandler(*this)
+  , mf_rapidUpdateRateFilter(0.0f)
   , mi32_rapidUpdateRateMs(0)
   , mi32_altitudeCm(0x7FFFFFFF)
   , mc_sendGpsISOName()
@@ -1228,7 +1230,7 @@ void TimePosGps_c::isoSendDirection( void )
       // compensate mktime() time zone influence:
       const CNAMESPACE::time_t secondsSince1970 = mktime( &testTime ) + mt_tzOffset;
       // calculate the days
-      ui16_daysSince1970 = secondsSince1970 / ( 60L * 60L *24L );
+      ui16_daysSince1970 = static_cast<uint16_t>(secondsSince1970 / ( 60L * 60L *24L ));
     }
     const uint32_t ui32_milliseconds = ( ( ( ( ( ( hourUtcGps() * 60 ) + minuteUtcGps() ) * 60 ) + secondUtcGps() ) * 1000 ) + millisecondUtcGps()) * 10;
     // write Position Date as Days since 1.1.1970
@@ -1271,9 +1273,9 @@ void TimePosGps_c::isoSendDirection( void )
 
     //now trigger sending
     #ifdef ENABLE_MULTIPACKET_VARIANT_FAST_PACKET
-    if ( getMultiSendInstance4Comm().sendIsoFastPacketBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState, NULL) )
+    if ( getMultiSendInstance4Comm().sendIsoFastPacketBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, &mt_multiSendEventHandler) )
     #else
-    if ( getMultiSendInstance4Comm().sendIsoBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, mt_multiSendSuccessState, NULL) )
+    if ( getMultiSendInstance4Comm().sendIsoBroadcast(mc_sendGpsISOName, &mc_nmea2000Streamer, NMEA_GPS_POSITION_DATA_PGN, &mt_multiSendEventHandler) )
     #endif
     { // update time
       mi32_lastIsoPositionStream = ci32_now;
@@ -1655,6 +1657,14 @@ TimePosGps_c::deregisterMsgEventHandler (MsgEventHandler_c &arc_msgEventHandler)
       ++iter;
     }
   }
+}
+
+void
+TimePosGps_c::reactOnStateChange(const SendStream_c& sendStream)
+{
+#ifdef ENABLE_NMEA_2000_MULTI_PACKET
+  mt_multiSendSuccessState = sendStream.getSendSuccess();
+#endif
 }
 
 

@@ -18,6 +18,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofilterbox_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
 #include "../igenericdata_c.h"
 
@@ -37,7 +38,7 @@ namespace __IsoAgLib
   /** Class proprietarymessageclient_c
       internal base class where each object represents one "proprietary PGN, Local node, remote node"-set
     */
-  class ProprietaryMessageClient_c
+  class ProprietaryMessageClient_c : public MultiSendEventHandler_c
   {
     public:
 
@@ -135,6 +136,8 @@ namespace __IsoAgLib
        */
       friend class IsoAgLib::iProprietaryMessageHandler_c;
       friend class __IsoAgLib::ProprietaryMessageHandler_c;
+
+      void reactOnStateChange(const SendStream_c& sendStream);
 
       /* information for definition of received filters, the application sets the data
          ProprietaryMessageHandler_c::registerProprietaryMessageClient() reads the following

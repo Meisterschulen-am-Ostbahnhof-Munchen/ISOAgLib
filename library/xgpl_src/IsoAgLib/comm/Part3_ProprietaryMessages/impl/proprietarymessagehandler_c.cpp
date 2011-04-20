@@ -16,6 +16,9 @@
 
 #include <list>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 /**
   ISO 11783 proprietary message
@@ -246,7 +249,7 @@ namespace __IsoAgLib
       /** default priority for Proprietary PGN as stated in PGN's definition in ISO 11783-3 */
       pkg.setIsoPri(6);
       /** set data */
-      pkg.setDataFromString (rc_sendData.getDataStream(), rc_sendData.getLen());
+      pkg.setDataFromString (rc_sendData.getDataStream(), static_cast<uint8_t>(rc_sendData.getLen()));
       /** sending */
       c_isobus << pkg;
     }
@@ -260,8 +263,7 @@ namespace __IsoAgLib
                                                   rc_sendData.getDataStream(0),
                                                   rc_sendData.getLen(),
                                                   rc_sendData.getIdent() >> 8,
-                                                  client.men_sendSuccess,
-                                                  NULL);
+                                                  &client);
     }
   }
 
@@ -518,6 +520,5 @@ namespace __IsoAgLib
   {
     MACRO_MULTITON_GET_INSTANCE_BODY(ProprietaryMessageHandler_c, PRT_INSTANCE_CNT, aui8_instance);
   }
-
 
 } // namespace __IsoAgLib

@@ -20,6 +20,10 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
 #include <IsoAgLib/util/iassert.h>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#pragma warning( disable : 4996 )
+#endif
 
 namespace __IsoAgLib
 {

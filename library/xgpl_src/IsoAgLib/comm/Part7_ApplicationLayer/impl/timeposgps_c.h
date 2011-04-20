@@ -20,6 +20,8 @@
 #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/basecommon_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgnhandler_c.h>
 
+#include <IsoAgLib/comm/Part3_DataLink/impl/multisendeventhandler_c.h>
+
 #if defined(ENABLE_NMEA_2000_MULTI_PACKET)
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
@@ -568,6 +570,32 @@ public:
   virtual const char* getTaskName() const;
 #endif
 
+private:
+  class MultiSendEventHandlerProxy_c : public MultiSendEventHandler_c {
+  public:
+    typedef TimePosGps_c Owner_t;
+
+    MultiSendEventHandlerProxy_c(Owner_t &art_owner) : mrt_owner(art_owner) {}
+
+    ~MultiSendEventHandlerProxy_c() {}
+
+  private:
+    void reactOnStateChange(const SendStream_c& sendStream)
+    {
+       mrt_owner.reactOnStateChange(sendStream);
+    }
+
+    // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise
+    // the reference to the containing object would become invalid.
+    MultiSendEventHandlerProxy_c(MultiSendEventHandlerProxy_c const &);
+
+    MultiSendEventHandlerProxy_c &operator=(MultiSendEventHandlerProxy_c const &);
+
+    Owner_t &mrt_owner;
+  }; // MultiSendEventHandlerProxy_c
+  MultiSendEventHandlerProxy_c mt_multiSendEventHandler;
+
+  void reactOnStateChange(const SendStream_c& sendStream);
 
 private:
   // Private methods
@@ -620,6 +648,8 @@ private:
   /** send position as detailed stream */
   void isoSendPositionStream( void );
 #endif // END ENABLE_NMEA_2000_MULTI_PACKET
+
+
 
 private:
   // Private attributes

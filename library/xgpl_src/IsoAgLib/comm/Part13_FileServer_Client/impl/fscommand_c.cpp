@@ -32,7 +32,9 @@
   #include <IsoAgLib/util/impl/util_funcs.h>
 #endif
 
-
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
 
 namespace __IsoAgLib
 {
@@ -48,6 +50,7 @@ FsCommand_c::FsCommand_c(
     FsClientServerCommunication_c &rc_inCsCom,
     FsServerInstance_c &rc_inFileserver)
   : mc_schedulerTask(*this)
+  , mt_multiSendEventHandler(*this)
   , ui8_tan( 0 )
   , rc_csCom( rc_inCsCom )
   , rc_fileserver( rc_inFileserver )
@@ -725,8 +728,7 @@ FsCommand_c::sendMultiPacketTry()
       pui8_sendBuffer,
       ui8_packetLength,
       CLIENT_TO_FS_PGN,
-      en_sendSuccessNotify,
-      NULL);
+      &mt_multiSendEventHandler);
 }
 
 
@@ -804,8 +806,8 @@ FsCommand_c::changeCurrentDirectory(uint8_t *pui8_newDirectory)
 
   pui8_sendBuffer[ui8_bufferPosition++] = en_changeCurrentDirectory;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
-  pui8_sendBuffer[ui8_bufferPosition++] = (0xFFu & ui16_length);
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_length >> 8;
+  pui8_sendBuffer[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_length);
+  pui8_sendBuffer[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_length >> 8);
 
   for (uint16_t i = 0; i < ui16_length; ++i)
     pui8_sendBuffer[ui8_bufferPosition + i] = pui8_fileName[i];
@@ -949,8 +951,8 @@ FsCommand_c::writeFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, uint8_t 
   pui8_sendBuffer[0] = en_writeFile;
   pui8_sendBuffer[1] = ui8_tan;
   pui8_sendBuffer[2] = ui8_fileHandle;
-  pui8_sendBuffer[3] = ui16_inCount;
-  pui8_sendBuffer[4] = ui16_inCount >> 0x08;
+  pui8_sendBuffer[3] = static_cast<uint8_t>(ui16_inCount);
+  pui8_sendBuffer[4] = static_cast<uint8_t>(ui16_inCount >> 8);
 
   for (uint16_t ui16_writeDataSz = 0; ui16_writeDataSz < ui16_inCount; ++ui16_writeDataSz)
   {
@@ -1073,8 +1075,8 @@ FsCommand_c::getFileAttributes(uint8_t *pui8_sourceName)
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
-  pui8_sendBuffer[2] = ui16_srcLength;
-  pui8_sendBuffer[3] = ui16_srcLength >> 0x08;
+  pui8_sendBuffer[2] = static_cast<uint8_t>(ui16_srcLength);
+  pui8_sendBuffer[3] = static_cast<uint8_t>(ui16_srcLength >> 8);
 
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[4 + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
@@ -1099,8 +1101,8 @@ FsCommand_c::setFileAttributes(uint8_t *pui8_sourceName, uint8_t  ui8_inHiddenAt
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
-  pui8_sendBuffer[3] = ui16_srcLength;
-  pui8_sendBuffer[4] = ui16_srcLength >> 0x08;
+  pui8_sendBuffer[3] = static_cast<uint8_t>(ui16_srcLength);
+  pui8_sendBuffer[4] = static_cast<uint8_t>(ui16_srcLength >> 8);
 
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[5 + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
@@ -1122,8 +1124,8 @@ FsCommand_c::getFileDateTime(uint8_t *pui8_sourceName)
 
   uint16_t ui16_srcLength = CNAMESPACE::strlen((const char *)pui8_sourceName);
 
-  pui8_sendBuffer[2] = ui16_srcLength;
-  pui8_sendBuffer[3] = ui16_srcLength >> 0x08;
+  pui8_sendBuffer[2] = static_cast<uint8_t>(ui16_srcLength);
+  pui8_sendBuffer[3] = static_cast<uint8_t>(ui16_srcLength >> 8);
 
   for (uint16_t ui16_iSrc = 0; ui16_iSrc < ui16_srcLength; ++ui16_iSrc)
     pui8_sendBuffer[4 + ui16_iSrc] = pui8_sourceName[ui16_iSrc];
@@ -1157,13 +1159,13 @@ IsoAgLib::iFsCommandErrors FsCommand_c::initializeVolume(
 void
 FsCommand_c::decodeAttributes(uint8_t ui8_attributes)
 {
-  b_caseSensitive = ui8_attributes & 0x80;
-  b_removable = !(ui8_attributes & 0x40);
-  b_longFilenames = ui8_attributes & 0x20;
-  b_isDirectory = ui8_attributes & 0x10;
-  b_isVolume = ui8_attributes & 0x8;
-  b_hidden = ui8_attributes & 0x2;
-  b_readOnly = ui8_attributes & 0x1;
+  b_caseSensitive = ((ui8_attributes & 0x80) != 0);
+  b_removable = ((ui8_attributes & 0x40) == 0);
+  b_longFilenames = ((ui8_attributes & 0x20) != 0);
+  b_isDirectory = ((ui8_attributes & 0x10) != 0);
+  b_isVolume = ((ui8_attributes & 0x8) != 0);
+  b_hidden = ((ui8_attributes & 0x2) != 0);
+  b_readOnly = ((ui8_attributes & 0x1) != 0);
 }
 
 
@@ -1380,8 +1382,8 @@ FsCommand_c::readFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, bool b_in
   pui8_sendBuffer[ui8_bufferPosition++] = en_readFile;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_tan;
   pui8_sendBuffer[ui8_bufferPosition++] = ui8_fileHandle;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_count;
-  pui8_sendBuffer[ui8_bufferPosition++] = ui16_count >> 8;
+  pui8_sendBuffer[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_count);
+  pui8_sendBuffer[ui8_bufferPosition++] = static_cast<uint8_t>(ui16_count >> 8);
 
   pui8_sendBuffer[ui8_bufferPosition++] = b_inReportHiddenFiles;
 
@@ -1393,6 +1395,12 @@ FsCommand_c::readFile(uint8_t ui8_inFileHandle, uint16_t ui16_inCount, bool b_in
   sendRequest (RequestInitial);
 
   return IsoAgLib::fsCommandNoError;
+}
+
+void
+FsCommand_c::reactOnStateChange(const SendStream_c& sendStream)
+{
+  en_sendSuccessNotify = sendStream.getSendSuccess();
 }
 
 } // __IsoAgLib

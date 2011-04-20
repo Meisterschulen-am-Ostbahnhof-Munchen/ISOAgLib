@@ -146,4 +146,10 @@ namespace __IsoAgLib
                         &mc_isonameRemoteECU);
   }
 
+  void
+  ProprietaryMessageClient_c::reactOnStateChange(const SendStream_c& sendStream)
+  {
+    men_sendSuccess = sendStream.getSendSuccess();
+  }
+
 };
