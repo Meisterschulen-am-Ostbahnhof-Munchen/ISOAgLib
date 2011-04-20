@@ -12,7 +12,7 @@
 */
 
 #include <IsoAgLib/isoaglib_config.h>
-#include "actor.h"
+#include "outputs.h"
 #include <IsoAgLib/util/impl/util_funcs.h>
 
 
