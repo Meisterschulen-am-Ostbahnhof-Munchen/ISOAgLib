@@ -18,9 +18,9 @@
 #include "procdatabase_c.h"
 #include "process_c.h"
 #include <IsoAgLib/comm/impl/isobus_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/Remote/Std/impl/procdataremote_c.h>
 
 namespace __IsoAgLib {
+
 
 /**
    initialise this ProcDataBase_c instance to a well defined initial state

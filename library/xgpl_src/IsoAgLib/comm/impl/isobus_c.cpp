@@ -28,7 +28,7 @@
 #ifdef USE_ISO_TERMINAL
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
 #endif
-#ifdef USE_PROCESS
+#ifdef USE_ISO_TASKCONTROLLER_CLIENT
   #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #endif
 #ifdef USE_TRACTOR_GENERAL
@@ -113,7 +113,7 @@ IsoBus_c::init (uint8_t aui8_busNumber)
     getTimePosGpsInstance4Comm().init();
   #endif
   /// Part 10 - Task Controller (Client)
-  #ifdef USE_PROCESS
+  #ifdef USE_ISO_TASKCONTROLLER_CLIENT
     getProcessInstance4Comm().init();
   #endif
   /// Part 12 - Diagnostics Services
@@ -140,7 +140,7 @@ IsoBus_c::close()
   /// Part 12 - Diagnostics Services
   // nop - only additional items for Part 5 currently
   /// Part 10 - Task Controller (Client)
-  #ifdef USE_PROCESS
+  #ifdef USE_ISO_TASKCONTROLLER_CLIENT
     getProcessInstance4Comm().close();
   #endif
   /// Part 7 - Application (Tractor-Client)

@@ -120,9 +120,6 @@
 #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 
-#if 0 //def USE_EEPROM_IO
-  #include <IsoAgLib/driver/eeprom/impl/eepromio_c.h>
-#endif
 
 namespace __IsoAgLib {
 
@@ -160,9 +157,6 @@ namespace __IsoAgLib {
 void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                                const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
                                bool ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                               uint16_t aui16_eepromAdr,
-#endif // USE_EEPROM_IO
                                IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                                int ai_multitonInst
                                )
@@ -171,10 +165,6 @@ void ProcDataLocalBase_c::init(const IsoAgLib::ElementDdi_s* ps_elementDDI, uint
                         apc_processDataChangeHandler, ai_multitonInst);
 
   mb_cumulativeValue = ab_cumulativeValue;
-#if 0 //def USE_EEPROM_IO
-  setEepromAdr(aui16_eepromAdr);
-  mi32_lastEepromStore = 0;
-#endif // USE_EEPROM_IO
   mi32_masterVal = 0;
 
   getProcessInstance4Comm().registerLocalProcessData( this );
@@ -200,11 +190,6 @@ const ProcDataLocalBase_c& ProcDataLocalBase_c::operator=( const ProcDataLocalBa
 void ProcDataLocalBase_c::assignFromSource( const ProcDataLocalBase_c& acrc_src )
 {
   mi32_masterVal = acrc_src.mi32_masterVal;
-#if 0 //def USE_EEPROM_IO
-  mi32_eepromVal = acrc_src.mi32_eepromVal;
-  mi32_lastEepromStore = acrc_src.mi32_lastEepromStore;
-  mui16_eepromAdr = acrc_src.mui16_eepromAdr;
-#endif // USE_EEPROM_IO
   mb_cumulativeValue = acrc_src.mb_cumulativeValue;
 }
 
@@ -214,39 +199,6 @@ ProcDataLocalBase_c::~ProcDataLocalBase_c(){
   // call unregisterLocalProcessData in last derived class because unregister does again message processing!
 }
 
-#if 0 //def USE_EEPROM_IO
-/**
-  set the eeprom adr for the value, read in value from EEPROM
-
-  possible errors:
-      * dependent error in EepromIo_c on problems during read
-  @param aui16_eepromAdr new EEPROM adress
-*/
-void ProcDataLocalBase_c::setEepromAdr(uint16_t aui16_eepromAdr)
-{
-  mui16_eepromAdr = aui16_eepromAdr;
-  if (mui16_eepromAdr < 0xFFFF)
-  { // valid adress -> read in value
-    // set read position
-    getEepromInstance().setg(aui16_eepromAdr);
-    // read data from eeprom
-    int32_t i32_temp;
-    getEepromInstance() >> i32_temp;
-    mi32_eepromVal = i32_temp;
-    // decide if eeprom val should be assigned as starting masterMeasurementVal
-    if (!mb_cumulativeValue)
-    { // value is NOT cumulative -> use eeprom as starting master,
-      // else for cumulative values master value can be set independent from EEPROM
-      // ==> for cumulative values the communicated value is sum of masterMeasurementVal AND EEPROM val
-      mi32_masterVal = mi32_eepromVal;
-    }
-  }
-  else
-  { // for undefined adr set value 0
-    mi32_eepromVal = 0;
-  }
-}
-#endif // USE_EEPROM_IO
 
 /**
   set the masterMeasurementVal from main application independent from any measure progs
@@ -254,10 +206,6 @@ void ProcDataLocalBase_c::setEepromAdr(uint16_t aui16_eepromAdr)
 */
 void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ai32_val)
 {
-#if 0 //def USE_EEPROM_IO
-  if (mb_cumulativeValue) mi32_eepromVal += (ai32_val - mi32_masterVal);
-  else mi32_eepromVal = ai32_val;
-#endif // USE_EEPROM_IO
   mi32_masterVal = ai32_val;
 }
 
@@ -267,9 +215,6 @@ void ProcDataLocalBase_c::setMasterMeasurementVal(int32_t ai32_val)
 */
 void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ai32_val)
 {
-#if 0 //def USE_EEPROM_IO
-  mi32_eepromVal += ai32_val;
-#endif // USE_EEPROM_IO
   mi32_masterVal += ai32_val;
 }
 
@@ -283,17 +228,6 @@ void ProcDataLocalBase_c::incrMasterMeasurementVal(int32_t ai32_val)
 */
 bool ProcDataLocalBase_c::timeEvent( uint16_t* /* pui16_nextTimePeriod */)
 {
-  if ( Scheduler_Task_c::getAvailableExecTime() == 0 ) return false;
-  #if 0 //def USE_EEPROM_IO
-  // check if eeprom value should be stored
-  int32_t i32_time = Scheduler_Task_c::getLastRetriggerTime();
-  if ((i32_time - mi32_lastEepromStore > CONFIG_PROC_STORE_EEPROM_INTERVAL) && (mui16_eepromAdr != 0xFFFF))
-  { // store needed
-    getEepromInstance().setp(mui16_eepromAdr);
-    getEepromInstance() << mi32_eepromVal;
-    mi32_lastEepromStore = i32_time;
-  }
-  #endif // USE_EEPROM_IO
   return true;
 }
 
@@ -310,11 +244,7 @@ bool ProcDataLocalBase_c::sendMasterMeasurementVal( const IsoName_c& ac_targetIS
                                                              ProcessCmd_c::exactValue,
                                                              ProcessCmd_c::setValue);
 
-    #if 0 //def USE_EEPROM_IO
-    return sendValISOName(ac_targetISOName, eepromVal());
-    #else
     return sendValISOName( pkg, ac_targetISOName, masterMeasurementVal());
-    #endif
 }
 
 
@@ -355,26 +285,6 @@ void ProcDataLocalBase_c::processSetpoint( const ProcessPkg_c& pkg )
   #endif
 }
 
-
-#if 0 //def USE_EEPROM_IO
-/**
-  called from MeasureProg item -> if this item is first in list
-  reset eeprom val
-
-  possible errors:
-      * dependent error in EepromIo_c on problems during read
-  @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
-*/
-void ProcDataLocalBase_c::resetEeprom( void ){
-  // now eeprom val can be reset
-  mi32_eepromVal = 0;
-  if (mui16_eepromAdr != 0xFFFF)
-  {   // write new val to EEPROM
-    getEepromInstance().setp(mui16_eepromAdr);
-    getEepromInstance() << mi32_eepromVal;
-  }
-}
-#endif // USE_EEPROM_IO
 
 bool ProcDataLocalBase_c::sendValISOName( ProcessPkg_c& arc_pkg, const IsoName_c& ac_varISOName, int32_t ai32_val) const
 {

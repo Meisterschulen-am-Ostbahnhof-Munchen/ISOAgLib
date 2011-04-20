@@ -269,14 +269,6 @@
   /// erase ISO 11783 items after time (>0), on missing address claim after request - can be manually overridden in project config file
 #  define CONFIG_ISO_ITEM_MAX_AGE 3000
 #endif
-
-/** interval in sec to store actual process data value for process datas which are
-    permanent in EEPROM
-*/
-#ifndef CONFIG_PROC_STORE_EEPROM_INTERVAL
-  /// interval [ms] for value update in EEPROM for local process data - can be manually overridden in project config file
-#  define CONFIG_PROC_STORE_EEPROM_INTERVAL 5000
-#endif
 /*@}*/
 
 
@@ -344,58 +336,10 @@
   * some systems send exact setpoint cmd with value 0 to reset a measurement value
   */
 #  ifndef RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN
-
 #    define RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN NO
 #  endif
 #  if RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT_YN == YES && !defined(RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT)
 #    define RESET_MEASUREMENT_WITH_ZERO_EXACT_SETPOINT
-#  endif
-
-
-/**
-  * @def LAV_COMMENT_MEASURE_PROG_CMD_YN
-  * LAV_COMMENT_MEASURE_PROG_CMD allows usage of specific start/stop/reset cmd values
-  */
-#  ifndef LAV_COMMENT_MEASURE_PROG_CMD_YN
-#    define LAV_COMMENT_MEASURE_PROG_CMD_YN NO
-#  endif
-#  if LAV_COMMENT_MEASURE_PROG_CMD_YN == YES && !defined(LAV_COMMENT_MEASURE_PROG_CMD)
-#    define LAV_COMMENT_MEASURE_PROG_CMD
-#  endif
-
-/**
-  * @def SIMPLE_SETPOINT_WITH_PERCENT_YN
-  * choose if simple setpoint should support percent setpoints
-  */
-
-#  ifndef SIMPLE_SETPOINT_WITH_PERCENT_YN
-#    define SIMPLE_SETPOINT_WITH_PERCENT_YN YES
-#  endif
-#  if SIMPLE_SETPOINT_WITH_PERCENT_YN == YES && !defined(SIMPLE_SETPOINT_WITH_PERCENT)
-#    define SIMPLE_SETPOINT_WITH_PERCENT
-#  endif
-
-/**
-  * @def SIMPLE_RESPOND_ON_SET_YN
-  * choose if local process data should simply respond received setpoint
-  * value after storing it (like Fieldstar (tm) )
-  */
-#  ifndef SIMPLE_RESPOND_ON_SET_YN
-#    define SIMPLE_RESPOND_ON_SET_YN YES
-#  endif
-#  if SIMPLE_RESPOND_ON_SET_YN == YES && !defined(SIMPLE_RESPOND_ON_SET)
-#    define SIMPLE_RESPOND_ON_SET
-#  endif
-
-/**
-  * @def HANDLE_SETPOINT_MEASURE_EQUIVALENT_YN
-  * choose if simple setpoint shouldn't distinguish between measurement and setpoint value
-  */
-#  ifndef HANDLE_SETPOINT_MEASURE_EQUIVALENT_YN
-#    define HANDLE_SETPOINT_MEASURE_EQUIVALENT_YN NO
-#  endif
-#  if HANDLE_SETPOINT_MEASURE_EQUIVALENT_YN == YES && !defined(HANDLE_SETPOINT_MEASURE_EQUIVALENT)
-#    define HANDLE_SETPOINT_MEASURE_EQUIVALENT
 #  endif
 
 /*@}*/
@@ -429,21 +373,6 @@
 #  endif
 #  if USE_ISO_TERMINAL_YN == YES && !defined(USE_ISO_TERMINAL) && defined( USE_ISO_11783 )
 #    define USE_ISO_TERMINAL
-#  endif
-
-/**
-  * @def USE_PROCESS_YN
-  * activate module for base data ( periodic sent main tractor data like speed, PTO, Hitch )
-  * ( even if IsoAgLib is mainly independent from this setting, the IsoItem_c::processMsg()
-  *   requires this setting, to detect if a call to Base_c:processMsg() is defined -
-  *   this call is performed if a REQUEST_PGN_MSG_PGN is processed by IsoItem_c and
-  *   the requested PGN is TIME_DATE_PGN )
-  */
-#  ifndef USE_PROCESS_YN
-#    define USE_PROCESS_YN NO
-#  endif
-#  if USE_PROCESS_YN == YES && !defined(USE_PROCESS)
-#    define USE_PROCESS
 #  endif
 
 
@@ -561,7 +490,7 @@
 
 #ifndef USE_WORKING_SET
   /// auto-define USE_WORKING_SET dependend on the parts that need it!
-#  if defined (USE_ISO_TERMINAL) || defined (USE_PROC_DATA_DESCRIPTION_POOL)
+#  if defined (USE_ISO_TERMINAL) || defined (USE_ISO_TASKCONTROLLER_CLIENT)
 #    define USE_WORKING_SET
 #  endif
 #endif

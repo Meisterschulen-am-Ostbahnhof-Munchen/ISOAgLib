@@ -1,132 +1,21 @@
 /***************************************************************************
                           iprocdatalocal_c.h  - managing of local
                                                        process data object
-                             -------------------
-    begin                : Fri Apr 07 2000
-    copyright            : (C) 2000 - 2009 by Dipl.-Inform. Achim Spangler
-    email                : a.spangler@osb-ag:de
-    type                 : Header
-    $LastChangedDate$
-    $LastChangedRevision$
- ***************************************************************************/
+*/
 
-/***************************************************************************
- *                                                                         *
- * This file is part of the "IsoAgLib", an object oriented program library *
- * to serve as a software layer between application specific program and   *
- * communication protocol details. By providing simple function calls for  *
- * jobs like starting a measuring program for a process data value on a    *
- * remote ECU, the main program has not to deal with single CAN telegram   *
- * formatting. This way communication problems between ECU's which use     *
- * this library should be prevented.                                       *
- * Everybody and every company is invited to use this library to make a    *
- * working plug and play standard out of the printed protocol standard.    *
- *                                                                         *
- * Copyright (C) 2000 - 2009 Dipl.-Inform. Achim Spangler                  *
- *                                                                         *
- * The IsoAgLib is free software; you can redistribute it and/or modify it *
- * under the terms of the GNU General Public License as published          *
- * by the Free Software Foundation; either version 2 of the License, or    *
- * (at your option) any later version.                                     *
- *                                                                         *
- * This library is distributed in the hope that it will be useful, but     *
- * WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       *
- * General Public License for more details.                                *
- *                                                                         *
- * You should have received a copy of the GNU General Public License       *
- * along with IsoAgLib; if not, write to the Free Software Foundation,     *
- * Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA           *
- *                                                                         *
- * As a special exception, if other files instantiate templates or use     *
- * macros or inline functions from this file, or you compile this file and *
- * link it with other works to produce a work based on this file, this file*
- * does not by itself cause the resulting work to be covered by the GNU    *
- * General Public License. However the source code for this file must still*
- * be made available in accordance with section (3) of the                 *
- * GNU General Public License.                                             *
- *                                                                         *
- * This exception does not invalidate any other reasons why a work based on*
- * this file might be covered by the GNU General Public License.           *
- *                                                                         *
- * Alternative licenses for IsoAgLib may be arranged by contacting         *
- * the main author Achim Spangler by a.spangler@osb-ag:de                  *
- ***************************************************************************/
 #ifndef IPROCESS_DATA_LOCAL_H
 #define IPROCESS_DATA_LOCAL_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "impl/procdatalocal_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/Local/StdMeasureElements/imeasureproglocal_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/Local/StdSetpointElements/isetpointlocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/imeasureproglocal_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/isetpointlocal_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h>
 
-// Begin Namespace IsoAgLib
+
 namespace IsoAgLib {
-// ***************************************************************************************
-// ****************** ProcDataLocal_c ******************
-// ***************************************************************************************
-
-/**
-  @brief Interface for managing of local process data object with standard
-  ( %i.e. no restrictions ) feature set.
-
-  Has __IsoAgLib::SetpointLocal_c / IsoAgLib::iSetpointLocal_c and __IsoAgLib::ManageMeasureProgLocal_c / IsoAgLib::iManageMeasureProgLocal_c
-  as member for doing setpoint and measurement specific jobs.
-  \n
-  Projects which use this class, must include the files and succeding subdirectories
-  of the following subdirectories of xgpl_src/IsoAgLib/Process:
-  - \e Local/StdMeasureElements,
-  - \e Local/StdSetpointElements,
-  - \e StdMeasureElements,
-  - \e StdSetpointElements and
-  - \e impl
-  \n
-  Example:
-  \code
-  // define local device type
-  IsoAgLib::iIsoName c_myIsoName( 1, 0 );
-  // creation of process data instance
-  iProcDataLocal_c c_workState;
-  // init for LIS=0, local device type/subtype=1/0, complete work width=0xFF,
-  // target process data/PRI=2, pointer to my local device type ( to resolve dynamic SA at time of cmd send ),
-  // load/store measurememnt data to/from EEPROM
-  c_workState.init( 0, 0, myIsoName, c_myIsoName, &c_myIsoName, false, 0x1234 );
-
-  // update current measurement value ( real value, which can differ from commanded value )
-  c_workState.setMasterMeasurementVal( 100 );
-  // measurement programs and value requests are handled in the backend of the IsoAgLibrary
-
-  // check if unhandled setpoints are received
-  if ( c_workState.setpoint().unhandledCnt() > 0 ) {
-    if ( ! c_workState.setpoint().existMaster() ) {
-      for ( uint8_t ind = 0; ind < c_workState.setpoint().unhandledCnt(); ind++ )
-      { // now decide on all received setpoints
-        if ( ( c_workState.setpoint().unhandledCnt() == 1 )
-          && ( ( c_workState.setpoint().unhandledFirst().exact() == 100 ) // undhandledFirst() is shortcut for unhandledInd( 0 )
-            || ( c_workState.setpoint().unhandledInd( 0 ).exact() == 0   ) ) )
-        { // as no master exist, and only one setpoint received -> simply accept if value is 0 or 100
-          c_workState.setpoint().unhandledFirst().setMaster( true );
-        }
-      }
-    }
-    else if ( ( c_workState.setpoint().unhandledMaster().exact() == 100 )
-           || ( c_workState.setpoint().unhandledMaster().exact() == 0 ) )
-    { // simply accept new master if 0 or 100
-      c_workState.setpoint().acceptNewMaster();
-    }
-    // send answer for all received setpoints
-    c_workState.setpoint().respondAckNack();
-  }
-  \endcode
-
-  @author Dipl.-Inform. Achim Spangler
-*/
-class iProcDataLocal_c
-: private __IsoAgLib::ProcDataLocal_c  {
+  
+class iProcDataLocal_c : private __IsoAgLib::ProcDataLocal_c  {
 private:
   friend class EventSource_c;
 public:
@@ -166,16 +55,10 @@ public:
                     const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
-#if 0 //def USE_EEPROM_IO
-                  uint16_t aui16_eepromAdr = 0xFFFF,
-#endif
                   ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                   int ai_multitonInst = 0)
     : ProcDataLocal_c( ps_elementDDI, aui16_element,
                        acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                       aui16_eepromAdr,
-#endif
                        apc_processDataChangeHandler,
                        ai_multitonInst
                       )
@@ -191,15 +74,9 @@ public:
                     const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
                     const iIsoName_c *apc_externalOverridingIsoName = NULL,
                     bool ab_cumulativeValue = false,
-#if 0 //def USE_EEPROM_IO
-                   uint16_t aui16_eepromAdr = 0xFFFF,
-#endif
                    ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
                    int ai_multitonInst = 0)
     : ProcDataLocal_c( NULL, aui16_element, acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                      aui16_eepromAdr,
-#endif
                       apc_processDataChangeHandler,
                       ai_multitonInst
                       )
@@ -213,9 +90,6 @@ public:
 
     ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
                       acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                      aui16_eepromAdr,
-#endif
                       apc_processDataChangeHandler,
                       ai_multitonInst
                       );
@@ -257,17 +131,11 @@ public:
              uint16_t aui16_element = 0xFFFF,
              const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
-#if 0 //def USE_EEPROM_IO
-            uint16_t aui16_eepromAdr = 0xFFFF,
-#endif
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
             )
   {ProcDataLocal_c::init( ps_elementDDI, aui16_element,
                          acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                         aui16_eepromAdr,
-#endif
                          apc_processDataChangeHandler,
                          ai_multitonInst);
   }
@@ -307,9 +175,6 @@ public:
   void init( uint16_t aui16_DDI, uint16_t aui16_element,
              const iIsoName_c& acrc_isoName = iIsoName_c::iIsoNameInitialProcessData(),
              const iIsoName_c *apc_externalOverridingIsoName = NULL, bool ab_cumulativeValue = false,
-#if 0 //def USE_EEPROM_IO
-            uint16_t aui16_eepromAdr = 0xFFFF,
-#endif
             ProcessDataChangeHandler_c *apc_processDataChangeHandler = NULL,
             int ai_multitonInst = 0
             )
@@ -323,9 +188,6 @@ public:
 
      ProcDataLocal_c::init( s_tmpElementDDI, aui16_element,
                             acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                            aui16_eepromAdr,
-#endif
                             apc_processDataChangeHandler,
                             ai_multitonInst);
   }
@@ -404,24 +266,6 @@ public:
     return setpointConst().sendSetpointForGroup( ac_targetISOName,
                                             en_valueGroup, __IsoAgLib::ProcessCmd_c::setValue );
   }
-
-  #if 0 //def USE_EEPROM_IO
-  /**
-    deliver the eeprom adr for the value
-    @return configured EEPROM adress
-  */
-  uint16_t eepromAdr()const{return ProcDataLocal_c::eepromAdr();}
-
-  /**
-    set the eeprom adr for the value, read in value from EEPROM
-
-    possible errors:
-        * dependent error in EepromIo_c on problems during read
-    @param aui16_eepromAdr new EEPROM adress
-  */
-  void setEepromAdr(uint16_t aui16_eepromAdr)
-    {ProcDataLocal_c::setEepromAdr(aui16_eepromAdr);}
-  #endif
 
   /**
     deliver the master value (central measure value of this process data;

@@ -14,16 +14,13 @@
 */
 
 #include "processdatachangehandler_c.h"
-#include "Local/Std/iprocdatalocal_c.h"
-#include "Remote/Std/iprocdataremote_c.h"
+#include "iprocdatalocal_c.h"
+
 
 namespace IsoAgLib {
+
 iProcDataLocal_c* EventSource_c::makeIProcDataLocal( void ) {
   return static_cast<iProcDataLocal_c*>(pc_src);
-}
-
-iProcDataRemote_c* EventSource_c::makeIProcDataRemote( void ) {
-  return static_cast<iProcDataRemote_c*>(pc_src);
 }
 
 /** react on new received setpoint for local process data

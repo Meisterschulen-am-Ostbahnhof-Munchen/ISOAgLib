@@ -25,18 +25,24 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/Local/impl/procdatalocalbase_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/Remote/impl/procdataremotebase_c.h>
+#include <IsoAgLib/comm/Part7_ProcessData/impl/procdatalocalbase_c.h>
 #include "processpkg_c.h"
 #include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
 #include <IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h>
-#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 #endif
 
 #include <list>
 
 namespace IsoAgLib { class iProcess_c;class iDevPropertyHandler_c;}
+
+
+#if defined(_MSC_VER)
+#pragma warning( push )
+#pragma warning( disable : 4355 )
+#endif
+
 
 // Begin Namespace IsoAgLib
 namespace __IsoAgLib {
@@ -65,7 +71,7 @@ public:
   */
   bool processMsg( const CanPkg_c& arc_data );
 
-#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   DevPropertyHandler_c& getDevPropertyHandlerInstance( void );
 #endif
 
@@ -107,25 +113,6 @@ public:
   ProcDataLocalBase_c& procDataLocal( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
 
   /**
-    search for suitable ProcDataRemoteBase_c item; create on if not found AND if wanted
-
-    possible errors:
-        * Err_c::badAlloc not enough memory to add new ProcDataRemote_c
-          (can cause badAlloc exception)
-        * Err_c::elNonexistent if element not found and ab_doCreate == false
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
-    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-    @return reference to searched/created ProcDataRemoteBase_c instance
-    @exception badAlloc
-  */
- ProcDataRemoteBase_c& procDataRemote( uint16_t aui16_DDI, uint16_t aui16_element,
-                                       const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
-
-
-  /**
     performs periodically actions
 
     @return true -> all planned activities performed in allowed time
@@ -151,16 +138,6 @@ public:
     */
   void unregisterLocalProcessData( ProcDataLocalBase_c* pc_localClient)
   { unregisterC1( pc_localClient );}
-
-  /** register pointer to a new remote process data instance
-    * this function is called within construction of new remote process data instance
-    */
-  bool registerRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
-
-  /** unregister pointer to a already registered remote process data instance
-    * this function is called within destruction of remote process data instance
-    */
-  void unregisterRemoteProcessData( ProcDataRemoteBase_c* pc_remoteClient);
 
   void registerWsmTaskMsgHandler(ProcessWsmTaskMsgHandler_c* apc_processWsmTaskMsgHandler)
   { mpc_processWsmTaskMsgHandler = apc_processWsmTaskMsgHandler; }
@@ -229,48 +206,6 @@ private: // Private methods
     @param acrc_isoNameReceiver isoName code of created local Process Data instance
   */
   bool updateLocalCache( uint16_t aui16_DDI, uint16_t aui16_element, const IsoName_c& acrc_isoNameReceiver);
-
-  /**
-    update the cache with search for according ProcDataRemoteBase_c item
-    ISO parameter
-    @param aui16_DDI
-    @param aui16_element
-    @param acrc_isoNameSender isoName of the sender (used for check against isoName())
-    @param acrc_isoNameReceiver isoName code of searched local Process Data instance
-  */
-  bool updateRemoteCache(uint16_t aui16_DDI, uint16_t aui16_element,
-                         const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
-
-  /**
-   * check if any remote process data needs a new receive filter
-   * @return true -> a remote filter has been created
-   */
-  bool checkCreateRemoteReceiveFilter();
-
-  /**
-    insert FilterBox_c for receive from remote isoName if needed
-    @param acrc_isoName ISOName code of remote owner who sent the message
-    @return true -> member exist and Filter Box created
-  */
-  bool createRemoteFilter(const IsoName_c& acrc_isoName);
-
-  /** checks if a DDI can be added to a group and return ptr to proc data if successfully */
-  ProcDataRemoteBase_c* addDDI2ExistingProcData(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName, ProcessCmd_c::ValueGroup_t& ren_valueGroup, bool& rb_isSetpoint);
-
-  /** checks if a DDI can be added to a group and if yes then add it! */
-  bool checkAndAddMatchingDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
-
-  /** adds a proprietary DDI to a group */
-  bool addProprietaryDDI2Group(uint16_t aui16_DDI, uint16_t aui_deviceElement, bool mb_isSetpoint, ProcessCmd_c::ValueGroup_t ddiType, const IsoName_c &acrc_isoName);
-
-  /** checks if several DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4DDIGroupMatch(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
-
-  /** checks this DDI already exists in one ProcDataRemoteBase_c instance */
-  bool check4DDIExisting(uint16_t aui16_DDI, uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
-
-  /** checks if proprietary DDI's can be summed up in groups */
-  ProcDataRemoteBase_c* check4ProprietaryDDIGroupMatch(uint16_t aui_deviceElement, const IsoName_c& acrc_isoName);
 
   virtual bool reactOnStreamStart(
       ReceiveStreamIdentifier_c const &ac_ident,
@@ -409,11 +344,10 @@ private: // Private attributes
   Process_c() :
     mt_handler(*this),
     mt_customer(*this),
-    CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST,
-    CONTAINER_CLIENT2_CTOR_INITIALIZER_LIST
+    CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
   {}
 
-#if defined(USE_PROC_DATA_DESCRIPTION_POOL)
+#if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   /**
     deliver reference to process pkg as reference to DevPropertyHandler_c which
     handles sending and processing of messages from can
@@ -425,7 +359,6 @@ private: // Private attributes
   int32_t mi32_lastFilterBoxTime;
 
   STL_NAMESPACE::list<IsoName_c> ml_filtersToDeleteISO;
-  bool mb_needCallOfCheckCreateRemoteReceiveFilter;
   const IsoName_c* mpc_tcISOName;
   uint8_t mui8_lastTcStatus;
 
@@ -438,10 +371,8 @@ private: // Private attributes
   Handler_t mt_handler;
   Customer_t mt_customer;
   CONTAINER_CLIENT1_MEMBER_FUNCTIONS_MAIN(ProcDataLocalBase_c);
-  CONTAINER_CLIENT2_MEMBER_FUNCTIONS_MAIN(ProcDataRemoteBase_c);
   friend Process_c &getProcessInstance( uint8_t aui8_instance );
 };
-
 
 
   /** C-style function, to get access to the unique Process_c singleton instance
@@ -449,4 +380,9 @@ private: // Private attributes
     */
   Process_c &getProcessInstance( uint8_t aui8_instance = 0 );
 }
+
+#if defined(_MSC_VER)
+#pragma warning( pop )
+#endif
+
 #endif

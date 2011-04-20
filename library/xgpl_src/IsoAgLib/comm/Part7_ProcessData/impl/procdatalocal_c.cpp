@@ -117,10 +117,12 @@
 #include "procdatalocal_c.h"
 #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 
+#if defined(_MSC_VER)
+#pragma warning( disable : 4355 )
+#endif
+
+
 namespace __IsoAgLib {
-// ****************************************************************************************
-// ********************************* ProcDataLocal_c *********************************
-// ****************************************************************************************
 
 /**
   constructor which can set all element vars
@@ -157,17 +159,11 @@ namespace __IsoAgLib {
 ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                                   const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
                                   bool ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                  uint16_t aui16_eepromAdr,
-#endif
                   IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                   int ai_multitonInst
                   )
     : ProcDataLocalBase_c( ps_elementDDI, aui16_element,
                           acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                          aui16_eepromAdr,
-#endif
                           apc_processDataChangeHandler,
                           ai_multitonInst)
     , mc_measureprog( this )
@@ -210,18 +206,12 @@ ProcDataLocal_c::ProcDataLocal_c( const IsoAgLib::ElementDdi_s* ps_elementDDI, u
 void ProcDataLocal_c::init( const IsoAgLib::ElementDdi_s* ps_elementDDI, uint16_t aui16_element,
                             const IsoName_c& acrc_isoName, const IsoName_c *apc_externalOverridingIsoName,
                             bool ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                           uint16_t aui16_eepromAdr,
-#endif
                            IsoAgLib::ProcessDataChangeHandler_c *apc_processDataChangeHandler,
                            int ai_multitonInst
                            )
 {
   ProcDataLocalBase_c::init( ps_elementDDI, aui16_element,
                             acrc_isoName, apc_externalOverridingIsoName, ab_cumulativeValue,
-#if 0 //def USE_EEPROM_IO
-                            aui16_eepromAdr,
-#endif
                             apc_processDataChangeHandler,
                             ai_multitonInst );
   mc_setpoint.init( this );
@@ -235,21 +225,6 @@ ProcDataLocal_c::~ProcDataLocal_c(){
 }
 
 
-#if 0 //def USE_EEPROM_IO
-/**
-  set the eeprom adr for the value, read in value from EEPROM
-
-  possible errors:
-      * dependent error in EepromIo_c on problems during read
-  @param aui16_eepromAdr new EEPROM adress
-*/
-void ProcDataLocal_c::setEepromAdr(uint16_t aui16_eepromAdr)
-{
-  ProcDataLocalBase_c::setEepromAdr( aui16_eepromAdr );
-  // now init read val for all MeasureProg
-  mc_measureprog.initGlobalVal( eepromVal() );
-}
-#endif
 /**
   set the masterMeasurementVal from main application independent from any measure progs
   @param ai32_val new measure value
@@ -286,21 +261,6 @@ bool ProcDataLocal_c::timeEvent( uint16_t *pui16_nextTimePeriod ){
   return true;
 }
 
-#if 0 //def USE_EEPROM_IO
-/**
-  called from MeasureProg item -> if this item is first in list
-  reset eeprom val
-
-  possible errors:
-      * dependent error in EepromIo_c on problems during read
-  @param pc_progItem MeasureProgLocal_c instance which wants to reset EEPROM val
-*/
-void ProcDataLocal_c::resetEeprom( MeasureProgLocal_c* pc_progItem )
-{ // only reset if pointer is begin
-  if (&(*mc_measureprog.vec_prog().begin()) == pc_progItem)
-    ProcDataLocalBase_c::resetEeprom();
-}
-#endif
 
 /** process a setpoint message */
 void ProcDataLocal_c::processSetpoint( const ProcessPkg_c& pkg ){

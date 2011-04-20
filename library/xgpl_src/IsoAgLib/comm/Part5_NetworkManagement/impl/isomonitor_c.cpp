@@ -19,7 +19,7 @@
 #include <IsoAgLib/util/iliberr_c.h>
 #include <IsoAgLib/util/iassert.h>
 
-#ifdef USE_PROCESS
+#ifdef USE_ISO_TASKCONTROLLER_CLIENT
   #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
 #endif
 
@@ -1244,7 +1244,7 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
       }
     } break;
 
-#ifdef USE_PROCESS
+#ifdef USE_ISO_TASKCONTROLLER_CLIENT
     case PROCESS_DATA_PGN:
       // TODO copy arc data in procesMsg of process_c
       return getProcessInstance4Comm().processMsg( arc_data );

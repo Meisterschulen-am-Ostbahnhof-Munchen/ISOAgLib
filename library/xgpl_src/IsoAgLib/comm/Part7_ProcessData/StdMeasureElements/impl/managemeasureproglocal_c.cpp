@@ -121,11 +121,7 @@ void ManageMeasureProgLocal_c::checkInitList( void )
     ProcDataLocalBase_c* pc_procdata =
       static_cast<ProcDataLocalBase_c*>(pprocessData());
     vec_prog().push_front(MeasureProgLocal_c(pc_procdata,
-                                              pc_procdata->masterMeasurementVal()
-                                              #if 0 //def USE_EEPROM_IO
-                                                , pc_procdata->eepromVal()
-                                              #endif
-                                              ));
+                                              pc_procdata->masterMeasurementVal()));
   }
   else
   { // insert default entry wihtout connection to root proc-data class into list
@@ -512,13 +508,6 @@ void ManageMeasureProgLocal_c::insertMeasureprog(const IsoName_c& acrc_isoName)
       << INTERNAL_DEBUG_DEVICE_ENDL;
     #endif
   }
-  #endif
-
-  #if 0 //def USE_EEPROM_IO
-  // set initial value of new item to eeprom value
-  ProcDataLocalBase_c* pc_procdata =
-    static_cast<ProcDataLocalBase_c*>(pprocessData());
-  mpc_progCache->initVal((int32_t)pc_procdata->eepromVal());
   #endif
 
   // set type and isoName for item
