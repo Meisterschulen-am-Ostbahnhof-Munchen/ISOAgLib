@@ -18,10 +18,7 @@
 #ifndef DEVPROPERTYHANDLER_C_H
 #define DEVPROPERTYHANDLER_C_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include <IsoAgLib/comm/Part7_ProcessData/impl/processpkg_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processpkg_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/iidentitem_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/imultisendstreamer_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
@@ -32,6 +29,7 @@
 namespace IsoAgLib { class iProcess_c;};
 
 namespace __IsoAgLib {
+
 
 class LanguageLabel_c {
   char str[2+1]; // 2 language characters + 0x00-termination

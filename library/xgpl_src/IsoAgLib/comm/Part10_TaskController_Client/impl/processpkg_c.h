@@ -13,17 +13,13 @@
 #ifndef PROCESS_PKG_H
 #define PROCESS_PKG_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include <IsoAgLib/hal/hal_typedef.h>
+#include "processcmd_c.h"
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-
 #include <IsoAgLib/comm/Part3_DataLink/impl/canpkgext_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include "processcmd_c.h"
+#include <IsoAgLib/comm/Part10_TaskController_Client/elementddi_s.h>
+#include <IsoAgLib/hal/hal_typedef.h>
 #include <IsoAgLib/driver/can/impl/ident_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/elementddi_s.h>
 
 namespace __IsoAgLib {
 

@@ -117,12 +117,9 @@
 #ifndef SETPOINT_LOCAL_H
 #define SETPOINT_LOCAL_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointbase_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/impl/setpointregister_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/impl/setpointregister_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
 #include <list>
 

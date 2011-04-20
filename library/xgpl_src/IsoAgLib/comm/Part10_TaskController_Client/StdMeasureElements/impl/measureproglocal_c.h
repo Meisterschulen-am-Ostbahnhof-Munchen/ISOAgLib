@@ -86,14 +86,12 @@
 #ifndef MEASUREPROG_LOCAL_H
 #define MEASUREPROG_LOCAL_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include <IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/impl/measureprogbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/impl/measureprogbase_c.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
 class ProcDataLocalBase_c;
+
 
 /**
   managing of local measure progs and values;

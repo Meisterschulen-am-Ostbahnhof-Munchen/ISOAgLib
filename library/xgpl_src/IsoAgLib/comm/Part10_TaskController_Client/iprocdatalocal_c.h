@@ -7,10 +7,10 @@
 #define IPROCESS_DATA_LOCAL_H
 
 #include "impl/procdatalocal_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/StdMeasureElements/imeasureproglocal_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/isetpointlocal_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/proc_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/StdMeasureElements/imeasureproglocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/isetpointlocal_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/proc_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/iprocesscmd_c.h>
 
 
 namespace IsoAgLib {

@@ -20,7 +20,7 @@
 #include <IsoAgLib/util/iassert.h>
 
 #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-  #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #endif
 
 #if DEBUG_ISOMONITOR || DEBUG_HEAP_USEAGE

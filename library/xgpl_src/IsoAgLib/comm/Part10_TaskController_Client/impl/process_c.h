@@ -25,10 +25,10 @@
 #include <IsoAgLib/util/config.h>
 #include <IsoAgLib/driver/can/impl/cancustomer_c.h>
 #include <IsoAgLib/scheduler/impl/schedulertask_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/impl/procdatalocalbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/procdatalocalbase_c.h>
 #include "processpkg_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processwsmtaskmsghandler_c.h>
 #if defined(USE_ISO_TASKCONTROLLER_CLIENT)
   #include <IsoAgLib/comm/Part10_TaskController_Client/impl/devpropertyhandler_c.h>
 #endif

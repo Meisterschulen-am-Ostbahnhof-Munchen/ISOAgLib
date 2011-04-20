@@ -11,13 +11,10 @@
   file LICENSE.txt or copy at <http://isoaglib.com/download/license>)
 */
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "setpointbase_c.h"
 #include "setpointregister_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h>
 
 namespace __IsoAgLib {
 

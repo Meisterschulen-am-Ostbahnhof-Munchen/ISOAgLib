@@ -29,6 +29,11 @@ doc/index.html -text
 doc/stylesheet.css -text
 doc/txt/impressum.txt -text
 library/commercial_BIOS/readme.txt -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/elementddi_s.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.cpp -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processcmd_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/impl/processwsmtaskmsghandler_c.h -text
+library/xgpl_src/IsoAgLib/comm/Part10_TaskController_Client/iprocesscmd_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticsservices_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/idiagnosticstypes.h -text
 library/xgpl_src/IsoAgLib/comm/Part12_DiagnosticsServices/impl/diagnosticpgnhandler_c.cpp -text
@@ -133,11 +138,6 @@ library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmove_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracmovesetpoint_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracpto_c.h -text
 library/xgpl_src/IsoAgLib/comm/Part7_ApplicationLayer/itracptosetpoint_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/elementddi_s.h -text
-library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.cpp -text
-library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processcmd_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/impl/processwsmtaskmsghandler_c.h -text
-library/xgpl_src/IsoAgLib/comm/Part7_ProcessData/iprocesscmd_c.h -text
 library/xgpl_src/IsoAgLib/comm/iisobus_c.h -text
 library/xgpl_src/IsoAgLib/comm/impl/isobus_c.cpp -text
 library/xgpl_src/IsoAgLib/comm/impl/isobus_c.h -text

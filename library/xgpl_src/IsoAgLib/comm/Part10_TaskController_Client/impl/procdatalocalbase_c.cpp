@@ -113,12 +113,9 @@
  * AS A RULE: Use only classes with names beginning with small letter :i:  *
  ***************************************************************************/
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "procdatalocalbase_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/processdatachangehandler_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/processdatachangehandler_c.h>
 
 
 namespace __IsoAgLib {

@@ -13,12 +13,9 @@
 #ifndef MEASUREPROG_BASE_H
 #define MEASUREPROG_BASE_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "measuresubprog_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/impl/processelementbase_c.h>
-#include <IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/processelementbase_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 
 #include <list>
 

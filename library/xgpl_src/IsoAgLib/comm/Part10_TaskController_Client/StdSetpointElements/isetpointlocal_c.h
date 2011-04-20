@@ -60,7 +60,7 @@
 /* ********** include headers ************ */
 /* *************************************** */
 #include "impl/setpointlocal_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/StdSetpointElements/isetpointregister_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/StdSetpointElements/isetpointregister_c.h>
 
 // Begin Namespace IsoAgLib
 namespace IsoAgLib {

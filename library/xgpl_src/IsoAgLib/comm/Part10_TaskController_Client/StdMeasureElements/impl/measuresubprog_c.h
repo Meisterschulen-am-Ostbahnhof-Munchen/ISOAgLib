@@ -14,15 +14,13 @@
 #ifndef MEASURE_SUBPROG_H
 #define MEASURE_SUBPROG_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/comm/Part7_ProcessData/impl/proc_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/impl/proc_c.h>
 #include <IsoAgLib/util/impl/singleton.h>
 
 // Begin Namespace __IsoAgLib
 namespace __IsoAgLib {
+
 
 /**
   Every increment type of a measure prog is

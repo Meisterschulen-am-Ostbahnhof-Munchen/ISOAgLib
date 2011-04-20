@@ -29,7 +29,7 @@
   #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
 #endif
 #ifdef USE_ISO_TASKCONTROLLER_CLIENT
-  #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
+  #include <IsoAgLib/comm/Part10_TaskController_Client/impl/process_c.h>
 #endif
 #ifdef USE_TRACTOR_GENERAL
   #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>

@@ -13,15 +13,11 @@
 #ifndef PROC_IDENT_H
 #define PROC_IDENT_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
-#include <IsoAgLib/hal/hal_typedef.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
-
-#include <IsoAgLib/util/impl/singleton.h>
 #include "processcmd_c.h"
-#include <IsoAgLib/comm/Part7_ProcessData/elementddi_s.h>
+#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isoname_c.h>
+#include <IsoAgLib/comm/Part10_TaskController_Client/elementddi_s.h>
+#include <IsoAgLib/hal/hal_typedef.h>
+#include <IsoAgLib/util/impl/singleton.h>
 #include <list>
 
 // Begin Namespace __IsoAgLib
