@@ -121,10 +121,9 @@ public:
   */
   void abortSend ();
 
-  bool matchSaDa (const IsoName_c& acrc_sa, const IsoName_c& acrc_da) { return (acrc_sa == mc_isoNameSender) && (acrc_da == mc_isoNameReceiver); }
+  bool matchSaDa (const IsoName_c& acrc_sa, const IsoName_c& acrc_da) const { return (acrc_sa == mc_isoNameSender) && (acrc_da == mc_isoNameReceiver); }
 
-//    bool matchSa (uint8_t aui8_sa) { return (aui8_sa == ui8_sender); }
-//    bool matchDa (uint8_t aui8_da) { return (aui8_da == ui8_receiver); }
+  MultiSendEventHandler_c* getMultiSendEventHandler() const { return mpc_multiSendEventHandler; }
 
   uint32_t pgn() const { return mui32_pgn;}
   const IsoName_c& receiver() const { return mc_isoNameReceiver; }

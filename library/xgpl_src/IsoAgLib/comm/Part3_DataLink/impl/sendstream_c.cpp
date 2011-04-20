@@ -429,14 +429,26 @@ SendStream_c::processMsg( const CanPkgExt_c& arc_data )
 void
 SendStream_c::abortSend()
 {
-  MultiSendPkg_c c_multiSendPkg;
+  switch (men_msgType)
+  {
+  case IsoTP:
+  case IsoETP:
+  {
+    MultiSendPkg_c c_multiSendPkg;
 
-  c_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_ConnAbort));
-  c_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
-  c_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(mui32_pgn & 0xFF));
-  c_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(mui32_pgn >> 8));
+    c_multiSendPkg.setUint8Data (0, static_cast<uint8_t>(scui8_CM_ConnAbort));
+    c_multiSendPkg.setUint32Data(1, uint32_t(0xFFFFFFFFUL));
+    c_multiSendPkg.setUint8Data (5, static_cast<uint8_t>(mui32_pgn & 0xFF));
+    c_multiSendPkg.setUint16Data(6, static_cast<uint16_t>(mui32_pgn >> 8));
 
-  sendPacketIso( false, c_multiSendPkg ); // ConnAbort is not Data, we need the connection management pgn here...
+    sendPacketIso( false, c_multiSendPkg ); // ConnAbort is not Data, we need the connection management pgn here...
+  } break;
+
+  case IsoTPbroadcast:
+  case NmeaFastPacket:
+    break;
+  }
+
   notifySender(SendAborted); // will cause isFinished() to report true!
 }
 

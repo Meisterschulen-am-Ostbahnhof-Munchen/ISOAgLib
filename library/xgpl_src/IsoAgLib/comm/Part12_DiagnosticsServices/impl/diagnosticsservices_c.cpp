@@ -77,14 +77,13 @@ DiagnosticsServices_c::init()
 void
 DiagnosticsServices_c::close()
 {
+  getMultiSendInstance4Comm().abortSend(mt_multiSendEventHandler);
+
   getIsoRequestPgnInstance4Comm().unregisterPGN ( mt_isoRequestPgnHandler, DIAGNOSTIC_DATA_CLEAR_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( mt_isoRequestPgnHandler, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( mt_isoRequestPgnHandler, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN );
 
   getSchedulerInstance().unregisterClient( this );
-
-  // @TODO : if multisend is running, close multisend connection
-
 }
 
 bool DiagnosticsServices_c::timeEvent()
@@ -131,7 +130,7 @@ bool DiagnosticsServices_c::timeEvent()
     }
     else
     { // Send out MultiPacket Broadcast
-      if (__IsoAgLib::getMultiSendInstance4Comm().sendIsoBroadcast(
+      if (getMultiSendInstance4Comm().sendIsoBroadcast(
             mrc_identItem.isoName(),
             (uint8_t *) marr_dm1SendingBroadcast,
             ms_dm1SendingBroadcast.marr_bufferSize,
@@ -194,7 +193,7 @@ void DiagnosticsServices_c::reactOnStateChange(const SendStream_c& sendStream)
 
       // immediately re-check everything in timeEvent
       /// THIS SHOULD ALWAYS BE CALLED FROM OUTSIDE TIMEEVENT, so we can't use setTimePeriod() here
-      __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime(), getTimePeriod());
+      getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime(), getTimePeriod());
     }
     break;
   case PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:
@@ -255,7 +254,7 @@ DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& 
 
     // immediately re-check everything in timeEvent
     /// THIS SHOULD ALWAYS BE CALLED FROM OUTSIDE TIMEEVENT, so we can't use setTimePeriod() here
-    __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime(), getTimePeriod());
+    getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime(), getTimePeriod());
   }
   else
   { // Last State Change Sent is less than 1s,
@@ -264,7 +263,7 @@ DiagnosticsServices_c::changeActiveDtcStatusAndRetrigger(DtcContainer_c::Dtc_s& 
 
     // immediately re-check everything in timeEvent
     /// THIS SHOULD ALWAYS BE CALLED FROM OUTSIDE TIMEEVENT, so we can't use setTimePeriod() here
-    __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime() + retriggerDelay, getTimePeriod());
+    getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime() + retriggerDelay, getTimePeriod());
   }
 }
 
@@ -310,7 +309,7 @@ uint16_t DiagnosticsServices_c::dtcActivate(uint32_t SPN, IsoAgLib::FailureModeI
 
     // immediately re-check everything in timeEvent
     /// THIS SHOULD ALWAYS BE CALLED FROM OUTSIDE TIMEEVENT, so we can't use setTimePeriod() here
-    __IsoAgLib::getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime(), getTimePeriod());
+    getSchedulerInstance().changeRetriggerTimeAndResort(this, HAL::getTime(), getTimePeriod());
   }
 
   // update send buffer -> "marr_dm1Current"

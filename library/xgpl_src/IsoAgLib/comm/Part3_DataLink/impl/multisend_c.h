@@ -249,6 +249,7 @@ public: // methods
 
   /** user function for explicit abort of any running matching stream. */
   void abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver);
+  void abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler);
 
   /** check if at least one multisend stream is running */
   bool isMultiSendRunning() const { return (!mlist_sendStream.empty()); }

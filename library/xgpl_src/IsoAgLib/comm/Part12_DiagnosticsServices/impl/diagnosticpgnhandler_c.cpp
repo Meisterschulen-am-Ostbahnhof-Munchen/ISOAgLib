@@ -66,9 +66,6 @@ DiagnosticPgnHandler_c::init()
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance4Comm().registerPGN ( *this, ISOBUS_CERTIFICATION_PGN );
-//getIsoRequestPgnInstance4Comm().registerPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
-//getIsoRequestPgnInstance4Comm().registerPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
-//getIsoRequestPgnInstance4Comm().registerPGN ( *this, DIAGNOSTIC_DATA_CLEAR_PGN);
 }
 
 
@@ -79,9 +76,6 @@ DiagnosticPgnHandler_c::close()
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_IDENTIFICATION_INFORMATION_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ECU_DIAGNOSTIC_PROTOCOL_PGN );
   getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ISOBUS_CERTIFICATION_PGN );
-//getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
-//getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN);
-//getIsoRequestPgnInstance4Comm().unregisterPGN ( *this, DIAGNOSTIC_DATA_CLEAR_PGN);
 }
 
 

@@ -494,6 +494,19 @@ MultiSend_c::abortSend (const IsoName_c& acrc_isoNameSender, const IsoName_c& ac
   /// we can use the same place in the stl-list without remove/insert!
 }
 
+void
+MultiSend_c::abortSend (const MultiSendEventHandler_c& apc_multiSendEventHandler)
+{
+  for (STL_NAMESPACE::list<SendStream_c>::iterator pc_iter=mlist_sendStream.begin(); pc_iter != mlist_sendStream.end(); pc_iter++)
+  {
+    if (pc_iter->getMultiSendEventHandler() == &apc_multiSendEventHandler)
+    {
+      if (!pc_iter->isFinished())
+        pc_iter->abortSend();
+    }
+  }
+}
+
 #if DEBUG_SCHEDULER
 const char*
 MultiSend_c::getTaskName() const
