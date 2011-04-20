@@ -104,7 +104,7 @@ public:
   void close();
 
   /** call back function called when the TP is finished */
-  void reactOnFinished(const SendStream_c& sendStream);
+  void reactOnStateChange(const SendStream_c& sendStream);
 
   bool processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* apc_isoItemReceiver, int32_t ai_time );
 
@@ -153,9 +153,9 @@ private: // typedef
     ~MultiSendEventHandlerProxy_c() {}
 
   private:
-    void reactOnFinished(const SendStream_c& sendStream)
+    void reactOnStateChange(const SendStream_c& sendStream)
     {
-       mrt_owner.reactOnFinished(sendStream);
+       mrt_owner.reactOnStateChange(sendStream);
     }
 
     // IsoRequestPgnHandlerProxy_c shall not be copyable. Otherwise

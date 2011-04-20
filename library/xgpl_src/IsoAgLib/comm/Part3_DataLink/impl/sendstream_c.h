@@ -55,7 +55,7 @@ public:
     , mui32_dataSize (0)
     , mhpbui8_data (NULL)
     , men_sendState (AwaitCts) // dummy init state
-    , mpen_sendSuccessNotify (NULL)
+    , men_sendSuccess (Running) // dummy init state
     , men_msgType (IsoTP) // dummy init state
     , mpc_mss (NULL)
     , mui32_packetNrRequestedInLastCts (0)
@@ -71,7 +71,6 @@ public:
              const IsoName_c& acrc_isoNameReceiver,
              const HUGE_MEM uint8_t* rhpb_data,
              uint32_t aui32_dataSize,
-             sendSuccess_t& rpen_sendSuccessNotify,
              uint32_t aui32_pgn,
              IsoAgLib::iMultiSendStreamer_c* apc_mss,
              msgType_t ren_msgType,
@@ -113,7 +112,9 @@ public:
   */
   uint32_t getDataSize() const { return mui32_dataSize; }
 
-  bool isFinished() const { return (*mpen_sendSuccessNotify == SendAborted) || (*mpen_sendSuccessNotify == SendSuccess); }
+  bool isFinished() const { return (men_sendSuccess == SendAborted) || (men_sendSuccess == SendSuccess); }
+
+  sendSuccess_t getSendSuccess() const { return men_sendSuccess; }
 
   /**
     abort the multipacket send stream
@@ -189,11 +190,9 @@ private: // attributes
   /** pointer to the data */
   const HUGE_MEM uint8_t* mhpbui8_data;
 
-  /** actual send state during Running process */
   sendState_t men_sendState;
 
-  /** reference to variable that will be set upon state change */
-  sendSuccess_t* mpen_sendSuccessNotify;
+  sendSuccess_t men_sendSuccess;
 
   /** are we broadcast, iso, extended, fast packet? */
   msgType_t men_msgType;

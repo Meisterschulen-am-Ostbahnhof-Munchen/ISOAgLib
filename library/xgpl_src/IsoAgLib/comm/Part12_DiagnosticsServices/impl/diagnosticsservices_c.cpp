@@ -84,12 +84,11 @@ DiagnosticsServices_c::close()
   getSchedulerInstance().unregisterClient( this );
 
   // @TODO : if multisend is running, close multisend connection
+
 }
 
 bool DiagnosticsServices_c::timeEvent()
 {
-  static SendStream_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
-
   // @TODO check if necessary
   if ( !mrc_identItem.isClaimedAddress() ) return true;
 
@@ -137,7 +136,6 @@ bool DiagnosticsServices_c::timeEvent()
             (uint8_t *) marr_dm1SendingBroadcast,
             ms_dm1SendingBroadcast.marr_bufferSize,
             ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
-            st_sendSuccessDONTCAREFOR,
             &mt_multiSendEventHandler ) )
       { // Message successfully transmitted to multisend
 #if DEBUG_DIAGNOSTICPGN
@@ -164,8 +162,17 @@ bool DiagnosticsServices_c::timeEvent()
   return true;
 }
 
-void DiagnosticsServices_c::reactOnFinished(const SendStream_c& sendStream)
+void DiagnosticsServices_c::reactOnStateChange(const SendStream_c& sendStream)
 {
+  switch (sendStream.getSendSuccess())
+  {
+  case SendStream_c::Running:
+    return;
+  case SendStream_c::SendAborted:
+  case SendStream_c::SendSuccess:
+    break;
+  }
+
   switch (sendStream.pgn())
   {
   case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:
@@ -456,14 +463,12 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         }
         else
         { // Send out MultiPacket Destination specific
-          static SendStream_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
           if (getMultiSendInstance4Comm().sendIsoTarget (
                 mrc_identItem.isoName(),
                 apc_isoItemSender->isoName(),
                 (uint8_t *) marr_dm1SendingDestination,
                 ms_dm1SendingDestination.marr_bufferSize,
                 ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
-                st_sendSuccessDONTCAREFOR,
                 &mt_multiSendEventHandler ) )
           { // Message successfully transmitted to multisend
             // indicate that TP (BAM) is sending now.
@@ -502,14 +507,12 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         }
         else
         {
-          static SendStream_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
           if (getMultiSendInstance4Comm().sendIsoTarget (
                 mrc_identItem.isoName(),
                 apc_isoItemSender->isoName(),
                 (uint8_t *) marr_dm2SendingDestination,
                 ms_dm2SendingDestination.marr_bufferSize,
                 PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
-                st_sendSuccessDONTCAREFOR,
                 &mt_multiSendEventHandler ) )
           { // Message successfully transmitted to multisend -> return true
             ms_dm2SendingDestination.mb_bufferUsedForTP = true;

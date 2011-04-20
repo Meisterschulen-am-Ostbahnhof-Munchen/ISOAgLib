@@ -219,19 +219,14 @@ MultiSend_c::addSendStream(const IsoName_c& acrc_isoNameSender, const IsoName_c&
       return pc_foundStream;
     }
   }
-
-  if (mlist_sendStream.empty()) {
-    mlist_sendStream.push_back (SendStream_c(*this MULTITON_INST_WITH_COMMA ));
-  } else {
-    mlist_sendStream.insert (mlist_sendStream.end(), mlist_sendStream.back()); // insert a copy of the first element (for performance reasons)
-  }
+  mlist_sendStream.push_back (SendStream_c(*this MULTITON_INST_WITH_COMMA ));
   return &mlist_sendStream.back();
 }
 
 
 
 bool
-MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, SendStream_c::sendSuccess_t& rpen_sendSuccessNotify, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, int32_t ai32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, SendStream_c::msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   isoaglib_assert( aui32_dataSize >= endSinglePacketSize );
   isoaglib_assert( (ren_msgType != SendStream_c::NmeaFastPacket) || (aui32_dataSize < endNmeaFastPacketSize) );
@@ -267,7 +262,7 @@ MultiSend_c::sendIntern (const IsoName_c& acrc_isoNameSender, const IsoName_c& a
   if (!cpc_newSendStream)
     return false;
 
-  cpc_newSendStream->init(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, rpen_sendSuccessNotify, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler);
+  cpc_newSendStream->init(acrc_isoNameSender, acrc_isoNameReceiver, rhpb_data, aui32_dataSize, ai32_pgn, apc_mss, ren_msgType, apc_multiSendEventHandler);
   // let this SendStream get sorted in now...
   calcAndSetNextTriggerTime();
   return true;
@@ -402,7 +397,7 @@ MultiSend_c::processMsg( const CanPkg_c& arc_data )
 }
 
 bool
-MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, SendStream_c::sendSuccess_t& rpen_sendSuccessNotify, MultiSendEventHandler_c* apc_multiSendEventHandler)
+MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   if (aui16_dataSize < beginTpPacketSize)
   {
@@ -415,13 +410,14 @@ MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender
       rc_multiSendPkg.setUint8Data (ui, rhpb_data[ui]);
 
     getIsoBusInstance4Comm() << rc_multiSendPkg;
-    rpen_sendSuccessNotify = SendStream_c::SendSuccess;
+    // @TODO : return enum/int instead of bool
+    //rpen_sendSuccessNotify = SendStream_c::SendSuccess;
     // NOTE: no call to "apc_multiSendEventHandler->reactOnFinished()" in case Single Packet is sent, to avoid loop
     return true;
   }
   else
   {
-    return sendIntern(acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, rpen_sendSuccessNotify, ai32_pgn, NULL /* NOT "yet" supported */, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler);
+    return sendIntern(acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, ai32_pgn, NULL /* NOT "yet" supported */, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler);
   }
 }
 

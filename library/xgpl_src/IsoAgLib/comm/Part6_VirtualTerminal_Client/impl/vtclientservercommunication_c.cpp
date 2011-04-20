@@ -331,7 +331,8 @@ VtClientServerCommunication_c::VtClientServerCommunication_c(
   char* apc_versionLabel,
   uint8_t aui8_clientId,
   bool ab_isSlave MULTITON_INST_PARAMETER_DEF_WITH_COMMA)
-  : mrc_pool (arc_pool)
+  : mt_multiSendEventHandler(*this)
+  , mrc_pool (arc_pool)
   , mb_vtAliveCurrent (false) // so we detect the rising edge when the VT gets connected!
   , mb_checkSameCommand (true)
   , mrc_wsMasterIdentItem (r_wsMasterIdentItem)
@@ -572,7 +573,7 @@ VtClientServerCommunication_c::startCurrentUploadPhase()
     mrc_wsMasterIdentItem.isoName(),
     mpc_vtServerInstance->getIsoName(),
     streamer,
-    ECU_TO_VT_PGN, men_sendSuccess, NULL);
+    ECU_TO_VT_PGN, &mt_multiSendEventHandler);
 }
 
 
@@ -2606,7 +2607,7 @@ VtClientServerCommunication_c::startUploadCommand()
 
     b_return = getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
       mpc_vtServerInstance->getIsoName(), &actSend->vec_uploadBuffer.front(),
-      actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, men_sendSuccess, NULL);
+      actSend->vec_uploadBuffer.size(), ECU_TO_VT_PGN, &mt_multiSendEventHandler);
   }
   else
   {
@@ -2615,7 +2616,7 @@ VtClientServerCommunication_c::startUploadCommand()
 
     b_return = getMultiSendInstance4Comm().sendIsoTarget (mrc_wsMasterIdentItem.isoName(),
       mpc_vtServerInstance->getIsoName(), (IsoAgLib::iMultiSendStreamer_c*)actSend->mssObjectString->getStreamer(),
-      ECU_TO_VT_PGN, men_sendSuccess, NULL);
+      ECU_TO_VT_PGN, &mt_multiSendEventHandler);
   }
 
   // Set time-out values
@@ -2787,6 +2788,11 @@ uint16_t
 VtClientServerCommunication_c::getVtObjectPoolSoftKeyHeight()
 {
   return mrc_pool.getSkHeight();
+}
+
+void VtClientServerCommunication_c::reactOnStateChange(const SendStream_c& sendStream)
+{
+  men_sendSuccess = sendStream.getSendSuccess();
 }
 
 

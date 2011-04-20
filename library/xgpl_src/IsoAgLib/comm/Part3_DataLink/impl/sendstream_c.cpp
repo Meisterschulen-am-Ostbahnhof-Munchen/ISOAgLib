@@ -45,7 +45,7 @@ static const uint8_t scui8_CM_ConnAbort = 255;
 namespace __IsoAgLib {
 
 void
-SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, sendSuccess_t& rpen_sendSuccessNotify, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
+SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_isoNameReceiver, const HUGE_MEM uint8_t* rhpb_data, uint32_t aui32_dataSize, uint32_t aui32_pgn, IsoAgLib::iMultiSendStreamer_c* apc_mss, msgType_t ren_msgType, MultiSendEventHandler_c* apc_multiSendEventHandler)
 {
   mui32_pgn = aui32_pgn;
   if ((mui32_pgn & 0x0FF00LU) < 0x0F000LU) mui32_pgn &= 0x3FF00LU;
@@ -56,7 +56,6 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
   mui32_dataSize = aui32_dataSize;   // initialise data for begin
   mpc_mss = apc_mss;
   men_msgType = ren_msgType;
-  mpen_sendSuccessNotify = &rpen_sendSuccessNotify;
 
   mui32_dataBufferOffset = 0;
   mui8_packetsSentInThisBurst = 0;
@@ -120,19 +119,19 @@ SendStream_c::init (const IsoName_c& acrc_isoNameSender, const IsoName_c& acrc_i
     if (mpc_mss) mpc_mss->resetDataNextStreamPart();
     sendPacketIso( false, r_multiSendPkg ); // ISO never starts with data. BAM/RTS
   }
-  *mpen_sendSuccessNotify = Running;
   if (men_msgType == IsoTPbroadcast)
   { // now we can switch the state to SendData
     switchToState (SendData, 50); // on broadcast, we'll have to interspace with 50ms (minimum!)
   }
+  notifySender(Running);
 }
 
 void
 SendStream_c::notifySender(sendSuccess_t ae_newStatus)
 {
-  *mpen_sendSuccessNotify = ae_newStatus;
+  men_sendSuccess = ae_newStatus;
   if (mpc_multiSendEventHandler)
-    mpc_multiSendEventHandler->reactOnFinished(*this);
+    mpc_multiSendEventHandler->reactOnStateChange(*this);
 }
 
 /**

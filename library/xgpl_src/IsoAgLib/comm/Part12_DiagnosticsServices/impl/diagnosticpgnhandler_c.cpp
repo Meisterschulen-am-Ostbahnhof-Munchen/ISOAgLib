@@ -87,7 +87,6 @@ DiagnosticPgnHandler_c::close()
 
 bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver, int32_t )
 { // ~X2C
-  static SendStream_c::sendSuccess_t st_sendSuccessDONTCAREFOR;
   if ( !mrc_identItem.isClaimedAddress() ) return false;
   if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) ) return false; // request not adressed to us!
 
@@ -100,7 +99,6 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             m_certification,
             8,
             ISOBUS_CERTIFICATION_PGN,
-            st_sendSuccessDONTCAREFOR,
             NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
@@ -121,7 +119,6 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             diagProtocolId,
             8,
             ECU_DIAGNOSTIC_PROTOCOL_PGN,
-            st_sendSuccessDONTCAREFOR,
             NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
@@ -138,7 +135,6 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             (uint8_t *) mcstr_SwIdentification,
             getCStringLength (mcstr_SwIdentification),
             SOFTWARE_IDENTIFICATION_PGN,
-            st_sendSuccessDONTCAREFOR,
             NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
@@ -155,7 +151,6 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
             (uint8_t *) mcstr_EcuIdentification,
             getCStringLength (mcstr_EcuIdentification),
             ECU_IDENTIFICATION_INFORMATION_PGN,
-            st_sendSuccessDONTCAREFOR,
             NULL ) )
       { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
@@ -164,54 +159,6 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
         return true;
       }
       break;
-
-#if 0
-    case ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN: {
-      static const uint8_t activeTroubleCodes[6] = {
-        0xFF,0xFF,0x00,0x00,0x00
-      };
-      if ( getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
-                                                                    activeTroubleCodes,
-                                                                    6,
-                                                                    ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
-                                                                    st_sendSuccessDONTCAREFOR ))
-      { // Message successfully transmitted to multisend -> return true
-#if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-        return true;
-      }
-      break; }
-
-    case PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:
-      static const uint8_t previouslyActiveTroubleCodes[6] = {
-        0xFF,0xFF,0x00,0x00,0x00
-      };
-      if ( getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket ( mrc_identItem.isoName(),
-                                                                    previouslyActiveTroubleCodes,
-                                                                    6,
-                                                                    PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN,
-                                                                    st_sendSuccessDONTCAREFOR ))
-      { // Message successfully transmitted to multisend -> return true
-#if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN" << INTERNAL_DEBUG_DEVICE_ENDL;
-#endif
-        return true;
-      }
-      break;
-
-    case DIAGNOSTIC_DATA_CLEAR_PGN:
-      // in future: clear the DTCs actually ;-)
-      if (rpc_isoItemReceiver != NULL)
-      { // Request was sent to DESTINATION
-        getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x00 ); // Positive ACKNOWLEDGE
-      }
-      else
-      { // Request was sent to GLOBAL
-        // don't respond with ACKNOWLEDGE_PGN
-      }
-      return true;
-#endif
   default:
     isoaglib_assert(!"Not registered for this PGN.");
     break;

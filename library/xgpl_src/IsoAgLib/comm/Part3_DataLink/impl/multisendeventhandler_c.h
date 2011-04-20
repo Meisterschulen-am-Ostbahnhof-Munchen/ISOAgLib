@@ -28,7 +28,7 @@ public:
   /** call back function called when the TP is finished
     @param sendStream stream that has just finished (success or abort)
   */
-  virtual void reactOnFinished(const SendStream_c& sendStream) = 0;
+  virtual void reactOnStateChange(const SendStream_c& sendStream) = 0;
 };
 
 } // __IsoAgLib
