@@ -378,8 +378,8 @@ check_set_correct_variables()
 
     case "$USE_TARGET_SYSTEM" in
         (pc_win32)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/VC6"
-            IDE_NAME="Visual Studio"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake"
+            IDE_NAME="CMake"
             ;;
         (pc_linux)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
@@ -2024,159 +2024,14 @@ format_sources_for_dsp()
     done
 }
 
-create_VCPrj()
+create_CMake()
 {
-
     DEV_PRJ_DIR="$1/$PROJECT"
-    # echo_ "Create Projekt file for VC6 in $DEV_PRJ_DIR"
     mkdir -p $DEV_PRJ_DIR
-    # Visual Studio will create the needed Debug and Release directories on its own.
-    PROJECT_FILE_NAME="${PROJECT}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}.dsp"
 
     DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
-    CONFIG_HDR_NAME="config_""$PROJECT.h"
 
-    # remove some file lists, which are not used for Dev-C++
-    rm -f "$1/$PROJECT/$FILELIST_LIBRARY_PURE" "$1/$PROJECT/$FILELIST_APP_PURE"
-
-    USE_DEFINES="/D PRJ_USE_AUTOGEN_CONFIG=$CONFIG_HDR_NAME"
-    USE_d_DEFINES=$(echo_ $USE_DEFINES | sed -e 's#/D#/d#g')
-
-
-    LIB_DIR_LINE=""
-    LIB_FILE_LINE=""
-
-    ISO_AG_LIB_PATH_WIN=$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE")
-
-    USE_STLPORT_HEADER_DIRECTORY=$(win_paths_from_unix_paths "$USE_STLPORT_HEADER_DIRECTORY")
-
-    USE_WIN32_EXTERNAL_INCLUDE_PATH_WIN=$(win_paths_from_unix_paths "$USE_WIN32_EXTERNAL_INCLUDE_PATH" )
-
-    USE_WIN32_EXTERNAL_LIBRARY_PATH_WIN=$(win_paths_from_unix_paths "$USE_WIN32_EXTERNAL_LIBRARY_PATH" )
-
-    USE_MSVC_EXTERNAL_LIBRARIES_WIN=$(win_paths_from_unix_paths "$USE_MSVC_EXTERNAL_LIBRARIES" )
-
-    REL_APP_PATH_WIN=$(win_paths_from_unix_paths "${REL_APP_PATH:-}" )
-
-    PRJ_INCLUDE_PATH_WIN=$(win_paths_from_unix_paths "$PRJ_INCLUDE_PATH" )
-
-    upper_defines_vcproj() { printf -- ' /D "%s"' "$@"; }
-    lower_defines_vcproj() { printf -- ' /d "%s"' "$@"; }
-
-    STRANGE_DEFINES_VCPROJ=upper_defines_vcproj # supposed, that it has to be replaced by lower_defines_vcproj
-    if  [ $USE_CAN_DRIVER = "socket_server" -o $USE_CAN_DRIVER = "socket_server_hal_simulator" ] ; then
-        USE_INCLUDE_PATHS="/I \"$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/library")\" /I \"$(win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/library/xgpl_src")\""
-        append USE_DEFINES "$(upper_defines_vcproj CAN_DRIVER_SOCKET SYSTEM_WITH_ENHANCED_CAN_HAL)"
-        append USE_d_DEFINES "$(lower_defines_vcproj CAN_DRIVER_SOCKET)"
-        append USE_d_DEFINES "$($STRANGE_DEFINES_VCPROJ SYSTEM_WITH_ENHANCED_CAN_HAL)"
-    fi
-
-    isoaglib_path_vcproj() { win_paths_from_unix_paths "$ISO_AG_LIB_INSIDE/$1"; }
-    include_paths_vcproj() { printf -- ' /I "%s"' "$@"; }
-    append USE_INCLUDE_PATHS "${REL_APP_PATH:+$(map include_paths_vcproj isoaglib_path_vcproj $REL_APP_PATH)}"
-    append USE_INCLUDE_PATHS "${PRJ_INCLUDE_PATH:+$(map include_paths_vcproj isoaglib_path_vcproj $PRJ_INCLUDE_PATH)}"
-
-    append USE_INCLUDE_PATHS "${USE_WIN32_EXTERNAL_INCLUDE_PATH:+$(map include_paths_vcproj win_paths_from_unix_paths $USE_WIN32_EXTERNAL_INCLUDE_PATH)}"
-    lib_list_vcproj() { printf -- ' "%s"' "$@"; }
-    append LIB_DIR_LINE "${USE_MSVC_EXTERNAL_LIBRARIES:+$(map lib_list_vcproj win_paths_from_unix_paths $USE_MSVC_EXTERNAL_LIBRARIES)}"
-    library_paths_vcproj() { printf -- ' /libpath:"%s"' "$@"; }
-    append LIB_DIR_LINE "${USE_WIN32_EXTERNAL_LIBRARY_PATH:+$(map library_paths_vcproj win_paths_from_unix_paths $USE_WIN32_EXTERNAL_LIBRARY_PATH)}"
-
-    #echo_ "Libs=$LIB_DIR_LINE"
-    #echo_ "Linker=$LIB_FILE_LINE"
-
-    append USE_DEFINES "${PRJ_DEFINES:+$(upper_defines_vcproj $PRJ_DEFINES)}"
-    append USE_d_DEFINES "${PRJ_DEFINES:+$($STRANGE_DEFINES_VCPROJ $PRJ_DEFINES)}"
-    if [ $PRJ_SYSTEM_WITH_ENHANCED_CAN_HAL -gt 0 ] ; then
-        append USE_DEFINES "$(upper_defines_vcproj SYSTEM_WITH_ENHANCED_CAN_HAL)"
-        append USE_d_DEFINES "$($STRANGE_DEFINES_VCPROJ SYSTEM_WITH_ENHANCED_CAN_HAL)"
-    fi
-
-    USE_STLPORT_LIB_DIRECTORY=$(echo_ "$USE_STLPORT_HEADER_DIRECTORY" |sed 's|stlport|lib|g')
-    SOURCES=$(grep -E "\.cc|\.cpp|\.c|\.lib" "$DspPrjFilelist")
-    HEADERS=$(grep -E "\.h|\.hpp" "$DspPrjFilelist")
-
-    local INSERT_PROJECT="$PROJECT"
-    local INSERT_INCLUDE_PATHS="$USE_INCLUDE_PATHS"
-    local INSERT_DEFINES="$USE_DEFINES"
-    local INSERT_d_DEFINES="$USE_d_DEFINES"
-    local INSERT_CAN_LIB_PATH="$LIB_DIR_LINE"
-    local INSERT_STLPORT_LIB_PATH="$USE_STLPORT_LIB_DIRECTORY"
-    
-    local INSERT_DEBUG_USE_MFC=0
-    local INSERT_DEBUG_USE_DEBUG_LIBRARIES=1
-    local INSERT_DEBUG_OUTPUT_DIR=Debug
-    local INSERT_DEBUG_INTERMEDIATE_DIR=Debug
-    local INSERT_DEBUG_IGNORE_EXPORT_LIB=0
-    local INSERT_DEBUG_TARGET_DIR=''
-    local INSERT_DEBUG_DEFINES="${DEBUG_DEFINES:+$(upper_defines_vcproj $DEBUG_DEFINES)}"
-    local INSERT_DEBUG_d_DEFINES="${DEBUG_DEFINES:+$(lower_defines_vcproj $DEBUG_DEFINES)}"
-    local INSERT_DEBUG_CPP_PARAMETERS="/nologo /W3 /Gm /GX /ZI /Od ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"_DEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES}${INSERT_DEBUG_DEFINES} /YX /FD /TP /GZ /c"
-    local INSERT_DEBUG_RSC_PARAMETERS="/l 0x407 /d \"_DEBUG\" ${INSERT_d_DEFINES}${INSERT_DEBUG_d_DEFINES}"
-    local INSERT_DEBUG_LINKER_PARAMETERS="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ws2_32.lib /nologo /subsystem:console /debug /machine:I386 /pdbtype:sept ${INSERT_CAN_LIB_PATH} /libpath:\"${INSERT_STLPORT_LIB_PATH}\""
-
-    local INSERT_RELEASE_USE_MFC=0
-    local INSERT_RELEASE_USE_DEBUG_LIBRARIES=0
-    local INSERT_RELEASE_OUTPUT_DIR=Release
-    local INSERT_RELEASE_INTERMEDIATE_DIR=Release
-    local INSERT_RELEASE_USE_RELEASE_LIBRARIES=0
-    local INSERT_RELEASE_IGNORE_EXPORT_LIB=0
-    local INSERT_RELEASE_TARGET_DIR=''
-    local INSERT_RELEASE_CPP_PARAMETERS="/nologo /W3 /GX /O2 ${INSERT_INCLUDE_PATHS} /D \"WIN32\" /D \"NDEBUG\" /D \"_CONSOLE\" /D \"_MBCS\" ${INSERT_DEFINES} /YX /FD /TP /c"
-    local INSERT_RELEASE_RSC_PARAMETERS="/l 0x407 /d \"NDEBUG\" ${INSERT_d_DEFINES}"
-    local INSERT_RELEASE_LINKER_PARAMETERS="kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib  kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib winmm.lib ws2_32.lib /nologo /subsystem:console /machine:I386 ${INSERT_CAN_LIB_PATH} /libpath:\"${INSERT_STLPORT_LIB_PATH}\""
-
-    {
-        expand_template "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_vc6_prj_base.dsp" >&3
-
-        printf '(VCPROJ_specific_settings\n' >&5
-        printf '  (Project_name %s)\n' "$PROJECT" >&5
-        printf '  (Debug\n' >&5
-        printf '    (Use_MFC %s)\n' "$INSERT_DEBUG_USE_MFC" >&5
-        printf '    (Use_debug_libraries %s)\n' "$INSERT_DEBUG_USE_DEBUG_LIBRARIES" >&5
-        printf '    (Ignore_export_lib %s)\n' "$INSERT_DEBUG_IGNORE_EXPORT_LIB" >&5
-        printf '    (Cpp_parameters %s)\n' "$INSERT_DEBUG_CPP_PARAMETERS" >&5
-        printf '    (Rsc_parameters %s)\n' "$INSERT_DEBUG_RSC_PARAMETERS" >&5
-        printf '    (Linker_parameters %s))\n' "$INSERT_DEBUG_LINKER_PARAMETERS" >&5
-        printf '  (Release\n' >&5
-        printf '    (Use_MFC %s)\n' "$INSERT_RELEASE_USE_MFC" >&5
-        printf '    (Use_release_libraries %s)\n' "$INSERT_RELEASE_USE_RELEASE_LIBRARIES" >&5
-        printf '    (Ignore_export_lib %s)\n' "$INSERT_RELEASE_IGNORE_EXPORT_LIB" >&5
-        printf '    (Cpp_parameters %s)\n' "$INSERT_RELEASE_CPP_PARAMETERS" >&5
-        printf '    (Rsc_parameters %s)\n' "$INSERT_RELEASE_RSC_PARAMETERS" >&5
-        printf '    (Linker_parameters %s))\n' "$INSERT_RELEASE_LINKER_PARAMETERS" >&5
-
-        cat <<'ENDOFHEADERB' >&3
-# Begin Group "Quellcodedateien"
-
-# PROP Default_Filter "cc;cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
-ENDOFHEADERB
-
-        printf '  (Modules %s)\n' "$(format_sources_for_dsp $SOURCES)" >&5
-
-        cat <<'ENDOFHEADERB' >&3
-# End Group
-
-# Begin Group "Header-Dateien"
-
-# PROP Default_Filter "h;hpp;hxx;hm;inl"
-ENDOFHEADERB
-
-        printf '  (Headers %s))\n' "$(format_sources_for_dsp $HEADERS)" >&5
-
-        echo_ "# End Group" >&3
-        echo_ "# End Target" >&3
-        echo_ "# End Project" >&3
-    } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-
-    #echo_ "Convert UNIX to Windows Linebreak in $DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-    unix_lines_to_windows_lines <<EOF >"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
-$(cat "$DEV_PRJ_DIR/$PROJECT_FILE_NAME")
-EOF
     cd "$DEV_PRJ_DIR"
-    # org test
-
-    # In addition generate a CMakeLists.txt file:
 
     : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CMakeLists.txt}
     local INSERT_CMAKE_PROJECT="$PROJECT"
@@ -2311,7 +2166,7 @@ create_buildfiles()
             ;;
         # check if a win32 project file whould be created
         (pc_win32)
-            create_VCPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
+            create_CMake $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
             ;;
         (p1mc)
             create_CcsPrj $GENERATE_FILES_ROOT_DIR "$SCRIPT_DIR"
