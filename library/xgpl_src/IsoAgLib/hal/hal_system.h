@@ -52,7 +52,7 @@ namespace HAL
   int16_t configWatchdog();
 
   /** reset the watchdog to use new configured watchdog settings */
-  int16_t wdReset();
+  void wdReset();
 
   /** trigger the watchdog */
   void wdTriggern();

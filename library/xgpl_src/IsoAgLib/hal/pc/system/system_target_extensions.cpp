@@ -220,15 +220,16 @@ int16_t  configWd(tWDConfig *tConfigArray)
     tConfigArray->bWDmaxTime, tConfigArray->bWDminTime, tConfigArray->bUDmax, tConfigArray->bUDmin);
   return 0;
 }
+
 void wdTriggern(void)
 {
   //DEBUG_PRINT("<WD>");
 }
-int16_t wdReset(void)
+
+void wdReset()
 {
-  DEBUG_PRINT("DEBUG: WD reset\n");
-  return 1;
 }
+
 void startTaskTimer ( void )
 {
   DEBUG_PRINT1("DEBUG: startTaskTimer with %d called\n", T_TASK_BASIC );

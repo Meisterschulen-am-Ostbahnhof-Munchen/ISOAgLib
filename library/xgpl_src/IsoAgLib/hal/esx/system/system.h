@@ -49,7 +49,7 @@ namespace HAL
 
   inline int16_t configWatchdog() { return __HAL::configWatchdog(); }
 
-  inline int16_t wdReset() { return __HAL::wd_reset(); }
+  inline void wdReset() { (void)__HAL::wd_reset(); }
 
   inline void wdTriggern() {__HAL::wdTriggern(); }
 

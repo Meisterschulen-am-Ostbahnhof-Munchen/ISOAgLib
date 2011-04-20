@@ -66,7 +66,7 @@ int16_t getSnr(uint8_t *snrDat);               /* serial number of target */
 
 int16_t  configWd(tWDConfig *tConfigArray); /* configuration of the system supervisor*/
 void wdTriggern(void);
-int16_t wdReset(void);
+void wdReset();
 
 
 void startTaskTimer ( void );

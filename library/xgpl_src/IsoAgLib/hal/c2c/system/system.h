@@ -42,7 +42,7 @@ namespace __HAL {
 
 namespace HAL
 {
-  inline int16_t  open_system() { return __HAL::open_system(); }
+  inline int16_t open_system() { return __HAL::open_system(); }
 
   inline int16_t closeSystem() { return __HAL::closeSystem(); }
 
@@ -50,7 +50,7 @@ namespace HAL
 
   inline int16_t configWatchdog() { return __HAL::configWatchdog(); }
 
-  inline int16_t wdReset() { return __HAL::reset_wd(); }
+  inline void wdReset() { (void)__HAL::reset_wd(); }
 
   inline void wdTriggern() {__HAL::trigger_wd(); }
 

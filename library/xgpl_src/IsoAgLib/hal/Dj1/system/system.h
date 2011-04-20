@@ -75,10 +75,9 @@ namespace HAL
   };
 
 
-  inline int16_t wdReset()
+  inline void wdReset()
   {
-    return ( HAL_NO_ERR );
-//jtm    return __HAL::reset_wd();
+//jtm    (void)__HAL::reset_wd();
   };
 
 

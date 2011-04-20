@@ -48,8 +48,7 @@ namespace HAL
 
   inline int16_t configWatchdog() {return __HAL::configWatchdog();}
 
-
-  inline int16_t wdReset() {return C_NO_ERR;}
+  inline void wdReset() {}
 
   inline void wdTriggern() {}
 
