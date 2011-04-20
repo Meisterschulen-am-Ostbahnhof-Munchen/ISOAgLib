@@ -79,11 +79,11 @@ namespace HAL
 
   inline int16_t getAdcUbat() { return 13500; }
 
-  inline int16_t getAdc_u85()	{ return 8500; }
+  inline int16_t getAdc_u85() { return 8500; }
 
   inline void stayingAlive() { __HAL::stayingAlive(); }
 
-  inline void powerDown() {__HAL::powerDown(); }
+  inline void powerDown() { __HAL::powerDown(); }
 
   inline void setRelais( bool bitState ) { __HAL::setRelais(bitState); }
 

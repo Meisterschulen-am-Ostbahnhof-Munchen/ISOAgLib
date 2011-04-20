@@ -49,7 +49,7 @@ namespace HAL
 
   inline int16_t getSnr(uint8_t *snrDat) { return __HAL::get_snr(snrDat); }
 
-  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  inline int32_t getSerialNr(int16_t* pi16_errCode)
   {
     uint8_t uint8 [6];
     int16_t errCode = __HAL::get_snr(uint8);

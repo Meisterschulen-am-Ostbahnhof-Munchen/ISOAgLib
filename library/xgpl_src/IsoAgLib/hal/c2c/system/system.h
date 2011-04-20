@@ -56,33 +56,9 @@ namespace HAL
 
   inline int32_t getTime() { return __HAL::get_time(); }
 
-  inline int16_t getSnr(uint8_t *snrDat)
-  {
-    int16_t retval = __HAL::get_snr(snrDat);
+  inline int16_t getSnr(uint8_t *snrDat) { return __HAL::get_snr(snrDat); }
 
-#if DEBUG_HAL
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "get_snr( "
-//<< (uint16_t) *snrDat
-//<< " ) returns  "
-//<< retval << "\r";
-
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_snr( %u ) returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (uint16_t)*snrDat
-, (int16_t) retval );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-
-	return retval;
-  }
-
-  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  inline int32_t getSerialNr(int16_t* pi16_errCode)
   {
       uint8_t uint8 [6];
       int16_t errCode = __HAL::get_snr(uint8);
@@ -94,54 +70,9 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
       return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
-  inline int16_t getLokalId(uint8_t *Dat)
-  {
-    int16_t retval = __HAL::get_lokal_id(Dat);
+  inline int16_t getLokalId(uint8_t *Dat) { return __HAL::get_lokal_id(Dat); }
 
-#if DEBUG_HAL
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "getLokalId( "
-//<< (uint16_t) *Dat
-//<< " ) returns  "
-//<< retval << "\r";
-
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_lokal_id( %u ) returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (uint16_t)*Dat
-, (int16_t) retval );
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-
-	return retval;
-  }
-
-  inline void startTaskTimer()
-  {
-    __HAL::start_task_timer ( T_TASK_BASIC );
-
-#if DEBUG_HAL
-//IsoAgLib::getIrs232Instance() << __HAL::get_time() << " ms - "
-//<< "start_task_timer( "
-//<< (uint16_t) T_TASK_BASIC
-//<< " )\r";
-
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - start_task_timer( %u )\r"
-, (uint16_t)__HAL::get_time()
-, (uint16_t)T_TASK_BASIC
-);
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-  }
+  inline void startTaskTimer() { __HAL::start_task_timer ( T_TASK_BASIC ); }
 
   /**
     init the Task Call
@@ -153,27 +84,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 	The maximum number of tasks is limited to 4.
   */
   inline int16_t initTaskCall( uint16_t wHandle, uint16_t wInterval, uint16_t wOffset, void (* pfFunction)(void) )
-  {
-    int16_t retval = __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction );
-
-#if DEBUG_HAL
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - init_task_call( %u, %u, %u, %s ) returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (uint16_t)wHandle
-, (uint16_t)wInterval
-, (uint16_t)wOffset
-, ( (pfFunction) ? "pfFunction" : "NULL" )
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-	return retval;
-  }
+  { return __HAL::init_task_call( wHandle, wInterval, wOffset, pfFunction ); }
 
   /**
     Get Task Overload
@@ -182,24 +93,7 @@ HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_
 	With reset_task_overload this flag can be deleted.
   */
   inline int16_t getTaskOverload ( uint16_t /*wHandle*/ )
-  {
-    int16_t retval = __HAL::get_task_overload ();
-
-#if DEBUG_HAL
-#if 0
-// don't use CNAMESPACE in header, doesn't always work properly
-// maybe reactivate the statement above using getIrs232Instance(..)
-uint8_t buf[128];
-CNAMESPACE::sprintf( (char*)buf, "%u ms - get_task_overload( %u ) returns %i\r"
-, (uint16_t)__HAL::get_time()
-, (uint16_t)wHandle
-, (int16_t) retval
-);
-HAL::put_rs232NChar( buf, CNAMESPACE::strlen( (char*)buf ), 0 /*HAL::RS232_over_can_busnum*/ );
-#endif
-#endif
-	return retval;
-  }
+  { return __HAL::get_task_overload (); }
 
   inline int16_t getAdcUbat() { return (40 * __HAL::get_adc(GET_U_E)); }
 

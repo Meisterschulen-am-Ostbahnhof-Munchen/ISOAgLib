@@ -41,35 +41,23 @@ namespace __HAL {
 
 namespace HAL
 {
+  inline int16_t open_system() { return __HAL::open_system(); }
 
-  inline int16_t  open_system()
-  {
-      return __HAL::open_system();
-  };
-
-  inline int16_t  closeSystem()
-  {
-      return __HAL::closeSystem();
-  };
+  inline int16_t closeSystem() { return __HAL::closeSystem(); }
 
 
-  inline int16_t configWatchdog()
-    {return __HAL::configWatchdog();};
+  inline int16_t configWatchdog() {return __HAL::configWatchdog();}
 
 
-  inline int16_t  wdReset(void)
-    {return C_NO_ERR;};
+  inline int16_t wdReset() {return C_NO_ERR;}
 
-  inline void wdTriggern(void)
-    {};
+  inline void wdTriggern() {}
 
-  inline int32_t getTime(void)
-    {return __HAL::getTime();};
+  inline int32_t getTime() {return __HAL::getTime();}
 
-  inline int16_t getSnr(uint8_t *snrDat)
-    {return __HAL::getSnr(snrDat);};
+  inline int16_t getSnr(uint8_t *snrDat) {return __HAL::getSnr(snrDat);}
 
-  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  inline int32_t getSerialNr(int16_t* pi16_errCode)
   {
     uint8_t uint8 [6];
     int16_t errCode = __HAL::getSnr(uint8);
@@ -81,36 +69,27 @@ namespace HAL
     return (__IsoAgLib::bcd2dec(uint8[2]) * 100 + __IsoAgLib::bcd2dec(uint8[3])) + (__IsoAgLib::bcd2dec(uint8[0]) << 14);
   };
 
-  inline void startTaskTimer ( void )
-    {__HAL::start_task_timer ( );};
+  inline void startTaskTimer() {__HAL::start_task_timer ( );}
 
-  inline int16_t  getOn_offSwitch(void)
+  inline int16_t getOn_offSwitch()
   {
     #if defined(NO_CAN_EN_CHECK)
       return ON;
     #else
       return __HAL::getOn_offSwitch();
     #endif
-  };
-
-  inline void stayingAlive(void)
-    {__HAL::stayingAlive();};
-
-  inline void powerDown(void)
-    {__HAL::powerDown();};
-
-  inline void setRelais(bool bitState)
-  {__HAL::setRelais(bitState);};
-
-  inline int16_t  getAdcUbat( void )
-    {return 14000;};
-
-  inline int16_t  getAdc_u85( void )
-    {return 8500;};
-
-  inline void sleep_max_ms( uint32_t ms )
-  {
-    // no sleep on the p1mc, but we don't need to ;-)
   }
+
+  inline void stayingAlive() {__HAL::stayingAlive();}
+
+  inline void powerDown() {__HAL::powerDown();}
+
+  inline void setRelais(bool bitState) {__HAL::setRelais(bitState);}
+
+  inline int16_t getAdcUbat() {return 14000;}
+
+  inline int16_t getAdc_u85() {return 8500;}
+
+  inline void sleep_max_ms( uint32_t ms ) { /* no sleep on the p1mc, but we don't need to ;-) */ }
 }
 #endif

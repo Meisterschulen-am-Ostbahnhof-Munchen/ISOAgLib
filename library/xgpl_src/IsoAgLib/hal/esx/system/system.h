@@ -57,7 +57,7 @@ namespace HAL
 
   inline int16_t getSnr(uint8_t *snrDat) { return __HAL::get_snr(snrDat); }
 
-  inline int32_t getSerialNr(int16_t* pi16_errCode = NULL)
+  inline int32_t getSerialNr(int16_t* pi16_errCode)
   {
     uint8_t uint8 [6];
     int16_t errCode = __HAL::get_snr(uint8);
@@ -71,7 +71,7 @@ namespace HAL
 
   inline void startTaskTimer() {__HAL::start_task_timer ( T_TASK_BASIC ); }
 
-  inline int16_t  getAdcUbat( void ) { return (33 * __HAL::get_adc(GET_U_C)); }
+  inline int16_t getAdcUbat() { return (33 * __HAL::get_adc(GET_U_C)); }
 
   inline int16_t getAdc_u85()
     { int16_t i16_temp = __HAL::get_adc(GET_U_EXT_8_5_V);
