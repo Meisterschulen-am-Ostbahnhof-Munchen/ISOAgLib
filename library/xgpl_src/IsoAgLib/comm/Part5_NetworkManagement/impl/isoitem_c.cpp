@@ -224,9 +224,6 @@ void IsoItem_c::set(int32_t ai32_time, const IsoName_c& acrc_isoName, uint8_t au
 /// @todo SOON-240 Merge with sendSaClaim - create an enum for the three cases!
 void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
 {
-  IsoBus_c& c_isobus = getIsoBusInstance4Comm();
-  IsoMonitor_c& c_isoMonitor = getIsoMonitorInstance4Comm();
-
   if (nr() == 254)
   { // no success -> send NACK and switch to off | error state
     setItemState(IState_c::itemState_t(IState_c::OffUnable | IState_c::Error));
@@ -247,17 +244,15 @@ void IsoItem_c::sendAddressClaim (bool ab_fromConflict)
   }
 
   CanPkgExt_c c_pkg;
-  // now nr() has now suitable value
   c_pkg.setIsoPri(6);
   c_pkg.setIsoPgn(ADDRESS_CLAIM_PGN);
-  c_pkg.setIsoPs(255); // global information
+  c_pkg.setIsoPs( 0xFF );
   c_pkg.setIsoSa( nr() );
-  // set NAME to CANPkg
   c_pkg.setDataUnion( outputNameUnion() );
-  // now IsoSystemPkg_c has right data -> send
-  c_isobus << c_pkg;
-  // update timestamp
+  getIsoBusInstance4Comm() << c_pkg;
+
   updateTime();
+
   #if DEBUG_ADDRESS_CLAIM
   INTERNAL_DEBUG_DEVICE << "Sending initial SA claim (sendAddressClaim())" << INTERNAL_DEBUG_DEVICE_ENDL;
   #endif

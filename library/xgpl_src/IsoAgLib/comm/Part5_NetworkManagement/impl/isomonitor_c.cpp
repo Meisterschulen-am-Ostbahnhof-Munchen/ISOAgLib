@@ -61,7 +61,6 @@ IsoMonitor_c &getIsoMonitorInstance( uint8_t aui8_instance )
 */
 IsoMonitor_c::IsoMonitor_c() :
   mvec_isoMember(),
-  mc_serviceTool( IsoName_c::IsoNameUnspecified() ),
   mt_handler(*this),
   mt_customer(*this),
   CONTAINER_CLIENT1_CTOR_INITIALIZER_LIST
@@ -82,9 +81,6 @@ IsoMonitor_c::init()
   mpc_isoMemberCache = mvec_isoMember.end();
   mi32_lastSaRequest = -1; // not yet requested. Do NOT use 0, as the first "setLastRequest()" could (and does randomly) occur at time0 as it's called at init() time.
   mc_tempIsoMemberItem.set( 0, IsoName_c::IsoNameUnspecified(), 0xFE, IState_c::Active, getMultitonInst() );
-
-  // register no-service mode
-  mc_serviceTool.setUnspecified();
 
   /// Set Period for Scheduler_c Start Period is 125
   /// timeEvent will change to longer Period after Start
@@ -1077,20 +1073,6 @@ bool IsoMonitor_c::processMsg( const CanPkg_c& arc_data )
   // get sender isoname
   const IsoName_c cc_dataIsoName (c_isoData.getDataUnionConst());
 
-  // decide whether the message should be processed
-  if ( mc_serviceTool.isSpecified() )
-  { // we are in diagnostic mode --> check if the message sender is the diagnostic tool
-    IsoName_c const& rcc_isoNameSa = c_isoData.getISONameForSA();
-    if (rcc_isoNameSa.isSpecified())
-    {
-      if ( rcc_isoNameSa != mc_serviceTool ) return false;
-    }
-    else if ( cc_dataIsoName != mc_serviceTool ) return false;
-    // if we reach here, the received message has to be processed, as the sender is the
-    // diagnostic tool
-  }
-
-
   // Handle DESTINATION PGNs
   switch ((c_isoData.isoPgn() & 0x3FF00LU))
   {
@@ -1440,41 +1422,6 @@ IsoMonitor_c::updateEarlierAndLatestInterval()
   }
 }
 
-
-
-/** command switching to and from special service / diagnostic mode.
-    setting the flag mc_serviceTool controls appropriate handling
-  */
-void IsoMonitor_c::setDiagnosticMode( const IsoName_c& acrc_serviceTool)
-{
-  mc_serviceTool = acrc_serviceTool;
-  if ( mc_serviceTool.isUnspecified() )
-  { // back to normal operation --> trigger send of Req4SaClaim
-    sendRequestForClaimedAddress( true, NULL );
-  }
-  else
-  { // switch from normal operation to diagnostic mode
-    Vec_ISOIterator pc_iter = mvec_isoMember.begin();
-    bool b_updateCacheIterator = false;
-    while ( pc_iter != mvec_isoMember.end() )
-    {
-      if ( ( pc_iter->isoName() == mc_serviceTool ) || ( pc_iter->itemState(IState_c::Local) ) )
-      { // current item is service tool or is local
-        // --> increment iterator to next item
-        pc_iter++;
-      }
-      else
-      { // remove the item from the monitor list
-        pc_iter = internalIsoItemErase( pc_iter );
-        b_updateCacheIterator = true;
-      }
-    }
-    if (b_updateCacheIterator)
-    { // due to erasing an element, the cache may get invalid, so we better reset it here!
-      mpc_isoMemberCache = mvec_isoMember.begin();
-    }
-  }
-}
 
 #if DEBUG_ISOMONITOR
 void

@@ -186,12 +186,6 @@ public:
   iIsoItem_c& getActiveLocalIsoMember()
   {return static_cast<iIsoItem_c&>(IsoMonitor_c::getActiveLocalIsoMember());}
 
-  /** command switching to and from special service / diagnostic mode.
-      setting the flag mc_serviceTool controls appropriate handling
-    */
-  void setDiagnosticMode( const iIsoName_c& acrc_serviceTool = iIsoName_c::iIsoNameUnspecified())
-  { IsoMonitor_c::setDiagnosticMode( acrc_serviceTool );}
-
   /** register an iControlFunctionStateHandler_c */
   void registerControlFunctionStateHandler(iControlFunctionStateHandler_c &arc_handler) {
     IsoMonitor_c::registerControlFunctionStateHandler( arc_handler );
