@@ -672,10 +672,10 @@ comm_proc_features()
         if [ -n "${COMM_PROC_FEATURES:-}" ]; then
             printf '%s' " -o " >&3
         fi
-        printf '%s' " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part7_ProcessData/impl/proc*' -o -path '*/Part7_ProcessData/iprocesscmd*' -o -path '*/Part7_ProcessData/impl/processcmd*' -o -path '*/Part7_ProcessData/*procdata*base_c.h'" >&3
+        printf '%s' " -name 'processdatachangehandler_c.*' -o -name 'iprocess_c.*' -o -name 'elementddi_s.h' -o -name 'proc_c.h' -o -path '*/Part10_TaskController_Client/impl/proc*' -o -path '*/Part10_TaskController_Client/iprocesscmd*' -o -path '*/Part10_TaskController_Client/impl/processcmd*' -o -path '*/Part10_TaskController_Client/*procdata*base_c.h'" >&3
         printf '%s' " -o -path '*/Part10_TaskController_Client/i*devproperty*'" >&3
-        printf '%s' " -o -path '*/Part7_ProcessData/StdMeasureElements/*'" >&3
-        printf '%s' " -o -path '*/Part7_ProcessData/StdSetpointElements/*'" >&3
+        printf '%s' " -o -path '*/Part10_TaskController_Client/StdMeasureElements/*'" >&3
+        printf '%s' " -o -path '*/Part10_TaskController_Client/StdSetpointElements/*'" >&3
     fi
 }
 
@@ -788,7 +788,7 @@ prepare_feature_partitions()
 {
     FEATURE_PARTITION_RULES=''
     # COMM PROC features:
-    add_feature_partition_rule PRJ_ISO_TASKCONTROLLER_CLIENT '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part7_ProcessData/impl/proc\|.*/Part7_ProcessData/iprocesscmd\|.*/Part7_ProcessData/impl/processcmd\|.*/Part7_ProcessData/[^/]*procdata[^/]*base_c\.h$\|.*/Part10_TaskController_Client/.*devproperty\|.*/Part7_ProcessData/.*/StdMeasureElements/\|.*/Part7_ProcessData/.*/StdSetpointElements'
+    add_feature_partition_rule PRJ_ISO_TASKCONTROLLER_CLIENT '.*/processdatachangehandler_c\.[^/]*$\|.*/iprocess_c\.[^/]*$\|.*/elementddi_s\.h$\|.*/proc_c\.h$\|.*/Part10_TaskController_Client/impl/proc\|.*/Part10_TaskController_Client/iprocesscmd\|.*/Part10_TaskController_Client/impl/processcmd\|.*/Part10_TaskController_Client/[^/]*procdata[^/]*base_c\.h$\|.*/Part10_TaskController_Client/.*devproperty\|.*/Part10_TaskController_Client/.*/StdMeasureElements/\|.*/Part10_TaskController_Client/.*/StdSetpointElements'
 
     # COMM features:
     add_feature_partition_rule PRJ_BASE '.*ibasetypes\.h\.[^/]*$\|.*basecommon_c*\.[^/]*$'
