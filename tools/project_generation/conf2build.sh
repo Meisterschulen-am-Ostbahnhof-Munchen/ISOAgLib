@@ -1341,12 +1341,12 @@ create_cmake_winlin()
     CompletePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
 
     local RELATIVE_INC_PATHS_WIN32="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-    local ALL_INC_PATHS_WIN32="$(echo_ ${RELATIVE_INC_PATHS_WIN32:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS_WIN32)} $USE_WIN32_EXTERNAL_INCLUDE_PATH)"
+    local ALL_INC_PATHS_WIN32="$(echo_ ${RELATIVE_INC_PATHS_WIN32:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS_WIN32)})"
 
     local INSERT_CMAKE_PROJECT="$PROJECT"
     local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
-    local INSERT_CMAKE_INCLUDE_DIRECTORIES_LINUX="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${BIOS_INC:-})"
-    local INSERT_CMAKE_INCLUDE_DIRECTORIES_WIN32="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS_WIN32:-} ${BIOS_INC:-})"
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES_LINUX="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES_WIN32="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${USE_WIN32_EXTERNAL_INCLUDE_PATH:-} ${BIOS_INC:-})"
     local INSERT_CMAKE_LINK_DIRECTORIES_LINUX="${USE_LINUX_EXTERNAL_LIBRARY_PATH:-}"
     local INSERT_CMAKE_LINK_DIRECTORIES_WIN32="${USE_WIN32_EXTERNAL_LIBRARY_PATH:-}"
     local INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
@@ -1521,7 +1521,7 @@ EOF
     shortcut_makefile "$MakefileNameLong" "Makefile"
 
     # In addition generate a CMakeLists.txt file:
-	create_cmake_winlin
+	create_cmake_winlin "$1"
 }
 
 create_CMake()
@@ -1655,7 +1655,7 @@ create_makefile()
     MakefileFilelistApp="$1/$PROJECT/$FILELIST_APP_PURE"
     MakefileFilelistAppHdr="$1/$PROJECT/$FILELIST_APP_HDR"
 
-    create_standard_makefile
+    create_standard_makefile $1
     create_pure_application_makefile
 
     cd $1
