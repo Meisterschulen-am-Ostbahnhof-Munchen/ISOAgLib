@@ -1340,8 +1340,8 @@ create_cmake_winlin()
 {
     CompletePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
 
-    local RELATIVE_INC_PATHS_WIN32="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-    local ALL_INC_PATHS_WIN32="$(echo_ ${RELATIVE_INC_PATHS_WIN32:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS_WIN32)})"
+    local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
+    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)})"
 
     local INSERT_CMAKE_PROJECT="$PROJECT"
     local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
