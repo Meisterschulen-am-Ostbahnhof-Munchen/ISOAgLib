@@ -14,46 +14,10 @@
 #ifndef ISCHEDULER_H
 #define ISCHEDULER_H
 
-/* *************************************** */
-/* ********** include headers ************ */
-/* *************************************** */
 #include "impl/scheduler_c.h"
 #include <IsoAgLib/scheduler/ischedulertask_c.h>
+#include <IsoAgLib/driver/system/isystem_c.h>
 
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isomonitor_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isofiltermanager_c.h>
-#include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
-#ifdef USE_PROCESS
-  #include <IsoAgLib/comm/Part7_ProcessData/impl/process_c.h>
-#endif
-#ifdef USE_TRACTOR_GENERAL
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracgeneral_c.h>
-#endif
-#ifdef USE_TRACTOR_MOVE
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracmove_c.h>
-#endif
-#ifdef USE_TRACTOR_PTO
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracpto_c.h>
-#endif
-#ifdef USE_TRACTOR_FACILITIES
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracfacilities_c.h>
-#endif
-#ifdef USE_TRACTOR_LIGHT
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/traclight_c.h>
-#endif
-#ifdef USE_TRACTOR_AUX
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/tracaux_c.h>
-#endif
-#ifdef USE_TIME_GPS
-  #include <IsoAgLib/comm/Part7_ApplicationLayer/impl/timeposgps_c.h>
-#endif
-#ifdef USE_ISO_TERMINAL
-  #include <IsoAgLib/comm/Part6_VirtualTerminal_Client/impl/isoterminal_c.h>
-#endif
-#ifdef DEF_Stream_IMPL
-  #include <IsoAgLib/comm/Part3_DataLink/impl/multireceive_c.h>
-  #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
-#endif
 
 /// Begin Namespace IsoAgLib
 namespace IsoAgLib {
