@@ -1,8 +1,8 @@
 #!/bin/sh
 
-# update_makefile.sh: Script to create file list, configuration
+# conf2build.sh: Script to create file list, configuration
 #   headers and project files for applications based on a feature set
-#   specifying config file
+#   specifying conf(ig) file
 #
 # (C) Copyright 2009 - 2010 by OSB AG and developing partners
 #
@@ -30,7 +30,7 @@ LF="
 "
 PATH_SEPARATOR1='=_=_'
 PATH_SEPARATOR2='_=_='
-TEMPFILE_PREFIX="/tmp/update_makefile$$"
+TEMPFILE_PREFIX="/tmp/conf2build$$"
 
 main()
 {
@@ -46,7 +46,6 @@ main()
     # configuration settings
     create_buildfiles "$CONF_DIR" "$SCRIPT_DIR"
     
-    make_doxygen_ready_comment_blocks
     report_summary
 }
 
@@ -382,8 +381,8 @@ check_set_correct_variables()
             IDE_NAME="CMake"
             ;;
         (pc_linux)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
-            IDE_NAME="KDevelop, make"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake_make"
+            IDE_NAME="CMake, make"
             ;;
         (esx|esxu|c2c)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/EDE"
@@ -398,8 +397,8 @@ check_set_correct_variables()
             IDE_NAME="Code Composer Studio"
             ;;
         (ees)
-            GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make/"
-            IDE_NAME="make"
+            GENERATE_FILES_ROOT_DIR="$CONF_DIR/cmake_make/"
+            IDE_NAME="CMake, make"
             ;;
         (src9)
             GENERATE_FILES_ROOT_DIR="$CONF_DIR/kdevelop_make"
@@ -856,11 +855,6 @@ create_filelist( )
     local FILELIST_COMBINED_HDR="filelist"'__'"${PROJECT}_hdr.txt"
     FILELIST_COMBINED_PURE="filelist"'__'"${PROJECT}.txt"
 
-    if [ -z "${DOXYGEN_EXPORT_DIR:-}" ]; then
-        FILELIST_DOXYGEN_READY="filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}-doc.txt"
-    else
-        FILELIST_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/filelist__${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}-doc.txt"
-    fi
     local FIND_TEMP_PATH="$(printf '%s' \
             "-path '*/scheduler/*'" \
         " -o -path '*/util/*'" \
@@ -904,42 +898,6 @@ create_filelist( )
     cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
     cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
 
-    {
-        # create list with suitable block definition for doxygen import
-        # start main block for all files for project
-        #echo_ "/**" > $FILELIST_DOXYGEN_READY
-        #echo_ "* \section FileLists$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Files for $PROJECT ." >&3
-        #echo_ "*/" >&3
-        #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section FileLists${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of Files for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
-
-        # write block of source files
-        #echo_ "/**" >&3
-        #echo_ "* \section SrcList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
-        #echo_ "*/" >&3
-        #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section SrcList${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of Sourcefiles for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
-        echo_ "\code" >&3
-        cat $FILELIST_COMBINED_PURE >&3
-        echo_ "\endcode" >&3
-        #echo_ "/*@}*/" >&3
-
-        echo_ "" >&3
-
-        # write block of header files
-        #echo_ "/**" >&3
-        #echo_ "* \section HdrList${PROJECT}"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of Sourcefiles for ${PROJECT} ." >&3
-        #echo_ "*/" >&3
-        #echo_ "/*@{*/" >&3
-        echo_e "\n\n @section HdrList${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of Headers for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
-        echo_ "\code" >&3
-        cat $FILELIST_COMBINED_HDR >&3
-        echo_ "\endcode" >&3
-        #echo_ "/*@}*/" >&3
-
-        # write end of main block of all project files
-        #echo_ "/*@}*/" >&3
-    } 3>"$FILELIST_DOXYGEN_READY"
     cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
     rm -f $FILELIST_COMBINED_HDR
 
@@ -987,11 +945,11 @@ END_OF_PATH
         CONFIG_HEADER_FILENAME=$(basename $CONFIG_NAME)
         echo_ "// File: $CONFIG_HEADER_FILENAME" >&3
         echo_ "// IMPORTANT: Never change the first block of this header manually!!!" >&3
-        echo_ "//            All manual changes are overwritten by the next call of \"update_makefile.sh $CONF_FILE\" " >&3
+        echo_ "//            All manual changes are overwritten by the next call of \"conf2build.sh $CONF_FILE\" " >&3
         echo_ "//            Perform changes direct in the feature and project setup file $CONF_FILE"  >&3
         echo_ "//  ALLOWED ADAPTATION: Move the to be adapted defines from the middle block to the end after" >&3
         echo_ "//                      the line START_INDIVIDUAL_PROJECT_CONFIG and remove the comment indication there."  >&3
-        echo_ "//                      All commented out defines in the middle block will be upated on next \"update_makefile.sh $CONF_FILE\" call,"  >&3
+        echo_ "//                      All commented out defines in the middle block will be upated on next \"conf2build.sh $CONF_FILE\" call,"  >&3
         echo_ "//                      if the corresponding value in isoaglib_config.h changed" >&3
         echo_e "$ENDLINE" >&3
 
@@ -1377,20 +1335,48 @@ EOF
     )
 }
 
-# make a directory for CMake stuff and echo the path
-make_cmake_dir()
+
+create_cmake_winlin()
 {
-    # replace nearest superdirectory VC6 with cmake_msvc:
-    local CMAKE_DIR="$(pwd | sed -e 's,\(.*\)/VC6/,\1/cmake_msvc/,')"
-    mkdir -p "$CMAKE_DIR" && printf -- '%s\n' "$CMAKE_DIR"
+    CompletePrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
+
+    local RELATIVE_INC_PATHS_WIN32="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
+    local ALL_INC_PATHS_WIN32="$(echo_ ${RELATIVE_INC_PATHS_WIN32:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS_WIN32)} $USE_WIN32_EXTERNAL_INCLUDE_PATH)"
+
+    local INSERT_CMAKE_PROJECT="$PROJECT"
+    local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES_LINUX="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${BIOS_INC:-})"
+    local INSERT_CMAKE_INCLUDE_DIRECTORIES_WIN32="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS_WIN32:-} ${BIOS_INC:-})"
+    local INSERT_CMAKE_LINK_DIRECTORIES_LINUX="${USE_LINUX_EXTERNAL_LIBRARY_PATH:-}"
+    local INSERT_CMAKE_LINK_DIRECTORIES_WIN32="${USE_WIN32_EXTERNAL_LIBRARY_PATH:-}"
+    local INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
+    local INSERT_CMAKE_TARGET_LINK_LIBRARIES_WIN32="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32)"
+    local INSERT_CMAKE_SOURCE_FILES="$(omit_or_printf '\n  %s' "$(cat filelist__$PROJECT.txt)" )"
+    local INSERT_CMAKE_ADD_EXECUTABLE="$(
+        omit_or_printf '\n  %s' "$PROJECT" $(
+            grep -E '\.cc|\.cpp|\.c|\.h' <"$CompletePrjFilelist" || status_le1))"
+
+    : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_CMakeLists.txt}
+    expand_template "$CMAKE_SKELETON_FILE" >"CMakeLists.txt"
 }
+
+# for information! (from the windows version)
+#    cat $FILELIST_LIBRARY_PURE $FILELIST_APP_PURE > $FILELIST_COMBINED_PURE
+#    cat $FILELIST_LIBRARY_HDR $FILELIST_APP_HDR > $FILELIST_COMBINED_HDR
+#    cat $FILELIST_COMBINED_HDR >> $FILELIST_COMBINED_PURE
+#
+#old linux version which did not include the headers:
+#LIN local INSERT_CMAKE_ADD_EXECUTABLE="$(
+#LIN     omit_or_printf '\n  %s' "$PROJECT" $(
+#LIN         cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c|\.h' || status_le1))"
+
 
 create_standard_makefile()
 {
     MakefileName="Makefile"
     MakefileNameLong="Makefile__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
 
-    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileSkeleton.txt}
+    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileSkeleton.txt}
     {
         # create Makefile Header
         echo_ "#############################################################################" >&3
@@ -1535,20 +1521,18 @@ EOF
     shortcut_makefile "$MakefileNameLong" "Makefile"
 
     # In addition generate a CMakeLists.txt file:
-
-    : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CMakeLists.txt}
-    local INSERT_CMAKE_PROJECT="$PROJECT"
-    local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
-    local INSERT_CMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
-
-    local INSERT_CMAKE_LINK_DIRECTORIES="${USE_LINUX_EXTERNAL_LIBRARY_PATH:-}"
-    local INSERT_CMAKE_ADD_EXECUTABLE="$(
-        omit_or_printf '\n  %s' "$PROJECT" $(
-            cat "$MakefileFilelistLibrary" "$MakefileFilelistApp" | grep -E '\.cc|\.cpp|\.c' || status_le1))"
-    local INSERT_CMAKE_SOURCE_FILES="$(omit_or_printf '\n  %s' "$(cat filelist__$PROJECT.txt)" )"
-    local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" rt $USE_LINUX_EXTERNAL_LIBRARIES)"
-    expand_template "$CMAKE_SKELETON_FILE" >"$(make_cmake_dir)/CMakeLists.txt"
+	create_cmake_winlin
 }
+
+create_CMake()
+{
+    DEV_PRJ_DIR="$1/$PROJECT"
+    mkdir -p $DEV_PRJ_DIR
+    cd "$DEV_PRJ_DIR"
+
+	create_cmake_winlin "$1"
+}
+
 
 create_pure_application_makefile()
 {
@@ -1556,7 +1540,7 @@ create_pure_application_makefile()
     MakefileName="MakefileApp"
     MakefileNameLong="MakefileApp__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
 
-    : ${MAKEFILE_APP_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileAppSkeleton.txt}
+    : ${MAKEFILE_APP_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileAppSkeleton.txt}
 
     {
         # create Makefile Header
@@ -1660,21 +1644,6 @@ END_OF_MODULE_LINES
     shortcut_makefile "$MakefileNameLong" "MakefileApp"
 }
 
-create_kdevelop3_project_file()
-{
-    # now create a Kdevelop3 project file
-    local REPLACE_AUTHOR="$PROJECT_AUTHOR"
-    local REPLACE_AUTHOR_EMAIL="$PROJECT_AUTHOR_EMAIL"
-    local REPLACE_PROJECT="$PROJECT"
-    local REPLACE_INCLUDE="$KDEVELOP_INCLUDE_PATH"
-    expand_template "$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_kdevelop3Generic.kdevelop" >"$PROJECT.kdevelop"
-    
-    {
-        echo_ "# KDevelop Custom Project File List" >&3
-        cat filelist__$PROJECT.txt >&3
-    } 3>"$PROJECT.kdevelop.filelist"
-}
-
 create_makefile()
 {
     # go to project dir - below config dir
@@ -1688,7 +1657,6 @@ create_makefile()
 
     create_standard_makefile
     create_pure_application_makefile
-    create_kdevelop3_project_file
 
     cd $1
 
@@ -1868,7 +1836,7 @@ create_EdePrj()
     local INSERT_LIBRARIES="$(with_ede_libraries join_semicolon)"
     {
         # Build Tasking Project File by: a) first stub part; b) file list c) second stub part
-        expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part1.pjt >&3
+        expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_EDE.part1.pjt >&3
 
         TMP_EDE="${TEMPFILE_PREFIX}ede"
         cp $EdePrjFilelist $TMP_EDE
@@ -1878,7 +1846,7 @@ create_EdePrj()
         # insert specific BIOS/OS sources
         local FORMAT="$(literal_format "$USE_EMBED_LIB_DIRECTORY")/%s\n"
         printf -- "$FORMAT" $USE_EMBED_BIOS_SRC >&3
-        expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_EDE.part2.pjt >&3
+        expand_template $DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_EDE.part2.pjt >&3
     } 3>"$DEV_PRJ_DIR/$PROJECT_FILE_NAME"
     cd $DEV_PRJ_DIR
 
@@ -1923,7 +1891,7 @@ create_CcsPrj()
     CCS_PROJECT_FILE_NAME="$PROJECT"'_'"$USE_TARGET_SYSTEM.pjt"
     CCS_PROJECT_FILE_LIST="$1/$PROJECT/$FILELIST_COMBINED_PURE"
     CCS_CONFIG_HDR_NAME="config_""$PROJECT.h"
-    CCS_PROJECT_TEMPLATE=$CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CCSSkeleton.pjt
+    CCS_PROJECT_TEMPLATE=$CCS_PROJECT_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_CCSSkeleton.pjt
     CCS_COMMERCIAL_BIOS_PATH="library/commercial_BIOS/bios_$USE_TARGET_SYSTEM"
     CCS_PROJECT_FILE_NAME_PATH="$CCS_PROJECT_DIR/$CCS_PROJECT_FILE_NAME"
 
@@ -2024,30 +1992,6 @@ format_sources_for_dsp()
     done
 }
 
-create_CMake()
-{
-    DEV_PRJ_DIR="$1/$PROJECT"
-    mkdir -p $DEV_PRJ_DIR
-
-    DspPrjFilelist="$1/$PROJECT/$FILELIST_COMBINED_PURE"
-
-    cd "$DEV_PRJ_DIR"
-
-    : ${CMAKE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_CMakeLists.txt}
-    local INSERT_CMAKE_PROJECT="$PROJECT"
-    local INSERT_CMAKE_DEFINITIONS="$(print_cmake_definitions)"
-    local RELATIVE_INC_PATHS="$(echo_ ${REL_APP_PATH:-} $PRJ_INCLUDE_PATH)"
-    local ALL_INC_PATHS="$(echo_ ${RELATIVE_INC_PATHS:+$(printf -- "$(literal_format "$ISO_AG_LIB_INSIDE")/%s\n" $RELATIVE_INC_PATHS)} $USE_WIN32_EXTERNAL_INCLUDE_PATH)"
-    local INSERT_CMAKE_INCLUDE_DIRECTORIES="$(omit_or_printf '\n  %s' . $ISO_AG_LIB_INSIDE/library $ISO_AG_LIB_INSIDE/library/xgpl_src ${ALL_INC_PATHS:-} ${BIOS_INC:-})"
-    local INSERT_CMAKE_LINK_DIRECTORIES="${USE_WIN32_EXTERNAL_LIBRARY_PATH:-}"
-    local INSERT_CMAKE_ADD_EXECUTABLE="$(
-        omit_or_printf '\n  %s' "$PROJECT" $(
-            grep -E '\.cc|\.cpp|\.c' <"$DspPrjFilelist" || status_le1))"
-    local INSERT_CMAKE_SOURCE_FILES="$(omit_or_printf '\n  %s' "$(cat filelist__$PROJECT.txt)" )"
-    local INSERT_CMAKE_TARGET_LINK_LIBRARIES="$(omit_or_printf '\n  %s' "$PROJECT" odbc32 odbccp32 winmm ws2_32)"
-    expand_template "$CMAKE_SKELETON_FILE" >"$(make_cmake_dir)/CMakeLists.txt"
-}
-
 create_library_makefile()
 {
     local DEV_PRJ_DIR="$1/$PROJECT"
@@ -2057,7 +2001,7 @@ create_library_makefile()
     local MAKEFILE_NAME="Makefile"
     local MAKEFILE_LONG_NAME="Makefile__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}"
 
-    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/update_makefile_MakefileLibSkeleton.txt}
+    : ${MAKEFILE_SKELETON_FILE:=$DEV_PRJ_DIR/$ISO_AG_LIB_INSIDE/tools/project_generation/conf2build_MakefileLibSkeleton.txt}
 
     local INSERT_APPLICATION_NAME="$PROJECT"
     local REPORT_ISOAGLIB_PATH='dummy'
@@ -2203,14 +2147,12 @@ create_buildfiles()
 usage ()
 {
     cat <<EOF
-Usage: update_makefile.sh [OPTIONS] project_config_file
+Usage: conf2build.sh [OPTIONS] project_config_file
 Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLib project.
 
 -h, --help                        print this message and exit.
 --report                          Print generation report.
 --report=REPORT_FILE              print generation report to REPORT_FILE.
---doxygen-export-directory=DIR    write the filelist and configuration files with doxygen documentation
-                                  blocks to the given directory instead of the default directory of all generated files.
 --IsoAgLib-root=DIR               use the given root directory instead of the entry in the selected configuration file.
 --target-system=TARGET            produce the project definition files for the selected TARGET instead of the
                                   target which is specified in the configuration file
@@ -2228,13 +2170,13 @@ Creates Filelist, Projectfile/Makefile and Configuration Settings for an IsoAgLi
                                   when 0: only NDEBUG is set (release build, default);
                                   when 1: NDEBUG and all DEBUG_... variants are set;
                                   when 2: only all DEBUG_... variants are set;
-"update_makefile.sh" parses the selected project configuration file and overwrites the default values for all contained settings.
+"conf2build.sh" parses the selected project configuration file and overwrites the default values for all contained settings.
 It then collects the corresponding files which can then be imported to an individual IDE.
 Additionally a project specific configuration header is created in the application source directory with the
 name scheme "config_<project_name>.h". If the #define PRJ_USE_AUTOGEN_CONFIG is set to "config_<project_name>.h",
 the central configuration header library/xgpl_src/IsoAgLib/isoaglib_config.h will include this header.
 Additionally set the SYSTEM_FOO for the wanted platform (this is already done in generated projectfiles).
-"update_makefile.sh" will output the correct define at the end of the run.
+"conf2build.sh" will output the correct define at the end of the run.
 Thus with these two DEFINE settings, the compiler can generate a clean running executable / HEX.
 
 Report bugs to <m.wodok@osb-ag.de>.
@@ -2306,13 +2248,6 @@ check_before_user_configuration()
             (-h | --help)
                 usage
                 exit 0 ;;
-            ('--doxygen-export-directory='*)
-                DOXYGEN_EXPORT_DIR_1=$(echo_ "$option" | sed -e 's/--doxygen-export-directory=//')
-                mkdir -p "$DOXYGEN_EXPORT_DIR_1"
-                CALL_DIR=$PWD
-                cd "$DOXYGEN_EXPORT_DIR_1"
-                DOXYGEN_EXPORT_DIR=$PWD
-                cd $CALL_DIR ;;
             ('--IsoAgLib-root='*)
                 ISOAGLIB_ROOT=$(echo_ "$option" | sed 's/--IsoAgLib-root=//')
                 if [ ! -f "$ISOAGLIB_ROOT/library/xgpl_src/IsoAgLib/isoaglib_config.h" ] ; then
@@ -2540,38 +2475,6 @@ report_summary()
     echo_ "Generation successful."
     if [ -n "${TMP_REPORTFILE:-}" ]; then
         cat "$TMP_REPORTFILE"
-    fi
-}
-
-make_doxygen_ready_comment_blocks()
-{
-    if [ -n "${DOXYGEN_EXPORT_DIR:-}" ] ; then
-        # doxygen export is specified -> copy config file there with suitable doc block
-        CONF_BASE=$(basename $CONF_FILE)
-        CONFIG_SPEC_DOXYGEN_READY="${DOXYGEN_EXPORT_DIR}/spec__${CONF_BASE}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER}-doc.txt"
-        TMP_CONF="${TEMPFILE_PREFIX}${CONF_BASE}"
-        {
-            #echo_ "/**" >&3
-            #echo_ "* \section PrjSpec$PROJECT"'__'"$USE_TARGET_SYSTEM"'__'"$USE_CAN_DRIVER"'__'"$USE_RS232_DRIVER List of configuration settings for $PROJECT ." >&3
-            #echo_ "* This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
-            #echo_ "* Use the file $CONF_FILE in this directory as input file for $0 to create the project generation files." >&3
-            #echo_ "*/" >&3
-            #echo_ "/*@{*/" >&3
-        #   cat $CONF_FILE >&3
-            #sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_FILE > $TMP_CONF
-            #cat $TMP_CONF >&3
-            #rm -f $TMP_CONF
-            #echo_ "/*@}*/" >&3
-        
-            echo_e "${ENDLINE}${ENDLINE} @section PrjSpec${PROJECT}__${USE_TARGET_SYSTEM}__${USE_CAN_DRIVER}__${USE_RS232_DRIVER} List of configuration settings for ${PROJECT} with CAN Driver ${USE_CAN_DRIVER} and RS232 Driver ${USE_RS232_DRIVER}" >&3
-            echo_ " This is only a copy with doxygen ready comment blocks from the original file in IsoAgLib/compiler_projeckdevelop_make/ " >&3
-            echo_ " Use the file $(basename "${CONF_FILE}") in this directory as input file for $(basename "$0") to create the project generation files." >&3
-            echo_ "\code" >&3
-            sed -e "s/USE_TARGET_SYSTEM=\".*/USE_TARGET_SYSTEM=\"$USE_TARGET_SYSTEM\"/g" -e "s/USE_CAN_DRIVER=\".*/USE_CAN_DRIVER=\"$USE_CAN_DRIVER\"/g" -e "s/USE_RS232_DRIVER=\".*/USE_RS232_DRIVER=\"$USE_RS232_DRIVER\"/g" $CONF_DIR/$CONF_FILE > $TMP_CONF
-            cat $TMP_CONF >&3
-            echo_ "\endcode" >&3
-        } 3>"$CONFIG_SPEC_DOXYGEN_READY"
-    
     fi
 }
 

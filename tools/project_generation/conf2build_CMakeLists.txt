@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 2.8.1)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release CACHE STRING
+      "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel."
+      FORCE)
+endif(NOT CMAKE_BUILD_TYPE)
+
+find_program(CSCOPE cscope)
+find_program(CTAGS ctags)
+
+project(${INSERT_CMAKE_PROJECT})
+
+add_definitions(${INSERT_CMAKE_DEFINITIONS})
+
+add_executable(${INSERT_CMAKE_ADD_EXECUTABLE})
+
+
+if( WIN32 )
+include_directories(${INSERT_CMAKE_INCLUDE_DIRECTORIES_WIN32})
+ 
+link_directories(${INSERT_CMAKE_LINK_DIRECTORIES_WIN32})
+
+target_link_libraries(${INSERT_CMAKE_TARGET_LINK_LIBRARIES_WIN32})
+endif( WIN32)
+
+
+if( UNIX )
+include_directories(${INSERT_CMAKE_INCLUDE_DIRECTORIES_LINUX})
+
+link_directories(${INSERT_CMAKE_LINK_DIRECTORIES_LINUX})
+
+target_link_libraries(${INSERT_CMAKE_TARGET_LINK_LIBRARIES_LINUX})
+
+add_custom_target(tags COMMAND \${CSCOPE} -b ${INSERT_CMAKE_SOURCE_FILES}
+                         COMMAND \${CTAGS}     ${INSERT_CMAKE_SOURCE_FILES} )
+endif( UNIX )
