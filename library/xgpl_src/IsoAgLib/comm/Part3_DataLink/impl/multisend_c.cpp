@@ -396,31 +396,6 @@ MultiSend_c::processMsg( const CanPkg_c& arc_data )
   }
 }
 
-bool
-MultiSend_c::sendIsoBroadcastOrSinglePacket (const IsoName_c& acrc_isoNameSender, const HUGE_MEM uint8_t* rhpb_data, uint16_t aui16_dataSize, int32_t ai32_pgn, MultiSendEventHandler_c* apc_multiSendEventHandler)
-{
-  if (aui16_dataSize < beginTpPacketSize)
-  {
-    MultiSendPkg_c rc_multiSendPkg;
-    rc_multiSendPkg.setIsoPri (6);
-    rc_multiSendPkg.setISONameForSA (acrc_isoNameSender);
-    rc_multiSendPkg.setLen (uint8_t (aui16_dataSize));
-    rc_multiSendPkg.setIsoPgn(ai32_pgn);
-    for (unsigned ui = 0 ; ui < aui16_dataSize; ++ui)
-      rc_multiSendPkg.setUint8Data (ui, rhpb_data[ui]);
-
-    getIsoBusInstance4Comm() << rc_multiSendPkg;
-    // @TODO : return enum/int instead of bool
-    //rpen_sendSuccessNotify = SendStream_c::SendSuccess;
-    // NOTE: no call to "apc_multiSendEventHandler->reactOnFinished()" in case Single Packet is sent, to avoid loop
-    return true;
-  }
-  else
-  {
-    return sendIntern(acrc_isoNameSender, IsoName_c::IsoNameUnspecified(), rhpb_data, aui16_dataSize, ai32_pgn, NULL /* NOT "yet" supported */, SendStream_c::IsoTPbroadcast, apc_multiSendEventHandler);
-  }
-}
-
 /** this function should NOT be called from INSIDE of timeEvent !
     ==> Only call it from OUTSIDE functions like init(), processMsg(), addSendStream, etc.
   */

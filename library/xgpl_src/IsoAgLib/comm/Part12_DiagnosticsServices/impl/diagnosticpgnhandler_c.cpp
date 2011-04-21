@@ -16,6 +16,7 @@
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/identitem_c.h>
 #include <IsoAgLib/comm/Part5_NetworkManagement/impl/isorequestpgn_c.h>
 #include <IsoAgLib/comm/Part3_DataLink/impl/multisend_c.h>
+#include <IsoAgLib/comm/impl/isobus_c.h>
 #include <IsoAgLib/util/iassert.h>
 #include <IsoAgLib/util/impl/util_funcs.h>
 #include <stdlib.h>
@@ -80,21 +81,16 @@ DiagnosticPgnHandler_c::close()
 
 
 bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_c* /*rpc_isoItemSender*/, IsoItem_c* rpc_isoItemReceiver, int32_t )
-{ // ~X2C
+{
   if ( !mrc_identItem.isClaimedAddress() ) return false;
   if ( ( rpc_isoItemReceiver != NULL ) && ( mrc_identItem.getIsoItem() != rpc_isoItemReceiver ) ) return false; // request not adressed to us!
 
   switch ( rui32_pgn )
   {
     case ISOBUS_CERTIFICATION_PGN:
-      if (mb_certificationIsSet &&
-          getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
-            mrc_identItem.isoName(),
-            m_certification,
-            8,
-            ISOBUS_CERTIFICATION_PGN,
-            NULL ) )
-      { // Message successfully transmitted to multisend -> return true
+      if (mb_certificationIsSet)
+      {
+        sendSinglePacket(m_certification,ISOBUS_CERTIFICATION_PGN);
 #if DEBUG_DIAGNOSTICPGN
         INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ISOBUS_CERTIFICATION " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
@@ -108,66 +104,80 @@ bool DiagnosticPgnHandler_c::processMsgRequestPGN ( uint32_t rui32_pgn, IsoItem_
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF// Reserved bytes according to the standard
       };
 
-      if (getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
-            mrc_identItem.isoName(),
-            diagProtocolId,
-            8,
-            ECU_DIAGNOSTIC_PROTOCOL_PGN,
-            NULL ) )
-      { // Message successfully transmitted to multisend -> return true
+      sendSinglePacket(diagProtocolId,ECU_DIAGNOSTIC_PROTOCOL_PGN);
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL: first byte (diag protocol id) is " << uint16_t (diagProtocolId[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
+      INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_DIAGNOSTIC_PROTOCOL: first byte (diag protocol id) is " << uint16_t (diagProtocolId[0]) << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-        return true;
-      }
-      break; }
+      return true; }
 
     case SOFTWARE_IDENTIFICATION_PGN:
-      if ((mcstr_SwIdentification != NULL) &&
-          getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
-            mrc_identItem.isoName(),
-            (uint8_t *) mcstr_SwIdentification,
-            getCStringLength (mcstr_SwIdentification),
-            SOFTWARE_IDENTIFICATION_PGN,
-            NULL ) )
-      { // Message successfully transmitted to multisend -> return true
+      if (mcstr_SwIdentification != NULL)
+      {
+        if (getCStringLength (mcstr_SwIdentification) < 9)
+        {
+          sendSinglePacket((uint8_t *) mcstr_SwIdentification,SOFTWARE_IDENTIFICATION_PGN);
+          return true;
+        }
+        else
+        {
+          if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+                mrc_identItem.isoName(),
+                (uint8_t *) mcstr_SwIdentification,
+                getCStringLength (mcstr_SwIdentification),
+                SOFTWARE_IDENTIFICATION_PGN,
+                NULL) )
+          { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PGN: " << mcstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with SOFTWARE_IDENTIFICATION_PGN: " << mcstr_SwIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-        return true;
-      }
+            return true;
+          }
+          // else
+        }
+      } // else
       break;
 
     case ECU_IDENTIFICATION_INFORMATION_PGN:
-      if ((mcstr_EcuIdentification != NULL) &&
-           getMultiSendInstance4Comm().sendIsoBroadcastOrSinglePacket(
-            mrc_identItem.isoName(),
-            (uint8_t *) mcstr_EcuIdentification,
-            getCStringLength (mcstr_EcuIdentification),
-            ECU_IDENTIFICATION_INFORMATION_PGN,
-            NULL ) )
-      { // Message successfully transmitted to multisend -> return true
+      if (mcstr_EcuIdentification != NULL)
+      {
+        if (getCStringLength (mcstr_EcuIdentification) < 9)
+        {
+          sendSinglePacket((uint8_t *) mcstr_EcuIdentification,ECU_IDENTIFICATION_INFORMATION_PGN);
+          return true;
+        }
+        else
+        {
+          if ( getMultiSendInstance4Comm().sendIsoBroadcast(
+                mrc_identItem.isoName(),
+                (uint8_t *) mcstr_EcuIdentification,
+                getCStringLength (mcstr_EcuIdentification),
+                ECU_IDENTIFICATION_INFORMATION_PGN,
+                NULL) )
+          { // Message successfully transmitted to multisend -> return true
 #if DEBUG_DIAGNOSTICPGN
-        INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN: " << mcstr_EcuIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
+            INTERNAL_DEBUG_DEVICE << "Response to RequestPGN with ECU_IDENTIFICATION_INFORMATION_PGN: " << mcstr_EcuIdentification << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
-        return true;
-      }
+            return true;
+          }
+          // else
+        }
+      } // else
       break;
+
   default:
     isoaglib_assert(!"Not registered for this PGN.");
     break;
   }
 
-  // something wrong happend - answer with CannotRespondNow
-  //  (couldn't multisend or Identification not yet ready)
-  getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
-
 #if DEBUG_DIAGNOSTICPGN
   INTERNAL_DEBUG_DEVICE << "Couldn't response to RequestPGN with PGN=" << rui32_pgn << ". " << INTERNAL_DEBUG_DEVICE_ENDL;
 #endif
 
-  return true;  // we shouldn't reach here without coming into one of the above conditions! - so true is okay!
-} // -X2C
+  // something wrong happend - answer with CannotRespondNow
+  //  (couldn't multisend or Identification not yet ready)
+  getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
+  return true;
+}
 
 
 /// Internal helper functions:
@@ -309,6 +319,21 @@ DiagnosticPgnHandler_c::setCertificationData(
 
   mb_certificationIsSet = true;
   return true;
+}
+
+void
+DiagnosticPgnHandler_c::sendSinglePacket (const HUGE_MEM uint8_t* rhpb_data,
+                                          int32_t ai32_pgn)
+{
+  CanPkgExt_c pkg;
+  pkg.setIsoPri (6);
+  pkg.setMonitorItemForSA (mrc_identItem.getIsoItem());
+  pkg.setLen (8);
+  pkg.setIsoPgn(ai32_pgn);
+  for (unsigned ui = 0 ; ui < 8; ++ui)
+    pkg.setUint8Data (ui, rhpb_data[ui]);
+
+  getIsoBusInstance4Comm() << pkg;
 }
 
 }
