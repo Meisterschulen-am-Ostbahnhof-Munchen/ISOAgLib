@@ -88,8 +88,11 @@ DiagnosticsServices_c::close()
 
 bool DiagnosticsServices_c::timeEvent()
 {
-  // @TODO check if necessary
-  if ( !mrc_identItem.isClaimedAddress() ) return true;
+  if ( !mrc_identItem.isClaimedAddress() )
+  {
+    setTimePeriod(50); // check every 50 ms if we can operate again
+    return true;
+  }
 
   if (!mb_dm1CurrentNeedsToBeSent)
   { // check if we have to send the DM1 out NOW?
@@ -432,7 +435,8 @@ DiagnosticsServices_c::sendSingleDM1DM2(uint32_t ui32_pgn, uint8_t* arr_send8byt
 bool
 DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_isoItemSender, IsoItem_c* /*apc_isoItemReceiver*/, int32_t )
 {
-  if ( !mrc_identItem.isClaimedAddress() ) return false;
+  if ( !mrc_identItem.isClaimedAddress() )
+    return false;
 
   switch (aui32_pgn)
   {
@@ -481,9 +485,9 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         }
       }
       // else cannot respond because we are already sending right now
-
       getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
-      break;
+      return true;
+
     case PREVIOUSLY_ACTIVE_DIAGNOSTIC_TROUBLE_CODES_PGN:
       if (!ms_dm2SendingDestination.mb_bufferUsedForTP)
       {
@@ -521,9 +525,9 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         }
       }
       // else cannot respond because we are already sending right now
-
       getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), 0x03 ); // CannotRespondNow ACKNOWLEDGE
-      break;
+      return true; 
+
     case DIAGNOSTIC_DATA_CLEAR_PGN:
       {
 #if DEBUG_DIAGNOSTICPGN
@@ -540,14 +544,11 @@ DiagnosticsServices_c::processMsgRequestPGN (uint32_t aui32_pgn, IsoItem_c* apc_
         getIsoRequestPgnInstance4Comm().answerRequestPGNwithACK ( *mrc_identItem.getIsoItem(), responsevalue );
         return true;
       }
-      break;
+
     default:
       isoaglib_assert(false);
-      break;
+      return false;
   }
-
-  // shouldn't happen as we only registered for the above handled PGNs @TODO check with Martin
-  return false;
 }
 
 bool DiagnosticsServices_c::registerServiceToolVerifier (IsoAgLib::iServiceToolVerifier_c& stVerifier)
