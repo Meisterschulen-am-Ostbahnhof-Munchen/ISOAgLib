@@ -591,7 +591,6 @@ tools/project_generation/conf2build_EDE.part2.pjt -text
 tools/project_generation/conf2build_MakefileAppSkeleton.txt -text
 tools/project_generation/conf2build_MakefileLibSkeleton.txt -text
 tools/project_generation/conf2build_kdevelop3Generic.kdevelop -text
-tools/project_generation/conf2build_qmake_stub.pro -text
 tools/project_generation/conf_template -text
 tools/vt2iso/Makefile -text
 tools/vt2iso/Makefile.incl -text
