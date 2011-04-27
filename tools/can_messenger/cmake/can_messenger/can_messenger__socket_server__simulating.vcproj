@@ -360,6 +360,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\impl\diagnosticsservices_c.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part12_DiagnosticsServices\impl\dtccontainer_c.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\driver\can\impl\filterbox_c.cpp"
 				>
 				<FileConfiguration
@@ -690,28 +698,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\isosystempkg_c.cpp"
-				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						PreprocessorDefinitions=""
-					/>
-				</FileConfiguration>
-			</File>
-			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part5_NetworkManagement\impl\istate_c.cpp"
 				>
 				<FileConfiguration
@@ -886,6 +872,10 @@
 						PreprocessorDefinitions=""
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\sendstream_c.cpp"
+				>
 			</File>
 			<File
 				RelativePath="..\..\..\..\library\xgpl_src\IsoAgLib\comm\Part3_DataLink\impl\stream_c.cpp"
