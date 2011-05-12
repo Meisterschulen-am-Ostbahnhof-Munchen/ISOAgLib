@@ -21,8 +21,12 @@
 #include <xercesc/dom/DOMAttr.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 
+#include <algorithm>
 // Includes (findfirst, findnext)
 #include <fstream>
+#include <iterator>
+#include <vector>
+
 #include <sys/stat.h>
 
 #include <stdio.h>
@@ -2344,53 +2348,16 @@ vt2iso_c::processElement (DOMNode *n, uint64_t ombType /*, const char* rpcc_inKe
             arrs_language [ui_languages].count = 0;
             arrs_language [ui_languages].firstLine = true;
 
-            // Open and read complete languages-files
-            if (mb_projectFile)
-            {
-              if (l_dictionaryPath.size() > 1)
-              {
-                std::cerr << "More than one <dictionary> node in project file is not allowed!" <<std::endl;
-                return false;
-              }
-              std::string str_concat = " "; str_concat[0] = scc_dirSeparatorCorrect;
-              std::string str_tmpWorkDir = mstr_sourceDir;
-              if (!l_dictionaryPath.front().b_relativePath)
-                str_tmpWorkDir.clear();
-
-              langFileName = str_tmpWorkDir + l_dictionaryPath.front().str_pathName + str_concat + arrs_language [ui_languages].code + ".vtl";
+            // scan for language files and read into buffer
+            std::list<std::string> l_languageFiles = scanLanguageFiles( arrs_language[ui_languages] );
+            if( l_languageFiles.empty() ) {
+              std::cerr << "    no language files found for lang " << arrs_language[ui_languages].code << std::endl;
+              return false;
+            } else {
+              readLanguageFilesToBuffer( l_languageFiles, arrs_language[ui_languages] );
             }
-            else
-              langFileName = str(format("%s.values.%s.txt") % mstr_sourceDirAndProjectPrefix % arrs_language [ui_languages].code);
 
-            FILE* tmpHandle = fopen (langFileName.c_str(), "rb");
-            if (tmpHandle != NULL)
-            {
-              if(!mb_silentMode)
-                std::cout << "    opening language file "<< langFileName << std::endl;
 
-              fseek (tmpHandle, 0, SEEK_END);
-              long length = ftell (tmpHandle);
-              fseek (tmpHandle, 0, SEEK_SET);
-              arrs_language [ui_languages].valueBufferLen = length + 1; // we'll internally add an extra NULL-byte!
-              arrs_language [ui_languages].valueBuffer = new (char [arrs_language [ui_languages].valueBufferLen]);
-              fread (arrs_language [ui_languages].valueBuffer, 1, length, tmpHandle);
-              arrs_language [ui_languages].valueBuffer[length+1-1] = 0x00;
-              char *iterate=arrs_language [ui_languages].valueBuffer;
-              char *iterateEnd=iterate+length;
-              // terminate all the lines with an 0x00 char.
-              while (iterate < iterateEnd)
-              {
-                if ((*iterate == '\n') || (*iterate == '\r')) *iterate = 0x00;
-                iterate++;
-              }
-              fclose (tmpHandle);
-            }
-            else
-            {
-              std::cout << "    language file "<< langFileName << " not found." << std::endl;
-              arrs_language [ui_languages].valueBufferLen = 0; // we'll internally add an extra NULL-byte!
-              arrs_language [ui_languages].valueBuffer = NULL;
-            }
             ui_languages++;
           }
         }
@@ -6107,4 +6074,120 @@ void vt2iso_c::diffFileSave( const std::string &destFileName, const std::string 
     rename( tempFileName.c_str(), destFileName.c_str() );
   }
 }
+
+
+std::list<std::string> vt2iso_c::scanLanguageFiles( const language_s& a_lang ) {
+
+  std::list<std::string> files;
+
+  if ( mb_projectFile ) {
+
+    if ( l_dictionaryPath.empty() ) {
+      std::cerr << "Warning: empty dictionary path!";
+      return files;
+    }
+
+    for ( std::list<Path_s>::iterator p = l_dictionaryPath.begin(); p != l_dictionaryPath.end(); ++p ) {
+
+      std::string str_tmpWorkDir = p->b_relativePath ? mstr_sourceDir : "";
+
+      DIR *dir;
+      struct dirent *ent;
+      dir = opendir(( str_tmpWorkDir + scc_dirSeparatorCorrect + p->str_pathName ).c_str() );
+      if ( dir != NULL ) {
+
+        while (( ent = readdir( dir ) ) != NULL ) {
+
+          // check filename length
+          if ( strlen( ent->d_name ) < ( 2 + 1 + 3 ) ) { // code + dot + vtl
+            continue;
+          }
+
+          // check first two chars
+          if ( 0 != strncmp( ent->d_name, a_lang.code, 2 ) ) {
+            continue;
+          }
+
+          // check postfix
+          if ( 0 != strncmp( ".vtl", ent->d_name + strlen( ent->d_name ) - 4,  4 ) ) {
+            continue;
+          }
+
+          std::string langFileName = str_tmpWorkDir + p->str_pathName + scc_dirSeparatorCorrect + std::string( ent->d_name );
+
+          files.push_front( langFileName );
+        }
+
+        closedir( dir );
+
+      } else {
+        /* could not open directory */
+        perror( "" );
+        files.clear(); // this is an error - we should not use partial results from file search
+        return files;
+      }
+    }
+
+
+  } else {
+    // old style without world class ISO11783 mask editor format
+    std::string langFileName = str( format( "%s.values.%s.txt" ) % mstr_sourceDirAndProjectPrefix % a_lang.code );
+    files.push_front( langFileName );
+  }
+
+
+  return files;
+}
+
+
+void vt2iso_c::readLanguageFilesToBuffer( std::list<std::string> a_languageFiles, language_s& a_lang ) {
+
+  std::vector<char> buffer;
+
+  // read files
+  while ( ! a_languageFiles.empty() ) {
+
+    if ( ! mb_silentMode )
+      std::cout << "    opening language file "<< a_languageFiles.front().c_str() << std::endl;
+
+    typedef std::istream_iterator<char> istream_iterator;
+    std::ifstream file( a_languageFiles.front().c_str() );
+
+    if ( file.is_open() ) {
+      file >> std::noskipws;
+      std::copy( istream_iterator( file ), istream_iterator(), std::back_inserter( buffer ) );
+      buffer.push_back( 0x00 );
+      file.close();
+    } else {
+      std::cout << "    could not open " << a_languageFiles.front().c_str() << " !" << std::endl;
+    }
+
+    a_languageFiles.pop_front();
+  }
+
+
+  // polish and copy buffer
+  if ( buffer.empty() ) {
+    a_lang.valueBufferLen = 0;
+    a_lang.valueBuffer = NULL;
+
+  } else {
+
+    // replace all newline chars with null
+    const char n = 0;
+    std::replace_if( buffer.begin(), buffer.end(), vt2iso_c::isEol, n );
+
+    a_lang.valueBufferLen = buffer.size();
+    a_lang.valueBuffer = new( char [a_lang.valueBufferLen] );
+    std::copy( buffer.begin(), buffer.end(), a_lang.valueBuffer ) ;
+  }
+
+}
+
+
+bool vt2iso_c::isEol( const char c ) {
+  return (( c == '\n' ) || ( c == '\r' ) );
+}
+
+
 

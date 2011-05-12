@@ -431,6 +431,10 @@ private:
 
   std::list<Path_s> l_dictionaryPath;
 
+  std::list<std::string> scanLanguageFiles( const language_s& a_lang );
+  void readLanguageFilesToBuffer( std::list<std::string> a_languageFiles, language_s& a_lang );
+  static bool isEol( const char c );
+
 };
 
 #endif // VT2ISO_H
